@@ -46,10 +46,10 @@
         </c:if>
         <tr>
             <td class="data-label">
-                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') ||fn:startsWith(marker.zdbID,'ZDB-EFG')  ?"<span class=genedom>" : " "}
+                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') ||fn:startsWith(marker.zdbID,'ZDB-EFG')||fn:contains(marker.zdbID,'RNAG')  ?"<span class=genedom>" : " "}
                     ${marker.abbreviation}
 
-                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') || fn:startsWith(marker.zdbID,'ZDB-EFG') ?"</span>" : " "}
+                    ${fn:startsWith(marker.zdbID,'ZDB-GENE') || fn:startsWith(marker.zdbID,'ZDB-EFG') ||fn:contains(marker.zdbID,'RNAG') ?"</span>" : " "}
                         ${entry.relationshipType}:
 
             </td>

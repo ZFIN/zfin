@@ -127,7 +127,8 @@ public class FeatureMarkerRelationship implements Comparable {
     }
 
     public boolean isMarkerIsGene() {
-        if(marker.getZdbID().startsWith("ZDB-GENE")) {
+
+        if(marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)||marker.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
             return true;
         }  else {
             return false;

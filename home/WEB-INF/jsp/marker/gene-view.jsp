@@ -75,8 +75,10 @@
     <zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}"/>
 
     <%--protein families, domains, and sites--%>
-    <zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>
+<c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
 
+    <zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>
+</c:if>
     <%--Transcripts--%>
     <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}"
                                    title="TRANSCRIPTS" showAllTranscripts="true"/>
@@ -95,10 +97,10 @@
         </table>
     </zfin2:subsection>
 
-    <%--Antibodies--%>
+<c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
     <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}" marker="${formBean.marker}"
                                               title="ANTIBODIES" maxNumber="5"/>
-
+</c:if>
     <%--Plasmid Links--%>
     <zfin2:subsection title="PLASMIDS" anchor="plasmid_links"
                       test="${!empty formBean.plasmidDBLinks}" showNoData="true" noDataText="No data available">

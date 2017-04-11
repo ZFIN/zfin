@@ -14,7 +14,7 @@
         <li>
             Add
             <a href="/action/marker/gene-add?type=GENE"><em>gene</em></a>,
-            <%--<a href="/action/marker/transcribedRegion-add"><em>region</em></a>,--%>
+            <a href="/action/marker/nonTranscribedRegion-add"><em>NTR</em></a>,
             <a href="/action/marker/gene-add?type=GENEP"><em>pseudogene</em></a>,
             <a href="/action/marker/gene-add?type=EFG"><em>foreign gene</em></a>,
             <br>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -180,7 +180,6 @@
 <h3><strong>Zebrafish Programs</strong></h3>
 <ul>
     <li>
-        <a href="http://www.nih.gov/science/models/zebrafish/">Trans-NIH Zebrafish Initiative</a>,<br>
         <a href="http://www.zf-health.org">ZF-HEALTH</a>,
         <a href="https://wiki.zfin.org/display/general/Zebrafish+Programs#husbandry">Husbandry Resources</a>,
         <a href="https://wiki.zfin.org/display/general/Zebrafish+Programs">more...</a>

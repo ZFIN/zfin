@@ -72,18 +72,19 @@ public class MergeMarkerController {
             ,@ModelAttribute("formBean") MergeBean formBean
             ,BindingResult result
     ) throws Exception {
-        String type = zdbIDToDelete.substring(4, 8);
+    //    String type = zdbIDToDelete.substring(4, 8);
 
         Marker markerToDelete;
 
-        if (type.startsWith("ATB") || type.startsWith("GEN") || type.startsWith("MRP") || type.startsWith("TAL") || type.startsWith("CRI"))  {
+  //      if (type.startsWith("ATB") || type.startsWith("GEN") || type.startsWith("MRP") || type.startsWith("TAL") || type.startsWith("CRI")
+  //              || type.startsWith("LIN") || type.startsWith("NCR"))  {
 
             markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean .getZdbIDToDelete());
 
             formBean.setMarkerToDelete(markerToDelete);
             //        model.addAttribute("markerToDeleteId", markerToDelete.getZdbID());
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
-        }
+  //      }
         return "marker/merge-marker.page";
     }
 
@@ -156,6 +157,22 @@ public class MergeMarkerController {
             }
         }
         return processedFoundGeneList;
+    }
+
+    // looks up region to be merged into
+    @RequestMapping(value = "/find-region-to-merge-into", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<LookupEntry> lookupRegionToMergeInto(@RequestParam("term") String lookupString, @RequestParam("exclude") String zdbId) {
+        String type = MarkerService.getTypeForZdbID(zdbId);
+        List<LookupEntry> foundRegionlist = RepositoryFactory.getMarkerRepository().getRegionListForString(lookupString, type);
+        List<LookupEntry> processedFoundRegionlist = new ArrayList<>();
+        for (LookupEntry region : foundRegionlist) {
+            if (!region.getId().equals(zdbId)) {
+                processedFoundRegionlist.add(region);
+            }
+        }
+        return processedFoundRegionlist;
     }
 
     // looks up MO to be merged into

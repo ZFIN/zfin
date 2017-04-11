@@ -367,7 +367,6 @@ function list_all(user_access) {
 <!-- to be used by walking windows  -->
 <!-- want GET string as short as possible - append only when variable exists, buffer overflow may cause segmentation fault -->
 <!-- UserInput is used by walking windows to move through the data set -->
-<!-- SearchInput remembers the search that was used to get here - need this infor to return to the correct search page from process-pub -->
 
 <!-- this is all needed to support I.E., the history button and frames are not compatible so we must save variables and pass them around also history.go is not implemented the same in I.E. and Netscape  -->
 
@@ -507,7 +506,7 @@ function list_all(user_access) {
 <?MIVAR NAME=$pubsel2_jtype>$12<?/MIVAR>
 <?MIVAR>
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/action/publication/$3/edit">EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ")
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3$UserInput&START=$START"><br>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/action/publication/$3/link"><br>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
 <?/MIVAR>
 <?MIBLOCK COND="$(NC,$pubsel2_jtype,Curation)">
      <?MIVAR>$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/action/publication/$pubsel2_zdb_id/track"><br>TRACK</A>&nbsp;&nbsp;&nbsp;")<?/MIVAR>

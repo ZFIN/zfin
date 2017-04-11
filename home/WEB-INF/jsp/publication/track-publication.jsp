@@ -21,16 +21,16 @@
 <script src="/javascript/publication-tracker.directive.js"></script>
 <script src="/javascript/select-all-list.directive.js"></script>
 
+<c:set var="viewURL">/${publication.zdbID}</c:set>
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
-
-<c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
-
+<c:set var="linkURL">/action/publication/${publication.zdbID}/link</c:set>
 <c:if test="${allowCuration}">
   <c:set var="curateURL">/action/curation/${publication.zdbID}</c:set>
 </c:if>
 
 <div class="container-fluid" ng-app="app">
   <zfin2:dataManager zdbID="${publication.zdbID}"
+                     viewURL="${viewURL}"
                      editURL="${editURL}"
                      linkURL="${linkURL}"
                      curateURL="${curateURL}"/>

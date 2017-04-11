@@ -213,7 +213,7 @@ public class FacetBuilderService {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         facetGroups.add(buildSingleFacetGroup("Type", "type", true));
-        facetGroups.add(buildSingleFacetGroup("Affected Gene", "affected_gene", true));
+        facetGroups.add(buildSingleFacetGroup("Affected Genomic Region", "affected_gene", true));
         facetGroups.add(buildPhenotypeBlock());
         //todo: need this in the index still?
         facetGroups.add(buildSingleFacetGroup("Consequence", "rna_consequence", false));
@@ -247,7 +247,7 @@ public class FacetBuilderService {
     private List<FacetGroup> buildFishFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
-        FacetGroup affectedGene = new FacetGroup("Affected Gene", true);
+        FacetGroup affectedGene = new FacetGroup("Affected Genomic Region", true);
         affectedGene.addFacet(buildFacet(AFFECTED_GENE.getName(), true));
         facetGroups.add(affectedGene);
 

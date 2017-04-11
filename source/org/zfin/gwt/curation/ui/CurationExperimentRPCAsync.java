@@ -15,10 +15,6 @@ public interface CurationExperimentRPCAsync {
 
     void getExperimentsByFilter(ExpressionExperimentDTO experimentFilter, AsyncCallback<List<ExpressionExperimentDTO>> async);
 
-    void getAssays(AsyncCallback<List<String>> async);
-
-    void getEnvironments(String publicationID, AsyncCallback<List<ExperimentDTO>> async);
-
     /**
      * Retrieve all genotypes for a given publication:
      * 1) WT
@@ -31,55 +27,12 @@ public interface CurationExperimentRPCAsync {
     void getFishList(String publicationID, AsyncCallback<List<FilterSelectionBoxEntry>> async);
 
     /**
-     * Retrieve antibodies that are attributed to a given publication
-     *
-     * @param publicationID pubID
-     * @param async         callback
-     */
-    void getAntibodies(String publicationID, AsyncCallback<List<MarkerDTO>> async);
-
-    /**
-     * Retrieve antibodies for a given publication and gene.
-     *
-     * @param publicationID String
-     * @param geneID        string
-     * @param async         callback
-     */
-    void readAntibodiesByGene(String publicationID, String geneID, AsyncCallback<List<MarkerDTO>> async);
-
-    /**
-     * Retrieve list of associated genes for given pub and antibody
-     *
-     * @param publicationID String
-     * @param antibodyID    string
-     * @param async         callback
-     */
-    void readGenesByAntibody(String publicationID, String antibodyID, AsyncCallback<List<MarkerDTO>> async);
-
-    /**
-     * Retrieve the accession numbers for a given gene
-     *
-     * @param publicationID pubID
-     * @param geneID        string
-     * @param async         callback
-     */
-    void readGenbankAccessions(String publicationID, String geneID, AsyncCallback<List<ExpressionExperimentDTO>> async);
-
-    /**
      * Update an existing experiment.
      *
      * @param selectedExperiment experiment to be updated
      * @param async              callback
      */
     void updateExperiment(ExpressionExperimentDTO selectedExperiment, AsyncCallback<ExpressionExperimentDTO> async);
-
-    /**
-     * Create a new expression experiment.
-     *
-     * @param experiment experiment
-     * @param async      callback
-     */
-    void createExpressionExperiment(ExpressionExperimentDTO experiment, AsyncCallback<ExpressionExperimentDTO> async);
 
     /**
      * Check the visibility of the experiment section
@@ -97,16 +50,6 @@ public interface CurationExperimentRPCAsync {
      * @param async                call back
      */
     void setExperimentVisibilitySession(String pubID, boolean experimentVisibility, AsyncCallback<Void> async);
-
-    void deleteExperiment(String experimentZdbID, AsyncCallback<Void> async);
-
-    /**
-     * Read all experiments that are available for a given publication.
-     *
-     * @param publicationID publication
-     * @param async         call back
-     */
-    void readExperiments(String publicationID, AsyncCallback<List<ExpressionExperimentDTO>> async);
 
     /**
      * Retrieve all figures that are available for this publication

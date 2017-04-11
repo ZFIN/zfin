@@ -115,13 +115,12 @@
                     </tr>
                     <tr>
                         <td>
-                            <form:label cssStyle="vertical-align: top;" path="country">Country:</form:label>
+                            <form:label path="country">Country:</form:label>
                         </td>
                         <td>
                             <form:select path="country">
-
+                                <form:option value="" />
                                 <form:options items="${countryList}" />
-                            </options>
                             </form:select>
                         </td>
                     </tr>

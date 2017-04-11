@@ -20,7 +20,7 @@ import java.util.zip.ZipException
 
 
 cli = new CliBuilder(usage: 'LoadAddgene')
-cli.jobName(args:1, 'Name of the job to be displayed in report')
+cli.jobName(args: 1, 'Name of the job to be displayed in report')
 cli.localData('Attempt to load a local addgene-plasmids.json file instead of downloading')
 cli.commit('Commits changes, otherwise rollback will be performed')
 cli.report('Generates an HTML report')
@@ -52,8 +52,11 @@ if (options.localData) {
 } else {
     print "Downloading JSON file from $DOWNLOAD_URL ... "
     // download, gunzip, and parse json from addgene
-    DOWNLOAD_URL.toURL().withInputStream { rawInputStream ->
-        rawInputStream.mark(100);
+    DOWNLOAD_URL
+            .toURL()
+            .newInputStream(requestProperties: ['User-Agent': 'ZFINbot/1.0'])
+            .withStream { rawInputStream ->
+        rawInputStream.mark(100)
         try {
             gzipInputStream = new GZIPInputStream(rawInputStream)
             gzipInputStream.withReader { gzipReader ->
@@ -112,7 +115,7 @@ query = session.createQuery(hql)
 query.setParameter("addgeneDb", addgeneDb)
 query.setParameter("entrezGeneDb", entrezGeneDb)
 query.setParameterList("accNums", entrezIdsFromAddgene)
-newLinks=query.list()
+newLinks = query.list()
 
 hql = """from MarkerDBLink
          where referenceDatabase = :entrezGeneDb
@@ -138,13 +141,12 @@ addedLinks = query.list().collect { entrezLink ->
     session.save(addgeneLink)
     println "  $addgeneLink.zdbID"
     addgeneLink
-   println "Adding new attributions test "
+    println "Adding new attributions test "
     recAttr = new RecordAttribution()
     recAttr.with {
-
         dataZdbID = addgeneLink.zdbID
         sourceZdbID = "ZDB-PUB-160316-6"
-        sourceType=RecordAttribution.SourceType.STANDARD
+        sourceType = RecordAttribution.SourceType.STANDARD
     }
     session.save(recAttr)
     recAttr
@@ -167,7 +169,7 @@ if (options.report) {
     hql = """select count(*)
              from MarkerDBLink
              where referenceDatabase = :addgeneDb"""
-    query =  session.createQuery(hql)
+    query = session.createQuery(hql)
     query.setParameter("addgeneDb", addgeneDb)
     count = query.uniqueResult()
 

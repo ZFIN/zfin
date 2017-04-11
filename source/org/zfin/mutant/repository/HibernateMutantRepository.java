@@ -11,6 +11,7 @@ import org.hibernate.jdbc.Work;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.database.DbSystemUtil;
+import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.feature.Feature;
@@ -303,44 +304,24 @@ public class HibernateMutantRepository implements MutantRepository {
     /**
      * Check if for a given figure annotation a pato record (Phenotype)
      *
-     * @param fishExperimentID expression experiment
-     * @param figureID         figure
-     * @param startID          start   stage
-     * @param endID            end     stage
-     * @param publicationID    publication
+     * @param efs expressionFigureStage entity
      * @return boolean
      */
-    public boolean isPatoExists(String fishExperimentID, String figureID, String startID, String endID, String publicationID) {
-        if (fishExperimentID == null) {
-            throw new NullPointerException("Invalid call to method: fishExperimentID is null");
-        }
-        if (figureID == null) {
-            throw new NullPointerException("Invalid call to method: figureID is null");
-        }
-        if (startID == null) {
-            throw new NullPointerException("Invalid call to method: startID is null");
-        }
-        if (endID == null) {
-            throw new NullPointerException("Invalid call to method: endID is null");
-        }
-        if (publicationID == null) {
-            throw new NullPointerException("Invalid call to method: publicationID is null");
-        }
-        long start = System.currentTimeMillis();
+    public boolean isPatoExists(ExpressionFigureStage efs) {
+
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select count(phenox) from PhenotypeExperiment phenox, Figure figure " +
-                "     where phenox.fishExperiment.zdbID = :genoxID" +
-                "           and phenox.startStage.zdbID = :startID " +
-                "           and phenox.endStage.zdbID = :endID " +
-                "           and phenox.figure.zdbID = :figureID " +
-                "           and figure.publication.zdbID = :publicationID ";
+        String hql = "select count(phenox) from PhenotypeExperiment phenox " +
+                "     where phenox.fishExperiment = :fishExperiment" +
+                "           and phenox.startStage = :start " +
+                "           and phenox.endStage = :endStage " +
+                "           and phenox.figure = :figure ";
+
         Query query = session.createQuery(hql);
-        query.setString("genoxID", fishExperimentID);
-        query.setString("startID", startID);
-        query.setString("endID", endID);
-        query.setString("figureID", figureID);
-        query.setString("publicationID", publicationID);
+        query.setParameter("fishExperiment", efs.getExpressionExperiment().getFishExperiment());
+        query.setParameter("start", efs.getStartStage());
+        query.setParameter("endStage", efs.getEndStage());
+        query.setParameter("figure", efs.getFigure());
 
         long numberOfRecords = (Long) query.uniqueResult();
         return (numberOfRecords > 0);
@@ -1228,6 +1209,52 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("fish", fish);
         query.setBoolean("directAnnotation", !includeSubstructures);
         return (List<PhenotypeStatementWarehouse>) query.list();
+    }
+
+    @Override
+    public List<DiseaseAnnotationModel> getDiseaseAnnotationModels(int numfOfRecords) {
+        String hql = " from DiseaseAnnotationModel model " +
+                "join fetch model.fishExperiment " +
+                "join fetch model.fishExperiment.fish " +
+                "join fetch model.fishExperiment.experiment " +
+                "join fetch model.fishExperiment.geneGenotypeExperiments " +
+                "join fetch model.fishExperiment.experiment.experimentConditions " +
+                "join fetch model.diseaseAnnotation " +
+                "join fetch model.diseaseAnnotation.disease " +
+                "join fetch model.diseaseAnnotation.publication ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (numfOfRecords > 0)
+            query.setMaxResults(numfOfRecords);
+        return (List<DiseaseAnnotationModel>) query.list();
+    }
+
+    @Override
+    public List<GeneGenotypeExperiment> getGeneDiseaseAnnotationModels(int numfOfRecords) {
+        String hql = "select distinct geneGenotype from GeneGenotypeExperiment geneGenotype, DiseaseAnnotationModel diseaseAnnotationModel " +
+                "join fetch geneGenotype.gene " +
+                "join fetch geneGenotype.fishExperiment " +
+                "where geneGenotype.fishExperiment = diseaseAnnotationModel.fishExperiment " +
+                "and geneGenotype.gene.markerType.name = :genedom "                ;
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (numfOfRecords > 0)
+            query.setMaxResults(numfOfRecords);
+        //query.setString("genedom", "ZDB-GENE")
+        query.setParameter("genedom", Marker.Type.GENE.toString());
+        return (List<GeneGenotypeExperiment>) query.list();
+    }
+
+    @Override
+    public List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords) {
+        String hql = " from OmimPhenotype model " +
+                "where model.externalReferences is not empty " +
+                "order by model.ortholog.zebrafishGene.abbreviationOrder";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (numfOfRecords > 0)
+            query.setMaxResults(numfOfRecords);
+        return (List<OmimPhenotype>) query.list();
     }
 
     public List<Genotype> getGenotypes(List<String> genotypeExperimentIDs) {

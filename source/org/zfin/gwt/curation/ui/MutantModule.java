@@ -6,6 +6,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import org.fusesource.restygwt.client.REST;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.*;
@@ -16,6 +17,8 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.gwt.root.util.WidgetUtil;
 
 import java.util.*;
+
+import static org.zfin.gwt.curation.ui.CurationEntryPoint.expressionService;
 
 /**
  * Phenotype section of the Phenotype curation page.
@@ -269,8 +272,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         String message;
         message = "Error while reading the environment";
         AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_ENVIRONMENT_LIST_START);
-        curationRPCAsync.getEnvironments(publicationID,
-                new RetrieveEnvironmentListCallBack(environmentList, message, errorElement, PhenotypeCurationModule.getModuleInfo()));
+        REST.withCallback(new RetrieveEnvironmentListCallBack(environmentList, message, errorElement, PhenotypeCurationModule.getModuleInfo()))
+                .call(expressionService).getExperiments(publicationID);
     }
 
     public void retrieveFishList() {

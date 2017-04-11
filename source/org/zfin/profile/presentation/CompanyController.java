@@ -1,6 +1,5 @@
 package org.zfin.profile.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -23,7 +22,6 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,27 +48,25 @@ public class CompanyController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
+    public enum TAB_INDEX {
+        INFORMATION("information", 0),
+        MEMBERS("members", 1),
+        PICTURE("picture", 2);
 
-    public static enum TAB_INDEX{
-        INFORMATION("information",0)
-        ,MEMBERS("members",1)
-        ,PICTURE("picture",2)
-        ;
+        private String label;
+        private int index;
 
-        private String label ;
-        private int index ;
-
-        TAB_INDEX(String label,int index){
-            this.label = label ;
-            this.index = index ;
+        TAB_INDEX(String label, int index) {
+            this.label = label;
+            this.index = index;
         }
 
-        public String getLabel(){
-            return label ;
+        public String getLabel() {
+            return label;
         }
 
-        public int getIndex(){
-            return index ;
+        public int getIndex() {
+            return index;
         }
 
     }
@@ -91,6 +87,7 @@ public class CompanyController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.COMPANY.getTitleString() + company.getName());
         model.addAttribute("members", profileRepository.getCompanyMembers(zdbID));
         model.addAttribute("positions", profileRepository.getCompanyPositions());
+        model.addAttribute("countryList", profileService.getCountries());
         List<String> prefixes = featureRepository.getAllFeaturePrefixes();
         prefixes.add(0, "- None -");
         model.addAttribute("prefixes", prefixes);
@@ -109,6 +106,7 @@ public class CompanyController {
         model.addAttribute(LookupStrings.ERRORS, errors);
         model.addAttribute("members", profileRepository.getCompanyMembers(zdbID));
         model.addAttribute("positions", profileRepository.getCompanyPositions());
+        model.addAttribute("countryList", profileService.getCountries());
         List<String> prefixes = featureRepository.getAllFeaturePrefixes();
         prefixes.add(0, "- None -");
         model.addAttribute("prefixes", prefixes);
@@ -118,11 +116,11 @@ public class CompanyController {
 
         //convert from none to null
         if (newCompany.getContactPerson() != null &&
-                StringUtils.equals(newCompany.getContactPerson().getZdbID(),"none"))
+                StringUtils.equals(newCompany.getContactPerson().getZdbID(), "none")) {
             newCompany.setContactPerson(null);
+        }
 
         model.addAttribute(LookupStrings.SELECTED_TAB, TAB_INDEX.INFORMATION.getLabel());
-
 
         if (errors.hasErrors()) {
             return "profile/profile-edit.page";
@@ -141,7 +139,7 @@ public class CompanyController {
             return "profile/profile-edit.page";
         }
 
-        return profileService.handleInfoUpdate(errors/*, profileTopic*/, company.getZdbID(), fields, securityPersonZdbId);
+        return profileService.handleInfoUpdate(errors, company.getZdbID(), fields, securityPersonZdbId);
     }
 
     @RequestMapping(value = "/company/view/{zdbID}", method = RequestMethod.GET)
@@ -164,6 +162,7 @@ public class CompanyController {
         model.addAttribute("publications", publications);
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes(company.getName(), false);
         model.addAttribute("prefixes", featurePrefixes);
+        model.addAttribute("country", profileService.getCountryDisplayName(company.getCountry()));
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.COMPANY.getTitleString() + company.getName());
         return "profile/profile-view.page";

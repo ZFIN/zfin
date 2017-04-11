@@ -1,5 +1,5 @@
-angular.module('authorLinkingApp', [])
-    .controller('AuthorLinkingController', ['$http', '$filter', '$attrs', function ($http, $filter, $attrs) {
+angular.module('app')
+    .controller('AuthorLinkingController', ['$http', '$filter', '$attrs', 'ZfinUtils', function ($http, $filter, $attrs, zf) {
 
         var authorLinkCtrl = this;
         authorLinkCtrl.pubZdbId = $attrs.pubZdbId;
@@ -85,7 +85,11 @@ angular.module('authorLinkingApp', [])
                 })
         };
 
-
+        authorLinkCtrl.isLinked = function (person) {
+            return zf.find(authorLinkCtrl.registeredAuthors, function (reg) {
+                return reg.zdbID === person.zdbID;
+            });
+        };
 
         authorLinkCtrl.loadRegisteredAuthors();
         authorLinkCtrl.loadAuthors();

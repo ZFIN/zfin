@@ -3138,5 +3138,30 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
     }
 
+    @Override
+    public List<LookupEntry> getRegionListForString(String lookupString, String type) {
+        String hql = " select region from Marker region " +
+                "where " +
+                "lower(region.abbreviation) like :lookupString " +
+                "and region.markerType.name = :type " +
+                "order by region.abbreviation  ";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
+                .setString("type", type)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] regions) {
+                        Marker reg = (Marker) tuple[0];
+                        LookupEntry regionSuggestionList = new LookupEntry();
+                        regionSuggestionList.setId(reg.getZdbID());
+                        regionSuggestionList.setLabel(reg.getAbbreviation());
+                        regionSuggestionList.setValue(reg.getAbbreviation());
+                        return regionSuggestionList;
+                    }
+                })
+                .list()
+                ;
+    }
+
 }
 

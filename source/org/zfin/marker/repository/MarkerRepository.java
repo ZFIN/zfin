@@ -496,4 +496,7 @@ public interface MarkerRepository {
     Map<String,GenericTerm> getSoTermMapping();
 
     void copyStrSequence(SequenceTargetingReagent str1, SequenceTargetingReagent str2);
+
+    List<LookupEntry> getRegionListForString(String lookupString, String type);
+
 }

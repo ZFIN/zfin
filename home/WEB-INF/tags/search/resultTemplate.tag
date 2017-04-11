@@ -72,7 +72,7 @@
         <c:if test="${!empty result.featureGenes}">
             <table class="fish-result-table">
                 <tr>
-                    <th>Affected Gene</th>
+                    <th>Affected Genomic Region</th>
                     <th>Line / Reagent</th>
                     <th>Mutation Type</th>
                     <th>Construct</th>
@@ -80,7 +80,7 @@
                 </tr>
                 <c:forEach var="featureGene" items="${result.featureGenes}">
                     <tr>
-                        <td title="Affected Gene">
+                        <td title="Affected Genomic Region">
                             <zfin:link entity="${featureGene.gene}" suppressPopupLink="true"/>
                         </td>
                         <td title="Line / Reagent">

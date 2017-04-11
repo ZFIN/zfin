@@ -41,7 +41,7 @@
                         <th width="20%">Genomic Feature</th>
                         <th width="30%">Construct</th>
                         <th width="25%">Type</th>
-                        <th width="34%">Affected Gene(s)</th>
+                        <th width="34%">Affected Genomic Region(s)</th>
                     </tr>
                 </table>
             </th>
@@ -128,7 +128,7 @@
                     <th border=0 width="33%">Genomic Feature
             </th>
             <th border=0 width="33%">Type</th>
-            <th border=0 width="34%">Affected Gene(s)</th>
+            <th border=0 width="34%">Affected Genomic Region(s)</th>
         </tr>
     </table>
     </th>

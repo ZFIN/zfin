@@ -7,6 +7,10 @@
         <antcall target="create-basic-gene-info-file-test"  />
     </target>
 
+    <target name="create-disease-test" >
+        <antcall target="create-disease-info-file-test"  />
+    </target>
+
     <target name="agr-test" >
         <antcall target="create-basic-gene-info-file-test"  />
     </target>
@@ -15,12 +19,35 @@
         <antcall target="create-basic-gene-info-file"  />
     </target>
 
+    <target name="create-disease" >
+        <antcall target="create-disease-info-file"  />
+    </target>
+
     <target name="create-basic-gene-info-file" depends=""
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.agr.BasicGeneInfo" fork="yes" classpathref="extended.classpath"
               failonerror="true" maxmemory="2048M">
             <classpath refid="classpath"/>
+        </java>
+    </target>
+
+    <target name="create-disease-info-file" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.DiseaseInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="2048M">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
+    <target name="create-disease-info-file-test" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.DiseaseInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="2048M">
+            <classpath refid="classpath"/>
+            <arg value="100"/>
         </java>
     </target>
 
@@ -34,15 +61,15 @@
         </java>
     </target>
 
-    <property name="version" value="0.3.0"/>
-    <property name="index" value="6"/>
-    <property name="daf-file" value="ZFIN_${version}_DAF.txt"/>
+    <property name="version" value="0.6.0"/>
+    <property name="index" value="8"/>
+    <property name="daf-file" value="ZFIN_${version}_DAF.json"/>
     <property name="bgi-file" value="ZFIN_${version}_BGI.json"/>
     <property name="agr-file" value="ZFIN_${version}_${index}"/>
 
     <target name="archive-agr" depends="">
         <copy file="basic-gene-info-zfin.json" tofile="${bgi-file}"/>
-        <copy file="disease_association_file.zfin.txt" tofile="${daf-file}"/>
+        <copy file="disease-info-zfin.json" tofile="${daf-file}"/>
         <echo message="Create tar/gzip file of BGI"/>
         <tar compression="gzip" destfile="${agr-file}.tar.gz" >
             <tarfileset dir="${basedir}" >

@@ -17,8 +17,10 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.agr.AllDiseaseDTO;
 import org.zfin.marker.agr.AllGeneDTO;
 import org.zfin.marker.agr.BasicGeneInfo;
+import org.zfin.marker.agr.DiseaseInfo;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.OrthologExternalReference;
@@ -210,9 +212,15 @@ public class GeneViewController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/all-genes")
+    @RequestMapping(value = "/genes")
     public AllGeneDTO getAllGenes() throws Exception {
         return getFirstGenes(0);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/diseases")
+    public AllDiseaseDTO getAllDiseases() throws Exception {
+        return getFirstDiseases(0);
     }
 
 
@@ -221,6 +229,13 @@ public class GeneViewController {
     public AllGeneDTO getFirstGenes(@PathVariable("number") int number) throws Exception {
         BasicGeneInfo info = new BasicGeneInfo(number);
         return info.getAllGeneInfo();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/diseases/{number}")
+    public AllDiseaseDTO getFirstDiseases(@PathVariable("number") int number) throws Exception {
+        DiseaseInfo info = new DiseaseInfo(number);
+        return info.getDiseaseInfo(number);
     }
 
 }

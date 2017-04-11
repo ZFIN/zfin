@@ -56,7 +56,7 @@ public class ResultService {
     public static String ABBREVIATION = "Abbreviation:";
     public static String ABSTRACT = "Abstract:";
     public static String ADDRESS = "Address:";
-    public static String AFFECTED_GENES = "Affected Genes:";
+    public static String AFFECTED_GENES = "Affected Genomic Regions:";
     public static String ANTIBODY = "Antibody:";
     public static String AUTHORS = "Authors:";
     public static String CAPTION = "Caption:";

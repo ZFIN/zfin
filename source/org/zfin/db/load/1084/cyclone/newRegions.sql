@@ -51,6 +51,14 @@ alter table marker_type_group add constraint primary
 alter table marker_type_group_member 
  modify (mtgrpmem_mrkr_type_group varchar(60) not null constraint mtgrpmem_mrkr_type_group_not_null);
 
+alter table marker_type_group_member
+  modify (mtgrpmem_mrkr_type varchar(60) not null constraint mtgrpmem_mrkr_type_not_null);
+
+
+alter table marker_type_group_member add constraint
+ (foreign key (mtgrpmem_mrkr_type) references marker_types 
+  constraint mtgrpmem_mrkr_type_fk);
+
 alter table marker_type_group_member add constraint 
     (foreign key (mtgrpmem_mrkr_type_group) references marker_type_group constraint mtgrpmem_mrkr_type_group_foreign_key);
 
@@ -123,8 +131,8 @@ insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_disp
 insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
   values ('SRPRNAG','22','srpRNA Gene');
 
-insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
-  values ('TSCRIPTNREGREGION','22','Transcript Regulatory Region');
+--insert into marker_types (marker_type, mrkrtype_significance, mrkrtype_type_display)
+--  values ('TSCRIPTNREGREGION','22','Transcript Regulatory Region');
 
 --insert into marker_type_group (mtgrp_name, mtgrp_comments)
 -- values ('TSCRIPTREGION', 'Transcript Region');
@@ -193,16 +201,17 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
  values ('TSCRIPT','GENEDOM_PROD_PROTEIN');
 
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
+--insert into marker_type_group_member(mtgrpmem_mrkr_type,
+--    mtgrpmem_mrkr_type_group)
 
-values ('TSCRIPTNREGREGION','NONTSCRBD_REGION');
+--values ('TSCRIPTNREGREGION','NONTSCRBD_REGION');
 
 insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('PROTBS','NONTSCRBD_REGION');
 
 
+create sequence lncrnag_seq increment by 1 maxvalue 9223372036854775807 minvalue 1 cache 20  order;
 insert into zdb_object_type (zobjtype_name,
                     zobjtype_day,
         zobjtype_app_page,
@@ -473,7 +482,7 @@ insert into marker_type_group_member(mtgrpmem_mrkr_type,
     mtgrpmem_mrkr_type_group)
 values ('SRPRNAG','SEARCH_MKSEG');
 
-insert into marker_type_group_member(mtgrpmem_mrkr_type,
-    mtgrpmem_mrkr_type_group)
-values ('TSCRIPTNREGREGION','SEARCH_MKSEG');
+--insert into marker_type_group_member(mtgrpmem_mrkr_type,
+--    mtgrpmem_mrkr_type_group)
+--values ('TSCRIPTNREGREGION','SEARCH_MKSEG');
 

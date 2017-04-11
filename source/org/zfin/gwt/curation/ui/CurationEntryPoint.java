@@ -9,6 +9,8 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import org.fusesource.restygwt.client.Resource;
+import org.fusesource.restygwt.client.RestServiceProxy;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.event.TabEventHandler;
@@ -56,6 +58,9 @@ public class CurationEntryPoint implements EntryPoint {
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
     private static List<FishDTO> wildtypeFishList;
 
+    public static CurationService curationService = GWT.create(CurationService.class);
+    public static ExpressionCurationService expressionService = GWT.create(ExpressionCurationService.class);
+
     public void onModuleLoad() {
         loadPublicationAndFilterElements();
         exposeSessionSaveMethodsToJavascript();
@@ -72,7 +77,6 @@ public class CurationEntryPoint implements EntryPoint {
                 initModules();
             }
         });
-
 /*
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
             @Override

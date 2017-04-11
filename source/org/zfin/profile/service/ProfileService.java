@@ -15,7 +15,6 @@ import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.*;
-
 import org.zfin.profile.presentation.PersonMemberPresentation;
 import org.zfin.profile.presentation.ProfileUpdateMessageBean;
 import org.zfin.profile.repository.ProfileRepository;
@@ -25,7 +24,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.sql.Blob;
 import java.util.*;
-import java.text.Collator;
+import java.util.stream.Collectors;
 
 /**
  */
@@ -268,10 +267,11 @@ public class ProfileService {
 
     public void updateImage(String zdbID, String securityPersonZdbID, Blob snapshot) throws Exception {
 
-        if (snapshot != null)
+        if (snapshot != null) {
             RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(zdbID, "snapsnot", "updating snapshot " + snapshot.length() + " bytes");
-        else
+        } else {
             RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(zdbID, "snapshot", "deleting snapshot");
+        }
 
         if (zdbID.startsWith("ZDB-PERS")) {
             Person person = profileRepository.getPerson(zdbID);
@@ -304,6 +304,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("fax", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldLab, newLab));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("country", oldLab, newLab));
         BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("address", oldLab, newLab);
         if (beanFieldUpdate != null) {
             beanFieldUpdate.setNullToTrueNull();
@@ -348,6 +349,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("address", oldCompany, newCompany));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("country", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("bio", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("contactPerson", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("prefix", oldCompany, newCompany));
@@ -401,24 +403,34 @@ public class ProfileService {
         logger.error("failed trying to remove a person to something that was not a lab or company: " + organizationZdbID);
         return false;
     }
-    /**
-     * using this method to get a list of Contries for use in Person edit
-     */
-    public static List<String> getCountries(final Locale inLocale) {
-        String[] countryCodes = Locale.getISOCountries();
-        List<String> countries = new ArrayList<String>(countryCodes.length);
-        countries.add("");
-        for (String countryCode : countryCodes) {
-            Locale obj = new Locale("", countryCode);
-          //  countries.add(obj.getDisplayCountry(inLocale));
-            countries.add(obj.getCountry());
 
-        }
-        Collections.sort(countries);
-        return countries;
+    /**
+     * using this method to get a list of countries for use in profile edit
+     */
+    public Map<String, String> getCountries() {
+        return Arrays.stream(Locale.getISOCountries())
+                .map(code -> {
+                    Locale locale = new Locale("", code);
+                    return new Country(locale.getCountry(), locale.getDisplayName());
+                })
+                .sorted(Comparator.comparing(Country::getName))
+                .collect(Collectors.toMap(
+                        Country::getCode,
+                        Country::getName,
+                        (a, b) -> b, // shouldn't be duplicates anyway, so whatever just take the last one
+                        LinkedHashMap::new
+                ));
     }
 
-        /**
+    public String getCountryDisplayName(String countryCode) {
+        if (countryCode == null) {
+            return null;
+        }
+        Locale locale = new Locale("", countryCode);
+        return locale.getDisplayCountry();
+    }
+
+    /**
      * If there is not an address for this person then insert the join record.
      * If there is one, then update the join record.
      * If there are multiple . . . create an error log and update both records.
@@ -573,8 +585,9 @@ public class ProfileService {
         positions = profileRepository.getLabPositions();
 
         for (OrganizationPosition op : positions) {
-            if (op.getId().equals(positionId))
+            if (op.getId().equals(positionId)) {
                 positionTitle = op.getName();
+            }
         }
         return positionTitle;
     }
@@ -586,8 +599,9 @@ public class ProfileService {
         positions = profileRepository.getCompanyPositions();
 
         for (OrganizationPosition op : positions) {
-            if (op.getId().equals(positionId))
+            if (op.getId().equals(positionId)) {
                 positionTitle = op.getName();
+            }
         }
         return positionTitle;
     }
@@ -623,9 +637,7 @@ public class ProfileService {
             for (ConstraintViolation constraintViolation : cve.getConstraintViolations()) {
                 errors.rejectValue(constraintViolation.getPropertyPath().toString(), ""
                         , "Invalid formatting of field [" + constraintViolation.getPropertyPath() + "].  "
-//                        + "] value["+constraintViolation.getInvalidValue()+"].  "
-//                        + constraintViolation.getMessageTemplate());
-                        + constraintViolation.getMessage());
+                                + constraintViolation.getMessage());
             }
             return "profile/profile-edit.page";
         } catch (Exception e) {
@@ -661,8 +673,9 @@ public class ProfileService {
     protected void setEmptyFieldToNull(BeanFieldUpdate field) {
         if (field.getFrom() == null
                 && field.getTo() instanceof String
-                && StringUtils.equals((String) field.getTo(), ""))
+                && StringUtils.equals((String) field.getTo(), "")) {
             field.setTo(null);
+        }
     }
 
     public String processUrl(String url) {
@@ -671,10 +684,11 @@ public class ProfileService {
         String newUrl;
 
         //if the url is set and doesn't start with http://, magically make it happen, just like browsers do
-        if (!StringUtils.isEmpty(url) && !url.startsWith("http://"))
+        if (!StringUtils.isEmpty(url) && !url.startsWith("http://")) {
             newUrl = "http://" + url;
-        else
+        } else {
             newUrl = url;
+        }
 
         logger.debug("processing url, after: " + newUrl);
 
@@ -682,8 +696,9 @@ public class ProfileService {
     }
 
     public static boolean isRootUser() {
-        if (getCurrentSecurityUser() == null)
+        if (getCurrentSecurityUser() == null) {
             return false;
+        }
         return getCurrentSecurityUser().getAccountInfo().getRoot();
     }
 }

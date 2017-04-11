@@ -8,7 +8,7 @@
     <property name="diseaseOboURL"
               value="https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/master/src/ontology/doid.obo"/>
     <property name="mpathOboURL" value="https://raw.githubusercontent.com/PaulNSchofield/mpath/master/mpath.obo"/>
-    <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
+    <property name="sequenceOboURL" value="http://purl.obolibrary.org/obo/so.obo"/>
     <property name="ecoOboURL" value="https://raw.githubusercontent.com/evidenceontology/evidenceontology/master/eco.obo"/>
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>

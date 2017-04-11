@@ -127,7 +127,7 @@ public class FunctionsTest {
     @Test
     public void makeDomIdentifierShouldRemoveIllegalCharacters() {
         assertThat("makeDomIdentifier should remove spaces from input",
-                ZfinJSPFunctions.makeDomIdentifier("Affected Gene"), is("AffectedGene"));
+                ZfinJSPFunctions.makeDomIdentifier("Affected Genomic Region"), is("AffectedGenomicRegion"));
 
         assertThat("makeDomIdentifier should remove slashes from input",
                 ZfinJSPFunctions.makeDomIdentifier("Mutation / Tg"), is("MutationTg"));

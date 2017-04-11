@@ -716,7 +716,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             query.setString("fishZdbID", fishZdbID);
         }
 
-        return (List<ExpressionFigureStage>) query.list();
+        return (List<ExpressionFigureStage>) query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     public ExpressionFigureStage getExpressionFigureStage(Long id) {

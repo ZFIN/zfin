@@ -23,7 +23,7 @@ public class FeatureBean {
     private List<GenoExpStatistics> genoexpStats;
     private MappedMarkerBean mappedMarkerBean;
     private Set<FeatureMarkerRelationship> sortedConstructRelationships;
-    private FeatureMarkerRelationship createdByRelationship;
+    private Set<FeatureMarkerRelationship> createdByRelationship;
     private List<PublicationAttribution> featureTypeAttributions;
     private Set<String> featureMap;
     private Collection<FeatureGenomeLocation> featureLocations;
@@ -145,11 +145,11 @@ public class FeatureBean {
         this.zdbID = zdbID;
     }
 
-    public FeatureMarkerRelationship getCreatedByRelationship() {
+    public Set<FeatureMarkerRelationship> getCreatedByRelationship() {
         return createdByRelationship;
     }
 
-    public void setCreatedByRelationship(FeatureMarkerRelationship createdByRelationship) {
+    public void setCreatedByRelationship(Set<FeatureMarkerRelationship> createdByRelationship) {
         this.createdByRelationship = createdByRelationship;
     }
 

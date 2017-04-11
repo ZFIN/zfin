@@ -78,7 +78,7 @@
                         Genomic Feature
                     </th>
                     <th width="25%">
-                        Affected Genes
+                        Affected Genomic Regions
                     </th>
                     <th width="25%">
                         &nbsp;

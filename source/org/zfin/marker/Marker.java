@@ -25,7 +25,7 @@ import java.util.*;
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
  * ToDo: needs more modelling...
  */
-public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityZdbID {
+public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityID {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
     private static Logger LOG = Logger.getLogger(Marker.class);
@@ -431,9 +431,27 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         NCRNAG("NCRNAG"),
         HISTBS("HISTBS"),
         PROTBS("PROTBS"),
+	NCCR("NCCR"),
+	BR("BR"),
+	BINDSITE("BINDSITE"),
+	LIGANDBS("LIGANDBS"),
+	TFBS("TFBS"),
+	EBS("EBS"),
+	NCBS("NCBS"),
+	EMR("EMR"),
+	HMR("HMR"),
+	MDNAB("MDNAB"),
+	RR("RR"),
+	TRR("TRR"),
+	TLNRR("TLNRR"),
+	PROMOTER("PROMOTER"),
+	ENHANCER("ENHANCER"),
+	LCR("LCR"),
+	NUCMO("NUCMO"),
+	DNAMO("DNAMO"),
+	RNAMO("RNAMO"),
         CPGISLAND("CPGISLAND"),
-        SRPRNAG("SRPRNAG"),
-        TSCRIPTNREGREGION("TSCRIPTNREGREGION")
+        SRPRNAG("SRPRNAG")
         ;
 
         private final String value;
@@ -484,6 +502,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         CLONE("CLONE"),
         CLONEDOM("CLONEDOM"),
         CONSTRUCT("CONSTRUCT"),
+	CRISPR("CRISPR"),
         EFG("EFG"),
         EST("EST"),
         FEATURE("FEATURE"),
@@ -505,6 +524,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         SMALLSEG("SMALLSEG"),
         SSLP("SSLP"),
         STS("STS"),
+	TALEN("TALEN"),
         TGCONSTRUCT("TGCONSTRUCT"),
         TRANSCRIPT("TRANSCRIPT"),
         DEFICIENCY_TLOC_MARK("DEFICIENCY_TLOC_MARK"),
@@ -522,10 +542,30 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         NCRNAG("NCRNAG"),
         HISTBS("HISTBS"),
         PROTBS("PROTBS"),
+	NCCR("NCCR"),
+	BR("BR"),
+	BINDSITE("BINDSITE"),
+	LIGANDBS("LIGANDBS"),
+	TFBS("TFBS"),
+	EBS("EBS"),
+	NCBS("NCBS"),
+	EMR("EMR"),
+	HMR("HMR"),
+	MDNAB("MDNAB"),
+	RR("RR"),
+	TRR("TRR"),
+	TLNRR("TLNRR"),
+	PROMOTER("PROMOTER"),
+	ENHANCER("ENHANCER"),
+	LCR("LCR"),
+	NUCMO("NUCMO"),
+	DNAMO("DNAMO"),
+	RNAMO("RNAMO"),
         CPGISLAND("CPGISLAND"),
         ENGINEERED_REGION("ENGINEERED_REGION"),
         GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
-        NONTSCRBD_REGION("NONTSCRBD_REGION")
+        NONTSCRBD_REGION("NONTSCRBD_REGION"),
+	GENEDOM_AND_NTR("GENEDOM_AND_NTR")
         ;
 
         private final String value;

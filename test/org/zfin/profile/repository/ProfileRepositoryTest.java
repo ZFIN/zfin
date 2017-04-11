@@ -182,7 +182,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
         assertEquals(1, organizationLinks.size());
         String linkText2 = "<a href=\"/action/profile/view/ZDB-LAB-040701-1\">BACPAC Resources Center (BPRC)</a>";
         linkText2 += " ";
-        linkText2 += "<span style=\"font-size: small;\">(<a href=\"http://bacpac.chori.org/order_clones.php?cloneList=CH1073-18O17\">order this</a>)</span>";
+        linkText2 += "<span style=\"font-size: small;\">(<a href=\"http://bacpacresources.org/order_clones.php?cloneList=CH1073-18O17\">order this</a>)</span>";
         assertEquals(linkText2, organizationLinks.iterator().next().getLinkWithAttributionAndOrderThis());
 
 

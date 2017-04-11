@@ -142,7 +142,7 @@
 
         <tr>
 
-                <td nowrap="nowrap">    <label class="namesearchLabel" for="affectedGene" title="Affected Gene">Inserted in gene</label></td>
+                <td nowrap="nowrap">    <label class="namesearchLabel" for="affectedGene" title="Affected Genomic Region">Inserted in gene</label></td>
 
                 <td>
                     <form:input id="affectedGene" path="affectedGene" size="30"   placeholder="sox9, tbx, tnnt"

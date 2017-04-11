@@ -3,6 +3,8 @@ package org.zfin.gwt.curation.ui.disease;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import org.fusesource.restygwt.client.Method;
+import org.fusesource.restygwt.client.REST;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.curation.event.CurationEvent;
@@ -12,6 +14,7 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.ui.ZfinAsynchronousCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
@@ -19,6 +22,9 @@ import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.zfin.gwt.curation.ui.CurationEntryPoint.curationService;
+import static org.zfin.gwt.curation.ui.CurationEntryPoint.expressionService;
 
 /**
  * Table of associated genotypes
@@ -113,7 +119,8 @@ public class DiseaseModelPresenter implements Presenter {
     public void retrieveEnvironmentList() {
         String message = "Error while reading the environment";
         AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_ENVIRONMENT_LIST_START);
-        curationRPCService.getEnvironments(publicationID, new RetrieveEnvironmentListCallBack(message, view.getErrorLabel()));
+        REST.withCallback(new RetrieveEnvironmentListCallBack(message, view.getErrorLabel()))
+                .call(expressionService).getExperiments(publicationID);
     }
 
     private void updateDiseaseList(List<DiseaseAnnotationDTO> diseaseModelList) {
@@ -160,7 +167,7 @@ public class DiseaseModelPresenter implements Presenter {
         FishServiceGWT.callServer(publicationID, new RetrieveFishListCallBack(message, view.getErrorLabel()));
     }
 
-    class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<ExperimentDTO>> {
+    class RetrieveEnvironmentListCallBack extends ZfinAsynchronousCallback<List<ExperimentDTO>> {
 
         public RetrieveEnvironmentListCallBack(String errorMessage, ErrorHandler errorLabel) {
             super(errorMessage, errorLabel,
@@ -168,7 +175,7 @@ public class DiseaseModelPresenter implements Presenter {
         }
 
         @Override
-        public void onSuccess(List<ExperimentDTO> list) {
+        public void onSuccess(Method method, List<ExperimentDTO> list) {
             super.onFinish();
             view.getEnvironmentSelectionBox().clear();
             environmentList = list;

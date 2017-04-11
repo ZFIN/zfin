@@ -12,7 +12,8 @@
         <tr>
             <td>Relationship Type</td>
 
-            <td><select ng-model="mkrreln.newRelationship">
+
+            <td><select class="form-control" ng-model="mkrreln.newRelationship">
             <option value="gene contains small segment">gene contains small segment</option>
                 <option value="gene hybridized by small segment">gene hybridized by small segment</option>
                 <option value="gene encodes small segment">gene encodes small segment</option>
@@ -25,8 +26,8 @@
         <tr>
             <td>Partner Symbol</td>
                 <td><input class="form-control"
-                       url="/action/quicksearch/autocomplete?q=%QUERY&category=Marker+%2F+Clone"
-                       ng-model="mkrreln.newGene"
+                       url="/action/quicksearch/autocomplete?q=%QUERY&category=Marker+%2F+Clone&fq=type%3A(%22BAC%22+OR+%22EST%22+OR+%22SSLP%22+OR+%22SNP%22)"
+                           ng-model="mkrreln.newGene"
                        autocompletify>
                     </td>
             </tr>
@@ -47,6 +48,7 @@
             </td>
         </tr>
     </table>
+    <p class="text-danger" ng-show="mkrreln.errorMessage">{{mkrreln.errorMessage}}</p>
     <span ng-bind-html="mkrreln.errorMessage | unsafe" class="error"></span>
 </div>
 

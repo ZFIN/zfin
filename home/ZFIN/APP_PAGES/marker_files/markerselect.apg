@@ -826,7 +826,7 @@ Message: $MI_ERRORMSG
         <?/MICOMMENT>
         <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EC,$type_of_genedom,t))">
 	  <?MIVAR NAME=$mrkr_param_list>&query_results=t$(IF,$(XST,$input_name),&input_name=$(URLENCODE,$input_name))$(IF,$(XST,$input_acc),&input_acc=$(URLENCODE,$input_acc))$(IF,$(XST,$compare),&compare=$compare)$(IF,$(NC,$lg,0),&lg=$lg)<?/MIVAR>
-<?MIBLOCK COND="$(EQ,$marker_type,GENE)">
+<?MIBLOCK COND="$(EC,$type_of_genedom,t)">
           <?MIBLOCK COND="$(NXST,$knownmutant)">
 	    <?MIVAR><input type=button
             value="Show genes with mutant(s)" onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&marker_type=GENE&knownmutant=t$mrkr_param_list')">

@@ -13,7 +13,7 @@ echo PID_FILE      $PID_FILE
 
 start_jenkins() {
 echo 'Starting Jenkins...'
-    nohup java -Dinstance=$INSTANCE -Djavax.net.ssl.trustStore=$JENKINS_HOME/bouncer.zfin.org-cert -jar $SOURCEROOT/server_apps/jenkins/jenkins.war --httpPort=$JENKINS_PORT --prefix=/jobs  > $JENKINS_HOME/logs/jenkins.log 2>&1 & echo $! > $JENKINS_HOME/jenkins.pid
+    nohup java -Dinstance=$INSTANCE -Djavax.net.ssl.trustStore=$JENKINS_HOME/bouncer.zfin.org-cert -jar $SOURCEROOT/server_apps/jenkins/jenkins.war --httpPort=$JENKINS_PORT --sessionTimeout=10080 --prefix=/jobs  > $JENKINS_HOME/logs/jenkins.log 2>&1 & echo $! > $JENKINS_HOME/jenkins.pid
     echo pid: $(cat $PID_FILE)
 #	start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --chuid $RUN_AS --exec $COMMAND
 }

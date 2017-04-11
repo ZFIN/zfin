@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -44,7 +45,7 @@ public class MarkerViewController {
     @Autowired
     private EngrRegionViewController engrRegionViewController;
     @Autowired
-    private TranscribedRegionViewController transcribedRegionViewController;
+    private NTRViewController ntrViewController;
     @Autowired
     private ConstructViewController constructViewController;
     @Autowired
@@ -108,6 +109,7 @@ public class MarkerViewController {
     private String getViewForMarkerZdbID(Model model, String zdbID, String userAgent) {
 
         String type = MarkerService.getTypeForZdbID(zdbID);
+        Marker marker= markerRepository.getMarkerByID(zdbID);
 
         try {
             if (type.equals(Marker.Type.ATB.name())) {
@@ -142,6 +144,9 @@ public class MarkerViewController {
                     ) {
 
                 return geneViewController.getGeneView(zdbID, model);
+            }
+            else if (marker.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)){
+                return ntrViewController.getNontranscribedRegionView(model, zdbID);
             }
         else if (type.equals(Marker.Type.MRPHLNO.name()) || type.equals(Marker.Type.TALEN.name()) || type.equals(Marker.Type.CRISPR.name())) {
                 return sequenceTargetingReagentViewController.getView(model, zdbID);

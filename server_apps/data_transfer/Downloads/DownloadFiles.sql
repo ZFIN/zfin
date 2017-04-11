@@ -247,8 +247,9 @@ select geno_zdb_id, geno_display_name, geno_handle, dalias_alias, szm_term_ont_i
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_marker_relationship.txt'
  DELIMITER "	"
 select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id, b.szm_term_ont_id, seq.mrkr_abbrev, mrel_type
- from marker_relationship, marker gene, marker seq, so_zfin_mapping a, so_zfin_mapping b
- where gene.mrkr_type[1,4] = 'GENE'
+ from marker_relationship, marker gene, marker seq, so_zfin_mapping a, so_zfin_mapping b,marker_type_group_member mem
+ where gene.mrkr_type=mem.mtgrpmem_mrkr_type
+  and mem.mtgrpmem_mrkr_type_group='GENEDOM'
    and seq.mrkr_type[1,4] != 'GENE'
    and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
    and mrel_mrkr_2_zdb_id = seq.mrkr_zdb_id
@@ -256,8 +257,9 @@ select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id, b
    and b.szm_object_type = seq.mrkr_type
 union
 select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id,  b.szm_term_ont_id, seq.mrkr_abbrev, mrel_type
- from marker_relationship, marker gene, marker seq, so_zfin_mapping a, so_zfin_mapping b
- where gene.mrkr_type[1,4] = 'GENE'
+ from marker_relationship, marker gene, marker seq, so_zfin_mapping a, so_zfin_mapping b,marker_type_group_member mem
+ where gene.mrkr_type=mem.mtgrpmem_mrkr_type
+  and mem.mtgrpmem_mrkr_type_group='GENEDOM'
    and seq.mrkr_type[1,4] != 'GENE'
    and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
    and mrel_mrkr_1_zdb_id = seq.mrkr_zdb_id
@@ -599,7 +601,7 @@ select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb
                 fig_source_zdb_id as publication,
                 pub.accession_no
 from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, expression_result2, fish_experiment, figure, publication pub
-where psg_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-")
+where psg_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-", "ZDB-LNCR","ZDB-LINC","ZDB-TRNA","ZDB-RRNA","ZDB-MIRN","ZDB-SNOR","ZDB-NCRN","ZDB-PIRN")
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
   and xpatex_gene_zdb_id = psg_mrkr_zdb_id
@@ -845,9 +847,10 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/all_rna_accessions.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/all_rna_accessions.txt'
 select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
- from db_link, marker gene, foreign_db_contains, foreign_db, foreign_db_data_type, so_zfin_mapping
+ from db_link, marker gene, marker_type_group_member,foreign_db_contains, foreign_db, foreign_db_data_type, so_zfin_mapping
  where dblink_linked_recid=gene.mrkr_zdb_id
-   and gene.mrkr_type='GENE'
+   and gene.mrkr_type=mtgrpmem_mrkr_type
+   and mtgrpmem_mrkr_type_group='GENEDOM'
    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdbdt_id = fdbdt_pk_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
@@ -861,7 +864,7 @@ union
 select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
        gene.mrkr_abbrev gene_sym,
        dblink_acc_num accession
- from marker gene, marker est, db_link, marker_relationship, foreign_db_contains,
+ from marker gene,marker_type_group_member, marker est, db_link, marker_relationship, foreign_db_contains,
  	foreign_db, foreign_db_data_type, so_zfin_mapping
  where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id
    and est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id
@@ -869,7 +872,8 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
    and est.mrkr_zdb_id = dblink_linked_recid
    and szm_object_type = gene.mrkr_type
    and est.mrkr_type  in ('EST','CDNA')
-   and gene.mrkr_type = 'GENE'
+    and gene.mrkr_type=mtgrpmem_mrkr_type
+   and mtgrpmem_mrkr_type_group='GENEDOM'
    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdbdt_id = fdbdt_pk_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
@@ -1079,11 +1083,12 @@ select distinct a.mrkr_zdb_id,
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features_missing_markers.txt'
  DELIMITER "	"
 select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, mrkr_zdb_id
- from feature_marker_relationship, feature, genotype, genotype_feature, marker
+ from feature_marker_relationship,marker_type_group_member, feature, genotype, genotype_feature, marker
  where fmrel_ftr_zdb_id=feature_zdb_id
    and fmrel_mrkr_zdb_id=mrkr_zdb_id
    and fmrel_type in ('markers missing', 'markers moved')
-   and mrkr_zdb_id[1,8] = 'ZDB-GENE'
+   and mrkr_type=mtgrpmem_mrkr_type
+   and mtgrpmem_mrkr_type_group='GENEDOM'
    and feature_zdb_id = genofeat_feature_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
 ;
@@ -1148,14 +1153,15 @@ order by zrepld_old_zdb_id, zrepld_new_zdb_id
 select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
        gene.mrkr_abbrev gene_sym,
        dblink_acc_num genbank_acc
-from marker gene, marker est, db_link, marker_relationship,foreign_db, foreign_db_contains, so_zfin_mapping
+from marker gene, marker_type_group_member,marker est, db_link, marker_relationship,foreign_db, foreign_db_contains, so_zfin_mapping
  where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id
    and   est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id
    and gene.mrkr_type = szm_object_type
    and  mrel_type = 'gene encodes small segment'
    and est.mrkr_zdb_id = dblink_linked_recid
    and est.mrkr_type  in ('EST','CDNA')
-   and gene.mrkr_type = 'GENE'
+   and gene.mrkr_type = mtgrpmem_mrkr_type
+   and mtgrpmem_mrkr_type_group='GENEDOM'
    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
    and fdb_db_name = 'GenBank'
    and fdbcont_fdb_db_id = fdb_db_pk_id
@@ -1396,9 +1402,9 @@ select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr
          mrkr_abbrev,
          mrkr_type,
          ex.xpatex_source_zdb_id AS source_id
-  FROM expression_experiment ex,  marker
+  FROM expression_experiment ex,  marker,marker_type_group_member
  where mrkr_zdb_id = ex.xpatex_gene_zdb_id
-AND mrkr_type in ("GENE", "GENEP")
+AND mrkr_type =mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group="GENEDOM"
 --ORDER BY mrkr_abbrev_order
  and not exists (Select 'x' from clone
      	 		where clone_mrkr_zdb_id = ex.xpatex_probe_feature_zdb_id
@@ -1410,16 +1416,16 @@ into temp tmp_pubs;
 unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt'
  DELIMITER "	"
 SELECT distinct mrkr_abbrev,
-       mrkr_zdb_id,
+       mrkr_zdb_id
        source_id,
        CASE pub.jtype
            WHEN "Unpublished" THEN "Data Submission"
            ELSE pub.jtype
        END,
        pub.accession_no
-FROM publication pub, tmp_pubs
+FROM publication pub, tmp_pubs,marker_type_group_member
  where source_id = zdb_id
- and mrkr_zdb_id like 'ZDB-GENE%';
+ and mrkr_type=mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM';
 
 
 select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
@@ -1549,7 +1555,7 @@ with no log;
 insert into tmp_gene_pubcount
 select recattrib_data_zdb_id geneid, count(recattrib_source_zdb_id) pubcount
  from record_attribution
- where recattrib_data_zdb_id[1,8] = 'ZDB-GENE'
+ where recattrib_data_zdb_id[1,8] in ("ZDB-GENE", "ZDB-LNCR","ZDB-LINC","ZDB-TRNA","ZDB-RRNA","ZDB-MIRN","ZDB-SNOR","ZDB-NCRN","ZDB-PIRN")
  group by recattrib_data_zdb_id
 ;
 
@@ -2027,12 +2033,12 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
     protein_position_start,
     protein_position_end,
     protein_reference_seq
-  FROM feature, feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b, tmp_mutation_details
+  FROM feature, feature_marker_relationship,marker, marker_type_group_member, so_zfin_mapping a, so_zfin_mapping b, tmp_mutation_details
   WHERE fmrel_ftr_zdb_id = feature_zdb_id
   AND mrkr_zdb_id = fmrel_mrkr_zdb_id
   AND a.szm_object_type = feature_type
   AND b.szm_objecT_type = mrkr_type
-  AND mrkr_type LIKE 'GENE%' AND (
+  AND mrkr_type =mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM' AND (
     (feature_type IN ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
                       'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
     (feature_type IN ('TRANSLOC', 'INVERSION') AND fmrel_type IN ('is allele of', 'markers moved')) OR

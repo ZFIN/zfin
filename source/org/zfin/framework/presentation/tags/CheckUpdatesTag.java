@@ -1,5 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
+import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.jsp.JspException;
@@ -14,7 +16,13 @@ public class CheckUpdatesTag extends TagSupport {
     private boolean locked;
 
     public int doStartTag() throws JspException {
-        boolean disableSystemUpdates = RepositoryFactory.getInfrastructureRepository().getDisableUpdatesFlag();
+        boolean disableSystemUpdates;
+        Person person = ProfileService.getCurrentSecurityUser();
+        if (person != null && person.getAccountInfo() != null && !person.getAccountInfo().isCurator()) {
+            disableSystemUpdates = false;
+        } else {
+            disableSystemUpdates = RepositoryFactory.getInfrastructureRepository().getUpdatesFlag().isSystemUpdateDisabled();
+        }
 
         if (locked) {
             if (disableSystemUpdates)
@@ -40,4 +48,5 @@ public class CheckUpdatesTag extends TagSupport {
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
+    
 }

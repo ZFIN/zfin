@@ -40,7 +40,7 @@ public class RegionViewController {
     private MarkerRepository markerRepository;
 
 
-    @RequestMapping(value ="/region/view/{zdbID}")
+    @RequestMapping(value ="/eregion/view/{zdbID}")
     public String getView(
             Model model
             ,@PathVariable("zdbID") String zdbID
@@ -102,6 +102,6 @@ public class RegionViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.EREGION.getTitleString() + region.getAbbreviation());
 
-        return "marker/region-view.page";
+        return "marker/eregion-view.page";
     }
 }

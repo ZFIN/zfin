@@ -1,6 +1,10 @@
 <%@ page import="org.zfin.framework.presentation.LoginController"%>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<link rel=stylesheet type="text/css" href="/css/bootstrap3/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css"/>
+<script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
+
 <table width=100% cellspacing=0 border=0 cellpadding=0 class="header">
     <tr>
         <td rowspan=2 bgcolor="#006666" width=80 align=left valign=bottom>

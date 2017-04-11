@@ -2,17 +2,17 @@ package org.zfin.framework.presentation;
 
 public enum MatchingTextType {
 
-    AFFECTED_GENE_NAME("Affected Gene Name"),
+    AFFECTED_GENE_NAME("Affected Genomic Region Name"),
     GENE_NAME("Gene Name"),
     SEQUENCE_TARGETING_REAGENT_NAME("Sequence Targeting Reagent Name"),
     SEQUENCE_TARGETING_REAGENT_ALIAS("Sequence Targeting Reagent Alias [Sequence Targeting Reagent]"),
     GENE_ABBREVIATION("Gene Symbol"),
-    AFFECTED_GENE_ABBREVIATION("Affected Gene Symbol"),
+    AFFECTED_GENE_ABBREVIATION("Affected Genomic Region Symbol"),
     CONSTRUCT_ABBREVIATION("Construct Symbol"),
     CONSTRUCT_NAME("Construct Name"),
     CONSTRUCT_ALIAS("Construct Alias [Construct]"),
     GENE_ALIAS("Gene Prev. Name"),
-    AFFECTED_GENE_ALIAS("Previous Name [Affected Gene]"),
+    AFFECTED_GENE_ALIAS("Previous Name [Affected Genomic Region]"),
     FEATURE_NAME("Genomic Feature Name"),
     FEATURE_LINE_NUMBER("Genomic Feature Line Number"),
     FEATURE_ABBREVIATION("Genomic Feature Abbreviation"),

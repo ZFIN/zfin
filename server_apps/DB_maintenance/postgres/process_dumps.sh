@@ -2,24 +2,45 @@
 
 startTime=$(date)
 echo $startTime
+echo ${DBNAME}
 
-cd /research/zunloads/databases/trunkdb/
+cd /research/zunloads/databases/$DBNAME/
 
 latestDump=`ls -td -- */ | head -n 1 | cut -d'/' -f1`
 echo $latestDump
 
 
 echo "*** Removing previous working directories"
-rm -rf /research/zunloads/databases/postgres_dumps/$latestDump;
+dumpToRemove=/research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump;
 
-cp -R /research/zunloads/databases/trunkdb/$latestDump /research/zunloads/databases/postgres_dumps/
-cd /research/zunloads/databases/postgres_dumps/
+echo "*** Dump to remove"
+echo $dumpToRemove
 
-echo "*** latest dump: "
+rm -rf $dumpToRemove;
+
+echo "removed"  
+
+dirToCopy=/research/zunloads/databases/${DBNAME}/$latestDump;
+echo "*** Directory to cp:"
+echo $dirToCopy
+
+destination=/research/zunloads/databases/postgres_dumps/${DBNAME};
+echo "*** Destination to cp:"
+
+echo $destination
+
+cp -R $dirToCopy $destination
+echo "copied"
+
+echo "*** latest db specific dump to process: "
+unloadDirectory=/research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump
+
 echo $unloadDirectory
-unloadDirectory=/research/zunloads/databases/postgres_dumps/$latestDump
 
 cd $unloadDirectory
+
+echo "in current directory:"
+pwd
 
 rm unload_*
 rm *.err
@@ -83,5 +104,3 @@ do
     
     rm $loadFile.t
 done
-
-

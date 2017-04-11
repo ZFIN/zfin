@@ -197,11 +197,11 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     }
 
     public String getRelationshipType() {
-        return relationshipType.intern();
+        return relationshipType;
     }
 
     public void setRelationshipType(String relationshipType) {
-        this.relationshipType = relationshipType.intern();
+        this.relationshipType = relationshipType;
     }
 
     public int getSignificance() {
@@ -213,14 +213,14 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     }
 
     public Map<String, Set<TermDTO>> getAllRelatedTerms() {
-        Map<String, Set<TermDTO>> relatedTermMap = new TreeMap<String, Set<TermDTO>>();
+        Map<String, Set<TermDTO>> relatedTermMap = new TreeMap<>();
 
         if (childrenTerms != null) {
             for (TermDTO term : childrenTerms) {
                 String display = RelationshipType.getInverseRelationshipByName(term.getRelationshipType()).getDisplay();
                 Set<TermDTO> termDTOs = relatedTermMap.get(display);
                 if (termDTOs == null) {
-                    termDTOs = new TreeSet<TermDTO>();
+                    termDTOs = new TreeSet<>();
                     relatedTermMap.put(display, termDTOs);
                 }
                 termDTOs.add(term);
@@ -231,7 +231,7 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
                 String display = RelationshipType.getRelationshipTypeByDbName(term.getRelationshipType()).getDisplay();
                 Set<TermDTO> termDTOs = relatedTermMap.get(display);
                 if (termDTOs == null) {
-                    termDTOs = new TreeSet<TermDTO>();
+                    termDTOs = new TreeSet<>();
                     relatedTermMap.put(display, termDTOs);
                 }
                 termDTOs.add(term);
@@ -305,7 +305,7 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
 
     public void addSubset(SubsetDTO relationalSlim) {
         if (subsets == null)
-            subsets = new HashSet<String>(1);
+            subsets = new HashSet<>(1);
         subsets.add(relationalSlim.toString());
     }
 

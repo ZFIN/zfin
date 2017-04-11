@@ -18,15 +18,12 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
-SUBDIRS = EDITpubs
-
 GENERICS = citlink.apg  \
-	js-delete_attrib.apg link_authors.apg \
+	js-delete_attrib.apg \
 	pubselect2.apg \
 	showpubs.apg showsnppubs.apg
 
-STATICS= REFERinfo.apg pubprintable.apg enterpubs.apg pubtopic_close.apg \
-	pnote_new.apg \
+STATICS= REFERinfo.apg pubprintable.apg enterpubs.apg \
 	citselectlist.apg \
 	citjtypeoption.apg citgeneric.apg cittotalcount.apg pub_rowdisplay.apg \
 

@@ -249,7 +249,28 @@ public class ActiveData implements ZdbID {
         TRNAG,
         SRPRNAG,
         SCRNAG,
-        NCRNAG;
+        NCRNAG,
+        NCCR,
+        TLNNR,
+        BR,
+        BINDSITE,
+        LIGANDBS,
+        TFBS,
+        EBS,
+        NCBS,
+        EMR,
+        HMR,
+        MDNAB,
+        RR,
+        TRR,
+        PROMOTER,
+        ENHANCER,
+        LCR,
+        NUCMO,
+        DNAMO,
+        RNAMO,
+        PROTBS;
+
 
         private Class<? extends DeleteEntityRule> ruleClass;
         private static String allValues;

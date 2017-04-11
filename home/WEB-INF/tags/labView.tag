@@ -61,6 +61,10 @@
                     <td class="postal-address">${lab.address}</td>
                 </tr>
                 <tr>
+                    <th>Country:</th>
+                    <td>${country}</td>
+                </tr>
+                <tr>
                     <th>Phone:</th>
                     <td>${lab.phone} </td>
                 </tr>
