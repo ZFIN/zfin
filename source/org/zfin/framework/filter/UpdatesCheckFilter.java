@@ -52,7 +52,7 @@ public class UpdatesCheckFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        if(readOnlyMode == null)
+        if (readOnlyMode == null)
             readOnlyMode = infrastructureRepository.getUpdatesFlag().isSystemUpdateDisabled();
 
         String url = request.getRequestURI();
@@ -62,6 +62,7 @@ public class UpdatesCheckFilter implements Filter {
             Person person = ProfileService.getCurrentSecurityUser();
             if (person != null && person.getAccountInfo() != null) {
                 if (!person.getAccountInfo().isAdmin()) {
+                    response.sendRedirect(REDIRECT_URL);
                     logoutUser(request, response);
                     logger.info("System is currently being updated. No login sessions are allowed.");
                     return;
