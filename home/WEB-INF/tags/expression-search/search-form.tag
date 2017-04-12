@@ -36,6 +36,14 @@
         <tr>
             <th><form:label path="targetGeneField" cssClass="namesearchLabel">Target Gene</form:label></th>
             <td><form:input type="text" path="targetGeneField"/></td>
+
+            <th><form:label path="assayName" cssClass="namesearchLabel">Assay</form:label></th>
+            <td>
+                <form:select path="assayName">
+                    <form:option value="">Any</form:option>
+                    <form:options items="${assays}" itemLabel="name" itemValue="name" />
+                </form:select>
+            </td>
         </tr>
         <tr>
             <th><form:label path="anatomy">Anatomy:</form:label></th>

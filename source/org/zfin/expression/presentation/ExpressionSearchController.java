@@ -7,12 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,12 +28,20 @@ public class ExpressionSearchController {
     private static final String BASE_URL = "/action/expression/results?";
 
     @Autowired
-    MarkerRepository markerRepository;
+    private MarkerRepository markerRepository;
+
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
+
+    @ModelAttribute("assays")
+    public List<ExpressionAssay> populateAssayOptions() {
+        return infrastructureRepository.getAllAssays();
+    }
 
     @RequestMapping("/search")
     public String search(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria) {
 
-        SortedMap<String,String> stages = ExpressionSearchService.getStageOptions();
+        SortedMap<String, String> stages = ExpressionSearchService.getStageOptions();
         model.addAttribute("stages", stages);
         criteria.setStartStageId(stages.firstKey());
         criteria.setEndStageId(stages.lastKey());
@@ -45,7 +53,7 @@ public class ExpressionSearchController {
     @RequestMapping("/results")
     public String results(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
 
-        model.addAttribute("stages",ExpressionSearchService.getStageOptions());
+        model.addAttribute("stages", ExpressionSearchService.getStageOptions());
 
         if (criteria.getRows() == null) {
             criteria.setRows(20);

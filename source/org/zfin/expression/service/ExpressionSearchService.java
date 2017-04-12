@@ -87,6 +87,10 @@ public class ExpressionSearchService {
 
         }
 
+        String assay = criteria.getAssayName();
+        if (StringUtils.isNotBlank(assay)) {
+            solrQuery.addFilterQuery(fq(FieldName.ASSAY, assay));
+        }
 
         if (criteria.isOnlyFiguresWithImages()) {
             solrQuery.addFilterQuery(fq(FieldName.HAS_IMAGE, TRUE));
@@ -343,7 +347,7 @@ public class ExpressionSearchService {
     }
 
     private static String fq(FieldName fieldName, String value) {
-        return fieldName.getName() + ":(" + SolrService.luceneEscape(value) + ")";
+        return fieldName.getName() + ":(\"" + SolrService.luceneEscape(value) + "\")";
     }
 
     private static String any(String... fqs) {
