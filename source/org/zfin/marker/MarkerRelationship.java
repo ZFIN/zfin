@@ -32,7 +32,8 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
         TRANSCRIPT_TARGETS_GENE("transcript targets gene"),
         PROMOTER_OF("promoter of"),
         CRISPR_TARGETS_REGION("crispr targets region"),
-        TALEN_TARGETS_REGION("talen targets region");
+        TALEN_TARGETS_REGION("talen targets region"),
+        CONTAINS_REGION("contains region");
 
         private final String value;
 

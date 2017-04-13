@@ -565,7 +565,8 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         ENGINEERED_REGION("ENGINEERED_REGION"),
         GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
         NONTSCRBD_REGION("NONTSCRBD_REGION"),
-	GENEDOM_AND_NTR("GENEDOM_AND_NTR")
+	GENEDOM_AND_NTR("GENEDOM_AND_NTR"),
+        CONSTRUCT_COMPONENTS("CONSTRUCT_COMPONENTS")
         ;
 
         private final String value;
