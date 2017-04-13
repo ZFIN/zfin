@@ -9,5 +9,8 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1085/ghost/PLC-317_load.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1085/ghost/PLC-317.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1085/ghost/CUR-670.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1085/ghost/DLOAD-484_pre.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1085/ghost/DLOAD-484_load.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1085/ghost/DLOAD-484.sql"/>
 
 </databaseChangeLog>
