@@ -1,6 +1,7 @@
 package org.zfin.gwt.root.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -100,6 +101,9 @@ public class ZfinAsynchronousCallback<T> implements MethodCallback<T> {
             loadingImage.setVisible(false);
         if (module != null && eventType != null)
             AppUtils.fireAjaxCall(module, eventType);
+        Window.alert(errorHandler.toString());
+        if (errorHandler != null)
+            errorHandler.setError(throwable.getMessage());
     }
 
     @Override
