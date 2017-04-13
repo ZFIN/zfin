@@ -63,7 +63,7 @@ public class ZfinEntityPresentation extends EntityPresentation {
      */
     public static String getAbbreviation(Marker marker) {
         String cssClassName;
-        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)|| (marker.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION))) {
             cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
         } else if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
             cssClassName = Marker.TypeGroup.CONSTRUCT.toString().toLowerCase();

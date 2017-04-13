@@ -14,21 +14,20 @@ import java.util.List;
 /**
  * General access web services (mostly by publication).
  */
-
 public interface CurationService extends DirectRestService {
 
     @GET
-    @Path("{publicationID}/genes")
+    @Path("/action/curation/{publicationID}/genes")
     @Options(dispatcher = ZfinDispatcher.class)
     public List<MarkerDTO> getGenes(@PathParam("publicationID") String pubID) throws PublicationNotFoundException;
 
     @GET
-    @Path("{publicationID}/antibodies")
+    @Path("/action/curation/{publicationID}/antibodies")
     @Options(dispatcher = ZfinDispatcher.class)
     public List<MarkerDTO>  getAntibodies(@PathParam("publicationID") String publicationID);
 
     @GET
-    @Path("assays")
+    @Path("/action/curation/assays")
     @Options(dispatcher = ZfinDispatcher.class)
     public List<String> getAssays();
 }

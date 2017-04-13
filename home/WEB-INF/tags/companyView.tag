@@ -51,6 +51,10 @@
                     <td class="postal-address">${company.address}</td>
                 </tr>
                 <tr>
+                    <th>Country:</th>
+                    <td>${country}</td>
+                </tr>
+                <tr>
                     <th>Phone:</th>
                     <td>${company.phone} </td>
                 </tr>

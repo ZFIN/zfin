@@ -7,30 +7,12 @@ import java.util.List;
  */
 public class FishDTO extends RelatedEntityDTO implements Comparable, FilterSelectionBoxEntry {
 
-    private String zdbID;
-    private String name;
     private String handle;
     private GenotypeDTO genotypeDTO;
     private List<RelatedEntityDTO> strList;
     private long order;
     private String nameOrder;
     private boolean wildtype;
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public List<RelatedEntityDTO> getStrList() {
         return strList;

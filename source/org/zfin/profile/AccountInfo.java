@@ -37,12 +37,12 @@ public class AccountInfo implements Serializable {
         this.login = login;
     }
 
-    public boolean getRoot(){
-        return role.equals(Role.ROOT.toString()) ;
+    public boolean getRoot() {
+        return role.equals(Role.ROOT.toString());
     }
 
-    public void setRoot(boolean isRoot){
-        role =  (isRoot ? Role.ROOT.toString() : Role.SUBMIT.toString()) ;
+    public void setRoot(boolean isRoot) {
+        role = (isRoot ? Role.ROOT.toString() : Role.SUBMIT.toString());
     }
 
     public String getPassword() {
@@ -152,6 +152,14 @@ public class AccountInfo implements Serializable {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public boolean isAdmin() {
+        if (role.equals(Role.ROOT.toString())) {
+            if (!curator)
+                return true;
+        }
+        return false;
     }
 
     public enum Role {

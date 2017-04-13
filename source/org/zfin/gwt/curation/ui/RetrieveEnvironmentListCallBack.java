@@ -11,7 +11,7 @@ import org.zfin.gwt.root.ui.ZfinModule;
 import java.util.List;
 
 /**
- * ToDo: ADD DOCUMENTATION!
+ * REST Callback class
  */
 public class RetrieveEnvironmentListCallBack extends ZfinAsynchronousCallback<List<ExperimentDTO>> {
 
@@ -23,7 +23,7 @@ public class RetrieveEnvironmentListCallBack extends ZfinAsynchronousCallback<Li
     }
 
     public void onSuccess(Method method, List<ExperimentDTO> environments) {
-        //Window.alert("brought back: " + experiments.size() );
+        //Window.alert("brought back: " + environments.size() );
         super.onFinish();
         environmentList.clear();
         for (ExperimentDTO environmentDTO : environments) {

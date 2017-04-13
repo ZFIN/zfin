@@ -681,14 +681,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (ZdbFlag) criteria.uniqueResult();
     }
 
-    public boolean getDisableUpdatesFlag() {
-        return Boolean.valueOf(HibernateUtil.currentSession().createSQLQuery("select " +
-                "        zflag_is_on  " +
-                "    from  zdb_flag " +
-                "    where zflag_name='disable updates'").uniqueResult().toString());
-    }
-
-
     public ExternalNote getExternalNoteByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return (ExternalNote) session.get(ExternalNote.class, zdbID);
@@ -1879,6 +1871,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Session session = HibernateUtil.currentSession();
         history.setDate(new Date());
         session.save(history);
+    }
+
+    @Override
+    public void setDisableUpdatesFlag(boolean readonlyMode) {
+        Boolean.valueOf(HibernateUtil.currentSession().createSQLQuery("select " +
+                "        zflag_is_on  " +
+                "    from  zdb_flag " +
+                "    where zflag_name='disable updates'").uniqueResult().toString());
     }
 }
 

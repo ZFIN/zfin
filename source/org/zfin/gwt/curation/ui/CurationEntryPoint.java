@@ -14,6 +14,7 @@ import org.fusesource.restygwt.client.RestServiceProxy;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.event.TabEventHandler;
+import org.zfin.gwt.curation.ui.experiment.ExperimentCurationService;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
@@ -60,10 +61,15 @@ public class CurationEntryPoint implements EntryPoint {
 
     public static CurationService curationService = GWT.create(CurationService.class);
     public static ExpressionCurationService expressionService = GWT.create(ExpressionCurationService.class);
+    public static ExperimentCurationService experimentService = GWT.create(ExperimentCurationService.class);
 
     public void onModuleLoad() {
         loadPublicationAndFilterElements();
         exposeSessionSaveMethodsToJavascript();
+        ((RestServiceProxy)curationService).setResource(new Resource("/"));
+        ((RestServiceProxy)expressionService).setResource(new Resource("/"));
+        ((RestServiceProxy)experimentService).setResource(new Resource("/"));
+
 
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);

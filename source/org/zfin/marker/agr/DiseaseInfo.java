@@ -47,8 +47,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         try (PrintStream out = new PrintStream(new FileOutputStream("disease-info-zfin.json"))) {
             out.print(jsonInString);
         }
-        System.out.println(jsonInString);
-        String name = "";
     }
 
     public AllDiseaseDTO getDiseaseInfo(int numberOrRecords) {
@@ -83,7 +81,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                         .stream()
                         .filter(geneGenotypeExperiment -> geneGenotypeExperiment.getGene().isGenedom())
                         .forEach(geneGenotypeExperiment ->
-                                inferredSet.add(geneGenotypeExperiment.getGene().getZdbID()));
+                                inferredSet.add(ZfinDTO.ZFIN + geneGenotypeExperiment.getGene().getZdbID()));
             });
             relationship.setInferredGeneAssociation(inferredSet);
 
@@ -137,7 +135,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                     return p1;
                                 }));
 
-        // keep track of the fishexperiments for each gene
+        // keep track of the fish experiments for each gene
         // need this to retrieve the experimental conditions later
         Map<Marker, Set<FishExperiment>> diseaseModelMap =
                 geneGenotypeExperiments.stream().collect(

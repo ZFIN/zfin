@@ -19,7 +19,7 @@ public class AjaxCallBaseManager {
         //GWT.log("Tab Name: " + tabName);
         String tabName = event.getModule().getTabName();
         AjaxCallEventType eventType = event.getEventType();
-        if (tabName.equals("feature") )
+        if (tabName.equals("experiment") )
             GWT.log(tabName + ": " + eventType);
 
         allEventTypeList.add(eventType);

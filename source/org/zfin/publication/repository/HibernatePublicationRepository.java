@@ -1150,8 +1150,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Marker> getGenesByPublication(String pubID, boolean includeEFGs) {
         Session session = HibernateUtil.currentSession();
 
-        Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM;
+        Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM_AND_NTR;
+
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
+
         if (includeEFGs){
             markerTypes.add(markerRepository.getMarkerTypeByName(Marker.Type.EFG.toString()));
         }
@@ -1159,11 +1161,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select distinct marker from Marker marker, PublicationAttribution pub" +
                 "     where pub.dataZdbID = marker.zdbID" +
                 "           and pub.publication.zdbID = :pubID " +
-                "           and marker.markerType in (:markerType)  " +
+                "           and marker.markerType in (:markerType)" +
                 "    order by marker.abbreviationOrder ";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameterList("markerType", markerTypes);
+
 
         return (List<Marker>) query.list();
     }
