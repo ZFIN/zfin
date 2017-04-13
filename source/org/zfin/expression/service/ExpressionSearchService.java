@@ -88,8 +88,13 @@ public class ExpressionSearchService {
         }
 
         String assay = criteria.getAssayName();
-        if (StringUtils.isNotBlank(assay)) {
+        if (StringUtils.isNotEmpty(assay)) {
             solrQuery.addFilterQuery(fq(FieldName.ASSAY, assay));
+        }
+
+        String fish = criteria.getFish();
+        if (StringUtils.isNotEmpty(fish)) {
+            solrQuery.addFilterQuery(fq(FieldName.FISH_T, fish));
         }
 
         if (criteria.isOnlyFiguresWithImages()) {

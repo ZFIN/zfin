@@ -34,8 +34,8 @@
             </td>
         </tr>
         <tr>
-            <th><form:label path="targetGeneField" cssClass="namesearchLabel">Target Gene</form:label></th>
-            <td><form:input type="text" path="targetGeneField"/></td>
+            <th><form:label path="fish">Fish</form:label></th>
+            <td><form:input type="text" path="fish" /></td>
 
             <th><form:label path="assayName" cssClass="namesearchLabel">Assay</form:label></th>
             <td>
@@ -44,6 +44,12 @@
                     <form:options items="${assays}" itemLabel="name" itemValue="name" />
                 </form:select>
             </td>
+        </tr>
+        <tr>
+            <th><form:label path="targetGeneField" cssClass="namesearchLabel">Target Gene</form:label></th>
+            <td><form:input type="text" path="targetGeneField"/></td>
+            <th></th>
+            <td><form:checkbox path="onlyFiguresWithImages"/> <label>Show only figures with images</label></td>
         </tr>
         <tr>
             <th><form:label path="anatomy">Anatomy:</form:label></th>
@@ -82,7 +88,7 @@
                 <div id="searchTermList"></div>
             </td>
             <th></th>
-            <td><form:checkbox path="onlyFiguresWithImages"/> <label>Show only figures with images</label></td>
+            <td></td>
         </tr>
     </table>
     <div class="submitbar">

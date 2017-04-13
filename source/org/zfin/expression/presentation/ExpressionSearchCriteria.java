@@ -17,6 +17,7 @@ public class ExpressionSearchCriteria {
     private String startStageId;
     private String endStageId;
     private String assayName;
+    private String fish;
 
     private String anatomyTermNames;
     private String anatomyTermIDs;
@@ -44,6 +45,7 @@ public class ExpressionSearchCriteria {
         urlCreator.addNameValuePair("endStageId", getEndStageId());
         urlCreator.addNameValuePair("targetGeneField", getTargetGeneField());
         urlCreator.addNameValuePair("assayName", getAssayName());
+        urlCreator.addNameValuePair("fish", getFish());
         return urlCreator.getURL();
     }
 
@@ -119,6 +121,14 @@ public class ExpressionSearchCriteria {
 
     public void setAssayName(String assayName) {
         this.assayName = assayName;
+    }
+
+    public String getFish() {
+        return fish;
+    }
+
+    public void setFish(String fish) {
+        this.fish = fish;
     }
 
     public String getAnatomyTermNames() {

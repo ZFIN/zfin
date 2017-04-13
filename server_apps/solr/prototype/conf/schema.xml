@@ -997,6 +997,7 @@
     <copyField source="ortholog_other_species_symbol" dest="ortholog_other_species_symbol_ac"/>
     <copyField source="ortholog_other_species_name" dest="ortholog_other_species_name_ac"/>
 
+    <copyField source="fish" dest="fish_t" />
 
     <copyField source="coding_sequence" dest="related_gene_symbol"/>
     <copyField source="regulatory_region" dest="related_gene_symbol"/>

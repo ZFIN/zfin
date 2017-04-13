@@ -51,6 +51,7 @@ public enum FieldName {
     FIGURE_ID("figure_id"),
     FIG_ZDB_ID("fig_zdb_id"),
     FISH("fish"),
+    FISH_T("fish_t"),
     FISH_ZDB_ID("fish_zdb_id"),
     FULL_NAME("full_name", "name"),
     FULL_NAME_AC("full_name_ac", "name"),
