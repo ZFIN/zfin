@@ -1,22 +1,26 @@
 package org.zfin.marker.agr;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveSource;
 
 public class PublicationAgrDTO {
 
     public static final String PMID = "PMID:";
-    private String publicationModId;
+    private String modPublicationId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String pubMedId;
 
     public PublicationAgrDTO(String publicationModId, String pubMedId) {
         if (ActiveSource.validateActiveData(publicationModId))
-            this.publicationModId = ZfinDTO.ZFIN;
-        this.publicationModId += publicationModId;
-        this.pubMedId = PMID + pubMedId;
+            this.modPublicationId = ZfinDTO.ZFIN;
+        this.modPublicationId += publicationModId;
+        if (StringUtils.isNotEmpty(pubMedId))
+            this.pubMedId = PMID + pubMedId;
     }
 
-    public String getPublicationModId() {
-        return publicationModId;
+    public String getModPublicationId() {
+        return modPublicationId;
     }
 
     public String getPubMedId() {
