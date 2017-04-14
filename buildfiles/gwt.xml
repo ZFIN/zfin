@@ -12,13 +12,11 @@
 
     <target name="gwt" description="Compiles all gwt targets">
         <!--TODO: when we go to zygotix full-time, this can go back into parallel mode-->
-        <!--<parallel>-->
-        <sequential>
+        <parallel>
             <pre-gwt-compile module="org.zfin.gwt.lookup.Lookup"/>
             <pre-gwt-compile module="org.zfin.gwt.marker.Marker"/>
             <pre-gwt-compile module="org.zfin.gwt.curation.Curation"/>
-        </sequential>
-        <!--</parallel>-->
+        </parallel>
     </target>
 
     <target name="lookup-gwt" description="Compiles lookup gwt">
