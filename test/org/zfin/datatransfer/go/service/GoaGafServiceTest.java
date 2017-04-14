@@ -8,7 +8,6 @@ import org.zfin.datatransfer.go.*;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
-import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -116,8 +115,9 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("removed: " + gafJobData.getRemovedEntries().size());
 
         assertThat("removed", gafJobData.getRemovedEntries(), hasSize(0));
-        assertThat("new", gafJobData.getNewEntries(), hasSize(13));
+        gafJobData.getErrors().forEach(System.out::println);
         assertThat("errors", gafJobData.getErrors(), hasSize(0));
+        assertThat("new", gafJobData.getNewEntries(), hasSize(13));
         assertThat("updated", gafJobData.getUpdateEntries(), hasSize(0));
     }
 
