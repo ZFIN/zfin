@@ -1,6 +1,5 @@
 package org.zfin.orthology.presentation;
 
-import org.zfin.gwt.root.dto.OrthologDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
 
 public class OrthologEvidenceDTO {
