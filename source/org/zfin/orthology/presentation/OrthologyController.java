@@ -10,7 +10,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.NcbiOtherSpeciesGeneDTO;
-import org.zfin.gwt.root.dto.OrthologDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.OrthologyPresentationBean;

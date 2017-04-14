@@ -36,6 +36,7 @@ import org.zfin.orthology.NcbiOtherSpeciesGene;
 import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.OrthologEvidence;
 import org.zfin.orthology.OrthologExternalReference;
+import org.zfin.orthology.presentation.OrthologDTO;
 import org.zfin.orthology.presentation.OrthologEvidenceDTO;
 import org.zfin.orthology.presentation.OrthologExternalReferenceDTO;
 import org.zfin.profile.CuratorSession;
