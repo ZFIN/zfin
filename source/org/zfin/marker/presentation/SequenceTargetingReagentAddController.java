@@ -138,7 +138,17 @@ public class SequenceTargetingReagentAddController {
             Marker targetGene = mr.getGeneByAbbreviation(targetGeneAbbr);
 
             if (targetGene != null && !StringUtils.isEmpty(pubZdbID)) {
-                MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+                if (targetGene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                    MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+                }
+                if (targetGene.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
+                    if (newSequenceTargetingReagent.getType()== Marker.Type.CRISPR) {
+                        MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.CRISPR_TARGETS_REGION);
+                    }
+                    if (newSequenceTargetingReagent.getType()== Marker.Type.TALEN) {
+                        MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.TALEN_TARGETS_REGION);
+                    }
+                }
             }
 
             String supplierName = formBean.getSupplier();
