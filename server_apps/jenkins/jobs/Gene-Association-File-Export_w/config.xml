@@ -19,7 +19,7 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd $TARGETROOT/server_apps/data_transfer/GO &amp;&amp; go.pl &amp;&amp; scp gene_association.zfin.gz $DOWNLOAD_DIRECTORY/current/</command>
+            <command>cd $TARGETROOT/server_apps/data_transfer/GO &amp;&amp; go.pl &amp;&amp; cp gene_association.zfin.gz $DOWNLOAD_DIRECTORY/current/</command>
         </hudson.tasks.Shell>
     </builders>
     <publishers>
