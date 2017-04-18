@@ -8,9 +8,11 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.StandardBasicTypes;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.sequence.blast.*;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -116,7 +118,7 @@ public class HibernateBlastRepository implements BlastRepository {
 
     public Map<String, Integer> getValidAccessionCountsForAllBlastDatabases() {
 
-        String sql = " select bdb.blastdb_abbrev, count(distinct dbl.dblink_acc_num) " +
+        String sql = " select bdb.blastdb_abbrev as abbrev, count(distinct dbl.dblink_acc_num) as num " +
                 " from db_link dbl " +
                 " join foreign_db_contains fdbc " +
                 "    on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id  " +
@@ -127,7 +129,10 @@ public class HibernateBlastRepository implements BlastRepository {
                 " where orig.bdot_type != :originationType " +
                 "  group by bdb.blastdb_abbrev ";
 
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        Query query = HibernateUtil.currentSession()
+                .createSQLQuery(sql)
+                .addScalar("abbrev", StandardBasicTypes.STRING)
+                .addScalar("num", StandardBasicTypes.LONG);
         query.setParameter("originationType", Origination.Type.EXTERNAL.toString());
         List<Object[]> blastDatabaseCounts = query.list();
 
@@ -138,7 +143,7 @@ public class HibernateBlastRepository implements BlastRepository {
 
         for (Object[] o : blastDatabaseCounts) {
             String blastDatabaseAbbrev = (String) o[0];
-            Integer accessionCount = ((BigDecimal) o[1]).intValue();
+            Integer accessionCount = ((Long) o[1]).intValue();
             accessionCountMap.put(blastDatabaseAbbrev, accessionCount);
         }
 

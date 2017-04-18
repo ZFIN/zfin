@@ -2,7 +2,6 @@ package org.zfin.antibody.repository;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
@@ -813,20 +812,15 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void createAntibody() {
         Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-        try {
-            MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-            MarkerType mt = mr.getMarkerTypeByName(Marker.Type.ATB.name());
-            Marker antibody = new Antibody();
-            antibody.setMarkerType(mt);
-            antibody.setName("werner");
-            antibody.setAbbreviation("werner");
-            antibody.setOwner(TestConfiguration.getPerson());
-            session.save(antibody);
-            session.flush();
-        } finally {
-            tx.rollback();
-        }
+        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+        MarkerType mt = mr.getMarkerTypeByName(Marker.Type.ATB.name());
+        Marker antibody = new Antibody();
+        antibody.setMarkerType(mt);
+        antibody.setName("werner");
+        antibody.setAbbreviation("werner");
+        antibody.setOwner(TestConfiguration.getPerson());
+        session.save(antibody);
+        session.flush();
     }
 
     @Test
@@ -835,17 +829,12 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         // anti-DLX3b
         String abName = "anti-DLX3b";
         Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-        try {
-            AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-            Antibody antibody = antibodyRepository.getAntibodyByName(abName);
-            antibody.setName("new name");
-            antibody.setAbbreviation("new name");
-            session.update(antibody);
-            session.flush();
-        } finally {
-            tx.rollback();
-        }
+        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
+        Antibody antibody = antibodyRepository.getAntibodyByName(abName);
+        antibody.setName("new name");
+        antibody.setAbbreviation("new name");
+        session.update(antibody);
+        session.flush();
     }
 
     @Test
@@ -854,21 +843,16 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         // anti-DLX3b
         String abName = "anti-DLX3b";
         Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-        try {
-            AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-            Antibody antibody = antibodyRepository.getAntibodyByName(abName);
-            antibody.setAbbreviation("new name");
+        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
+        Antibody antibody = antibodyRepository.getAntibodyByName(abName);
+        antibody.setAbbreviation("new name");
 
 
-            PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-            Publication pub = pr.getPublication("ZDB-PUB-000104-1");
-            MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-            mr.renameMarker(antibody, pub, MarkerHistory.Reason.NOT_SPECIFIED, abName, abName);
-            session.flush();
-        } finally {
-            tx.rollback();
-        }
+        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
+        Publication pub = pr.getPublication("ZDB-PUB-000104-1");
+        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+        mr.renameMarker(antibody, pub, MarkerHistory.Reason.NOT_SPECIFIED, abName, abName);
+        session.flush();
     }
 
     @Test

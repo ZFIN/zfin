@@ -35,9 +35,6 @@ public class GwtConversionTest extends AbstractDatabaseTest {
 
     @Test
     public void testNewName() {
-
-        HibernateUtil.createTransaction();
-        try {
             Feature feature = (Feature) HibernateUtil.currentSession()
                     .createCriteria(Feature.class)
                     .setMaxResults(1)
@@ -57,41 +54,28 @@ public class GwtConversionTest extends AbstractDatabaseTest {
             assertNotNull(dataAliasList);
             assertEquals(1, dataAliasList.size());
             assertEquals(DTOConversionService.escapeString(unescapedName), dataAliasList.get(0).getAlias());
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
     }
 
     @Test
     public void testMarkerPublicNote() {
 
-        HibernateUtil.createTransaction();
-        try {
-            Marker marker = markerRepository.getMarkerByID("ZDB-ATB-090831-1");
+        Marker marker = markerRepository.getMarkerByID("ZDB-ATB-090831-1");
 
-            String newNote = DTOConversionService.escapeString(unescapedNote);
-            marker.setPublicComments(newNote);
-            HibernateUtil.currentSession().save(marker);
-            assertEquals(DTOConversionService.escapeString(unescapedNote), marker.getPublicComments());
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        String newNote = DTOConversionService.escapeString(unescapedNote);
+        marker.setPublicComments(newNote);
+        HibernateUtil.currentSession().save(marker);
+        assertEquals(DTOConversionService.escapeString(unescapedNote), marker.getPublicComments());
     }
 
     @Test
     public void testFeaturePublicNote() {
 
-        HibernateUtil.createTransaction();
-        try {
-            Feature ftr = featureRepository.getFeatureByID("ZDB-ALT-070628-4");
-            assertEquals(DTOConversionService.escapeString(unescapedNote), escapedNote);
+        Feature ftr = featureRepository.getFeatureByID("ZDB-ALT-070628-4");
+        assertEquals(DTOConversionService.escapeString(unescapedNote), escapedNote);
 
-            String newNote = DTOConversionService.escapeString(unescapedNote);
-            ftr.setPublicComments(newNote);
-            HibernateUtil.currentSession().save(ftr);
-            assertEquals(DTOConversionService.escapeString(unescapedNote), ftr.getPublicComments());
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        String newNote = DTOConversionService.escapeString(unescapedNote);
+        ftr.setPublicComments(newNote);
+        HibernateUtil.currentSession().save(ftr);
+        assertEquals(DTOConversionService.escapeString(unescapedNote), ftr.getPublicComments());
     }
 }

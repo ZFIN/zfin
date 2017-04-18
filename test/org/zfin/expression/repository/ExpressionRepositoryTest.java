@@ -1,7 +1,7 @@
 package org.zfin.expression.repository;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +15,6 @@ import org.zfin.expression.presentation.PublicationExpressionBean;
 import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.curation.server.CurationExperimentRPCImpl;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -45,9 +44,11 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     private ExpressionService expressionService = new ExpressionService();
 
-    @Before
-    public void setUp() {
-        TestConfiguration.setAuthenticatedUser();
+    @After
+    public void closeSession() {
+        super.closeSession();
+        // make sure to close the session to be able to re-create the entities
+        HibernateUtil.closeSession();
     }
 
     @Test
@@ -95,13 +96,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void createNewGenotypeExperimentFromIds() {
         String experimentID = "ZDB-EXP-070511-5";
         String genotypeID = "ZDB-GENO-960809-7";
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            FishExperiment genox = expRep.createFishExperiment(experimentID, genotypeID);
-            assertTrue(genox.getZdbID() != null);
-        } finally {
-            tx.rollback();
-        }
+        FishExperiment genox = expRep.createFishExperiment(experimentID, genotypeID);
+        assertTrue(genox.getZdbID() != null);
     }
 
     @Test
@@ -125,15 +121,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2();
 
-
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-////            CurationExperimentRPCImpl.populateExpressionExperiment(dto, expressionExperiment);
-            expRep.createExpressionExperiment(expressionExperiment);
-            assertTrue(expressionExperiment.getZdbID() != null);
-        } finally {
-            tx.rollback();
-        }
+        expRep.createExpressionExperiment(expressionExperiment);
+        assertTrue(expressionExperiment.getZdbID() != null);
     }
 
 
@@ -141,13 +130,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void removeExperiment() {
         String experimentID = "ZDB-XPAT-090430-4";
 
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
         ExpressionExperiment2 experiment = expRep.getExpressionExperiment2(experimentID);
-        try {
-            expRep.deleteExpressionExperiment(experiment);
-        } finally {
-            tx.rollback();
-        }
+        expRep.deleteExpressionExperiment(experiment);
     }
 
     @Test

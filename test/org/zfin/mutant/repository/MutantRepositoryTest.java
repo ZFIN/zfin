@@ -148,7 +148,6 @@ public class MutantRepositoryTest {
     }
 
     public static MarkerGoTermEvidence findSingleMarkerGoTermEvidenceWithOneInference() {
-        HibernateUtil.createTransaction();
         MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery("" +
                 " from MarkerGoTermEvidence ev where ev.inferredFrom is not empty and size(ev.inferredFrom) = 1 " +
                 "").setMaxResults(1).uniqueResult();

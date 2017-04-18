@@ -301,90 +301,83 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
     public void testAccessionsToMarkerDBLink() {
 
         Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        try {
-            insertMarkerDBLinkRunCandidate();
-            // test accession1
-            List<Hit> hits1 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM1 + "'").list();
-            assertEquals("hits1 for " + ACCESSION_NUM1 + " is 1", 1, hits1.size());
+        insertMarkerDBLinkRunCandidate();
+        // test accession1
+        List<Hit> hits1 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM1 + "'").list();
+        assertEquals("hits1 for " + ACCESSION_NUM1 + " is 1", 1, hits1.size());
 
 
-            Accession acc1 = hits1.get(0).getTargetAccession();
-            Set<DBLink> dbLinks1 = acc1.getDbLinks();
-            assertEquals("number of dblinks for " + ACCESSION_NUM1, 1, dbLinks1.size());
+        Accession acc1 = hits1.get(0).getTargetAccession();
+        Set<DBLink> dbLinks1 = acc1.getDbLinks();
+        assertEquals("number of dblinks for " + ACCESSION_NUM1, 1, dbLinks1.size());
 
-            assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM1, dbLinks1.iterator().next() instanceof MarkerDBLink);
-            MarkerDBLink markerLink1 = (MarkerDBLink) dbLinks1.iterator().next();
-            assertEquals("marker name for " + ACCESSION_NUM1, CDNA_NAME, (markerLink1.getMarker().getName()));
-            Set<MarkerDBLink> blastableMarkerDBLinks1 = hits1.get(0).getTargetAccession().getBlastableMarkerDBLinks();
-            assertEquals("should be 0 because available from GenBank is Genomic anot not blastable: " + ACCESSION_NUM1, 0, blastableMarkerDBLinks1.size());
+        assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM1, dbLinks1.iterator().next() instanceof MarkerDBLink);
+        MarkerDBLink markerLink1 = (MarkerDBLink) dbLinks1.iterator().next();
+        assertEquals("marker name for " + ACCESSION_NUM1, CDNA_NAME, (markerLink1.getMarker().getName()));
+        Set<MarkerDBLink> blastableMarkerDBLinks1 = hits1.get(0).getTargetAccession().getBlastableMarkerDBLinks();
+        assertEquals("should be 0 because available from GenBank is Genomic anot not blastable: " + ACCESSION_NUM1, 0, blastableMarkerDBLinks1.size());
 
-            List<Marker> markers1 = hits1.get(0).getTargetAccession().getMarkers();
-            assertEquals("number of marker via dblinks " + ACCESSION_NUM1, 1, markers1.size());
-
-
-            // test accession2
-            List<Hit> hits2 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM2 + "'").list();
-            assertEquals("hits2 for " + ACCESSION_NUM2 + " is 1", 1, hits2.size());
-
-            Hit hit2 = hits2.get(0);
-            Set<DBLink> dbLinks2 = hit2.getTargetAccession().getDbLinks();
-
-            assertEquals("hit number is 2", 2, hit2.getHitNumber());
-            assertEquals("should be 0 because not in refSeq " + ACCESSION_NUM2, 0, dbLinks2.size());
-            Set<MarkerDBLink> blastableMarkerDBLinks2 = hit2.getTargetAccession().getBlastableMarkerDBLinks();
-            assertEquals("should be 1 blastable markers because we don't care about DB mismatch: " + ACCESSION_NUM2, 1, blastableMarkerDBLinks2.size());
-
-            List<Marker> markers2 = hits2.get(0).getTargetAccession().getMarkers();
-            assertEquals("number of marker via dblinks should be 1" + ACCESSION_NUM2, 0, markers2.size());
-
-            // test accession3
-            List<Hit> hits3 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM3 + "'").list();
-            Hit hit3 = hits3.get(0);
-            Set<DBLink> dbLinks3 = hit3.getTargetAccession().getDbLinks();
-
-            assertEquals("hit number is 3", 3, hit3.getHitNumber());
-            assertEquals("should be 2 markers with GenBank for " + ACCESSION_NUM3, 2, dbLinks3.size());
-            assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM3, dbLinks3.iterator().next() instanceof MarkerDBLink);
-            Set<MarkerDBLink> blastableMarkerDBLinks3 = hit3.getTargetAccession().getBlastableMarkerDBLinks();
-            assertEquals("should be 2 because is in GenBank " + ACCESSION_NUM3, 0, blastableMarkerDBLinks3.size());
-
-            List<Marker> markers3 = hits3.get(0).getTargetAccession().getMarkers();
-            assertEquals("number of marker via dblinks " + ACCESSION_NUM3, 2, markers3.size());
-
-            // test accession4
-            List<Hit> hits4 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM4 + "'").list();
-            Hit hit4 = hits4.get(0);
-            Set<DBLink> dbLinks4 = hit4.getTargetAccession().getDbLinks();
-            assertEquals("hit number is 4", 4, hit4.getHitNumber());
-            assertEquals("should be 1 markers for " + ACCESSION_NUM4, 1, dbLinks4.size());
-            assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM4, dbLinks4.iterator().next() instanceof MarkerDBLink);
-            assertEquals("is refSeq database for " + ACCESSION_NUM4, refSeqReferenceDatabase.getZdbID(), dbLinks4.iterator().next().getReferenceDatabase().getZdbID());
-            Set<MarkerDBLink> blastableMarkerDBLinks4 = hit4.getTargetAccession().getBlastableMarkerDBLinks();
-            logger.info("hit 4 accession: " + hit4.getTargetAccession().getID());
-            assertEquals("should be 1 blastable marker for " + ACCESSION_NUM4, 1, blastableMarkerDBLinks4.size());
-
-            List<Marker> markers4 = hits4.get(0).getTargetAccession().getMarkers();
-            assertEquals("number of marker via dblinks " + ACCESSION_NUM4, 1, markers4.size());
+        List<Marker> markers1 = hits1.get(0).getTargetAccession().getMarkers();
+        assertEquals("number of marker via dblinks " + ACCESSION_NUM1, 1, markers1.size());
 
 
-            // test accession5
-            List<Hit> hits5 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM5 + "'").list();
-            Hit hit5 = hits5.get(0);
-            Set<DBLink> dbLinks5 = hit5.getTargetAccession().getDbLinks();
-            assertEquals("hit number is 5", 5, hit5.getHitNumber());
-            assertEquals("should be 0 marker DBLink for because of db mismatch" + ACCESSION_NUM5, 0, dbLinks5.size());
-            Set<MarkerDBLink> blastableMarkerDBLinks5 = hit5.getTargetAccession().getBlastableMarkerDBLinks();
-            assertEquals("one available DBLink  " + ACCESSION_NUM5, 1, blastableMarkerDBLinks5.size());
+        // test accession2
+        List<Hit> hits2 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM2 + "'").list();
+        assertEquals("hits2 for " + ACCESSION_NUM2 + " is 1", 1, hits2.size());
 
-            List<Marker> markers5 = hits5.get(0).getTargetAccession().getMarkers();
-            assertEquals("number of marker is 1 via dblinks " + ACCESSION_NUM5, 0, markers5.size());
+        Hit hit2 = hits2.get(0);
+        Set<DBLink> dbLinks2 = hit2.getTargetAccession().getDbLinks();
 
-        } finally {
-            // rollback on success or exception
-            session.getTransaction().rollback();
-//            session.getTransaction().commit();
-        }
+        assertEquals("hit number is 2", 2, hit2.getHitNumber());
+        assertEquals("should be 0 because not in refSeq " + ACCESSION_NUM2, 0, dbLinks2.size());
+        Set<MarkerDBLink> blastableMarkerDBLinks2 = hit2.getTargetAccession().getBlastableMarkerDBLinks();
+        assertEquals("should be 1 blastable markers because we don't care about DB mismatch: " + ACCESSION_NUM2, 1, blastableMarkerDBLinks2.size());
+
+        List<Marker> markers2 = hits2.get(0).getTargetAccession().getMarkers();
+        assertEquals("number of marker via dblinks should be 1" + ACCESSION_NUM2, 0, markers2.size());
+
+        // test accession3
+        List<Hit> hits3 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM3 + "'").list();
+        Hit hit3 = hits3.get(0);
+        Set<DBLink> dbLinks3 = hit3.getTargetAccession().getDbLinks();
+
+        assertEquals("hit number is 3", 3, hit3.getHitNumber());
+        assertEquals("should be 2 markers with GenBank for " + ACCESSION_NUM3, 2, dbLinks3.size());
+        assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM3, dbLinks3.iterator().next() instanceof MarkerDBLink);
+        Set<MarkerDBLink> blastableMarkerDBLinks3 = hit3.getTargetAccession().getBlastableMarkerDBLinks();
+        assertEquals("should be 2 because is in GenBank " + ACCESSION_NUM3, 0, blastableMarkerDBLinks3.size());
+
+        List<Marker> markers3 = hits3.get(0).getTargetAccession().getMarkers();
+        assertEquals("number of marker via dblinks " + ACCESSION_NUM3, 2, markers3.size());
+
+        // test accession4
+        List<Hit> hits4 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM4 + "'").list();
+        Hit hit4 = hits4.get(0);
+        Set<DBLink> dbLinks4 = hit4.getTargetAccession().getDbLinks();
+        assertEquals("hit number is 4", 4, hit4.getHitNumber());
+        assertEquals("should be 1 markers for " + ACCESSION_NUM4, 1, dbLinks4.size());
+        assertTrue("link is instance of MarkerDBLink" + ACCESSION_NUM4, dbLinks4.iterator().next() instanceof MarkerDBLink);
+        assertEquals("is refSeq database for " + ACCESSION_NUM4, refSeqReferenceDatabase.getZdbID(), dbLinks4.iterator().next().getReferenceDatabase().getZdbID());
+        Set<MarkerDBLink> blastableMarkerDBLinks4 = hit4.getTargetAccession().getBlastableMarkerDBLinks();
+        logger.info("hit 4 accession: " + hit4.getTargetAccession().getID());
+        assertEquals("should be 1 blastable marker for " + ACCESSION_NUM4, 1, blastableMarkerDBLinks4.size());
+
+        List<Marker> markers4 = hits4.get(0).getTargetAccession().getMarkers();
+        assertEquals("number of marker via dblinks " + ACCESSION_NUM4, 1, markers4.size());
+
+
+        // test accession5
+        List<Hit> hits5 = session.createQuery("from Hit h where h.targetAccession.number='" + ACCESSION_NUM5 + "'").list();
+        Hit hit5 = hits5.get(0);
+        Set<DBLink> dbLinks5 = hit5.getTargetAccession().getDbLinks();
+        assertEquals("hit number is 5", 5, hit5.getHitNumber());
+        assertEquals("should be 0 marker DBLink for because of db mismatch" + ACCESSION_NUM5, 0, dbLinks5.size());
+        Set<MarkerDBLink> blastableMarkerDBLinks5 = hit5.getTargetAccession().getBlastableMarkerDBLinks();
+        assertEquals("one available DBLink  " + ACCESSION_NUM5, 1, blastableMarkerDBLinks5.size());
+
+        List<Marker> markers5 = hits5.get(0).getTargetAccession().getMarkers();
+        assertEquals("number of marker is 1 via dblinks " + ACCESSION_NUM5, 0, markers5.size());
+
     }
 
 

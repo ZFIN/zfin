@@ -1,8 +1,8 @@
 package org.zfin.sequence.reno;
 
 import org.hibernate.Criteria;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.junit.After;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -33,60 +33,54 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
 
     private RenoService renoService = new RenoService();
 
+    @After
+    public void closeSession() {
+        super.closeSession();
+        // make sure to close the session to be able to re-create the entities
+        HibernateUtil.closeSession();
+    }
 
     @Test
     // Test that there are Redundancy runs in the database
     // Test the test redundancy run
     public void getRedundancyRuns() {
-        HibernateUtil.createTransaction();
-        try {
-            List<RedundancyRun> redundancyRuns = repository.getRedundancyRuns();
-            int oldSize = redundancyRuns.size();
-            insertTestData();
-            redundancyRuns = repository.getRedundancyRuns();
-            // Check that there is at least one Redundancy Run (the test run)
-            assertNotNull("Redundancy Runs not Null", redundancyRuns);
-            assertNotSame("Redundancy runs returned 0", 0, repository.getRedundancyRuns().size());
-            boolean found = false;
-            for (Run run : redundancyRuns) {
-                if (run.getName().equals("TestRedundancy")) {
-                    found = true;
-                    break;
-                }
+        List<RedundancyRun> redundancyRuns = repository.getRedundancyRuns();
+        int oldSize = redundancyRuns.size();
+        insertTestData();
+        redundancyRuns = repository.getRedundancyRuns();
+        // Check that there is at least one Redundancy Run (the test run)
+        assertNotNull("Redundancy Runs not Null", redundancyRuns);
+        assertNotSame("Redundancy runs returned 0", 0, repository.getRedundancyRuns().size());
+        boolean found = false;
+        for (Run run : redundancyRuns) {
+            if (run.getName().equals("TestRedundancy")) {
+                found = true;
+                break;
             }
-            // Test Run found
-            assertTrue("Added Redundancy Run is found", found);
-            assertEquals("Added One Redundancy Run", oldSize + 1, redundancyRuns.size());
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            HibernateUtil.rollbackTransaction();
         }
+        // Test Run found
+        assertTrue("Added Redundancy Run is found", found);
+        assertEquals("Added One Redundancy Run", oldSize + 1, redundancyRuns.size());
     }
 
     @Test
     // Test that there are nomenclature runs in the database
     public void getNomenclatureRuns() {
         Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        try {
-            List<NomenclatureRun> nomenclatureRuns = repository.getNomenclatureRuns();
-            int oldSize = nomenclatureRuns.size();
-            insertTestData();
-            nomenclatureRuns = repository.getNomenclatureRuns();
-            assertNotNull("Nomenclature Runs not Null", nomenclatureRuns);
-            assertNotSame("Nomenclature runs returned 0", 0, repository.getNomenclatureRuns().size());
-            boolean found = false;
-            for (Run run : nomenclatureRuns) {
-                if (run.getName().equals("TestNomenclature")) {
-                    found = true;
-                }
+        List<NomenclatureRun> nomenclatureRuns = repository.getNomenclatureRuns();
+        int oldSize = nomenclatureRuns.size();
+        insertTestData();
+        nomenclatureRuns = repository.getNomenclatureRuns();
+        assertNotNull("Nomenclature Runs not Null", nomenclatureRuns);
+        assertNotSame("Nomenclature runs returned 0", 0, repository.getNomenclatureRuns().size());
+        boolean found = false;
+        for (Run run : nomenclatureRuns) {
+            if (run.getName().equals("TestNomenclature")) {
+                found = true;
             }
-            assertTrue("Added Nomenclature Run is found", found);
-            assertEquals("Added One Nomenclature Run", oldSize + 1, nomenclatureRuns.size());
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
         }
+        assertTrue("Added Nomenclature Run is found", found);
+        assertEquals("Added One Nomenclature Run", oldSize + 1, nomenclatureRuns.size());
 
     }
 
@@ -107,25 +101,19 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void queryCandidates() {
         Session session = HibernateUtil.currentSession();
-        try {
-            session.beginTransaction();
-            assertEquals("No query candidates", 0, repository.getQueueCandidateCount(null));
-            Map<String, Object> returnMap = insertTestData();
-            Run run = (Run) returnMap.get("run1");
-            RunCandidate runCandidate = (RunCandidate) returnMap.get("runCandidate1");
-            assertEquals("One query candidate", 1, repository.getQueueCandidateCount(run));
-            runCandidate.setDone(true);
-            assertEquals("No query candidate because done", 0, repository.getQueueCandidateCount(run));
-            runCandidate.setDone(false);
-            Person person1 = (Person) returnMap.get("person1");
-            repository.lock(person1, runCandidate);
-            assertEquals("No query candidate because locked", 0, repository.getQueueCandidateCount(run));
-            repository.unlock(person1, runCandidate);
-            assertEquals("One query candidate again", 1, repository.getQueueCandidateCount(run));
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
-        }
+        assertEquals("No query candidates", 0, repository.getQueueCandidateCount(null));
+        Map<String, Object> returnMap = insertTestData();
+        Run run = (Run) returnMap.get("run1");
+        RunCandidate runCandidate = (RunCandidate) returnMap.get("runCandidate1");
+        assertEquals("One query candidate", 1, repository.getQueueCandidateCount(run));
+        runCandidate.setDone(true);
+        assertEquals("No query candidate because done", 0, repository.getQueueCandidateCount(run));
+        runCandidate.setDone(false);
+        Person person1 = (Person) returnMap.get("person1");
+        repository.lock(person1, runCandidate);
+        assertEquals("No query candidate because locked", 0, repository.getQueueCandidateCount(run));
+        repository.unlock(person1, runCandidate);
+        assertEquals("One query candidate again", 1, repository.getQueueCandidateCount(run));
     }
 
 
@@ -137,27 +125,21 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
     public void pendingCandidates() {
         assertEquals("No Pending candidates", 0, repository.getPendingCandidates(null).size());
         Session session = HibernateUtil.currentSession();
-        try {
-            session.beginTransaction();
-            assertEquals("No pending candidates", 0, repository.getPendingCandidateCount(null));
-            Map<String, Object> returnMap = insertTestData();
-            Run run1 = (Run) returnMap.get("run1");
-            RunCandidate runCandidate = (RunCandidate) returnMap.get("runCandidate1");
-            assertEquals("No pending candidate because not locked", 0, repository.getPendingCandidateCount(run1));
-            runCandidate.setDone(true);
-            session.saveOrUpdate(runCandidate);
-            assertEquals("No pending candidate because finished", 0, repository.getPendingCandidateCount(run1));
-            runCandidate.setDone(false);
-            session.saveOrUpdate(runCandidate);
-            Person person1 = (Person) returnMap.get("person1");
-            repository.lock(person1, runCandidate);
-            assertEquals("One pending candidate because locked and not finished", 1, repository.getPendingCandidateCount(run1));
-            repository.unlock(person1, runCandidate);
-            assertEquals("No pending candidate because unlocked and not finished", 0, repository.getPendingCandidateCount(run1));
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
-        }
+        assertEquals("No pending candidates", 0, repository.getPendingCandidateCount(null));
+        Map<String, Object> returnMap = insertTestData();
+        Run run1 = (Run) returnMap.get("run1");
+        RunCandidate runCandidate = (RunCandidate) returnMap.get("runCandidate1");
+        assertEquals("No pending candidate because not locked", 0, repository.getPendingCandidateCount(run1));
+        runCandidate.setDone(true);
+        session.saveOrUpdate(runCandidate);
+        assertEquals("No pending candidate because finished", 0, repository.getPendingCandidateCount(run1));
+        runCandidate.setDone(false);
+        session.saveOrUpdate(runCandidate);
+        Person person1 = (Person) returnMap.get("person1");
+        repository.lock(person1, runCandidate);
+        assertEquals("One pending candidate because locked and not finished", 1, repository.getPendingCandidateCount(run1));
+        repository.unlock(person1, runCandidate);
+        assertEquals("No pending candidate because unlocked and not finished", 0, repository.getPendingCandidateCount(run1));
     }
 
     @Test
@@ -167,30 +149,24 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
     public void finishedCandidates() {
         assertEquals("No Finished candidates", 0, repository.getFinishedCandidateCount(null));
         Session session = HibernateUtil.currentSession();
-        try {
-            session.beginTransaction();
-            assertEquals("No finished candidates", 0, repository.getFinishedCandidateCount(null));
-            Map<String, Object> returnMap = insertTestData();
-            Run run1 = (Run) returnMap.get("run1");
-            RunCandidate runCandidate = (RunCandidate) returnMap.get("runCandidate1");
-            assertEquals("No finished candidate because not finished", 0, repository.getFinishedCandidateCount(run1));
-            runCandidate.setDone(true);
-            session.saveOrUpdate(runCandidate);
-            assertEquals("One finished candidate because finished and not locked", 1,
-                    repository.getFinishedCandidateCount(run1));
-            runCandidate.setDone(false);
-            session.saveOrUpdate(runCandidate);
-            Person person1 = (Person) returnMap.get("person1");
-            repository.lock(person1, runCandidate);
-            assertEquals("No finished candidate because locked and not finished", 0,
-                    repository.getFinishedCandidateCount(run1));
-            repository.unlock(person1, runCandidate);
-            assertEquals("No finished candidate because unlocked and not finished", 0,
-                    repository.getFinishedCandidateCount(run1));
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
-        }
+        assertEquals("No finished candidates", 0, repository.getFinishedCandidateCount(null));
+        Map<String, Object> returnMap = insertTestData();
+        Run run1 = (Run) returnMap.get("run1");
+        RunCandidate runCandidate = (RunCandidate) returnMap.get("runCandidate1");
+        assertEquals("No finished candidate because not finished", 0, repository.getFinishedCandidateCount(run1));
+        runCandidate.setDone(true);
+        session.saveOrUpdate(runCandidate);
+        assertEquals("One finished candidate because finished and not locked", 1,
+                repository.getFinishedCandidateCount(run1));
+        runCandidate.setDone(false);
+        session.saveOrUpdate(runCandidate);
+        Person person1 = (Person) returnMap.get("person1");
+        repository.lock(person1, runCandidate);
+        assertEquals("No finished candidate because locked and not finished", 0,
+                repository.getFinishedCandidateCount(run1));
+        repository.unlock(person1, runCandidate);
+        assertEquals("No finished candidate because unlocked and not finished", 0,
+                repository.getFinishedCandidateCount(run1));
     }
 
     /**
@@ -211,115 +187,91 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void lockRunCandidate() {
         Session session = HibernateUtil.currentSession();
-        try {
-            session.beginTransaction();
-            Map<String, Object> returnMap = insertTestData();
-            RunCandidate runCandidate = (RunCandidate) returnMap.get("runCandidate1");
-            assertFalse("RunCandidate is not locked", runCandidate.isLocked());
-            Person person1 = (Person) returnMap.get("person1");
-            assertTrue("RunCandidate is locked by person 1", repository.lock(person1, runCandidate));
-            assertTrue("RunCandidate is locked by same person 1", repository.lock(person1, runCandidate));
-            Person person2 = (Person) returnMap.get("person2");
-            assertFalse("RunCandidate is locked by person 2 and fails", repository.lock(person2, runCandidate));
-            assertTrue("RunCandidate is file is locked", runCandidate.isLocked());
-            assertTrue("RunCandidate is unlocked by person 1", repository.unlock(person1, runCandidate));
-            assertFalse("RunCandidate is file not locked", runCandidate.isLocked());
-            assertFalse("RunCandidate can not be unlocked if not locked", repository.unlock(person1, runCandidate));
-            assertFalse("RunCandidate can not be unlocked if not locked", repository.unlock(person2, runCandidate));
-            assertTrue("RunCandidate locked by person 2", repository.lock(person2, runCandidate));
-            assertFalse("RunCandidate can not be unlocked by person 1 if locked by person 2", repository.unlock(person1, runCandidate));
-            assertTrue("RunCandidate is locked", runCandidate.isLocked());
-            assertTrue("RunCandidate unlocked by person 2", repository.unlock(person2, runCandidate));
-            assertFalse("RunCandidate is unlocked", runCandidate.isLocked());
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
-        }
+        Map<String, Object> returnMap = insertTestData();
+        RunCandidate runCandidate = (RunCandidate) returnMap.get("runCandidate1");
+        assertFalse("RunCandidate is not locked", runCandidate.isLocked());
+        Person person1 = (Person) returnMap.get("person1");
+        assertTrue("RunCandidate is locked by person 1", repository.lock(person1, runCandidate));
+        assertTrue("RunCandidate is locked by same person 1", repository.lock(person1, runCandidate));
+        Person person2 = (Person) returnMap.get("person2");
+        assertFalse("RunCandidate is locked by person 2 and fails", repository.lock(person2, runCandidate));
+        assertTrue("RunCandidate is file is locked", runCandidate.isLocked());
+        assertTrue("RunCandidate is unlocked by person 1", repository.unlock(person1, runCandidate));
+        assertFalse("RunCandidate is file not locked", runCandidate.isLocked());
+        assertFalse("RunCandidate can not be unlocked if not locked", repository.unlock(person1, runCandidate));
+        assertFalse("RunCandidate can not be unlocked if not locked", repository.unlock(person2, runCandidate));
+        assertTrue("RunCandidate locked by person 2", repository.lock(person2, runCandidate));
+        assertFalse("RunCandidate can not be unlocked by person 1 if locked by person 2", repository.unlock(person1, runCandidate));
+        assertTrue("RunCandidate is locked", runCandidate.isLocked());
+        assertTrue("RunCandidate unlocked by person 2", repository.unlock(person2, runCandidate));
+        assertFalse("RunCandidate is unlocked", runCandidate.isLocked());
 
     }
 
     @Test
     public void testRunSetAttribution() {
         Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        try {
-            Map<String, Object> returnMap = insertTestData();
-            Run run1 = (Run) returnMap.get("run1");
-            assertTrue("Is redundancy run", run1.isRedundancy());
-            assertFalse("Not nomenclature run", run1.isNomenclature());
-            RedundancyRun redunRun = (RedundancyRun) run1;
-            Publication publication2 = (Publication) returnMap.get("publication2");
-            assertNotSame("Run attribution has an expected initial value", publication2, redunRun.getNomenclaturePublication());
+        Map<String, Object> returnMap = insertTestData();
+        Run run1 = (Run) returnMap.get("run1");
+        assertTrue("Is redundancy run", run1.isRedundancy());
+        assertFalse("Not nomenclature run", run1.isNomenclature());
+        RedundancyRun redunRun = (RedundancyRun) run1;
+        Publication publication2 = (Publication) returnMap.get("publication2");
+        assertNotSame("Run attribution has an expected initial value", publication2, redunRun.getNomenclaturePublication());
 
-            redunRun.setRelationPublication(publication2);
-            assertSame("Run attribution update is successful", publication2, redunRun.getRelationPublication());
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
-        }
+        redunRun.setRelationPublication(publication2);
+        assertSame("Run attribution update is successful", publication2, redunRun.getRelationPublication());
     }
 
     @Test
     public void testRunSetOrthologyAttribution() {
         Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        try {
-            Map<String, Object> returnMap = insertTestData();
-            Run run2 = (Run) returnMap.get("run2");
-            assertTrue("Is nomenclature run", run2.isNomenclature());
-            assertFalse("Not redundancy run", run2.isRedundancy());
-            NomenclatureRun nomenRun = (NomenclatureRun) run2;
-            Publication publication1 = (Publication) returnMap.get("publication1");
-            assertNotSame("Run orthology attribution has an expected initial value", publication1, nomenRun.getNomenclaturePublication());
+        Map<String, Object> returnMap = insertTestData();
+        Run run2 = (Run) returnMap.get("run2");
+        assertTrue("Is nomenclature run", run2.isNomenclature());
+        assertFalse("Not redundancy run", run2.isRedundancy());
+        NomenclatureRun nomenRun = (NomenclatureRun) run2;
+        Publication publication1 = (Publication) returnMap.get("publication1");
+        assertNotSame("Run orthology attribution has an expected initial value", publication1, nomenRun.getNomenclaturePublication());
 
-            nomenRun.setOrthologyPublication(publication1);
-            assertSame("Run orthology attribution update is successful", publication1, nomenRun.getOrthologyPublication());
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
-        }
+        nomenRun.setOrthologyPublication(publication1);
+        assertSame("Run orthology attribution update is successful", publication1, nomenRun.getOrthologyPublication());
     }
 
 
     @Test
     public void testSortedRunCandidates() {
         Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        try {
-            Map<String, Object> returnMap = insertTestData();
-            Run run1 = (Run) returnMap.get("run1");
-            List runCandidates;
-            Hit bestHit;
-            RunCandidate runCandidate;
-            runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
-            runCandidate = (RunCandidate) runCandidates.get(0);
-            bestHit = runCandidate.getBestHit();
-            Hit hit1 = (Hit) returnMap.get("hit1");
-            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue(), 0.001f);
-            assertEquals(bestHit.getScore(), hit1.getScore());
+        Map<String, Object> returnMap = insertTestData();
+        Run run1 = (Run) returnMap.get("run1");
+        List runCandidates;
+        Hit bestHit;
+        RunCandidate runCandidate;
+        runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
+        runCandidate = (RunCandidate) runCandidates.get(0);
+        bestHit = runCandidate.getBestHit();
+        Hit hit1 = (Hit) returnMap.get("hit1");
+        assertEquals(bestHit.getExpectValue(), hit1.getExpectValue(), 0.001f);
+        assertEquals(bestHit.getScore(), hit1.getScore());
 
-            // should choose the same score, because still has the best expect value
-            hit1.setScore(600);
-            session.update(hit1);
-            runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
-            runCandidate = (RunCandidate) runCandidates.get(0);
-            bestHit = runCandidate.getBestHit();
-            assertEquals(bestHit.getExpectValue(), hit1.getExpectValue(), 0.001f);
-            assertEquals(bestHit.getScore(), hit1.getScore());
+        // should choose the same score, because still has the best expect value
+        hit1.setScore(600);
+        session.update(hit1);
+        runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
+        runCandidate = (RunCandidate) runCandidates.get(0);
+        bestHit = runCandidate.getBestHit();
+        assertEquals(bestHit.getExpectValue(), hit1.getExpectValue(), 0.001f);
+        assertEquals(bestHit.getScore(), hit1.getScore());
 
-            // make hit1 and hit2 the same expect value, so now should take hit2 value as 800 > 600
-            Hit hit2 = (Hit) returnMap.get("hit2");
-            hit2.setExpectValue(0);
-            session.update(hit2);
-            runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
-            runCandidate = (RunCandidate) runCandidates.get(0);
-            bestHit = runCandidate.getBestHit();
-            assertEquals(bestHit.getExpectValue(), hit2.getExpectValue(), 0.001f);// would work for either hit1 or hit2
-            assertEquals(bestHit.getScore(), hit2.getScore());
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            session.getTransaction().rollback();
-        }
+        // make hit1 and hit2 the same expect value, so now should take hit2 value as 800 > 600
+        Hit hit2 = (Hit) returnMap.get("hit2");
+        hit2.setExpectValue(0);
+        session.update(hit2);
+        runCandidates = repository.getSortedRunCandidates(run1, "other", 3);
+        runCandidate = (RunCandidate) runCandidates.get(0);
+        bestHit = runCandidate.getBestHit();
+        assertEquals(bestHit.getExpectValue(), hit2.getExpectValue(), 0.001f);// would work for either hit1 or hit2
+        assertEquals(bestHit.getScore(), hit2.getScore());
     }
 
 
@@ -504,10 +456,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void zdbGeneratorRollBack() {
-        Session session = null;
-        try {
-            session = HibernateUtil.currentSession();
-            session.beginTransaction();
+        Session session = HibernateUtil.currentSession();
             Map<String, Object> returnMap1 = insertTestData();
             session.getTransaction().rollback();
             HibernateUtil.closeSession();  // use the HibernateUtil since it knows about closing and opening sessions
@@ -565,11 +514,6 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
                     ((RunCandidate) returnMap1.get("runCandidate2")).getZdbID(),
                     ((RunCandidate) returnMap2.get("runCandidate2")).getZdbID()
             );
-
-
-        } finally {
-            session.getTransaction().rollback();
-        }
 
     }
 
