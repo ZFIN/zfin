@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class ConstructViewController {
@@ -40,14 +38,15 @@ public class ConstructViewController {
     @Autowired
     private MutantRepository mutantRepository;
 
+    @Autowired
+    private MarkerService markerService;
+
     @RequestMapping(value = "/construct/view/{zdbID}")
-    public String getGeneView(
-            Model model
-            , @PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         ConstructBean markerBean = new ConstructBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker construct = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + construct);

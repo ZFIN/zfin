@@ -20,8 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class EfgViewController {
@@ -34,14 +32,15 @@ public class EfgViewController {
     @Autowired
     private MarkerRepository markerRepository;
 
+    @Autowired
+    private MarkerService markerService;
+
     @RequestMapping(value = "/efg/view/{zdbID}")
-    public String getView(
-            Model model
-            , @PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         MarkerBean markerBean = new MarkerBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker efg = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + efg);

@@ -144,7 +144,7 @@
                         <td>
                             <c:forEach var="construct" items="${genoFeat.feature.constructs}"
                                        varStatus="constructsloop">
-                                <a href="/action/marker/view/${construct.marker.zdbID}"><i>${construct.marker.name}</i></a>
+                                <a href="/${construct.marker.zdbID}"><i>${construct.marker.name}</i></a>
                                 <c:if test="${!constructsloop.last}">
                                     ,&nbsp;
                                 </c:if>

@@ -11,8 +11,6 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class GenericMarkerViewController {
@@ -22,10 +20,12 @@ public class GenericMarkerViewController {
     @Autowired
     private MarkerRepository markerRepository;
 
-    @RequestMapping("/generic/view/{zdbID}")
-    public String getGenericMarkerView(@PathVariable("zdbID") String zdbID,
-                                       Model model) {
+    @Autowired
+    private MarkerService markerService;
 
+    @RequestMapping("/generic/view/{zdbID}")
+    public String getGenericMarkerView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker marker = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + marker);

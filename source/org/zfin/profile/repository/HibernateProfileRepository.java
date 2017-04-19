@@ -374,13 +374,12 @@ public class HibernateProfileRepository implements ProfileRepository {
         String sql = "" +
                 "select id.idsup_supplier_zdb_id, su.srcurl_url, " +
                 "su.srcurl_display_text, id.idsup_acc_num, comp.name as cname, l.name as lname " +
-                "from int_data_supplier id, outer source_url su, outer company comp, outer lab l " +
-                "where id.idsup_supplier_zdb_id = su.srcurl_source_zdb_id " +
-                "and id.idsup_data_zdb_id = :OID  " +
-                "and su.srcurl_purpose = 'order' " +
-                "and comp.zdb_id=id.idsup_supplier_zdb_id " +
-                "and l.zdb_id=id.idsup_supplier_zdb_id " +
-                " ";
+                "from int_data_supplier id " +
+                "left outer join source_url su on id.idsup_supplier_zdb_id = su.srcurl_source_zdb_id " +
+                "left outer join company comp on comp.zdb_id=id.idsup_supplier_zdb_id " +
+                "left outer join lab l on l.zdb_id=id.idsup_supplier_zdb_id " +
+                "where id.idsup_data_zdb_id = :OID  " +
+                "and su.srcurl_purpose = 'order' ";
 
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("OID", zdbID)

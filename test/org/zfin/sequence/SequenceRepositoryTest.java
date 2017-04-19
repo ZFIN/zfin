@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
@@ -140,7 +141,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         assertFalse(dblinks.contains("EE708906"));
     }
 
-    @Test
+    @Ignore(value = "This methods takes a long time")
     public void getGenbankXpatCdnaDBLinks() {
         Set<String> dblinks = sequenceRepository.getGenbankXpatCdnaDBLinks();
         assertNotNull(dblinks);

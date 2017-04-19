@@ -29,7 +29,7 @@
         <form>
             <center>
                 <a style="font-size: large;" href="javascript:"
-                   onClick="document.location.replace('/action/marker/view/${formBean.antibody.zdbID}')">[View
+                   onClick="document.location.replace('/${formBean.antibody.zdbID}')">[View
                     Antibody]</a>
             </center>
         </form>
@@ -89,7 +89,7 @@
 
 <font size=+1>
     <b>
-        Antibody Name:&nbsp;<a href="/action/marker/view/${formBean.antibody.zdbID}">${formBean.antibody.name}</a>
+        Antibody Name:&nbsp;<a href="/${formBean.antibody.zdbID}">${formBean.antibody.name}</a>
         <br/>
     </b>
 </font>

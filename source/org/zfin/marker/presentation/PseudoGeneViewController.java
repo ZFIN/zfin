@@ -36,12 +36,15 @@ public class PseudoGeneViewController {
     @Autowired
     private MarkerRepository markerRepository;
 
+    @Autowired
+    private MarkerService markerService;
+
     @RequestMapping(value = "/pseudogene/view")
-    public String getGeneView(Model model,
-                              @PathVariable("zdbID") String zdbID) throws Exception {
+    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker gene = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + gene);

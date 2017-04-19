@@ -277,10 +277,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         // todo: note that when in SQL, start at 1 (current) , but when in HQL, start at 0
         String hql = "SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol, " +
                 "count(distinct fig.fig_zdb_id) as numOfFig  " +
-                "FROM  Expression_Experiment exp, outer marker probe, Term item_, Marker gene, Figure fig," +
+                "FROM  Expression_Experiment exp, Term item_, Marker gene, Figure fig," +
                 "      Genotype geno, fish_Experiment genox, expression_pattern_figure results, expression_result result, fish fish " +
-                "WHERE  exp.xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id AND" +
-                "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND         " +
+                "      left outer join marker as probe on exp.xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id " +
+                "WHERE  exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND         " +
                 "       item_.term_zdb_id = :termID AND " +
                 "       result.xpatres_xpatex_zdb_id = exp.xpatex_zdb_id AND " +
                 "       (result.xpatres_superterm_zdb_id = item_.term_zdb_id OR result.xpatres_subterm_zdb_id = item_.term_zdb_id) AND " +
@@ -294,7 +294,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       fish.fish_is_wildtype = :isWildtype AND " +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND " +
                 "       genox.genox_is_std_or_generic_control = :condition AND " +
-                "       gene.mrkr_abbrev[1,10] <> :withdrawn  AND   " +
+                "       SUBSTRING (gene.mrkr_abbrev from  1 for 9) <> :withdrawn  AND   " +
                 "       not exists( " +
                 "           select 'x' from clone " +
                 "           where clone.clone_mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
@@ -304,7 +304,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       not exists( " +
                 "           select 'x' from marker m2" +
                 "           where m2.mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
-                "           and m2.mrkr_abbrev[1,10] = :withdrawn  " +
+                "           and SUBSTRING (m2.mrkr_abbrev from 1 for 9) = :withdrawn  " +
                 "       ) " +
                 "GROUP BY exp.xpatex_gene_zdb_id, gene.mrkr_abbrev " +
                 "ORDER BY numOfFig DESC, geneSymbol ";
@@ -322,7 +322,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         results.last();
         int totalResults = results.getRowNumber() + 1;
 
-        List<Object[]> list = new ArrayList<Object[]>();
+        List<Object[]> list = new ArrayList<>();
 
         results.beforeFirst();
         while (results.next() && results.getRowNumber() < numberOfRecords) {
@@ -959,7 +959,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                     " from record_attribution ra, marker_history mh " +
                     " where mh.mhist_zdb_id  = ra.recattrib_data_zdb_id " +
                     " and  :markerZdbID = mh.mhist_mrkr_zdb_id ";
-        commonPubSQL += " ) where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
+        commonPubSQL += " ) as qt where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
         return commonPubSQL;
     }
 
@@ -991,7 +991,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public int getNumberAssociatedPublicationsForZdbID(String zdbID) {
-        String sql = " select count(*) from ( " + getCommonPublicationSQL(zdbID) + " )";
+        String sql = " select count(*) from ( " + getCommonPublicationSQL(zdbID) + " ) as query ";
 
         int count = Integer.valueOf(HibernateUtil.currentSession()
                 .createSQLQuery(sql)
@@ -1153,7 +1153,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM_AND_NTR;
 
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
-
         if (includeEFGs){
             markerTypes.add(markerRepository.getMarkerTypeByName(Marker.Type.EFG.toString()));
         }
@@ -1161,12 +1160,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select distinct marker from Marker marker, PublicationAttribution pub" +
                 "     where pub.dataZdbID = marker.zdbID" +
                 "           and pub.publication.zdbID = :pubID " +
-                "           and marker.markerType in (:markerType)" +
+                "           and marker.markerType in (:markerType)  " +
                 "    order by marker.abbreviationOrder ";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameterList("markerType", markerTypes);
-
 
         return (List<Marker>) query.list();
     }
@@ -1823,37 +1821,36 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Long getMarkerCount(Publication publication) {
-        String sql = "select count(*) FROM (\n" +
-                "  SELECT fmrel_mrkr_zdb_id\n" +
-                "  FROM record_attribution, feature_marker_relationship\n" +
-                "  WHERE recattrib_source_zdb_id = :zdbID\n" +
-                "        AND recattrib_data_zdb_id = fmrel_ftr_zdb_id\n" +
-                "        AND fmrel_type = 'is allele of'\n" +
-                "\n" +
-                "  UNION\n" +
-                "\n" +
-                "  SELECT mrkr_zdb_id\n" +
-                "  FROM record_attribution, marker\n" +
-                "  WHERE recattrib_source_zdb_id = :zdbID\n" +
-                "        AND recattrib_data_zdb_id = mrkr_zdb_id\n" +
-                "        AND mrkr_type IN\n" +
-                "            (\n" +
-                "              SELECT mtgrpmem_mrkr_type\n" +
-                "              FROM marker_type_group_member\n" +
-                "              WHERE mtgrpmem_mrkr_type_group = 'SEARCH_MK'\n" +
-                "            )\n" +
-                "        AND (mrkr_type <> 'MRPHLNO' AND mrkr_type <> 'EFG')\n" +
-                "\n" +
-                "  UNION\n" +
-                "\n" +
-                "  SELECT mr.mrel_mrkr_2_zdb_id\n" +
-                "  FROM record_attribution ra, marker m, marker_relationship mr\n" +
-                "  WHERE recattrib_source_zdb_id = :zdbID\n" +
-                "        AND recattrib_data_zdb_id = mrkr_zdb_id\n" +
-                "        AND m.mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id\n" +
-                "        AND mrkr_type = 'MRPHLNO'\n" +
-                "\n" +
-                ");";
+        String sql = "select count(*) FROM (" +
+                "  SELECT fmrel_mrkr_zdb_id" +
+                "  FROM record_attribution, feature_marker_relationship" +
+                "  WHERE recattrib_source_zdb_id = :zdbID" +
+                "        AND recattrib_data_zdb_id = fmrel_ftr_zdb_id" +
+                "        AND fmrel_type = 'is allele of'" +
+                "" +
+                "  UNION" +
+                "" +
+                "  SELECT mrkr_zdb_id" +
+                "  FROM record_attribution, marker" +
+                "  WHERE recattrib_source_zdb_id = :zdbID" +
+                "        AND recattrib_data_zdb_id = mrkr_zdb_id" +
+                "        AND mrkr_type IN" +
+                "            (" +
+                "              SELECT mtgrpmem_mrkr_type" +
+                "              FROM marker_type_group_member" +
+                "              WHERE mtgrpmem_mrkr_type_group = 'SEARCH_MK'" +
+                "            )" +
+                "        AND (mrkr_type <> 'MRPHLNO' AND mrkr_type <> 'EFG')  " +
+                "" +
+                "  UNION" +
+                "" +
+                "  SELECT mr.mrel_mrkr_2_zdb_id" +
+                "  FROM record_attribution ra, marker m, marker_relationship mr" +
+                "  WHERE recattrib_source_zdb_id = :zdbID" +
+                "        AND recattrib_data_zdb_id = mrkr_zdb_id" +
+                "        AND m.mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id" +
+                "        AND mrkr_type = 'MRPHLNO'  " +
+                ") as q3 ;";
 
         return getCount(sql, publication.getZdbID());
     }
@@ -1901,53 +1898,53 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Long getCloneProbeCount(Publication publication) {
-        String sql = "\tselect count(recattrib_data_zdb_id)\n" +
-                "\t from  record_attribution, marker\n" +
-                "\t where recattrib_source_zdb_id = :zdbID\n" +
-                "\t  and  recattrib_data_zdb_id   = mrkr_zdb_id\n" +
-                "\t  and  mrkr_type in \n" +
-                "\t\t  (select mtgrpmem_mrkr_type from marker_type_group_member\n" +
+        String sql = "\tselect count(recattrib_data_zdb_id)" +
+                "\t from  record_attribution, marker" +
+                "\t where recattrib_source_zdb_id = :zdbID" +
+                "\t  and  recattrib_data_zdb_id   = mrkr_zdb_id" +
+                "\t  and  mrkr_type in " +
+                "\t\t  (select mtgrpmem_mrkr_type from marker_type_group_member" +
                 "                    where mtgrpmem_mrkr_type_group = 'SEARCH_SEG');";
         return getCount(sql, publication.getZdbID());
     }
 
     public Long getExpressionCount(Publication publication) {
-        String sql = "\tselect count(distinct xpatfig_fig_zdb_id)\n" +
-                " \t  from figure, expression_pattern_figure\n" +
-                " \t where fig_source_zdb_id = :zdbID\n" +
+        String sql = "\tselect count(distinct xpatfig_fig_zdb_id)" +
+                " \t  from figure, expression_pattern_figure" +
+                " \t where fig_source_zdb_id = :zdbID" +
                 "         and fig_zdb_id=xpatfig_fig_zdb_id";
         return getCount(sql, publication.getZdbID());
     }
 
     public Long getPhenotypeCount(Publication publication) {
-        String sql = "\tselect count(distinct pg_fig_zdb_id)\n" +
-                " \t  from figure, phenotype_source_generated\n" +
-                " \t where fig_source_zdb_id = :zdbID\n" +
+        String sql = "\tselect count(distinct pg_fig_zdb_id)" +
+                " \t  from figure, phenotype_source_generated" +
+                " \t where fig_source_zdb_id = :zdbID" +
                 "         and pg_fig_zdb_id = fig_zdb_id";
         return getCount(sql, publication.getZdbID());
     }
 
     public Long getFeatureCount(Publication publication) {
-        String sql = "\tselect count(distinct recattrib_data_zdb_id)\n" +
-                "\t from  record_attribution\n" +
-                "\t where recattrib_source_zdb_id = :zdbID\n" +
+        String sql = "\tselect count(distinct recattrib_data_zdb_id)" +
+                "\t from  record_attribution" +
+                "\t where recattrib_source_zdb_id = :zdbID" +
                 "\t  and  recattrib_data_zdb_id like 'ZDB-ALT-%';";
         return getCount(sql, publication.getZdbID());
     }
 
     public Long getPhenotypeAlleleCount(Publication publication) {
-        String sql = "\tselect count(distinct geno_zdb_id)\n" +
-                "\tfrom   record_attribution, genotype\n" +
-                "\twhere  recattrib_source_zdb_id = :zdbID\n" +
-                "\t  and  recattrib_data_zdb_id = geno_zdb_id\n" +
+        String sql = "\tselect count(distinct geno_zdb_id)" +
+                "\tfrom   record_attribution, genotype" +
+                "\twhere  recattrib_source_zdb_id = :zdbID" +
+                "\t  and  recattrib_data_zdb_id = geno_zdb_id" +
                 "\t  and  geno_is_wildtype = 'f';";
         return getCount(sql, publication.getZdbID());
     }
 
     public Long getFishCount(Publication publication) {
-        String sql = "\tselect count(distinct fish_zdb_id)\n" +
-                "\tfrom   record_attribution, fish\n" +
-                "\twhere  recattrib_source_zdb_id = :zdbID\n" +
+        String sql = "\tselect count(distinct fish_zdb_id)" +
+                "\tfrom   record_attribution, fish" +
+                "\twhere  recattrib_source_zdb_id = :zdbID" +
                 "\t  and  recattrib_data_zdb_id = fish_zdb_id;";
         return getCount(sql, publication.getZdbID());
     }
@@ -1961,41 +1958,41 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Long getMappingDetailsCount(Publication publication) {
-        String sql = "select (\n" +
-                "select count(distinct lms_member_1_zdb_id)\n" +
-                "    \t  from linkage, linkage_membership_search\n" +
-                "    \t where lnkg_source_zdb_id = :zdbID\n" +
-                "    \t and lms_lnkg_zdb_id = lnkg_zdb_id    \n" +
-                ") +\n" +
-                "(select  count(distinct lsingle_member_zdb_id)\n" +
-                "    \t  from linkage, linkage_single\n" +
-                "    \t where lnkg_source_zdb_id = :zdbID\n" +
-                "    \t and lsingle_lnkg_zdb_id = lnkg_zdb_id\n" +
-                "    \t and not exists (select 'x' from linkage_membership_search \n" +
-                "    \t where lms_lnkg_zdb_id = lnkg_zdb_id)\n" +
-                ") from systables where tabid = 1\n" +
-                "\t  ;";
+        String sql = "SELECT Count(DISTINCT lms_member_1_zdb_id) " +
+                "FROM   linkage, " +
+                "       linkage_membership_search " +
+                "WHERE  lnkg_source_zdb_id = :zdbID " +
+                "       AND lms_lnkg_zdb_id = lnkg_zdb_id " +
+                "UNION " +
+                "SELECT Count(DISTINCT lsingle_member_zdb_id) " +
+                "FROM   linkage, " +
+                "       linkage_single " +
+                "WHERE  lnkg_source_zdb_id = :zdbID " +
+                "       AND lsingle_lnkg_zdb_id = lnkg_zdb_id " +
+                "       AND NOT EXISTS (SELECT 'x' " +
+                "                       FROM   linkage_membership_search " +
+                "                       WHERE  lms_lnkg_zdb_id = lnkg_zdb_id) ";
         return getCount(sql, publication.getZdbID());
     }
 
     public Boolean canDeletePublication(Publication publication) {
 
-        String sql = "select count(recattrib_source_zdb_id) \n" +
-                "               from record_attribution, figure \n" +
-                "              where recattrib_source_zdb_id = :zdbID\n" +
-                "                and recattrib_data_zdb_id = fig_zdb_id\n" +
-                "                and (exists (select 'x' \n" +
-                "                               from phenotype_experiment\n" +
-                "                              where phenox_fig_zdb_id = fig_zdb_id)\n" +
-                "                  or exists (select 'x' \n" +
-                "\t\t               from construct_figure\n" +
-                "                              where consfig_fig_zdb_id = fig_zdb_id)\n" +
-                "                  or exists (select 'x' \n" +
-                "\t\t               from expression_pattern_figure\n" +
-                "                              where xpatfig_fig_zdb_id = fig_zdb_id)\n" +
-                "                  or exists (select 'x' \n" +
-                "\t\t               from genotype_figure_fast_search\n" +
-                "                              where gffs_fig_zdb_id = fig_zdb_id)\n" +
+        String sql = "select count(recattrib_source_zdb_id) " +
+                "               from record_attribution, figure " +
+                "              where recattrib_source_zdb_id = :zdbID" +
+                "                and recattrib_data_zdb_id = fig_zdb_id" +
+                "                and (exists (select 'x' " +
+                "                               from phenotype_experiment" +
+                "                              where phenox_fig_zdb_id = fig_zdb_id)" +
+                "                  or exists (select 'x' " +
+                "               from construct_figure" +
+                "                              where consfig_fig_zdb_id = fig_zdb_id)" +
+                "                  or exists (select 'x' " +
+                "               from expression_pattern_figure" +
+                "                              where xpatfig_fig_zdb_id = fig_zdb_id)" +
+                "                  or exists (select 'x' " +
+                "               from genotype_figure_fast_search" +
+                "                              where gffs_fig_zdb_id = fig_zdb_id)" +
                 "                    );";
 
         Long figureDataCount = getCount(sql, publication.getZdbID());
@@ -2116,11 +2113,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     private Long getMarkerCountByMarkerType(String zdbID, String type) {
-        String sql = "select count(recattrib_data_zdb_id)\n" +
-                "\tfrom  record_attribution, marker\n" +
-                "\twhere recattrib_source_zdb_id = :zdbID\n" +
-                "\t  and recattrib_data_zdb_id = mrkr_zdb_id\n" +
-                "\t  and mrkr_type = :mrkrType\n" +
+        String sql = "select count(recattrib_data_zdb_id) " +
+                "from  record_attribution, marker " +
+                "where recattrib_source_zdb_id = :zdbID" +
+                "  and recattrib_data_zdb_id = mrkr_zdb_id" +
+                "  and mrkr_type = :mrkrType" +
                 "      ; ";
 
         SQLQuery query = HibernateUtil.currentSession().createSQLQuery(sql);

@@ -37,7 +37,7 @@ public class AntibodiesPerPublicationController {
         // if there is only one antibody forward to the ab detail page.
         if (antibodies.size() == 1) {
             Antibody antibody = antibodies.get(0);
-            return "redirect:/action/marker/view/" + antibody.getZdbID();
+            return "redirect:/" + antibody.getZdbID();
         }
         model.addAttribute("publication", publication);
         model.addAttribute(LookupStrings.FORM_BEAN, antibodies);

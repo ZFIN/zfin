@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
@@ -14,42 +13,35 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class NTRViewController {
 
     private Logger logger = Logger.getLogger(NTRViewController.class);
 
-//    @Autowired
-//    private ExpressionService expressionService ;
-private LinkDisplayOtherComparator linkDisplayOtherComparator = new LinkDisplayOtherComparator();
+    @Autowired
+    private MarkerService markerService;
 
     @Autowired
-    private ExpressionService expressionService;
+    private MarkerRepository markerRepository;
 
-    @Autowired
-    private MarkerRepository markerRepository ;
-    
     @Autowired
     private EfgViewController efgViewController;
 
-    @RequestMapping(value ="/region/view/{zdbID}")
-    public String getNontranscribedRegionView(
-            Model model
-            ,@PathVariable("zdbID") String zdbID
+    @RequestMapping(value = "/region/view/{zdbID}")
+    public String getNontranscribedRegionView(Model model, @PathVariable("zdbID") String zdbID
     ) throws Exception {
         // set base bean
         MarkerBean markerBean = new MarkerBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker region = markerRepository.getMarkerByID(zdbID);
         logger.info("region: " + region);
         markerBean.setMarker(region);
 
         // not used, too much stuff excluded
-       MarkerService.createDefaultViewForMarker(markerBean);
+        MarkerService.createDefaultViewForMarker(markerBean);
 //        MarkerService.pullClonesOntoGeneFromTranscript(markerBean);
         /*List<LinkDisplay> otherMarkerDBLinksLinks = markerBean.getOtherMarkerPages();
         otherMarkerDBLinksLinks.addAll(markerRepository.getVegaGeneDBLinksTranscript(
@@ -83,7 +75,7 @@ private LinkDisplayOtherComparator linkDisplayOtherComparator = new LinkDisplayO
         markerBean.setSequenceInfo(MarkerService.getSequenceInfoSummary(region));
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
-      //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
+        //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
 
         return "marker/region-view.page";
     }

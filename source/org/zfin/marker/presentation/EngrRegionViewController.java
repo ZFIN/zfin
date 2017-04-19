@@ -13,6 +13,8 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.List;
+
 /**
  */
 @Controller
@@ -21,23 +23,21 @@ public class EngrRegionViewController {
 
     private Logger logger = Logger.getLogger(EngrRegionViewController.class);
 
-//    @Autowired
-//    private ExpressionService expressionService ;
+    @Autowired
+    private MarkerRepository markerRepository;
 
     @Autowired
-    private MarkerRepository markerRepository ;
-    
+    private MarkerService markerService;
+
     @Autowired
     private EfgViewController efgViewController;
 
-    @RequestMapping(value ="/engregion/view/{zdbID}")
-    public String getView(
-            Model model
-            ,@PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    @RequestMapping(value = "/engregion/view/{zdbID}")
+    public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         MarkerBean markerBean = new MarkerBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker region = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + region);
@@ -48,7 +48,7 @@ public class EngrRegionViewController {
 
         markerBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(region));
         markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(region));
-        markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID)) ;
+        markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
 
         // EXPRESSION SECTION
 //        markerBean.setMarkerExpression(expressionService.getExpressionForEfg(region));
@@ -69,5 +69,12 @@ public class EngrRegionViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.EREGION.getTitleString() + region.getAbbreviation());
 
         return "marker/engrRegion-view.page";
+    }
+
+    @RequestMapping("/view-all-engineered-regions/")
+    public String viewAllEngineeredRegions(Model model) {
+        List<Marker> engineeredRegions = markerRepository.getAllEngineeredRegions();
+        model.addAttribute("engineeredRegions", engineeredRegions);
+        return "marker/view-all-engineered-regions.page";
     }
 }
