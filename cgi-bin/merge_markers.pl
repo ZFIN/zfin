@@ -1127,7 +1127,7 @@ print <<EOA;
 
 <HEAD>
     <script language="JavaScript">    
-    window.location.href='/action/marker/view/$intoId';
+    window.location.href='/$intoId';
 </script>  
 </HEAD>
 <BODY>

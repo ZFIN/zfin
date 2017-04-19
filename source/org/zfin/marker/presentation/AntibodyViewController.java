@@ -19,8 +19,6 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- */
 @Controller
 @RequestMapping("/antibody")
 public class AntibodyViewController {
@@ -30,13 +28,15 @@ public class AntibodyViewController {
     @Autowired
     private MarkerRepository markerRepository;
 
+    @Autowired
+    private MarkerService markerService;
+
     @RequestMapping(value = "/view/{zdbID}")
-    public String getAntibodyView(Model model
-            , @PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    public String getAntibodyView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
         logger.info("antibody: " + antibody);

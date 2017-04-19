@@ -5,22 +5,20 @@ import org.apache.log4j.Logger;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.Transcript;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationPresentation;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.Sequence;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Presentation Class to create output from a marker object.
@@ -90,7 +88,7 @@ public class MarkerPresentation extends EntityPresentation {
 
     /**
      * Should be of the form.
-     * [atp6va0a1|http://zfin.org/action/marker/view/ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
+     * [atp6va0a1|http://zfin.org/ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
      *
      * @param marker Marker to render.
      * @return A rendered wiki link.

@@ -42,8 +42,6 @@ import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class GeneViewController {
@@ -55,17 +53,20 @@ public class GeneViewController {
     private ExpressionService expressionService;
 
     @Autowired
+    private MarkerService markerService;
+
+    @Autowired
     private MarkerRepository markerRepository;
 
     @Autowired
     private EfgViewController efgViewController;
 
     @RequestMapping(value = "/gene/view/{zdbID}")
-    public String getGeneView(@PathVariable("zdbID") String zdbID,
-                              Model model) throws Exception {
+    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
         logger.info("gene: " + gene);

@@ -10,44 +10,33 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.sequence.service.TranscriptService;
 
-import java.util.Collections;
-import java.util.List;
-
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class RegionViewController {
 
     private Logger logger = Logger.getLogger(RegionViewController.class);
 
-//    @Autowired
-//    private ExpressionService expressionService ;
-
-   
     @Autowired
     private ExpressionService expressionService;
 
     @Autowired
     private MarkerRepository markerRepository;
 
+    @Autowired
+    private MarkerService markerService;
 
-    @RequestMapping(value ="/eregion/view/{zdbID}")
-    public String getView(
-            Model model
-            ,@PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    @RequestMapping(value = "/eregion/view/{zdbID}")
+    public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         MarkerBean markerBean = new MarkerBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker region = markerRepository.getMarkerByID(zdbID);
         logger.info("region: " + region);
@@ -58,7 +47,7 @@ public class RegionViewController {
 
         markerBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(region));
         markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(region));
-        markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID)) ;
+        markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
 
         // EXPRESSION SECTION
         /*List<LinkDisplay> otherMarkerDBLinksLinks = markerBean.getOtherMarkerPages();
@@ -92,8 +81,6 @@ public class RegionViewController {
         markerBean.setGeneProductsBean(markerRepository.getGeneProducts(region.getZdbID()));
 
         // (CONSTRUCTS)
-
-
 
 
 //      CITATIONS

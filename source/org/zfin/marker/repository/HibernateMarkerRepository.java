@@ -1815,7 +1815,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... typesNotIn) {
         String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
                 "	       mreltype_1_to_2_comments, " +
-                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          '<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "          src.srcurl_url, src.srcurl_display_text , mrel_zdb_id  " +
                 " 	  from marker_relationship  " +
@@ -1836,7 +1836,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql2To1 = " select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
                 "	       mreltype_2_to_1_comments, " +
-                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          '<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "          src.srcurl_url, src.srcurl_display_text  , mrel_zdb_id  " +
                 " 	  from marker_relationship " +
@@ -1887,7 +1887,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types) {
         String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
                 "	       mreltype_1_to_2_comments, " +
-                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          '<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "          src.srcurl_url, src.srcurl_display_text  , mrel_zdb_id  " +
                 " 	  from marker_relationship  " +
@@ -1908,7 +1908,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql2To1 = " select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
                 "	       mreltype_2_to_1_comments, " +
-                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          '<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "          src.srcurl_url, src.srcurl_display_text , mrel_zdb_id   " +
                 " 	  from marker_relationship " +
@@ -2442,7 +2442,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql = " select m.mrkr_abbrev, m.mrkr_zdb_id, m.mrkr_abbrev_order, mt.mrkrtype_type_display, " +
                 "mrt.mreltype_2_to_1_comments, " +
-                "'<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "'<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "src.srcurl_url, src.srcurl_display_text , mrct.mrel_zdb_id   " +
                 "from marker_relationship mrgt " +
@@ -2477,7 +2477,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql = " select m.mrkr_abbrev, m.mrkr_zdb_id, m.mrkr_abbrev_order, mt.mrkrtype_type_display, " +
                 "mrt.mreltype_2_to_1_comments, " +
-                "'<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "'<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "src.srcurl_url, src.srcurl_display_text , mrct.mrel_zdb_id   " +
                 "from marker_relationship mrgt " +

@@ -51,7 +51,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testAntibodyDetailPage() throws Exception {
         // name
         String zdbID = "ZDB-ATB-081002-3";
-        String uri = "/action/marker/view/" + zdbID;
+        String uri = "/" + zdbID;
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
         HtmlTableDataCell cell = (HtmlTableDataCell) page.getByXPath("//table[@class='data_manager']//td").get(0);
         assertTrue(cell.getTextContent().contains(zdbID));

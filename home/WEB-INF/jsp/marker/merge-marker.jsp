@@ -108,7 +108,7 @@
                     event.preventDefault();
                     jQuery('#merge_oid').val(markerZdbIdToBeMergedInto);
                     jQuery('#intoMarkerAbbrev').val(markerAbbrevToMergeInto);
-                    jQuery('#into').html('<a target="_blank" class="external" href="/action/marker/view/' + markerZdbIdToBeMergedInto + '">' + markerAbbrevToMergeInto + '</a>');
+                    jQuery('#into').html('<a target="_blank" class="external" href="/' + markerZdbIdToBeMergedInto + '">' + markerAbbrevToMergeInto + '</a>');
                     <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'
                                   || formBean.markerToDelete.markerType.name eq 'LINCRNAG' || formBean.markerToDelete.markerType.name eq 'NCRNAG'
                                   || formBean.markerToDelete.markerType.name eq 'SNORNAG' || formBean.markerToDelete.markerType.name eq 'LNCRNAG'
@@ -190,7 +190,7 @@
 
                 unspecifiedAllelesIgnored = false;
 
-                jQuery('#validationUnspecifiedAllelesText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following unspecified allele:</h3>');
+                jQuery('#validationUnspecifiedAllelesText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following unspecified allele:</h3>');
                 jQuery('#validationUnspecifiedAllelesText').append('<div>'
                         + '<a target="_blank" href="/' + unspecifiedAlleleIdOfGene1 +'">'
                         + unspecifiedAlleleNameOfGene1 + '</a>'
@@ -206,7 +206,7 @@
 
                 if (null !== unspecifiedAlleleNameOfGene2 && typeof unspecifiedAlleleNameOfGene2 != 'undefined') {
 
-                    jQuery('#validationUnspecifiedAllelesText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following unspecified allele:</h3>');
+                    jQuery('#validationUnspecifiedAllelesText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following unspecified allele:</h3>');
                     jQuery('#validationUnspecifiedAllelesText').append('<div>'
                             + '<a target="_blank" href="/' + unspecifiedAlleleIdOfGene2 +'">'
                             + unspecifiedAlleleNameOfGene2 + '</a>'
@@ -219,7 +219,7 @@
                     }
 
                 } else {
-                    jQuery('#validationUnspecifiedAllelesText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has no unspecified allele.</h3>');
+                    jQuery('#validationUnspecifiedAllelesText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has no unspecified allele.</h3>');
                     jQuery('#renameUnspecifiedAllele').show();
                 }
             }
@@ -251,11 +251,11 @@
                             for (sequenceTargetingReagent in data) {
                                 numberOfSTRs++;
                                 if (numberOfSTRs == 1)
-                                    jQuery('#validationSequenceTargetingReagentText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following sequence targeting reagents:</h3>');
+                                    jQuery('#validationSequenceTargetingReagentText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following sequence targeting reagents:</h3>');
 
 
                                 jQuery('#validationSequenceTargetingReagentText').append("<div>"
-                                        + "<a target='_blank' href='/action/marker/view/"+data[sequenceTargetingReagent].id+"'>"+data[sequenceTargetingReagent].label+"</a>"
+                                        + "<a target='_blank' href='/"+data[sequenceTargetingReagent].id+"'>"+data[sequenceTargetingReagent].label+"</a>"
                                         + "</div>");
                             }
 
@@ -273,14 +273,14 @@
                                                 for (sequenceTargetingReagent in data) {
                                                     numberOfSTRsForGene2++;
                                                     if (numberOfSTRsForGene2 == 1)
-                                                        jQuery('#validationSequenceTargetingReagentText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following sequence targeting reagents:</h3>');
+                                                        jQuery('#validationSequenceTargetingReagentText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following sequence targeting reagents:</h3>');
 
                                                     jQuery('#validationSequenceTargetingReagentText').append("<div>"
-                                                            + "<a target='_blank' href='/action/marker/view/"+data[sequenceTargetingReagent].id+"'>"+data[sequenceTargetingReagent].label+"</a>"
+                                                            + "<a target='_blank' href='/"+data[sequenceTargetingReagent].id+"'>"+data[sequenceTargetingReagent].label+"</a>"
                                                             + "</div>");
                                                 }
                                                 if (numberOfSTRsForGene2 == 0)
-                                                    jQuery('#validationSequenceTargetingReagentText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto +'">' + geneAbbrevMergedInto + '</a> has no sequence targeting reagent.</h3>');
+                                                    jQuery('#validationSequenceTargetingReagentText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto +'">' + geneAbbrevMergedInto + '</a> has no sequence targeting reagent.</h3>');
 
                                                 jQuery('#ignoreSTR').show();
                                             },
@@ -323,11 +323,11 @@
                             for (antibody in data) {
                                 numberOfAntibodies++;
                                 if (numberOfAntibodies == 1)
-                                    jQuery('#validationAntibodyText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following antibody:</h3>');
+                                    jQuery('#validationAntibodyText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following antibody:</h3>');
 
 
                                 jQuery('#validationAntibodyText').append("<div>"
-                                        + "<a target='_blank' href='/action/marker/view/"+data[antibody].id+"'>"+data[antibody].label+"</a>"
+                                        + "<a target='_blank' href='/"+data[antibody].id+"'>"+data[antibody].label+"</a>"
                                         + "</div>");
                             }
 
@@ -345,14 +345,14 @@
                                                 for (antibody in data) {
                                                     numberOfAntibodiesForGene2++;
                                                     if (numberOfAntibodiesForGene2 == 1)
-                                                        jQuery('#validationAntibodyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following antibody:</h3>');
+                                                        jQuery('#validationAntibodyText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following antibody:</h3>');
 
                                                     jQuery('#validationAntibodyText').append("<div>"
-                                                            + "<a target='_blank' href='/action/marker/view/"+data[antibody].id+"'>"+data[antibody].label+"</a>"
+                                                            + "<a target='_blank' href='/"+data[antibody].id+"'>"+data[antibody].label+"</a>"
                                                             + "</div>");
                                                 }
                                                 if (numberOfAntibodiesForGene2 == 0)
-                                                    jQuery('#validationAntibodyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto +'">' + geneAbbrevMergedInto + '</a> has no antibody.</h3>');
+                                                    jQuery('#validationAntibodyText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto +'">' + geneAbbrevMergedInto + '</a> has no antibody.</h3>');
 
                                                 jQuery('#ignoreAntibody').show();
                                             },
@@ -422,7 +422,7 @@
 
             if (differentNCBIgeneIds) {
                 ncbiGeneIdsIgnored = false;
-                jQuery('#validationNCBIgeneIdsText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following NCBI Gene Id:</h3>');
+                jQuery('#validationNCBIgeneIdsText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following NCBI Gene Id:</h3>');
                 for (var i = 0; i < ncbiGeneIdsOfGene1.length; i++) {
                     jQuery('#validationNCBIgeneIdsText').append('<div>'
                             + '<a target="_blank" href="' + ncbiGeneIdLinksOfGene1[i] +'">'
@@ -430,7 +430,7 @@
                             + '</div>');
                 }
 
-                jQuery('#validationNCBIgeneIdsText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following NCBI Gene Id:</h3>');
+                jQuery('#validationNCBIgeneIdsText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following NCBI Gene Id:</h3>');
                 for (var i = 0; i < ncbiGeneIdsOfGene2.length; i++) {
                     jQuery('#validationNCBIgeneIdsText').append('<div>'
                             + '<a target="_blank" href="' + ncbiGeneIdLinksOfGene2[i] +'">'
@@ -488,7 +488,7 @@
 
             if (differentUniGeneIds) {
                 uniGeneIdsIgnored = false;
-                jQuery('#validationUniGeneIdsText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following UniGene Id:</h3>');
+                jQuery('#validationUniGeneIdsText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following UniGene Id:</h3>');
                 for (var i = 0; i < uniGeneIdsOfGene1.length; i++) {
                     jQuery('#validationUniGeneIdsText').append('<div>'
                             + '<a target="_blank" href="' + uniGeneIdLinksOfGene1[i] +'">'
@@ -496,7 +496,7 @@
                             + '</div>');
                 }
 
-                jQuery('#validationUniGeneIdsText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following UniGene Id:</h3>');
+                jQuery('#validationUniGeneIdsText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following UniGene Id:</h3>');
                 for (var i = 0; i < uniGeneIdsOfGene2.length; i++) {
                     jQuery('#validationUniGeneIdsText').append('<div>'
                             + '<a target="_blank" href="' + uniGeneIdLinksOfGene2[i] +'">'
@@ -552,7 +552,7 @@
 
             if (differentVegaIds) {
                 vegaIdsIgnored = false;
-                jQuery('#validationVegaIdsText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following Vega Id:</h3>');
+                jQuery('#validationVegaIdsText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following Vega Id:</h3>');
                 for (var i = 0; i < vegaIdsOfGene1.length; i++) {
                     jQuery('#validationVegaIdsText').append('<div>'
                             + '<a target="_blank" href="' + vegaIdLinksOfGene1[i] +'">'
@@ -560,7 +560,7 @@
                             + '</div>');
                 }
 
-                jQuery('#validationVegaIdsText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following Vega Id:</h3>');
+                jQuery('#validationVegaIdsText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following Vega Id:</h3>');
                 for (var i = 0; i < vegaIdsOfGene2.length; i++) {
                     jQuery('#validationVegaIdsText').append('<div>'
                             + '<a target="_blank" href="' + vegaIdLinksOfGene2[i] +'">'
@@ -616,7 +616,7 @@
 
             if (differentEnsemblGRCz10Ids) {
                 EnsemblGRCz10IdsIgnored = false;
-                jQuery('#validationEnsemblGRCz10IdsText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following Ensembl(GRCz10) Id:</h3>');
+                jQuery('#validationEnsemblGRCz10IdsText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following Ensembl(GRCz10) Id:</h3>');
                 for (var i = 0; i < EnsemblGRCz10IdsOfGene1.length; i++) {
                     jQuery('#validationEnsemblGRCz10IdsText').append('<div>'
                             + '<a target="_blank" href="' + EnsemblGRCz10LinksOfGene1[i] +'">'
@@ -624,7 +624,7 @@
                             + '</div>');
                 }
 
-                jQuery('#validationEnsemblGRCz10IdsText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following Ensembl(GRCz10) Id:</h3>');
+                jQuery('#validationEnsemblGRCz10IdsText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following Ensembl(GRCz10) Id:</h3>');
                 for (var i = 0; i < EnsemblGRCz10IdsOfGene2.length; i++) {
                     jQuery('#validationEnsemblGRCz10IdsText').append('<div>'
                             + '<a target="_blank" href="' + EnsemblGRCz10LinksOfGene2[i] +'">'
@@ -662,11 +662,11 @@
                             for (transcript in data) {
                                 numberOfTranscripts++;
                                 if (numberOfTranscripts == 1)
-                                    jQuery('#validationTranscriptText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following transcripts:</h3>');
+                                    jQuery('#validationTranscriptText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following transcripts:</h3>');
 
 
                                 jQuery('#validationTranscriptText').append("<div>"
-                                        + "<a target='_blank' href='/action/marker/view/"+data[transcript].zdbID+"'>"+data[transcript].name+"</a>"
+                                        + "<a target='_blank' href='/"+data[transcript].zdbID+"'>"+data[transcript].name+"</a>"
                                         + "</div>");
                             }
 
@@ -686,14 +686,14 @@
                                                 for (transcript in data) {
                                                     numberOfTranscriptsOfMarker2++;
                                                     if (numberOfTranscriptsOfMarker2 == 1)
-                                                        jQuery('#validationTranscriptText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following transcripts:</h3>');
+                                                        jQuery('#validationTranscriptText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following transcripts:</h3>');
 
                                                     jQuery('#validationTranscriptText').append("<div>"
-                                                            + "<a target='_blank' href='/action/marker/view/"+data[transcript].zdbID+"'>"+data[transcript].name+"</a>"
+                                                            + "<a target='_blank' href='/"+data[transcript].zdbID+"'>"+data[transcript].name+"</a>"
                                                             + "</div>");
                                                 }
                                                 if (numberOfTranscriptsOfMarker2 == 0)
-                                                    jQuery('#validationTranscriptText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto +'">' + geneAbbrevMergedInto + '</a> has no transcript.</h3>');
+                                                    jQuery('#validationTranscriptText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto +'">' + geneAbbrevMergedInto + '</a> has no transcript.</h3>');
 
                                                 jQuery('#ignoreTranscript').show();
                                             },
@@ -749,7 +749,7 @@
                     for (orthology1 in orthologyData1) {
                         numberOfOrthology++;
                         if (numberOfOrthology == 1)
-                            jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following orthology:</h3>');
+                            jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following orthology:</h3>');
 
 
                         jQuery('#validationOrthologyText').append("<div>"
@@ -768,7 +768,7 @@
                     for (orthology2 in orthologyData2) {
                         numberOfOrthologyOfMarker2++;
                         if (numberOfOrthologyOfMarker2 == 1)
-                            jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following orthology:</h3>');
+                            jQuery('#validationOrthologyText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following orthology:</h3>');
 
                         jQuery('#validationOrthologyText').append("<div>"
                                 +orthologyData2[orthology2].organism+"&nbsp;&nbsp;&nbsp;"+orthologyData2[orthology2].orthologySymbol+"&nbsp;&nbsp;&nbsp;"+orthologyData2[orthology2].evidenceCode+"&nbsp;&nbsp;&nbsp;"+orthologyData2[orthology2].publication
@@ -809,7 +809,7 @@
                 for (eapPub in eapPubs) {
                     numberOfEapPubs++;
                     if (numberOfEapPubs == 1)
-                        jQuery('#blockMerge').append('<h3>You cannot merge the gene with expression as phenotype data to another gene; you have to do some manual work first. <br/><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has been in the following publication(s) with expression as phenotype data:</h3>');
+                        jQuery('#blockMerge').append('<h3>You cannot merge the gene with expression as phenotype data to another gene; you have to do some manual work first. <br/><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has been in the following publication(s) with expression as phenotype data:</h3>');
 
 
                     jQuery('#blockMerge').append("<div>"
@@ -844,9 +844,9 @@
                 else
                     chromosomeGeneMergeInto = chromosomeGeneMergeInto + '  <a target="_blank" href="/action/mapping/detail/' + geneZdbIdMergedInto + '">Details</a>';
 
-                jQuery('#validationMapInfoText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following mapping info:</h3>');
+                jQuery('#validationMapInfoText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following mapping info:</h3>');
                 jQuery('#validationMapInfoText').append("<div>" + chromosomeGeneDelete + "</div>");
-                jQuery('#validationMapInfoText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following mapping info:</h3>');
+                jQuery('#validationMapInfoText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following mapping info:</h3>');
                 jQuery('#validationMapInfoText').append("<div>" + chromosomeGeneMergeInto + "</div>");
                 jQuery('#ignoreMapping').show();
             }
@@ -893,27 +893,27 @@
             if (differentTargets) {
                 jQuery('#validationSTRText').append('<h4>Merging these two sequence targeting reagents is not allowed because they have different target genes.</h4>');
                 if (targetGeneSymbolsOfSTR1.length > 0) {
-                    jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following target gene:</h4>');
+                    jQuery('#validationSTRText').append('<h4><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following target gene:</h4>');
                     for (var i = 0; i < targetGeneSymbolsOfSTR1.length; i++) {
                         jQuery('#validationSTRText').append('<div>'
-                                + '<a target="_blank" href="/action/marker/view/' + targetIDsOfSTR1[i] +'">'
+                                + '<a target="_blank" href="/' + targetIDsOfSTR1[i] +'">'
                                 + targetGeneSymbolsOfSTR1[i] + '</a>'
                                 + '</div>');
                     }
                 } else {
-                    jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has no target gene.</h4>');
+                    jQuery('#validationSTRText').append('<h4><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has no target gene.</h4>');
                 }
 
                 if (targetGeneSymbolsOfSTR2.length > 0) {
-                    jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> has the following target gene:</h4>');
+                    jQuery('#validationSTRText').append('<h4><a target="_blank" href="/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> has the following target gene:</h4>');
                     for (var i = 0; i < targetGeneSymbolsOfSTR2.length; i++) {
                         jQuery('#validationSTRText').append('<div>'
-                                + '<a target="_blank" href="/action/marker/view/' + targetIDsOfSTR2[i] +'">'
+                                + '<a target="_blank" href="/' + targetIDsOfSTR2[i] +'">'
                                 + targetGeneSymbolsOfSTR2[i] + '</a>'
                                 + '</div>');
                     }
                 } else {
-                    jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> has no target gene.</h4>');
+                    jQuery('#validationSTRText').append('<h4><a target="_blank" href="/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> has no target gene.</h4>');
                 }
             } else {
                 validateFishListForMergingSRTs(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto);
@@ -955,7 +955,7 @@
 
             if (differentSequence) {
                 jQuery('#validationSTRText').append('<h4>Merging these two sequence targeting reagents is not allowed because they have different sequences:</h4>');
-                jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following sequence:</h4>');
+                jQuery('#validationSTRText').append('<h4><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following sequence:</h4>');
                 if(isTALEN) {
                     jQuery('#validationSTRText').append('<div>Sequence 1: '+ sequenceSTR1 + '</div>');
                     jQuery('#validationSTRText').append('<div>Sequence 2: '+ secondSequenceSTR1 + '</div>');
@@ -965,7 +965,7 @@
                 if(!differentTargets)
                     jQuery('#useSeqencesForSTR').show();
 
-                jQuery('#validationSTRText2').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> has the following sequence:</h4>');
+                jQuery('#validationSTRText2').append('<h4><a target="_blank" href="/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> has the following sequence:</h4>');
                 if(isTALEN) {
                     jQuery('#validationSTRText2').append('<div>Sequence 1: '+ sequenceSTR2 + '</div>');
                     jQuery('#validationSTRText2').append('<div>Sequence 2: '+ secondSequenceSTR2 + '</div>');
@@ -1037,7 +1037,7 @@
             if (differentFish) {
                 jQuery('#validationSTRText3').append('<h4>Merging these two sequence targeting reagents is not allowed because they have been with different fish.</h4>');
                 if (str1UsedInFish === "Yes") {
-                    jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with the following fish:</h4>');
+                    jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with the following fish:</h4>');
                     for (var i = 0; i < fishNamesOfSTR1.length; i++) {
                         jQuery('#validationSTRText3').append('<div>'
                                 + '<a target="_blank" href="/' + fishIDsOfSTR1[i] +'">'
@@ -1045,11 +1045,11 @@
                                 + '</div>');
                     }
                 } else {
-                    jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with no fish.</h4>');
+                    jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is associated with no fish.</h4>');
                 }
 
                 if (str2UsedInFish === "Yes") {
-                    jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with the following fish:</h4>');
+                    jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with the following fish:</h4>');
                     for (var i = 0; i < fishNamesOfSTR2.length; i++) {
                         jQuery('#validationSTRText3').append('<div>'
                                 + '<a target="_blank" href="/' + fishIDsOfSTR2[i] +'">'
@@ -1057,7 +1057,7 @@
                                 + '</div>');
                     }
                 } else {
-                    jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with no fish.</h4>');
+                    jQuery('#validationSTRText3').append('<h4><a target="_blank" href="/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is associated with no fish.</h4>');
                 }
             }
 
@@ -1197,10 +1197,10 @@
             <input type="hidden" id="merge_oid" name="merge_oid" value="none">
             <input type="hidden" id="intoMarkerAbbrev" name="intoMarkerAbbrev" value="none">
             <p/>
-            Merge <a target="_blank" class="external" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> into
+            Merge <a target="_blank" class="external" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> into
           <span id="into"><input id="mergedIntoGeneAbbrev" value="" type="text" size="15" />
           </span>&nbsp;&nbsp;
-          <span id="warning" style="font-size: large; color: red">(Warning: <a target="_blank" class="external" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> will be deleted after the merging!)
+          <span id="warning" style="font-size: large; color: red">(Warning: <a target="_blank" class="external" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> will be deleted after the merging!)
           </span>
             <br/><br/>
             <input type="button" value="Merge these two markers" id="submitMerge" title="Perform the merge action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -1271,7 +1271,7 @@
                 <tr>
                     <td valign="top">
                         Merge <a target="_blank" class="external"
-                                 href="/action/marker/view/${formBean.zdbIDToDelete}">
+                                 href="/${formBean.zdbIDToDelete}">
                             ${formBean.markerToDeleteViewString}</a>
                             <%--<a target="_blank"  class="external"--%>
                             <%--href="/action/marker/marker-edit?zdbID=${formBean.zdbIDToDelete}">--%>

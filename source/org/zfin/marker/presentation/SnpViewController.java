@@ -17,37 +17,33 @@ import org.zfin.sequence.blast.Database;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class SnpViewController {
 
     private Logger logger = Logger.getLogger(SnpViewController.class);
-    private String snpBlastUrl ;
-    private String ncbiBlastUrl ;
+    private String snpBlastUrl;
+    private String ncbiBlastUrl;
 
     @Autowired
-    private MarkerRepository markerRepository ;
+    private MarkerRepository markerRepository;
 
-    public SnpViewController(){
+    @Autowired
+    private MarkerService markerService;
+
+    public SnpViewController() {
         snpBlastUrl = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.SNPBLAST).getLocation();
         ncbiBlastUrl = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.BLAST).getLocation();
         HibernateUtil.closeSession();
     }
 
-    @RequestMapping(value ="/snp/view/{zdbID}")
-    public String getView(
-            Model model
-            , @PathVariable("zdbID") String zdbID
-    ) throws Exception {
-        // set base bean
-
+    @RequestMapping(value = "/snp/view/{zdbID}")
+    public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.debug("zdbID: " + zdbID);
         SNP marker = markerRepository.getSNPByID(zdbID);
-        //Marker marker = markerRepository.getMarkerByID(zdbID);
         logger.debug("snp marker: " + marker);
-        logger.debug("snp sequence component: " + marker.getSequence().getTargetSequence()) ;
+        logger.debug("snp sequence component: " + marker.getSequence().getTargetSequence());
 
         SnpMarkerBean snpMarkerBean = new SnpMarkerBean();
         snpMarkerBean.setMarker(marker);
@@ -63,7 +59,7 @@ public class SnpViewController {
         snpMarkerBean.setSequence(marker.getSequence());
 
         // snp marker relationships (is only secondary)
-        List<MarkerRelationshipPresentation> cloneRelationships  = new ArrayList<>();
+        List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<>();
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
         snpMarkerBean.setMarkerRelationshipPresentationList(cloneRelationships);
 
