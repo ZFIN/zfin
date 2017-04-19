@@ -109,16 +109,20 @@ jQuery(document).ready(function () {
             jQuery('#merge_oid').val(markerZdbIdToBeMergedInto);
             jQuery('#intoMarkerAbbrev').val(markerAbbrevToMergeInto);
             jQuery('#into').html('<a target="_blank" class="external" href="/action/marker/view/' + markerZdbIdToBeMergedInto + '">' + markerAbbrevToMergeInto + '</a>');
-            <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'}">
+            <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'
+                          || formBean.markerToDelete.markerType.name eq 'LINCRNAG' || formBean.markerToDelete.markerType.name eq 'NCRNAG'
+                          || formBean.markerToDelete.markerType.name eq 'SNORNAG' || formBean.markerToDelete.markerType.name eq 'LNCRNAG'
+                          || formBean.markerToDelete.markerType.name eq 'SCRNAG' || formBean.markerToDelete.markerType.name eq 'MIRNAG'
+                          || formBean.markerToDelete.markerType.name eq 'TRNAG' || formBean.markerToDelete.markerType.name eq 'SRPRNAG'
+                          || formBean.markerToDelete.markerType.name eq 'PIRNAG' || formBean.markerToDelete.markerType.name eq 'RRNAG'}">
                     validateEap(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
             </c:if>
-            <c:if test="${formBean.markerToDelete.markerType.name ne 'GENE' && formBean.markerToDelete.markerType.name ne 'GENEP'
-                  && formBean.markerToDelete.markerType.name ne 'MRPHLNO' && formBean.markerToDelete.markerType.name ne 'TALEN' && formBean.markerToDelete.markerType.name ne 'CRISPR'}">
-                    enableMerge();
-            </c:if>
+
             <c:if test="${formBean.markerToDelete.markerType.name eq 'MRPHLNO' || formBean.markerToDelete.markerType.name eq 'TALEN' || formBean.markerToDelete.markerType.name eq 'CRISPR'}">
                     validateTargetGenesForMergingSRTs(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
             </c:if>
+
+            enableMerge();
             return false;
         }
     });
