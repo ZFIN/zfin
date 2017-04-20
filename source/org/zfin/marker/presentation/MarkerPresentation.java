@@ -185,7 +185,7 @@ public class MarkerPresentation extends EntityPresentation {
     }
 
     public static String getAntibodyLink(Marker marker) {
-        return getViewLink(marker.getZdbID(), marker.getName(), null, marker.getZdbID());
+        return getViewLink(marker.getZdbID(), marker.getName(), marker.getZdbID(), null, marker.getAbbreviation());
     }
 
     /**

@@ -109,12 +109,7 @@
                     jQuery('#merge_oid').val(markerZdbIdToBeMergedInto);
                     jQuery('#intoMarkerAbbrev').val(markerAbbrevToMergeInto);
                     jQuery('#into').html('<a target="_blank" class="external" href="/action/marker/view/' + markerZdbIdToBeMergedInto + '">' + markerAbbrevToMergeInto + '</a>');
-                    <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'
-                                  || formBean.markerToDelete.markerType.name eq 'LINCRNAG' || formBean.markerToDelete.markerType.name eq 'NCRNAG'
-                                  || formBean.markerToDelete.markerType.name eq 'SNORNAG' || formBean.markerToDelete.markerType.name eq 'LNCRNAG'
-                                  || formBean.markerToDelete.markerType.name eq 'SCRNAG' || formBean.markerToDelete.markerType.name eq 'MIRNAG'
-                                  || formBean.markerToDelete.markerType.name eq 'TRNAG' || formBean.markerToDelete.markerType.name eq 'SRPRNAG'
-                                  || formBean.markerToDelete.markerType.name eq 'PIRNAG' || formBean.markerToDelete.markerType.name eq 'RRNAG'}">
+                    <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'}">
                           validateEap(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
                     </c:if>
                     <c:if test="${formBean.markerToDelete.markerType.name eq 'MRPHLNO' || formBean.markerToDelete.markerType.name eq 'TALEN' || formBean.markerToDelete.markerType.name eq 'CRISPR'}">
@@ -130,7 +125,7 @@
                                   || formBean.markerToDelete.markerType.name eq 'EBS' || formBean.markerToDelete.markerType.name eq 'TLNRR'
                                   || formBean.markerToDelete.markerType.name eq 'LCR' || formBean.markerToDelete.markerType.name eq 'DNAMO'
                                   || formBean.markerToDelete.markerType.name eq 'PROMOTER'}">
-                          validateGeneWithOrthology(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
+                       //   validateGeneWithOrthology(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
                     </c:if>
                     return false;
                 }
@@ -1226,7 +1221,41 @@
 
     </script>
 
-    <c:if test="${formBean.markerToDelete.markerType.name ne 'ATB'}">
+    <c:if test="${formBean.markerToDelete.markerType.name eq 'LINCRNAG' || formBean.markerToDelete.markerType.name eq 'NCRNAG'
+                                  || formBean.markerToDelete.markerType.name eq 'SNORNAG' || formBean.markerToDelete.markerType.name eq 'LNCRNAG'
+                                  || formBean.markerToDelete.markerType.name eq 'SCRNAG' || formBean.markerToDelete.markerType.name eq 'MIRNAG'
+                                  || formBean.markerToDelete.markerType.name eq 'TRNAG' || formBean.markerToDelete.markerType.name eq 'SRPRNAG'
+                                  || formBean.markerToDelete.markerType.name eq 'PIRNAG' || formBean.markerToDelete.markerType.name eq 'RRNAG'
+                                  || formBean.markerToDelete.markerType.name eq 'NCCR' || formBean.markerToDelete.markerType.name eq 'TFBS'
+                                  || formBean.markerToDelete.markerType.name eq 'RNAMO' || formBean.markerToDelete.markerType.name eq 'NCBS'
+                                  || formBean.markerToDelete.markerType.name eq 'MDNAB' || formBean.markerToDelete.markerType.name eq 'ENHANCER'
+                                  || formBean.markerToDelete.markerType.name eq 'EMR' || formBean.markerToDelete.markerType.name eq 'HMR'
+                                  || formBean.markerToDelete.markerType.name eq 'NUCMO' || formBean.markerToDelete.markerType.name eq 'BR'
+                                  || formBean.markerToDelete.markerType.name eq 'PROTBS' || formBean.markerToDelete.markerType.name eq 'TRR'
+                                  || formBean.markerToDelete.markerType.name eq 'BINDSITE' || formBean.markerToDelete.markerType.name eq 'RR'
+                                  || formBean.markerToDelete.markerType.name eq 'EBS' || formBean.markerToDelete.markerType.name eq 'TLNRR'
+                                  || formBean.markerToDelete.markerType.name eq 'LCR' || formBean.markerToDelete.markerType.name eq 'DNAMO'
+                                  || formBean.markerToDelete.markerType.name eq 'PROMOTER'}">
+        <br/>
+        <div id="disabledNow" style="font-size: large; color: red">Region and NTR merge is disabled at this time.</div>
+    </c:if>
+
+    <c:if test="${formBean.markerToDelete.markerType.name ne 'ATB'
+                                  && formBean.markerToDelete.markerType.name ne 'LINCRNAG' && formBean.markerToDelete.markerType.name ne 'NCRNAG'
+                                  && formBean.markerToDelete.markerType.name ne 'SNORNAG' && formBean.markerToDelete.markerType.name ne 'LNCRNAG'
+                                  && formBean.markerToDelete.markerType.name ne 'SCRNAG' && formBean.markerToDelete.markerType.name ne 'MIRNAG'
+                                  && formBean.markerToDelete.markerType.name ne 'TRNAG' && formBean.markerToDelete.markerType.name ne 'SRPRNAG'
+                                  && formBean.markerToDelete.markerType.name ne 'PIRNAG' && formBean.markerToDelete.markerType.name ne 'RRNAG'
+                                  && formBean.markerToDelete.markerType.name ne 'NCCR' && formBean.markerToDelete.markerType.name ne 'TFBS'
+                                  && formBean.markerToDelete.markerType.name ne 'RNAMO' && formBean.markerToDelete.markerType.name ne 'NCBS'
+                                  && formBean.markerToDelete.markerType.name ne 'MDNAB' && formBean.markerToDelete.markerType.name ne 'ENHANCER'
+                                  && formBean.markerToDelete.markerType.name ne 'EMR' && formBean.markerToDelete.markerType.name ne 'HMR'
+                                  && formBean.markerToDelete.markerType.name ne 'NUCMO' && formBean.markerToDelete.markerType.name ne 'BR'
+                                  && formBean.markerToDelete.markerType.name ne 'PROTBS' && formBean.markerToDelete.markerType.name ne 'TRR'
+                                  && formBean.markerToDelete.markerType.name ne 'BINDSITE' && formBean.markerToDelete.markerType.name ne 'RR'
+                                  && formBean.markerToDelete.markerType.name ne 'EBS' && formBean.markerToDelete.markerType.name ne 'TLNRR'
+                                  && formBean.markerToDelete.markerType.name ne 'LCR' && formBean.markerToDelete.markerType.name ne 'DNAMO'
+                                  && formBean.markerToDelete.markerType.name ne 'PROMOTER'}">
         <form id="mergeTheGenes" action="/cgi-bin/merge_markers.pl">
             <input type="hidden" id="zdbIDToDelete" name="OID" value="${formBean.zdbIDToDelete}">
             <input type="hidden" id="merge_oid" name="merge_oid" value="none">
