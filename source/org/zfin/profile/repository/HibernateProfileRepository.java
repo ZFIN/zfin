@@ -372,14 +372,21 @@ public class HibernateProfileRepository implements ProfileRepository {
     @Override
     public List<OrganizationLink> getSupplierLinksForZdbId(String zdbID) {
         String sql = "" +
-                "select id.idsup_supplier_zdb_id, su.srcurl_url, " +
-                "su.srcurl_display_text, id.idsup_acc_num, comp.name as cname, l.name as lname " +
-                "from int_data_supplier id " +
-                "left outer join source_url su on id.idsup_supplier_zdb_id = su.srcurl_source_zdb_id " +
-                "left outer join company comp on comp.zdb_id=id.idsup_supplier_zdb_id " +
-                "left outer join lab l on l.zdb_id=id.idsup_supplier_zdb_id " +
-                "where id.idsup_data_zdb_id = :OID  " +
-                "and su.srcurl_purpose = 'order' ";
+                "SELECT id.idsup_supplier_zdb_id," +
+                "       su.srcurl_url," +
+                "       su.srcurl_display_text," +
+                "       id.idsup_acc_num," +
+                "       comp.NAME AS cname," +
+                "       l.NAME    AS lname " +
+                "FROM   int_data_supplier id" +
+                "       LEFT OUTER JOIN source_url su" +
+                "                    ON id.idsup_supplier_zdb_id = su.srcurl_source_zdb_id" +
+                "                       AND su.srcurl_purpose = 'order'" +
+                "       LEFT OUTER JOIN company comp" +
+                "                    ON comp.zdb_id = id.idsup_supplier_zdb_id" +
+                "       LEFT OUTER JOIN lab l" +
+                "                    ON l.zdb_id = id.idsup_supplier_zdb_id " +
+                "WHERE  id.idsup_data_zdb_id =  :OID  " ;
 
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("OID", zdbID)
