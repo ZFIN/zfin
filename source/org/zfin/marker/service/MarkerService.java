@@ -813,7 +813,11 @@ public class MarkerService {
 
     public static OrthologyPresentationBean getOrthologyEvidence(Marker gene, Publication publication) {
         Collection<Ortholog> orthologs = getOrthologyRepository().getOrthologs(gene);
-        return getOrthologyPresentationBean(orthologs, gene, publication);
+        if (orthologs!=null) {
+            return getOrthologyPresentationBean(orthologs, gene, publication);
+        }
+        else
+            return null;
     }
 
     public static OrthologyPresentationBean getOrthologyEvidence(Marker gene) {
