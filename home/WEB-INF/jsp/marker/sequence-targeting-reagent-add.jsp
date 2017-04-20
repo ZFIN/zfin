@@ -134,7 +134,8 @@
 
         $('#strType').on('change', displaySequenceControls);
         $('#supplier').autocompletify('/action/marker/find-suppliers?term=%QUERY');
-        $('#targetGeneSymbol').autocompletify('/action/quicksearch/autocomplete?q=%QUERY&category=Gene+%2F+Transcript&fq=type%3A("Gene"+OR+"Pseudogene"+OR+"miRNA+Gene"+OR+"tRNA+Gene"+OR+"snoRNA+Gene"+OR+"rRNA+Gene"+OR+"lncRNA+Gene"+OR+"lincRNA+Gene"+OR+"piRNA+Gene"+OR+"scRNA+Gene")');
+        //$('#targetGeneSymbol').autocompletify('/action/quicksearch/autocomplete?q=%QUERY&category=Gene+%2F+Transcript&fq=type%3A("Gene"+OR+"Pseudogene"+OR+"miRNA+Gene"+OR+"tRNA+Gene"+OR+"snoRNA+Gene"+OR+"rRNA+Gene"+OR+"lncRNA+Gene"+OR+"lincRNA+Gene"+OR+"piRNA+Gene"+OR+"scRNA+Gene")');
+        $('#targetGeneSymbol').autocompletify('/action/marker/find-targetGenes?term=%QUERY');
 
 
         displaySequenceControls();
