@@ -2580,15 +2580,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString) {
+
+         List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
         String hql = " select targetGene from Marker targetGene " +
                 "where " +
                 "lower(targetGene.abbreviation) like :lookupString " +
-                "and targetGene.markerType.name in (:type1 , :type2) " +
+                "and targetGene.markerType in (:markerType)  " +
                 "order by targetGene.abbreviation  ";
+
         return HibernateUtil.currentSession().createQuery(hql)
                 .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
-                .setString("type1", "GENE")
-                .setString("type2", "GENEP")
+                .setParameterList("markerType", markerTypes)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
@@ -2603,6 +2605,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 .list()
                 ;
     }
+
+
+
+
 
 
     public List<LookupEntry> getConstructComponentsForString(String lookupString, String zdbId) {
