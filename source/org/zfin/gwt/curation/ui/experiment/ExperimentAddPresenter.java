@@ -109,7 +109,8 @@ public class ExperimentAddPresenter implements HandlesError {
 
     public void createExperiment() {
         final ExperimentDTO environmentDTO = getEnvironmentFromForm();
-
+        if(environmentDTO.getName().isEmpty())
+            return;
         try {
             REST.withCallback(new ZfinAsynchronousCallback<List<ExperimentDTO>>("Failed to save a Experiment: ", view.errorLabel) {
                 public void onSuccess(Method method, List<ExperimentDTO> experimentList) {
