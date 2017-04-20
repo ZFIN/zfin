@@ -189,7 +189,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         geneViewController.setExpressionService(new ExpressionService());
         geneViewController.setMarkerRepository(getMarkerRepository());
         Model model = new ExtendedModelMap();
-        geneViewController.getGeneView("ZDB-GENE-001103-1", model);
+        geneViewController.getGeneView(model, "ZDB-GENE-001103-1");
     }
 
 
