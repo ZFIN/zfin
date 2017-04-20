@@ -789,7 +789,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void labSupplierSecond() {
-        String antibodyName = "anti-DLX3b";
+        String antibodyName = "ab1-DLX3b";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
         Set<MarkerSupplier> suppliers = antibody.getSuppliers();
         if (suppliers != null) {
@@ -827,10 +827,9 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void updateAntibody() {
 
         // anti-DLX3b
-        String abName = "anti-DLX3b";
+        String abName = "ab1-DLX3b";
         Session session = HibernateUtil.currentSession();
-        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
-        Antibody antibody = antibodyRepository.getAntibodyByName(abName);
+        Antibody antibody = getAntibodyRepository().getAntibodyByName(abName);
         antibody.setName("new name");
         antibody.setAbbreviation("new name");
         session.update(antibody);
@@ -841,7 +840,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void updateAntibodyViaRenameMarkerMethod() {
 
         // anti-DLX3b
-        String abName = "anti-DLX3b";
+        String abName = "ab1-DLX3b";
         Session session = HibernateUtil.currentSession();
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
         Antibody antibody = antibodyRepository.getAntibodyByName(abName);
