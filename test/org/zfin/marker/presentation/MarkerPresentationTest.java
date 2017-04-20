@@ -39,7 +39,7 @@ public class MarkerPresentationTest {
     @Test
     public void markerLink() {
         String link = MarkerPresentation.getLink(marker);
-        assertEquals("<a href=\"/ZDB-GENE-081507-1\" name=\"fibroblast growth factor 8 a\" id='ZDB-GENE-081507-1'><span class=\"genedom\" title=\"fibroblast growth factor 8 a\" id=\"Gene Symbol\">fgf8</span></a>",
+        assertEquals("<a href=\"/ZDB-GENE-081507-1\" id=\"ZDB-GENE-081507-1\" title=\"fibroblast growth factor 8 a\"><span class=\"genedom\" title=\"fibroblast growth factor 8 a\" id=\"Gene Symbol\">fgf8</span></a>",
                 link
         );
 

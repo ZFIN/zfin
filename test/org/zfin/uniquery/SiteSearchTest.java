@@ -20,10 +20,9 @@ import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test class for site search.
@@ -105,16 +104,6 @@ public class SiteSearchTest {
         }
         isearcher.close();
         directory.close();
-    }
-
-    @Test
-    public void fancyExcludeDefinition() {
-//        Pattern  pattern = Pattern.compile("\\p{ASCII}*marker/view\\p{ASCII}*ZDB-(!GENE|!ATB|\\p{ASCII}*)-\\p{ASCII}*") ;
-        Pattern pattern = Pattern.compile("marker/view/ZDB-(?!(GENE|ATB))");
-//        Pattern  pattern = Pattern.compile("marker/view") ;
-        assertFalse(pattern.matcher("http://localhost/ZDB-GENE-040425-396").find());
-        assertFalse(pattern.matcher("http://localhost/ZDB-ATB-040425-396").find());
-        assertTrue(pattern.matcher("http://localhost/ZDB-CDNA-040425-396").find());
     }
 
     @Test

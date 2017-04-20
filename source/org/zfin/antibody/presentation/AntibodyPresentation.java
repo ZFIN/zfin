@@ -8,8 +8,6 @@ import org.zfin.framework.presentation.EntityPresentation;
  */
 public class AntibodyPresentation extends EntityPresentation {
 
-    private static final String uri = "marker/view/";
-
     /**
      * Generates a link to the antibody detail page.
      *
@@ -17,7 +15,7 @@ public class AntibodyPresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(Antibody antibody) {
-        return getTomcatLink(uri, antibody.getZdbID(), antibody.getName(), null);
+        return getViewLink(antibody.getZdbID(), antibody.getName());
     }
 
     public static String getName(Antibody antibody) {

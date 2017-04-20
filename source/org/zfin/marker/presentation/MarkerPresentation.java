@@ -28,7 +28,6 @@ import java.util.Set;
 public class MarkerPresentation extends EntityPresentation {
 
     private static final Logger logger = Logger.getLogger(MarkerPresentation.class);
-    public static final String marker_uri = "marker/view/";
     public static final String MARKER_NAME = "markerName";
 
     /**
@@ -99,7 +98,7 @@ public class MarkerPresentation extends EntityPresentation {
 
 
     public static String getMarkerLink(Marker marker) {
-        return getTomcatLink(marker_uri, marker.getZdbID(), getAbbreviation(marker), marker.getName());
+        return getViewLink(marker.getZdbID(), getAbbreviation(marker), marker.getName(), null, marker.getZdbID());
     }
 
     public static String getMarkerLinkByZfinEntity(ZfinEntity entity) {
@@ -178,16 +177,15 @@ public class MarkerPresentation extends EntityPresentation {
     }
 
     public static String getTranscriptLink(Transcript transcript) {
-        return getTomcatLink(marker_uri, transcript.getZdbID(), getName(transcript), null) + (transcript.isWithdrawn() ? WITHDRAWN : "");
+        return getViewLink(transcript.getZdbID(), getName(transcript)) + (transcript.isWithdrawn() ? WITHDRAWN : "");
     }
 
     public static String getCloneLink(Marker marker) {
-//        return getTomcatLink(clone_uri, marker.getZdbID(), getAbbreviation(marker));
-        return getTomcatLink(marker_uri, marker.getZdbID(), getAbbreviation(marker));
+        return getViewLink(marker.getZdbID(), getAbbreviation(marker));
     }
 
     public static String getAntibodyLink(Marker marker) {
-        return getTomcatLink(marker_uri, marker.getZdbID(), marker.getName(), null, marker.getAbbreviation());
+        return getViewLink(marker.getZdbID(), marker.getName(), null, marker.getZdbID());
     }
 
     /**
