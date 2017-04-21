@@ -1834,7 +1834,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "            (" +
                 "              SELECT mtgrpmem_mrkr_type" +
                 "              FROM marker_type_group_member" +
-                "              WHERE mtgrpmem_mrkr_type_group = 'SEARCH_MK'" +
+                "              WHERE mtgrpmem_mrkr_type_group in ('GENEDOM_AND_NTR','SEARCH_MK')" +
                 "            )" +
                 "        AND (mrkr_type <> 'MRPHLNO' AND mrkr_type <> 'EFG')  " +
                 "" +
