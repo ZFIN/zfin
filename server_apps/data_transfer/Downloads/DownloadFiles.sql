@@ -1416,7 +1416,7 @@ into temp tmp_pubs;
 unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt'
  DELIMITER "	"
 SELECT distinct mrkr_abbrev,
-       mrkr_zdb_id
+       mrkr_zdb_id,
        source_id,
        CASE pub.jtype
            WHEN "Unpublished" THEN "Data Submission"
