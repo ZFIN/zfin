@@ -17,7 +17,7 @@ PIRNAG /action/marker/gene/view/ZDB-PIRNAG
 TRNAG /action/marker/gene/view/ZDB-TRNAG
 NCRNAG /action/marker/gene/view/ZDB-NCRNAG
 SCRNAG /action/marker/gene/view/ZDB-SCRNAG
-SRPNAG /action/marker/gene/view/ZDB-SRPNAG
+SRPRNAG /action/marker/gene/view/ZDB-SRPRNAG
 NCCR /action/marker/region/view/ZDB-NCCR
 TLNNR /action/marker/region/view/ZDB-TLNNR
 BR /action/marker/region/view/ZDB-BR
