@@ -278,6 +278,26 @@ public class FishGenotypeConstructionPresenter implements Presenter {
         view.updateGenotypeFeatureList(genotypeFeatureDTOList, backgroundGenoList, newStrList);
     }
 
+    public void retrieveFish(FishDTO fish) {
+        diseaseRpcService.retrieveFish(fish.getZdbID(),
+                new RetrieveFishCallBack("Retrieve Fish", view.getErrorLabel()));
+
+    }
+
+    class RetrieveFishCallBack extends ZfinAsyncCallback<FishDTO> {
+
+
+        public RetrieveFishCallBack(String errorMessage, ErrorHandler errorLabel) {
+            super(errorMessage, errorLabel);
+        }
+
+        @Override
+        public void onSuccess(FishDTO fish) {
+            populate(fish);
+        }
+    }
+
+
     class RetrieveZygosityListCallBack extends ZfinAsyncCallback<List<ZygosityDTO>> {
 
         public RetrieveZygosityListCallBack(String errorMessage, ErrorHandler errorLabel) {
