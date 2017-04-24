@@ -934,7 +934,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        types.add(MarkerRelationship.Type.CONTAINS_REGION);
 
         PaginationResult<Marker> relatedMarkerResult = markerRepository.getRelatedMarker(efg, types, new PaginationBean());
         assertNotNull(relatedMarkerResult);

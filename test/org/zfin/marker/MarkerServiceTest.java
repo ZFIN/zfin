@@ -374,7 +374,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        types.add(MarkerRelationship.Type.CONTAINS_REGION);
         Set<Marker> set = MarkerService.getRelatedMarker(efg, types);
         assertNotNull(set);
     }
