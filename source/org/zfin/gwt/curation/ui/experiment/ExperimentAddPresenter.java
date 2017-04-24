@@ -17,6 +17,7 @@ import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.ui.ZfinAsynchronousCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.DeleteImage;
+import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.List;
 
@@ -109,7 +110,7 @@ public class ExperimentAddPresenter implements HandlesError {
 
     public void createExperiment() {
         final ExperimentDTO environmentDTO = getEnvironmentFromForm();
-        if(environmentDTO.getName().isEmpty())
+        if (environmentDTO.getName().isEmpty())
             return;
         try {
             REST.withCallback(new ZfinAsynchronousCallback<List<ExperimentDTO>>("Failed to save a Experiment: ", view.errorLabel) {
@@ -179,6 +180,11 @@ public class ExperimentAddPresenter implements HandlesError {
 
         @Override
         public void onClick(ClickEvent clickEvent) {
+            String newExperimentName = experimentTextBox.getText();
+            if (StringUtils.isEmpty(newExperimentName)) {
+                view.setError("Cannot have an empty experiment name");
+                return;
+            }
             experimentDTO.setName(experimentTextBox.getValue());
             try {
                 REST.withCallback(new ZfinAsynchronousCallback<List<ExperimentDTO>>("Failed to update an Experiment: ", view.errorLabel) {
