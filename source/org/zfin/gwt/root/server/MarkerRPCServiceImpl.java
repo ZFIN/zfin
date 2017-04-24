@@ -356,7 +356,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
      *
      */
     public String getEditableRelationshipTypesForConstruct() {
-        return MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION.toString();
+        return MarkerRelationship.Type.CONTAINS_REGION.toString();
     }
 
     public List<MarkerDTO> getMarkersForRelation(String featureTypeName, String publicationZdbID) {

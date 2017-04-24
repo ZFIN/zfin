@@ -217,7 +217,7 @@ public class SequenceTargetingReagentViewController {
         Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        types.add(MarkerRelationship.Type.CONTAINS_REGION);
         Set<Marker> markerSet = new TreeSet<>();
         PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(sequenceTargetingReagent, types, 7);
         markerSet.addAll(relatedMarker.getPopulatedResults());
@@ -238,7 +238,7 @@ public class SequenceTargetingReagentViewController {
         Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        types.add(MarkerRelationship.Type.CONTAINS_REGION);
         Set<Marker> markerSet = new TreeSet<>();
         // get all constructs
         PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(str, types, -1);

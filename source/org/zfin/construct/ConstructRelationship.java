@@ -25,7 +25,7 @@ public class ConstructRelationship implements EntityAttribution {
 
 
         CODING_SEQUENCE_OF("coding sequence of"),
-        CONTAINS_ENGINEERED_REGION("contains engineered region"),
+        CONTAINS_REGION("contains region"),
         CONTAINS_POLYMORPHISM("contains polymorphism"),
 
         PROMOTER_OF("promoter of");

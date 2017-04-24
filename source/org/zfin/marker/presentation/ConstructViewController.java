@@ -60,7 +60,7 @@ public class ConstructViewController {
                 construct, true
                 , MarkerRelationship.Type.PROMOTER_OF
                 , MarkerRelationship.Type.CODING_SEQUENCE_OF
-                , MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION
+                , MarkerRelationship.Type.CONTAINS_REGION
         ));
 
         for (MarkerRelationshipPresentation markerRelationshipPresentation : cloneRelationships) {

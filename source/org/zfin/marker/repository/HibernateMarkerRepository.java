@@ -308,7 +308,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
         markerRelationshipList.add(MarkerRelationship.Type.PROMOTER_OF);
         markerRelationshipList.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_REGION);
 
         Session session = currentSession();
         String hql = "select distinct mr from MarkerRelationship as mr, " +
@@ -336,7 +336,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
         markerRelationshipList.add(MarkerRelationship.Type.PROMOTER_OF);
         markerRelationshipList.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_REGION);
 
         Session session = currentSession();
         String hql = "select distinct mr from MarkerRelationship as mr " +
@@ -2276,7 +2276,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
         markerRelationshipList.add(MarkerRelationship.Type.PROMOTER_OF);
         markerRelationshipList.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_REGION);
 
         String hql = " select m from MarkerRelationship mr1 , MarkerRelationship  mr2, Marker m " +
                 " where mr1.secondMarker.zdbID=mr2.secondMarker.zdbID " +

@@ -10,7 +10,7 @@ public enum MarkerRelationshipEnumTypeGWTHack {
     CLONE_CONTAINS_TRANSCRIPT("clone contains transcript"),
     CLONE_OVERLAP("clone overlap"),
     CODING_SEQUENCE_OF("coding sequence of"),
-    CONTAINS_ENGINEERED_REGION("contains engineered region"),
+    CONTAINS_REGION("contains region"),
     CONTAINS_POLYMORPHISM("contains polymorphism"),
     CRISPR_TARGETS_REGION("crispr targets region"),
     GENE_CONTAINS_SMALL_SEGMENT("gene contains small segment"),

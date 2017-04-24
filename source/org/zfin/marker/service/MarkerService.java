@@ -326,7 +326,7 @@ public class MarkerService {
                 , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
                 , MarkerRelationship.Type.PROMOTER_OF
                 , MarkerRelationship.Type.CODING_SEQUENCE_OF
-                , MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION
+                , MarkerRelationship.Type.CONTAINS_REGION
                 , MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY
                 , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
                 , MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE
