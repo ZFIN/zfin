@@ -104,7 +104,7 @@ public class FishModule extends Composite implements ZfinCurationModule {
                 new CloneFishEventHandler() {
                     @Override
                     public void onClone(CloneFishEvent event) {
-                        genotypeConstructionPresenter.populate(event.getFish());
+                        genotypeConstructionPresenter.retrieveFish(event.getFish());
                     }
                 });
     }
