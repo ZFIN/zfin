@@ -98,5 +98,23 @@
         </exec>
     </target>
 
+    <target name="aws-ls-data" depends="">
+        <echo message="List directory AWS S3"/>
+        <exec executable="aws" failifexecutionfails="true">
+            <arg value="s3"/>
+            <arg value="ls"/>
+            <arg value="s3://mod-datadumps/data/"/>
+        </exec>
+    </target>
+
+    <target name="aws-ls-ortho" depends="">
+        <echo message="List directory AWS S3"/>
+        <exec executable="aws" failifexecutionfails="true">
+            <arg value="s3"/>
+            <arg value="ls"/>
+            <arg value="s3://mod-datadumps/ORTHO/"/>
+        </exec>
+    </target>
+
 
 </project>

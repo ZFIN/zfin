@@ -2,9 +2,15 @@ package org.zfin.marker;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.AppConfig;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.mapping.presentation.MappedMarkerBean;
@@ -32,6 +38,9 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 /**
  * Tests for org.zfin.marker.service.MarkerService
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {AppConfig.class})
+@WebAppConfiguration
 public class MarkerServiceTest extends AbstractDatabaseTest {
 
     private Logger logger = Logger.getLogger(MarkerServiceTest.class);
@@ -183,11 +192,11 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
     }
 
 
+    @Autowired
+    GeneViewController geneViewController;
+
     @Test
     public void geneViewController() throws Exception {
-        GeneViewController geneViewController = new GeneViewController();
-        geneViewController.setExpressionService(new ExpressionService());
-        geneViewController.setMarkerRepository(getMarkerRepository());
         Model model = new ExtendedModelMap();
         geneViewController.getGeneView(model, "ZDB-GENE-001103-1");
     }
