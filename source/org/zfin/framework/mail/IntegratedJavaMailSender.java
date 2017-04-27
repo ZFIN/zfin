@@ -103,7 +103,7 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
         return sendMail(subject, message, doDefaultSubjectHeader, fromEmail, recipients, true, filename);
     }
 
-    private String[] filterEmail(String... emailAddresses) {
+    public String[] filterEmail(String... emailAddresses) {
         String[] returnEmails = new String[emailAddresses.length];
         int i = 0;
         for (String emailAddress : emailAddresses) {
@@ -112,7 +112,7 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
         return returnEmails;
     }
 
-    private String filterEmail(String emailAddress) {
+    public String filterEmail(String emailAddress) {
         return emailAddress.replaceAll("\\\\@", "@");
     }
 
