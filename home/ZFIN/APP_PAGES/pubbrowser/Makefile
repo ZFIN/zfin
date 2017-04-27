@@ -23,7 +23,7 @@ GENERICS = citlink.apg  \
 	pubselect2.apg \
 	showpubs.apg showsnppubs.apg
 
-STATICS= REFERinfo.apg pubprintable.apg enterpubs.apg \
+STATICS= REFERinfo.apg pubprintable.apg \
 	citselectlist.apg \
 	citjtypeoption.apg citgeneric.apg cittotalcount.apg pub_rowdisplay.apg \
 
