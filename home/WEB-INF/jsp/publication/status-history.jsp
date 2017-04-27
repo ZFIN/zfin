@@ -14,14 +14,7 @@
     <div class="media">
       <div class="media-left">
         <div class="thumb-container">
-          <c:choose>
-            <c:when test="${!empty item.updater.snapshot}">
-              <img class="thumb-image" src="/action/profile/image/view/${item.updater.zdbID}.jpg">
-            </c:when>
-            <c:otherwise>
-              <img class="thumb-image" src="/images/LOCAL/smallogo.gif">
-            </c:otherwise>
-          </c:choose>
+          <zfin2:profileImage className="thumb-image" value="${item.updater}"/>
         </div>
       </div>
       <div class="media-body">

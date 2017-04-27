@@ -17,7 +17,7 @@
                 <div class="thumb-container">
                     <c:choose>
                         <c:when test="${!empty update.submitter}">
-                            <zfin2:viewSnapshot className="thumb-image" value="${update.submitter}"/>
+                            <zfin2:profileImage className="thumb-image" value="${update.submitter}"/>
                         </c:when>
                     </c:choose>
                 </div>

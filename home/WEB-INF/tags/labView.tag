@@ -93,7 +93,7 @@
             </table>
         </td>
         <td width="30%" style="vertical-align: top; text-align: right;">
-            <zfin2:viewSnapshot value="${lab}" className="profile-image"/>
+            <zfin2:profileImage value="${lab}" className="profile-image"/>
         </td>
 </table>
 
