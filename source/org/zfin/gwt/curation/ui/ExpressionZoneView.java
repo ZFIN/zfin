@@ -13,7 +13,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.event.RemoveExpressionEvent;
@@ -494,8 +493,12 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
 
         public void onSuccess(Void exp) {
-            Label pushed = new Label(IN_PATO);
-            displayTable.setWidget(row, HeaderName.PUSH.getIndex(), pushed);
+            ExpressionFigureStageDTO efs = displayTableMap.get(row);
+            for (int rowIndex : displayTableMap.keySet()) {
+                if (efs.isSamePhenotypeExperiment(displayTableMap.get(rowIndex))) {
+                    displayTable.setWidget(rowIndex, HeaderName.PUSH.getIndex(), new Label(IN_PATO));
+                }
+            }
             clearErrorMessages();
             //Window.alert("Success");
             AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.PUSH_TO_PATO));
@@ -722,7 +725,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
             createExpressionTable();
         }
 
-        protected List<ExpressionFigureStageDTO> getDisplayExpressionList(){
+        protected List<ExpressionFigureStageDTO> getDisplayExpressionList() {
             return displayedExpressions;
         }
 
