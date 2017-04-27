@@ -1,4 +1,5 @@
 <%@ tag import="org.zfin.search.service.ResultService" %>
+<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="results" required="true" type="java.util.List" %>
@@ -57,12 +58,12 @@
 
                 <td style="word-wrap: break-word">${result.attributes[addressAttribute]}</td>
                 <td>
-                    <c:if test="${not empty result.snapshot}">
+                    <c:if test="${not empty result.profileImage}">
                         <div class="pull-right result-thumbnail-container">
                             <div class="search-result-thumbnail">
                                 <a href="${result.url}">
                                     <img style="max-width: 150px; max-height: 70px;"
-                                         src="/action/profile/image/view/${result.snapshot}.jpg">
+                                         src="<%=ZfinPropertiesEnum.IMAGE_LOAD.value()%>/${result.profileImage}">
                                 </a>
                             </div>
                         </div>
