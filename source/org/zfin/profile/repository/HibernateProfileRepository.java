@@ -1007,11 +1007,4 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .list();
     }
 
-    public boolean personHasSnapshot(Person person) {
-        return HibernateUtil.currentSession()
-                .createCriteria(Person.class)
-                .add(Restrictions.eq("zdbID", person.getZdbID()))
-                .add(Restrictions.isNotNull("snapshot"))
-                .uniqueResult() != null;
-    }
 }

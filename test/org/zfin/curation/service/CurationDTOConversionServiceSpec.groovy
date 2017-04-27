@@ -7,6 +7,7 @@ import org.zfin.curation.Correspondence
 import org.zfin.curation.Curation
 import org.zfin.curation.PublicationNote
 import org.zfin.profile.Person
+import org.zfin.properties.ZfinPropertiesEnum
 import org.zfin.publication.Publication
 import org.zfin.publication.PublicationTrackingHistory
 import org.zfin.publication.PublicationTrackingLocation
@@ -33,7 +34,7 @@ class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
                 firstName: "Monte",
                 lastName: "Westerfield",
                 shortName: "Westerfield-M.",
-                snapshot: new SerialBlob(new byte[0])
+                image: "vacation-picture-1.jpg"
             )
     ]
 
@@ -121,7 +122,7 @@ class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
         then:
         dto.name == "$person.monte.firstName $person.monte.lastName"
         dto.zdbID == person.monte.zdbID
-        dto.imageURL == "/action/profile/image/view/${person.monte.zdbID}.jpg"
+        dto.imageURL == "$ZfinPropertiesEnum.IMAGE_LOAD/${person.image}"
     }
 
     @Unroll
