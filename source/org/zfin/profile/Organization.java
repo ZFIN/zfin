@@ -9,13 +9,12 @@ import org.zfin.mutant.Genotype;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.sql.Blob;
 import java.util.Set;
 
 /**
  *
  */
-public abstract class Organization implements Comparable<Organization>, HasUpdateType, HasSnapshot, EntityZdbID {
+public abstract class Organization implements Comparable<Organization>, HasUpdateType, HasImage, EntityZdbID {
 
     public static final String ACTIVE_STATUS = "active";
 
@@ -60,7 +59,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     @Size(max = 12000, message = "Must be less than 12000 characters.")
     private String bio;
 
-    private Blob snapshot;
+    private String image;
     private Person contactPerson;
 
     private Set<Marker> markerSourceList;
@@ -122,12 +121,12 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
         this.bio = bio;
     }
 
-    public Blob getSnapshot() {
-        return snapshot;
+    public String getImage() {
+        return image;
     }
 
-    public void setSnapshot(Blob snapshot) {
-        this.snapshot = snapshot;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getZdbID() {

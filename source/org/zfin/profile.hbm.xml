@@ -21,7 +21,7 @@
         <property name="nonZfinPublications" column="nonzf_pubs" lazy="true"/>
         <property name="personalBio" column="pers_bio" lazy="true"/>
 
-        <property name="snapshot" column="snapshot" type="blob" lazy="true"/>
+        <property name="image"/>
         <property name="url"/>
         <property name="email"/>
         <property name="fax"/>
@@ -112,7 +112,7 @@
         <property name="country" />
         <property name="status"/>
         <property name="bio"/>
-        <property name="snapshot" column="snapshot" type="blob"/>
+        <property name="image"/>
         <many-to-one name="contactPerson" column="contact_person" class="org.zfin.profile.Person"/>
 
         <set name="organizationUrls">

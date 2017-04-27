@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ attribute name="value" type="org.zfin.profile.HasSnapshot" %>
+<%@ attribute name="value" type="org.zfin.profile.HasImage" %>
 <%@ attribute name="className" type="java.lang.String" required="false" %>
 
 <c:choose>

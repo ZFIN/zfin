@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ attribute name="value" type="org.zfin.profile.HasSnapshot" %>
+<%@ attribute name="value" type="org.zfin.profile.HasImage" %>
 
 ${empty value.snapshot ? '<div style="color: red;">Please provide a snapshot</div>' : '' }
 
