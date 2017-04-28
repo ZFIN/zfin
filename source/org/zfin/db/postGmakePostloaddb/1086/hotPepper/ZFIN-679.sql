@@ -13,7 +13,7 @@ delete from construct_component where cc_construct_Zdb_id='ZDB-TGCONSTRCT-071017
 delete from construct_component where cc_construct_Zdb_id='ZDB-TGCONSTRCT-071017-1' and cc_order=6;
 
 
-insert into construct_component (cc_construct_Zdb_id,cc_Component_type,cc_component_category,cc_component_zdb_id,cc_component,cc_cassette_number,cc_order) values ('ZDB-TGCONSTRCT-071017-1','text component','prefix component','','PAC',1,2);
+insert into construct_component (cc_construct_Zdb_id,cc_Component_type,cc_component_category,cc_component,cc_cassette_number,cc_order) values ('ZDB-TGCONSTRCT-071017-1','text component','prefix component','PAC',1,2);
 insert into construct_component (cc_construct_Zdb_id,cc_Component_type,cc_component_category,cc_component_zdb_id,cc_component,cc_cassette_number,cc_order) values ('ZDB-TGCONSTRCT-071017-1','controlled vocab component','construct wrapper component','ZDB-CV-150506-7','(',1,3);
 insert into construct_component (cc_construct_Zdb_id,cc_Component_type,cc_component_category,cc_component_zdb_id,cc_component,cc_cassette_number,cc_order) values ('ZDB-TGCONSTRCT-071017-1','promoter of','promoter component','ZDB-GENE-991110-14','myb',1,4);
 insert into construct_component (cc_construct_Zdb_id,cc_Component_type,cc_component_category,cc_component_zdb_id,cc_component,cc_cassette_number,cc_order) values ('ZDB-TGCONSTRCT-071017-1','controlled vocab component','promoter component','ZDB-CV-150506-10',':',1,5);
