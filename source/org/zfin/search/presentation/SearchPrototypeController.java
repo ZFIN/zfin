@@ -100,11 +100,13 @@ public class SearchPrototypeController {
 
         if (StringUtils.isNotEmpty(q)) {
             String url = null;
+            //support for ZFIN:ZDB-... ID format
+            String zdbQuery = q.replace("ZFIN:ZDB","ZDB");
 
-            String replacementZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(q);
+            String replacementZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbQuery);
 
-            if (zdbIDService.isActiveZdbID(q)) {
-                url = "/" + q;
+            if (zdbIDService.isActiveZdbID(zdbQuery)) {
+                url = "/" + zdbQuery;
             } else if (StringUtils.isNotEmpty(replacementZdbID)) {
                 url = "/" + replacementZdbID;
             }

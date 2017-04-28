@@ -12,6 +12,7 @@ public class QueryManipulationService {
         query = processIdIbd(query);
         query = processNcbiAccession(query);
         query = processConstructDash(query);
+        query = processZfinPrefix(query);
 
         return query;
     }
@@ -38,5 +39,8 @@ public class QueryManipulationService {
         } else { return query; }
 
     }
+
+    //Case INF-2933
+    public String processZfinPrefix(String query) { return query.replaceAll("ZFIN:", ""); }
 
 }
