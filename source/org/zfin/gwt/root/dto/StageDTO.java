@@ -89,4 +89,22 @@ public class StageDTO implements IsSerializable , Serializable {
     public void setTimeString(String timeString) {
         this.timeString = timeString;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StageDTO)) return false;
+
+        StageDTO stageDTO = (StageDTO) o;
+
+        if (zdbID != null ? !zdbID.equals(stageDTO.zdbID) : stageDTO.zdbID != null) return false;
+        return oboID != null ? oboID.equals(stageDTO.oboID) : stageDTO.oboID == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = zdbID != null ? zdbID.hashCode() : 0;
+        result = 31 * result + (oboID != null ? oboID.hashCode() : 0);
+        return result;
+    }
 }

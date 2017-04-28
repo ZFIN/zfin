@@ -11,13 +11,9 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.ZfinStringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -62,12 +58,12 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                 HibernateUtil.currentSession().createQuery(" " +
                         " from MarkerGoTermEvidence ev" +
                         " left join fetch ev.inferredFrom " +
-                        " left join fetch ev.inferredFrom " +
                         " join fetch ev.marker " +
                         " where ev.source = :pubZdbID " +
                         " order by ev.marker.abbreviation , ev.goTerm.termName " +
                         "")
                         .setString("pubZdbID", publicationID)
+                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                         .list();
     }
 
@@ -182,11 +178,12 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
         String hql = " delete from MarkerGoTermEvidence ev where ev.zdbID in (:zdbIDs) ";
 
         int deleted = HibernateUtil.currentSession().createQuery(hql)
-                .setParameterList("zdbIDs",zdbIDs)
+                .setParameterList("zdbIDs", zdbIDs)
                 .executeUpdate();
 
         return deleted;
     }
+
     @Override
     public int getEvidenceForMarkerCount(Marker m) {
         String sql = " select count(distinct mrkrgoev_term_zdb_id) " +
@@ -199,18 +196,19 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     }
 
     /**
-     *   select first 1 mrkrgoev_zdb_id, term_name, mrkrgoev_gflag_name
-     from term,go_evidence_code, marker_go_term_evidence
-     where mrkrgoev_mrkr_zdb_id = '$OID'
-     and mrkrgoev_term_zdb_id = term_zdb_id
-     and mrkrgoev_evidence_code = goev_code
-     and term_ontology = '$ontology'
-     order by goev_display_order, term_name
+     * select first 1 mrkrgoev_zdb_id, term_name, mrkrgoev_gflag_name
+     * from term,go_evidence_code, marker_go_term_evidence
+     * where mrkrgoev_mrkr_zdb_id = '$OID'
+     * and mrkrgoev_term_zdb_id = term_zdb_id
+     * and mrkrgoev_evidence_code = goev_code
+     * and term_ontology = '$ontology'
+     * order by goev_display_order, term_name
+     *
      * @param m
      * @return
      */
     @Override
-    public MarkerGoTermEvidence getFirstEvidenceForMarkerOntology(Marker m,Ontology ontology) {
+    public MarkerGoTermEvidence getFirstEvidenceForMarkerOntology(Marker m, Ontology ontology) {
         String hql = " select ev from MarkerGoTermEvidence ev " +
                 " where ev.marker = :marker " +
                 " and ev.goTerm.ontology = :ontology" +
@@ -218,8 +216,8 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                 " ";
 
         return (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("marker",m)
-                .setParameter("ontology",ontology)
+                .setParameter("marker", m)
+                .setParameter("ontology", ontology)
                 .setMaxResults(1)
                 .uniqueResult();
 
@@ -230,7 +228,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
             return null;
         String inferredFromSTR = "ZFIN:" + zdbID;
         String hql = " select infGrpMem from InferenceGroupMember infGrpMem " +
-                     "  where infGrpMem.inferredFrom = :inferredFrom ";
+                "  where infGrpMem.inferredFrom = :inferredFrom ";
 
         List<InferenceGroupMember> inferenceGroupMembers = HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("inferredFrom", inferredFromSTR)

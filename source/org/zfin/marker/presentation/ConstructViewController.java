@@ -15,6 +15,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeService;
 import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.mutant.repository.MutantRepository;
 
@@ -115,7 +116,9 @@ public class ConstructViewController {
                 List<GenotypeFishResult> fishSummaryList = FishService.getFishExperiementSummaryForGenotype(genotype);
                 for (GenotypeFishResult fishSummary : fishSummaryList) {
                     if (fishSummary.getFish().getStrList().isEmpty()) {
+                        fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));
                         allFish.add(fishSummary);
+
                     }
                 }
             }

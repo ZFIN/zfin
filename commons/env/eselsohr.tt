@@ -49,7 +49,7 @@
 <!--|LN54_CONTACT_EMAIL|-->	cmpich\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	cmpich\@zfin.org
-<!--|MACHINE_NAME|-->	rhel7test
+<!--|MACHINE_NAME|-->	dense
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	eselsohr
 <!--|NOMEN_COORDINATOR|-->	cmpich\@zfin.org
@@ -70,7 +70,7 @@
 <!--|SITE_BACKGROUND|-->	#FFFFCC
 <!--|SOURCEROOT|-->	/research/zusers/cmpich/projects/svn/eselsohr
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	rhel7test.zfin.org
+<!--|SQLHOSTS_HOST|-->	dense.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	cmpich\@zfin.org
 <!--|SWISSPROT_EMAIL_ERR|-->	cmpich\@zfin.org
 <!--|SWISSPROT_EMAIL_REPORT|-->	cmpich\@zfin.org
