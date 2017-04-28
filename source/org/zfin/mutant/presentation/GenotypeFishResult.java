@@ -4,6 +4,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  * This class is a statistics class about Fish for given genotype
@@ -11,12 +12,21 @@ import java.util.List;
 public class GenotypeFishResult implements Comparable<GenotypeFishResult> {
 
     private Fish fish;
-    private List<Marker> affectedMarkers;
+  //  private List<Marker> affectedMarkers;
+    private SortedSet<Marker> affectedMarkers;
     private FishGenotypePhenotypeStatistics fishGenotypePhenotypeStatistics;
     private FishGenotypeExpressionStatistics fishGenotypeExpressionStatistics;
 
     public GenotypeFishResult(Fish fish) {
         this.fish = fish;
+    }
+
+    public SortedSet<Marker> getAffectedMarkers() {
+        return affectedMarkers;
+    }
+
+    public void setAffectedMarkers(SortedSet<Marker> affectedMarkers) {
+        this.affectedMarkers = affectedMarkers;
     }
 
     public Fish getFish() {
@@ -39,13 +49,13 @@ public class GenotypeFishResult implements Comparable<GenotypeFishResult> {
         this.fishGenotypePhenotypeStatistics = fishGenotypePhenotypeStatistics;
     }
 
-    public List<Marker> getAffectedMarkers() {
+   /* public List<Marker> getAffectedMarkers() {
         return affectedMarkers;
     }
 
     public void setAffectedMarkers(List<Marker> affectedMarkers) {
         this.affectedMarkers = affectedMarkers;
-    }
+    }*/
 
     @Override
     public boolean equals(Object o) {
