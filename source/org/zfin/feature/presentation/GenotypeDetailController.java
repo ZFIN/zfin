@@ -7,12 +7,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.feature.Feature;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.*;
+import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -71,7 +74,7 @@ public class GenotypeDetailController {
                 retrieveGenotypeAndFeatureData(form, genotype);
 
             }
-
+            model.addAttribute("affectedMarkerList", GenotypeService.getAffectedMarker(genotype));
             model.addAttribute(LookupStrings.FORM_BEAN, form);
             String genotypeName = genotype.getName();
             genotypeName = genotypeName.replaceAll("<sup>", "^");
@@ -109,7 +112,19 @@ public class GenotypeDetailController {
         if (!genotype.isWildtype()) {
             retrieveGenotypeAndFeatureData(form, genotype);
             retrievePublicationData(form, genotype);
-            model.addAttribute("fishList", FishService.getFishExperiementSummaryForGenotype(genotype));
+            List<GenotypeFishResult> allFish = new ArrayList<>();
+
+                    List<GenotypeFishResult> fishSummaryList = FishService.getFishExperiementSummaryForGenotype(genotype);
+                    for (GenotypeFishResult fishSummary : fishSummaryList) {
+                        if (fishSummary.getFish().getStrList().isEmpty()) {
+                            fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));
+                            allFish.add(fishSummary);
+
+                        }
+                    }
+
+
+            model.addAttribute("fishList", allFish);
             model.addAttribute("affectedMarkerList", GenotypeService.getAffectedMarker(genotype));
         }
 
