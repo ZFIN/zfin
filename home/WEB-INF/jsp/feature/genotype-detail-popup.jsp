@@ -88,21 +88,19 @@
         </tr>
         <tr>
             <th>
-                <c:choose>
-                    <c:when test="${fn:length(formBean.fishStatistics.affectedMarkers) ne null && fn:length(formBean.fishStatistics.affectedMarkers) > 1}">
-                        Affected&nbsp;Genes:
-                    </c:when>
-                    <c:otherwise>
-                        Affected&nbsp;Gene:
-                    </c:otherwise>
-                </c:choose>
+                <zfin2:pluralization list="${affectedMarkerList}" singular="Affected Genomic Region:"
+                                     nonSingular="Affected Genomic Regions:"/>
             </th>
             <td>
-                <c:forEach var="affectedGene" items="${formBean.fishStatistics.affectedMarkers}" varStatus="loop">
+                <c:forEach var="affectedGene" items="${affectedMarkerList}" varStatus="loop">
                     <zfin:link entity="${affectedGene}"/><c:if test="${!loop.last}">,&nbsp;</c:if>
                 </c:forEach>
             </td>
         </tr>
+
+
+
+
     </c:if>
 
 
