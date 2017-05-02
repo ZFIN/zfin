@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ attribute name="value" type="org.zfin.profile.HasImage" %>
 
-${empty value.image ? '<div style="color: red;">Please provide a snapshot</div>' : '' }
+${empty value.image ? '<div style="color: red;">Please provide a picture</div>' : '' }
 
 <form id='image-post' method="post"
       action="/action/profile/image/edit/${value.zdbID}" enctype="multipart/form-data"

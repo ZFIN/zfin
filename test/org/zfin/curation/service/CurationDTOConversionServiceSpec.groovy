@@ -15,8 +15,6 @@ import org.zfin.publication.PublicationTrackingStatus
 import spock.lang.Shared
 import spock.lang.Unroll
 
-import javax.sql.rowset.serial.SerialBlob
-
 class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
 
     @Autowired
@@ -105,7 +103,7 @@ class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
         !dto.editable
     }
 
-    def "convert Person to DTO for person without snapshot"() {
+    def "convert Person to DTO for person without image"() {
         when:
         def dto = converter.toPersonDTO(person.patrick)
 
@@ -115,14 +113,14 @@ class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
         dto.imageURL == "/images/LOCAL/smallogo.gif"
     }
 
-    def "convert Person to DTO for person with snapshot"() {
+    def "convert Person to DTO for person with image"() {
         when:
         def dto = converter.toPersonDTO(person.monte)
 
         then:
         dto.name == "$person.monte.firstName $person.monte.lastName"
         dto.zdbID == person.monte.zdbID
-        dto.imageURL == "$ZfinPropertiesEnum.IMAGE_LOAD/${person.image}"
+        dto.imageURL == "$ZfinPropertiesEnum.IMAGE_LOAD/${person.monte.image}"
     }
 
     @Unroll

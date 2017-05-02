@@ -194,7 +194,7 @@
         </div>
 
         <div id='picture'>
-            <zfin2:editSnapshot value='${lab}'/>
+            <zfin2:editProfileImage value='${lab}'/>
         </div>
     </div>
 
