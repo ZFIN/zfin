@@ -3,14 +3,7 @@ package org.zfin.database;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.*;
-import org.hibernate.mapping.*;
 import org.zfin.database.presentation.*;
-import org.zfin.database.presentation.ForeignKey;
-import org.zfin.database.presentation.Table;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DbScriptFileParser;
 
@@ -18,8 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.*;
-import java.util.List;
-import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.util.SqlQueryKeywords.*;
@@ -334,7 +325,10 @@ public class DatabaseService {
         return runDbScriptFile(dbScriptFile, dataMap, null);
     }
 
+    private TraceFileService trace;
+
     public List<String> runDbScriptFile(File dbScriptFile, Map<String, List<List<String>>> dataMap, Map<String, String> variableMap) {
+        trace = new TraceFileService("load");
         List<String> errorMessage = new ArrayList<>(2);
         if (!dbScriptFile.exists()) {
             String message = "Could not find script file " + dbScriptFile.getAbsolutePath();
@@ -347,7 +341,6 @@ public class DatabaseService {
             dataMap = new HashMap<>(5);
         DbScriptFileParser parser = new DbScriptFileParser(dbScriptFile);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
-        InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();
         if (!LOG.isDebugEnabled())
             LOG.info("No Debugging enabled: To see more debug data enable the logger to leg level debug.");
         for (DatabaseJdbcStatement statement : queries) {
@@ -357,7 +350,7 @@ public class DatabaseService {
                 continue;
             if (statement.isLoadStatement()) {
                 if (statement.isSelectIntoStatement()) {
-                    infrastructureRep.executeJdbcStatement(statement);
+                    getInfrastructureRepository().executeJdbcStatement(statement);
                 } else {
                     List<List<String>> data = dataMap.get(statement.getDataKey());
                     if (data == null) {
@@ -365,13 +358,13 @@ public class DatabaseService {
                         continue;
                     }
                     statement = statement.completeInsertStatement(data.get(0).size());
-                    infrastructureRep.executeJdbcStatement(statement, data);
+                    getInfrastructureRepository().executeJdbcStatement(statement, data);
                     LOG.info(data.size() + " records inserted");
                 }
             } else if (statement.isDebug()) {
                 List<List<String>> dataReturn;
                 if (LOG.isDebugEnabled()) {
-                    dataReturn = infrastructureRep.executeNativeQuery(statement);
+                    dataReturn = getInfrastructureRepository().executeNativeQuery(statement);
                     listOfResultRecords.add(dataReturn);
                     if (dataReturn == null)
                         LOG.debug("  Debug data: No records found.");
@@ -383,7 +376,7 @@ public class DatabaseService {
                 }
             } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
                 List<List<String>> dataReturn;
-                dataReturn = infrastructureRep.executeNativeDynamicQuery(statement);
+                dataReturn = getInfrastructureRepository().executeNativeDynamicQuery(statement);
                 if (CollectionUtils.isNotEmpty(dataReturn)) {
                     listOfResultRecords.add(dataReturn);
                     if (statement.getDataKey() != null)
@@ -410,10 +403,20 @@ public class DatabaseService {
                 if (statement.isTestTrue(value))
                     errorMessage.add(statement.getErrorMessage(value));
             } else {
-                infrastructureRep.executeJdbcStatement(statement);
+                if (statement.isInsertStatement() || statement.isDeleteStatement()) {
+                    runDebugStatement(statement);
+                }
+                int affectedRows = getInfrastructureRepository().executeJdbcStatement(statement);
+                if (statement.isDeleteStatement()) {
+                    trace.writeToTraceFile("Deleted Rows: " + affectedRows);
+                    trace.writeToTraceFile("After Delete Statement: ");
+                    runDebugStatementAfterDelete(statement);
+                    LOG.info("  Deleted data:\n " + affectedRows);
+                }
             }
             DbSystemUtil.logLockInfo();
         }
+        trace.closeTraceFile();
         return errorMessage;
     }
 
@@ -441,6 +444,33 @@ public class DatabaseService {
             return;
         }
         LOG.getRootLogger().addAppender(appender);
+    }
+
+    private boolean debugMode = true;
+
+    private void runDebugStatement(DatabaseJdbcStatement statement) {
+        if (debugMode == false)
+            return;
+        try {
+            DatabaseJdbcStatement debugStatement = statement.getDebugStatement();
+            List<List<String>> dataReturn = getInfrastructureRepository().executeNativeQuery(debugStatement);
+            trace.writeToTraceFile(debugStatement, dataReturn);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+    }
+
+
+    private void runDebugStatementAfterDelete(DatabaseJdbcStatement statement) {
+        if (debugMode == false)
+            return;
+        try {
+            DatabaseJdbcStatement debugStatement = statement.getDebugDeleteStatement();
+            List<List<String>> dataReturn = getInfrastructureRepository().executeNativeQuery(debugStatement);
+            trace.writeToTraceFile(debugStatement, dataReturn, false);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
     }
 
     private final Logger LOG = Logger.getLogger(DatabaseService.class);

@@ -22,7 +22,8 @@ STATICS  = fetch_ensdarTG.sh fetch_ensdarG.mysql fetch_ensdarT_dbacc.mysql \
 	load_ensdarG.sql load_ensdarT_dbacc.sql fetch_ensdarpInfo.mysql \
 	fetch_ensembl_gff.sh gtf2gff3.pl gtf2gff3.cfg unload_zfin_DNA_clone.sql \
 	 agp_to_gff3.awk agp_to_gff3_trim.awk clone_gff3_w_alias.awk  \
-	  rollback.sql commit.sql readme readme.ensembl_mysql fetch_sangerMutantInfo.mysql fetch_ensdargOttdargTable.mysql loadEnsdarPMapping.sql loadSangerMutantData.sql loadEnsdargOttdarg.sql updateSequenceFeatureChromosomeLocation.sql
+	  rollback.sql commit.sql readme readme.ensembl_mysql fetch_sangerMutantInfo.mysql fetch_ensdargOttdargTable.mysql loadEnsdarPMapping.sql loadSangerMutantData.sql loadEnsdargOttdarg.sql updateSequenceFeatureChromosomeLocation.sql \
+	load-missing-uniprot-records.sql log4j.xml reports.properties build.xml
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.

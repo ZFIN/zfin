@@ -8,6 +8,8 @@
     <property name="deploy.dir" value="deploy"/>
     <property name="web.dir" value="${basedir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="classes.dir" value="${env.TARGETROOT.dir}/home/WEB-INFclasses"/>
+
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="web.conf" value="${web-inf.dir}/conf"/>
     <property name="lib" value="${basedir}/lib/Java"/>

@@ -1,0 +1,50 @@
+<project name="Ensembl load" basedir=".">
+
+    <property name="root.dir" value="${basedir}/../../../"/>
+    <property name="web.dir" value="${root.dir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+    <property name="lib" value="${root.dir}/lib/Java"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="log.dir" value="${basedir}/logs"/>
+    <property name="jvm.args" value="-Xverify:none"/>
+
+    <property environment="env"/>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${env.SOURCEROOT}/lib/Java">
+            <include name="*jdbc*.jar"/>
+            <include name="*csv*.jar"/>
+        </fileset>
+
+    </path>
+
+    <taskdef name="groovy"
+             classname="org.codehaus.groovy.ant.Groovy"
+             classpathref="classpath"/>
+
+    <target name="load-missing-uniprots">
+        <property name="dbScriptFiles"
+                  value="load-missing-uniprot-records.sql"/>
+
+        <java classname="org.zfin.datatransfer.LoadMissingUnitProt" fork="yes" maxmemory="2024m"
+              failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-dbScriptFileNames"/>
+            <arg value="${dbScriptFiles}"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+            <arg value="-loadDir"/>
+            <arg value="${basedir}"/>
+            <arg value="-jobName"/>
+            <arg value="${JobName}"/>
+            <jvmarg value="${jvm.args}"/>
+        </java>
+    </target>
+
+</project>
