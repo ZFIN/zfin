@@ -3,19 +3,24 @@
 #  goparser.pl
 #
 
-system("/bin/rm -f gaf_from_go");
+## system("/bin/rm -f gaf_from_go");
 
-my $url = "http://viewvc.geneontology.org/viewvc/GO-SVN/trunk/gene-associations/gene_association.zfin.gz";
+## my $url = "http://viewvc.geneontology.org/viewvc/GO-SVN/trunk/gene-associations/gene_association.zfin.gz";
 
-system("/local/bin/wget $url -O gaf_from_go.gz");
-system("/local/bin/gunzip gaf_from_go.gz");
+## system("/local/bin/wget $url -O gaf_from_go.gz");
 
-open (GAFFROMGO, "gaf_from_go") or die "Cannot open gaf_from_go : $!\n";
-while ($line = <GAFFROMGO>) {
+## system("/local/bin/gunzip gaf_from_go.gz");
+
+system("/local/bin/gunzip gene_association.zfin.gz");
+
+open (OLDGAF, "gene_association.zfin") or die "Cannot open gene_association.zfin : $!\n";
+while ($line = <OLDGAF>) {
    $gaf_version = $line if $line =~ m/!gaf-version/;
    $versionNumber = $1 if $line =~ m/!Version:\s+([0123456789\.]+)/;
 }
-close GAFFROMGO;
+close OLDGAF;
+
+system("/bin/rm -f gene_association.zfin");
 
 $versionNumber += 0.001;
 

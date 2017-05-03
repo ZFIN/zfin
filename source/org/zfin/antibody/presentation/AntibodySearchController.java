@@ -74,7 +74,7 @@ public class AntibodySearchController {
             antibodySearchFormBean.setAntibodies(antibodies.getPopulatedResults());
             return "antibody/antibody-search-result.page";
         } else {
-            return "redirect:/action/marker/view/" + antibodies.getPopulatedResults().get(0).getZdbID();
+            return "redirect:/" + antibodies.getPopulatedResults().get(0).getZdbID();
         }
     }
 

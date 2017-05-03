@@ -23,7 +23,7 @@
             <a id="members-tab" href="#members" ${empty members ? 'style="color: red;"' : '' }>Members</a>
         </li>
         <li>
-            <a href="#picture" ${empty company.snapshot ? 'style="color: red;"' : '' }>Picture</a>
+            <a href="#picture" ${empty company.image ? 'style="color: red;"' : '' }>Picture</a>
         </li>
     </ul>
 
@@ -197,7 +197,7 @@
 
 
         <div id='picture'>
-            <zfin2:editSnapshot value='${company}'/>
+            <zfin2:editProfileImage value='${company}'/>
         </div>
 
     </div>

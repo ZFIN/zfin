@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
+import org.zfin.gwt.curation.ui.fish.FishGenotypeConstructionPresenter;
 import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
@@ -50,6 +51,8 @@ public interface CurationDiseaseRPCAsync {
     void getZygosityLists(AsyncCallback<List<ZygosityDTO>> async);
 
     void createGenotypeFish(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundList, Set<RelatedEntityDTO> strSet, AsyncCallback<GenotypeCreationReportDTO> callBack);
+
+    void retrieveFish(String zdbID, AsyncCallback<FishDTO> async);
 }
 
 

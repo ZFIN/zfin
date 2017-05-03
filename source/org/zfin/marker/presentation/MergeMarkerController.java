@@ -231,7 +231,7 @@ public class MergeMarkerController {
     public
     @ResponseBody
     List<PublicationLink> getEapPublicationForGene(@RequestParam("geneZdbId") String geneZdbId) {
-        Marker gene = RepositoryFactory.getMarkerRepository().getGeneByID(geneZdbId);
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbId);
         if (gene == null)
             return null;
         List<ExpressionResult2> eapExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultList(gene);
@@ -252,7 +252,7 @@ public class MergeMarkerController {
     public
     @ResponseBody
     List<OrthologySlimPresentation> getOrthologyForGene(@RequestParam("geneZdbId") String geneZdbId) {
-        Marker gene = RepositoryFactory.getMarkerRepository().getGeneByID(geneZdbId);
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbId);
         if (gene == null)
             return null;
         return RepositoryFactory.getOrthologyRepository().getOrthologySlimForGeneId(geneZdbId);

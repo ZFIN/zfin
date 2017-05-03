@@ -1,5 +1,7 @@
 package org.zfin.gwt.root.dto;
 
+import com.google.gwt.user.client.Window;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -124,5 +126,19 @@ public class ExpressionFigureStageDTO extends AbstractFigureStageDTO<ExpressedTe
             }
         }
         return list;
+    }
+
+    public boolean isSamePhenotypeExperiment(ExpressionFigureStageDTO dto) {
+        if (!figure.equals(dto.getFigure()))
+            return false;
+        if (!experiment.getFishID().equals(dto.getExperiment().getFishID()))
+            return false;
+        if (!experiment.getEnvironment().equals(dto.getExperiment().getEnvironment()))
+            return false;
+        if (!start.equals(dto.getStart()))
+            return false;
+        if (!end.equals(dto.getEnd()))
+            return false;
+        return true;
     }
 }

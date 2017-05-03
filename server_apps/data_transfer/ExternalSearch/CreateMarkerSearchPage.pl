@@ -10,7 +10,7 @@
 # </header>
 # <body>
 # for each marker m{
-# <a href="/action/marker/view/${m.zdbID}" title=${m.name}>${m.abbrev}</a> <br>
+# <a href="/${m.zdbID}" title=${m.name}>${m.abbrev}</a> <br>
 # }
 # </body>
 # </html>
@@ -36,7 +36,7 @@ my $dbname = "<!--|DB_NAME|-->";
 my $user = "";
 my $passwd = "";
 
-my $sql = "   select '<a href=\"/action/marker/view/'||m.mrkr_zdb_id || '\" title=\"'||m.mrkr_name||'\">' || m.mrkr_abbrev || '</a><br>'  
+my $sql = "   select '<a href=\"/'||m.mrkr_zdb_id || '\" title=\"'||m.mrkr_name||'\">' || m.mrkr_abbrev || '</a><br>'
 from marker m   
 order by m.mrkr_type, m.mrkr_abbrev ; 
 " ;

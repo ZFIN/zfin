@@ -115,7 +115,7 @@ create  function regen_genox() returning integer
     let errorHint = "mutant_fast_search_new";
 
     insert into regen_genox_input_zdb_id_temp ( rggz_zdb_id )
-      select mrkr_zdb_id from marker where mrkr_type in ("GENE","MRPHLNO","TALEN", "CRISPR");
+      select mrkr_zdb_id from marker where mrkr_type in ("GENE","MRPHLNO","TALEN", "CRISPR", "LNCRNAG", "LINCRNAG","MIRNAG","PIRNAG","SCRNAG","SNORNAG", "TRNAG","RRNAG","NCRNAG","SRPRNAG");
 
     let errorHint = "insert into mutant_fast_search_new";
 

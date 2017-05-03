@@ -12,14 +12,11 @@ import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.gbrowse.presentation.GBrowseImage;
-import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
@@ -28,23 +25,19 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.*;
-import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.mutant.repository.PhenotypeRepository;
+import org.zfin.mutant.GenotypeFigure;
+import org.zfin.mutant.PhenotypeService;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.Database;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class SequenceTargetingReagentViewController {
@@ -55,7 +48,7 @@ public class SequenceTargetingReagentViewController {
     private MarkerRepository markerRepository;
 
     @Autowired
-    private MutantRepository mutantRepository;
+    private MarkerService markerService;
 
     @Autowired
     private LinkageRepository linkageRepository;
@@ -70,14 +63,12 @@ public class SequenceTargetingReagentViewController {
         HibernateUtil.closeSession();
     }
 
-    @RequestMapping(value = "/marker/view/{zdbID}")
-    public String getView(
-            Model model
-            , @RequestParam("zdbID") String zdbID
-    ) throws Exception {
+    @RequestMapping(value = "/str/view/{zdbID}")
+    public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagent(zdbID);
         logger.info("sequenceTargetingReagent: " + sequenceTargetingReagent);
@@ -95,7 +86,7 @@ public class SequenceTargetingReagentViewController {
         // (Antibodies)
 
 
-   // Expression data
+        // Expression data
         ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
         List<ExpressionResult> strExpressionResults = expressionRepository.getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
         List<String> expressionFigureIDs = expressionRepository.getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
@@ -110,24 +101,25 @@ public class SequenceTargetingReagentViewController {
         if (!phenoMartRegening) {
             List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
 
-            if (genotypeFigures == null || genotypeFigures.size() == 0)  {
+            if (genotypeFigures == null || genotypeFigures.size() == 0) {
                 sequenceTargetingReagentBean.setPhenotypeDisplays(null);
             } else {
                 List<PhenotypeStatementWarehouse> phenotypeStatements = new ArrayList<>();
                 for (GenotypeFigure genotypeFigure : genotypeFigures) {
                     PhenotypeStatementWarehouse phenotypeStatement = genotypeFigure.getPhenotypeStatement();
-                    if (phenotypeStatement != null)
+                    if (phenotypeStatement != null) {
                         phenotypeStatements.add(phenotypeStatement);
+                    }
                 }
-                sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenotypeStatements,"str", "phenotypeStatement"));
+                sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "str", "phenotypeStatement"));
             }
 
             List<PhenotypeStatementWarehouse> allPhenotypeStatements = RepositoryFactory.getPhenotypeRepository().getAllPhenotypeStatementsForSTR(sequenceTargetingReagent);
 
-            if (allPhenotypeStatements == null || allPhenotypeStatements.size() == 0)  {
+            if (allPhenotypeStatements == null || allPhenotypeStatements.size() == 0) {
                 sequenceTargetingReagentBean.setAllPhenotypeDisplays(null);
             } else {
-                sequenceTargetingReagentBean.setAllPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(allPhenotypeStatements,"condition", "fish"));
+                sequenceTargetingReagentBean.setAllPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(allPhenotypeStatements, "condition", "fish"));
             }
         }
 
@@ -165,7 +157,7 @@ public class SequenceTargetingReagentViewController {
         return "marker/sequence-targeting-reagent-view.page";
     }
 
-    @RequestMapping(value="/view/{zdbID}/str-targeted-genes")
+    @RequestMapping(value = "/view/{zdbID}/str-targeted-genes")
     public String showTargetedGenes(Model model, @PathVariable("zdbID") String zdbID) {
         SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();
         SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagent(zdbID);
@@ -175,12 +167,12 @@ public class SequenceTargetingReagentViewController {
 
         model.addAttribute(LookupStrings.FORM_BEAN, sequenceTargetingReagentBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, sequenceTargetingReagent.getAbbreviation() + " Target Locations");
-        
+
         return "marker/sequence-targeting-reagent-target-view.page";
     }
 
 
-    @RequestMapping(value="/popup/{zdbID}")
+    @RequestMapping(value = "/popup/{zdbID}")
     public String getPopup(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         //getView(model, zdbID);
 
@@ -215,7 +207,7 @@ public class SequenceTargetingReagentViewController {
                 sequenceTargetingReagent, true
                 , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
         ));
-        for (MarkerRelationshipPresentation targetGene: knockdownRelationships) {
+        for (MarkerRelationshipPresentation targetGene : knockdownRelationships) {
             InformixUtil.runInformixProcedure("regen_genox_marker", targetGene.getZdbId());
         }
         return knockdownRelationships.size();
@@ -225,13 +217,14 @@ public class SequenceTargetingReagentViewController {
         Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        types.add(MarkerRelationship.Type.CONTAINS_REGION);
         Set<Marker> markerSet = new TreeSet<>();
         PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(sequenceTargetingReagent, types, 7);
         markerSet.addAll(relatedMarker.getPopulatedResults());
         sequenceTargetingReagentBean.setConstructs(markerSet);
         sequenceTargetingReagentBean.setNumberOfConstructs(relatedMarker.getTotalCount());
     }
+
     @RequestMapping(value = "/str/constructs/{zdbID}")
     public String getAllConstructs(Model model,
                                    @PathVariable("zdbID") String zdbID
@@ -245,7 +238,7 @@ public class SequenceTargetingReagentViewController {
         Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        types.add(MarkerRelationship.Type.CONTAINS_REGION);
         Set<Marker> markerSet = new TreeSet<>();
         // get all constructs
         PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(str, types, -1);
@@ -258,7 +251,7 @@ public class SequenceTargetingReagentViewController {
 
 
     private void addKnockdownRelationships(SequenceTargetingReagent sequenceTargetingReagent,
-                                                  SequenceTargetingReagentBean sequenceTargetingReagentBean) {
+                                           SequenceTargetingReagentBean sequenceTargetingReagentBean) {
         List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<>();
         knockdownRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
                 sequenceTargetingReagent, true
@@ -305,21 +298,21 @@ public class SequenceTargetingReagentViewController {
             mergedLocation.setEnd(Math.max(mergedLocation.getEnd(), strLocations.get(0).getEnd()));
 
             sequenceTargetingReagentBean.addGBrowseImage(GBrowseImage.builder()
-                            .landmark(mergedLocation)
-                            .withPadding(0.1)
-                            .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
-                            .highlight(sequenceTargetingReagent)
-                            .build()
+                    .landmark(mergedLocation)
+                    .withPadding(0.1)
+                    .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
+                    .highlight(sequenceTargetingReagent)
+                    .build()
             );
         } else {
             // otherwise: just show each STR location with 10kbp padding
             for (MarkerGenomeLocation location : strLocations) {
                 sequenceTargetingReagentBean.addGBrowseImage(GBrowseImage.builder()
-                                .landmark(location)
-                                .withPadding(10000)
-                                .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
-                                .highlight(sequenceTargetingReagent)
-                                .build()
+                        .landmark(location)
+                        .withPadding(10000)
+                        .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
+                        .highlight(sequenceTargetingReagent)
+                        .build()
                 );
             }
         }

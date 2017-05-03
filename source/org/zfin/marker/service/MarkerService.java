@@ -326,7 +326,7 @@ public class MarkerService {
                 , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
                 , MarkerRelationship.Type.PROMOTER_OF
                 , MarkerRelationship.Type.CODING_SEQUENCE_OF
-                , MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION
+                , MarkerRelationship.Type.CONTAINS_REGION
                 , MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY
                 , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
                 , MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE
@@ -813,7 +813,11 @@ public class MarkerService {
 
     public static OrthologyPresentationBean getOrthologyEvidence(Marker gene, Publication publication) {
         Collection<Ortholog> orthologs = getOrthologyRepository().getOrthologs(gene);
-        return getOrthologyPresentationBean(orthologs, gene, publication);
+        if (orthologs!=null) {
+            return getOrthologyPresentationBean(orthologs, gene, publication);
+        }
+        else
+            return null;
     }
 
     public static OrthologyPresentationBean getOrthologyEvidence(Marker gene) {
@@ -971,5 +975,40 @@ public class MarkerService {
             soTermMapping = getMarkerRepository().getSoTermMapping();
         }
         return soTermMapping.get(marker.getMarkerType().getName());
+    }
+
+    public String getActiveMarkerID(String zdbID) throws MarkerNotFoundException {
+        if (zdbID.startsWith("ZDB-")) {
+            if (markerRepository.markerExistsForZdbID(zdbID)) {
+                return zdbID;
+            }
+
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+            logger.debug("trying to find a replaced zdbID for: " + zdbID);
+            if (replacedZdbID != null && markerRepository.markerExistsForZdbID(replacedZdbID)) {
+                logger.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                return replacedZdbID;
+            }
+        } else {
+            Marker marker = markerRepository.getMarkerByAbbreviationIgnoreCase(zdbID);
+
+            if (marker == null) {
+                marker = markerRepository.getMarkerByName(zdbID);
+            }
+
+            if (marker == null) {
+                List<Marker> markers = markerRepository.getMarkersByAlias(zdbID);
+                if (markers != null && markers.size() == 1) {
+                    marker = markers.get(0);
+                }
+            }
+
+            if (marker != null) {
+                return marker.getZdbID();
+            }
+        }
+
+        // if we got to this point we could not resolve the ID by any means, so bail out
+        throw new MarkerNotFoundException(zdbID);
     }
 }

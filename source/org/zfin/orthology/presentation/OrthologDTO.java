@@ -1,5 +1,7 @@
-package org.zfin.gwt.root.dto;
+package org.zfin.orthology.presentation;
 
+import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.dto.NcbiOtherSpeciesGeneDTO;
 import org.zfin.orthology.presentation.OrthologEvidenceDTO;
 import org.zfin.orthology.presentation.OrthologEvidenceGroupedByCode;
 import org.zfin.orthology.presentation.OrthologExternalReferenceDTO;

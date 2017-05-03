@@ -158,6 +158,7 @@
 <filter token="TECHNICAL_AT_ZFIN" value="${TECHNICAL_AT_ZFIN}"/>
 <filter token="USER" value="${USER}"/>
 <filter token="USE_APACHE_FOR_SMOKE_TESTS" value="${USE_APACHE_FOR_SMOKE_TESTS}"/>
+<filter token="USE_POSTGRES" value="${USE_POSTGRES}"/>
 <filter token="VALIDATION_EMAIL_AD" value="${VALIDATION_EMAIL_AD}"/>
 <filter token="VALIDATION_EMAIL_CURATOR" value="${VALIDATION_EMAIL_CURATOR}"/>
 <filter token="VALIDATION_EMAIL_DBA" value="${VALIDATION_EMAIL_DBA}"/>

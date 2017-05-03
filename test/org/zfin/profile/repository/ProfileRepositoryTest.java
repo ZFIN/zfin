@@ -1,7 +1,7 @@
 package org.zfin.profile.repository;
 
+import org.junit.After;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -13,9 +13,6 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.UserDetailServiceImpl;
 
-import javax.servlet.ServletOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -32,57 +29,50 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
+
+    @After
+    public void closeSession() {
+        super.closeSession();
+        // make sure to close the session to be able to re-create the entities
+        HibernateUtil.closeSession();
+    }
+
     @Test
     public void createAndUpdateCuratorSession() {
 
-        try {
-            HibernateUtil.createTransaction();
+        Person person = profileRepository.getPerson(REAL_PERSON_1_ZDB_ID);
+        Person person2 = profileRepository.getPerson(REAL_PERSON_2_ZDB_ID);
+        Publication pub = person.getPublications().iterator().next();
 
-            Person person = profileRepository.getPerson(REAL_PERSON_1_ZDB_ID);
-            Person person2 = profileRepository.getPerson(REAL_PERSON_2_ZDB_ID);
-            Publication pub = person.getPublications().iterator().next();
+        String field = "This is my field";
+        String value = "This is my value";
 
-            String field = "This is my field";
-            String value = "This is my value";
+        profileRepository.createCuratorSession(person.getZdbID(), pub.getZdbID(), field, value);
+        profileRepository.createCuratorSession(person2.getZdbID(), pub.getZdbID(), field, value);
 
-            profileRepository.createCuratorSession(person.getZdbID(), pub.getZdbID(), field, value);
-            profileRepository.createCuratorSession(person2.getZdbID(), pub.getZdbID(), field, value);
+        CuratorSession databaseCS = profileRepository.getCuratorSession(person.getZdbID(), pub.getZdbID(), field);
 
-            CuratorSession databaseCS = profileRepository.getCuratorSession(person.getZdbID(), pub.getZdbID(), field);
+        assertNotNull("curator session created successfully", databaseCS);
+        assertNotNull("curator session created with PK id", databaseCS.getID());
+        assertEquals("curator session value is correct", databaseCS.getValue(), value);
 
-            assertNotNull("curator session created successfully", databaseCS);
-            assertNotNull("curator session created with PK id", databaseCS.getID());
-            assertEquals("curator session value is correct", databaseCS.getValue(), value);
-
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            HibernateUtil.rollbackTransaction();
-        }
 
     }
 
     @Test
     public void createAndUpdateCuratorSessionWithNoPublication() {
 
-        try {
-            HibernateUtil.createTransaction();
+        Person person = profileRepository.getPerson(REAL_PERSON_1_ZDB_ID);
+        String field = "This is my field";
+        String value = "This is my value";
 
-            Person person = profileRepository.getPerson(REAL_PERSON_1_ZDB_ID);
-            String field = "This is my field";
-            String value = "This is my value";
+        profileRepository.createCuratorSession(REAL_PERSON_1_ZDB_ID, null, field, value);
 
-            profileRepository.createCuratorSession(REAL_PERSON_1_ZDB_ID, null, field, value);
+        CuratorSession databaseCS = profileRepository.getCuratorSession(person.getZdbID(), null, field);
 
-            CuratorSession databaseCS = profileRepository.getCuratorSession(person.getZdbID(), null, field);
-
-            assertNotNull("curator session created successfully", databaseCS);
-            assertNotNull("curator session created with PK id", databaseCS.getID());
-            assertEquals("curator session value is correct", databaseCS.getValue(), value);
-
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            HibernateUtil.rollbackTransaction();
-        }
+        assertNotNull("curator session created successfully", databaseCS);
+        assertNotNull("curator session created with PK id", databaseCS.getID());
+        assertEquals("curator session value is correct", databaseCS.getValue(), value);
 
     }
 
@@ -94,17 +84,11 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
      */
     public void createPersonWithAccountInfo() {
         Person person = getTestPerson();
+        HibernateUtil.currentSession().save(person);
 
-        try {
-            HibernateUtil.createTransaction();
-            HibernateUtil.currentSession().save(person);
+        String personID = person.getZdbID();
+        assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
 
-            String personID = person.getZdbID();
-            assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
-
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
     }
 
     /**
@@ -115,16 +99,11 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
     public void createPersonOnly() {
         Person person = getTestPerson();
         person.setAccountInfo(null);
-        try {
-            HibernateUtil.createTransaction();
-            HibernateUtil.currentSession().save(person);
+        HibernateUtil.currentSession().save(person);
 
-            String personID = person.getZdbID();
-            assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
-            assertTrue("No user object created", person.getAccountInfo() == null);
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        String personID = person.getZdbID();
+        assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
+        assertTrue("No user object created", person.getAccountInfo() == null);
     }
 
     @Test
@@ -198,28 +177,8 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
     public void getPersonFields() throws Exception {
         Person person = profileRepository.getPerson("ZDB-PERS-960805-676");
         assertTrue(person.getPersonalBio().contains("Princeton University"));
-//        assertEquals("00000001a6b7c8d90000000b0000000b0000001b4dcd6983000000000001ffff00000000000000000000000000000000000000000000000000000000000000000000000000000000",person.getSnapshotAsString());
         assertTrue(person.getNonZfinPublications().contains("Westerfield"));
         assertNotNull(person);
-    }
-
-
-    @Test
-    public void getPersonSnapshot() throws Exception {
-        ImageController imageController = new ImageController();
-        imageController.setProfileRepository(RepositoryFactory.getProfileRepository());
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        OutputStream outputStream = new ServletOutputStream() {
-            @Override
-            public void write(int i) throws IOException {
-
-                // do nothing;
-            }
-        };
-        imageController.viewSnapshot("ZDB-PERS-960805-676", response, outputStream);
-        assertFalse(System.out.checkError());
-//        System.out.flush();
-//        System.out.close();
     }
 
     @Test
@@ -271,16 +230,11 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void deleteFromOrganization() {
 
-        try {
-            HibernateUtil.createTransaction();
-            int result;
-            result = profileRepository.removeMemberFromOrganization("ZDB-PERS-960805-676", "ZDB-LAB-000914-1");
-            assertEquals(1, result);
-            result = profileRepository.removeMemberFromOrganization("ZDB-PERS-010126-3", "ZDB-COMPANY-020115-1");
-            assertEquals(1, result);
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        int result;
+        result = profileRepository.removeMemberFromOrganization("ZDB-PERS-960805-676", "ZDB-LAB-000914-1");
+        assertEquals(1, result);
+        result = profileRepository.removeMemberFromOrganization("ZDB-PERS-010126-3", "ZDB-COMPANY-020115-1");
+        assertEquals(1, result);
     }
 
     @Test
@@ -291,24 +245,14 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void addLabMember() {
-        try {
-            HibernateUtil.createTransaction();
-            int result = profileRepository.addLabMember("ZDB-PERS-000329-1", "ZDB-LAB-000914-1", 7);
-            assertEquals(1, result);
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        int result = profileRepository.addLabMember("ZDB-PERS-000329-1", "ZDB-LAB-000914-1", 7);
+        assertEquals(1, result);
     }
 
     @Test
     public void addCompanyMember() {
-        try {
-            HibernateUtil.createTransaction();
-            int result = profileRepository.addCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1", 2);
-            assertEquals(1, result);
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        int result = profileRepository.addCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1", 2);
+        assertEquals(1, result);
     }
 
 
@@ -328,34 +272,24 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void removeLabMember() {
-        try {
-            HibernateUtil.createTransaction();
-            int result = -1;
-            result = profileRepository.removeLabMember("ZDB-PERS-000329-1", "ZDB-LAB-000914-1");
-            assertEquals(0, result);
-            result = profileRepository.addLabMember("ZDB-PERS-000329-1", "ZDB-LAB-000914-1", 4);
-            assertEquals(1, result);
-            result = profileRepository.removeLabMember("ZDB-PERS-000329-1", "ZDB-LAB-000914-1");
-            assertEquals(1, result);
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        int result = -1;
+        result = profileRepository.removeLabMember("ZDB-PERS-000329-1", "ZDB-LAB-000914-1");
+        assertEquals(0, result);
+        result = profileRepository.addLabMember("ZDB-PERS-000329-1", "ZDB-LAB-000914-1", 4);
+        assertEquals(1, result);
+        result = profileRepository.removeLabMember("ZDB-PERS-000329-1", "ZDB-LAB-000914-1");
+        assertEquals(1, result);
     }
 
     @Test
     public void removeCompanyMember() {
-        try {
-            HibernateUtil.createTransaction();
-            int result = -1;
-            result = profileRepository.removeCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1");
-            assertEquals(0, result);
-            result = profileRepository.addCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1", 3);
-            assertEquals(1, result);
-            result = profileRepository.removeCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1");
-            assertEquals(1, result);
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        int result = -1;
+        result = profileRepository.removeCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1");
+        assertEquals(0, result);
+        result = profileRepository.addCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1", 3);
+        assertEquals(1, result);
+        result = profileRepository.removeCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1");
+        assertEquals(1, result);
     }
 
     @Test

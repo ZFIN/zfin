@@ -4,7 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,13 +27,17 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  * Tests the xdbget.c function in lib/DB_functions/C, and mapped in blast.hbm.xml
  * Calls the function with blastAbbrev, blastDBtype, and accession number as parameters.
  */
-public class BlastAccessTest extends AbstractDatabaseTest{
+public class BlastAccessTest extends AbstractDatabaseTest {
 
     private Logger logger = Logger.getLogger(BlastAccessTest.class);
 
-    @Before
-    public void setUp() {
+    @After
+    public void closeSession() {
+        super.closeSession();
+        // make sure to close the session to be able to re-create the entities
+        HibernateUtil.closeSession();
     }
+
 
     @Test
     public void getBlastPath() {
@@ -121,8 +125,6 @@ public class BlastAccessTest extends AbstractDatabaseTest{
     @Test
     public void addNucleotideSequenceThroughTranscript() {
 
-        Session session = HibernateUtil.currentSession();
-
         final String sequenceData = "AAAAAAAATTTTTTTTTTCCCCCCCCGGGGGGGG";
 
         // should always get a valid transcript this way
@@ -138,7 +140,6 @@ public class BlastAccessTest extends AbstractDatabaseTest{
                         DisplayGroup.GroupName.ADDABLE_NUCLEOTIDE_SEQUENCE);
 
 
-        Transaction transaction = session.beginTransaction();
         try {
             for (ReferenceDatabase referenceDatabase : referenceDatabases) {
                 Transcript transcript = (Transcript) query.uniqueResult();
@@ -168,20 +169,14 @@ public class BlastAccessTest extends AbstractDatabaseTest{
                 }
                 assertTrue("Must have the sequence that it added", hasSequence);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(e.toString());
-        }
-        finally {
-            transaction.rollback();
         }
     }
 
 
     @Test
     public void addProteinSequenceThroughGene() {
-
-        Session session = HibernateUtil.currentSession();
 
         final String sequenceData = "AYAYAYAYAYAYAYAYAYAYAYAYAY";
 
@@ -201,7 +196,6 @@ public class BlastAccessTest extends AbstractDatabaseTest{
                     RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
                             displayGroup);
 
-            Transaction transaction = session.beginTransaction();
             try {
                 logger.debug("# of refDbs:" + referenceDatabases.size());
                 for (ReferenceDatabase referenceDatabase : referenceDatabases) {
@@ -240,20 +234,14 @@ public class BlastAccessTest extends AbstractDatabaseTest{
                     logger.debug("has sequence for refDB[" + referenceDatabase.getZdbID() + "]: " + hasSequence);
                     assertTrue("Must have the sequence that it added", hasSequence);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 fail(e.toString());
-            }
-            finally {
-                transaction.rollback();
             }
         }
     }
 
     @Test
     public void addProteinSequenceThroughTranscript() {
-
-        Session session = HibernateUtil.currentSession();
 
         final String sequenceData = "AYAYAYAYAYAYAYAYAYAYAYAYAY";
 
@@ -274,7 +262,6 @@ public class BlastAccessTest extends AbstractDatabaseTest{
                     RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
                             displayGroup);
 
-            Transaction transaction = session.beginTransaction();
             try {
                 logger.debug("# of refDbs:" + referenceDatabases.size());
                 for (ReferenceDatabase referenceDatabase : referenceDatabases) {
@@ -312,12 +299,8 @@ public class BlastAccessTest extends AbstractDatabaseTest{
                     logger.debug("has sequence for refDB[" + referenceDatabase.getZdbID() + "]: " + hasSequence);
                     assertTrue("Must have the sequence that it added", hasSequence);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 fail(e.toString());
-            }
-            finally {
-                transaction.rollback();
             }
         }
     }
@@ -326,34 +309,23 @@ public class BlastAccessTest extends AbstractDatabaseTest{
     @Test
     public void getNucleotideAccessionNumber() {
         Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
         try {
             String accession = NucleotideInternalAccessionGenerator.getInstance().generateAccession();
             logger.debug("nucleotide accession: " + accession);
             assertTrue("Bad nucleotide accession", accession.startsWith(NucleotideInternalAccessionGenerator.ZFIN_INTERNAL_ACCESSION_NUCLEOTIDE));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(e.toString());
-        }
-        finally {
-            session.getTransaction().rollback();
         }
     }
 
     @Test
     public void getPolypeptideAccessionNumber() {
-        Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
         try {
             String accession = ProteinInternalAccessionGenerator.getInstance().generateAccession();
             logger.debug("protein accession: " + accession);
             assertTrue("Bad protein accession", accession.startsWith(ProteinInternalAccessionGenerator.ZFIN_INTERNAL_ACCESSION_PROTEIN));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(e.toString());
-        }
-        finally {
-            session.getTransaction().rollback();
         }
     }
 
@@ -365,8 +337,7 @@ public class BlastAccessTest extends AbstractDatabaseTest{
 
         try {
             MountedWublastBlastService.getInstance().regenerateDatabaseFromValidAccessions(databaseToCurate);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(e.toString());
         }
     }
@@ -416,8 +387,7 @@ public class BlastAccessTest extends AbstractDatabaseTest{
     public void regenerateCuratedDatabases() {
         try {
             MountedWublastBlastService.getInstance().regenerateCuratedDatabases();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(e.toString());
         }
     }
@@ -447,11 +417,9 @@ public class BlastAccessTest extends AbstractDatabaseTest{
         try {
             MountedWublastBlastService.getInstance().addSequenceToTranscript(transcript.getZdbID(), "ATATATAGA", referenceDatabase.getZdbID());
             MountedWublastBlastService.getInstance().regenerateDatabaseFromValidAccessions(referenceDatabase.getPrimaryBlastDatabase());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(e.toString());
-        }
-        finally {
+        } finally {
             currentSession().getTransaction().rollback();
         }
     }
@@ -482,11 +450,9 @@ public class BlastAccessTest extends AbstractDatabaseTest{
         try {
             MountedWublastBlastService.getInstance().addSequenceToTranscript(transcript.getZdbID(), "ATATATAGA", referenceDatabase.getZdbID());
             MountedWublastBlastService.getInstance().regenerateDatabaseFromValidAccessions(referenceDatabase.getPrimaryBlastDatabase());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(e.toString());
-        }
-        finally {
+        } finally {
             currentSession().getTransaction().rollback();
         }
     }
@@ -548,16 +514,14 @@ public class BlastAccessTest extends AbstractDatabaseTest{
                         logger.debug("databaseB lock released");
                         assertFalse("databaseB is now unlocked", databaseB.isLocked());
                         logger.debug("databseB is now unlocked: " + databaseB.isLocked());
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         fail(e.toString());
                     }
                 }
             };
             try {
                 aThread.start();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 fail(e.toString());
             }
 
@@ -573,11 +537,9 @@ public class BlastAccessTest extends AbstractDatabaseTest{
             MountedWublastBlastService.getInstance().unlockForce(databaseA);
             logger.debug("databseA is should now be unlocked: " + databaseA.isLocked());
             assertFalse("database A is now unlocked again: ", databaseA.isLocked());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(e.toString());
-        }
-        finally {
+        } finally {
             currentSession().getTransaction().rollback();
         }
     }
@@ -595,15 +557,14 @@ public class BlastAccessTest extends AbstractDatabaseTest{
             databaseStatistics = WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(database);
             assertEquals(numAccessions, databaseStatistics.getNumAccessions());
             assertEquals(numSequences, databaseStatistics.getNumSequences());
-        }
-        catch (Exception ioe) {
+        } catch (Exception ioe) {
             fail(ioe.fillInStackTrace().toString());
         }
     }
 
     @Test
     public void getProperDefline() {
-        Marker marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-200") ;
+        Marker marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-200");
         MarkerDBLink markerDBLink = new MarkerDBLink();
         markerDBLink.setMarker(marker);
         String accession = "abc123";

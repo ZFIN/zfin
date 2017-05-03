@@ -1,10 +1,8 @@
 package org.zfin.construct.presentation;
 
 import org.zfin.construct.ConstructCuration;
-import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.repository.FeaturePresentationBean;
 
 /**
  * Presentation Class to create output from a Feature object.
@@ -13,7 +11,6 @@ import org.zfin.mutant.repository.FeaturePresentationBean;
  */
 public class ConstructPresentation extends EntityPresentation {
 
-    private static final String uri = "marker/view/";
     /**
      * Generates an html formatted Genotype name
      *
@@ -32,7 +29,7 @@ public class ConstructPresentation extends EntityPresentation {
      * @return html for feature link
      */
     public static String getLink(ConstructCuration construct) {
-        return getTomcatLink(uri, construct.getZdbID(), construct.getName(), construct.getName());
+        return getViewLink(construct.getZdbID(), construct.getName(), construct.getName());
     }
 
 }

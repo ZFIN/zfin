@@ -8,7 +8,6 @@ import java.sql.Blob;
 public class Company extends Organization {
 
     private String bio;
-    private Blob snapshot;
 
     public int compareTo(Organization org) {
         if (org == null)
@@ -37,11 +36,4 @@ public class Company extends Organization {
         return "company";
     }
 
-   public Blob getSnapshot() {
-        return snapshot;
-    }
-
-    public void setSnapshot(Blob snapshot) {
-        this.snapshot = snapshot;
-    }
 }

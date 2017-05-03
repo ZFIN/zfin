@@ -730,7 +730,7 @@
    <field name="person_name" type="simplified-international-text" indexed="true"/>
 
    <field name="lab_member_name" type="simplified-international-text" indexed="true"/>
-   <field name="snapshot" type="string" stored="true" indexed="true" multiValued="false"   />
+   <field name="profile_image" type="string" stored="true" indexed="true" multiValued="false"   />
    <field name="biography" type="text" indexed="true" stored="true"   />
    <field name="postal_address" type="text" indexed="true" stored="true"   />
    <field name="email_address" type="text" indexed="true" stored="true"   />

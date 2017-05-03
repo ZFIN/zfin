@@ -45,13 +45,13 @@ sendErrorReport ("/bin/rm -f gene_association.zfin.gz") if
 sendErrorReport ("/local/bin/gzip gene_association.zfin failed") if
     system ("/local/bin/gzip gene_association.zfin");
 
-sendErrorReport ("gp2protein.pl failed") if
-    system ("./gp2protein.pl");
+##sendErrorReport ("gp2protein.pl failed") if
+  ##  system ("./gp2protein.pl");
 
-sendErrorReport ("/bin/rm -f gp2protein.zfin.gz") if
-    system ("/bin/rm -f gp2protein.zfin.gz");
+##sendErrorReport ("/bin/rm -f gp2protein.zfin.gz") if
+  ##  system ("/bin/rm -f gp2protein.zfin.gz");
 
-sendErrorReport ("/local/bin/gzip gp2protein.zfin failed") if
-    system ("/local/bin/gzip gp2protein.zfin");
+##sendErrorReport ("/local/bin/gzip gp2protein.zfin failed") if
+  ##  system ("/local/bin/gzip gp2protein.zfin");
 
 exit;

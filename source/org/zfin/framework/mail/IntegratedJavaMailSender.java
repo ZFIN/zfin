@@ -3,12 +3,13 @@ package org.zfin.framework.mail;
 import org.apache.log4j.Logger;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.zfin.properties.ZfinProperties;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.mail.Message;
 import javax.mail.Multipart;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -40,49 +41,43 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
                             String[] recipients, boolean useHtml, String filename) {
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
 
         try {
-            helper.setTo(filterEmail(recipients));
-            // can only handle first
-            helper.setFrom(filterEmail(fromEmail));
-//            helper.setFrom(ZfinProperties.getAdminEmailAddresses()[0]);
+            mimeMessage.setFrom(new InternetAddress(filterEmail(fromEmail)));
+            for (String recipient : recipients) {
+                mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(filterEmail(recipient)));
+            }
 
             if (doDefaultSubjectHeader) {
                 subject = prependSubject(subject);
             }
             mimeMessage.setSubject(subject);
 
-            MimeBodyPart mainBody = new MimeBodyPart();
-            Multipart mp = new MimeMultipart();
+            MimeBodyPart messageBody = new MimeBodyPart();
+            if (useHtml) {
+                messageBody.setContent(message, "text/html");
+            } else {
+                messageBody.setText(message);
+            }
 
-            if(useHtml){
-                // create and fill the first message part
-                mainBody.setContent(message, "text/html");
-            }
-            else{
-                mainBody.setContent(message,"text/txt");
-            }
             // create the Multipart and add its parts to it
-            mp.addBodyPart(mainBody);
-
-            // add the Multipart to the message
-            mimeMessage.setContent(mp);
-
-            MimeBodyPart attachment = new MimeBodyPart();
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBody);
 
             // attach the file to the message if it exists
             if (filename != null) {
+                MimeBodyPart attachment = new MimeBodyPart();
                 FileDataSource fds = new FileDataSource(filename);
                 if (fds.getFile().exists()) {
                     attachment.setDataHandler(new DataHandler(fds));
                     attachment.setFileName(fds.getName());
-                    mp.addBodyPart(attachment);
+                    multipart.addBodyPart(attachment);
                 } else {
                     logger.error("Could not find file " + fds.getFile().getAbsolutePath() + "to attach to email");
                 }
             }
 
+            mimeMessage.setContent(multipart);
 
             if (mailSender instanceof JavaMailSenderImpl) {
                 if (((JavaMailSenderImpl) mailSender).getHost() == null) {
@@ -91,8 +86,7 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
             }
             mailSender.send(mimeMessage);
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Failed to send mail with subject[" + subject + "]", e);
             return false;
         }
@@ -109,17 +103,17 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
         return sendMail(subject, message, doDefaultSubjectHeader, fromEmail, recipients, true, filename);
     }
 
-    protected String[] filterEmail(String... emailAddresses) {
-        String[] returnEmails = new String[emailAddresses.length] ;
-        int i = 0 ;
-        for(String emailAddress : emailAddresses){
-            returnEmails[i++] = filterEmail(emailAddress) ;
+    public String[] filterEmail(String... emailAddresses) {
+        String[] returnEmails = new String[emailAddresses.length];
+        int i = 0;
+        for (String emailAddress : emailAddresses) {
+            returnEmails[i++] = filterEmail(emailAddress);
         }
-        return returnEmails ;
+        return returnEmails;
     }
 
-    protected String filterEmail(String emailAddress) {
-        return emailAddress.replaceAll("\\\\@","@") ;
+    public String filterEmail(String emailAddress) {
+        return emailAddress.replaceAll("\\\\@", "@");
     }
 
     public JavaMailSender getMailSender() {

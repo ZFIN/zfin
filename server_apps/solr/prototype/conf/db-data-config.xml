@@ -1,7 +1,15 @@
 <dataConfig>
 
-    <dataSource name="db" driver="com.informix.jdbc.IfxDriver" url="jdbc:informix-sqli://@SQLHOSTS_HOST@:@INFORMIX_PORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;DB_LOCALE=en_US.utf8"
-	        transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>
+<!--    <dataSource name="db"
+           	    driver="org.postgresql.Driver"
+                url="jdbc:postgresql://localhost:5432/celldb"
+                transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>-->
+
+    <dataSource name="db"
+
+                driver="com.informix.jdbc.IfxDriver"
+                url="jdbc:informix-sqli://@SQLHOSTS_HOST@:@INFORMIX_PORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;DB_LOCALE=en_US.utf8"
+	            transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>
 
 
     <document>
@@ -30,24 +38,29 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
 
    <entity name="gene_attribution"
            datasource="db" query="select recattrib_data_zdb_id as data_zdb_id, count(recattrib_source_zdb_id) as attribution_count
-                  from record_attribution
-                  where recattrib_data_zdb_id[1,8]='ZDB-GENE'
-                     or recattrib_data_zdb_id[1,7]='ZDB-EFG'
+                  from marker
+                       join record_attribution on recattrib_data_zdb_id = mrkr_zdb_id
+                       join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                            and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG'))
                   group by 1"
            where="data_zdb_id=gene.id"
            cacheImpl="SortedMapBackedCache"/>
 
    <entity name="gene_aliases"
-             datasource="db" query="select dalias_alias alias, dalias_alias gene_previous_name, dalias_data_zdb_id from data_alias
-                   where dalias_data_zdb_id[1,8] = 'ZDB-GENE'
-                      or dalias_data_zdb_id[1,7] = 'ZDB-EFG'"
+             datasource="db" query="select dalias_alias alias, dalias_alias gene_previous_name, dalias_data_zdb_id
+             from data_alias
+                  join marker on dalias_data_zdb_id = mrkr_zdb_id
+                  join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                            and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG'))"
             where="dalias_data_zdb_id=gene.id"
             cacheImpl="SortedMapBackedCache"/>
 
    <entity name="gene_replaced_ids"
-             datasource="db" query="select zrepld_old_zdb_id alias, zrepld_old_zdb_id gene_previous_name, zrepld_new_zdb_id from zdb_replaced_data
-                   where zrepld_new_zdb_id[1,8] = 'ZDB-GENE'
-                      or zrepld_new_zdb_id[1,7] = 'ZDB-EFG'"
+             datasource="db" query="select zrepld_old_zdb_id alias, zrepld_old_zdb_id gene_previous_name, zrepld_new_zdb_id
+             from zdb_replaced_data
+                  join marker on zrepld_new_zdb_id = mrkr_zdb_id
+                  join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                            and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG'))"
             where="zrepld_new_zdb_id=gene.id"
             cacheImpl="SortedMapBackedCache"/>
 
@@ -114,16 +127,16 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                 join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
                                 join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
-                            where (start_stage.stg_name == 'Unknown'
-                                   OR end_stage.stg_name == 'Unknown')
+                            where (start_stage.stg_name = 'Unknown'
+                                   OR end_stage.stg_name = 'Unknown')
                            union
                            select end_stage.stg_name as stage, xpatex_gene_zdb_id as gene_zdb_id
                             from expression_experiment2
                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                 join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
                                 join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
-                            where (start_stage.stg_name == 'Unknown'
-                                   OR end_stage.stg_name == 'Unknown');"
+                            where (start_stage.stg_name = 'Unknown'
+                                   OR end_stage.stg_name = 'Unknown');"
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -207,10 +220,12 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
                                 from expression_result er
                                     join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
                                     join term on er.xpatres_superterm_zdb_id=term_zdb_id
+                                    join marker on ee.xpatex_gene_zdb_id = mrkr_zdb_id
+                                    join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                                         and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG'))
                                 where er.xpatres_expression_found='t'
                                     and ee.xpatex_gene_zdb_id is not null
                                     and term_ontology='zebrafish_anatomy'
-                                    and xpatex_gene_zdb_id[1,7] == 'ZDB-EFG'
                                 union
                                 select
                                    term_ont_id as xref, term_name as anatomy_direct,
@@ -218,10 +233,12 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
                                     from expression_result er
                                         join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
                                         join term  on er.xpatres_subterm_zdb_id=term_zdb_id
+                                        join marker on ee.xpatex_gene_zdb_id = mrkr_zdb_id
+                                        join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                                             and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG'))
                                     where er.xpatres_expression_found='t'
                                         and ee.xpatex_gene_zdb_id is not null
                                         and term_ontology='zebrafish_anatomy'
-                                        and xpatex_gene_zdb_id[1,7] == 'ZDB-EFG'
                                 "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -234,10 +251,12 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
                                     join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
                                     join all_term_contains on alltermcon_contained_zdb_id = er.xpatres_superterm_zdb_id
                                     join term on alltermcon_container_zdb_id = term_zdb_id
+                                    join marker on ee.xpatex_gene_zdb_id = mrkr_zdb_id
+                                    join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                                         and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG'))
                                 where er.xpatres_expression_found='t'
                                     and ee.xpatex_gene_zdb_id is not null
                                     and term_ontology='zebrafish_anatomy'
-                                    and xpatex_gene_zdb_id[1,7] == 'ZDB-EFG'
                                 union
                                 select
                                    term_ont_id as xref, term_name as anatomy_direct,
@@ -246,10 +265,12 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
                                         join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
                                         join all_term_contains on alltermcon_contained_zdb_id = er.xpatres_subterm_zdb_id
                                         join term on alltermcon_container_zdb_id = term_zdb_id
+                                        join marker on ee.xpatex_gene_zdb_id = mrkr_zdb_id
+                                        join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                                             and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG'))
                                     where er.xpatres_expression_found='t'
                                         and ee.xpatex_gene_zdb_id is not null
                                         and term_ontology='zebrafish_anatomy'
-                                        and xpatex_gene_zdb_id[1,7] == 'ZDB-EFG'
                                 "
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
@@ -697,12 +718,14 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
                 <entity name="gene_accession"
                         datasource="db" query="select fdb_db_name || ':' || dblink_acc_num as related_accession,
                                                      dblink_linked_recid as gene_zdb_id
-                                             from db_link, foreign_db_contains, foreign_db
+                                             from db_link, foreign_db_contains, foreign_db,
+                                                  marker, marker_type_group_member
                                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                                and fdbcont_fdb_db_id = fdb_db_pk_id
-                                               and (dblink_linked_recid[1,8] = 'ZDB-GENE'
-                                                    or dblink_linked_recid[1,7] = 'ZDB-EFG')
-                                                and dblink_acc_num not like 'OTTDARG%'
+                                               and dblink_linked_recid = mrkr_zdb_id
+                                               and mtgrpmem_mrkr_type = mrkr_type
+                                               and mtgrpmem_mrkr_type_group in ('GENEDOM','EFG')
+                                               and dblink_acc_num not like 'OTTDARG%'
                         union
                                              select fdb_db_name || ':' || oef_accession_number as related_accession,
                                                      ortho_zebrafish_gene_zdb_id as gene_zdb_id
@@ -713,10 +736,13 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
                         union
                           select fdb_db_name || ':' || dblink_acc_num as related_accession,
                                                      mrel_mrkr_1_zdb_id as gene_zdb_id
-                                             from db_link, foreign_db_contains, foreign_db,marker_relationship
+                                             from db_link, foreign_db_contains, foreign_db,marker_relationship,
+                                                   marker, marker_type_group_member
                                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                                and fdbcont_fdb_db_id = fdb_db_pk_id
-                                               and dblink_linked_recid[1,11]='ZDB-TSCRIPT'
+                                               and mrkr_zdb_id = dblink_linked_recid
+                                               and mtgrpmem_mrkr_type = mrkr_type
+                                               and mtgrpmem_mrkr_type_group in ('TRANSCRIPT')
                                                and mrel_mrkr_2_zdb_id=dblink_linked_recid
                                                and dblink_acc_num like 'OTTDARG%'
                                                and mrel_type='gene produces transcript'
@@ -738,12 +764,11 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
 
                 <entity name="gene_chromosome"
                         datasource="db" query="select ul_chromosome as chromosome,
-                                       ul_data_zdb_id as gene_zdb_id
+                                       mrkr_zdb_id as gene_zdb_id
                                 from unique_location
-                                where ul_data_zdb_id[1,8] = 'ZDB-GENE'
-                                   or ul_data_zdb_id[1,7] = 'ZDB-EFG'
-                                   or ul_data_zdb_id[1,11] = 'ZDB-TSCRIPT'
-                                   ;"
+                                     join marker on ul_data_zdb_id = mrkr_zdb_id
+                                     join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                                          and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG','TRANSCRIPT'))"
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -752,9 +777,9 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
                         datasource="db" query="select distinct 'ambiguous' as chromosome,
                                        sfclg_data_Zdb_id as gene_zdb_id
                                 from sequence_feature_chromosome_location_generated
-                                where sfclg_data_zdb_id not in (select ul_data_Zdb_id from unique_location where ul_data_zdb_id[1,8] = 'ZDB-GENE'
-                                                                   or ul_data_zdb_id[1,7] = 'ZDB-EFG'
-                                                                                                      or ul_data_zdb_id[1,11] = 'ZDB-TSCRIPT')
+                                where sfclg_data_zdb_id not in (select ul_data_Zdb_id from unique_location where substring(ul_data_zdb_id from 1 for 8) = 'ZDB-GENE'
+                                                                   or substring(ul_data_zdb_id from 1 for 7) = 'ZDB-EFG'
+                                                                                                      or substring(ul_data_zdb_id from 1 for 11) = 'ZDB-TSCRIPT')
                                                                                                       and sfclg_data_zdb_id like 'ZDB-GENE%' group by sfclg_data_zdb_id,sfclg_chromosome having count(sfclg_Data_zdb_id)>1
                                                                                                       ;"
                         cacheImpl="SortedMapBackedCache"
@@ -787,11 +812,11 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
 
                 <entity name="gene_publication_xref"
                         datasource="db" query="select distinct mrkr_zdb_id as gene_zdb_id, recattrib_source_zdb_id as xref
-                                from record_attribution, marker
+                                from record_attribution, marker, marker_type_group_member
                                 where recattrib_data_zdb_id = mrkr_zdb_id
-                                  and ( mrkr_zdb_id[1,8] == 'ZDB-GENE'
-                                        or mrkr_zdb_id[1,7] == 'ZDB-EFG')
-                                        ;"
+                                  and mtgrpmem_mrkr_type = mrkr_type
+                                  and mtgrpmem_mrkr_type_group in ('GENEDOM','EFG')
+                                  ;"
                         cacheImpl="SortedMapBackedCache"
                         where="gene_zdb_id=gene.id"/>
 
@@ -814,7 +839,7 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
                datasource="db" query="
 select
     mrkr_zdb_id as id,
-    case when mrkr_type == 'TSCRIPT' then rtrim('Gene / Transcript')
+    case when mrkr_type = 'TSCRIPT' then rtrim('Gene / Transcript')
          else 'Marker / Clone' end as category,
     mrkrtype_type_display as type,
     mrkr_abbrev as name,
@@ -823,7 +848,7 @@ select
     mrkr_name as full_name,
     mrkr_abbrev_order as name_sort,
        '/' || mrkr_zdb_id as url,
-       (select min(when) from updates where rec_id = mrkr_zdb_id) as date
+       to_date(get_date_from_id(mrkr_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
 from marker, marker_types
 where mrkr_type not in (
     SELECT mtgrpmem_mrkr_type
@@ -831,7 +856,7 @@ where mrkr_type not in (
     WHERE mtgrpmem_mrkr_type_group in ('GENEDOM', 'EFG')
   )
   and mrkr_type != 'ATB'
-  and mrkr_zdb_id[1,9] != 'ZDB-TGCON'
+  and substring(mrkr_zdb_id from 1 for 9) != 'ZDB-TGCON'
   and mrkr_type != 'MRPHLNO'
   and mrkr_type != 'TALEN'
   and mrkr_type != 'CRISPR'
@@ -917,36 +942,35 @@ where mrkr_type not in (
                datasource="db" query="select ul_chromosome as chromosome,
        ul_data_zdb_id as marker_zdb_id
 from unique_location
-where ul_data_zdb_id[1,8] != 'ZDB-GENE'
-  and ul_data_zdb_id[1,7] != 'ZDB-EFG';"
+where substring(ul_data_zdb_id from 1 for 8) != 'ZDB-GENE'
+  and substring(ul_data_zdb_id from 1 for 7) != 'ZDB-EFG'"
                cacheImpl="SortedMapBackedCache"
                where="marker_zdb_id=marker.id"/>
-       
+
+
        <entity name="marker_ambig_chromosome"
                datasource="db" query="select distinct 'ambiguous' as chromosome,
-                                       sfclg_data_Zdb_id as marker_zdb_id
-                                from sequence_feature_chromosome_location_generated
-                                where sfclg_data_zdb_id not in (select ul_data_Zdb_id from unique_location where ul_data_zdb_id[1,8] != 'ZDB-GENE'
-                                                                   or ul_data_zdb_id[1,7] != 'ZDB-EFG')
-
-                                                                                                      and sfclg_data_zdb_id[1,8] != 'ZDB-GENE'
-  and sfclg_data_zdb_id[1,7] != 'ZDB-EFG' group by sfclg_data_zdb_id,sfclg_chromosome having count(sfclg_Data_zdb_id)>1;"
+                                               sfclg_data_Zdb_id as marker_zdb_id
+                                        from sequence_feature_chromosome_location_generated
+                                        where not exists (select ul_data_Zdb_id from unique_location where ul_data_zdb_id = sfclg_data_zdb_id)
+                                        group by sfclg_data_zdb_id,sfclg_chromosome
+                                        having count(sfclg_Data_zdb_id)>1;"
                cacheImpl="SortedMapBackedCache"
                where="marker_zdb_id=marker.id"/>
 
        <entity name="marker_supplier"
                datasource="db" query=" select lab.zdb_id as xref, lab.name as source, idsup_data_zdb_id
-                           from int_data_supplier, lab
-                           where idsup_data_zdb_id[1,7] != 'ZDB-ATB'
-                           and idsup_data_zdb_id[1,8] != 'ZDB-GENE'
-  and idsup_data_zdb_id[1,7] != 'ZDB-EFG'
+                           from int_data_supplier, lab, marker, marker_type_group_member
+                           where idsup_data_zdb_id = mrkr_zdb_id
+                             and mtgrpmem_mrkr_type = mrkr_type
+                             and mtgrpmem_mrkr_type_group not in ('ATB','GENEDOM','EFG')
                              and idsup_supplier_zdb_id = lab.zdb_id
                            union
                            select company.zdb_id as xref, company.name as source, idsup_data_zdb_id
-                           from int_data_supplier, company
-                            where idsup_data_zdb_id[1,7] != 'ZDB-ATB'
-                           and idsup_data_zdb_id[1,8] != 'ZDB-GENE'
-  and idsup_data_zdb_id[1,7] != 'ZDB-EFG'
+                           from int_data_supplier, company, marker, marker_type_group_member
+                            where idsup_data_zdb_id = mrkr_zdb_id
+                             and mtgrpmem_mrkr_type = mrkr_type
+                             and mtgrpmem_mrkr_type_group not in ('ATB','GENEDOM','EFG')
                              and idsup_supplier_zdb_id = company.zdb_id;"
                cacheImpl="SortedMapBackedCache"
                where="idsup_data_zdb_id=marker.id"/>
@@ -956,14 +980,16 @@ where ul_data_zdb_id[1,8] != 'ZDB-GENE'
        <entity name="marker_mrel_xrefs"
                 datasource="db" query="
                 select mrel_mrkr_1_zdb_id as xref, mrel_mrkr_2_zdb_id as mrkr_zdb_id
-                from marker_relationship
-                where mrel_mrkr_2_zdb_id[1,8] != 'ZDB-GENE'
-                  and mrel_mrkr_2_zdb_id[1,7] != 'ZDB-ATB'
+                from marker_relationship,marker, marker_type_group_member
+                where mrel_mrkr_2_zdb_id = mrkr_zdb_id
+                  and mtgrpmem_mrkr_type = mrkr_type
+                  and mtgrpmem_mrkr_type_group not in ('ATB','GENEDOM')
                 union
                 select mrel_mrkr_2_zdb_id as xref, mrel_mrkr_1_zdb_id as mrkr_zdb_id
-                from marker_relationship
-                where mrel_mrkr_2_zdb_id[1,8] != 'ZDB-GENE'
-                  and mrel_mrkr_2_zdb_id[1,7] != 'ZDB-ATB';"
+                from marker_relationship,marker, marker_type_group_member
+                where mrel_mrkr_2_zdb_id = mrkr_zdb_id
+                  and mtgrpmem_mrkr_type = mrkr_type
+                  and mtgrpmem_mrkr_type_group not in ('ATB','GENEDOM')"
                 cacheImpl="SortedMapBackedCache"
                 where="marker_zdb_id=marker.id"/>
 
@@ -1839,7 +1865,7 @@ select
 
        <entity name="construct_aliases"
                datasource="db" query="select dalias_alias alias, dalias_alias construct_alias, dalias_data_zdb_id from data_alias
-                      where dalias_data_zdb_id[1,9] in ('ZDB-TGCON','ZDB-PTCON','ZDB-GTCON','ZDB-ETCON') "
+                      where substring(dalias_data_zdb_id from 1 for 9) in ('ZDB-TGCON','ZDB-PTCON','ZDB-GTCON','ZDB-ETCON') "
                where="dalias_data_zdb_id=construct.id"
                cacheImpl="SortedMapBackedCache" />
 
@@ -2016,9 +2042,9 @@ select
                                              from db_link, foreign_db_contains, foreign_db
                                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                                and fdbcont_fdb_db_id = fdb_db_pk_id
-                                               and (dblink_linked_recid[1,12] = 'ZDB-MRPHLNO-'
-                                                    or dblink_linked_recid[1,11] = 'ZDB-CRISPR-'
-                                                    or dblink_linked_recid[1,10] = 'ZDB-TALEN-')
+                                               and (substring(dblink_linked_recid from 1 for 12) = 'ZDB-MRPHLNO-'
+                                                    or substring(dblink_linked_recid from 1 for 11) = 'ZDB-CRISPR-'
+                                                    or substring(dblink_linked_recid from 1 for 10) = 'ZDB-TALEN-')
                            ;"
                         cacheImpl="SortedMapBackedCache"
                         where="mrkr_zdb_id=str.id"/>
@@ -2127,15 +2153,15 @@ select
                             from phenotype_source_generated
                                 join stage start_stage on pg_start_stg_zdb_id = start_stage.stg_zdb_id
                                 join stage end_stage on pg_end_stg_zdb_id = end_stage.stg_zdb_id
-                            where (start_stage.stg_name == 'Unknown'
-                                   OR end_stage.stg_name == 'Unknown')
+                            where (start_stage.stg_name = 'Unknown'
+                                   OR end_stage.stg_name = 'Unknown')
                            union
                            select end_stage.stg_name as stage, 'pg-' || pg_id as pg_id
                             from phenotype_source_generated
                                 join stage start_stage on pg_start_stg_zdb_id = start_stage.stg_zdb_id
                                 join stage end_stage on pg_end_stg_zdb_id = end_stage.stg_zdb_id
-                            where (start_stage.stg_name == 'Unknown'
-                                   OR end_stage.stg_name == 'Unknown');"
+                            where (start_stage.stg_name = 'Unknown'
+                                   OR end_stage.stg_name = 'Unknown');"
                    cacheImpl="SortedMapBackedCache"
                    where="pg_id=phenotype.id"/>
 
@@ -2691,27 +2717,27 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                         case
                              when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id)
                              then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_probe_feature_zdb_id)
-                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
+                             when xpatex_gene_zdb_id is not null and substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
                              then (select '&lt;i&gt;' || mrkr_abbrev || '&lt;/i&gt; expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
-                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
+                             when xpatex_gene_zdb_id is not null and substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
                              then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
                              else (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_atb_zdb_id)
                          end as name,
                          case
                              when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id)
                              then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_probe_feature_zdb_id)
-                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
+                             when xpatex_gene_zdb_id is not null and substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
                              then (select '&lt;i&gt;' || mrkr_abbrev || '&lt;/i&gt; expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
-                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
+                             when xpatex_gene_zdb_id is not null and substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
                              then (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
                              else (select mrkr_abbrev || ' expression in ' || fish_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_atb_zdb_id)
                          end as full_name,
                          case
                              when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id)
                              then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_probe_feature_zdb_id)
-                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
+                             when xpatex_gene_zdb_id is not null and substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
                              then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
-                             when xpatex_gene_zdb_id is not null and xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
+                             when xpatex_gene_zdb_id is not null and substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
                              then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
                              else (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_atb_zdb_id)
                          end as name_sort,
@@ -2772,7 +2798,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                  join marker on xpatex_gene_zdb_id = mrkr_zdb_id
-                            where xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
+                            where substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
                               and not exists (
                                            select 'x'
                                            from clone
@@ -2789,7 +2815,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                  join data_alias on xpatex_gene_zdb_id = dalias_data_zdb_id
-                            where xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
+                            where substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
                               and not exists (
                                            select 'x'
                                            from clone
@@ -2808,7 +2834,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                             from expression_experiment2
                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                 join marker on xpatex_gene_zdb_id = mrkr_zdb_id
-                            where xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
+                            where substring(xpatex_gene_zdb_id from 1 for 8) = 'ZDB-EFG'
                             ;
                    "
                    where="efs_pk_id=expression.id"
@@ -2916,16 +2942,16 @@ term_name as expression_anatomy_direct,
                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                 join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
                                 join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
-                            where (start_stage.stg_name == 'Unknown'
-                                   OR end_stage.stg_name == 'Unknown')
+                            where (start_stage.stg_name = 'Unknown'
+                                   OR end_stage.stg_name = 'Unknown')
                            union
                            select end_stage.stg_name as stage, 'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                 join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
                                 join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
-                            where (start_stage.stg_name == 'Unknown'
-                                   OR end_stage.stg_name == 'Unknown');"
+                            where (start_stage.stg_name = 'Unknown'
+                                   OR end_stage.stg_name = 'Unknown');"
                    cacheImpl="SortedMapBackedCache"
                    where="efs_pk_id=expression.id"/>
 
@@ -3118,7 +3144,7 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
 
            <entity name="antibody_aliases"
                    datasource="db" query="select dalias_alias alias, dalias_data_zdb_id from data_alias
-                         where dalias_data_zdb_id[1,7] = 'ZDB-ATB' "
+                         where substring(dalias_data_zdb_id from 1 for 7) = 'ZDB-ATB' "
                    where="dalias_data_zdb_id=antibody.id"
                    cacheImpl="SortedMapBackedCache"/>
 
@@ -3131,7 +3157,7 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
                                              from db_link, foreign_db_contains, foreign_db
                                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                                and fdbcont_fdb_db_id = fdb_db_pk_id
-                                               and (dblink_linked_recid[1,8] = 'ZDB-ATB-')
+                                               and substring(dblink_linked_recid from 1 for 8) = 'ZDB-ATB-'
                            ;"
                         cacheImpl="SortedMapBackedCache"
                         where="mrkr_zdb_id=antibody.id"/>
@@ -3167,12 +3193,12 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
            <entity name="antibody_supplier"
                    datasource="db" query=" select lab.zdb_id as xref, lab.name as source, idsup_data_zdb_id
                            from int_data_supplier, lab
-                           where idsup_data_zdb_id[1,7] = 'ZDB-ATB'
+                           where substring(idsup_data_zdb_id from 1 for 7) = 'ZDB-ATB'
                              and idsup_supplier_zdb_id = lab.zdb_id
                            union
                            select company.zdb_id as xref, company.name as source, idsup_data_zdb_id
                            from int_data_supplier, company
-                           where idsup_data_zdb_id[1,7] = 'ZDB-ATB'
+                           where substring(idsup_data_zdb_id from 1 for 7) = 'ZDB-ATB'
                              and idsup_supplier_zdb_id = company.zdb_id;"
                    cacheImpl="SortedMapBackedCache"
                    where="idsup_data_zdb_id=antibody.id"/>
@@ -3278,19 +3304,23 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
                    datasource="db" query="select mrkr_abbrev as antigen_gene,
                           mrkr_name as antigen_gene_full_name,
                           mrel_mrkr_2_zdb_id as atb_zdb_id
-                   from marker_relationship, marker
+                   from marker_relationship, marker, marker_type_group_member
                    where mrel_type = 'gene product recognized by antibody'
                      and mrel_mrkr_1_zdb_id = mrkr_zdb_id
-                     and mrkr_zdb_id[1,8] = 'ZDB-GENE'"
+                     and mtgrpmem_mrkr_type = mrkr_type
+                     and mtgrpmem_mrkr_type_group in ('GENEDOM')
+                     "
                    cacheImpl="SortedMapBackedCache"
                    where="atb_zdb_id=antibody.id"/>
 
            <entity name="antibody_antigen_gene_previous_names"
                    datasource="db" query="select dalias_alias as antigen_gene_previous_name,
                                              mrel_mrkr_2_zdb_id as atb_zdb_id
-                                      from marker_relationship, data_alias
+                                      from marker_relationship, data_alias, marker, marker_type_group_member
                                       where mrel_type = 'gene product recognized by antibody'
-                                        and mrel_mrkr_1_zdb_id[1,8] = 'ZDB-GENE'
+                                        and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+                                        and mtgrpmem_mrkr_type = mrkr_type
+                                        and mtgrpmem_mrkr_type_group in ('GENEDOM')
                                         and mrel_mrkr_1_zdb_id = dalias_data_zdb_id;
                    "
                    cacheImpl="SortedMapBackedCache"
@@ -3326,7 +3356,7 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
 
            <entity name="feature_aliases"
                    datasource="db" query="select dalias_alias alias, dalias_data_zdb_id from data_alias
-                   where dalias_data_zdb_id[1,7] = 'ZDB-ALT'"
+                   where substring(dalias_data_zdb_id from 1 for 7) = 'ZDB-ALT'"
                    where="dalias_data_zdb_id=feature.id"
                    cacheImpl="SortedMapBackedCache" >
                <field name="alias" column="dalias_alias"/>
@@ -3336,7 +3366,7 @@ SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
                                              from db_link, foreign_db_contains, foreign_db
                                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                                and fdbcont_fdb_db_id = fdb_db_pk_id
-                                               and (dblink_linked_recid[1,8] = 'ZDB-ALT-')
+                                               and substring(dblink_linked_recid from 1 for 8) = 'ZDB-ALT-'
                            ;"
                         cacheImpl="SortedMapBackedCache"
                         where="feature_zdb_id=feature.id"/>
@@ -3435,12 +3465,12 @@ where feature_zdb_id = ftmd_feature_zdb_id
        <entity name="feature_supplier"
                datasource="db" query="select lab.zdb_id as xref, lab.name as source, idsup_data_zdb_id as feature_zdb_id
                       from int_data_supplier, lab
-                      where idsup_data_zdb_id[1,7] = 'ZDB-ALT'
+                      where substring(idsup_data_zdb_id from 1 for 7) = 'ZDB-ALT'
                         and idsup_supplier_zdb_id = lab.zdb_id
                       union
                       select company.zdb_id as xref, company.name as source, idsup_data_zdb_id
                       from int_data_supplier, company
-                      where idsup_data_zdb_id[1,7] = 'ZDB-ALT'
+                      where substring(idsup_data_zdb_id from 1 for 7) = 'ZDB-ALT'
                         and idsup_supplier_zdb_id = company.zdb_id;"
                cacheImpl="SortedMapBackedCache"
                where="feature_zdb_id=feature.id"/>
@@ -3997,16 +4027,16 @@ where feature_zdb_id = ftmd_feature_zdb_id
                              case when term_ontology = 'disease_ontology' then TRIM('Human Disease')
                                   else TRIM('Anatomy / GO') end as category,
                              case
-                               when term_ontology == 'biological_process' then 'Biological Process'
-                               when term_ontology == 'cellular_component' then 'Cellular Component'
-                               when term_ontology == 'molecular_function' then 'Molecular Function'
-                               when term_ontology == 'zebrafish_anatomy' then 'Zebrafish Anatomy'
-                               when term_ontology == 'disease_ontology' then 'Human Disease'
+                               when term_ontology = 'biological_process' then 'Biological Process'
+                               when term_ontology = 'cellular_component' then 'Cellular Component'
+                               when term_ontology = 'molecular_function' then 'Molecular Function'
+                               when term_ontology = 'zebrafish_anatomy' then 'Zebrafish Anatomy'
+                               when term_ontology = 'disease_ontology' then 'Human Disease'
                              end as ontology,
                              '/' || term_ont_id as url,
                              case
-                                when term_is_obsolete == 't' then 'obsolete'
-                                when term_is_obsolete == 'f' then 'current'
+                                when term_is_obsolete = 't' then 'obsolete'
+                                when term_is_obsolete = 'f' then 'current'
                              end as term_status,
                              term_is_obsolete as root_only,
                              term_definition as definition
@@ -4018,7 +4048,7 @@ where feature_zdb_id = ftmd_feature_zdb_id
            <entity name="term_aliases"
                    datasource="db" query="select dalias_alias alias, dalias_data_zdb_id
                          from data_alias
-                         where dalias_data_zdb_id[1,8] = 'ZDB-TERM'"
+                         where substring(dalias_data_zdb_id from 1 for 8) = 'ZDB-TERM'"
                    where="dalias_data_zdb_id=term.internal_id"
                    cacheImpl="SortedMapBackedCache" >
                <field name="alias" column="dalias_alias"/>
@@ -4027,7 +4057,7 @@ where feature_zdb_id = ftmd_feature_zdb_id
            <entity name="term_replacements"
                    datasource="db" query="select zrepld_old_zdb_id related_accession, zrepld_new_zdb_id
                          from zdb_replaced_data
-                         where zrepld_new_zdb_id[1,8] = 'ZDB-TERM'"
+                         where substring(zrepld_new_zdb_id from 1 for 8) = 'ZDB-TERM'"
                    where="zrepld_new_zdb_id=term.internal_id"
                    cacheImpl="SortedMapBackedCache" >
            </entity>
@@ -4249,18 +4279,18 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
            <entity name="pub_recattrib_xref"
                    datasource="db" query="select distinct recattrib_source_zdb_id as pub_zdb_id, recattrib_data_zdb_id as xref
                             from record_attribution
-                            where recattrib_source_zdb_id[1,7] == 'ZDB-PUB'
-                              and recattrib_data_zdb_id[1,8] != 'ZDB-GENE'
-                              and recattrib_data_zdb_id[1,7] != 'ZDB-ALT'
-                              and recattrib_data_zdb_id[1,8] != 'ZDB-ANAT'
-                              and recattrib_data_zdb_id[1,10] != 'ZDB-DALIAS'
-                              and recattrib_data_zdb_id[1,9] != 'ZDB-APATO'
-                              and recattrib_data_zdb_id[1,7] != 'ZDB-EXP'
-                              and recattrib_data_zdb_id[1,9] != 'ZDB-IMAGE'
-                              and recattrib_data_zdb_id[1,8] != 'ZDB-MREL'
-                              and recattrib_data_zdb_id[1,10] != 'ZDB-DBLINK'
-                              and recattrib_data_zdb_id[1,8] != 'ZDB-OEVD'
-                              and recattrib_data_zdb_id[1,8] != 'ZDB-XPAT';"
+                            where substring(recattrib_source_zdb_id from 1 for 7) = 'ZDB-PUB'
+                              and substring(recattrib_data_zdb_id from 1 for 8) != 'ZDB-GENE'
+                              and substring(recattrib_data_zdb_id from 1 for 7) != 'ZDB-ALT'
+                              and substring(recattrib_data_zdb_id from 1 for 8) != 'ZDB-ANAT'
+                              and substring(recattrib_data_zdb_id from 1 for 10) != 'ZDB-DALIAS'
+                              and substring(recattrib_data_zdb_id from 1 for 9) != 'ZDB-APATO'
+                              and substring(recattrib_data_zdb_id from 1 for 7) != 'ZDB-EXP'
+                              and substring(recattrib_data_zdb_id from 1 for 9) != 'ZDB-IMAGE'
+                              and substring(recattrib_data_zdb_id from 1 for 8) != 'ZDB-MREL'
+                              and substring(recattrib_data_zdb_id from 1 for 10) != 'ZDB-DBLINK'
+                              and substring(recattrib_data_zdb_id from 1 for 8) != 'ZDB-OEVD'
+                              and substring(recattrib_data_zdb_id from 1 for 8) != 'ZDB-XPAT';"
                    cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
 
@@ -4414,7 +4444,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    datasource="db" query="select recattrib_source_zdb_id as pub_zdb_id,
                                  recattrib_data_zdb_id as xref
                      from record_attribution
-                    where recattrib_data_zdb_id[1,7] = 'ZDB-ATB';"
+                    where substring(recattrib_data_zdb_id from 1 for 7) = 'ZDB-ATB';"
                    cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
 
@@ -4463,7 +4493,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
            <entity name="pub_attribution"
                    datasource="db" query="select recattrib_source_zdb_id as pub_zdb_id, count(recattrib_data_zdb_id) as attribution_count
                             from record_attribution
-                            where recattrib_source_zdb_id[1,7] = 'ZDB-PUB'
+                            where substring(recattrib_source_zdb_id from 1 for 7) = 'ZDB-PUB'
                             group by 1;"
                    cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
@@ -4474,7 +4504,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                                              dalias_alias as gene_previous_name
                                         from data_alias, record_attribution
                                        where recattrib_data_zdb_id = dalias_data_zdb_id
-                                         and recattrib_data_zdb_id[1,8] = 'ZDB-GENE';"
+                                         and substring(recattrib_data_zdb_id from 1 for 8) = 'ZDB-GENE';"
                    cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
 
@@ -4668,8 +4698,7 @@ from expression_experiment
      join marker on xpatex_gene_zdb_id = mrkr_zdb_id
      join expression_result on xpatres_xpatex_zdb_id = xpatex_zdb_id
      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-where xpatex_gene_zdb_id[1,8] = 'ZDB-GENE';
-                   "
+where substring(xpatex_gene_zdb_id from 1 for 7) != 'ZDB-EFG' "
                    where="fig_zdb_id=figure.id"
                    cacheImpl="SortedMapBackedCache"/>
 
@@ -4681,10 +4710,7 @@ from expression_experiment
      join data_alias on xpatex_gene_zdb_id = dalias_data_zdb_id
      join expression_result on xpatres_xpatex_zdb_id = xpatex_zdb_id
      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
-where xpatex_gene_zdb_id[1,8] = 'ZDB-GENE'
-;
-
-                   "
+where substring(xpatex_gene_zdb_id from 1 for 7) != 'ZDB-EFG'"
                    where="fig_zdb_id=figure.id"
                    cacheImpl="SortedMapBackedCache"/>
 
@@ -4697,8 +4723,7 @@ from expression_experiment
      join expression_result on xpatres_xpatex_zdb_id = xpatex_zdb_id
      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id
      join marker on xpatex_gene_zdb_id = mrkr_zdb_id
-where xpatex_gene_zdb_id[1,8] != 'ZDB-GENE'
-;
+where substring(xpatex_gene_zdb_id from 1 for 7) = 'ZDB-EFG'
                    "
                    where="fig_zdb_id=figure.id"
                    cacheImpl="SortedMapBackedCache"/>
@@ -5182,9 +5207,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                               'Person' as type,
                               to_date(get_date_from_id(zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                               '/' || zdb_id as url,
-                              case when snapshot is null
-                                   then null
-                                   else zdb_id end  as snapshot,
+                              image as profile_image,
                               pers_bio as biography,
                               address as postal_address,
                               email as email_address
@@ -5215,9 +5238,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                                              'Lab' as type,
                                              '/' || zdb_id as url,
                                              to_date(get_date_from_id(zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
-                                             case when snapshot is null
-                                                  then null
-                                                  else zdb_id end  as snapshot,
+                                             image as profile_image,
                                              bio as biography,
                                              address as postal_address,
                                              email as email_address
@@ -5255,9 +5276,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                                                             'Company' as type,
                                                             '/' || zdb_id as url,
                                                             to_date(get_date_from_id(zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
-                                                            case when snapshot is null
-                                                                 then null
-                                                                 else zdb_id end  as snapshot,
+                                                            image as profile_image,
                                                             bio as biography,
                                                             address as postal_address,
                                                             email as email_address
@@ -5333,7 +5352,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
            <entity name="term_aliases"
                    datasource="db" query="select dalias_alias alias, dalias_data_zdb_id
                              from data_alias
-                             where dalias_data_zdb_id[1,8] = 'ZDB-TERM'"
+                             where substring(dalias_data_zdb_id from 1 for 8) = 'ZDB-TERM'"
                    where="dalias_data_zdb_id=term.internal_id"
                    cacheImpl="SortedMapBackedCache" />
 

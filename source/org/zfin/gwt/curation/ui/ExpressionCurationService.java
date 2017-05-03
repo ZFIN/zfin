@@ -15,17 +15,17 @@ public interface ExpressionCurationService extends DirectRestService {
 
 
     @GET
-    @Path("{publicationID}/experiments")
+    @Path("/action/curation/{publicationID}/experiments")
     @Options(dispatcher = ZfinDispatcher.class)
     List<ExperimentDTO> getExperiments(@PathParam("publicationID") String publicationID);
 
     @GET
-    @Path("{publicationID}/expression-experiments")
+    @Path("/action/curation/{publicationID}/expression-experiments")
     @Options(dispatcher = ZfinDispatcher.class)
     List<ExpressionExperimentDTO> getExpressionExperiments(@PathParam("publicationID") String publicationID);
 
     @POST
-    @Path("{publicationID}/expression-experiments")
+    @Path("/action/curation/{publicationID}/expression-experiments")
     @Options(dispatcher = ZfinDispatcher.class)
     ExpressionExperimentDTO createExpressionExperiment(@PathParam("publicationID") String publicationID, ExpressionExperimentDTO dto);
 
@@ -37,19 +37,19 @@ public interface ExpressionCurationService extends DirectRestService {
                                        @PathParam("antibodyID") String geneID) throws PublicationNotFoundException;
 
     @GET
-    @Path("{publicationID}/{geneID}/genbank-accessions")
+    @Path("/action/curation/{publicationID}/{geneID}/genbank-accessions")
     @Options(dispatcher = ZfinDispatcher.class)
     public List<ExpressionExperimentDTO> getGenbankAccessions(@PathParam("publicationID") String publicationID,
                                                               @PathParam("geneID") String geneID);
 
     @GET
-    @Path("{publicationID}/{geneID}/antibodies")
+    @Path("/action/curation/{publicationID}/{geneID}/antibodies")
     @Options(dispatcher = ZfinDispatcher.class)
     public List<MarkerDTO> getAntibodiesByGene(@PathParam("publicationID") String publicationID,
                                                @PathParam("geneID") String geneID);
 
     @DELETE
-    @Path("{publicationID}/expression-experiments/{expressionExperimentID}")
+    @Path("/action/curation/{publicationID}/expression-experiments/{expressionExperimentID}")
     @Options(dispatcher = ZfinDispatcher.class)
     public void deleteExperiment(@PathParam("publicationID") String publicationID,
                                  @PathParam("expressionExperimentID") String expressionExperimentID) ;

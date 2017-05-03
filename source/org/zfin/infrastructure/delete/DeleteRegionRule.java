@@ -25,7 +25,7 @@ public class DeleteRegionRule extends AbstractDeleteEntityRule implements Delete
         Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        types.add(MarkerRelationship.Type.CONTAINS_REGION);
         Set<Marker> constructs = MarkerService.getRelatedMarker(region, types);
         addToValidationReport(region.getAbbreviation() + " has relationships to the following constructs:", constructs);
 

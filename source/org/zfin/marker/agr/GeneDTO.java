@@ -19,7 +19,7 @@ public class GeneDTO extends ZfinDTO {
     private static final String geneLiteratureUrlPrefix = "http://zfin.org/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() + "?MIval=aa-showpubs.apg";
     //private List<SynonymDTO> synonyms;
     private List<String> synonyms;
-    private List<CrossReferenceDTO> crossReferences;
+    private List<String> crossReferenceIds;
     private Set<String> secondaryIds;
     private Set<GenomeLocationDTO> genomeLocations;
 
@@ -76,12 +76,12 @@ public class GeneDTO extends ZfinDTO {
         this.synonyms = synonyms;
     }
 
-    public List<CrossReferenceDTO> getCrossReferences() {
-        return crossReferences;
+    public List<String> getCrossReferenceIds() {
+        return crossReferenceIds;
     }
 
-    public void setCrossReferences(List<CrossReferenceDTO> crossReferences) {
-        this.crossReferences = crossReferences;
+    public void setCrossReferenceIds(List<String> crossReferenceIds) {
+        this.crossReferenceIds = crossReferenceIds;
     }
 
     public Set<String> getSecondaryIds() {

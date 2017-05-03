@@ -4,9 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.publication.presentation.PublicationPresentation;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -193,10 +191,10 @@ else
 
             if (link == null) {
                 if (markerType != null && markerType.toLowerCase().contains("gene")) {
-                    return "<i><a href=\"/action/marker/view/" + zdbId + "\">" + abbreviation + "</a></i>";
+                    return "<i><a href=\"/" + zdbId + "\">" + abbreviation + "</a></i>";
             } else {
                     if (markerType != null && isSTR()) {
-                        return "<a href=\"/action/marker/view/" + zdbId + "\">" + name + "</a>" +
+                        return "<a href=\"/" + zdbId + "\">" + name + "</a>" +
                                 "<a class='popup-link data-popup-link' " +
                                 " href='/action/marker/popup/" + zdbId + "'></a>";
                     }
@@ -205,7 +203,7 @@ else
                 }
 
                 {
-                    return "<a href=\"/action/marker/view/" + zdbId + "\">" + name + "</a>";
+                    return "<a href=\"/" + zdbId + "\">" + name + "</a>";
                 }
             }
         else {

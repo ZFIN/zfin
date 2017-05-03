@@ -308,7 +308,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
         markerRelationshipList.add(MarkerRelationship.Type.PROMOTER_OF);
         markerRelationshipList.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_REGION);
 
         Session session = currentSession();
         String hql = "select distinct mr from MarkerRelationship as mr, " +
@@ -336,7 +336,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
         markerRelationshipList.add(MarkerRelationship.Type.PROMOTER_OF);
         markerRelationshipList.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_REGION);
 
         Session session = currentSession();
         String hql = "select distinct mr from MarkerRelationship as mr " +
@@ -1815,7 +1815,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... typesNotIn) {
         String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
                 "	       mreltype_1_to_2_comments, " +
-                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          '<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "          src.srcurl_url, src.srcurl_display_text , mrel_zdb_id  " +
                 " 	  from marker_relationship  " +
@@ -1836,7 +1836,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql2To1 = " select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
                 "	       mreltype_2_to_1_comments, " +
-                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          '<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "          src.srcurl_url, src.srcurl_display_text  , mrel_zdb_id  " +
                 " 	  from marker_relationship " +
@@ -1887,7 +1887,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types) {
         String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
                 "	       mreltype_1_to_2_comments, " +
-                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          '<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "          src.srcurl_url, src.srcurl_display_text  , mrel_zdb_id  " +
                 " 	  from marker_relationship  " +
@@ -1908,7 +1908,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql2To1 = " select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
                 "	       mreltype_2_to_1_comments, " +
-                "          '<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "          '<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "          src.srcurl_url, src.srcurl_display_text , mrel_zdb_id   " +
                 " 	  from marker_relationship " +
@@ -2276,7 +2276,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
         markerRelationshipList.add(MarkerRelationship.Type.PROMOTER_OF);
         markerRelationshipList.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_REGION);
 
         String hql = " select m from MarkerRelationship mr1 , MarkerRelationship  mr2, Marker m " +
                 " where mr1.secondMarker.zdbID=mr2.secondMarker.zdbID " +
@@ -2442,7 +2442,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql = " select m.mrkr_abbrev, m.mrkr_zdb_id, m.mrkr_abbrev_order, mt.mrkrtype_type_display, " +
                 "mrt.mreltype_2_to_1_comments, " +
-                "'<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "'<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "src.srcurl_url, src.srcurl_display_text , mrct.mrel_zdb_id   " +
                 "from marker_relationship mrgt " +
@@ -2477,7 +2477,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql = " select m.mrkr_abbrev, m.mrkr_zdb_id, m.mrkr_abbrev_order, mt.mrkrtype_type_display, " +
                 "mrt.mreltype_2_to_1_comments, " +
-                "'<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "'<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "src.srcurl_url, src.srcurl_display_text , mrct.mrel_zdb_id   " +
                 "from marker_relationship mrgt " +
@@ -2580,15 +2580,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString) {
+
+         List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
         String hql = " select targetGene from Marker targetGene " +
                 "where " +
                 "lower(targetGene.abbreviation) like :lookupString " +
-                "and targetGene.markerType.name in (:type1 , :type2) " +
+                "and targetGene.markerType in (:markerType)  " +
                 "order by targetGene.abbreviation  ";
+
         return HibernateUtil.currentSession().createQuery(hql)
                 .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
-                .setString("type1", "GENE")
-                .setString("type2", "GENEP")
+                .setParameterList("markerType", markerTypes)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
@@ -2605,13 +2607,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
+
+
+
+
     public List<LookupEntry> getConstructComponentsForString(String lookupString, String zdbId) {
 
 
         String sqlQuery = "select mrkr_abbrev as abbrev, mrkr_type as type from marker, record_attribution ra,marker_type_group_member m " +
                 "where " +
                 "lower(mrkr_abbrev) like :lookupString " +
-                "and mrkr_type=m.mtgrpmem_mrkr_type and m.mtgrpmem_mrkr_type_group in ('GENEDOM_EFG_EREGION_K') " +
+                "and mrkr_type=m.mtgrpmem_mrkr_type and m.mtgrpmem_mrkr_type_group in ('CONSTRUCT_COMPONENTS') " +
                 "and mrkr_zdb_id=ra.recattrib_data_zdb_id and ra.recattrib_source_type = :standard and ra.recattrib_source_zdb_id = :pubZdbID " +
                 "UNION " +
                 "select cv_term_name as abbrev,cv_name_definition as type from controlled_vocabulary " +

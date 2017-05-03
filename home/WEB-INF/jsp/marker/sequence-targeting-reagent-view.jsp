@@ -51,7 +51,7 @@
 
     <c:if test="${fn:length(formBean.gbrowseImages) > 2}">
         <div>
-            <a href="/action/marker/view/${formBean.marker.zdbID}/str-targeted-genes">View
+            <a href="/${formBean.marker.zdbID}/str-targeted-genes">View
                 all ${fn:length(formBean.gbrowseImages)} target locations</a>
         </div>
     </c:if>

@@ -96,6 +96,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.GENE.name             | "gene:13"                                        | "12504"
         Category.GENE.name             | "misexpressed_gene:Any"                          | "12775"
         Category.GENE.name             | "trpv6 misexpression id:ZDB-GENE-040623-1"       | "12776"
+	Category.GENE.name             | "ZFIN:ZDB-GENE-990415-8 id:ZDB-GENE-990415-8"    | "INF-2933"
         Category.FIGURE.name           | "sa365"                                          | "12028"
         Category.FIGURE.name           | "trpv6 misexpression id:ZDB-FIG-160128-2"        | "12776"
         Category.FISH.name             | "t24412 MO4-tp53"                                | "11415"

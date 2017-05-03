@@ -6,8 +6,6 @@ import org.zfin.framework.presentation.tags.DeflineTag;
 import org.zfin.gwt.marker.ui.SequenceValidator;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +25,7 @@ public class SequenceTest {
 
         int index2 =
                 outputDefline.indexOf(
-                        "<a href=/action/marker/view/ZDB-TSCRIPT-081112-10003>ZDB-TSCRIPT-081112-10003</a>");
+                        "<a href=/ZDB-TSCRIPT-081112-10003>ZDB-TSCRIPT-081112-10003</a>");
         assertEquals("indexes should be equal", index1, index2);
     }
 

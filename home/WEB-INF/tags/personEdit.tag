@@ -29,7 +29,7 @@
         </li>
         <li><a href="#login">Login</a></li>
         <li>
-            <a href="#picture" ${empty person.snapshot ? 'style="color: red;"' : '' }>Picture</a>
+            <a href="#picture" ${empty person.image ? 'style="color: red;"' : '' }>Picture</a>
         </li>
     </ul>
 
@@ -261,7 +261,7 @@
         </div>
 
         <div id='picture'>
-            <zfin2:editSnapshot value='${person}'/>
+            <zfin2:editProfileImage value='${person}'/>
         </div>
     </div>
 </div>

@@ -61,7 +61,7 @@
         </java>
     </target>
 
-    <property name="version" value="0.6.0"/>
+    <property name="version" value="0.6.1"/>
     <property name="index" value="8"/>
     <property name="daf-file" value="ZFIN_${version}_DAF.json"/>
     <property name="bgi-file" value="ZFIN_${version}_BGI.json"/>
@@ -95,6 +95,24 @@
             <arg value="s3"/>
             <arg value="ls"/>
             <arg value="s3://mod-datadumps/"/>
+        </exec>
+    </target>
+
+    <target name="aws-ls-data" depends="">
+        <echo message="List directory AWS S3"/>
+        <exec executable="aws" failifexecutionfails="true">
+            <arg value="s3"/>
+            <arg value="ls"/>
+            <arg value="s3://mod-datadumps/data/"/>
+        </exec>
+    </target>
+
+    <target name="aws-ls-ortho" depends="">
+        <echo message="List directory AWS S3"/>
+        <exec executable="aws" failifexecutionfails="true">
+            <arg value="s3"/>
+            <arg value="ls"/>
+            <arg value="s3://mod-datadumps/ORTHO/"/>
         </exec>
     </target>
 

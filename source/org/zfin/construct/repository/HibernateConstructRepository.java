@@ -471,7 +471,7 @@ public class HibernateConstructRepository implements ConstructRepository {
         List<ConstructRelationship.Type> constructRelationshipList = new ArrayList<ConstructRelationship.Type>();
         constructRelationshipList.add(ConstructRelationship.Type.PROMOTER_OF);
         constructRelationshipList.add(ConstructRelationship.Type.CODING_SEQUENCE_OF);
-        constructRelationshipList.add(ConstructRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        constructRelationshipList.add(ConstructRelationship.Type.CONTAINS_REGION);
 
         Session session = currentSession();
         String hql = "select distinct cmr from ConstructRelationship as cmr, " +

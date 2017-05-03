@@ -824,7 +824,7 @@
       print "<param name = \"" . $edit_panel . "_ztotal\"\t value = ". $Q->param($edit_panel.'_ztotal').">\n";
     }
     if (! defined  $Q->param('OID')){$Q->param('OID', ''); }
-    print   "<param name = \"marker_url\"\t value = \"/action/marker/view/\">\n".
+    print   "<param name = \"marker_url\"\t value = \"/\">\n".
 
       "<param name = \"panel_url\"\t value = \"/action/mapping/panel-detail/\">\n".
 

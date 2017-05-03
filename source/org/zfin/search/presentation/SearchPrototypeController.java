@@ -101,11 +101,13 @@ public class SearchPrototypeController {
 
         if (StringUtils.isNotEmpty(q)) {
             String url = null;
+            //support for ZFIN:ZDB-... ID format
+            String zdbQuery = q.replace("ZFIN:ZDB","ZDB");
 
-            String replacementZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(q);
+            String replacementZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbQuery);
 
-            if (zdbIDService.isActiveZdbID(q)) {
-                url = "/" + q;
+            if (zdbIDService.isActiveZdbID(zdbQuery)) {
+                url = "/" + zdbQuery;
             } else if (StringUtils.isNotEmpty(replacementZdbID)) {
                 url = "/" + replacementZdbID;
             }
@@ -132,7 +134,7 @@ public class SearchPrototypeController {
         model.addAttribute("request", request);
 
         if (explain) {
-            query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]", "pgcmid");
+            query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, profile_image, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]", "pgcmid");
         }
 
         URLCreator resubmitUrlCreator = new URLCreator(baseUrl);

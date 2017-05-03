@@ -64,9 +64,9 @@
 
     <%--Transgenics that utilize the construct--%>
     <%--link to the facet search result if there are more than 50 features --%>
-    <c:choose>
+   <c:choose>
         <c:when test="${formBean.transgenics != null && fn:length(formBean.transgenics) > 50 }">
-            <zfin2:subsection title="GENOMIC FEATURES  THAT UTILIZE <i>${formBean.marker.name}</i>">
+            <zfin2:subsection title="GENOMIC FEATURES  THAT UTILIZE"> <span class="name-value"><zfin:name entity="${formBean.marker}"/><i>${formBean.marker.name}</i></span>
                 <table class="summary horizontal-solidblock">
                     <tr>
                         <td>
@@ -79,8 +79,8 @@
         </c:when>
         <c:otherwise>
             <div id="transgenics" class="summary">
-                <zfin2:subsection title="GENOMIC FEATURES  THAT UTILIZE <i>${formBean.marker.name}</i>"
-                                  test="${!empty formBean.transgenics}" showNoData="true">
+                <zfin2:subsection test="${!empty formBean.transgenics}" showNoData="true" title="GENOMIC FEATURES  THAT UTILIZE"> <span class="name-value"><zfin:name entity="${formBean.marker}"/></span>
+
                     <table id="features-table" class="summary rowstripes">
                         <tr>
                             <th width="25%">
@@ -120,7 +120,7 @@
     </c:choose>
 <c:choose>
     <c:when test="${formBean.transgenics != null && fn:length(formBean.transgenics) > 50 }">
-        <zfin2:subsection title="TRANSGENICS THAT UTILIZE <i>${formBean.marker.name}</i>">
+        <zfin2:subsection title="TRANSGENICS THAT UTILIZE"> <span class="name-value"><zfin:name entity="${formBean.marker}"/></span>
             <table class="summary horizontal-solidblock">
                 <tr>
                     <td>
@@ -133,8 +133,7 @@
     </c:when>
     <c:otherwise>
     <div id="transgenic-lines" class="summary">
-        <zfin2:subsection title="TRANSGENICS THAT UTILIZE" showNoData="true"
-                          test="${!empty formBean.fish}">
+        <zfin2:subsection test="${!empty formBean.fish}" showNoData="true" title="TRANSGENICS THAT UTILIZE <i>${formBean.marker.name}</i>">
             <table class="summary rowstripes">
                 <tr>
                     <th>Fish</th>

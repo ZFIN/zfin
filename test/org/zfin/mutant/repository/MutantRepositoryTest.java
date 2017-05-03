@@ -148,7 +148,6 @@ public class MutantRepositoryTest {
     }
 
     public static MarkerGoTermEvidence findSingleMarkerGoTermEvidenceWithOneInference() {
-        HibernateUtil.createTransaction();
         MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery("" +
                 " from MarkerGoTermEvidence ev where ev.inferredFrom is not empty and size(ev.inferredFrom) = 1 " +
                 "").setMaxResults(1).uniqueResult();
@@ -497,7 +496,7 @@ public class MutantRepositoryTest {
 
     @Test
     public void getDiseaseAgr() {
-        List<DiseaseAnnotationModel> models = getMutantRepository().getDiseaseAnnotationModels(2);
+        List<DiseaseAnnotationModel> models = getMutantRepository().getDiseaseAnnotationModels(5);
         assertNotNull(models);
         assertThat(models.size(), greaterThan(2));
     }

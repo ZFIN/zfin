@@ -283,6 +283,12 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         return report;
     }
 
+    @Override
+    public FishDTO retrieveFish(String fisID) {
+        Fish fish = getMutantRepository().getFish(fisID);
+        return DTOConversionService.convertToFishDtoFromFish(fish);
+    }
+
 
     public List<TermDTO> getHumanDiseaseList(String publicationID) {
         List<GenericTerm> diseaseList = getPhenotypeRepository().getHumanDiseases(publicationID);

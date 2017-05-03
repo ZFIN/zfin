@@ -2,6 +2,7 @@ package org.zfin.feature.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,9 +42,11 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
     private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
 
-    @Before
-    public void setUp() {
-        TestConfiguration.configure();
+    @After
+    public void closeSession() {
+        super.closeSession();
+        // make sure to close the session to be able to re-create the entities
+        HibernateUtil.closeSession();
     }
 
     /**
@@ -284,38 +287,32 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         List<Feature> features;
         int size1, size2, totalSize;
 
-        try {
-            HibernateUtil.createTransaction();
+        features = featureRepository.getFeaturesForLab(lab1ZdbID);
+        size1 = features.size();
+        assertTrue(size1 > 0);
 
-            features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            size1 = features.size();
-            assertTrue(size1 > 0);
+        features = featureRepository.getFeaturesForLab(lab2ZdbID);
+        size2 = features.size();
+        assertTrue(size2 > 0);
 
-            features = featureRepository.getFeaturesForLab(lab2ZdbID);
-            size2 = features.size();
-            assertTrue(size2 > 0);
-
-            totalSize = size1 + size2;
-            assertTrue(totalSize > 0);
+        totalSize = size1 + size2;
+        assertTrue(totalSize > 0);
 
 
-            Organization lab2 = RepositoryFactory.getProfileRepository().getLabById(lab2ZdbID);
-            features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            for (Feature feature : features) {
-                featureRepository.setLabOfOriginForFeature(lab2, feature);
-            }
-
-
-            features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            size1 = features.size();
-            assertEquals(0, size1);
-
-            features = featureRepository.getFeaturesForLab(lab2ZdbID);
-            size2 = features.size();
-            assertEquals(totalSize, size2);
-        } finally {
-            HibernateUtil.rollbackTransaction();
+        Organization lab2 = RepositoryFactory.getProfileRepository().getLabById(lab2ZdbID);
+        features = featureRepository.getFeaturesForLab(lab1ZdbID);
+        for (Feature feature : features) {
+            featureRepository.setLabOfOriginForFeature(lab2, feature);
         }
+
+
+        features = featureRepository.getFeaturesForLab(lab1ZdbID);
+        size1 = features.size();
+        assertEquals(0, size1);
+
+        features = featureRepository.getFeaturesForLab(lab2ZdbID);
+        size2 = features.size();
+        assertEquals(totalSize, size2);
     }
 
     @Test
@@ -325,26 +322,20 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         List<Feature> features;
         int size1;
 
-        try {
-            HibernateUtil.createTransaction();
-
-            features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            size1 = features.size();
-            assertTrue(size1 > 0);
+        features = featureRepository.getFeaturesForLab(lab1ZdbID);
+        size1 = features.size();
+        assertTrue(size1 > 0);
 
 
-            features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            for (Feature feature : features) {
-                featureRepository.deleteLabOfOriginForFeature(feature);
-            }
-
-
-            features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            size1 = features.size();
-            assertEquals(0, size1);
-        } finally {
-            HibernateUtil.rollbackTransaction();
+        features = featureRepository.getFeaturesForLab(lab1ZdbID);
+        for (Feature feature : features) {
+            featureRepository.deleteLabOfOriginForFeature(feature);
         }
+
+
+        features = featureRepository.getFeaturesForLab(lab1ZdbID);
+        size1 = features.size();
+        assertEquals(0, size1);
     }
 
 
@@ -378,35 +369,29 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         List<Feature> features;
         int size1;
 
-        try {
-            HibernateUtil.createTransaction();
+        features = featureRepository.getFeaturesForLab(lab1ZdbID);
+        size1 = features.size();
+        assertTrue(size1 > 0);
 
-            features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            size1 = features.size();
-            assertTrue(size1 > 0);
+        Feature myFeature = features.get(0);
 
-            Feature myFeature = features.get(0);
-
-            features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            for (Feature feature : features) {
-                featureRepository.deleteLabOfOriginForFeature(feature);
-            }
-
-
-            features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            size1 = features.size();
-            assertEquals(0, size1);
-
-
-            int added = featureRepository.addLabOfOriginForFeature(myFeature, lab1ZdbID);
-            assertEquals(1, added);
-
-            features = featureRepository.getFeaturesForLab(lab1ZdbID);
-            size1 = features.size();
-            assertEquals(1, size1);
-        } finally {
-            HibernateUtil.rollbackTransaction();
+        features = featureRepository.getFeaturesForLab(lab1ZdbID);
+        for (Feature feature : features) {
+            featureRepository.deleteLabOfOriginForFeature(feature);
         }
+
+
+        features = featureRepository.getFeaturesForLab(lab1ZdbID);
+        size1 = features.size();
+        assertEquals(0, size1);
+
+
+        int added = featureRepository.addLabOfOriginForFeature(myFeature, lab1ZdbID);
+        assertEquals(1, added);
+
+        features = featureRepository.getFeaturesForLab(lab1ZdbID);
+        size1 = features.size();
+        assertEquals(1, size1);
     }
 
     @Test

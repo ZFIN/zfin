@@ -356,7 +356,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
                         getQuery().replaceFirst("(?i)" + INSERT + "( *)" + INTO, SELECT + " " + STAR + " " + FROM)
                 );
             } else {
-                int startOfSelect = getQuery().indexOf(SELECT.toLowerCase());
+                int startOfSelect = getQuery().toLowerCase().indexOf(SELECT.toLowerCase());
                 statement.comment = getQuery().substring(0, startOfSelect).trim();
                 statement.query = new StringBuilder(getQuery().substring(startOfSelect));
             }

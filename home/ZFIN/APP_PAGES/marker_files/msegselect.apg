@@ -549,7 +549,7 @@ Message: $MI_ERRORMSG
           <?/MISQL>
  
 
-      <?MIVAR NAME=$viewer>/action/marker/view/<?/MIVAR>
+      <?MIVAR NAME=$viewer>/<?/MIVAR>
      <!-- create form for each marker  -->
       <!-- get rid of dashes to avoid javascript error -->
 

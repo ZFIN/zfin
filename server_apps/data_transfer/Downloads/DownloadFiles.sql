@@ -1416,7 +1416,7 @@ into temp tmp_pubs;
 unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt'
  DELIMITER "	"
 SELECT distinct mrkr_abbrev,
-       mrkr_zdb_id
+       mrkr_zdb_id,
        source_id,
        CASE pub.jtype
            WHEN "Unpublished" THEN "Data Submission"
@@ -1425,7 +1425,7 @@ SELECT distinct mrkr_abbrev,
        pub.accession_no
 FROM publication pub, tmp_pubs,marker_type_group_member
  where source_id = zdb_id
- and mrkr_type=mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM';
+ and mrkr_type=mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM_AND_NTR';
 
 
 select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
@@ -2038,7 +2038,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
   AND mrkr_zdb_id = fmrel_mrkr_zdb_id
   AND a.szm_object_type = feature_type
   AND b.szm_objecT_type = mrkr_type
-  AND mrkr_type =mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM' AND (
+  AND mrkr_type =mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM_AND_NTR' AND (
     (feature_type IN ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
                       'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
     (feature_type IN ('TRANSLOC', 'INVERSION') AND fmrel_type IN ('is allele of', 'markers moved')) OR

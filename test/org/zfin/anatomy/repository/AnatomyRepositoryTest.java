@@ -45,16 +45,6 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
 
     }
 
-    @Test
-    public void getAnatomyRelationships() {
-        String termName = "neural rod";
-        Term item = getOntologyRepository().getTermByName(termName, Ontology.ANATOMY);
-        List<GenericTermRelationship> anatomyRelationships = getOntologyRepository().getTermRelationships(item);
-        assertNotNull(anatomyRelationships);
-        assertTrue(anatomyRelationships.size() > 0);
-
-    }
-
     /**
      * 1 - find anatomy item term
      * 2 - find anatomy item term by synonym

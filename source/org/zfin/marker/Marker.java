@@ -192,7 +192,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return null;
 
         if (orthologyNotes.size() > 1) {
-            String message = "More than one Ortholgoy notes found. This is not allowed!";
+            String message = "More than one Orthology note found. This is not allowed!";
             LOG.error(message);
         }
 
@@ -565,7 +565,8 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         ENGINEERED_REGION("ENGINEERED_REGION"),
         GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
         NONTSCRBD_REGION("NONTSCRBD_REGION"),
-	GENEDOM_AND_NTR("GENEDOM_AND_NTR")
+	GENEDOM_AND_NTR("GENEDOM_AND_NTR"),
+        CONSTRUCT_COMPONENTS("CONSTRUCT_COMPONENTS")
         ;
 
         private final String value;

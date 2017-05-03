@@ -5,6 +5,7 @@ import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
@@ -52,6 +53,14 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+
+    @After
+    public void closeSession() {
+        super.closeSession();
+        // make sure to close the session to be able to re-create the entities
+        HibernateUtil.closeSession();
+    }
+
 
     @Test
     public void testMarkerLoad() {
@@ -122,24 +131,19 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void testZdbSequenceGenerator() {
         Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        try {
-            MarkerRepository mr = markerRepository;
-            MarkerType type = mr.getMarkerTypeByName(Marker.Type.BAC.toString());
-            Marker marker = new Marker();
-            marker.setMarkerType(type);
-            marker.setName("test marker");
-            marker.setAbbreviation("test Abbreviation");
-            marker.setAbbreviationOrder("test Abbreviation");
-            marker.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
-            session.save(marker);
+        MarkerRepository mr = markerRepository;
+        MarkerType type = mr.getMarkerTypeByName(Marker.Type.BAC.toString());
+        Marker marker = new Marker();
+        marker.setMarkerType(type);
+        marker.setName("test marker");
+        marker.setAbbreviation("test Abbreviation");
+        marker.setAbbreviationOrder("test Abbreviation");
+        marker.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+        session.save(marker);
 
-            String zdbID = marker.getZdbID();
-            assertTrue("non-null ZDB ID", zdbID != null);
-            assertTrue("ID contains BAC", zdbID.indexOf(Marker.Type.BAC.toString()) > -1);
-        } finally {
-            session.getTransaction().rollback();
-        }
+        String zdbID = marker.getZdbID();
+        assertTrue("non-null ZDB ID", zdbID != null);
+        assertTrue("ID contains BAC", zdbID.indexOf(Marker.Type.BAC.toString()) > -1);
     }
 
     @Test
@@ -173,14 +177,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void runRegenNamesMarkerProcedure() {
         boolean success = true;
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-        try {
-            Marker marker = markerRepository.getGeneByID("ZDB-GENE-990415-8"); // pax2a
-            markerRepository.runMarkerNameFastSearchUpdate(marker);
-        } finally {
-            tx.rollback();
-        }
+        Marker marker = markerRepository.getGeneByID("ZDB-GENE-990415-8"); // pax2a
+        markerRepository.runMarkerNameFastSearchUpdate(marker);
         assertTrue("Successful execution of stored procedure", success);
     }
 
@@ -203,25 +201,18 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void testRenameMarker() {
 
         Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-
-        try {
-            Marker marker = insertTestMarker();
-            Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
-            marker.setName("test1 name");
-            marker.setAbbreviation("testsierra");
-            markerRepository.renameMarker(marker, publication, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES, "old symbol", "old name");
-            session.flush();
-            session.refresh(marker);
-            assertEquals("Created one new alias", 1, marker.getAliases().size());
-            assertEquals("Created one new marker history record", 1, marker.getMarkerHistory().size());
-            assertNotNull(infrastructureRepository.getRecordAttribution(
-                    marker.getMarkerHistory().iterator().next().getMarkerAlias().getZdbID(),
-                    publication.getZdbID(), null));
-        } finally {
-            // rollback on success or exception
-            tx.rollback();
-        }
+        Marker marker = insertTestMarker();
+        Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
+        marker.setName("test1 name");
+        marker.setAbbreviation("testsierra");
+        markerRepository.renameMarker(marker, publication, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES, "old symbol", "old name");
+        session.flush();
+        session.refresh(marker);
+        assertEquals("Created one new alias", 1, marker.getAliases().size());
+        assertEquals("Created one new marker history record", 1, marker.getMarkerHistory().size());
+        assertNotNull(infrastructureRepository.getRecordAttribution(
+                marker.getMarkerHistory().iterator().next().getMarkerAlias().getZdbID(),
+                publication.getZdbID(), null));
     }
 
     private Marker insertTestMarker() {
@@ -241,31 +232,21 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
         // than using the exisitng genes which might be merged
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            MarkerRepository mr = markerRepository;
-            Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
-            Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
-            assertEquals("Only one gene found", 1, genes.size());
-            assertEquals("Found gene", "ZDB-GENE-040426-2113", genes.iterator().next().getZdbID());
-        } finally {
-            tx.rollback();
-        }
+        MarkerRepository mr = markerRepository;
+        Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
+        Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
+        assertEquals("Only one gene found", 1, genes.size());
+        assertEquals("Found gene", "ZDB-GENE-040426-2113", genes.iterator().next().getZdbID());
     }
 
     @Test
     public void testGetSpecificMarkerRelationship() {
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            MarkerRepository mr = markerRepository;
-            Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
-            Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
-            assertEquals("Only one gene found", 1, genes.size());
-            MarkerRelationship mrel = mr.getMarkerRelationship(genes.iterator().next(), clone, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
-            assertEquals("Found marker relationship", "ZDB-MREL-040426-3790", mrel.getZdbID());
-        } finally {
-            tx.rollback();
-        }
+        MarkerRepository mr = markerRepository;
+        Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
+        Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
+        assertEquals("Only one gene found", 1, genes.size());
+        MarkerRelationship mrel = mr.getMarkerRelationship(genes.iterator().next(), clone, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+        assertEquals("Found marker relationship", "ZDB-MREL-040426-3790", mrel.getZdbID());
     }
 
 
@@ -273,99 +254,91 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void testRemoveRedundantDBLinks() {
         Session session = HibernateUtil.currentSession();
 
-        try {
-            SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
-            ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
+        SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
+        ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
 
-            session.beginTransaction();
-
-            ReferenceDatabase refDb = sequenceRepository.getReferenceDatabase(
-                    ForeignDB.AvailableName.GENBANK,
-                    ForeignDBDataType.DataType.RNA,
-                    ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.Type.ZEBRAFISH);
+        ReferenceDatabase refDb = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.RNA,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
 
 
-            Accession acc1 = new Accession();
-            acc1.setNumber("BC:01");
-            acc1.setDefline("defline leopard");
-            acc1.setLength(12);
-            acc1.setReferenceDatabase(refDb);
-            session.save(acc1);
+        Accession acc1 = new Accession();
+        acc1.setNumber("BC:01");
+        acc1.setDefline("defline leopard");
+        acc1.setLength(12);
+        acc1.setReferenceDatabase(refDb);
+        session.save(acc1);
 
-            Accession acc2 = new Accession();
-            acc2.setNumber("BC:02");
-            acc2.setDefline("defline leopard");
-            acc2.setLength(1233);
-            acc2.setReferenceDatabase(refDb);
-            session.save(acc2);
+        Accession acc2 = new Accession();
+        acc2.setNumber("BC:02");
+        acc2.setDefline("defline leopard");
+        acc2.setLength(1233);
+        acc2.setReferenceDatabase(refDb);
+        session.save(acc2);
 
-            Marker segment = new Marker();
-            segment.setAbbreviation("MGC:test");
-            segment.setName("MGC:test");
-            segment.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.CDNA.toString()));
-            segment.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
-            session.save(segment);
+        Marker segment = new Marker();
+        segment.setAbbreviation("MGC:test");
+        segment.setName("MGC:test");
+        segment.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.CDNA.toString()));
+        segment.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+        session.save(segment);
 
-            Marker gene = new Marker();
-            gene.setAbbreviation("renogene");
-            gene.setName("existing reno gene");
-            gene.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.GENE.toString()));
-            gene.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
-            session.save(gene);
+        Marker gene = new Marker();
+        gene.setAbbreviation("renogene");
+        gene.setName("existing reno gene");
+        gene.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.GENE.toString()));
+        gene.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+        session.save(gene);
 
-            Marker segment2 = new Marker();
-            segment2.setAbbreviation("MGC:test2");
-            segment2.setName("MGC:test2");
-            segment2.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.CDNA.toString()));
-            segment2.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
-            session.save(segment2);
+        Marker segment2 = new Marker();
+        segment2.setAbbreviation("MGC:test2");
+        segment2.setName("MGC:test2");
+        segment2.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.CDNA.toString()));
+        segment2.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+        session.save(segment2);
 
-            Marker gene2 = new Marker();
-            gene2.setAbbreviation("renogene2");
-            gene2.setName("existing reno gene 2");
-            gene2.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.GENE.toString()));
-            gene2.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
-            session.save(gene2);
-
-
-            String curationPubZdbID = "ZDB-PUB-020723-3";
-            String journalPubZdbID = "ZDB-PUB-041006-7";
-
-            //this case will get a deletion
-            markerRepository.addDBLink(gene, acc1.getNumber(), refDb, curationPubZdbID);
-            markerRepository.addDBLink(segment, acc1.getNumber(), refDb, curationPubZdbID);
-            markerRepository.addSmallSegmentToGene(gene, segment, curationPubZdbID);
-
-            //this case won't have the dblink deleted
-            markerRepository.addDBLink(gene2, acc2.getNumber(), refDb, journalPubZdbID);
-            markerRepository.addDBLink(segment2, acc2.getNumber(), refDb, curationPubZdbID);
-            markerRepository.addSmallSegmentToGene(gene2, segment2, curationPubZdbID);
-
-            //make sure it's all in the database before testing
-            session.flush();
-
-            //try the cleanup function
-            Set<Accession> accessions = new HashSet<Accession>();
-            accessions.add(acc1);
-            MarkerService.removeRedundantDBLinks(gene, accessions);
-
-            accessions.remove(acc1);
-            accessions.add(acc2);
-
-            MarkerService.removeRedundantDBLinks(gene2, accessions);
-
-            session.refresh(acc1);
-            session.refresh(acc2);
+        Marker gene2 = new Marker();
+        gene2.setAbbreviation("renogene2");
+        gene2.setName("existing reno gene 2");
+        gene2.setMarkerType(markerRepository.getMarkerTypeByName(Marker.Type.GENE.toString()));
+        gene2.setOwner(personRepository.getPerson("ZDB-PERS-030520-1"));
+        session.save(gene2);
 
 
-            assertEquals("test accession acc1 should have one marker", acc1.getMarkers().size(), 1);
-            assertEquals("test accession acc2 should have two markers", acc2.getMarkers().size(), 2);
+        String curationPubZdbID = "ZDB-PUB-020723-3";
+        String journalPubZdbID = "ZDB-PUB-041006-7";
+
+        //this case will get a deletion
+        markerRepository.addDBLink(gene, acc1.getNumber(), refDb, curationPubZdbID);
+        markerRepository.addDBLink(segment, acc1.getNumber(), refDb, curationPubZdbID);
+        markerRepository.addSmallSegmentToGene(gene, segment, curationPubZdbID);
+
+        //this case won't have the dblink deleted
+        markerRepository.addDBLink(gene2, acc2.getNumber(), refDb, journalPubZdbID);
+        markerRepository.addDBLink(segment2, acc2.getNumber(), refDb, curationPubZdbID);
+        markerRepository.addSmallSegmentToGene(gene2, segment2, curationPubZdbID);
+
+        //make sure it's all in the database before testing
+        session.flush();
+
+        //try the cleanup function
+        Set<Accession> accessions = new HashSet<Accession>();
+        accessions.add(acc1);
+        MarkerService.removeRedundantDBLinks(gene, accessions);
+
+        accessions.remove(acc1);
+        accessions.add(acc2);
+
+        MarkerService.removeRedundantDBLinks(gene2, accessions);
+
+        session.refresh(acc1);
+        session.refresh(acc2);
 
 
-        } finally {
-            session.getTransaction().rollback();
-        }
+        assertEquals("test accession acc1 should have one marker", acc1.getMarkers().size(), 1);
+        assertEquals("test accession acc2 should have two markers", acc2.getMarkers().size(), 2);
 
     }
 
@@ -377,33 +350,22 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
         // than using the exisitng genes which might be merged
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            MarkerRepository mr = markerRepository;
-            Marker clone = mr.getMarkerByID("ZDB-CDNA-040425-118");
-            Set<LinkageGroup> groups = MarkerService.getLinkageGroups(clone);
-            assertTrue(groups != null);
-            assertEquals("2 linkage groups found", 1, groups.size());
-            LinkageGroup group = groups.iterator().next();
-            assertEquals("First LG", "1", group.getName());
-
-        } finally {
-            tx.rollback();
-        }
+        MarkerRepository mr = markerRepository;
+        Marker clone = mr.getMarkerByID("ZDB-CDNA-040425-118");
+        Set<LinkageGroup> groups = MarkerService.getLinkageGroups(clone);
+        assertTrue(groups != null);
+        assertEquals("2 linkage groups found", 1, groups.size());
+        LinkageGroup group = groups.iterator().next();
+        assertEquals("First LG", "1", group.getName());
     }
 
     @Test
     public void retrieveLinkageGroupFromGene() {
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            MarkerRepository mr = markerRepository;
-            Marker gene = mr.getMarkerByID("ZDB-GENE-990415-72");
-            Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
-            assertTrue(groups != null);
-            assertTrue(groups.size() > 1);
-        } finally {
-            tx.rollback();
-        }
+        MarkerRepository mr = markerRepository;
+        Marker gene = mr.getMarkerByID("ZDB-GENE-990415-72");
+        Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
+        assertTrue(groups != null);
+        assertTrue(groups.size() > 1);
     }
 
     @Test
@@ -445,24 +407,19 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void testClone() {
         Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-        try {
-            Marker marker1 = markerRepository.getMarkerByID("ZDB-CDNA-080114-111");
-            assertTrue("Marker is a clone", marker1 instanceof Clone);
-            Clone clone = (Clone) marker1;
+        Marker marker1 = markerRepository.getMarkerByID("ZDB-CDNA-080114-111");
+        assertTrue("Marker is a clone", marker1 instanceof Clone);
+        Clone clone = (Clone) marker1;
 //            logger.info(clone.toString());
-            Integer rating = 3;
-            clone.setRating(rating);
-            // NOTE: must be CDNA or EST to set as a non-null problem type
-            clone.setProblem(Clone.ProblemType.CHIMERIC);
-            session.update(clone);
-            session.flush();
-            Clone clone2 = (Clone) session.createQuery("from Clone c where c.zdbID = 'ZDB-CDNA-080114-111'").uniqueResult();
-            assertEquals(clone2.getRating(), rating);
-            assertEquals(clone2.getProblem(), Clone.ProblemType.CHIMERIC);
-        } finally {
-            tx.rollback();
-        }
+        Integer rating = 3;
+        clone.setRating(rating);
+        // NOTE: must be CDNA or EST to set as a non-null problem type
+        clone.setProblem(Clone.ProblemType.CHIMERIC);
+        session.update(clone);
+        session.flush();
+        Clone clone2 = (Clone) session.createQuery("from Clone c where c.zdbID = 'ZDB-CDNA-080114-111'").uniqueResult();
+        assertEquals(clone2.getRating(), rating);
+        assertEquals(clone2.getProblem(), Clone.ProblemType.CHIMERIC);
     }
 
 
@@ -550,7 +507,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void hibernateQueryIterate() {
         String aoTermName = "brain";
-        HibernateUtil.createTransaction();
         Session session = HibernateUtil.currentSession();
         OntologyRepository anatomyRep = RepositoryFactory.getOntologyRepository();
         GenericTerm aoTerm = anatomyRep.getTermByName(aoTermName, Ontology.ANATOMY);
@@ -599,7 +555,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
         results.last();
         assertTrue(true);
-        session.getTransaction().rollback();
     }
 
     @Test
@@ -609,12 +564,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         Marker gene = markerRepository.getMarkerByAbbreviation(geneName);
         assertNotNull(gene);
 
-        try {
-            HibernateUtil.createTransaction();
-            markerRepository.createOrUpdateOrthologyExternalNote(gene, "This is a note");
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        markerRepository.createOrUpdateOrthologyExternalNote(gene, "This is a note");
     }
 
     @Test
@@ -648,11 +598,9 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void createDataAlias() {
         String pubID = "ZDB-PUB-020723-5";
         String antibodyID = "ZDB-ATB-081002-16";
-        HibernateUtil.createTransaction();
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(antibodyID);
         Publication publication = publicationRepository.getPublication(pubID);
         markerRepository.addMarkerAlias(antibody, "Bruno", publication);
-        HibernateUtil.rollbackTransaction();
     }
 
     @Test
@@ -822,7 +770,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         String linkWithAttribution = mrp.getLinkWithAttribution();
         logger.debug(linkWithAttribution);
 
-        assertTrue(linkWithAttribution.startsWith("<a href=\"/action/marker/view/ZDB-MRPHLNO-060317-4\">"));
+        assertTrue(linkWithAttribution.startsWith("<a href=\"/ZDB-MRPHLNO-060317-4\">"));
         assertTrue(linkWithAttribution.contains("/webdriver?MIval=aa-showpubs.apg&orgOID=ZDB-MRPHLNO-060317-4&recattrsrctype=standard&OID=ZDB-MREL-060317-4\">2</a>)"));
     }
 
@@ -986,7 +934,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        types.add(MarkerRelationship.Type.CONTAINS_REGION);
 
         PaginationResult<Marker> relatedMarkerResult = markerRepository.getRelatedMarker(efg, types, new PaginationBean());
         assertNotNull(relatedMarkerResult);

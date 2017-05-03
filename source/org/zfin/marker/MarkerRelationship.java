@@ -20,7 +20,6 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
         CLONE_CONTAINS_TRANSCRIPT("clone contains transcript"),
         CLONE_OVERLAP("clone overlap"),
         CODING_SEQUENCE_OF("coding sequence of"),
-        CONTAINS_ENGINEERED_REGION("contains engineered region"),
         CONTAINS_POLYMORPHISM("contains polymorphism"),
         GENE_CONTAINS_SMALL_SEGMENT("gene contains small segment"),
         GENE_PRODUCES_TRANSCRIPT("gene produces transcript"),
@@ -32,7 +31,8 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
         TRANSCRIPT_TARGETS_GENE("transcript targets gene"),
         PROMOTER_OF("promoter of"),
         CRISPR_TARGETS_REGION("crispr targets region"),
-        TALEN_TARGETS_REGION("talen targets region");
+        TALEN_TARGETS_REGION("talen targets region"),
+        CONTAINS_REGION("contains region");
 
         private final String value;
 

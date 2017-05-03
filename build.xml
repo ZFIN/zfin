@@ -55,7 +55,8 @@
         </and>
     </condition>
 
-
+	<property name="classes.dir.target" value="${env.TARGETROOT}/home/WEB-INF/classes"/>
+	<property name="lib.dir.target" value="${env.TARGETROOT}/home/WEB-INF/lib"/>
     <!--If the INSTANCE variable is not already set (this code gets run for every target, I believe)-->
     <!--the we check if it is defined in the system as OVERRIDE_INSTANCE-->
     <if>
@@ -410,6 +411,7 @@
     <target name="cleanClasses" description="Remove java classes directory contents. ">
         <delete includeemptydirs="true" quiet="true">
             <fileset dir="${classbin.dir}" includes="**/*"/>
+            <fileset dir="${lib.dir}" includes="**/*"/>
         </delete>
         <!--<delete includeemptydirs="true" quiet="true">-->
         <!--<fileset dir="${domain-work}" includes="**/*"/>-->
@@ -559,24 +561,14 @@
             </condition>
         </fail>
 
-        <available property="post-home.exists" file="${post-home.target}"/>
-        <echo message="${post-home.exists}"/>
+	<delete>
+	   <fileset dir="${classes.dir.target}" includes="**/*"/>
+	   <fileset dir="${lib.dir.target}" includes="**/*"/>
+	</delete>
 
-        <moveWebApp to="${post-home.target}" from="${home.target}" overwrite="true" failonerror="false"/>
         <moveWebApp to="${home.target}" from="${pre-home.target}" overwrite="true" failonerror="true"/>
-
         <echo message=":BUILD ADVANCED SUCCESSFULY:"/>
     </target>
-
-    <target name="notify-deploy" if="isproduction">
-    </target>
-
-    <target name="notify-up" if="isproduction">
-    </target>
-
-    <target name="notify-restart" if="isproduction">
-    </target>
-
 
     <macrodef name="emailMessage">
         <attribute name="message"/>
@@ -600,12 +592,12 @@
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="pre-deploy,build-properties,advance-build,unittests-quiet,notify-restart,instrument,restart,notify-up,deploy-solr"/>
+            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,instrument,restart,deploy-solr"/>
 
     <target name="deploy-without-tests-and-tomcat-restart"
-            depends="pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
+            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
 
-    <target name="pre-deploy" depends="do,notify-deploy,prepareDeploy,gwt,copy-to-pre-release,generateVersionInfo"
+    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release,generateVersionInfo"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <copy-indexer-build-file-with-env-variables/>
 <!--        <jsp-compile/> -->
