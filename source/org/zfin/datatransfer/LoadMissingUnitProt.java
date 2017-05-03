@@ -150,7 +150,7 @@ public class LoadMissingUnitProt extends AbstractValidateDataReportTask {
                 service.runDbScriptFile(dbScriptFile, dataMap);
                 LOG.info("Duration of Script Execution: " + DateUtil.getTimeDuration(startTimeLong));
             }
-            //HibernateUtil.flushAndCommitCurrentSession();
+            HibernateUtil.flushAndCommitCurrentSession();
             LOG.info("Committed load...");
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
