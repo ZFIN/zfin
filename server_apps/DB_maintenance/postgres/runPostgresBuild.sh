@@ -76,4 +76,5 @@ cd ${SOURCEROOT}/server_apps/DB_maintenance/postgres/
 cd ${SOURCEROOT}
 ant addPostgresConstraints
 
+mkdir /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump
 ${PGBINDIR}/pg_dump ${DBNAME} > /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump
