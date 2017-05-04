@@ -155,7 +155,7 @@ public class ConstructRelationshipBox extends AbstractComposite<ConstructDTO>{
                 constructTable.setWidget(lastRow,1, new Label(relationshipDTO.getConstructDTO().getConstructType()));
                 constructTable.setWidget(lastRow,2, new Label(relationshipDTO.getRelationshipType()));
                 constructTable.setWidget(lastRow,3,new HTML(relationshipDTO.getMarkerDTO().getLink())) ;
-                if(relationshipDTO.getRelationshipType().equals("contains engineered region")){
+                if(relationshipDTO.getRelationshipType().equals("contains region")){
                 constructTable.setWidget(lastRow,4,new DeleteConstructMarkerRelationshipButton(relationshipDTO,this) );
                 }
 
