@@ -267,7 +267,7 @@ public class HibernateConstructRepository implements ConstructRepository {
             BtsContainsService btsService2 = new BtsContainsService("ccs_engineered_region_all_names");
             btsService2.addBtsExpandedValueList("ccs_engineered_region_all_names", criteria.getEngineeredRegionCriteria().getValues());
             whereClauseList.add(" exists" + "(" + "select 'c' from construct_component_search where " +
-                    "ccs_cons_id = cons_pk_id and ccs_relationship_type = 'contains engineered region'  ");
+                    "ccs_cons_id = cons_pk_id and ccs_relationship_type = 'contains region'  ");
             String btsContainsClause1 = btsService2.getFullClauseConstructs();
             whereClauseList.add(btsContainsClause1 + ")");
 
