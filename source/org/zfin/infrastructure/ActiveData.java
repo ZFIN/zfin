@@ -252,7 +252,7 @@ public class ActiveData implements ZdbID {
         SCRNAG,
         NCRNAG,
         NCCR,
-        TLNNR,
+        TLNRR,
         BR,
         BINDSITE,
         LIGANDBS,
