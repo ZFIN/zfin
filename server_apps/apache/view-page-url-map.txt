@@ -23,6 +23,7 @@ TLNNR /action/marker/region/view/ZDB-TLNNR
 BR /action/marker/region/view/ZDB-BR
 BINDSITE /action/marker/region/view/ZDB-BINDSITE
 LIGANDBS /action/marker/region/view/ZDB-LIGANDBS
+PROTBS /action/marker/region/view/ZDB-PROTBS
 TFBS /action/marker/region/view/ZDB-TFBS
 EBS /action/marker/region/view/ZDB-EBS
 NCBS /action/marker/region/view/ZDB-NCBS
