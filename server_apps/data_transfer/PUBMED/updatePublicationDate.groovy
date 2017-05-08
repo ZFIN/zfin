@@ -46,11 +46,11 @@ Sql.withInstance(db) { Sql sql ->
                 return
             }
 
-            def month = pubDate.Month
+            def month = pubDate.Month as String
             if (month == '') {
                 month = createDate.Month
-            } else {
-                month = months[month as String]
+            } else if (months.containsKey(month)) {
+                month = months[month]
             }
             if (month == '') {
                 pubsNotUpdated.add([idMap[id], id])

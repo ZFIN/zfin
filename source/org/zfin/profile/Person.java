@@ -6,19 +6,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.infrastructure.EntityZdbID;
-import org.zfin.infrastructure.ZdbID;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
-import javax.imageio.ImageIO;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
@@ -27,7 +20,7 @@ import java.util.Set;
  * Domain business object that describes a single person.
  * AccountInfo composite contains login information which is optional.
  */
-public class Person implements UserDetails, Serializable, Comparable<Person>, HasUpdateType, ProvidesLink, HasSnapshot, EntityZdbID {
+public class Person implements UserDetails, Serializable, Comparable<Person>, HasUpdateType, ProvidesLink, HasImage, EntityZdbID {
 
     @NotNull
     @Size(min = 17, max = 50)
@@ -90,7 +83,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     private Set<Company> companies;
     private Set<Publication> publications;
     private AccountInfo accountInfo;
-    private Blob snapshot;
+    private String image;
 
     public String getPutativeLoginName() {
         return putativeLoginName;
@@ -133,9 +126,8 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         this.position = position;
     }
 
-
-    public Blob getSnapshot() {
-        return snapshot;
+    public String getImage() {
+        return image;
     }
 
     public String getCountry() {
@@ -146,27 +138,6 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         this.country = country;
     }
 
-    public String getSnapshotAsString() throws Exception {
-        if (snapshot == null) return null;
-
-        BufferedImage image = ImageIO.read(new ByteArrayInputStream(snapshot.getBytes((long) 1, (int) snapshot.length())));
-        String s = new String();
-
-        byte[] bytes = snapshot.getBytes((long) 1, (int) snapshot.length());
-        int length = bytes.length;
-
-
-//        return new String(bytes) ;
-        StringBuffer strOut = new StringBuffer();
-        String aux;
-        BufferedReader br = new BufferedReader(new InputStreamReader(snapshot.getBinaryStream()));
-        while ((aux = br.readLine()) != null) {
-            strOut.append(aux);
-        }
-
-        return strOut.toString();
-    }
-
     public String getOrcidID() {
         return orcidID;
     }
@@ -175,10 +146,9 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         this.orcidID = orcidID;
     }
 
-    public void setSnapshot(Blob snapshot) {
-        this.snapshot = snapshot;
+    public void setImage(String image) {
+        this.image = image;
     }
-
 
     public String getZdbID() {
         return zdbID;
@@ -187,7 +157,6 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
     }
-
 
     public String getFirstName() {
         return firstName;

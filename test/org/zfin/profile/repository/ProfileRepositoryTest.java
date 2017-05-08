@@ -2,7 +2,6 @@ package org.zfin.profile.repository;
 
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -14,9 +13,6 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.UserDetailServiceImpl;
 
-import javax.servlet.ServletOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -181,28 +177,8 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
     public void getPersonFields() throws Exception {
         Person person = profileRepository.getPerson("ZDB-PERS-960805-676");
         assertTrue(person.getPersonalBio().contains("Princeton University"));
-//        assertEquals("00000001a6b7c8d90000000b0000000b0000001b4dcd6983000000000001ffff00000000000000000000000000000000000000000000000000000000000000000000000000000000",person.getSnapshotAsString());
         assertTrue(person.getNonZfinPublications().contains("Westerfield"));
         assertNotNull(person);
-    }
-
-
-    @Test
-    public void getPersonSnapshot() throws Exception {
-        ImageController imageController = new ImageController();
-        imageController.setProfileRepository(RepositoryFactory.getProfileRepository());
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        OutputStream outputStream = new ServletOutputStream() {
-            @Override
-            public void write(int i) throws IOException {
-
-                // do nothing;
-            }
-        };
-        imageController.viewSnapshot("ZDB-PERS-960805-676", response, outputStream);
-        assertFalse(System.out.checkError());
-//        System.out.flush();
-//        System.out.close();
     }
 
     @Test

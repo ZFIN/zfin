@@ -1973,7 +1973,7 @@ select
            <entity name="construct_regulatory_region"
                    datasource="db" query="select mrel_mrkr_1_zdb_id, mrkr_abbrev as engineered_region, mrkr_name as engineered_region_full_name
                           from marker_relationship, marker
-                          where mrel_type = 'contains engineered region'
+                          where mrel_type = 'contains region'
                             and mrel_mrkr_2_zdb_id = mrkr_zdb_id "
                    cacheImpl="SortedMapBackedCache"
                    where="mrel_mrkr_1_zdb_id=construct.id">
@@ -5161,9 +5161,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                               'Person' as type,
                               to_date(get_date_from_id(zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                               '/' || zdb_id as url,
-                              case when snapshot is null
-                                   then null
-                                   else zdb_id end  as snapshot,
+                              image as profile_image,
                               pers_bio as biography,
                               address as postal_address,
                               email as email_address
@@ -5194,9 +5192,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                                              'Lab' as type,
                                              '/' || zdb_id as url,
                                              to_date(get_date_from_id(zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
-                                             case when snapshot is null
-                                                  then null
-                                                  else zdb_id end  as snapshot,
+                                             image as profile_image,
                                              bio as biography,
                                              address as postal_address,
                                              email as email_address
@@ -5234,9 +5230,7 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                                                             'Company' as type,
                                                             '/' || zdb_id as url,
                                                             to_date(get_date_from_id(zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
-                                                            case when snapshot is null
-                                                                 then null
-                                                                 else zdb_id end  as snapshot,
+                                                            image as profile_image,
                                                             bio as biography,
                                                             address as postal_address,
                                                             email as email_address

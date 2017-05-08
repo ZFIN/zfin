@@ -11,7 +11,6 @@
     <c:set var="loggedIn" value="true"/>
     <script>
         markerID = '${gene.zdbID}';
-        markerType='${gene.markerType.displayName}'
 
         var reasonList = [];
         <c:forEach items="${markerHistoryReasonCodes}" var="reason" varStatus="status">
@@ -27,9 +26,9 @@
             <span class="name-value"><zfin:name entity="${gene}"/></span>
             <authz:authorize access="hasRole('root')">
                 <span style="cursor: pointer;"
-                      ng-click="control.openGeneEditor(markerID, control.geneName, 'Name')"
+                      ng-click="control.openGeneEditor(markerID, control.geneName, 'Gene Name')"
                       ng-if="editMode">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit name"></i>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene name"></i>
                 </span>
             </authz:authorize>
         </td>
@@ -40,9 +39,9 @@
             <span class="name-value" geneSymbol><zfin:abbrev entity="${gene}"/></span>
             <authz:authorize access="hasRole('root')">
                     <span style="cursor: pointer;"
-                          ng-click="control.openGeneEditor(markerID, control.geneAbbreviation, 'Symbol')"
+                          ng-click="control.openGeneEditor(markerID, control.geneAbbreviation,'Gene Symbol')"
                           ng-if="editMode">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit symbol"></i></span>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene symbol"></i></span>
             </authz:authorize>
         </td>
     </tr>

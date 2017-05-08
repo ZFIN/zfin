@@ -54,7 +54,9 @@ public class GeneAddController {
         Map<String, String> allTypes = new LinkedHashMap<>(markerTypes.size());
         for (MarkerType markerType : markerTypes) {
             if (!markerType.getDisplayName().equals("Transcript")) {
-                allTypes.put(markerType.getType().name(), markerType.getDisplayName());
+                if (!markerType.getDisplayName().equals("Gene Family")) {
+                    allTypes.put(markerType.getType().name(), markerType.getDisplayName());
+                }
             }
         }
 

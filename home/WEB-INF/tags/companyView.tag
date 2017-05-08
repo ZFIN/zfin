@@ -84,7 +84,7 @@
             </table>
         </td>
         <td width="30%"  style="vertical-align: top; text-align: right; ">
-            <zfin2:viewSnapshot value="${company}" className="profile-image"/>
+            <zfin2:profileImage value="${company}" className="profile-image"/>
         </td>
     </tr>
 </table>

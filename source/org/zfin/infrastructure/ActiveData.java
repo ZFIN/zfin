@@ -154,7 +154,7 @@ public class ActiveData implements ZdbID {
     }
     public static boolean isInGroupGenedom(String ID) {
         Marker marker= RepositoryFactory.getMarkerRepository().getMarkerByID(ID);
-        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM))
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR))
             return true;
         return false;
     }

@@ -247,7 +247,7 @@
         <str name="defType">edismax</str>
         <!-- there is an override in SearchPrototypeController that mirrors this list but includes an extra, so they should be updated in tandem -->
         <!--screen used to be here, removed as a result of case 11323-->
-        <str name="fl">name, type, id, category, full_name, url, thumbnail, image, img_zdb_id, snapshot, date, attribution_count, has_orthology, xpat_zdb_id, fig_zdb_id, score,pgcmid</str>
+        <str name="fl">name, type, id, category, full_name, url, thumbnail, image, img_zdb_id, profile_image, date, attribution_count, has_orthology, xpat_zdb_id, fig_zdb_id, score,pgcmid</str>
 
           <!-- fast vector highlighter config -->
          <str name="hl.tag.pre"><![CDATA[<span class="search-result-highlight">]]></str>
@@ -848,7 +848,7 @@
             <str name="q.alt">*:*</str>
             <str name="defType">edismax</str>
             <!-- This list needs to match the fl for the primary requesthandler, or, more importantly, it needs to match the annotations in SearchResult.java  -->
-            <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count,  has_orthology, xpat_zdb_id, fig_zdb_id, score,pgcmid</str>
+            <str name="fl">name, type, id, category, full_name, url, thumbnail, image, profile_image, date, attribution_count,  has_orthology, xpat_zdb_id, fig_zdb_id, score,pgcmid</str>
             <str name="qf">
                 proper_name_k^100.0
                 proper_name^10.0
