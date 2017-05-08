@@ -135,7 +135,8 @@ public class SequenceTargetingReagentAddController {
             }
 
             String targetGeneAbbr = formBean.getTargetGeneSymbol();
-            Marker targetGene = mr.getGeneByAbbreviation(targetGeneAbbr);
+          //  Marker targetGene = mr.getGeneByAbbreviation(targetGeneAbbr);
+            Marker targetGene = mr.getMarkerByAbbreviation(targetGeneAbbr);
 
             if (targetGene != null && !StringUtils.isEmpty(pubZdbID)) {
                 if (targetGene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {

@@ -330,6 +330,8 @@ public class MarkerService {
                 , MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY
                 , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
                 , MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE
+                , MarkerRelationship.Type.CRISPR_TARGETS_REGION
+                , MarkerRelationship.Type.TALEN_TARGETS_REGION
         );
     }
 

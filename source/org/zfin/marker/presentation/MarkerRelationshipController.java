@@ -156,7 +156,7 @@ public class MarkerRelationshipController {
         if ((type==GENE_CONTAINS_SMALL_SEGMENT)|| (type==GENE_ENCODES_SMALL_SEGMENT) || (type==GENE_HAS_ARTIFACT )|| (type==GENE_HYBRIDIZED_BY_SMALL_SEGMENT)){
             if (!second.isInTypeGroup(Marker.TypeGroup.SMALLSEG)){
               //  errors.rejectValue("second", "marker.relationship.invalid");
-                throw new InvalidWebRequestException("Second marker not in correct group", errors);
+                throw new InvalidWebRequestException("You cannnot enter this relationship type to this marker type", errors);
             }
         }
         HibernateUtil.createTransaction();

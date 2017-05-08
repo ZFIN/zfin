@@ -255,7 +255,7 @@ public class SequenceTargetingReagentViewController {
         List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<>();
         knockdownRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
                 sequenceTargetingReagent, true
-                , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
+                , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE,MarkerRelationship.Type.CRISPR_TARGETS_REGION,MarkerRelationship.Type.TALEN_TARGETS_REGION
         ));
         sequenceTargetingReagentBean.setMarkerRelationshipPresentationList(knockdownRelationships);
 
