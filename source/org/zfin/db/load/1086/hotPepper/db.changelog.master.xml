@@ -6,5 +6,5 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/load/1086/hotPepper/INF-2024.sql"/>
-
+    <include file="source/org/zfin/db/load/1086/hotPepper/RGNS-59.sql"/>
 </databaseChangeLog>
