@@ -367,6 +367,8 @@ public class SearchPrototypeController {
 
         List<String> categories = new ArrayList<>();
         categories.addAll(org.zfin.search.Category.getFacetMap().keySet());
+        categories.remove(Category.STR_RELATIONSHIP.getName());
+
         Collections.sort(categories, new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
