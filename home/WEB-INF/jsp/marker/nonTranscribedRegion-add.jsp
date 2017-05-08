@@ -3,8 +3,19 @@
 
 <link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
 <link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
+<%--<script type="text/javascript" language="javascript"
+        src="org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+
+  <script type="text/javascript">
+  var curationProperties = {
+    zdbID: "ZDB-PUB-020723-1",
+    moduleType: "feature",
+    debug: "false"
+  }
+</script>--%>
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.RegionAddFormBean" scope="request"/>
+
 
 <div class="container-fluid">
   <h2 class="page-header">New NTR</h2>
@@ -19,6 +30,7 @@
         <form:errors path="type" class="error"/>
       </div>
     </div>
+    <%--<div id="construct-relationship"></div>--%>
     <div class="form-group">
       <form:label path="publicationId" class="col-sm-2 control-label">Reference</form:label>
       <div class="col-sm-4">
@@ -69,14 +81,14 @@
 <script>
   $(function() {
     var $type = $('#type');
+    var selectedTerm = $type.val();
 
-    function showHideAbbrevField() {
-      var $abbrev = $('#abbrev-group');
-      $abbrev.toggle($type.val() != 'EFG');
-    }
 
-    $type.on('change', showHideAbbrevField);
 
-    showHideAbbrevField();
+
+    $type.on('change', updateTermInfoBox(selectedTerm, selectedOption, tabName));
+
+
   })
 </script>
+
