@@ -245,7 +245,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public Marker getGeneByAbbreviation(String name) {
         Session session = currentSession();
         Criteria criteria1 = session.createCriteria(Marker.class);
-        criteria1.add(Restrictions.like("zdbID", "ZDB-GENE%"));
+       criteria1.add(Restrictions.like("zdbID", "ZDB-GENE%"));
         criteria1.add(Restrictions.eq("abbreviation", name));
         try {
             return (Marker) criteria1.uniqueResult();
