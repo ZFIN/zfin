@@ -46,6 +46,9 @@ public class ExpressionSearchCriteria {
         urlCreator.addNameValuePair("targetGeneField", getTargetGeneField());
         urlCreator.addNameValuePair("assayName", getAssayName());
         urlCreator.addNameValuePair("fish", getFish());
+        if (onlyFiguresWithImages) {
+            urlCreator.addNameValuePair("onlyFiguresWithImages", "true");
+        }
         return urlCreator.getURL();
     }
 
