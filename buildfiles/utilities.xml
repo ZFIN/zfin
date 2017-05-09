@@ -100,6 +100,46 @@
 
     </target>
 
+    <target name="move-watson-to-franklin-loadup" description="Synchronize loadup directory on franklin with watson">
+        <echo message="Synchronizing Jenkins jobs: copy watson files to franklin"/>
+
+        <if >
+            <equals arg1="${HOSTNAME}" arg2="franklin.zfin.org" />
+            <then>
+                <exec executable="rsync" failifexecutionfails="true">
+                    <arg value="-auv "/>
+                    <arg value="/net/watson.zfin.org/opt/zfin/loadUp/"/>
+                    <arg value="/opt/zfin/loadUp"/>
+                </exec>
+                <echo message=":rsync SUCCESSFUL:"/>
+            </then>
+            <else>
+                <echo message="No rsync done: you are not on franklin.zfin.org"/>
+            </else>
+        </if>
+
+    </target>
+
+    <target name="sync-blast-on-franklin" description="Synchronize blast directory on franklin with watson">
+        <echo message="Synchronizing BLAST files: copy /research files to franklin"/>
+
+        <if >
+            <equals arg1="${HOSTNAME}" arg2="franklin.zfin.org" />
+            <then>
+                <exec executable="rsync" failifexecutionfails="true">
+                    <arg value="-auv "/>
+                    <arg value=" /research/zblastfiles/zmore/blastRegeneration/Current/"/>
+                    <arg value="/opt/zfin/blastdb/Current"/>
+                </exec>
+                <echo message=":rsync SUCCESSFUL:"/>
+            </then>
+            <else>
+                <echo message="No rsync done: you are not on franklin.zfin.org"/>
+            </else>
+        </if>
+
+    </target>
+
 
     <macrodef name="remove-old-files" description="Remove files older that a given date">
         <attribute name="removal.date"/>
