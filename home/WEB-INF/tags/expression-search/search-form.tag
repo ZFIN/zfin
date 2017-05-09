@@ -70,7 +70,13 @@
                         wildcard:false,
                         termsWithDataOnly:true,
                         useTermTable:true
-                    }
+                    };
+                    $('#anatomyTermInput').on('keyup keypress', function (e) {
+                        if (e.which === 13) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
                 </script>
                 <script language="javascript"
                         src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js" type=""></script>
