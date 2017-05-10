@@ -14,6 +14,7 @@ public class ExpressionSearchCriteria {
     private Marker gene;
     private String targetGeneField;
     private boolean onlyFiguresWithImages;
+    private boolean onlyWildtype;
     private String startStageId;
     private String endStageId;
     private String assayName;
@@ -100,6 +101,14 @@ public class ExpressionSearchCriteria {
 
     public void setOnlyFiguresWithImages(boolean onlyFiguresWithImages) {
         this.onlyFiguresWithImages = onlyFiguresWithImages;
+    }
+
+    public boolean isOnlyWildtype() {
+        return onlyWildtype;
+    }
+
+    public void setOnlyWildtype(boolean onlyWildtype) {
+        this.onlyWildtype = onlyWildtype;
     }
 
     public String getStartStageId() {

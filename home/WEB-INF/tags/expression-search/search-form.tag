@@ -103,7 +103,8 @@
                     </form:select>
                 </div>
                 <div class="form-group">
-                    <form:checkbox path="onlyFiguresWithImages"/> <label>Show only figures with images</label>
+                    <div><form:checkbox path="onlyWildtype" /> <label>Show only WT expression</label></div>
+                    <div><form:checkbox path="onlyFiguresWithImages"/> <label>Show only figures with images</label></div>
                 </div>
             </td>
         </tr>

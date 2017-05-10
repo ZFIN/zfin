@@ -101,6 +101,10 @@ public class ExpressionSearchService {
         if (criteria.isOnlyFiguresWithImages()) {
             solrQuery.addFilterQuery(fq(FieldName.HAS_IMAGE, TRUE));
         }
+
+        if (criteria.isOnlyWildtype()) {
+            solrQuery.addFilterQuery(fq(FieldName.IS_WILDTYPE, TRUE));
+        }
         
         solrQuery.setRows(criteria.getRows());
         solrQuery.setStart((criteria.getPage() - 1) * criteria.getRows());
