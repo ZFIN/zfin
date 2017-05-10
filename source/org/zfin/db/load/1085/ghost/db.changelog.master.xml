@@ -7,6 +7,7 @@
 
 <include file="source/org/zfin/db/load/1085/ghost/addConstructRelationships.sql"/>
 <include file="source/org/zfin/db/load/1085/ghost/PLC-317.sql"/>
+<include file="source/org/zfin/db/load/1085/ghost/updateMarkerTypeGroup.sql"/>
 <include file="source/org/zfin/db/load/1085/ghost/addFeatureSNPGroupMembers.sql"/>
 <include file="source/org/zfin/db/load/1085/ghost/addRRseq.sql"/>
 

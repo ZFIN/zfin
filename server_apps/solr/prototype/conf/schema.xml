@@ -489,6 +489,7 @@
 
      <!-- feature type? marker type? whatever!-->
    <field name="type" type="keyword" indexed="true" stored="true"   />
+   <field name="typegroup" type="keyword" indexed="true" stored="true" multiValued="true" />
    <field name="antibody_type" type="keyword" indexed="true" stored="true"   />
    <field name="publication_type" type="keyword" indexed="true" stored="true"   />
    <field name="ontology" type="keyword" indexed="true" stored="true"   />

@@ -103,6 +103,7 @@ public enum FieldName {
     THUMBNAIL("thumbnail"),
     TOPIC("topic"),
     TYPE("type"),
+    TYPEGROUP("typegroup"),
     URL("url"),
     XREF("xref"),
     ZEBRAFISH_GENE("zebrafish_gene");

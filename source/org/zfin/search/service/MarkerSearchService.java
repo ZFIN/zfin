@@ -51,7 +51,7 @@ public class MarkerSearchService {
 
         query.setRequestHandler("/marker-search");
 
-        query.addFacetField(FieldName.TYPE.getName());
+        query.addFacetField(FieldName.TYPEGROUP.getName());
         query.addFacetField(FieldName.CHROMOSOME.getName());
 
         query.setRows(0);
@@ -64,9 +64,10 @@ public class MarkerSearchService {
         }
 
         criteria.setChromosomeOptions(getFacetStrings(response, FieldName.CHROMOSOME));
+        criteria.setTypeOptions(getFacetStrings(response, FieldName.TYPEGROUP));
 
-        List<MarkerType> markerTypes = RepositoryFactory.getMarkerRepository().getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MKSEG);
-        criteria.setTypeOptions(sortMarkerTypes(markerTypes));
+//        List<MarkerType> markerTypes = RepositoryFactory.getMarkerRepository().getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MKSEG);
+//        criteria.setTypeOptions(sortMarkerTypes(markerTypes));
 
         return criteria;
     }
@@ -100,11 +101,11 @@ public class MarkerSearchService {
         }
 
         if (StringUtils.isNotEmpty(criteria.getSelectedType())) {
-            query.addFilterQuery(FieldName.TYPE.getName() + ":\"" + criteria.getSelectedType() + "\"");
+            query.addFilterQuery(FieldName.TYPEGROUP.getName() + ":\"" + criteria.getSelectedType() + "\"");
         }
 
         if (StringUtils.isNotEmpty(criteria.getDisplayType())) {
-            query.addFilterQuery(FieldName.TYPE.getName() + ":\"" + criteria.getDisplayType() + "\"");
+            query.addFilterQuery(FieldName.TYPEGROUP.getName() + ":\"" + criteria.getDisplayType() + "\"");
             criteria.setSelectedType(criteria.getDisplayType());
         }
 
@@ -238,7 +239,7 @@ public class MarkerSearchService {
     public List<FacetField.Count> getTypesFound(QueryResponse response) {
         List<FacetField.Count> types = new ArrayList<>();
 
-        FacetField type = response.getFacetField(FieldName.TYPE.getName());
+        FacetField type = response.getFacetField(FieldName.TYPEGROUP.getName());
         if (type != null) {
             for (FacetField.Count count : type.getValues()) {
                 types.add(count);
@@ -283,17 +284,37 @@ public class MarkerSearchService {
     }
 
 
-    public List<String> sortMarkerTypes(List<MarkerType> markerTypes) {
+    /*public List<String> sortMarkerTypes(List<MarkerType> markerTypes) {
+        List<String> returnStrings = new ArrayList<>();
+        Collections.sort(markerTypes, new MarkerTypeSignificanceComparator<MarkerType>());
+        returnStrings.addAll(CollectionUtils.collect(markerTypes, new BeanToPropertyValueTransformer("displayName")));
+        return returnStrings;
+    }
+*/
+    public List<FacetField.Count> sortMarkerTypeFacet(List<FacetField.Count> countList) {
+        Collections.sort(countList, new MarkerTypeFacetComparator<>());
+        return countList;
+    }
+
+    //This is the slower, but "safer" (less redundant?) option, alternatively,
+    // we could store the display name and signficiance in the Marker.Type enumeration
+    public List<String> sortMarkerTypes(List<String> typeStrings) {
+        List<MarkerType> markerTypes = getSortedMarkerTypes(typeStrings);
         List<String> returnStrings = new ArrayList<>();
         Collections.sort(markerTypes, new MarkerTypeSignificanceComparator<MarkerType>());
         returnStrings.addAll(CollectionUtils.collect(markerTypes, new BeanToPropertyValueTransformer("displayName")));
         return returnStrings;
     }
 
-    public List<FacetField.Count> sortMarkerTypeFacet(List<FacetField.Count> countList) {
-        Collections.sort(countList, new MarkerTypeFacetComparator<>());
-        return countList;
+    public List<MarkerType> getSortedMarkerTypes(List<String> typeStrings) {
+        List<MarkerType> markerTypes = new ArrayList<>();
+
+        for (String typeString : typeStrings) {
+            markerTypes.add(RepositoryFactory.getMarkerRepository().getMarkerTypeByDisplayName(typeString));
+        }
+        return markerTypes;
     }
+
 
 
 

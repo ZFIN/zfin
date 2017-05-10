@@ -36,6 +36,16 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
   and mrkr_type = marker_type
        ;">
 
+   <entity name="gene_typegroup" datasource="db"
+           query="select mtgrp_display_name as typegroup,
+                           mrkr_zdb_id as gene_zdb_id
+                    from marker
+                         join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                         join marker_type_group on mtgrpmem_mrkr_type_group = mtgrp_name
+                    where mtgrp_searchable = 't'"
+           where="gene_zdb_id=gene.id"
+           cacheImpl="SortedMapBackedCache"/>
+
    <entity name="gene_attribution"
            datasource="db" query="select recattrib_data_zdb_id as data_zdb_id, count(recattrib_source_zdb_id) as attribution_count
                   from marker
@@ -863,6 +873,17 @@ where mrkr_type not in (
   and mrkr_type = marker_type
        ;
                ">
+
+       <entity name="marker_typegroup" datasource="db"
+               query="select mtgrp_display_name as typegroup,
+                           mrkr_zdb_id
+                    from marker
+                         join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                         join marker_type_group on mtgrpmem_mrkr_type_group = mtgrp_name
+                     where mtgrp_searchable = 't'"
+               where="mrkr_zdb_id=marker.id"
+               cacheImpl="SortedMapBackedCache"/>
+
        <entity name="marker_aliases"
                datasource="db" query="select dalias_alias alias, dalias_data_zdb_id from data_alias, marker
                    where dalias_data_zdb_id = mrkr_zdb_id;"
@@ -1862,6 +1883,16 @@ select
                         and mrkr_type = marker_type
        ;">
 
+      <entity name="construct_typegroup" datasource="db"
+              query="select mtgrp_display_name as typegroup, mtgrp_name,
+                           mrkr_zdb_id as construct_id
+                    from marker
+                         join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                         join marker_type_group on mtgrpmem_mrkr_type_group = mtgrp_name
+                                               and mtgrp_name = 'SEARCHABLE_CONSTRUCT'
+                    where mtgrp_searchable = 't'"
+              where="construct_id=construct.id"
+              cacheImpl="SortedMapBackedCache"/>
 
        <entity name="construct_aliases"
                datasource="db" query="select dalias_alias alias, dalias_alias construct_alias, dalias_data_zdb_id from data_alias
@@ -5404,6 +5435,18 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                                      join marker str on mrel_mrkr_1_zdb_id = str.mrkr_zdb_id
                                      join marker_types on str.mrkr_type = marker_type
                                 where mrel_type = 'knockdown reagent targets gene';">
+
+            <entity name="str_typegroup" datasource="db"
+                    query="select mtgrp_display_name as typegroup,
+                           mrel_zdb_id
+                    from marker_relationship
+                         join marker on mrel_mrkr_1_zdb_id = mrkr_zdb_id
+                         join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                         join marker_type_group on mtgrpmem_mrkr_type_group = mtgrp_name
+                    where mrel_type = 'knockdown reagent targets gene'
+                      and mtgrp_searchable = 't'"
+                    where="mrel_zdb_id=str_relationship.id"
+                    cacheImpl="SortedMapBackedCache"/>
 
             <entity name="str_alias" datasource="db"
                     query="select

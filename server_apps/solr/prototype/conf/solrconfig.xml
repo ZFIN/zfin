@@ -1019,7 +1019,7 @@
             <str name="facet">true</str>
             <str name="facet.mincount">1</str>
             <str name="facet.sort">index</str>
-            <str name="facet.field">type</str>
+            <str name="facet.field">typegroup</str>
             <str name="facet.field">chromosome</str>
 
             <str name="defType">edismax</str>

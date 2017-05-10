@@ -133,39 +133,19 @@ public class MarkerSearchCriteria {
     }
 
     public Boolean isGenedomResult() {
-        //we don't store the display name in the Marker.Type enum...maybe we should?
-        if (StringUtils.equals(displayType, "Gene") || StringUtils.equals(displayType, "Pseudogene")) {
-            return true;
-        }
-        return false;
+        return StringUtils.equals(displayType, Marker.TypeGroup.SEARCHABLE_GENE.getDisplayName());
     }
 
     public Boolean isCloneResult() {
-        if (StringUtils.equals(displayType, "BAC")
-            || StringUtils.equals(displayType, "PAC")
-            || StringUtils.equals(displayType, "Fosmid")
-            || StringUtils.equals(displayType, "STS")
-            || StringUtils.equals(displayType, "EST")
-            || StringUtils.equals(displayType, "cDNA")) {
-            return true;
-        }
-        return false;
+        return StringUtils.equals(displayType, Marker.TypeGroup.SEARCHABLE_CLONE.getDisplayName());
     }
 
     public Boolean isTranscriptResult() {
-        if (StringUtils.equals(displayType, "Transcript")) {
-            return true;
-        }
-        return false;
+        return StringUtils.equals(displayType, Marker.TypeGroup.SEARCHABLE_TRANSCRIPT.getDisplayName());
     }
 
     public Boolean isStrResult() {
-        if (StringUtils.equals(displayType,"Morpholino")
-            || StringUtils.equals(displayType,"CRISPR")
-            || StringUtils.equals(displayType,"TALEN")) {
-            return true;
-        }
-        return false;
+        return StringUtils.equals(displayType, Marker.TypeGroup.SEARCHABLE_STR.getDisplayName());
     }
 
 }

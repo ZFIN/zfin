@@ -561,24 +561,38 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 	NUCMO("NUCMO"),
 	DNAMO("DNAMO"),
 	RNAMO("RNAMO"),
-        CPGISLAND("CPGISLAND"),
-        ENGINEERED_REGION("ENGINEERED_REGION"),
-        GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
-        NONTSCRBD_REGION("NONTSCRBD_REGION"),
+    CPGISLAND("CPGISLAND"),
+    ENGINEERED_REGION("ENGINEERED_REGION"),
+    GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
+    NONTSCRBD_REGION("NONTSCRBD_REGION"),
 	GENEDOM_AND_NTR("GENEDOM_AND_NTR"),
-        CONSTRUCT_COMPONENTS("CONSTRUCT_COMPONENTS"),
+    CONSTRUCT_COMPONENTS("CONSTRUCT_COMPONENTS"),
+    SEARCHABLE_ANTIBODY("SEARCHABLE_ANTIBODY", "Antibody"),
+    SEARCHABLE_CLONE("SEARCHABLE_CLONE", "Clone"),
+    SEARCHABLE_CONSTRUCT("SEARCHABLE_CONSTRUCT","Construct"),
+    SEARCHABLE_SMALL_SEGMENT("SEARCHABLE_SMALL_SEGMENT", "Small Segment"),
+    SEARCHABLE_GENE("SEARCHABLE_GENE", "Gene"),
+    SEARCHABLE_STR("SEARCHABLE_STR","Sequence Targeting Reagent"),
+    SEARCHABLE_TRANSCRIPT("SEARCHABLE_TRANSCRIPT", "Transcript"),
 	REGION("REGION")
         ;
 
         private final String value;
+        private final String displayName;
 
         private TypeGroup(String type) {
             this.value = type;
+            this.displayName = null;
+        }
+        private TypeGroup(String type, String displayName) {
+            this.value = type;
+            this.displayName = displayName;
         }
 
         public String toString() {
             return this.value;
         }
+        public String getDisplayName() { return this.displayName; }
 
         public static TypeGroup getType(String type) {
             for (TypeGroup t : values()) {
@@ -587,6 +601,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             }
             throw new RuntimeException("No run type of string " + type + " found.");
         }
+
 
     }
 
