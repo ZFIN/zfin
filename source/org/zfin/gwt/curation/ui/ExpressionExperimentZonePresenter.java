@@ -485,7 +485,22 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     public void setGene(ExpressionExperimentDTO selectedExperiment) {
         AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_GENE_LIST_START);
-        ///      curationService.getGenes(publicationID, new GeneSelectionListAsyncCallback(selectedExperiment.getGene()));
+        getGenesAjax(selectedExperiment);
+    }
+
+    private void getGenesAjax(ExpressionExperimentDTO selectedExperiment) {
+        try {
+            if (selectedExperiment != null)
+                REST.withCallback(new GeneSelectionListAsyncCallback(selectedExperiment.getGene()))
+                        .call(curationService)
+                        .getGenes(publicationID);
+            else
+                REST.withCallback(new GeneSelectionListAsyncCallback())
+                        .call(curationService)
+                        .getGenes(publicationID);
+        } catch (PublicationNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void readGenbankAccessions(ExpressionExperimentDTO selectedExperiment) {
@@ -507,19 +522,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     public void updateGenes() {
         AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_GENE_LIST_START);
-        try {
-            if (lastSelectedExperiment != null)
-                REST.withCallback(new GeneSelectionListAsyncCallback(lastSelectedExperiment.getGene()))
-                        .call(curationService)
-                        .getGenes(publicationID);
-            else
-                REST.withCallback(new GeneSelectionListAsyncCallback())
-                        .call(curationService)
-                        .getGenes(publicationID);
-        } catch (PublicationNotFoundException e) {
-            e.printStackTrace();
-        }
-
+        getGenesAjax(lastSelectedExperiment);
     }
 
     public void onShowHideClick(boolean visibility) {

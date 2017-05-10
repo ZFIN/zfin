@@ -394,6 +394,17 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         }
     }
 
+    public void setInPhenoStatus(ExpressionFigureStageDTO efs) {
+        for (int rowIndex : displayTableMap.keySet()) {
+            ExpressionFigureStageDTO dto = displayTableMap.get(rowIndex);
+            if (efs.isSamePhenotypeExperiment(dto)) {
+                dto.setPatoExists(true);
+                displayTable.setWidget(rowIndex, HeaderName.PUSH.getIndex(), new Label(IN_PATO));
+            }
+        }
+    }
+
+
     private class ExpressionSelectCopyStructureButtonClickHandler implements ClickHandler {
         @Override
         public void onClick(ClickEvent clickEvent) {
@@ -494,11 +505,7 @@ public class ExpressionZoneView extends Composite implements HandlesError {
 
         public void onSuccess(Void exp) {
             ExpressionFigureStageDTO efs = displayTableMap.get(row);
-            for (int rowIndex : displayTableMap.keySet()) {
-                if (efs.isSamePhenotypeExperiment(displayTableMap.get(rowIndex))) {
-                    displayTable.setWidget(rowIndex, HeaderName.PUSH.getIndex(), new Label(IN_PATO));
-                }
-            }
+            setInPhenoStatus(efs);
             clearErrorMessages();
             //Window.alert("Success");
             AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.PUSH_TO_PATO));
@@ -988,44 +995,6 @@ public class ExpressionZoneView extends Composite implements HandlesError {
         public String getText() {
             return text;
         }
-    }
-
-    private class AddExpressionCallback extends ZfinAsyncCallback<List<ExpressionFigureStageDTO>> {
-
-        private List<ExpressionFigureStageDTO> figureAnnotations;
-
-        public AddExpressionCallback(List<ExpressionFigureStageDTO> experiment) {
-            super("Error while creating experiment", errorElement);
-            this.figureAnnotations = experiment;
-        }
-
-        public void onSuccess(List<ExpressionFigureStageDTO> newAnnotations) {
-            displayedExpressions.addAll(newAnnotations);
-            Collections.sort(displayedExpressions);
-            displayTable.createExpressionTable();
-            recordAllExpressedTerms();
-            addButtonInProgress = false;
-            addButton.setEnabled(true);
-            loadingImage.setVisible(false);
-            clearErrorMessages();
-            stageSelector.resetGui();
-            Map<ExpressionExperimentDTO, Integer> expressionExperimentDTOMap = new HashMap<>();
-            for (ExpressionFigureStageDTO dto : newAnnotations) {
-                ExpressionExperimentDTO experimentDTO = dto.getExperiment();
-                if (expressionExperimentDTOMap.containsKey(experimentDTO)) {
-                    expressionExperimentDTOMap.put(experimentDTO, expressionExperimentDTOMap.get(experimentDTO) + 1);
-                } else {
-                    expressionExperimentDTOMap.put(experimentDTO, 1);
-                }
-            }
-            expressionExperimentZonePresenter.notifyAddedExpression(expressionExperimentDTOMap);
-            loadingImage.setVisible(false);
-        }
-
-        public void onFailureCleanup() {
-            loadingImage.setVisible(false);
-        }
-
     }
 
     public void updateFigureListBox(List<FigureDTO> allFigureDtos) {
