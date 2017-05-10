@@ -77,22 +77,13 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                 }
                 dto.setSynonyms(aliasList);
             }
-/*
-            if (CollectionUtils.isNotEmpty(gene.getAliases())) {
-                List<SynonymDTO> aliasList = new ArrayList<>(gene.getAliases().size());
-                for (MarkerAlias alias : gene.getAliases()) {
-                    SynonymDTO syn = new SynonymDTO(alias.getAlias());
-                    aliasList.add(syn);
-                }
-                dto.setSynonyms(aliasList);
-            }
-*/
             if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
                 List<String> dbLinkList = new ArrayList<>(gene.getDbLinks().size());
                 for (MarkerDBLink link : gene.getDbLinks()) {
                     String dbName = DataProvider.getExternalDatabaseName(link.getReferenceDatabase().getForeignDB().getDbName());
                     if (dbName == null)
                         continue;
+                    // do not include ENSDARP records
                     if (dbName.equals(ForeignDB.AvailableName.ENSEMBL.toString()) && link.getAccessionNumber().startsWith("ENSDARP"))
                         continue;
                     CrossReferenceDTO xRefDto = new CrossReferenceDTO(dbName, link.getAccessionNumber());

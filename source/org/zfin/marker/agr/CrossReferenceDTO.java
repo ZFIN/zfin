@@ -30,7 +30,7 @@ public class CrossReferenceDTO {
         dbNameMap.put("NCBIGene", "NCBI_Gene");
         dbNameMap.put("UniProtKB", "UniProtKB");
         dbNameMap.put("Ensembl", "ENSEMBL");
-        dbNameMap.put("Ensembl", "PMID");
+        dbNameMap.put("PMID", "PMID");
     }
 
 
