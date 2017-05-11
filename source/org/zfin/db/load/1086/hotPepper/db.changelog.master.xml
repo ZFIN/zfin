@@ -7,4 +7,5 @@
 
     <include file="source/org/zfin/db/load/1086/hotPepper/INF-2024.sql"/>
     <include file="source/org/zfin/db/load/1086/hotPepper/RGNS-59.sql"/>
+    <include file="source/org/zfin/db/load/1086/hotPepper/updateMarkerTypeGroup.sql"/>
 </databaseChangeLog>

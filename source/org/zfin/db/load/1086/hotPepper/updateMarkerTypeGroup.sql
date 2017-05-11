@@ -1,4 +1,5 @@
-begin work;
+--liquibase formated sql
+--changeset kschaper:INF-2935
 
 alter table marker_type_group
 add (mtgrp_display_name varchar(80));
@@ -143,5 +144,4 @@ values ('TALEN','SEARCHABLE_STR');
 select * from marker_type_group where mtgrp_searchable = 't';
 select * from marker_type_group_member where mtgrpmem_mrkr_type_group like 'SEARCHABLE%';
 
-commit work;
---rollback work;
+
