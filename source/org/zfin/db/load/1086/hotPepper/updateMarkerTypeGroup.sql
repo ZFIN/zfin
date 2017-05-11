@@ -141,7 +141,3 @@ insert into marker_type_group_member (mtgrpmem_mrkr_type, mtgrpmem_mrkr_type_gro
 values ('TALEN','SEARCHABLE_STR');
 
 
-select * from marker_type_group where mtgrp_searchable = 't';
-select * from marker_type_group_member where mtgrpmem_mrkr_type_group like 'SEARCHABLE%';
-
-
