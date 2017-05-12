@@ -3100,8 +3100,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number) {
         MarkerTypeGroup type = getMarkerTypeGroupByName(group.name());
-        String hql = "from Marker as marker " +
-                "where marker.markerType.name in (:names) order by marker.abbreviationOrder ";
+        String hql = "select distinct marker from Marker as marker " +
+                "left join fetch marker.dbLinks " +
+                "where marker.markerType.name in (:names) ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("names", type.getTypeStrings());
         if (number > 0)
