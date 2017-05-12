@@ -572,6 +572,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     SEARCHABLE_CONSTRUCT("SEARCHABLE_CONSTRUCT","Construct"),
     SEARCHABLE_SMALL_SEGMENT("SEARCHABLE_SMALL_SEGMENT", "Small Segment"),
     SEARCHABLE_GENE("SEARCHABLE_GENE", "Gene"),
+    SEARCHABLE_REGION("SEARCHABLE_REGION","Region"),
     SEARCHABLE_STR("SEARCHABLE_STR","Sequence Targeting Reagent"),
     SEARCHABLE_TRANSCRIPT("SEARCHABLE_TRANSCRIPT", "Transcript"),
 	REGION("REGION")
