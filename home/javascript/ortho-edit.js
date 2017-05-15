@@ -30,7 +30,7 @@
             return new Date(0);
         }
         // sorry, zfinners in the year 2090 :(
-        var century = date.startsWith('9') ? '19' : '20';
+        var century = (date.substr(0, 1) === '9') ? '19' : '20';
         return new Date(century + date.substring(0, 2), Number(date.substring(2, 4)) - 1, date.substring(4, 6));
     }
 
