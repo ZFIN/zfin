@@ -80,8 +80,7 @@
         <echo message=":rsync SUCCESSFUL:"/>
     </target>
 
-    <target name="move-watson-to-crick
-" description="Synchronize Jenkins on crick with watson">
+    <target name="move-watson-to-crick" description="Synchronize Jenkins on crick with watson">
         <echo message="Synchronizing Jenkins jobs: copy Crick files onto Watson"/>
         <exec executable="rsync" failifexecutionfails="true">
             <arg value="-avz"/>
