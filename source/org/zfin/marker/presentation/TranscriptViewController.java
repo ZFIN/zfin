@@ -36,7 +36,7 @@ public class TranscriptViewController {
     @Autowired
     private MarkerService markerService;
 
-    @RequestMapping(value = "/transcript/view")
+    @RequestMapping(value = "/transcript/view/{zdbID}")
     public String getTranscriptView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         zdbID = markerService.getActiveMarkerID(zdbID);
         // set base bean
