@@ -110,8 +110,6 @@
 
     </target>
 
-<<<<<<< HEAD
-=======
     <target name="move-watson-to-franklin-loadup" description="Synchronize loadup directory on franklin with watson">
         <echo message="Synchronizing Jenkins jobs: copy watson files to franklin"/>
 
@@ -151,8 +149,6 @@
         </if>
 
     </target>
-
->>>>>>> release-1085
 
     <macrodef name="remove-old-files" description="Remove files older that a given date">
         <attribute name="removal.date"/>
