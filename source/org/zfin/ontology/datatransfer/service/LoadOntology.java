@@ -74,6 +74,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         options.addOption(webrootDirectory);
         options.addOption(productionModeOption);
         options.addOption(debugModeOption);
+        options.addOption(forceLoadOption);
         options.addOption(DataReportTask.jobNameOpt);
     }
 
@@ -96,6 +97,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     // if false always load the obo file.
     private boolean productionMode = true;
     private boolean debugMode = true;
+    private boolean forceLoad = false;
     private File loadDirectory;
 
     /**
@@ -154,6 +156,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             LOG.error(e.getMessage());
             System.exit(-1);
         }
+        String forceLoadStr = commandLine.getOptionValue(forceLoadOption.getOpt());
+        loader.forceLoad = forceLoadStr != null && forceLoadStr.equals("true");
+
         loader.jobName = jobName;
         LOG.info("Job Name: " + loader.jobName);
         String optionValue = commandLine.getOptionValue(productionModeOption.getOpt());
@@ -870,7 +875,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     }
 
     private boolean processOboFile() {
-        if (!newerVersionFound() && productionMode) {
+        if ((!newerVersionFound() && !forceLoad) && productionMode ) {
             String message = ontology.getOntologyName() + " ontology in the database is up-to-date. \n";
             message += oboMetadata.toString();
             LOG.info(message);
