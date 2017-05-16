@@ -269,7 +269,7 @@
                 <arg value="-jobName"/>
                 <arg value="${JobName}"/>
                 <arg value="-forceLoad"/>
-                <arg value="${JobName}"/>
+                <arg value="${forceLoad}"/>
                 <jvmarg value="${jvm.args}"/>
             </java>
         </sequential>
@@ -300,6 +300,8 @@
             <arg value="${basedir}"/>
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
+            <arg value="-forceLoad"/>
+            <arg value="${forceLoad}"/>
             <jvmarg value="${jvm.args}"/>
         </java>
 
