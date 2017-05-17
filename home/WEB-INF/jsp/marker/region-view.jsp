@@ -31,7 +31,10 @@
 
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
 <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}</c:set>
-
+    <script>
+        if (opener != null)
+            opener.fireCreateMarkerEvent();
+    </script>
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    mergeURL="${mergeURL}"
                    editMarker="true"/>
