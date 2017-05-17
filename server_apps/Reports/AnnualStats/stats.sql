@@ -25,7 +25,7 @@ grep OTTDART0 db_link | wc -l
 -- Genes
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), "Genes", "Genes", current year to second from marker
- where mrkr_type[1,4] = 'GENE'
+ where mrkr_type[1,4] = 'GENE' or mrkr_type like '%RNAG%'
 --and mrkr_zdb_id not like "ZDB-%-12____-%"
 ;
 -- Genes on Vega Assembly
@@ -183,7 +183,7 @@ insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(distinct (mfs_mrkr_Zdb_id)), "Expression & Phenotype", "Genes with a phenotype", current year to second from phenotype_statement, phenotype_Experiment, mutant_fast_search
  where phenox_pk_id = phenos_phenox_pk_id 
  and phenox_genox_zdb_id = mfs_genox_zdb_id
-and mfs_mrkr_zdb_id like 'ZDB-GENE%';
+and (mfs_mrkr_zdb_id like 'ZDB-GENE%' or mfs_mrkr_zdb_id like '%RNAG%');
 
 -- Images annotated for expression
 insert into annual_stats(as_count, as_section, as_type, as_date)

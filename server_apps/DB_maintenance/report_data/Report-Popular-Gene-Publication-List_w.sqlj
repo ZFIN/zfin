@@ -4,13 +4,14 @@ SELECT mrkr_zdb_id,
        mrkr_abbrev,
        Count(DISTINCT zdb_id) AS ct
 FROM   record_attribution,
-       marker,
+       marker,marker_type_group_member,
        publication
 WHERE  mrkr_zdb_id = recattrib_data_zdb_id
        AND recattrib_source_zdb_id = zdb_id
        AND jtype = 'Journal'
-       AND mrkr_type = 'GENE'
-GROUP  BY mrkr_zdb_id,
+       AND mtgrpmem_mrkr_type=mrkr_type
+       AND mtgrpmem_mrkr_type_group='GENEDOM'
+       GROUP  BY mrkr_zdb_id,
           mrkr_abbrev
 HAVING Count(DISTINCT zdb_id) > 100
 ORDER  BY ct DESC
@@ -24,12 +25,13 @@ SELECT FIRST 3
        zdb_id,
        pub_date
 FROM   record_attribution,
-       marker,
+       marker,marker_type_group_member,
        publication
 WHERE  mrkr_zdb_id = recattrib_data_zdb_id
        AND recattrib_source_zdb_id = zdb_id
        AND jtype = 'Journal'
-       AND mrkr_type = 'GENE'
+       AND mtgrpmem_mrkr_type=mrkr_type
+       AND mtgrpmem_mrkr_type_group='GENEDOM'
        AND NOT EXISTS (SELECT 'x'
                        FROM   curation
                        WHERE  zdb_id = cur_pub_zdb_id
