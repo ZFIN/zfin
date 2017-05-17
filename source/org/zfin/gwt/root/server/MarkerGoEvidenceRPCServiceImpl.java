@@ -437,10 +437,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
                 if (m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                     markerDTOs.add(DTOConversionService.convertToMarkerDTO(m));
                 }
-                if (m.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
-                    markerDTOs.add(DTOConversionService.convertToMarkerDTO(m));
-                }
-            }
+                            }
         }
 
         return markerDTOs;

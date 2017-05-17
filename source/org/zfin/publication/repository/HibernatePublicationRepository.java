@@ -1146,7 +1146,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Marker> getGenesByPublication(String pubID, boolean includeEFGs) {
         Session session = HibernateUtil.currentSession();
 
-        Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM_AND_NTR;
+        Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM;
 
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
         if (includeEFGs){
