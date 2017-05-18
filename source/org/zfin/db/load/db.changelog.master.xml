@@ -18,5 +18,5 @@
     <include file="source/org/zfin/db/load/1085/fire/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1085/ghost/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1086/hotPepper/db.changelog.master.xml"/>
-
+    <include file="source/org/zfin/db/load/1086/iceCream/db.changelog.master.xml"/>
 </databaseChangeLog>
