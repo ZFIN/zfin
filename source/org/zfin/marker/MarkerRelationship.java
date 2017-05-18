@@ -14,7 +14,9 @@ import java.util.Set;
 public class MarkerRelationship implements Comparable, EntityAttribution, AbstractMarkerRelationshipInterface {
 
     public enum Type {
-
+	BAC_CONTAINS_GENEDOME("BAC contains GENEDOM"),
+	BAC_CONTAINS_NTR("BAC contains NTR"),
+	GENEDOM_CONTAINS_NTR("GENEDOM contains NTR"),
         CLONE_CONTAINS_GENE("clone contains gene"),
         CLONE_CONTAINS_SMALL_SEGMENT("clone contains small segment"),
         CLONE_CONTAINS_TRANSCRIPT("clone contains transcript"),
@@ -32,7 +34,15 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
         PROMOTER_OF("promoter of"),
         CRISPR_TARGETS_REGION("crispr targets region"),
         TALEN_TARGETS_REGION("talen targets region"),
-        CONTAINS_REGION("contains region");
+        CONTAINS_REGION("contains region"),
+	NTR_INTERACTS_WITH_GENE("NTR interacts with GENE"),
+        NTR_INTERACTS_WITH_GENEP("NTR interacts with GENEP"),
+	NTR_INTERACTS_WITH_NTR("NTR interacts with NTR"),
+	RNAGENE_INTERACTS_WITH_GENE("RNAGENE interacts with GENE"),
+	RNAGENE_INTERACTS_WITH_GENEP("RNAGENE interacts with GENEP"),
+	RNAGENE_INTERACTS_WITH_NTR("RNAGENE interacts with NTR"),
+	RNAGENE_INTERACTS_WITH_RNAGENE("RNAGENE interacts with RNAGENE"),
+;
 
         private final String value;
 

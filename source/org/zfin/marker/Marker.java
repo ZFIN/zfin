@@ -522,6 +522,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         SEARCH_MKSEG("SEARCH_MKSEG"),
         SEARCH_SEG("SEARCH_SEG"),
         SMALLSEG("SMALLSEG"),
+	SMALLSEG_NO_ESTCDNA("SMALLSEG_NO_ESTCDNA"),
         SSLP("SSLP"),
         STS("STS"),
 	TALEN("TALEN"),
@@ -574,9 +575,8 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     SEARCHABLE_GENE("SEARCHABLE_GENE", "Gene"),
     SEARCHABLE_REGION("SEARCHABLE_REGION","Region"),
     SEARCHABLE_STR("SEARCHABLE_STR","Sequence Targeting Reagent"),
-    SEARCHABLE_TRANSCRIPT("SEARCHABLE_TRANSCRIPT", "Transcript"),
-	REGION("REGION"),
-	INTERACTS_WITH("INTERACTS_WITH")
+	SEARCHABLE_TRANSCRIPT("SEARCHABLE_TRANSCRIPT", "Transcript"),
+	RNAGENE("RNAGENE")
         ;
 
         private final String value;
