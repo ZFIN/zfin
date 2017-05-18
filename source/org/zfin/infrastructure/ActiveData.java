@@ -5,7 +5,6 @@ import org.zfin.infrastructure.delete.*;
 import org.zfin.mapping.Panel;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
-import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.repository.RepositoryFactory;
@@ -41,8 +40,9 @@ public class ActiveData implements ZdbID {
             return false;
         }
 
-        if (!id.startsWith(ActiveSource.ZDB))
+        if (!id.startsWith(ActiveSource.ZDB)) {
             return false;
+        }
 
         Type type = null;
         for (Type zdbType : Type.values()) {
@@ -65,8 +65,9 @@ public class ActiveData implements ZdbID {
             throw new InvalidZdbID();
         }
 
-        if (!id.startsWith(ActiveSource.ZDB))
+        if (!id.startsWith(ActiveSource.ZDB)) {
             throw new InvalidZdbID(id);
+        }
 
         Type type = null;
         String[] components = id.split("-");
@@ -87,8 +88,9 @@ public class ActiveData implements ZdbID {
             return null;
         }
 
-        if (!id.startsWith(ActiveSource.ZDB))
+        if (!id.startsWith(ActiveSource.ZDB)) {
             return null;
+        }
 
         Type type = null;
         String[] components = id.split("-");
@@ -119,7 +121,10 @@ public class ActiveData implements ZdbID {
     }
 
     public static boolean isMarker(Type type) {
-        if (type.equals(Type.ATB) ||
+        if (type == null) {
+            return false;
+        }
+        return type.equals(Type.ATB) ||
                 type.equals(Type.BAC) ||
                 type.equals(Type.BAC_END) ||
                 type.equals(Type.CDNA) ||
@@ -140,22 +145,22 @@ public class ActiveData implements ZdbID {
                 type.equals(Type.STS) ||
                 type.equals(Type.TALEN) ||
                 type.equals(Type.TGCONSTRCT) ||
-                type.equals(Type.TSCRIPT)
-                )
-            return true;
-        return false;
+                type.equals(Type.TSCRIPT);
     }
 
     public static boolean isGeneOrGeneP(String ID) {
         Type type = getType(ID);
-        if (type.equals(Type.GENE) || type.equals(Type.GENEP))
+        if (type.equals(Type.GENE) || type.equals(Type.GENEP)) {
             return true;
+        }
         return false;
     }
+
     public static boolean isInGroupGenedom(String ID) {
-        Marker marker= RepositoryFactory.getMarkerRepository().getMarkerByID(ID);
-        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR))
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(ID);
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR)) {
             return true;
+        }
         return false;
     }
 
@@ -174,6 +179,7 @@ public class ActiveData implements ZdbID {
         CDT,
         CHROMO,
         CND,
+        CNE,
         CRISPR(DeleteSTRRule.class),
         CUR,
         CV,
@@ -291,16 +297,18 @@ public class ActiveData implements ZdbID {
         }
 
         public static String getValues() {
-            if (allValues != null)
+            if (allValues != null) {
                 return allValues;
+            }
             StringBuilder sb = new StringBuilder("[");
             int size = values().length;
             int index = 0;
             for (Type type : values()) {
                 sb.append(type.name());
                 index++;
-                if (index < size)
+                if (index < size) {
                     sb.append(",");
+                }
             }
             sb.append("]");
             allValues = sb.toString();
@@ -309,8 +317,9 @@ public class ActiveData implements ZdbID {
 
         public static Type getType(String type) {
             for (Type t : values()) {
-                if (t.toString().equals(type))
+                if (t.toString().equals(type)) {
                     return t;
+                }
             }
             throw new RuntimeException("No active Data type of string " + type + " found.");
         }
