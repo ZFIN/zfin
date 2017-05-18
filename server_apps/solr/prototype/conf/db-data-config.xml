@@ -2080,25 +2080,25 @@ select
                         cacheImpl="SortedMapBackedCache"
                         where="mrkr_zdb_id=str.id"/>
 
-           <entity name="str_targeted_gene"
+           <entity name="str_target"
                    datasource="db" query="select
-                            mrkr_abbrev as targeted_gene,
-                            mrkr_name as targeted_gene_full_name,
+                            mrkr_abbrev as target,
+                            mrkr_name as target_full_name,
                             mrel_mrkr_1_zdb_id as str_zdb_id
                             from marker_relationship
-                                 join marker gene on mrel_mrkr_2_zdb_id = mrkr_zdb_id
+                                 join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id
                             where mrel_type = 'knockdown reagent targets gene';"
                    where="str_zdb_id=str.id"
                    cacheImpl="SortedMapBackedCache"/>
 
 
-           <entity name="str_targeted_gene_previous_name"
+           <entity name="str_target_previous_name"
                    datasource="db" query="select
-                            dalias_alias as targeted_gene_previous_name,
+                            dalias_alias as target_previous_name,
                             mrel_mrkr_1_zdb_id as str_zdb_id
                             from data_alias
                                  join marker_relationship on mrel_mrkr_2_zdb_id = dalias_data_zdb_id
-                                 join marker gene on mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+                                 join marker on mrel_mrkr_1_zdb_id = mrkr_zdb_id
                             where mrel_type = 'knockdown reagent targets gene';"
                    where="str_zdb_id=str.id"
                    cacheImpl="SortedMapBackedCache"/>
@@ -5469,25 +5469,25 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                     where="mrel_zdb_id=str_relationship.id"
                     cacheImpl="SortedMapBackedCache"/>
 
-            <entity name="str_targeted_gene"
+            <entity name="str_target"
                     datasource="db" query="select
-                            mrkr_abbrev as targeted_gene,
-                            mrkr_name as targeted_gene_full_name,
+                            mrkr_abbrev as target,
+                            mrkr_name as target_full_name,
                             mrel_zdb_id
                             from marker_relationship
-                                 join marker gene on mrel_mrkr_2_zdb_id = mrkr_zdb_id
+                                 join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id
                             where mrel_type = 'knockdown reagent targets gene';"
                     where="mrel_zdb_id=str_relationship.id"
                     cacheImpl="SortedMapBackedCache"/>
 
 
-            <entity name="str_targeted_gene_previous_name"
+            <entity name="str_target_previous_name"
                     datasource="db" query="select
-                            dalias_alias as targeted_gene_previous_name,
+                            dalias_alias as target_previous_name,
                             mrel_zdb_id
                             from data_alias
                                  join marker_relationship on mrel_mrkr_2_zdb_id = dalias_data_zdb_id
-                                 join marker gene on mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+                                 join marker on mrel_mrkr_1_zdb_id = mrkr_zdb_id
                             where mrel_type = 'knockdown reagent targets gene';"
                     where="mrel_zdb_id=str_relationship.id"
                     cacheImpl="SortedMapBackedCache"/>

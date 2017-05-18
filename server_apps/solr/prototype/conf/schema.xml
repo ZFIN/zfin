@@ -571,9 +571,9 @@
    <field name="sequence_targeting_reagent" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
 
-   <field name="targeted_gene" type="keyword" indexed="true" stored="true" multiValued="true" />
-   <field name="targeted_gene_full_name" type="text" indexed="true" stored="true" multiValued="true" />
-   <field name="targeted_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true" />
+   <field name="target" type="keyword" indexed="true" stored="true" multiValued="true" />
+   <field name="target_full_name" type="text" indexed="true" stored="true" multiValued="true" />
+   <field name="target_previous_name" type="text" indexed="true" stored="true" multiValued="true" />
 
 
    <field name="construct" type="keyword" indexed="true" stored="true" multiValued="true"   />
@@ -1004,7 +1004,7 @@
     <copyField source="gene" dest="related_gene_symbol"/>
     <copyField source="zebrafish_gene" dest="related_gene_symbol"/>
     <copyField source="reporter_gene" dest="related_gene_symbol"/>
-    <copyField source="targeted_gene" dest="related_gene_symbol"/>
+    <copyField source="target" dest="related_gene_symbol"/>
 <!--    <copyField source="expressed_gene" dest="related_gene_symbol"/>-->
 
 

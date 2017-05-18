@@ -93,7 +93,7 @@ public class ResultService {
     public static String STAGE = "Stage:";
     public static String STATUS = "Status:";
     public static String SYNONYMS = "Synonyms:";
-    public static String TARGETED_GENES = "Targeted Genes:";
+    public static String TARGETS = "Targets:";
     public static String TRANSCRIPT_NAME = "Transcript Name:";
     public static String TYPE = "Type:";
     public static String HOST_ORGANISM = "Host Organism:";
@@ -404,7 +404,7 @@ public class ResultService {
                 affectedGenes.add(MarkerPresentation.getAbbreviation(gene));
             }
             if (affectedGenes.size() > 0) {
-                result.addAttribute(TARGETED_GENES, withCommas(affectedGenes));
+                result.addAttribute(TARGETS, withCommas(affectedGenes));
             }
 
             List<String> sequenceList = new ArrayList<String>();
