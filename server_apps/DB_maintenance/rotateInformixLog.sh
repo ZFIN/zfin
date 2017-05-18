@@ -17,7 +17,7 @@ cd <!--|SOURCEROOT|-->/server_apps/DB_maintenance/
 echo "dump logs continuous"
 <!--|TARGETROOT|-->/server_apps/DB_maintenance/dumpLogsContinuous.pl
 
-rm -rf $logToBeDeleted
+/bin/rm -rf $logToBeDeleted
 
 echo "dump server"
 <!--|TARGETROOT|-->/server_apps/DB_maintenance/dumpServer.pl
