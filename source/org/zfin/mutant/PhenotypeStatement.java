@@ -154,7 +154,9 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
 
         String displayName = getDisplayName();
         String thatDisplayName = that.getDisplayName();
+        String thatTag = that.getTag();
         if (displayName != null ? !displayName.equals(thatDisplayName) : thatDisplayName != null) return false;
+        if (tag != null ? !tag.equals(thatTag) : thatTag != null) return false;
 
         return true;
     }
@@ -162,7 +164,9 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
     @Override
     public int hashCode() {
         String displayName = getDisplayName();
-        return displayName != null ? displayName.hashCode() : 0;
+        int hash = displayName != null ? displayName.hashCode() : 0;
+        hash += tag != null ? tag.hashCode() : 0;
+        return hash;
     }
 
     /**

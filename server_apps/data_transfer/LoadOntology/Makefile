@@ -25,7 +25,7 @@ loadSubsets.sql handleSecondaryTerms.sql handleRelationships.sql handleSynonyms.
 loadDBxrefs.sql report.html.template report.properties statistics.html.template obsoleteMergeChebi.sql obsoleteMergeDisease.sql \
 obsoleteMergeGene.sql obsoleteMergeZebrafishExperimentalConditions.sql obsoleteMergeZecoTaxonomy.sql \
 obsoleteMergeZebrafishAnatomical.sql obsoleteMergeEco.sql obsoleteMergeSequence.sql obsoleteMergeQuality.sql \
-obsoleteMergeMousePathology.ontology.sql
+obsoleteMergeMousePathology.ontology.sql fixAnnotationsUponOntologyLoad.sql
 
 # Define targets that require special handling.
 

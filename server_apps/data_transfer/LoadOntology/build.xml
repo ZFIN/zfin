@@ -28,6 +28,7 @@
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
     <property name="jvm.args" value="-Xverify:none"/>
+    <property name="jvm.mem" value="-Xmx4g"/>
     <property name="run-directory" value="./obo-files"/>
 
     <property environment="env"/>
@@ -252,7 +253,7 @@
             <echo>OBO file: @{oboDirectory}</echo>
             <echo>script Files: @{scripts}</echo>
             <antcall target="clear-output-directory"/>
-            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="no" maxmemory="2024m"
+            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="no" maxmemory="4g"
                   failonerror="true">
                 <classpath refid="classpath"/>
                 <arg value="-localOboFileName"/>

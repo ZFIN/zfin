@@ -39,7 +39,7 @@ public class PseudoGeneViewController {
     @Autowired
     private MarkerService markerService;
 
-    @RequestMapping(value = "/pseudogene/view")
+    @RequestMapping(value = "/pseudogene/view/{zdbID}")
     public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();

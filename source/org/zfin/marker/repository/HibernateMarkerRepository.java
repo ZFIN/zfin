@@ -245,7 +245,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public Marker getGeneByAbbreviation(String name) {
         Session session = currentSession();
         Criteria criteria1 = session.createCriteria(Marker.class);
-        criteria1.add(Restrictions.like("zdbID", "ZDB-GENE%"));
+       criteria1.add(Restrictions.like("zdbID", "ZDB-GENE%"));
         criteria1.add(Restrictions.eq("abbreviation", name));
         try {
             return (Marker) criteria1.uniqueResult();
@@ -267,11 +267,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<Marker> getMarkersForRelation(String featureRelationshipName, String publicationZdbID) {
         String sql = "select distinct mrkr_zdb_id " +
-                "    from marker, " +
+                "    from marker,marker_type_group_member, " +
                 "    record_attribution" +
                 "    where mrkr_zdb_id = recattrib_data_zdb_id" +
                 "    and recattrib_source_zdb_id=:pubZdbID " +
-                "    and mrkr_type in ('EREGION','CNE')";
+                "    and mrkr_type=mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='CONSTRUCT_COMPONENTS'";
 
 
         List<String> markerZdbIds = (List<String>) HibernateUtil.currentSession().createSQLQuery(sql)

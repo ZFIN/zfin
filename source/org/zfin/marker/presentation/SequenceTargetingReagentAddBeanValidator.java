@@ -35,14 +35,20 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
 
         String strSequence = formBean.getSequence();
         validateSequence(errors, "sequence", strSequence);
-
+        String strType = formBean.getStrType();
+        Marker.Type type = Marker.Type.getType(strType);
         String targetGeneSymbol = formBean.getTargetGeneSymbol();
         if (StringUtils.isEmpty(targetGeneSymbol)) {
             errors.rejectValue("targetGeneSymbol", "str.target.empty");
-        } else if (mr.getGeneByAbbreviation(targetGeneSymbol) == null) {
+        } else if (mr.getMarkerByAbbreviation(targetGeneSymbol) == null) {
+
             errors.rejectValue("targetGeneSymbol", "str.target.notfound");
         }
-
+        if (type == Marker.Type.MRPHLNO) {
+            if(mr.getMarkerByAbbreviation(targetGeneSymbol).isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)){
+                errors.rejectValue("targetGeneSymbol", "str.target.invalid");
+            }
+        }
         String strSupplier = formBean.getSupplier();
         if (!StringUtils.isEmpty(strSupplier)) {
             if (pr.getOrganizationByName(strSupplier) == null) {
@@ -50,11 +56,11 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
             }
         }
 
-        String strType = formBean.getStrType();
+
         if (StringUtils.isBlank(strType)) {
             errors.rejectValue("strType", "str.type.empty");
         } else {
-            Marker.Type type = Marker.Type.getType(strType);
+            //Marker.Type type = Marker.Type.getType(strType);
             String strSecondSequence = formBean.getSequence2();
             if (type == Marker.Type.TALEN) {
                 validateSequence(errors, "sequence2", strSecondSequence);

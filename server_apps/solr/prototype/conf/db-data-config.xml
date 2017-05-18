@@ -1973,7 +1973,7 @@ select
            <entity name="construct_regulatory_region"
                    datasource="db" query="select mrel_mrkr_1_zdb_id, mrkr_abbrev as engineered_region, mrkr_name as engineered_region_full_name
                           from marker_relationship, marker
-                          where mrel_type = 'contains engineered region'
+                          where mrel_type = 'contains region'
                             and mrel_mrkr_2_zdb_id = mrkr_zdb_id "
                    cacheImpl="SortedMapBackedCache"
                    where="mrel_mrkr_1_zdb_id=construct.id">
