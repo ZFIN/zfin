@@ -575,7 +575,8 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     SEARCHABLE_REGION("SEARCHABLE_REGION","Region"),
     SEARCHABLE_STR("SEARCHABLE_STR","Sequence Targeting Reagent"),
     SEARCHABLE_TRANSCRIPT("SEARCHABLE_TRANSCRIPT", "Transcript"),
-	REGION("REGION")
+	REGION("REGION"),
+	INTERACTS_WITH("INTERACTS_WITH")
         ;
 
         private final String value;
