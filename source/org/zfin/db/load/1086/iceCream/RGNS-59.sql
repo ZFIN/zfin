@@ -7,7 +7,7 @@ alter table marker_type_Group
 alter table marker_type_Group
  modify (mtgrp_display_name varchar(80) not null constraint mtgrp_searchable_not_null);
 
-insert into marker_Type_group (mtgrp_name, mtgrp_commnets, mtgrp_searchable, mtgrp_display_name)
+insert into marker_Type_group (mtgrp_name, mtgrp_comments, mtgrp_searchable, mtgrp_display_name)
   values ('RNAGENE', 'group of genes defined as RNA genes', 'f','RNA Genes');
 
 insert into marker_type_group_member (mtgrpmem_mrkr_type, mtgrpmem_mrkr_type_group)
