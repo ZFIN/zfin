@@ -11,18 +11,25 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
+import org.zfin.marker.ZfinSoTerm;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.Person;
 import org.zfin.profile.presentation.PersonLookupEntry;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.webservice.client.Zfin;
 
 import javax.validation.Valid;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @Controller
 @RequestMapping("/marker")
@@ -106,5 +113,19 @@ public class RegionAddController {
 
         return "redirect:/" + newRegion.getZdbID();
     }
+
+    @RequestMapping(value = "/find-SoTerm/{type}", method = RequestMethod.GET)
+
+    public
+    @ResponseBody
+    TermDTO lookupTermBySoID(String type) {
+
+        ZfinSoTerm soTerm=getMarkerRepository().getSoIdByMarkerType("RNAMO");
+        GenericTerm item = soTerm.getSoTerm();
+
+        TermDTO termDTO = DTOConversionService.convertToTermDTO(item, true);
+        return termDTO;
+    }
+
 
 }
