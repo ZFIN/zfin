@@ -3,16 +3,7 @@
 
 <link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
 <link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
-<%--<script type="text/javascript" language="javascript"
-        src="org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
-  <script type="text/javascript">
-  var curationProperties = {
-    zdbID: "ZDB-PUB-020723-1",
-    moduleType: "feature",
-    debug: "false"
-  }
-</script>--%>
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.RegionAddFormBean" scope="request"/>
 
@@ -20,6 +11,9 @@
 <div class="container-fluid">
   <h2 class="page-header">New NTR</h2>
   <form:form id="nonTranscribedRegion-add" class="form-horizontal" commandName="formBean" action="nonTranscribedRegion-add">
+    <table>
+
+<tr><td>
     <div class="form-group">
       <form:label path="type" class="col-sm-2 control-label">Type</form:label><a href="http://www.sequenceontology.org/browser/current_svn/term/">Link to the SO (for reference)</a>
       <div class="col-sm-4">
@@ -30,7 +24,12 @@
         <form:errors path="type" class="error"/>
       </div>
     </div>
-    <%--<div id="construct-relationship"></div>--%>
+
+      <td>
+    <div id="term-info"></div>
+</td>
+      </tr>
+    </table>
     <div class="form-group">
       <form:label path="publicationId" class="col-sm-2 control-label">Reference</form:label>
       <div class="col-sm-4">
@@ -79,16 +78,34 @@
 </div>
 
 <script>
-  $(function() {
-    var $type = $('#type');
-    var selectedTerm = $type.val();
+    $(function(e) {
 
 
+        function showTermInfo() {
+            var typeSO=$('#type').val();
+            alert(typeSO);
+            jQuery.ajax({
+                url: '/action/marker/find-SoTerm/'+typeSO,
+                type: 'GET',
+                success: function (response) {
+                    alert(response.termName);
+                    alert(response.oboID);
+                    var termId=response.oboID;
 
+                    termDiv = document.getElementById('term-info');
+                    termDiv.style.display = 'inline';
+                    jQuery('#termInfo').load('/action/ontology/term-detail-popup?termID=SO:0000710' ,null, function(responseText, textStatus, xhr) {
+                        alert(textStatus); })
+                },
+                error: function (data) {
+                    alert('There was a problem with your request: ' + data);
+                }
 
-    $type.on('change', updateTermInfoBox(selectedTerm, selectedOption, tabName));
+            });
+        }
 
+        $('#type').on('change', showTermInfo);
 
-  })
+        showTermInfo();
+    })
 </script>
-
