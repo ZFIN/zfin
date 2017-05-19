@@ -4,6 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-
+<!--    <include file="source/org/zfin/db/load/1086/iceCream/notNullAdditions.sql"/>-->
     <include file="source/org/zfin/db/load/1086/iceCream/RGNS-59.sql"/>
+    <include file="source/org/zfin/db/load/1086/iceCream/RGNS-82.sql"/>
+    <include file="source/org/zfin/db/load/1086/iceCream/RGNS-64.sql"/>
+
 </databaseChangeLog>

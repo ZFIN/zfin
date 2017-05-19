@@ -4,7 +4,7 @@
 <%@attribute name="results" required="true" type="java.util.List" %>
 <c:set var="aliasAttribute" value="<%=ResultService.SYNONYMS%>"/>
 <c:set var="seqAttribute" value="<%=ResultService.SEQUENCE%>"/>
-<c:set var="tgtGeneAttribute" value="<%=ResultService.TARGETED_GENES%>"/>
+<c:set var="tgtGeneAttribute" value="<%=ResultService.TARGETS%>"/>
 
 
 <table class="table-results searchresults" style="display: none;">

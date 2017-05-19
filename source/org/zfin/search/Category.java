@@ -110,7 +110,7 @@ public enum Category {
     ),
     SEQUENCE_TARGETING_REAGENT("Sequence Targeting Reagent (STR)",
             TYPE,
-            TARGETED_GENE
+            TARGET
     ),
     EXPRESSIONS("Expression",
             asList( FacetQueryEnum.ANY_ZEBRAFISH_GENE,

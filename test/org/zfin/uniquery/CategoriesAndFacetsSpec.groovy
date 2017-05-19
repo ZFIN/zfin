@@ -129,7 +129,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.TYPE
                 ],
                 (Category.SEQUENCE_TARGETING_REAGENT): [
-                        FieldName.TARGETED_GENE,
+                        FieldName.TARGET,
                         FieldName.TYPE
                 ],
                 (Category.MARKER)                    : [
@@ -233,7 +233,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage"]
         Category.MUTANT                     | ["Type", "Affected Genomic Region", "Phenotype", "Consequence", "Mutagen", "Source", "Lab of Origin", "Institution"]
         Category.CONSTRUCT                  | ["Type", "Regulatory Region", "Coding Sequence", "Inserted In Gene", "Expressed In", "Reporter Color", "Engineered Region"]
-        Category.SEQUENCE_TARGETING_REAGENT | ["Type", "Targeted Gene"]
+        Category.SEQUENCE_TARGETING_REAGENT | ["Type", "Target"]
         Category.ANTIBODY                   | ["Type", "Antigen Gene", "Labeled Structure", "Assay", "Source", "Host Organism"]
         Category.MARKER                     | ["Type", "Location", "Source"]
         Category.FIGURE                     | ["Expression Anatomy", "Expressed Gene", "Phenotype", "Construct", "Registered Author", "Has Image"]
