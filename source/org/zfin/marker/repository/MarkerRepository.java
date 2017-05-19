@@ -499,4 +499,6 @@ public interface MarkerRepository {
 
     List<LookupEntry> getRegionListForString(String lookupString, String type);
 
+    ZfinSoTerm getSoIdByMarkerType(String markerType);
+
 }

@@ -3170,5 +3170,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 ;
     }
 
+    @Override
+    public ZfinSoTerm getSoIdByMarkerType(String markerType) {
+        String hql = " select so from ZfinSoTerm so " +
+                "where so.entityName = :markerType ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("markerType", markerType);
+        return (ZfinSoTerm) query.uniqueResult();
+    }
+
 }
 
