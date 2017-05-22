@@ -18,16 +18,12 @@ import org.zfin.marker.MarkerType;
 import org.zfin.marker.ZfinSoTerm;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.profile.Person;
-import org.zfin.profile.presentation.PersonLookupEntry;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.webservice.client.Zfin;
 
 import javax.validation.Valid;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -50,16 +46,16 @@ public class RegionAddController {
 
     @ModelAttribute("formBean")
     public RegionAddFormBean getDefaultForm(@RequestParam(required = false) String type,
-                                          @RequestParam(required = false) String source) {
+                                            @RequestParam(required = false) String source) {
         RegionAddFormBean form = new RegionAddFormBean();
         form.setPublicationId(source);
         form.setType(type);
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.NONTSCRBD_REGION);
-        Map<String, String> allTypes = new LinkedHashMap<>(markerTypes.size());
+        LinkedHashMap<String, String> allTypes = new LinkedHashMap<>(markerTypes.size());
         for (MarkerType markerType : markerTypes) {
-                            allTypes.put(markerType.getType().name(), markerType.getDisplayName());
-                    }
-
+            ZfinSoTerm soTerm = getMarkerRepository().getSoIdByMarkerType(markerType.getType().name());
+            allTypes.put(soTerm.getOboID() + "|" + markerType.getType().name(), markerType.getDisplayName());
+        }
 
 
         form.setAllTypes(allTypes);
@@ -74,14 +70,16 @@ public class RegionAddController {
 
     @RequestMapping(value = "/nonTranscribedRegion-add", method = RequestMethod.POST)
     public String processRegionAddForm(Model model,
-                                     @Valid @ModelAttribute("formBean") RegionAddFormBean formBean,
-                                     BindingResult result) {
+                                       @Valid @ModelAttribute("formBean") RegionAddFormBean formBean,
+                                       BindingResult result) {
         if (result.hasErrors()) {
             return showRegionAddForm(model);
         }
 
         Marker newRegion = new Marker();
-        newRegion.setMarkerType(markerRepository.getMarkerTypeByName(formBean.getType()));
+        String typeSoTerm = formBean.getType();
+
+        newRegion.setMarkerType(markerRepository.getMarkerTypeByName(typeSoTerm.split("\\|")[1]));
         newRegion.setName(formBean.getName());
         newRegion.setAbbreviation(formBean.getAbbreviation());
         newRegion.setPublicComments(formBean.getPublicNote());
@@ -120,7 +118,7 @@ public class RegionAddController {
     @ResponseBody
     TermDTO lookupTermBySoID(String type) {
 
-        ZfinSoTerm soTerm=getMarkerRepository().getSoIdByMarkerType("RNAMO");
+        ZfinSoTerm soTerm = getMarkerRepository().getSoIdByMarkerType("RNAMO");
         GenericTerm item = soTerm.getSoTerm();
 
         TermDTO termDTO = DTOConversionService.convertToTermDTO(item, true);

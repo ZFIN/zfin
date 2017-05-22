@@ -88,7 +88,8 @@
                                 </c:when>
                                 <c:otherwise>
                                     <span class="related-ontology-term" id="${term.termName}">
-                                        <a href="/action/ontology/term-detail-popup?termID=${term.zdbID}">${term.termName}</a>
+                                        <a href="#"
+                                           onClick="loadTerm('/action/ontology/term-detail-popup?termID=${term.zdbID}')">${term.termName}</a>
                                     </span>
                                 </c:otherwise>
                             </c:choose>
@@ -103,3 +104,9 @@
         <a href="/action/ontology/term-detail/${term.zdbID}" target="_blank">Show Anatomy Details</a>
     </c:if>
 </div>
+<script>
+
+    function loadTerm(url) {
+        jQuery('#term-info').load(url)
+    }
+</script>
