@@ -1955,19 +1955,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public Long getMappingDetailsCount(Publication publication) {
         String sql = "SELECT Count(tem.member_id)" +
-	                 "FROM   (select distinct lms_member_1_zdb_id as member_id" +
-	                            "from linkage, linkage_membership_search" +          
-		       	               "WHERE  lnkg_source_zdb_id = :zdbID"+
-			               "AND lms_lnkg_zdb_id = lnkg_zdb_id" +  
-			           "UNION"      +  
-			           "SELECT  distinct lsingle_member_zdb_id" +       
-			             "FROM   linkage, linkage_single"  +         
-			             "WHERE  lnkg_source_zdb_id =  :zdbID"  +    
-			               "AND lsingle_lnkg_zdb_id = lnkg_zdb_id" +        
-			               "AND NOT EXISTS (SELECT 'x'" +
-			       	       	      	          "FROM   linkage_membership_search"  +   
-						          "WHERE  lms_lnkg_zdb_id = lnkg_zdb_id)" +
-		 	          ") as tem";
+	                 "FROM   (select distinct lms_member_1_zdb_id as member_id " +
+	                            "from linkage, linkage_membership_search " +          
+		       	               "WHERE  lnkg_source_zdb_id = :zdbID "+
+			               "AND lms_lnkg_zdb_id = lnkg_zdb_id " +  
+			           "UNION "      +  
+			           "SELECT  distinct lsingle_member_zdb_id " +       
+			             "FROM   linkage, linkage_single "  +         
+			             "WHERE  lnkg_source_zdb_id =  :zdbID "  +    
+			               "AND lsingle_lnkg_zdb_id = lnkg_zdb_id " +        
+			               "AND NOT EXISTS (SELECT 'x' " +
+			       	       	      	          "FROM   linkage_membership_search "  +   
+						          "WHERE  lms_lnkg_zdb_id = lnkg_zdb_id) " +
+		 	          ") as tem" ;
 
         return getCount(sql, publication.getZdbID());
     }
