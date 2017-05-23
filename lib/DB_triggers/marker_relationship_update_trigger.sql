@@ -8,6 +8,9 @@ create trigger marker_relationship_update_trigger
           new_mrkr_rel.mrel_mrkr_1_zdb_id, 
 	  new_mrkr_rel.mrel_mrkr_2_zdb_id, 
 	  new_mrkr_rel.mrel_type
-        )
+        ),
+	 execute procedure checkTscriptType (new_mrkr_rel.mrel_mrkr_1_zdb_id, 
+	 	 	   		     new_mrkr_rel.mrel_mrkr_2_zdb_id,
+					     new_mrkr_rel.mrel_type)
     );
 
