@@ -43,58 +43,87 @@ tmp_xref_db_id = fdb_db_pk_id
 
 --for statistics dump the xrefs that will be deleted from this load
 unload to removed_xrefs
-select tx_term_zdb_id,tx_full_accession,tx_fdb_db_id from term_xref
- where not exists (
-  select 'x' from tmp_dbxrefs_with_ids
-  where tx_term_zdb_id = tmp_term_zdb_id AND
-        tx_fdb_db_id = tmp_xref_db_id AND
-        tx_full_accession = tmp_xref_db||":"||tmp_xref_accession
-  );
+SELECT tx_term_zdb_id,
+       tx_full_accession,
+       tx_fdb_db_id
+FROM   term_xref
+WHERE  NOT EXISTS (SELECT 'x'
+                   FROM   tmp_dbxrefs_with_ids
+                   WHERE  tx_term_zdb_id = tmp_term_zdb_id
+                          AND nvl(tx_fdb_db_id, '') = nvl(tmp_xref_db_id, '')
+                          AND tx_full_accession = tmp_xref_db
+                                                  || ":"
+                                                  || tmp_xref_accession)
+       AND EXISTS (SELECT 'x'
+                   FROM   term,
+                          ontology,
+                          tmp_header
+                   WHERE  ont_ontology_name = default_namespace
+                          AND ont_pk_id = term_ontology_id
+                          AND term_zdb_id = tx_term_zdb_id);
+                          
 -- delete those records from the base table that are not found in the temp table
- delete from term_xref
- where not exists (
-  select 'x' from tmp_dbxrefs_with_ids
-  where tx_term_zdb_id = tmp_term_zdb_id AND
-        tx_fdb_db_id = tmp_xref_db_id AND
-        tx_full_accession = tmp_xref_db||":"||tmp_xref_accession
-  )
-  AND
-  exists (
-   select 'x' from term, ontology, tmp_header
-   	where ont_ontology_name = default_namespace AND
-          ont_pk_Id = term_ontology_id AND
-          term_zdb_id = tx_term_zdb_id
-  );
-
+DELETE FROM term_xref
+WHERE  NOT EXISTS (SELECT 'x'
+                   FROM   tmp_dbxrefs_with_ids
+                   WHERE  tx_term_zdb_id = tmp_term_zdb_id
+                          AND nvl(tx_fdb_db_id, '') = nvl(tmp_xref_db_id,'')
+                          AND tx_full_accession = tmp_xref_db
+                                                  || ":"
+                                                  || tmp_xref_accession)
+       AND EXISTS (SELECT 'x'
+                   FROM   term,
+                          ontology,
+                          tmp_header
+                   WHERE  ont_ontology_name = default_namespace
+                          AND ont_pk_id = term_ontology_id
+                          AND term_zdb_id = tx_term_zdb_id);
 
 -- delete those records from the temp table that are already in base table
-delete from tmp_dbxrefs_with_ids
-where exists (
-  select 'x' from term_xref
-  where tx_term_zdb_id = tmp_term_zdb_id AND
-        tx_full_accession = tmp_xref_db||":"||tmp_xref_accession AND
-        tx_fdb_db_id = tmp_xref_db_id
-)
-
-;
+DELETE FROM tmp_dbxrefs_with_ids
+WHERE  EXISTS (SELECT 'x'
+               FROM   term_xref
+               WHERE  tx_term_zdb_id = tmp_term_zdb_id
+                      AND tx_full_accession = tmp_xref_db
+                                              || ":"
+                                              || tmp_xref_accession
+                      AND nvl(tx_fdb_db_id, '') = nvl(tmp_xref_db_id, ''));
 
 --for statistics load the new xrefs that will be added
 
 unload to new_xrefs
-select tmp_term_zdb_id,tmp_xref_accession
-from tmp_dbxrefs_with_ids,foreign_db
-where fdb_db_pk_id=tmp_xref_db_id;
+SELECT tmp_term_zdb_id,
+       term_ont_id,
+       tmp_xref_db || ":" || tmp_xref_accession
+FROM   tmp_dbxrefs_with_ids,
+       term,
+       outer foreign_db
+WHERE  fdb_db_pk_id = tmp_xref_db_id
+       AND term_zdb_Id = tmp_term_zdb_id;
 
-
-
-insert into term_xref (tx_term_zdb_id,tx_full_accession,tx_prefix,tx_accession,tx_fdb_db_id)
-select distinct tmp_term_zdb_id,tmp_xref_db||":"||tmp_xref_accession,tmp_xref_db,tmp_xref_accession,tmp_xref_db_id from tmp_dbxrefs_with_ids
- where not exists (Select 'x' from term_xref
-       	   	  	  where tmp_term_zdb_id = tx_term_zdb_id
-			  and tmp_xref_db||":"||tmp_xref_accession = tx_full_accession
-			  and tx_prefix = tmp_xref_db
-			  and tx_accession = tmp_xref_accession
-			  and tx_fdb_db_id = tmp_xref_db_id);
+INSERT INTO term_xref
+            (tx_term_zdb_id,
+             tx_full_accession,
+             tx_prefix,
+             tx_accession,
+             tx_fdb_db_id)
+SELECT DISTINCT tmp_term_zdb_id,
+                tmp_xref_db
+                || ":"
+                || tmp_xref_accession,
+                tmp_xref_db,
+                tmp_xref_accession,
+                tmp_xref_db_id
+FROM   tmp_dbxrefs_with_ids
+WHERE  NOT EXISTS (SELECT 'x'
+                   FROM   term_xref
+                   WHERE  tmp_term_zdb_id = tx_term_zdb_id
+                          AND tmp_xref_db
+                              || ":"
+                              || tmp_xref_accession = tx_full_accession
+                          AND tx_prefix = tmp_xref_db
+                          AND tx_accession = tmp_xref_accession
+                          AND tx_fdb_db_id = tmp_xref_db_id);
 
 
 

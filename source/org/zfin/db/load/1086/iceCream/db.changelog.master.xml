@@ -8,5 +8,6 @@
     <include file="source/org/zfin/db/load/1086/iceCream/RGNS-59.sql"/>
     <include file="source/org/zfin/db/load/1086/iceCream/RGNS-82.sql"/>
     <include file="source/org/zfin/db/load/1086/iceCream/RGNS-64.sql"/>
+    <include file="source/org/zfin/db/load/1086/iceCream/fixDbxrefInOntologyLoad.sql"/>
 
 </databaseChangeLog>
