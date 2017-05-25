@@ -1,8 +1,5 @@
 --liquibase formatted sql
---changeset sierra:notNullAdditions
+--changeset Christian:ONT-618
 
---alter table marker_type_Group
--- modify (mtgrp_searchable boolean default 'f' not null constraint mtgrp_searchable_not_null);
-
---alter table marker_type_Group
--- modify (mtgrp_display_name varchar(80) not null constraint mtgrp_display_name_not_null);
+insert into foreign_db (fdb_db_Name, fdb_db_query, fdb_db_display_name, fdb_db_Significance)
+values ('HTTPS', '', 'Https://',29)
