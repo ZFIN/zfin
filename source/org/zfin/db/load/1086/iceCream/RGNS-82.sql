@@ -33,3 +33,47 @@ insert into marker_relationship_type (mreltype_name,
                     'NONTSCRBD_REGION',
                     'Contains',
                     'Contained in');
+
+insert into marker_relationship_type (mreltype_name, 
+                                      mreltype_mrkr_type_group_1, 
+                                      mreltype_mrkr_type_group_2, 
+                                      mreltype_1_to_2_comments, 
+                                      mreltype_2_to_1_comments)
+ values ('PAC contains GENEDOM',
+                    'PAC',
+                    'GENEDOM',
+                    'Contains',
+                    'Contained in');
+
+insert into marker_relationship_type (mreltype_name, 
+                                      mreltype_mrkr_type_group_1, 
+                                      mreltype_mrkr_type_group_2, 
+                                      mreltype_1_to_2_comments, 
+                                      mreltype_2_to_1_comments)
+ values ('PAC contains NTR',
+                    'PAC',
+                    'NONTSCRBD_REGION',
+                    'Contains',
+                    'Contained in');
+
+insert into marker_relationship_type (mreltype_name, 
+                                      mreltype_mrkr_type_group_1, 
+                                      mreltype_mrkr_type_group_2, 
+                                      mreltype_1_to_2_comments, 
+                                      mreltype_2_to_1_comments)
+ values ('FOSMID contains GENEDOM',
+                    'FOSMID',
+                    'GENEDOM',
+                    'Contains',
+                    'Contained in');
+
+insert into marker_relationship_type (mreltype_name, 
+                                      mreltype_mrkr_type_group_1, 
+                                      mreltype_mrkr_type_group_2, 
+                                      mreltype_1_to_2_comments, 
+                                      mreltype_2_to_1_comments)
+ values ('FOSMID contains NTR',
+                    'FOSMID',
+                    'NONTSCRBD_REGION',
+                    'Contains',
+                    'Contained in');
