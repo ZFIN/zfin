@@ -245,7 +245,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public Marker getGeneByAbbreviation(String name) {
         Session session = currentSession();
         Criteria criteria1 = session.createCriteria(Marker.class);
-       criteria1.add(Restrictions.like("zdbID", "ZDB-GENE%"));
+        criteria1.add(Restrictions.like("zdbID", "ZDB-GENE%"));
         criteria1.add(Restrictions.eq("abbreviation", name));
         try {
             return (Marker) criteria1.uniqueResult();
@@ -2581,7 +2581,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString) {
 
-         List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
+        List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
         String hql = " select targetGene from Marker targetGene " +
                 "where " +
                 "lower(targetGene.abbreviation) like :lookupString " +
@@ -2605,10 +2605,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 .list()
                 ;
     }
-
-
-
-
 
 
     public List<LookupEntry> getConstructComponentsForString(String lookupString, String zdbId) {
@@ -3100,13 +3096,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number) {
         MarkerTypeGroup type = getMarkerTypeGroupByName(group.name());
-        String hql = "select distinct marker from Marker as marker " +
-                "left join fetch marker.dbLinks " +
-                "where marker.markerType.name in (:names) ";
+        String hql = "select marker from Marker as marker ";
+        // only do the eager join when retrieving all records otherwise the
+        // number of records setting won't work, i.e. Hibernate would not set the
+        // max number of records.
+        if (number <1)
+            hql += "left join fetch marker.dbLinks ";
+        hql += "where marker.markerType.name in (:names) ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("names", type.getTypeStrings());
-        if (number > 0)
+        if (number > 0) {
+            query.setFirstResult(0);
             query.setMaxResults(number);
+        }
         return query.list();
     }
 
