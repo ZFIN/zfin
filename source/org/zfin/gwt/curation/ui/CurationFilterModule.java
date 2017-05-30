@@ -12,12 +12,15 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.ChangeCurationFilterEvent;
 import org.zfin.gwt.curation.event.EventType;
+import org.zfin.gwt.curation.ui.disease.HumanDiseaseModule;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.ListBoxWrapper;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
+
+import java.util.List;
 
 /**
  * Filter bar aka banana bar.
@@ -94,9 +97,7 @@ public class CurationFilterModule extends Composite {
     }
 
     public void refreshFishList() {
-        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
-        curationRPCAsync.getFishList(publicationID, new RetrieveSelectionBoxValueCallback(fishList, null,
-                PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_STOP));
+        curationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack());
     }
 
     private void initGUI() {
@@ -309,6 +310,31 @@ public class CurationFilterModule extends Composite {
         }
 
     }
+
+    class RetrieveFishListCallBack extends ZfinAsyncCallback<List<FishDTO>> {
+
+        public RetrieveFishListCallBack() {
+            super("Could not retrieve fish list", null,
+                    HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
+        }
+
+        @Override
+        public void onSuccess(List<FishDTO> list) {
+            super.onFinish();
+            String selectedID = fishList.getSelectedValue();
+            fishList.clear();
+            int selectedItemIndex = 0;
+            fishList.addItem("All", "");
+            selectedItemIndex = 1;
+            for (FishDTO featureDTO : list) {
+                fishList.addItem(featureDTO.getHandle(), featureDTO.getValue());
+                if (featureDTO.getValue().equals(selectedID))
+                    fishList.setSelectedIndex(selectedItemIndex);
+                selectedItemIndex++;
+            }
+        }
+    }
+
 
     private class ChangeFilterHandler implements ChangeHandler {
 
