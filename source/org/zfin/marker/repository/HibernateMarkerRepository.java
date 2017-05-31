@@ -2627,7 +2627,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 " m.mtgrpmem_mrkr_type_group = :markerTypeGroup" ;
 
 
-        List<String> markerTypes = HibernateUtil.currentSession().createSQLQuery(sqlQuery)
+       List<String> markerTypes = HibernateUtil.currentSession().createSQLQuery(sqlQuery)
 
                 .setString("markerTypeGroup", markerTypeGroup)
 
@@ -2664,6 +2664,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
+=======
+>>>>>>> a6f6d9c4c39b5423056ff1f114dada9566899dd7
     public List<LookupEntry> getConstructComponentsForString(String lookupString, String zdbId) {
 
 
