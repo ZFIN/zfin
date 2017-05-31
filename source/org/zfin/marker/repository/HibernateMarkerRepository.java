@@ -2615,7 +2615,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<String> getMarkerTypesforRelationship(String relType){
         Session session = currentSession();
-
         String hql = "select mr.secondMarkerTypeGroup.name from MarkerRelationshipType mr " +
                 " where mr.name =:relType";
         Query query = session.createQuery(hql);
@@ -2661,6 +2660,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     ;
     }
 
+=======
+>>>>>>> a6f6d9c4c39b5423056ff1f114dada9566899dd7
 =======
 >>>>>>> a6f6d9c4c39b5423056ff1f114dada9566899dd7
 =======
