@@ -2626,7 +2626,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         "where " +
                 " m.mtgrpmem_mrkr_type_group = :markerTypeGroup" ;
 
-<<<<<<< HEAD
        List<String> markerTypes = HibernateUtil.currentSession().createSQLQuery(sqlQuery)
 
                 .setString("markerTypeGroup", markerTypeGroup)
