@@ -21,6 +21,9 @@
         <c:if test="${empty title}">
             <c:set var="title" value="MARKER RELATIONSHIPS"/>
         </c:if>
+        <c:if test="${marker.nontranscribed}">
+            <c:set var="title" value=""/>
+        </c:if>
         <span class="summaryTitle">${title}</span>
 
         <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="editMode">
@@ -39,6 +42,7 @@
 
         <c:forEach var="entry" items="${relationships}" varStatus="loop">
 
+        <c:if test="${entry.relationshipType ne 'interacts with'}">
         <c:if test="${entry.relationshipType ne relationshipType}">
         <c:if test="${!loop.first}">
             </td>
@@ -75,6 +79,7 @@
 
                     <c:set var="relationshipType" value="${entry.relationshipType}"/>
                     <c:set var="markerType" value="${entry.markerType}"/>
+                    </c:if>
                 </c:forEach>
     </table>
     <tr>
