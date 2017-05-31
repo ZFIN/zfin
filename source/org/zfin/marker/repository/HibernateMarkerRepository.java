@@ -2621,7 +2621,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         query.setParameter("relType", relType);
         String markerTypeGroup =query.uniqueResult().toString();
 
-        String sqlQuery = "select  mtgrpmem_mrkr_type as type from marker_type_group_member m " +
+       String sqlQuery = "select  mtgrpmem_mrkr_type as type from marker_type_group_member m " +
         "where " +
                 " m.mtgrpmem_mrkr_type_group = :markerTypeGroup" ;
        List<String> markerTypes = HibernateUtil.currentSession().createSQLQuery(sqlQuery)
@@ -2660,6 +2660,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     ;
     }
 
+=======
+>>>>>>> a6f6d9c4c39b5423056ff1f114dada9566899dd7
 =======
 >>>>>>> a6f6d9c4c39b5423056ff1f114dada9566899dd7
 =======
