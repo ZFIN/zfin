@@ -86,8 +86,8 @@
     <zfin2:geneProductsDescription geneBean="${formBean}"/>
 
 
-    <zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links"
-                      test="${!empty formBean.pathwayDBLinks}" showNoData="true" noDataText="No data available">
+    <zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links">
+                      <c:if test="${!empty formBean.pathwayDBLinks}">
         <table class="summary">
             <c:forEach var="link" items="${formBean.pathwayDBLinks}" varStatus="loop">
                 <tr>
@@ -95,6 +95,10 @@
                 </tr>
             </c:forEach>
         </table>
+        </c:if>
+        <zfin2:markerInteractionsLight relationships="${formBean.markerRelationshipPresentationList}"
+                                       marker="${formBean.marker}"></zfin2:markerInteractionsLight>
+
     </zfin2:subsection>
 
 <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
