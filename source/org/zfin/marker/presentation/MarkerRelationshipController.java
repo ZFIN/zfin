@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.error.Mark;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.MarkerDTO;
@@ -18,6 +19,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerRelationshipType;
+import org.zfin.marker.MarkerTypeGroup;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
@@ -57,6 +59,19 @@ public class MarkerRelationshipController {
         binder.setValidator(new MarkerReferenceBeanValidator());
     }
 
+    @ResponseBody
+    @RequestMapping("/relationshipTypes/type")
+    public Collection<String> getRelationshipTypes(@RequestParam(name = "markerId", required = true) String markerId) {
+
+        Marker marker = markerRepository.getMarkerByID(markerId);
+
+        Collection<String> relType=markerRepository.getMarkerRelationshipTypesForMarkerEdit(marker);
+        return relType;
+
+    }
+
+
+
 
     @ResponseBody
     @RequestMapping(value = "/{markerId}/relationships", method = RequestMethod.GET)
@@ -93,28 +108,48 @@ public class MarkerRelationshipController {
         if (errors.hasErrors()) {
             throw new InvalidWebRequestException("Invalid marker relationship", errors);
         }
-
+        MarkerRelationship.Type mkrType;
         Marker first = getMarkerByIdOrAbbrev(newRelationship.getFirst());
         Marker second = getMarkerByIdOrAbbrev(newRelationship.getSecond());
-        MarkerRelationship.Type type = MarkerRelationship.Type.getType(newRelationship.getRelationship());
+         mkrType = MarkerRelationship.Type.getType(newRelationship.getRelationship());
+        if (second.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)){
+            if (first.getType()==Marker.Type.CRISPR){
+                 mkrType = MarkerRelationship.Type.CRISPR_TARGETS_REGION;
+            }
+            if (first.getType()==Marker.Type.TALEN){
+                mkrType = MarkerRelationship.Type.TALEN_TARGETS_REGION;
+            }
+            if (first.getType()==Marker.Type.MRPHLNO){
+                errors.rejectValue("second", "marker.relationship.duplicate");
+                throw new InvalidWebRequestException("Invalid marker relationship", errors);
+            }
+        }
 
-        Collection<Marker> related = MarkerService.getRelatedMarker(first, type);
+
+        Collection<Marker> related = MarkerService.getRelatedMarker(first, mkrType);
         if (CollectionUtils.isNotEmpty(related) && related.contains(second)) {
             errors.rejectValue("second", "marker.relationship.duplicate");
             throw new InvalidWebRequestException("Invalid marker relationship", errors);
         }
-        if ((type==GENE_CONTAINS_SMALL_SEGMENT)|| (type==GENE_ENCODES_SMALL_SEGMENT) || (type==GENE_HAS_ARTIFACT )|| (type==GENE_HYBRIDIZED_BY_SMALL_SEGMENT)){
-            if (!second.isInTypeGroup(Marker.TypeGroup.SMALLSEG)){
+        /*if ((type==GENE_CONTAINS_SMALL_SEGMENT)){
+            if (!second.isInTypeGroup(Marker.TypeGroup.SMALLSEG_NO_ESTCDNA)){
                 errors.rejectValue("second", "marker.relationship.invalid");
                 throw new InvalidWebRequestException("You cannnot enter this relationship type to this marker type", errors);
             }
         }
+        if ((type==GENE_ENCODES_SMALL_SEGMENT) || (type==GENE_HAS_ARTIFACT )|| (type==GENE_HYBRIDIZED_BY_SMALL_SEGMENT)){
+            if (!second.isInTypeGroup(Marker.TypeGroup.SMALLSEG)){
+                errors.rejectValue("second", "marker.relationship.invalid");
+                throw new InvalidWebRequestException("You cannnot enter this relationship type to this marker type", errors);
+            }
+        }*/
 
         // assume new incoming relationship has only one reference
         String pubId = newRelationship.getReferences().iterator().next().getZdbID();
 
         HibernateUtil.createTransaction();
-        MarkerRelationship relationship = MarkerService.addMarkerRelationship(first, second, pubId, type);
+
+        MarkerRelationship relationship = MarkerService.addMarkerRelationship(first, second, pubId, mkrType);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return MarkerRelationshipBean.convert(relationship);
@@ -153,12 +188,19 @@ public class MarkerRelationshipController {
             throw new InvalidWebRequestException("Invalid publication", errors);
         }
       //  String pubId = newRelationship.getReferences().iterator().next().getZdbID();
-        if ((type==GENE_CONTAINS_SMALL_SEGMENT)|| (type==GENE_ENCODES_SMALL_SEGMENT) || (type==GENE_HAS_ARTIFACT )|| (type==GENE_HYBRIDIZED_BY_SMALL_SEGMENT)){
-            if (!second.isInTypeGroup(Marker.TypeGroup.SMALLSEG)){
-              //  errors.rejectValue("second", "marker.relationship.invalid");
+        if ((type==GENE_CONTAINS_SMALL_SEGMENT)){
+            if (!second.isInTypeGroup(Marker.TypeGroup.SMALLSEG_NO_ESTCDNA)){
+                errors.rejectValue("second", "marker.relationship.invalid");
                 throw new InvalidWebRequestException("You cannnot enter this relationship type to this marker type", errors);
             }
         }
+        if ((type==GENE_ENCODES_SMALL_SEGMENT) || (type==GENE_HAS_ARTIFACT )|| (type==GENE_HYBRIDIZED_BY_SMALL_SEGMENT)){
+            if (!second.isInTypeGroup(Marker.TypeGroup.SMALLSEG)){
+                errors.rejectValue("second", "marker.relationship.invalid");
+                throw new InvalidWebRequestException("You cannnot enter this relationship type to this marker type", errors);
+            }
+        }
+
         HibernateUtil.createTransaction();
         if (!newRelationship.getRelationship().equals("clone contains gene")) {
             MarkerRelationship relationship = MarkerService.addMarkerRelationship(first, second,  pubZDB, type);

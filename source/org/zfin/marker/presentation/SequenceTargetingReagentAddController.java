@@ -197,6 +197,16 @@ public class SequenceTargetingReagentAddController {
     List<TargetGeneLookupEntry> lookupTargetGenes(@RequestParam("term") String lookupString) {
         return mr.getTargetGenesWithNoTranscriptForString(lookupString);
     }
+
+    @RequestMapping(value = "/find-relationshipTargets", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<TargetGeneLookupEntry> lookupRelationshipTargets(@RequestParam("term") String lookupString,@RequestParam("relType") String relType) {
+        if (relType==""){
+            relType="GENEDOM contains NTR";
+        }
+        return mr.getRelationshipTargetsForString(lookupString,relType);
+    }
 }
 
 

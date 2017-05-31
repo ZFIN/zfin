@@ -273,7 +273,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     }
 
     public boolean isGenedom() {
-        return isInTypeGroup(Marker.TypeGroup.GENEDOM);
+        return isInTypeGroup(TypeGroup.GENEDOM_AND_NTR);
+    };
+    public boolean isNontranscribed() {
+        return isInTypeGroup(TypeGroup.NONTSCRBD_REGION);
     };
 
     public MarkerType getMarkerType() {

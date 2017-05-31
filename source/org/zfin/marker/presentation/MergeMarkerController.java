@@ -363,7 +363,19 @@ public class MergeMarkerController {
     List<SequenceTargetingReagentLookupEntry> getSTRforGene(@RequestParam("geneZdbID") String geneZdbID) {
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         Marker gene = mr.getMarkerByID(geneZdbID);
-        Set<RelatedMarker> sequenceTargetingReagents = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+        Set<RelatedMarker> sequenceTargetingReagents = new HashSet<>();
+        if (gene.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
+            Set<RelatedMarker> crisprs = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.CRISPR_TARGETS_REGION);
+            if (crisprs != null) {
+                sequenceTargetingReagents.addAll(crisprs);
+            }
+            Set<RelatedMarker> talens = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.TALEN_TARGETS_REGION);
+            if (talens != null) {
+                sequenceTargetingReagents.addAll(talens);
+            }
+        } else {
+            sequenceTargetingReagents = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+        }
         List<SequenceTargetingReagentLookupEntry> sequenceTargetingReagentEntries = new ArrayList<>();
         for (RelatedMarker str : sequenceTargetingReagents) {
             SequenceTargetingReagentLookupEntry sequenceTargetingReagentEntry = new SequenceTargetingReagentLookupEntry();

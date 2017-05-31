@@ -42,6 +42,10 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
 	RNAGENE_INTERACTS_WITH_GENEP("RNAGENE interacts with GENEP"),
 	RNAGENE_INTERACTS_WITH_NTR("RNAGENE interacts with NTR"),
 	RNAGENE_INTERACTS_WITH_RNAGENE("RNAGENE interacts with RNAGENE"),
+	PAC_CONTAINS_NTR("PAC contains NTR"),
+	PAC_CONTAINS_GENEDOM("PAC contains GENEDOM"),
+	FOSMID_CONTAINS_GENEDOM("FOSMID contains GENEDOM"),
+	FOSMID_CONTAINS_NTR("FOSMID contains NTR")
 ;
 
         private final String value;
