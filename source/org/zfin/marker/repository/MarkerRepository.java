@@ -430,8 +430,6 @@ public interface MarkerRepository {
     List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
     List<TargetGeneLookupEntry> getRelationshipTargetsForString(String lookupString,String relType);
     List<String> getMarkerTypesforRelationship(String relType);
-
-
     List<LookupEntry> getConstructComponentsForString(String lookupString, String pubZdbId);
 
 
