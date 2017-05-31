@@ -2660,14 +2660,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     ;
     }
 
-=======
->>>>>>> a6f6d9c4c39b5423056ff1f114dada9566899dd7
-=======
->>>>>>> a6f6d9c4c39b5423056ff1f114dada9566899dd7
-=======
->>>>>>> a6f6d9c4c39b5423056ff1f114dada9566899dd7
-=======
->>>>>>> a6f6d9c4c39b5423056ff1f114dada9566899dd7
+
     public List<LookupEntry> getConstructComponentsForString(String lookupString, String zdbId) {
 
 

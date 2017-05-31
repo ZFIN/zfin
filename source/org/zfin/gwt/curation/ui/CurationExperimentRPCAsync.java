@@ -24,7 +24,7 @@ public interface CurationExperimentRPCAsync {
      * @param publicationID pub ID
      * @param async         callback
      */
-    void getFishList(String publicationID, AsyncCallback<List<FilterSelectionBoxEntry>> async);
+    void getFishList(String publicationID, AsyncCallback<List<FishDTO>> async);
 
     /**
      * Update an existing experiment.
