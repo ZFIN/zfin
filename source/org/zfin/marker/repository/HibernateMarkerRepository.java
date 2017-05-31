@@ -245,7 +245,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public Marker getGeneByAbbreviation(String name) {
         Session session = currentSession();
         Criteria criteria1 = session.createCriteria(Marker.class);
-       criteria1.add(Restrictions.like("zdbID", "ZDB-GENE%"));
+        criteria1.add(Restrictions.like("zdbID", "ZDB-GENE%"));
         criteria1.add(Restrictions.eq("abbreviation", name));
         try {
             return (Marker) criteria1.uniqueResult();
@@ -332,23 +332,30 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return markerRelationships;
     }
 
-    public List<MarkerRelationship> getMarkerRelationshipTypesForMarkerEdit(String grpName) {
-        List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
-        markerRelationshipList.add(MarkerRelationship.Type.PROMOTER_OF);
-        markerRelationshipList.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        markerRelationshipList.add(MarkerRelationship.Type.CONTAINS_REGION);
+    public List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker) {
 
+        List<String> mTypeGroup = new ArrayList<String>();
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+            mTypeGroup.add("GENEDOM");
+            mTypeGroup.add("FEATURE");
+        }
+        if (marker.isInTypeGroup(Marker.TypeGroup.RNAGENE)) {
+            mTypeGroup.add("GENEDOM");
+            mTypeGroup.add("FEATURE");
+            mTypeGroup.add("RNAGENE");
+        }
+        if (marker.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
+            mTypeGroup.add("NONTSCRBD_REGION");
+        }
         Session session = currentSession();
-        String hql = "select distinct mr from MarkerRelationship as mr " +
-                "where mr.type not in (:markerRelationshipType)";
 
-
+        String hql = "select mr.name from MarkerRelationshipType mr " +
+                " where mr.firstMarkerTypeGroup.name in (:mTypeGroup)";
         Query query = session.createQuery(hql);
+        query.setParameterList("mTypeGroup", mTypeGroup);
+        return (List<String>) query.list();
 
-        query.setParameterList("markerRelationshipType", markerRelationshipList);
-        List<MarkerRelationship> markerRelationshipTypes = (List<MarkerRelationship>) query.list();
 
-        return markerRelationshipTypes;
     }
 
     public TreeSet<String> getLG(Marker marker) {
@@ -2581,7 +2588,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString) {
 
-         List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
+        List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
+
         String hql = " select targetGene from Marker targetGene " +
                 "where " +
                 "lower(targetGene.abbreviation) like :lookupString " +
@@ -2604,6 +2612,56 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 })
                 .list()
                 ;
+    }
+
+    public List<String> getMarkerTypesforRelationship(String relType){
+        Session session = currentSession();
+
+        String hql = "select mr.secondMarkerTypeGroup.name from MarkerRelationshipType mr " +
+                " where mr.name =:relType";
+        Query query = session.createQuery(hql);
+        query.setParameter("relType", relType);
+        String markerTypeGroup =query.uniqueResult().toString();
+
+        String sqlQuery = "select  mtgrpmem_mrkr_type as type from marker_type_group_member m " +
+        "where " +
+                " m.mtgrpmem_mrkr_type_group = :markerTypeGroup" ;
+
+
+        List<String> markerTypes = HibernateUtil.currentSession().createSQLQuery(sqlQuery)
+
+                .setString("markerTypeGroup", markerTypeGroup)
+
+                .list();
+        return markerTypes;
+
+}
+
+        public List<TargetGeneLookupEntry> getRelationshipTargetsForString(String lookupString,String relType) {
+           List<String> markerTypes=getMarkerTypesforRelationship(relType);
+            Session session = currentSession();
+            String hql = " select targetGene from Marker targetGene " +
+                    "where " +
+                    "lower(targetGene.abbreviation) like :lookupString " +
+                    "and targetGene.markerType.name in (:markerType)  " +
+                    "order by targetGene.abbreviation  ";
+
+            return HibernateUtil.currentSession().createQuery(hql)
+                    .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
+                    .setParameterList("markerType", markerTypes)
+                    .setResultTransformer(new BasicTransformerAdapter() {
+                        @Override
+                        public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
+                            Marker targetGene = (Marker) tuple[0];
+                            TargetGeneLookupEntry targetGeneSuggestionList = new TargetGeneLookupEntry();
+                            targetGeneSuggestionList.setId(targetGene.getZdbID());
+                            targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
+                            targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
+                            return targetGeneSuggestionList;
+                        }
+                    })
+                    .list()
+                    ;
     }
 
 
