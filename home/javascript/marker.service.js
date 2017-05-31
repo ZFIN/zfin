@@ -91,9 +91,9 @@
         }
 
         // === RELATIONSHIPS ===
-        function getRelationshipTypes() {
-                return $http.get('/action/marker/relationship/relationshipTypes/')
-                .then(returnResponseData);
+        function getRelationshipTypes(markerId) {
+            return $http.get('/action/marker/relationshipTypes/type?markerId=' + markerId)
+                .then(returnResponseData)
         }
 
         function getRelationships(markerId) {

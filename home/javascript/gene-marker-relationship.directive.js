@@ -39,6 +39,16 @@
         init();
 
         function init() {
+            MarkerService.getRelationshipTypes(mkrreln.markerId)
+
+                .then(function (relationshipTypes) {
+                    mkrreln.relationshipTypes = relationshipTypes;
+                                  })
+
+                .catch(function (error) {
+                    console.error(error);
+                });
+
 
             MarkerService.getRelationshipsForEdit(mkrreln.markerId)
                 

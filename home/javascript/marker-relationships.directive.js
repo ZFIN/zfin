@@ -44,6 +44,7 @@
         function activate() {
             MarkerService.getRelationships(vm.markerId)
                 .then(function (relationships) {
+
                     vm.relationships = relationships.filter(function (relationship) {
                         return relationship.relationship === vm.relationship;
                     });
