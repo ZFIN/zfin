@@ -66,11 +66,10 @@
                                title="TRANSCRIPTS" showAllTranscripts="true"/>
 
 <zfin2:constructsWithSequences formBean="${formBean}"/>
-    <zfin2:subsection title="INTERACTIONS AND PATHWAYS">
 
         <zfin2:markerInteractionsLight relationships="${formBean.markerRelationshipPresentationList}"
-                                        marker="${formBean.marker}"></zfin2:markerInteractionsLight>
-    </zfin2:subsection>
+                                        marker="${formBean.marker}" title="INTERACTIONS AND PATHWAYS"/>
+
 <%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
 
 <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
