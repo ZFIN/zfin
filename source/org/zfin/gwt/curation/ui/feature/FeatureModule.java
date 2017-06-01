@@ -10,8 +10,6 @@ import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.DirtyValueEvent;
 import org.zfin.gwt.curation.event.DirtyValueEventHandler;
 import org.zfin.gwt.curation.event.EventType;
-import org.zfin.gwt.curation.ui.fish.FishModule;
-import org.zfin.gwt.root.ui.AjaxCallBaseManager;
 import org.zfin.gwt.curation.ui.CurationTab;
 import org.zfin.gwt.curation.ui.ZfinCurationModule;
 import org.zfin.gwt.root.ui.ZfinModule;
@@ -80,8 +78,9 @@ public class FeatureModule implements ZfinCurationModule {
                 event.getEventType().equals(EventType.CREATE_MARKER)) {
             featureRelationshipView.onChangeFeatureRelationship(null);
         }
-        if (eventType.is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE) || eventType.is(EventType.CREATE_FEATURE)) {
-            featureEditPresenter.loadFeaturesForPub(true);
+        if (eventType.is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE) || eventType.is(EventType.CUD_FEATURE)) {
+            if (!eventType.is(EventType.EDIT_FEATURE))
+                featureEditPresenter.loadFeaturesForPub(true);
             featureRelationshipPresenter.onFeatureAddEvent();
         }
     }
@@ -106,7 +105,7 @@ public class FeatureModule implements ZfinCurationModule {
                 });
     }
 
-    static ZfinModule getModuleInfo(){
+    static ZfinModule getModuleInfo() {
         return new ZfinModule(CurationTab.FEATURE.getName(), FeatureModule.class.getName());
     }
 
