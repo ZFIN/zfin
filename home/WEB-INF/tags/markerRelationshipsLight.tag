@@ -15,15 +15,13 @@
     <c:set var="loggedIn" value="true"/>
 </authz:authorize>
 
-<c:if test="${loggedIn && marker.genedom}">
+<c:if test="${loggedIn && (marker.genedom||marker.nontranscribed) }">
 
     <div class="summary horizontal-solidblock">
         <c:if test="${empty title}">
             <c:set var="title" value="MARKER RELATIONSHIPS"/>
         </c:if>
-        <c:if test="${marker.nontranscribed}">
-            <c:set var="title" value=""/>
-        </c:if>
+
         <span class="summaryTitle">${title}</span>
 
         <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="editMode">

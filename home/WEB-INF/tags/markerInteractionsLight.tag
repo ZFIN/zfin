@@ -16,7 +16,7 @@
 </authz:authorize>
 
 
-<c:if test="${loggedIn eq 'no'}">
+
 
    <zfin2:subsection title="${title}"
                   test="${!empty relationships}" showNoData="true">
@@ -26,7 +26,7 @@
         <c:set var="markerType" value="notthesame"/>
 
         <c:forEach var="entry" items="${relationships}" varStatus="loop">
-        
+
         <c:if test="${entry.relationshipType eq 'interacts with'}">
         <c:if test="${entry.relationshipType ne relationshipType}">
         <c:if test="${!loop.first}">
@@ -72,4 +72,4 @@
     </tr>
 
 </zfin2:subsection>
-</c:if>
+
