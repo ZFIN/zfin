@@ -196,7 +196,7 @@ $handle = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
     or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 $sql = 'select mrkr_zdb_id, mrkr_abbrev from marker
-         where mrkr_zdb_id like "ZDB-GENE%"
+         where (mrkr_zdb_id like "ZDB-GENE%" or mrkr_zdb_id like "ZDB-LINCRNAG%" or mrkr_zdb_id like "ZDB-MIRNAG%")
            and exists (select "x" from db_link
          where dblink_linked_recid = mrkr_zdb_id
            and dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-38","ZDB-FDBCONT-040412-39","ZDB-FDBCONT-040527-1"));';
@@ -220,7 +220,7 @@ $ctGenesWithRefSeqBefore = scalar(keys %genesWithRefSeqBeforeLoad);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-1"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numNCBIgeneIdBefore = ZFINPerlModules->countData($sql);
 
@@ -228,7 +228,7 @@ $numNCBIgeneIdBefore = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-44"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numUniGeneBefore = ZFINPerlModules->countData($sql);
 
@@ -236,7 +236,7 @@ $numUniGeneBefore = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-38"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numRefSeqRNABefore = ZFINPerlModules->countData($sql);
 
@@ -244,7 +244,7 @@ $numRefSeqRNABefore = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-39"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numRefPeptBefore = ZFINPerlModules->countData($sql);
 
@@ -252,7 +252,7 @@ $numRefPeptBefore = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040527-1"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numRefSeqDNABefore = ZFINPerlModules->countData($sql);
 
@@ -260,7 +260,7 @@ $numRefSeqDNABefore = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
-           and dblink_linked_recid like "ZDB-GENE%"
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
            and exists(select "x" from record_attribution
                        where recattrib_data_zdb_id = dblink_zdb_id
                          and recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2"));';
@@ -271,7 +271,7 @@ $numGenBankRNABefore = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42"
-           and dblink_linked_recid like "ZDB-GENE%"
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
            and exists(select "x" from record_attribution
                        where recattrib_data_zdb_id = dblink_zdb_id
                          and recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2"));';
@@ -282,7 +282,7 @@ $numGenPeptBefore = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-36"
-           and dblink_linked_recid like "ZDB-GENE%"
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
            and exists(select "x" from record_attribution
                        where recattrib_data_zdb_id = dblink_zdb_id
                          and recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2"));';
@@ -294,7 +294,7 @@ $sql = 'select distinct dblink_linked_recid
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-38"
            and dblink_acc_num like "NM_%"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numGenesRefSeqRNABefore = ZFINPerlModules->countData($sql);
 
@@ -303,7 +303,7 @@ $sql = 'select distinct dblink_linked_recid
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-39"
            and dblink_acc_num like "NP_%"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numGenesRefSeqPeptBefore = ZFINPerlModules->countData($sql);
 
@@ -313,7 +313,7 @@ $sql = 'select distinct dblink_linked_recid
          where dblink_fdbcont_zdb_id = fdbcont_zdb_id
            and fdbcont_fdb_db_id = fdb_db_pk_id
            and fdb_db_name = "GenBank"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numGenesGenBankBefore = ZFINPerlModules->countData($sql);
 
@@ -461,7 +461,7 @@ print LOG "\nctVegaIdWithMultipleNCBIgene = $ctVegaIdWithMultipleNCBIgene\n\n";
 
 %geneZDBidsSymbols = ();
 
-$sqlGeneZDBidsSymbols = 'select mrkr_zdb_id, mrkr_abbrev from marker where mrkr_zdb_id like "ZDB-GENE%" and mrkr_abbrev not like "WITHDRAWN%";';
+$sqlGeneZDBidsSymbols = 'select mrkr_zdb_id, mrkr_abbrev from marker where (mrkr_zdb_id like "ZDB-GENE%" or mrkr_zdb_id like "ZDB-LINCRNAG%" or mrkr_zdb_id like "ZDB-MIRNAG%") and mrkr_abbrev not like "WITHDRAWN%";';
 
 $curGeneZDBidsSymbols = $handle->prepare($sqlGeneZDBidsSymbols);
 
@@ -492,7 +492,9 @@ $sqlGetSupportingGenBankRNAs = 'select dblink_acc_num
                                 select dblink_acc_num
                                   from db_link
                                  where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
-                                   and dblink_linked_recid not like "ZDB-GENE%"
+                                   and dblink_linked_recid not like "ZDB-GENE%" 
+                                   and dblink_linked_recid not like "ZDB-LINCRNAG%" 
+                                   and dblink_linked_recid not like "ZDB-MIRNAG%"
                                    and exists(select "x" from marker_relationship
                                                where mrel_mrkr_1_zdb_id = ?
                                                  and mrel_type = "gene encodes small segment"
@@ -724,7 +726,7 @@ print LOG "ctGenesZFINwithAccSupportingMoreThan1 = $ctGenesZFINwithAccSupporting
 $sqlGenBankAccessionLength = 'select dblink_acc_num, dblink_length
                                 from db_link
                                where dblink_length is not null
-                                 and dblink_linked_recid like "ZDB-GENE%"
+                                 and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
                                  and dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-37","ZDB-FDBCONT-040412-42","ZDB-FDBCONT-040412-36");';
 
 
@@ -1724,7 +1726,7 @@ $sqlGetVEGAidAndGeneZDBId = 'select mrel_mrkr_1_zdb_id, dblink_acc_num
                                from marker_relationship, db_link
                               where mrel_mrkr_2_zdb_id = dblink_linked_recid
                                 and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-14"
-                                and mrel_mrkr_1_zdb_id like "ZDB-GENE%"
+                                and (mrel_mrkr_1_zdb_id like "ZDB-GENE%" or mrel_mrkr_1_zdb_id like "ZDB-LINCRNAG%" or mrel_mrkr_1_zdb_id like "ZDB-MIRNAG%")
                                 and dblink_acc_num like "OTTDARG%"
                                 and mrel_type = "gene produces transcript";';
 
@@ -1940,7 +1942,7 @@ print LOG "\nctSeqLengthCalculated = $ctSeqLengthCalculated\n\n";
 
 $sqlGetGenBankAndRefSeqAccs = 'select dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id, dblink_zdb_id
                                  from db_link
-                                where dblink_linked_recid like "ZDB-GENE%"
+                                where (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
                                   and dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-37","ZDB-FDBCONT-040412-42",
                                                                 "ZDB-FDBCONT-040412-36","ZDB-FDBCONT-040412-38",
                                                                 "ZDB-FDBCONT-040412-39","ZDB-FDBCONT-040527-1");';
@@ -2001,7 +2003,7 @@ $sqlGenPeptAttributedToNonLoadPub = 'select dblink_acc_num, dblink_zdb_id, recat
                                        from record_attribution, db_link
                                       where recattrib_data_zdb_id = dblink_zdb_id
                                         and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42"
-                                        and dblink_linked_recid like "ZDB-GENE%"
+                                        and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
                                         and recattrib_source_zdb_id not in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2");';
 
 $curGenPeptAttributedToNonLoadPub = $handle->prepare($sqlGenPeptAttributedToNonLoadPub);
@@ -2103,7 +2105,7 @@ print STATS "\nNon-load attribution for the $ctToAttribute manually curated GenP
 $sqlAllGenPeptWithGeneZFIN = 'select dblink_acc_num, dblink_linked_recid
                                 from db_link
                                where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42"
-                                 and dblink_linked_recid like "ZDB-GENE%";';
+                                 and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $curAllGenPeptWithGeneZFIN = $handle->prepare($sqlAllGenPeptWithGeneZFIN);
 
@@ -2333,7 +2335,7 @@ print LOG "\nDone with the deltion and loading!\n\n";
 $sqlAllGenPeptWithGeneAfterLoad = 'select dblink_acc_num, dblink_linked_recid
                                      from db_link
                                     where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42"
-                                      and dblink_linked_recid like "ZDB-GENE%";';
+                                      and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $curAllGenPeptWithGeneAfterLoad = $handle->prepare($sqlAllGenPeptWithGeneAfterLoad);
 
@@ -2420,7 +2422,7 @@ print STATS "--------------------------\nTotal: $ctGenPeptNonLoadPub\n\n\n";
 #-------------------------------------------------------------------------------------------------
 
 $sql = 'select mrkr_zdb_id, mrkr_abbrev from marker
-         where mrkr_zdb_id like "ZDB-GENE%"
+         where (mrkr_zdb_id like "ZDB-GENE%" or mrkr_zdb_id like "ZDB-LINCRNAG%" or mrkr_zdb_id like "ZDB-MIRNAG%")
            and exists (select "x" from db_link
          where dblink_linked_recid = mrkr_zdb_id
            and dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-38","ZDB-FDBCONT-040412-39","ZDB-FDBCONT-040527-1"));';
@@ -2447,7 +2449,7 @@ $handle->disconnect();
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-1"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numNCBIgeneIdAfter = ZFINPerlModules->countData($sql);
 
@@ -2455,7 +2457,7 @@ $numNCBIgeneIdAfter = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-44"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numUniGeneAfter = ZFINPerlModules->countData($sql);
 
@@ -2463,7 +2465,7 @@ $numUniGeneAfter = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-38"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numRefSeqRNAAfter = ZFINPerlModules->countData($sql);
 
@@ -2471,7 +2473,7 @@ $numRefSeqRNAAfter = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-39"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numRefPeptAfter = ZFINPerlModules->countData($sql);
 
@@ -2479,7 +2481,7 @@ $numRefPeptAfter = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040527-1"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numRefSeqDNAAfter = ZFINPerlModules->countData($sql);
 
@@ -2487,7 +2489,7 @@ $numRefSeqDNAAfter = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
-           and dblink_linked_recid like "ZDB-GENE%"
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
            and exists(select "x" from record_attribution
                        where recattrib_data_zdb_id = dblink_zdb_id
                          and recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2"));';
@@ -2498,7 +2500,7 @@ $numGenBankRNAAfter = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42"
-           and dblink_linked_recid like "ZDB-GENE%"
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
            and exists(select "x" from record_attribution
                        where recattrib_data_zdb_id = dblink_zdb_id
                          and recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2"));';
@@ -2509,7 +2511,7 @@ $numGenPeptAfter = ZFINPerlModules->countData($sql);
 $sql = 'select distinct dblink_acc_num
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-36"
-           and dblink_linked_recid like "ZDB-GENE%"
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
            and exists(select "x" from record_attribution
                        where recattrib_data_zdb_id = dblink_zdb_id
                          and recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2"));';
@@ -2521,7 +2523,7 @@ $sql = 'select distinct dblink_linked_recid
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-38"
            and dblink_acc_num like "NM_%"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numGenesRefSeqRNAAfter = ZFINPerlModules->countData($sql);
 
@@ -2530,7 +2532,7 @@ $sql = 'select distinct dblink_linked_recid
           from db_link
          where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-39"
            and dblink_acc_num like "NP_%"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numGenesRefSeqPeptAfter = ZFINPerlModules->countData($sql);
 
@@ -2540,7 +2542,7 @@ $sql = 'select distinct dblink_linked_recid
          where dblink_fdbcont_zdb_id = fdbcont_zdb_id
            and fdbcont_fdb_db_id = fdb_db_pk_id
            and fdb_db_name = "GenBank"
-           and dblink_linked_recid like "ZDB-GENE%";';
+           and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");';
 
 $numGenesGenBankAfter = ZFINPerlModules->countData($sql);
 

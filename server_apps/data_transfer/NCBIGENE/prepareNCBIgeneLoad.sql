@@ -69,11 +69,13 @@ select distinct dblink_linked_recid[1,8], count(dblink_linked_recid)
  where dblink_loaded_zdb_id = dblink_zdb_id
  group by dblink_linked_recid[1,8]; 
  
-!echo 'Retain those db_link accessions which are not related to gene or pseudogene.'
+!echo 'Retain those db_link accessions which are not related to gene or pseudogene or lincRNA or miRNA.'
 delete from pre_delete
  where exists (select "x" from db_link 
                 where dblink_loaded_zdb_id = dblink_zdb_id
-                  and dblink_linked_recid not like "ZDB-GENE%");
+                  and dblink_linked_recid not like "ZDB-GENE%" 
+                  and dblink_linked_recid not like "ZDB-LINCRNAG%" 
+                  and dblink_linked_recid not like "ZDB-MIRNAG%");
 		  
 !echo 'Retain those attributed to a publication other than NCBI gene load publication.'
 
@@ -93,11 +95,13 @@ select distinct dblink_linked_recid[1,8], count(dblink_linked_recid)
  where dblink_loaded_zdb_id = dblink_zdb_id
  group by dblink_linked_recid[1,8]; 
  
-!echo 'Retain those db_link accessions which are not related to gene or pseudogene.'
+!echo 'Retain those db_link accessions which are not related to gene or pseudogene or lincRNA or miRNA.'
 delete from pre_delete
  where exists (select "x" from db_link 
                 where dblink_loaded_zdb_id = dblink_zdb_id
-                  and dblink_linked_recid not like "ZDB-GENE%");
+                  and dblink_linked_recid not like "ZDB-GENE%" 
+                  and dblink_linked_recid not like "ZDB-LINCRNAG%" 
+                  and dblink_linked_recid not like "ZDB-MIRNAG%");
 
 create temp table backup_accession_length (	
         temp_acc_num	       varchar(30) not null,
@@ -110,7 +114,7 @@ create temp table backup_accession_length (
 select dblink_linked_recid as gene
   from db_link
  where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
-   and dblink_linked_recid like "ZDB-GENE%"
+   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
    and not exists(select "x" from pre_delete
                    where dblink_loaded_zdb_id = dblink_zdb_id)
    and not exists(select "x" from marker 
@@ -131,10 +135,6 @@ select mrel_mrkr_1_zdb_id as gene
 into temp tmp_genes_supported_by_rna with no log;
 
 select count(gene) as numberOfGenesWithRNAevidence from tmp_genes_supported_by_rna;
-
---!echo 'Pseudo-genes involved in the load'
-
---select distinct gene from tmp_genes_supported_by_rna where gene not like "ZDB-GENE-%"; 
 
 !echo 'Dump the list of genes supported by GenBank RNA sequenecs, as the start set on ZFIN end for mapping'
 
