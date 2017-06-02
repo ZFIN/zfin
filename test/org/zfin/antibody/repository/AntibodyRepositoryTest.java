@@ -56,7 +56,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
      */
     @Test
     public void getAntibodyByID() {
-        String zdbID = "ZDB-ATB-080421-2";
+        String zdbID = "ZDB-ATB-081002-10";
 
         Antibody ab = getAntibodyRepository().getAntibodyByID(zdbID);
         assertTrue(ab == null);
