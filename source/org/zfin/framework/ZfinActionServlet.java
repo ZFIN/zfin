@@ -2,11 +2,7 @@ package org.zfin.framework;
 
 import org.hibernate.stat.Statistics;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.zfin.framework.mail.IntegratedJavaMailSender;
-import org.zfin.infrastructure.EnumValidationException;
-import org.zfin.infrastructure.EnumValidationService;
 import org.zfin.ontology.RelationshipDisplayNames;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.WebHostDatabaseStatisticsCache;
 import org.zfin.uniquery.categories.SiteSearchCategories;
@@ -50,7 +46,7 @@ public class ZfinActionServlet extends DispatcherServlet {
         // to the right context. There might be parameters that should only apply on a session scope...
         config.getServletContext().setAttribute("webdriverURL", ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
         initDatabase();
-        if(Boolean.valueOf(ZfinPropertiesEnum.BLAST_CACHE_AT_STARTUP.value())){
+        if (Boolean.valueOf(ZfinPropertiesEnum.BLAST_CACHE_AT_STARTUP.value())) {
             initBlast();
         }
         initRelationshipDisplayNames();
@@ -67,7 +63,8 @@ public class ZfinActionServlet extends DispatcherServlet {
                 WebHostDatabaseStatisticsCache.getInstance().cacheAll();
                 HibernateUtil.closeSession();
                 GBrowseHibernateUtil.closeSession();
-                SysmasterHibernateUtil.closeSession();
+                if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false"))
+                    SysmasterHibernateUtil.closeSession();
             }
         };
         t.start();
@@ -76,7 +73,8 @@ public class ZfinActionServlet extends DispatcherServlet {
     private void initDatabase() {
         // initialize Hibernate
         HibernateUtil.init();
-        SysmasterHibernateUtil.init();
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false"))
+            SysmasterHibernateUtil.init();
         Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
         stats.setStatisticsEnabled(true);
     }

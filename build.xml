@@ -124,9 +124,23 @@
     <!-- ====================================================================== -->
 
     <target name="prepare" depends="hibernate-available" description="Prepares directories for compilation">
+        <if>
+        <equals arg1="${USE_POSTGRES}" arg2="true"/>
+        <then>
+            <property name="DIALECT" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
+        </then>
+            <else>
+                <property name="DIALECT" value="org.zfin.database.ZfinInformixDialect"/>
+            </else>
+        </if>
+        <echo >Dialect Class: ${DIALECT}</echo>
         <mkdir dir="${classbin.dir}"/>
         <mkdir dir="${classbin.dir}/resources"/>
-        <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
+        <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}">
+            <filterset>
+                <filter token="DIALECT" value="${DIALECT}"/>
+            </filterset>
+        </copy>
         <copy file="${conf.dir}/hibernate-gbrowse.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/hibernate-sysmaster.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${commons.dir}/${LOG4J_FILE}" tofile="${web-inf.dir}/log4j.xml" failonerror="false">
