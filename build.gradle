@@ -1,0 +1,41 @@
+apply plugin: 'java'
+
+//apply from : '../zfinGradle/build.gradle'
+
+def env = System.getenv()
+def dbname = env['DBNAME']
+
+task deployPostgres(dependsOn: ['lib:DB_Functions:postgresFunctions:deployPostgresFunctions',
+                                'lib:DB_Functions:postgresProcedures:deployPostgresProcedures',
+                                'lib:DB_triggers:postgresTriggers:deployPostgresTrigger']) {
+    description "Deploy all postgres code"
+}
+
+project.ext.set("dbname", dbname)
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['sourc']
+        }
+        resources {
+            srcDirs = ['home']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['test/groovy']
+        }
+    }
+}
+
+/*
+list all functions in postgres
+
+SELECT  proname, proargnames, prosrc
+FROM    pg_catalog.pg_namespace n
+JOIN    pg_catalog.pg_proc p
+ON      pronamespace = n.oid
+WHERE   nspname = 'public ';
+*/

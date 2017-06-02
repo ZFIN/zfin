@@ -1,0 +1,44 @@
+
+def env = System.getenv()
+def dbname = env['DBNAME']
+
+
+task deployPostgresFunctions {
+    description = "deploy postgres function in PG"
+    doLast {
+        println "deploying postgres functions ..."
+        int numberOfTrigger = runSqlFiles(".")
+        println "deployed " + numberOfTrigger + " functions."
+    }
+}
+
+
+File[] fileList(String dir) {
+    file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
+}
+
+int runSqlFiles(String directory){
+    int numberOfTrigger = 0;
+    fileList(directory).each {
+        File file ->
+            if (file.getName().endsWith(".sql")) {
+                String command = "psql -d " + dbname + " -a -f " + file.getAbsoluteFile();
+                command.execute().text
+                //println command.execute().text
+                numberOfTrigger++;
+            }
+    }
+    return numberOfTrigger;
+}
+
+
+
+/*
+list all functions in postgres
+
+SELECT  proname, proargnames, prosrc
+FROM    pg_catalog.pg_namespace n
+JOIN    pg_catalog.pg_proc p
+ON      pronamespace = n.oid
+WHERE   nspname = 'public ';
+*/

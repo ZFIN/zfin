@@ -1,4 +1,4 @@
-create or replace function get_obj_name(zdbId varchar) returns varchar as $$; 
+create or replace function get_obj_name(zdbId varchar) returns varchar as $$
 
   -- Given a ZDB ID, gets the name of the object associated with that ZDB ID.
   -- If the object does not have a name per se, then its ZDB ID is returned
