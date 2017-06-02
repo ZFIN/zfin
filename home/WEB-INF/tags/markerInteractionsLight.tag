@@ -17,7 +17,6 @@
 
 
 
-
    <zfin2:subsection title="${title}"
                   test="${!empty relationships}" showNoData="true">
 
