@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.yaml.snakeyaml.error.Mark;
+
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.MarkerDTO;
@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.zfin.marker.MarkerRelationship.Type.*;
 
@@ -188,7 +189,14 @@ public class MarkerRelationshipController {
             throw new InvalidWebRequestException("Invalid publication", errors);
         }
       //  String pubId = newRelationship.getReferences().iterator().next().getZdbID();
-        if ((type==GENE_CONTAINS_SMALL_SEGMENT)){
+        List<String> markerTypes=markerRepository.getMarkerTypesforRelationship(type.toString());
+        String markerTypeDisplay1=String.join(",", markerTypes);
+        String markerTypeDisplay=markerTypeDisplay1.replaceAll(",", "\n");
+        if (!markerTypes.contains(second.getMarkerType().getName())){
+            throw new InvalidWebRequestException("You can only add markers of type " + markerTypeDisplay.replaceAll(",", "\n") + " to this marker relationship", errors);
+        }
+
+        /*if ((type==GENE_CONTAINS_SMALL_SEGMENT)){
             if (!second.isInTypeGroup(Marker.TypeGroup.SMALLSEG_NO_ESTCDNA)){
                 errors.rejectValue("second", "marker.relationship.invalid");
                 throw new InvalidWebRequestException("You cannnot enter this relationship type to this marker type", errors);
@@ -199,7 +207,7 @@ public class MarkerRelationshipController {
                 errors.rejectValue("second", "marker.relationship.invalid");
                 throw new InvalidWebRequestException("You cannnot enter this relationship type to this marker type", errors);
             }
-        }
+        }*/
 
         HibernateUtil.createTransaction();
         if (!newRelationship.getRelationship().equals("clone contains gene")) {

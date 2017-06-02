@@ -428,7 +428,7 @@ public interface MarkerRepository {
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 
     List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
-    List<TargetGeneLookupEntry> getRelationshipTargetsForString(String lookupString,String relType);
+    List<TargetGeneLookupEntry> getRelationshipTargetsForString(String lookupString);
     List<String> getMarkerTypesforRelationship(String relType);
     List<LookupEntry> getConstructComponentsForString(String lookupString, String pubZdbId);
 

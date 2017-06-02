@@ -2633,13 +2633,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 }
 
-        public List<TargetGeneLookupEntry> getRelationshipTargetsForString(String lookupString,String relType) {
-           List<String> markerTypes=getMarkerTypesforRelationship(relType);
-            Session session = currentSession();
+        public List<TargetGeneLookupEntry> getRelationshipTargetsForString(String lookupString) {
+            List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
+            markerTypes.addAll(getMarkerTypesByGroup(Marker.TypeGroup.SMALLSEG));
+            markerTypes.addAll(getMarkerTypesByGroup(Marker.TypeGroup.SMALLSEG_NO_ESTCDNA));
+            markerTypes.addAll(getMarkerTypesByGroup(Marker.TypeGroup.TRANSCRIPT));
             String hql = " select targetGene from Marker targetGene " +
                     "where " +
                     "lower(targetGene.abbreviation) like :lookupString " +
-                    "and targetGene.markerType.name in (:markerType)  " +
+                    "and targetGene.markerType in (:markerType)  " +
                     "order by targetGene.abbreviation  ";
 
             return HibernateUtil.currentSession().createQuery(hql)
@@ -2658,7 +2660,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     })
                     .list()
                     ;
-    }
+        }
 
 
     public List<LookupEntry> getConstructComponentsForString(String lookupString, String zdbId) {

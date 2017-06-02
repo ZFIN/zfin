@@ -201,11 +201,9 @@ public class SequenceTargetingReagentAddController {
     @RequestMapping(value = "/find-relationshipTargets", method = RequestMethod.GET)
     public
     @ResponseBody
-    List<TargetGeneLookupEntry> lookupRelationshipTargets(@RequestParam("term") String lookupString,@RequestParam("relType") String relType) {
-        if (relType==""){
-            relType="GENEDOM contains NTR";
-        }
-        return mr.getRelationshipTargetsForString(lookupString,relType);
+    List<TargetGeneLookupEntry> lookupRelationshipTargets(@RequestParam("term") String lookupString) {
+
+        return mr.getRelationshipTargetsForString(lookupString);
     }
 }
 
