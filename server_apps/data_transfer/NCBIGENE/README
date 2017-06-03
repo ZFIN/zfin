@@ -60,7 +60,7 @@ Run SQL to get all the gene ZDB Ids with GenBank RNA accessions in ZFIN that are
 select dblink_linked_recid as gene
   from db_link
  where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"     -- GenBank RNA
-   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
+   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "%RNAG%")
 union
 select mrel_mrkr_1_zdb_id as gene
   from marker_relationship

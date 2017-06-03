@@ -74,8 +74,7 @@ delete from pre_delete
  where exists (select "x" from db_link 
                 where dblink_loaded_zdb_id = dblink_zdb_id
                   and dblink_linked_recid not like "ZDB-GENE%" 
-                  and dblink_linked_recid not like "ZDB-LINCRNAG%" 
-                  and dblink_linked_recid not like "ZDB-MIRNAG%");
+                  and dblink_linked_recid not like "%RNAG%");
 		  
 !echo 'Retain those attributed to a publication other than NCBI gene load publication.'
 
@@ -100,8 +99,7 @@ delete from pre_delete
  where exists (select "x" from db_link 
                 where dblink_loaded_zdb_id = dblink_zdb_id
                   and dblink_linked_recid not like "ZDB-GENE%" 
-                  and dblink_linked_recid not like "ZDB-LINCRNAG%" 
-                  and dblink_linked_recid not like "ZDB-MIRNAG%");
+                  and dblink_linked_recid not like "%RNAG%");
 
 create temp table backup_accession_length (	
         temp_acc_num	       varchar(30) not null,
@@ -114,7 +112,7 @@ create temp table backup_accession_length (
 select dblink_linked_recid as gene
   from db_link
  where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
-   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
+   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "%RNAG%")
    and not exists(select "x" from pre_delete
                    where dblink_loaded_zdb_id = dblink_zdb_id)
    and not exists(select "x" from marker 

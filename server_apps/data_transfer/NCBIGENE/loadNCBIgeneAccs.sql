@@ -37,7 +37,7 @@ select count(dblink_zdb_id) as noLengthBefore
   from db_link
  where dblink_length is null
    and dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-38","ZDB-FDBCONT-040412-39","ZDB-FDBCONT-040527-1","ZDB-FDBCONT-040412-37","ZDB-FDBCONT-040412-42","ZDB-FDBCONT-040412-36")
-   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");
+   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "%RNAG%");
 
 !echo 'Delete from zdb_active_data table and cause delete cascades on db_link records'
 
@@ -50,7 +50,7 @@ delete from record_attribution
  where recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2")
    and exists (select "x" from db_link
                 where recattrib_data_zdb_id = dblink_zdb_id 
-                  and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
+                  and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "%RNAG%")
                   and dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-37","ZDB-FDBCONT-040412-42","ZDB-FDBCONT-040412-36")
               );
 
@@ -76,7 +76,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/reportNonLoadPu
 select recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid 
   from db_link, record_attribution 
  where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42" 
-   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%")
+   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "%RNAG%")
    and dblink_zdb_id = recattrib_data_zdb_id 
    and recattrib_source_zdb_id not in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2") 
 group by recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid 
@@ -88,7 +88,7 @@ select count(dblink_zdb_id) as noLengthAfter
   from db_link
  where dblink_length is null
    and dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-38","ZDB-FDBCONT-040412-39","ZDB-FDBCONT-040527-1","ZDB-FDBCONT-040412-37","ZDB-FDBCONT-040412-42","ZDB-FDBCONT-040412-36")
-   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "ZDB-LINCRNAG%" or dblink_linked_recid like "ZDB-MIRNAG%");
+   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "%RNAG%");
 
 !echo 'CHECK: how many loaded GenBank accessions missing length after the load'
 
@@ -96,7 +96,7 @@ select count(dblink_zdb_id) as noLenLoadedGenBank
   from db_link
  where dblink_length is null
    and dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-37","ZDB-FDBCONT-040412-42","ZDB-FDBCONT-040412-36")
-   and dblink_linked_recid like "ZDB-GENE%"
+   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "%RNAG%")
    and exists(select "x" from record_attribution
                where recattrib_data_zdb_id = dblink_zdb_id
                  and recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-020723-3"));
