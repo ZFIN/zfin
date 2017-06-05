@@ -60,8 +60,8 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     public void handleCurationEvent(CurationEvent event) {
         if (event == null)
             return;
-        if (event.getEventType().equals(EventType.CREATE_MARKER) ||
-                event.getEventType().equals(EventType.CREATE_FEATURE) ||
+        if (event.getEventType().is(EventType.CREATE_MARKER) ||
+                event.getEventType().is(EventType.CUD_FEATURE) ||
                 event.getEventType().equals(EventType.CREATE_FISH)) {
             populateAttributeRemoval();
         }
