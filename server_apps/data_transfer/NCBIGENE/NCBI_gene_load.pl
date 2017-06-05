@@ -461,7 +461,7 @@ print LOG "\nctVegaIdWithMultipleNCBIgene = $ctVegaIdWithMultipleNCBIgene\n\n";
 
 %geneZDBidsSymbols = ();
 
-$sqlGeneZDBidsSymbols = 'select mrkr_zdb_id, mrkr_abbrev from marker where (mrkr_zdb_id like "ZDB-GENE%" or mrkr_zdb_id like "ZDB-LINCRNAG%" or mrkr_zdb_id like "ZDB-MIRNAG%") and mrkr_abbrev not like "WITHDRAWN%";';
+$sqlGeneZDBidsSymbols = 'select mrkr_zdb_id, mrkr_abbrev from marker where (mrkr_zdb_id like "ZDB-GENE%" or mrkr_zdb_id like "%RNAG%") and mrkr_abbrev not like "WITHDRAWN%";';
 
 $curGeneZDBidsSymbols = $handle->prepare($sqlGeneZDBidsSymbols);
 
