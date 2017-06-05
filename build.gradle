@@ -16,16 +16,10 @@ project.ext.set("dbname", dbname)
 sourceSets {
     main {
         java {
-            srcDirs = ['sourc']
+            srcDirs = ['source']
         }
         resources {
             srcDirs = ['home']
-        }
-    }
-
-    test {
-        java {
-            srcDirs = ['test/groovy']
         }
     }
 }
