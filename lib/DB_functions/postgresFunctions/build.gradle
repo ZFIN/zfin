@@ -2,9 +2,9 @@
 def env = System.getenv()
 def dbname = env['DBNAME']
 
-
 task deployPostgresFunctions {
     description = "deploy postgres function in PG"
+    
     doLast {
         println "deploying postgres functions ..."
         int numberOfTrigger = runSqlFiles(".")
@@ -16,6 +16,7 @@ task deployPostgresFunctions {
 File[] fileList(String dir) {
     file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
 }
+
 
 int runSqlFiles(String directory){
     int numberOfTrigger = 0;
@@ -33,12 +34,3 @@ int runSqlFiles(String directory){
 
 
 
-/*
-list all functions in postgres
-
-SELECT  proname, proargnames, prosrc
-FROM    pg_catalog.pg_namespace n
-JOIN    pg_catalog.pg_proc p
-ON      pronamespace = n.oid
-WHERE   nspname = 'public ';
-*/

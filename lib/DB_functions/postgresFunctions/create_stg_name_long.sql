@@ -4,7 +4,7 @@ create or replace function create_stg_name_long(
   stgHrsEnd         stage.stg_hours_end%TYPE,
   stgOtherFeatures  stage.stg_other_features%TYPE)
 
-  returns text as $stgNameLong$;
+  returns text as $stgNameLong$
 
   -- Creates the "long name" for a stage.  The long name includes
   -- the name of the stage, plus the hours it spans, and the contents 

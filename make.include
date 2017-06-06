@@ -137,7 +137,7 @@ MAKESPECIFIC = ${COMMONS_BIN}/make-specific.r
 
 SPECIFICCHECK = $(foreach GNRC,$(GENERICS),echo 'Informix weblint $(GNRC)'; $(WEBLINTIFMX) $(GNRC);)
 
-PSQL= $(PGBINDIR)/bin/psql
+PSQL= $(PGBINDIR)/psql
 DBACCESS = $(INFORMIXDIR)/bin/dbaccess
 WEBLINTIFMXBASE := $(INFORMIXDIR)/extend/web.4.13.FC3/utils/weblint
 # to be used in 'loadapppage.pl'

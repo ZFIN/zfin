@@ -3,7 +3,7 @@ create or replace function create_stg_name_ext(
   stgHrsEnd        decimal(7,2),
   stgOtherFeatures varchar(50))
 
-  returns varchar(50) as $stgNameExt$; 
+  returns varchar(50) as $stgNameExt$
 
   -- Creates the extension part of the "long name" for a stage, i.e, the part
   -- that makes a long name long.  The extension includes the hours the 
