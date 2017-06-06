@@ -454,20 +454,22 @@ public class SearchPrototypeController {
 
         if (facetField != null && facetField.getValues() != null) {
 
-            List<FacetField.Count> facetValues = new ArrayList<>();
+            List<FacetValue> facetValues = new ArrayList<>();
 
-            facetValues.addAll(facetField.getValues());
+            for (FacetField.Count count : facetField.getValues()) {
+                facetValues.add(new FacetValue(count));
+            }
 
             facetBuilderService.sortFacetValues(facetField.getName(), facetValues);
 
-            for (FacetField.Count count : facetValues) {
+            for (FacetValue facetValue : facetValues) {
                 FacetLookupEntry entry = new FacetLookupEntry();
-                entry.setName(SolrService.encode(count.getName()));
-                entry.setLabel(count.getName().replace("\"", "") + " (" + count.getCount() + ") ");
-                String fq = SolrService.encode(facetField.getName() + ":\"" + count.getName() + "\"");
+                entry.setName(SolrService.encode(facetValue.getLabel()));
+                entry.setLabel(facetValue.getLabel().replace("\"", "") + " (" + facetValue.getCount() + ") ");
+                String fq = SolrService.encode(facetField.getName() + ":\"" + facetValue.getLabel() + "\"");
                 entry.setFq(fq);
-                entry.setValue(count.getName());
-                entry.setCount(String.valueOf(count.getCount()));
+                entry.setValue(facetValue.getLabel());
+                entry.setCount(String.valueOf(facetValue.getCount()));
                 facets.add(entry);
             }
         }

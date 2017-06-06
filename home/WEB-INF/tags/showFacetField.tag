@@ -61,6 +61,7 @@
                 </c:if>
                 <zfin2:showFacetValue gaCategory="${zfn:buildFacetedSearchGACategory(category, facet.label)}"
                                       value="${facetValue}" showIncludeExclude="${facet.showIncludeExcludeIcons}"/>
+
                 <c:if test="${loop.count > 4 && loop.last && !facet.alwaysShowAllFacets}">
                     </div>
                 </c:if>
@@ -76,7 +77,7 @@
                         <a class="facet-show-all-facets-link facet-value-modal-link" href="#"
                            onclick="ga('send', 'event', '${zfn:buildFacetedSearchGACategory(category, facet.label)} Facet', 'show all');"
                            data-toggle="modal" data-target="#facet-value-modal"
-                           category="${category}" field="${facet.facetField.name}" modal-title="${facet.label}">Show
+                           category="${category}" field="${facet.name}" modal-title="${facet.label}">Show
                             All</a>
                     </div>
                 </div>

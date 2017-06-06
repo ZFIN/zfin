@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.PivotField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.zfin.search.*;
 import org.zfin.search.presentation.Facet;
@@ -506,19 +507,31 @@ public class FacetBuilderService {
 
     private Facet buildFacet(String fieldName,
                             boolean openByDefault) {
+        FieldName fieldNameInstance = FieldName.getFieldName(fieldName);
         return buildFacet(fieldName, new ArrayList<FacetQueryEnum>(), openByDefault);
     }
 
     private Facet buildFacet(String fieldName,
+                             List<FacetQueryEnum> facetQueryEnumList,
+                             boolean openByDefault) {
+        FieldName fieldNameInstance = FieldName.getFieldName(fieldName);
+
+        if (fieldNameInstance == null) { return null; }
+
+        return buildFacet(fieldNameInstance, facetQueryEnumList, openByDefault);
+    }
+
+    private Facet buildFacet(FieldName fieldNameInstance,
                             List<FacetQueryEnum> facetQueryEnumList,
                             boolean openByDefault) {
 
-        FacetField facetField = response.getFacetField(fieldName);
+        FacetField facetField = response.getFacetField(fieldNameInstance.getName());
 
-        if (facetField == null)
+
+        if (facetField == null && !fieldNameInstance.isHierarchical())
             return null;
 
-        Facet facet = new Facet(facetField);
+        Facet facet = new Facet(fieldNameInstance.getName());
 
         facet.setFacetQueries(buildFacetQueries(facetQueryEnumList));
 
@@ -528,10 +541,10 @@ public class FacetBuilderService {
 
         //That methods collects a list of "joinable" facets, which basically means things with names,
         //only show the autocomplete box if it has a name...
-        facet.setShowAutocompleteBox(SolrService.isAnAutocompletableFacet(fieldName));
+        facet.setShowAutocompleteBox(SolrService.isAnAutocompletableFacet(fieldNameInstance.getName()));
 
-        List<FacetField.Count> selectedFacetFieldCounts = new ArrayList<>();
-        List<FacetField.Count> facetFieldCounts = new ArrayList<>();
+        List<FacetValue> selectedFacetValues = new ArrayList<>();
+        List<FacetValue> facetValues = new ArrayList<>();
 
 
         //to take advantage of a Comparators that already exist, split into groups and sort
@@ -543,60 +556,76 @@ public class FacetBuilderService {
         //build fake FacetField.Count instances and throw them in the selected list 
         for (String key : filterQuerySelectionMap.keySet()) {
             NameValuePair nameValuePair = SolrService.splitFilterQuery(key);
-            if (StringUtils.equals(nameValuePair.getName(), facetField.getName())) {
+            if (nameValuePair != null && StringUtils.equals(nameValuePair.getName(), fieldNameInstance.getName())) {
                 String value = nameValuePair.getValue().replace("\"", "");
                 FacetField.Count count = new FacetField.Count(facetField, value, 0);
                 if (!facetQueryValues.contains(value)) {
-                    selectedFacetFieldCounts.add(count);
+                    selectedFacetValues.add(buildFacetValue(fieldNameInstance.getName(), count, true, baseUrl));
                 }
             }
         }
 
         //build the facet list, ignoring the selected facet values
-        for (FacetField.Count count : facetField.getValues()) {
-            String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
-            if (!filterQuerySelectionMap.containsKey(quotedFq)) {
-                facetFieldCounts.add(count);
+
+        if (fieldNameInstance.isHierarchical()) {
+            for (PivotField pivotField : response.getFacetPivot().get(fieldNameInstance.getPivotKey())) {
+                facetValues.add(buildFacetValue(pivotField, false, baseUrl));
+            }
+        } else {
+            for (FacetField.Count count : facetField.getValues()) {
+                String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
+                if (!filterQuerySelectionMap.containsKey(quotedFq)) {
+                    facetValues.add(buildFacetValue(fieldNameInstance.getName(), count, false, baseUrl));
+                }
             }
 
         }
 
-        sortFacetValues(facetField.getName(), selectedFacetFieldCounts);
-        sortFacetValues(facetField.getName(), facetFieldCounts);
-
-        List<FacetValue> selectedFacetValues = new ArrayList<>();
-        List<FacetValue> facetValues = new ArrayList<>();
-
-        for (FacetField.Count count : selectedFacetFieldCounts) {
-            selectedFacetValues.add(buildFacetValue(facetField, count, true, baseUrl));
-            logger.debug("breadbox facet: " + count.getName());
-        }
-        for (FacetField.Count count : facetFieldCounts) {
-            facetValues.add(buildFacetValue(facetField, count, false, baseUrl));
-            logger.debug("facet: " + count.getName());
-        }
+        sortFacetValues(fieldNameInstance.getName(), selectedFacetValues);
+        sortFacetValues(fieldNameInstance.getName(), facetValues);
 
         facet.setSelectedFacetValues(selectedFacetValues);
         facet.setFacetValues(facetValues);
 
 
         //if there is a facet query for the number of docs with a value for this field, fill it in
-        String key = facetField.getName() + ":[* TO *]";
-        Map<String, Integer> facetQueryMap = response.getFacetQuery();
-        if (facetQueryMap != null && facetQueryMap.containsKey(key))
-            facet.setNonEmptyDocumentCount(facetQueryMap.get(key));
+        if (facetField != null) {
+            String key = facetField.getName() + ":[* TO *]";
+            Map<String, Integer> facetQueryMap = response.getFacetQuery();
+            if (facetQueryMap != null && facetQueryMap.containsKey(key)) {
+                facet.setNonEmptyDocumentCount(facetQueryMap.get(key));
+            }
+        }
+
         return facet;
     }
 
-    private FacetValue buildFacetValue(FacetField facetField, FacetField.Count count, boolean selected, String baseUrl) {
+
+    private FacetValue buildFacetValue(PivotField pivotField, boolean selected, String baseUrl) {
+        FacetField.Count count = new FacetField.Count(null, (String) pivotField.getValue(), (long) pivotField.getCount());
+
+        //todo: is it selected?
+        FacetValue facetValue = buildFacetValue(pivotField.getField(), count, selected, baseUrl);
+
+        if (pivotField.getPivot() != null) {
+            for (PivotField child : pivotField.getPivot()) {
+                //todo: is it selected?
+                facetValue.addChildFacet(buildFacetValue(child, selected, baseUrl));
+            }
+        }
+
+        return facetValue;
+    }
+
+    private FacetValue buildFacetValue(String fieldName, FacetField.Count count, boolean selected, String baseUrl) {
         String url;
         if (selected) {
-            String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
+            String quotedFq = fieldName + ":\"" + count.getName() + "\"";
             url = SolrService.getBreadBoxUrl(quotedFq, baseUrl);
         } else
-            url = SolrService.getFacetUrl(facetField, count, baseUrl);
+            url = SolrService.getFacetUrl(fieldName, count, baseUrl);
 
-        String excludeUrl = SolrService.getNotFacetUrl(facetField, count, baseUrl);
+        String excludeUrl = SolrService.getNotFacetUrl(fieldName, count, baseUrl);
 
         return new FacetValue(count, selected, url, excludeUrl);
     }
@@ -624,7 +653,7 @@ public class FacetBuilderService {
     }
 
 
-    public void sortFacetValues(String fieldName, List<FacetField.Count> values) {
+    public void sortFacetValues(String fieldName, List<FacetValue> values) {
 
         if (SolrService.isToBeHumanSorted(fieldName)) {
             Collections.sort(values, new FacetValueAlphanumComparator<>());

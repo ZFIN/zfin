@@ -1,6 +1,7 @@
 package org.zfin.search;
 
 import org.apache.solr.client.solrj.response.FacetField;
+import org.zfin.search.presentation.FacetValue;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,7 +14,7 @@ import java.util.Map;
 * Why does it use strings rather than integers for the compare value?  So that it
 * can fall back to comparing by the key if the key isn't found in the map.
 * */
-public class FacetStageComparator  <T extends FacetField.Count> implements Comparator<T> {
+public class FacetStageComparator  <T extends FacetValue> implements Comparator<T> {
     private static final Map<String, String> sortMap;
     static {
         Map<String, String> map = new HashMap<String, String>();
@@ -45,15 +46,15 @@ public class FacetStageComparator  <T extends FacetField.Count> implements Compa
         String s1;
         String s2;
 
-        if (sortMap.containsKey(o1.getName()))
-            s1 = sortMap.get(o1.getName()) + o1.getName();
+        if (sortMap.containsKey(o1.getLabel()))
+            s1 = sortMap.get(o1.getLabel()) + o1.getLabel();
         else
-            s1 = o1.getName();
+            s1 = o1.getLabel();
 
-        if (sortMap.containsKey(o2.getName()))
-            s2 = sortMap.get(o2.getName()) + o2.getName();
+        if (sortMap.containsKey(o2.getLabel()))
+            s2 = sortMap.get(o2.getLabel()) + o2.getLabel();
         else
-            s2 = o1.getName();
+            s2 = o1.getLabel();
 
         return s1.compareTo(s2);
     }

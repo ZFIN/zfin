@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Facet  {
 
-    FacetField facetField;
+    String name;
     List<FacetValue> selectedFacetValues;
     List<FacetValue> facetValues;
     List<FacetQuery> facetQueries;
@@ -19,19 +19,11 @@ public class Facet  {
     Boolean alwaysShowAllFacets;
     Boolean showIncludeExcludeIcons;
 
-    public Facet(FacetField facetField) {
-        this.facetField = facetField;
+    public Facet(String name) {
+        this.name = name;
         this.showAutocompleteBox = true;
         this.alwaysShowAllFacets = false;
         this.showIncludeExcludeIcons = true;
-    }
-
-    public FacetField getFacetField() {
-        return facetField;
-    }
-
-    public void setFacetField(FacetField facetField) {
-        this.facetField = facetField;
     }
 
     public List<FacetValue> getSelectedFacetValues() {
@@ -83,15 +75,11 @@ public class Facet  {
     }
 
     public String getLabel() {
-        if (facetField == null)
-            return null;
-        return SolrService.getPrettyFieldName(facetField.getName());
+        return SolrService.getPrettyFieldName(name);
     }
 
     public String getName() {
-        if (facetField == null)
-            return null;
-        return facetField.getName();
+        return name;
     }
 
     public boolean getHasSelectedValues() {

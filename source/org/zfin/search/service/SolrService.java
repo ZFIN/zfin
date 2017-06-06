@@ -1,5 +1,6 @@
 package org.zfin.search.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.http.NameValuePair;
@@ -171,6 +172,12 @@ public class SolrService {
         }
         //facet on images no matter what
         query.addFacetField(FieldName.IMG_ZDB_ID.getName());
+
+        if (category != null && CollectionUtils.isNotEmpty(category.getPivotFacetStrings())) {
+            category.getPivotFacetStrings().forEach( pivot -> {
+                query.addFacetPivotField(pivot);
+            });
+        }
 
     }
 
@@ -484,25 +491,25 @@ public class SolrService {
         return out.toString();
     }
 
-    public static String getFacetUrl(FacetField facetField, FacetField.Count count, String baseUrl) {
-        String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
+    public static String getFacetUrl(String fieldName, FacetField.Count count, String baseUrl) {
+        String quotedFq = fieldName + ":\"" + count.getName() + "\"";
 
         URLCreator urlCreator = new URLCreator(baseUrl);
         urlCreator.addNamevaluePair("fq", quotedFq);
         urlCreator.removeNameValuePair("page");
-        if (StringUtils.equals("category", facetField.getName())) {
+        if (StringUtils.equals("category", fieldName)) {
             urlCreator.removeNameValuePair("category");
             urlCreator.addNamevaluePair("category", count.getName());
         }
         return urlCreator.getURL();
     }
 
-    public static String getNotFacetUrl(FacetField facetField, FacetField.Count count, String baseUrl) {
-        String quotedFq = "-" + facetField.getName() + ":\"" + count.getName() + "\"";
+    public static String getNotFacetUrl(String fieldName, FacetField.Count count, String baseUrl) {
+        String quotedFq = "-" + fieldName + ":\"" + count.getName() + "\"";
         URLCreator urlCreator = new URLCreator(baseUrl);
         urlCreator.addNamevaluePair("fq", quotedFq);
         urlCreator.removeNameValuePair("page");
-        if (StringUtils.equals("category", facetField.getName())) {
+        if (StringUtils.equals("category", fieldName)) {
             urlCreator.removeNameValuePair("category");
         }
         logger.debug("exclude URL for " + count.getName() + ": " + urlCreator.getURL());

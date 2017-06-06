@@ -36,6 +36,21 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
   and mrkr_type = marker_type
        ;">
 
+   <entity name="gene_type_hierarchy"
+           query="select mtgrp_display_name as type_0,
+                           mrkrtype_type_display as type_1,
+                           mrkr_zdb_id as gene_zdb_id
+                    from marker
+                         join marker_types on mrkr_type = marker_type
+                         join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                         join marker_type_group on mtgrpmem_mrkr_type_group = mtgrp_name
+                    where mtgrp_name in ('PROTEIN_CODING_GENE','NON_PROTEIN_CODING_GENE');"
+           where="gene_zdb_id=gene.id"
+           cacheImpl="SortedMapBackedCache">
+       <column name="type_0" column="type_0"/>
+       <column name="type_1" column="type_1"/>
+   </entity>
+
    <entity name="gene_typegroup" datasource="db"
            query="select mtgrp_display_name as typegroup,
                            mrkr_zdb_id as gene_zdb_id
