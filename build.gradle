@@ -5,8 +5,8 @@ apply plugin: 'java'
 def env = System.getenv()
 def dbname = env['DBNAME']
 
-task deployPostgres(dependsOn: ['lib:DB_Functions:postgresFunctions:deployPostgresFunctions',
-                                'lib:DB_Functions:postgresProcedures:deployPostgresProcedures',
+task deployPostgres(dependsOn: ['lib:DB_functions:postgresFunctions:deployPostgresFunctions',
+                                'lib:DB_functions:postgresProcedures:deployPostgresProcedures',
                                 'lib:DB_triggers:postgresTriggers:deployPostgresTrigger']) {
     description "Deploy all postgres code"
 }

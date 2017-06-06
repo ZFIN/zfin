@@ -1,0 +1,29 @@
+apply plugin: 'java'
+
+//apply from : '../zfinGradle/build.gradle'
+
+def env = System.getenv()
+def targetroot = env['TARGETROOT']
+
+
+task deployApacheFiles {
+    doLast{
+        copy {
+            from '.'
+            into targetroot+"/server_apps/apache"
+            exclude 'Makefile'
+	    exclude 'build.gradle'
+        }
+    }
+}
+
+
+/*
+list all functions in postgres
+
+SELECT  proname, proargnames, prosrc
+FROM    pg_catalog.pg_namespace n
+JOIN    pg_catalog.pg_proc p
+ON      pronamespace = n.oid
+WHERE   nspname = 'public ';
+*/
