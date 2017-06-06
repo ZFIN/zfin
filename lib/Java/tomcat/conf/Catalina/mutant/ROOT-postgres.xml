@@ -1,0 +1,31 @@
+<!--
+    Context configuration file for @DOMAIN-NAME@ Tomcat instance
+-->
+
+
+
+<Context path="/" docBase="@TARGETROOT@/home"
+         antiResourceLocking="false" antiJARLocking="false" swallowOutput="true" 
+         allowLinking="true" privileged="true">
+
+<!-- check every 20 min (=1200sec) if the connection is healthy by running the 
+preferredTestQuery. If unhealthy, a new connection will be created.-->
+ <Resource name="jdbc/zfin" auth="Container" factory="org.apache.naming.factory.BeanFactory"
+           description="Database Connections" 
+           type="com.mchange.v2.c3p0.ComboPooledDataSource" 
+           driverClass="org.postgresql.Driver"
+           
+jdbcUrl="jdbc:postgresql://@SQLHOSTSHOST@:5432/@DBNAME@"
+           maxPoolSize="8" minPoolSize="6"  
+           idleConnectionTestPeriod="1200" preferredTestQuery="select * from single"
+/>
+
+<Valve className="org.apache.catalina.valves.AccessLogValve"
+                 fileDateFormat="yyyy-MM"
+                 directory="logs"  prefix="@DOMAIN-NAME@_zfin_access_log." 
+                 suffix=".txt"
+                 pattern="combined" resolveHosts="false"/>
+
+</Context>
+
+
