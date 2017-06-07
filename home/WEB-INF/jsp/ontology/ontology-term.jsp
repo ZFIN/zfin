@@ -46,7 +46,7 @@
                 <zfin2:termDefinitionReferences term="${term}"/>
             </td>
         </tr>
-        <c:if test="${formBean.term.ontology.ontologyName == 'zebrafish_anatomy'}">
+        <c:if test="${formBean.term.ontology.ontologyName == 'zebrafish_anatomy' && !term.obsolete}">
             <tr>
                 <th>Appears&nbsp;at:</th>
                 <td>
