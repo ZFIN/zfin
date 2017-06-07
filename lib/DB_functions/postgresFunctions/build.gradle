@@ -36,8 +36,8 @@ int runSqlFiles(String directory){
         File file ->
             if (file.getName().endsWith(".sql")) {
                 String command = "psql -d " + dbname + " -a -f " + file.getAbsoluteFile();
-                command.execute().text
-                //println command.execute().text
+		// will execute command, return the text output from the executed command, and print to screen.
+                println command.execute().text
                 numberOfTrigger++;
             }
     }
