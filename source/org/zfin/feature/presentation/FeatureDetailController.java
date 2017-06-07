@@ -11,6 +11,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.feature.service.MutationDetailsConversionService;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -85,7 +86,7 @@ public class FeatureDetailController {
         retrievePubData(feature, form);
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, feature.getName());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.FEATURE.getTitleString() + feature.getName());
 
         return "feature/feature-detail.page";
     }

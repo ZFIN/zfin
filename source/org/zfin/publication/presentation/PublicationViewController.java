@@ -4,7 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +29,7 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.util.ZfinStringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
@@ -120,16 +120,7 @@ public class PublicationViewController {
             model.addAttribute("showAdditionalData", false);
         }
 
-        //If the mini_ref / shortAuthorList is empty, can't use it in the title...so don't!
-        if (StringUtils.isEmpty(publication.getShortAuthorList())) {
-            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication: " + publication.getZdbID());
-        } else {
-            String title = "Publication: " + publication.getShortAuthorList();
-            title = title.replace("<i>", "").replace("</i>", "");
-
-            model.addAttribute(LookupStrings.DYNAMIC_TITLE, title);
-        }
-
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         return "publication/publication-view.page";
     }
 
@@ -202,6 +193,7 @@ public class PublicationViewController {
         geneBean.setTotalRecords(result.getTotalCount());
         model.addAttribute("orthologyBeanList", beanList);
         model.addAttribute("publication", publication);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Orthology"));
         return "publication/publication-orthology-list.page";
     }
 
@@ -223,6 +215,7 @@ public class PublicationViewController {
 
         model.addAttribute("featureList", featureList);
         model.addAttribute("publication", publication);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Mutations and Transgenics"));
         return "feature/feature-per-publication.page";
     }
 
@@ -244,6 +237,7 @@ public class PublicationViewController {
 
         model.addAttribute("fishList", featureList);
         model.addAttribute("publication", publication);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Fish"));
         return "fish/fish-per-publication.page";
     }
 
@@ -259,8 +253,7 @@ public class PublicationViewController {
 
         model.addAttribute("publication", publication);
         model.addAttribute("diseases", phenotypeRepository.getHumanDiseaseModels(publication.getZdbID()));
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication: " + publication.getShortAuthorList().replace("<i>", "").replace("</i> Disease", ""));
-
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Human Disease / Zebrafish Models"));
         return "publication/publication-disease.page";
     }
 
@@ -362,6 +355,23 @@ public class PublicationViewController {
         return publication;
     }
 
+    private String getTitle(Publication publication) {
+        return getTitle(publication, null);
+    }
+
+    private String getTitle(Publication publication, String subPage) {
+        String title;
+        //If the mini_ref / shortAuthorList is empty, can't use it in the title...so don't!
+        if (StringUtils.isEmpty(publication.getShortAuthorList())) {
+            title = "Publication: " + publication.getZdbID();
+        } else {
+            title = ZfinStringUtils.removeHtmlTags("Publication: " + publication.getShortAuthorList());
+        }
+        if (StringUtils.isNotEmpty(subPage)) {
+            title += ": " + subPage;
+        }
+        return title;
+    }
 }
 
 
