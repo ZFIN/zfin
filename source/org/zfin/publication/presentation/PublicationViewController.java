@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,10 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
-import org.zfin.figure.presentation.FigureExpressionSummary;
-import org.zfin.figure.presentation.FigurePhenotypeSummary;
 import org.zfin.figure.service.FigureViewService;
-import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.MarkerDTO;
@@ -22,9 +20,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
-import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.GeneBean;
-import org.zfin.marker.presentation.MarkerBean;
 import org.zfin.marker.presentation.MarkerReferenceBean;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseAnnotation;
@@ -34,11 +30,12 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 public class PublicationViewController {
@@ -59,16 +56,8 @@ public class PublicationViewController {
 
     @RequestMapping("/publication/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
-        Publication publication = publicationRepository.getPublication(zdbID);
-        //try zdb_replaced data if necessary
-        if (publication == null) {
-            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
-            if (replacedZdbID != null) {
-                publication = publicationRepository.getPublication(replacedZdbID);
-            }
-        }
+        Publication publication = getPublication(zdbID);
 
-        //give up
         if (publication == null) {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
@@ -167,17 +156,24 @@ public class PublicationViewController {
     @RequestMapping("/publication/{pubID}/orthology-list")
     public String showOrthologyList(@PathVariable String pubID,
                                     @ModelAttribute("formBean") GeneBean geneBean,
-                                    Model model) {
+                                    Model model,
+                                    HttpServletResponse response) {
         logger.info("zdbID: " + pubID);
 
         if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
             return "redirect:/" + pubID;
         }
 
+        Publication publication = getPublication(pubID);
+
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
         // assumes that the orthologs are ordered by zebrafish gene
-        PaginationResult<Ortholog> result = publicationRepository.getOrthologPaginationByPub(pubID, geneBean);
+        PaginationResult<Ortholog> result = publicationRepository.getOrthologPaginationByPub(publication.getZdbID(), geneBean);
         List<Ortholog> orthologList = result.getPopulatedResults();
-        Publication publication = publicationRepository.getPublication(pubID);
         List<GeneBean> beanList = new ArrayList<>(orthologList.size() * 4);
         List<Ortholog> orthologsPerGene = new ArrayList<>(5);
         for (int index = 0; index < orthologList.size(); index++) {
@@ -212,11 +208,18 @@ public class PublicationViewController {
     @RequestMapping("/publication/{pubID}/feature-list")
     public String showFeatureList(@PathVariable String pubID,
                                   @ModelAttribute("formBean") GeneBean geneBean,
-                                  Model model) {
+                                  Model model,
+                                  HttpServletResponse response) {
         logger.info("zdbID: " + pubID);
 
-        List<Feature> featureList = publicationRepository.getFeaturesByPublication(pubID);
-        Publication publication = publicationRepository.getPublication(pubID);
+        Publication publication = getPublication(pubID);
+
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        List<Feature> featureList = publicationRepository.getFeaturesByPublication(publication.getZdbID());
 
         model.addAttribute("featureList", featureList);
         model.addAttribute("publication", publication);
@@ -226,11 +229,18 @@ public class PublicationViewController {
     @RequestMapping("/publication/{pubID}/fish-list")
     public String showFishList(@PathVariable String pubID,
                                @ModelAttribute("formBean") GeneBean geneBean,
-                               Model model) {
+                               Model model,
+                               HttpServletResponse response) {
         logger.info("zdbID: " + pubID);
 
-        List<Fish> featureList = publicationRepository.getFishByPublication(pubID);
-        Publication publication = publicationRepository.getPublication(pubID);
+        Publication publication = getPublication(pubID);
+
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        List<Fish> featureList = publicationRepository.getFishByPublication(publication.getZdbID());
 
         model.addAttribute("fishList", featureList);
         model.addAttribute("publication", publication);
@@ -240,17 +250,8 @@ public class PublicationViewController {
 
     @RequestMapping("/publication/{zdbID}/disease")
     public String disease(@PathVariable String zdbID, Model model, HttpServletResponse response) {
+        Publication publication = getPublication(zdbID);
 
-        Publication publication = publicationRepository.getPublication(zdbID);
-        //try zdb_replaced data if necessary
-        if (publication == null) {
-            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
-            if (replacedZdbID != null) {
-                publication = publicationRepository.getPublication(replacedZdbID);
-            }
-        }
-
-        //give up
         if (publication == null) {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
@@ -321,7 +322,6 @@ public class PublicationViewController {
             return null;
         }
 
-
         model.addAttribute("image", image);
 
         Figure figure = image.getFigure();
@@ -337,16 +337,7 @@ public class PublicationViewController {
 
     @RequestMapping("/publication/printable/{zdbID}")
     public String printable (@PathVariable String zdbID, Model model, HttpServletResponse response) {
-        Publication publication = publicationRepository.getPublication(zdbID);
-        //try zdb_replaced data if necessary
-        if (publication == null) {
-            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
-            if (replacedZdbID != null) {
-                publication = publicationRepository.getPublication(replacedZdbID);
-            }
-        }
-
-        //give up
+        Publication publication = getPublication(zdbID);
         if (publication == null) {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
@@ -360,6 +351,16 @@ public class PublicationViewController {
         return "publication/printable.ajax";
     }
 
+    private Publication getPublication(String zdbID) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+        if (publication == null) {
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+        return publication;
+    }
 
 }
 
