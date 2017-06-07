@@ -4,6 +4,8 @@ apply plugin: 'java'
 
 def env = System.getenv()
 def dbname = env['DBNAME']
+def sourceroot = env['SOURCEROOT']
+
 
 task deployPostgres(dependsOn: ['lib:DB_functions:postgresFunctions:deployPostgresFunctions',
                                 'lib:DB_functions:postgresProcedures:deployPostgresProcedures',
@@ -11,7 +13,10 @@ task deployPostgres(dependsOn: ['lib:DB_functions:postgresFunctions:deployPostgr
     description "Deploy all postgres code"
 }
 
+
+
 project.ext.set("dbname", dbname)
+project.ext.set("sourceroot", sourceroot)
 
 sourceSets {
     main {
@@ -24,6 +29,8 @@ sourceSets {
     }
 }
 
+
+ 
 /*
 list all functions in postgres
 
