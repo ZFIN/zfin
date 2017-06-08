@@ -12,7 +12,7 @@ begin
                                                 NEW.pth_status_id);
 	select updatePubIndexedDate(NEW.pth_pub_zdb_id,
                                                 NEW.pth_status_id);
-
+        RETURN NEW;
 end;
 $BODY$ LANGUAGE plpgsql;
 

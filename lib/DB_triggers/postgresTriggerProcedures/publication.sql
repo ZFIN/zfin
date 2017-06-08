@@ -47,8 +47,11 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
+
+
+
 create trigger publication_trigger before insert or update on publication
- for each row
+ for each row 
  execute procedure publication();
 
 
