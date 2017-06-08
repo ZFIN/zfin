@@ -1,8 +1,8 @@
-create function 
+create or replace function 
 jrnl_acknowledgment (
-  jrnlZdbId        like journal.jrnl_zdb_id)
+  jrnlZdbId        journal.jrnl_zdb_id%TYPE)
 
-  returning lvarchar;
+  returns text as $$
 
   -- Returns an html acknowledgment
   -- Template
@@ -15,18 +15,17 @@ jrnl_acknowledgment (
   --   The parameter is not pub zdb_id  
  
 
-  define jrnl_ackn      lvarchar;
-  define zdb_jrnl_count integer;
-  define jrnl_url       varchar(255);
-  define journal_name   varchar(255);
-  define add_on_text    varchar(50);  
+  declare jrnl_ackn      text;
+   zdb_jrnl_count integer;
+   jrnl_url       varchar(255);
+   journal_name   varchar(255);
+   add_on_text    varchar(50);  
 
-  
+ begin  
   -- Check that the parameter is not null
   if (jrnlZdbId == '') then
-    raise exception -746, 0,		 -- !!! ERROR EXIT
-      'Parameter is null';
-  end if
+    raise exception 'Parameter is null';
+  end if;
 
   
   -- Check that the parameter is a journal zdb_id
@@ -36,9 +35,8 @@ jrnl_acknowledgment (
     where jrnl_zdb_id = jrnlZdbId;
     
   if (zdb_jrnl_count == 0) then
-    raise exception -746, 0,		 -- !!! ERROR EXIT
-      'Parameter is not in the Journal table';
-  end if
+    raise exception 'Parameter is not in the Journal table';
+  end if;
   
   select srcurl_url, jrnl_name
     into jrnl_url, journal_name
@@ -49,4 +47,6 @@ jrnl_acknowledgment (
      
   return "<a href='" || jrnl_url || "'>" || journal_name || "</a> " ;
   
-end function;
+end 
+
+$$ LANGUAGE plpgsql
