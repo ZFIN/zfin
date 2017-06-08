@@ -35,3 +35,8 @@ begin
      RETURN NEW;
 end;
 $BODY$ LANGUAGE plpgsql;
+
+create trigger marker_abbrev_trigger before update on marker
+ for each row 
+ when (OLD.mrkr_abbrev IS DISTINCT FROM NEW.mrkr_abbrev)
+ execute procedure marker_abbrev();
