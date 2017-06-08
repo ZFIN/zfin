@@ -15,7 +15,7 @@ preferredTestQuery. If unhealthy, a new connection will be created.-->
            type="com.mchange.v2.c3p0.ComboPooledDataSource" 
            driverClass="org.postgresql.Driver"
            
-jdbcUrl="jdbc:postgresql://@SQLHOSTSHOST@:5432/@DBNAME@"
+jdbcUrl="jdbc:postgresql://localhost:5432/@DBNAME@"
            maxPoolSize="8" minPoolSize="6"  
            idleConnectionTestPeriod="1200" preferredTestQuery="select * from single"
 />
