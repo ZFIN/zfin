@@ -257,6 +257,23 @@ public class PublicationViewController {
         return "publication/publication-disease.page";
     }
 
+    @RequestMapping("/publication/{zdbID}/genes")
+    public String showGenesMarkersList(@PathVariable String zdbID,
+                                       Model model,
+                                       HttpServletResponse response) {
+        Publication publication = getPublication(zdbID);
+
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute("publication", publication);
+        model.addAttribute("markers", publicationRepository.getGenesByPublication(publication.getZdbID(), false));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Genes / Markers"));
+        return "publication/publication-marker-list.page";
+    }
+
     @ResponseBody
     @RequestMapping(value = "/publication/{zdbID}/genes.json", method = RequestMethod.GET)
     public List<MarkerDTO> getPublicationGenes(@PathVariable String zdbID) {

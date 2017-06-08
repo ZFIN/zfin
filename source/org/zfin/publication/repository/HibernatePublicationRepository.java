@@ -26,6 +26,7 @@ import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.PublicationAttribution;

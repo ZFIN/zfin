@@ -176,9 +176,7 @@
 
     <ul>
         <c:if test="${markerCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mrkr">Genes /
-                Markers</a> (${markerCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/genes">Genes / Markers</a> (${markerCount})</li>
         </c:if>
         <c:if test="${morpholinoCount > 0}">
             <li>
