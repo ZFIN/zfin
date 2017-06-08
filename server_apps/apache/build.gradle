@@ -17,7 +17,6 @@ task deployApacheFiles {
     }
 }
 
-
 /*
 list all functions in postgres
 
