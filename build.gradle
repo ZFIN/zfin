@@ -29,9 +29,9 @@ task loadDb() {
        if (System.getProperty("B")) { unloadPath = System.getProperty("B") }
 
        //might as well support -Dunload also
-       if (System.getProperty("unload")) { unloadPath = System.getProperty("unload") }	  
+       if (System.getProperty("unload")) { unloadPath = System.getProperty("unload") }
 
-       println "Loading $unloadPath into $dbname"       
+       println "Loading $unloadPath into $dbname"
        exec { commandLine 'dropdb', dbname }
        exec { commandLine 'createdb', dbname }
        exec { commandLine "bash", "-c", "psql --set ON_ERROR_STOP=on $dbname < $unloadPath" }
