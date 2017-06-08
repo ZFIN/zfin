@@ -17,6 +17,8 @@ public class ChromosomeService<T extends GenomeLocation> {
 
     private void init() {
         String locationDisplay = MappingService.getChromosomeLocationDisplay(genomeLocationList);
+	if(locationDisplay == null)
+		return;
         if (!locationDisplay.equals(AMBIGUOUS) && !locationDisplay.isEmpty()) {
             trustedValue = true;
             chromosomeNumber = locationDisplay;

@@ -3165,7 +3165,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             query.setFirstResult(0);
             query.setMaxResults(number);
         }
-        return query.list();
+        return query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     @Override
