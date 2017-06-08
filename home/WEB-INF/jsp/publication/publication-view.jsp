@@ -179,22 +179,13 @@
             <li><a href="/action/publication/${publication.zdbID}/genes">Genes / Markers</a> (${markerCount})</li>
         </c:if>
         <c:if test="${morpholinoCount > 0}">
-            <li>
-                <a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mo">Morpholino</a>
-                (${morpholinoCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/strs?type=MRPHLNO">Morpholino</a> (${morpholinoCount})</li>
         </c:if>
         <c:if test="${talenCount > 0}">
-            <li>
-                <a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_talen">TALEN</a>
-                (${talenCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/strs?type=TALEN">TALEN</a> (${talenCount})</li>
         </c:if>
         <c:if test="${crisprCount > 0}">
-            <li>
-                <a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_crispr">CRISPR</a>
-                (${crisprCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/strs?type=CRISPR">CRISPR</a> (${crisprCount})</li>
         </c:if>
         <c:if test="${antibodyCount > 0}">
             <li><a href="/action/antibody/antibodies-per-publication/${publication.zdbID}" id="list-of-antibodies">Antibodies</a>

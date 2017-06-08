@@ -19,11 +19,15 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.MarkerReferenceBean;
+import org.zfin.marker.presentation.STRTargetRow;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Journal;
@@ -34,6 +38,7 @@ import org.zfin.util.ZfinStringUtils;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +48,9 @@ public class PublicationViewController {
     private Logger logger = Logger.getLogger(PublicationViewController.class);
 
     @Autowired
+    private MarkerRepository markerRepository;
+
+    @Autowired
     private PublicationRepository publicationRepository;
 
     @Autowired
@@ -50,6 +58,7 @@ public class PublicationViewController {
 
     @Autowired
     private PhenotypeRepository phenotypeRepository;
+
     @Autowired
     private FigureViewService figureViewService;
 
@@ -283,6 +292,36 @@ public class PublicationViewController {
             dtos.add(DTOConversionService.convertToMarkerDTO(gene));
         }
         return dtos;
+    }
+
+    @RequestMapping("/publication/{zdbID}/strs")
+    public String showSTRList(@PathVariable String zdbID,
+                                       @RequestParam("type") String type,
+                                       Model model,
+                                       HttpServletResponse response) {
+        Publication publication = getPublication(zdbID);
+
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        MarkerType markerType = markerRepository.getMarkerTypeByName(type);
+        List<SequenceTargetingReagent> strs = publicationRepository.getSTRsByPublication(publication.getZdbID(), markerType);
+        List<STRTargetRow> rows = new ArrayList<>(strs.size());
+        for (SequenceTargetingReagent str : strs) {
+            for (Marker target : str.getTargetGenes()) {
+                rows.add(new STRTargetRow(str, target));
+            }
+        }
+        rows.sort(Comparator.comparing(STRTargetRow::getTarget));
+
+        model.addAttribute("publication", publication);
+        model.addAttribute("markerType", markerType);
+        model.addAttribute("numSTRs", strs.size());
+        model.addAttribute("rows", rows);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, markerType.getDisplayName() + " List"));
+        return "publication/publication-str-list.page";
     }
 
     @ResponseBody

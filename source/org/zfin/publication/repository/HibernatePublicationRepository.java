@@ -37,6 +37,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
@@ -1141,19 +1142,21 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param includeEfgs boolean
      * @return list of markers
      */
-    // ToDo: There must be a better way to retrieve GENEs versus all markers.
-    // GENE should be a subclass of Marker
-    @SuppressWarnings("unchecked")
     public List<Marker> getGenesByPublication(String pubID, boolean includeEFGs) {
-        Session session = HibernateUtil.currentSession();
-
         Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM;
-
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
         if (includeEFGs){
             markerTypes.add(markerRepository.getMarkerTypeByName(Marker.Type.EFG.toString()));
         }
+        return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
+    }
 
+    public List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType) {
+        return (List<SequenceTargetingReagent>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
+    }
+
+    private List getMarkersByPublication(String pubID, List<MarkerType> markerTypes) {
+        Session session = HibernateUtil.currentSession();
         String hql = "select distinct marker from Marker marker, PublicationAttribution pub" +
                 "     where pub.dataZdbID = marker.zdbID" +
                 "           and pub.publication.zdbID = :pubID " +
@@ -1162,8 +1165,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameterList("markerType", markerTypes);
-
-        return (List<Marker>) query.list();
+        return query.list();
     }
 
     public List<Feature> getFeaturesByPublication(String pubID) {

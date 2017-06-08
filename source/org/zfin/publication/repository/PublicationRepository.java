@@ -10,10 +10,12 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
@@ -337,6 +339,7 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Marker> getGenesByPublication(String pubID);
     List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
+    List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType);
     List<Feature> getFeaturesByPublication(String pubID);
     List<Fish> getFishByPublication(String pubID);
 
