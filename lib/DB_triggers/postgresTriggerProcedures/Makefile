@@ -22,7 +22,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_triggers/postgresTriggerProcedures
 
-ZDB_STATS = zdb_submitters.sql
+ZDB_STATS = zdb_submitters.sql zdb_object_type.sql updates.sql transcript.sql term.sql term_stage.sql term_relationship.sql
 
 STATIC_PROCS  = $(ZDB_STATS)
 
