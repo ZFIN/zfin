@@ -139,7 +139,7 @@ public class FacetBuilderService {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup type = new FacetGroup("Type", true);
-        type.addFacet(buildFacet("type", true));
+        type.addFacet(buildFacet(FieldName.TYPE_TREE, true));
         facetGroups.add(type);
 
         FacetGroup expressedIn = new FacetGroup("Expression", true);
@@ -502,6 +502,12 @@ public class FacetBuilderService {
         phenotype.addFacet(buildFacet(PHENOTYPE_STATEMENT.getName(), false));
         phenotype.addFacet(buildFacet(MISEXPRESSED_GENE.getName(), false));
         return phenotype;
+    }
+
+
+    private Facet buildFacet(FieldName fieldName,
+                             boolean openByDefault) {
+        return buildFacet(fieldName, new ArrayList<FacetQueryEnum>(), openByDefault);
     }
 
 

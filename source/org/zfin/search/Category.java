@@ -17,7 +17,7 @@ public enum Category {
 
     GENE("Gene / Transcript",
             new ArrayList<FacetQueryEnum>(),
-            TYPE,
+            TYPE_TREE,
             ANATOMY_TF,
             STAGE,
             AFFECTED_ANATOMY_TF,
