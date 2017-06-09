@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -107,7 +108,9 @@ public class ImageController {
             HibernateUtil.createTransaction();
 
             String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-            String destinationName = PROFILE_IMAGE_DIR + File.separator + zdbID + FilenameUtils.EXTENSION_SEPARATOR + extension;
+            String destinationName = PROFILE_IMAGE_DIR + File.separator +
+                    zdbID + "-" + Instant.now().toEpochMilli() + // timestamped to break browser cache on upload
+                    FilenameUtils.EXTENSION_SEPARATOR + extension;
             File destinationFile = new File(IMAGE_LOADUP_DIR, destinationName);
             Files.copy(file.getInputStream(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             profileService.updateImage(zdbID, securityPersonZdbId, destinationName);
