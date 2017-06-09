@@ -339,6 +339,7 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Marker> getGenesByPublication(String pubID);
     List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
+    List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType);
     List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType);
     List<Feature> getFeaturesByPublication(String pubID);
     List<Fish> getFishByPublication(String pubID);

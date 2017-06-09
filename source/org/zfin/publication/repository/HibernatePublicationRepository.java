@@ -1151,6 +1151,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
     }
 
+    public List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType) {
+        return (List<Marker>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
+    }
+
     public List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType) {
         return (List<SequenceTargetingReagent>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
     }

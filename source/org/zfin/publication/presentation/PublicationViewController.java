@@ -283,6 +283,25 @@ public class PublicationViewController {
         return "publication/publication-marker-list.page";
     }
 
+    @RequestMapping("/publication/{zdbID}/efgs")
+    public String showEFGsList(@PathVariable String zdbID,
+                                       Model model,
+                                       HttpServletResponse response) {
+        Publication publication = getPublication(zdbID);
+
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute("publication", publication);
+
+        MarkerType efgType = markerRepository.getMarkerTypeByName(Marker.Type.EFG.name());
+        model.addAttribute("markers", publicationRepository.getMarkersByTypeForPublication(publication.getZdbID(), efgType));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Engineered Foreign Genes"));
+        return "publication/publication-egf-list.page";
+    }
+
     @ResponseBody
     @RequestMapping(value = "/publication/{zdbID}/genes.json", method = RequestMethod.GET)
     public List<MarkerDTO> getPublicationGenes(@PathVariable String zdbID) {

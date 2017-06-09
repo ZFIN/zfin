@@ -193,9 +193,7 @@
             </li>
         </c:if>
         <c:if test="${efgCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_efg">Engineered
-                Foreign Genes</a> (${efgCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/efgs">Engineered Foreign Genes</a> (${efgCount})</li>
         </c:if>
         <c:if test="${cloneProbeCount > 0}">
             <li><a href="/cgi-bin/webdriver?MIval=aa-msegselect.apg&pubId=${publication.zdbID}">Clones and Probes</a>
