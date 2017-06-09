@@ -64,6 +64,8 @@ cat /tmp/tables.xml ${SOURCEROOT}/server_apps/DB_maintenance/postgres/xmlFooter.
 cd ${SOURCEROOT}
 ant buildPostgresDatabase
 
+${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/add_monthly_average_curated_metric.sql
+
 dumpLocation=/research/zunloads/databases/postgres_dumps/${DBNAME}
 echo "dumpLocation"
 echo $dumpLocation

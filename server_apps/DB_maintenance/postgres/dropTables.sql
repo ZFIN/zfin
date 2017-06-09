@@ -1,7 +1,7 @@
 begin work ;
 
 
-
+drop table monthly_curated_average_metric;
 drop table staging_webpages;
 drop table sysblderrorlog;
 drop table sysbldiprovided;
@@ -10,9 +10,6 @@ drop table sysbldobjdepends;
 drop table sysbldobjects;
 drop table sysbldobjkinds ;
 drop table sysbldregistered;
-drop table syserrors;
-drop table systraceclasses; 
-drop table systracemsgs;
 drop table webcmimages ;
 drop table webcmpages ;
 drop table webconfigs;
