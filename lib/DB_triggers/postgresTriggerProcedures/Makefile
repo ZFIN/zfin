@@ -22,7 +22,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_triggers/postgresTriggerProcedures
 
-ZDB_STATS = publication.sql zdb_submitters.sql zdb_object_type.sql updates.sql transcript.sql term.sql term_stage.sql term_relationship.sql stage.sql source_alias.sql run_candidate.sql record_attribution.sql pub_tracking_history.sql publication_completion_date.sql pub_correspondence_sent_tracker.sql phenotype_statement.sql phenotype_experiment.sql person.sql one_to_one_accession.sql marker_name.sql marker_abbrev.sql marker_sequence.sql marker_relationship.sql marker.sql marker_go_term_evidence.sql marker_update_comments.sql linkage.sql lab.sql lab_address.sql journal.sql int_person_pub.sql inference_group_member.sql image_stage.sql fish_experiment.sql
+ZDB_STATS = publication.sql zdb_submitters.sql zdb_object_type.sql updates.sql transcript.sql term.sql term_stage.sql term_relationship.sql stage.sql source_alias.sql run_candidate.sql record_attribution.sql pub_tracking_history.sql publication_completion_date.sql pub_correspondence_sent_tracker.sql phenotype_statement.sql phenotype_experiment.sql person.sql one_to_one_accession.sql marker_name.sql marker_abbrev.sql marker_sequence.sql marker_relationship.sql marker.sql marker_go_term_evidence.sql marker_update_comments.sql linkage.sql lab.sql lab_address.sql journal.sql int_person_pub.sql inference_group_member.sql image_stage.sql fish_experiment.sql genotype_display_name.sql genotype_handle.sql genotype.sql genotype_feature.sql fish_str.sql
 
 STATIC_PROCS  = $(ZDB_STATS)
 
