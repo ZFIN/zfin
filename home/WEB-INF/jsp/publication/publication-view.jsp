@@ -196,9 +196,7 @@
             <li><a href="/action/publication/${publication.zdbID}/efgs">Engineered Foreign Genes</a> (${efgCount})</li>
         </c:if>
         <c:if test="${cloneProbeCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-msegselect.apg&pubId=${publication.zdbID}">Clones and Probes</a>
-                (${cloneProbeCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/clones">Clones and Probes</a> (${cloneProbeCount})</li>
         </c:if>
         <c:if test="${expressionCount > 0 || phenotypeCount > 0}">
             <li><a href="/action/figure/all-figure-view/${publication.zdbID}">${expressionAndPhenotypeLabel}</a></li>

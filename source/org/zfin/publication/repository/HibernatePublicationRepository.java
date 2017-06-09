@@ -1159,17 +1159,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<SequenceTargetingReagent>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
     }
 
+    public PaginationResult<Clone> getClonesByPublication(String pubID, PaginationBean paginationBean) {
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_SEG);
+        ScrollableResults results = getMarkersByPublicationQuery(pubID, markerTypes).scroll();
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, results);
+    }
+
     private List getMarkersByPublication(String pubID, List<MarkerType> markerTypes) {
+        return getMarkersByPublicationQuery(pubID, markerTypes).list();
+    }
+
+    private Query getMarkersByPublicationQuery(String pubID, List<MarkerType> markerTypes) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct marker from Marker marker, PublicationAttribution pub" +
-                "     where pub.dataZdbID = marker.zdbID" +
-                "           and pub.publication.zdbID = :pubID " +
+        String hql = "select distinct marker from Marker marker, RecordAttribution attr" +
+                "     where attr.dataZdbID = marker.zdbID" +
+                "           and attr.sourceZdbID = :pubID " +
                 "           and marker.markerType in (:markerType)  " +
                 "    order by marker.abbreviationOrder ";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameterList("markerType", markerTypes);
-        return query.list();
+        return query;
     }
 
     public List<Feature> getFeaturesByPublication(String pubID) {

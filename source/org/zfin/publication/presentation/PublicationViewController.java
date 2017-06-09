@@ -13,6 +13,7 @@ import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -35,6 +36,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.util.ZfinStringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -285,8 +287,8 @@ public class PublicationViewController {
 
     @RequestMapping("/publication/{zdbID}/efgs")
     public String showEFGsList(@PathVariable String zdbID,
-                                       Model model,
-                                       HttpServletResponse response) {
+                               Model model,
+                               HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
 
         if (publication == null) {
@@ -300,6 +302,32 @@ public class PublicationViewController {
         model.addAttribute("markers", publicationRepository.getMarkersByTypeForPublication(publication.getZdbID(), efgType));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Engineered Foreign Genes"));
         return "publication/publication-egf-list.page";
+    }
+
+    @RequestMapping("/publication/{zdbID}/clones")
+    public String showClonesList(@PathVariable String zdbID,
+                                 @ModelAttribute("pagination") PaginationBean pagination,
+                                 Model model,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) {
+        Publication publication = getPublication(zdbID);
+
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        pagination.setMaxDisplayRecords(100);
+
+        PaginationResult<Clone> clones = publicationRepository.getClonesByPublication(publication.getZdbID(), pagination);
+
+        pagination.setTotalRecords(clones.getTotalCount());
+        pagination.setRequestUrl(request.getRequestURL());
+        model.addAttribute("pagination", pagination);
+        model.addAttribute("publication", publication);
+        model.addAttribute("clones", clones.getPopulatedResults());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Clones and Probes"));
+        return "publication/publication-clone-list.page";
     }
 
     @ResponseBody
