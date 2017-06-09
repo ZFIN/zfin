@@ -47,7 +47,7 @@ begin
 
 
 
-  if (substring(vMrkrName,1,11) == 'WITHDRAWN: '  OR  substring(vMrkrAbbrev,1,11) == 'WITHDRAWN: ' )
+  if (substring(vMrkrName,1,11) = 'WITHDRAWN: '  OR  substring(vMrkrAbbrev,1,11) = 'WITHDRAWN: ' )
      then
 
       raise exception 'FAIL!! No space following : for WITHDRAWN';
