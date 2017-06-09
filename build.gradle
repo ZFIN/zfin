@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.postgresql:postgresql:42.0.0'
+    }
+}
+plugins {
+    id "org.liquibase.gradle" version "1.2.4"
+}
+
 apply plugin: 'java'
 
 //apply from : '../zfinGradle/build.gradle'
@@ -6,10 +18,14 @@ def env = System.getenv()
 def dbname = env['DBNAME']
 def sourceroot = env['SOURCEROOT']
 
+dependencies {
+    compile 'org.liquibase:liquibase-core:3.4.1'
+    compile "org.liquibase:liquibase-gradle-plugin:1.1.1"
+}
 
 task deployPostgres(dependsOn: ['lib:DB_functions:postgresFunctions:deployPostgresFunctions',
                                 'lib:DB_functions:postgresProcedures:deployPostgresProcedures',
-                                'lib:DB_triggers:postgresTriggers:deployPostgresTrigger']) {
+                                'lib:DB_triggers:postgresTriggerProcedures:deployPostgresTrigger']) {
     description "Deploy all postgres code"
 }
 
@@ -52,13 +68,18 @@ sourceSets {
 }
 
 
- 
-/*
-list all functions in postgres
+def changeLog = "$projectDir/source/org/zfin/db/load/db.changelog.master.xml"
 
-SELECT  proname, proargnames, prosrc
-FROM    pg_catalog.pg_namespace n
-JOIN    pg_catalog.pg_proc p
-ON      pronamespace = n.oid
-WHERE   nspname = 'public ';
-*/
+task buildDatabase() {
+    println dbname
+    println "Running liquibase updates..."
+    println "change logs: "+changeLog
+    liquibase {
+        activities {
+            main {
+                changeLogFile changeLog
+                url 'jdbc:postgresql://localhost:5432/'+dbname
+            }
+        }
+    }
+}
