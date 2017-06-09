@@ -13,7 +13,7 @@
 		       			   and mtgrpmem_mrkr_type = vType );
 
   begin 
-      if vOk == 0
+      if vOk = 0
 
       then 
         raise exception 'FAIL!: oevdisp_gene_zdb_id must have type valid in marker_group: GENEDOM' ;

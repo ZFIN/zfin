@@ -25,7 +25,7 @@ returns void as $$
 	                     from zdb_active_source
 	                     where zactvs_zdb_id = vSourceZdbId );
 
-	if ( vDataZdbId is not null and vOk_sourceId == 1)
+	if ( vDataZdbId is not null and vOk_sourceId = 1)
 	
 	then
 

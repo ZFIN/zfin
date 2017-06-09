@@ -35,7 +35,7 @@ create or replace function get_genotype_backgrounds_html_link( genoZdbId varchar
     order by geno_display_name
   loop         
       -- if background(wildtype) abbrev is the same as name, then only show name
-      if (backNameDisplay == backHandle) then
+      if (backNameDisplay = backHandle) then
 	 backName = '<a href="/' ||
 		backZdbId || '">' || '<span class="wildtype">' || backNameDisplay || '</span>' || '</a>';
       -- otherwise, show abbrev in parenthesis after name
@@ -45,7 +45,7 @@ create or replace function get_genotype_backgrounds_html_link( genoZdbId varchar
 		' (' || backHandle || ')';
       end if;
 		
-      if (backgroundList == 'unspecified') then
+      if (backgroundList = 'unspecified') then
     
            backgroundList = backName ;
       

@@ -25,7 +25,7 @@ pub_xpat_curation_status (
 begin
   
   -- Check that the parameter is not null
-  if (pubZdbId == '') then
+  if (pubZdbId = '') then
     raise exception 'Parameter is null';
   end if;
 
@@ -36,7 +36,7 @@ begin
     from publication
     where zdb_id = pubZdbId;
     
-  if (zdb_pub_count == 0) then
+  if (zdb_pub_count = 0) then
     raise exception 'Parameter is not in the Publication table';
   end if;
   
@@ -74,7 +74,7 @@ begin
     
     else
 
-      if (figure_count - text_fig_count == 0) then
+      if (figure_count - text_fig_count = 0) then
 
          xpat_cur_status = 'Text Only Curated';
 

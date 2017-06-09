@@ -23,7 +23,7 @@ jrnl_acknowledgment (
 
  begin  
   -- Check that the parameter is not null
-  if (jrnlZdbId == '') then
+  if (jrnlZdbId = '') then
     raise exception 'Parameter is null';
   end if;
 
@@ -34,7 +34,7 @@ jrnl_acknowledgment (
     from journal
     where jrnl_zdb_id = jrnlZdbId;
     
-  if (zdb_jrnl_count == 0) then
+  if (zdb_jrnl_count = 0) then
     raise exception 'Parameter is not in the Journal table';
   end if;
   

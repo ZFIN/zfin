@@ -7,7 +7,7 @@ typeName = (select tscriptt_type from transcript_type, transcript where vTscript
 if (typeName not in ('aberrant processed transcript', 'pseudogenic transcript', 'lincRNA',
    	     	    	       'piRNA', 'miRNA', 'pre miRNA', 'rRNA', 'snRNA', 'scRNA',
 			       'snoRNA', 'tRNA', 'ncRNA')
-     and vMrelType == 'transcript targets gene')
+     and vMrelType = 'transcript targets gene')
   then 
        raise exception 'FAIL!: only ncRNA transcripts can have targets relationships';
   end if;

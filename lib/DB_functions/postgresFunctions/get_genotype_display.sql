@@ -185,7 +185,7 @@ returns text as $genoDisplayHtml$
           order by gcs_significance asc, mrkr_abbrev asc , zyg_abbrev , fad2, fad desc
           loop
 
-  	  if (fad2 == featAbbrevHtml) then
+  	  if (fad2 = featAbbrevHtml) then
 	       continue ;
        	  else
      
@@ -197,7 +197,7 @@ returns text as $genoDisplayHtml$
             end if;
         
 	
-	    if (zygAllele == '/allele') then
+	    if (zygAllele = '/allele') then
                 zygAllele = '/' || featAbbrev;
 	    else
 	    end if;
@@ -206,7 +206,7 @@ returns text as $genoDisplayHtml$
                 zygAllele = '';
             end if;
                
-            if (genoDisplayHtml == '') then
+            if (genoDisplayHtml = '') then
                 genoDisplayHtml =  featAbbrevHtml ;
           
 	    else
