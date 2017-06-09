@@ -279,8 +279,14 @@ public class PublicationViewController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
+        List<Marker> markers = publicationRepository.getGenesByPublication(publication.getZdbID(), false);
+
+        if (markers.size() == 1) {
+            return "redirect:/" + markers.get(0).getZdbID();
+        }
+
         model.addAttribute("publication", publication);
-        model.addAttribute("markers", publicationRepository.getGenesByPublication(publication.getZdbID(), false));
+        model.addAttribute("markers", markers);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Genes / Markers"));
         return "publication/publication-marker-list.page";
     }
@@ -299,7 +305,13 @@ public class PublicationViewController {
         model.addAttribute("publication", publication);
 
         MarkerType efgType = markerRepository.getMarkerTypeByName(Marker.Type.EFG.name());
-        model.addAttribute("markers", publicationRepository.getMarkersByTypeForPublication(publication.getZdbID(), efgType));
+        List<Marker> markers = publicationRepository.getMarkersByTypeForPublication(publication.getZdbID(), efgType);
+
+        if (markers.size() == 1) {
+            return "redirect:/" + markers.get(0).getZdbID();
+        }
+
+        model.addAttribute("markers", markers);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Engineered Foreign Genes"));
         return "publication/publication-egf-list.page";
     }
@@ -320,6 +332,10 @@ public class PublicationViewController {
         pagination.setMaxDisplayRecords(100);
 
         PaginationResult<Clone> clones = publicationRepository.getClonesByPublication(publication.getZdbID(), pagination);
+
+        if (clones.getTotalCount() == 1) {
+            return "redirect:/" + clones.getPopulatedResults().get(0).getZdbID();
+        }
 
         pagination.setTotalRecords(clones.getTotalCount());
         pagination.setRequestUrl(request.getRequestURL());
@@ -355,6 +371,11 @@ public class PublicationViewController {
 
         MarkerType markerType = markerRepository.getMarkerTypeByName(type);
         List<SequenceTargetingReagent> strs = publicationRepository.getSTRsByPublication(publication.getZdbID(), markerType);
+
+        if (strs.size() == 1) {
+            return "redirect:/" + strs.get(0).getZdbID();
+        }
+
         List<STRTargetRow> rows = new ArrayList<>(strs.size());
         for (SequenceTargetingReagent str : strs) {
             for (Marker target : str.getTargetGenes()) {
