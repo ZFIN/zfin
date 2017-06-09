@@ -1,4 +1,3 @@
 include 'lib:DB_functions:postgresFunctions'
-include 'lib:DB_functions:postgresProcedures'
 include 'lib:DB_triggers:postgresTriggerProcedures'
 include 'server_apps:apache'

@@ -21,7 +21,7 @@ int runSqlFiles(String directory){
         File file ->
             if (file.getName().endsWith(".sql")) {
                 String command = "psql -d " + dbname + " -a -f " + file.getAbsoluteFile();
-                println command
+                //println command
                 command.execute().text
                 numberOfTrigger++;
             }
@@ -29,19 +29,3 @@ int runSqlFiles(String directory){
     return numberOfTrigger;
 }
 
-
-/*
-list all functions in postgres
-
-SELECT  proname, proargnames, prosrc
-FROM    pg_catalog.pg_namespace n
-JOIN    pg_catalog.pg_proc p
-ON      pronamespace = n.oid
-WHERE   nspname = 'public ';
-
-SELECT  count(*)
-FROM    pg_catalog.pg_namespace n
-JOIN    pg_catalog.pg_proc p
-ON      pronamespace = n.oid
-WHERE   nspname = 'public ';
-*/

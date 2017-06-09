@@ -24,33 +24,39 @@ dependencies {
 }
 
 task deployPostgres(dependsOn: ['lib:DB_functions:postgresFunctions:deployPostgresFunctions',
-                                'lib:DB_functions:postgresProcedures:deployPostgresProcedures',
                                 'lib:DB_triggers:postgresTriggerProcedures:deployPostgresTrigger']) {
     description "Deploy all postgres code"
 }
 
-
+defaultTasks 'defaultTask'
 
 project.ext.set("dbname", dbname)
 project.ext.set("sourceroot", sourceroot)
 
 task loadDb(dependsOn: ['lib:DB_functions:postgresFunctions:killConnectionsToPostgres']) {
     doLast {
-       File unloads = file('/research/zunloads/databases/postgres_self_dumps/darwindb/')
-       File latest = unloads.listFiles().last()
-       String unloadPath = latest.getPath()
+        File unloads = file('/research/zunloads/databases/postgres_self_dumps/darwindb/')
+        String unloadPath;
+        if (unloads.exists()) {
+            File latest = unloads.listFiles().last()
+            unloadPath = latest.getPath()
+        }
 
-       //use -DB=... path if specified, also, yes, I'm being cute so that it will be -DB=...
-       //rather than -Ddb=...
-       if (System.getProperty("B")) { unloadPath = System.getProperty("B") }
+        //use -DB=... path if specified, also, yes, I'm being cute so that it will be -DB=...
+        //rather than -Ddb=...
+        if (System.getProperty("B")) {
+            unloadPath = System.getProperty("B")
+        }
 
-       //might as well support -Dunload also
-       if (System.getProperty("unload")) { unloadPath = System.getProperty("unload") }
+        //might as well support -Dunload also
+        if (System.getProperty("unload")) {
+            unloadPath = System.getProperty("unload")
+        }
 
-       println "Loading $unloadPath into $dbname"
-       exec { commandLine 'dropdb', dbname }
-       exec { commandLine 'createdb', dbname }
-       exec { commandLine "bash", "-c", "psql --set ON_ERROR_STOP=on $dbname < $unloadPath" }
+        println "Loading $unloadPath into $dbname"
+        exec { commandLine 'dropdb', dbname }
+        exec { commandLine 'createdb', dbname }
+        exec { commandLine "bash", "-c", "psql --set ON_ERROR_STOP=on $dbname < $unloadPath" }
     }
 }
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
@@ -67,19 +73,39 @@ sourceSets {
     }
 }
 
-
 def changeLog = "$projectDir/source/org/zfin/db/load/db.changelog.master.xml"
 
 task buildDatabase() {
-    println dbname
-    println "Running liquibase updates..."
-    println "change logs: "+changeLog
     liquibase {
         activities {
             main {
                 changeLogFile changeLog
-                url 'jdbc:postgresql://localhost:5432/'+dbname
+                url 'jdbc:postgresql://localhost:5432/' + dbname
             }
         }
     }
 }
+
+update {
+/*
+    println dbname
+    println "Running liquibase updates..."
+    println "change logs: " + changeLog
+*/
+
+}
+
+task defaultTask {
+/*
+    println "Hello"
+    subprojects.each { subproject ->
+        println subproject.path
+        println subproject.defaultTasks
+        subproject.defaultTasks.each {
+            println subproject.path+":"+it
+            dependsOn subproject.path+":"+it
+        }
+    }
+*/
+}
+

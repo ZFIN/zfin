@@ -5,6 +5,7 @@ apply plugin: 'java'
 def env = System.getenv()
 def targetroot = env['TARGETROOT']
 
+defaultTasks 'deployApacheFiles'
 
 task deployApacheFiles {
     doLast{
@@ -14,15 +15,8 @@ task deployApacheFiles {
             exclude 'Makefile'
 	    exclude 'build.gradle'
         }
+        println 'deploy apache files'
     }
 }
 
-/*
-list all functions in postgres
-
-SELECT  proname, proargnames, prosrc
-FROM    pg_catalog.pg_namespace n
-JOIN    pg_catalog.pg_proc p
-ON      pronamespace = n.oid
-WHERE   nspname = 'public ';
-*/
+println defaultTasks
