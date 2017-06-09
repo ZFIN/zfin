@@ -1,0 +1,37 @@
+drop trigger if exists db_link_trigger on db_link;
+
+create or replace function db_link()
+returns trigger as
+$BODY$
+
+declare dblink_acc_num db_link.dblink_acc_num%TYPE;
+declare dblink_acc_num_display db_link.dblink_acc_num_display%TYPE;
+
+
+begin
+
+     dblink_Acc_num = (select scrub_char(new_db_link.dblink_acc_num) );
+     NEW.dblink_acc_num = dblink_acc_num;
+
+     dblink_acc_num_display = (select get_dblink_acc_num_display(
+	NEW.dblink_fdbcont_zdb_id,
+	NEW.dblink_acc_num)) ;
+     NEW.dblink_acc_num_display = dblink_acc_num_display;
+   
+     select  p_dblink_has_parent(NEW.dblink_linked_recid) ;
+
+     select  p_check_caps_acc_num(NEW.dblink_fdbcont_zdb_id, NEW.dblink_acc_num);
+
+     select  checkDblinkTranscriptWithdrawn(NEW.dblink_zdb_id,
+					    NEW.dblink_linked_recid,
+					    NEW.dblink_fdbcont_zdb_id);
+ --TODO: return into two variables
+-- get_genbank_dblink_length_type 
+     RETURN NEW;
+
+end;
+$BODY$ LANGUAGE plpgsql;
+
+create trigger db_link_trigger before insert or update on db_link
+ for each row
+ execute procedure db_link();
