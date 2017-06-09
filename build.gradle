@@ -34,7 +34,7 @@ task deployPostgres(dependsOn: ['lib:DB_functions:postgresFunctions:deployPostgr
 project.ext.set("dbname", dbname)
 project.ext.set("sourceroot", sourceroot)
 
-task loadDb(dependsOn: ['lib:DB_functions:postgresFunction:killConnectionsToPostgres']) {
+task loadDb(dependsOn: ['lib:DB_functions:postgresFunctions:killConnectionsToPostgres']) {
     doLast {
        File unloads = file('/research/zunloads/databases/postgres_self_dumps/darwindb/')
        File latest = unloads.listFiles().last()
