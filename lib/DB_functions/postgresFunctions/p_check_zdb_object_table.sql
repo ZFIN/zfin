@@ -5,8 +5,8 @@
   --REPLACES:
   --sub zdbObjectHomeTableColumnExist 
 
-  create or replace function p_check_zdb_object_table (vTableName varchar(128), 
-	  				     vColumnName varchar(35))
+  create or replace function p_check_zdb_object_table (vTableName text, 
+	  				     vColumnName text)
   returns void as $$
   declare vOkInSystables		integer;
    vOkInSyscolumns	integer;
