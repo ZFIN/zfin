@@ -92,6 +92,8 @@
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
 <filter token="JAVA_HOME" value="${JAVA_HOME}"/>
 <filter token="JAVA_OPTS" value="${JAVA_OPTS}"/>
+<filter token="JDBC_DRIVER" value="${JDBC_DRIVER}"/>
+<filter token="JDBC_URL" value="${JDBC_URL}"/>
 <filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>
 <filter token="JENKINS_PORT" value="${JENKINS_PORT}"/>
 <filter token="JPDA_ADDRESS" value="${JPDA_ADDRESS}"/>
@@ -126,6 +128,8 @@
 <filter token="PDF_PATH" value="${PDF_PATH}"/>
 <filter token="PGBINDIR" value="${PGBINDIR}"/>
 <filter token="PGDATA" value="${PGDATA}"/>
+<filter token="PG_XML_COMMENT_CLOSE" value="${PG_XML_COMMENT_CLOSE}"/>
+<filter token="PG_XML_COMMENT_OPEN" value="${PG_XML_COMMENT_OPEN}"/>
 <filter token="PRODUCTION_NOTIFICATION_EMAIL" value="${PRODUCTION_NOTIFICATION_EMAIL}"/>
 <filter token="REQUEST_NEW_ANATOMY_EMAIL" value="${REQUEST_NEW_ANATOMY_EMAIL}"/>
 <filter token="ROOT_PATH" value="${ROOT_PATH}"/>

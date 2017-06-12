@@ -152,7 +152,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "     and not exists ( " +
                 "         select 'x' from marker " +
                 "         where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
-                "         and mrkr_abbrev[1,10] = 'WITHDRAWN:' " +
+                "         and substring(mrkr_abbrev from 1 for 10) = 'WITHDRAWN:' " +
                 "     ) ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("markerZdbID", marker.getZdbID());
@@ -226,7 +226,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "     ( " +
                 "     select 'x' from marker " +
                 "     where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
-                "     and mrkr_abbrev[1,10] = 'WITHDRAWN:' " +
+                "     and substring(mrkr_abbrev from 1 for 10) = 'WITHDRAWN:' " +
                 "     ) " +
                 "     and not exists " +
                 "     ( " +
@@ -264,7 +264,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "         ( " +
                 "           select 'x' from marker " +
                 "             where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
-                "             and mrkr_abbrev[1,10] = 'WITHDRAWN:' " +
+                "             and substring(mrkr_abbrev from 1 for 10) = 'WITHDRAWN:' " +
                 "         ) " +
                 "         and not exists " +
                 "         ( " +
@@ -372,7 +372,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "          and not exists ( " +
                 "             select 'x' from marker " +
                 "             where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
-                "             and mrkr_abbrev[1,10] = 'WITHDRAWN:' " +
+                "             and substring(mrkr_abbrev from 1 for 10) = 'WITHDRAWN:' " +
                 "         ) " +
                 "         group by m.mrkr_zdb_id, m.mrkr_abbrev, pub.zdb_id, pub.pub_mini_ref ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
