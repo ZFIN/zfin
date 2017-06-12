@@ -13,7 +13,7 @@ begin
      feature_name_order = (select zero_pad(feature_name_order));
      NEW.feature_name_order = feature_name_order;
 
-     select fhist_event(NEW.feature_zdb_id,
+     perform fhist_event(NEW.feature_zdb_id,
        		'reassigned', NEW.feature_name, OLD.feature_name);
      
      RETURN NEW;

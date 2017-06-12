@@ -1,6 +1,5 @@
 drop trigger if exists feature_abbrev_trigger on publication;
 
-
 create or replace function feature_abbrev()
 returns trigger as
 $BODY$
@@ -12,7 +11,7 @@ begin
      feature_abbrev = (select scrub_char(feature_abbrev));
      NEW.feature_abbrev = feature_abbrev;
      
-     select checkFeatureAbbrev(NEW.feature_zdb_id,
+     perform checkFeatureAbbrev(NEW.feature_zdb_id,
        		 		     NEW.feature_type, 
        		 		     NEW.feature_abbrev, 
 				     NEW.feature_lab_prefix_id, 
@@ -27,12 +26,12 @@ begin
      feature_abbrev_order = (select zero_pad(feature_abbrev_order));
      NEW.feature_abbrev_order = feature_abbrev_order;
 
-     select fhist_event(NEW.feature_zdb_id,
+     perform fhist_event(NEW.feature_zdb_id,
        		'reassigned', NEW.feature_abbrev, OLD.feature_abbrev);
      
-     select checkDupFeaturePrefixLineDesignation (NEW.feature_lab_prefix_id, NEW.feature_line_number);
+     perform checkDupFeaturePrefixLineDesignation (NEW.feature_lab_prefix_id, NEW.feature_line_number);
 
-     select populate_feature_tracking(NEW.feature_Abbrev, NEW.feature_name, NEW.feature_zdb_id); 
+     perform populate_feature_tracking(NEW.feature_Abbrev, NEW.feature_name, NEW.feature_zdb_id); 
 
      RETURN NEW;
 end;

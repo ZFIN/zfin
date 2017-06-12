@@ -10,7 +10,7 @@ begin
      exp_name = (Select scrub_char(NEW.exp_name));
      NEW.exp_name = exp_name;
 
-     select p_insert_into_record_attribution_tablezdbids(
+     perform p_insert_into_record_attribution_tablezdbids(
 			NEW.exp_zdb_id,
 			NEW.exp_source_zdb_id );
     

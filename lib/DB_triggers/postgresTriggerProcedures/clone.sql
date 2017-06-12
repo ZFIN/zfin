@@ -5,7 +5,7 @@ returns trigger as
 $BODY$
 
 begin
-     select p_update_clone_relationship(NEW.clone_mrkr_zdb_id, NEW.clone_problem_type);
+     perform p_update_clone_relationship(NEW.clone_mrkr_zdb_id, NEW.clone_problem_type);
      
      RETURN NEW;
 

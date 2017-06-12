@@ -14,8 +14,8 @@ begin
     geno_complexity_order = (Select update_geno_sort_order(NEW.geno_zdb_id));
     NEW.geno_complexity_order = geno_complexity_order;
 
-    select p_update_related_fish_names(NEW.geno_zdb_id);
-    select p_update_geno_nickname(NEW.geno_zdb_id,
+    perform p_update_related_fish_names(NEW.geno_zdb_id);
+    perform p_update_geno_nickname(NEW.geno_zdb_id,
 				  NEW.geno_handle);
     
 end;
