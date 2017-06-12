@@ -341,6 +341,7 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Marker> getGenesByPublication(String pubID);
     List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
+    List<Marker> getGenesAndMarkersByPublication(String pubID);
     List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType);
     List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType);
     PaginationResult<Clone> getClonesByPublication(String pubID, PaginationBean paginationBean);

@@ -25,9 +25,11 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.feature.FeatureMarkerRelationshipType;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
@@ -1149,6 +1151,39 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             markerTypes.add(markerRepository.getMarkerTypeByName(Marker.Type.EFG.toString()));
         }
         return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
+    }
+
+    public List<Marker> getGenesAndMarkersByPublication(String pubID) {
+        // directly annotated markers
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM);
+        markerTypes.addAll(markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MK));
+        Set<Marker> markers = new TreeSet<>(getMarkersByPublication(pubID, markerTypes));
+
+        // markers pulled through features
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct marker from Marker marker, RecordAttribution attr, Feature feature, FeatureMarkerRelationship fmrel " +
+                "where attr.dataZdbID = feature.zdbID " +
+                "and attr.sourceZdbID = :pubID " +
+                "and fmrel.type = :isAllele " +
+                "and fmrel.feature = feature " +
+                "and fmrel.marker = marker ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setParameter("isAllele", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
+        markers.addAll(query.list());
+
+        // markers pulled through MOs
+        hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
+                "where attr.sourceZdbID = :pubID " +
+                "and attr.dataZdbID = mrel.firstMarker " +
+                "and mrel.secondMarker = marker " +
+                "and mrel.firstMarker.markerType.name = :mo ";
+        query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setString("mo", Marker.Type.MRPHLNO.name());
+        markers.addAll(query.list());
+
+        return new ArrayList<>(markers);
     }
 
     public List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType) {

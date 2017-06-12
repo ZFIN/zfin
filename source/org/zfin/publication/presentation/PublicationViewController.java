@@ -279,7 +279,7 @@ public class PublicationViewController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        List<Marker> markers = publicationRepository.getGenesByPublication(publication.getZdbID(), false);
+        List<Marker> markers = publicationRepository.getGenesAndMarkersByPublication(publication.getZdbID());
 
         if (markers.size() == 1) {
             return "redirect:/" + markers.get(0).getZdbID();
