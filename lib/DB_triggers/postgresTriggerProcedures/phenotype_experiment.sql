@@ -5,7 +5,7 @@ returns trigger as
 $BODY$
 begin
 
-   select p_stg_hours_consistent(NEW.phenox_start_stg_zdb_id,
+   perform p_stg_hours_consistent(NEW.phenox_start_stg_zdb_id,
 				 NEW.phenox_end_stg_zdb_id );
 
    RETURN NEW;

@@ -30,12 +30,12 @@ begin
      mrkr_comments = (select scrub_char(NEW.mrkr_comments));
      NEW.mrkr_comments = mrkr_comments;
 
-     select p_check_mrkr_abbrev(NEW.mrkr_name,
+     perform p_check_mrkr_abbrev(NEW.mrkr_name,
 				NEW.mrkr_abbrev,
 				NEW.mrkr_type );
-     select mhist_event(NEW.mrkr_zdb_id, '',NEW.mrkr_abbrev, '',NEW.mrkr_name);
+     perform mhist_event(NEW.mrkr_zdb_id, '',NEW.mrkr_abbrev, '',NEW.mrkr_name);
 
-     select p_populate_go_root_terms(NEW.mrkr_zdb_id,
+     perform p_populate_go_root_terms(NEW.mrkr_zdb_id,
 				     NEW.mrkr_name,
 				     NEW.mrkr_type);
 

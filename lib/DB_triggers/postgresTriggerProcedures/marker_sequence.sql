@@ -6,7 +6,7 @@ $BODY$
 declare recattrib_source_zdb_id text;
 begin
 
-     select p_marker_sequence_unique(NEW.seq_mrkr_zdb_id, 
+     perform p_marker_sequence_unique(NEW.seq_mrkr_zdb_id, 
 				     NEW.seq_sequence, 
 				     NEW.seq_sequence_2);
      RETURN NEW;

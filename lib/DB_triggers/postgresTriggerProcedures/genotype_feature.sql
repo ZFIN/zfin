@@ -6,7 +6,7 @@ $BODY$
 
 begin
 
-     select  p_check_tginsertion_has_construct_relationship(
+     perform  p_check_tginsertion_has_construct_relationship(
 			NEW.genofeat_feature_zdb_id);
      
      RETURN NEW;

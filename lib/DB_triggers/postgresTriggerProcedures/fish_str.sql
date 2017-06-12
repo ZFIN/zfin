@@ -6,7 +6,7 @@ $BODY$
 
 begin
 
-     select p_update_related_fish_for_str(NEW.fishstr_str_zdb_id); 
+     perform p_update_related_fish_for_str(NEW.fishstr_str_zdb_id); 
      
      RETURN NEW;
 

@@ -5,7 +5,7 @@ returns trigger as
 $BODY$
 begin
 
-     select checkDblinkOneToOneAccessionMapping (NEW.ooa_dblink_zdb_id, NEW.ooa_feature_zdb_id, NEW.ooa_dblink_acc_num);
+     perform checkDblinkOneToOneAccessionMapping (NEW.ooa_dblink_zdb_id, NEW.ooa_feature_zdb_id, NEW.ooa_dblink_acc_num);
      RETURN NEW;
 
 end;
