@@ -110,16 +110,16 @@ public class MarkerRelationshipController {
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, true));
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
         for (int i = 0; i < cloneRelationships.size(); i++){
-            MarkerRelationshipPresentation student = cloneRelationships.get(i);
+            MarkerRelationshipPresentation mrp = cloneRelationships.get(i);
 
 
             if (interacts.equals("no")) {
-                if (student.getRelationshipType().contains("interacts with")) {
+                if (mrp.getRelationshipType().contains("interacts with")) {
                     cloneRelationships.remove(i);
                 }
             }
             if (interacts.equals("yes")) {
-                if (!student.getRelationshipType().contains("interacts with")) {
+                if (!mrp.getRelationshipType().contains("interacts with")) {
                     cloneRelationships.remove(i);
                 }
             }
