@@ -6,10 +6,10 @@ $BODY$
 
 begin
      
-   select p_check_submitter_is_root(NEW.xpatinf_curator_zdb_id);
-   select p_check_fx_postcomposed_terms(NEW.xpatinf_superterm_zdb_id,NEW.xpatinf_subterm_zdb_id);
-   select p_term_is_not_obsolete_or_secondary(NEW.xpatinf_superterm_zdb_id);
-   select p_term_is_not_obsolete_or_secondary(NEW.xpatinf_subterm_zdb_id);	 
+   perform p_check_submitter_is_root(NEW.xpatinf_curator_zdb_id);
+   perform p_check_fx_postcomposed_terms(NEW.xpatinf_superterm_zdb_id,NEW.xpatinf_subterm_zdb_id);
+   perform p_term_is_not_obsolete_or_secondary(NEW.xpatinf_superterm_zdb_id);
+   perform p_term_is_not_obsolete_or_secondary(NEW.xpatinf_subterm_zdb_id);	 
 
 
      RETURN NEW;

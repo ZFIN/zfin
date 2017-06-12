@@ -6,13 +6,13 @@ $BODY$
 
 begin
      
-     select p_insert_into_record_attribution_tablezdbids(NEW.xpatex_zdb_id 
+     perform p_insert_into_record_attribution_tablezdbids(NEW.xpatex_zdb_id 
     ,NEW.xpatex_source_zdb_id );
 
-     select p_insert_into_record_attribution_datazdbids(NEW.xpatex_gene_zdb_id 
+     perform p_insert_into_record_attribution_datazdbids(NEW.xpatex_gene_zdb_id 
     ,NEW.xpatex_source_zdb_id );
 
-     select check_xpat_null_valid(NEW.xpatex_gene_zdb_id, NEW.xpatex_probe_feature_zdb_id, NEW.xpatex_atb_zdb_id);
+     perform check_xpat_null_valid(NEW.xpatex_gene_zdb_id, NEW.xpatex_probe_feature_zdb_id, NEW.xpatex_atb_zdb_id);
 
      RETURN NEW;
 

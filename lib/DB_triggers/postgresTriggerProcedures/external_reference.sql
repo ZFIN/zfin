@@ -10,7 +10,7 @@ begin
      exref_reference = (select scrub_char(exref_reference));
      NEW.exref_reference = exref_reference;
 
-     select p_insert_into_record_attribution_datazdbids (
+     perform p_insert_into_record_attribution_datazdbids (
 		NEW.exref_data_zdb_id, NEW.exref_reference);
 
 

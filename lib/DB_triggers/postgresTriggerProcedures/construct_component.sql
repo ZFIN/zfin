@@ -5,7 +5,7 @@ returns trigger as
 $BODY$
 begin
 
-     select update_construct_name (NEW.cc_construct_zdb_id, NEW.cc_component_zdb_id);
+     perform update_construct_name (NEW.cc_construct_zdb_id, NEW.cc_component_zdb_id);
 
      RETURN NEW;
 

@@ -6,8 +6,8 @@ $BODY$
 
 begin
      
-     select p_disease_annotation_term_is_from_do(NEW.dat_term_zdb_id);
-     select p_insert_into_record_attribution_datazdbids(
+     perform p_disease_annotation_term_is_from_do(NEW.dat_term_zdb_id);
+     perform p_insert_into_record_attribution_datazdbids(
                         NEW.dat_term_zdb_id,
                         NEW.dat_source_zdb_id);
      RETURN NEW;

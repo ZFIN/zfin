@@ -18,11 +18,11 @@ begin
 	NEW.dblink_acc_num)) ;
      NEW.dblink_acc_num_display = dblink_acc_num_display;
    
-     select  p_dblink_has_parent(NEW.dblink_linked_recid) ;
+     perform  p_dblink_has_parent(NEW.dblink_linked_recid) ;
 
-     select  p_check_caps_acc_num(NEW.dblink_fdbcont_zdb_id, NEW.dblink_acc_num);
+     perform  p_check_caps_acc_num(NEW.dblink_fdbcont_zdb_id, NEW.dblink_acc_num);
 
-     select  checkDblinkTranscriptWithdrawn(NEW.dblink_zdb_id,
+     perform  checkDblinkTranscriptWithdrawn(NEW.dblink_zdb_id,
 					    NEW.dblink_linked_recid,
 					    NEW.dblink_fdbcont_zdb_id);
  --TODO: return into two variables

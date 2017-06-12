@@ -22,7 +22,7 @@ begin
      feature_abbrev_order = (Select zero_pad(NEW.feature_abbrev_order));
      NEW.feature_abbrev_order = feature_abbrev_order;
 
-     select checkFeatureAbbrev(NEW.feature_zdb_id,
+     perform checkFeatureAbbrev(NEW.feature_zdb_id,
        		 		     NEW.feature_type, 
        		 		     NEW.feature_abbrev, 
 				     NEW.feature_lab_prefix_id, 
@@ -34,11 +34,11 @@ begin
 				     NEW.feature_tg_suffix,
 				     NEW.feature_known_insertion_site);
   
-     select fhist_event(NEW.feature_zdb_id,
+     perform fhist_event(NEW.feature_zdb_id,
        		'assigned', NEW.feature_name,NEW.feature_abbrev);
 
-     select checkDupFeaturePrefixLineDesignation (NEW.feature_lab_prefix_id, NEW.feature_line_number);
-     select populate_feature_Tracking(NEW.feature_abbrev, NEW.feature_name, NEW.feature_zdb_id);
+     perform checkDupFeaturePrefixLineDesignation (NEW.feature_lab_prefix_id, NEW.feature_line_number);
+     perform populate_feature_Tracking(NEW.feature_abbrev, NEW.feature_name, NEW.feature_zdb_id);
 
      RETURN NEW;
 
