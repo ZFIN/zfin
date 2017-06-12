@@ -37,6 +37,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -120,6 +121,7 @@ public class GeneViewController {
         // (Antibodies)
         geneBean.setRelatedAntibodies(markerRepository.getRelatedMarkerDisplayForTypes(
                 gene, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
+
 
         geneBean.setPlasmidDBLinks(
                 markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PLASMIDS));

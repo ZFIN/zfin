@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerRelationshipType;
 import org.zfin.marker.MarkerTypeGroup;
+import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
@@ -49,7 +51,7 @@ public class MarkerRelationshipController {
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
-
+    private static Logger logger = Logger.getLogger(MarkerRelationshipController.class);
     @InitBinder("markerRelationshipBean")
     public void initRelationshipBinder(WebDataBinder binder) {
         binder.setValidator(new MarkerRelationshipBeanValidator());
@@ -60,13 +62,22 @@ public class MarkerRelationshipController {
         binder.setValidator(new MarkerReferenceBeanValidator());
     }
 
+
+
     @ResponseBody
-    @RequestMapping("/relationshipTypes/type")
-    public Collection<String> getRelationshipTypes(@RequestParam(name = "markerId", required = true) String markerId) {
+    @RequestMapping("/{markerId}/relationshipTypes")
+    public Collection<String> getRelationshipTypes(@PathVariable String markerId,@RequestParam(name = "interacts", required = true) String interacts) {
 
         Marker marker = markerRepository.getMarkerByID(markerId);
 
+
         Collection<String> relType=markerRepository.getMarkerRelationshipTypesForMarkerEdit(marker);
+        if (interacts.equals("no")) {
+            relType.removeIf(s -> s.contains("interacts with"));
+        }
+        if (interacts.equals("yes")) {
+            relType.removeIf(s -> !(s.contains("interacts with")));
+        }
         return relType;
 
     }
@@ -90,13 +101,37 @@ public class MarkerRelationshipController {
 
     @ResponseBody
     @RequestMapping(value = "/{markerId}/relationshipsForEdit", method = RequestMethod.GET)
-    public Collection<MarkerRelationshipPresentation> getMarkerRelationshipsForEdit(@PathVariable String markerId) {
+    public Collection<MarkerRelationshipPresentation> getMarkerRelationshipsForEdit(@PathVariable String markerId,@RequestParam(name = "interacts", required = true) String interacts) {
        MarkerRelationshipSupplierComparator markerRelationshipSupplierComparator = new MarkerRelationshipSupplierComparator();
 
         Marker marker = markerRepository.getMarkerByID(markerId);
         List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<>();
+
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, true));
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
+        for (int i = 0; i < cloneRelationships.size(); i++){
+            MarkerRelationshipPresentation student = cloneRelationships.get(i);
+
+
+            if (interacts.equals("no")) {
+                if (student.getRelationshipType().contains("interacts with")) {
+                    cloneRelationships.remove(i);
+                }
+            }
+            if (interacts.equals("yes")) {
+                if (!student.getRelationshipType().contains("interacts with")) {
+                    cloneRelationships.remove(i);
+                }
+            }
+
+    }
+
+  /*if (interacts.equals("no")) {
+            cloneRelationships.removeIf(s -> (s.getName().contains("interact")));
+        }
+        if (interacts.equals("yes")) {
+            cloneRelationships.removeIf(s -> !(s.getName().contains("interact")));
+        }*/
         Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);
 
         return cloneRelationships;
