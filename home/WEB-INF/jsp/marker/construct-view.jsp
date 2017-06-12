@@ -66,7 +66,7 @@
     <%--link to the facet search result if there are more than 50 features --%>
    <c:choose>
         <c:when test="${formBean.transgenics != null && fn:length(formBean.transgenics) > 50 }">
-            <zfin2:subsection title="GENOMIC FEATURES  THAT UTILIZE"> <span class="name-value"><zfin:name entity="${formBean.marker}"/><i>${formBean.marker.name}</i></span>
+            <zfin2:subsection title="GENOMIC FEATURES  THAT UTILIZE <i>${formBean.marker.name}</i>">
                 <table class="summary horizontal-solidblock">
                     <tr>
                         <td>
@@ -79,7 +79,7 @@
         </c:when>
         <c:otherwise>
             <div id="transgenics" class="summary">
-                <zfin2:subsection test="${!empty formBean.transgenics}" showNoData="true" title="GENOMIC FEATURES  THAT UTILIZE"> <span class="name-value"><zfin:name entity="${formBean.marker}"/></span>
+                <zfin2:subsection test="${!empty formBean.transgenics}" showNoData="true" title="GENOMIC FEATURES  THAT UTILIZE <i>${formBean.marker.name}</i>">
 
                     <table id="features-table" class="summary rowstripes">
                         <tr>
@@ -120,7 +120,7 @@
     </c:choose>
 <c:choose>
     <c:when test="${formBean.transgenics != null && fn:length(formBean.transgenics) > 50 }">
-        <zfin2:subsection title="TRANSGENICS THAT UTILIZE"> <span class="name-value"><zfin:name entity="${formBean.marker}"/></span>
+        <zfin2:subsection title="TRANSGENICS THAT UTILIZE ${formBean.marker.name}">
             <table class="summary horizontal-solidblock">
                 <tr>
                     <td>
