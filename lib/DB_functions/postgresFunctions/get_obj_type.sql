@@ -4,7 +4,7 @@ declare objType zdb_object_type.zobjtype_name%TYPE ;
 
 begin   
 
-  objType := substring(zdbId from '-([A-Z]*)-') ;
+  objType = substring(zdbId from '-([A-Z]*)-') ;
 
 return objType;
 
