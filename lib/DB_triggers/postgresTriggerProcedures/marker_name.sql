@@ -1,11 +1,11 @@
-drop trigger if exists marker_name_trigger on publication;
+drop trigger if exists marker_name_trigger on marker;
 
 
 create or replace function marker_name()
 returns trigger as
 $BODY$
 declare mrkr_name marker.mrkr_name%TYPE;
-	mrkr_name_lower marker.mrkr_name_lower%TYPE;
+declare	mrkr_name_lower marker.mrkr_name_lower%TYPE;
 begin
      mrkr_name = (select scrub_char(NEW.mrkr_name));     
      NEW.mrkr_name = mrkr_name;
