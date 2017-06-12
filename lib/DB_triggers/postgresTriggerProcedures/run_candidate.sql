@@ -6,7 +6,7 @@ $BODY$
 declare runcan_occurrence_order int;
 begin
 
-     runcan_occurrence_order = (select increment_candidate_occurrences(NEW.runcan_occurrence_order));
+     runcan_occurrence_order = (select increment_candidate_occurrences(NEW.runcan_cnd_zdb_id));
      NEW.runcan_occurrence_order = runcan_occurrence_order;
      RETURN NEW;
 

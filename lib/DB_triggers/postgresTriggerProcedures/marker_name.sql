@@ -5,7 +5,7 @@ create or replace function marker_name()
 returns trigger as
 $BODY$
 declare mrkr_name marker.mrkr_name%TYPE;
-declare	mrkr_name_lower marker.mrkr_name_lower%TYPE;
+declare	mrkr_name_order marker.mrkr_name_order%TYPE;
 begin
      mrkr_name = (select scrub_char(NEW.mrkr_name));     
      NEW.mrkr_name = mrkr_name;
@@ -18,13 +18,13 @@ begin
      	    			 NEW.mrkr_abbrev,
 				 NEW.mrkr_type);
      
-     mrkr_name_lower = lower(NEW.mrkr_name);
-     NEW.mrkr_name_lower = mrkr_name_lower;
+     mrkr_name_order = zero_pad(NEW.mrkr_name);
+     NEW.mrkr_name_order = mrkr_name_lower;
 
      select p_update_related_fish_names(NEW.mrkr_zdb_id);
      select mhist_event(NEW.mrkr_zdb_id,OLD.mrkr_name,
 					NEW.mrkr_name, OLD.mrkr_abbrev, 
-					NEW.mrkr_abbrev )
+					NEW.mrkr_abbrev );
 
      RETURN NEW;
 end;
