@@ -91,8 +91,11 @@
         }
 
         // === RELATIONSHIPS ===
-        function getRelationshipTypes(markerId) {
-            return $http.get('/action/marker/relationshipTypes/type?markerId=' + markerId)
+
+
+        function getRelationshipTypes(markerId,interacts) {
+
+            return $http.get('/action/marker/'+ markerId + '/relationshipTypes?interacts=' +interacts)
                 .then(returnResponseData)
         }
 
@@ -100,8 +103,8 @@
             return $http.get('/action/marker/' + markerId + '/relationships')
                 .then(returnResponseData);
         }
-        function getRelationshipsForEdit(markerId) {
-            return $http.get('/action/marker/' + markerId + '/relationshipsForEdit')
+        function getRelationshipsForEdit(markerId,interacts) {
+            return $http.get('/action/marker/' + markerId + '/relationshipsForEdit?interacts=' +interacts)
                 .then(returnResponseData);
         }
 

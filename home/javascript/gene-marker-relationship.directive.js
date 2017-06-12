@@ -10,7 +10,8 @@
             scope: {
                 markerId: '@',
                 edit: '=',
-                markerAbbrev: '@'
+                markerAbbrev: '@',
+                interacts: '@'
                 },
             controller: GeneMarkerRelationshipController,
             controllerAs: 'mkrreln',
@@ -39,7 +40,7 @@
         init();
 
         function init() {
-            MarkerService.getRelationshipTypes(mkrreln.markerId)
+            MarkerService.getRelationshipTypes(mkrreln.markerId,mkrreln.interacts)
 
                 .then(function (relationshipTypes) {
                     mkrreln.relationshipTypes = relationshipTypes;
@@ -50,9 +51,10 @@
                 });
 
 
-            MarkerService.getRelationshipsForEdit(mkrreln.markerId)
+            MarkerService.getRelationshipsForEdit(mkrreln.markerId,mkrreln.interacts)
                 
                 .then(function (relationships) {
+
                     mkrreln.relationships = relationships;
                     })
               
