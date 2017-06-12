@@ -36,7 +36,7 @@ public class FeatureMarkerRelationshipValidationService {
                     return validateMaxIsAlleleOfRelationships(newFeatureMarkerRelationshipDTO, existingFeatureMarkerRelationshipDTOs, 1);
                 }
                 else{
-                    return validateMaxIsAlleleOfRelationships(newFeatureMarkerRelationshipDTO, existingFeatureMarkerRelationshipDTOs, 2);
+                    return validateMaxIsAlleleOfRelationships(newFeatureMarkerRelationshipDTO, existingFeatureMarkerRelationshipDTOs, 10);
                 }
             case TRANSLOC:
                 return
