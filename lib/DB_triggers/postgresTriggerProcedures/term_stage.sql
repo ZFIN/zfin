@@ -4,7 +4,7 @@ create or replace function term_stage()
 returns trigger as
 $BODY$
 begin
-	select p_stg_hours_consistent(NEW.ts_start_stg_zdb_id,
+	perform p_stg_hours_consistent(NEW.ts_start_stg_zdb_id,
 					NEW.ts_end_stg_zdb_id);
 
 end;

@@ -6,7 +6,7 @@ $BODY$
 
 begin
 
-   select populate_lab_address_update_tracking(NEW.zdb_id 
+   perform populate_lab_address_update_tracking(NEW.zdb_id 
     ,OLD.address ,OLD.address );
   
 

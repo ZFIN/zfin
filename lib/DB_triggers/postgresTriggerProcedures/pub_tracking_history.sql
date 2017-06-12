@@ -4,13 +4,13 @@ create or replace function pub_tracking_history()
 returns trigger as
 $BODY$
 begin
-	select checkPubTrackingLocationOwner (NEW.pth_pub_zdb_id,
+	perform checkPubTrackingLocationOwner (NEW.pth_pub_zdb_id,
                                                 NEW.pth_status_id,
                                                 NEW.pth_location_id,
                                                 NEW.pth_claimed_by);
-	select updatePubCompletionDate(NEW.pth_pub_zdb_id,
+	perform updatePubCompletionDate(NEW.pth_pub_zdb_id,
                                                 NEW.pth_status_id);
-	select updatePubIndexedDate(NEW.pth_pub_zdb_id,
+	perform updatePubIndexedDate(NEW.pth_pub_zdb_id,
                                                 NEW.pth_status_id);
         RETURN NEW;
 end;

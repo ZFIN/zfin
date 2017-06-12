@@ -4,7 +4,7 @@ create or replace function term_relationship()
 returns trigger as
 $BODY$
 begin
-	select p_check_anatrel_stg_consistent (NEW.termrel_term_1_zdb_id,
+	perform p_check_anatrel_stg_consistent (NEW.termrel_term_1_zdb_id,
                                                NEW.termrel_term_2_zdb_id,
                                                NEW.termrel_type);
 end;

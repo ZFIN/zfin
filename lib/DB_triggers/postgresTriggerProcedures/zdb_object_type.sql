@@ -5,7 +5,7 @@ returns trigger as
 $BODY$
 begin
 
-select p_check_zdb_object_type(NEW.zobjtype_home_table,
+   perform p_check_zdb_object_type(NEW.zobjtype_home_table,
 				NEW.zobjtype_home_zdb_id_column);
 
 end;
