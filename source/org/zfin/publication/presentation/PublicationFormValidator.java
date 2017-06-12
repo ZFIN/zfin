@@ -27,10 +27,7 @@ public class PublicationFormValidator implements Validator {
         ValidationUtils.rejectIfEmpty(errors, "journal", "journal.empty");
         ValidationUtils.rejectIfEmpty(errors, "publicationDate", "publicationDate.empty");
 
-        if (form.getAccessionNumber() != null && !form.getAccessionNumber().isEmpty()) {
-            if (!form.getAccessionNumber().matches("^\\d+$")) {
-                errors.rejectValue("accessionNumber", "accessionNumber.not.number");
-            }
+        if (form.getAccessionNumber() != null && form.getAccessionNumber() != null) {
 
             if (!errors.hasFieldErrors("accessionNumber")) {
                 List<Publication> pubsWithSamePubMedId = RepositoryFactory.getPublicationRepository().getPublicationByPmid(form.getAccessionNumber());

@@ -5,9 +5,9 @@ select zobjtype_name,
        zobjtype_home_zdb_id_column
 from  zdb_object_type
 subquery
-select first 1 get_obj_name($2)
+select get_obj_name($2)
 from $1
-
+FETCH FIRST 1 ROWS ONLY
 
 --rollback work;
 

@@ -23,7 +23,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private String volume;
     private String pages;
     private Type type;
-    private String accessionNumber;
+    private Integer accessionNumber;
     private String doi;
     private String acknowledgment;
     private Status status;
@@ -156,7 +156,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.type = type;
     }
 
-    public String getAccessionNumber() {
+    public Integer getAccessionNumber() {
         return accessionNumber;
     }
 
@@ -177,7 +177,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.doi = doi;
     }
 
-    public void setAccessionNumber(String accessionNumber) {
+    public void setAccessionNumber(Integer accessionNumber) {
         this.accessionNumber = accessionNumber;
     }
 

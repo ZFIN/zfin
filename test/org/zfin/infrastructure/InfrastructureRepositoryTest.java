@@ -297,8 +297,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void callJdbcStatement() {
-        String query = "create temp table tmp_syndef (namespace varchar(30), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))" +
-                "with no log;";
+        String query = "create temp table tmp_syndef (namespace varchar(30), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))";
         DatabaseJdbcStatement statement = new DatabaseJdbcStatement();
         statement.addQueryPart(query);
         infrastructureRepository.executeJdbcStatement(statement);

@@ -140,8 +140,8 @@ public class PublicationViewController {
                                   HttpServletResponse response) {
         Publication publication = null;
 
-        if (StringUtils.isNotBlank(accession)) {
-            List<Publication> pubMedPubs = publicationRepository.getPublicationByPmid(accession);
+        if (StringUtils.isNotBlank(accession) && StringUtils.isNumeric(accession)) {
+            List<Publication> pubMedPubs = publicationRepository.getPublicationByPmid(Integer.parseInt(accession));
             if (CollectionUtils.isNotEmpty(pubMedPubs)) {
                 publication = pubMedPubs.get(0);
             }

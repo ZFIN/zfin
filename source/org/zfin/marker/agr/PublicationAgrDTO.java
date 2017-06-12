@@ -1,7 +1,6 @@
 package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveSource;
 
 public class PublicationAgrDTO {
@@ -11,11 +10,11 @@ public class PublicationAgrDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String pubMedId;
 
-    public PublicationAgrDTO(String publicationModId, String pubMedId) {
+    public PublicationAgrDTO(String publicationModId, Integer pubMedId) {
         if (ActiveSource.validateActiveData(publicationModId))
             this.modPublicationId = ZfinDTO.ZFIN;
         this.modPublicationId += publicationModId;
-        if (StringUtils.isNotEmpty(pubMedId))
+        if (pubMedId != null)
             this.pubMedId = PMID + pubMedId;
     }
 

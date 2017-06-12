@@ -24,12 +24,12 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
     public static final String PUB_MED = "pubmed";
 
     private static Integer numberOfPublicationsToScan;
-    private static Map<String, Publication> publicationMap;
+    private static Map<Integer, Publication> publicationMap;
     private static final Logger LOG = Logger.getLogger(PubMedValidationReport.class);
     private static List<String> errorList = new ArrayList<>();
     private static List<List<String>> pubMedIdNotFoundList = new ArrayList<>();
     private static List<List<String>> pubInfoMismatchList = new ArrayList<>();
-    private static List<String> processedIds = new ArrayList<>();
+    private static List<Integer> processedIds = new ArrayList<>();
 
     static {
         options.addOption(withArgName("jobName").hasArg().withDescription("Job Name").create("jobName"));
@@ -70,7 +70,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         buildPublicationMap();
         int batchSize = 5000;
         LOG.info(publicationMap.size() + " publications are scanned");
-        List<String> pubIds = new ArrayList<>(publicationMap.keySet());
+        List<Integer> pubIds = new ArrayList<>(publicationMap.keySet());
         for (int start = 0; start < pubIds.size(); start += batchSize) {
             int end = Math.min(start + batchSize, pubIds.size());
             String idList = StringUtils.join(pubIds.subList(start, end), ",");
@@ -91,9 +91,12 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
             }
         }
         pubIds.removeAll(processedIds);
-        for (String id : pubIds) {
-            Publication publication = publicationMap.get(id);
-            pubMedIdNotFoundList.add(getElementsList(publication.getShortAuthorList(), publication.getZdbID(), publication.getAccessionNumber()));
+        for (Integer accessionNumber : pubIds) {
+            Publication publication = publicationMap.get(accessionNumber);
+            String accession = null;
+            if(accessionNumber != null)
+                accession = accessionNumber.toString();
+            pubMedIdNotFoundList.add(getElementsList(publication.getShortAuthorList(), publication.getZdbID(), accession));
         }
         createReports();
         LOG.info("Finished");
@@ -126,7 +129,10 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     private static void checkValidPubMedRecord(Element article) {
         String pmid = article.getElementsByTagName("PMID").item(0).getTextContent();
-        processedIds.add(pmid);
+        Integer accession= null;
+        if(StringUtils.isNumeric(pmid))
+            accession = Integer.parseInt(pmid);
+        processedIds.add(accession);
         Publication publication = publicationMap.get(pmid);
         PublicationMismatch mismatch = new PublicationMismatch();
 
@@ -329,8 +335,11 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
             this.titleExternal = titleExternal;
         }
 
-        public List<String> createPublicationMismatchElements(String pubID, String authors, String pubMedID) {
-            return getElementsList(authors, pubID, pubMedID,
+        public List<String> createPublicationMismatchElements(String pubID, String authors, Integer pubMedID) {
+            String accession = null;
+            if(pubMedID != null)
+                accession = pubMedID.toString();
+            return getElementsList(authors, pubID, accession,
                     doi == null ? "" : doi, doiExternal,
                     pages == null ? "" : pages, pagesExternal,
                     volume == null ? "" : volume, volumeExternal,

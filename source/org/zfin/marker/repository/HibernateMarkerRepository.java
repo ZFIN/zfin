@@ -2172,7 +2172,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public boolean isFromChimericClone(String zdbID) {
-        String sql = "   select 't' " +
+        String sql = "   select TRUE " +
                 "    from marker_relationship " +
                 "    join clone on clone_mrkr_zdb_id = mrel_mrkr_2_zdb_id " +
                 "    where mrel_mrkr_1_zdb_id = :markerZdbID " +
