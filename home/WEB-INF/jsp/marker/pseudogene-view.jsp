@@ -47,11 +47,23 @@
 <%--Transcripts--%>
 <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}"
                                title="TRANSCRIPTS" showAllTranscripts="true" />
-
+    <zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links">
+        <c:if test="${!empty formBean.pathwayDBLinks}">
+            <table class="summary">
+                <c:forEach var="link" items="${formBean.pathwayDBLinks}" varStatus="loop">
+                    <tr>
+                        <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
+        <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
+                                        marker="${formBean.marker}" title="" interactsWith="yes"/>
+    </zfin2:subsection>
 
 <%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
-<zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}" marker="${formBean.marker}"
-                                title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS" />
+    <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
+                                    marker="${formBean.marker}" title="MARKER RELATIONSHIPS" interactsWith="no"/>
 
 
 <%--SEQUENCE INFORMATION--%>

@@ -67,13 +67,13 @@
 
 <zfin2:constructsWithSequences formBean="${formBean}"/>
 
-        <zfin2:markerInteractionsLight relationships="${formBean.markerRelationshipPresentationList}"
-                                        marker="${formBean.marker}" title="INTERACTIONS AND PATHWAYS"/>
+    <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
+                                    marker="${formBean.marker}" title="INTERACTIONS AND PATHWAYS" interactsWith="yes"/>
 
 <%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
 
 <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
-                                marker="${formBean.marker}" title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS"/>
+                                marker="${formBean.marker}" title="MARKER RELATIONSHIPS" interactsWith="no"/>
 <%--SEQUENCE INFORMATION--%>
 <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}"
                                         title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>

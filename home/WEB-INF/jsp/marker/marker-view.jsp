@@ -39,7 +39,7 @@
     <%--MARKER RELATIONSHIPTS--%>
     <c:if test="${formBean.marker.type ne 'RAPD'}">
         <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
-                                        marker="${formBean.marker}"  title="${fn:toUpperCase('MARKER RELATIONSHIPS')}"/>
+                                        marker="${formBean.marker}"  title="${fn:toUpperCase('MARKER RELATIONSHIPS')}" interactsWith="no"/>
     </c:if>
 
     <%--SEQUENCE INFORMATION--%>
