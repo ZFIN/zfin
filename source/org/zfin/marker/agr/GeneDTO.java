@@ -16,7 +16,7 @@ public class GeneDTO extends ZfinDTO {
     private String primaryId;
     private String soTermId;
     private String geneLiteratureUrl;
-    private static final String geneLiteratureUrlPrefix = "http://zfin.org/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() + "?MIval=aa-showpubs.apg";
+    private static final String geneLiteratureUrlPrefix = "http://zfin.org/action/marker/citation-list/";
     //private List<SynonymDTO> synonyms;
     private List<String> synonyms;
     private List<String> crossReferenceIds;
