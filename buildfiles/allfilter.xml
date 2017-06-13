@@ -128,6 +128,7 @@
 <filter token="PDF_PATH" value="${PDF_PATH}"/>
 <filter token="PGBINDIR" value="${PGBINDIR}"/>
 <filter token="PGDATA" value="${PGDATA}"/>
+<filter token="PGDATABASE" value="${PGDATABASE}"/>
 <filter token="PG_XML_COMMENT_CLOSE" value="${PG_XML_COMMENT_CLOSE}"/>
 <filter token="PG_XML_COMMENT_OPEN" value="${PG_XML_COMMENT_OPEN}"/>
 <filter token="PRODUCTION_NOTIFICATION_EMAIL" value="${PRODUCTION_NOTIFICATION_EMAIL}"/>
