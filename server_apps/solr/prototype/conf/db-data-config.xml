@@ -892,6 +892,25 @@ where mrkr_type not in (
                where="mrkr_zdb_id=marker.id"
                cacheImpl="SortedMapBackedCache"/>
 
+       <entity name="marker_type_hierarchy_ncRNA"
+               query="select 'Transcript' type_0,
+                             'ncRNA' as type_1,
+                           tscriptt_display as type_2,
+                           mrkr_zdb_id as mrkr_zdb_id
+                    from marker
+                         join transcript on tscript_mrkr_zdb_id = mrkr_zdb_id
+                         join transcript_type on tscript_type_id = tscriptt_pk_id
+                    where tscriptt_type in ('mRNA','miRNA','piRNA','pre miRNA','pseudogenic transcript',
+                                            'rRNA','scRNA','snRNA','snoRNA','tRNA','antisense',
+                                            'aberrant processed transcript');"
+               where="mrkr_zdb_id=marker.id"
+               cacheImpl="SortedMapBackedCache">
+           <column name="type_0" column="type_0"/>
+           <column name="type_1" column="type_1"/>
+           <column name="type_2" column="type_2"/>
+       </entity>
+
+
        <entity name="marker_aliases"
                datasource="db" query="select dalias_alias alias, dalias_data_zdb_id from data_alias, marker
                    where dalias_data_zdb_id = mrkr_zdb_id;"

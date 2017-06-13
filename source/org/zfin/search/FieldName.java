@@ -109,7 +109,7 @@ public enum FieldName {
     THUMBNAIL("thumbnail"),
     TOPIC("topic"),
     TYPE("type"),
-    TYPE_TREE("type", 2, "Type"),
+    TYPE_TREE("type", 3, "Type"),
     TYPEGROUP("typegroup"),
     URL("url"),
     XREF("xref"),
