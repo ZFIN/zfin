@@ -5,8 +5,9 @@ select zobjtype_name,
        zobjtype_home_zdb_id_column
 from  zdb_object_type
 subquery
-select get_obj_name($2)
+select distinct get_obj_name($2)
 from $1
+where $2 = ''
 
 --rollback work;
 
