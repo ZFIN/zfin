@@ -11,6 +11,7 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
@@ -69,6 +70,9 @@ public class PseudoGeneViewController {
 
         // (Transcripts)
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
+        geneBean.setRelatedInteractions(markerRepository.getRelatedMarkerDisplayForTypes(
+                gene, true, MarkerRelationship.Type.RNAGENE_INTERACTS_WITH_GENEP));
+
 
         // ORTHOLOGY
         geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));

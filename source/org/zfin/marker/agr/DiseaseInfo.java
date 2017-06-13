@@ -176,7 +176,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             .collect(Collectors.toList());
                     evDto.setPublications(pubDtoList);
                     // hard-coded pub added to every evidence
-                    PublicationAgrDTO fixedPub = new PublicationAgrDTO("ZDB-PUB-170406-10", "");
+                    PublicationAgrDTO fixedPub = new PublicationAgrDTO("ZDB-PUB-170406-10", null);
                     evDto.getPublications().add(fixedPub);
                     evidenceList.add(evDto);
                 });

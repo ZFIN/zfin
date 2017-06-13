@@ -132,22 +132,43 @@
             </filterset>
         </copy>
         <!--        Copy the  context files-->
-        <copy todir="${domain-conf}" overwrite="true">
-            <fileset dir="${template-dir}/conf/Catalina/mutant"/>
-            <filterset>
-                <filter token="TARGETROOT" value="${TARGETROOT}"/>
-                <filter token="DBNAME" value="${DBNAME}"/>
-                <filter token="SERVER-SHUTDOWN-PORT" value="${SHUTDOWNPORT}"/>
-                <filter token="Non-SECUREPORT" value="${NON_SECUREPORT}"/>
-                <filter token="SECUREPORT" value="${SECUREPORT}"/>
-                <filter token="SQLHOSTSHOST" value="${SQLHOSTS_HOST}"/>
-                <filter token="INFORMIXSERVER" value="${INFORMIXSERVER}"/>
-                <filter token="INFORMIXPORT" value="${INFORMIX_PORT}"/>
-                <filter token="DOMAIN-NAME" value="${DOMAIN_NAME}"/>
-                <filter token="GBROWSE_DB" value="${GBROWSE_DB}"/>
-                <filter token="GBROWSE_DB_HOST" value="${GBROWSE_DB_HOST}"/>
-            </filterset>
-        </copy>
+        <echo>USE_POSTGRES: ${USE_POSTGRES}</echo>
+        <if>
+            <equals arg1="${USE_POSTGRES}" arg2="true" />
+            <then>
+                <copy file="${template-dir}/conf/Catalina/mutant/ROOT-postgres.xml" tofile="${domain-conf}/ROOT.xml" overwrite="true" >
+                    <filterset>
+                        <filter token="TARGETROOT" value="${TARGETROOT}"/>
+                        <filter token="DBNAME" value="${DBNAME}"/>
+                        <filter token="SERVER-SHUTDOWN-PORT" value="${SHUTDOWNPORT}"/>
+                        <filter token="Non-SECUREPORT" value="${NON_SECUREPORT}"/>
+                        <filter token="SECUREPORT" value="${SECUREPORT}"/>
+                        <filter token="SQLHOSTSHOST" value="${SQLHOSTS_HOST}"/>
+                        <filter token="DOMAIN-NAME" value="${DOMAIN_NAME}"/>
+                        <filter token="GBROWSE_DB" value="${GBROWSE_DB}"/>
+                        <filter token="GBROWSE_DB_HOST" value="${GBROWSE_DB_HOST}"/>
+                    </filterset>
+                </copy>
+            </then>
+            <else>
+                <copy todir="${domain-conf}" overwrite="true">
+                    <fileset dir="${template-dir}/conf/Catalina/mutant"/>
+                    <filterset>
+                        <filter token="TARGETROOT" value="${TARGETROOT}"/>
+                        <filter token="DBNAME" value="${DBNAME}"/>
+                        <filter token="SERVER-SHUTDOWN-PORT" value="${SHUTDOWNPORT}"/>
+                        <filter token="Non-SECUREPORT" value="${NON_SECUREPORT}"/>
+                        <filter token="SECUREPORT" value="${SECUREPORT}"/>
+                        <filter token="SQLHOSTSHOST" value="${SQLHOSTS_HOST}"/>
+                        <filter token="INFORMIXSERVER" value="${INFORMIXSERVER}"/>
+                        <filter token="INFORMIXPORT" value="${INFORMIX_PORT}"/>
+                        <filter token="DOMAIN-NAME" value="${DOMAIN_NAME}"/>
+                        <filter token="GBROWSE_DB" value="${GBROWSE_DB}"/>
+                        <filter token="GBROWSE_DB_HOST" value="${GBROWSE_DB_HOST}"/>
+                    </filterset>
+                </copy>
+            </else>
+        </if>
         <antcall target="set-catalina-base-perms"/>
     </target>
 
@@ -211,7 +232,7 @@
                      compile="false"
                      compilerSourceVM="1.8"
                      compilerTargetVM="1.8"
-                    />
+            />
             <javac srcdir="${pre.jsp-compile}"
                    destdir="${pre.jsp-compile}"
                    classpathref="jspc.classpath"

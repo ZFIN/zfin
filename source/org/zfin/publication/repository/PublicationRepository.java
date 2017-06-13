@@ -7,13 +7,17 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
@@ -337,6 +341,10 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Marker> getGenesByPublication(String pubID);
     List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
+    List<Marker> getGenesAndMarkersByPublication(String pubID);
+    List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType);
+    List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType);
+    PaginationResult<Clone> getClonesByPublication(String pubID, PaginationBean paginationBean);
     List<Feature> getFeaturesByPublication(String pubID);
     List<Fish> getFishByPublication(String pubID);
 
@@ -449,7 +457,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     PaginationResult<Publication> getAllAssociatedPublicationsForGenotype(Genotype genotype, int maxPubs);
 
-    List<Publication> getPublicationByPmid(String pubMedID);
+    List<Publication> getPublicationByPmid(Integer pubMedID);
 
     int getNumberDirectPublications(String zdbID);
 

@@ -962,7 +962,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     public List<String> getSourcedDataIds(Organization organization) {
         return HibernateUtil.currentSession().createSQLQuery("select ids_data_zdb_id from int_data_source " +
-                "where ids_source_zdb_id = :sourId and ids_data_zdb_id[5,8] not in (:exclusion1,:exclusion2) order by ids_data_zdb_id ")
+                "where ids_source_zdb_id = :sourId and substring(ids_data_zdb_id from 5 for 8) not in (:exclusion1,:exclusion2) order by ids_data_zdb_id ")
                 .setString("sourId", organization.getZdbID())
                 .setString("exclusion1", "XPAT")
                 .setString("exclusion2", "GENO")

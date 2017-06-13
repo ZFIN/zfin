@@ -460,9 +460,9 @@ public class GafService {
         return goTerm;
     }
 
-    protected String getPubMedId(String pubMedId) {
+    protected Integer getPubMedId(String pubMedId) {
         if (pubMedId.startsWith(PUBMED_PREFIX)) {
-            return pubMedId.substring(PUBMED_PREFIX.length());
+            return Integer.parseInt(pubMedId.substring(PUBMED_PREFIX.length()));
         }
         return null;
     }

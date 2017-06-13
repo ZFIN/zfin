@@ -179,17 +179,35 @@ public class HibernateFeatureRepository implements FeatureRepository {
      * @return Gets a reprentation of all of the FeaturePrefixes with their associated labs.
      */
     public List<FeaturePrefixLight> getFeaturePrefixWithLabs() {
-        String sql = "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name, sfp.sfp_current_designation " +
-                "from feature_prefix fp " +
-                "join source_feature_prefix sfp on fp.fp_pk_id=sfp.sfp_prefix_id " +
-                "join lab l on sfp.sfp_source_zdb_id=l.zdb_id " +
-                "union " +
-                "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name, sfp.sfp_current_designation " +
-                "from feature_prefix fp " +
-                "join source_feature_prefix sfp on fp.fp_pk_id=sfp.sfp_prefix_id " +
-                "join company l on sfp.sfp_source_zdb_id=l.zdb_id " +
-                "group by fp.fp_prefix, fp.fp_institute_display,l.zdb_id,l.name, sfp.sfp_current_designation " +
-                "order by fp.fp_prefix, l.name ";
+        String sql = "" +
+                "SELECT fp.fp_prefix AS prefix, " +
+                "       fp.fp_institute_display, " +
+                "       l.zdb_id, " +
+                "       l.NAME       AS nam, " +
+                "       sfp.sfp_current_designation " +
+                "FROM   feature_prefix fp " +
+                "       JOIN source_feature_prefix sfp " +
+                "         ON fp.fp_pk_id = sfp.sfp_prefix_id " +
+                "       JOIN lab l " +
+                "         ON sfp.sfp_source_zdb_id = l.zdb_id " +
+                "UNION " +
+                "SELECT fp.fp_prefix AS prefix, " +
+                "       fp.fp_institute_display, " +
+                "       l.zdb_id, " +
+                "       l.NAME       AS nam, " +
+                "       sfp.sfp_current_designation " +
+                "FROM   feature_prefix fp " +
+                "       JOIN source_feature_prefix sfp " +
+                "         ON fp.fp_pk_id = sfp.sfp_prefix_id " +
+                "       JOIN company l " +
+                "         ON sfp.sfp_source_zdb_id = l.zdb_id " +
+                "GROUP  BY prefix, " +
+                "          fp.fp_institute_display, " +
+                "          l.zdb_id, " +
+                "          nam, " +
+                "          sfp.sfp_current_designation " +
+                "ORDER  BY prefix, " +
+                "          nam ";
         List<Object[]> results = HibernateUtil.currentSession().createSQLQuery(sql).list();
         List<FeaturePrefixLight> featurePrefixLightList = new ArrayList<FeaturePrefixLight>();
         FeaturePrefixLight featurePrefixLight = null;
@@ -780,7 +798,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
     public void deleteLabOfOriginForFeature(Feature feature) {
-        String sql = " delete int_data_source " +
+        String sql = " delete FROM int_data_source " +
                 " where ids_data_zdb_id  = :featureZdbId  ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("featureZdbId", feature.getZdbID());

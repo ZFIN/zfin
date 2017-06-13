@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
+import org.zfin.mapping.ChromosomeService;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -55,8 +56,6 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
         try (PrintStream out = new PrintStream(new FileOutputStream("basic-gene-info-zfin.json"))) {
             out.print(jsonInString);
         }
-
-        String name = "";
     }
 
     public AllGeneDTO getAllGeneInfo() {
@@ -95,8 +94,12 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             // get genomic data
                             List<MarkerGenomeLocation> locations = getLinkageRepository().getGenomeLocation(gene);
                             Set<GenomeLocationDTO> locationDTOList = new HashSet<>();
-                            if (locations != null) {
+                            ChromosomeService<MarkerGenomeLocation> chromosomeService = new ChromosomeService<>(locations);
+                            if (locations != null && chromosomeService.isTrustedValue()) {
                                 for (MarkerGenomeLocation loc : locations) {
+                                    // ignore records that do not equal the ofifical chromosome number
+                                    if (!loc.getChromosome().equals(chromosomeService.getChromosomeNumber()))
+                                        continue;
                                     GenomeLocationDTO genomeDto = new GenomeLocationDTO(loc.getAssembly(), loc.getChromosome());
                                     if (loc.getStart() != null)
                                         genomeDto.setStartPosition(loc.getStart());

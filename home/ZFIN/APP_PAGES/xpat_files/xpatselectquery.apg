@@ -296,7 +296,13 @@ Message: $MI_ERRORMSG
     	    select allmapnm_zdb_id, min(allmapnm_significance)
               from all_map_names $xpatselqry_nameEndsTable
              where $xpatselqry_nameCond
-               and (allmapnm_zdb_id like 'ZDB-GENE%' or allmapnm_zdb_id like 'ZDB-EFG%') 
+               and (allmapnm_zdb_id like 'ZDB-EFG%' or
+                    get_obj_type(allmapnm_zdb_id) in (
+                        select mtgrpmem_mrkr_type
+                        from marker_type_group_member
+                        where mtgrpmem_mrkr_type_group = 'GENEDOM'
+                    )
+               )
                and allmapnm_precedence in ('Current symbol', 'Current name')                
             group by allmapnm_zdb_id;">
   <?/MISQL>
@@ -449,7 +455,13 @@ Message: $MI_ERRORMSG
     	    select allmapnm_zdb_id, allmapnm_significance, allmapnm_name, allmapnm_precedence
               from all_map_names $xpatselqry_nameEndsTable
              where $xpatselqry_nameCond
-               and (allmapnm_zdb_id like 'ZDB-GENE%' or allmapnm_zdb_id like 'ZDB-EFG%') ;">	    
+               and (allmapnm_zdb_id like 'ZDB-EFG%' or
+                   get_obj_type(allmapnm_zdb_id) in (
+                       select mtgrpmem_mrkr_type
+                       from marker_type_group_member
+                       where mtgrpmem_mrkr_type_group = 'GENEDOM'
+                   )
+              );">
     <?/MISQL>
     
     <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">

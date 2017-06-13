@@ -148,4 +148,12 @@ public enum AjaxCallEventType {
     public AjaxCallEventType getStartMate() {
         return mate;
     }
+
+    public AjaxCallEventType getEndMate(AjaxCallEventType startType) {
+        for (AjaxCallEventType type : values()) {
+            if (type.isStop() && type.getStartMate().equals(startType))
+                return type;
+        }
+        return null;
+    }
 }

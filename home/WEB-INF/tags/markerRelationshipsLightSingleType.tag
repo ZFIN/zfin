@@ -17,7 +17,9 @@
 
 
 <c:if test="${empty title}">
+    <c:if test="${!marker.genedom}">
     <c:set var="title" value="MARKER RELATIONSHIPS"/>
+    </c:if>
 </c:if>
 
 <zfin2:subsection title="${title}"

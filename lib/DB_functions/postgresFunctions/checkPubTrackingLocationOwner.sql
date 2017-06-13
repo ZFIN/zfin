@@ -1,0 +1,12 @@
+create or replace function checkPubTrackingLocationOwner(vPthPubZdbId varchar(50), vPthStatusId int8, vPthLocationId int8, vPthClaimedBy varchar(50))
+returns void as $$
+       declare status varchar(100) := (Select pts_status from pub_tracking_status
+       	   	    	    where pts_pk_id = vPthStatusId);
+begin
+       if status in ('Curating','Indexing','Indexed','Curated') 
+        and (vPthLocationId is null or vPthClaimedBy is null)
+          then 
+       	    raise exception 'FAIL!: status of curating or indexing need locations';
+       end if;
+end
+$$ LANGUAGE plpgsql

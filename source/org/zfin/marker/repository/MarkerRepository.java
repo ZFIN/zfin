@@ -366,6 +366,7 @@ public interface MarkerRepository {
     List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName);
 
     List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types);
+    List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker);
 
     List<GeneProductsBean> getGeneProducts(String zdbID);
 
@@ -427,8 +428,8 @@ public interface MarkerRepository {
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 
     List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
-
-
+    List<TargetGeneLookupEntry> getRelationshipTargetsForString(String lookupString);
+    List<String> getMarkerTypesforRelationship(String relType);
     List<LookupEntry> getConstructComponentsForString(String lookupString, String pubZdbId);
 
 

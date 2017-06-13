@@ -12,6 +12,8 @@ import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
 public class MappingService {
 
+    public static final String AMBIGUOUS = "Ambiguous";
+
     public static Map<String, Map<String, Long>> getChromosomePanelCountMap(Panel panel) {
         List<PanelCount> panelCountList = getLinkageRepository().getPanelCount(panel);
         Map<String, Map<String, Long>> returnMap = new TreeMap<>(new ChromosomeComparator());
@@ -109,9 +111,8 @@ public class MappingService {
     public static String getChromosomeNumber(Set<String> chromosomeList) {
         if (CollectionUtils.isEmpty(chromosomeList))
             return "";
-        String builder = "";
         if (chromosomeList.size() > 1)
-            return "Ambiguous";
+            return AMBIGUOUS;
         return chromosomeList.iterator().next();
     }
 

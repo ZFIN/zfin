@@ -52,7 +52,7 @@
 
     <zfin2:markerRelationshipsLight marker="${formBean.clone}"
                                     relationships="${formBean.markerRelationshipPresentationList}"
-                                    title="MARKER RELATIONSHIPS"
+                                    title="MARKER RELATIONSHIPS" interactsWith="no"
             />
 
     <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}"

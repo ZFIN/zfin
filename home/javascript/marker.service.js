@@ -91,17 +91,20 @@
         }
 
         // === RELATIONSHIPS ===
-        function getRelationshipTypes() {
-                return $http.get('/action/marker/relationship/relationshipTypes/')
-                .then(returnResponseData);
+
+
+        function getRelationshipTypes(markerId,interacts) {
+
+            return $http.get('/action/marker/'+ markerId + '/relationshipTypes?interacts=' +interacts)
+                .then(returnResponseData)
         }
 
         function getRelationships(markerId) {
             return $http.get('/action/marker/' + markerId + '/relationships')
                 .then(returnResponseData);
         }
-        function getRelationshipsForEdit(markerId) {
-            return $http.get('/action/marker/' + markerId + '/relationshipsForEdit')
+        function getRelationshipsForEdit(markerId,interacts) {
+            return $http.get('/action/marker/' + markerId + '/relationshipsForEdit?interacts=' +interacts)
                 .then(returnResponseData);
         }
 

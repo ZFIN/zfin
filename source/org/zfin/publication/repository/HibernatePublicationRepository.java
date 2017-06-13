@@ -25,8 +25,11 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.feature.FeatureMarkerRelationshipType;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
@@ -36,6 +39,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
@@ -1140,29 +1144,77 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param includeEfgs boolean
      * @return list of markers
      */
-    // ToDo: There must be a better way to retrieve GENEs versus all markers.
-    // GENE should be a subclass of Marker
-    @SuppressWarnings("unchecked")
     public List<Marker> getGenesByPublication(String pubID, boolean includeEFGs) {
-        Session session = HibernateUtil.currentSession();
-
         Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM;
-
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
         if (includeEFGs){
             markerTypes.add(markerRepository.getMarkerTypeByName(Marker.Type.EFG.toString()));
         }
+        return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
+    }
 
-        String hql = "select distinct marker from Marker marker, PublicationAttribution pub" +
-                "     where pub.dataZdbID = marker.zdbID" +
-                "           and pub.publication.zdbID = :pubID " +
+    public List<Marker> getGenesAndMarkersByPublication(String pubID) {
+        // directly annotated markers
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM);
+        markerTypes.addAll(markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MK));
+        Set<Marker> markers = new TreeSet<>(getMarkersByPublication(pubID, markerTypes));
+
+        // markers pulled through features
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct marker from Marker marker, RecordAttribution attr, Feature feature, FeatureMarkerRelationship fmrel " +
+                "where attr.dataZdbID = feature.zdbID " +
+                "and attr.sourceZdbID = :pubID " +
+                "and fmrel.type = :isAllele " +
+                "and fmrel.feature = feature " +
+                "and fmrel.marker = marker ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setParameter("isAllele", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
+        markers.addAll(query.list());
+
+        // markers pulled through MOs
+        hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
+                "where attr.sourceZdbID = :pubID " +
+                "and attr.dataZdbID = mrel.firstMarker " +
+                "and mrel.secondMarker = marker " +
+                "and mrel.firstMarker.markerType.name = :mo ";
+        query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setString("mo", Marker.Type.MRPHLNO.name());
+        markers.addAll(query.list());
+
+        return new ArrayList<>(markers);
+    }
+
+    public List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType) {
+        return (List<Marker>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
+    }
+
+    public List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType) {
+        return (List<SequenceTargetingReagent>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
+    }
+
+    public PaginationResult<Clone> getClonesByPublication(String pubID, PaginationBean paginationBean) {
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_SEG);
+        ScrollableResults results = getMarkersByPublicationQuery(pubID, markerTypes).scroll();
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, results);
+    }
+
+    private List getMarkersByPublication(String pubID, List<MarkerType> markerTypes) {
+        return getMarkersByPublicationQuery(pubID, markerTypes).list();
+    }
+
+    private Query getMarkersByPublicationQuery(String pubID, List<MarkerType> markerTypes) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct marker from Marker marker, RecordAttribution attr" +
+                "     where attr.dataZdbID = marker.zdbID" +
+                "           and attr.sourceZdbID = :pubID " +
                 "           and marker.markerType in (:markerType)  " +
                 "    order by marker.abbreviationOrder ";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameterList("markerType", markerTypes);
-
-        return (List<Marker>) query.list();
+        return query;
     }
 
     public List<Feature> getFeaturesByPublication(String pubID) {
@@ -1587,7 +1639,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return paginationResult;
     }
 
-    public List<Publication> getPublicationByPmid(String pubMedID) {
+    public List<Publication> getPublicationByPmid(Integer pubMedID) {
         return (List<Publication>) HibernateUtil.currentSession().createCriteria(Publication.class)
                 .add(Restrictions.eq("accessionNumber", pubMedID))
                 .list();

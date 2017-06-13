@@ -38,6 +38,16 @@ public class MarkerBean extends PaginationBean {
     private List<PreviousNameLight> previousNames;
     private List<GeneProductsBean> geneProductsBean;
     private List<MarkerRelationshipPresentation> relatedAntibodies;
+
+    public List<MarkerRelationshipPresentation> getRelatedInteractions() {
+        return relatedInteractions;
+    }
+
+    public void setRelatedInteractions(List<MarkerRelationshipPresentation> relatedInteractions) {
+        this.relatedInteractions = relatedInteractions;
+    }
+
+    private List<MarkerRelationshipPresentation> relatedInteractions;
     private int numberOfConstructs;
     private List<DiseaseDisplay> diseaseDisplays;
     private GenericTerm zfinSoTerm;

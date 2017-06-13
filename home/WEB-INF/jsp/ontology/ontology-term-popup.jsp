@@ -2,6 +2,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
+<div id="term-info">
 <div class="popup-body phenotype-popup-body">
 
     <c:if test="${hasAddToSearchButton}">
@@ -110,3 +111,4 @@
         jQuery('#term-info').load(url)
     }
 </script>
+</div>

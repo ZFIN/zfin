@@ -6,6 +6,9 @@ echo $startTime
 echo "drop tables in informixd that are not migrating to postgres"
 
 ${INFORMIXDIR}/bin/dbaccess ${DBNAME} ${SOURCEROOT}/server_apps/DB_maintenance/postgres/dropTables.sql
+${INFORMIXDIR}/bin/dbaccess ${DBNAME} ${SOURCEROOT}/server_apps/DB_maintenance/postgres/dumpNonKeyIndexes.sql
+
+sed 's/|/;/g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql > /tmp/fix.sql && mv /tmp/fix.sql ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql
 
 echo "drop and recreate database in $DBNAME value"
 
@@ -48,7 +51,7 @@ sed '/<addPrimaryKey/q' /tmp/changelogMigrationFile.xml | head -n -2 > /tmp/tabl
 # change lvarchar() to text, reorganize timestamps and defaults to postgres syntax
 sed 's/LVARCHAR([0-9]*)/text/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 sed 's/DATETIME YEAR TO SECOND NOT NULL/CURRENT_TIMESTAMP/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
-sed 's/VARCHAR([0-9]*)/VARCHAR/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
+sed 's/VARCHAR([0-9]*)/text/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 sed 's/current year to second/CURRENT_TIMESTAMP/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 sed 's/defaultValueComputed="current year to day"/defaultValueComputed="CURRENT_TIMESTAMP"/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
 sed 's/BOOLEAN(1)/BOOLEAN/g' /tmp/tables.xml > /tmp/tables.xml.tmp && mv /tmp/tables.xml.tmp /tmp/tables.xml
@@ -60,6 +63,8 @@ cat /tmp/tables.xml ${SOURCEROOT}/server_apps/DB_maintenance/postgres/xmlFooter.
 
 cd ${SOURCEROOT}
 ant buildPostgresDatabase
+
+${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/add_monthly_average_curated_metric.sql
 
 dumpLocation=/research/zunloads/databases/postgres_dumps/${DBNAME}
 echo "dumpLocation"
@@ -76,5 +81,19 @@ cd ${SOURCEROOT}/server_apps/DB_maintenance/postgres/
 cd ${SOURCEROOT}
 ant addPostgresConstraints
 
-mkdir /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump
+# generate serial id replacement sql file : reset.sql
+${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/resetSerialIds.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
+
+#remove header and summary from reset.sql so that we can run it directly and reset the sequences.
+
+sed 's/?column?//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp && mv ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
+
+sed 's/-//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp && mv ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
+
+sed 's/(142 rows)//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp && mv ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
+
+# reset the sequence start values for all serial ids
+${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
+${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql
+
 ${PGBINDIR}/pg_dump ${DBNAME} > /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump

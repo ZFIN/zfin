@@ -65,6 +65,13 @@ update external_reference_temp
   tdr_foreign_db_id_temp = fdb_db_pk_id AND
   upper(fdb_db_name) = 'HTTP' and upper(tdr_reference_temp[1,4]) != 'HTTP');
 
+update external_reference_temp
+ set tdr_reference_temp = 'https:'||tdr_reference_temp
+ where exists (
+  select 'x' from foreign_db where
+  tdr_foreign_db_id_temp = fdb_db_pk_id AND
+  upper(fdb_db_name) = 'HTTPS' and upper(tdr_reference_temp[1,5]) != 'HTTPS');
+
 -- put the ZFA: in front of the reference back as it was parsed out due to the semicolon
 update external_reference_temp
  set tdr_reference_temp = 'ZFA:'||tdr_reference_temp

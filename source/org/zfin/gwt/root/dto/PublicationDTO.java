@@ -14,7 +14,7 @@ public class PublicationDTO implements IsSerializable {
     private String zdbID;
     private String abstractText;
     private String doi;
-    private String accession;
+    private Integer accession;
     private String citation;
     private String miniRef;
 
@@ -79,11 +79,11 @@ public class PublicationDTO implements IsSerializable {
         this.doi = doi;
     }
 
-    public String getAccession() {
+    public Integer getAccession() {
         return accession;
     }
 
-    public void setAccession(String accession) {
+    public void setAccession(Integer accession) {
         this.accession = accession;
     }
 

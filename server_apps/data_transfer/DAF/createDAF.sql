@@ -121,7 +121,7 @@ update tmp_da_full
 update tmp_da_full
   set inferredGeneAssociation  =  replace(replace(replace(substr(multiset (select distinct mfs_mrkr_zdb_id from mutant_fast_search, fish_experiment
                                                                                   where mfs_genox_zdb_id = genox_id
-										  and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+										  and (mfs_mrkr_zdb_id like 'ZDB-GENE%' or mfs_mrkr_zdb_id like '%RNAG%')
 										  and genox_id = genox_zdb_id
 										  and mfs_genox_zdb_id = genox_id
 										  and genox_is_std_or_generic_control = 't'

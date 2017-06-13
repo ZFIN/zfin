@@ -86,8 +86,8 @@
     <zfin2:geneProductsDescription geneBean="${formBean}"/>
 
 
-    <zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links"
-                      test="${!empty formBean.pathwayDBLinks}" showNoData="true" noDataText="No data available">
+    <zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links">
+                      <c:if test="${!empty formBean.pathwayDBLinks}">
         <table class="summary">
             <c:forEach var="link" items="${formBean.pathwayDBLinks}" varStatus="loop">
                 <tr>
@@ -95,6 +95,10 @@
                 </tr>
             </c:forEach>
         </table>
+        </c:if>
+        <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
+                                        marker="${formBean.marker}" title="" interactsWith="yes"/>
+
     </zfin2:subsection>
 
 <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
@@ -120,7 +124,7 @@
     <%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
 
     <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
-                                    marker="${formBean.marker}" title="SEGMENT (CLONE AND PROBE) RELATIONSHIPS"/>
+                                    marker="${formBean.marker}" title="MARKER RELATIONSHIPS" interactsWith="no"/>
     <%--SEQUENCE INFORMATION--%>
     <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}"
                                             title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>

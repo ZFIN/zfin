@@ -27,7 +27,7 @@
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.agr.BasicGeneInfo" fork="yes" classpathref="extended.classpath"
-              failonerror="true" maxmemory="2048M">
+              failonerror="true" maxmemory="6G">
             <classpath refid="classpath"/>
         </java>
     </target>
@@ -62,7 +62,7 @@
     </target>
 
     <property name="version" value="0.6.1"/>
-    <property name="index" value="9"/>
+    <property name="index" value="10"/>
     <property name="daf-file" value="ZFIN_${version}_DAF.json"/>
     <property name="bgi-file" value="ZFIN_${version}_BGI.json"/>
     <property name="agr-file" value="ZFIN_${version}_${index}"/>

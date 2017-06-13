@@ -1,16 +1,9 @@
 <dataConfig>
 
-<!--    <dataSource name="db"
-           	    driver="org.postgresql.Driver"
-                url="jdbc:postgresql://localhost:5432/celldb"
-                transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>-->
-
     <dataSource name="db"
-
-                driver="com.informix.jdbc.IfxDriver"
-                url="jdbc:informix-sqli://@SQLHOSTS_HOST@:@INFORMIX_PORT@/@DBNAME@:INFORMIXSERVER=@INFORMIXSERVER@;DB_LOCALE=en_US.utf8"
-	            transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>
-
+                driver="@JDBC_DRIVER@"
+                url="@JDBC_URL@"
+                transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>
 
     <document>
 
@@ -1951,6 +1944,7 @@ select
                    where="construct_pk_id=construct.construct_pk_id"
                    cacheImpl="SortedMapBackedCache"/>
 
+           @PG_XML_COMMENT_OPEN@
            <entity name="construct_expressed_in_direct"
                    datasource="db" query="select DISTINCT term_ont_id as xref, term_name as expressed_in_parent, cc_construct_zdb_id as construct_id
                                             from expression_experiment
@@ -1979,7 +1973,7 @@ select
                                              ;"
                    where="construct_id=construct.id"
                    cacheImpl="SortedMapBackedCache"/>
-
+           @PG_XML_COMMENT_CLOSE@
 
 
 <!--           <entity name="construct_authors"
@@ -2896,6 +2890,8 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                             ;"
                    where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
+
+           <!-- todo: stalled out on postgres -->
 
            <entity name="expression_expression_anatomy_parent"
                    datasource="db" query="select

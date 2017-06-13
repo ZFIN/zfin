@@ -1,20 +1,21 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <ul>
-    <li><a href="/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg"
-           title="Search by name, accession number, chromosome, vector or sequence type">
-        <strong>Genes / Markers / Clones</strong></a></li>
-    <ul>
+    <li>
         <authz:authorize access="hasRole('root')">
-            <li>
-                <a href="/action/marker/search"
-                   title="Search by name, accession number, chromosome, vector or sequence type">
-                    <img src="/images/new1.gif"/>
-                    <em>Please try the new Genes / Markers / Clones</em>
-                    <img src="/images/new1.gif"/></em>
-                </a>
-            </li>
+            <a href="/action/marker/search"
+               title="Search by name, accession number, chromosome, vector or sequence type">
+                <strong>Genes / Markers / Clones</strong>
+            </a>
         </authz:authorize>
+        <authz:authorize access="!hasAnyRole('root')">
+        <a href="/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg"
+           title="Search by name, accession number, chromosome, vector or sequence type">
+            <strong>Genes / Markers / Clones</strong>
+        </a>
+        </authz:authorize>
+    </li>
+    <ul>
         <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines"
                title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li>
         <li><a href="/action/nomenclature/gene-name"

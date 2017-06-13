@@ -109,23 +109,14 @@
                     jQuery('#merge_oid').val(markerZdbIdToBeMergedInto);
                     jQuery('#intoMarkerAbbrev').val(markerAbbrevToMergeInto);
                     jQuery('#into').html('<a target="_blank" class="external" href="/' + markerZdbIdToBeMergedInto + '">' + markerAbbrevToMergeInto + '</a>');
-                    <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'}">
+                    <c:if test="${formBean.markerToDelete.genedom && !formBean.markerToDelete.nontranscribed}">
                           validateEap(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
                     </c:if>
                     <c:if test="${formBean.markerToDelete.markerType.name eq 'MRPHLNO' || formBean.markerToDelete.markerType.name eq 'TALEN' || formBean.markerToDelete.markerType.name eq 'CRISPR'}">
                           validateTargetGenesForMergingSRTs(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
                     </c:if>
-                    <c:if test="${formBean.markerToDelete.markerType.name eq 'NCCR' || formBean.markerToDelete.markerType.name eq 'TFBS'
-                                  || formBean.markerToDelete.markerType.name eq 'RNAMO' || formBean.markerToDelete.markerType.name eq 'NCBS'
-                                  || formBean.markerToDelete.markerType.name eq 'MDNAB' || formBean.markerToDelete.markerType.name eq 'ENHANCER'
-                                  || formBean.markerToDelete.markerType.name eq 'EMR' || formBean.markerToDelete.markerType.name eq 'HMR'
-                                  || formBean.markerToDelete.markerType.name eq 'NUCMO' || formBean.markerToDelete.markerType.name eq 'BR'
-                                  || formBean.markerToDelete.markerType.name eq 'PROTBS' || formBean.markerToDelete.markerType.name eq 'TRR'
-                                  || formBean.markerToDelete.markerType.name eq 'BINDSITE' || formBean.markerToDelete.markerType.name eq 'RR'
-                                  || formBean.markerToDelete.markerType.name eq 'EBS' || formBean.markerToDelete.markerType.name eq 'TLNRR'
-                                  || formBean.markerToDelete.markerType.name eq 'LCR' || formBean.markerToDelete.markerType.name eq 'DNAMO'
-                                  || formBean.markerToDelete.markerType.name eq 'PROMOTER'}">
-                       //   validateGeneWithOrthology(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
+                    <c:if test="${formBean.markerToDelete.nontranscribed}">
+                          validateGeneWithOrthology(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
                     </c:if>
                     return false;
                 }
@@ -233,13 +224,6 @@
             checkUnspecifiedAllelesDone = 1;
 
             if (checkUnspecifiedAllelesDone == 1 && bothHavingUnspecifiedAllels == 0) {
-                <c:if test="${formBean.markerToDelete.markerType.name eq 'LINCRNAG' || formBean.markerToDelete.markerType.name eq 'NCRNAG'
-                            || formBean.markerToDelete.markerType.name eq 'SNORNAG' || formBean.markerToDelete.markerType.name eq 'LNCRNAG'
-                            || formBean.markerToDelete.markerType.name eq 'SCRNAG' || formBean.markerToDelete.markerType.name eq 'MIRNAG'
-                            || formBean.markerToDelete.markerType.name eq 'TRNAG' || formBean.markerToDelete.markerType.name eq 'SRPRNAG'
-                            || formBean.markerToDelete.markerType.name eq 'PIRNAG' || formBean.markerToDelete.markerType.name eq 'RRNAG'}">
-                    validateNCBIgeneIds(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
-                </c:if>
                 validateSTRs(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
             }
         };
@@ -247,7 +231,6 @@
         var validateSTRs = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
             var numberOfSTRs = 0;
             var checkSTRsDone = 0;
-            sequenceTargetingReagentsIgnored = false;
 
             jQuery.ajax(
                     {
@@ -268,7 +251,7 @@
                             if (numberOfSTRs > 0) {
                                 sequenceTargetingReagentsIgnored = false;
 
-                                jQuery('#mergedIntoGeneAbbrev').attr("disabled","disabled");
+                                jQuery('#submitMerge').attr("disabled", "disabled");
 
                                 jQuery.ajax(
                                         {
@@ -312,14 +295,18 @@
             checkSTRsDone = 1;
 
             if (checkSTRsDone == 1) {
-                validateAntibodies(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+                <c:if test="${formBean.markerToDelete.genedom && !formBean.markerToDelete.nontranscribed}">
+                      validateAntibodies(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+                </c:if>
+                <c:if test="${formBean.markerToDelete.nontranscribed}">
+                      validateNCBIgeneIds(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+                </c:if>
             }
         };
 
         var validateAntibodies = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
             var numberOfAntibodies = 0;
             var checkAntibodiesDone = 0;
-            antibodiesIgnored = false;
 
             jQuery.ajax(
                     {
@@ -340,7 +327,7 @@
                             if (numberOfAntibodies > 0) {
                                 antibodiesIgnored = false;
 
-                                jQuery('#mergedIntoGeneAbbrev').attr("disabled","disabled");
+                                jQuery('#submitMerge').attr("disabled","disabled");
 
                                 jQuery.ajax(
                                         {
@@ -644,33 +631,18 @@
             checkEnsemblGRCz10IdsDone = 1;
 
             if (checkEnsemblGRCz10IdsDone == 1) {
-                <c:if test="${formBean.markerToDelete.markerType.name eq 'LINCRNAG' || formBean.markerToDelete.markerType.name eq 'NCRNAG'
-                          || formBean.markerToDelete.markerType.name eq 'SNORNAG' || formBean.markerToDelete.markerType.name eq 'LNCRNAG'
-                          || formBean.markerToDelete.markerType.name eq 'SCRNAG' || formBean.markerToDelete.markerType.name eq 'MIRNAG'
-                          || formBean.markerToDelete.markerType.name eq 'TRNAG' || formBean.markerToDelete.markerType.name eq 'SRPRNAG'
-                          || formBean.markerToDelete.markerType.name eq 'PIRNAG' || formBean.markerToDelete.markerType.name eq 'RRNAG'}">
-                     validateGeneWithMappingInfo();
+                <c:if test="${formBean.markerToDelete.genedom  && !formBean.markerToDelete.nontranscribed}">
+                     validateGeneWithTranscript(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
                 </c:if>
-                <c:if test="${formBean.markerToDelete.markerType.name eq 'NCCR' || formBean.markerToDelete.markerType.name eq 'TFBS'
-                              || formBean.markerToDelete.markerType.name eq 'RNAMO' || formBean.markerToDelete.markerType.name eq 'NCBS'
-                              || formBean.markerToDelete.markerType.name eq 'MDNAB' || formBean.markerToDelete.markerType.name eq 'ENHANCER'
-                              || formBean.markerToDelete.markerType.name eq 'EMR' || formBean.markerToDelete.markerType.name eq 'HMR'
-                              || formBean.markerToDelete.markerType.name eq 'NUCMO' || formBean.markerToDelete.markerType.name eq 'BR'
-                              || formBean.markerToDelete.markerType.name eq 'PROTBS' || formBean.markerToDelete.markerType.name eq 'TRR'
-                              || formBean.markerToDelete.markerType.name eq 'BINDSITE' || formBean.markerToDelete.markerType.name eq 'RR'
-                              || formBean.markerToDelete.markerType.name eq 'EBS' || formBean.markerToDelete.markerType.name eq 'TLNRR'
-                              || formBean.markerToDelete.markerType.name eq 'LCR' || formBean.markerToDelete.markerType.name eq 'DNAMO'
-                              || formBean.markerToDelete.markerType.name eq 'PROMOTER'}">
+                <c:if test="${formBean.markerToDelete.nontranscribed}">
                       validateGeneWithMappingInfo(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
                 </c:if>
-                validateGeneWithTranscript(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
             }
         };
 
         var validateGeneWithTranscript = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
             var numberOfTranscripts = 0;
             var checkTranscriptsDone = 0;
-            transcriptsIgnored = false;
 
             jQuery.ajax(
                     {
@@ -691,7 +663,7 @@
                             if (numberOfTranscripts > 0) {
                                 transcriptsIgnored = false;
 
-                                jQuery('#mergedIntoGeneAbbrev').attr("disabled","disabled");
+                                jQuery('#submitMerge').attr("disabled","disabled");
 
 
 
@@ -808,19 +780,12 @@
                     } else {
                         orthologyIgnored = true;
                     }
-                    <c:if test="${formBean.markerToDelete.markerType.name eq 'NCCR' || formBean.markerToDelete.markerType.name eq 'TFBS'
-                                  || formBean.markerToDelete.markerType.name eq 'RNAMO' || formBean.markerToDelete.markerType.name eq 'NCBS'
-                                  || formBean.markerToDelete.markerType.name eq 'MDNAB' || formBean.markerToDelete.markerType.name eq 'ENHANCER'
-                                  || formBean.markerToDelete.markerType.name eq 'EMR' || formBean.markerToDelete.markerType.name eq 'HMR'
-                                  || formBean.markerToDelete.markerType.name eq 'NUCMO' || formBean.markerToDelete.markerType.name eq 'BR'
-                                  || formBean.markerToDelete.markerType.name eq 'PROTBS' || formBean.markerToDelete.markerType.name eq 'TRR'
-                                  || formBean.markerToDelete.markerType.name eq 'BINDSITE' || formBean.markerToDelete.markerType.name eq 'RR'
-                                  || formBean.markerToDelete.markerType.name eq 'EBS' || formBean.markerToDelete.markerType.name eq 'TLNRR'
-                                  || formBean.markerToDelete.markerType.name eq 'LCR' || formBean.markerToDelete.markerType.name eq 'DNAMO'
-                                  || formBean.markerToDelete.markerType.name eq 'PROMOTER'}">
-                         validateNCBIgeneIds(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+                    <c:if test="${formBean.markerToDelete.genedom && !formBean.markerToDelete.nontranscribed}">
+                           validateUnspecifiedAlleles(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
                     </c:if>
-                    validateUnspecifiedAlleles(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+                    <c:if test="${formBean.markerToDelete.nontranscribed}">
+                           validateSTRs(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+                    </c:if>
                 }
 
             }
@@ -1221,41 +1186,7 @@
 
     </script>
 
-    <c:if test="${formBean.markerToDelete.markerType.name eq 'LINCRNAG' || formBean.markerToDelete.markerType.name eq 'NCRNAG'
-                                  || formBean.markerToDelete.markerType.name eq 'SNORNAG' || formBean.markerToDelete.markerType.name eq 'LNCRNAG'
-                                  || formBean.markerToDelete.markerType.name eq 'SCRNAG' || formBean.markerToDelete.markerType.name eq 'MIRNAG'
-                                  || formBean.markerToDelete.markerType.name eq 'TRNAG' || formBean.markerToDelete.markerType.name eq 'SRPRNAG'
-                                  || formBean.markerToDelete.markerType.name eq 'PIRNAG' || formBean.markerToDelete.markerType.name eq 'RRNAG'
-                                  || formBean.markerToDelete.markerType.name eq 'NCCR' || formBean.markerToDelete.markerType.name eq 'TFBS'
-                                  || formBean.markerToDelete.markerType.name eq 'RNAMO' || formBean.markerToDelete.markerType.name eq 'NCBS'
-                                  || formBean.markerToDelete.markerType.name eq 'MDNAB' || formBean.markerToDelete.markerType.name eq 'ENHANCER'
-                                  || formBean.markerToDelete.markerType.name eq 'EMR' || formBean.markerToDelete.markerType.name eq 'HMR'
-                                  || formBean.markerToDelete.markerType.name eq 'NUCMO' || formBean.markerToDelete.markerType.name eq 'BR'
-                                  || formBean.markerToDelete.markerType.name eq 'PROTBS' || formBean.markerToDelete.markerType.name eq 'TRR'
-                                  || formBean.markerToDelete.markerType.name eq 'BINDSITE' || formBean.markerToDelete.markerType.name eq 'RR'
-                                  || formBean.markerToDelete.markerType.name eq 'EBS' || formBean.markerToDelete.markerType.name eq 'TLNRR'
-                                  || formBean.markerToDelete.markerType.name eq 'LCR' || formBean.markerToDelete.markerType.name eq 'DNAMO'
-                                  || formBean.markerToDelete.markerType.name eq 'PROMOTER'}">
-        <br/>
-        <div id="disabledNow" style="font-size: large; color: red">Region and NTR merge is disabled at this time.</div>
-    </c:if>
-
-    <c:if test="${formBean.markerToDelete.markerType.name ne 'ATB'
-                                  && formBean.markerToDelete.markerType.name ne 'LINCRNAG' && formBean.markerToDelete.markerType.name ne 'NCRNAG'
-                                  && formBean.markerToDelete.markerType.name ne 'SNORNAG' && formBean.markerToDelete.markerType.name ne 'LNCRNAG'
-                                  && formBean.markerToDelete.markerType.name ne 'SCRNAG' && formBean.markerToDelete.markerType.name ne 'MIRNAG'
-                                  && formBean.markerToDelete.markerType.name ne 'TRNAG' && formBean.markerToDelete.markerType.name ne 'SRPRNAG'
-                                  && formBean.markerToDelete.markerType.name ne 'PIRNAG' && formBean.markerToDelete.markerType.name ne 'RRNAG'
-                                  && formBean.markerToDelete.markerType.name ne 'NCCR' && formBean.markerToDelete.markerType.name ne 'TFBS'
-                                  && formBean.markerToDelete.markerType.name ne 'RNAMO' && formBean.markerToDelete.markerType.name ne 'NCBS'
-                                  && formBean.markerToDelete.markerType.name ne 'MDNAB' && formBean.markerToDelete.markerType.name ne 'ENHANCER'
-                                  && formBean.markerToDelete.markerType.name ne 'EMR' && formBean.markerToDelete.markerType.name ne 'HMR'
-                                  && formBean.markerToDelete.markerType.name ne 'NUCMO' && formBean.markerToDelete.markerType.name ne 'BR'
-                                  && formBean.markerToDelete.markerType.name ne 'PROTBS' && formBean.markerToDelete.markerType.name ne 'TRR'
-                                  && formBean.markerToDelete.markerType.name ne 'BINDSITE' && formBean.markerToDelete.markerType.name ne 'RR'
-                                  && formBean.markerToDelete.markerType.name ne 'EBS' && formBean.markerToDelete.markerType.name ne 'TLNRR'
-                                  && formBean.markerToDelete.markerType.name ne 'LCR' && formBean.markerToDelete.markerType.name ne 'DNAMO'
-                                  && formBean.markerToDelete.markerType.name ne 'PROMOTER'}">
+    <c:if test="${formBean.markerToDelete.markerType.name ne 'ATB'}">
         <form id="mergeTheGenes" action="/cgi-bin/merge_markers.pl">
             <input type="hidden" id="zdbIDToDelete" name="OID" value="${formBean.zdbIDToDelete}">
             <input type="hidden" id="merge_oid" name="merge_oid" value="none">

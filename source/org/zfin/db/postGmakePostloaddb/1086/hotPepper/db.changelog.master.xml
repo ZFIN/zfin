@@ -10,5 +10,5 @@
        
         <include file="source/org/zfin/db/postGmakePostloaddb/1086/hotPepper/ZFIN-2947.sql"/>
 
-
+        <include file="source/org/zfin/db/postGmakePostloaddb/1086/hotPepper/CUR-71.sql"/>
 </databaseChangeLog>

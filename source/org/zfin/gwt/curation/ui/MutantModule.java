@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.*;
 import org.fusesource.restygwt.client.REST;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
+import org.zfin.gwt.curation.ui.disease.HumanDiseaseModule;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.*;
@@ -277,22 +278,16 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     }
 
     public void retrieveFishList() {
-        String message = "Error while reading fish";
-        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
-        curationRPCAsync.getFishList(publicationID,
-                new RetrieveSelectionBoxValueCallback(fishList, null, PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_STOP));
+        curationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack());
     }
 
     public void refreshFigureList() {
-        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_START);
         curationRPCAsync.getFigures(publicationID, new RetrieveFiguresCallback());
     }
 
     public void updateFish() {
         fishList.clear();
-        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
-        curationRPCAsync.getFishList(publicationID, new RetrieveSelectionBoxValueCallback(fishList, null,
-                PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START));
+        curationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack());
     }
 
 
@@ -449,6 +444,28 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
     // ****************** Handlers, Callbacks, etc.
 
+    class RetrieveFishListCallBack extends ZfinAsyncCallback<List<FishDTO>> {
+
+        public RetrieveFishListCallBack() {
+            super("Could not retrieve fish list", null,
+                    HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
+        }
+
+        @Override
+        public void onSuccess(List<FishDTO> list) {
+            super.onFinish();
+            String selectedID = fishList.getSelectedValue();
+            fishList.clear();
+            int selectedItemIndex = 0;
+            for (FishDTO featureDTO : list) {
+                fishList.addItem(featureDTO.getHandle(), featureDTO.getValue());
+                if (featureDTO.getValue().equals(selectedID))
+                    fishList.setSelectedIndex(selectedItemIndex);
+                selectedItemIndex++;
+            }
+        }
+    }
+
 
     private class SelectUnselectAllMutantsClickHandler implements ClickHandler {
 
@@ -557,7 +574,6 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         }
 
         private void deleteExperiment(PhenotypeExperimentDTO figureAnnotation) {
-            AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.DELETE_FIGURE_ANNOTATION_START);
             phenotypeCurationRPCAsync.deleteFigureAnnotation(figureAnnotation, new DeleteFigureAnnotationCallback(figureAnnotation));
         }
 
@@ -587,7 +603,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
         DeleteFigureAnnotationCallback(PhenotypeExperimentDTO figureAnnotation) {
             super("Error while deleting Figure Annotation", errorElement,
-                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.DELETE_FIGURE_ANNOTATION_STOP);
+                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.DELETE_FIGURE_ANNOTATION_START);
             this.figureAnnotation = figureAnnotation;
         }
 
@@ -1190,7 +1206,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
         public RetrieveFiguresCallback() {
             super(figureList, false, errorElement,
-                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_STOP);
+                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_FIGURE_LIST_START);
+
         }
 
         @Override

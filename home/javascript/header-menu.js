@@ -107,6 +107,9 @@ $(function() {
         url: "/action/login-status",
         success: function (data) {
             if (data) {
+                if (data.root) {
+                    $('#hdr-gmc-search').attr('href', '/action/marker/search');
+                }
                 login.hide();
                 logout.show();
             } else {

@@ -503,8 +503,8 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 "       and exists (select NOTnormal.psg_id  " +
                 "                     from phenotype_observation_generated NOTnormal  " +
                 "                    where NOTnormal.psg_pg_id = pg_id  " +
-                "                      and NOTnormal.psg_tag != \"normal\") " +
-                " ) " +
+                "                      and NOTnormal.psg_tag != 'normal') " +
+                " ) countingTable" +
                 " ";
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("markerZdbId", gene.getZdbID())
@@ -526,7 +526,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 "   NOTnormal.psg_id " +
                 "   from phenotype_observation_generated NOTnormal " +
                 "   where NOTnormal.psg_pg_id = pg_id " +
-                "   and NOTnormal.psg_tag != \"normal\" " +
+                "   and NOTnormal.psg_tag != 'normal' " +
                 ") ";
         return (FigureLink) HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("markerZdbId", gene.getZdbID())
@@ -609,7 +609,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 "         and exists (select NOTnormal.psg_id  " +
                 "                     from phenotype_observation_generated NOTnormal  " +
                 "                    where NOTnormal.psg_pg_id = pg_id  " +
-                "                      and NOTnormal.psg_tag != \"normal\")     " +
+                "                      and NOTnormal.psg_tag != 'normal')     " +
                 "        order by p.pub_date asc " +
                 "  " +
                 " ";
@@ -640,8 +640,8 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 "         and exists (select NOTnormal.psg_id  " +
                 "                     from phenotype_observation_generated NOTnormal  " +
                 "                    where NOTnormal.psg_pg_id = pg_id  " +
-                "                      and NOTnormal.psg_tag != \"normal\")     " +
-                " ) " +
+                "                      and NOTnormal.psg_tag != 'normal')     " +
+                " ) countingTable" +
                 " ";
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("markerZdbId", gene.getZdbID())

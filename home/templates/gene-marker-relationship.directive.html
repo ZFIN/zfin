@@ -11,25 +11,20 @@
     <table class="table table-condensed">
         <tr>
             <td>Relationship Type</td>
+<td><select class="form-control" ng-model="mkrreln.newRelationship" ng-options="str for str in mkrreln.relationshipTypes"></select></td>
 
 
-            <td><select class="form-control" ng-model="mkrreln.newRelationship">
-            <option value="gene contains small segment">gene contains small segment</option>
-                <option value="gene hybridized by small segment">gene hybridized by small segment</option>
-                <option value="gene encodes small segment">gene encodes small segment</option>
-                <option value="gene has artifact">gene has artifact</option>
-                <option value="contains polymorphism">contains polymorphism</option>
-                <option value="clone contains gene">clone contains gene</option>
-            </select>
-            </td>
+            </select></td>
         </tr>
         <tr>
+
             <td>Partner Symbol</td>
                 <td><input class="form-control"
-                       url="/action/quicksearch/autocomplete?q=%QUERY&category=Marker+%2F+Clone&fq=type%3A(%22BAC%22+OR+%22EST%22+OR+%22SSLP%22+OR+%22SNP%22)"
+                           url="/action/marker/find-relationshipTargets?term=%QUERY"
                            ng-model="mkrreln.newGene"
                        autocompletify>
                     </td>
+
             </tr>
         <tr>
             <td>Attribution</td>

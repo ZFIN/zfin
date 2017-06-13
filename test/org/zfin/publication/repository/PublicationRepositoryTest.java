@@ -635,7 +635,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getPubByPubmedID() {
-        assertEquals(1, publicationRepository.getPublicationByPmid("18056260").size());
+        assertEquals(1, publicationRepository.getPublicationByPmid(18056260).size());
     }
 
     @Test

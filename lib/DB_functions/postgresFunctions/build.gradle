@@ -1,0 +1,77 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+def env = System.getenv()
+def dbname = env['DBNAME']
+def sourceroot = env['SOURCEROOT']
+
+task deployPostgresFunctions {
+    description = "deploy postgres function in PG"
+
+    doLast {
+        println "deploying postgres functions ..."
+        int numberOfTrigger = runSqlFiles(".")
+        println "deployed " + numberOfTrigger + " functions."
+    }
+}
+
+task killConnectionsToPostgres {
+    description = "kill all connections to postgres db defined in dbname."
+
+    doLast {
+        File file = file(sourceroot + '/killConnectionsToPostgres.sql');
+        println file.getPath();
+        String command = "echo \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname ='" + dbname + "' AND pid <> pg_backend_pid();\" | " + "psql -d " + dbname;
+        println command
+        command.execute().text
+    }
+}
+
+def projectDir = project.projectDir;
+
+String table = ""
+if (System.getProperty("table")) {
+    table = System.getProperty("table")
+}
+def triggerTable = 'triggerForTable.sql'
+
+task createTriggerFile(type: Copy) {
+    from "trigger.sql"
+    into "./"
+    rename ('trigger.sql', triggerTable)
+    filter(ReplaceTokens, tokens: [TABLE: table])
+}
+
+task showTriggerOnTable(dependsOn: createTriggerFile) {
+    description = "Show trigger for a given table. Use the following parameters: -Dtable=<table name>"
+
+    doLast {
+        if (table != null) {
+            println "Trigger on table " + table.toUpperCase()
+
+            File file = new File(projectDir, triggerTable)
+            String command = "psql -d " + dbname + " -a -f " + file.getAbsoluteFile()
+            //println command
+            println command.execute().text
+            ("rm "+file.absolutePath).execute()
+        }
+    }
+}
+
+File[] fileList(String dir) {
+    file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
+}
+
+int runSqlFiles(String directory) {
+    int numberOfTrigger = 0;
+    fileList(directory).each {
+        File file ->
+            if (file.getName().endsWith(".sql")) {
+                String command = "psql -d " + dbname + " -a -f " + file.getAbsoluteFile();
+                // will execute command, return the text output from the executed command, and print to screen.
+                //println command.execute().text
+                command.execute().text
+                numberOfTrigger++;
+            }
+    }
+    return numberOfTrigger;
+}

@@ -69,7 +69,12 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
     public ZfinAsyncCallback(String errorMessage, ErrorHandler errorLabel, ZfinModule module, AjaxCallEventType eventType) {
         this(errorMessage, errorLabel);
         this.module = module;
-        this.eventType = eventType;
+        if (eventType.isStart()) {
+            AppUtils.fireAjaxCall(module, eventType);
+            this.eventType = eventType.getEndMate(eventType);
+        } else {
+            this.eventType = eventType;
+        }
     }
 
     private Widget getImageWidget() {

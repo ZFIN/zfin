@@ -79,7 +79,10 @@ public class DOIProcessor {
             Citexplore wsdlConnect = new Citexplore();
             publicationList = wsdlConnect.getDoisForPubmedID(publicationList);
             for (Publication publication : publicationList) {
-                updated.add(Arrays.asList(publication.getZdbID(), publication.getAccessionNumber(), publication.getDoi()));
+                String accession = null;
+                if(publication.getAccessionNumber() != null)
+                    accession = publication.getAccessionNumber().toString();
+                updated.add(Arrays.asList(publication.getZdbID(), accession, publication.getDoi()));
             }
             if (CollectionUtils.isNotEmpty(publicationList)) {
                 messages.add("There are " + (totalPublications - publicationList.size()) + " publications for which no DOI was found");

@@ -1569,7 +1569,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 " and ra.recattrib_source_zdb_id=:pubZdbID " +
                 " and mr.mrel_type in ('gene encodes small segment','gene contains small segment')" +
                 " and ra.recattrib_source_type='standard' " +
-                ") " +
+                ") as subquery" +
                 " ";
         int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("zdbID", zdbID)
