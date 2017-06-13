@@ -1,5 +1,6 @@
 package org.zfin.profile;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.util.Date;
  * It contains all the credential-related info, including
  * role and cookie.
  */
+@JsonIgnoreProperties({"accountCreationDate", "cookie", "pass1", "pass2", "password", "previousLoginDate"})
 public class AccountInfo implements Serializable {
 
     private String login;
