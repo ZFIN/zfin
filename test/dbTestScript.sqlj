@@ -7,7 +7,6 @@ from  zdb_object_type
 subquery
 select get_obj_name($2)
 from $1
-FETCH FIRST 1 ROWS ONLY
 
 --rollback work;
 

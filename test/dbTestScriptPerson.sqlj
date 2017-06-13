@@ -5,7 +5,6 @@ where zdb_Id = 'ZDB-PERS-960805-665'
 subquery
 select * from curation
 where cur_curator_zdb_Id = '$0'
-FETCH FIRST 10 ROWS ONLY
 
 --rollback work;
 
