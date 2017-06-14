@@ -19,6 +19,8 @@ import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.PublicationListAdapter;
+import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -147,6 +149,21 @@ public class FeatureDetailController {
         form.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(fr.getZdbID()));
     }
 
+    @RequestMapping(value = "feature-marker-relation-citation-list/{zdbID}")
+    public String featureMarkerelationCitationList(Model model, @PathVariable String zdbID, @RequestParam(required = false) String orderBy) {
+      //  Feature feature = featureRepository.getFeatureByID(zdbID);
+        model.addAttribute("featureMarkerRelationshipZdbID",zdbID);
+        List<PublicationAttribution> publicationAttributions = RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(zdbID);
+        List<Publication> publications = new ArrayList<>();
+        for (PublicationAttribution pub : publicationAttributions) {
+            publications.add(pub.getPublication());
+        }
+        model.addAttribute("pubCount", publications.size());
+        PublicationListBean citationBean = new PublicationListAdapter(publications);
+        citationBean.setOrderBy(orderBy);
+        model.addAttribute("citationList",citationBean);
 
+        return "feature/feature-marker-relation-citation-list.page";
+    }
 }
 

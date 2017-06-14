@@ -125,8 +125,7 @@
                                                 test="${!loop.last}">, </c:if>
                                         </c:when>
                                         <c:otherwise>
-                                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)<c:if
-                                                test="${!loop.last}">, </c:if>
+                                            (<a href="/action/feature/feature-marker-relation-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
                                         </c:otherwise>
                                     </c:choose>
                                 </c:if>
