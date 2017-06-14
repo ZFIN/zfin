@@ -14,7 +14,7 @@ package org.zfin.gwt.root.dto;
  */
 public enum InferenceCategory {
     ZFIN_MRPH_GENO("ZFIN", "ZFIN:ZDB-MRPHLNO-.*|ZFIN:ZDB-TALEN-.*|ZFIN:ZDB-CRISPR-.*|ZFIN:ZDB-GENO-.*", "(Knockdown/Genotype)"),
-    ZFIN_GENE("ZFIN", "ZFIN:ZDB-GENE-.*", "(Gene)"),
+    ZFIN_GENE("ZFIN", "ZFIN:ZDB-GENE-.*|ZFIN:ZDB-LINCRNAG-.*|ZFIN:ZDB-LNCRNAG-.*|ZFIN:ZDB-MIRNAG-.*|ZFIN:ZDB-PIRNAG-.*|ZFIN:ZDB-NCRNAG-.*|ZFIN:ZDB-SNORNAG-.*|ZFIN:ZDB-SCRNAG-.*|ZFIN:ZDB-RRNAG-.*|ZFIN:ZDB-SRPRNAG-.*|ZFIN:ZDB-TRNAG-.*", "(Gene)"),
     UNIPROTKB("UniProtKB"),
     GO("GO"),
     GENBANK("GenBank"),
