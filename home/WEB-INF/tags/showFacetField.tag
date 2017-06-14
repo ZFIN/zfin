@@ -13,8 +13,7 @@
 
     <c:if test="${showLabel}">
         <div id="${name}-facet-label-container" class="facet-label-container">
-
-                <%-- Only show the widgets if there are values --%>
+            <%-- Only show the widgets if there are values --%>
             <c:choose>
                 <c:when test="${(fn:length(facet.selectedFacetValues) + fn:length(facet.facetValues)) > 0}">
                     <i class="fa fa-fw fa-caret-right icon-toggle <c:if test="${open}">open</c:if>"></i>
@@ -30,10 +29,10 @@
                     ${facet.label}
             </span>
 
-                <span id="${name}-facet-field-count" class="facet-field-count pull-right"
-                      <c:if test="${open}">style=" display:none" </c:if>
-                        >[<fmt:formatNumber value="${facet.nonEmptyDocumentCount}" pattern="##,###"/>]
-                </span>
+            <span id="${name}-facet-field-count" class="facet-field-count"
+                  <c:if test="${open}">style=" display:none" </c:if>
+                    >[<fmt:formatNumber value="${facet.nonEmptyDocumentCount}" pattern="##,###"/>]
+            </span>
 
         </div>
     </c:if>

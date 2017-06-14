@@ -4,8 +4,6 @@
 <%@attribute name="value" type="org.zfin.search.presentation.FacetValue" required="true" %>
 <%@attribute name="showIncludeExclude" type="java.lang.Boolean" required="true"%>
 
-
-
 <c:set var="specialTitle"></c:set>
 <c:set var="showHover">false</c:set>
 <c:choose>
@@ -31,48 +29,39 @@
     </c:when>
 </c:choose>
 
-
-<li class="facet-value row">
-    <div class="row">
-        <div class="col-md-2 col-xs-3 tight-on-the-right">
-            <c:if test="${showIncludeExclude}">
-                <div style="white-space: nowrap" class="pull-right">
-                    <a href="${value.url}" onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${value.label}')">
-                        <i title="include term" class="include-exclude-icon facet-include fa fa-plus-circle"></i>
-                    </a>
-                    <a href="${value.excludeUrl}" onclick="ga('send', 'event', '${gaCategory} Facet', 'exclude', '${value.label}')">
-                        <i title="exclude term" class="include-exclude-icon facet-exclude fa fa-minus-circle"></i>
-                    </a>
-                </div>
-            </c:if>
-        </div>
-        <div class="col-md-7 col-xs-7 tight-on-the-left">
-            <a class="facet-value-hover facet-link"
-               title="${specialTitle}"
-               href="${value.url}"
-               onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${value.label}')">
-                ${value.label}
-            </a>
-        </div>
-        <div class="col-md-3 col-xs-2 facet-count">
-            <div class="pull-right">
-                (<fmt:formatNumber value="${value.count}" pattern="##,###"/>)
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-3 col-xs-4 tight-on-the-right"></div>
-        <div class="col-md-9 col-xs-7 tight-on-the-left">
-            <c:if test="${!empty value.childFacets}">
-                <ol class="facet-value-list child-facet list-unstyled">
-                    <c:forEach var="childFacet" items="${value.childFacets}">
-                        <zfin2:showFacetValue gaCategory="${gaCategory}" value="${childFacet}" showIncludeExclude="${showIncludeExclude}"/>
-                    </c:forEach>
-                </ol>
-            </c:if>
-        </div>
-    </div>
-
-
+<li class="facet-value">
+    <span>
+        <c:if test="${showIncludeExclude}">
+            <span style="white-space: nowrap">
+                <a href="${value.url}" onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${value.label}')">
+                    <i title="include term" class="include-exclude-icon facet-include fa fa-plus-circle"></i>
+                </a>
+                <a href="${value.excludeUrl}" onclick="ga('send', 'event', '${gaCategory} Facet', 'exclude', '${value.label}')">
+                    <i title="exclude term" class="include-exclude-icon facet-exclude fa fa-minus-circle"></i>
+                </a>
+            </span>
+        </c:if>
+    </span>
+    <span>
+        <a class="facet-value-hover facet-link"
+           title="${specialTitle}"
+           href="${value.url}"
+           onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${value.label}')">
+            ${value.label}
+        </a>
+    </span>
+    <span class="facet-count">
+        (<fmt:formatNumber value="${value.count}" pattern="##,###"/>)
+    </span>
 </li>
+
+<c:if test="${!empty value.childFacets}">
+    <li style="margin-left: 20px">
+        <ol class="facet-value-list child-facet list-unstyled">
+            <c:forEach var="childFacet" items="${value.childFacets}">
+                <zfin2:showFacetValue gaCategory="${gaCategory}" value="${childFacet}" showIncludeExclude="${showIncludeExclude}"/>
+            </c:forEach>
+        </ol>
+    </li>
+</c:if>
 
