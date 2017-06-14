@@ -29,19 +29,46 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
   and mrkr_type = marker_type
        ;">
 
-   <entity name="gene_type_hierarchy"
-           query="select mtgrp_display_name as type_0,
-                           mrkrtype_type_display as type_1,
+
+        <entity name="gene_type_hierarchy_ncRNA_children"
+                        query="select 'Gene' type_0,
+                           case
+                             when mrkr_type = 'GENE' then 'Protein Coding Gene'
+                             else mrkrtype_type_display end as type_1,
                            mrkr_zdb_id as gene_zdb_id
                     from marker
                          join marker_types on mrkr_type = marker_type
-                         join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
-                         join marker_type_group on mtgrpmem_mrkr_type_group = mtgrp_name
-                    where mtgrp_name in ('PROTEIN_CODING_GENE','NON_PROTEIN_CODING_GENE');"
+                    where mrkr_type in ('GENE',
+                                        'GENEP',
+                                        'EFG',
+                                        'NCRNAG');"
+                        where="gene_zdb_id=gene.id"
+                        cacheImpl="SortedMapBackedCache">
+                    <column name="type_0" column="type_0"/>
+                    <column name="type_1" column="type_1"/>
+        </entity>
+
+        <entity name="gene_type_hierarchy_ncRNA_children"
+           query="select 'Gene' type_0,
+                           'ncRNA Gene' as type_1,
+                           mrkrtype_type_display as type_2,
+                           mrkr_zdb_id as gene_zdb_id
+                    from marker
+                         join marker_types on mrkr_type = marker_type
+                    where mrkr_type in ('LINCRNAG',
+                                        'LNCRNAG',
+                                        'MIRNAG',
+                                        'PIRNAG',
+                                        'RRNAG',
+                                        'SCRNAG',
+                                        'SNORNAG',
+                                        'SRPRNAG',
+                                        'TRNAG');"
            where="gene_zdb_id=gene.id"
            cacheImpl="SortedMapBackedCache">
        <column name="type_0" column="type_0"/>
        <column name="type_1" column="type_1"/>
+       <column name="type_2" column="type_2"/>
    </entity>
 
    <entity name="gene_typegroup" datasource="db"
@@ -1981,7 +2008,6 @@ select
                    where="construct_pk_id=construct.construct_pk_id"
                    cacheImpl="SortedMapBackedCache"/>
 
-           @PG_XML_COMMENT_OPEN@
            <entity name="construct_expressed_in_direct"
                    datasource="db" query="select DISTINCT term_ont_id as xref, term_name as expressed_in_parent, cc_construct_zdb_id as construct_id
                                             from expression_experiment
@@ -2010,7 +2036,6 @@ select
                                              ;"
                    where="construct_id=construct.id"
                    cacheImpl="SortedMapBackedCache"/>
-           @PG_XML_COMMENT_CLOSE@
 
 
 <!--           <entity name="construct_authors"
