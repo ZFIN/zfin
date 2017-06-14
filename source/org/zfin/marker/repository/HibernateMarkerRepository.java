@@ -1371,6 +1371,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
         } else {
 
             types.add(Marker.Type.GENE.name());
+            List<MarkerType> mkrType=getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM);
+            for (MarkerType markerType : mkrType) {
+                types.add(markerType.getName());
+            }
+
 
         }
         String hql = "select m from PublicationAttribution pa , Marker m " +
@@ -1774,7 +1779,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         PreviousNameLight previousNameLight = new PreviousNameLight(gene.getAbbreviation());
                         previousNameLight.setMarkerZdbID(gene.getZdbID());
                         previousNameLight.setPureAliasName(tuple[0].toString());
-                        if (gene.getZdbID().startsWith("ZDB-GENE")) {
+                        if (gene.getZdbID().contains("GENE")) {
                             previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
                         } else {
                             if (gene.getZdbID().contains("CONSTRCT")) {
