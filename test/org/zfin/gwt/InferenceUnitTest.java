@@ -24,7 +24,7 @@ public class InferenceUnitTest {
         assertTrue(testString2.matches("ZFIN:ZDB-MRPHLNO-.*|asdf"));
         assertEquals("GenBank:.*", InferenceCategory.GENBANK.match());
         assertEquals("ZFIN:ZDB-MRPHLNO-.*|ZFIN:ZDB-TALEN-.*|ZFIN:ZDB-CRISPR-.*|ZFIN:ZDB-GENO-.*", InferenceCategory.ZFIN_MRPH_GENO.match());
-        assertEquals("ZFIN:ZDB-GENE-.*", InferenceCategory.ZFIN_GENE.match());
+        assertEquals("ZFIN:ZDB-GENE-.*|ZFIN:ZDB-LINCRNAG-.*|ZFIN:ZDB-LNCRNAG-.*|ZFIN:ZDB-MIRNAG-.*|ZFIN:ZDB-PIRNAG-.*|ZFIN:ZDB-NCRNAG-.*|ZFIN:ZDB-SNORNAG-.*|ZFIN:ZDB-SCRNAG-.*|ZFIN:ZDB-RRNAG-.*|ZFIN:ZDB-SRPRNAG-.*|ZFIN:ZDB-TRNAG-.*",InferenceCategory.ZFIN_GENE.match());
 //        assertEquals("GenBank:.*",InferenceCategory.GENBANK.match());
 //        "GenBank.*".
         assertEquals(InferenceCategory.GENBANK, InferenceCategory.getInferenceCategoryByValue(testString1));
