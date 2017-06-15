@@ -611,7 +611,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 throw new ValidationException("[" + featureDTO.getOptionalName() + "] not found.  "
                         + MESSAGE_UNSPECIFIED_FEATURE
                 );
-            } else if (false == m.getZdbID().startsWith("ZDB-GENE-")) {
+            } else if (false == m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                 throw new ValidationException("[" + featureDTO.getOptionalName() + "] must be a gene.  "
                         + MESSAGE_UNSPECIFIED_FEATURE
                 );

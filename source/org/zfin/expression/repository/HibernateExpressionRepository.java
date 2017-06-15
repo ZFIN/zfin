@@ -1485,7 +1485,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "        and geno = fish.genotype " +
                 "        and geno.wildtype = 't' " +
                 "        and xpRslt.expressionExperiment = xpExp " +
-                " and xpExp.gene.zdbID like 'ZDB-GENE%'" +
+                " and (xpExp.gene.zdbID like 'ZDB-GENE%' or xpExp.gene.zdbID like '%RNAG%')" +
                 " and cefs.fishExperiment=fishox" +
                 " and cefs.gene=:str";
 
@@ -1504,7 +1504,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String sql = " select distinct xpatfig_fig_zdb_id  " +
                 "   from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, clean_expression_fast_search  " +
                 "  where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-                "    and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
+                "    and (xpatex_gene_zdb_id like 'ZDB-GENE%' or xpatex_gene_zdb_id like '%RNAG%') " +
                 "    and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "    and xpatex_genox_zdb_id = genox_zdb_id " +
                 "    and genox_fish_zdb_id = fish_zdb_id " +
@@ -1523,7 +1523,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String sql = "select distinct xpatfig_fig_zdb_id  " +
                 "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, clean_expression_fast_search " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-                "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
+                "   and (xpatex_gene_zdb_id like 'ZDB-GENE%' or xpatex_gene_zdb_id like '%RNAG%') " +
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "   and xpatex_gene_zdb_id = :expressedGeneID " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
@@ -1542,7 +1542,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String sql = "select distinct fig_source_zdb_id  " +
                 "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, fish, genotype, clean_expression_fast_search " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-                "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
+                "   and (xpatex_gene_zdb_id like 'ZDB-GENE%' or xpatex_gene_zdb_id like '%RNAG%') " +
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "   and fig_zdb_id = xpatfig_fig_zdb_id " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +

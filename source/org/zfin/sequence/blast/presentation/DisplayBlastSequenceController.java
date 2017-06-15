@@ -33,7 +33,7 @@ public class DisplayBlastSequenceController {
             if (dbLink.getDataZdbID().startsWith("ZDB-TSCRIPT")) {
                 // ick . . would like to refact Transcript / TranscriptDBLink at some point
                 blastBean.setTranscript(((TranscriptDBLink) dbLink).getTranscript());
-            } else if (dbLink.getDataZdbID().startsWith("ZDB-GENE")) {
+            } else if (dbLink.getDataZdbID().startsWith("ZDB-GENE")||dbLink.getDataZdbID().contains("RNAG")) {
                 blastBean.setGene(((MarkerDBLink) dbLink).getMarker());
             }
         }

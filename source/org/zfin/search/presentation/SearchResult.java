@@ -89,7 +89,7 @@ public class SearchResult implements ProvidesLink {
 
     public String getLink() {
         String cssClass = "";
-        if (id.startsWith("ZDB-GENE"))
+        if (id.startsWith("GENE")||id.contains("RNAG"))
             cssClass = " class = \"genedom\" ";
         if (id.contains("CONSTRCT"))
             cssClass = " class = \"genedom\" ";

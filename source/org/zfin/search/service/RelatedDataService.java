@@ -386,9 +386,9 @@ public class RelatedDataService {
                                             long categoryCount, String hyperlinkName, boolean isXref,
                                             Properties properties, String... filterQueries) {
         //this is an unpleasant hack, I need to stuff the expression popup link in here, so it's a little hijack...
-        if (id.startsWith("ZDB-GENE") && StringUtils.equals(categoryName, "Expression")) {
+        if ((id.startsWith("ZDB-GENE")||id.contains("RNAG")) && StringUtils.equals(categoryName, "Expression")) {
             return getGeneExpressionPopupLink(id, categoryCount);
-        } else if (id.startsWith("ZDB-GENE") && StringUtils.equals(categoryName, "Phenotype")) {
+        } else if ((id.startsWith("ZDB-GENE")||id.contains("RNAG")) && StringUtils.equals(categoryName, "Phenotype")) {
             return getGenePhenotypePopupLink(id, categoryCount);
 
         } else if (id.startsWith("ZDB-FIG") && StringUtils.equals(categoryName, "Publication")) {

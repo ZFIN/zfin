@@ -134,7 +134,7 @@ public class ExpressionService {
     public int updateGeoLinkForMarker(Marker marker) {
         Collection<String> accessions;
         boolean hasGeoLink, shouldHaveGeoLink;
-        if (marker.getZdbID().startsWith("ZDB-GENE")) {
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             hasGeoLink = infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers(marker.getZdbID()
                     , MicroarrayWebserviceJob.MICROARRAY_PUB);
             accessions = sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA);
@@ -176,7 +176,7 @@ public class ExpressionService {
 
     public String getGeoLinkForMarker(Marker marker) {
         Collection<String> accessions;
-        if (marker.getZdbID().startsWith("ZDB-GENE")) {
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             accessions = sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA);
             accessions.addAll(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
             return NCBIEfetch.getMicroarrayLink(accessions, marker.getAbbreviation());
@@ -187,7 +187,7 @@ public class ExpressionService {
     }
 
     public String getGeoLinkForMarkerIfExists(Marker marker) {
-        if (marker.getZdbID().startsWith("ZDB-GENE")) {
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             if (!infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers(marker.getZdbID(), MicroarrayWebserviceJob.MICROARRAY_PUB)) {
                 return null;
             }
