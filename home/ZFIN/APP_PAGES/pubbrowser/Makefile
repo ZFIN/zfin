@@ -18,8 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
-GENERICS = citlink.apg  \
-	js-delete_attrib.apg \
+GENERICS = js-delete_attrib.apg \
 	pubselect2.apg \
 	showpubs.apg
 
