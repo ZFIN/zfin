@@ -21,7 +21,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 GENERICS = citlink.apg  \
 	js-delete_attrib.apg \
 	pubselect2.apg \
-	showpubs.apg showsnppubs.apg
+	showpubs.apg
 
 STATICS= REFERinfo.apg pubprintable.apg \
 	citselectlist.apg \
