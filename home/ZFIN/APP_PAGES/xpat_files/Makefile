@@ -28,7 +28,7 @@ STATICS = xpatselectquery.apg xpatexdisplayname.apg \
 fxfigstgrng.apg fxfigfishlist.apg \
 fxgenestgrng.apg \
 xpatselect_resultsasimages.apg \
-fxfiganatlist.apg fxfiggenelist.apg 
+fxfiganatlist.apg
 
 # Use default rules for app page directories.
 
