@@ -377,7 +377,7 @@
                                 (<a href="/${link.singlePublication.zdbID}">${link.publicationCount}</a>)
                             </c:when>
                             <c:otherwise>
-                                (<a href="${zfn:getWebdriverLink()}?MIval=aa-showpubs.apg&OID=${link.zdbID}&rtype=genotype">${link.publicationCount}</a>)
+                                (<a href="/action/infrastructure/data-citation-list/${link.zdbID}">${link.publicationCount}</a>)
                             </c:otherwise>
                         </c:choose>
                     </c:if>
