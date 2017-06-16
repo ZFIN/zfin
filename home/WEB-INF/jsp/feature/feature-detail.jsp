@@ -86,7 +86,7 @@
                                                         test="${!loop.last}">, </c:if>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    (<a href="/action/feature/feature-marker-relation-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)<c:if
+                                                    (<a href="/action/infrastructure/data-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)<c:if
                                                         test="${!loop.last}">, </c:if>
                                                 </c:otherwise>
                                             </c:choose>
@@ -125,7 +125,7 @@
                                                 test="${!loop.last}">, </c:if>
                                         </c:when>
                                         <c:otherwise>
-                                            (<a href="/action/feature/feature-marker-relation-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
+                                            (<a href="/action/infrastructure/data-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
                                         </c:otherwise>
                                     </c:choose>
                                 </c:if>
