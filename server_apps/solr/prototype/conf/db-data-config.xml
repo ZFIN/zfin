@@ -29,6 +29,48 @@ where mtgrpmem_mrkr_type_group IN ('GENEDOM', 'EFG')
   and mrkr_type = marker_type
        ;">
 
+
+        <entity name="gene_type_hierarchy_ncRNA_children"
+                        query="select 'Gene' type_0,
+                           case
+                             when mrkr_type = 'GENE' then 'Protein Coding Gene'
+                             else mrkrtype_type_display end as type_1,
+                           mrkr_zdb_id as gene_zdb_id
+                    from marker
+                         join marker_types on mrkr_type = marker_type
+                    where mrkr_type in ('GENE',
+                                        'GENEP',
+                                        'EFG',
+                                        'NCRNAG');"
+                        where="gene_zdb_id=gene.id"
+                        cacheImpl="SortedMapBackedCache">
+                    <column name="type_0" column="type_0"/>
+                    <column name="type_1" column="type_1"/>
+        </entity>
+
+        <entity name="gene_type_hierarchy_ncRNA_children"
+           query="select 'Gene' type_0,
+                           'ncRNA Gene' as type_1,
+                           mrkrtype_type_display as type_2,
+                           mrkr_zdb_id as gene_zdb_id
+                    from marker
+                         join marker_types on mrkr_type = marker_type
+                    where mrkr_type in ('LINCRNAG',
+                                        'LNCRNAG',
+                                        'MIRNAG',
+                                        'PIRNAG',
+                                        'RRNAG',
+                                        'SCRNAG',
+                                        'SNORNAG',
+                                        'SRPRNAG',
+                                        'TRNAG');"
+           where="gene_zdb_id=gene.id"
+           cacheImpl="SortedMapBackedCache">
+       <column name="type_0" column="type_0"/>
+       <column name="type_1" column="type_1"/>
+       <column name="type_2" column="type_2"/>
+   </entity>
+
    <entity name="gene_typegroup" datasource="db"
            query="select mtgrp_display_name as typegroup,
                            mrkr_zdb_id as gene_zdb_id
@@ -876,6 +918,43 @@ where mrkr_type not in (
                      where mtgrp_searchable = 't'"
                where="mrkr_zdb_id=marker.id"
                cacheImpl="SortedMapBackedCache"/>
+
+       <entity name="marker_type_hierarchy"
+               query="select 'Transcript' type_0,
+                           tscriptt_display as type_1,
+                           mrkr_zdb_id as mrkr_zdb_id
+                    from marker
+                         join transcript on tscript_mrkr_zdb_id = mrkr_zdb_id
+                         join transcript_type on tscript_type_id = tscriptt_pk_id
+                    where tscriptt_type in ('mRNA', 'disrupted domain',
+                                            'polycistronic transcript',
+                                            'transposable element',
+                                            'V-gene', 'ncRNA');"
+               where="mrkr_zdb_id=marker.id"
+               cacheImpl="SortedMapBackedCache">
+           <column name="type_0" column="type_0"/>
+           <column name="type_1" column="type_1"/>
+           <column name="type_2" column="type_2"/>
+       </entity>
+
+       <entity name="marker_type_hierarchy_ncRNA"
+               query="select 'Transcript' type_0,
+                             'ncRNA' as type_1,
+                           tscriptt_display as type_2,
+                           mrkr_zdb_id as mrkr_zdb_id
+                    from marker
+                         join transcript on tscript_mrkr_zdb_id = mrkr_zdb_id
+                         join transcript_type on tscript_type_id = tscriptt_pk_id
+                    where tscriptt_type in ('miRNA','piRNA','pre miRNA','pseudogenic transcript',
+                                            'rRNA','scRNA','snRNA','snoRNA','tRNA','antisense',
+                                            'aberrant processed transcript');"
+               where="mrkr_zdb_id=marker.id"
+               cacheImpl="SortedMapBackedCache">
+           <column name="type_0" column="type_0"/>
+           <column name="type_1" column="type_1"/>
+           <column name="type_2" column="type_2"/>
+       </entity>
+
 
        <entity name="marker_aliases"
                datasource="db" query="select dalias_alias alias, dalias_data_zdb_id from data_alias, marker
@@ -1929,7 +2008,6 @@ select
                    where="construct_pk_id=construct.construct_pk_id"
                    cacheImpl="SortedMapBackedCache"/>
 
-           @PG_XML_COMMENT_OPEN@
            <entity name="construct_expressed_in_direct"
                    datasource="db" query="select DISTINCT term_ont_id as xref, term_name as expressed_in_parent, cc_construct_zdb_id as construct_id
                                             from expression_experiment
@@ -1943,7 +2021,7 @@ select
                                              ;"
                    cacheImpl="SortedMapBackedCache"
                    where="construct_id=construct.id"/>
-
+@PG_XML_COMMENT_OPEN@
            <entity name="construct_expressed_in_parent"
                    datasource="db" query="select DISTINCT term_ont_id as xref, term_name as expressed_in_parent, cc_construct_zdb_id as construct_id
                                             from expression_experiment
@@ -1958,8 +2036,7 @@ select
                                              ;"
                    where="construct_id=construct.id"
                    cacheImpl="SortedMapBackedCache"/>
-           @PG_XML_COMMENT_CLOSE@
-
+@PG_XML_COMMENT_CLOSE@
 
 <!--           <entity name="construct_authors"
                   datasource="db" query="
@@ -2876,7 +2953,8 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                    where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
 
-           <!-- todo: stalled out on postgres -->
+
+@PG_XML_COMMENT_OPEN@
 
            <entity name="expression_expression_anatomy_parent"
                    datasource="db" query="select
@@ -2891,6 +2969,7 @@ term_name as expression_anatomy_direct,
                             ;"
                    where="efs_pk_id=expression.id"
                    cacheImpl="SortedMapBackedCache"/>
+@PG_XML_COMMENT_CLOSE@
 
            <entity name="expression_image"
                    datasource="db" query="select

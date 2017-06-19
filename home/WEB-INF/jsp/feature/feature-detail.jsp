@@ -86,7 +86,7 @@
                                                         test="${!loop.last}">, </c:if>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)<c:if
+                                                    (<a href="/action/infrastructure/data-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)<c:if
                                                         test="${!loop.last}">, </c:if>
                                                 </c:otherwise>
                                             </c:choose>
@@ -125,7 +125,7 @@
                                                 test="${!loop.last}">, </c:if>
                                         </c:when>
                                         <c:otherwise>
-                                            (<a href="/action/feature/feature-marker-relation-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
+                                            (<a href="/action/infrastructure/data-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
                                         </c:otherwise>
                                     </c:choose>
                                 </c:if>
@@ -146,7 +146,7 @@
                                     (<a href="/${formBean.featureTypeAttributions[0].sourceZdbID}">1</a>)
                                 </c:when>
                                 <c:otherwise>
-                                    (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&rtype=genotype&recattrsrctype=feature+type&OID=${formBean.feature.zdbID}">${fn:length(formBean.featureTypeAttributions)}</a>)
+                                    (<a href="/action/infrastructure/data-citation-list/${formBean.feature.zdbID}">${fn:length(formBean.featureTypeAttributions)}</a>)
                                 </c:otherwise>
                             </c:choose>
                         </c:if>
@@ -243,7 +243,7 @@
                                         (<a href="/${featureGenbankLink.singlePublication.zdbID}">${featureGenbankLink.publicationCount}</a>)
                                     </c:when>
                                     <c:otherwise>
-                                        (<a href="${zfn:getWebdriverLink()}?MIval=aa-showpubs.apg&OID=${featureGenbankLink.zdbID}&rtype=genotype">${featureGenbankLink.publicationCount}</a>)
+                                        (<a href="/action/infrastructure/data-citation-list/${featureGenbankLink.zdbID}">${featureGenbankLink.publicationCount}</a>)
                                     </c:otherwise>
                                 </c:choose>
                             </c:if>
@@ -377,7 +377,7 @@
                                 (<a href="/${link.singlePublication.zdbID}">${link.publicationCount}</a>)
                             </c:when>
                             <c:otherwise>
-                                (<a href="${zfn:getWebdriverLink()}?MIval=aa-showpubs.apg&OID=${link.zdbID}&rtype=genotype">${link.publicationCount}</a>)
+                                (<a href="/action/infrastructure/data-citation-list/${link.zdbID}">${link.publicationCount}</a>)
                             </c:otherwise>
                         </c:choose>
                     </c:if>

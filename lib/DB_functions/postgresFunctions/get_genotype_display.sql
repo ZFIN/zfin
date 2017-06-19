@@ -93,12 +93,12 @@ returns text as $genoDisplayHtml$
  and feature_type = ftrtype_name
 	  and gcs_mrkr_type = mrkr_type
 	  and gcs_ftr_type = feature_type
-	  and fmrel_type = "is allele of"
+	  and fmrel_type = 'is allele of'
 	  union 
 	select distinct get_feature_abbrev_display(feature_zdb_id) as fad, 
                             zyg_allele_display, 
               case 
-                when fmrel_type in ("contains innocuous sequence feature","created by","contains phenotypic sequence feature")
+                when fmrel_type in ('contains innocuous sequence feature','created by','contains phenotypic sequence feature')
                 then mrkr_abbrev
                 else lower(get_feature_abbrev_display(feature_zdb_id)) 
                 end as fad2,
@@ -107,7 +107,7 @@ returns text as $genoDisplayHtml$
               zyg_abbrev, 
               feature_abbrev, 
               case
-	        when fmrel_type = "contains innocuous sequence feature"
+	        when fmrel_type = 'contains innocuous sequence feature'
    		then 24
 		else
 		  gcs_significance--,
@@ -133,16 +133,16 @@ returns text as $genoDisplayHtml$
 	          select *
 	          from feature_marker_relationship as fm2
 	          where fm2.fmrel_ftr_zdb_id = fm1.fmrel_ftr_zdb_id
-	            and fm1.fmrel_type in ("contains innocuous sequence feature",
-	                                   "contains phenotypic sequence feature")
-		    and fm2.fmrel_type = "is allele of"
+	            and fm1.fmrel_type in ('contains innocuous sequence feature',
+	                                   'contains phenotypic sequence feature')
+		    and fm2.fmrel_type = 'is allele of'
 	       )
 
 	  union 
 	select distinct get_feature_abbrev_display(feature_zdb_id) as fad, 
                             zyg_allele_display, 
               case 
-                when fmrel_type in ("contains innocuous sequence feature","created by","contains phenotypic sequence feature")
+                when fmrel_type in ('contains innocuous sequence feature','created by','contains phenotypic sequence feature')
                 then mrkr_abbrev
                 else lower(get_feature_abbrev_display(feature_zdb_id)) 
                 end as fad2,
@@ -151,7 +151,7 @@ returns text as $genoDisplayHtml$
               zyg_abbrev, 
               feature_abbrev, 
               case
-	        when fmrel_type = "contains innocuous sequence feature"
+	        when fmrel_type = 'contains innocuous sequence feature'
    		then 24
 		else
 		  gcs_significance--,
@@ -174,9 +174,9 @@ returns text as $genoDisplayHtml$
 	          select *
 	          from feature_marker_relationship as fm2
 	          where fm2.fmrel_ftr_zdb_id = fm1.fmrel_ftr_zdb_id
-	            and fm1.fmrel_type in ("contains innocuous sequence feature",
-	                                   "contains phenotypic sequence feature")
-		    and fm2.fmrel_type = "is allele of"
+	            and fm1.fmrel_type in ('contains innocuous sequence feature',
+	                                   'contains phenotypic sequence feature')
+		    and fm2.fmrel_type = 'is allele of'
 	       )
           and not exists (SElect 'x' from feature_marker_relationship
 	      	  	 	 where fmrel_ftr_zdb_id = feature_Zdb_id
@@ -189,11 +189,11 @@ returns text as $genoDisplayHtml$
 	       continue ;
        	  else
      
-            if (featAbbrev like "%unspecified") then
-                featAbbrev = "unspecified";    
+            if (featAbbrev like '%unspecified') then
+                featAbbrev = 'unspecified';    
             end if;
-       	    if (featAbbrev like "%unrecovered") then
-                featAbbrev = "unrecovered";    
+       	    if (featAbbrev like '%unrecovered') then
+                featAbbrev = 'unrecovered';    
             end if;
         
 	
@@ -218,7 +218,7 @@ returns text as $genoDisplayHtml$
 
             if (zygAllele != '') then
         
-		if (featAbbrevHtml like "%<sup>%") then
+		if (featAbbrevHtml like '%<sup>%') then
             	  
             	   genoDisplayHtml = genoDisplayHtml || '<sup>' || zygAllele || '</sup>';
                 

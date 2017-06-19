@@ -1,6 +1,10 @@
 package org.zfin.search;
 
+import org.apache.commons.lang.StringUtils;
 import org.zfin.ontology.Ontology;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This enumeration lists all field names used in SOLR
@@ -105,6 +109,7 @@ public enum FieldName {
     THUMBNAIL("thumbnail"),
     TOPIC("topic"),
     TYPE("type"),
+    TYPE_TREE("type", 3, "Type"),
     TYPEGROUP("typegroup"),
     URL("url"),
     XREF("xref"),
@@ -112,13 +117,27 @@ public enum FieldName {
 
     private String name;
     private String prettyName;
+    private Integer depth;
 
     FieldName(String name) {
         this.name = name;
+        this.depth = 1;
     }
 
     FieldName(String name, String prettyName) {
         this.name = name;
+        this.prettyName = prettyName;
+        this.depth = 1;
+    }
+
+    FieldName(String name, Integer depth) {
+        this.name = name;
+        this.depth = depth;
+    }
+
+    FieldName(String name, Integer depth, String prettyName) {
+        this.name = name;
+        this.depth = depth;
         this.prettyName = prettyName;
     }
 
@@ -130,6 +149,8 @@ public enum FieldName {
     public boolean isTermFacet() {
         return name.endsWith("tf");
     }
+    public boolean isHierarchical() { return (depth > 1); }
+
 
     public static FieldName getFieldName(String name) {
         if (name == null)
@@ -139,6 +160,14 @@ public enum FieldName {
                 return fieldName;
         }
         return null;
+    }
+
+    public String getPivotKey() {
+        List<String> fields = new ArrayList<>();
+        for (int i = 0 ; i < depth ; i++) {
+            fields.add(getName() + "_" + i);
+        }
+        return StringUtils.join(fields, ",");
     }
 
     public String getPrettyName() {

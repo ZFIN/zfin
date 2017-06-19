@@ -219,7 +219,7 @@ public class ShowFacetLinksTag extends TagSupport {
             facetHtml.append("<a title=\"require in results\" style=\"min-height:10px\" class=\" ");
             facetHtml.append(categoryCssClasses);
             facetHtml.append("\" href=\"");
-            facetHtml.append(SolrService.getFacetUrl(facetField, count, baseUrl));
+            facetHtml.append(SolrService.getFacetUrl(facetField.getName(), count, baseUrl));
             facetHtml.append("\">");
             facetHtml.append("<img class=\"checkbox-icon\" src=\"/images/icon-check-empty.png\"/>");
             facetHtml.append(count.getName());
@@ -237,8 +237,8 @@ public class ShowFacetLinksTag extends TagSupport {
                     ")        <b class=\"caret\"></b>\n" +
                     "      </a>\n" +
                     "    <ul class=\"dropdown-menu\">\n" +
-                    "      <li><a href=\"" + SolrService.getFacetUrl(facetField, count, baseUrl) + "\">Require</a></li>\n" +
-                    "      <li><a href=\"" + SolrService.getNotFacetUrl(facetField, count, baseUrl) + "\">Exclude</a></li>\n");
+                    "      <li><a href=\"" + SolrService.getFacetUrl(facetField.getName(), count, baseUrl) + "\">Require</a></li>\n" +
+                    "      <li><a href=\"" + SolrService.getNotFacetUrl(facetField.getName(), count, baseUrl) + "\">Exclude</a></li>\n");
             if (SolrService.isAJoinableFacetField(facetField.getName())) {
                 facetHtml.append("      <li class=\"divider\"></li>\n" +
                         "      <li><a target=\"_blank\" href=\"/prototype?q=" + count.getName()

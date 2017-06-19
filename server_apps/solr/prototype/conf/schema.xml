@@ -789,7 +789,7 @@
    <dynamicField name="*_dt" type="date"    indexed="true"  stored="true"/>
    <dynamicField name="*_ac"  type="edgytext"    indexed="true"  stored="true" multiValued="true" />
    <dynamicField name="*_tf"  type="term_facet"    indexed="true" stored="true" multiValued="true" />
-
+   <dynamicField name="type_*" type="string" indexed="true" stored="true" />
 <!--
    <dynamicField name="*_suggest" type="word_suggest" indexed="true"  stored="true" multiValued="true"/>
 -->
