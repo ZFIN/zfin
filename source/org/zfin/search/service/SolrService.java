@@ -536,7 +536,7 @@ public class SolrService {
         fieldName = fieldName.replaceAll("_t$", "");
         fieldName = StringUtils.replace(fieldName, "_tf", "");
         fieldName = StringUtils.replace(fieldName, "_hl", "");
-
+        fieldName = fieldName.replaceAll("_([0-9]+)$", "");
 
         /* these should only get replaced at the end of the word! */
 

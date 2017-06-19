@@ -574,13 +574,13 @@ public class FacetBuilderService {
         //build the facet list, ignoring the selected facet values
 
         if (fieldNameInstance.isHierarchical()) {
+
             for (PivotField pivotField : response.getFacetPivot().get(fieldNameInstance.getPivotKey())) {
-                facetValues.add(buildFacetValue(pivotField, false, baseUrl));
+                    facetValues.add(buildFacetValue(pivotField, isSelected(pivotField), baseUrl));
             }
         } else {
             for (FacetField.Count count : facetField.getValues()) {
-                String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
-                if (!filterQuerySelectionMap.containsKey(quotedFq)) {
+                if (!isSelected(count)) {
                     facetValues.add(buildFacetValue(fieldNameInstance.getName(), count, false, baseUrl));
                 }
             }
@@ -610,13 +610,13 @@ public class FacetBuilderService {
     private FacetValue buildFacetValue(PivotField pivotField, boolean selected, String baseUrl) {
         FacetField.Count count = new FacetField.Count(null, (String) pivotField.getValue(), (long) pivotField.getCount());
 
-        //todo: is it selected?
-        FacetValue facetValue = buildFacetValue(pivotField.getField(), count, selected, baseUrl);
+        FacetValue facetValue = null;
 
-        if (pivotField.getPivot() != null) {
+        facetValue = buildFacetValue(pivotField.getField(), count, selected, baseUrl);
+
+        if (pivotField.getPivot() != null && facetValue != null) {
             for (PivotField child : pivotField.getPivot()) {
-                //todo: is it selected?
-                facetValue.addChildFacet(buildFacetValue(child, selected, baseUrl));
+                facetValue.addChildFacet(buildFacetValue(child, isSelected(child), baseUrl));
             }
         }
 
@@ -670,4 +670,17 @@ public class FacetBuilderService {
         }
     }
 
+    private Boolean isSelected(PivotField pivotField) {
+        return isSelected(pivotField.getField(), pivotField.getValue().toString());
+    }
+
+    private Boolean isSelected(FacetField.Count count) {
+        return isSelected(count.getFacetField().getName(), count.getName());
+    }
+
+    private Boolean isSelected(String fieldName, String value) {
+        String quotedFq = fieldName + ":\"" + value + "\"";
+
+        return filterQuerySelectionMap.containsKey(quotedFq);
+    }
 }

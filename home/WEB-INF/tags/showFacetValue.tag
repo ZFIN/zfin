@@ -59,7 +59,16 @@
     <li style="margin-left: 20px">
         <ol class="facet-value-list child-facet list-unstyled">
             <c:forEach var="childFacet" items="${value.childFacets}">
-                <zfin2:showFacetValue gaCategory="${gaCategory}" value="${childFacet}" showIncludeExclude="${showIncludeExclude}"/>
+                <c:choose>
+                    <c:when test="${childFacet.selected}">
+                        <zfin2:showSelectedFacetValue value="${childFacet}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <zfin2:showFacetValue gaCategory="${gaCategory}" value="${childFacet}" showIncludeExclude="${showIncludeExclude}"/>
+                    </c:otherwise>
+                </c:choose>
+
+
             </c:forEach>
         </ol>
     </li>
