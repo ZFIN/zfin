@@ -629,9 +629,9 @@ public class FacetBuilderService {
             String quotedFq = fieldName + ":\"" + count.getName() + "\"";
             url = SolrService.getBreadBoxUrl(quotedFq, baseUrl);
         } else
-            url = SolrService.getFacetUrl(fieldName, count, baseUrl);
+            url = SolrService.getFacetUrl(fieldName, count.getName(), baseUrl);
 
-        String excludeUrl = SolrService.getNotFacetUrl(fieldName, count, baseUrl);
+        String excludeUrl = SolrService.getNotFacetUrl(fieldName, count.getName(), baseUrl);
 
         return new FacetValue(count, selected, url, excludeUrl);
     }

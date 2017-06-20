@@ -55,6 +55,8 @@ public class FacetValue {
         return selected;
     }
 
+    public void setSelected(Boolean selected) { this.selected = selected; }
+
     public void addChildFacet(FacetValue childFacet) {
         if (childFacets == null) { childFacets = new ArrayList<>(); }
         childFacets.add(childFacet);

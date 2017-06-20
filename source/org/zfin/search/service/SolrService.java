@@ -19,6 +19,7 @@ import org.apache.solr.common.util.NamedList;
 import org.springframework.stereotype.Service;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.search.*;
+import org.zfin.search.presentation.FacetValue;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,16 +96,16 @@ public class SolrService {
         return url.toString();
     }
 
-    public static ArrayList<FacetField.Count> reorderFacetField(FacetField facetField, Map<String, Boolean> fqMap) {
+    public static ArrayList<FacetValue> reorderFacetField(FacetField facetField, Map<String, Boolean> fqMap) {
         //We want to show selected values first, split the list into two groups
         //then put it back together...
-        ArrayList<FacetField.Count> facetValues = new ArrayList<>();
+        ArrayList<FacetValue> facetValues = new ArrayList<>();
         //The order of execution is different than the order of values... odd
-        List<FacetField.Count> unselectedValues = getUnselectedValues(facetField, fqMap);
-        List<FacetField.Count> selectedValues = getSelectedValues(facetField, fqMap);
+        List<FacetValue> unselectedValues = getUnselectedValues(facetField, fqMap);
+        List<FacetValue> selectedValues = getSelectedValues(facetField, fqMap);
 
-        selectedValues = sortFacets(facetField, selectedValues);
-        unselectedValues = sortFacets(facetField, unselectedValues);
+        selectedValues = sortFacetValues(facetField, selectedValues);
+        unselectedValues = sortFacetValues(facetField, unselectedValues);
 
         facetValues.addAll(unselectedValues);
         facetValues.addAll(selectedValues);
@@ -112,8 +113,9 @@ public class SolrService {
         return facetValues;
     }
 
-    public static List<FacetField.Count> sortFacets(FacetField facetField, List<FacetField.Count> inputValues) {
-        List<FacetField.Count> outputValues = new ArrayList<>();
+
+    public static List<FacetValue> sortFacetValues(FacetField facetField, List<FacetValue> inputValues) {
+        List<FacetValue> outputValues = new ArrayList<>();
         outputValues.addAll(inputValues);
         if (SolrService.isToBeHumanSorted(facetField.getName())) {
             Collections.sort(outputValues, new FacetValueAlphanumComparator());
@@ -124,21 +126,23 @@ public class SolrService {
         return outputValues;
     }
 
-    private static List<FacetField.Count> getSelectedValues(FacetField facetField, Map<String, Boolean> fqMap) {
+    private static List<FacetValue> getSelectedValues(FacetField facetField, Map<String, Boolean> fqMap) {
         return getFacetValues(facetField, fqMap, true);
     }
 
-    private static List<FacetField.Count> getUnselectedValues(FacetField facetField, Map<String, Boolean> fqMap) {
+    private static List<FacetValue> getUnselectedValues(FacetField facetField, Map<String, Boolean> fqMap) {
         return getFacetValues(facetField, fqMap, false);
     }
 
-    private static List<FacetField.Count> getFacetValues(FacetField facetField, Map<String, Boolean> fqMap, boolean selected) {
-        List<FacetField.Count> values = new ArrayList<>();
+    private static List<FacetValue> getFacetValues(FacetField facetField, Map<String, Boolean> fqMap, boolean selected) {
+        List<FacetValue> values = new ArrayList<>();
 
         for (FacetField.Count count : facetField.getValues()) {
             String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
             if (!selected == fqMap.containsKey(quotedFq)) {
-                values.add(count);
+                FacetValue value = new FacetValue(count);
+                value.setSelected(selected);
+                values.add(value);
             }
         }
         return values;
@@ -491,28 +495,28 @@ public class SolrService {
         return out.toString();
     }
 
-    public static String getFacetUrl(String fieldName, FacetField.Count count, String baseUrl) {
-        String quotedFq = fieldName + ":\"" + count.getName() + "\"";
+    public static String getFacetUrl(String fieldName, String value, String baseUrl) {
+        String quotedFq = fieldName + ":\"" + value + "\"";
 
         URLCreator urlCreator = new URLCreator(baseUrl);
         urlCreator.addNamevaluePair("fq", quotedFq);
         urlCreator.removeNameValuePair("page");
         if (StringUtils.equals("category", fieldName)) {
             urlCreator.removeNameValuePair("category");
-            urlCreator.addNamevaluePair("category", count.getName());
+            urlCreator.addNamevaluePair("category", value);
         }
         return urlCreator.getURL();
     }
 
-    public static String getNotFacetUrl(String fieldName, FacetField.Count count, String baseUrl) {
-        String quotedFq = "-" + fieldName + ":\"" + count.getName() + "\"";
+    public static String getNotFacetUrl(String fieldName, String value, String baseUrl) {
+        String quotedFq = "-" + fieldName + ":\"" + value + "\"";
         URLCreator urlCreator = new URLCreator(baseUrl);
         urlCreator.addNamevaluePair("fq", quotedFq);
         urlCreator.removeNameValuePair("page");
         if (StringUtils.equals("category", fieldName)) {
             urlCreator.removeNameValuePair("category");
         }
-        logger.debug("exclude URL for " + count.getName() + ": " + urlCreator.getURL());
+        logger.debug("exclude URL for " + value + ": " + urlCreator.getURL());
         return urlCreator.getURL();
     }
 
@@ -846,4 +850,6 @@ public class SolrService {
     public static boolean isIndexingInProgress() throws IOException, SolrServerException {
         return !getServerStatus().equals(IDLE);
     }
+
+
 }

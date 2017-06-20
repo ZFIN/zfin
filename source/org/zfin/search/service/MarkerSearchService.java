@@ -4,7 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrResponse;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -17,19 +16,18 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.MarkerTypeSignificanceComparator;
-import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.search.FacetValueAlphanumComparator;
 import org.zfin.search.FieldName;
 import org.zfin.search.MarkerTypeFacetComparator;
+import org.zfin.search.presentation.FacetValue;
 import org.zfin.search.presentation.MarkerSearchCriteria;
 import org.zfin.search.presentation.MarkerSearchResult;
-import org.zfin.util.URLCreator;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -73,16 +71,11 @@ public class MarkerSearchService {
     }
 
     public List<String> getFacetStrings(QueryResponse response, FieldName fieldName) {
-        List<String> values = new ArrayList<>();
-
         FacetField facetField = response.getFacetField(fieldName.getName());
-        List<FacetField.Count> facetValues = SolrService.sortFacets(facetField, facetField.getValues());
 
-        for (FacetField.Count count : facetValues) {
-            values.add(count.getName());
-        }
+        List<FacetValue> sortedFacetValues = SolrService.sortFacetValues(facetField, buildFacetValues(facetField.getValues()));
 
-        return values;
+        return sortedFacetValues.stream().map(FacetValue::getLabel).collect(Collectors.toList());
     }
 
 
@@ -316,6 +309,12 @@ public class MarkerSearchService {
     }
 
 
-
+    private List<FacetValue> buildFacetValues(List<FacetField.Count> counts) {
+        List<FacetValue> values = new ArrayList<>();
+        for (FacetField.Count count : counts) {
+            values.add(new FacetValue(count));
+        }
+        return values;
+    }
 
 }

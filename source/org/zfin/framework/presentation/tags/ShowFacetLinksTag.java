@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.zfin.search.presentation.FacetValue;
 import org.zfin.search.service.SolrService;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.util.URLCreator;
@@ -156,9 +157,9 @@ public class ShowFacetLinksTag extends TagSupport {
 
             if (facetField.getValues() != null) {
 
-                ArrayList<FacetField.Count> facetValues = SolrService.reorderFacetField(facetField, fqMap);
+                ArrayList<FacetValue> facetValues = SolrService.reorderFacetField(facetField, fqMap);
 
-                for (FacetField.Count count : facetValues) {
+                for (FacetValue value : facetValues) {
                     if (expandable && facetValueIndex == VISIBLE_FACET_VALUES) {
                         facetHtml.append("<div ");
                         facetHtml.append(" id=\"" + facetField.getName() + "-additional-values\" " );
@@ -166,14 +167,14 @@ public class ShowFacetLinksTag extends TagSupport {
                         facetHtml.append(">");
                     }
 
-                    String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
+                    String quotedFq = facetField.getName() + ":\"" + value.getLabel() + "\"";
 
                     if (!fqMap.containsKey(quotedFq)) {
-                        facetHtml.append(showSingleFacetValue(facetField, count, quotedFq, false));
+                        facetHtml.append(showSingleFacetValue(facetField, value, quotedFq, false));
                         //only unselected facets count towards the number visible
                         facetValueIndex++;
                     } else {
-                        facetHtml.append(showSingleFacetValue(facetField, count, quotedFq, true));
+                        facetHtml.append(showSingleFacetValue(facetField, value, quotedFq, true));
 
                     }
 
@@ -205,7 +206,7 @@ public class ShowFacetLinksTag extends TagSupport {
         return facetHtml.toString();
     }
 
-    public String showSingleFacetValue(FacetField facetField, FacetField.Count count, String quotedFq, Boolean selected) {
+    public String showSingleFacetValue(FacetField facetField, FacetValue value, String quotedFq, Boolean selected) {
         StringBuilder facetHtml = new StringBuilder();
 
         facetHtml.append("<li style=\"min-height:10px\" class=\"facet-value row-fluid\">");
@@ -219,30 +220,30 @@ public class ShowFacetLinksTag extends TagSupport {
             facetHtml.append("<a title=\"require in results\" style=\"min-height:10px\" class=\" ");
             facetHtml.append(categoryCssClasses);
             facetHtml.append("\" href=\"");
-            facetHtml.append(SolrService.getFacetUrl(facetField.getName(), count, baseUrl));
+            facetHtml.append(SolrService.getFacetUrl(facetField.getName(), value.getLabel(), baseUrl));
             facetHtml.append("\">");
             facetHtml.append("<img class=\"checkbox-icon\" src=\"/images/icon-check-empty.png\"/>");
-            facetHtml.append(count.getName());
+            facetHtml.append(value.getLabel());
             facetHtml.append("</a>");
             facetHtml.append("</span>");
 
-            String shortenedName = SolrService.shortenFacetValue(count.getName());
+            String shortenedName = SolrService.shortenFacetValue(value.getLabel());
 
             facetHtml.append("<ul style=\"min-height:10px\" class=\"facet-count-container col-md-3 unstyled\">\n" +
                     "  <li class=\"dropdown\">\n" +
                     "    <a class=\"facet-count dropdown-toggle\"\n" +
                     "       data-toggle=\"dropdown\"\n" +
                     "       href=\"#\">\n(" +
-                    count.getCount() +
+                    value.getCount() +
                     ")        <b class=\"caret\"></b>\n" +
                     "      </a>\n" +
                     "    <ul class=\"dropdown-menu\">\n" +
-                    "      <li><a href=\"" + SolrService.getFacetUrl(facetField.getName(), count, baseUrl) + "\">Require</a></li>\n" +
-                    "      <li><a href=\"" + SolrService.getNotFacetUrl(facetField.getName(), count, baseUrl) + "\">Exclude</a></li>\n");
+                    "      <li><a href=\"" + SolrService.getFacetUrl(facetField.getName(), value.getLabel(), baseUrl) + "\">Require</a></li>\n" +
+                    "      <li><a href=\"" + SolrService.getNotFacetUrl(facetField.getName(), value.getLabel(), baseUrl) + "\">Exclude</a></li>\n");
             if (SolrService.isAJoinableFacetField(facetField.getName())) {
                 facetHtml.append("      <li class=\"divider\"></li>\n" +
-                        "      <li><a target=\"_blank\" href=\"/prototype?q=" + count.getName()
-                        + "\">Search for <strong>" + count.getName() + "</strong> in New Window</a></li>\n");
+                        "      <li><a target=\"_blank\" href=\"/prototype?q=" + value.getLabel()
+                        + "\">Search for <strong>" + value.getLabel() + "</strong> in New Window</a></li>\n");
             }
             facetHtml.append(        "    </ul>\n" +
                     "  </li>\n" +
