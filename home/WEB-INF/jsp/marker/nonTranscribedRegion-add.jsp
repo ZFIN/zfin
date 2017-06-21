@@ -41,8 +41,7 @@
                     <div class="form-group">
                         <form:label path="name" class="col-sm-2 control-label">Name</form:label>
                         <div class="col-sm-4">
-                            <form:input path="name" class="form-control"/>
-                            <form:errors path="name" class="error"/>
+                            <form:input path="name" class="form-control"/><form:errors path="name" class="error"/>
                         </div>
                     </div>
                     <div class="form-group" id="abbrev-group">
