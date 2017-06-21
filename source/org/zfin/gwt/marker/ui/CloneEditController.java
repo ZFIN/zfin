@@ -175,7 +175,7 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
             relatedGenesBox.setZdbIDThenAbbrev(false);
             relatedGenesBox.setUpdateExpression(true);
         } else {
-            relatedGeneTitle.setHTML("<b>Clone contains Gene:</b>");
+            relatedGeneTitle.setHTML("<b>Clone contains Gene/NTR:</b>");
         }
     }
 

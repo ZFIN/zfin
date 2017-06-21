@@ -14,7 +14,7 @@ import java.util.Set;
 public class MarkerRelationship implements Comparable, EntityAttribution, AbstractMarkerRelationshipInterface {
 
     public enum Type {
-	BAC_CONTAINS_GENEDOME("BAC contains GENEDOM"),
+	BAC_CONTAINS_GENEDOM("BAC contains GENEDOM"),
 	BAC_CONTAINS_NTR("BAC contains NTR"),
 	GENEDOM_CONTAINS_NTR("GENEDOM contains NTR"),
         CLONE_CONTAINS_GENE("clone contains gene"),

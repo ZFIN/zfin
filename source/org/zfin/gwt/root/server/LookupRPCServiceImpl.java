@@ -265,7 +265,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
      * @return response
      */
     public SuggestOracle.Response getGenedomSuggestions(SuggestOracle.Request req) {
-        return getMarkerSuggestionsForType(req, Marker.TypeGroup.GENEDOM_PROD_PROTEIN);
+        return getMarkerSuggestionsForType(req, Marker.TypeGroup.GENEDOM_AND_NTR);
     }
 
     public SuggestOracle.Response getMarkerSuggestionsForType(SuggestOracle.Request req, Marker.TypeGroup typeGroup) {
