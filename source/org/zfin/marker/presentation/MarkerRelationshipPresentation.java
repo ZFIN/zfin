@@ -57,18 +57,13 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
             sb.append(PublicationPresentation.getLink(attributionZdbIDs.iterator().next(), "1"));
             sb.append(")");
         } else if (attributionZdbIDs.size() > 1) {
-            /* todo: there should be some more infrastructure for the showpubs links */
-            StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
-            uri.append("&orgOID=");
-            uri.append(zdbId);
-            uri.append("&recattrsrctype=standard");
-            uri.append("&OID=");
             String count = String.valueOf(attributionZdbIDs.size());
 
-            sb.append(" (");
-//            sb.append(EntityPresentation.getWebdriverLink(uri.toString(), zdbId, count));
-            sb.append(EntityPresentation.getWebdriverLink(uri.toString(), markerRelationshipZdbId, count));
-            sb.append(")");
+            sb.append(" (<a href=\"/action/infrastructure/data-citation-list/");
+            sb.append(markerRelationshipZdbId);
+            sb.append("\">");
+            sb.append(count);
+            sb.append("</a>)");
         }
 
         return sb.toString();

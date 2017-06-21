@@ -55,17 +55,13 @@ public class LinkDisplay implements ProvidesLink {
             sb.append(PublicationPresentation.getLink(references.iterator().next().getZdbID(), "1"));
             sb.append(")");
         } else if (references.size() > 1) {
-            /* todo: there should be some more infrastructure for the showpubs links */
-            StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
-            uri.append("&orgOID=");
-            uri.append(markerZdbID);
-            uri.append("&recattrsrctype=standard");
-            uri.append("&OID=");
             String count = String.valueOf(references.size());
 
-            sb.append(" (");
-            sb.append(EntityPresentation.getWebdriverLink(uri.toString(), dblinkZdbID, count));
-            sb.append(")");
+            sb.append(" (<a href=\"/action/infrastructure/data-citation-list/");
+            sb.append(dblinkZdbID);
+            sb.append("\">");
+            sb.append(count);
+            sb.append("</a>)");
         }
 
         return sb.toString();

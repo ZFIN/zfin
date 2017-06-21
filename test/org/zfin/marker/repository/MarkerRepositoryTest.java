@@ -770,8 +770,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         String linkWithAttribution = mrp.getLinkWithAttribution();
         logger.debug(linkWithAttribution);
 
-        assertTrue(linkWithAttribution.startsWith("<a href=\"/ZDB-MRPHLNO-060317-4\">"));
-        assertTrue(linkWithAttribution.contains("/webdriver?MIval=aa-showpubs.apg&orgOID=ZDB-MRPHLNO-060317-4&recattrsrctype=standard&OID=ZDB-MREL-060317-4\">2</a>)"));
+        assertTrue(linkWithAttribution.contains("/action/infrastructure/data-citation-list/ZDB-MRPHLNO-060317-4\">2</a>)"));
     }
 
     @Test

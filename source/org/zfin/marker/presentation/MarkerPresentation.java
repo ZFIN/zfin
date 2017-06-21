@@ -337,8 +337,7 @@ public class MarkerPresentation extends EntityPresentation {
         if (publicationCount == 1) {
             return PublicationPresentation.getSingleAttributionLink(publicationZdbID, publicationCount);
         } else {
-            return PublicationPresentation.getMultipleAttributionLink(markerZdbID, additionalZdbID,
-                    "marker", "standard", publicationCount);
+            return PublicationPresentation.getMultipleAttributionLink(markerZdbID, additionalZdbID, publicationCount);
         }
     }
 

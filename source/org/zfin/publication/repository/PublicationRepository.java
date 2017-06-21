@@ -556,4 +556,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     CorrespondenceReceivedMessage addReceivedCorrespondence(Publication publication, CorrespondenceDTO dto);
 
+    List<String> getPublicationIdsForMarkerGo(String markerZdbID, String markerGoEvdZdbID);
+
 }

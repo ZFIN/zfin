@@ -2365,4 +2365,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         HibernateUtil.currentSession().save(correspondence);
         return correspondence;
     }
+
+    @Override
+    public List<String> getPublicationIdsForMarkerGo(String markerZdbID, String markerGoEvdZdbID) {
+        Session session = HibernateUtil.currentSession();
+        String sql =  " select ra.recattrib_source_zdb_id  " +
+                " from record_attribution ra ,  marker_go_term_evidence ev " +
+                " where  ev.mrkrgoev_zdb_id  = ra.recattrib_data_zdb_id " +
+                " and  :markerZdbID = ev.mrkrgoev_mrkr_zdb_id " +
+                " and :markerGoEvdZdbID = ev.mrkrgoev_zdb_id";
+        SQLQuery query = session.createSQLQuery(sql);
+        query.setString("markerZdbID", markerZdbID);
+        query.setString("markerGoEvdZdbID", markerGoEvdZdbID);
+        List<String> pubIDs = query.list();
+        return pubIDs;
+    }
 }

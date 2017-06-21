@@ -64,17 +64,13 @@ public class DBLinkPresentation extends EntityPresentation {
             sb.append(PublicationPresentation.getLink(dblink.getSinglePublication(), "1"));
             sb.append(")");
         } else if (dblink.getPublicationCount() > 1) {
-            /* todo: there should be some more infrastructure for the showpubs links */
-            StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
-            uri.append("&orgOID=");
-            uri.append(markerZdbId);
-            uri.append("&recattrsrctype=standard");
-            uri.append("&OID=");
             String count = String.valueOf(dblink.getPublicationCount());
 
-            sb.append(" (");
-            sb.append(getWebdriverLink(uri.toString(), dblink.getZdbID(), count));
-            sb.append(")");
+            sb.append(" (<a href=\"/action/infrastructure/data-citation-list/");
+            sb.append(dblink.getZdbID());
+            sb.append("\">");
+            sb.append(count);
+            sb.append("</a>)");
         }
 
         return sb.toString();

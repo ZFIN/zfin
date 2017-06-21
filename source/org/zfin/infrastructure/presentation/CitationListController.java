@@ -40,7 +40,7 @@ public class CitationListController {
         }
         model.addAttribute("pubCount", publications.size());
         PublicationListBean citationBean = new PublicationListAdapter(publications);
-        citationBean.setOrderBy("Order By Author");
+        citationBean.setOrderBy("author");
         model.addAttribute("citationList",citationBean);
 
         return "infrastructure/data-citation-list.page";
