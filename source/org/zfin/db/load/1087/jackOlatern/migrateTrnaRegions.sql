@@ -39,78 +39,78 @@ into temp tmp_to_convert1;
 
 
 update zdb_replaced_data
- set zrepld_old_zdb_id = replace(zrepld_old_zdb_id, 'GENE','SNORNAG')
+ set zrepld_old_zdb_id = replace(zrepld_old_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where zrepld_old_zdb_id = gene_id);
 
 update zdb_replaced_data
- set zrepld_new_zdb_id = replace(zrepld_new_zdb_id, 'GENE','SNORNAG')
+ set zrepld_new_zdb_id = replace(zrepld_new_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where zrepld_new_zdb_id = gene_id);
 
 update withdrawn_data 
- set wd_old_zdb_id = replace(wd_old_Zdb_id, 'GENE','SNORNAG')
+ set wd_old_zdb_id = replace(wd_old_Zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where wd_old_zdb_id = gene_id);
 
 update withdrawn_data 
- set wd_new_zdb_id = replace(wd_new_Zdb_id, 'GENE','SNORNAG')
+ set wd_new_zdb_id = replace(wd_new_Zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where wd_new_zdb_id = gene_id);
 
 insert into zdb_replaced_data (zrepld_new_zdb_id, zrepld_old_zdb_id)
- select replace(gene_id, 'GENE','SNORNAG'), gene_id
+ select replace(gene_id, 'GENE','TRNAG'), gene_id
   from tmp_to_convert1;
 
 insert into withdrawn_data (wd_old_zdb_id, wd_new_zdb_id)
- select replace(gene_id, 'GENE','SNORNAG'), gene_id
+ select replace(gene_id, 'GENE','TRNAG'), gene_id
   from tmp_to_convert1;
 
 update zdb_active_data
- set zactvd_zdb_id = replace(zactvd_zdb_id, 'GENE','SNORNAG')
+ set zactvd_zdb_id = replace(zactvd_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where zactvd_zdb_id = gene_id);
 
 update marker
- set mrkr_zdb_id = replace(mrkr_Zdb_id, 'GENE','SNORNAG')
+ set mrkr_zdb_id = replace(mrkr_Zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where mrkr_zdb_id = gene_id);
 
 update marker
- set mrkr_type = 'SNORNAG'
+ set mrkr_type = 'TRNAG'
  where mrkr_type = 'GENE'
  and exists (Select 'x' from tmp_to_convert1 where mrkr_zdb_id = gene_id);
 
 update zmap_pub_pan_mark
- set zdb_id = replace(zdb_id, 'GENE','SNORNAG')
+ set zdb_id = replace(zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where  zdb_id = gene_id);
 
 update external_note
- set extnote_data_zdb_id = replace(extnote_data_zdb_id, 'GENE','SNORNAG')
+ set extnote_data_zdb_id = replace(extnote_data_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where extnote_data_zdb_id = gene_id);
 
 
 update paneled_markers
- set  zdb_id = replace(zdb_id, 'GENE','SNORNAG')
+ set  zdb_id = replace(zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where zdb_id = gene_id);
 
 update all_map_names
- set allmapnm_zdb_id = replace(allmapnm_zdb_id, 'GENE','SNORNAG')
+ set allmapnm_zdb_id = replace(allmapnm_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where allmapnm_zdb_id = gene_id);
 
 update sequence_feature_chromosome_location
- set sfcl_feature_Zdb_id = replace( sfcl_feature_Zdb_id, 'GENE','SNORNAG')
+ set sfcl_feature_Zdb_id = replace( sfcl_feature_Zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where  sfcl_feature_Zdb_id = gene_id);
 
 
 update record_attribution
- set recattrib_data_zdb_id = replace(recattrib_data_zdb_id, 'GENE','SNORNAG')
+ set recattrib_data_zdb_id = replace(recattrib_data_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where recattrib_data_zdb_id = gene_id);
 
 update expression_experiment2
- set xpatex_gene_zdb_id = replace(xpatex_gene_zdb_id, 'GENE','SNORNAG')
+ set xpatex_gene_zdb_id = replace(xpatex_gene_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where xpatex_gene_zdb_id = gene_id);
 
 update feature_marker_relationship
- set fmrel_mrkr_zdb_id = replace(fmrel_mrkr_zdb_id , 'GENE','SNORNAG')
+ set fmrel_mrkr_zdb_id = replace(fmrel_mrkr_zdb_id , 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where fmrel_mrkr_zdb_id = gene_id);
 
 update marker_Relationship
- set mrel_mrkr_1_zdb_id = replace(mrel_mrkr_1_zdb_id, 'GENE','SNORNAG')
+ set mrel_mrkr_1_zdb_id = replace(mrel_mrkr_1_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where mrel_mrkr_1_zdb_id = gene_id);
 
 select distinct mrel_type from marker_relationship
@@ -121,7 +121,7 @@ select count(*) from marker_relationship
 
 
 update construct_component
- set cc_component_zdb_id  = replace(cc_component_zdb_id, 'GENE','SNORNAG')
+ set cc_component_zdb_id  = replace(cc_component_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where cc_component_zdb_id = gene_id);
 
 --CONSTRUCT_COMPONENTS
@@ -129,121 +129,121 @@ update construct_component
 
 
 update marker_Relationship
- set mrel_mrkr_2_zdb_id = replace(mrel_mrkr_2_zdb_id, 'GENE','SNORNAG')
+ set mrel_mrkr_2_zdb_id = replace(mrel_mrkr_2_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where mrel_mrkr_2_zdb_id = gene_id);
 
 update data_alias
- set dalias_data_zdb_id = replace(dalias_data_zdb_id, 'GENE','SNORNAG')
+ set dalias_data_zdb_id = replace(dalias_data_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where dalias_data_zdb_id = gene_id);
 
 update marker_history
- set mhist_mrkr_zdb_id = replace(mhist_mrkr_zdb_id,  'GENE','SNORNAG')
+ set mhist_mrkr_zdb_id = replace(mhist_mrkr_zdb_id,  'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where mhist_mrkr_zdb_id = gene_id);
 
 update marker_history_audit
- set mha_mrkr_zdb_id = replace(mha_mrkr_zdb_id, 'GENE','SNORNAG')
+ set mha_mrkr_zdb_id = replace(mha_mrkr_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where mha_mrkr_zdb_id = gene_id);
 
 update zdb_orphan_data
- set zorphand_zdb_id = replace(zorphand_zdb_id, 'GENE','SNORNAG')
+ set zorphand_zdb_id = replace(zorphand_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where zorphand_zdb_id  = gene_id);
 
 update external_reference
- set exref_data_zdb_id = replace(exref_data_zdb_id, 'GENE','SNORNAG')
+ set exref_data_zdb_id = replace(exref_data_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where exref_data_zdb_id = gene_id);
 
 update int_data_source
- set ids_data_zdb_id = replace(ids_data_zdb_id, 'GENE','SNORNAG')
+ set ids_data_zdb_id = replace(ids_data_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where ids_data_zdb_id = gene_id);
 
 update linkage_membership_Search
- set lms_member_1_zdb_id = replace(lms_member_1_zdb_id, 'GENE','SNORNAG')
+ set lms_member_1_zdb_id = replace(lms_member_1_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where lms_member_1_zdb_id  = gene_id);
 
 update linkage_membership_Search
- set lms_member_2_zdb_id = replace(lms_member_2_zdb_id, 'GENE','SNORNAG')
+ set lms_member_2_zdb_id = replace(lms_member_2_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where lms_member_2_zdb_id  = gene_id);
 
 update mapped_marker
- set marker_id  = replace(marker_id, 'GENE','SNORNAG')
+ set marker_id  = replace(marker_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where marker_id = gene_id);
 
 
 
 update db_link
- set dblink_linked_recid = replace(dblink_linked_recid, 'GENE','SNORNAG')
+ set dblink_linked_recid = replace(dblink_linked_recid, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where dblink_linked_recid = gene_id);
 
 update data_note
- set dnote_data_zdb_id = replace(dnote_data_zdb_id, 'GENE','SNORNAG')
+ set dnote_data_zdb_id = replace(dnote_data_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where dnote_data_zdb_id = gene_id);
 
 update unique_location 
-  set ul_data_zdb_id = replace(ul_data_zdb_id, 'GENE','SNORNAG')
+  set ul_data_zdb_id = replace(ul_data_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where ul_data_zdb_id = gene_id);
 
 update ortholog
-  set ortho_zebrafish_gene_zdb_id = replace(ortho_zebrafish_gene_zdb_id, 'GENE','SNORNAG')
+  set ortho_zebrafish_gene_zdb_id = replace(ortho_zebrafish_gene_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where ortho_zebrafish_gene_zdb_id = gene_id);
 
 update snp_download
-  set snpd_mrkr_zdb_id = replace(snpd_mrkr_zdb_id, 'GENE','SNORNAG')
+  set snpd_mrkr_zdb_id = replace(snpd_mrkr_zdb_id, 'GENE','TRNAG')
  where exists (select 'x' from tmp_to_convert1 where snpd_mrkr_zdb_id = gene_id);
 
 update marker_go_term_evidence
-  set mrkrgoev_mrkr_zdb_id = replace(mrkrgoev_mrkr_zdb_id, 'GENE','SNORNAG')
+  set mrkrgoev_mrkr_zdb_id = replace(mrkrgoev_mrkr_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where mrkrgoev_mrkr_zdb_id = gene_id);
 
 update linkage_member
- set lnkgmem_member_zdb_id = replace(lnkgmem_member_zdb_id, 'GENE','SNORNAG')
+ set lnkgmem_member_zdb_id = replace(lnkgmem_member_zdb_id, 'GENE','TRNAG')
 where exists (Select 'x' from tmp_to_convert1 where lnkgmem_member_zdb_id = gene_id);
 
 update linkage_membership
- set lnkgm_member_1_zdb_id = replace(lnkgm_member_1_zdb_id, 'GENE','SNORNAG')
+ set lnkgm_member_1_zdb_id = replace(lnkgm_member_1_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where lnkgm_member_1_zdb_id = gene_id);
 
 update linkage_membership
- set lnkgm_member_2_zdb_id = replace(lnkgm_member_2_zdb_id, 'GENE','SNORNAG')
+ set lnkgm_member_2_zdb_id = replace(lnkgm_member_2_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where lnkgm_member_2_zdb_id = gene_id);
 
 update linkage_pair_member
-  set lpmem_member_zdb_id = replace(lpmem_member_zdb_id, 'GENE','SNORNAG')
+  set lpmem_member_zdb_id = replace(lpmem_member_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where lpmem_member_zdb_id = gene_id);
 
 update linkage_single
- set lsingle_member_zdb_id = replace(lsingle_member_zdb_id, 'GENE','SNORNAG')
+ set lsingle_member_zdb_id = replace(lsingle_member_zdb_id, 'GENE','TRNAG')
  where exists (Select 'x' from tmp_to_convert1 where lsingle_member_zdb_id = gene_id);
 
 update updates
-  set rec_id = replace(rec_id, 'GENE','SNORNAG')
+  set rec_id = replace(rec_id, 'GENE','TRNAG')
  where exists (select 'x' from tmp_to_convert1 where rec_id = gene_id);
 
 update primer_set
-  set marker_id = replace(marker_id, 'GENE','SNORNAG' )
+  set marker_id = replace(marker_id, 'GENE','TRNAG' )
 where exists (Select 'x' from tmp_to_convert1 where  marker_id = gene_id);
 
 update genedom_family_member
-  set gfammem_mrkr_zdb_id = replace(gfammem_mrkr_zdb_id , 'GENE','SNORNAG')
+  set gfammem_mrkr_zdb_id = replace(gfammem_mrkr_zdb_id , 'GENE','TRNAG')
 where exists (Select 'x' from tmp_to_convert1 where gfammem_mrkr_zdb_id  = gene_id);
 
 update clone
-  set clone_mrkr_zdb_id = replace(clone_mrkr_zdb_id , 'GENE','SNORNAG')
+  set clone_mrkr_zdb_id = replace(clone_mrkr_zdb_id , 'GENE','TRNAG')
 where exists (Select 'x' from tmp_to_convert1 where clone_mrkr_zdb_id  = gene_id);
 
 update construct_marker_relationship
-  set conmrkrrel_mrkr_zdb_id = replace( conmrkrrel_mrkr_zdb_id, 'GENE','SNORNAG')
+  set conmrkrrel_mrkr_zdb_id = replace( conmrkrrel_mrkr_zdb_id, 'GENE','TRNAG')
 where exists (Select 'x' from tmp_to_convert1 where conmrkrrel_mrkr_zdb_id  = gene_id);
 
 update marker_sequence
-  set seq_mrkr_Zdb_id = replace(seq_mrkr_Zdb_id , 'GENE','SNORNAG')
+  set seq_mrkr_Zdb_id = replace(seq_mrkr_Zdb_id , 'GENE','TRNAG')
 where exists (Select 'x' from tmp_to_convert1 where seq_mrkr_Zdb_id  = gene_id);
 
 update clean_expression_fast_search
-  set cefs_mrkr_zdb_id = replace(cefs_mrkr_zdb_id , 'GENE','SNORNAG')
+  set cefs_mrkr_zdb_id = replace(cefs_mrkr_zdb_id , 'GENE','TRNAG')
 where exists (Select 'x' from tmp_to_convert1 where cefs_mrkr_zdb_id  = gene_id);
 
 update mutant_fast_search
-  set mfs_mrkr_zdb_id = replace(mfs_mrkr_zdb_id , 'GENE','SNORNAG')
+  set mfs_mrkr_zdb_id = replace(mfs_mrkr_zdb_id , 'GENE','TRNAG')
 where exists (Select 'x' from tmp_to_convert1 where mfs_mrkr_zdb_id  = gene_id);
 
 
