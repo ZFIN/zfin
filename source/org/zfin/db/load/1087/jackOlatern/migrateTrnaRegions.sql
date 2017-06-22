@@ -59,7 +59,7 @@ insert into zdb_replaced_data (zrepld_new_zdb_id, zrepld_old_zdb_id)
   from tmp_to_convert1;
 
 insert into withdrawn_data (wd_old_zdb_id, wd_new_zdb_id)
- select replace(gene_id, 'GENE','TRNAG'), gene_id
+ select  gene_id,replace(gene_id, 'GENE','TRNAG')
   from tmp_to_convert1;
 
 update zdb_active_data
