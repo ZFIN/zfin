@@ -82,15 +82,17 @@ public class PublicationEditController {
 
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public String showNewPublicationForm(@ModelAttribute Publication publication) {
+    public String showNewPublicationForm(@ModelAttribute PublicationBean publicationBean) {
         // default type should be journal
+        Publication publication = new Publication();
         publication.setType(Publication.Type.JOURNAL);
+        publicationBean.setPublication(publication);
         return "publication/add-publication.page";
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String processNewPublication(Model model,
-                                        @Valid @ModelAttribute Publication publication,
+                                        @Valid @ModelAttribute PublicationBean publication,
                                         BindingResult result,
                                         RedirectAttributes ra) { // keeps the query parameters off of the redirect URL
 
@@ -100,7 +102,7 @@ public class PublicationEditController {
 
         Publication newPublication = new Publication();
         try {
-            Collection<BeanFieldUpdate> updates = publicationService.mergePublicationFromForm(publication, newPublication);
+            Collection<BeanFieldUpdate> updates = publicationService.mergePublicationFromForm(publication.getPublication(), newPublication);
             publicationRepository.addPublication(newPublication);
             for (BeanFieldUpdate update : updates) {
                 infrastructureRepository.insertUpdatesTable(newPublication, update, "Add pub");

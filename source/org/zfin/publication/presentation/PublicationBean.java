@@ -10,6 +10,7 @@ public class PublicationBean {
     private String zdbID;
     private Publication publication;
     private boolean validPublication;
+    private String accessionNumber;
 
     public String getZdbID() {
         return zdbID;
@@ -35,5 +36,13 @@ public class PublicationBean {
 
     public void setValidPublication(boolean validPublication) {
         this.validPublication = validPublication;
+    }
+
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
+
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
     }
 }

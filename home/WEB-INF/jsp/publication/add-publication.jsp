@@ -7,5 +7,5 @@
 
 <div class="container-fluid">
     <h2>New Publication</h2>
-    <zfin2:publicationForm publication="${publication}" error="${error}"/>
+    <zfin2:publicationForm publicationBean="${publicationBean}" error="${error}"/>
 </div>

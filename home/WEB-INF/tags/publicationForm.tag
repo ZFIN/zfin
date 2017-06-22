@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<%@ attribute name="publication" type="org.zfin.publication.Publication" required="true" %>
+<%@ attribute name="publicationBean" type="org.zfin.publication.presentation.PublicationBean" required="true" %>
 <%@ attribute name="error" type="java.lang.String" %>
 
 <c:if test="${!empty error}">
@@ -10,19 +10,19 @@
 <link rel=stylesheet type="text/css" href="/css/datepicker3.css">
 <script src="/javascript/bootstrap-datepicker.js"></script>
 
-<form:form method="POST" commandName="publication" cssClass="form-horizontal">
+<form:form method="POST" commandName="publicationBean" cssClass="form-horizontal">
     <div class="form-group">
-        <label for="title" class="col-sm-3 control-label">Title</label>
+        <label for="publication.title" class="col-sm-3 control-label">Title</label>
         <div class="col-sm-8">
-            <form:textarea path="title" cssClass="form-control"/>
-            <form:errors path="title" cssClass="text-danger" />
+            <form:textarea path="publication.title" cssClass="form-control"/>
+            <form:errors path="publication.title" cssClass="text-danger" />
         </div>
     </div>
 
     <div class="form-group">
-        <label for="status" class="col-sm-3 control-label">Status</label>
+        <label for="publication.status" class="col-sm-3 control-label">Status</label>
         <div class="col-sm-8">
-            <form:select path="status" items="${statusList}" itemLabel="display" cssClass="form-control"/>
+            <form:select path="publication.status" items="${statusList}" itemLabel="display" cssClass="form-control"/>
         </div>
     </div>
 
@@ -35,17 +35,17 @@
     </div>
 
     <div class="form-group">
-        <label for="doi" class="col-sm-3 control-label">DOI</label>
+        <label for="publication.doi" class="col-sm-3 control-label">DOI</label>
         <div class="col-sm-8">
-            <form:input path="doi" cssClass="form-control"/>
+            <form:input path="publication.doi" cssClass="form-control"/>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="authors" class="col-sm-3 control-label">Authors</label>
+        <label for="publication.authors" class="col-sm-3 control-label">Authors</label>
         <div class="col-sm-8">
-            <form:textarea path="authors" cssClass="form-control"/>
-            <form:errors path="authors" cssClass="text-danger" />
+            <form:textarea path="publication.authors" cssClass="form-control"/>
+            <form:errors path="publication.authors" cssClass="text-danger" />
             <span class="help-block">Standard format: Dole, J.P., Nixon, R.M., and Gingrinch, N.
                 <a data-toggle="collapse" href="#authors-more-help"><i class="fa fa-question-circle"></i></a>
             </span>
@@ -67,73 +67,73 @@
     </div>
 
     <div class="form-group">
-        <label for="publicationDate" class="col-sm-3 control-label">Date</label>
+        <label for="publication.publicationDate" class="col-sm-3 control-label">Date</label>
         <div class="col-sm-8">
-            <form:input path="publicationDate" cssClass="form-control datepicker" data-provide="datepicker"/>
-            <form:errors path="publicationDate" cssClass="text-danger" />
+            <form:input path="publication.publicationDate" cssClass="form-control datepicker" data-provide="datepicker"/>
+            <form:errors path="publication.publicationDate" cssClass="text-danger" />
             <span class="help-block">(MM/DD/YYYY)</span>
         </div>
     </div>
 
     <div id="journal" class="form-group">
-        <label for="journal" class="col-sm-3 control-label">Journal Abbreviation</label>
+        <label for="publication.journal" class="col-sm-3 control-label">Journal Abbreviation</label>
         <div class="col-sm-8">
             <div class="scrollable-dropdown-menu">
-                <form:input path="journal" cssClass="form-control" id="journal-autocomplete"/>
+                <form:input path="publication.journal" cssClass="form-control" id="journal-autocomplete"/>
             </div>
-            <form:errors path="journal" cssClass="text-danger" htmlEscape="false" />
+            <form:errors path="publication.journal" cssClass="text-danger" htmlEscape="false" />
         </div>
     </div>
 
     <div class="form-group">
-        <label for="volume" class="col-sm-3 control-label">Journal Volume</label>
+        <label for="publication.volume" class="col-sm-3 control-label">Journal Volume</label>
         <div class="col-sm-8">
-            <form:input path="volume" cssClass="form-control"/>
+            <form:input path="publication.volume" cssClass="form-control"/>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="pages" class="col-sm-3 control-label">Pages</label>
+        <label for="publication.pages" class="col-sm-3 control-label">Pages</label>
         <div class="col-sm-8">
-            <form:input path="pages" cssClass="form-control"/>
+            <form:input path="publication.pages" cssClass="form-control"/>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="status" class="col-sm-3 control-label">Type</label>
+        <label for="publication.type" class="col-sm-3 control-label">Type</label>
         <div class="col-sm-8">
-            <form:select path="type" items="${typeList}" itemLabel="display" cssClass="form-control"/>
+            <form:select path="publication.type" items="${typeList}" itemLabel="display" cssClass="form-control"/>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="keywords" class="col-sm-3 control-label">Keywords</label>
+        <label for="publication.keywords" class="col-sm-3 control-label">Keywords</label>
         <div class="col-sm-8">
-            <form:textarea path="keywords" cssClass="form-control"/>
+            <form:textarea path="publication.keywords" cssClass="form-control"/>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="abstractText" class="col-sm-3 control-label">Abstract</label>
+        <label for="publication.abstractText" class="col-sm-3 control-label">Abstract</label>
         <div class="col-sm-8">
-            <form:textarea path="abstractText" cssClass="form-control" rows="8"/>
+            <form:textarea path="publication.abstractText" cssClass="form-control" rows="8"/>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="errataAndNotes" class="col-sm-3 control-label">Errata & Notes</label>
+        <label for="publication.errataAndNotes" class="col-sm-3 control-label">Errata & Notes</label>
         <div class="col-sm-8">
-            <form:textarea path="errataAndNotes" cssClass="form-control"/>
+            <form:textarea path="publication.errataAndNotes" cssClass="form-control"/>
         </div>
     </div>
 
     <div class="form-group">
-        <label for="canShowImages" class="col-sm-3 control-label">Has Image Permissions</label>
+        <label for="publication.canShowImages" class="col-sm-3 control-label">Has Image Permissions</label>
         <div class="col-sm-8">
             <div class="checkbox">
-                <label><form:checkbox path="canShowImages"/></label>
+                <label><form:checkbox path="publication.canShowImages"/></label>
             </div>
-            <form:errors path="canShowImages" cssClass="text-danger" />
+            <form:errors path="publication.canShowImages" cssClass="text-danger" />
         </div>
     </div>
 
