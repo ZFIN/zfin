@@ -1,8 +1,6 @@
-create function
-get_image_stats(
-  filepath lvarchar)
-
-  returning integer, integer;	-- width, height in pixels
+create or replace function get_image_stats(
+  filepath text, OUT width int, out height int)
+as $image$
 
   -- Given the name of a file containing an image, return the width and 
   -- height of the image in pixels.  Calls a shell script to get these values.
@@ -14,21 +12,21 @@ get_image_stats(
   -- separated by a space.  This function splits that lvarchar into the 
   -- two integers returned by this routine.
 
-  define scriptReturn       lvarchar;
-  define width		    integer;
-  define height		    integer;
-  define col		    integer;
+  declare scriptReturn       text;
+   	  col		    integer;
+  begin 
 
-  let scriptReturn = sysexec("get_image_stats", filepath);
+   scriptReturn = sysexec("get_image_stats", filepath);
   
-  let col = 1;
-  while (substring(scriptReturn from col for 1) <> " ")
-    let col = col + 1;
-  end while
+   col = 1;
 
-  let width  = substring(scriptReturn from 1 for col - 1)::integer;
-  let height = substring(scriptReturn from col + 1)::integer;
+   while (substring(scriptReturn from col for 1) <> " ") loop
+     	 col = col + 1;
+   end loop;
 
-  return width, height;
+   width  = substring(scriptReturn from 1 for col - 1)::integer;
+   height = substring(scriptReturn from col + 1)::integer;
 
-end function;
+  end
+$image$ LANGUAGE plpgsql;
+
