@@ -22,7 +22,6 @@ GENERICS = js-delete_attrib.apg \
 	pubselect2.apg \
 
 STATICS= REFERinfo.apg pubprintable.apg \
-	citselectlist.apg \
 	cittotalcount.apg pub_rowdisplay.apg \
 
 # use default rules for app page directories.
