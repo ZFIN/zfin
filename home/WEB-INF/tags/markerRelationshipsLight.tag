@@ -26,9 +26,15 @@
         </c:if>
 
         <span class="summaryTitle">${title}</span>
-
-        <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="editMode" interacts="${interactsWith}">
+    <c:if test="${interactsWith eq 'no'}">
+        <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="editMode" interacts=false >
         </gene-marker-relationship>
+    </c:if>
+        <c:if test="${interactsWith eq 'yes'}">
+
+            <gene-marker-relationship marker-id="${marker.zdbID}" marker-abbrev="${marker.abbreviation}" edit="editMode" interacts=true >
+            </gene-marker-relationship>
+        </c:if>
     </div>
 </c:if>
 
