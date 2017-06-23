@@ -29,6 +29,7 @@ public class PublicationMarkerViewController {
         List<Publication> publications = RepositoryFactory.getPublicationRepository().getPubsForDisplay(zdbID);
         model.addAttribute("pubCount",publications.size());
         PublicationListBean citationBean = new PublicationListAdapter(publications);
+        citationBean.setOrderBy("author");
         model.addAttribute("citationList",citationBean);
 
         return "marker/citation-list.page";

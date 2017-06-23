@@ -85,7 +85,7 @@ public abstract class PublicationListBean {
             }
         }
 
-        sortPublications(sortedPublishedPublications, getOrderBy());
+        sortPublications(sortedPublishedPublications, ORDER_BY_AUTHOR);
         return sortedPublishedPublications;
     }
 
@@ -97,7 +97,7 @@ public abstract class PublicationListBean {
             }
         }
 
-        sortPublications(sortedUnpublishedPublications, getOrderBy());
+        sortPublications(sortedUnpublishedPublications, ORDER_BY_AUTHOR);
         return sortedUnpublishedPublications;
     }
 
@@ -123,5 +123,17 @@ public abstract class PublicationListBean {
 
     public void setEntity(EntityZdbID entity) {
         this.entity = entity;
+    }
+
+    public List<Publication> getPublishedPublicationsByDate() {
+        List<Publication>publications = getSortedPublishedPublications();
+        Collections.sort(publications);
+        return publications;
+    }
+
+    public List<Publication> getUnpublishedByDate() {
+        List<Publication>publications = getSortedUnpublishedPublications();
+        Collections.sort(publications);
+        return publications;
     }
 }
