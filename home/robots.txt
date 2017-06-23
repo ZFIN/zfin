@@ -14,7 +14,8 @@ Disallow: /action/blast/blast-with-sequence
 Disallow: /cgi-bin/webdriver?MIval=aa-companyselect.apg
 Disallow: /action/fish/search
 Disallow: /search
-Disallow: /cgi-bin/webdriver?MIval=aa-showpubs.apg
+Disallow: /action/publication/list
+Disallow: /action/infrastructure/data-citation-list
 # this is okay if there is a pub, but without the pubid, it is open search
 # Need to set explicitly on the page
 Disallow: /cgi-bin/webdriver?MIval=aa-quickfindpers.apg
@@ -24,7 +25,6 @@ Disallow: /action/marker/search
 # need to set explicitly on the page
 Disallow: /cgi-bin/webdriver?MIval=aa-labselect.apg
 Disallow: /cgi-bin/webdriver?MIval=aa-pubselect2.apg
-Disallow: /cgi-bin/webdriver?MIval=aa-showpubs.apg
 # has results as well as search form, so must disallow
 Disallow: /cgi-bin/webdriver?MIval=aa-xpatselect.apg
 # has results as well as search form, so must disallow
