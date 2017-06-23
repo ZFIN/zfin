@@ -18,8 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
-GENERICS = js-delete_attrib.apg \
-	pubselect2.apg \
+GENERICS = pubselect2.apg \
 
 STATICS= REFERinfo.apg pubprintable.apg \
 	cittotalcount.apg pub_rowdisplay.apg \
