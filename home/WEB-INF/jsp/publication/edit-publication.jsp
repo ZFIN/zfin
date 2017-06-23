@@ -20,16 +20,17 @@
 <script src="/javascript/publication.service.js"></script>
 <script src="/javascript/zfinutils.service.js"></script>
 
-<c:set var="linkURL">/action/publication/${publication.zdbID}/link</c:set>
-<c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>
-<c:set var="viewURL">/${publication.zdbID}</c:set>
+<jsp:useBean id="publicationBean" class="org.zfin.publication.presentation.PublicationBean"/>
+<c:set var="linkURL">/action/publication/${publicationBean.publication.zdbID}/link</c:set>
+<c:set var="trackURL">/action/publication/${publicationBean.publication.zdbID}/track</c:set>
+<c:set var="viewURL">/${publicationBean.publication.zdbID}</c:set>
 <c:if test="${allowCuration}">
-    <c:set var="curateURL">/action/curation/${publication.zdbID}</c:set>
+    <c:set var="curateURL">/action/curation/${publicationBean.publication.zdbID}</c:set>
 </c:if>
 
 
 <div class="container-fluid">
-    <zfin2:dataManager zdbID="${publication.zdbID}"
+    <zfin2:dataManager zdbID="${publicationBean.publication.zdbID}"
                        linkURL="${linkURL}"
                        trackURL="${trackURL}"
                        curateURL="${curateURL}"
@@ -37,7 +38,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <h2>Editing ${publication.zdbID}</h2>
+            <h2>Editing ${publicationBean.publication.zdbID}</h2>
         </div>
     </div>
 
@@ -49,13 +50,13 @@
 
     <div class="tab-content" ng-app="app">
         <div role="tabpanel" class="tab-pane active" id="details">
-            <zfin2:publicationForm publication="${publication}" error="${error}"/>
+            <zfin2:publicationForm publicationBean="${publication}" error="${error}"/>
         </div>
         <div role="tabpanel" class="tab-pane" id="files">
-            <div pub-file-edit pub-id="${publication.zdbID}"></div>
+            <div pub-file-edit pub-id="${publicationBean.publication.zdbID}"></div>
         </div>
         <div role="tabpanel" class="tab-pane figure-edit-panel" id="figures">
-            <div figure-edit pub-id="${publication.zdbID}"></div>
+            <div figure-edit pub-id="${publicationBean.publication.zdbID}"></div>
         </div>
     </div>
 
