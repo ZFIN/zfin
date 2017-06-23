@@ -10,6 +10,7 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
@@ -79,6 +80,7 @@ public class RegionViewController {
 
         // region products
         markerBean.setGeneProductsBean(markerRepository.getGeneProducts(region.getZdbID()));
+
 
         // (CONSTRUCTS)
 

@@ -333,7 +333,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return markerRelationships;
     }
 
-    public List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker) {
+    public List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker,Boolean interacts) {
 
         List<String> mTypeGroup = new ArrayList<String>();
         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
@@ -349,12 +349,21 @@ public class HibernateMarkerRepository implements MarkerRepository {
             mTypeGroup.add("NONTSCRBD_REGION");
         }
         Session session = currentSession();
-
-        String hql = "select mr.name from MarkerRelationshipType mr " +
-                " where mr.firstMarkerTypeGroup.name in (:mTypeGroup)";
-        Query query = session.createQuery(hql);
-        query.setParameterList("mTypeGroup", mTypeGroup);
-        return (List<String>) query.list();
+        if (interacts==true) {
+            String hql = "select mr.name from MarkerRelationshipType mr " +
+                    " where mr.firstMarkerTypeGroup.name in (:mTypeGroup) and mr.name like '%interacts%'";
+            Query query = session.createQuery(hql);
+            query.setParameterList("mTypeGroup", mTypeGroup);
+            return (List<String>) query.list();
+        }
+        else
+        {
+            String hql = "select mr.name from MarkerRelationshipType mr " +
+                    " where mr.firstMarkerTypeGroup.name in (:mTypeGroup) and mr.name not like '%interacts%'";
+            Query query = session.createQuery(hql);
+            query.setParameterList("mTypeGroup", mTypeGroup);
+            return (List<String>) query.list();
+        }
 
 
     }

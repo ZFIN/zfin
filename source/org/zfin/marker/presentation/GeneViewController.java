@@ -121,6 +121,10 @@ public class GeneViewController {
         // (Antibodies)
         geneBean.setRelatedAntibodies(markerRepository.getRelatedMarkerDisplayForTypes(
                 gene, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
+        if (gene.getType()== Marker.Type.GENE) {
+            geneBean.setRelatedInteractions(markerRepository.getRelatedMarkerDisplayForTypes(
+                    gene, false, MarkerRelationship.Type.RNAGENE_INTERACTS_WITH_GENE, MarkerRelationship.Type.NTR_INTERACTS_WITH_GENE));
+        }
 
 
         geneBean.setPlasmidDBLinks(

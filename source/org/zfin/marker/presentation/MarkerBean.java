@@ -37,7 +37,17 @@ public class MarkerBean extends PaginationBean {
     private boolean hasMarkerHistory;
     private List<PreviousNameLight> previousNames;
     private List<GeneProductsBean> geneProductsBean;
+
+    public List<MarkerRelationshipPresentation> getRelatedMarkers() {
+        return relatedMarkers;
+    }
+
+    public void setRelatedMarkers(List<MarkerRelationshipPresentation> relatedMarkers) {
+        this.relatedMarkers = relatedMarkers;
+    }
+
     private List<MarkerRelationshipPresentation> relatedAntibodies;
+    private List<MarkerRelationshipPresentation> relatedMarkers;
 
     public List<MarkerRelationshipPresentation> getRelatedInteractions() {
         return relatedInteractions;

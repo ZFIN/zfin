@@ -366,7 +366,7 @@ public interface MarkerRepository {
     List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName);
 
     List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types);
-    List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker);
+    List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker,Boolean interacts);
 
     List<GeneProductsBean> getGeneProducts(String zdbID);
 

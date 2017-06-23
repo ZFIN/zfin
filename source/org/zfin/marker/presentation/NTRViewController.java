@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
@@ -63,6 +64,7 @@ public class NTRViewController {
 
         // region Ontology
         markerBean.setGeneOntologyOnMarkerBeans(MarkerService.getGeneOntologyOnMarker(region));
+        markerBean.setRelatedMarkers(markerRepository.getRelatedMarkerDisplayForTypes(region, false, MarkerRelationship.Type.PAC_CONTAINS_NTR, MarkerRelationship.Type.BAC_CONTAINS_NTR,MarkerRelationship.Type.FOSMID_CONTAINS_NTR,MarkerRelationship.Type.GENEDOM_CONTAINS_NTR));
 
         //region Transcripts
 //        markerBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(region));

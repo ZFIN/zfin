@@ -66,20 +66,14 @@ public class MarkerRelationshipController {
 
     @ResponseBody
     @RequestMapping("/{markerId}/relationshipTypes")
-    public Collection<String> getRelationshipTypes(@PathVariable String markerId,@RequestParam(name = "interacts", required = true) String interacts) {
+    public Collection<String> getRelationshipTypes(@PathVariable String markerId,@RequestParam(name = "interacts", required = true) Boolean interacts) {
 
         Marker marker = markerRepository.getMarkerByID(markerId);
 
 
-        Collection<String> relType=markerRepository.getMarkerRelationshipTypesForMarkerEdit(marker);
-        if (interacts.equals("no")) {
-            relType.removeIf(s -> s.contains("interacts with"));
-        }
-        if (interacts.equals("yes")) {
-            relType.removeIf(s -> !(s.contains("interacts with")));
-        }
-        return relType;
+        List<String> relType = markerRepository.getMarkerRelationshipTypesForMarkerEdit(marker,interacts);
 
+        return relType;
     }
 
 
@@ -101,7 +95,7 @@ public class MarkerRelationshipController {
 
     @ResponseBody
     @RequestMapping(value = "/{markerId}/relationshipsForEdit", method = RequestMethod.GET)
-    public Collection<MarkerRelationshipPresentation> getMarkerRelationshipsForEdit(@PathVariable String markerId,@RequestParam(name = "interacts", required = true) String interacts) {
+    public Collection<MarkerRelationshipPresentation> getMarkerRelationshipsForEdit(@PathVariable String markerId,@RequestParam(name = "interacts", required = true) Boolean interacts) {
        MarkerRelationshipSupplierComparator markerRelationshipSupplierComparator = new MarkerRelationshipSupplierComparator();
 
         Marker marker = markerRepository.getMarkerByID(markerId);
@@ -109,18 +103,27 @@ public class MarkerRelationshipController {
 
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, true));
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
-        for (int i = 0; i < cloneRelationships.size(); i++){
-            MarkerRelationshipPresentation mrp = cloneRelationships.get(i);
+        Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);
+        if (!interacts) {
+            for (int i = 0; i < cloneRelationships.size(); i++) {
+                MarkerRelationshipPresentation mrp = cloneRelationships.get(i);
+                System.out.println(interacts);
 
 
-            if (interacts.equals("no")) {
                 if (mrp.getRelationshipType().contains("interacts with")) {
                     cloneRelationships.remove(i);
                 }
             }
-            if (interacts.equals("yes")) {
-                if (!mrp.getRelationshipType().contains("interacts with")) {
+        }
+
+            if (interacts) {
+                for (int i = 0; i < cloneRelationships.size(); i++) {
+                    MarkerRelationshipPresentation mrp = cloneRelationships.get(i);
+                System.out.println(mrp.getRelationshipType());
+                if (!mrp.getRelationshipType().equals("interacts with")) {
+                    System.out.println("huh");
                     cloneRelationships.remove(i);
+                    i--;
                 }
             }
 
@@ -132,7 +135,7 @@ public class MarkerRelationshipController {
         if (interacts.equals("yes")) {
             cloneRelationships.removeIf(s -> !(s.getName().contains("interact")));
         }*/
-        Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);
+
 
         return cloneRelationships;
     }
