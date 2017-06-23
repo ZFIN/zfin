@@ -20,8 +20,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
 GENERICS = pubselect2.apg \
 
-STATICS= REFERinfo.apg pubprintable.apg \
-	cittotalcount.apg pub_rowdisplay.apg \
+STATICS= REFERinfo.apg pubprintable.apg pub_rowdisplay.apg \
 
 # use default rules for app page directories.
 
