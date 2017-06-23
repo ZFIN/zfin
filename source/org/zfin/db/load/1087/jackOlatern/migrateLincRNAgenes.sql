@@ -47,6 +47,11 @@ update zdb_active_data
  where exists (Select 'x' from tmp_to_convert where zactvd_zdb_id = gene_id);
 
 update marker
+ set mrkr_type = 'LNCRNAG'
+ where mrkr_type = 'GENE'
+ and exists (Select 'x' from tmp_to_convert1 where mrkr_zdb_id = gene_id);
+
+update marker
  set mrkr_zdb_id = replace(mrkr_Zdb_id, 'GENE','LNCRNAG')
  where exists (Select 'x' from tmp_to_convert where mrkr_zdb_id = gene_id);
 
@@ -289,5 +294,7 @@ having count(*) >1 ;
 set constraints all immediate;
 
 --rollback work;
+
+
 
 commit work;

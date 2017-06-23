@@ -24,6 +24,11 @@ update zdb_replaced_data
  where exists (Select 'x' from tmp_to_convert where gene_id = zrepld_old_zdb_id);
 
 update marker
+ set mrkr_type = 'NCRNAG'
+ where mrkr_type = 'GENE'
+ and exists (Select 'x' from tmp_to_convert1 where mrkr_zdb_id = gene_id);
+
+update marker
  set mrkr_zdb_id = (select rna_id from tmp_to_convert where mrkr_zdb_id = gene_id)
  where exists (Select 'x' from tmp_to_convert where gene_id = mrkr_zdb_id);
 
