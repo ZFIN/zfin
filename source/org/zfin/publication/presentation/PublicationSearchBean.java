@@ -1,46 +1,62 @@
 package org.zfin.publication.presentation;
 
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.marker.Marker;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.List;
 
-/**
- * Main bean that serves publication-related information.
- */
 public class PublicationSearchBean extends PaginationBean {
 
-    private Marker marker;
-    private GenericTerm term;
-    private List<Publication> publications;
+    private String author;
+    private String title;
+    private String journal;
 
-    public GenericTerm getTerm() {
-        if (term == null)
-            term = new GenericTerm();
-        return term;
+    private List<Publication> results;
+
+    public String getAuthor() {
+        return author;
     }
 
-    public void setTerm(GenericTerm anatomyItem) {
-        this.term = anatomyItem;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public Marker getMarker() {
-        if (marker == null)
-            marker = new Marker();
-        return marker;
+    public String getTitle() {
+        return title;
     }
 
-    public void setMarker(Marker marker) {
-        this.marker = marker;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public List<Publication> getPublications() {
-        return publications;
+    public String getJournal() {
+        return journal;
     }
 
-    public void setPublications(List<Publication> publications) {
-        this.publications = publications;
+    public void setJournal(String journal) {
+        this.journal = journal;
+    }
+
+    public List<Publication> getResults() {
+        return results;
+    }
+
+    public void setResults(List<Publication> results) {
+        this.results = results;
+    }
+
+    public boolean isEmpty() {
+        return author == null &&
+                title == null &&
+                journal == null;
+    }
+
+    @Override
+    public String toString() {
+        return "PublicationSearchBean{" +
+                "author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", journal='" + journal + '\'' +
+                '}';
     }
 }
