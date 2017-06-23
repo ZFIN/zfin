@@ -13,6 +13,7 @@
 <script src="/javascript/field-error.service.js"></script>
 <script src="/javascript/other-markers.directive.js"></script>
 <script src="/javascript/gene-marker-relationship.directive.js"></script>
+<script src="/javascript/marker-interacts-relationship.directive.js"></script>
 <script src="/javascript/marker.service.js"></script>
 <script src="/javascript/autocompletify.directive.js"></script>
 
@@ -96,8 +97,14 @@
             </c:forEach>
         </table>
         </c:if>
-        <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
-                                        marker="${formBean.marker}" title="" interactsWith="yes"/>
+        <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
+            <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedInteractions}" marker="${formBean.marker}"
+                                                      title="" maxNumber="5" interactsWith="yes"/>
+        </c:if>
+        <c:if test="${fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
+            <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
+                                            marker="${formBean.marker}" title="" interactsWith="yes"/>
+        </c:if>
 
     </zfin2:subsection>
 
@@ -105,6 +112,8 @@
     <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}" marker="${formBean.marker}"
                                               title="ANTIBODIES" maxNumber="5"/>
 </c:if>
+
+
     <%--Plasmid Links--%>
     <zfin2:subsection title="PLASMIDS" anchor="plasmid_links"
                       test="${!empty formBean.plasmidDBLinks}" showNoData="true" noDataText="No data available">
