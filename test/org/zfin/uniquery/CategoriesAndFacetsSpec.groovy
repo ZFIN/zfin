@@ -4,6 +4,7 @@ import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.response.FacetField
+import org.apache.solr.client.solrj.response.PivotField
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
@@ -68,7 +69,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
             logger.error(e);
         }
 
-        def returnedFacets = response.facetFields*.name
+        List<String> returnedFacets = response.facetFields*.name
 
         then:
         returnedFacets.contains(field.name)
@@ -89,7 +90,6 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.MOLECULAR_FUNCTION_TF,
                         FieldName.PHENOTYPE_STATEMENT,
                         FieldName.STAGE,
-                        FieldName.TYPE
                 ],
                 (Category.FISH)                      : [
                         FieldName.AFFECTED_ANATOMY_TF,

@@ -4308,6 +4308,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                              pub_date as date,
                              pub_arrival_date as pet_date,
                              jtype as publication_type,
+                             pub_abstract as abstract,
                              pub_jrnl_zdb_id as xref,
                              'PMID:' || accession_no as related_accession,
                              case when pub_is_indexed = 't' then 'Indexed'

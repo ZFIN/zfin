@@ -4,33 +4,19 @@
 import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient
 import org.apache.solr.common.SolrInputDocument
+import groovy.sql.Sql
+import org.zfin.properties.ZfinPropertiesEnum
+import org.zfin.properties.ZfinProperties
 
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.ResultSet
-import java.sql.Statement
+ZfinProperties.init("${System.getenv()['SOURCEROOT']}/home/WEB-INF/zfin.properties")
 
-def dbname = System.getenv('DBNAME')
-def sqlhost = System.getenv('SQLHOSTS_HOST')
-def port = System.getenv('INFORMIX_PORT')
-def informixServer = System.getenv('INFORMIXSERVER')
+String jdbc_driver = ZfinPropertiesEnum.JDBC_DRIVER.value()
+String jdbc_url = ZfinPropertiesEnum.JDBC_URL.value()
 
-
-args = [driver: 'com.informix.jdbc.IfxDriver',
-        url: "jdbc:informix-sqli://$sqlhost:$port/$dbname:INFORMIXSERVER=$informixServer;DB_LOCALE=en_US.utf8"
-]
-
-Class.forName("com.informix.jdbc.IfxDriver")
-
-Connection conn = null
-Properties connectionProps = new Properties()
-connectionProps.put("driver", args.driver)
-
-conn = DriverManager.getConnection(args.url, connectionProps)
+def sql = Sql.newInstance(jdbc_url, jdbc_driver)
 
 def solrPort = System.env.get("SOLR_PORT")
 SolrClient client = new ConcurrentUpdateSolrClient("http://localhost:$solrPort/solr/prototype", 100, 20)
-
 
 Map<String, String> abstractMap = new HashMap<>()
 
@@ -40,13 +26,14 @@ pubQuery = """
     from publication
 """
 
-Statement statement = conn.createStatement(
-        java.sql.ResultSet.TYPE_FORWARD_ONLY,
-        java.sql.ResultSet.CONCUR_READ_ONLY)
-statement.setFetchSize(1);
-ResultSet rs = statement.executeQuery(pubQuery);
 println "building documents"
-while (rs.next()) {
+
+sql.withStatement { statement ->
+    statement.fetchSize = 1
+}
+
+sql.query(pubQuery) { rs ->
+    while (rs.next()) {
         String id = rs.getString("id")
         String abstractText = rs.getString("pub_abstract")
 
@@ -56,9 +43,7 @@ while (rs.next()) {
         doc.addField("id", id);
         doc.addField("abstract", partialUpdate);
         client.add(doc)
-
-        print "."
-
+    }
 }
 
 client.commit()
