@@ -11,6 +11,7 @@
 <script src="/javascript/zfinutils.service.js"></script>
 <script src="/javascript/author-linking.js"></script>
 
+<c:set var="publication" value="${publicationBean.publication}" scope="page"/>
 <c:set var="viewURL">/${publication.zdbID}</c:set>
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
 <c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>

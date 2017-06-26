@@ -195,7 +195,11 @@ public class PublicationEditController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        model.addAttribute("publication", publication);
+        PublicationBean bean = new PublicationBean();
+        bean.setPublication(publication);
+        if (publication.getAccessionNumber() != null)
+            bean.setAccessionNumber(publication.getAccessionNumber().toString());
+        model.addAttribute("publicationBean", bean);
         model.addAttribute("authorStrings", publicationService.splitAuthorListString(publication.getAuthors()));
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Link Authors: " + publication.getTitle());
