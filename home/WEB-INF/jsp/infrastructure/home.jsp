@@ -22,12 +22,25 @@
                         <input class="search-form-input input form-control"
                                placeholder="bmp2a, hindbrain development disrupted, pax morpholino"
                                name="q" id="search-query-input" autocomplete="off" type="text"/>
-                        <button type="submit" class="btn btn-primary btn-zfin btn-search">Go</button>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary btn-zfin btn-search">Go</button>
+                            <authz:authorize access="hasRole('root')">
+                                <button type="submit" class="btn btn-default" title="Open up the first result"
+                                        onclick="feelingLucky();">🚀</button>
+                            </authz:authorize>
+                        </div>
                         <a href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
                             <i class="fa fa-question-circle fa-lg"></i>
                         </a>
+
                     </form>
                     <script>
+                        function feelingLucky() {
+                            var primaryInput = $('#primary-query-input');
+                            if (primaryInput.val()) {
+                                primaryInput.val('!!' + primaryInput.val());
+                            }
+                        }
                         jQuery(document).ready(function() {
                             jQuery('#search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
                         });
