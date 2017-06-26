@@ -5,10 +5,10 @@ set constraints all deferred;
 create temp table tmp_linc (id varchar(50)) 
 with no log;
 
-load from lincrnagenes.txt
+load from othergenes.txt
  insert into tmp_linc;
 
-select id as gene_id
+select id as gene_id, type as type_name
  from tmp_linc
 into temp tmp_to_convert;
 

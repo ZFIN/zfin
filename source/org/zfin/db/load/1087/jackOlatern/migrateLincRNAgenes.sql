@@ -8,6 +8,14 @@ with no log;
 load from lincrnagenes.txt
  insert into tmp_linc;
 
+insert into tmp_linc (id)
+values ('ZDB-GENE-151012-1');
+
+
+insert into tmp_linc (id)
+values ('ZDB-GENE-160518-1');
+
+
 select id as gene_id
  from tmp_linc
 into temp tmp_to_convert;
