@@ -57,7 +57,7 @@ update zdb_active_data
 update marker
  set mrkr_type = 'LNCRNAG'
  where mrkr_type = 'GENE'
- and exists (Select 'x' from tmp_to_convert1 where mrkr_zdb_id = gene_id);
+ and exists (Select 'x' from tmp_to_convert where mrkr_zdb_id = gene_id);
 
 update marker
  set mrkr_zdb_id = replace(mrkr_Zdb_id, 'GENE','LNCRNAG')
