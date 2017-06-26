@@ -32,7 +32,7 @@
                        linkURL="${linkURL}"
                        trackURL="${trackURL}"
                        curateURL="${curateURL}"
-                       viewURL="${pubID}"/>
+                       viewURL="/${pubID}"/>
 
     <div class="row">
         <div class="col-xs-12">
