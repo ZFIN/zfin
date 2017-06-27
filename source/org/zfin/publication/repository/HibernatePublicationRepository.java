@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import org.zfin.antibody.Antibody;
 import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.PersonDTO;
+import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
@@ -45,11 +46,13 @@ import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.*;
+import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,6 +61,9 @@ import java.util.stream.Collectors;
  */
 @Repository
 public class HibernatePublicationRepository extends PaginationUtil implements PublicationRepository {
+
+    @Autowired
+    private CurationDTOConversionService converter;
 
     Logger logger = Logger.getLogger(HibernatePublicationRepository.class);
 
@@ -2221,12 +2227,51 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (PublicationTrackingLocation) HibernateUtil.currentSession().get(PublicationTrackingLocation.class, id);
     }
 
-    public PaginationResult<PublicationTrackingHistory> getPublicationsByStatus(Long status,
-                                                                                Long location,
-                                                                                String owner,
-                                                                                int count,
-                                                                                int offset,
-                                                                                String sort) {
+    public DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count,
+                                                            int offset, String sort) {
+
+        Criteria listCriteria = createPubsByStatusCriteria(status, location, owner);
+        listCriteria.addOrder(Order.asc("status"));
+        if (StringUtils.isNotEmpty(sort)) {
+            boolean isAscending = true;
+            if (sort.startsWith("-")) {
+                isAscending = false;
+                sort = sort.substring(1);
+            }
+            Order order;
+            if (isAscending) {
+                order = Order.asc(sort);
+            } else {
+                order = Order.desc(sort);
+            }
+            listCriteria.addOrder(order);
+        }
+        PaginationResult<PublicationTrackingHistory> histories = PaginationResultFactory
+                .createResultFromScrollableResultAndClose(offset, offset + count, listCriteria.scroll());
+
+        Criteria countsCriteria = createPubsByStatusCriteria(status, location, owner);
+        List countList = countsCriteria.setProjection(Projections.projectionList()
+                .add(Projections.groupProperty("status"))
+                .add(Projections.rowCount()))
+                .list();
+        Map<String, Long> counts = new HashMap<>();
+        for (Object item : countList) {
+            Object[] tuple = (Object []) item;
+            PublicationTrackingStatus pubStatus = (PublicationTrackingStatus) tuple[0];
+            counts.put(pubStatus.getName(), (long) tuple[1]);
+        }
+
+        DashboardPublicationList result = new DashboardPublicationList();
+        result.setTotalCount(histories.getTotalCount());
+        result.setPublications(histories.getPopulatedResults().stream()
+                .map(converter::toDashboardPublicationBean)
+                .collect(Collectors.toList()));
+        result.setStatusCounts(counts);
+
+        return result;
+    }
+
+    private Criteria createPubsByStatusCriteria(Long status, Long location, String owner) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(PublicationTrackingHistory.class)
                 .add(Restrictions.eq("isCurrent", true))
                 .createAlias("publication", "pub");
@@ -2250,24 +2295,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 criteria.add(Restrictions.eq("owner", profileRepository.getPerson(owner)));
             }
         }
-
-        criteria.addOrder(Order.asc("status"));
-        if (StringUtils.isNotEmpty(sort)) {
-            boolean isAscending = true;
-            if (sort.startsWith("-")) {
-                isAscending = false;
-                sort = sort.substring(1);
-            }
-            Order order;
-            if (isAscending) {
-                order = Order.asc(sort);
-            } else {
-                order = Order.desc(sort);
-            }
-            criteria.addOrder(order);
-        }
-
-        return PaginationResultFactory.createResultFromScrollableResultAndClose(offset, offset + count, criteria.scroll());
+        return criteria;
     }
 
     public List<PublicationFileType> getAllPublicationFileTypes() {

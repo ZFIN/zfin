@@ -37,6 +37,7 @@
         vm.loading = true;
         vm.pubList = null;
         vm.pubMap = {};
+        vm.statusCounts = {};
         vm.totalPubs = 0;
         vm.currentPage = 1;
         vm.pubsPerPage = 50;
@@ -110,7 +111,8 @@
             };
             PublicationService.searchPubStatus(query)
                 .then(function (response) {
-                    vm.pubList = response.data.populatedResults;
+                    vm.pubList = response.data.publications;
+                    vm.statusCounts = response.data.statusCounts;
                     vm.totalPubs = response.data.totalCount;
                     vm.pubMap = groupPubs(vm.pubList);
                 })

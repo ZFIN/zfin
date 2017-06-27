@@ -22,6 +22,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.publication.*;
+import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -533,12 +534,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     PublicationTrackingLocation getPublicationTrackingLocation(long id);
 
-    PaginationResult<PublicationTrackingHistory> getPublicationsByStatus(Long status,
-                                                                         Long location,
-                                                                         String owner,
-                                                                         int count,
-                                                                         int offset,
-                                                                         String sort);
+    DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count, int offset, String sort);
 
     List<PublicationFileType> getAllPublicationFileTypes();
 
