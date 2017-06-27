@@ -29,6 +29,8 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingHistory;
 import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
+import org.zfin.publication.presentation.DashboardPublicationBean;
+import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -803,36 +805,44 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getPublicationsByStatusShouldOnlyReturnCurrentStatuses() {
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, null, 20, 0, null);
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.isCurrent(), is(true));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(null, null, null, 20, 0, null)
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().isCurrent(), is(true));
         }
     }
 
     @Test
     public void getPublicationsByStatusShouldReturnObjectsWithSpecifiedStatus() {
         long statusId = 1;
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(statusId, null, null, 20, 0, null);
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.getStatus().getId(), is(statusId));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(statusId, null, null, 20, 0, null)
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().getStatus().getId(), is(statusId));
         }
     }
 
     @Test
     public void getPublicationsByStatusShouldReturnObjectsWithSpecifiedLocation() {
         long locationId = 1;
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, locationId, null, 20, 0, null);
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.getLocation().getId(), is(locationId));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(null, locationId, null, 20, 0, null)
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().getLocation().getId(), is(locationId));
         }
     }
 
     @Test
     public void getPublicationsByStatusShouldInterpretZeroAsNullForLocation() {
         long locationId = 0;
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, locationId, null, 20, 0, "location");
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.getLocation(), is(nullValue()));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(null, locationId, null, 20, 0, "location")
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().getLocation(), is(nullValue()));
         }
     }
 
@@ -842,40 +852,43 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // The test uses Holly's id. Hopefully she continues to exist and has something
         // assigned to her otherwise this test isn't doing anything.
         String ownerId = "ZDB-PERS-100329-1";
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, ownerId, 20, 0, null);
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.getOwner().getZdbID(), is(ownerId));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(null, null, ownerId, 20, 0, null)
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().getOwner().getZdbID(), is(ownerId));
         }
     }
 
     @Test
     public void getPublicationsByStatusShouldInterpretStarAsAnyOwner() {
         String ownerId = "*";
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, ownerId, 50, 0, "-owner");
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.getOwner(), is(notNullValue()));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(null, null, ownerId, 50, 0, "-owner")
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().getOwner(), is(notNullValue()));
         }
     }
 
     @Test
     public void getPublicationsByStatusShouldReturnSpecifiedNumberOfObjectsAndPopulateTotalCount() {
         int count = 33;
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, null, count, 0, null);
-        assertThat(statuses.getPopulatedResults(), hasSize(count));
+        DashboardPublicationList statuses = publicationRepository
+                .getPublicationsByStatus(null, null, null, count, 0, null);
+        assertThat(statuses.getPublications(), hasSize(count));
         assertThat(statuses.getTotalCount(), is(greaterThanOrEqualTo(count)));
     }
 
     @Test
     public void getPublicationsByStatusShouldPaginateCorrectly() {
         int count = 27;
-        PaginationResult<PublicationTrackingHistory> firstPage = publicationRepository.getPublicationsByStatus(null, null, null, count, 0, null);
-        PaginationResult<PublicationTrackingHistory> secondPage = publicationRepository.getPublicationsByStatus(null, null, null, count, count, null);
-        assertThat(firstPage.getStart(), is(0));
-        assertThat(secondPage.getStart(), is(0));
-        assertThat(firstPage.getPopulatedResults(), is(not(empty())));
-        assertThat(secondPage.getPopulatedResults(), is(not(empty())));
-        assertThat(secondPage.getPopulatedResults().get(0), not(equalTo(firstPage.getPopulatedResults().get(0))));
-        assertThat(secondPage.getPopulatedResults().get(0), not(equalTo(firstPage.getPopulatedResults().get(firstPage.getPopulatedResults().size() - 1))));
+        DashboardPublicationList firstPage = publicationRepository.getPublicationsByStatus(null, null, null, count, 0, null);
+        DashboardPublicationList secondPage = publicationRepository.getPublicationsByStatus(null, null, null, count, count, null);
+        assertThat(firstPage.getPublications(), is(not(empty())));
+        assertThat(secondPage.getPublications(), is(not(empty())));
+        assertThat(secondPage.getPublications().get(0), not(equalTo(firstPage.getPublications().get(0))));
+        assertThat(secondPage.getPublications().get(0), not(equalTo(firstPage.getPublications().get(firstPage.getPublications().size() - 1))));
     }
 }
 

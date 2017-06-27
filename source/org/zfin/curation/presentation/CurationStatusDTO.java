@@ -7,11 +7,20 @@ import java.util.Calendar;
 
 public class CurationStatusDTO {
 
+    private boolean current;
     private String pubZdbID;
     private PublicationTrackingStatus status;
     private PublicationTrackingLocation location;
     private PersonDTO owner;
     private Calendar updateDate;
+
+    public boolean isCurrent() {
+        return current;
+    }
+
+    public void setCurrent(boolean current) {
+        this.current = current;
+    }
 
     public String getPubZdbID() {
         return pubZdbID;
