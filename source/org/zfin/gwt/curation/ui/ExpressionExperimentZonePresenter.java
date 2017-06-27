@@ -171,11 +171,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         //Window.alert(itemText);
         if (ExpressionAssayDTO.isAntibodyAssay(itemText)) {
             view.getAntibodyList().setEnabled(true);
-            String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
-            AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_ANTIBODIES_BY_GENE_START);
-            REST.withCallback(new RetrieveAntibodyList())
-                    .call(expressionService)
-                    .getAntibodiesByGene(publicationID, geneID);
+            antibodyRefresh();
         } else {
             view.getAntibodyList().setEnabled(false);
 
@@ -196,15 +192,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         String assayName = view.getAssayList().getItemText(view.getAssayList().getSelectedIndex());
         // only fetch antibodies if the right assay is selected
         if (ExpressionAssayDTO.isAntibodyAssay(assayName)) {
-            AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_ANTIBODIES_BY_GENE_START);
-            if (StringUtils.isNotEmpty(geneID))
-                REST.withCallback(new RetrieveAntibodyList())
-                        .call(expressionService)
-                        .getAntibodiesByGene(publicationID, geneID);
-            else
-                REST.withCallback(new RetrieveAntibodyList())
-                        .call(curationService)
-                        .getAntibodies(publicationID);
+            antibodyRefresh(geneID);
         }
         if (StringUtils.isNotEmpty(geneID)) {
             AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_GENBANK_ACCESSIONS_START);
@@ -214,6 +202,23 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         } else {
             view.getGenbankList().clear();
         }
+    }
+
+    public void antibodyRefresh() {
+        String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
+        antibodyRefresh(geneID);
+    }
+
+    public void antibodyRefresh(String geneID) {
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_ANTIBODIES_BY_GENE_START);
+        if (StringUtils.isNotEmpty(geneID))
+            REST.withCallback(new RetrieveAntibodyList())
+                    .call(expressionService)
+                    .getAntibodiesByGene(publicationID, geneID);
+        else
+            REST.withCallback(new RetrieveAntibodyList())
+                    .call(curationService)
+                    .getAntibodies(publicationID);
     }
 
 

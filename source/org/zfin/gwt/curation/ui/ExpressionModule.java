@@ -132,6 +132,7 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
         }
         if (event.getEventType().is(EventType.MARKER_ATTRIBUTION) || event.getEventType().is(EventType.MARKER_DEATTRIBUTION)) {
             expressionExperimentZonePresenter.updateGenes();
+            expressionExperimentZonePresenter.antibodyRefresh(null);
             curationFilterPresenter.refreshGeneList();
         }
         if (event.getEventType().is(EventType.ADD_REMOVE_ATTRIBUTION_FISH)) {
