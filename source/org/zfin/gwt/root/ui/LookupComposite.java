@@ -764,6 +764,12 @@ public class LookupComposite extends Composite implements Revertible {
         return validatedTerm;
     }
 
+    public boolean hasValidNonNullTerm() {
+        if (textBox.getText().trim().equals(""))
+            return false;
+        return validatedTerm;
+    }
+
     public void setValidationStyle(boolean isValidated) {
         String styleClass = textBox.getStyleName();
         if (isValidated) {

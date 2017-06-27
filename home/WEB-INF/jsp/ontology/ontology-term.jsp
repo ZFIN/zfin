@@ -1,6 +1,5 @@
 <%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ page import="org.zfin.ontology.Ontology" %>
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
@@ -131,7 +130,10 @@
         <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_expression.jsp" flush="false"/>
     </c:if>
 
-    <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_phenotype.jsp" flush="false"/>
+
+    <c:if test="${showPhenotypeSection}">
+        <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_phenotype.jsp" flush="false"/>
+    </c:if>
 
     <zfin2:ExpandRequestSections sectionVisibility="${formBean.sectionVisibility}"/>
 
@@ -140,16 +142,16 @@
             <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
         </c:if>
     </authz:authorize>
-<c:if test="${isDiseaseTerm}">
-    <div class="summary">
-        <c:choose>
-            <c:when test="${numberOfCitations == 0}"><span class="name-label"> CITATIONS:</span> None</c:when>
-            <c:otherwise>
-                <a href="/action/ontology/disease-publication-list/${term.oboID}">CITATIONS</a> (${numberOfCitations})
-            </c:otherwise>
-        </c:choose>
-    </div>
-</c:if>
+    <c:if test="${isDiseaseTerm}">
+        <div class="summary">
+            <c:choose>
+                <c:when test="${numberOfCitations == 0}"><span class="name-label"> CITATIONS:</span> None</c:when>
+                <c:otherwise>
+                    <a href="/action/ontology/disease-publication-list/${term.oboID}">CITATIONS</a> (${numberOfCitations})
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </c:if>
 
 </div>
 <script>
