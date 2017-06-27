@@ -34,3 +34,30 @@ create table monthly_average_curated_metric
     macm_longest_ortho_number_of_days integer 
         default 0 not null 
   );
+
+create table average_curation_time_metric (actm_pk_id BIGSERIAL NOT NULL, 
+       	     				  actm_average_time_in_curating_status INT DEFAULT 0 NOT NULL,
+					  actm_stddev_time_in_curating_status INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_in_bin1 INT DEFAULT 0 NOT NULL, 
+					  actm_stddev_in_bin1 INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_in_bin2 INT DEFAULT 0 NOT NULL, 
+					  actm_stddev_in_bin2 INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_in_bin3 INT DEFAULT 0 NOT NULL, 
+					  actm_stddev_in_bin3 INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_in_xpat INT DEFAULT 0 NOT NULL, 
+					  actm_stddev_in_xpat INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_in_pheno INT DEFAULT 0 NOT NULL, 
+					  actm_stddev_in_pheno INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_in_ortho INT DEFAULT 0 NOT NULL, 
+					  actm_stddev_in_ortho INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_waiting_for_nomenclature INT DEFAULT 0 NOT NULL, 
+					  actm_stdev_time_waiting_for_nomenclature INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_waiting_for_software_fix INT DEFAULT 0 NOT NULL, 
+					  actm_stdev_time_waiting_for_software_fix INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_waiting_for_author INT DEFAULT 0 NOT NULL, 
+					  actm_stdev_time_waiting_for_author INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_waiting_for_ontology INT DEFAULT 0 NOT NULL, 
+					  actm_stdev_time_waiting_for_ontology INT DEFAULT 0 NOT NULL, 
+					  actm_average_time_waiting_for_curator_review INT DEFAULT 0 NOT NULL, 
+					  actm_stdev_time_waiting_for_curator_review INT DEFAULT 0 NOT NULL, 
+					  actm_date_captured TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW() NOT NULL);

@@ -2,6 +2,7 @@ begin work ;
 
 
 drop table monthly_average_curated_metric;
+drop table average_curation_time_metric;
 drop table staging_webpages;
 drop table sysblderrorlog;
 drop table sysbldiprovided;
