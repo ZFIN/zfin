@@ -2,22 +2,22 @@
 
 !echo "Linc RNA";
 
-$INFORMIXDIR/bin/dbaccess $DBNAME migrateLincRNAgenes.sql;
+$INFORMIXDIR/bin/dbaccess $DBNAME $SOURCEROOT/src/org/zfin/db/load/1087/jackOlantern/migrateLincRNAgenes.sql;
 
 !echo "mirna RNA";
 
-$INFORMIXDIR/bin/dbaccess $DBNAME migrateMirnaRegions.sql
+$INFORMIXDIR/bin/dbaccess $DBNAME $SOURCEROOT/src/org/zfin/db/load/1087/jackOlantern/migrateMirnaRegions.sql
 
 !echo "ncrna RNA";
 
-$INFORMIXDIR/bin/dbaccess $DBNAME migrateNcRNARegions.sql
+$INFORMIXDIR/bin/dbaccess $DBNAME $SOURCEROOT/src/org/zfin/db/load/1087/jackOlantern/migrateNcRNARegions.sql
 
 !echo "sno RNA";
 
-$INFORMIXDIR/bin/dbaccess $DBNAME migrateSnoRegions.sql
+$INFORMIXDIR/bin/dbaccess $DBNAME $SOURCEROOT/src/org/zfin/db/load/1087/jackOlantern/migrateSnoRegions.sql
 
 !echo "trna RNA";
-$INFORMIXDIR/bin/dbaccess $DBNAME migrateTrnaRegions.sql
+$INFORMIXDIR/bin/dbaccess $DBNAME $SOURCEROOT/src/org/zfin/db/load/1087/jackOlantern/migrateTrnaRegions.sql
 
 
 
