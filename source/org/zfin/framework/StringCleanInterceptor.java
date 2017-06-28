@@ -77,7 +77,7 @@ public class StringCleanInterceptor extends EmptyInterceptor {
                     try {
                         return method.invoke(o);
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        logger.error("Could not determine method: " + method.getName());
+                        logger.error("Could not determine method: " + method.getName() + " on class " + o.getClass().getName(), e);
                     }
 
                 }
@@ -94,7 +94,7 @@ public class StringCleanInterceptor extends EmptyInterceptor {
                     try {
                         return method.invoke(o, value);
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        logger.error("Could not determine method: " + method.getName());
+                        logger.error("Could not determine method: " + method.getName() + " on class " + o.getClass().getName(), e);
                     }
 
                 }
