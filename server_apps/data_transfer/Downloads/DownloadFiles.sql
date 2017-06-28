@@ -1217,6 +1217,11 @@ select xpatres_zdb_id,
    and subterm.term_zdb_id = xpatres_subterm_zdb_id
    and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
    and xpatex_zdb_id = xpatres_xpatex_zdb_id
+   and not exists(select 'x' from expression_experiment, marker 
+                   where xpatex_zdb_id = xpatres_xpatex_zdb_id
+                     and xpatex_gene_zdb_id is not null
+                     and xpatex_gene_zdb_id = mrkr_zdb_id
+                     and mrkr_abbrev like 'WITHDRAWN%')
  order by xpatres_xpatex_zdb_id
 ;
 
