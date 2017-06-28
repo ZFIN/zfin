@@ -301,8 +301,8 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
             List<Marker> markers = markerRepository.getConstructsByAttribution(query);
             for (Marker marker : markers) {
-                StringBuilder builder = highlighter.hidePureTermNameHtml(marker.getAbbreviation());
-                builder.append(highlighter.highlight(marker.getAbbreviation()));
+                StringBuilder builder = highlighter.hidePureTermNameHtml(marker.getName());
+                builder.append(highlighter.highlight(marker.getName()));
                 suggestions.add(new ItemSuggestion(builder.toString(), marker.getZdbID()));
             }
         }
