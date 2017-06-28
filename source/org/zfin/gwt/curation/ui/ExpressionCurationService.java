@@ -31,7 +31,7 @@ public interface ExpressionCurationService extends DirectRestService {
 
 
     @GET
-    @Path("{publicationID}/{antibodyID}/genes")
+    @Path("/action/curation/{publicationID}/{antibodyID}/genes")
     @Options(dispatcher = ZfinDispatcher.class)
     List<MarkerDTO> getGenesByAntibody(@PathParam("publicationID") String publicationID,
                                        @PathParam("antibodyID") String geneID) throws PublicationNotFoundException;

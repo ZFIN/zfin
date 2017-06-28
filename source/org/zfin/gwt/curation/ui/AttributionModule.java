@@ -279,10 +279,18 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private boolean checkAttributionExists(String attribution) {
         if (removeListBox.setIndexForValue(attribution) >= 0) {
             setError("'" + attribution + "' is already attributed.");
+
             return true;
         }
         return false;
     }
+
+    @Override
+    public void setError(String message) {
+        super.setError(message);
+        clearMessage();
+    }
+
 
     private void addFeatureAttribution(final String value) {
         // should cancel second submit (case 5943)
