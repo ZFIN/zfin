@@ -45,6 +45,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.repository.ProfileRepository;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.PaginationResultFactory;
@@ -1869,8 +1870,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public void addPublication(Publication publication) {
+        Session session = HibernateUtil.currentSession();
         HibernateUtil.createTransaction();
-        HibernateUtil.currentSession().save(publication);
+        session.save(publication);
+        PublicationTrackingHistory trackingEntry = new PublicationTrackingHistory();
+        PublicationTrackingStatus newStatus = getPublicationStatusByName("New");
+        trackingEntry.setPublication(publication);
+        trackingEntry.setStatus(newStatus);
+        trackingEntry.setUpdater(ProfileService.getCurrentSecurityUser());
+        trackingEntry.setDate(new GregorianCalendar());
+        session.save(trackingEntry);
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
