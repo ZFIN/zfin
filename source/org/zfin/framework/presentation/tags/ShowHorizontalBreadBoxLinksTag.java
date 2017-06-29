@@ -74,6 +74,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
 
     private String getBreadBoxLinkHtml(String fq) {
         NameValuePair nameValuePair = SolrService.splitFilterQuery(fq);
+        Boolean suppressNotLabel = false;
 
         if (nameValuePair == null) {
             return "";
@@ -92,6 +93,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         FacetQueryEnum facetQueryEnum = FacetQueryEnum.getFacetQueryEnum(fq);
         if (facetQueryEnum != null) {
             nameValuePair = new BasicNameValuePair(nameValuePair.getName(), facetQueryEnum.getLabel());
+            suppressNotLabel = true;
         }
 
         Map<String, String> dateMap = FacetBuilderService.getPublicationDateQueries();
@@ -101,16 +103,20 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
             }
         }
 
+
+        String fieldName = SolrService.getPrettyFieldName(nameValuePair.getName(), suppressNotLabel);
+        String fieldValue = SolrService.getPrettyFieldValue(nameValuePair.getValue().replace("\"", ""));
+
         if (!StringUtils.equals(nameValuePair.getName(), "category")) {
             out.append("<span title=\"click to remove this filter\" class=\"breadbox-field-name\">");
-            out.append(SolrService.getPrettyFieldName(nameValuePair.getName()));
+            out.append(fieldName);
             out.append(": ");
         }
         out.append("</span>");
         out.append("<span class=\"breadbox-field-value\">");
-        String displayValue = nameValuePair.getValue().replace("\"", "");
 
-        out.append(SolrService.getPrettyFieldValue(displayValue));
+
+        out.append(fieldValue);
         out.append("</span>");
         out.append("&nbsp;&times;");
         out.append("</a>");

@@ -187,13 +187,13 @@ public class FacetBuilderService {
         facetGroups.add(expressedGene);
 
         facetGroups.add(buildSingleFacetGroup("Expressed In Anatomy", EXPRESSION_ANATOMY_TF.getName(), true));
-        facetGroups.add(buildSingleFacetGroup("Stage", "stage", true));
-        facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", true));
-        FacetGroup wildtypeGroup = buildSingleFacetGroup("Is Wildtype and Clean", "is_wildtype", false);
+        facetGroups.add(buildSingleFacetGroup("Stage", FieldName.STAGE.getName(), true));
+        facetGroups.add(buildSingleFacetGroup("Has Image", FieldName.HAS_IMAGE.getName(), true));
+        FacetGroup wildtypeGroup = buildSingleFacetGroup("Is Wildtype and Clean", FieldName.IS_WILDTYPE.getName(), false);
 
         wildtypeGroup.setRootOnly(true);
         facetGroups.add(wildtypeGroup);
-        facetGroups.add(buildSingleFacetGroup("Assay", "assay", false));
+        facetGroups.add(buildSingleFacetGroup("Assay", FieldName.ASSAY.getName(), false));
 
 
         FacetGroup genotype = buildSingleFacetGroup("Genotype", FieldName.GENOTYPE_FULL_NAME.getName(),
@@ -202,7 +202,9 @@ public class FacetBuilderService {
 
         facetGroups.add(genotype);
 
-        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", "sequence_targeting_reagent", false));
+        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)",
+                FieldName.SEQUENCE_TARGETING_REAGENT.getName(),
+                Category.EXPRESSIONS.getFacetQueriesForField(FieldName.SEQUENCE_TARGETING_REAGENT),false));
         facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.CONDITIONS.getName(), false));
 
 
