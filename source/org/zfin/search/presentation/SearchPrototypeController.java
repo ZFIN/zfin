@@ -566,6 +566,9 @@ public class SearchPrototypeController {
 
         category = getCategory(filterQuery, category);
 
+        if (StringUtils.isNotEmpty(category)) {
+            query.addFilterQuery("category:\"" + category + "\"");
+        }
 
         //this should do everything exactly the same as regular controller method to build the result set,
         //but...
