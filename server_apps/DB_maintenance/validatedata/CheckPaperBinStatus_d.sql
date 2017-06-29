@@ -4,6 +4,7 @@ select dim_date_captured,
        dim_number_indexed_bin_3, 
        dim_number_archived,
        dim_number_phenotype_bin,
+       dim_number_orthology_bin,
        dim_number_expression_bin,
        dim_number_closed_no_data,
        dim_number_closed_no_pdf
