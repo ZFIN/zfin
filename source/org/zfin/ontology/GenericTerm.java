@@ -2,6 +2,8 @@ package org.zfin.ontology;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
 import org.zfin.util.NumberAwareStringComparator;
@@ -98,7 +100,8 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     protected DevelopmentStage start;
     */
 
-    @OneToOne(mappedBy = "term", fetch = FetchType.LAZY, optional = false)
+    @OneToOne(mappedBy = "term", fetch = FetchType.LAZY)
+    @NotFound(action= NotFoundAction.IGNORE)
     protected TermStage termStage;
     // attribute that is populated lazily
     // transient modifier because we do not want to serialize the whole relationship tree

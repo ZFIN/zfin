@@ -52,6 +52,12 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         String anatomyRootID = "ZFA:0000037";
         Term term = ontologyRepository.getTermByOboID(anatomyRootID);
         Assert.assertNotNull(term);
+
+        // Ensure obsoleted terms that do not have a term stage range are handled ok too, no exception
+        anatomyRootID = "ZFA:0001160";
+        term = ontologyRepository.getTermByOboID(anatomyRootID);
+        term.getStart();
+        Assert.assertNotNull(term);
     }
 
     @Test
