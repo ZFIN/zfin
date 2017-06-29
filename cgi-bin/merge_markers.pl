@@ -639,6 +639,32 @@ while ($curGetFishName->fetch()) {
 $curGetFishName->finish();
 $curUpdateFishName->finish();
 
+### MRDL-121
+### get the public notes and concatenate them 
+
+$sqlGetPublicNote = "select mrkr_comments from marker where mrkr_zdb_id = ?;";
+$curGetPublicNote = $dbh->prepare_cached($sqlGetPublicNote);
+$curGetPublicNote->execute($mergeId);
+$curGetPublicNote->bind_columns(\$firstNote);
+while ($curGetPublicNote->fetch()) {
+   $firstNoteFound = 1;
+}
+
+if($firstNoteFound == 1 && defined($firstNote)) {
+   $curGetPublicNote->execute($intoId);
+   $curGetPublicNote->bind_columns(\$secondNote);        
+   while ($curGetPublicNote->fetch()) {
+      $secondNoteFound = 1;    
+   }
+   if($secondNoteFound == 1 && defined($secondNote)) {
+      $combinedPublicNote = $secondNote . "\n\n" . "$firstNote";
+   } else {
+      $combinedPublicNote = $firstNote;
+   }
+}
+
+$curGetPublicNote->finish();
+
 ### FB case 14194
 
 $sqlUpdateSfclg = "update sequence_feature_chromosome_location_generated
@@ -1088,6 +1114,16 @@ $updateMarkerHistory = "update marker_history set mhist_mrkr_zdb_id = ? where mh
 $curUpdateMarkerHistory = $dbh->prepare($updateMarkerHistory);   
 $curUpdateMarkerHistory->execute($intoId,$mergeId);
 $curUpdateMarkerHistory->finish();
+
+### MRDL-121
+### update the public note with the combined note
+
+if(defined($combinedPublicNote)) {
+   $sqlUpdatePublicNote = "update marker set mrkr_comments = ? where mrkr_zdb_id = ?;";
+   $curUpdatePublicNote = $dbh->prepare_cached($sqlUpdatePublicNote);                
+   $curUpdatePublicNote->execute($combinedPublicNote,$intoId);
+   $curUpdatePublicNote->finish();
+}
 
 # regen_names
 $regenNames = "execute procedure regen_names_marker(?);";
