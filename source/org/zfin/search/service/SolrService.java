@@ -520,8 +520,11 @@ public class SolrService {
         return urlCreator.getURL();
     }
 
-
     public static String getPrettyFieldName(String fieldName) {
+        return getPrettyFieldName(fieldName, false);
+    }
+
+    public static String getPrettyFieldName(String fieldName, Boolean ignoreMinus) {
 
 
         FieldName fName = FieldName.getFieldName(fieldName);
@@ -534,7 +537,11 @@ public class SolrService {
         //             return "Normal Phenotype Statement";
 
         //in breadbox links, field names might start with a - for exclusion facets, make it nicer?
-        fieldName = StringUtils.replace(fieldName, "-", "NOT ");
+        if (!ignoreMinus) {
+            fieldName = StringUtils.replace(fieldName, "-", "NOT ");
+        } else {
+            fieldName = StringUtils.replace(fieldName, "-", "");
+        }
 
         //remove fieldType suffix cruft
         fieldName = fieldName.replaceAll("_t$", "");
