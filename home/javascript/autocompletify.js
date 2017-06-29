@@ -11,7 +11,7 @@
         var defaults = {
             templates: {
                 suggestion: function (item) {
-                    return "<p>" + item.label + "</p>";
+                    return "<p>" + item.label + " <a href=\"/" + item.id + "\"><i class=\"fa fa-rocket\"></i</a>" +"</p>";
                 }
             },
             limit: 5
@@ -36,7 +36,7 @@
             displayKey: 'value',
             templates: options.templates,
             source: hound,
-            limit: options.limit,
+            limit: options.limit
         });
 
         return this;
