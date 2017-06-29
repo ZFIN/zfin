@@ -85,6 +85,7 @@ public class PublicationTrackingController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Track Pub: " + publication.getTitle());
         model.addAttribute("publication", publication);
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
         model.addAttribute("loggedInUser", ProfileService.getCurrentSecurityUser());
         return "publication/track-publication.page";
     }

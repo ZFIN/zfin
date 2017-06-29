@@ -18,6 +18,9 @@
 <c:if test="${allowCuration}">
   <c:set var="curateURL">/action/curation/${publication.zdbID}</c:set>
 </c:if>
+<c:if test="${hasCorrespondence}">
+    <c:set var="correspondenceURL">/action/publication/${publication.zdbID}/track#correspondence</c:set>
+</c:if>
 
 <style>
     .author-item {
@@ -34,6 +37,7 @@
                      viewURL="${viewURL}"
                      editURL="${editURL}"
                      trackURL="${trackURL}"
+                     correspondenceURL="${correspondenceURL}"
                      curateURL="${curateURL}"/>
 
     <div class="row">

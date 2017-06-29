@@ -30,11 +30,15 @@
 <c:if test="${allowCuration}">
     <c:set var="curateURL">/action/curation/${publication.zdbID}</c:set>
 </c:if>
+<c:if test="${hasCorrespondence}">
+    <c:set var="correspondenceURL">/action/publication/${publication.zdbID}/track#correspondence</c:set>
+</c:if>
 
 <zfin2:dataManager zdbID="${publication.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
                    trackURL="${trackURL}"
+                   correspondenceURL="${correspondenceURL}"
                    linkURL="${linkURL}"
                    curateURL="${curateURL}"/>
 
@@ -124,27 +128,36 @@
             </span>
         </td>
     </tr>
-
     <authz:authorize access="hasRole('root')">
-
         <tr>
             <th>Files:</th>
             <td>
                 <c:forEach items="${publication.files}" var="file" varStatus="loop">
                     <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${file.fileName}">
-                        ${file.type.name.toString() eq 'Original Article' ? 'Original Article' : file.originalFileName}
+                            ${file.type.name.toString() eq 'Original Article' ? 'Original Article' : file.originalFileName}
                     </a>${loop.last ? " &mdash; " : ", "}
                 </c:forEach>
                 <a href="/action/publication/${publication.zdbID}/edit#files">Add/Update Files</a>
             </td>
         </tr>
-
         <tr>
             <th>Curation Status:</th>
             <td>${curationStatusDisplay}</td>
         </tr>
+        <tr>
+            <th>Author Correspondence:</th>
+            <td>
+                <c:choose>
+                    <c:when test="${!empty correspondenceDisplay}">
+                        <a href="/action/publication/${publication.zdbID}/track#correspondence">${correspondenceDisplay}</a>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="no-data-tag"><i>None</i></span>
+                    </c:otherwise>
+                </c:choose>
+            </td>
+        </tr>
     </authz:authorize>
-
 </table>
 
 <div class="jq-modal" id="generate-reference-overlay" style="width: auto; height: auto; padding: 15px 15px;">

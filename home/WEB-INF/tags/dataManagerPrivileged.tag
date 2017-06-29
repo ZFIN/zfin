@@ -7,6 +7,7 @@
 <%@ attribute name="deleteURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="trackURL" type="java.lang.String" rtexprvalue="true" required="false" %>
+<%@ attribute name="correspondenceURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="linkURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="curateURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="viewURL" type="java.lang.String" rtexprvalue="true" required="false" %>
@@ -69,8 +70,11 @@
         <a href="${curateURL}" class="root">Curate</a>
     </td>
 </c:if>
-
-
+<c:if test="${!empty correspondenceURL}">
+    <td>
+        <a href="${correspondenceURL}" class="root"><i class="fa fa-envelope-o"></i></a>
+    </td>
+</c:if>
 <c:if test="${showLastUpdate}">
     <td>
         <a href="/action/updates/${zdbID}">

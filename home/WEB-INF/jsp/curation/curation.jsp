@@ -60,10 +60,15 @@
 
 <div ng-app="app">
 
+    <c:if test="${hasCorrespondence}">
+        <c:set var="correspondenceURL">/action/publication/${publication.zdbID}/track#correspondence</c:set>
+    </c:if>
+
     <zfin2:dataManager zdbID="${publication.zdbID}"
                        showLastUpdate="true"
                        viewURL="/${publication.zdbID}"
                        trackURL="/action/publication/${publication.zdbID}/track"
+                       correspondenceURL="${correspondenceURL}"
                        editURL="/action/publication/${publication.zdbID}/edit"
                        linkURL="/action/publication/${publication.zdbID}/link"
     />

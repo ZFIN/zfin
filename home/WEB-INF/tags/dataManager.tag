@@ -7,6 +7,7 @@
 <%@ attribute name="deleteURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="trackURL" type="java.lang.String" rtexprvalue="true" required="false" %>
+<%@ attribute name="correspondenceURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="linkURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="curateURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="viewURL" type="java.lang.String" rtexprvalue="true" required="false" %>
@@ -50,14 +51,16 @@
             <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" editLinkText="${editLinkText}"
                                          deleteURL="${deleteURL}" linkURL="${linkURL}" curateURL="${curateURL}" viewURL="${viewURL}"
                                          mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}"
-                                         showLastUpdate="${showLastUpdate}" editMarker="${editMarker}"/>
+                                         showLastUpdate="${showLastUpdate}" editMarker="${editMarker}"
+                                         correspondenceURL="${correspondenceURL}" />
         </authz:authorize>
         <authz:authorize access="hasRole('submit')">
             <c:if test="${isOwner}">
                 <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" deleteURL="${deleteURL}"
                                              linkURL="${linkURL}" curateURL="${curateURL}" viewURL="${viewURL}"
                                              mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}"
-                                             showLastUpdate="${showLastUpdate}"/>
+                                             showLastUpdate="${showLastUpdate}"
+                                             correspondenceURL="${correspondenceURL}"/>
             </c:if>
         </authz:authorize>
 

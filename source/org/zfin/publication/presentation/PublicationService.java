@@ -103,6 +103,33 @@ public class PublicationService {
         return sb.toString();
     }
 
+    public static String getLastAuthorCorrespondenceDisplay(Publication publication) {
+        Set<CorrespondenceSentMessage> sentMessages = publication.getSentMessages();
+        String messageType = "";
+        Date latestMessageDate = null;
+        if (CollectionUtils.isNotEmpty(sentMessages)) {
+            latestMessageDate = sentMessages.iterator().next().getSentDate();
+            messageType = "Sent";
+        }
+        Set<CorrespondenceReceivedMessage> receivedMessages = publication.getReceivedMessages();
+        if (CollectionUtils.isNotEmpty(receivedMessages)) {
+            Date receivedDate = receivedMessages.iterator().next().getDate();
+            if (latestMessageDate == null || receivedDate.after(latestMessageDate)) {
+                latestMessageDate = receivedDate;
+                messageType = "Received";
+            }
+        }
+        if (latestMessageDate == null) {
+            return null;
+        }
+        return messageType + ", " + DateFormat.getDateInstance(DateFormat.SHORT).format(latestMessageDate);
+    }
+
+    public static boolean hasCorrespondence(Publication publication) {
+        return CollectionUtils.isNotEmpty(publication.getSentMessages()) ||
+                CollectionUtils.isNotEmpty(publication.getReceivedMessages());
+    }
+
     public static Boolean allowCuration(Publication publication) {
         if (publication.isUnpublished()) {
             return false;

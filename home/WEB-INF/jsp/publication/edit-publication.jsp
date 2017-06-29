@@ -25,13 +25,16 @@
 <c:if test="${allowCuration}">
     <c:set var="curateURL">/action/curation/${pubID}</c:set>
 </c:if>
-
+<c:if test="${hasCorrespondence}">
+    <c:set var="correspondenceURL">/action/publication/${publication.zdbID}/track#correspondence</c:set>
+</c:if>
 
 <div class="container-fluid">
     <zfin2:dataManager zdbID="${pubID}"
                        linkURL="${linkURL}"
                        trackURL="${trackURL}"
                        curateURL="${curateURL}"
+                       correspondenceURL="${correspondenceURL}"
                        viewURL="/${pubID}"/>
 
     <div class="row">

@@ -128,6 +128,7 @@ public class PublicationEditController {
 
         model.addAttribute("publicationBean", publicationBean);
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Pub: " + publication.getTitle());
         return "publication/edit-publication.page";
     }
@@ -202,6 +203,7 @@ public class PublicationEditController {
         model.addAttribute("publicationBean", bean);
         model.addAttribute("authorStrings", publicationService.splitAuthorListString(publication.getAuthors()));
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Link Authors: " + publication.getTitle());
 
         return "publication/link-authors.page";
