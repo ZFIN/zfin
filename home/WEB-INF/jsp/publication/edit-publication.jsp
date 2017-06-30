@@ -3,6 +3,7 @@
 <link rel=stylesheet type="text/css" href="/css/bootstrap3/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css">
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
+<script type="text/javascript" src="/javascript/jquery.stickytabs.js"></script>
 
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/paging.min.js"></script>
@@ -64,30 +65,6 @@
 </div>
 
 <script>
-    $(function () {
-
-        function goToTab(hash) {
-            $('#fig-edit-tabs a[href=' + hash + ']').tab('show');
-        }
-
-        var hash = window.location.hash;
-        if (hash) {
-            goToTab(hash);
-        }
-
-        $('#fig-edit-tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-            var href = $(e.target).attr('href');
-            if (history.pushState) {
-                history.pushState(null, null, href);
-            } else {
-                location.hash = href;
-            }
-        });
-
-        $('.tab-content').on('click', "a[href^='#']", function () {
-            var hash = $(this).attr('href');
-            goToTab(hash);
-        });
-    });
+    $('#fig-edit-tabs').stickyTabs();
 </script>
 
