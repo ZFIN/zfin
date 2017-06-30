@@ -1,5 +1,5 @@
 select mcm_date_Captured,
-       mcm_pub_arrival_date_month,
+       LPAD(mcm_pub_arrival_date_month, 2, '0') as month,
        mcm_pub_arrival_date_year,
        mcm_number_in_bin_1,
        mcm_number_in_bin_2,
@@ -13,5 +13,5 @@ select mcm_date_Captured,
  from monthly_curated_metric
  where mcm_date_captured = (select max(mcm_date_Captured)
        			      from monthly_curated_metric)
- order by mcm_pub_arrival_date_year, mcm_pub_arrival_date_month asc;
+ order by mcm_pub_arrival_date_year, month asc;
        
