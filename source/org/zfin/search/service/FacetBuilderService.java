@@ -113,13 +113,7 @@ public class FacetBuilderService {
 
     private List<FacetGroup> buildAnatomyFacetGroup() {
         List<FacetGroup> facetGroups = new ArrayList<>();
-
-        FacetGroup ontologyGroup = new FacetGroup("Ontology", true);
-        Facet ontologyFacet = buildFacet( FieldName.ONTOLOGY.getName(), true);
-        ontologyFacet.setAlwaysShowAllFacets(true);
-        ontologyGroup.addFacet(ontologyFacet);
-        facetGroups.add(ontologyGroup);
-
+        facetGroups.add(buildSingleFacetGroup("Ontology", FieldName.ONTOLOGY.getName(), true));
         FacetGroup statusGroup = buildSingleFacetGroup("Term Status", FieldName.TERM_STATUS.getName(), true);
         statusGroup.setRootOnly(true);
         facetGroups.add(statusGroup);
