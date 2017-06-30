@@ -2,6 +2,7 @@ package org.zfin.profile.repository;
 
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -13,7 +14,10 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.UserDetailServiceImpl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -290,6 +294,30 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
         assertEquals(1, result);
         result = profileRepository.removeCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1");
         assertEquals(1, result);
+    }
+
+    @Test
+    public void checkPasswords() throws ParseException {
+        List<Person> list = (List<Person>) HibernateUtil.currentSession().createQuery("from Person").list();
+        int index = 0;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date when = sdf.parse("2017-3-31");
+
+        System.out.println("date1 : " + sdf.format(when));
+        Iterator<Person> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            Person person = iterator.next();
+            AccountInfo info = person.getAccountInfo();
+            if (info != null) {
+                String saltedLogin = new Md5PasswordEncoder().encodePassword(info.getLogin(), "dedicated to George Streisinger");
+                if (info.getPassword() != null && info.getPassword().equals(saltedLogin) && info.getPreviousLoginDate() != null
+                        && info.getPreviousLoginDate().after(when))
+                    //System.out.println(index++ +": "+person.getZdbID()+": "+info.getPreviousLoginDate().toString());
+                    System.out.println(index++ +": "+person.getEmail());
+                //System.out.println(person.getFullName());
+            }
+
+        };
     }
 
     @Test
