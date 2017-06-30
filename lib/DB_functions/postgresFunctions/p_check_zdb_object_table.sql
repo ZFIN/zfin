@@ -12,22 +12,21 @@
    vOkInSyscolumns	integer;
    vTableId		integer;
   begin
-   vTableId = (select tabid 
-		   from systables 
-		   where tabname = vTableName);
+   vTableId = (select pg_class.oid 
+		   from pg_class 
+		   where relname = vTableName);
 
    vOkInSystables = (select count(*) 
-			  from systables 
-			  where tabname = vTableName);
+			  from pg_tables
+			  where tablename = vTableName);
 
   if vOkInSystables < 1 then
     raise exception 'FAIL!: table name not in systables';
   else 
 	 vOkInSyscolumns = (select count(*) 
-	 			 from syscolumns, systables 
-  				 where syscolumns.tabid = systables.tabid
-			         and systables.tabid = vTableid
-				 and syscolumns.colname = vColumnName);
+	 			 from pg_attribute 
+  				 where attrelid = vTableid
+				 and attname = vColumnName);
 
 	if vOkInSyscolumns < 1 then
 	  raise exception 'FAIL!: column name not in syscolumns';
