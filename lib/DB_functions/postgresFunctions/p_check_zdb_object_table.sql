@@ -1,7 +1,7 @@
 --P_CHECK_ZDB_OBJECT_TABLE
   ------------------------------------------------------
   --procedure that checks to make sure tables and columns in 
-  --zdb_object_type table exist in systables and syscolumns.
+  --zdb_object_type table exist in pg_tables and pg_attributes.
   --REPLACES:
   --sub zdbObjectHomeTableColumnExist 
 
