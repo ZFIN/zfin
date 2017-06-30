@@ -4084,8 +4084,7 @@ where feature_zdb_id = ftmd_feature_zdb_id
                              term_name as full_name,
                              zero_pad(term_name) as name_sort,
                              to_date(get_date_from_id(term_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
-                             case when term_ontology = 'disease_ontology' then TRIM('Human Disease')
-                                  else TRIM('Anatomy / GO') end as category,
+                             TRIM('Anatomy / GO / Human Disease') as category,
                              case
                                when term_ontology = 'biological_process' then 'Biological Process'
                                when term_ontology = 'cellular_component' then 'Cellular Component'
@@ -4104,6 +4103,15 @@ where feature_zdb_id = ftmd_feature_zdb_id
                       where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology')
                       and term_is_secondary = 'f';
  ">
+
+           <entity name="term_human_disease"
+                   datasource="db" query="select 'Human Disease' as category, term_zdb_id
+                      from term
+                      where term_ontology in ('disease_ontology')
+                      and term_is_secondary = 'f'"
+		   where="term_zdb_id=term.internal_id"
+                   cacheImpl="SortedMapBackedCache" >
+           </entity>
 
            <entity name="term_aliases"
                    datasource="db" query="select dalias_alias alias, dalias_data_zdb_id
