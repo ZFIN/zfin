@@ -34,7 +34,7 @@ defaultTasks 'defaultTask'
 
 project.ext.set("dbname", dbname)
 project.ext.set("sourceroot", sourceroot)
-project.ext.set("pgdata", pddata)
+project.ext.set("pgdata", pgdata)
 project.ext.set("pgbindir", pgbindir)
 
 task loadDb(dependsOn: ['lib:DB_functions:postgresFunctions:killConnectionsToPostgres']) {
