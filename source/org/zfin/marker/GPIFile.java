@@ -56,7 +56,10 @@ public class GPIFile extends AbstractScriptWrapper{
                         geneRow.append(geneAlias.getAlias());
                         geneRow.append("|");
                     }
+                    Integer lastPipe = geneRow.length();
+                    geneRow.deleteCharAt(lastPipe-1);
                 }
+
                 geneRow.append('\t');
                 geneRow.append(gene.getType().toString());
                 geneRow.append('\t');
@@ -67,7 +70,11 @@ public class GPIFile extends AbstractScriptWrapper{
                         geneRow.append(dblink.getAccessionNumberDisplay());
                         geneRow.append("|");
                     }
+                    Integer lastPipe = geneRow.length();
+                    geneRow.deleteCharAt(lastPipe-1);
                 }
+
+
                 geneRow.append('\n');
                 bw.write(geneRow.toString());
             }
