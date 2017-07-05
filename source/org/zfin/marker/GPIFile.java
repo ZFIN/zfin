@@ -2,14 +2,11 @@ package org.zfin.marker;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;
-
 
 import java.io.*;
 import java.util.List;
-import java.io.IOException;
-
-import java.io.FileOutputStream;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -34,8 +31,9 @@ public class GPIFile extends AbstractScriptWrapper{
         private void init() throws IOException {
             initAll();
 
-            File f = new File("zfin.gpi");
-            OutputStream os = new FileOutputStream(f);
+            File gpiFile = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/data_transfer/GO/zfin.gpi");
+
+            OutputStream os = new FileOutputStream(gpiFile);
             String encoding = "UTF8";
             OutputStreamWriter osw = new OutputStreamWriter(os, encoding);
             BufferedWriter bw = new BufferedWriter(osw);
@@ -61,7 +59,7 @@ public class GPIFile extends AbstractScriptWrapper{
                 }
 
                 geneRow.append('\t');
-                geneRow.append(gene.getType().toString());
+                geneRow.append(gene.getSoTerm().getTermName().toLowerCase());
                 geneRow.append('\t');
                 geneRow.append("7955");
                 geneRow.append('\t');
