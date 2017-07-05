@@ -130,6 +130,14 @@ public class PublicationService {
                 CollectionUtils.isNotEmpty(publication.getReceivedMessages());
     }
 
+    public static List<String> getMeshTermDisplayList(Publication publication) {
+        List<String> meshTermDisplays = new ArrayList<>();
+        for (MeshHeading heading : publication.getMeshHeadings()) {
+            meshTermDisplays.addAll(heading.getDisplayList());
+        }
+        return meshTermDisplays;
+    }
+
     public static Boolean allowCuration(Publication publication) {
         if (publication.isUnpublished()) {
             return false;
