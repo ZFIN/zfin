@@ -1,13 +1,13 @@
 --liquibase formatted sql
 --changeset pm:ZFIN-5711
 
-update construct_component set cc_component_zdb_id='' where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-7' and cc_component='MLS';
-update construct_component set cc_component_zdb_id='' where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-5' and cc_component='MLS';
-update construct_component set cc_component_zdb_id='' where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-6' and cc_component='MLS';
-update construct_component set cc_component_zdb_id='' where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-3' and cc_component='MLS';
-update construct_component set cc_component_zdb_id='' where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-4' and cc_component='MLS';
-update construct_component set cc_component_zdb_id='' where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-19' and cc_component='MLS';
-update construct_component set cc_component_zdb_id='' where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-20' and cc_component='MLS';
+update construct_component set cc_component_zdb_id=NULL where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-7' and cc_component='MLS';
+update construct_component set cc_component_zdb_id=NULL  where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-5' and cc_component='MLS';
+update construct_component set cc_component_zdb_id=NULL where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-6' and cc_component='MLS';
+update construct_component set cc_component_zdb_id=NULL where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-3' and cc_component='MLS';
+update construct_component set cc_component_zdb_id=NULL where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-4' and cc_component='MLS';
+update construct_component set cc_component_zdb_id=NULL where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-19' and cc_component='MLS';
+update construct_component set cc_component_zdb_id=NULL where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-20' and cc_component='MLS';
 
 
 update construct_component set cc_component='Hsa.HRAS' where cc_construct_zdb_id='ZDB-TGCONSTRCT-170322-7' and cc_component='MLS';
