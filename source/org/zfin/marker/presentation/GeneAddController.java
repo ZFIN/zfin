@@ -16,6 +16,7 @@ import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerSolrService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.search.Category;
@@ -38,6 +39,9 @@ public class GeneAddController {
 
     @Autowired
     private PublicationRepository publicationRepository;
+
+    @Autowired
+    MarkerSolrService markerSolrService;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
@@ -102,29 +106,8 @@ public class GeneAddController {
 
             HibernateUtil.flushAndCommitCurrentSession();
 
-            Map<FieldName, Object> solrDoc = new HashMap<>(12);
-            solrDoc.put(FieldName.ID, newGene.getZdbID());
-            solrDoc.put(FieldName.CATEGORY, Category.GENE.getName());
-            solrDoc.put(FieldName.TYPE, newGene.getMarkerType().getDisplayName());
-            solrDoc.put(FieldName.NOTE, newGene.getPublicComments());
-            solrDoc.put(FieldName.NAME, newGene.getAbbreviation());
-            solrDoc.put(FieldName.PROPER_NAME, newGene.getAbbreviation());
-            solrDoc.put(FieldName.GENE, newGene.getAbbreviation());
-            solrDoc.put(FieldName.FULL_NAME, newGene.getName());
-            solrDoc.put(FieldName.GENE_FULL_NAME, newGene.getName());
-            solrDoc.put(FieldName.NAME_SORT, newGene.getAbbreviationOrder());
-            solrDoc.put(FieldName.URL, "/" + newGene.getZdbID());
-            solrDoc.put(FieldName.DATE, new Date());
+            markerSolrService.addMarkerStub(newGene, Category.GENE);
 
-            if (newGene.getAliases() != null) {
-                List<String> aliases = newGene.getAliases().stream()
-                        .map(DataAlias::getAlias)
-                        .collect(Collectors.toList());
-                solrDoc.put(FieldName.ALIAS, aliases);
-                solrDoc.put(FieldName.GENE_PREVIOUS_NAME, aliases);
-            }
-
-            SolrService.addDocument(solrDoc);
         } catch (Exception e) {
             try {
                 HibernateUtil.rollbackTransaction();
