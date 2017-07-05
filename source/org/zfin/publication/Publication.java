@@ -307,9 +307,9 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         if (publicationDate != null) {
             sb.append(" (");
             sb.append(getYear());
-            sb.append(") ");
+            sb.append(")");
         }
-        sb.append(title);
+        sb.append(" ").append(title);
         sb.append(". ");
         sb.append(getJournalAndPages());
         return sb.toString();
@@ -528,16 +528,15 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     }
 
     public String getPrintable() {
-        String printable = authors + " " + "(" + publicationDate.get(Calendar.YEAR) + ")" + " " + title + ". " + journal.getMedAbbrev() + " ";
-        if (volume != null)
-            printable =  printable + " " + volume + ":";
-        if (pages != null)
-            printable =  printable + " " + pages + ". ";
-        if (status == Status.EPUB || status == Status.PRESS)
-            printable = printable + status.toString() + ".";
-        if (journal.isZfinDierectDataSubmission())
-            printable += "(http://zfin.org).";
-        return printable;
+        StringBuilder sb = new StringBuilder(getCitation());
+        if (status == Status.EPUB || status == Status.PRESS) {
+            sb.append(". ").append(status.toString());
+        }
+        if (journal.isZfinDierectDataSubmission()) {
+            sb.append(". (http://zfin.org)");
+        }
+        sb.append(".");
+        return sb.toString();
     }
 
 }
