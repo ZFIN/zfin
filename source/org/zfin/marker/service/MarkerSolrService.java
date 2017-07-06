@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 public class MarkerSolrService {
 
     public void addMarkerStub(Marker marker, Category category) throws IOException, SolrServerException {
-        addMarkerStub(marker, category, new HashMap<String,String>());
+        addMarkerStub(marker, category, new HashMap<String,Object>());
     }
 
-    public void addMarkerStub(Marker marker, Category category, Map<String,String> extras) throws IOException, SolrServerException {
+    public void addMarkerStub(Marker marker, Category category, Map<String,Object> extras) throws IOException, SolrServerException {
 
         Map<FieldName, Object> solrDoc = new HashMap<>(12);
         solrDoc.put(FieldName.ID, marker.getZdbID());
@@ -48,11 +48,7 @@ public class MarkerSolrService {
             solrDoc.put(FieldName.GENE_PREVIOUS_NAME, aliases);
         }
 
-        SolrInputDocument document = new SolrInputDocument();
-        document.putAll(solrDoc);
-        document.putAll(extras)
-
-        SolrService.addDocument(document);
+        SolrService.addDocument(solrDoc, extras);
 
     }
 

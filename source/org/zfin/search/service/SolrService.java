@@ -837,11 +837,20 @@ public class SolrService {
     }
 
     public static void addDocument(Map<FieldName, Object> fields) throws IOException, SolrServerException {
+        addDocument(fields, new HashMap<>());
+    }
+
+    public static void addDocument(Map<FieldName, Object> fields, Map<String, Object> extras) throws IOException, SolrServerException {
         SolrInputDocument document = new SolrInputDocument();
         SolrClient solr = getSolrClient();
         for (Map.Entry<FieldName, Object> field : fields.entrySet()) {
             document.addField(field.getKey().getName(), field.getValue());
         }
+
+        for (Map.Entry<String, Object> field : extras.entrySet()) {
+            document.addField(field.getKey(), field.getValue());
+        }
+
         solr.add(document);
         if (!isIndexingInProgress()) {
             solr.commit();
