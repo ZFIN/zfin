@@ -329,4 +329,8 @@ public class PublicationService {
         return pubFile;
     }
 
+    public boolean publicationHasFigureWithLabel(Publication publication, String label) {
+        return publication.getFigures().stream().anyMatch(fig -> fig.getLabel().equals(label));
+    }
+
 }

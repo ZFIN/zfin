@@ -3,7 +3,13 @@ package org.zfin.publication.repository;
 import org.hibernate.Session;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.AppConfig;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
@@ -37,15 +43,20 @@ import org.zfin.sequence.MarkerDBLink;
 import java.util.Calendar;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {AppConfig.class})
+@WebAppConfiguration
 public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
-    private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+    @Autowired
+    private PublicationRepository publicationRepository;
+
     private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private static AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
