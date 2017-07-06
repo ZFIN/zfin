@@ -9,7 +9,7 @@ begin
      perform p_marker_sequence_unique(NEW.seq_mrkr_zdb_id, 
 				     NEW.seq_sequence, 
 				     NEW.seq_sequence_2);
-     RETURN NEW;
+     RETURN null;
 
 end;
 $BODY$ LANGUAGE plpgsql;

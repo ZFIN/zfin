@@ -9,6 +9,7 @@ begin
      mrkr_comments = (select scrub_char(NEW.mrkr_comments));
      NEW.mrkr_comments = mrkr_comments;
 
+     return new;
 end;
 $BODY$ LANGUAGE plpgsql;
 

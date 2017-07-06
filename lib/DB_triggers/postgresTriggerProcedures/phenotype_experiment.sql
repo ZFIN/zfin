@@ -8,7 +8,7 @@ begin
    perform p_stg_hours_consistent(NEW.phenox_start_stg_zdb_id,
 				 NEW.phenox_end_stg_zdb_id );
 
-   RETURN NEW;
+   RETURN NULL;
 end;
 $BODY$ LANGUAGE plpgsql;
 

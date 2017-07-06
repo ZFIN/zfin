@@ -17,7 +17,7 @@ begin
     perform p_update_related_fish_names(NEW.geno_zdb_id);
     perform p_update_geno_nickname(NEW.geno_zdb_id,
 				  NEW.geno_handle);
-    
+    RETURN NEW;
 end;
 $BODY$ LANGUAGE plpgsql;
 

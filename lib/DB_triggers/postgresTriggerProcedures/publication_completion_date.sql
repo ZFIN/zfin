@@ -9,7 +9,7 @@ begin
      
      perform p_delete_curator_session(NEW.zdb_id,
 				     NEW.pub_completion_date);
-     RETURN NEW;
+     RETURN NULL;
 end;
 $BODY$ LANGUAGE plpgsql;
 

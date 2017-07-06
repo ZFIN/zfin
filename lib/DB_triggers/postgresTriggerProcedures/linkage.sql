@@ -6,7 +6,7 @@ $BODY$
 
 begin
      perform p_insert_into_record_attribution_tablezdbids(NEW.lnkg_zdb_id);
-     RETURN NEW;
+     RETURN null;
 
 end;
 $BODY$ LANGUAGE plpgsql;

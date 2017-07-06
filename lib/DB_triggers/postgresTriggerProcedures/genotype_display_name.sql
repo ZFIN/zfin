@@ -17,6 +17,7 @@ begin
     perform regen_names_genotype(NEW.geno_zdb_id);
     perform p_update_related_fish_names(NEW.geno_zdb_id);
     
+    RETURN NEW;
 end;
 $BODY$ LANGUAGE plpgsql;
 

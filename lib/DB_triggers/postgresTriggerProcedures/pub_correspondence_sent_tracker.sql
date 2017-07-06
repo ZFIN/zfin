@@ -4,8 +4,8 @@ create or replace function pub_correspondence_sent_tracker()
 returns trigger as
 $BODY$
 begin
-   select updatePubLastSentEmailDate(NEW.pubcst_pub_zdb_id,NEW.pubcst_date_sent);
-   RETURN NEW;
+   perform updatePubLastSentEmailDate(NEW.pubcst_pub_zdb_id,NEW.pubcst_date_sent);
+   RETURN NULL;
 end;
 $BODY$ LANGUAGE plpgsql;
 

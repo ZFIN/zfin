@@ -9,6 +9,7 @@ begin
    perform populate_lab_address_update_tracking(NEW.zdb_id 
     ,OLD.address ,OLD.address );
   
+  RETURN NULL;
 
 end;
 $BODY$ LANGUAGE plpgsql;

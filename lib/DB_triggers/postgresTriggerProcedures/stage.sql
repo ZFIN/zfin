@@ -1,4 +1,4 @@
-drop trigger if exists stage_trigger on stage;
+ drop trigger if exists stage_trigger on stage;
 
 create or replace function stage()
 returns trigger as

@@ -6,7 +6,7 @@ $BODY$
 begin
 
      perform checkDblinkOneToOneAccessionMapping (NEW.ooa_dblink_zdb_id, NEW.ooa_feature_zdb_id, NEW.ooa_dblink_acc_num);
-     RETURN NEW;
+     RETURN NULL;
 
 end;
 $BODY$ LANGUAGE plpgsql;

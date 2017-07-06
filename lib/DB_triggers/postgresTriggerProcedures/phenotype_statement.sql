@@ -11,7 +11,7 @@ begin
 	perform p_term_is_not_obsolete_or_secondary(NEW.phenos_entity_2_superterm_zdb_id);
 	perform p_term_is_not_obsolete_or_secondary(NEW.phenos_entity_2_subterm_zdb_id);
 
-   RETURN NEW;
+   RETURN NULL;
 end;
 
 $BODY$ LANGUAGE plpgsql;
