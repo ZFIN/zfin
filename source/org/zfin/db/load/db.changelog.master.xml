@@ -20,4 +20,5 @@
     <include file="source/org/zfin/db/load/1086/hotPepper/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1086/iceCream/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1087/jackOlatern/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1088/kissingFace/db.changelog.master.xml"/>
 </databaseChangeLog>
