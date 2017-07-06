@@ -1,15 +1,15 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%--
 Similar to toggledHypelinkList, but the collection is a collection of strings that are displayed directly.
-Also, we provide a suffix so that we can change the display easily.
+Also, we provide a delimiter so that we can change the display easily.
 --%>
 
 <%@attribute name="collection" type="java.util.Collection" %>
 <%@attribute name="maxNumber" type="java.lang.Integer" %>
 <%@attribute name="id" type="java.lang.String" %>
-<%@ attribute name="suffix" type="java.lang.String" required="false" %>
+<%@ attribute name="delimiter" type="java.lang.String" required="false" %>
 
-<c:if test="${empty suffix}">
+<c:if test="${empty delimiter}">
     <c:set var="delimiter" value=", "/>
 </c:if>
 

@@ -6,9 +6,7 @@
             <zfin:alternating-tr loopName="loop">
                 <td>
                     <div class="show_pubs">
-                        <a href="/${pub.zdbID}"
-                           id="${pub.zdbID}">${pub.authors}&nbsp;(${pub.year})&nbsp;${pub.title}.&nbsp;${pub.journal.abbreviation}&nbsp;<c:if
-                                test="${pub.volume != null}">${pub.volume}:</c:if>${pub.pages}</a>
+                        <a href="/${pub.zdbID}" id="${pub.zdbID}">${pub.citation}</a>
                         <authz:authorize access="hasRole('root')"><c:if
                                 test="${pub.open}">OPEN</c:if><c:if
                                 test="${!pub.open}">CLOSED</c:if><c:if

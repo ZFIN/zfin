@@ -126,6 +126,9 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
         if (event.getEventType().is(EventType.CUD_EXPERIMENT_CONDITION)) {
             expressionExperimentZonePresenter.updateEnvironmentList();
         }
+        if (event.getEventType().is(EventType.CUD_EXPERIMENT)) {
+            expressionExperimentZonePresenter.updateEnvironmentList();
+        }
         if (event.getEventType().is(EventType.REMOVE_PHENTOTYPE_EXPERIMENT)) {
             // update possible push-to-pato reversals
             expressionZonePresenter.retrieveExpressions();

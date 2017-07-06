@@ -102,11 +102,13 @@
     <tr>
         <th>MeSH Terms:</th>
         <td>
-            <c:forEach var="meshHeading" items="${publication.meshHeadings}" varStatus="idx1">
-                <c:forEach var="displayString" items="${meshHeading.displayList}" varStatus="idx2">
-                    ${displayString}<c:if test="${!idx1.last || !idx2.last}">; </c:if>
-                </c:forEach>
-            </c:forEach>
+            <c:choose>
+                <c:when test="${!empty meshTermDisplayList}">
+                    <zfin2:toggledHyperlinkStrings collection="${meshTermDisplayList}" id="mesh-term-list"
+                                                   maxNumber="5" delimiter="; " />
+                </c:when>
+                <c:otherwise><span class="no-data-tag">none</span></c:otherwise>
+            </c:choose>
         </td>
     </tr>
 

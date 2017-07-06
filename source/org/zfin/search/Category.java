@@ -49,7 +49,7 @@ public enum Category {
             SOURCE,
             HOST_ORGANISM
     ),
-    ANATOMY("Anatomy / GO / Human Disease",
+    ANATOMY("Anatomy / GO",
             ONTOLOGY,
             TERM_STATUS
     ),
