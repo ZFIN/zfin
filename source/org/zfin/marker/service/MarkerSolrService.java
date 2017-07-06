@@ -1,6 +1,8 @@
 package org.zfin.marker.service;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Service;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.Marker;
@@ -19,6 +21,10 @@ import java.util.stream.Collectors;
 public class MarkerSolrService {
 
     public void addMarkerStub(Marker marker, Category category) throws IOException, SolrServerException {
+        addMarkerStub(marker, category, new HashMap<String,String>());
+    }
+
+    public void addMarkerStub(Marker marker, Category category, Map<String,String> extras) throws IOException, SolrServerException {
 
         Map<FieldName, Object> solrDoc = new HashMap<>(12);
         solrDoc.put(FieldName.ID, marker.getZdbID());
@@ -42,7 +48,11 @@ public class MarkerSolrService {
             solrDoc.put(FieldName.GENE_PREVIOUS_NAME, aliases);
         }
 
-        SolrService.addDocument(solrDoc);
+        SolrInputDocument document = new SolrInputDocument();
+        document.putAll(solrDoc);
+        document.putAll(extras)
+
+        SolrService.addDocument(document);
 
     }
 
