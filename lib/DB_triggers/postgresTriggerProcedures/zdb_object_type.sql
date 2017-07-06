@@ -8,7 +8,10 @@ begin
    perform p_check_zdb_object_table(NEW.zobjtype_home_table,
 				NEW.zobjtype_home_zdb_id_column);
 
+
+return null;
 end;
+
 $BODY$ LANGUAGE plpgsql;
 
 create trigger zdb_object_type_trigger before insert or update on zdb_object_type
