@@ -17,11 +17,13 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerSolrService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -34,6 +36,9 @@ public class EngineeredRegionAddController {
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+
+    @Autowired
+    MarkerSolrService markerSolrService;
 
     @ModelAttribute("formBean")
     private EngineeredRegionAddBean getDefaultSearchForm(@RequestParam(value = "regionPublicationZdbID", required = false) String zdbID) {
@@ -94,6 +99,8 @@ public class EngineeredRegionAddController {
             PublicationService.addRecentPublications(request.getSession().getServletContext(), regionPub, PublicationSessionKey.GENE);
 
             HibernateUtil.flushAndCommitCurrentSession();
+
+            markerSolrService.addMarkerStub(newRegion, Category.GENE);
 
             HibernateUtil.currentSession().merge(newRegion);
         } catch (Exception e) {

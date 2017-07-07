@@ -64,6 +64,12 @@ File[] fileList(String dir) {
 }
 
 int runSqlFiles(String directory) {
+
+    def env = System.getenv()
+    def dbname = env['DBNAME']
+    def pgbindir = env['PGBINDIR']
+
+
     int numberOfTrigger = 0;
     fileList(directory).each {
         File file ->

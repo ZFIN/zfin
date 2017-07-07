@@ -17,9 +17,11 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.ZfinSoTerm;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerSolrService;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.search.Category;
 
 import javax.validation.Valid;
 import java.util.LinkedHashMap;
@@ -38,6 +40,9 @@ public class RegionAddController {
 
     @Autowired
     PublicationRepository publicationRepository;
+
+    @Autowired
+    MarkerSolrService markerSolrService;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
@@ -99,6 +104,9 @@ public class RegionAddController {
             }
 
             HibernateUtil.flushAndCommitCurrentSession();
+
+            markerSolrService.addMarkerStub(newRegion, Category.MARKER);
+
         } catch (Exception e) {
             try {
                 HibernateUtil.rollbackTransaction();
