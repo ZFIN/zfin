@@ -105,7 +105,7 @@ public class RegionAddController {
 
             HibernateUtil.flushAndCommitCurrentSession();
 
-            markerSolrService.addMarkerStub(newRegion, Category.GENE);
+            markerSolrService.addMarkerStub(newRegion, Category.MARKER);
 
         } catch (Exception e) {
             try {
