@@ -132,14 +132,14 @@ public class Citexplore {
     }
 
     static private class EPMCResult {
-        private String id;
+        private Integer id;
         private String doi;
 
-        public String getId() {
+        public Integer getId() {
             return id;
         }
 
-        public void setId(String id) {
+        public void setId(Integer id) {
             this.id = id;
         }
 
