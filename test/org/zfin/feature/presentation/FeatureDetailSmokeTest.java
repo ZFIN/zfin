@@ -22,7 +22,7 @@ public class FeatureDetailSmokeTest extends AbstractSmokeTest {
     @Test
     public void testFeaturePage() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-ALT-980203-401");
-        assertEquals(page.getTitleText(),"Feature: b191");
+        assertEquals(page.getTitleText(), "ZFIN Feature: b191");
         assertNotNull("Should have a genotype table", page.getElementById("genotypes-table"));
         assertTrue("Should have a non-empty collection of links in the genotype table",
                 CollectionUtils.isNotEmpty(page.getElementById("genotypes-table").getElementsByTagName("a")));
@@ -32,7 +32,7 @@ public class FeatureDetailSmokeTest extends AbstractSmokeTest {
     @Test
     public void testFeaturePageWithOtherPagesLink() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-ALT-130627-1");
-        assertEquals(page.getTitleText(),"Feature: tud11Gt");
+        assertEquals(page.getTitleText(), "ZFIN Feature: tud11Gt");
         assertTrue("Should be at least one other feature page link", page.getElementById("other-pages").getElementsByTagName("a").size() > 0);
     }
 
