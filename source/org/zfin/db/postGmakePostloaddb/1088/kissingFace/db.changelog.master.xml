@@ -19,6 +19,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/PUB-391.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/ZFIN-5711.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/DLOAD-223.sql" />
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/DLOAD-496.sql" />
 
 </databaseChangeLog>
