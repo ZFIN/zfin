@@ -25,7 +25,7 @@ tr \~ '\n' < mo_seq.fa_line > mo_seq.fa
 dbaccess -a $DBNAME get_talen_seq_1.sql get_talen_seq_2.sql
 tr \~ '\n' < talen_seq_1.fa_line > talen_seq_1.fa
 tr \~ '\n' < talen_seq_2.fa_line > talen_seq_2.fa
-/opt/misc/bowtie2/bowtie2 -x $BOWTIE_IDX  --no-discordant --no-mixed -f -1 talen_seq_1.fa -2 talen_seq_2.fa -S E_talen_seq.sam
+/opt/misc/bowtie2/bowtie2 -x $BOWTIE_IDX  --no-discordant --no-mixed -X 750 -f -1 talen_seq_1.fa -2 talen_seq_2.fa -S E_talen_seq.sam
 ./sam2gff3.groovy --useZdbId < E_talen_seq.sam > E_zfin_talen.gff3 2> talen_seq_E_miss.fa
 
 
