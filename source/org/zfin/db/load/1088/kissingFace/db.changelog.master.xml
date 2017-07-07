@@ -7,7 +7,8 @@
 <!--    <include file="source/org/zfin/db/load/1086/iceCream/notNullAdditions.sql"/>-->
     <include file="source/org/zfin/db/load/1088/kissingFace/updateDailyIndexedMetric.sql"/>
     <include file="source/org/zfin/db/load/1088/kissingFace/PUB-417_deleteDupPubs.sql"/>
-<include file="source/org/zfin/db/load/1088/kissingFace/ZFIN-5714.sql"/>
-<include file="source/org/zfin/db/load/1088/kissingFace/RGNS-103.sql"/>
+    <include file="source/org/zfin/db/load/1088/kissingFace/ZFIN-5714.sql"/>
+    <include file="source/org/zfin/db/load/1088/kissingFace/RGNS-103.sql"/>
+    <include file="source/org/zfin/db/load/1088/kissingFace/SRCH-1029.sql"/>
 
 </databaseChangeLog>
