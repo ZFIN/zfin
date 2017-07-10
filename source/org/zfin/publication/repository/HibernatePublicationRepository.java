@@ -31,9 +31,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
-import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.*;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -56,6 +54,8 @@ import org.zfin.sequence.MarkerDBLink;
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
  * ToDO: include documentation
@@ -847,7 +847,38 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (Journal) criteria.uniqueResult();
     }
 
+    public void createJournal(Journal journal) {
+        if (journal.getName() == null) {
+            throw new RuntimeException("Cannot create a new journal without a name.");
+        }
+        if (journal == null) {
+            throw new RuntimeException("No journal object provided.");
+        }
 
+
+        currentSession().save(journal);
+        // Need to flush here to make the trigger fire as that will
+        // create a MarkerHistory record needed.
+       currentSession().flush();
+
+        //add publication to attribution list.
+
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(journal, "New " + journal.getName(), "");
+    }
+
+    public Journal getJournalByPrintIssn(String pIssn) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Journal.class);
+        criteria.add(Restrictions.eq("printIssn", pIssn));
+        return (Journal) criteria.uniqueResult();
+    }
+
+    public Journal getJournalByEIssn(String eIssn) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Journal.class);
+        criteria.add(Restrictions.eq("onlineIssn", eIssn));
+        return (Journal) criteria.uniqueResult();
+    }
     /**
      * Utility method for filling list to a max amount.  This is a destructive method on fillList.
      *
@@ -1881,7 +1912,40 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         trackingEntry.setDate(new GregorianCalendar());
         session.save(trackingEntry);
         HibernateUtil.flushAndCommitCurrentSession();
+
     }
+
+
+    public SourceAlias addJournalAlias(Journal journal, String alias) {
+        //first handle the alias..
+        
+        SourceAlias journalAlias = new SourceAlias();
+        journalAlias.setDataZdbID(journal.getZdbID());
+        journalAlias.setAlias(alias);
+
+        if (journal.getAliases() == null) {
+            Set<SourceAlias> sourceAliases = new HashSet<>();
+            sourceAliases.add(journalAlias);
+            journal.setAliases(sourceAliases);
+        } else {
+            // if alias exists do not add continue...
+            if (!journal.getAliases().add(journalAlias))
+                return null;
+        }
+
+        currentSession().save(journalAlias);
+
+        //now handle the attribution
+     /*   String updateComment;
+
+        updateComment = "Added alias: '" + journalAlias.getAlias() + " with no attribution";
+
+
+        InfrastructureService.insertUpdate(journal, updateComment);
+*/
+        return journalAlias;
+    }
+
 
     public Long getMarkerCount(Publication publication) {
         String sql = "select count(*) FROM (" +
