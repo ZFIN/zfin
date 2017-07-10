@@ -26,4 +26,5 @@ unload to pubs-with-longest-days-in-status
    from longest_bin_resident_metric
 
    	where lbrm_date_captured = (select max(lbrm_date_Captured)
-       			      from longest_bin_resident_metric);
+       			      from longest_bin_resident_metric)
+  order by lbrm_status_counted ;
