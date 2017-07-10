@@ -1179,15 +1179,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setParameter("isAllele", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         markers.addAll(query.list());
 
-        // markers pulled through MOs
+        // markers pulled through STRs
         hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
                 "where attr.sourceZdbID = :pubID " +
                 "and attr.dataZdbID = mrel.firstMarker " +
                 "and mrel.secondMarker = marker " +
-                "and mrel.firstMarker.markerType.name = :mo ";
+                "and mrel.type = :type ";
         query = session.createQuery(hql);
         query.setString("pubID", pubID);
-        query.setString("mo", Marker.Type.MRPHLNO.name());
+        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
         markers.addAll(query.list());
 
         return new ArrayList<>(markers);
@@ -1912,7 +1912,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "  WHERE recattrib_source_zdb_id = :zdbID" +
                 "        AND recattrib_data_zdb_id = mrkr_zdb_id" +
                 "        AND m.mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id" +
-                "        AND mrkr_type = 'MRPHLNO'  " +
+                "        AND mrel_type = 'knockdown reagent targets gene'  " +
                 ") as q3 ;";
 
         return getCount(sql, publication.getZdbID());
