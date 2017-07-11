@@ -160,7 +160,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertThat(experiments.size(), greaterThan(1));
 
         // mir206-1
-        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-GENE-050609-28", null, null);
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-MIRNAG-050609-28", null, null);
         assertThat(experiments.size(), greaterThan(4));
 
         // mir122
@@ -179,7 +179,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         // genotype . .  .all the same
         //TODO needs a FISH rather than a genotype?
-        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-GENE-050609-28", "ZDB-GENO-050209-5", "ZDB-FIG-070109-23");
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-MIRNAG-050609-28", "ZDB-GENO-050209-5", "ZDB-FIG-070109-23");
         assertThat(experiments.size(), equalTo(0));
 
     }
