@@ -1,5 +1,6 @@
 package org.zfin.gwt.marker.server;
 
+import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -171,7 +172,7 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
     public MarkerDTO addConstruct(String name, String imageZdbID) {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
-        Marker construct = markerRepository.getMarkerByName(name);
+        Marker construct = markerRepository.getMarkerByName(WordUtils.capitalize(name));
 
         Image image = publicationRepository.getImageById(imageZdbID);
         MarkerDTO markerDTO = new MarkerDTO();

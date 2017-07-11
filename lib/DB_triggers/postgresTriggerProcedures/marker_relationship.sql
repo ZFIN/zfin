@@ -5,16 +5,16 @@ returns trigger as
 $BODY$
 
 begin
-     select p_mrel_grpmem_correct (
+     perform p_mrel_grpmem_correct (
            NEW.mrel_mrkr_1_zdb_id, 
            NEW.mrel_mrkr_2_zdb_id, 
            NEW.mrel_type
          );
-     select checkTscriptType (NEW.mrel_mrkr_1_zdb_id, 
+     perform checkTscriptType (NEW.mrel_mrkr_1_zdb_id, 
                               NEW.mrel_mrkr_2_zdb_id,
                               NEW.mrel_type);
      
-     RETURN NEW;
+     RETURN null;
 
 end;
 $BODY$ LANGUAGE plpgsql;

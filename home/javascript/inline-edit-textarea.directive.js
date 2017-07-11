@@ -14,10 +14,15 @@
             '    <div ng-hide="vm.text" class="muted">{{vm.defaultText}}</div>' +
             '  </div>' +
             '  <div ng-show="vm.editing">' +
-            '    <textarea ng-model="vm.text" ng-class="{{vm.textAreaClass}}" rows="5"></textarea>' +
-            '    <button type="button" ng-click="vm.cancelEdit()" ng-class="{{vm.cancelButtonClass}}">Cancel</button>' +
+            '    <textarea ng-if="!vm.useInput" ng-model="vm.text" ng-class="{{vm.textAreaClass}}" rows="5"></textarea>' +
+            '    <input type="text" ng-if="vm.useInput" ng-model="vm.text" ng-class="{{vm.textAreaClass}}">' +
+            '    <button type="button" ng-click="vm.cancelEdit()" ng-class="{{vm.cancelButtonClass}}">' +
+            '      <span ng-if="!vm.useIcons">Cancel</span>' +
+            '      <span ng-if="vm.useIcons"><i class="fa fa-fw fa-close"></i></span>' +
+            '    </button>' +
             '    <button type="button" ng-click="vm.saveEdit()" ng-class="{{vm.saveButtonClass}}" ng-disabled="vm.saving">' +
-            '      <span ng-show="!vm.saving">Save</span>' +
+            '      <span ng-show="!vm.saving && !vm.useIcons">Save</span>' +
+            '      <span ng-show="!vm.saving && vm.useIcons"><i class="fa fa-fw fa-check"></i></span>' +
             '      <span ng-show="vm.saving"><i class="fa fa-spinner fa-spin"></i></span>' +
             '    </button>' +
             '  </div>' +
@@ -35,7 +40,9 @@
                 defaultText: '@',
                 textAreaClass: '@',
                 saveButtonClass: '@',
-                cancelButtonClass: '@'
+                cancelButtonClass: '@',
+                useIcons: '<',
+                useInput: '<'
             },
             controller: InlineEditTextareaController,
             controllerAs: 'vm',
@@ -79,10 +86,15 @@
         function saveEdit() {
             vm.saving = true;
             var save = vm.onSave();
-            if (angular.isDefined(save) && angular.isFunction(save.finally)) {
+            if (angular.isDefined(save) && angular.isFunction(save.then)) {
                 // we got a promise
-                save.finally(function () {
-                    exitEdit()
+                save.then(function () {
+                    exitEdit();
+                }).catch(function (response) {
+                    if (response && response.data) {
+                        vm.error = response.data.message;
+                    }
+                    vm.saving = false;
                 });
             } else {
                 // onSave() was synchronous or didn't return a promise

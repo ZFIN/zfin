@@ -141,10 +141,8 @@
                     </authz:authorize>
 
                     <div class="show_pubs">
-                        <a href="/${publishedPublication.zdbID}">${publishedPublication.authors}
-                            &nbsp;(${publishedPublication.year})&nbsp;${publishedPublication.title}.&nbsp;${publishedPublication.journal.abbreviation}&nbsp;<c:if
-                                    test="${publishedPublication.volume != null}">${publishedPublication.volume}:</c:if>${publishedPublication.pages}
-                        </a><authz:authorize access="hasRole('root')">&nbsp;&nbsp;&nbsp;<c:if
+                        <a href="/${publishedPublication.zdbID}">${publishedPublication.citation}</a>
+                        <authz:authorize access="hasRole('root')">&nbsp;&nbsp;&nbsp;<c:if
                             test="${publishedPublication.open}">OPEN</c:if><c:if
                             test="${!publishedPublication.open}">CLOSE</c:if><c:if
                             test="${publishedPublication.indexed}">,&nbsp;INDEXED</c:if></authz:authorize>
@@ -170,9 +168,8 @@
                         </c:if>
 
             <div class="show_pubs">
-            <a href="/${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
-                &nbsp;(${unpublishedPublication.year})&nbsp;${unpublishedPublication.title}
-            </a><authz:authorize access="hasRole('root')">&nbsp;&nbsp;&nbsp;<c:if
+                <a href="/${unpublishedPublication.zdbID}">${unpublishedPublication.citation}</a>
+                <authz:authorize access="hasRole('root')">&nbsp;&nbsp;&nbsp;<c:if
                 test="${unpublishedPublication.open}">OPEN</c:if><c:if
                 test="${!unpublishedPublication.open}">CLOSE</c:if><c:if
                 test="${publishedPublication.indexed}">,&nbsp;INDEXED</c:if></authz:authorize>

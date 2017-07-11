@@ -1,4 +1,4 @@
-drop trigger if exists marker_update_comments_trigger on marker_update_comments;
+drop trigger if exists marker_update_comments_trigger on marker;
 
 create or replace function marker_update_comments()
 returns trigger as
@@ -9,6 +9,7 @@ begin
      mrkr_comments = (select scrub_char(NEW.mrkr_comments));
      NEW.mrkr_comments = mrkr_comments;
 
+     return new;
 end;
 $BODY$ LANGUAGE plpgsql;
 

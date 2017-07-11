@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import org.zfin.antibody.Antibody;
 import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.PersonDTO;
+import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
@@ -30,9 +31,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
-import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.*;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -44,20 +43,28 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.repository.ProfileRepository;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.*;
+import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
  * ToDO: include documentation
  */
 @Repository
 public class HibernatePublicationRepository extends PaginationUtil implements PublicationRepository {
+
+    @Autowired
+    private CurationDTOConversionService converter;
 
     Logger logger = Logger.getLogger(HibernatePublicationRepository.class);
 
@@ -840,7 +847,38 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (Journal) criteria.uniqueResult();
     }
 
+    public void createJournal(Journal journal) {
+        if (journal.getName() == null) {
+            throw new RuntimeException("Cannot create a new journal without a name.");
+        }
+        if (journal == null) {
+            throw new RuntimeException("No journal object provided.");
+        }
 
+
+        currentSession().save(journal);
+        // Need to flush here to make the trigger fire as that will
+        // create a MarkerHistory record needed.
+       currentSession().flush();
+
+        //add publication to attribution list.
+
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(journal, "New " + journal.getName(), "");
+    }
+
+    public Journal getJournalByPrintIssn(String pIssn) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Journal.class);
+        criteria.add(Restrictions.eq("printIssn", pIssn));
+        return (Journal) criteria.uniqueResult();
+    }
+
+    public Journal getJournalByEIssn(String eIssn) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Journal.class);
+        criteria.add(Restrictions.eq("onlineIssn", eIssn));
+        return (Journal) criteria.uniqueResult();
+    }
     /**
      * Utility method for filling list to a max amount.  This is a destructive method on fillList.
      *
@@ -1172,15 +1210,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setParameter("isAllele", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
         markers.addAll(query.list());
 
-        // markers pulled through MOs
+        // markers pulled through STRs
         hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
                 "where attr.sourceZdbID = :pubID " +
                 "and attr.dataZdbID = mrel.firstMarker " +
                 "and mrel.secondMarker = marker " +
-                "and mrel.firstMarker.markerType.name = :mo ";
+                "and mrel.type = :type ";
         query = session.createQuery(hql);
         query.setString("pubID", pubID);
-        query.setString("mo", Marker.Type.MRPHLNO.name());
+        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
         markers.addAll(query.list());
 
         return new ArrayList<>(markers);
@@ -1863,10 +1901,51 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public void addPublication(Publication publication) {
+        Session session = HibernateUtil.currentSession();
         HibernateUtil.createTransaction();
-        HibernateUtil.currentSession().save(publication);
+        session.save(publication);
+        PublicationTrackingHistory trackingEntry = new PublicationTrackingHistory();
+        PublicationTrackingStatus newStatus = getPublicationStatusByName("New");
+        trackingEntry.setPublication(publication);
+        trackingEntry.setStatus(newStatus);
+        trackingEntry.setUpdater(ProfileService.getCurrentSecurityUser());
+        trackingEntry.setDate(new GregorianCalendar());
+        session.save(trackingEntry);
         HibernateUtil.flushAndCommitCurrentSession();
+
     }
+
+
+    public SourceAlias addJournalAlias(Journal journal, String alias) {
+        //first handle the alias..
+        
+        SourceAlias journalAlias = new SourceAlias();
+        journalAlias.setDataZdbID(journal.getZdbID());
+        journalAlias.setAlias(alias);
+
+        if (journal.getAliases() == null) {
+            Set<SourceAlias> sourceAliases = new HashSet<>();
+            sourceAliases.add(journalAlias);
+            journal.setAliases(sourceAliases);
+        } else {
+            // if alias exists do not add continue...
+            if (!journal.getAliases().add(journalAlias))
+                return null;
+        }
+
+        currentSession().save(journalAlias);
+
+        //now handle the attribution
+     /*   String updateComment;
+
+        updateComment = "Added alias: '" + journalAlias.getAlias() + " with no attribution";
+
+
+        InfrastructureService.insertUpdate(journal, updateComment);
+*/
+        return journalAlias;
+    }
+
 
     public Long getMarkerCount(Publication publication) {
         String sql = "select count(*) FROM (" +
@@ -1897,7 +1976,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "  WHERE recattrib_source_zdb_id = :zdbID" +
                 "        AND recattrib_data_zdb_id = mrkr_zdb_id" +
                 "        AND m.mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id" +
-                "        AND mrkr_type = 'MRPHLNO'  " +
+                "        AND mrel_type = 'knockdown reagent targets gene'  " +
                 ") as q3 ;";
 
         return getCount(sql, publication.getZdbID());
@@ -2221,12 +2300,51 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (PublicationTrackingLocation) HibernateUtil.currentSession().get(PublicationTrackingLocation.class, id);
     }
 
-    public PaginationResult<PublicationTrackingHistory> getPublicationsByStatus(Long status,
-                                                                                Long location,
-                                                                                String owner,
-                                                                                int count,
-                                                                                int offset,
-                                                                                String sort) {
+    public DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count,
+                                                            int offset, String sort) {
+
+        Criteria listCriteria = createPubsByStatusCriteria(status, location, owner);
+        listCriteria.addOrder(Order.asc("status"));
+        if (StringUtils.isNotEmpty(sort)) {
+            boolean isAscending = true;
+            if (sort.startsWith("-")) {
+                isAscending = false;
+                sort = sort.substring(1);
+            }
+            Order order;
+            if (isAscending) {
+                order = Order.asc(sort);
+            } else {
+                order = Order.desc(sort);
+            }
+            listCriteria.addOrder(order);
+        }
+        PaginationResult<PublicationTrackingHistory> histories = PaginationResultFactory
+                .createResultFromScrollableResultAndClose(offset, offset + count, listCriteria.scroll());
+
+        Criteria countsCriteria = createPubsByStatusCriteria(status, location, owner);
+        List countList = countsCriteria.setProjection(Projections.projectionList()
+                .add(Projections.groupProperty("status"))
+                .add(Projections.rowCount()))
+                .list();
+        Map<String, Long> counts = new HashMap<>();
+        for (Object item : countList) {
+            Object[] tuple = (Object []) item;
+            PublicationTrackingStatus pubStatus = (PublicationTrackingStatus) tuple[0];
+            counts.put(pubStatus.getName(), (long) tuple[1]);
+        }
+
+        DashboardPublicationList result = new DashboardPublicationList();
+        result.setTotalCount(histories.getTotalCount());
+        result.setPublications(histories.getPopulatedResults().stream()
+                .map(converter::toDashboardPublicationBean)
+                .collect(Collectors.toList()));
+        result.setStatusCounts(counts);
+
+        return result;
+    }
+
+    private Criteria createPubsByStatusCriteria(Long status, Long location, String owner) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(PublicationTrackingHistory.class)
                 .add(Restrictions.eq("isCurrent", true))
                 .createAlias("publication", "pub");
@@ -2250,24 +2368,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 criteria.add(Restrictions.eq("owner", profileRepository.getPerson(owner)));
             }
         }
-
-        criteria.addOrder(Order.asc("status"));
-        if (StringUtils.isNotEmpty(sort)) {
-            boolean isAscending = true;
-            if (sort.startsWith("-")) {
-                isAscending = false;
-                sort = sort.substring(1);
-            }
-            Order order;
-            if (isAscending) {
-                order = Order.asc(sort);
-            } else {
-                order = Order.desc(sort);
-            }
-            criteria.addOrder(order);
-        }
-
-        return PaginationResultFactory.createResultFromScrollableResultAndClose(offset, offset + count, criteria.scroll());
+        return criteria;
     }
 
     public List<PublicationFileType> getAllPublicationFileTypes() {

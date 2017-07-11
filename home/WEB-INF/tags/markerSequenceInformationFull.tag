@@ -32,6 +32,7 @@
             <c:if test="${dblink.referenceDatabase.foreignDBDataType.dataType ne lastType}">
                 <c:set var="groupIndex" value="${groupIndex + 1}"/>
             </c:if>
+            <c:if test="${not fn:containsIgnoreCase(dblink.accessionNumber, 'ENSDARP')}">
             <tr>
                 <zfin:alternating-tr loopName="loop"
                                      groupBeanCollection="${dbLinks}"
@@ -55,6 +56,7 @@
                 </zfin:alternating-tr>
             </tr>
             <c:set var="lastType" value="${dblink.referenceDatabase.foreignDBDataType.dataType}"/>
+            </c:if>
         </c:forEach>
     </table>
 </zfin2:subsection>

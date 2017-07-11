@@ -1,4 +1,4 @@
-create or replace function getFishOrder (vFishId in varchar,  fishOrder out varchar,  numAffectedGene out int) returns RECORD as $BODY$
+create or replace function getFishOrder (vFishId varchar,  out fishOrder varchar,  out numAffectedGene  int) returns RECORD as $func$
 
 
 declare fishOrder fish.fish_order%TYPE := '9999999999';
@@ -46,6 +46,8 @@ for workingMrkr in
 	   
 end loop ;
 raise notice 'endLoop: %', fishOrder;
+raise notice 'existingMrkr: %', existingMrkr;
+
  genoIsWT := (select geno_is_wildtype from genotype, fish
     	       	       where fish_genotype_zdb_id = geno_Zdb_id
 		       and fish_zdb_id = vFishId);
@@ -111,4 +113,4 @@ raise notice 'end: %', numAffectedGene;
 end;
 
 
-$BODY$ LANGUAGE plpgsql;
+$func$ LANGUAGE plpgsql;

@@ -1,5 +1,7 @@
 def env = System.getenv()
 def dbname = env['DBNAME']
+def pgbindir = env['PGBINDIR']
+def pgdata = env['PGDATA']
 
 task deployPostgresTrigger {
     description = "deploy postgres trigger into PG"
@@ -16,11 +18,17 @@ File[] fileList(String dir) {
 
 
 int runSqlFiles(String directory){
+
+    def env = System.getenv()
+    def dbname = env['DBNAME']
+    def pgbindir = env['PGBINDIR']
+
+
     int numberOfTrigger = 0;
     fileList(directory).each {
         File file ->
             if (file.getName().endsWith(".sql")) {
-                String command = "psql -d " + dbname + " -a -f " + file.getAbsoluteFile();
+                String command = pgbindir + "/psql -d " + dbname + " -a -f " + file.getAbsoluteFile();
                 //println command
                 command.execute().text
                 numberOfTrigger++;

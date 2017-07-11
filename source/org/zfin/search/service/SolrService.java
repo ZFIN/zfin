@@ -520,8 +520,11 @@ public class SolrService {
         return urlCreator.getURL();
     }
 
-
     public static String getPrettyFieldName(String fieldName) {
+        return getPrettyFieldName(fieldName, false);
+    }
+
+    public static String getPrettyFieldName(String fieldName, Boolean ignoreMinus) {
 
 
         FieldName fName = FieldName.getFieldName(fieldName);
@@ -534,7 +537,11 @@ public class SolrService {
         //             return "Normal Phenotype Statement";
 
         //in breadbox links, field names might start with a - for exclusion facets, make it nicer?
-        fieldName = StringUtils.replace(fieldName, "-", "NOT ");
+        if (!ignoreMinus) {
+            fieldName = StringUtils.replace(fieldName, "-", "NOT ");
+        } else {
+            fieldName = StringUtils.replace(fieldName, "-", "");
+        }
 
         //remove fieldType suffix cruft
         fieldName = fieldName.replaceAll("_t$", "");
@@ -830,11 +837,20 @@ public class SolrService {
     }
 
     public static void addDocument(Map<FieldName, Object> fields) throws IOException, SolrServerException {
+        addDocument(fields, new HashMap<>());
+    }
+
+    public static void addDocument(Map<FieldName, Object> fields, Map<String, Object> extras) throws IOException, SolrServerException {
         SolrInputDocument document = new SolrInputDocument();
         SolrClient solr = getSolrClient();
         for (Map.Entry<FieldName, Object> field : fields.entrySet()) {
             document.addField(field.getKey().getName(), field.getValue());
         }
+
+        for (Map.Entry<String, Object> field : extras.entrySet()) {
+            document.addField(field.getKey(), field.getValue());
+        }
+
         solr.add(document);
         if (!isIndexingInProgress()) {
             solr.commit();

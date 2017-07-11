@@ -18,11 +18,13 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerSolrService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,10 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/antibody")
 public class AntibodyCreateController {
+
+
+    @Autowired
+    MarkerSolrService markerSolrService;
 
     private static Logger LOG = Logger.getLogger(AntibodyCreateController.class);
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
@@ -97,6 +103,7 @@ public class AntibodyCreateController {
 
             HibernateUtil.currentSession().merge(newAntibody);
             createAntibodyWiki(newAntibody) ;
+            markerSolrService.addMarkerStub(newAntibody, Category.ANTIBODY);
 
         } catch (Exception e) {
             try {

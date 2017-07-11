@@ -72,6 +72,9 @@ public class PhenotypeCurationModule implements ZfinCurationModule, HandlesError
         if (event.getEventType().is(EventType.CUD_EXPERIMENT_CONDITION)) {
             mutantExpressionModule.retrieveExperimentConditionList();
         }
+        if (event.getEventType().is(EventType.CUD_EXPERIMENT)) {
+            mutantExpressionModule.retrieveExperimentConditionList();
+        }
         if (event.getEventType().is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE)) {
             curationFilterModule.refreshFeatureList();
         }

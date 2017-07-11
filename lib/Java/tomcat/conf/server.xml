@@ -35,8 +35,7 @@
         <Engine name="Catalina" defaultHost="@DOMAIN-NAME@">
 
             <Host name="@DOMAIN-NAME@" appBase="webapps"
-                  unpackWARs="true" autoDeploy="false"
-                  xmlValidation="false" xmlNamespaceAware="false">
+                  unpackWARs="true" autoDeploy="false">
 
             </Host>
 

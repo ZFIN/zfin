@@ -6,6 +6,7 @@ $BODY$
 begin
 	perform p_stg_hours_consistent(NEW.ts_start_stg_zdb_id,
 					NEW.ts_end_stg_zdb_id);
+	return null;
 
 end;
 $BODY$ LANGUAGE plpgsql;

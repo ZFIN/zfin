@@ -7,6 +7,7 @@ begin
 	perform p_check_anatrel_stg_consistent (NEW.termrel_term_1_zdb_id,
                                                NEW.termrel_term_2_zdb_id,
                                                NEW.termrel_type);
+	return null;
 end;
 $BODY$ LANGUAGE plpgsql;
 

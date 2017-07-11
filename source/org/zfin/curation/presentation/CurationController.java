@@ -18,6 +18,7 @@ import org.zfin.infrastructure.EntityID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -104,6 +105,7 @@ public class CurationController implements CurationService {
         model.addAttribute("publication", publication);
         model.addAttribute("curationTabs", CurationModuleType.values());
         model.addAttribute("currentTab", currentTab);
+        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Curate: " + publication.getTitle());
         return "curation/curation.page";
     }

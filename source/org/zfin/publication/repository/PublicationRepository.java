@@ -9,6 +9,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.SourceAlias;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
@@ -22,6 +23,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.publication.*;
+import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -299,6 +301,10 @@ public interface PublicationRepository extends PaginationParameter {
     Journal getJournalByTitle(String journalTitle);
 
     Journal findJournalByAbbreviation(String abbrevation);
+    void createJournal(Journal journal);
+    Journal getJournalByPrintIssn(String pIssn);
+    Journal getJournalByEIssn(String eIssn);
+   SourceAlias addJournalAlias(Journal journal, String alias);
 
     int getNumberAssociatedPublicationsForZdbID(String zdbID) ;
 
@@ -533,12 +539,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     PublicationTrackingLocation getPublicationTrackingLocation(long id);
 
-    PaginationResult<PublicationTrackingHistory> getPublicationsByStatus(Long status,
-                                                                         Long location,
-                                                                         String owner,
-                                                                         int count,
-                                                                         int offset,
-                                                                         String sort);
+    DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count, int offset, String sort);
 
     List<PublicationFileType> getAllPublicationFileTypes();
 

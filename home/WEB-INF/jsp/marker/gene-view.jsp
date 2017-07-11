@@ -13,7 +13,6 @@
 <script src="/javascript/field-error.service.js"></script>
 <script src="/javascript/other-markers.directive.js"></script>
 <script src="/javascript/gene-marker-relationship.directive.js"></script>
-<script src="/javascript/marker-interacts-relationship.directive.js"></script>
 <script src="/javascript/marker.service.js"></script>
 <script src="/javascript/autocompletify.directive.js"></script>
 

@@ -91,6 +91,7 @@
     <a href="/action/profile/company/create"><em>company</em></a>,
     <br>&nbsp;&nbsp;&nbsp;&nbsp;
     <a href="/action/publication/new"><em>pub</em></a>,
+    <a href="/action/publication/journal-add"><em>journal</em></a>,
     <a href="/action/feature/alleleDesig-add-form"><em>line designation</em></a>
     </li>
     <li>

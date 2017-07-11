@@ -126,12 +126,16 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
         if (event.getEventType().is(EventType.CUD_EXPERIMENT_CONDITION)) {
             expressionExperimentZonePresenter.updateEnvironmentList();
         }
+        if (event.getEventType().is(EventType.CUD_EXPERIMENT)) {
+            expressionExperimentZonePresenter.updateEnvironmentList();
+        }
         if (event.getEventType().is(EventType.REMOVE_PHENTOTYPE_EXPERIMENT)) {
             // update possible push-to-pato reversals
             expressionZonePresenter.retrieveExpressions();
         }
         if (event.getEventType().is(EventType.MARKER_ATTRIBUTION) || event.getEventType().is(EventType.MARKER_DEATTRIBUTION)) {
             expressionExperimentZonePresenter.updateGenes();
+            expressionExperimentZonePresenter.antibodyRefresh(null);
             curationFilterPresenter.refreshGeneList();
         }
         if (event.getEventType().is(EventType.ADD_REMOVE_ATTRIBUTION_FISH)) {

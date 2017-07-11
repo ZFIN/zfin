@@ -7,15 +7,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.publication.PublicationTrackingHistory;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.repository.PublicationRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping("/publication")
@@ -100,21 +95,12 @@ public class PublicationDashboardController {
 
     @ResponseBody
     @RequestMapping(value = "/search-status", method = RequestMethod.GET)
-    public PaginationResult<DashboardPublicationBean> getListOfPubsInBin(@RequestParam(required = false) Long status,
+    public DashboardPublicationList getListOfPubsInBin(@RequestParam(required = false) Long status,
                                                                          @RequestParam(required = false) Long location,
                                                                          @RequestParam(required = false) String owner,
                                                                          @RequestParam(required = false, defaultValue = "0") int offset,
                                                                          @RequestParam(required = false, defaultValue = "50") int count,
                                                                          @RequestParam(required = false) String sort) {
-
-        PaginationResult<PublicationTrackingHistory> histories = publicationRepository.getPublicationsByStatus(
-                status, location, owner, count, offset, sort);
-
-        List<DashboardPublicationBean> beans = new ArrayList<>(count);
-        for (PublicationTrackingHistory history : histories.getPopulatedResults()) {
-            beans.add(converter.toDashboardPublicationBean(history));
-        }
-
-        return new PaginationResult<>(histories.getTotalCount(), offset, beans);
+        return publicationRepository.getPublicationsByStatus(status, location, owner, count, offset, sort);
     }
 }

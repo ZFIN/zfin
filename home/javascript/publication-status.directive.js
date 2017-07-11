@@ -110,7 +110,8 @@
         }
 
         function handleStatusChange() {
-            if (vm.current.status.type === 'CURATING') {
+            var type = vm.current.status.type;
+            if (type === 'CURATING' || type === 'INDEXING') {
                 vm.current.owner = vm.curator;
             } else {
                 vm.current.owner = vm.original.owner;

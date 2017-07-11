@@ -22,7 +22,10 @@
             '    <td class="text-muted text-center" colspan="3">No figures yet.</td>' +
             '  </tr>' +
             '  <tr ng-repeat="figure in vm.figures">' +
-            '    <td>{{figure.label}}</td>' +
+            '    <td>' +
+            '      <div inline-edit-textarea text="figure.label" use-icons="true" use-input="true" error="figure.error"' +
+            '           error-class="\'error\'" wrapper-class="\'fig-label-edit-container\'" on-save="vm.updateFigure(figure)"></div>' +
+            '    </td>' +
             '    <td>' +
             '      <div figure-update figure="figure" has-permissions="vm.pubCanShowImages"></div>' +
             '    </td>' +
@@ -89,8 +92,8 @@
         return directive;
     }
 
-    FigureEditController.$inject = ['FigureService'];
-    function FigureEditController(FigureService) {
+    FigureEditController.$inject = ['$q', 'FigureService'];
+    function FigureEditController($q, FigureService) {
         var vm = this;
 
         vm.loading = false;
@@ -98,6 +101,7 @@
         vm.pubCanShowImages = false;
 
         vm.deleteFigure = deleteFigure;
+        vm.updateFigure = updateFigure;
 
         activate();
 
@@ -121,6 +125,17 @@
                 })
                 .finally(function () {
                     fig.deleting = false;
+                });
+        }
+
+        function updateFigure(figure) {
+            if (!figure.label) {
+                figure.error = 'Label is required';
+                return $q.reject();
+            }
+            return FigureService.updateFigure(figure)
+                .then(function (response) {
+                    angular.copy(response.data, figure);
                 });
         }
     }

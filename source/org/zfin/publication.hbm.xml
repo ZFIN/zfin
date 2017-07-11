@@ -125,7 +125,10 @@
     <class name="org.zfin.publication.Journal" table="journal">
         <id name="zdbID" type="string">
             <column name="jrnl_zdb_id" not-null="true"/>
-            <generator class="native"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">JRNL</param>
+                <param name="insertActiveSource">true</param>
+            </generator>
         </id>
 
         <property name="name">

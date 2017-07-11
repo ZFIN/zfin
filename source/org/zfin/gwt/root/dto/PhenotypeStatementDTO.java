@@ -33,10 +33,10 @@ public class PhenotypeStatementDTO extends ExpressedTermDTO {
         this.relatedEntity = relatedEntity;
     }
 
-    public boolean hasRelatedEntity(){
-        if(relatedEntity == null)
+    public boolean hasRelatedEntity() {
+        if (relatedEntity == null)
             return false;
-        if(relatedEntity.getSuperTerm() == null && relatedEntity.getSubTerm() == null)
+        if (relatedEntity.getSuperTerm() == null && relatedEntity.getSubTerm() == null)
             return false;
         return true;
     }
@@ -145,9 +145,17 @@ public class PhenotypeStatementDTO extends ExpressedTermDTO {
             return entity.compareTo(term.getEntity());
         if (quality.compareTo(term.getQuality()) != 0)
             return quality.compareTo(term.getQuality());
-        if (relatedEntity == null)
+        if (!hasRelatedEntity() && term.hasRelatedEntity())
             return -1;
-        return relatedEntity.compareTo(term.getRelatedEntity());
+        if (hasRelatedEntity() && !term.hasRelatedEntity())
+            return 1;
+        if (hasRelatedEntity() && term.hasRelatedEntity()) {
+            if (relatedEntity.compareTo(term.getRelatedEntity()) != 0)
+                return relatedEntity.compareTo(term.getRelatedEntity());
+        }
+        if (tag.compareTo(term.getTag()) != 0)
+            return tag.compareTo(term.getTag());
+        return 0;
     }
 
     public String toString() {

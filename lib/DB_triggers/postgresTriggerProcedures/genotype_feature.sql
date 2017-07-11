@@ -9,7 +9,7 @@ begin
      perform  p_check_tginsertion_has_construct_relationship(
 			NEW.genofeat_feature_zdb_id);
      
-     RETURN NEW;
+     RETURN NULL;
 
 end;
 $BODY$ LANGUAGE plpgsql;

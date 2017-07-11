@@ -103,6 +103,10 @@ public class MarkerRelationshipController {
 
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, true));
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
+        cloneRelationships.addAll(markerRepository.getWeakReferenceMarker(marker.getZdbID()
+                        , MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
+                        , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT));
+
         Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);
         if (!interacts) {
             for (int i = 0; i < cloneRelationships.size(); i++) {

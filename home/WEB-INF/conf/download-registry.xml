@@ -1002,8 +1002,8 @@
             <Column id="5">Chebi Term ID (Chebi:ID)</Column>
             <Column id="6">ZFA Term Name</Column>  
             <Column id="7">ZFA Term ID (ZFA:ID)</Column>  
-            <Column id="8">Altered Structure Name</Column>
-            <Column id="9">Altered Structure ID (ZFA:ID)</Column>
+            <Column id="8">Affected Structure Subterm Name</Column>
+            <Column id="9">Affected Structure Subterm ID (GO-CC:ID)</Column>
             <Column id="10">NCBI Taxon Name</Column>
             <Column id="11">NCBI Taxon ID (NCBI Taxon:ID)</Column>
         </Download>
@@ -1056,6 +1056,11 @@
                      from expression_result, term superterm, OUTER term subterm
                      where superterm.term_zdb_id = xpatres_superterm_zdb_id
                        and subterm.term_zdb_id = xpatres_subterm_zdb_id
+                       and not exists(select "x" from expression_experiment, marker 
+                                       where xpatex_zdb_id = xpatres_xpatex_zdb_id
+                                         and xpatex_gene_zdb_id is not null
+                                         and xpatex_gene_zdb_id = mrkr_zdb_id
+                                         and mrkr_abbrev like "WITHDRAWN%")
                      order by xpatres_xpatex_zdb_id
                 ]]>
             </Query>
@@ -1382,8 +1387,8 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="5">Chebi Term ID (Chebi:ID)</Column>
             <Column id="6">ZFA Term Name</Column>
             <Column id="7">ZFA Term ID (ZFA:ID)</Column>
-            <Column id="8">Altered Structure Name</Column> 
-            <Column id="9">Altered Structure ID (ZFA:ID)</Column>
+            <Column id="8">Affected Structure Subterm Name</Column> 
+            <Column id="9">Affected Structure Subterm ID (GO-CC:ID)</Column>
             <Column id="10">NCBI Taxon Name</Column>
             <Column id="11">NCBI Taxon ID (NCBI Taxon:ID)</Column>
         </Download>

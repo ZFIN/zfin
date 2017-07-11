@@ -8,6 +8,14 @@ with no log;
 load from lincrnagenes.txt
  insert into tmp_linc;
 
+insert into tmp_linc (id)
+values ('ZDB-GENE-151012-1');
+
+
+insert into tmp_linc (id)
+values ('ZDB-GENE-160518-1');
+
+
 select id as gene_id
  from tmp_linc
 into temp tmp_to_convert;
@@ -45,6 +53,11 @@ insert into withdrawn_data (wd_new_zdb_id,wd_old_zdb_id)
 update zdb_active_data
  set zactvd_zdb_id = replace(zactvd_zdb_id, 'GENE','LNCRNAG')
  where exists (Select 'x' from tmp_to_convert where zactvd_zdb_id = gene_id);
+
+update marker
+ set mrkr_type = 'LNCRNAG'
+ where mrkr_type = 'GENE'
+ and exists (Select 'x' from tmp_to_convert where mrkr_zdb_id = gene_id);
 
 update marker
  set mrkr_zdb_id = replace(mrkr_Zdb_id, 'GENE','LNCRNAG')
@@ -289,5 +302,7 @@ having count(*) >1 ;
 set constraints all immediate;
 
 --rollback work;
+
+
 
 commit work;

@@ -78,6 +78,9 @@ public class PublicationViewController {
         model.addAttribute("abstractText", publication.getAbstractText());
         model.addAttribute("showFiguresLink", PublicationService.showFiguresLink(publication));
         model.addAttribute("curationStatusDisplay", PublicationService.getCurationStatusDisplay(publication));
+        model.addAttribute("correspondenceDisplay", PublicationService.getLastAuthorCorrespondenceDisplay(publication));
+        model.addAttribute("meshTermDisplayList", PublicationService.getMeshTermDisplayList(publication));
+        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
 
         /* counts */

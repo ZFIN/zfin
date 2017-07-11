@@ -70,6 +70,8 @@ public class HumanDiseaseModule implements ZfinCurationModule, HandlesError {
             diseaseModelPresenter.retrieveFishList();
         if (event.getEventType().is(EventType.CUD_EXPERIMENT_CONDITION))
             diseaseModelPresenter.retrieveEnvironmentList();
+        if (event.getEventType().is(EventType.CUD_EXPERIMENT))
+            diseaseModelPresenter.retrieveEnvironmentList();
     }
 
     @Override

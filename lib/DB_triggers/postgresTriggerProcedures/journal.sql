@@ -22,8 +22,6 @@ begin
      jrnl_abbrev_lower = lower(NEW.jrnl_abbrev_lower);
      NEW.jrnl_abbrev_lower = jrnl_abbrev_lower;
 
-
-
      RETURN NEW;
 
 end;

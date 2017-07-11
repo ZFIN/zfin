@@ -1,11 +1,14 @@
 package org.zfin.gwt.curation.ui.feature;
 
-import org.zfin.gwt.root.event.AjaxCallEventType;
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
-import org.zfin.gwt.curation.ui.*;
+import org.zfin.gwt.curation.ui.FeatureRPCService;
+import org.zfin.gwt.curation.ui.FeatureServiceGWT;
+import org.zfin.gwt.curation.ui.FeatureValidationService;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.BooleanCollector;
@@ -205,6 +208,10 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
     public void updateFeature() {
         FeatureDTO featureDTO = createDTOFromGUI();
+        // if a public note was added (they persist immedately) update this feature with it
+        // so validation can happen correctly
+        if (featureDTO.getPublicNoteList() == null || featureDTO.getPublicNoteList().size() == 0)
+            featureDTO.setPublicNoteList(featureNotesPresenter.featureDTO.getPublicNoteList());
         String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
         if (errorMessage != null) {
             setError(errorMessage);

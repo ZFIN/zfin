@@ -2,7 +2,7 @@
 #
 # reportPubsForGeneAndFeature.pl
 #
-# This script executes the SQLs (similar to those in showpubs.apg) to get all the publications at ZFIN for genes and features.
+# This script executes the SQLs to get all the publications at ZFIN for genes and features.
 
 use strict;
 use MIME::Lite;

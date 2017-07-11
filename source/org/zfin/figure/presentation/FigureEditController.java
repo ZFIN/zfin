@@ -1,6 +1,7 @@
 package org.zfin.figure.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,6 +19,7 @@ import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.repository.PublicationRepository;
 
 import java.io.IOException;
@@ -35,6 +37,9 @@ public class FigureEditController {
 
     @Autowired
     private PublicationRepository publicationRepository;
+
+    @Autowired
+    private PublicationService publicationService;
 
     @ResponseBody
     @RequestMapping(value = "/publication/{zdbID}/figures", method = RequestMethod.GET)
@@ -67,8 +72,7 @@ public class FigureEditController {
             throw new InvalidWebRequestException("Invalid publication");
         }
 
-        boolean existingLabel = publication.getFigures().stream().anyMatch(fig -> fig.getLabel().equals(label));
-        if (existingLabel) {
+        if (publicationService.publicationHasFigureWithLabel(publication, label)) {
             throw new InvalidWebRequestException(label + " already exists");
         }
 
@@ -120,9 +124,16 @@ public class FigureEditController {
     public FigurePresentationBean updateFigure(@PathVariable String zdbID,
                                                @RequestBody FigurePresentationBean figureUpdates) {
         Figure figure = publicationRepository.getFigure(zdbID);
+
+        if (!StringUtils.equals(figure.getLabel(), figureUpdates.getLabel()) &&
+                publicationService.publicationHasFigureWithLabel(figure.getPublication(), figureUpdates.getLabel())) {
+            throw new InvalidWebRequestException(figureUpdates.getLabel() + " already exists");
+        }
+
         String oldValue = getFigureUpdateValue(figure);
 
         figure.setCaption(figureUpdates.getCaption());
+        figure.setLabel(figureUpdates.getLabel());
 
         Transaction tx = HibernateUtil.createTransaction();
         HibernateUtil.currentSession().save(figure);

@@ -64,7 +64,6 @@
                 </tr>
                 <tr>
                     <td class="col-md-1">
-                        <a href="/action/curation/">Curation</a>
                     </td>
                     <td class="col-md-2">
                         <a href="/action/blast/blast-files">Downloadable Blast Files</a>

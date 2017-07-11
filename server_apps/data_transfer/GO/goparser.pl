@@ -45,7 +45,7 @@ while ($line = <INDEXFILE>) {
       if ($lastmrkrgoev ne '' && $mrkrgoev ne $lastmrkrgoev) {
 
           $lineToProduce = "$db\t$mrkrid\t$mrkrabb\t$qualifier\t$goid\tZFIN:$pubid\t$evidence\t".
-             join(',',@inf_array)."\t$go_o\t$mrkrname\t$aliases\tgene_product\ttaxon:7955\t$ev_date\t$mod_by\t\t\n";
+             join(',',@inf_array)."\t$go_o\t$mrkrname\t$aliases\t$gene_product\ttaxon:7955\t$ev_date\t$mod_by\t\t\n";
 
           ## DLOAD-480
           $find = 'GO Central';
@@ -70,6 +70,7 @@ while ($line = <INDEXFILE>) {
       $ev_date=goDate($fields[11]);
       $mod_by=goMod($fields[12]);
       $aliases=$fields[13];
+      $gene_product=$fields[14];
       $aliases=~s/,/|/g;
       $aliases=~s/Sierra/,/g;
 

@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="/css/bootstrap3/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css">
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
+<script type="text/javascript" src="/javascript/jquery.stickytabs.js"></script>
 
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/paging.min.js"></script>
@@ -27,12 +28,16 @@
 <c:if test="${allowCuration}">
   <c:set var="curateURL">/action/curation/${publication.zdbID}</c:set>
 </c:if>
+<c:if test="${hasCorrespondence}">
+  <c:set var="correspondenceURL">/action/publication/${publication.zdbID}/track#correspondence</c:set>
+</c:if>
 
 <div class="container-fluid" ng-app="app">
   <zfin2:dataManager zdbID="${publication.zdbID}"
                      viewURL="${viewURL}"
                      editURL="${editURL}"
                      linkURL="${linkURL}"
+                     correspondenceURL="${correspondenceURL}"
                      curateURL="${curateURL}"/>
 
   <p class="lead">
@@ -41,7 +46,7 @@
   </p>
 
   <div>
-    <ul class="nav nav-tabs nav-justified nav-padded" role="tablist">
+    <ul id="pub-track-tabs" class="nav nav-tabs nav-justified nav-padded" role="tablist">
       <li role="presentation" class="active"><a href="#status" aria-controls="status" role="tab" data-toggle="tab">Status</a></li>
       <li role="presentation"><a href="#correspondence" aria-controls="correspondence" role="tab" data-toggle="tab">Correspondence</a></li>
     </ul>
@@ -63,3 +68,7 @@
   </div>
 
 </div>
+
+<script>
+  $('#pub-track-tabs').stickyTabs();
+</script>

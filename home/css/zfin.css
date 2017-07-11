@@ -502,6 +502,11 @@ video {
     border: 1px solid blue;
 }
 
+.fig-label-edit-container {
+    width: 100px;
+    white-space: nowrap;
+}
+
 .pub-abstract-section {
     margin-bottom: 1em;
 }

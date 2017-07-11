@@ -121,8 +121,14 @@ public class PublicationEditController {
         if (publication == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
-        model.addAttribute("publication", publication);
+        PublicationBean publicationBean = new PublicationBean();
+        publicationBean.setPublication(publication);
+        if (publication.getAccessionNumber() != null)
+            publicationBean.setAccessionNumber(publication.getAccessionNumber().toString());
+
+        model.addAttribute("publicationBean", publicationBean);
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Pub: " + publication.getTitle());
         return "publication/edit-publication.page";
     }
@@ -130,7 +136,7 @@ public class PublicationEditController {
     @RequestMapping(value = "/{zdbID}/edit", method = RequestMethod.POST)
     public String processUpdatedPublication(Model model,
                                             @PathVariable String zdbID,
-                                            @Valid @ModelAttribute Publication publication,
+                                            @Valid @ModelAttribute PublicationBean publicationBean,
                                             BindingResult result,
                                             RedirectAttributes ra) {
         Publication existingPublication = publicationRepository.getPublication(zdbID);
@@ -139,6 +145,7 @@ public class PublicationEditController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
+        Publication publication = publicationBean.getPublication();
         boolean hasFigureWithImages = existingPublication.getFigures().stream().anyMatch(f -> !f.isImgless());
         if (!publication.isCanShowImages() && existingPublication.isCanShowImages() && hasFigureWithImages) {
             result.rejectValue("canShowImages", "canShowImages.existingFigures");
@@ -189,9 +196,14 @@ public class PublicationEditController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        model.addAttribute("publication", publication);
+        PublicationBean bean = new PublicationBean();
+        bean.setPublication(publication);
+        if (publication.getAccessionNumber() != null)
+            bean.setAccessionNumber(publication.getAccessionNumber().toString());
+        model.addAttribute("publicationBean", bean);
         model.addAttribute("authorStrings", publicationService.splitAuthorListString(publication.getAuthors()));
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Link Authors: " + publication.getTitle());
 
         return "publication/link-authors.page";
@@ -307,7 +319,7 @@ public class PublicationEditController {
             logger.error("Error in Transaction", exception);
             throw new RuntimeException("Error during transaction. Rolled back.", exception);
         }
-        
+
 
     }
 
@@ -336,7 +348,6 @@ public class PublicationEditController {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-
 
 
         Transaction tx = null;

@@ -38,7 +38,9 @@ public class PublicationFormValidator implements Validator {
             if (!errors.hasFieldErrors("accessionNumber")) {
                 List<Publication> pubsWithSamePubMedId = RepositoryFactory.getPublicationRepository().getPublicationByPmid(publication.getAccessionNumber());
                 if (CollectionUtils.isNotEmpty(pubsWithSamePubMedId)) {
-                    errors.rejectValue("accessionNumber", "accessionNumber.duplicate", new String[]{ pubsWithSamePubMedId.get(0).getZdbID()}, "");
+                    // in edit mode if the zdbIDs equal then it is valid...
+                    if (formBean.getZdbID() == null || !pubsWithSamePubMedId.get(0).getZdbID().equals(formBean.getZdbID()))
+                        errors.rejectValue("accessionNumber", "accessionNumber.duplicate", new String[]{pubsWithSamePubMedId.get(0).getZdbID()}, "");
                 }
             }
         }

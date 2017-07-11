@@ -145,6 +145,7 @@ public class CurationDTOConversionService {
             return null;
         }
         CurationStatusDTO dto = new CurationStatusDTO();
+        dto.setCurrent(status.isCurrent());
         dto.setPubZdbID(status.getPublication().getZdbID());
         dto.setStatus(status.getStatus());
         dto.setLocation(status.getLocation());

@@ -1,5 +1,6 @@
 package org.zfin.framework;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
@@ -7,7 +8,6 @@ import org.hibernate.type.Type;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Hibernate Interceptor to trim strings and escape characters that informix can't handle
@@ -70,39 +70,24 @@ public class StringCleanInterceptor extends EmptyInterceptor {
     }
 
     public static Object runGetter(Field field, Object o) {
-        // Find the correct method
-        for (Method method : o.getClass().getMethods()) {
-            if ((method.getName().startsWith("get")) && (method.getName().length() == (field.getName().length() + 3))) {
-                if (method.getName().toLowerCase().endsWith(field.getName().toLowerCase())) {
-                    try {
-                        return method.invoke(o);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        logger.error("Could not determine method: " + method.getName());
-                    }
-
-                }
-            }
+        if (o.getClass().isEnum())
+            return null;
+        try {
+            return BeanUtils.getProperty(o, field.getName());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            logger.info(e);
         }
         return null;
     }
 
-    public static Object runSetter(Field field, Object o, Object value) {
-        // Find the correct method
-        for (Method method : o.getClass().getMethods()) {
-            if ((method.getName().startsWith("set")) && (method.getName().length() == (field.getName().length() + 3))) {
-                if (method.getName().toLowerCase().endsWith(field.getName().toLowerCase())) {
-                    try {
-                        return method.invoke(o, value);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        logger.error("Could not determine method: " + method.getName());
-                    }
-
-                }
-            }
+    public static void runSetter(Field field, Object o, Object value) {
+        if (o.getClass().isEnum())
+            return;
+        try {
+            BeanUtils.setProperty(o, field.getName(), value);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            logger.info(e);
         }
-
-
-        return null;
     }
 }
 

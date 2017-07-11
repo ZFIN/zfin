@@ -17,6 +17,8 @@ apply plugin: 'java'
 def env = System.getenv()
 def dbname = env['DBNAME']
 def sourceroot = env['SOURCEROOT']
+def pgbindir = env['PGBINDIR']
+def pgdata = env['PGDATA']
 
 dependencies {
     compile 'org.liquibase:liquibase-core:3.4.1'
@@ -32,6 +34,8 @@ defaultTasks 'defaultTask'
 
 project.ext.set("dbname", dbname)
 project.ext.set("sourceroot", sourceroot)
+project.ext.set("pgdata", pgdata)
+project.ext.set("pgbindir", pgbindir)
 
 task loadDb(dependsOn: ['lib:DB_functions:postgresFunctions:killConnectionsToPostgres']) {
     doLast {

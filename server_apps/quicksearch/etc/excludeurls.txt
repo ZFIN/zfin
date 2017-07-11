@@ -59,7 +59,6 @@ aa-geneprddescription.apg
 aa-quickfindpers.apg
 aa-xpatexpcdndisplay.apg
 aa-zirclist.apg
-aa-showpubs.apg
 aa-externalredirect.apg
 aa-pubmedredirect.apg
 

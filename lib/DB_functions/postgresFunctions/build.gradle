@@ -3,6 +3,8 @@ import org.apache.tools.ant.filters.ReplaceTokens
 def env = System.getenv()
 def dbname = env['DBNAME']
 def sourceroot = env['SOURCEROOT']
+def pgbindir = env['PGBINDIR']
+def pgdata = env['PGDATA']
 
 task deployPostgresFunctions {
     description = "deploy postgres function in PG"
@@ -20,7 +22,7 @@ task killConnectionsToPostgres {
     doLast {
         File file = file(sourceroot + '/killConnectionsToPostgres.sql')
         println file.getPath()
-        String command = "echo \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname ='" + dbname + "' AND pid <> pg_backend_pid();\" | " + "psql -d " + dbname
+        String command = "echo \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname ='" + dbname + "' AND pid <> pg_backend_pid();\" | " + pgbindir + "/psql -d " + dbname
         println command
         command.execute().text
     }
@@ -49,7 +51,7 @@ task showTriggerOnTable(dependsOn: createTriggerFile) {
             println "Trigger on table " + table.toUpperCase()
 
             File file = new File(projectDir, triggerTable)
-            String command = "psql -d " + dbname + " -a -f " + file.getAbsoluteFile()
+            String command = pgbindir + "/psql -d " + dbname + " -a -f " + file.getAbsoluteFile()
             //println command
             println command.execute().text
             ("rm "+file.absolutePath).execute()
@@ -62,11 +64,17 @@ File[] fileList(String dir) {
 }
 
 int runSqlFiles(String directory) {
+
+    def env = System.getenv()
+    def dbname = env['DBNAME']
+    def pgbindir = env['PGBINDIR']
+
+
     int numberOfTrigger = 0;
     fileList(directory).each {
         File file ->
             if (file.getName().endsWith(".sql")) {
-                String command = "psql -d " + dbname + " -a -f " + file.getAbsoluteFile();
+                String command = pgbindir + "/psql -d " + dbname + " -a -f " + file.getAbsoluteFile();
                 // will execute command, return the text output from the executed command, and print to screen.
                 //println command.execute().text
                 command.execute().text

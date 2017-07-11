@@ -153,7 +153,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     }
 
     /**
-     * From citgeneric.apg.
      *
      * @param zdbID    ZdbID to check against.
      * @param pubZdbID Pub to check against.

@@ -32,7 +32,7 @@
         No pubs match query
     </div>
     <div ng-repeat="(status, pubList) in vm.pubMap">
-        <h4>{{status}} ({{pubList.length}})</h4>
+        <h4>{{status}} ({{vm.statusCounts[status]}})</h4>
         <table class="table">
             <thead>
             <tr>

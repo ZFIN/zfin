@@ -180,6 +180,7 @@ public class OntologyTermDetailController {
             model.addAttribute("fishModels", OntologyService.getDiseaseModelsWithFishModel(term));
         }
         model.addAttribute("isDiseaseTerm", isDiseaseTerm);
+        model.addAttribute("showPhenotypeSection", !term.getOntology().equals(Ontology.ECO));
         return "ontology/ontology-term.page";
 
     }
