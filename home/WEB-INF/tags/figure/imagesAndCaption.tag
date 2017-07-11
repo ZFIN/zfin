@@ -81,7 +81,7 @@
            <img class="placeholder" src="/images/onlyfrompublisher.jpg">
        </c:if>
        <c:choose>
-           <c:when test="${!figure.publication.canShowImages || (empty figure.caption && figure.publication.type != UNPUBLISHED)}">
+           <c:when test="${!figure.publication.canShowImages || (empty figure.images && empty figure.caption && figure.publication.type != UNPUBLISHED)}">
 
                <c:choose>
                    <c:when test="${figure.comments == 'GELI'}">
