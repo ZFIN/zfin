@@ -26,10 +26,11 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
     public int execute() {
         LOG.info("Job Name: " + jobName);
         LOG.info("Running SQLQueryTask on instance: " + instance);
-        if (useDynamicQuery)
+        if (useDynamicQuery) {
             queryFile = new File(dataDirectory, jobName + ".sqlj");
-        else
+        } else {
             queryFile = new File(dataDirectory, jobName + ".sql");
+        }
         if (!queryFile.exists()) {
             String message = "No file found: " + queryFile.getAbsolutePath();
             LOG.error(message);
@@ -50,8 +51,9 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
             errorMessages = service.runDbScriptFile(dbQueryFile);
             resultMap = service.getResultMap();
             generateReports(errorMessages, resultMap);
-            if (CollectionUtils.isNotEmpty(resultMap.values()))
+            if (!resultMap.values().stream().allMatch(List::isEmpty)) {
                 LOG.warn("Validation Errors found");
+            }
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             LOG.error(e);
@@ -64,11 +66,14 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
     }
 
     private boolean isErrorRecord(Map<String, List<List<String>>> resultMap) {
-        if (MapUtils.isEmpty(resultMap))
+        if (MapUtils.isEmpty(resultMap)) {
             return false;
-        for (String key : resultMap.keySet())
-            if (CollectionUtils.isNotEmpty(resultMap.get(key)))
+        }
+        for (String key : resultMap.keySet()) {
+            if (CollectionUtils.isNotEmpty(resultMap.get(key))) {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -79,8 +84,9 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
         String propertyFilePath = args[3];
         CreateValidateDataReportTask task = new CreateValidateDataReportTask(jobName, propertyFilePath, directory);
         task.setInstance(instance);
-        if (args.length > 4)
+        if (args.length > 4) {
             task.useDynamicQuery = Boolean.parseBoolean(args[4]);
+        }
         task.initDatabase();
         System.exit(task.execute());
     }
