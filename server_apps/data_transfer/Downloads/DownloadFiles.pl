@@ -146,6 +146,57 @@ while ($cur->fetch()) {
 
 close MOWITHPUBS;
 
+## generate a file with antibodies and associated expression experiment
+## ZFIN-5654
+$sql = '
+ select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
+	"" as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
+	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
+ from expression_experiment, fish_experiment, fish, marker atb
+ where xpatex_genox_Zdb_id = genox_zdb_id
+ and genox_fish_zdb_id = fish_Zdb_id
+ and atb.mrkr_zdb_id = xpatex_atb_zdb_id
+   and xpatex_gene_zdb_id is null
+ AND not exists (Select "x" from clone
+      where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+      and clone_problem_type = "Chimeric")
+UNION
+ select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
+	gene.mrkr_abbrev as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
+	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
+ from expression_experiment, fish_experiment, fish, marker atb, marker gene
+ where xpatex_genox_Zdb_id = genox_zdb_id
+ and genox_fish_zdb_id = fish_Zdb_id
+ and atb.mrkr_zdb_id = xpatex_atb_zdb_id
+ and gene.mrkr_zdb_id = xpatex_gene_zdb_id
+   and xpatex_gene_zdb_id is not null
+ and gene.mrkr_abbrev not like "WITHDRAWN:"
+ AND not exists (Select "x" from clone
+      where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+      and clone_problem_type = "Chimeric");
+';
+$cur = $dbh->prepare($sql);
+$cur->execute();
+$cur->bind_columns(\$abId, \$abSym, \$geneId, \$geneSym, \$xpType, \$xpId, \$pubId, \$fishId, \$envId); 
+
+
+$abXpatFishFile = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat_fish.txt';
+
+open (ABXPFISH, ">$abXpatFishFile") || die "Cannot open $abXpatFishFile : $!\n";
+
+while ($cur->fetch()) {
+    # remove back slash from the gene ID column of the download file
+    if ($geneId) {
+        $geneId =~ s/\\//g;
+    } else {
+        $geneId = "";
+    }
+            
+    print ABXPFISH "$abId\t$abSym\t$geneId\t$geneSym\t$xpType\t$xpId\t$pubId\t$fishId\t$envId\n";
+}
+
+close ABXPFISH;
+
 $TALENfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/TALEN.txt';
 
 open (TALENWITHPUBS, ">$TALENfileWithPubsAndNoHTMLtags") || die "Cannot open $TALENfileWithPubsAndNoHTMLtags : $!\n";

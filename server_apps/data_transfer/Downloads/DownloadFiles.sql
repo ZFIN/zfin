@@ -425,38 +425,6 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  DELIMITER "	"
 select * from tmp_xpat_fish;
 
--- generate a file with antibodies and associated expression experiment
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat_fish.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat_fish.txt'
- DELIMITER "	"
- select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
-	"" as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
-	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
- from expression_experiment, fish_experiment, fish, marker atb
- where xpatex_genox_Zdb_id = genox_zdb_id
- and genox_fish_zdb_id = fish_Zdb_id
- and atb.mrkr_zdb_id = xpatex_atb_zdb_id
-   and xpatex_gene_zdb_id is null
- AND not exists (Select 'x' from clone
-      where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-      and clone_problem_type = "Chimeric")
-UNION
- select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
-	gene.mrkr_abbrev as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
-	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
- from expression_experiment, fish_experiment, fish, marker atb, marker gene
- where xpatex_genox_Zdb_id = genox_zdb_id
- and genox_fish_zdb_id = fish_Zdb_id
- and atb.mrkr_zdb_id = xpatex_atb_zdb_id
- and gene.mrkr_zdb_id = xpatex_gene_zdb_id
-   and xpatex_gene_zdb_id is not null
- and gene.mrkr_abbrev not like 'WITHDRAWN:'
- AND not exists (Select 'x' from clone
-      where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-      and clone_problem_type = "Chimeric")
-
-;
-
 -- generate a file to map experiment id to environment condition description
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt'
