@@ -22,18 +22,16 @@ public class JournalAddBeanValidator implements Validator {
     public void validate(Object o, Errors errors) {
         JournalAddBean form = (JournalAddBean) o;
 
-        if (form.getPrintIssn()==null && form.geteIssn()==null) {
-            errors.rejectValue("ISSN", "issn.empty");
-        }
+        
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "journal.name.empty");
-        if (form.getPrintIssn()!=null) {
+        if (!form.getPrintIssn().equals("")) {
             if (pubRepository.getJournalByPrintIssn(form.getPrintIssn()) != null) {
-                errors.rejectValue("issn", "Journal.printISSN.inuse");
+                errors.rejectValue("printIssn", "journal.printIssn.inuse");
             }
         }
-        if (form.geteIssn()!=null) {
+        if (!form.geteIssn().equals("")) {
             if (pubRepository.getJournalByEIssn(form.geteIssn()) != null) {
-                errors.rejectValue("issn", "Journal.eISSN.inuse");
+                errors.rejectValue("eIssn", "journal.eIssn.inuse");
             }
         }
         }
