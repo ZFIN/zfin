@@ -5,7 +5,7 @@ create temp table tmp_id2 (id varchar(50))
 with no log;
 
 insert into tmp_id2 (id)
- select get_id('GENE') from single;
+ select get_id('LINCRNAG') from single;
 
 insert into zdb_active_data (zactvd_zdb_id)
  select id from tmp_id2;

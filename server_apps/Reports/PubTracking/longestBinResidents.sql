@@ -139,6 +139,7 @@ insert into longest_bin_resident_metric (lbrm_date_captured,
 		     and ptl_location = 'BIN_2'
 		     and pts_pk_id = pth_status_id
 		     and pts_status = 'READY_FOR_CURATION' 
+		     and pth_status_is_current = 't'
 		     and date(current year to second)-date(pth_status_insert_date) = (select max(date(current year to second)-date(pth_status_insert_date))
 		     	 					  	  from pub_tracking_history, pub_tracking_location, pub_tracking_status
 		     							  where pth_location_id = ptl_pk_id
@@ -157,6 +158,7 @@ insert into longest_bin_resident_metric (lbrm_date_captured,
 		     and ptl_location = 'BIN_3'
 		     and pts_pk_id = pth_status_id
 		     and pts_status = 'READY_FOR_CURATION'
+		     and pth_status_is_current = 't'
 		     and date(current year to second)-date(pth_status_insert_date) = (select max(date(current year to second)-date(pth_status_insert_date))
 		     	 					  	  from pub_tracking_history, pub_tracking_location, pub_tracking_status
 		     							  where pth_location_id = ptl_pk_id

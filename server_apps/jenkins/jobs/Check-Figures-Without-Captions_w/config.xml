@@ -1,47 +1,59 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
-  <actions/>
-  <description>GPI File for Noctua</description>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers/>
-  <concurrentBuild>false</concurrentBuild>
-  <customWorkspace>$TARGETROOT</customWorkspace>
-  <builders>
-    <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>create-gpi-file</targets>
-    </hudson.tasks.Ant>
-    <hudson.tasks.Shell>
-      <command>cp $TARGETROOT/server_apps/data_transfer/GO/zfin.gpi $DOWNLOAD_DIRECTORY/current/</command>
-    </hudson.tasks.Shell>
-  </builders>
-  <publishers>
+    <actions/>
+    <description>Report figures with images from pubs of type Journal, Review, or Other that do not have captions.</description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers>
+        <hudson.triggers.TimerTrigger>
+            <spec></spec>
+        </hudson.triggers.TimerTrigger>
+    </triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <customWorkspace>$TARGETROOT</customWorkspace>
+    <builders>
+        <hudson.tasks.Ant plugin="ant@1.2">
+            <targets>validate-data-report-simple -DJobName=Check-Figures-Without-Captions_w</targets>
+            <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+        </hudson.tasks.Ant>
+    </builders>
+    <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/GO/*.gpi</artifacts>
-            <allowEmptyArchive>false</allowEmptyArchive>
-            <onlyIfSuccessful>false</onlyIfSuccessful>
-            <fingerprint>false</fingerprint>
-            <defaultExcludes>true</defaultExcludes>
-            <caseSensitive>true</caseSensitive>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-Figures-Without-Captions_w/*</artifacts>
+            <latestOnly>false</latestOnly>
+            <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
         <hudson.plugins.logparser.LogParserPublisher plugin="log-parser@1.0.8">
             <unstableOnWarning>true</unstableOnWarning>
             <failBuildOnError>false</failBuildOnError>
             <parsingRulesPath></parsingRulesPath>
         </hudson.plugins.logparser.LogParserPublisher>
+        <htmlpublisher.HtmlPublisher plugin="htmlpublisher@1.3">
+            <reportTargets>
+                <htmlpublisher.HtmlPublisherTarget>
+                    <reportName>Error Report</reportName>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Figures-Without-Captions_w</reportDir>
+                    <reportFiles>Check-Figures-Without-Captions_w.html</reportFiles>
+                    <keepAll>false</keepAll>
+                    <allowMissing>false</allowMissing>
+                </htmlpublisher.HtmlPublisherTarget>
+            </reportTargets>
+        </htmlpublisher.HtmlPublisher>
         <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
-            <recipientList>$DEFAULT_RECIPIENTS</recipientList>
+            <recipientList></recipientList>
             <configuredTriggers>
                 <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
                     <email>
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Figures-Without-Captions_w/Check-Figures-Without-Captions_w.html&quot;}
+
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
@@ -60,7 +72,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/data_transfer/GO/zfin.gpi&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Figures-Without-Captions_w/Check-Figures-Without-Captions_w.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
@@ -76,16 +88,23 @@
                     </email>
                 </hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
             </configuredTriggers>
-            <contentType>text/html</contentType>
-            <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+            <contentType>default</contentType>
+            <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
             <defaultContent>$DEFAULT_CONTENT</defaultContent>
             <attachmentsPattern></attachmentsPattern>
             <presendScript></presendScript>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
-            <replyTo>$DEFAULT_REPLYTO</replyTo>
+            <replyTo>${DB_OWNER}@zfin.org</replyTo>
             <saveOutput>false</saveOutput>
         </hudson.plugins.emailext.ExtendedEmailPublisher>
-  </publishers>
-  <buildWrappers/>
+    </publishers>
+    <buildWrappers>
+        <EnvInjectBuildWrapper plugin="envinject@1.89">
+            <info>
+                <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
+                <loadFilesFromMaster>false</loadFilesFromMaster>
+            </info>
+        </EnvInjectBuildWrapper>
+    </buildWrappers>
 </project>
