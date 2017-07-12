@@ -34,7 +34,7 @@
     <target name="create-gpi-file" depends=""
             description="Generates tab delimited file for GO/Noctua">
         <echo message="Check entity changes"/>
-        <java classname="org.zfin.marker.GPIFile" fork="yes" classpathref="extended.classpath"
+        <java classname="org.zfin.marker.GPIFile" classpathref="extended.classpath"
               failonerror="true" maxmemory="6G">
             <classpath refid="classpath"/>
         </java>

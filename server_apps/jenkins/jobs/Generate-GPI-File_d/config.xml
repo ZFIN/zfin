@@ -15,6 +15,7 @@
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>create-gpi-file</targets>
+      <buildFile>$SOURCEROOT/build.xml</buildFile>
     </hudson.tasks.Ant>
     <hudson.tasks.Shell>
       <command>cp $TARGETROOT/server_apps/data_transfer/GO/zfin.gpi $DOWNLOAD_DIRECTORY/current/</command>
