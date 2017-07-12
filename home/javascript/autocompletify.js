@@ -11,7 +11,9 @@
         var defaults = {
             templates: {
                 suggestion: function (item) {
-                    return "<p>" + item.label + " <a href=\"/" + item.id + "\"><i class=\"fa fa-rocket\"></i</a>" +"</p>";
+                    return "<p>" + item.label + " <a class=\"pull-right autocomplete-direct-link\""
+                    + "title=\"Go directly to record\" href=\"/"
+                        + item.id + "\"><i class=\"fa fa-arrow-circle-right\"></i</a>" +"</p>";
                 }
             },
             limit: 5

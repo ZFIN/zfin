@@ -1043,3 +1043,15 @@ input + label {
     color: red !important;
     font-weight: normal !important;
 }
+
+.autocomplete-direct-link {
+    color: #ccc;
+    padding-left: 30px;
+    visibility: hidden;
+}
+
+.autocomplete-direct-link:hover { color: white }
+
+.tt-suggestion:hover .autocomplete-direct-link {
+    visibility: visible;
+}

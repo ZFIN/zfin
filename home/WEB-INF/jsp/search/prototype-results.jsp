@@ -75,8 +75,6 @@
                         <div class="btn-group search-box-buttons">
                             <button type="submit" class="btn btn-default btn-zfin">Go</button>
                             <authz:authorize access="hasRole('root')">
-                                <button type="submit" class="btn btn-default" title="Open up the first result"
-                                        onclick="feelingLucky();">🚀</button>
                                 <c:if test="${category eq publicationCategoryName}">
                                     <a id="advanced-search-button" class="btn btn-default" href="#" title="Advanced Search Options"
                                        onClick="jQuery('#advanced-container').slideToggle(200);"><i class="fa fa-list"></i></a>
@@ -376,14 +374,6 @@
 
 
 <script>
-
-
-function feelingLucky() {
-    var primaryInput = $('#primary-query-input');
-    if (primaryInput.val()) {
-        primaryInput.val('!!' + primaryInput.val());
-    }
-}
 
 function submitAdvancedQuery(fields) {
     var query = "${baseUrlWithoutQ}";
