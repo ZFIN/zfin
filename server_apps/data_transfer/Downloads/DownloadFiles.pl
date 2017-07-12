@@ -197,6 +197,25 @@ while ($cur->fetch()) {
 
 close ABXPFISH;
 
+## ZFIN-5649 
+$wtXpatFishWithBackSlash = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt';
+
+open (WTXPATFISHSLASH, $wtXpatFishWithBackSlash) || die "Can't open $wtXpatFishWithBackSlash : $!\n";
+
+@lines=<WTXPATFISHSLASH>;
+$wtXpatFish = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt';
+
+open (WTXPATFISH,  ">$wtXpatFish") || die "Can't open: $wtXpatFish $!\n";
+foreach $line (@lines) {
+  $line =~ s/\\//g;
+  print WTXPATFISH "$line";
+}
+
+close WTXPATFISHSLASH;
+close WTXPATFISH;
+
+system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish2.txt");
+
 $TALENfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/TALEN.txt';
 
 open (TALENWITHPUBS, ">$TALENfileWithPubsAndNoHTMLtags") || die "Cannot open $TALENfileWithPubsAndNoHTMLtags : $!\n";
