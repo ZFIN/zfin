@@ -1,6 +1,10 @@
 --liquibase formatted sql
 --changeset sierra:RGNS-103.sql
 
+update marker_relationship_type
+ set  mreltype_mrkr_type_group_1 = 'GENEDOM'
+where mreltype_name = 'gene produces transcript';
+
 create temp table tmp_id2 (id varchar(50))
 with no log;
 
