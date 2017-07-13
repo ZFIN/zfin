@@ -73,3 +73,7 @@ update marker
 update marker
   set mrkr_name = replace(mrkr_name, 'sierra', '')
  where mrkr_zdb_id = (Select id from tmp_id);
+
+update marker
+ set mrkr_type = 'GENE'
+where mrkr_zdb_id = (Select id from tmp_id);

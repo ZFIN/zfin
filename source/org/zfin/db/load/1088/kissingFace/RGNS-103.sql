@@ -91,3 +91,7 @@ update marker
 update marker
   set mrkr_name = replace(mrkr_name, 'sierra', '')
  where mrkr_zdb_id = (Select id from tmp_id2);
+
+update marker
+ set mrkr_type = 'LINCRNAG'
+ where mrkr_zdb_id = (Select id from tmp_id2);
