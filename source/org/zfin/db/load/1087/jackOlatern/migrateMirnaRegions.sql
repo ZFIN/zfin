@@ -326,6 +326,6 @@ where zrepld_new_zdb_id = zrepld_old_zdb_id;
 
 set constraints all immediate;
 
-rollback work;
+--rollback work;
 
---commit work;
+commit work;
