@@ -3,6 +3,10 @@ begin work;
 set constraints all deferred;
 
 
+select count(*) from zdb_replaced_data
+where zrepld_new_zdb_id = zrepld_old_zdb_id;
+
+
 update marker_relationship_type
  set mreltype_mrkr_type_group_1 = 'GENEDOM'
  where mreltype_mrkr_type_group_1 = 'GENEDOM_PROD_PROTEIN'
@@ -11,6 +15,7 @@ and mreltype_name = 'gene produces transcript';
 select mrkr_zdb_id as gene_id
  from marker
  where mrkr_name like 'microRNA%'
+and mrkr_type = 'GENE'
 into temp tmp_to_convert;
 
 
@@ -37,6 +42,11 @@ insert into zdb_replaced_data (zrepld_new_zdb_id, zrepld_old_zdb_id)
 insert into withdrawn_data (wd_old_zdb_id, wd_new_zdb_id)
  select replace(gene_id, 'GENE','MIRNAG'), gene_id
   from tmp_to_convert;
+
+
+select * from zdb_replaced_data, marker
+where zrepld_new_zdb_id = zrepld_old_zdb_id
+ and mrkr_zdb_id = zrepld_new_zdb_id;
 
 update zdb_active_data
  set zactvd_zdb_id = replace(zactvd_zdb_id, 'GENE','MIRNAG')
@@ -303,7 +313,7 @@ update genotype
 where geno_zdb_id = 'ZDB-GENO-161006-28';
 
 update genotype
- set geno_display_name = 'mir142a<sup>zf643/zf643</sup> ; nz117Tg ; mir142b<sup>zf660/zf660</sup>'
+ set geno_display_name = 'mir142a<sup>zf643/zf643</sup> ; nz117Tg ; mir142b<supzf660/zf660</sup>'
 where geno_zdb_id = 'ZDB-GENO-161006-30';
 
 update genotype
@@ -311,8 +321,11 @@ update genotype
 where geno_zdb_id = 'ZDB-GENO-161006-29';
 
 
+select count(*) from zdb_replaced_data
+where zrepld_new_zdb_id = zrepld_old_zdb_id;
+
 set constraints all immediate;
 
---rollback work;
+rollback work;
 
-commit work;
+--commit work;
