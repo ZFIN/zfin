@@ -92,17 +92,20 @@ public class DTOMarkerService {
         logger.debug("# of marker relationships: " + markerRelationships.size());
         List<MarkerDTO> relatedGenes = new ArrayList<MarkerDTO>();
         for (MarkerRelationship markerRelationship : markerRelationships) {
-            if (
+           /* if (
                     markerRelationship.getSecondMarker().isInTypeGroup(Marker.TypeGroup.GENE)
                 // todo: should use a different type
 //                  &&
 //                   markerRelationship.getType().equals(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)
-                    ) {
+                    ) {*/
                 Marker internalGene = markerRelationship.getSecondMarker();
+            System.out.println(internalGene.getName());
 //                relatedGenes.addAll(DTOHelper.createAttributesForPublication(gene.getAbbreviation(),markerRelationship.getPublications())) ;
                 relatedGenes.addAll(DTOConversionService.createLinks(DTOConversionService.convertToMarkerDTO(internalGene), markerRelationship.getPublications()));
-            }
+
         }
+        System.out.println("# of related genes: " + relatedGenes.size());
+
         logger.debug("# of related genes: " + relatedGenes.size());
         return relatedGenes;
     }

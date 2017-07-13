@@ -22,7 +22,7 @@ public class RelatedCloneListener extends RelatedMarkerListener {
         dto.setZdbID(relatedMarkerBox.getZdbID());
         dto.setName(dto.getName());
         dto.setPublicationZdbID(dto.getPublicationZdbID());
-        dto.setMarkerRelationshipType(relatedMarkerBox.getType().toString());
+       // dto.setMarkerRelationshipType(relatedMarkerBox.getType().toString());
         dto.setZdbIDThenAbbrev(relatedMarkerBox.isZdbIDThenAbbrev());
 
         MarkerRPCService.App.getInstance().addRelatedMarker(dto, new AsyncCallback<MarkerDTO>() {
