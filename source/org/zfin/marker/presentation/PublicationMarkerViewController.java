@@ -35,13 +35,12 @@ public class PublicationMarkerViewController {
         return "marker/citation-list.page";
     }
 
-    @RequestMapping("/marker-go-evidence-citation-list/")
-    public String getPublicationListForMarkerGoEvd(Model model
-            , @RequestParam(value = "mrkrZdbID", required = true) String markerZdbID
-            , @RequestParam(value = "mrkrGoEvdZdbID", required = true) String markerGoEvdZdbID) {
-        model.addAttribute("dataZdbID",markerGoEvdZdbID);
+    @RequestMapping("/go-citation-list/markerID/{markerZdbID}/mrkrGoEvdTermZdbID/{markerGoEvdTermZdbID}/evidenceCode/{evdCode}/inference/{inf}")
+    public String getPublicationListForMarkerGoEvd(@PathVariable String markerZdbID, @PathVariable String markerGoEvdTermZdbID, @PathVariable String evdCode, @PathVariable String inf, Model model) {
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(markerZdbID);
+        model.addAttribute("marker",marker);
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-        List<String> publicationIDs = publicationRepository.getPublicationIdsForMarkerGo(markerZdbID,markerGoEvdZdbID);
+        List<String> publicationIDs = publicationRepository.getPublicationIdsForMarkerGo(markerZdbID,markerGoEvdTermZdbID,evdCode,inf);
         List<Publication> publications = new ArrayList<>();
         for (String pubID : publicationIDs) {
             publications.add(publicationRepository.getPublication(pubID));
@@ -51,7 +50,7 @@ public class PublicationMarkerViewController {
         citationBean.setOrderBy("author");
         model.addAttribute("citationList",citationBean);
 
-        return "infrastructure/data-citation-list.page";
+        return "marker/go-citation-list.page";
     }
 
 }
