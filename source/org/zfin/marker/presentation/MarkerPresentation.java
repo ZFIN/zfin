@@ -45,7 +45,12 @@ public class MarkerPresentation extends EntityPresentation {
         } else {
             cssClassName = NONGENEDOMMARKER;
         }
-        return getSpanTagWithID(cssClassName, marker.getAbbreviation(), marker.getName(), MARKER_NAME);
+        if(marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
+            return getSpanTagWithID(cssClassName, marker.getName(), marker.getName(), MARKER_NAME);
+        }
+        else{
+            return getSpanTagWithID(cssClassName, marker.getAbbreviation(), marker.getName(), MARKER_NAME);
+        }
     }
 
     /**
@@ -98,7 +103,9 @@ public class MarkerPresentation extends EntityPresentation {
 
 
     public static String getMarkerLink(Marker marker) {
-        return getViewLink(marker.getZdbID(), getAbbreviation(marker), marker.getName(), null, marker.getZdbID());
+
+            return getViewLink(marker.getZdbID(), getAbbreviation(marker), marker.getName(), null, marker.getZdbID());
+
     }
 
     public static String getMarkerLinkByZfinEntity(ZfinEntity entity) {

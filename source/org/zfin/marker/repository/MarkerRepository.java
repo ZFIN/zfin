@@ -72,6 +72,9 @@ public interface MarkerRepository {
     MarkerRelationship getMarkerRelationship(Marker firstMarker,
                                              Marker secondMarker,
                                              MarkerRelationship.Type type);
+    MarkerRelationship getMarkerRelationship(Marker firstMarker,
+                                             Marker secondMarker
+                                             );
 
     List<MarkerRelationship> getMarkerRelationshipsByPublication(String publicationZdbID);
 
