@@ -556,7 +556,19 @@ public class MarkerService {
      */
     public static void deleteMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID,
                                                            MarkerRelationship.Type markerRelationshipType) {
+      //  MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
         MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
+
+        //now deal with attribution
+        if (pubZdbID != null && pubZdbID.length() > 0) {
+            int deletedRecord = infrastructureRepository.deleteRecordAttribution(markerRelationship.getZdbID(), pubZdbID);
+            logger.info("deleted record attrs: " + deletedRecord);
+        }
+    }
+    public static void deleteMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID
+                                                          ) {
+        //  MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
+        MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2);
 
         //now deal with attribution
         if (pubZdbID != null && pubZdbID.length() > 0) {
@@ -580,6 +592,10 @@ public class MarkerService {
      */
     public static void deleteMarkerRelationship(Marker marker1, Marker marker2, MarkerRelationship.Type type) {
         MarkerRelationship mrel = getMarkerRepository().getMarkerRelationship(marker1, marker2, type);
+        deleteMarkerRelationship(mrel);
+    }
+    public static void deleteMarkerRelationship(Marker marker1, Marker marker2) {
+        MarkerRelationship mrel = getMarkerRepository().getMarkerRelationship(marker1, marker2);
         deleteMarkerRelationship(mrel);
     }
 

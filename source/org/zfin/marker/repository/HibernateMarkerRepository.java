@@ -266,6 +266,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (MarkerRelationship) criteria.uniqueResult();
     }
 
+    @Override
+    public MarkerRelationship getMarkerRelationship(Marker marker1, Marker marker2) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(MarkerRelationship.class);
+        criteria.add(Restrictions.eq("firstMarker", marker1));
+        criteria.add(Restrictions.eq("secondMarker", marker2));
+
+        return (MarkerRelationship) criteria.uniqueResult();
+    }
+
     public List<Marker> getMarkersForRelation(String featureRelationshipName, String publicationZdbID) {
         String sql = "SELECT DISTINCT mrkr_zdb_id " +
                 "    FROM marker,marker_type_group_member, " +
@@ -1029,7 +1039,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }*/
 
         String hql = " select distinct m from Marker m , PublicationAttribution pa "
-                + " where lower(m.abbreviation) like lower(:name)  "
+                + " where lower(m.name) like lower(:name)  "
                 + " and pa.dataZdbID = m.zdbID  "
                 + " and m.markerType like '%CONS%'  ";
 //                + " order by m.abbreviationOrder asc " ;
