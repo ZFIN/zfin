@@ -34,7 +34,7 @@
             <span class="name-label">${marker.markerType.displayName} Symbol:</span>
         </th>
         <td>
-            <span class="name-value" geneSymbol><zfin:link entity="${marker.abbreviation}"/></span>
+            <span class="name-value" geneSymbol><zfin:abbrev entity="${marker}"/></span>
         </td>
     </tr>
 </table>
