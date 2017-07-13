@@ -77,13 +77,18 @@ public class MarkerGoService {
         StringBuilder sb = new StringBuilder();
 
         if (row.getPublications().size() > 1) {
-            sb.append(" (<a href=\"/action/marker/marker-go-evidence-citation-list?mrkrZdbID=");
+            sb.append(" <a href=\"/action/marker/go-citation-list/markerID/");
             sb.append(marker.getZdbID());
-            sb.append("&mrkrGoEvdZdbID=");
+            sb.append("/mrkrGoEvdTermZdbID/");
             sb.append(row.getTerm().getZdbID());
+            sb.append("/evidenceCode/");
+            sb.append(row.getEvidenceCode().getCode().toUpperCase());
+            sb.append("/inference/");
+            sb.append(row.getFirstInference());
             sb.append("\">");
             sb.append(String.valueOf(row.getPublications().size()));
-            sb.append("</a>)");
+            sb.append(" Publications");
+            sb.append("</a>");
         } else {
             Publication publication = row.getPublications().iterator().next();
             sb.append(PublicationPresentation.getLink(publication));
