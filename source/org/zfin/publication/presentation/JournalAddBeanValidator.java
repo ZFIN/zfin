@@ -22,7 +22,7 @@ public class JournalAddBeanValidator implements Validator {
     public void validate(Object o, Errors errors) {
         JournalAddBean form = (JournalAddBean) o;
 
-        
+
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "journal.name.empty");
         if (!form.getPrintIssn().equals("")) {
             if (pubRepository.getJournalByPrintIssn(form.getPrintIssn()) != null) {
