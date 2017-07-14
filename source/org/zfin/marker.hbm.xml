@@ -346,6 +346,12 @@
         </id>
         <property name="displayName" column="mrkrtype_type_display"/>
         <property name="significance" column="mrkrtype_significance"/>
+
+        <set name="mappedTypeGroups" table="marker_type_group_member">
+            <key column="mtgrpmem_mrkr_type"/>
+            <many-to-many class="org.zfin.marker.MarkerTypeGroup" column="mtgrpmem_mrkr_type_group"/>
+        </set>
+
         <set name="typeGroupStrings" table="marker_type_group_member">
             <key column="mtgrpmem_mrkr_type"/>
             <element column="mtgrpmem_mrkr_type_group" type="string"/>
@@ -388,6 +394,8 @@
             <column name="mtgrp_name"/>
         </id>
         <property name="comment" column="mtgrp_comments"/>
+        <property name="searchable" column="mtgrp_searchable"/>
+        <property name="displayName" column="mtgrp_display_name"/>
         <set name="typeStrings" table="marker_type_group_member">
             <key column="mtgrpmem_mrkr_type_group"/>
             <element column="mtgrpmem_mrkr_type" type="string"/>

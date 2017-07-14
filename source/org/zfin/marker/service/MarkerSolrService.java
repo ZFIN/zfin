@@ -6,15 +6,14 @@ import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Service;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerTypeGroup;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +38,11 @@ public class MarkerSolrService {
         solrDoc.put(FieldName.NAME_SORT, marker.getAbbreviationOrder());
         solrDoc.put(FieldName.URL, "/" + marker.getZdbID());
         solrDoc.put(FieldName.DATE, new Date());
+
+        marker.getMarkerType().getMappedTypeGroups().stream()
+                .filter(MarkerTypeGroup::getSearchable)
+                .forEach(typeGroup -> solrDoc.put(FieldName.TYPEGROUP, typeGroup.getDisplayName()));
+
 
         if (marker.getAliases() != null) {
             List<String> aliases = marker.getAliases().stream()

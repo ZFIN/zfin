@@ -10,6 +10,7 @@ public class MarkerType implements Comparable, Serializable {
     private Marker.Type type;
     private Set<String> typeGroupStrings;
     private Set<Marker.TypeGroup> typeGroups;
+    private Set<MarkerTypeGroup> mappedTypeGroups;
     private String displayName;
     private Integer significance;
 
@@ -80,6 +81,14 @@ public class MarkerType implements Comparable, Serializable {
 
     public void setTypeGroups(Set<Marker.TypeGroup> typeGroups) {
         this.typeGroups = typeGroups;
+    }
+
+    public Set<MarkerTypeGroup> getMappedTypeGroups() {
+        return mappedTypeGroups;
+    }
+
+    public void setMappedTypeGroups(Set<MarkerTypeGroup> mappedTypeGroups) {
+        this.mappedTypeGroups = mappedTypeGroups;
     }
 
     public Integer getSignificance() {
