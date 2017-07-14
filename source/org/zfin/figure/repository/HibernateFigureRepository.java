@@ -72,7 +72,7 @@ public class HibernateFigureRepository implements FigureRepository {
                 "FROM int_data_source, expression_experiment " +
                 "WHERE xpatex_zdb_id = ids_data_zdb_id " +
                 "  and xpatex_source_zdb_id = :pubZdbID " +
-                "  and substring(ids_source_zdb_id from 1 for 8) = 'ZDB-PERS%'";
+                "  and substring(ids_source_zdb_id from 1 for 8) = 'ZDB-PERS'";
 
         if (probeZdbID != null) {
             sql += "  and xpatex_probe_feature_zdb_id = :probeZdbID ";
