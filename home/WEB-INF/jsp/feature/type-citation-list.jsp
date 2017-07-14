@@ -23,7 +23,7 @@
 <table class="primary-entity-attributes">
     <tr>
         <th class="genotype-name-label">
-            <span class="name-label">${feature.name} Feature Name:</span>
+            <span class="name-label">Feature Name:</span>
         </th>
         <td>
             <span class="name-value" geneSymbol><zfin:link entity="${feature}"/></span>
