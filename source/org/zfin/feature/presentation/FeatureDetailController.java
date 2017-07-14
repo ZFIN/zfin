@@ -21,6 +21,7 @@ import org.zfin.mutant.GenotypeFeature;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListAdapter;
 import org.zfin.publication.presentation.PublicationListBean;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -147,6 +148,24 @@ public class FeatureDetailController {
 
     private void retrievePubData(Feature fr, FeatureBean form) {
         form.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(fr.getZdbID()));
+    }
+
+    @RequestMapping("/type-citation-list/{zdbID}")
+    public String getFeatureTypePublicationList(@PathVariable String zdbID,Model model){
+        Feature feature = featureRepository.getFeatureByID(zdbID);
+        model.addAttribute("feature",feature);
+        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+        List<String> publicationIDs = publicationRepository.getPublicationIdsForFeatureType(zdbID);
+        List<Publication> publications = new ArrayList<>();
+        for (String pubID : publicationIDs) {
+            publications.add(publicationRepository.getPublication(pubID));
+        }
+        model.addAttribute("pubCount", publications.size());
+        PublicationListBean citationBean = new PublicationListAdapter(publications);
+        citationBean.setOrderBy("author");
+        model.addAttribute("citationList",citationBean);
+
+        return "feature/type-citation-list.page";
     }
 
 }

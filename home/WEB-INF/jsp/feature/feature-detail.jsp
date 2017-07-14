@@ -146,7 +146,7 @@
                                     (<a href="/${formBean.featureTypeAttributions[0].sourceZdbID}">1</a>)
                                 </c:when>
                                 <c:otherwise>
-                                    (<a href="/action/infrastructure/data-citation-list/${formBean.feature.zdbID}">${fn:length(formBean.featureTypeAttributions)}</a>)
+                                    (<a href="/action/feature/type-citation-list/${formBean.feature.zdbID}">${fn:length(formBean.featureTypeAttributions)}</a>)
                                 </c:otherwise>
                             </c:choose>
                         </c:if>
