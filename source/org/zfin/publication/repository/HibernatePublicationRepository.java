@@ -2486,4 +2486,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         List<String> pubIDs = query.list();
         return pubIDs;
     }
+
+    @Override
+    public List<String> getPublicationIdsForFeatureType(String featureZdbID) {
+        Session session = HibernateUtil.currentSession();
+        String sql =  " select ra.recattrib_source_zdb_id  " +
+                " from record_attribution ra" +
+                " where :featureType = ra.recattrib_source_type " +
+                " and :featureID = ra.recattrib_data_zdb_id";
+        SQLQuery query = session.createSQLQuery(sql);
+        query.setString("featureType", "feature type");
+        query.setString("featureID", featureZdbID);
+        List<String> pubIDs = query.list();
+        return pubIDs;
+    }
 }

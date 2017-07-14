@@ -559,4 +559,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<String> getPublicationIdsForMarkerGo(String markerZdbID, String markerGoEvdTermZdbID, String evidenceCode, String inference);
 
+    List<String> getPublicationIdsForFeatureType(String featureZdbID);
+
 }
