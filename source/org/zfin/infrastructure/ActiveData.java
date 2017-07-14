@@ -213,7 +213,6 @@ public class ActiveData implements ZdbID {
         IMAGE,
         IMAGEP,
         INFGRP,
-        JRNL,
         LINK,
         LOCUS,
         MAPDEL,
