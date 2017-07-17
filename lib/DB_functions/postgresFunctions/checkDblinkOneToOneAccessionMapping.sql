@@ -1,4 +1,4 @@
-create or replace function checkDblinkOneToOneAccessionMapping (vDblinkZdbId varchar(50),
+create or replace function checkDblinkOneToOneAccessionMapping (vDblinkZdbId text,
        		 				      vFeatureZdbId text,
 						      vDblinkAccNum text
 )

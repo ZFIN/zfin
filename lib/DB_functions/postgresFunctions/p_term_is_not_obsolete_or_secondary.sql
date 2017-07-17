@@ -1,4 +1,4 @@
-create or replace function p_term_is_not_obsolete_or_secondary (vTerm varchar(50))
+create or replace function p_term_is_not_obsolete_or_secondary (vTerm text)
  returns void as $$
 
 declare ok boolean;

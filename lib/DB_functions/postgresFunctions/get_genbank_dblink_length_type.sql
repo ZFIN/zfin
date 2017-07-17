@@ -9,7 +9,7 @@
 
   create or replace function get_genbank_dblink_length_type (vDblinkAccNum varchar(30),
 						  vDblinkLength integer,
-					 	  vDblinkFdbcontZdbId varchar(50))
+					 	  vDblinkFdbcontZdbId text)
   returns $vDblinkFdbcontZdbId$ as varchar, $vDblinkLength$ as integer ;
   
 

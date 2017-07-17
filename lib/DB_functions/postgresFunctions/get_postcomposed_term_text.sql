@@ -1,5 +1,5 @@
-create or replace function get_postcomposed_term_text ( supertermZdbId varchar(50), 
-                                                 subtermZdbId varchar(50)  )
+create or replace function get_postcomposed_term_text ( supertermZdbId text, 
+                                                 subtermZdbId text  )
 
   returns text as $resultHtml$
 

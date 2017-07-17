@@ -18,8 +18,8 @@
 ----------------------------------------------------------------------
 
 create or replace function  p_check_drop_go_root_term (
-		mrkrZdbId	varchar(50),
-		gotermZdbId	varchar(50)
+		mrkrZdbId	text,
+		gotermZdbId	text
 		)
 returns void as $$
 	declare goRootTermZdbId	term.term_zdb_id%TYPE;

@@ -1,4 +1,4 @@
-create or replace function get_genotype_display( genoZdbId varchar(50) )
+create or replace function get_genotype_display( genoZdbId text )
 returns text as $genoDisplayHtml$
 
   -- --------------------------------------------------------------------- 

@@ -1,6 +1,6 @@
 create or replace function
 get_stg_name_long_html(
-  stgZdbId        varchar(50),
+  stgZdbId        text,
   javascriptFunc  varchar(80) default NULL)
 
   returns varchar(255) as $stgNameLongHtml$

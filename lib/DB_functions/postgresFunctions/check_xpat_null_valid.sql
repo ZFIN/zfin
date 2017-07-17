@@ -1,4 +1,4 @@
-create or replace function check_xpat_null_valid (vXpatex_gene_zdb_id varchar(50), vXpatex_probe_feature_zdb_id varchar(50), vXpatex_atb_zdb_id varchar(50))
+create or replace function check_xpat_null_valid (vXpatex_gene_zdb_id text, vXpatex_probe_feature_zdb_id text, vXpatex_atb_zdb_id text)
 
 returns void as $$
 declare vMrkrNameWithdrawn boolean;

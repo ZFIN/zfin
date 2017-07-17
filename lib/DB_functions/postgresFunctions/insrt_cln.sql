@@ -2,7 +2,7 @@
 -- returns the number of clones inserted
 -- realies on the probe_lib and fest_lib_inst for parts
 
-create or replace function insrt_cln( est_id varchar(50),est_abbrev varchar(150) ) returns int as $$
+create or replace function insrt_cln( est_id text,est_abbrev varchar(150) ) returns int as $$
 
 begin
     insert into clone (   

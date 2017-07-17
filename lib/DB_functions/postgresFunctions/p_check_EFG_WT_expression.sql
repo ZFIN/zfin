@@ -1,5 +1,5 @@
-create or replace function p_check_EFG_WT_expression (vXpatGenoxZdbId varchar(50),
-   				       vXpatGeneZdbId varchar(50))
+create or replace function p_check_EFG_WT_expression (vXpatGenoxZdbId text,
+   				       vXpatGeneZdbId text)
 returns void as $$
 declare vGenoIsWildtype genotype.geno_is_wildtype%TYPE;
  vGeneIsEFG boolean ;

@@ -2,7 +2,7 @@
 create or replace function insert_clone() returns integer as $cnt$
     declare cnt integer :=0;
     	    rtn integer;
-     	    id varchar(50);
+     	    id text;
      	    abbrev varchar(150);
 
     for id, abbrev in  

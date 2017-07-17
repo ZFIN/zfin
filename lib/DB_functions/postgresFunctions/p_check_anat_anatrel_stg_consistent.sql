@@ -22,9 +22,9 @@
 -------------------------------------------------------------
 
 create or replace function p_check_anat_anatrel_stg_consistent (
-		anatZdbId 	varchar(50),
-		startStgZdbId	varchar(50),
-		endStgZdbId	varchar(50)
+		anatZdbId 	text,
+		startStgZdbId	text,
+		endStgZdbId	text
 	)
 returns void as $$
 

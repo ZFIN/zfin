@@ -1,5 +1,5 @@
-create or replace function  p_marker_has_goterm (vMrkrZdbId varchar(50),
-					vMrkrGotermId varchar(50))
+create or replace function  p_marker_has_goterm (vMrkrZdbId text,
+					vMrkrGotermId text))
 returns void as $$
 
         declare vCount     integer ;
