@@ -1,6 +1,6 @@
-create or replace function checkDblinkTranscriptWithdrawn (vDblinkZdbId varchar(50),
-       		 				      vTscriptZdbId varchar(50),
-						      vFDBContZdbId varchar(50)
+create or replace function checkDblinkTranscriptWithdrawn (vDblinkZdbId text,
+       		 				      vTscriptZdbId text,
+						      vFDBContZdbId text
 )
 returns void as $$
 begin

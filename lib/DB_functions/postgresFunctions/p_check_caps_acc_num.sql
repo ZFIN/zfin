@@ -1,8 +1,8 @@
-create or replace function p_check_caps_acc_num (vFDBcontZdbID varchar(50),
-   				       vDblinkAccNum varchar(50))
+create or replace function p_check_caps_acc_num (vFDBcontZdbID text,
+   				       vDblinkAccNum text)
 returns void as $$ 
 
-declare vDbName varchar(50);
+declare vDbName text;
 begin 
 select distinct fdb_db_name 
   into vDbName

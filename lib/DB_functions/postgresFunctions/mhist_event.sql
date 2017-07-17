@@ -1,4 +1,4 @@
-create or replace function mhist_event( active_marker varchar(50), 
+create or replace function mhist_event( active_marker text, 
 	     old_name varchar(255),
 	     new_name varchar(255),
 	     old_abbrev varchar(150),

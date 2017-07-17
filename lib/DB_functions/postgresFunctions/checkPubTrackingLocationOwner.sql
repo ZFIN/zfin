@@ -1,4 +1,4 @@
-create or replace function checkPubTrackingLocationOwner(vPthPubZdbId varchar(50), vPthStatusId int8, vPthLocationId int8, vPthClaimedBy varchar(50))
+create or replace function checkPubTrackingLocationOwner(vPthPubZdbId text, vPthStatusId int8, vPthLocationId int8, vPthClaimedBy text)
 returns void as $$
        declare status varchar(100) := (Select pts_status from pub_tracking_status
        	   	    	    where pts_pk_id = vPthStatusId);

@@ -1,7 +1,7 @@
 create or replace function p_check_anatitem_overlaps_stg_Window (
-	vAnatItemZdbId varchar(50),
-	vStartStgZdbId varchar(50),
-	vEndStgZdbId   varchar(50))
+	vAnatItemZdbId text,
+	vStartStgZdbId text,
+	vEndStgZdbId   text))
 returns void as $$
 begin
   if not anatitem_overlaps_stg_window (vAnatItemZdbId, 

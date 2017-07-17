@@ -6,9 +6,9 @@
 --not allow the insert or update to procede.
 -------------------------------------------------
 
-  create or replace function  p_fimg_overlaps_stg_window (vFimgZdbId varchar(50),
-						vStartStgZdbId varchar(50),
-					    	vEndStgZdbId varchar(50))
+  create or replace function  p_fimg_overlaps_stg_window (vFimgZdbId text,
+						vStartStgZdbId text,
+					    	vEndStgZdbId text)
   returns void as $$
   declare vOk 	boolean := fimg_overlaps_stg_window(vFimgZdbId, vStartStgZdbId, vEndStgZdbId);
   begin 

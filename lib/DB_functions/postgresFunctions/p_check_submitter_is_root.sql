@@ -3,7 +3,7 @@ returns void as $$
 
 --p_check_submitter_is_root
 -------------------------------
---variables passed in: person_zdb_id varchar(50), required
+--variables passed in: person_zdb_id text, required
 --
 --output: checks that zdb_submitters.access equals root 
 --  where zdb_submitters.zdb_id

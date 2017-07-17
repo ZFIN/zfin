@@ -1,4 +1,4 @@
-create or replace function checkfeatureabbrev (vFeatureZdbId varchar(50),
+create or replace function checkfeatureabbrev (vFeatureZdbId text,
        		 		     vFeatureType varchar(30), 
        		 		     vFeatureAbbrev varchar(70), 
 				     vFeatureLabPrefixId int8, 

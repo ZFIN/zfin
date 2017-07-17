@@ -1,4 +1,4 @@
-create or replace function get_sortable_authors_lower(vZdbId varchar(50)) 
+create or replace function get_sortable_authors_lower(vZdbId text) 
 	returns varchar(200) as $vSortableAuthorsLower$
 
   declare vSortableAuthorsLower varchar(200) := (select substr(pub_authors_lower,1,200)

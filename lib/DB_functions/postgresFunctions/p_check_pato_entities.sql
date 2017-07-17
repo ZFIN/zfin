@@ -1,6 +1,6 @@
-create or replace function p_check_pato_entities (vPatoZdbId varchar(50),
-					vEntityAZdbId varchar(50),
-					vEntityBZdbId varchar(50))
+create or replace function p_check_pato_entities (vPatoZdbId text,
+					vEntityAZdbId text,
+					vEntityBZdbId text)
 returns void as $$
 
 	declare vATermType term.term_ontology%TYPE ;

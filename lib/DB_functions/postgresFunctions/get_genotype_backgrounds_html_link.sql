@@ -1,5 +1,5 @@
 
-create or replace function get_genotype_backgrounds_html_link( genoZdbId varchar(50) )
+create or replace function get_genotype_backgrounds_html_link( genoZdbId text )
 
   returns text as $backgroundList$	
 

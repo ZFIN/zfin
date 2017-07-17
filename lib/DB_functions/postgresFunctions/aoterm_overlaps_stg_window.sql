@@ -1,8 +1,8 @@
 create or replace function 
 aoterm_overlaps_stg_window (
-  anatItemZdbId   varchar(50),
-  startStageZdbId varchar(50),
-  endStageZdbId   varchar(50))
+  anatItemZdbId   text,
+  startStageZdbId text,
+  endStageZdbId   text)
 
   returns boolean as $true$
 

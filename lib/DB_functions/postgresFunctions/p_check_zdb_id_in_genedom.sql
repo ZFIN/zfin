@@ -3,7 +3,7 @@
   --procedure that checks to see that the object type of a zdb_id 
   --exists in the marker_type_group 'GENEDOM' 
 
-  create or replace function p_check_zdb_id_in_genedom (vZdbId varchar(50))
+  create or replace function p_check_zdb_id_in_genedom (vZdbId text)
   returns void as $$
 
       declare vType	varchar(10) := get_obj_type(vZdbId);
