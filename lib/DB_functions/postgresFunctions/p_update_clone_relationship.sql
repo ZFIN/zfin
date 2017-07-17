@@ -1,4 +1,4 @@
-create or replace function p_update_clone_relationship (clone_mrkr_zdb_id varchar(50),
+create or replace function p_update_clone_relationship (clone_mrkr_zdb_id text,
        		 clone_problem_type varchar(60))
 returns void as $$
 

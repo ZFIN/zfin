@@ -1,4 +1,4 @@
-create or replace function p_update_geno_nickname (vZDBid varchar(50), 
+create or replace function p_update_geno_nickname (vZDBid text, 
 						handle varchar(255))
 
 returns void as $$

@@ -1,4 +1,4 @@
-create or replace function p_update_related_names (vMarkerZdbId varchar(50), vOldMrkrAbbrev varchar(255), vNewMrkrAbbrev varchar(255))
+create or replace function p_update_related_names (vMarkerZdbId text, vOldMrkrAbbrev varchar(255), vNewMrkrAbbrev varchar(255))
 returns void as $$
 	declare vGenotypeZDB genotype.geno_zdb_id%TYPE;
 	 vGenoDisplay genotype.geno_display_name%TYPE;

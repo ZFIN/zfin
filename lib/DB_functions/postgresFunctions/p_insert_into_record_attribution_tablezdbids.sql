@@ -1,6 +1,6 @@
 create or replace function p_insert_into_record_attribution_tablezdbids 
-					(vTableZdbId varchar(50), 
-					vSourceZdbId varchar(50))
+					(vTableZdbId text), 
+					vSourceZdbId text))
 
 returns void as $$
 --p_insert_into_record_attribution_tablezdbids.

@@ -1,5 +1,5 @@
-create or replace function p_update_unspecified_alleles (vMarkerZdbId varchar(50),
-       		 			       vFeatureZdbId varchar(50))
+create or replace function p_update_unspecified_alleles (vMarkerZdbId text,
+       		 			       vFeatureZdbId text)
 returns void as $$
     declare vUnallele feature.feature_abbrev%TYPE;
      vUnspecified feature.feature_unspecified%TYPE;

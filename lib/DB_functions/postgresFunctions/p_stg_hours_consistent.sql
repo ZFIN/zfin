@@ -6,8 +6,8 @@
 --not allow the insert or update to procede.
 -------------------------------------------------
 
-  create or replace function  p_stg_hours_consistent (vStartZDB varchar(50), 
-					    vEndZDB varchar(50))
+  create or replace function  p_stg_hours_consistent (vStartZDB text, 
+					    vEndZDB text)
   returns void as $$
   declare vOk 	boolean := stg_window_consistent(vStartZDB, vEndZDB);
   begin

@@ -1,4 +1,4 @@
-create or replace function  p_update_related_genotype_names (vZDBid varchar(50))
+create or replace function  p_update_related_genotype_names (vZDBid text)
 returns void as $$
 declare vDataType varchar(30) ;
 	 vGenotypeFtrCount integer ;	

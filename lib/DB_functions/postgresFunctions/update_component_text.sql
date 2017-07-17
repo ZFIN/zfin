@@ -1,4 +1,4 @@
-create or replace function update_component_text (cc_componentId varchar(50))
+create or replace function update_component_text (cc_componentId text)
 returns varchar(30) as $mrkrAbbrev$
 
 declare mrkrAbbrev  marker.mrkr_abbrev%TYPE;

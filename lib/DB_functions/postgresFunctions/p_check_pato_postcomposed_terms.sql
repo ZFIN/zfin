@@ -1,5 +1,5 @@
-create or replace function p_check_pato_postcomposed_terms (vSuperTermZdbId varchar(50),
-                                        vSubTermZdbId varchar(50))
+create or replace function p_check_pato_postcomposed_terms (vSuperTermZdbId text,
+                                        vSubTermZdbId text)
 returns void as $$
 
 declare vSubTermType  term.term_ontology%TYPE ;

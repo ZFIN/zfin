@@ -1,4 +1,4 @@
-create or replace function p_update_related_fish_for_str (vZdbId varchar(50))
+create or replace function p_update_related_fish_for_str (vZdbId text)
 returns void as $$
 
 declare vFishName fish.fish_name%TYPE;
