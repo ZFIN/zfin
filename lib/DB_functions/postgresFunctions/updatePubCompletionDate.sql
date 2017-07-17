@@ -8,7 +8,7 @@ returns void as $$
 --this may mean that it was once "completed" but is no longer completed based
 --on curator actions in the pub tracker -- aka: pub_history_tracking table.
 
-declare status varchar(50) := (Select pts_status from pub_tracking_Status
+declare status text := (Select pts_status from pub_tracking_Status
     	     	     where pts_pk_id = vPubStatusId);
 begin 
 if (status like 'CLOSED%')

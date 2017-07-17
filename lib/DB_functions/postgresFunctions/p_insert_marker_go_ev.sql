@@ -1,6 +1,6 @@
-create or replace function p_insert_marker_go_ev (mrkrZdbId	varchar(50), 
-				      goTermZdbId	varchar(50), 
-			                 pubZdbId	varchar(50),
+create or replace function p_insert_marker_go_ev (mrkrZdbId	text, 
+				      goTermZdbId	text, 
+			                 pubZdbId	text,
 	                                   evCode      varchar(3))
 
 returns void as $$

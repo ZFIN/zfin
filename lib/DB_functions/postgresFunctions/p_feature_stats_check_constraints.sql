@@ -1,10 +1,10 @@
 create or replace function p_feature_stats_check_constraints (vPkID int8, 
-       		 vFeatID varchar(50),
-		 vSuperTermID varchar(50),
-		 vSubTermID varchar(50),
-		 vFigID varchar(50),
-		 vPubID varchar(50),
-		 vXpatResID varchar(50))
+       		 vFeatID text,
+		 vSuperTermID text,
+		 vSubTermID text,
+		 vFigID text,
+		 vPubID text,
+		 vXpatResID text)
 returns void as $$
 declare vOk int;
 begin

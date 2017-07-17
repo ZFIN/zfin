@@ -4,7 +4,7 @@ returns void as $$
 
 --procedure assumes that on insert of pub_tracking_history, only the "Ready for Curation.
 
-declare status varchar(50) := (Select pts_status from pub_tracking_Status
+declare status text := (Select pts_status from pub_tracking_Status
     	     	     where pts_pk_id = vPubStatusId);
 
 begin

@@ -3,7 +3,7 @@ returns void as $$
 declare vDataType varchar(30) ;
 	 vGenotypeFtrCount integer ;	
 	 vFmrelCount integer ;
-	 vRelatedFtr varchar(50);
+	 vRelatedFtr text;
 	 vGenotypeZDB  genotype.geno_zdb_id%TYPE;
 	 vGenoDisplay  genotype.geno_display_name%TYPE;
 	 vGenoHandle  genotype.geno_handle%TYPE;

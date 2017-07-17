@@ -1,5 +1,5 @@
 
-create or replace function p_marker_sequence_unique (vseq_mrkr_zdb_id varchar(50), vseq_sequence varchar(255), vseq_sequence_2 varchar(255))
+create or replace function p_marker_sequence_unique (vseq_mrkr_zdb_id text, vseq_sequence varchar(255), vseq_sequence_2 varchar(255))
 returns void as $$
 
 declare ok boolean;

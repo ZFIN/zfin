@@ -1,4 +1,4 @@
-create or replace function p_update_dblink_length (zAccBkAccNum varchar(50), zAccBkFdbcontZdbId text, vAccBkLength int)
+create or replace function p_update_dblink_length (zAccBkAccNum text, zAccBkFdbcontZdbId text, vAccBkLength int)
 returns void as $$
 
 begin

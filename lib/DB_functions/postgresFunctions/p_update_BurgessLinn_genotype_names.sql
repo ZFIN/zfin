@@ -1,7 +1,7 @@
 create or replace function p_update_BurgessLinn_genotype_names ()
 returns void as $$
 	
-	declare vFtrZDB varchar(50);
+	declare vFtrZDB text;
 	begin
 		for vFtrZDB in
 			select tmp_feat_id

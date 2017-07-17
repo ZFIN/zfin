@@ -1,6 +1,6 @@
-create or replace function p_markers_present_absent_exclusive (vFmrelMrkrId varchar(50),
-       					  vFmrelFtrId varchar(50),
-					  vFmrelRel varchar(50))
+create or replace function p_markers_present_absent_exclusive (vFmrelMrkrId text,
+       					  vFmrelFtrId text,
+					  vFmrelRel text)
 returns void as $$
 
     declare vOk int :=0 ;

@@ -1,7 +1,7 @@
 create or replace function create_stg_name_ext(
   stgHrsStart      decimal(7,2),
   stgHrsEnd        decimal(7,2),
-  stgOtherFeatures varchar(50))
+  stgOtherFeatures text)
 
   returns varchar(50) as $stgNameExt$
 

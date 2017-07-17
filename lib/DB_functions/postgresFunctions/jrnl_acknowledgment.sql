@@ -19,7 +19,7 @@ jrnl_acknowledgment (
    zdb_jrnl_count integer;
    jrnl_url       varchar(255);
    journal_name   varchar(255);
-   add_on_text    varchar(50);  
+   add_on_text    text;  
 
  begin  
   -- Check that the parameter is not null
