@@ -1,6 +1,6 @@
 create or replace function 
 pub_xpat_curation_status (
-  pubZdbId       varchar(50))
+  pubZdbId       text)
 
   returns varchar(25) as $xpat_cur_status$ 
 

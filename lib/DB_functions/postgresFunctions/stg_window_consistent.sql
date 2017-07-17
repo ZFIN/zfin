@@ -1,7 +1,7 @@
 create or replace function
 stg_window_consistent (
-  startStgZdbId varchar(50),
-  endStgZdbId   varchar(50))
+  startStgZdbId text,
+  endStgZdbId   text)
 
   returns boolean as $true$
 

@@ -1,4 +1,4 @@
-create or replace function get_person_full_name(personZdbId varchar(50)) 
+create or replace function get_person_full_name(personZdbId text) 
 	returns varchar(150) as $vFullName$
 
 

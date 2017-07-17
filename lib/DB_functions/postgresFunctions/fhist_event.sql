@@ -1,5 +1,5 @@
 create or replace procedure 
-fhist_event( active_feature varchar(50), 
+fhist_event( active_feature text, 
 	     event varchar(40), 
 	     new_value varchar(255), 
              old_value varchar(255) )
@@ -21,9 +21,9 @@ returns void as $$
 
 
   --define global variables  
-  DECLARE vfeature_type varchar(50);	
-   nomen_zdb_id varchar(50);
-   data_zdb_id  varchar(50);
+  DECLARE vfeature_type text;	
+   nomen_zdb_id text;
+   data_zdb_id  text;
    count	integer;
    temp date;
   BEGIN 

@@ -1,4 +1,4 @@
-create or replace function updateMaxStatusAsCurrent (workingPub varchar(50))
+create or replace function updateMaxStatusAsCurrent (workingPub text)
 returns boolean as $true$
  
 

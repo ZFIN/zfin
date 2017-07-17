@@ -37,7 +37,7 @@ returns void as $$
     begin
      drop table if exists anatomy_relationship_list_temp;
      create temp table anatomy_relationship_list_temp (
-	arlt_term_zdb_id	varchar(50),
+	arlt_term_zdb_id	text,
 	arlt_contained_by	varchar(255),
 	arlt_contains 		text,
 	arlt_develops_from	varchar(255),

@@ -1,5 +1,5 @@
 
-create or replace function update_construct_name_component (vMrkrZdbId varchar(50), vMrkrNewName varchar(255))
+create or replace function update_construct_name_component (vMrkrZdbId text, vMrkrNewName varchar(255))
 returns void as $$
 
 begin 

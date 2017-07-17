@@ -1,4 +1,4 @@
-create or replace function updatePubCompletionDate (vPubZdbId varchar(50),
+create or replace function updatePubCompletionDate (vPubZdbId text,
        		 			 vPubStatusId int8)
 returns void as $$
 

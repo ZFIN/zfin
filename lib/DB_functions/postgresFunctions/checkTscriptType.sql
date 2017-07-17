@@ -1,4 +1,4 @@
-create or replace function checkTscriptType (vTscriptZdbId varchar(50),  vMrelMrkr2Zdb_id varchar(50), vMrelType varchar(50))
+create or replace function checkTscriptType (vTscriptZdbId text,  vMrelMrkr2Zdb_id text, vMrelType text)
 returns void as $$
 declare typeName transcript_type.tscriptt_type%TYPE;
 begin

@@ -1,4 +1,4 @@
-create or replace function restrictGAFEntries (vTermZdbId varchar(50), vEvidenceCode varchar(3))
+create or replace function restrictGAFEntries (vTermZdbId text, vEvidenceCode varchar(3))
 returns void as $$
 
 begin 

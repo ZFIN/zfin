@@ -1,4 +1,4 @@
-create or replace function updatestandardorgenericcontrol(vExpZdbId varchar(50))
+create or replace function updatestandardorgenericcontrol(vExpZdbId text)
 returns boolean as $true$ 
   
   declare stdGc boolean := 'f';

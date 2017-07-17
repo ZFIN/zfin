@@ -1,5 +1,5 @@
 
-create or replace function populate_lab_address_update_tracking (labZdbId varchar(50), oldAddress text, newAddress text)
+create or replace function populate_lab_address_update_tracking (labZdbId text, oldAddress text, newAddress text)
 returns void as $$
 
 begin

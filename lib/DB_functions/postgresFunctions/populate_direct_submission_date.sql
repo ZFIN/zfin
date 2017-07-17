@@ -12,7 +12,7 @@
 -------------------------------------------------------------
 
 create or replace function populate_direct_submission_date (
-				xpatexZdbId   varchar(50))
+				xpatexZdbId  text)
 returns void as $$
 begin
 	update expression_experiment 

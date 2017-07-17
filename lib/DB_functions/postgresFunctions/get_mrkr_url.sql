@@ -1,4 +1,4 @@
-create or replace function get_mrkr_url( mrkrZdbId varchar(50) )
+create or replace function get_mrkr_url( mrkrZdbId text )
  
   returns text as $mrkrUrl$
 

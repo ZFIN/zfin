@@ -1,6 +1,6 @@
 create or replace function checkDblinkOneToOneAccessionMapping (vDblinkZdbId varchar(50),
-       		 				      vFeatureZdbId varchar(50),
-						      vDblinkAccNum varchar(50)
+       		 				      vFeatureZdbId text,
+						      vDblinkAccNum text
 )
 returns void as $$
 begin

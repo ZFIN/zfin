@@ -1,4 +1,4 @@
-create or replace function updateConstructAbbrev (vMrkrZdbId varchar(50), vMrkrName varchar(255), vMrkrType varchar(10))
+create or replace function updateConstructAbbrev (vMrkrZdbId text, vMrkrName varchar(255), vMrkrType varchar(10))
 
 returns void as $$
 

@@ -1,8 +1,8 @@
 create or replace function stg_windows_overlap(
-  w1StartStageZdbId varchar(50),
-  w1EndStageZdbId varchar(50),
-  w2StartStageZdbId varchar(50),
-  w2EndStageZdbId varchar(50))
+  w1StartStageZdbId text),
+  w1EndStageZdbId text,
+  w2StartStageZdbId text,
+  w2EndStageZdbId text)
 
   returns boolean as $true$
 

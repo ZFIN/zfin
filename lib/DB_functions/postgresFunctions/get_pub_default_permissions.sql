@@ -28,7 +28,7 @@
 --
 ------------------------------------------------------------------------
 
-create or replace function get_pub_default_permissions (vPubJrnlZdbId varchar(50))
+create or replace function get_pub_default_permissions (vPubJrnlZdbId text)
 
   returns boolean as $true$
 

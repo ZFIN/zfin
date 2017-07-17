@@ -1,4 +1,4 @@
-create or replace function get_entity_name_html ( entityZdbId varchar(50) )
+create or replace function get_entity_name_html ( entityZdbId text )
 
   returns text as $entityNameHtml$;
 

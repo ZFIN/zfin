@@ -1,4 +1,4 @@
-create function get_mrkr_abbrev_html_link( mrkrZdbId varchar(50) )
+create function get_mrkr_abbrev_html_link( mrkrZdbId text )
  
   returning lvarchar;
 

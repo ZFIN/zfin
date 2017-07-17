@@ -18,9 +18,7 @@ begin
      title = (select scrub_char(NEW.title));
      NEW.title = title;
 
-     accession_no = (select scrub_char(NEW.accession_no));
-     NEW.accession_no = accession_no;
-
+    
      pubmed_authors = (select scrub_char(NEW.pubmed_authors));
      NEW.pubmed_authors = pubmed_authors;
 

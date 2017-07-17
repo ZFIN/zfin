@@ -1,4 +1,4 @@
-create or replace function update_construct_name (constructId varchar(50), componentId varchar(50))
+create or replace function update_construct_name (constructId text, componentId text)
 returns void as $$
 
    declare name varchar(255);

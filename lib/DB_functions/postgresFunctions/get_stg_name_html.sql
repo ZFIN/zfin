@@ -1,5 +1,5 @@
 create or replace function get_stg_name_html(
-  stgZdbId        varchar(50),
+  stgZdbId        text,
   nameType  	  varchar(30) default NULL)
 
   returns varchar(200) as $stgNameHtml$

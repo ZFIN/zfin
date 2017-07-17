@@ -3,7 +3,7 @@ drop trigger if exists transcript_trigger on transcript;
 create or replace function transcript()
 returns trigger as
 $BODY$
-declare tscript_load_id varchar(50);
+declare tscript_load_id text;
 begin
      
      tscript_load_id = (select setTscriptLoadId(NEW.tscript_load_id));

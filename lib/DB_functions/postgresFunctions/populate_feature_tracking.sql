@@ -1,6 +1,6 @@
 create or replace function populate_feature_tracking (featureAbbrev varchar(70),
        		 			    featureName varchar(255),
-					    featureZdbId varchar(50))
+					    featureZdbId text)
 
 returns void as $$
    declare vOk int := 0;

@@ -1,4 +1,4 @@
-create or replace function get_pub_mini_ref(pubZdbId varchar(50))
+create or replace function get_pub_mini_ref(pubZdbId text)
 
   returns varchar(60) as miniRef
 

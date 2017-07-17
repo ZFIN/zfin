@@ -1,4 +1,4 @@
-create or replace function updatePubLastSentEmailDate (vPubZdbId varchar(50), vDateReceived timestamp)
+create or replace function updatePubLastSentEmailDate (vPubZdbId text, vDateReceived timestamp)
 returns void as $$
 
 begin
