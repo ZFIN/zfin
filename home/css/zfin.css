@@ -1044,14 +1044,19 @@ input + label {
     font-weight: normal !important;
 }
 
+.autocomplete-suggestion-text {
+    clear: both;
+    margin-right: 10px;
+}
 .autocomplete-direct-link {
     color: #ccc;
-    padding-left: 30px;
     visibility: hidden;
+    float:right;
 }
 
 .autocomplete-direct-link:hover { color: white }
 
 .tt-suggestion:hover .autocomplete-direct-link {
+    color: white;
     visibility: visible;
 }
