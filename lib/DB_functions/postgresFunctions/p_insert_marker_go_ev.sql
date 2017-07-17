@@ -5,7 +5,7 @@ create or replace function p_insert_marker_go_ev (mrkrZdbId	text,
 
 returns void as $$
 
-	declare mrkrGOEvZdbId	varchar(50) := get_id('MRKRGOEV');
+	declare mrkrGOEvZdbId	text) := get_id('MRKRGOEV');
 	
 	begin 
 

@@ -1,5 +1,5 @@
-create or replace function p_update_fmrel_genotype_names (vNewZDBid varchar(50),
-					vOldZdbId varchar(50))
+create or replace function p_update_fmrel_genotype_names (vNewZDBid text,
+					vOldZdbId text)
 returns void as $$
 
 	declare vDataType varchar(30) ;

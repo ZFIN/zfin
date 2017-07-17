@@ -1,4 +1,4 @@
-create or replace function p_set_fish_to_modified(vZdbId varchar(50))
+create or replace function p_set_fish_to_modified(vZdbId text)
 returns void as $$
 
 begin

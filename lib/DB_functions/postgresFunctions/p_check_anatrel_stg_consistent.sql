@@ -39,15 +39,15 @@
 
 
 create or replace function  p_check_anatrel_stg_consistent (
-		parentAnatZdbId    varchar(50) default NULL,
-	   	childAnatZdbId	   varchar(50) default NULL,
-		relDageditId	   varchar(50) default NULL,	
-		parentStartHour	   varchar(50) default NULL,
-		parentEndHour	   varchar(50) default NULL,
-		childStartHour	   varchar(50) default NULL,
-		childEndHour	   varchar(50) default NULL,
-		childOboID	   varchar(50) default NULL,
-		parentOboID	   varchar(50) default NULL
+		parentAnatZdbId    text default NULL,
+	   	childAnatZdbId	   text default NULL,
+		relDageditId	   text default NULL,	
+		parentStartHour	   text default NULL,
+		parentEndHour	   text default NULL,
+		childStartHour	   text default NULL,
+		childEndHour	   text default NULL,
+		childOboID	   text default NULL,
+		parentOboID	   text default NULL
 	
 	)
 returns void as $$

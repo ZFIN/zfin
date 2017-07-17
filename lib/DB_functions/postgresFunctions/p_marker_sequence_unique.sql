@@ -4,7 +4,7 @@ returns void as $$
 
 declare ok boolean;
  objtype varchar(30) := get_obj_type(vseq_mrkr_zdb_id);
- foundId varchar(50) := (select seq_mrkr_zdb_id from only(marker_sequence) 
+ foundId text := (select seq_mrkr_zdb_id from only(marker_sequence) 
 				where seq_sequence = 
                       and seq_sequence_2 = vseq_sequence_2
                       and seq_sequence_2 is not null

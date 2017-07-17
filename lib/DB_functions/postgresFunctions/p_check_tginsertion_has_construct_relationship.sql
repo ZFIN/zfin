@@ -1,4 +1,4 @@
-create or replace function p_check_tginsertion_has_construct_relationship (vGenofeat_feature_zdb_id varchar(50))
+create or replace function p_check_tginsertion_has_construct_relationship (vGenofeat_feature_zdb_id text)
 
 returns void as $$
 

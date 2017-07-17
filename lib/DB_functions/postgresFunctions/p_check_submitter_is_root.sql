@@ -1,4 +1,4 @@
-create or replace function p_check_submitter_is_root (vSubmitter_ID varchar(50))
+create or replace function p_check_submitter_is_root (vSubmitter_ID text)
 returns void as $$
 
 --p_check_submitter_is_root

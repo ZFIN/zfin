@@ -1,5 +1,5 @@
-create or replace function p_populate_go_root_terms (mrkrZdbId  varchar(50), 
-				          mrkrName  varchar(50),
+create or replace function p_populate_go_root_terms (mrkrZdbId  text, 
+				          mrkrName  text,
 				 	  mrkrType  varchar(20))
 
 returns void as $$

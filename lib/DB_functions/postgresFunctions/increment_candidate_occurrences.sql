@@ -1,4 +1,4 @@
-create or replace function increment_candidate_occurrences (vCndZdbId varchar(50))
+create or replace function increment_candidate_occurrences (vCndZdbId text)
         returns int as $counter$
 
        declare counter  run_candidate.runcan_occurrence_order%TYPE := (select cnd_run_count

@@ -1,8 +1,8 @@
-create or replace function p_check_fx_postcomposed_terms (vSuperTermZdbId varchar(50),
-                                        vSubTermZdbId varchar(50))
+create or replace function p_check_fx_postcomposed_terms (vSuperTermZdbId text,
+                                        vSubTermZdbId text)
 returns void as $$
-        declare vSubTermType varchar(50);
-        declare vSuperTermType varchar(50) ;
+        declare vSubTermType text;
+        declare vSuperTermType text;
 	declare vIsSuperTermAOCell      boolean ;
 	declare vIsSubTermAOCell	       boolean;
 

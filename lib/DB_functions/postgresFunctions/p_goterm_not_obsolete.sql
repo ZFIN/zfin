@@ -5,7 +5,7 @@
 --Terms are declared 'obsolete' by the gene_ontology consortium.
 -----------------------------------------------------------------------------------
 
-create or replace function p_goterm_not_obsolete (vGoTerm varchar(50))
+create or replace function p_goterm_not_obsolete (vGoTerm text)
 returns void as $$
 declare ok boolean := (select term_is_obsolete
            from term

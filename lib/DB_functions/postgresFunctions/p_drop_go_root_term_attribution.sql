@@ -13,7 +13,7 @@
 --       none
 ----------------------------------------------------------------------
 create or replace function p_drop_go_root_term_attribution (
-		 	mrkrZdbId	varchar(50)
+		 	mrkrZdbId	text
 			)
 returns void as $$
 begin

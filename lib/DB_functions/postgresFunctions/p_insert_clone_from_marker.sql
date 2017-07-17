@@ -1,4 +1,4 @@
-create or replace function p_insert_clone_from_marker (vMrkrZdbId varchar(50),
+create or replace function p_insert_clone_from_marker (vMrkrZdbId text,
        		 			     vMrkrType varchar(30))
 returns void as $$
 
