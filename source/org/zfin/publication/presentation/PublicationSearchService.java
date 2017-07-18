@@ -1,11 +1,11 @@
 package org.zfin.publication.presentation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.search.Category;
@@ -27,15 +27,11 @@ public class PublicationSearchService {
         SolrQuery query = new SolrQuery();
         query.addFilterQuery(fq(FieldName.CATEGORY, Category.PUBLICATION.getName()));
         query.setFields(FieldName.ID.getName());
-        if (StringUtils.isNotEmpty(formBean.getAuthor())) {
-            query.addFilterQuery(fq(FieldName.AUTHOR_STRING, formBean.getAuthor()));
-        }
-        if (StringUtils.isNotEmpty(formBean.getTitle())) {
-            query.addFilterQuery(fq(FieldName.NAME, formBean.getTitle()));
-        }
-        if (StringUtils.isNotEmpty(formBean.getJournal())) {
-            query.addFilterQuery(fq(FieldName.JOURNAL, formBean.getJournal()));
-        }
+        addFq(query, FieldName.AUTHOR_STRING, formBean.getAuthor());
+        addFq(query, FieldName.NAME, formBean.getTitle());
+        addFq(query, FieldName.JOURNAL, formBean.getJournal());
+        addFq(query, FieldName.KEYWORD, formBean.getKeywords());
+        addFq(query, FieldName.ID_T, formBean.getZdbID());
         query.addSort(FieldName.DATE.getName(), SolrQuery.ORDER.desc);
         query.addSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
         query.setRows(formBean.getMaxDisplayRecordsInteger());
@@ -56,6 +52,12 @@ public class PublicationSearchService {
 
     private static String fq(FieldName fieldName, String value) {
         return fieldName.getName() + ":(\"" + SolrService.luceneEscape(value) + "\")";
+    }
+
+    private static void addFq(SolrQuery query, FieldName fieldName, String value) {
+        if (StringUtils.isNotEmpty(value)) {
+            query.addFilterQuery(fq(fieldName, value));
+        }
     }
 
 }

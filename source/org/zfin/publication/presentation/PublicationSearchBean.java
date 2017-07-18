@@ -10,6 +10,8 @@ public class PublicationSearchBean extends PaginationBean {
     private String author;
     private String title;
     private String journal;
+    private String keywords;
+    private String zdbID;
 
     private List<Publication> results;
 
@@ -37,6 +39,22 @@ public class PublicationSearchBean extends PaginationBean {
         this.journal = journal;
     }
 
+    public String getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
+    }
+
     public List<Publication> getResults() {
         return results;
     }
@@ -46,9 +64,7 @@ public class PublicationSearchBean extends PaginationBean {
     }
 
     public boolean isEmpty() {
-        return author == null &&
-                title == null &&
-                journal == null;
+        return author == null && title == null && journal == null && keywords == null && zdbID == null;
     }
 
     @Override

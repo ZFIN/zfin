@@ -55,6 +55,14 @@
                         <th><form:label path="journal" cssClass="namesearchLabel">Journal</form:label></th>
                         <td><form:input type="text" path="journal"/></td>
                     </tr>
+                    <tr>
+                        <th><form:label path="journal" cssClass="namesearchLabel">Keywords</form:label></th>
+                        <td><form:input type="text" path="keywords"/></td>
+                    </tr>
+                    <tr>
+                        <th><form:label path="journal" cssClass="namesearchLabel">ZFIN ID</form:label></th>
+                        <td><form:input type="text" path="zdbID"/></td>
+                    </tr>
                 </table>
             </td>
         </tr>
