@@ -31,6 +31,8 @@ public class PublicationSearchController {
             publicationSearchService.populateSearchResults(formBean);
         }
         model.addAttribute("formBean", formBean);
+        model.addAttribute("yearTypes", PublicationSearchBean.YearType.values());
+        model.addAttribute("centuries", PublicationSearchBean.Century.values());
         return "publication/publication-search.page";
     }
 

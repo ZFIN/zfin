@@ -56,18 +56,34 @@
                         <td><form:input type="text" path="journal"/></td>
                     </tr>
                     <tr>
-                        <th><form:label path="journal" cssClass="namesearchLabel">Keywords</form:label></th>
+                        <th><form:label path="keywords" cssClass="namesearchLabel">Keywords</form:label></th>
                         <td><form:input type="text" path="keywords"/></td>
                     </tr>
                     <tr>
-                        <th><form:label path="journal" cssClass="namesearchLabel">ZFIN ID</form:label></th>
+                        <th><form:label path="zdbID" cssClass="namesearchLabel">ZFIN ID</form:label></th>
                         <td><form:input type="text" path="zdbID"/></td>
+                    </tr>
+                </table>
+            </td>
+            <td width="50%">
+                <table class="primary-entity-attributes">
+                    <tr>
+                        <th><form:label path="twoDigitYear" cssClass="namesearchLabel">Year</form:label></th>
+                        <td>
+                            <form:select path="yearType">
+                                <form:options itmes="${yearTypes}" itemLabel="display" />
+                            </form:select>
+                            <form:select path="century">
+                                <form:options items="${centuries}" itemLabel="display" />
+                            </form:select>
+                            <form:input type="text" path="twoDigitYear" size="2" maxlength="2" />
+                        </td>
                     </tr>
                 </table>
             </td>
         </tr>
         <tr>
-            <td class="submitbar" bgcolor="#cccccc">
+            <td class="submitbar" bgcolor="#cccccc" colspan="2">
                 <input value="Search" type="submit">
                 <input value="Reset" type="reset">
             </td>

@@ -7,11 +7,46 @@ import java.util.List;
 
 public class PublicationSearchBean extends PaginationBean {
 
+    public enum YearType {
+        EQUALS("equals"),
+        BEFORE("before"),
+        AFTER("after");
+
+        private final String display;
+
+        YearType(String display) {
+            this.display = display;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
+    }
+
+    public enum Century {
+        TWENTY("20"),
+        NINETEEN("19"),
+        EIGHTEEN("18");
+
+        private final String display;
+
+        Century(String display) {
+            this.display = display;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
+    }
+
     private String author;
     private String title;
     private String journal;
     private String keywords;
     private String zdbID;
+    private YearType yearType;
+    private Century century;
+    private String twoDigitYear;
 
     private List<Publication> results;
 
@@ -53,6 +88,30 @@ public class PublicationSearchBean extends PaginationBean {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public YearType getYearType() {
+        return yearType;
+    }
+
+    public void setYearType(YearType yearType) {
+        this.yearType = yearType;
+    }
+
+    public Century getCentury() {
+        return century;
+    }
+
+    public void setCentury(Century century) {
+        this.century = century;
+    }
+
+    public String getTwoDigitYear() {
+        return twoDigitYear;
+    }
+
+    public void setTwoDigitYear(String twoDigitYear) {
+        this.twoDigitYear = twoDigitYear;
     }
 
     public List<Publication> getResults() {

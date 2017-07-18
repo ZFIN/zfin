@@ -32,6 +32,20 @@ public class PublicationSearchService {
         addFq(query, FieldName.JOURNAL, formBean.getJournal());
         addFq(query, FieldName.KEYWORD, formBean.getKeywords());
         addFq(query, FieldName.ID_T, formBean.getZdbID());
+        if (StringUtils.isNotEmpty(formBean.getTwoDigitYear()) && formBean.getTwoDigitYear().matches("[0-9]+")) {
+            int fullYear = Integer.parseInt(formBean.getCentury().getDisplay() + formBean.getTwoDigitYear());
+            switch (formBean.getYearType()) {
+                case EQUALS:
+                    query.addFilterQuery("year:" + fullYear);
+                    break;
+                case BEFORE:
+                    query.addFilterQuery("year:[* TO " + (fullYear - 1) + "]");
+                    break;
+                case AFTER:
+                    query.addFilterQuery("year:[" + (fullYear + 1) + " TO *]");
+                    break;
+            }
+        }
         query.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
         query.addSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
         query.setRows(formBean.getMaxDisplayRecordsInteger());
