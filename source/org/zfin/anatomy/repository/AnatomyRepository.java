@@ -101,4 +101,8 @@ public interface AnatomyRepository extends CachedRepository {
     void createPileStructure(ExpressionStructure structure);
 
     DevelopmentStage getStageByOboID(String ID);
+
+    DevelopmentStage getStageByStartHours(float start);
+
+    DevelopmentStage getStageByEndHours(float end);
 }

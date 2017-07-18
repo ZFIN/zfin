@@ -1,11 +1,16 @@
 package org.zfin.expression.presentation;
 
-public class GeneResult {
+import org.zfin.marker.Marker;
 
-    String symbol;
-    String id;
-    Integer publicationCount;
-    Integer figureCount;
+public class GeneResult extends ExpressionSearchResult {
+
+    private String symbol;
+    private String id;
+    private Integer publicationCount;
+    private Integer figureCount;
+    private Marker gene;
+    private String matchingText;
+    private String figureResultUrl;
 
     public String getUrl() { return "http://zfin.org/" + id; }
 
@@ -39,5 +44,29 @@ public class GeneResult {
 
     public void setFigureCount(Integer figureCount) {
         this.figureCount = figureCount;
+    }
+
+    public Marker getGene() {
+        return gene;
+    }
+
+    public void setGene(Marker gene) {
+        this.gene = gene;
+    }
+
+    public String getMatchingText() {
+        return matchingText;
+    }
+
+    public void setMatchingText(String matchingText) {
+        this.matchingText = matchingText;
+    }
+
+    public String getFigureResultUrl() {
+        return figureResultUrl;
+    }
+
+    public void setFigureResultUrl(String figureResultUrl) {
+        this.figureResultUrl = figureResultUrl;
     }
 }

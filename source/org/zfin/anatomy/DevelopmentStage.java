@@ -17,6 +17,8 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
     public static final String ADULT_STAGE = "Adult";
     public static final String ADULT_STAGE_ZDB_ID = "ZDB-STAGE-010723-39";
     public static final String UNKNOWN = "Unknown";
+    public static final Float MIN = 0.0f;
+    public static final Float MAX = 17520f;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")

@@ -120,8 +120,6 @@
             <script language="javascript"
                     src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js" type=""></script>
             <div id="anatomyTermInput"></div>
-
-
         </td>
         <td rowspan=2>
             <span class="bold">Filters:</span><a href="/ZFIN/misc_html/fish_search_filters.html" class="popup-link help-popup-link"></a>

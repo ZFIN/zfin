@@ -16,8 +16,6 @@ import org.zfin.expression.ExpressionStructure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GenericTermRelationship;
-import org.zfin.ontology.Term;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 
@@ -255,6 +253,24 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      */
     public void invalidateCachedObjects() {
         allStagesWithoutUnknown = null;
+    }
+
+    @Override
+    public DevelopmentStage getStageByStartHours(float start) {
+        return (DevelopmentStage) HibernateUtil.currentSession()
+                .createCriteria(DevelopmentStage.class)
+                .add(Restrictions.eq("hoursStart", start))
+                .add(Restrictions.ne("name", "Unknown"))
+                .uniqueResult();
+    }
+
+    @Override
+    public DevelopmentStage getStageByEndHours(float end) {
+            return (DevelopmentStage) HibernateUtil.currentSession()
+                    .createCriteria(DevelopmentStage.class)
+                    .add(Restrictions.eq("hoursEnd", end))
+                    .add(Restrictions.ne("name", "Unknown"))
+                    .uniqueResult();
     }
 
 }
