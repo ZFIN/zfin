@@ -114,6 +114,7 @@ public enum FieldName {
     TYPEGROUP("typegroup"),
     URL("url"),
     XREF("xref"),
+    YEAR("year"),
     ZEBRAFISH_GENE("zebrafish_gene");
 
     private String name;

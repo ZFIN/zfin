@@ -32,7 +32,7 @@ public class PublicationSearchService {
         addFq(query, FieldName.JOURNAL, formBean.getJournal());
         addFq(query, FieldName.KEYWORD, formBean.getKeywords());
         addFq(query, FieldName.ID_T, formBean.getZdbID());
-        query.addSort(FieldName.DATE.getName(), SolrQuery.ORDER.desc);
+        query.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
         query.addSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
         query.setRows(formBean.getMaxDisplayRecordsInteger());
         query.setStart((formBean.getPageInteger() - 1) * formBean.getMaxDisplayRecordsInteger());
