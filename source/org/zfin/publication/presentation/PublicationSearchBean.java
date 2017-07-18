@@ -47,6 +47,7 @@ public class PublicationSearchBean extends PaginationBean {
     private YearType yearType;
     private Century century;
     private String twoDigitYear;
+    private Publication.Type pubType;
 
     private List<Publication> results;
 
@@ -112,6 +113,14 @@ public class PublicationSearchBean extends PaginationBean {
 
     public void setTwoDigitYear(String twoDigitYear) {
         this.twoDigitYear = twoDigitYear;
+    }
+
+    public Publication.Type getPubType() {
+        return pubType;
+    }
+
+    public void setPubType(Publication.Type pubType) {
+        this.pubType = pubType;
     }
 
     public List<Publication> getResults() {

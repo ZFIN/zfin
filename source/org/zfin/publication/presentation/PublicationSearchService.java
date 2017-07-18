@@ -32,6 +32,9 @@ public class PublicationSearchService {
         addFq(query, FieldName.JOURNAL, formBean.getJournal());
         addFq(query, FieldName.KEYWORD, formBean.getKeywords());
         addFq(query, FieldName.ID_T, formBean.getZdbID());
+        if (formBean.getPubType() != null) {
+            addFq(query, FieldName.PUBLICATION_TYPE, formBean.getPubType().getDisplay());
+        }
         if (StringUtils.isNotEmpty(formBean.getTwoDigitYear()) && formBean.getTwoDigitYear().matches("[0-9]+")) {
             int fullYear = Integer.parseInt(formBean.getCentury().getDisplay() + formBean.getTwoDigitYear());
             switch (formBean.getYearType()) {

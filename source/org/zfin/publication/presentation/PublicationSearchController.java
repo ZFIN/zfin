@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.zfin.publication.Publication;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,6 +34,7 @@ public class PublicationSearchController {
         model.addAttribute("formBean", formBean);
         model.addAttribute("yearTypes", PublicationSearchBean.YearType.values());
         model.addAttribute("centuries", PublicationSearchBean.Century.values());
+        model.addAttribute("pubTypes", Publication.Type.values());
         return "publication/publication-search.page";
     }
 

@@ -79,6 +79,15 @@
                             <form:input type="text" path="twoDigitYear" size="2" maxlength="2" />
                         </td>
                     </tr>
+                    <tr>
+                        <th><form:label path="pubType" cssClass="namesearchLabel">Type</form:label></th>
+                        <td>
+                            <form:select path="pubType">
+                                <form:option value="" label="ALL" />
+                                <form:options items="${pubTypes}" itemLabel="display" />
+                            </form:select>
+                        </td>
+                    </tr>
                 </table>
             </td>
         </tr>
