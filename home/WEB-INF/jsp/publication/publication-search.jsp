@@ -30,7 +30,7 @@
 </c:if>
 
 <div class="titlebar">
-    <h1>Search for Publications</h1>
+    <h1>${formBean.isEmpty() ? "Search for Publications" : "Modify your search"}</h1>
     <span class="yourinputwelcome">
         <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
             <tiles:putAttribute name="subjectName" value="Publication search"/>
