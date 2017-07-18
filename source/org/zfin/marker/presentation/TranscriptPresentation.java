@@ -12,7 +12,7 @@ public class TranscriptPresentation implements ProvidesLink, Serializable {
 
     @Override
     public String getLink() {
-        String link = "<a href='/action/marker/view/" + zdbID + "'>";
+        String link = "<a href='/" + zdbID + "'>";
         return link;
     }
 

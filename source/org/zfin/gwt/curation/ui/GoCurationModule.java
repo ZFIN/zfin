@@ -12,12 +12,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.ui.ListBoxWrapper;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
+import org.zfin.gwt.root.ui.ZfinModule;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,10 +75,16 @@ public class GoCurationModule extends ConstructionZoneAdapater implements ZfinCu
 
     @Override
     public void handleCurationEvent(CurationEvent event) {
-        if (event.getEventType().is(EventType.MARKER_ATTRIBUTION) || event.getEventType().is(EventType.MARKER_DEATTRIBUTION))
+        if (event.getEventType().is(EventType.MARKER_ATTRIBUTION) || event.getEventType().is(EventType.MARKER_DEATTRIBUTION)
+                || event.getEventType().is(EventType.CREATE_MARKER))
             goAddBox.updateGenes();
         if (event.getEventType().is(EventType.CREATE_FISH))
             goAddBox.getInferenceListBox().setAvailableValues();
+
+        if (event.getEventType().equals(EventType.CREATE_MARKER_GO_EVIDENCE)) {
+            goViewTable.setValues();
+        }
+
     }
 
     @Override
@@ -142,19 +150,32 @@ public class GoCurationModule extends ConstructionZoneAdapater implements ZfinCu
     }
 
     private void updateGeneFilter() {
-        MarkerGoEvidenceRPCService.App.getInstance().getMarkerGoTermEvidencesForPub(publicationID,
-                new MarkerEditCallBack<List<GoEvidenceDTO>>("Failed to find pub: " + publicationID + " ") {
-                    @Override
-                    public void onSuccess(List<GoEvidenceDTO> result) {
-                        geneFilterListBox.clear();
-                        geneFilterListBox.addItem(GENE_FILTER_ALL);
-                        for (GoEvidenceDTO goEvidenceDTO : result) {
-                            if (false == geneFilterListBox.containsItemText(goEvidenceDTO.getMarkerDTO().getName())) {
-                                geneFilterListBox.addItem(goEvidenceDTO.getMarkerDTO().getName());
-                            }
-                        }
+        AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.GET_GENES_FOR_MARKER_GO_START);
+        MarkerGoEvidenceServiceGWT.getMarkerGoTermEvidencesForPub(publicationID, new MarkerEditCallBack<List<GoEvidenceDTO>>("Failed to find pub: " + publicationID + " ") {
+            @Override
+            public void onSuccess(List<GoEvidenceDTO> result) {
+                AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.GET_GENES_FOR_MARKER_GO_STOP);
+                geneFilterListBox.clear();
+                geneFilterListBox.addItem(GENE_FILTER_ALL);
+                for (GoEvidenceDTO goEvidenceDTO : result) {
+                    if (false == geneFilterListBox.containsItemText(goEvidenceDTO.getMarkerDTO().getName())) {
+                        geneFilterListBox.addItem(goEvidenceDTO.getMarkerDTO().getName());
                     }
-                });
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                super.onFailure(throwable);
+                AppUtils.fireAjaxCall(GoCurationModule.getModuleInfo(), AjaxCallEventType.GET_GENES_FOR_MARKER_GO_STOP);
+            }
+        });
+
+
+    }
+
+    public static ZfinModule getModuleInfo() {
+        return new ZfinModule(CurationTab.GO.getName(), GoCurationModule.class.getName());
     }
 
     public ConstructionZone getPileConstructionZoneModule() {
@@ -168,9 +189,7 @@ public class GoCurationModule extends ConstructionZoneAdapater implements ZfinCu
 
     @Override
     public void clearError() {
-        goAddBox.updateGenes();
         goViewTable.refreshGUI();
-        updateGeneFilter();
         openBox(false);
     }
 

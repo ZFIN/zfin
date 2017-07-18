@@ -246,47 +246,6 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return term;
     }
 
-    /**
-     * Retrieve all related Terms and populate the correct relationship types.
-     *
-     * @param genericTerm term
-     * @return list of relationships
-     */
-    @SuppressWarnings("unchecked")
-    public List<GenericTermRelationship> getTermRelationships(Term genericTerm) {
-
-        List<GenericTermRelationship> relatedTerms = new ArrayList<GenericTermRelationship>();
-
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(GenericTermRelationship.class);
-        criteria.add(Restrictions.eq("termOne.zdbID", genericTerm.getZdbID()));
-        criteria.setFetchMode("termTwo", FetchMode.JOIN);
-        criteria.setFetchMode("termTwo.definition", FetchMode.JOIN);
-        List<GenericTermRelationship> rels = (List<GenericTermRelationship>) criteria.list();
-        if (rels != null) {
-            for (GenericTermRelationship relationship : rels) {
-                RelationshipType type = RelationshipType.getInverseRelationshipByName(relationship.getType());
-                if (type != null) {
-                    relationship.setRelationshipType(type);
-                    relatedTerms.add(relationship);
-                }
-            }
-        }
-
-        Criteria criteriaTwo = session.createCriteria(GenericTermRelationship.class);
-        criteriaTwo.add(Restrictions.eq("termTwo.zdbID", genericTerm.getZdbID()));
-        criteriaTwo.setFetchMode("termOne", FetchMode.JOIN);
-        List<GenericTermRelationship> relationshipListTwo = (List<GenericTermRelationship>) criteriaTwo.list();
-        if (relationshipListTwo != null) {
-            for (GenericTermRelationship relationship : relationshipListTwo) {
-                RelationshipType type = RelationshipType.getRelationshipTypeByDbName(relationship.getType());
-                relationship.setRelationshipType(type);
-                relatedTerms.add(relationship);
-            }
-        }
-        return relatedTerms;
-    }
-
     public List<GenericTermRelationship> getTermRelationshipsForTerms(List<Term> terms) {
         Set<String> termIds = new HashSet<String>();
         for (Term t : terms) {

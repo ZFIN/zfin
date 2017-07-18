@@ -1,0 +1,22 @@
+apply plugin: 'java'
+
+//apply from : '../zfinGradle/build.gradle'
+
+def env = System.getenv()
+def targetroot = env['TARGETROOT']
+
+defaultTasks 'deployApacheFiles'
+
+task deployApacheFiles {
+    doLast{
+        copy {
+            from '.'
+            into targetroot+"/server_apps/apache"
+            exclude 'Makefile'
+	    exclude 'build.gradle'
+        }
+        println 'deploy apache files'
+    }
+}
+
+println defaultTasks

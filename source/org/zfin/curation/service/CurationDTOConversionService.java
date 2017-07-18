@@ -1,6 +1,8 @@
 package org.zfin.curation.service;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
@@ -8,7 +10,9 @@ import org.zfin.curation.presentation.*;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.profile.Person;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardImageBean;
 import org.zfin.publication.presentation.DashboardPublicationBean;
@@ -18,6 +22,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class CurationDTOConversionService {
+
+    @Autowired
+    private ProfileRepository profileRepository;
 
     private static final String DEFAULT_IMAGE = "/images/LOCAL/smallogo.gif";
 
@@ -47,10 +54,10 @@ public class CurationDTOConversionService {
         dto.setLastName(person.getLastName());
         dto.setName(person.getFirstName() + " " + person.getLastName());
         dto.setEmail(person.getEmail());
-        if (person.getSnapshot() == null) {
-            dto.setImageURL(DEFAULT_IMAGE);
+        if (StringUtils.isNotEmpty(person.getImage())) {
+            dto.setImageURL(ZfinPropertiesEnum.IMAGE_LOAD.value() + "/" + person.getImage());
         } else {
-            dto.setImageURL("/action/profile/image/view/" + person.getZdbID() + ".jpg");
+            dto.setImageURL(DEFAULT_IMAGE);
         }
         return dto;
     }
@@ -138,6 +145,7 @@ public class CurationDTOConversionService {
             return null;
         }
         CurationStatusDTO dto = new CurationStatusDTO();
+        dto.setCurrent(status.isCurrent());
         dto.setPubZdbID(status.getPublication().getZdbID());
         dto.setStatus(status.getStatus());
         dto.setLocation(status.getLocation());

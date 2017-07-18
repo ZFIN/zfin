@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.expression.FigureService;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.service.ExpressionService;
@@ -16,6 +17,10 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.agr.AllDiseaseDTO;
+import org.zfin.marker.agr.AllGeneDTO;
+import org.zfin.marker.agr.BasicGeneInfo;
+import org.zfin.marker.agr.DiseaseInfo;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.OrthologExternalReference;
@@ -32,13 +37,12 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class GeneViewController {
@@ -50,17 +54,20 @@ public class GeneViewController {
     private ExpressionService expressionService;
 
     @Autowired
+    private MarkerService markerService;
+
+    @Autowired
     private MarkerRepository markerRepository;
 
     @Autowired
     private EfgViewController efgViewController;
 
     @RequestMapping(value = "/gene/view/{zdbID}")
-    public String getGeneView(@PathVariable("zdbID") String zdbID,
-                              Model model) throws Exception {
+    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
         logger.info("gene: " + gene);
@@ -114,6 +121,11 @@ public class GeneViewController {
         // (Antibodies)
         geneBean.setRelatedAntibodies(markerRepository.getRelatedMarkerDisplayForTypes(
                 gene, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
+        if (gene.getType()== Marker.Type.GENE) {
+            geneBean.setRelatedInteractions(markerRepository.getRelatedMarkerDisplayForTypes(
+                    gene, false, MarkerRelationship.Type.RNAGENE_INTERACTS_WITH_GENE, MarkerRelationship.Type.NTR_INTERACTS_WITH_GENE));
+        }
+
 
         geneBean.setPlasmidDBLinks(
                 markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PLASMIDS));
@@ -163,7 +175,7 @@ public class GeneViewController {
         }
 
         response.setContentType("data:text/csv;charset=utf-8");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + marker.getAbbreviation() + "-" + marker.getZdbID() +  "-orthology.csv\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + marker.getAbbreviation() + "-" + marker.getZdbID() + "-orthology.csv\"");
 
 
         try {
@@ -176,21 +188,21 @@ public class GeneViewController {
             OrthologyPresentationBean orthologyBean = MarkerService.getOrthologyEvidence(marker);
 
             //print column headers
-            csvPrinter.printRecord("species","symbol","location", "accession", "pub_id", "evidence");
+            csvPrinter.printRecord("species", "symbol", "location", "accession", "pub_id", "evidence");
 
             for (OrthologyPresentationRow row : orthologyBean.getOrthologs()) {
                 for (OrthologExternalReference orthologExternalReference : row.getAccessions()) {
-                   for (OrthologEvidencePresentation orthologEvidencePresentation : row.getEvidence()) {
-                       for (Publication publication : orthologEvidencePresentation.getPublications()) {
-                           csvPrinter.printRecord(
-                                   row.getSpecies(),
-                                   row.getAbbreviation(),
-                                   row.getChromosome(),
-                                   orthologExternalReference.getReferenceDatabase().getForeignDB().getDbName() + ":" + orthologExternalReference.getAccessionNumber(),
-                                   publication.getZdbID(),
-                                   orthologEvidencePresentation.getCode().getName()
-                                   );
-                       }
+                    for (OrthologEvidencePresentation orthologEvidencePresentation : row.getEvidence()) {
+                        for (Publication publication : orthologEvidencePresentation.getPublications()) {
+                            csvPrinter.printRecord(
+                                    row.getSpecies(),
+                                    row.getAbbreviation(),
+                                    row.getChromosome(),
+                                    orthologExternalReference.getReferenceDatabase().getForeignDB().getDbName() + ":" + orthologExternalReference.getAccessionNumber(),
+                                    publication.getZdbID(),
+                                    orthologEvidencePresentation.getCode().getName()
+                            );
+                        }
 
                     }
                 }
@@ -204,8 +216,33 @@ public class GeneViewController {
         } catch (IOException e) {
             logger.error(e);
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/genes")
+    public AllGeneDTO getAllGenes() throws Exception {
+        return getFirstGenes(0);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/diseases")
+    public AllDiseaseDTO getAllDiseases() throws Exception {
+        return getFirstDiseases(0);
+    }
 
 
+    @ResponseBody
+    @RequestMapping(value = "/all-genes/{number}")
+    public AllGeneDTO getFirstGenes(@PathVariable("number") int number) throws Exception {
+        BasicGeneInfo info = new BasicGeneInfo(number);
+        return info.getAllGeneInfo();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/diseases/{number}")
+    public AllDiseaseDTO getFirstDiseases(@PathVariable("number") int number) throws Exception {
+        DiseaseInfo info = new DiseaseInfo(number);
+        return info.getDiseaseInfo(number);
     }
 
 }

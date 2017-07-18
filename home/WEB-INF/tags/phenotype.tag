@@ -27,24 +27,7 @@
             <tr>
                 <td class="data-label"><b>Data:</b></td>
                 <td>
-                    <c:choose>
-                        <c:when test="${phenotypeOnMarkerBean.numFigures==1}">
-                            ${phenotypeOnMarkerBean.singleFigureLink.link}
-                        </c:when>
-                        <c:otherwise>
-                            <a href="/action/marker/${marker.zdbID}/phenotype-summary">
-                                    ${phenotypeOnMarkerBean.numFigures} figures</a>
-                        </c:otherwise>
-                    </c:choose>
-                    from
-                    <c:choose>
-                        <c:when test="${phenotypeOnMarkerBean.numPublications==1}">
-                            ${phenotypeOnMarkerBean.singlePublicationLink.link}
-                        </c:when>
-                        <c:otherwise>
-                            ${phenotypeOnMarkerBean.numPublications} publications
-                        </c:otherwise>
-                    </c:choose>
+                    <zfin2:markerPhenotypeLink phenotypeOnMarkerBean="${phenotypeOnMarkerBean}" marker="${marker}"/>
                 </td>
             </tr>
             <tr>

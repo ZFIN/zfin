@@ -487,8 +487,10 @@
    <field name="disease" type="keyword" indexed="true" stored="true" multiValued="true"  />
    <field name="omim_id" type="keyword" indexed="true" stored="true" multiValued="true" />
 
-     <!-- feature type? marker type? antibody type?  whatever!-->
+     <!-- feature type? marker type? whatever!-->
    <field name="type" type="keyword" indexed="true" stored="true"   />
+   <field name="typegroup" type="keyword" indexed="true" stored="true" multiValued="true" />
+   <field name="antibody_type" type="keyword" indexed="true" stored="true"   />
    <field name="publication_type" type="keyword" indexed="true" stored="true"   />
    <field name="ontology" type="keyword" indexed="true" stored="true"   />
    <field name="root_only" type="boolean" indexed="true" stored="true" default="false"/>
@@ -569,9 +571,9 @@
    <field name="sequence_targeting_reagent" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
 
-   <field name="targeted_gene" type="keyword" indexed="true" stored="true" multiValued="true" />
-   <field name="targeted_gene_full_name" type="text" indexed="true" stored="true" multiValued="true" />
-   <field name="targeted_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true" />
+   <field name="target" type="keyword" indexed="true" stored="true" multiValued="true" />
+   <field name="target_full_name" type="text" indexed="true" stored="true" multiValued="true" />
+   <field name="target_previous_name" type="text" indexed="true" stored="true" multiValued="true" />
 
 
    <field name="construct" type="keyword" indexed="true" stored="true" multiValued="true"   />
@@ -726,7 +728,7 @@
    <field name="person_name" type="simplified-international-text" indexed="true"/>
 
    <field name="lab_member_name" type="simplified-international-text" indexed="true"/>
-   <field name="snapshot" type="string" stored="true" indexed="true" multiValued="false"   />
+   <field name="profile_image" type="string" stored="true" indexed="true" multiValued="false"   />
    <field name="biography" type="text" indexed="true" stored="true"   />
    <field name="postal_address" type="text" indexed="true" stored="true"   />
    <field name="email_address" type="text" indexed="true" stored="true"   />
@@ -735,7 +737,7 @@
 
    <!-- these are used to join expression records by natural key rather than primary key -->
    <field name="xpat_zdb_id" type="string" indexed="false" stored="true" />
-   <field name="fig_zdb_id" type="string" indexed="false" stored="true" />
+   <field name="fig_zdb_id" type="keyword" indexed="true" stored="true" />
 
    <!-- used for the figure gallery -->
    <field name="img_zdb_id" type="string" indexed="true" stored="true" multiValued="true"/>
@@ -787,7 +789,7 @@
    <dynamicField name="*_dt" type="date"    indexed="true"  stored="true"/>
    <dynamicField name="*_ac"  type="edgytext"    indexed="true"  stored="true" multiValued="true" />
    <dynamicField name="*_tf"  type="term_facet"    indexed="true" stored="true" multiValued="true" />
-
+   <dynamicField name="type_*" type="string" indexed="true" stored="true" />
 <!--
    <dynamicField name="*_suggest" type="word_suggest" indexed="true"  stored="true" multiValued="true"/>
 -->
@@ -1002,7 +1004,7 @@
     <copyField source="gene" dest="related_gene_symbol"/>
     <copyField source="zebrafish_gene" dest="related_gene_symbol"/>
     <copyField source="reporter_gene" dest="related_gene_symbol"/>
-    <copyField source="targeted_gene" dest="related_gene_symbol"/>
+    <copyField source="target" dest="related_gene_symbol"/>
 <!--    <copyField source="expressed_gene" dest="related_gene_symbol"/>-->
 
 

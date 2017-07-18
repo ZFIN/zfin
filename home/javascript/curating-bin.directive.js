@@ -104,7 +104,7 @@
             };
             PublicationService.searchPubStatus(query)
                 .then(function (response) {
-                    vm.pubs = response.data.populatedResults;
+                    vm.pubs = response.data.publications;
                     vm.totalPubs = response.data.totalCount;
                 })
                 .finally(function () {

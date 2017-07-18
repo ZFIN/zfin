@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-
+<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ tag description="Search result template for faceted search" pageEncoding="UTF-8"%>
 
 <%@attribute name="result" type="org.zfin.search.presentation.SearchResult" required="true" %>
@@ -55,12 +55,12 @@
                             <zfin-search:imageModal result="${result}"/>
                         </div>
                     </c:if>
-                    <c:if test="${not empty result.snapshot}">
+                    <c:if test="${not empty result.profileImage}">
                         <div class="pull-right result-thumbnail-container">
                             <div class="search-result-thumbnail">
                                 <a href="${result.url}">
                                     <img style="max-width: 150px; max-height: 70px;"
-                                         src="/action/profile/image/view/${result.snapshot}.jpg">
+                                         src="<%=ZfinPropertiesEnum.IMAGE_LOAD.value()%>/${result.profileImage}">
                                 </a>
                             </div>
                         </div>
@@ -72,7 +72,7 @@
         <c:if test="${!empty result.featureGenes}">
             <table class="fish-result-table">
                 <tr>
-                    <th>Affected Gene</th>
+                    <th>Affected Genomic Region</th>
                     <th>Line / Reagent</th>
                     <th>Mutation Type</th>
                     <th>Construct</th>
@@ -80,7 +80,7 @@
                 </tr>
                 <c:forEach var="featureGene" items="${result.featureGenes}">
                     <tr>
-                        <td title="Affected Gene">
+                        <td title="Affected Genomic Region">
                             <zfin:link entity="${featureGene.gene}" suppressPopupLink="true"/>
                         </td>
                         <td title="Line / Reagent">

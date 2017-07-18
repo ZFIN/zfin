@@ -300,7 +300,7 @@ public class StructurePilePresenter implements Presenter {
         public void onSuccess(List<ExpressionFigureStageDTO> updatedFigureAnnotations) {
             //Window.alert("Success");
             // update the expression list
-            CreateExpressionEvent event = new CreateExpressionEvent();
+            CreateExpressionEvent event = new CreateExpressionEvent(updatedFigureAnnotations);
             AppUtils.EVENT_BUS.fireEvent(event);
             view.getStructurePileTable().resetActionButtons();
             view.getLoadingImage().setVisible(false);

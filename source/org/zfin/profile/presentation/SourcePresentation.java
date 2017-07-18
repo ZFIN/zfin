@@ -41,7 +41,7 @@ public class SourcePresentation extends EntityPresentation {
 
     /**
      * Should be of the form.
-     * [atp6va0a1|http://zfin.org/action/marker/view/ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
+     * [atp6va0a1|http://zfin.org/ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
      *
      * @param organization Organization to render.
      * @return A rendered wiki link.

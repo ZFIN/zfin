@@ -384,6 +384,11 @@ body.modal-open {
 /* indentation, layout */
 li.facet-value {
     line-height: 21px !important;
+    clear: both;
+}
+
+.facet-label-container {
+    clear: both;
 }
 
 .tight-on-the-left {
@@ -429,6 +434,11 @@ i.facet-selected,
 .facet-field-count,
 .facet-value-modal-link {
     color: #707770;
+}
+
+.facet-field-count,
+.facet-count {
+    float: right;
 }
 
 .facet-count {

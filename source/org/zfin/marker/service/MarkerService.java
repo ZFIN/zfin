@@ -20,6 +20,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.presentation.DiseaseDisplay;
@@ -58,6 +59,8 @@ public class MarkerService {
 
     private static Pattern typePattern = Pattern.compile("ZDB-([\\p{Alpha}_]+)-.*");
 
+    private static Map<String, GenericTerm> soTermMapping;
+
     /**
      * Looks for firstMarkers in Genedom and returns the entire relation.
      *
@@ -87,8 +90,8 @@ public class MarkerService {
         SequenceInfo sequenceInfo = new SequenceInfo();
 
         sequenceInfo.setDbLinks(RepositoryFactory.getSequenceRepository()
-                        .getDBLinksForMarkerAndDisplayGroup(marker
-                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
+                .getDBLinksForMarkerAndDisplayGroup(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
         );
 
         List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
@@ -104,10 +107,10 @@ public class MarkerService {
 
         Set<RelatedMarkerDBLinkDisplay> markerDBLinks = new TreeSet<>();
         markerDBLinks.addAll(RepositoryFactory.getSequenceRepository()
-                        .getDBLinksForSecondRelatedMarker(marker
-                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                        )
+                .getDBLinksForSecondRelatedMarker(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
         );
 
         markerDBLinks.addAll(getTranscriptReferences(marker));
@@ -156,10 +159,10 @@ public class MarkerService {
                         MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
                 );
         relatedLinks.addAll(RepositoryFactory.getSequenceRepository()
-                        .getDBLinksForSecondRelatedMarker(marker
-                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                        )
+                .getDBLinksForSecondRelatedMarker(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
         );
         relatedLinks.addAll(getTranscriptReferences(marker));
         for (RelatedMarkerDBLinkDisplay relatedLink : relatedLinks) {
@@ -323,10 +326,12 @@ public class MarkerService {
                 , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
                 , MarkerRelationship.Type.PROMOTER_OF
                 , MarkerRelationship.Type.CODING_SEQUENCE_OF
-                , MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION
+                , MarkerRelationship.Type.CONTAINS_REGION
                 , MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY
                 , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
                 , MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE
+                , MarkerRelationship.Type.CRISPR_TARGETS_REGION
+                , MarkerRelationship.Type.TALEN_TARGETS_REGION
         );
     }
 
@@ -551,7 +556,19 @@ public class MarkerService {
      */
     public static void deleteMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID,
                                                            MarkerRelationship.Type markerRelationshipType) {
+      //  MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
         MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
+
+        //now deal with attribution
+        if (pubZdbID != null && pubZdbID.length() > 0) {
+            int deletedRecord = infrastructureRepository.deleteRecordAttribution(markerRelationship.getZdbID(), pubZdbID);
+            logger.info("deleted record attrs: " + deletedRecord);
+        }
+    }
+    public static void deleteMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID
+                                                          ) {
+        //  MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
+        MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2);
 
         //now deal with attribution
         if (pubZdbID != null && pubZdbID.length() > 0) {
@@ -575,6 +592,10 @@ public class MarkerService {
      */
     public static void deleteMarkerRelationship(Marker marker1, Marker marker2, MarkerRelationship.Type type) {
         MarkerRelationship mrel = getMarkerRepository().getMarkerRelationship(marker1, marker2, type);
+        deleteMarkerRelationship(mrel);
+    }
+    public static void deleteMarkerRelationship(Marker marker1, Marker marker2) {
+        MarkerRelationship mrel = getMarkerRepository().getMarkerRelationship(marker1, marker2);
         deleteMarkerRelationship(mrel);
     }
 
@@ -810,7 +831,11 @@ public class MarkerService {
 
     public static OrthologyPresentationBean getOrthologyEvidence(Marker gene, Publication publication) {
         Collection<Ortholog> orthologs = getOrthologyRepository().getOrthologs(gene);
-        return getOrthologyPresentationBean(orthologs, gene, publication);
+        if (orthologs!=null) {
+            return getOrthologyPresentationBean(orthologs, gene, publication);
+        }
+        else
+            return null;
     }
 
     public static OrthologyPresentationBean getOrthologyEvidence(Marker gene) {
@@ -839,6 +864,7 @@ public class MarkerService {
         }
 
         markerBean.setMarkerTypeDisplay(getMarkerTypeString(marker));
+        markerBean.setZfinSoTerm(getSoTerm(marker));
 
         markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(marker));
 
@@ -962,4 +988,45 @@ public class MarkerService {
         return note;
     }
 
+    public static GenericTerm getSoTerm(Marker marker) {
+        if (soTermMapping == null) {
+            soTermMapping = getMarkerRepository().getSoTermMapping();
+        }
+        return soTermMapping.get(marker.getMarkerType().getName());
+    }
+
+    public String getActiveMarkerID(String zdbID) throws MarkerNotFoundException {
+        if (zdbID.startsWith("ZDB-")) {
+            if (markerRepository.markerExistsForZdbID(zdbID)) {
+                return zdbID;
+            }
+
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+            logger.debug("trying to find a replaced zdbID for: " + zdbID);
+            if (replacedZdbID != null && markerRepository.markerExistsForZdbID(replacedZdbID)) {
+                logger.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                return replacedZdbID;
+            }
+        } else {
+            Marker marker = markerRepository.getMarkerByAbbreviationIgnoreCase(zdbID);
+
+            if (marker == null) {
+                marker = markerRepository.getMarkerByName(zdbID);
+            }
+
+            if (marker == null) {
+                List<Marker> markers = markerRepository.getMarkersByAlias(zdbID);
+                if (markers != null && markers.size() == 1) {
+                    marker = markers.get(0);
+                }
+            }
+
+            if (marker != null) {
+                return marker.getZdbID();
+            }
+        }
+
+        // if we got to this point we could not resolve the ID by any means, so bail out
+        throw new MarkerNotFoundException(zdbID);
+    }
 }

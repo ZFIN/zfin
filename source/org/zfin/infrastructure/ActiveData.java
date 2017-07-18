@@ -3,9 +3,11 @@ package org.zfin.infrastructure;
 import org.zfin.feature.Feature;
 import org.zfin.infrastructure.delete.*;
 import org.zfin.mapping.Panel;
+import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,8 +40,9 @@ public class ActiveData implements ZdbID {
             return false;
         }
 
-        if (!id.startsWith(ActiveSource.ZDB))
+        if (!id.startsWith(ActiveSource.ZDB)) {
             return false;
+        }
 
         Type type = null;
         for (Type zdbType : Type.values()) {
@@ -62,8 +65,9 @@ public class ActiveData implements ZdbID {
             throw new InvalidZdbID();
         }
 
-        if (!id.startsWith(ActiveSource.ZDB))
+        if (!id.startsWith(ActiveSource.ZDB)) {
             throw new InvalidZdbID(id);
+        }
 
         Type type = null;
         String[] components = id.split("-");
@@ -84,8 +88,9 @@ public class ActiveData implements ZdbID {
             return null;
         }
 
-        if (!id.startsWith(ActiveSource.ZDB))
+        if (!id.startsWith(ActiveSource.ZDB)) {
             return null;
+        }
 
         Type type = null;
         String[] components = id.split("-");
@@ -116,7 +121,10 @@ public class ActiveData implements ZdbID {
     }
 
     public static boolean isMarker(Type type) {
-        if (type.equals(Type.ATB) ||
+        if (type == null) {
+            return false;
+        }
+        return type.equals(Type.ATB) ||
                 type.equals(Type.BAC) ||
                 type.equals(Type.BAC_END) ||
                 type.equals(Type.CDNA) ||
@@ -131,22 +139,28 @@ public class ActiveData implements ZdbID {
                 type.equals(Type.MRPHLNO) ||
                 type.equals(Type.PAC) ||
                 type.equals(Type.RAPD) ||
-                type.equals(Type.REGION) ||
+                type.equals(Type.EREGION) ||
                 type.equals(Type.SNP) ||
                 type.equals(Type.SSLP) ||
                 type.equals(Type.STS) ||
                 type.equals(Type.TALEN) ||
                 type.equals(Type.TGCONSTRCT) ||
-                type.equals(Type.TSCRIPT)
-                )
-            return true;
-        return false;
+                type.equals(Type.TSCRIPT);
     }
 
     public static boolean isGeneOrGeneP(String ID) {
         Type type = getType(ID);
-        if (type.equals(Type.GENE) || type.equals(Type.GENEP))
+        if (type.equals(Type.GENE) || type.equals(Type.GENEP)) {
             return true;
+        }
+        return false;
+    }
+
+    public static boolean isInGroupGenedom(String ID) {
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(ID);
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR)) {
+            return true;
+        }
         return false;
     }
 
@@ -165,6 +179,7 @@ public class ActiveData implements ZdbID {
         CDT,
         CHROMO,
         CND,
+        CNE,
         CRISPR(DeleteSTRRule.class),
         CUR,
         CV,
@@ -199,6 +214,7 @@ public class ActiveData implements ZdbID {
         IMAGEP,
         INFGRP,
         LINK,
+        LOCUS,
         MAPDEL,
         MREL,
         CMREL,
@@ -214,8 +230,9 @@ public class ActiveData implements ZdbID {
         PTCONSTRCT(DeleteConstructRule.class),
         RAPD,
         REFCROSS(null, Panel.class),
-        REGION(DeleteRegionRule.class),
+        EREGION(DeleteRegionRule.class),
         RUN,
+        SALIAS,
         SNP,
         SSLP,
         STAGE,
@@ -230,7 +247,38 @@ public class ActiveData implements ZdbID {
         XPAT,
         XPATINF,
         XPATRES,
-        ZYG;
+        ZYG,
+        MIRNAG,
+        SNORNAG,
+        RRNAG,
+        LNCRNAG,
+        LINCRNAG,
+        PIRNAG,
+        TRNAG,
+        SRPRNAG,
+        SCRNAG,
+        NCRNAG,
+        NCCR,
+        TLNRR,
+        BR,
+        BINDSITE,
+        LIGANDBS,
+        TFBS,
+        EBS,
+        NCBS,
+        EMR,
+        HMR,
+        MDNAB,
+        RR,
+        TRR,
+        PROMOTER,
+        ENHANCER,
+        LCR,
+        NUCMO,
+        DNAMO,
+        RNAMO,
+        PROTBS;
+
 
         private Class<? extends DeleteEntityRule> ruleClass;
         private static String allValues;
@@ -250,16 +298,18 @@ public class ActiveData implements ZdbID {
         }
 
         public static String getValues() {
-            if (allValues != null)
+            if (allValues != null) {
                 return allValues;
+            }
             StringBuilder sb = new StringBuilder("[");
             int size = values().length;
             int index = 0;
             for (Type type : values()) {
                 sb.append(type.name());
                 index++;
-                if (index < size)
+                if (index < size) {
                     sb.append(",");
+                }
             }
             sb.append("]");
             allValues = sb.toString();
@@ -268,8 +318,9 @@ public class ActiveData implements ZdbID {
 
         public static Type getType(String type) {
             for (Type t : values()) {
-                if (t.toString().equals(type))
+                if (t.toString().equals(type)) {
                     return t;
+                }
             }
             throw new RuntimeException("No active Data type of string " + type + " found.");
         }

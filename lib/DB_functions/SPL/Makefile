@@ -28,11 +28,12 @@ SUBDIRS = Regen_names Regen_genox regen_clean_expression
 # 2. Generic or static.  The makefile needs to know this.
 
 DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
-	       p_check_caps_acc_num.sql  p_update_dblink_length.sql \
+	       p_check_caps_acc_num.sql  p_update_dblink_length.sql p_check_zdb_id_in_genedom.sql \
 	       get_genbank_dblink_length_type.sql increment_candidate_occurrences.sql \
 	       getZfinAccessionNumberNoInsert.sql \
 	       getZfinAccessionNumber.sql \
 	       setTscriptLoadId.sql \
+	       checkTscriptType.sql \
 	       checkDblinkTranscriptWithdrawn.sql \
 	       p_marker_sequence_unique.sql strip_omim.sql
 FISH_STATS   = get_image_stats.sql \

@@ -17,7 +17,7 @@
       if vOk == 0
 
       then 
-        raise exception -746, 0, 'FAIL!: oevdisp_gene_zdb_id must have type valid in marker_group: GENEDOM' ;
+        raise exception -746, 0, 'FAIL!: zdb_id is not in GENEDOM' ;
     
       end if ;
 

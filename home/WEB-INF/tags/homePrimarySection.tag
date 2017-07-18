@@ -1,9 +1,20 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <ul>
-    <li><a href="/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg"
+    <li>
+        <authz:authorize access="hasRole('root')">
+            <a href="/action/marker/search"
+               title="Search by name, accession number, chromosome, vector or sequence type">
+                <strong>Genes / Markers / Clones</strong>
+            </a>
+        </authz:authorize>
+        <authz:authorize access="!hasAnyRole('root')">
+        <a href="/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg"
            title="Search by name, accession number, chromosome, vector or sequence type">
-        <strong>Genes / Markers / Clones</strong></a></li>
+            <strong>Genes / Markers / Clones</strong>
+        </a>
+        </authz:authorize>
+    </li>
     <ul>
         <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines"
                title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li>
@@ -46,7 +57,7 @@
     </ul>
 </ul>
 <ul>
-    <li><a href="/action/construct/search"
+    <li><a href="/search?q=&fq=category%3A%22Construct%22&category=Construct"
            title="Search for constructs"><strong>Constructs</strong></a></li>
 
 </ul>

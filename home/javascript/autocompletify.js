@@ -11,7 +11,17 @@
         var defaults = {
             templates: {
                 suggestion: function (item) {
-                    return "<p>" + item.label + "</p>";
+
+                    var directLink = "";
+
+                    //only show a link for ZDB- and OBO formatted IDs
+                    if (item.id && item.id.startsWith('ZDB') || item.id.match('[A-Z]+:[0-9]+')) {
+                        directLink = " <a class=\"autocomplete-direct-link\""
+                            + "title=\"Go directly to record\" href=\"/"
+                            + item.id + "\"><i class=\"fa fa-arrow-circle-right\"></i</a>";
+                    }
+
+                    return "<p><span class=\"autocomplete-suggestion-text\">" + item.label  + "</span>" + directLink + "</p>";
                 }
             },
             limit: 5
@@ -36,7 +46,7 @@
             displayKey: 'value',
             templates: options.templates,
             source: hound,
-            limit: options.limit,
+            limit: options.limit
         });
 
         return this;

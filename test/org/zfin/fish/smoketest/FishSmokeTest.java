@@ -48,7 +48,7 @@ public class FishSmokeTest extends AbstractSmokeTest {
     public void testFishCitationList() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/publication/list/ZDB-FISH-150901-19155");
         List<?> pubs = page.getByXPath("//a[@id='ZDB-PUB-081001-3']");
-        assertThat(pubs, hasSize(1));
+        assertThat(pubs.size(), greaterThan(1));
     }
 
     /**

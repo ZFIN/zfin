@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.Species;
 import org.zfin.expression.service.ExpressionService;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseTrack;
@@ -22,38 +23,39 @@ import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.List;
 
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class CloneViewController {
 
     private Logger logger = Logger.getLogger(CloneViewController.class);
 
-    private ReferenceDatabase ensemblDatabase = null ;
+    private ReferenceDatabase ensemblDatabase = null;
 
     @Autowired
-    private ExpressionService expressionService ;
+    private ExpressionService expressionService;
 
     @Autowired
-    private MarkerRepository markerRepository ;
+    private MarkerRepository markerRepository;
 
-    public CloneViewController(){
+    @Autowired
+    private MarkerService markerService;
+
+    public CloneViewController() {
         ensemblDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                ForeignDB.AvailableName.ENSEMBL_CLONE
-                ,ForeignDBDataType.DataType.OTHER
-                ,ForeignDBDataType.SuperType.SUMMARY_PAGE
-                , Species.Type.ZEBRAFISH
+                ForeignDB.AvailableName.ENSEMBL_CLONE,
+                ForeignDBDataType.DataType.OTHER,
+                ForeignDBDataType.SuperType.SUMMARY_PAGE,
+                Species.Type.ZEBRAFISH
         );
+        HibernateUtil.closeSession();
     }
 
     @RequestMapping(value = "/clone/view/{zdbID}")
-    public String getCloneView(Model model
-            ,@PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    public String getCloneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         CloneBean cloneBean = new CloneBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Clone clone = markerRepository.getCloneById(zdbID);
         logger.info("clone: " + clone);
@@ -76,7 +78,7 @@ public class CloneViewController {
 
         // iterate through related marker list to add snps to it (if a dna clone)
         // this is technically a small list, so should be cheap
-        if(!clone.isRnaClone() && RepositoryFactory.getMarkerRepository().cloneHasSnp(clone)){
+        if (!clone.isRnaClone() && RepositoryFactory.getMarkerRepository().cloneHasSnp(clone)) {
             List<MarkerRelationshipPresentation> markerRelationshipPresentationList = cloneBean.getMarkerRelationshipPresentationList();
             MarkerRelationshipPresentation snpPresentation = new SnpMarkerRelationshipPresentation();
             snpPresentation.setZdbId(zdbID);

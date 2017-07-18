@@ -112,3 +112,10 @@ table.searchresults tr.even {
     background-color: SpringGreen;
 }
 
+.form-inline-input-group {    
+    padding: 1em;
+}
+
+.form-inline-input-group label {
+    padding-left: 5px;
+}

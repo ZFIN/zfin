@@ -5,7 +5,6 @@ FROM   marker a,
        marker_relationship c
 WHERE  a.mrkr_zdb_id = c.mrel_mrkr_1_zdb_id
        AND b.mrkr_zdb_id = c.mrel_mrkr_2_zdb_id
-       AND b.mrkr_abbrev NOT LIKE 'mir%'
        AND EXISTS (SELECT 'x'
                    FROM   marker_type_group_member
                    WHERE  a.mrkr_type = mtgrpmem_mrkr_type

@@ -40,6 +40,8 @@ public interface CurationDiseaseRPC extends RemoteService {
     GenotypeCreationReportDTO createGenotypeFish(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundList, Set<RelatedEntityDTO> strSet)
             throws TermNotFoundException;
 
+    FishDTO retrieveFish(String zdbID);
+
     public static class App {
         private static final CurationDiseaseRPCAsync INSTANCE;
 

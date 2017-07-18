@@ -92,6 +92,8 @@
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
 <filter token="JAVA_HOME" value="${JAVA_HOME}"/>
 <filter token="JAVA_OPTS" value="${JAVA_OPTS}"/>
+<filter token="JDBC_DRIVER" value="${JDBC_DRIVER}"/>
+<filter token="JDBC_URL" value="${JDBC_URL}"/>
 <filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>
 <filter token="JENKINS_PORT" value="${JENKINS_PORT}"/>
 <filter token="JPDA_ADDRESS" value="${JPDA_ADDRESS}"/>
@@ -124,6 +126,11 @@
 <filter token="PATO_EMAIL_CURATOR" value="${PATO_EMAIL_CURATOR}"/>
 <filter token="PDF_LOAD" value="${PDF_LOAD}"/>
 <filter token="PDF_PATH" value="${PDF_PATH}"/>
+<filter token="PGBINDIR" value="${PGBINDIR}"/>
+<filter token="PGDATA" value="${PGDATA}"/>
+<filter token="PGDATABASE" value="${PGDATABASE}"/>
+<filter token="PG_XML_COMMENT_CLOSE" value="${PG_XML_COMMENT_CLOSE}"/>
+<filter token="PG_XML_COMMENT_OPEN" value="${PG_XML_COMMENT_OPEN}"/>
 <filter token="PRODUCTION_NOTIFICATION_EMAIL" value="${PRODUCTION_NOTIFICATION_EMAIL}"/>
 <filter token="REQUEST_NEW_ANATOMY_EMAIL" value="${REQUEST_NEW_ANATOMY_EMAIL}"/>
 <filter token="ROOT_PATH" value="${ROOT_PATH}"/>
@@ -156,6 +163,7 @@
 <filter token="TECHNICAL_AT_ZFIN" value="${TECHNICAL_AT_ZFIN}"/>
 <filter token="USER" value="${USER}"/>
 <filter token="USE_APACHE_FOR_SMOKE_TESTS" value="${USE_APACHE_FOR_SMOKE_TESTS}"/>
+<filter token="USE_POSTGRES" value="${USE_POSTGRES}"/>
 <filter token="VALIDATION_EMAIL_AD" value="${VALIDATION_EMAIL_AD}"/>
 <filter token="VALIDATION_EMAIL_CURATOR" value="${VALIDATION_EMAIL_CURATOR}"/>
 <filter token="VALIDATION_EMAIL_DBA" value="${VALIDATION_EMAIL_DBA}"/>

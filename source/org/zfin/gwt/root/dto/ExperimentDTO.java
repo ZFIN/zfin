@@ -7,8 +7,6 @@ import java.util.List;
  */
 public class ExperimentDTO extends RelatedEntityDTO {
 
-    private String zdbID;
-    private String name;
     public static final String STANDARD = "Standard";
     public static final String GENERIC_CONTROL = "Generic-control";
 
@@ -44,22 +42,6 @@ public class ExperimentDTO extends RelatedEntityDTO {
 
     public static String getSTANDARD() {
         return STANDARD;
-    }
-
-
-
-
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public List<ConditionDTO> getConditionDTOList() {

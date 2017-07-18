@@ -80,7 +80,7 @@ Create dba function regen_expression_term_fast_search()
 
     let errorHint = "create xpatfs_temp";
     create table xpatfs_temp (etfs_pk_id serial8 ,
-    	   	 	      etfs_xpatres_zdb_id int8,
+    	   	 	      etfs_xpatres_pk_id int8,
 			      etfs_term_zdb_id varchar(50) ,
 			      etfs_created_date datetime year to second default current year to second,
 			      etfs_is_xpatres_term boolean default 'f' 
@@ -91,8 +91,8 @@ Create dba function regen_expression_term_fast_search()
 
       let errorHint = "insert into xpatfs_temp";
 
-            insert into xpatfs_temp (etfs_xpatres_zdb_id, etfs_term_zdb_id)
-      	     	 select distinct etfs_xpatres_zdb_id, etfs_term_zdb_id
+            insert into xpatfs_temp (etfs_xpatres_pk_id, etfs_term_zdb_id)
+      	     	 select distinct etfs_xpatres_pk_id, etfs_term_zdb_id
 	     	   from expression_term_fast_search
       		    ;
 
@@ -136,11 +136,11 @@ Create dba function regen_expression_term_fast_search()
   		  using btree in idxdbs1;
 
            create unique index etfs_alternate_key_index
-  	   	  on xpatfs_temp (etfs_xpatres_zdb_id, etfs_term_zdb_id)
+  	   	  on xpatfs_temp (etfs_xpatres_pk_id, etfs_term_zdb_id)
   		  using btree in idxdbs2;
 
            create index expression_term_fast_search_xpatres_id_index 
-	   	  on xpatfs_temp (etfs_xpatres_zdb_id) 
+	   	  on xpatfs_temp (etfs_xpatres_pk_id)
 		  using btree in idxdbs2;
 
            create index expression_term_fast_search_term_id_index 
@@ -182,7 +182,7 @@ Create dba function regen_expression_term_fast_search()
   
 	let errorHint = "insert superterm and parents into xpatfs_working";
 	
-	insert into xpatfs_working (etfs_xpatres_zdb_id, etfs_term_zdb_id)
+	insert into xpatfs_working (etfs_xpatres_pk_id, etfs_term_zdb_id)
 		SELECT xpatres_zdb_id,
 					 alltermcon_container_zdb_id
 		FROM   expression_result,
@@ -205,7 +205,7 @@ Create dba function regen_expression_term_fast_search()
 	let errorHint = "insert subterm and parents into xpatfs_working";
 
 
-        insert into xpatfs_working (etfs_xpatres_zdb_id, etfs_term_zdb_id)
+        insert into xpatfs_working (etfs_xpatres_pk_id, etfs_term_zdb_id)
 					SELECT xpatres_zdb_id,
 								 alltermcon_container_zdb_id
 					FROM   expression_result,
@@ -230,12 +230,12 @@ Create dba function regen_expression_term_fast_search()
     	  update xpatfs_working
   	       set etfs_is_xpatres_term = 't'
  	       where exists (select 'x' from expression_result where xpatres_superterm_zdb_id = etfs_term_zdb_id
-	       	     	     and  etfs_xpatres_zdb_id =  xpatres_zdb_id);
+	       	     	     and  etfs_xpatres_pk_id =  xpatres_zdb_id);
 
 	  update xpatfs_working
   	       set etfs_is_xpatres_term = 't'
  	       where exists (select 'x' from expression_result where xpatres_subterm_zdb_id = etfs_term_zdb_id
-	       	     	     and  etfs_xpatres_zdb_id =  xpatres_zdb_id);
+	       	     	     and  etfs_xpatres_pk_id =  xpatres_zdb_id);
       
 	 let errorHint = "rename table xpatfs_new";
 

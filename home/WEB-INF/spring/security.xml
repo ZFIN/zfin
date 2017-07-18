@@ -114,7 +114,8 @@
                                 access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/clone-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/gene-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
-        <security:intercept-url pattern="/action/marker/region-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/marker/transcribedRegion-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/marker/engineeredRegion-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/sequence-targeting-reagent-add"
                                 access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/construct/construct-add"
@@ -130,6 +131,7 @@
         <security:intercept-url pattern="/action/figure/*/images" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/image/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/new" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/publication/journal-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/curating-bin" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/indexing-bin" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/publication/dashboard" access="hasRole('root') or ${DISABLE_SECURITY}"/>

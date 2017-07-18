@@ -20,7 +20,13 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/LoadOntology
 
-STATICS = paths.txt loadTerms.sql updateDefinitionReferences.sql fixZecoAnnotations.sql fixSoAnnotations.sql fixAnnotationsUponOntologyLoad.sql build.xml dropTempTables.sql log4j.xml loadSubsets.sql handleSecondaryTerms.sql handleRelationships.sql handleSynonyms.sql handleRelationshipsAndStages.sql loadDBxrefs.sql report.html.template report.properties statistics.html.template
+STATICS = paths.txt loadTerms.sql updateDefinitionReferences.sql fixSoAnnotations.sql build.xml dropTempTables.sql log4j.xml \
+loadSubsets.sql handleSecondaryTerms.sql handleRelationships.sql handleSynonyms.sql handleRelationshipsAndStages.sql \
+loadDBxrefs.sql report.html.template report.properties statistics.html.template obsoleteMergeChebi.sql obsoleteMergeDisease.sql \
+obsoleteMergeGene.sql obsoleteMergeZebrafishExperimentalConditions.sql obsoleteMergeZecoTaxonomy.sql \
+obsoleteMergeZebrafishAnatomical.sql obsoleteMergeEco.sql obsoleteMergeSequence.sql obsoleteMergeQuality.sql \
+obsoleteMergeMousePathology.ontology.sql fixAnnotationsUponOntologyLoad.sql
+
 # Define targets that require special handling.
 
 HTTP_DATA_TRANSFER_DIR = $(TARGETROOT)/home/data_transfer/LoadOntology

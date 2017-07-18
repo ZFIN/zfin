@@ -1,5 +1,6 @@
 package org.zfin.infrastructure;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.publication.Journal;
 
 import javax.persistence.*;
@@ -7,14 +8,22 @@ import javax.persistence.*;
 @Entity
 @Table(name = "source_alias")
 public class SourceAlias {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "SALIAS"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true")
+            })
     @Column(name = "salias_zdb_id")
     protected String zdbID;
 
+
     @Column(name = "salias_alias")
     protected String alias;
-    @Column(name = "salias_source_zdb_id", insertable = false, updatable = false)
+
+    @Column(name = "salias_source_zdb_id")
     protected String dataZdbID;
 
     @Column(name = "salias_alias_lower")
@@ -22,9 +31,9 @@ public class SourceAlias {
 
     // if we use aliases for another source type, this will need a discriminator and subclasses
     // for now, there doesn't seem to be any reason to add that level complication
-    @ManyToOne
+    /*@ManyToOne
     @JoinColumn(name = "salias_source_zdb_id")
-    Journal journal;
+    Journal journal;*/
 
     public String getZdbID() {
         return zdbID;

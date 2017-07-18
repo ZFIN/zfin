@@ -2,10 +2,12 @@ package org.zfin.search;
 
 public enum FacetQueryEnum {
 
-    ANY_WILDTYPE(FieldName.GENOTYPE, "Any WT", "is_genotype_wildtype:true"),
-    ANY_MUTANT(FieldName.GENOTYPE, "Any Mutant", "is_genotype_wildtype:false"),
-    ANY_ZEBRAFISH_GENE(FieldName.ZEBRAFISH_GENE, "Any Zebrafish Gene", "zebrafish_gene:[* TO *]"),
-    ANY_REPORTER_GENE(FieldName.REPORTER_GENE, "Any Reporter Gene", "reporter_gene:[* TO *]");
+    ANY_WILDTYPE(FieldName.GENOTYPE, "Any WT", FieldName.IS_GENOTYPE_WILDTYPE.getName() + ":true"),
+    ANY_MUTANT(FieldName.GENOTYPE, "Any Mutant", FieldName.IS_GENOTYPE_WILDTYPE.getName() + ":false"),
+    ANY_ZEBRAFISH_GENE(FieldName.ZEBRAFISH_GENE, "Any Zebrafish Gene", FieldName.ZEBRAFISH_GENE.getName() + ":[* TO *]"),
+    ANY_REPORTER_GENE(FieldName.REPORTER_GENE, "Any Reporter Gene", FieldName.REPORTER_GENE.getName() + ":[* TO *]"),
+    NONE_SEQUENCE_TARGETING_REAGENT(FieldName.SEQUENCE_TARGETING_REAGENT, "Exclude All",
+                    "-" + FieldName.SEQUENCE_TARGETING_REAGENT.getName() + ":[* TO *]");
 
     private String query;
     private String label;

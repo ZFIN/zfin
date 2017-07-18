@@ -11,7 +11,7 @@
             <tbody>
             <tr>
                 <th width="15%">
-                    Affected Gene
+                    Affected Genomic Region
                 </th>
                 <th width="15%">
                     Fish

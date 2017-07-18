@@ -41,19 +41,20 @@ public class PersonController {
     @Autowired
     private CreatePersonValidator createPersonValidator;
 
-
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
-
-    public static enum TAB_INDEX {
-        INFORMATION("information", 0), BIOGRAPHY("biography", 1), PUBLICATIONS("publications", 2), LOGIN("login", 3), PICTURE("picture", 4);
+    public enum TAB_INDEX {
+        INFORMATION("information", 0),
+        BIOGRAPHY("biography", 1),
+        PUBLICATIONS("publications", 2),
+        LOGIN("login", 3),
+        PICTURE("picture", 4);
 
         private String label;
         private int index;
-
 
         TAB_INDEX(String label, int index) {
             this.label = label;
@@ -72,19 +73,19 @@ public class PersonController {
 
     @RequestMapping(value = "/person/edit/{zdbID}", method = RequestMethod.GET)
     public String editView(@PathVariable String zdbID, Model model) {
+
         String securityPersonZdbID = profileService.isEditableBySecurityPerson(zdbID);
 
         Person person = profileRepository.getPerson(zdbID);
         model.addAttribute(LookupStrings.FORM_BEAN, person);
         model.addAttribute("securityPersonZdbID", securityPersonZdbID);
-
         boolean showDeceasedCheckBox = false;
         if (profileService.getCurrentSecurityUser() != null   // it's a logged-in user
                 && profileService.isCurrentSecurityUserRoot()) {  //  the user logged in as root
             showDeceasedCheckBox = true;
         }
         model.addAttribute("showDeceasedCheckBox", showDeceasedCheckBox);
-
+        model.addAttribute("countryList", profileService.getCountries());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
         return "profile/profile-edit.page";
     }
@@ -116,7 +117,7 @@ public class PersonController {
             return "profile/profile-edit.page";
         }
 
-        return profileService.handleInfoUpdate(errors/*, profileTopic*/, person.getZdbID(), fields, securityPersonZdbId);
+        return profileService.handleInfoUpdate(errors, person.getZdbID(), fields, securityPersonZdbId);
 
     }
 
@@ -136,11 +137,9 @@ public class PersonController {
 
         final List<BeanFieldUpdate> fields = new ArrayList<>();
         try {
-
             fields.addAll(profileService.comparePublicationsField(person, newPerson));
         } catch (Exception e) {
             logger.error("fail", e);
-
             errors.reject("", "There was a problem updating your user record.");
         }
 
@@ -148,14 +147,12 @@ public class PersonController {
             return "profile/profile-edit.page";
         }
 
-        return profileService.handleInfoUpdate(errors/*, profileTopic*/, person.getZdbID(), fields, securityPersonZdbId);
+        return profileService.handleInfoUpdate(errors, person.getZdbID(), fields, securityPersonZdbId);
     }
 
 
-
     @RequestMapping(value = "/person/edit-user-details/{zdbID}", method = RequestMethod.POST)
-    public String submitAccountInfoDetails(@PathVariable String zdbID, Model model, Person newPerson, Errors errors)
-            throws Exception {
+    public String submitAccountInfoDetails(@PathVariable String zdbID, Model model, Person newPerson, Errors errors) throws Exception {
         final String securityPersonZdbId = profileService.isEditableBySecurityPerson(zdbID);
         final Person person = profileRepository.getPerson(zdbID);
         AccountInfo newAccountInfo = newPerson.getAccountInfo();
@@ -174,7 +171,7 @@ public class PersonController {
 
         if (StringUtils.isNotEmpty(newAccountInfo.getPass1())) {
             if (StringUtils.isEmpty(newAccountInfo.getPass2())
-                    || false == newAccountInfo.getPass2().equals(newAccountInfo.getPass1())) {
+                    || !newAccountInfo.getPass2().equals(newAccountInfo.getPass1())) {
                 errors.reject("", "Passwords must match");
             }
             newAccountInfo.setPassword(profileService.encodePassword(newAccountInfo.getPass1()));
@@ -189,7 +186,6 @@ public class PersonController {
 
         final List<BeanFieldUpdate> fields = new ArrayList<>();
         try {
-
             fields.addAll(profileService.compareAccountInfoFields(oldAccountInfo, newAccountInfo));
         } catch (Exception e) {
             e.printStackTrace();
@@ -224,9 +220,7 @@ public class PersonController {
                 if (constraintViolation.getInvalidValue().toString().length() > 0) {
                     errors.rejectValue(constraintViolation.getPropertyPath().toString(), ""
                             , constraintViolation.getPropertyPath() + " field may need help:  "
-//                        + "] value["+constraintViolation.getInvalidValue()+"].  "
-//                        + constraintViolation.getMessageTemplate());
-                            + constraintViolation.getMessage());
+                                    + constraintViolation.getMessage());
                 }
             }
             return "profile/profile-edit.page";
@@ -240,27 +234,24 @@ public class PersonController {
     }
 
     @RequestMapping(value = "/person/edit/{zdbID}", method = RequestMethod.POST)
-    public String submitEdit
-            (@PathVariable String zdbID,
-             @RequestParam(value = "tab", required = false) String tab,
-             Model model,
-             Person newPerson,
-             Errors errors)
-            throws Exception {
+    public String submitEdit(@PathVariable String zdbID,
+                             @RequestParam(value = "tab", required = false) String tab,
+                             Model model,
+                             Person newPerson,
+                             Errors errors) throws Exception {
         final String securityPersonZdbId = profileService.isEditableBySecurityPerson(zdbID);
         final Person person = profileRepository.getPerson(zdbID);
 
         model.addAttribute(LookupStrings.FORM_BEAN, person);
         model.addAttribute(LookupStrings.ERRORS, errors);
-
         if (!StringUtils.isEmpty(tab)) {
             model.addAttribute(LookupStrings.SELECTED_TAB, tab);
         } else {
             model.addAttribute(LookupStrings.SELECTED_TAB, TAB_INDEX.INFORMATION.getLabel());
         }
 
-
         newPerson.setUrl(profileService.processUrl(newPerson.getUrl()));
+        model.addAttribute("countryList", profileService.getCountries());
 
         if (errors.hasErrors()) {
             return "profile/profile-edit.page";
@@ -280,15 +271,12 @@ public class PersonController {
             return "profile/profile-edit.page";
         }
 
-        return profileService.handleInfoUpdate(errors/*, profileTopic*/, person.getZdbID(), fields, securityPersonZdbId);
+        return profileService.handleInfoUpdate(errors, person.getZdbID(), fields, securityPersonZdbId);
 
     }
 
     @RequestMapping(value = "/person/view/{zdbID}", method = RequestMethod.GET)
-    public String viewPerson
-            (@PathVariable String
-                     zdbID, Model
-                    model) {
+    public String viewPerson(@PathVariable String zdbID, Model model) {
         Person person = profileRepository.getPerson(zdbID);
         if (person == null) {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
@@ -305,21 +293,21 @@ public class PersonController {
         model.addAttribute("companies", companies);
         List<LabPresentation> labs = profileRepository.getLabsForPerson(zdbID);
         model.addAttribute("labs", labs);
-
+        model.addAttribute("country", profileService.getCountryDisplayName(person.getCountry()));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
         return "profile/profile-view.page";
     }
 
     @RequestMapping(value = "/person/create", method = RequestMethod.GET)
-    public String createPersonSetup
-            (@RequestParam(value = "organization", required = false) String organizationZdbId,
-             Model model, Person
-                    person, Errors
-                    errors) {
+    public String createPersonSetup(@RequestParam(value = "organization", required = false) String organizationZdbId,
+                                    Model model,
+                                    Person person,
+                                    Errors errors) {
         model.addAttribute(LookupStrings.FORM_BEAN, person);
 
-        if (!StringUtils.isEmpty(organizationZdbId))
+        if (!StringUtils.isEmpty(organizationZdbId)) {
             return createPersonSetupWithOrganization(organizationZdbId, model, person, errors);
+        }
 
         return "profile/create-person.page";
     }
@@ -329,11 +317,10 @@ public class PersonController {
      * Create a new person using an existing organization (lab/company) as a starting place     
      */
     @RequestMapping(value = "/person/create/{organization}", method = RequestMethod.GET)
-    public String createPersonSetupWithOrganization
-    (@PathVariable("organization") String organizationZdbID, Model
-            model, Person
-            person, Errors
-            errors) {
+    public String createPersonSetupWithOrganization(@PathVariable("organization") String organizationZdbID,
+                                                    Model model,
+                                                    Person person,
+                                                    Errors errors) {
         model.addAttribute(LookupStrings.FORM_BEAN, person);
 
         logger.debug("passed in an organization");
@@ -361,11 +348,7 @@ public class PersonController {
 
 
     @RequestMapping(value = "/person/create", method = RequestMethod.POST)
-    public String createPersonFromOrganization(
-            Model model, Person
-            person, Errors
-            errors) {
-
+    public String createPersonFromOrganization(Model model, Person person, Errors errors) {
         model.addAttribute(LookupStrings.FORM_BEAN, person);
         // do a very little amount of validation
         createPersonValidator.validate(person, errors);

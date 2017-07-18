@@ -43,6 +43,9 @@
                             Genomic Feature
                         </th>
                         <th width="20%">
+                            Affected Gene
+                        </th>
+                        <th width="20%">
                             Construct
                         </th>
                         <th width="20%">
@@ -61,9 +64,16 @@
                                 <zfin:link entity="${genoFeat.feature}"/>
                             </td>
                             <td>
+                                <c:forEach var="affGene" items="${genoFeat.feature.affectedGenesReln}"
+                                           varStatus="constructsloop">
+                                    <a href="/${affGene.marker.zdbID}"><i>${affGene.marker.abbreviation}</i></a><c:if
+                                        test="${!constructsloop.last}">,&nbsp;</c:if>
+                                </c:forEach>
+                            </td>
+                            <td>
                                 <c:forEach var="construct" items="${genoFeat.feature.constructs}"
                                            varStatus="constructsloop">
-                                    <a href="/action/marker/view/${construct.marker.zdbID}"><i>${construct.marker.name}</i></a><c:if
+                                    <a href="/${construct.marker.zdbID}"><i>${construct.marker.name}</i></a><c:if
                                         test="${!constructsloop.last}">,&nbsp;</c:if>
                                 </c:forEach>
                             </td>

@@ -5,6 +5,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.zfin.gwt.root.event.AjaxCallEventType;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.WidgetUtil;
 
 /**
@@ -21,6 +23,12 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
     private Widget loadingImage;
 
     private static final String LOGIN_REQUIRED = "/j_security-check";
+
+    public ZfinAsyncCallback(String errorMessage, ErrorHandler errorLabel, String loadingImageDivName, ZfinModule module, AjaxCallEventType eventType) {
+        this(errorMessage, errorLabel, loadingImageDivName);
+        this.module = module;
+        this.eventType = eventType;
+    }
 
     public ZfinAsyncCallback(String errorMessage, ErrorHandler errorLabel, String loadingImageDivName) {
         this.message = errorMessage;
@@ -49,6 +57,26 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
         }
     }
 
+    private ZfinModule module;
+    private AjaxCallEventType eventType;
+
+    public ZfinAsyncCallback(String errorMessage, ErrorHandler errorLabel, Widget widget, ZfinModule module, AjaxCallEventType eventType) {
+        this(errorMessage, errorLabel, widget);
+        this.module = module;
+        this.eventType = eventType;
+    }
+
+    public ZfinAsyncCallback(String errorMessage, ErrorHandler errorLabel, ZfinModule module, AjaxCallEventType eventType) {
+        this(errorMessage, errorLabel);
+        this.module = module;
+        if (eventType.isStart()) {
+            AppUtils.fireAjaxCall(module, eventType);
+            this.eventType = eventType.getEndMate(eventType);
+        } else {
+            this.eventType = eventType;
+        }
+    }
+
     private Widget getImageWidget() {
         if (loadingImage != null)
             return loadingImage;
@@ -73,12 +101,20 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
             getImageWidget().setVisible(false);
         if (loadingImage != null)
             loadingImage.setVisible(false);
-
+        if (module != null && eventType != null)
+            AppUtils.fireAjaxCall(module, eventType);
     }
 
     public void onSuccess(T t) {
         if (loadingPanel != null && getImageWidget() != null)
             getImageWidget().setVisible(false);
+        if (module != null && eventType != null)
+            AppUtils.fireAjaxCall(module, eventType);
+    }
+
+    public void onFinish() {
+        if (module != null && eventType != null)
+            AppUtils.fireAjaxCall(module, eventType);
     }
 
     private boolean handleDuplicateRecords(Throwable throwable) {

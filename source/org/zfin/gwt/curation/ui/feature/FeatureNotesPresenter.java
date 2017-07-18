@@ -19,7 +19,7 @@ public class FeatureNotesPresenter {
 
     private FeatureNotesView view;
     private String publicationID;
-    private FeatureDTO featureDTO;
+    FeatureDTO featureDTO;
     private PersonDTO curator;
 
     public FeatureNotesPresenter(String publicationID, FeatureNotesView view) {

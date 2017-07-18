@@ -23,8 +23,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/misc_files
 # They are HTML files, but they are loaded in the database 
 # like an app page.  Treat them like app pages.
 
-GENERICS = data_mgr.apg \
-    start_select.apg htmlpageheader.apg
+GENERICS =     htmlpageheader.apg
 
 STATICS=stub.html helpframes.html \
     htmlpagefooter.apg input_button_generic.apg

@@ -110,7 +110,8 @@
         }
 
         function handleStatusChange() {
-            if (vm.current.status.type === 'CURATING') {
+            var type = vm.current.status.type;
+            if (type === 'CURATING' || type === 'INDEXING') {
                 vm.current.owner = vm.curator;
             } else {
                 vm.current.owner = vm.original.owner;
@@ -156,15 +157,13 @@
         function updateStatus(validate) {
             vm.processing = true;
             var isClosing = vm.current.status.type === 'CLOSED';
-            var isIndexed = false;
-            if (vm.original.status != null)
-                isIndexed = vm.original.status.type === 'INDEXING' &&
-                    vm.current.status.type === 'READY_FOR_CURATION';
+            var isIndexed = vm.original.status &&
+                vm.original.status.type === 'INDEXING' &&
+                vm.current.status.type === 'READY_FOR_CURATION';
             var update;
             if (validate && isClosing) {
                 update = validateBeforeClose();
-            }
-            if (isIndexed) {
+            } else if (isIndexed) {
                 var indexed = {
                     location: null,
                     owner: vm.curator,

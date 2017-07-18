@@ -56,24 +56,19 @@ public class PublicationPresentation extends EntityPresentation {
         return sb.toString();
     }
 
-    public static String getMultipleAttributionLink(String zdbID, String additionalZdbID,
-                                                    String rType, String srcType, int publicationCount ) {
+    public static String getMultipleAttributionLink(String zdbID, String additionalZdbID, int publicationCount ) {
         StringBuilder sb = new StringBuilder("");
 
-        StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
-        if (!StringUtils.isEmpty(additionalZdbID)) {
-            uri.append("&OID=");
-            uri.append(additionalZdbID);
+        String count = String.valueOf(publicationCount);
+        sb.append(" (<a href=\"/action/infrastructure/data-citation-list/");
+        if (zdbID.equals(additionalZdbID)) {
+            sb.append(zdbID);
+        } else {
+            sb.append(additionalZdbID);
         }
-        uri.append("&rtype=");
-        uri.append(rType);
-        uri.append("&recattrsrctype=");
-        uri.append(srcType);
-        uri.append("&orgOID=");
-
-        sb.append(" (");
-        sb.append(getWebdriverLink(uri.toString(), zdbID, String.valueOf(publicationCount)));
-        sb.append(")");
+        sb.append("\">");
+        sb.append(count);
+        sb.append("</a>)");
 
         return sb.toString();
     }

@@ -7,17 +7,23 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.SourceAlias;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.publication.*;
+import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -295,6 +301,10 @@ public interface PublicationRepository extends PaginationParameter {
     Journal getJournalByTitle(String journalTitle);
 
     Journal findJournalByAbbreviation(String abbrevation);
+    void createJournal(Journal journal);
+    Journal getJournalByPrintIssn(String pIssn);
+    Journal getJournalByEIssn(String eIssn);
+   SourceAlias addJournalAlias(Journal journal, String alias);
 
     int getNumberAssociatedPublicationsForZdbID(String zdbID) ;
 
@@ -337,6 +347,10 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Marker> getGenesByPublication(String pubID);
     List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
+    List<Marker> getGenesAndMarkersByPublication(String pubID);
+    List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType);
+    List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType);
+    PaginationResult<Clone> getClonesByPublication(String pubID, PaginationBean paginationBean);
     List<Feature> getFeaturesByPublication(String pubID);
     List<Fish> getFishByPublication(String pubID);
 
@@ -449,7 +463,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     PaginationResult<Publication> getAllAssociatedPublicationsForGenotype(Genotype genotype, int maxPubs);
 
-    List<Publication> getPublicationByPmid(String pubMedID);
+    List<Publication> getPublicationByPmid(Integer pubMedID);
 
     int getNumberDirectPublications(String zdbID);
 
@@ -489,6 +503,7 @@ public interface PublicationRepository extends PaginationParameter {
 
 
     public Long getMarkerCount(Publication publication);
+    public List<Marker> getMarkers(Publication publication);
     public Long getMorpholinoCount(Publication publication);
     public Long getTalenCount(Publication publication);
     public Long getCrisprCount(Publication publication);
@@ -524,12 +539,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     PublicationTrackingLocation getPublicationTrackingLocation(long id);
 
-    PaginationResult<PublicationTrackingHistory> getPublicationsByStatus(Long status,
-                                                                         Long location,
-                                                                         String owner,
-                                                                         int count,
-                                                                         int offset,
-                                                                         String sort);
+    DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count, int offset, String sort);
 
     List<PublicationFileType> getAllPublicationFileTypes();
 
@@ -546,5 +556,9 @@ public interface PublicationRepository extends PaginationParameter {
     CorrespondenceSentMessage addResentCorrespondence(Publication publication, CorrespondenceDTO dto);
 
     CorrespondenceReceivedMessage addReceivedCorrespondence(Publication publication, CorrespondenceDTO dto);
+
+    List<String> getPublicationIdsForMarkerGo(String markerZdbID, String markerGoEvdTermZdbID, String evidenceCode, String inference);
+
+    List<String> getPublicationIdsForFeatureType(String featureZdbID);
 
 }

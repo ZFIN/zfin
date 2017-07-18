@@ -6,16 +6,21 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.curation.event.*;
+import org.zfin.gwt.curation.event.CurationEvent;
+import org.zfin.gwt.curation.event.DirtyValueEvent;
+import org.zfin.gwt.curation.event.DirtyValueEventHandler;
+import org.zfin.gwt.curation.event.EventType;
+import org.zfin.gwt.curation.ui.CurationTab;
 import org.zfin.gwt.curation.ui.ZfinCurationModule;
+import org.zfin.gwt.root.ui.ZfinModule;
 import org.zfin.gwt.root.util.AppUtils;
 
 /**
- * Entry point for FX curation module.
+ * Entry point for Feature curation module.
  */
 public class FeatureModule implements ZfinCurationModule {
 
-    public static final String FEATURE_ZONE = "feature-module";
+    private static final String FEATURE_ZONE = "feature-module";
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("FeatureModule.ui.xml")
@@ -23,7 +28,6 @@ public class FeatureModule implements ZfinCurationModule {
     }
 
     private String publicationID;
-    private boolean debug;
     @UiField
     FeatureAddView featureAddView;
     @UiField
@@ -33,7 +37,6 @@ public class FeatureModule implements ZfinCurationModule {
 
     private FeatureEditPresenter featureEditPresenter;
     private FeatureRelationshipPresenter featureRelationshipPresenter;
-    private FeatureAddPresenter addFeaturePresenter;
 
     public FeatureModule(String publicationID) {
         this.publicationID = publicationID;
@@ -42,10 +45,11 @@ public class FeatureModule implements ZfinCurationModule {
 
     @Override
     public void init() {
+        bindEventBusHandler();
         FlowPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(FEATURE_ZONE).add(outer);
 
-        addFeaturePresenter = new FeatureAddPresenter(featureAddView, publicationID);
+        FeatureAddPresenter addFeaturePresenter = new FeatureAddPresenter(featureAddView, publicationID);
         featureAddView.setPresenter(addFeaturePresenter);
         addFeaturePresenter.go();
 
@@ -57,7 +61,6 @@ public class FeatureModule implements ZfinCurationModule {
         featureRelationshipView.setPresenter(featureRelationshipPresenter);
         featureRelationshipPresenter.go();
 
-        bindEventBusHandler();
 
     }
 
@@ -71,11 +74,13 @@ public class FeatureModule implements ZfinCurationModule {
         if (event == null)
             return;
         EventType eventType = event.getEventType();
-        if (eventType.is(EventType.ATTRIBUTE_MARKER) || eventType.is(EventType.DEATTRIBUTE_MARKER)) {
+        if (eventType.is(EventType.ATTRIBUTE_MARKER) || eventType.is(EventType.DEATTRIBUTE_MARKER) ||
+                event.getEventType().equals(EventType.CREATE_MARKER)) {
             featureRelationshipView.onChangeFeatureRelationship(null);
         }
-        if (eventType.is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE) || eventType.is(EventType.CREATE_FEATURE)) {
-            featureEditPresenter.loadFeaturesForPub(true);
+        if (eventType.is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE) || eventType.is(EventType.CUD_FEATURE)) {
+            if (!eventType.is(EventType.EDIT_FEATURE))
+                featureEditPresenter.loadFeaturesForPub(true);
             featureRelationshipPresenter.onFeatureAddEvent();
         }
     }
@@ -98,7 +103,10 @@ public class FeatureModule implements ZfinCurationModule {
                         featureEditPresenter.onDirtyValueNotification(event.getDirty());
                     }
                 });
+    }
 
+    static ZfinModule getModuleInfo() {
+        return new ZfinModule(CurationTab.FEATURE.getName(), FeatureModule.class.getName());
     }
 
 

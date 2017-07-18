@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="pkalita" id="PLC-317_load">
+        <loadData file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1085/ghost/PLC-317_company.csv"
+                  catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_company_country" encoding="UTF-8">
+            <column name="id" type="String"/>
+            <column name="country" type="String"/>
+        </loadData>
+        <loadData file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1085/ghost/PLC-317_lab.csv"
+                  catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_lab_country" encoding="UTF-8">
+            <column name="id" type="String"/>
+            <column name="country" type="String"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>

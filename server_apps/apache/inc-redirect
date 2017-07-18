@@ -2,8 +2,8 @@ RewriteEngine On
 
 RewriteMap viewmap txt:<!--|TARGETROOT|-->/server_apps/apache/view-page-url-map.txt
 
-#ZDB-[TYPE]-000000-0 ids
-RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3
+#ZDB-[TYPE]-000000-0 ids, with optional ZFIN: prefix
+RewriteRule ^/(?:ZFIN\:)?ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3
 
 #[TYPE]:000000 ids
 RewriteRule ^/([A-Za-z]+):([0-9]+)$ ${viewmap:$1}:$2
@@ -114,10 +114,10 @@ RewriteCond %{QUERY_STRING} ^termID=([\w-:]+)$ [NC]
 RewriteRule ^/action/ontology/term-detail$ /action/ontology/term-detail/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^antibody.zdbID=([\w-]+)$    [NC]
-RewriteRule ^/action/antibody/detail /action/marker/view/%1? [NC,R=301]
+RewriteRule ^/action/antibody/detail /%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^zdbID=([\w-]+)$    [NC]
-RewriteRule ^/action/marker/transcript-view /action/marker/view/%1? [NC,R=301]
+RewriteRule ^/action/marker/transcript-view /%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    ^anatomyItem.zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/anatomy/term-detail /action/anatomy/anatomy-view/%1? [NC,R=301]
@@ -181,8 +181,6 @@ RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpat
 
 RewriteRule ^/action/ontology/ontology-search /action/ontology/search [NC,R=301]
 
-RewriteRule ^/action/mutant/construct-search /action/construct/search [NC,R=301]
-
 RewriteRule ^/action/antibody/antibody-search /action/antibody/search [NC,R=301]
 
 # normal ZFIN_jump requests
@@ -196,6 +194,7 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 RewriteRule ^/search(.*)  /action/quicksearch/prototype$1
 RewriteRule ^/prototype(.*)  /action/quicksearch/prototype$1
 
+RewriteRule ^/action/marker/view/([\w-]+)$ /$1 [NC,R=301]
 
 #download page
 # redirect to fix trailing slash problem

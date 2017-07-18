@@ -11,7 +11,10 @@ import org.zfin.gwt.curation.event.CloneFishEvent;
 import org.zfin.gwt.curation.event.CloneFishEventHandler;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
+import org.zfin.gwt.curation.ui.CurationTab;
 import org.zfin.gwt.curation.ui.ZfinCurationModule;
+import org.zfin.gwt.root.ui.AjaxCallBaseManager;
+import org.zfin.gwt.root.ui.ZfinModule;
 import org.zfin.gwt.root.util.AppUtils;
 
 /**
@@ -21,6 +24,7 @@ public class FishModule extends Composite implements ZfinCurationModule {
 
     public static final String FISH_TAB = "fishTab";
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+    private AjaxCallBaseManager ajaxCallBaseManager = new AjaxCallBaseManager();
 
     @UiTemplate("FishModule.ui.xml")
     interface MyUiBinder extends UiBinder<VerticalPanel, FishModule> {
@@ -66,7 +70,7 @@ public class FishModule extends Composite implements ZfinCurationModule {
 
     @Override
     public void handleCurationEvent(CurationEvent event) {
-        if (event.getEventType().is(EventType.MARKER_ATTRIBUTION))
+        if (event.getEventType().is(EventType.MARKER_ATTRIBUTION) || event.getEventType().equals(EventType.CREATE_MARKER))
             genotypeConstructionPresenter.updateStrList();
         if (event.getEventType().is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE) || event.getEventType().is(EventType.CUD_FEATURE)) {
             genotypeConstructionPresenter.updateFeatureList();
@@ -100,10 +104,12 @@ public class FishModule extends Composite implements ZfinCurationModule {
                 new CloneFishEventHandler() {
                     @Override
                     public void onClone(CloneFishEvent event) {
-                        genotypeConstructionPresenter.populate(event.getFish());
+                        genotypeConstructionPresenter.retrieveFish(event.getFish());
                     }
                 });
-
     }
 
+    public static ZfinModule getModuleInfo() {
+        return new ZfinModule(CurationTab.FISH.getName(), FishModule.class.getName());
+    }
 }

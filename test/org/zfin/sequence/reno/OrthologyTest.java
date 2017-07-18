@@ -2,7 +2,6 @@ package org.zfin.sequence.reno;
 
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.EvidenceCode;
@@ -32,38 +31,32 @@ public class OrthologyTest extends AbstractDatabaseTest {
     // Test that there are Redundancy runs in the database
     // Test the test redundancy run
     public void insertSingleOrthology() {
-        try {
-            HibernateUtil.createTransaction();
-            Marker pax2a = markerRepository.getMarkerByAbbreviation("fsb");
-            Publication publication = pubRepository.getPublication("ZDB-PUB-030905-1");
+        Marker pax2a = markerRepository.getMarkerByAbbreviation("fsb");
+        Publication publication = pubRepository.getPublication("ZDB-PUB-030905-1");
 
-            Ortholog ortho = new Ortholog();
-            ortho.setZebrafishGene(pax2a);
-            Set<OrthologEvidence> evidences  = new HashSet<>();
-            OrthologEvidence evidence = new OrthologEvidence();
-            evidence.setEvidenceCode(getEvidenceCode("AA"));
-            evidence.setPublication(publication);
-            evidence.setOrtholog(ortho);
-            evidences.add(evidence);
-            ortho.setEvidenceSet(evidences);
+        Ortholog ortho = new Ortholog();
+        ortho.setZebrafishGene(pax2a);
+        Set<OrthologEvidence> evidences = new HashSet<>();
+        OrthologEvidence evidence = new OrthologEvidence();
+        evidence.setEvidenceCode(getEvidenceCode("AA"));
+        evidence.setPublication(publication);
+        evidence.setOrtholog(ortho);
+        evidences.add(evidence);
+        ortho.setEvidenceSet(evidences);
 
-            NcbiOtherSpeciesGene ncbiOtherSpeciesGene = getOrthologyRepository().getNcbiGene("2253");
-            ortho.setNcbiOtherSpeciesGene(ncbiOtherSpeciesGene);
+        NcbiOtherSpeciesGene ncbiOtherSpeciesGene = getOrthologyRepository().getNcbiGene("2253");
+        ortho.setNcbiOtherSpeciesGene(ncbiOtherSpeciesGene);
 
-            orthoRepository.saveOrthology(ortho, publication);
+        orthoRepository.saveOrthology(ortho, publication);
 
-            String zdbID = ortho.getZdbID();
-            assertTrue("ID created for Ortholog", zdbID != null && zdbID.startsWith("ZDB-ORTHO"));
+        String zdbID = ortho.getZdbID();
+        assertTrue("ID created for Ortholog", zdbID != null && zdbID.startsWith("ZDB-ORTHO"));
 
-            List<String> evids = getOrthologyRepository().getEvidenceCodes(pax2a);
-            assertTrue("One evidence code created", evids != null);
-            assertEquals("One evidence code created", evids.size(), 1);
-            assertEquals("One evidence code created", evids.get(0), "AA");
+        List<String> evids = getOrthologyRepository().getEvidenceCodes(pax2a);
+        assertTrue("One evidence code created", evids != null);
+        assertEquals("One evidence code created", evids.size(), 1);
+        assertEquals("One evidence code created", evids.get(0), "AA");
 
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            HibernateUtil.rollbackTransaction();
-        }
     }
 
     private EvidenceCode getEvidenceCode(String aa) {

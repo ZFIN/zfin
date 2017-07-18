@@ -32,7 +32,12 @@ public class FeatureMarkerRelationshipValidationService {
             case DELETION:
             case INSERTION:
             case UNSPECIFIED:
-                return validateMaxIsAlleleOfRelationships(newFeatureMarkerRelationshipDTO,existingFeatureMarkerRelationshipDTOs,1) ;
+                if (newFeatureMarkerRelationshipDTO.getRelationshipType().equals("is allele of")) {
+                    return validateMaxIsAlleleOfRelationships(newFeatureMarkerRelationshipDTO, existingFeatureMarkerRelationshipDTOs, 1);
+                }
+                else{
+                    return validateMaxIsAlleleOfRelationships(newFeatureMarkerRelationshipDTO, existingFeatureMarkerRelationshipDTOs, 10);
+                }
             case TRANSLOC:
                 return
                         validateMaxIsAlleleOfRelationships(newFeatureMarkerRelationshipDTO ,existingFeatureMarkerRelationshipDTOs,4)

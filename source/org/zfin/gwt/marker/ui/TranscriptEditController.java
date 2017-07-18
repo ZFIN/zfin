@@ -30,7 +30,7 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
 
 
     // gui elements
-    private final ViewClickLabel transcriptViewClickLabel = new ViewClickLabel("[View Transcript]", "/action/marker/view/", "Ignore");
+    private final ViewClickLabel transcriptViewClickLabel = new ViewClickLabel("[View Transcript]", "/", "Ignore");
     private final TranscriptHeaderEdit transcriptHeaderEdit = new TranscriptHeaderEdit();
     private final RelatedMarkerBox relatedGenesBox =
             new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCES_TRANSCRIPT, false, geneDiv);

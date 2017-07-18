@@ -1,5 +1,6 @@
 package org.zfin.search.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.http.NameValuePair;
@@ -7,15 +8,22 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.util.NamedList;
 import org.springframework.stereotype.Service;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.search.*;
+import org.zfin.search.presentation.FacetValue;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -39,6 +47,8 @@ public class SolrService {
     private static final String SEARCH_URL = "/search";
 
     private static final String PRIMARY_CORE = "prototype";
+
+    private static final String IDLE = "idle";
 
     private static SolrClient prototype;
 
@@ -86,23 +96,16 @@ public class SolrService {
         return url.toString();
     }
 
-    public static ArrayList<FacetField.Count> reorderFacetField(FacetField facetField, Map<String, Boolean> fqMap) {
+    public static ArrayList<FacetValue> reorderFacetField(FacetField facetField, Map<String, Boolean> fqMap) {
         //We want to show selected values first, split the list into two groups
         //then put it back together...
-        ArrayList<FacetField.Count> facetValues = new ArrayList<>();
+        ArrayList<FacetValue> facetValues = new ArrayList<>();
         //The order of execution is different than the order of values... odd
-        List<FacetField.Count> unselectedValues = getUnselectedValues(facetField, fqMap);
-        List<FacetField.Count> selectedValues = getSelectedValues(facetField, fqMap);
+        List<FacetValue> unselectedValues = getUnselectedValues(facetField, fqMap);
+        List<FacetValue> selectedValues = getSelectedValues(facetField, fqMap);
 
-        //always 'human sort' the chromosome facets, unless it's been asked for as count sort
-        if (SolrService.isToBeHumanSorted(facetField.getName())) {
-            Collections.sort(selectedValues, new FacetValueAlphanumComparator());
-            Collections.sort(unselectedValues, new FacetValueAlphanumComparator());
-        }
-        if (facetField.getName().equals("category")) {
-            Collections.sort(selectedValues, new FacetCategoryComparator());
-            Collections.sort(unselectedValues, new FacetCategoryComparator());
-        }
+        selectedValues = sortFacetValues(facetField, selectedValues);
+        unselectedValues = sortFacetValues(facetField, unselectedValues);
 
         facetValues.addAll(unselectedValues);
         facetValues.addAll(selectedValues);
@@ -110,21 +113,36 @@ public class SolrService {
         return facetValues;
     }
 
-    private static List<FacetField.Count> getSelectedValues(FacetField facetField, Map<String, Boolean> fqMap) {
+
+    public static List<FacetValue> sortFacetValues(FacetField facetField, List<FacetValue> inputValues) {
+        List<FacetValue> outputValues = new ArrayList<>();
+        outputValues.addAll(inputValues);
+        if (SolrService.isToBeHumanSorted(facetField.getName())) {
+            Collections.sort(outputValues, new FacetValueAlphanumComparator());
+        }
+        if (facetField.getName().equals("category")) {
+            Collections.sort(outputValues, new FacetCategoryComparator());
+        }
+        return outputValues;
+    }
+
+    private static List<FacetValue> getSelectedValues(FacetField facetField, Map<String, Boolean> fqMap) {
         return getFacetValues(facetField, fqMap, true);
     }
 
-    private static List<FacetField.Count> getUnselectedValues(FacetField facetField, Map<String, Boolean> fqMap) {
+    private static List<FacetValue> getUnselectedValues(FacetField facetField, Map<String, Boolean> fqMap) {
         return getFacetValues(facetField, fqMap, false);
     }
 
-    private static List<FacetField.Count> getFacetValues(FacetField facetField, Map<String, Boolean> fqMap, boolean selected) {
-        List<FacetField.Count> values = new ArrayList<>();
+    private static List<FacetValue> getFacetValues(FacetField facetField, Map<String, Boolean> fqMap, boolean selected) {
+        List<FacetValue> values = new ArrayList<>();
 
         for (FacetField.Count count : facetField.getValues()) {
             String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
             if (!selected == fqMap.containsKey(quotedFq)) {
-                values.add(count);
+                FacetValue value = new FacetValue(count);
+                value.setSelected(selected);
+                values.add(value);
             }
         }
         return values;
@@ -158,6 +176,12 @@ public class SolrService {
         }
         //facet on images no matter what
         query.addFacetField(FieldName.IMG_ZDB_ID.getName());
+
+        if (category != null && CollectionUtils.isNotEmpty(category.getPivotFacetStrings())) {
+            category.getPivotFacetStrings().forEach( pivot -> {
+                query.addFacetPivotField(pivot);
+            });
+        }
 
     }
 
@@ -471,33 +495,36 @@ public class SolrService {
         return out.toString();
     }
 
-    public static String getFacetUrl(FacetField facetField, FacetField.Count count, String baseUrl) {
-        String quotedFq = facetField.getName() + ":\"" + count.getName() + "\"";
+    public static String getFacetUrl(String fieldName, String value, String baseUrl) {
+        String quotedFq = fieldName + ":\"" + value + "\"";
 
         URLCreator urlCreator = new URLCreator(baseUrl);
         urlCreator.addNamevaluePair("fq", quotedFq);
         urlCreator.removeNameValuePair("page");
-        if (StringUtils.equals("category", facetField.getName())) {
+        if (StringUtils.equals("category", fieldName)) {
             urlCreator.removeNameValuePair("category");
-            urlCreator.addNamevaluePair("category", count.getName());
+            urlCreator.addNamevaluePair("category", value);
         }
         return urlCreator.getURL();
     }
 
-    public static String getNotFacetUrl(FacetField facetField, FacetField.Count count, String baseUrl) {
-        String quotedFq = "-" + facetField.getName() + ":\"" + count.getName() + "\"";
+    public static String getNotFacetUrl(String fieldName, String value, String baseUrl) {
+        String quotedFq = "-" + fieldName + ":\"" + value + "\"";
         URLCreator urlCreator = new URLCreator(baseUrl);
         urlCreator.addNamevaluePair("fq", quotedFq);
         urlCreator.removeNameValuePair("page");
-        if (StringUtils.equals("category", facetField.getName())) {
+        if (StringUtils.equals("category", fieldName)) {
             urlCreator.removeNameValuePair("category");
         }
-        logger.debug("exclude URL for " + count.getName() + ": " + urlCreator.getURL());
+        logger.debug("exclude URL for " + value + ": " + urlCreator.getURL());
         return urlCreator.getURL();
     }
-
 
     public static String getPrettyFieldName(String fieldName) {
+        return getPrettyFieldName(fieldName, false);
+    }
+
+    public static String getPrettyFieldName(String fieldName, Boolean ignoreMinus) {
 
 
         FieldName fName = FieldName.getFieldName(fieldName);
@@ -510,13 +537,17 @@ public class SolrService {
         //             return "Normal Phenotype Statement";
 
         //in breadbox links, field names might start with a - for exclusion facets, make it nicer?
-        fieldName = StringUtils.replace(fieldName, "-", "NOT ");
+        if (!ignoreMinus) {
+            fieldName = StringUtils.replace(fieldName, "-", "NOT ");
+        } else {
+            fieldName = StringUtils.replace(fieldName, "-", "");
+        }
 
         //remove fieldType suffix cruft
         fieldName = fieldName.replaceAll("_t$", "");
         fieldName = StringUtils.replace(fieldName, "_tf", "");
         fieldName = StringUtils.replace(fieldName, "_hl", "");
-
+        fieldName = fieldName.replaceAll("_([0-9]+)$", "");
 
         /* these should only get replaced at the end of the word! */
 
@@ -768,6 +799,9 @@ public class SolrService {
 
 
     public static String luceneEscape(String value) {
+        if (StringUtils.isEmpty(value)) {
+            return value;
+        }
         String escaped = LUCENE_PATTERN.matcher(value).replaceAll(REPLACEMENT_STRING);
         return escaped;
     }
@@ -801,4 +835,37 @@ public class SolrService {
         String[] filterQueries = query.getFilterQueries();
         return filterQueries != null && !(filterQueries.length == 1 && filterQueries[0].startsWith("root_only:"));
     }
+
+    public static void addDocument(Map<FieldName, Object> fields) throws IOException, SolrServerException {
+        addDocument(fields, new HashMap<>());
+    }
+
+    public static void addDocument(Map<FieldName, Object> fields, Map<String, Object> extras) throws IOException, SolrServerException {
+        SolrInputDocument document = new SolrInputDocument();
+        SolrClient solr = getSolrClient();
+        for (Map.Entry<FieldName, Object> field : fields.entrySet()) {
+            document.addField(field.getKey().getName(), field.getValue());
+        }
+
+        for (Map.Entry<String, Object> field : extras.entrySet()) {
+            document.addField(field.getKey(), field.getValue());
+        }
+
+        solr.add(document);
+        if (!isIndexingInProgress()) {
+            solr.commit();
+        }
+    }
+
+    public static String getServerStatus() throws IOException, SolrServerException {
+        SolrRequest req = new DirectXmlRequest("/dataimport", null);
+        NamedList<Object> response = getSolrClient().request(req);
+        return (String) response.get("status");
+    }
+
+    public static boolean isIndexingInProgress() throws IOException, SolrServerException {
+        return !getServerStatus().equals(IDLE);
+    }
+
+
 }

@@ -71,6 +71,10 @@
                     <td class="postal-address">${person.address}</td>
                 </tr>
                 <tr>
+                    <th>Country:</th>
+                    <td>${country}</td>
+                </tr>
+                <tr>
                     <th>Phone:</th>
                     <td>${person.phone} </td>
                 </tr>
@@ -86,7 +90,7 @@
         </td>
 
         <td width="30%" style="vertical-align: top; text-align: right;">
-            <zfin2:viewSnapshot value="${person}" className="profile-image"/>
+            <zfin2:profileImage value="${person}" className="profile-image"/>
         </td>
     </tr>
 </table>

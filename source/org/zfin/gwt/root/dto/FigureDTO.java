@@ -39,4 +39,33 @@ public class FigureDTO implements IsSerializable, FilterSelectionBoxEntry {
     public String getValue() {
         return zdbID;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FigureDTO)) return false;
+
+        FigureDTO figureDTO = (FigureDTO) o;
+
+        if (zdbID != null ? !zdbID.equals(figureDTO.zdbID) : figureDTO.zdbID != null) return false;
+        if (label != null ? !label.equals(figureDTO.label) : figureDTO.label != null) return false;
+        return orderingLabel != null ? orderingLabel.equals(figureDTO.orderingLabel) : figureDTO.orderingLabel == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = zdbID != null ? zdbID.hashCode() : 0;
+        result = 31 * result + (label != null ? label.hashCode() : 0);
+        result = 31 * result + (orderingLabel != null ? orderingLabel.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "FigureDTO{" +
+                "zdbID='" + zdbID + '\'' +
+                ", label='" + label + '\'' +
+                ", orderingLabel='" + orderingLabel + '\'' +
+                '}';
+    }
 }

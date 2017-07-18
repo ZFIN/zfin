@@ -16,6 +16,8 @@ public class FishExperiment implements Comparable<FishExperiment> {
     private Fish fish;
     private Set<PhenotypeExperiment> phenotypeExperiments;
     private Set<ExpressionExperiment> expressionExperiments;
+    private Set<GeneGenotypeExperiment> geneGenotypeExperiments;
+    private Set<DiseaseAnnotationModel> diseaseAnnotationModels;
 
     public String getZdbID() {
         return zdbID;
@@ -73,6 +75,14 @@ public class FishExperiment implements Comparable<FishExperiment> {
         this.phenotypeExperiments = phenotypeExperiments;
     }
 
+    public Set<DiseaseAnnotationModel> getDiseaseAnnotationModels() {
+        return diseaseAnnotationModels;
+    }
+
+    public void setDiseaseAnnotationModels(Set<DiseaseAnnotationModel> diseaseAnnotationModels) {
+        this.diseaseAnnotationModels = diseaseAnnotationModels;
+    }
+
     @Override
     public int compareTo(FishExperiment o) {
         int fishCompare = fish.compareTo(o.getFish());
@@ -82,4 +92,11 @@ public class FishExperiment implements Comparable<FishExperiment> {
         return experiment.compareTo(o.getExperiment());
     }
 
+    public Set<GeneGenotypeExperiment> getGeneGenotypeExperiments() {
+        return geneGenotypeExperiments;
+    }
+
+    public void setGeneGenotypeExperiments(Set<GeneGenotypeExperiment> geneGenotypeExperiments) {
+        this.geneGenotypeExperiments = geneGenotypeExperiments;
+    }
 }

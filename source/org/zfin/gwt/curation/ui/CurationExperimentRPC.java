@@ -17,10 +17,6 @@ public interface CurationExperimentRPC extends RemoteService {
 
     public List<ExpressionExperimentDTO> getExperimentsByFilter(ExpressionExperimentDTO experimentFilter);
 
-    public List<String> getAssays();
-
-    public List<ExperimentDTO> getEnvironments(String publicationID);
-
     /**
      * Retrieve all genotypes for a given publication:
      * 1) WT
@@ -42,46 +38,11 @@ public interface CurationExperimentRPC extends RemoteService {
     List<FishDTO> getFishList(String publicationID);
 
     /**
-     * Retrieve antibodies that are attributed to a given publication
-     */
-    List<MarkerDTO> getAntibodies(String publicationID);
-
-    /**
-     * Retrieve antibodies for a given publication and gene.
-     *
-     * @param publicationID String
-     * @param geneID        string
-     */
-    public List<MarkerDTO> readAntibodiesByGene(String publicationID, String geneID);
-
-    /**
-     * Retrieve list of associated genes for given pub and antibody
-     *
-     * @param publicationID String
-     * @param antibodyID    string
-     */
-    List<MarkerDTO> readGenesByAntibody(String publicationID, String antibodyID) throws PublicationNotFoundException;
-
-    /**
-     * Retrieve the accession numbers for a given gene
-     *
-     * @param geneID string
-     */
-    List<ExpressionExperimentDTO> readGenbankAccessions(String publicationID, String geneID);
-
-    /**
      * Update an existing experiment.
      *
      * @param selectedExperiment experiment to be updated
      */
     ExpressionExperimentDTO updateExperiment(ExpressionExperimentDTO selectedExperiment);
-
-    /**
-     * Create a new expression experiment.
-     *
-     * @param experiment experiment
-     */
-    ExpressionExperimentDTO createExpressionExperiment(ExpressionExperimentDTO experiment) throws Exception;
 
     /**
      * Check the visibility of the experiment section
@@ -107,6 +68,8 @@ public interface CurationExperimentRPC extends RemoteService {
 
     List<RelatedEntityDTO> getBackgroundGenotypes(String publicationID);
 
+    List<FishDTO> getWildTypeFishList();
+
     /**
      * Utility/Convenience class.
      * Use CurationExperimentRPC.App.getInstance() to access static instance of CurationExperimentRPCAsync
@@ -123,21 +86,6 @@ public interface CurationExperimentRPC extends RemoteService {
             return INSTANCE;
         }
     }
-
-    /**
-     * Delete an experiment and all related records.
-     *
-     * @param experimentZdbID zdb ID
-     */
-    public void deleteExperiment(String experimentZdbID);
-
-    /**
-     * Read all experiments that are available for a given publication.
-     *
-     * @param publicationID publication
-     */
-    public List<ExpressionExperimentDTO> readExperiments(String publicationID);
-
 
     /**
      * Retrieve all figures that are available for this publication

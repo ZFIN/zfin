@@ -502,6 +502,11 @@ video {
     border: 1px solid blue;
 }
 
+.fig-label-edit-container {
+    width: 100px;
+    white-space: nowrap;
+}
+
 .pub-abstract-section {
     margin-bottom: 1em;
 }
@@ -790,16 +795,6 @@ a + .inline-upload {
     color: #9A9A9A;
 }
 
-.loading-overlay {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.5);
-    font-size: 3em;
-    color: rgba(255, 255, 255, 0.8);
-    text-align: center;
-    padding: 30px;
-    box-sizing: border-box;
-}
-
 .login-box {
     border-radius: 5px;
     background: #e0e7e0;
@@ -1004,6 +999,7 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 }
 .icon-toggle.open {
     transform: rotate(90deg);
+}
 
 .history-popup-panel {
     border: 3px solid #000000;
@@ -1041,4 +1037,26 @@ input + label {
 
 .term-construction-zone-width td:first-child {
     width: 250px !important;
+}
+
+.nav-tabs-loading {
+    color: red !important;
+    font-weight: normal !important;
+}
+
+.autocomplete-suggestion-text {
+    clear: both;
+    margin-right: 10px;
+}
+.autocomplete-direct-link {
+    color: #ccc;
+    visibility: hidden;
+    float:right;
+}
+
+.autocomplete-direct-link:hover { color: white }
+
+.tt-suggestion:hover .autocomplete-direct-link {
+    color: white;
+    visibility: visible;
 }

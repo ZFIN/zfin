@@ -186,7 +186,7 @@ public class GafService {
 
     protected Collection<Marker> getGenes(String entryId) throws GafValidationError {
         Set<Marker> returnGenes = new HashSet<>();
-        if (entryId.startsWith("ZDB-GENE-")) {
+        if (entryId.startsWith("ZDB-GENE-")||entryId.contains("RNAG")) {
             Marker gene = markerRepository.getGeneByID(entryId);
             if (gene == null) {
                 throw new GafValidationError("No gene found for ID: " + entryId);
@@ -196,7 +196,7 @@ public class GafService {
             List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(entryId, getUniprot());
             for (MarkerDBLink markerDBLink : markerDBLinks) {
                 Marker gene = markerDBLink.getMarker();
-                if (gene.getZdbID().startsWith("ZDB-GENE-")) {
+                if (gene.getZdbID().startsWith("ZDB-GENE-")||entryId.contains("RNAG")) {
                     returnGenes.add(gene);
                 } else {
                     logger.debug("no gene associated with dblink: " + markerDBLink);
@@ -325,7 +325,7 @@ public class GafService {
                         List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(
                                 inference.substring(InferenceCategory.UNIPROTKB.prefix().length()), SequenceService.getUniprotRefDB());
                         // if it is one gene, then set that as the prefix
-                        if (markerDBLinks != null && markerDBLinks.size() == 1 && markerDBLinks.get(0).getMarker().getZdbID().startsWith("ZDB-GENE")) {
+                        if (markerDBLinks != null && markerDBLinks.size() == 1 && markerDBLinks.get(0).getMarker().isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                             inference = InferenceCategory.ZFIN_GENE.prefix() + markerDBLinks.get(0).getMarker().getZdbID();
                         }
                     }
@@ -460,9 +460,9 @@ public class GafService {
         return goTerm;
     }
 
-    protected String getPubMedId(String pubMedId) {
+    protected Integer getPubMedId(String pubMedId) {
         if (pubMedId.startsWith(PUBMED_PREFIX)) {
-            return pubMedId.substring(PUBMED_PREFIX.length());
+            return Integer.parseInt(pubMedId.substring(PUBMED_PREFIX.length()));
         }
         return null;
     }
@@ -489,7 +489,6 @@ public class GafService {
             logger.debug("adding " + markerGoTermEvidenceToAdd);
 
             markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidenceToAdd);
-            RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(markerGoTermEvidenceToAdd.getZdbID(), "MarkerGoTermEvidence", markerGoTermEvidenceToAdd.toString(), "Created new MarkerGoTermEvidence record from GafService load");
 
             logger.debug("added " + markerGoTermEvidenceToAdd);
         } catch (Exception e) {

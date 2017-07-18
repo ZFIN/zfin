@@ -37,7 +37,7 @@ public class StageRangeIntersection implements IsSerializable {
         this.start = start;
         this.end = end;
         startHours = start.getStartHours();
-        if (end.getAbbreviation() !=null && end.getAbbreviation().equals(StageRangeUnion.UNKNOWN_ABBREVIATION))
+        if (end.getAbbreviation() != null && end.getAbbreviation().equals(StageRangeUnion.UNKNOWN_ABBREVIATION))
             endHours = StageRangeUnion.UNKNOWN_END_HOURS;
         else
             endHours = end.getStartHours();
@@ -58,10 +58,10 @@ public class StageRangeIntersection implements IsSerializable {
             start = efs.getStart();
             end = efs.getEnd();
             if (efs.getStart().getStartHours() < 0.0F || efs.getEnd().getStartHours() < 0.0F)
-                throw new RuntimeException("Stage hours are not initialized " + efs.getUniqueID());
+                throw new RuntimeException("Stage hours are not initialized " + efs.getID());
             // check that start <= end
             if (efs.getStart().getStartHours() > efs.getEnd().getStartHours())
-                throw new RuntimeException("Start stage is before end stage! " + efs.getUniqueID());
+                throw new RuntimeException("Start stage is before end stage! " + efs.getID());
             // if first element
             if (index == 0) {
                 startHours = efs.getStart().getStartHours();
@@ -175,21 +175,21 @@ public class StageRangeIntersection implements IsSerializable {
     }
 
     public boolean isOverlap(EntityDTO entity) {
-        if(entity == null)
+        if (entity == null)
             return false;
         TermDTO superTerm = entity.getSuperTerm();
-        if(superTerm == null)
+        if (superTerm == null)
             return false;
-        if(!isOverlap(superTerm))
+        if (!isOverlap(superTerm))
             return false;
         TermDTO subTerm = entity.getSubTerm();
         return subTerm == null || isOverlap(subTerm);
     }
 
     private boolean isOverlap(TermDTO term) {
-        if(term == null)
+        if (term == null)
             return true;
-        if(term.getStartStage() == null && term.getEndStage() == null)
+        if (term.getStartStage() == null && term.getEndStage() == null)
             return true;
         return isOverlap(term.getStartStage(), term.getEndStage());
     }

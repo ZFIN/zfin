@@ -8,7 +8,8 @@
     <property name="diseaseOboURL"
               value="https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/master/src/ontology/doid.obo"/>
     <property name="mpathOboURL" value="https://raw.githubusercontent.com/PaulNSchofield/mpath/master/mpath.obo"/>
-    <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
+    <property name="sequenceOboURL" value="http://purl.obolibrary.org/obo/so.obo"/>
+    <property name="ecoOboURL" value="https://raw.githubusercontent.com/evidenceontology/evidenceontology/master/eco.obo"/>
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
     <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
@@ -16,7 +17,7 @@
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so-xp-simple.obo"/>
     <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
     <property name="zecoTaxonomySourceURL" value="/home/informix/Curation/zeco-taxonomy-source.txt"/>
-    <property name="zecoOboURL" value="file:///home/informix/Curation/zeco.obo"/>
+    <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
     <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
 
     <property name="root.dir" value="${basedir}/../../../"/>
@@ -27,6 +28,7 @@
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
     <property name="jvm.args" value="-Xverify:none"/>
+    <property name="jvm.mem" value="-Xmx4g"/>
     <property name="run-directory" value="./obo-files"/>
 
     <property environment="env"/>
@@ -116,6 +118,11 @@
                        scripts="${scriptFilesNoAnnotation}"/>
     </target>
 
+    <target name="load-eco-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="eco-ontology.obo"
+                       scripts="${scriptFilesNoAnnotation}"/>
+    </target>
+
     <target name="load-disease-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="disease-ontology.obo"/>
     </target>
@@ -160,6 +167,12 @@
         <antcall target="download-ontology"/>
     </target>
 
+    <target name="download-eco-ontology">
+        <property name="localOboFile" value="eco-ontology.obo"/>
+        <property name="oboFileURL" value="${ecoOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
     <target name="download-zeco-taxonomy-ontology">
         <property name="localOboFile" value="zeco-taxonomy.obo"/>
         <property name="oboFileURL" value="${zecoTaxonomyOboURL}"/>
@@ -170,7 +183,7 @@
     <target name="download-zeco-ontology">
         <property name="localOboFile" value="zeco.obo"/>
         <property name="oboFileURL" value="${zecoOboURL}"/>
-        <antcall target="download-ontology"/>
+        <copy file="${zecoOboURL}" tofile="${run-directory}/${localOboFile}"/>
     </target>
 
     <target name="download-anatomy-ontology">
@@ -194,6 +207,8 @@
     <target name="load-gene" depends="download-gene-ontology,load-gene-ontology"/>
 
     <target name="load-chebi" depends="download-chebi-ontology,load-chebi-ontology"/>
+
+    <target name="load-eco" depends="download-eco-ontology,load-eco-ontology"/>
 
     <target name="load-zeco-taxonomy" depends="load-zeco-taxonomy-ontology"/>
 
@@ -223,10 +238,10 @@
     </target>
 
     <property name="scriptFiles"
-              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,fixZecoAnnotations.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
 
     <property name="scriptFilesNoAnnotation"
-              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,fixZecoAnnotations.sql,dropTempTables.sql"/>
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
 
     <macrodef name="load-ontology" description="Run the ontology loader">
         <attribute name="oboFileName"/>
@@ -238,7 +253,7 @@
             <echo>OBO file: @{oboDirectory}</echo>
             <echo>script Files: @{scripts}</echo>
             <antcall target="clear-output-directory"/>
-            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="no" maxmemory="2024m"
+            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="no" maxmemory="4g"
                   failonerror="true">
                 <classpath refid="classpath"/>
                 <arg value="-localOboFileName"/>
@@ -253,6 +268,8 @@
                 <arg value="${basedir}"/>
                 <arg value="-jobName"/>
                 <arg value="${JobName}"/>
+                <arg value="-forceLoad"/>
+                <arg value="${forceLoad}"/>
                 <jvmarg value="${jvm.args}"/>
             </java>
         </sequential>
@@ -283,6 +300,8 @@
             <arg value="${basedir}"/>
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
+            <arg value="-forceLoad"/>
+            <arg value="${forceLoad}"/>
             <jvmarg value="${jvm.args}"/>
         </java>
 
@@ -391,7 +410,7 @@
         </exec>
 
         <!-- convert owl file into an obo file -->
-        <java fork="true" jar="${env.SOURCEROOT}/lib/Java/robot.jar">
+        <java fork="true" jar="${env.SOURCEROOT}/lib/Java/ontologies/robot.jar">
             <arg value="convert"/>
             <arg value="--input"/>
             <arg value="obo-files/zeco-taxonomy.owl"/>

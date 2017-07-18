@@ -52,6 +52,12 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         String anatomyRootID = "ZFA:0000037";
         Term term = ontologyRepository.getTermByOboID(anatomyRootID);
         Assert.assertNotNull(term);
+
+        // Ensure obsoleted terms that do not have a term stage range are handled ok too, no exception
+        anatomyRootID = "ZFA:0001160";
+        term = ontologyRepository.getTermByOboID(anatomyRootID);
+        term.getStart();
+        Assert.assertNotNull(term);
     }
 
     @Test
@@ -310,6 +316,8 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore("Disease ontology issue: uses disease_Ontology as a default namespace but then uses 'doid' " +
+            "as namespaces for some terms. Need to check with the working group")
     public void getFirst2Terms() {
         List<String> allTerms = ontologyRepository.getFirstNTermsPerOntology(2);
         assertNotNull(allTerms);

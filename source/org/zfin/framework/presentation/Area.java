@@ -2,27 +2,26 @@ package org.zfin.framework.presentation;
 
 
 /**
-*/
+ */
 public enum Area {
+    ANATOMY("Anatomy"),
+    ANTIBODY("Antibody"),
+    CLONE("Clone"),
+    COMPANY("Company"),
+    EFG("Engineered Foreign Gene"),
+    EREGION("Engineered Region"),
+    FEATURE("Feature"),
+    GENE("Gene"),
+    LAB("Lab"),
+    MAPPING("Mapping"),
+    MARKER("Marker"),
+    PERSON("Person"),
+    PSEUDOGENE("Pseudogene"),
+    PUBLICATION("Publication"),
     TRANSCRIPT("Transcript"),
-    ANATOMY("Anatomy")     ,
-    ANTIBODY("Antibody")     ,
-    CLONE("Clone")     ,
-    GENE("Gene")     ,
-    PSEUDOGENE("Pseudogene")     ,
-    MARKER("Marker")     ,
-    MAPPING("Mapping")     ,
-    USER("User")     ,
-    PUBLICATION("Publication")     ,
-    PERSON("Person")     ,
-    LAB("Lab")     ,
-    COMPANY("Company")     ,
-    REGION("Engineered Region")    ,
-    EFG("Engineered Foreign Gene")
+    USER("User");
 
-    ;
-
-// area variables
+    // area variables
     public final String EDIT = "Edit";
     public final String ADD = "Add";
     public final String DELETE = "Delete";
@@ -31,7 +30,7 @@ public enum Area {
     private final String display;
 
     Area(String type) {
-        this.display= type;
+        this.display = type;
     }
 
     public String getTitleString() {
@@ -39,19 +38,19 @@ public enum Area {
     }
 
     public String getEditTitleString() {
-        return EDIT + " "+ getTitleString();
+        return EDIT + " " + getTitleString();
     }
 
     public String getAddTitleString() {
-        return ADD + " "+ getTitleString();
+        return ADD + " " + getTitleString();
     }
 
     public String getDeleteTitleString() {
-        return DELETE+ " "+ getTitleString();
+        return DELETE + " " + getTitleString();
     }
 
     public String getMergeTitleString() {
-        return MERGE+ " "+ getTitleString();
+        return MERGE + " " + getTitleString();
     }
 
     public String toString() {
@@ -60,8 +59,9 @@ public enum Area {
 
     public static Area getType(String type) {
         for (Area t : values()) {
-            if (t.toString().equals(type))
+            if (t.toString().equals(type)) {
                 return t;
+            }
         }
         throw new RuntimeException("Area not found " + type + " found.");
     }

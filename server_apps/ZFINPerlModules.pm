@@ -21,6 +21,18 @@ my %monthDisplays = (
 );
 
 
+sub doSystemCommand {                  
+
+  my $systemCommand = $_[1];               
+
+  print "Executing [$systemCommand] \n";
+
+  my $returnCode = system( $systemCommand );
+
+  if ( $returnCode != 0 ) {
+    exit -1;
+  }
+} 
 
 
 sub sendMailWithAttachedReport {

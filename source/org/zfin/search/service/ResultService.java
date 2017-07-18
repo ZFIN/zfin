@@ -56,7 +56,7 @@ public class ResultService {
     public static String ABBREVIATION = "Abbreviation:";
     public static String ABSTRACT = "Abstract:";
     public static String ADDRESS = "Address:";
-    public static String AFFECTED_GENES = "Affected Genes:";
+    public static String AFFECTED_GENES = "Affected Genomic Regions:";
     public static String ANTIBODY = "Antibody:";
     public static String AUTHORS = "Authors:";
     public static String CAPTION = "Caption:";
@@ -93,7 +93,7 @@ public class ResultService {
     public static String STAGE = "Stage:";
     public static String STATUS = "Status:";
     public static String SYNONYMS = "Synonyms:";
-    public static String TARGETED_GENES = "Targeted Genes:";
+    public static String TARGETS = "Targets:";
     public static String TRANSCRIPT_NAME = "Transcript Name:";
     public static String TYPE = "Type:";
     public static String HOST_ORGANISM = "Host Organism:";
@@ -286,17 +286,9 @@ public class ResultService {
         if (gene != null) {
 
             result.setEntity(gene);
-
-            if (gene.getType() == Marker.Type.GENE) {
-                result.addAttribute(GENE_NAME, "<span class=\"genedom\">" + gene.getName() + "</span>");
-            }
-            if (gene.getType() == Marker.Type.GENEP) {
-                result.addAttribute(PSEUDOGENE_NAME, "<span class=\"genedom\">" + gene.getName() + "</span>");
-            }
-            if (gene.getType() == Marker.Type.EFG) {
-                result.addAttribute(EFG_NAME, "<span class=\"genedom\">" + gene.getName() + "</span>");
-            }
-            if (gene.getType() == Marker.Type.TSCRIPT) {
+            if (gene.isInTypeGroup(Marker.TypeGroup.GENEDOM) || gene.isInTypeGroup(Marker.TypeGroup.EFG)) {
+                result.addAttribute(gene.getMarkerType().getDisplayName() + " Name:", "<span class=\"genedom\">" + gene.getName() + "</span>");
+            } else if (gene.getType() == Marker.Type.TSCRIPT) {
                 result.addAttribute(TRANSCRIPT_NAME, MarkerPresentation.getAbbreviation(gene));
             }
             if (gene.getAliases() != null && gene.getAliases().size() > 0) {
@@ -412,7 +404,7 @@ public class ResultService {
                 affectedGenes.add(MarkerPresentation.getAbbreviation(gene));
             }
             if (affectedGenes.size() > 0) {
-                result.addAttribute(TARGETED_GENES, withCommas(affectedGenes));
+                result.addAttribute(TARGETS, withCommas(affectedGenes));
             }
 
             List<String> sequenceList = new ArrayList<String>();
@@ -440,7 +432,7 @@ public class ResultService {
 
         addSynonyms(result, marker);
         result.addAttribute(TYPE, marker.getType().toString());
-        if (marker.getType().equals(Marker.Type.REGION)) {
+        if (marker.getType().equals(Marker.Type.EREGION)) {
             addComments(result, marker);
         }
         addLocationInfo(result, marker);

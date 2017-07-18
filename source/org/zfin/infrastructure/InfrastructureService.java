@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
+import org.zfin.publication.Journal;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Calendar;
@@ -28,6 +29,10 @@ public class InfrastructureService {
     public static void insertUpdate(Marker marker, String actionDone) {
         logger.debug("Update: " + marker.getZdbID() + " " + actionDone);
         infrastructureRepository.insertUpdatesTable(marker, "", actionDone);
+    }
+    public static void insertUpdate(Journal journal, String actionDone) {
+        logger.debug("Update: " + journal.getZdbID() + " " + actionDone);
+        infrastructureRepository.insertUpdatesTable(journal, "", actionDone);
     }
 
     public static void insertUpdate(Marker marker, String fieldname, String oldValue, String newValue) {

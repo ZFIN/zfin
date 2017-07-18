@@ -135,10 +135,21 @@ public class SequenceTargetingReagentAddController {
             }
 
             String targetGeneAbbr = formBean.getTargetGeneSymbol();
-            Marker targetGene = mr.getGeneByAbbreviation(targetGeneAbbr);
+          //  Marker targetGene = mr.getGeneByAbbreviation(targetGeneAbbr);
+            Marker targetGene = mr.getMarkerByAbbreviation(targetGeneAbbr);
 
             if (targetGene != null && !StringUtils.isEmpty(pubZdbID)) {
-                MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+                if (targetGene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                    MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+                }
+                if (targetGene.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
+                    if (newSequenceTargetingReagent.getType()== Marker.Type.CRISPR) {
+                        MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.CRISPR_TARGETS_REGION);
+                    }
+                    if (newSequenceTargetingReagent.getType()== Marker.Type.TALEN) {
+                        MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.TALEN_TARGETS_REGION);
+                    }
+                }
             }
 
             String supplierName = formBean.getSupplier();
@@ -185,6 +196,14 @@ public class SequenceTargetingReagentAddController {
     @ResponseBody
     List<TargetGeneLookupEntry> lookupTargetGenes(@RequestParam("term") String lookupString) {
         return mr.getTargetGenesWithNoTranscriptForString(lookupString);
+    }
+
+    @RequestMapping(value = "/find-relationshipTargets", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<TargetGeneLookupEntry> lookupRelationshipTargets(@RequestParam("term") String lookupString) {
+
+        return mr.getRelationshipTargetsForString(lookupString);
     }
 }
 

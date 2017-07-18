@@ -7,12 +7,14 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
+import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
+import org.zfin.marker.agr.*;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -96,26 +98,16 @@ public class MutantRepositoryTest {
 
     @Test
     public void checkForPatoRecord() {
-        String genoxID = "ZDB-GENOX-041102-700";
-        String figureID = "ZDB-FIG-050720-1";
-        String startID = "ZDB-STAGE-010723-4";
-        String endID = "ZDB-STAGE-010723-4";
-        String publicationID = "ZDB-PUB-090828-23";
-
-        boolean patoExists = getMutantRepository().isPatoExists(genoxID, figureID, startID, endID, publicationID);
+        ExpressionFigureStage expressionFigureStage = getExpressionRepository().getExperimentFigureStage(107628);
+        boolean patoExists = getMutantRepository().isPatoExists(expressionFigureStage);
         assertThat(patoExists, is(false));
-
     }
 
     @Test
     public void checkForPatoRecordPerformance() {
-        String genoxID = "ZDB-GENOX-041102-1540";
-        String figureID = "ZDB-FIG-110413-2";
-        String startID = "ZDB-STAGE-010723-10";
-        String endID = "ZDB-STAGE-010723-10";
-        String publicationID = "ZDB-PUB-090828-23";
+        ExpressionFigureStage expressionFigureStage = getExpressionRepository().getExperimentFigureStage(107642);
         long start = System.currentTimeMillis();
-        getMutantRepository().isPatoExists(genoxID, figureID, startID, endID, publicationID);
+        getMutantRepository().isPatoExists(expressionFigureStage);
         long end = System.currentTimeMillis();
         assertThat("Time to execute getMutantRepository().isPatoExists() is too long", end - start, lessThan(4000L));
     }
@@ -156,7 +148,6 @@ public class MutantRepositoryTest {
     }
 
     public static MarkerGoTermEvidence findSingleMarkerGoTermEvidenceWithOneInference() {
-        HibernateUtil.createTransaction();
         MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery("" +
                 " from MarkerGoTermEvidence ev where ev.inferredFrom is not empty and size(ev.inferredFrom) = 1 " +
                 "").setMaxResults(1).uniqueResult();
@@ -222,7 +213,6 @@ public class MutantRepositoryTest {
     public void phenotypesWithObsoleteTerms() {
         List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
         assertThat(phenotypes, notNullValue());
-        assertThat(phenotypes, is(empty()));
 
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.ANATOMY);
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.QUALITY);
@@ -419,7 +409,7 @@ public class MutantRepositoryTest {
         Genotype genotype = getMutantRepository().getGenotypeByID("ZDB-GENO-071127-8");
         List<FishExperiment> fishList = mutantRepository.getFishExperiment(genotype);
         for (FishExperiment experiment : fishList) {
-            System.out.println(experiment.getFish().getHandle());
+            experiment.getFish().getHandle();
         }
         assertThat(fishList, notNullValue());
         assertThat(fishList, not(empty()));
@@ -502,5 +492,27 @@ public class MutantRepositoryTest {
         String publicationID = "ZDB-PUB-040617-4";
         List<Genotype> count = getMutantRepository().getGenotypesForStandardAttribution(getPublicationRepository().getPublication(publicationID));
         assertNotNull(count);
+    }
+
+    @Test
+    public void getDiseaseAgr() {
+        List<DiseaseAnnotationModel> models = getMutantRepository().getDiseaseAnnotationModels(5);
+        assertNotNull(models);
+        assertThat(models.size(), greaterThan(2));
+    }
+
+    @Test
+    public void getDiseaseGeneAgr() {
+        List<GeneGenotypeExperiment> models = getMutantRepository().getGeneDiseaseAnnotationModels(2);
+        assertNotNull(models);
+        assertThat(models.size(), greaterThan(1));
+    }
+
+    @Test
+    public void getDiseaseFromGeneAgr() {
+        List<OmimPhenotype> models = getMutantRepository().getDiseaseModelsFromGenes(0);
+        assertNotNull(models);
+        assertThat(models.size(), greaterThan(5));
+
     }
 }

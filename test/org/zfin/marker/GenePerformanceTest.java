@@ -6,7 +6,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.zfin.AbstractUnitSmokeTest;
-import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +34,7 @@ public class GenePerformanceTest extends AbstractUnitSmokeTest {
     private List<String> worstGenesPhenoFigur;
     private List<String> worstGenesRecattrib;
     private List<String> worstGenesXpat;
-    String javaPageUrl = "/action/marker/view/";
+    String javaPageUrl = "/";
     final int maxSize = 200  ;
 
     public GenePerformanceTest() throws Exception{

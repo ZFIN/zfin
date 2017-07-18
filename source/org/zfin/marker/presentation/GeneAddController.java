@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,14 +12,21 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerSolrService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.search.Category;
+import org.zfin.search.FieldName;
+import org.zfin.search.service.SolrService;
 
 import javax.validation.Valid;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/marker")
@@ -27,10 +35,13 @@ public class GeneAddController {
     private static Logger LOG = Logger.getLogger(GeneAddController.class);
 
     @Autowired
-    MarkerRepository markerRepository;
+    private MarkerRepository markerRepository;
 
     @Autowired
-    PublicationRepository publicationRepository;
+    private PublicationRepository publicationRepository;
+
+    @Autowired
+    MarkerSolrService markerSolrService;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
@@ -43,16 +54,24 @@ public class GeneAddController {
         GeneAddFormBean form = new GeneAddFormBean();
         form.setPublicationId(source);
         form.setType(type);
-        Map<String, String> allTypes = new LinkedHashMap<>(3);
-        allTypes.put(Marker.Type.GENE.name(), "Gene");
-        allTypes.put(Marker.Type.GENEP.name(), "Pseudogene");
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM);
+        Map<String, String> allTypes = new LinkedHashMap<>(markerTypes.size());
+        for (MarkerType markerType : markerTypes) {
+            if (!markerType.getDisplayName().equals("Transcript")) {
+                if (!markerType.getDisplayName().equals("Gene Family")) {
+                    allTypes.put(markerType.getType().name(), markerType.getDisplayName());
+                }
+            }
+        }
+
         allTypes.put(Marker.Type.EFG.name(), "Engineered Foreign Gene");
         form.setAllTypes(allTypes);
+
         return form;
     }
 
     @RequestMapping(value = "/gene-add", method = RequestMethod.GET)
-    public String showGeneAddForm(Model model) {
+    public String showGeneAddForm(Model model) throws IOException, SolrServerException {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add New Gene");
         return "marker/gene-add.page";
     }
@@ -60,7 +79,7 @@ public class GeneAddController {
     @RequestMapping(value = "/gene-add", method = RequestMethod.POST)
     public String processGeneAddForm(Model model,
                                      @Valid @ModelAttribute("formBean") GeneAddFormBean formBean,
-                                     BindingResult result) {
+                                     BindingResult result) throws IOException, SolrServerException {
         if (result.hasErrors()) {
             return showGeneAddForm(model);
         }
@@ -86,6 +105,9 @@ public class GeneAddController {
             }
 
             HibernateUtil.flushAndCommitCurrentSession();
+
+            markerSolrService.addMarkerStub(newGene, Category.GENE);
+
         } catch (Exception e) {
             try {
                 HibernateUtil.rollbackTransaction();

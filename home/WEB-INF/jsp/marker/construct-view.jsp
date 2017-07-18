@@ -64,14 +64,14 @@
 
     <%--Transgenics that utilize the construct--%>
     <%--link to the facet search result if there are more than 50 features --%>
-    <c:choose>
+   <c:choose>
         <c:when test="${formBean.transgenics != null && fn:length(formBean.transgenics) > 50 }">
-            <zfin2:subsection title="TRANSGENICS THAT UTILIZE <i>${formBean.marker.name}</i>">
+            <zfin2:subsection title="GENOMIC FEATURES  THAT UTILIZE <i>${formBean.marker.name}</i>">
                 <table class="summary horizontal-solidblock">
                     <tr>
                         <td>
                             <a href="/prototype?q=&fq=category:%22Mutation+/+Tg%22&fq=xref:${formBean.marker.zdbID}">View
-                                all transgenics that utilize <i>${formBean.marker.name}</i></a>
+                                all genomic features that utilize <i>${formBean.marker.name}</i></a>
                         </td>
                     </tr>
                 </table>
@@ -79,15 +79,15 @@
         </c:when>
         <c:otherwise>
             <div id="transgenics" class="summary">
-                <zfin2:subsection title="TRANSGENICS THAT UTILIZE <i>${formBean.marker.name}</i>"
-                                  test="${!empty formBean.transgenics}" showNoData="true">
+                <zfin2:subsection test="${!empty formBean.transgenics}" showNoData="true" title="GENOMIC FEATURES  THAT UTILIZE <i>${formBean.marker.name}</i>">
+
                     <table id="features-table" class="summary rowstripes">
                         <tr>
                             <th width="25%">
                                 Genomic Feature
                             </th>
                             <th width="25%">
-                                Affected Genes
+                                Affected Genomic Regions
                             </th>
                             <th width="25%">
                                 &nbsp;
@@ -118,14 +118,26 @@
             </div>
         </c:otherwise>
     </c:choose>
-
+<c:choose>
+    <c:when test="${formBean.transgenics != null && fn:length(formBean.transgenics) > 50 }">
+        <zfin2:subsection title="TRANSGENICS THAT UTILIZE ${formBean.marker.name}">
+            <table class="summary horizontal-solidblock">
+                <tr>
+                    <td>
+                        <a href="/prototype?q=&fq=category:%22Fish%22&fq=xref:${formBean.marker.zdbID}">View
+                            all transgenics that utilize <i>${formBean.marker.name}</i></a>
+                    </td>
+                </tr>
+            </table>
+        </zfin2:subsection>
+    </c:when>
+    <c:otherwise>
     <div id="transgenic-lines" class="summary">
-        <zfin2:subsection title="TRANSGENIC LINES" showNoData="true"
-                          test="${!empty formBean.fish}">
+        <zfin2:subsection test="${!empty formBean.fish}" showNoData="true" title="TRANSGENICS THAT UTILIZE <i>${formBean.marker.name}</i>">
             <table class="summary rowstripes">
                 <tr>
                     <th>Fish</th>
-                    <th>Affected Genes</th>
+                    <th>Affected Genomic Regions</th>
                     <th>Phenotype</th>
                     <th>Gene Expression</th>
                 </tr>
@@ -154,6 +166,8 @@
             </table>
         </zfin2:subsection>
     </div>
+    </c:otherwise>
+</c:choose>
 
     <%--SEQUENCE INFORMATION--%>
     <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}"

@@ -1,6 +1,6 @@
 begin work;
 
-create temp table tmp_header (format_ver varchar(10), data_ver varchar(10), datet varchar(20), saved_by varchar(10), auto varchar(50), default_namespace varchar(50), remark varchar(100))
+create temp table tmp_header (format_ver varchar(10), data_ver varchar(10), datet varchar(20), saved_by varchar(50), auto varchar(50), default_namespace varchar(50), remark varchar(100))
 with no log;
 
 load from ontology_header.unl

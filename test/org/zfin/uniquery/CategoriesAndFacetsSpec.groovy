@@ -4,6 +4,7 @@ import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.response.FacetField
+import org.apache.solr.client.solrj.response.PivotField
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
@@ -52,7 +53,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         facetValues.contains(category.name)
 
         where:
-        category << Category.values()
+        category << Category.values().findAll { it != Category.STR_RELATIONSHIP }
     }
 
     @Unroll
@@ -68,7 +69,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
             logger.error(e);
         }
 
-        def returnedFacets = response.facetFields*.name
+        List<String> returnedFacets = response.facetFields*.name
 
         then:
         returnedFacets.contains(field.name)
@@ -89,7 +90,6 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.MOLECULAR_FUNCTION_TF,
                         FieldName.PHENOTYPE_STATEMENT,
                         FieldName.STAGE,
-                        FieldName.TYPE
                 ],
                 (Category.FISH)                      : [
                         FieldName.AFFECTED_ANATOMY_TF,
@@ -129,7 +129,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.TYPE
                 ],
                 (Category.SEQUENCE_TARGETING_REAGENT): [
-                        FieldName.TARGETED_GENE,
+                        FieldName.TARGET,
                         FieldName.TYPE
                 ],
                 (Category.MARKER)                    : [
@@ -194,7 +194,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.HOST_ORGANISM,
                         FieldName.LABELED_STRUCTURE_TF,
                         FieldName.SOURCE,
-                        FieldName.TYPE
+                        FieldName.ANTIBODY_TYPE
                 ],
                 (Category.DISEASE)                   : [
                         FieldName.GENE,
@@ -229,11 +229,11 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         Category.EXPRESSIONS                | ["Expressed Gene", "Expressed In Anatomy", "Stage", "Has Image", "Is Wildtype and Clean", "Assay", "Genotype", "Sequence Targeting Reagent (STR)", "Conditions"]
         Category.PHENOTYPE                  | ["Phenotypic Gene", "Phenotype Statement", "Stage", "Manifests In", "Sequence Targeting Reagent (STR)", "Is Monogenic", "Conditions", "Has Image"]
         Category.DISEASE                    | ["Gene", "Disease Model"]
-        Category.FISH                       | ["Affected Gene", "Is Model Of", "Expression Anatomy", "Phenotype", "Sequence Targeting Reagent (STR)", "Construct", "Mutation / Tg", "Background"]
+        Category.FISH                       | ["Affected Genomic Region", "Is Model Of", "Expression Anatomy", "Phenotype", "Sequence Targeting Reagent (STR)", "Construct", "Mutation / Tg", "Background"]
         Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage"]
-        Category.MUTANT                     | ["Type", "Affected Gene", "Phenotype", "Consequence", "Mutagen", "Source", "Lab of Origin", "Institution"]
+        Category.MUTANT                     | ["Type", "Affected Genomic Region", "Phenotype", "Consequence", "Mutagen", "Source", "Lab of Origin", "Institution"]
         Category.CONSTRUCT                  | ["Type", "Regulatory Region", "Coding Sequence", "Inserted In Gene", "Expressed In", "Reporter Color", "Engineered Region"]
-        Category.SEQUENCE_TARGETING_REAGENT | ["Type", "Targeted Gene"]
+        Category.SEQUENCE_TARGETING_REAGENT | ["Type", "Target"]
         Category.ANTIBODY                   | ["Type", "Antigen Gene", "Labeled Structure", "Assay", "Source", "Host Organism"]
         Category.MARKER                     | ["Type", "Location", "Source"]
         Category.FIGURE                     | ["Expression Anatomy", "Expressed Gene", "Phenotype", "Construct", "Registered Author", "Has Image"]

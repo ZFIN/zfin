@@ -11,24 +11,20 @@
     <table class="table table-condensed">
         <tr>
             <td>Relationship Type</td>
+<td><select class="form-control" ng-model="mkrreln.newRelationship" ng-options="str for str in mkrreln.relationshipTypes"></select></td>
 
-            <td><select ng-model="mkrreln.newRelationship">
-            <option value="gene contains small segment">gene contains small segment</option>
-                <option value="gene hybridized by small segment">gene hybridized by small segment</option>
-                <option value="gene encodes small segment">gene encodes small segment</option>
-                <option value="gene has artifact">gene has artifact</option>
-                <option value="contains polymorphism">contains polymorphism</option>
-                <option value="clone contains gene">clone contains gene</option>
-            </select>
-            </td>
+
+            </select></td>
         </tr>
         <tr>
+
             <td>Partner Symbol</td>
                 <td><input class="form-control"
-                       url="/action/quicksearch/autocomplete?q=%QUERY&category=Marker+%2F+Clone"
-                       ng-model="mkrreln.newGene"
+                           url="/action/marker/find-relationshipTargets?term=%QUERY"
+                           ng-model="mkrreln.newGene"
                        autocompletify>
                     </td>
+
             </tr>
         <tr>
             <td>Attribution</td>
@@ -47,7 +43,8 @@
             </td>
         </tr>
     </table>
-    <span ng-bind-html="mkrreln.errorMessage | unsafe" class="error"></span>
+    <p class="text-danger" ng-show="mkrreln.errorMessage">{{mkrreln.errorMessage}}</p>
+    <!--<span ng-bind-html="mkrreln.errorMessage | unsafe" class="error"></span>-->
 </div>
 
 <!--<div class="row">
@@ -59,12 +56,12 @@
                     <a style="font-weight: bold;" target="_blank" ng-href="{{mkrreln.markerId}}"><i>{{mkrreln.markerAbbrev}}</i></a> {{relationship.name}} </td>
                <td>
                     {{relationship.relationshipType}} [{{relationship.markerType}}]{{mkrreln.relationship.attributionZdbIDs.length}}  <span ng-bind-html="relationship.linkWithAttributionAndOrderThis | unsafe"></span>{{relationship.abbrev}}
-                    <span
+                    <span  ng-if="relationship.relationshipType!='Contained in'"
                             ng-show="mkrreln.edit" style="cursor: pointer;"
                             ng-click="mkrreln.openEditAttribution(relationship, $index)"><i class="fa fa-pencil" aria-hidden="true" style="color: red"
                                                                                        title="Edit attributions"></i></span>
 
-                      <span ng-show="mkrreln.edit" style="cursor: pointer;"
+                      <span ng-if="relationship.relationshipType!='Contained in'" ng-show="mkrreln.edit" style="cursor: pointer;"
                             ng-click="mkrreln.openDeleteRelationship(relationship, $index)">
 
                     <i class="fa fa-trash" aria-hidden="true"

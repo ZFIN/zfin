@@ -1,4 +1,5 @@
 # Generated things
+.gradle
 home/WEB-INF/classes/
 home/WEB-INF/jsp/dev-tools/zfin-properties.jsp
 home/WEB-INF/log4j.xml
@@ -6,6 +7,9 @@ home/WEB-INF/zfin.properties
 lib/DB_functions/**/*.so
 reports/tests/
 server_apps/jenkins/jenkins.war
+server_apps/data_transfer/LoadOntology/reload-status/
+server_apps/data_transfer/LoadOntology/obo-files
+server_apps/data_transfer/LoadOntology/logs
 
 # IntelliJ things
 .idea

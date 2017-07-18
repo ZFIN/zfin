@@ -72,18 +72,19 @@ public class MergeMarkerController {
             ,@ModelAttribute("formBean") MergeBean formBean
             ,BindingResult result
     ) throws Exception {
-        String type = zdbIDToDelete.substring(4, 8);
+    //    String type = zdbIDToDelete.substring(4, 8);
 
         Marker markerToDelete;
 
-        if (type.startsWith("ATB") || type.startsWith("GEN") || type.startsWith("MRP") || type.startsWith("TAL") || type.startsWith("CRI"))  {
+  //      if (type.startsWith("ATB") || type.startsWith("GEN") || type.startsWith("MRP") || type.startsWith("TAL") || type.startsWith("CRI")
+  //              || type.startsWith("LIN") || type.startsWith("NCR"))  {
 
             markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean .getZdbIDToDelete());
 
             formBean.setMarkerToDelete(markerToDelete);
             //        model.addAttribute("markerToDeleteId", markerToDelete.getZdbID());
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
-        }
+  //      }
         return "marker/merge-marker.page";
     }
 
@@ -158,6 +159,22 @@ public class MergeMarkerController {
         return processedFoundGeneList;
     }
 
+    // looks up region to be merged into
+    @RequestMapping(value = "/find-region-to-merge-into", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<LookupEntry> lookupRegionToMergeInto(@RequestParam("term") String lookupString, @RequestParam("exclude") String zdbId) {
+        String type = MarkerService.getTypeForZdbID(zdbId);
+        List<LookupEntry> foundRegionlist = RepositoryFactory.getMarkerRepository().getRegionListForString(lookupString, type);
+        List<LookupEntry> processedFoundRegionlist = new ArrayList<>();
+        for (LookupEntry region : foundRegionlist) {
+            if (!region.getId().equals(zdbId)) {
+                processedFoundRegionlist.add(region);
+            }
+        }
+        return processedFoundRegionlist;
+    }
+
     // looks up MO to be merged into
     @RequestMapping(value = "/find-mo-to-merge-into", method = RequestMethod.GET)
     public
@@ -214,7 +231,7 @@ public class MergeMarkerController {
     public
     @ResponseBody
     List<PublicationLink> getEapPublicationForGene(@RequestParam("geneZdbId") String geneZdbId) {
-        Marker gene = RepositoryFactory.getMarkerRepository().getGeneByID(geneZdbId);
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbId);
         if (gene == null)
             return null;
         List<ExpressionResult2> eapExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultList(gene);
@@ -235,7 +252,7 @@ public class MergeMarkerController {
     public
     @ResponseBody
     List<OrthologySlimPresentation> getOrthologyForGene(@RequestParam("geneZdbId") String geneZdbId) {
-        Marker gene = RepositoryFactory.getMarkerRepository().getGeneByID(geneZdbId);
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbId);
         if (gene == null)
             return null;
         return RepositoryFactory.getOrthologyRepository().getOrthologySlimForGeneId(geneZdbId);
@@ -346,7 +363,19 @@ public class MergeMarkerController {
     List<SequenceTargetingReagentLookupEntry> getSTRforGene(@RequestParam("geneZdbID") String geneZdbID) {
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         Marker gene = mr.getMarkerByID(geneZdbID);
-        Set<RelatedMarker> sequenceTargetingReagents = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+        Set<RelatedMarker> sequenceTargetingReagents = new HashSet<>();
+        if (gene.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
+            Set<RelatedMarker> crisprs = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.CRISPR_TARGETS_REGION);
+            if (crisprs != null) {
+                sequenceTargetingReagents.addAll(crisprs);
+            }
+            Set<RelatedMarker> talens = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.TALEN_TARGETS_REGION);
+            if (talens != null) {
+                sequenceTargetingReagents.addAll(talens);
+            }
+        } else {
+            sequenceTargetingReagents = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+        }
         List<SequenceTargetingReagentLookupEntry> sequenceTargetingReagentEntries = new ArrayList<>();
         for (RelatedMarker str : sequenceTargetingReagents) {
             SequenceTargetingReagentLookupEntry sequenceTargetingReagentEntry = new SequenceTargetingReagentLookupEntry();
@@ -412,5 +441,17 @@ public class MergeMarkerController {
             fishes.add(fishEntry);
         }
         return fishes;
+    }
+
+    @RequestMapping(value = "/update-str-sequence", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    void updateStrSequence(@RequestParam("source") String source, @RequestParam("target") String target) {
+        MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+        SequenceTargetingReagent sourceStr = mutantRepository.getSequenceTargetingReagentByID(source);
+        SequenceTargetingReagent targetStr = mutantRepository.getSequenceTargetingReagentByID(target);
+        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+        markerRepository.copyStrSequence(sourceStr, targetStr);
+        return;
     }
 }

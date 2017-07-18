@@ -5,5 +5,5 @@ select a.dblink_linked_recid
                         and b.dblink_fdbcont_Zdb_id = fdbcont_zdb_id
                         and fdbcont_fdbdt_id = fdbdt_pk_id
                         and fdbdt_data_type = 'RNA')
-and a.dblink_linked_recid like 'ZDB-GENE%'
+and (a.dblink_linked_recid like 'ZDB-GENE%' or a.dblink_linked_recid like '%RNAG%')
 and (a.dblink_acc_num like 'BK%' or a.dblink_acc_num like 'BN%')

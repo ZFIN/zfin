@@ -3,6 +3,7 @@ package org.zfin.feature.repository;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
@@ -100,10 +101,6 @@ public interface FeatureRepository {
 
     List<Feature> getFeaturesForStandardAttribution(Publication publication);
 
-    List<Feature> getFeatureForAttribution(String publicationZdbID);
-
-    List<Feature> getFeaturesForAttribution(String publicationZdbID);
-
     Feature getFeatureByAbbreviation(String featureAbbrev);
 
     String getFeatureByAbbreviationInTrackingTable(String featureAbbrev);
@@ -181,4 +178,8 @@ public interface FeatureRepository {
     void update(Feature feature, Set<FeatureTranscriptMutationDetail> addTranscriptAttribution, String publicationID);
 
     void deleteFeatureProteinMutationDetail(FeatureProteinMutationDetail detail);
+
+    Long getFeaturesForLabCount(String zdbID);
+
+    List<Feature> getFeaturesForLab(String zdbID, int i);
 }

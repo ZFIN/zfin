@@ -2,6 +2,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
+<div id="term-info">
 <div class="popup-body phenotype-popup-body">
 
     <c:if test="${hasAddToSearchButton}">
@@ -88,7 +89,8 @@
                                 </c:when>
                                 <c:otherwise>
                                     <span class="related-ontology-term" id="${term.termName}">
-                                        <a href="/action/ontology/term-detail-popup?termID=${term.zdbID}">${term.termName}</a>
+                                        <a href="#"
+                                           onClick="loadTerm('/action/ontology/term-detail-popup?termID=${term.zdbID}')">${term.termName}</a>
                                     </span>
                                 </c:otherwise>
                             </c:choose>
@@ -102,4 +104,11 @@
     <c:if test="${!empty term && fn:contains(term.ontology.commonName,'Anatomy Ontology')}">
         <a href="/action/ontology/term-detail/${term.zdbID}" target="_blank">Show Anatomy Details</a>
     </c:if>
+</div>
+<script>
+
+    function loadTerm(url) {
+        jQuery('#term-info').load(url)
+    }
+</script>
 </div>

@@ -1,11 +1,9 @@
 package org.zfin.infrastructure;
 
+import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 
@@ -17,6 +15,10 @@ public class PublicationAttribution extends RecordAttribution implements Seriali
     @JoinColumn(name = "recattrib_source_zdb_id", insertable = false, updatable = false)
     protected Publication publication;
 
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name = "recattrib_data_zdb_id", insertable = false, updatable = false)
+    protected Marker marker;
+
     public Publication getPublication() {
         return publication;
     }
@@ -24,6 +26,14 @@ public class PublicationAttribution extends RecordAttribution implements Seriali
     public void setPublication(Publication publication) {
         this.publication = publication;
         setSourceZdbID(publication.getZdbID());
+    }
+
+    public Marker getMarker() {
+        return marker;
+    }
+
+    public void setMarker(Marker marker) {
+        this.marker = marker;
     }
 
     public int compareTo(PublicationAttribution pubAttrib) {

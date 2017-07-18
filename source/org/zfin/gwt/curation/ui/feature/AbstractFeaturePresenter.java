@@ -3,13 +3,14 @@ package org.zfin.gwt.curation.ui.feature;
 import com.google.gwt.core.client.GWT;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.curation.ui.FeatureValidationService;
-import org.zfin.gwt.curation.ui.feature.AbstractFeatureView;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeaturePrefixDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.OrganizationDTO;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
     }
 
     private void setLabOfOriginsValues() {
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_LABS_OF_ORIGIN_WITH_PREFIX_START);
         FeatureRPCService.App.getInstance().getLabsOfOriginWithPrefix(new FeatureEditCallBack<List<OrganizationDTO>>("Failed to load labs", this) {
             public void onSuccess(List<OrganizationDTO> list) {
                 view.labOfOriginBox.clear();
@@ -40,6 +42,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 for (OrganizationDTO labDTO : list) {
                     view.labOfOriginBox.addItem(labDTO.getName(), labDTO.getZdbID());
                 }
+                AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_LABS_OF_ORIGIN_WITH_PREFIX_STOP);
             }
         });
 
@@ -109,6 +112,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
     public void onLabOfOriginChange(String labOfOriginSelected, final String labPrefix) {
         if (view.labOfOriginBox.isSelectedNull())
             return;
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_START);
         FeatureRPCService.App.getInstance().getPrefix(labOfOriginSelected,
                 new FeatureEditCallBack<List<FeaturePrefixDTO>>("Failed to load lab prefixes", this) {
 
@@ -138,9 +142,14 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                             view.labDesignationBox.setIndexForValue(dto.getLabPrefix());
                         handleDirty();
                         clearError();
-
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_STOP);
                     }
 
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        super.onFailure(throwable);
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_STOP);
+                    }
                 });
 
     }

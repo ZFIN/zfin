@@ -21,13 +21,14 @@
         <property name="nonZfinPublications" column="nonzf_pubs" lazy="true"/>
         <property name="personalBio" column="pers_bio" lazy="true"/>
 
-        <property name="snapshot" column="snapshot" type="blob" lazy="true"/>
+        <property name="image"/>
         <property name="url"/>
         <property name="email"/>
         <property name="fax"/>
         <property name="phone"/>
         <property name="orcidID" column="orcid_id"/>
         <property name="address" column="address"/>
+        <property name="country" column="person_country"/>
         <property name="shortName" column="name"/>
         <property name="fullName" column="full_name"/>
 
@@ -108,9 +109,10 @@
         <property name="fax"/>
         <property name="phone"/>
         <property name="address" column="address"/>
+        <property name="country" />
         <property name="status"/>
         <property name="bio"/>
-        <property name="snapshot" column="snapshot" type="blob"/>
+        <property name="image"/>
         <many-to-one name="contactPerson" column="contact_person" class="org.zfin.profile.Person"/>
 
         <set name="organizationUrls">

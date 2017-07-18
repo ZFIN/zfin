@@ -5,7 +5,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.DevelopmentStage;
@@ -74,9 +73,17 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         List<PhenotypeStructure> structures = getPhenotypeRepository().retrievePhenotypeStructures(pubID);
         assertNotNull(structures);
         for (PhenotypeStructure structure : structures) {
-            System.out.println(structure.getEntity().getSuperterm().getTermName());
-            System.out.println(structure.getQualityTerm().getTermName());
+            structure.getEntity().getSuperterm().getTermName();
+            structure.getQualityTerm().getTermName();
         }
+    }
+
+    @Test
+    public void hasPhenotypeStructures() {
+        String pubID = "ZDB-PUB-961014-496";
+
+        boolean hasStructures = getPhenotypeRepository().hasPhenotypeStructures(pubID);
+        assertFalse(hasStructures);
     }
 
     @SuppressWarnings({"NonBooleanMethodNameMayNotStartWithQuestion"})
@@ -207,8 +214,15 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         String publicationID = "ZDB-PUB-090731-2";
         List<PhenotypeExperiment> structure = getPhenotypeRepository().getMutantExpressionsByFigureFish(publicationID, null, null, null);
         assertNotNull(structure);
-
     }
+
+    @Test
+    public void hasMutantExpressions() {
+        String publicationID = "ZDB-PUB-090731-2";
+        boolean hasMutantExpressions = getPhenotypeRepository().hasMutantExpressions(publicationID);
+        assertTrue(hasMutantExpressions);
+    }
+
 
     @Test
     public void retrievePhenotypePileStructure() {

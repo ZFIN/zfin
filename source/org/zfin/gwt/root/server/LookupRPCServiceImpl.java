@@ -265,7 +265,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
      * @return response
      */
     public SuggestOracle.Response getGenedomSuggestions(SuggestOracle.Request req) {
-        return getMarkerSuggestionsForType(req, Marker.TypeGroup.GENEDOM);
+        return getMarkerSuggestionsForType(req, Marker.TypeGroup.GENEDOM_AND_NTR);
     }
 
     public SuggestOracle.Response getMarkerSuggestionsForType(SuggestOracle.Request req, Marker.TypeGroup typeGroup) {
@@ -301,8 +301,8 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
             List<Marker> markers = markerRepository.getConstructsByAttribution(query);
             for (Marker marker : markers) {
-                StringBuilder builder = highlighter.hidePureTermNameHtml(marker.getAbbreviation());
-                builder.append(highlighter.highlight(marker.getAbbreviation()));
+                StringBuilder builder = highlighter.hidePureTermNameHtml(marker.getName());
+                builder.append(highlighter.highlight(marker.getName()));
                 suggestions.add(new ItemSuggestion(builder.toString(), marker.getZdbID()));
             }
         }
@@ -429,7 +429,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         }
 
 
-        List<Feature> features = getFeatureRepository().getFeaturesForAttribution(publicationZdbID);
+        List<Feature> features = getFeatureRepository().getFeaturesByPublication(publicationZdbID);
         if (CollectionUtils.isNotEmpty(features)) {
             RelatedEntityDTO spacer = new RelatedEntityDTO();
             spacer.setName(AttributionType.FEATURE.toString());
@@ -462,7 +462,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             for (Fish fish : fishList) {
                 RelatedEntityDTO genotypeDTO = new RelatedEntityDTO();
                 genotypeDTO.setZdbID(fish.getZdbID());
-                genotypeDTO.setName(fish.getName());
+                genotypeDTO.setName(fish.getHandle());
                 relatedEntityDTOs.add(genotypeDTO);
             }
         }

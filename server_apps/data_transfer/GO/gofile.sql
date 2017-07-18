@@ -36,7 +36,8 @@ create temp table tmp_go (mv_zdb_id varchar(50),
 			 t_ont varchar(100),
 			 mv_date_modified datetime year to second,
 			 mv_created_by varchar(100),
-			 id2 lvarchar(4000))
+			 id2 lvarchar(4000),
+			 gene_type varchar(100))
 with no log;
 
 insert into tmp_go (mv_zdb_id,
@@ -51,17 +52,19 @@ insert into tmp_go (mv_zdb_id,
        mv_flag,
        t_ont,
        mv_date_modified,
-       mv_created_by
+       mv_created_by,
+       gene_type
 )
 select mrkrgoev_zdb_id,
 				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by
-			   from marker_go_term_evidence, marker, term, publication,
+				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by, szm_term_ont_id
+			   from marker_go_term_evidence, marker, term, publication, so_zfin_mapping,
 					   outer inference_group_member
 			  where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
 			    and mrkrgoev_term_zdb_id = term_zdb_id
 			    and mrkrgoev_source_zdb_id  = zdb_id
+			    and mrkr_type = szm_object_type
 			    and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id ;
 
 update tmp_go

@@ -41,7 +41,7 @@ STATICS = 227.gif fish.gif logo.jpeg \
 	translocation.jpeg zfin.gif anatomy.html zebrafish2009.pdf \
 	glossary.html GO.html blast_info.html \
 	author_guidelines.html author_guide_checklist.html \
-	zfin_stats.html zfin_statistics.jpg nomen.html stars.html
+	zfin_stats.html zfin_statistics.png nomen.html stars.html
 
 
 # ---------------  Production Rules  ------------------------------------

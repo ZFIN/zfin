@@ -3,7 +3,17 @@
     <actions/>
     <description></description>
     <keepDependencies>false</keepDependencies>
-    <properties/>
+    <properties>
+        <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>forceLoad</name>
+                    <description>If set to true load ontology even if the file is not new.</description>
+                    <defaultValue>false</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+            </parameterDefinitions>
+        </hudson.model.ParametersDefinitionProperty>
+    </properties>
     <scm class="hudson.scm.NullSCM"/>
     <canRoam>true</canRoam>
     <disabled>false</disabled>
@@ -27,7 +37,9 @@
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/LoadOntology/Load-Anatomy-Ontology/*,server_apps/data_transfer/LoadOntology/obo-files/zebrafish*.obo</artifacts>
+            <artifacts>
+                server_apps/data_transfer/LoadOntology/Load-Anatomy-Ontology/*,server_apps/data_transfer/LoadOntology/obo-files/zebrafish*.obo
+            </artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>

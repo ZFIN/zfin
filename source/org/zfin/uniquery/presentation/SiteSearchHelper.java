@@ -386,7 +386,7 @@ public class SiteSearchHelper {
             } else if (matchId.startsWith("ZDB-ANAT") || matchId.startsWith("ZDB-TERM")) {
                 viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + matchId;
             } else {
-                viewPageUrl = "/action/marker/view/" + matchId;
+                viewPageUrl = "/" + matchId;
             }
             returnResults += "<br><span class='best_match'>Exact Match: ";
             returnResults += "<a href='" + viewPageUrl + "'><b>" + queryTerm + "</b></a> ";

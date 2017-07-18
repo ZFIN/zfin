@@ -11,7 +11,6 @@ import org.zfin.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -83,13 +82,13 @@ public final class OntologySerializationService {
             if (!lookupFile.exists() || !lookupFile.canRead()) {
                 throw new IOException("Lookup file does not exist or has bad permissions: " + lookupFile.getAbsolutePath());
             }
-            LOGGER.info("Lookup file: " + lookupFile + " size:" + lookupFile.length() + " last modified: " + new Date(lookupFile.lastModified()));
+            LOGGER.info("Lookup file: " + lookupFile);
             entity = FileUtil.deserializeOntologies(lookupFile);
         } catch (Exception e) {
             LOGGER.error("Failed to deserialize the files", e);
             throw e;
         }
-        LOGGER.info("Time to deserialize ontology[" + fileName + "]: " + DateUtil.getTimeDuration(start));
+        LOGGER.debug("Time to deserialize ontology[" + fileName + "]: " + DateUtil.getTimeDuration(start));
         return entity;
     }
 

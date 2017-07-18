@@ -3,7 +3,9 @@ package org.zfin.gwt.curation.ui;
 import org.zfin.gwt.root.dto.PhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PhenotypePileStructureDTO;
 import org.zfin.gwt.root.dto.PhenotypeStatementDTO;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +24,13 @@ public class PhenotypeStructureModule extends AbstractStructureModule {
     @Override
     protected void retrievePileStructures() {
         //loadingImage.setVisible(true);
+        AppUtils.fireAjaxCall(PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_PHENOTYPE_PILE_STRUCTURES_START);
         pileStructureRPC.getPhenotypePileStructures(publicationID, new RetrieveStructuresCallback());
     }
 
 
     public void updateFigureAnnotations(List<PhenotypeExperimentDTO> figureAnnotations) {
-        if (figureAnnotations == null || figureAnnotations.size() == 0){
+        if (figureAnnotations == null || figureAnnotations.size() == 0) {
             selectUnSelectStructuresOnPile(null);
             return;
         }
@@ -57,11 +60,12 @@ public class PhenotypeStructureModule extends AbstractStructureModule {
     private class RetrieveStructuresCallback extends ZfinAsyncCallback<List<PhenotypePileStructureDTO>> {
 
         public RetrieveStructuresCallback() {
-            super("Error while reading Structures", null);
+            super("Error while reading Structures", null,
+                    PhenotypeCurationModule.getModuleInfo(), AjaxCallEventType.GET_PHENOTYPE_PILE_STRUCTURES_STOP);
         }
 
         public void onSuccess(List<PhenotypePileStructureDTO> list) {
-
+            super.onFinish();
             displayedStructures.clear();
             for (PhenotypePileStructureDTO structure : list) {
                 // do not add 'unspecified'

@@ -11,6 +11,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.feature.service.MutationDetailsConversionService;
+import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -18,6 +19,9 @@ import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.PublicationListAdapter;
+import org.zfin.publication.presentation.PublicationListBean;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -85,7 +89,7 @@ public class FeatureDetailController {
         retrievePubData(feature, form);
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, feature.getName());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.FEATURE.getTitleString() + feature.getName());
 
         return "feature/feature-detail.page";
     }
@@ -146,6 +150,23 @@ public class FeatureDetailController {
         form.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(fr.getZdbID()));
     }
 
+    @RequestMapping("/type-citation-list/{zdbID}")
+    public String getFeatureTypePublicationList(@PathVariable String zdbID,Model model){
+        Feature feature = featureRepository.getFeatureByID(zdbID);
+        model.addAttribute("feature",feature);
+        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+        List<String> publicationIDs = publicationRepository.getPublicationIdsForFeatureType(zdbID);
+        List<Publication> publications = new ArrayList<>();
+        for (String pubID : publicationIDs) {
+            publications.add(publicationRepository.getPublication(pubID));
+        }
+        model.addAttribute("pubCount", publications.size());
+        PublicationListBean citationBean = new PublicationListAdapter(publications);
+        citationBean.setOrderBy("author");
+        model.addAttribute("citationList",citationBean);
+
+        return "feature/type-citation-list.page";
+    }
 
 }
 

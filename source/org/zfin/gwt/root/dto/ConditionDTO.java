@@ -5,21 +5,12 @@ package org.zfin.gwt.root.dto;
  */
 public class ConditionDTO extends RelatedEntityDTO {
 
-    private String zdbID;
     public TermDTO zecoTerm;
     public TermDTO chebiTerm;
     public TermDTO aoTerm;
     public TermDTO goCCTerm;
     public TermDTO taxonTerm;
     public String environmentZdbID;
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
 
     public TermDTO getAoTerm() {
         return aoTerm;

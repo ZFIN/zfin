@@ -267,7 +267,7 @@ public class HibernateConstructRepository implements ConstructRepository {
             BtsContainsService btsService2 = new BtsContainsService("ccs_engineered_region_all_names");
             btsService2.addBtsExpandedValueList("ccs_engineered_region_all_names", criteria.getEngineeredRegionCriteria().getValues());
             whereClauseList.add(" exists" + "(" + "select 'c' from construct_component_search where " +
-                    "ccs_cons_id = cons_pk_id and ccs_relationship_type = 'contains engineered region'  ");
+                    "ccs_cons_id = cons_pk_id and ccs_relationship_type = 'contains region'  ");
             String btsContainsClause1 = btsService2.getFullClauseConstructs();
             whereClauseList.add(btsContainsClause1 + ")");
 
@@ -471,7 +471,7 @@ public class HibernateConstructRepository implements ConstructRepository {
         List<ConstructRelationship.Type> constructRelationshipList = new ArrayList<ConstructRelationship.Type>();
         constructRelationshipList.add(ConstructRelationship.Type.PROMOTER_OF);
         constructRelationshipList.add(ConstructRelationship.Type.CODING_SEQUENCE_OF);
-        constructRelationshipList.add(ConstructRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        constructRelationshipList.add(ConstructRelationship.Type.CONTAINS_REGION);
 
         Session session = currentSession();
         String hql = "select distinct cmr from ConstructRelationship as cmr, " +

@@ -74,6 +74,7 @@ public class ActiveSource implements ZdbID, Serializable {
     }
 
     public enum Type implements Serializable {
+        SALIAS(null),
         COMPANY(DeleteCompanyRule.class),
         JRNL(DeleteJournalRule.class),
         LAB(DeleteLabRule.class),

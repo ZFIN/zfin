@@ -3,32 +3,11 @@ package org.zfin.gwt.root.dto;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  */
 public class ZygosityDTO extends RelatedEntityDTO implements IsSerializable, Serializable {
-
-    protected String zdbID;  // the primary key of this object
-    protected String name;
-
-    public ZygosityDTO() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
 
     public Type getType() {
         return Type.getZygosity(name);
@@ -36,10 +15,10 @@ public class ZygosityDTO extends RelatedEntityDTO implements IsSerializable, Ser
 
     public String getMutantZygosityDisplay(String featureName) {
         StringBuilder builder = new StringBuilder(featureName);
-        if (Type.getZygosity(name).equals(Type.HOMOZYGOUS)) {
+        if (Objects.equals(Type.getZygosity(name), Type.HOMOZYGOUS)) {
             builder.append("/");
             builder.append(featureName);
-        } else if (Type.getZygosity(name).equals(Type.HETEROZYGOUS)) {
+        } else if (Objects.equals(Type.getZygosity(name), Type.HETEROZYGOUS)) {
             builder.append("/");
             builder.append("+");
         }

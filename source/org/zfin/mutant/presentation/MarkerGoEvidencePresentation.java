@@ -165,7 +165,7 @@ public class MarkerGoEvidencePresentation {
                 } else if (accession.startsWith("ZDB-GENO-")) {
                     Genotype genotype = (Genotype) HibernateUtil.currentSession().get(Genotype.class, accession);
                     return GenotypePresentation.getLink(genotype, false);
-                } else if (accession.startsWith("ZDB-GENE-")){
+                } else if (accession.startsWith("ZDB-GENE-")||accession.contains("RNAG")){
                     Marker gene = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
                     return MarkerPresentation.getLink(gene);
                 }

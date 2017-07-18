@@ -88,8 +88,8 @@ public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements Clo
         cloneDTO.setAliasAttributes(DTOMarkerService.getMarkerAliasDTOs(clone));
 
         // get related genes
-       // cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getRelatedGenesMarkerDTOs(clone));
-        cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getGenesMarkerDTOs(clone));
+       cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getRelatedGenesMarkerDTOs(clone));
+       // cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getGenesMarkerDTOs(clone));
 
         // get sequences
         cloneDTO.setSupportingSequenceLinks(DTOMarkerService.getSupportingSequenceDTOs(clone));
@@ -225,7 +225,6 @@ public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements Clo
     public void updateCloneHeaders(CloneDTO cloneDTO) {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
-        HibernateUtil.createTransaction();
         Clone clone = (Clone) session.get(Clone.class, cloneDTO.getZdbID());
 
         // set name

@@ -6,6 +6,7 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.presentation.EntityPresentation;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,7 +41,7 @@ public class ExperimentConditionPresentation extends EntityPresentation {
      * @param conditions set of ExperimentConditions
      * @return html for marker link
      */
-    public static String getLink(Set<ExperimentCondition> conditions, Experiment experiment, boolean suppressPopupLink) {
+    public static String getLink(List<ExperimentCondition> conditions, Experiment experiment, boolean suppressPopupLink) {
         StringBuilder sb = new StringBuilder(50);
         if (CollectionUtils.isNotEmpty(conditions)) {
             for (ExperimentCondition condition : conditions) {

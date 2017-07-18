@@ -25,16 +25,20 @@
 
 <c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>
 
-<c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
+<c:set var="linkURL">/action/publication/${publication.zdbID}/link</c:set>
 
 <c:if test="${allowCuration}">
     <c:set var="curateURL">/action/curation/${publication.zdbID}</c:set>
+</c:if>
+<c:if test="${hasCorrespondence}">
+    <c:set var="correspondenceURL">/action/publication/${publication.zdbID}/track#correspondence</c:set>
 </c:if>
 
 <zfin2:dataManager zdbID="${publication.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
                    trackURL="${trackURL}"
+                   correspondenceURL="${correspondenceURL}"
                    linkURL="${linkURL}"
                    curateURL="${curateURL}"/>
 
@@ -98,11 +102,13 @@
     <tr>
         <th>MeSH Terms:</th>
         <td>
-            <c:forEach var="meshHeading" items="${publication.meshHeadings}" varStatus="idx1">
-                <c:forEach var="displayString" items="${meshHeading.displayList}" varStatus="idx2">
-                    ${displayString}<c:if test="${!idx1.last || !idx2.last}">; </c:if>
-                </c:forEach>
-            </c:forEach>
+            <c:choose>
+                <c:when test="${!empty meshTermDisplayList}">
+                    <zfin2:toggledHyperlinkStrings collection="${meshTermDisplayList}" id="mesh-term-list"
+                                                   maxNumber="5" delimiter="; " />
+                </c:when>
+                <c:otherwise><span class="no-data-tag">none</span></c:otherwise>
+            </c:choose>
         </td>
     </tr>
 
@@ -124,27 +130,36 @@
             </span>
         </td>
     </tr>
-
     <authz:authorize access="hasRole('root')">
-
         <tr>
             <th>Files:</th>
             <td>
                 <c:forEach items="${publication.files}" var="file" varStatus="loop">
                     <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${file.fileName}">
-                        ${file.type.name.toString() eq 'Original Article' ? 'Original Article' : file.originalFileName}
+                            ${file.type.name.toString() eq 'Original Article' ? 'Original Article' : file.originalFileName}
                     </a>${loop.last ? " &mdash; " : ", "}
                 </c:forEach>
                 <a href="/action/publication/${publication.zdbID}/edit#files">Add/Update Files</a>
             </td>
         </tr>
-
         <tr>
             <th>Curation Status:</th>
             <td>${curationStatusDisplay}</td>
         </tr>
+        <tr>
+            <th>Author Correspondence:</th>
+            <td>
+                <c:choose>
+                    <c:when test="${!empty correspondenceDisplay}">
+                        <a href="/action/publication/${publication.zdbID}/track#correspondence">${correspondenceDisplay}</a>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="no-data-tag"><i>None</i></span>
+                    </c:otherwise>
+                </c:choose>
+            </td>
+        </tr>
     </authz:authorize>
-
 </table>
 
 <div class="jq-modal" id="generate-reference-overlay" style="width: auto; height: auto; padding: 15px 15px;">
@@ -176,27 +191,16 @@
 
     <ul>
         <c:if test="${markerCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mrkr">Genes /
-                Markers</a> (${markerCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/genes">Genes / Markers</a> (${markerCount})</li>
         </c:if>
         <c:if test="${morpholinoCount > 0}">
-            <li>
-                <a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mo">Morpholino</a>
-                (${morpholinoCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/strs?type=MRPHLNO">Morpholino</a> (${morpholinoCount})</li>
         </c:if>
         <c:if test="${talenCount > 0}">
-            <li>
-                <a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_talen">TALEN</a>
-                (${talenCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/strs?type=TALEN">TALEN</a> (${talenCount})</li>
         </c:if>
         <c:if test="${crisprCount > 0}">
-            <li>
-                <a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_crispr">CRISPR</a>
-                (${crisprCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/strs?type=CRISPR">CRISPR</a> (${crisprCount})</li>
         </c:if>
         <c:if test="${antibodyCount > 0}">
             <li><a href="/action/antibody/antibodies-per-publication/${publication.zdbID}" id="list-of-antibodies">Antibodies</a>
@@ -204,14 +208,10 @@
             </li>
         </c:if>
         <c:if test="${efgCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_efg">Engineered
-                Foreign Genes</a> (${efgCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/efgs">Engineered Foreign Genes</a> (${efgCount})</li>
         </c:if>
         <c:if test="${cloneProbeCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-msegselect.apg&pubId=${publication.zdbID}">Clones and Probes</a>
-                (${cloneProbeCount})
-            </li>
+            <li><a href="/action/publication/${publication.zdbID}/clones">Clones and Probes</a> (${cloneProbeCount})</li>
         </c:if>
         <c:if test="${expressionCount > 0 || phenotypeCount > 0}">
             <li><a href="/action/figure/all-figure-view/${publication.zdbID}">${expressionAndPhenotypeLabel}</a></li>

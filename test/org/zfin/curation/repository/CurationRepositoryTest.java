@@ -3,7 +3,6 @@ package org.zfin.curation.repository;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.curation.Curation;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.HibernateProfileRepository;
 import org.zfin.profile.repository.ProfileRepository;
@@ -47,8 +46,6 @@ public class CurationRepositoryTest extends AbstractDatabaseTest {
         Publication pub = publicationRepository.getPublication("ZDB-PUB-010102-2");
         Person curator = profileRepository.getPerson("ZDB-PERS-960805-676");
 
-        HibernateUtil.createTransaction();
-
         curationRepository.closeCurationTopics(pub, curator);
 
         List<Curation> postList = curationRepository.getCurationForPub(pub);
@@ -57,8 +54,6 @@ public class CurationRepositoryTest extends AbstractDatabaseTest {
             assertThat(curation.getClosedDate(), is(notNullValue()));
             assertThat(curation.getTopic(), is(not(Curation.Topic.LINKED_AUTHORS)));
         }
-
-        HibernateUtil.rollbackTransaction();
     }
 
 }

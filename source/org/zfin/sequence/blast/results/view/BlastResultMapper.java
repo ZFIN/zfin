@@ -241,7 +241,7 @@ public class BlastResultMapper {
                             if (ForeignDB.AvailableName.GENBANK != dbLink.getReferenceDatabase().getForeignDB().getDbName()) {
                                 transcriptDBLink = dbLink;
                             }
-                        } else if (dbLink.getDataZdbID().startsWith("ZDB-GENE-")) {
+                        } else if (dbLink.getDataZdbID().contains("GENE-")||dbLink.getDataZdbID().contains("RNAG-")) {
                             geneDBLink = dbLink;
                         } else if (dbLink.getDataZdbID().startsWith("ZDB-CDNA-")
                                 ||

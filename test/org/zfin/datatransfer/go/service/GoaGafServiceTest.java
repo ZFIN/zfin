@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.go.service;
 
 import org.apache.log4j.Logger;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -8,7 +9,6 @@ import org.zfin.datatransfer.go.*;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
-import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -41,6 +41,13 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
 
     private final String GOA_DIRECTORY = "test/gaf/goa/";
 
+
+    @After
+    public void closeSession() {
+        super.closeSession();
+        // make sure to close the session to be able to re-create the entities
+        HibernateUtil.closeSession();
+    }
 
     /**
      * All annotations should have this pub so subsequent loads to break the code.
@@ -116,8 +123,9 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("removed: " + gafJobData.getRemovedEntries().size());
 
         assertThat("removed", gafJobData.getRemovedEntries(), hasSize(0));
-        assertThat("new", gafJobData.getNewEntries(), hasSize(13));
+        gafJobData.getErrors().forEach(System.out::println);
         assertThat("errors", gafJobData.getErrors(), hasSize(0));
+        assertThat("new", gafJobData.getNewEntries(), hasSize(13));
         assertThat("updated", gafJobData.getUpdateEntries(), hasSize(0));
     }
 
@@ -136,16 +144,10 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafReport1.getErrors());
 
         GafJobData gafReport2 = null;
-        try {
-            HibernateUtil.createTransaction();
-            gafService.addAnnotations(gafReport1);
+        gafService.addAnnotations(gafReport1);
 
-            gafReport2 = new GafJobData();
-            gafService.processEntries(gafEntries, gafReport2);
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
-
+        gafReport2 = new GafJobData();
+        gafService.processEntries(gafEntries, gafReport2);
         assertThat("first new", gafReport1.getNewEntries(), hasSize(1));
         assertThat("first errors", gafReport1.getErrors(), hasSize(0));
         assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
@@ -176,14 +178,8 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafReport1.getErrors());
 
         GafJobData gafReport2 = new GafJobData();
-        try {
-            HibernateUtil.createTransaction();
-            gafService.addAnnotations(gafReport1);
-
-            gafService.processEntries(gafEntries, gafReport2);
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        gafService.addAnnotations(gafReport1);
+        gafService.processEntries(gafEntries, gafReport2);
 
 
         assertThat("first new", gafReport1.getNewEntries(), hasSize(3));
@@ -216,20 +212,15 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafReport1.getErrors());
 
         GafJobData gafReport2 = null;
-        try {
-            HibernateUtil.createTransaction();
-            gafService.addAnnotations(gafReport1);
+        gafService.addAnnotations(gafReport1);
 
-            gafReport2 = new GafJobData();
-            gafService.processEntries(gafEntries, gafReport2);
+        gafReport2 = new GafJobData();
+        gafService.processEntries(gafEntries, gafReport2);
 
-            logger.debug("summary: " + gafReport2.toString());
-            logger.debug("entries: " + gafReport2.getNewEntries());
-            logger.debug("existing: " + gafReport2.getExistingEntries());
-            logger.debug("errors: " + gafReport2.getErrors());
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        logger.debug("summary: " + gafReport2.toString());
+        logger.debug("entries: " + gafReport2.getNewEntries());
+        logger.debug("existing: " + gafReport2.getExistingEntries());
+        logger.debug("errors: " + gafReport2.getErrors());
 
 
         assertThat("first new", gafReport1.getNewEntries(), hasSize(3));
@@ -300,20 +291,15 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafReport1.getErrors());
 
         GafJobData gafReport2 = null;
-        try {
-            HibernateUtil.createTransaction();
-            gafService.addAnnotations(gafReport1);
+        gafService.addAnnotations(gafReport1);
 
-            gafReport2 = new GafJobData();
-            gafService.processEntries(gafEntries, gafReport2);
+        gafReport2 = new GafJobData();
+        gafService.processEntries(gafEntries, gafReport2);
 
-            logger.debug("summary: " + gafReport2.toString());
-            logger.debug("entries: " + gafReport2.getNewEntries());
-            logger.debug("existing: " + gafReport2.getExistingEntries());
-            logger.debug("errors: " + gafReport2.getErrors());
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        logger.debug("summary: " + gafReport2.toString());
+        logger.debug("entries: " + gafReport2.getNewEntries());
+        logger.debug("existing: " + gafReport2.getExistingEntries());
+        logger.debug("errors: " + gafReport2.getErrors());
 
 
         assertThat("first new", gafReport1.getNewEntries(), hasSize(2));
@@ -413,20 +399,15 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafReport1.getErrors());
 
         GafJobData gafReport2 = null;
-        try {
-            HibernateUtil.createTransaction();
-            gafService.addAnnotations(gafReport1);
+        gafService.addAnnotations(gafReport1);
 
-            gafReport2 = new GafJobData();
-            gafService.processEntries(gafEntries, gafReport2);
+        gafReport2 = new GafJobData();
+        gafService.processEntries(gafEntries, gafReport2);
 
-            logger.debug("summary: " + gafReport2.toString());
-            logger.debug("entries: " + gafReport2.getNewEntries());
-            logger.debug("existing: " + gafReport2.getExistingEntries());
-            logger.debug("errors: " + gafReport2.getErrors());
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        logger.debug("summary: " + gafReport2.toString());
+        logger.debug("entries: " + gafReport2.getNewEntries());
+        logger.debug("existing: " + gafReport2.getExistingEntries());
+        logger.debug("errors: " + gafReport2.getErrors());
 
         assertThat("first new", gafReport1.getNewEntries(), hasSize(7));
         assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
@@ -471,12 +452,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
 
         GafJobData gafJobData = new GafJobData();
         gafJobData.addNewEntry(evidence);
-        try {
-            HibernateUtil.createTransaction();
-            gafService.addAnnotations(gafJobData);
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        gafService.addAnnotations(gafJobData);
 
         logger.debug("summary: " + gafJobData.toString());
         logger.debug("entries: " + gafJobData.getNewEntries());
@@ -514,30 +490,25 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         assertThat("first updated", gafReport1.getUpdateEntries(), hasSize(0));
 
         GafJobData gafReport2 = null;
-        try {
-            HibernateUtil.createTransaction();
-            gafService.addAnnotations(gafReport1);
+        gafService.addAnnotations(gafReport1);
 
-            gafReport2 = new GafJobData();
-            gafService.processEntries(gafEntries, gafReport2);
-            HibernateUtil.currentSession().flush();
-            GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository().getGafOrganization(GafOrganization.OrganizationEnum.GOA);
-            Set<String> existingZfinZdbIDs = new TreeSet<>(RepositoryFactory.getMarkerGoTermEvidenceRepository().getEvidencesForGafOrganization(gafOrganization));
+        gafReport2 = new GafJobData();
+        gafService.processEntries(gafEntries, gafReport2);
+        HibernateUtil.currentSession().flush();
+        GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository().getGafOrganization(GafOrganization.OrganizationEnum.GOA);
+        Set<String> existingZfinZdbIDs = new TreeSet<>(RepositoryFactory.getMarkerGoTermEvidenceRepository().getEvidencesForGafOrganization(gafOrganization));
 
-            // is it in the database currently
-            String newZdbID = gafReport1.getNewEntries().iterator().next().getZdbID();
-            assertTrue(existingZfinZdbIDs.contains(newZdbID));
+        // is it in the database currently
+        String newZdbID = gafReport1.getNewEntries().iterator().next().getZdbID();
+        assertTrue(existingZfinZdbIDs.contains(newZdbID));
 
-            // is it one of the processed existing entries
-            assertTrue(gafReport2.getExistingEntries().contains(new GafJobEntry(newZdbID)));
+        // is it one of the processed existing entries
+        assertTrue(gafReport2.getExistingEntries().contains(new GafJobEntry(newZdbID)));
 
 
-            Collection<String> outdatedEntries = gafService.findOutdatedEntries(gafReport2, gafOrganization);
+        Collection<String> outdatedEntries = gafService.findOutdatedEntries(gafReport2, gafOrganization);
 
-            assertFalse(outdatedEntries.contains(newZdbID));
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        assertFalse(outdatedEntries.contains(newZdbID));
 
         logger.debug("summary: " + gafReport2.toString());
         logger.debug("entries: " + gafReport2.getNewEntries());
@@ -616,22 +587,17 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
         assertThat("first updated", gafReport1.getUpdateEntries(), hasSize(0));
 
-        try {
-            HibernateUtil.createTransaction();
-            gafService.addAnnotations(gafReport1);
+        gafService.addAnnotations(gafReport1);
 
-            replaceDates(gafEntries);
-            GafJobData gafReport2 = new GafJobData();
-            gafService.processEntries(gafEntries, gafReport2);
+        replaceDates(gafEntries);
+        GafJobData gafReport2 = new GafJobData();
+        gafService.processEntries(gafEntries, gafReport2);
 
-            assertThat("second new", gafReport2.getNewEntries(), hasSize(0));
-            assertThat("second existing", gafReport2.getExistingEntries(), hasSize(0));
-            assertThat("second errors", gafReport2.getErrors(), hasSize(2));
-            assertThat("second removed", gafReport2.getRemovedEntries(), hasSize(0));
-            assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(2));
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        assertThat("second new", gafReport2.getNewEntries(), hasSize(0));
+        assertThat("second existing", gafReport2.getExistingEntries(), hasSize(0));
+        assertThat("second errors", gafReport2.getErrors(), hasSize(2));
+        assertThat("second removed", gafReport2.getRemovedEntries(), hasSize(0));
+        assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(2));
     }
 
     @Test

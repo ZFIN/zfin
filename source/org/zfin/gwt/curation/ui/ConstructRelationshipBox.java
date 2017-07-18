@@ -7,8 +7,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.event.FilterChangeEvent;
 import org.zfin.gwt.curation.event.FilterChangeListener;
+import org.zfin.gwt.curation.ui.fish.FishModule;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.*;
+import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.marker.MarkerType;
 
 import java.util.Collections;
@@ -65,28 +68,35 @@ public class ConstructRelationshipBox extends AbstractComposite<ConstructDTO>{
 
     protected void setValues() {
         if(dto!=null && dto.getPublicationZdbID()!=null){
+            AppUtils.fireAjaxCall(ConstructCurationModule.getModuleInfo(), AjaxCallEventType.GET_CONSTRUCT_MARKER_RELATIONSHIPS_FOR_PUB_START);
             MarkerRPCService.App.getInstance().getConstructMarkerRelationshipsForPub(dto.getPublicationZdbID(),
                     new MarkerEditCallBack<List<ConstructRelationshipDTO>>(
                             "Failed to find construct marker relationships for this pub: "
-                                    + dto.getPublicationZdbID(),this){
+                                    + dto.getPublicationZdbID(),this,
+                            ConstructCurationModule.getModuleInfo(), AjaxCallEventType.GET_CONSTRUCT_MARKER_RELATIONSHIPS_FOR_PUB_STOP){
                         @Override
                         public void onSuccess(List<ConstructRelationshipDTO> constructMarkerRelationshipDTOList) {
+                            super.onFinish();
                             constructMarkerRelationshipDTOs = constructMarkerRelationshipDTOList;
                             redrawTable();
                         }
                     });
 
+            AppUtils.fireAjaxCall(ConstructCurationModule.getModuleInfo(), AjaxCallEventType.GET_CONSTRUCTS_FOR_PUB_START);
             MarkerRPCService.App.getInstance().getConstructsForPub(dto.getPublicationZdbID(),
-                    new MarkerEditCallBack<List<ConstructDTO>>("Problem finding constructs for pub: " + dto.getPublicationZdbID()+ " ",this) {
+                    new MarkerEditCallBack<List<ConstructDTO>>("Problem finding constructs for pub: " + dto.getPublicationZdbID()+ " ",this,
+                            ConstructCurationModule.getModuleInfo(), AjaxCallEventType.GET_CONSTRUCTS_FOR_PUB_STOP){
 
                         @Override
                         public void onFailure(Throwable throwable) {
+                            super.onFinish();
                             super.onFailure(throwable);
                             constructToAddList.setEnabled(false);
                         }
 
                         @Override
                         public void onSuccess(List<ConstructDTO> constructs) {
+                            super.onFinish();
                             constructDTOs = constructs ;
                             if(constructDTOs!=null){
                                 constructToAddList.clear();
@@ -145,7 +155,7 @@ public class ConstructRelationshipBox extends AbstractComposite<ConstructDTO>{
                 constructTable.setWidget(lastRow,1, new Label(relationshipDTO.getConstructDTO().getConstructType()));
                 constructTable.setWidget(lastRow,2, new Label(relationshipDTO.getRelationshipType()));
                 constructTable.setWidget(lastRow,3,new HTML(relationshipDTO.getMarkerDTO().getLink())) ;
-                if(relationshipDTO.getRelationshipType().equals("contains engineered region")){
+                if(relationshipDTO.getRelationshipType().equals("contains region")){
                 constructTable.setWidget(lastRow,4,new DeleteConstructMarkerRelationshipButton(relationshipDTO,this) );
                 }
 
@@ -229,11 +239,14 @@ public class ConstructRelationshipBox extends AbstractComposite<ConstructDTO>{
                 constructToAddList.setEnabled(false);
                 constructToAddRelationship.setEnabled(false);
                 lastSelectedConstructZdbId = constructRelationshipDTO.getConstructDTO().getZdbID();
+                AppUtils.fireAjaxCall(ConstructCurationModule.getModuleInfo(), AjaxCallEventType.ADD_CONSTRUCT_MARKER_RELATIONSHIP_START);
                 MarkerRPCService.App.getInstance().addConstructMarkerRelationShip(constructRelationshipDTO
-                        ,new MarkerEditCallBack<Void>("Failed to create constructMarkerRelation: "+constructRelationshipDTO,handlesError){
+                        ,new MarkerEditCallBack<Void>("Failed to create constructMarkerRelation: "+constructRelationshipDTO,handlesError,
+                                ConstructCurationModule.getModuleInfo(), AjaxCallEventType.ADD_CONSTRUCT_MARKER_RELATIONSHIP_START){
 
                     @Override
                     public void onFailure(Throwable throwable) {
+                        super.onFinish();
                         super.onFailure(throwable);
                         addButton.setEnabled(true);
                         constructToAddTarget.setEnabled(true);
@@ -243,6 +256,7 @@ public class ConstructRelationshipBox extends AbstractComposite<ConstructDTO>{
 
                     @Override
                     public void onSuccess(Void result) {
+                        super.onFinish();
                         revertGUI();
                         clearError();
                     }

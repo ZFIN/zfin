@@ -2,6 +2,7 @@ package org.zfin.sequence.reno;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
@@ -28,7 +29,10 @@ import org.zfin.sequence.reno.presentation.CandidateBean;
 import org.zfin.sequence.reno.repository.RenoRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -44,69 +48,59 @@ public class AlignmentsControllerTest extends AbstractDatabaseTest {
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
 
+    @After
+    public void closeSession() {
+        super.closeSession();
+        // make sure to close the session to be able to re-create the entities
+        HibernateUtil.closeSession();
+    }
+
     /**
      * To add hits, needs query , needs runcand, needs run, needs publication
      */
     @Test
     public void alignmentsWithDataInsertions() {
 
-        Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        try {
-            String runCandidateZdbID = insertRunCandidate();
-            logger.debug("inserted runCandidate: " + runCandidateZdbID);
-            RunCandidate runCandidate = renoRepository.getRunCandidateByID(runCandidateZdbID);
-            assertNotNull("RunCandidate is NOT NULL following insert", runCandidate);
-            Run run = runCandidate.getRun();
-            assertNotNull("Run is NOT NULL following insert", run);
-            Candidate candidate = runCandidate.getCandidate();
-            assertNotNull("Candidate is NOT NULL following insert", candidate);
+        String runCandidateZdbID = insertRunCandidate();
+        logger.debug("inserted runCandidate: " + runCandidateZdbID);
+        RunCandidate runCandidate = renoRepository.getRunCandidateByID(runCandidateZdbID);
+        assertNotNull("RunCandidate is NOT NULL following insert", runCandidate);
+        Run run = runCandidate.getRun();
+        assertNotNull("Run is NOT NULL following insert", run);
+        Candidate candidate = runCandidate.getCandidate();
+        assertNotNull("Candidate is NOT NULL following insert", candidate);
 
-            Set<Query> candidateQueries = runCandidate.getCandidateQueries();
-            Query query = candidateQueries.iterator().next();
-            assertNotNull("Candidate Queries are NOT NULL following insert", query);
+        Set<Query> candidateQueries = runCandidate.getCandidateQueries();
+        Query query = candidateQueries.iterator().next();
+        assertNotNull("Candidate Queries are NOT NULL following insert", query);
 
-            // assert hits (5)
-            List<Hit> hitList = new ArrayList<Hit>(query.getBlastHits());
-            assertEquals("Returns 5 hits for this query", 5, hitList.size());
-        } finally {
-            // rollback on success or exception
-            session.getTransaction().rollback();
-        }
-
-
+        // assert hits (5)
+        List<Hit> hitList = new ArrayList<Hit>(query.getBlastHits());
+        assertEquals("Returns 5 hits for this query", 5, hitList.size());
     }
 
 
     @Test
     public void alignments() throws Exception {
-        Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
+        String zdbID = insertRunCandidate();
+        AlignmentsController controller = new AlignmentsController();
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/action/reno/alignment-list/" + zdbID);
+        request.setSession(new MockHttpSession(null));
+        BindException errors = new BindException(request, "test");
+        Model model = new ExtendedModelMap();
+        String returnView = controller.handle(zdbID, new CandidateBean(), errors, model);
+        assertEquals("reno/alignments-list.page", returnView);
 
-        try {
-            String zdbID = insertRunCandidate();
-            AlignmentsController controller = new AlignmentsController();
-            MockHttpServletRequest request = new MockHttpServletRequest("GET", "/action/reno/alignment-list/"+zdbID);
-            request.setSession(new MockHttpSession(null));
-            BindException errors = new BindException(request,"test");
-            Model model = new ExtendedModelMap();
-            String returnView = controller.handle(zdbID,new CandidateBean(), errors,model);
-            assertEquals("reno/alignments-list.page",returnView);
-
-            CandidateBean formBean;
-            assertNotNull("Returns valid model", model);
-            formBean = (CandidateBean) model.asMap().get("not a bean string");
-            assertNull("Returns no bean for bad string", formBean);
-            formBean = (CandidateBean) model.asMap().get("formBean");
-            assertNotNull("Returns valid formBean", formBean);
-            assertEquals("Returns 1 query for this candidate", 1, formBean.getRunCandidate().getCandidateQueries().size());
-            Query query = formBean.getRunCandidate().getCandidateQueries().iterator().next();
-            assertNotNull("Returns a valid query", query);
-            assertEquals("Returns 5 hits for this query", 5, query.getBlastHits().size());
-        } finally {
-            // rollback on success or exception
-            session.getTransaction().rollback();
-        }
+        CandidateBean formBean;
+        assertNotNull("Returns valid model", model);
+        formBean = (CandidateBean) model.asMap().get("not a bean string");
+        assertNull("Returns no bean for bad string", formBean);
+        formBean = (CandidateBean) model.asMap().get("formBean");
+        assertNotNull("Returns valid formBean", formBean);
+        assertEquals("Returns 1 query for this candidate", 1, formBean.getRunCandidate().getCandidateQueries().size());
+        Query query = formBean.getRunCandidate().getCandidateQueries().iterator().next();
+        assertNotNull("Returns a valid query", query);
+        assertEquals("Returns 5 hits for this query", 5, query.getBlastHits().size());
     }
 
 

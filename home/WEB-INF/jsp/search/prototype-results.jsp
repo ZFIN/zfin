@@ -375,7 +375,6 @@
 
 <script>
 
-
 function submitAdvancedQuery(fields) {
     var query = "${baseUrlWithoutQ}";
 

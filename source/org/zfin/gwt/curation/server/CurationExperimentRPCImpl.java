@@ -7,6 +7,7 @@ import org.apache.log4j.spi.RootLogger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
@@ -24,10 +25,11 @@ import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.StageRangeIntersection;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.infrastructure.EntityID;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeExperiment;
@@ -47,6 +49,7 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
@@ -60,12 +63,10 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     private static PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
     private static ExpressionRepository expRepository = RepositoryFactory.getExpressionRepository();
     private static ProfileRepository profileRep = RepositoryFactory.getProfileRepository();
-    private static InfrastructureRepository infraRep = RepositoryFactory.getInfrastructureRepository();
     private static AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
     private static MutantRepository mutantRep = RepositoryFactory.getMutantRepository();
     private static PhenotypeRepository phenotypeRep = RepositoryFactory.getPhenotypeRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-    private CurationFilterRPCImpl curationFilterRPC = new CurationFilterRPCImpl();
 
     public List<MarkerDTO> getGenes(String pubID) throws PublicationNotFoundException {
 
@@ -86,65 +87,6 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         }
 
         return genes;
-    }
-
-    /**
-     * Delete a given experiment.
-     *
-     * @param experimentZdbID experiment id
-     */
-    public void deleteExperiment(String experimentZdbID) {
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            ExpressionExperiment2 experiment = expRepository.getExpressionExperiment2(experimentZdbID);
-            expRepository.deleteExpressionExperiment(experiment);
-            tx.commit();
-        } catch (HibernateException e) {
-            LOG.error("Could not Delete", e);
-            tx.rollback();
-            throw e;
-        }
-    }
-
-    /**
-     * Retrieve all experiments for a given publication.
-     *
-     * @param publicationID publication
-     * @return list of experiments
-     */
-    public List<ExpressionExperimentDTO> readExperiments(String publicationID) {
-        List<ExpressionExperiment> experiments = expRepository.getExperiments(publicationID);
-        if (experiments == null)
-            return null;
-
-        List<ExpressionExperimentDTO> dtos = new ArrayList<>();
-        for (ExpressionExperiment experiment : experiments) {
-            ExpressionExperimentDTO experimentDTO = new ExpressionExperimentDTO();
-            experimentDTO.setExperimentZdbID(experiment.getZdbID());
-            Marker gene = experiment.getGene();
-            if (gene != null) {
-                experimentDTO.setGene(DTOConversionService.convertToMarkerDTO(gene));
-                if (experiment.getMarkerDBLink() != null && experiment.getMarkerDBLink().getAccessionNumber() != null) {
-                    String dblink = experiment.getMarkerDBLink().getAccessionNumber();
-                    experimentDTO.setGenbankNumber(dblink);
-                    experimentDTO.setGenbankID(experiment.getMarkerDBLink().getZdbID());
-                }
-            }
-            if (experiment.getAntibody() != null) {
-                experimentDTO.setAntibodyMarker(DTOConversionService.convertToMarkerDTO(experiment.getAntibody()));
-            }
-            experimentDTO.setFishName(experiment.getFishExperiment().getFish().getHandle());
-            experimentDTO.setFishID(experiment.getFishExperiment().getFish().getZdbID());
-            experimentDTO.setEnvironment(DTOConversionService.convertToExperimentDTO(experiment.getFishExperiment().getExperiment()));
-            experimentDTO.setAssay(experiment.getAssay().getName());
-            // check if there are expressions associated
-            Set<ExpressionResult> expressionResults = experiment.getExpressionResults();
-            if (expressionResults != null)
-                experimentDTO.setNumberOfExpressions(experiment.getDistinctExpressions());
-
-            dtos.add(experimentDTO);
-        }
-        return dtos;
     }
 
     public List<ExpressionExperimentDTO> getExperimentsByFilter(ExpressionExperimentDTO experimentFilter) {
@@ -169,30 +111,55 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return dtos;
     }
 
-    public List<String> getAssays() {
-        InfrastructureRepository infra = RepositoryFactory.getInfrastructureRepository();
-        List<ExpressionAssay> assays = infra.getAllAssays();
-        List<String> assayDtos = new ArrayList<>();
-        for (ExpressionAssay assay : assays)
-            assayDtos.add(assay.getName());
-        return assayDtos;
-    }
+    // Will be cached
+    private static List<FishDTO> wildtypeFishList;
 
-    public List<ExperimentDTO> getEnvironments(String publicationID) {
-        List<Experiment> experiments = pubRepository.getExperimentsByPublication(publicationID);
-        List<ExperimentDTO> assayDtos = new ArrayList<>();
-        for (Experiment experiment : experiments) {
-            ExperimentDTO env = DTOConversionService.convertToExperimentDTO(experiment);
-            assayDtos.add(env);
+    public List<FishDTO> getWildTypeFishList() {
+        if (wildtypeFishList != null)
+            return wildtypeFishList;
+
+        List<FishDTO> fishDTOList = new ArrayList<>();
+        List<Fish> wildtypeList = pubRepository.getWildtypeFish();
+        for (Fish wFish : wildtypeList) {
+            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(wFish, true);
+            fishDTOList.add(fishy);
         }
-
-        return assayDtos;
+        wildtypeFishList = fishDTOList;
+        return fishDTOList;
     }
 
-    @Override
+    // THe presentation elements - empty fish records indicating a divider - should be removed here
+    // and go into the GWT code.
     public List<FishDTO> getFishList(String publicationID) {
-        return curationFilterRPC.createFishList(publicationID);
+        List<FishDTO> fishDTOList = new ArrayList<>();
+        Fish wtFish = pubRepository.getFishByHandle("WT");
+        FishDTO fish = DTOConversionService.convertToFishDtoFromFish(wtFish, true);
+        fishDTOList.add(fish);
+        fish = new FishDTO();
+        fish.setZdbID(null);
+        fish.setName("---------");
+        fish.setHandle("---------");
+        fishDTOList.add(fish);
+        List<Fish> fishList = pubRepository.getNonWTFishByPublication(publicationID);
+        for (Fish nonWTFish : fishList) {
+            if (nonWTFish.getHandle().equals("WT"))
+                continue;
+            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(nonWTFish, true);
+            fishDTOList.add(fishy);
+        }
+        FishDTO separator = new FishDTO();
+        separator.setZdbID(null);
+        separator.setName("---------");
+        separator.setHandle("---------");
+        fishDTOList.add(separator);
+        List<Fish> wildtypeList = pubRepository.getWildtypeFish();
+        for (Fish wFish : wildtypeList) {
+            FishDTO fishy = DTOConversionService.convertToFishDtoFromFish(wFish, true);
+            fishDTOList.add(fishy);
+        }
+        return fishDTOList;
     }
+
 
     public List<GenotypeDTO> getGenotypes(String publicationID) {
         List<GenotypeDTO> genotypes = new ArrayList<>();
@@ -229,77 +196,21 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return genotypes;
     }
 
-    public List<MarkerDTO> getAntibodies(String publicationID) {
+    public List<MarkerDTO> getAntibodies(@PathVariable String publicationID) {
         List<Antibody> antibodies = pubRepository.getAntibodiesByPublication(publicationID);
+        List<MarkerDTO> markers = getListOfMarkerDtos(antibodies);
+        return markers;
+    }
+
+    public List<MarkerDTO> getListOfMarkerDtos(List<? extends EntityID> antibodies) {
         List<MarkerDTO> markers = new ArrayList<>();
-        for (Antibody antibody : antibodies) {
+        for (EntityID antibody : antibodies) {
             MarkerDTO env = new MarkerDTO();
             env.setName(antibody.getName());
             env.setZdbID(antibody.getZdbID());
             markers.add(env);
         }
         return markers;
-    }
-
-    public List<MarkerDTO> readAntibodiesByGene(String publicationID, String geneID) {
-        if (StringUtils.isEmpty(geneID))
-            return getAntibodies(publicationID);
-
-        List<Antibody> antibodies = pubRepository.getAntibodiesByPublicationAndGene(publicationID, geneID);
-        List<MarkerDTO> markers = new ArrayList<>();
-        for (Antibody antibody : antibodies) {
-            MarkerDTO env = new MarkerDTO();
-            env.setName(antibody.getName());
-            env.setZdbID(antibody.getZdbID());
-            markers.add(env);
-        }
-        return markers;
-    }
-
-    /**
-     * Retrieve list of associated genes for given pub and antibody
-     *
-     * @param publicationID String
-     * @param antibodyID    string
-     */
-    public List<MarkerDTO> readGenesByAntibody(String publicationID, String antibodyID) throws PublicationNotFoundException {
-        if (StringUtils.isEmpty(antibodyID))
-            return getGenes(publicationID);
-
-        List<Marker> antibodies = pubRepository.getGenesByAntibody(publicationID, antibodyID);
-        List<MarkerDTO> markers = new ArrayList<>();
-        for (Marker gene : antibodies) {
-            MarkerDTO env = new MarkerDTO();
-            env.setName(gene.getAbbreviation());
-            env.setZdbID(gene.getZdbID());
-            markers.add(env);
-        }
-        return markers;
-    }
-
-    /**
-     * Retrieve the accession numbers for a given gene
-     *
-     * @param geneID string
-     */
-    public List<ExpressionExperimentDTO> readGenbankAccessions(String publicationID, String geneID) {
-        List<MarkerDBLink> geneDBLinks = pubRepository.getDBLinksByGene(publicationID, geneID);
-        List<ExpressionExperimentDTO> accessionNumbers = new ArrayList<>();
-        for (MarkerDBLink geneDBLink : geneDBLinks) {
-            ExpressionExperimentDTO accession = new ExpressionExperimentDTO();
-            accession.setGenbankNumber(geneDBLink.getAccessionNumber());
-            accession.setGenbankID(geneDBLink.getZdbID());
-            accessionNumbers.add(accession);
-        }
-        List<MarkerDBLink> cloneDBLinks = pubRepository.getDBLinksForCloneByGene(publicationID, geneID);
-        for (MarkerDBLink cloneDBLink : cloneDBLinks) {
-            ExpressionExperimentDTO accession = new ExpressionExperimentDTO();
-            accession.setGenbankNumber(cloneDBLink.getAccessionNumber() + " [" + cloneDBLink.getMarker().getType().toString() + "]");
-            accession.setGenbankID(cloneDBLink.getZdbID());
-            accessionNumbers.add(accession);
-        }
-        return accessionNumbers;
-
     }
 
     /**
@@ -321,29 +232,6 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             // update assay: never null
             populateExpressionExperiment(experimentDTO, expressionExperiment);
             tx.commit();
-        } catch (HibernateException e) {
-            tx.rollback();
-            throw e;
-        }
-        return experimentDTO;
-    }
-
-    public ExpressionExperimentDTO createExpressionExperiment(ExpressionExperimentDTO experimentDTO) throws Exception {
-        if (experimentDTO == null)
-            return null;
-
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2();
-            populateExpressionExperiment(experimentDTO, expressionExperiment);
-
-            expRepository.createExpressionExperiment(expressionExperiment);
-            experimentDTO.setExperimentZdbID(expressionExperiment.getZdbID());
-            getInfrastructureRepository().insertRecordAttribution(expressionExperiment.getFishExperiment().getFish(), expressionExperiment.getPublication());
-            tx.commit();
-        } catch (ConstraintViolationException e) {
-            tx.rollback();
-            throw new Exception("Experiment already exist. Experiments have to be unique.");
         } catch (HibernateException e) {
             tx.rollback();
             throw e;
@@ -419,7 +307,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param experimentDTO        dto
      * @param expressionExperiment expression experiment on which the changes are applied.
      */
-    public static void populateExpressionExperiment(ExpressionExperimentDTO experimentDTO, ExpressionExperiment2 expressionExperiment) {
+    public void populateExpressionExperiment(ExpressionExperimentDTO experimentDTO, ExpressionExperiment2 expressionExperiment) {
         // update assay: never null
         ExpressionAssay newAssay = expRepository.getAssayByName(experimentDTO.getAssay());
         expressionExperiment.setAssay(newAssay);
@@ -504,20 +392,8 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
         List<ExpressionFigureStageDTO> dtos = new ArrayList<>();
         for (ExpressionFigureStage efs : experiments) {
-            ExpressionFigureStageDTO dto = new ExpressionFigureStageDTO();
-            dto.setExperiment(DTOConversionService.convertToExperimentDTO(efs.getExpressionExperiment()));
-            dto.setFigure(DTOConversionService.convertToFigureDTO(efs.getFigure()));
-            dto.setStart(DTOConversionService.convertToStageDTO(efs.getStartStage()));
-            dto.setEnd((DTOConversionService.convertToStageDTO(efs.getEndStage())));
-
-            List<ExpressedTermDTO> termStrings = new ArrayList<>();
-            for (ExpressionResult2 result : efs.getExpressionResultSet()) {
-                termStrings.add(DTOConversionService.convertToExpressedTermDTO(result));
-            }
-            Collections.sort(termStrings);
-            dto.setExpressedTerms(termStrings);
-            dto.setPatoExists(mutantRep.isPatoExists(efs.getExpressionExperiment().getFishExperiment().getZdbID(),
-                    efs.getFigure().getZdbID(), efs.getStartStage().getZdbID(), efs.getEndStage().getZdbID(), experimentFilter.getPublicationID()));
+            ExpressionFigureStageDTO dto = DTOConversionService.convertToExpressionFigureStageDTO(efs);
+            dto.setPatoExists(getMutantRepository().isPatoExists(efs));
             dtos.add(dto);
         }
         Collections.sort(dtos);
@@ -628,6 +504,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             expressionFigureStage.setExpressionExperiment(expressionExperiment);
             RepositoryFactory.getExpressionRepository().createExpressionFigureStage(expressionFigureStage);
             fullDto = DTOConversionService.convertToExpressionFigureStageDTOShallow(expressionFigureStage);
+            fullDto.setPatoExists(getMutantRepository().isPatoExists(expressionFigureStage));
             tx.commit();
         } catch (ConstraintViolationException e) {
             tx.rollback();
@@ -681,15 +558,9 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     public void deleteFigureAnnotation(ExpressionFigureStageDTO figureAnnotation) {
         if (figureAnnotation == null)
             return;
-        ExpressionExperimentDTO experiment = figureAnnotation.getExperiment();
-        if (experiment == null || experiment.getExperimentZdbID() == null)
+        if (figureAnnotation.getID() == 0)
             return;
-        if (figureAnnotation.getFigure() == null ||
-                figureAnnotation.getStart().getZdbID() == null ||
-                figureAnnotation.getEnd().getZdbID() == null)
-            return;
-        ExpressionFigureStage efs = expRepository.getExperimentFigureStage(experiment.getExperimentZdbID(), figureAnnotation.getFigure().getZdbID(),
-                figureAnnotation.getStart().getZdbID(), figureAnnotation.getEnd().getZdbID());
+        ExpressionFigureStage efs = expRepository.getExperimentFigureStage(figureAnnotation.getID());
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             expRepository.deleteFigureAnnotation(efs);
@@ -785,12 +656,12 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     public void setFigureAnnotationStatus(ExpressionFigureStageDTO checkedExpression, boolean checked) {
         String publicationID = checkedExpression.getExperiment().getPublicationID();
         String key = createSessionVariableName(publicationID, FX_FIGURE_ANNOTATION_CHECKBOX);
-        Set<String> currentState = (Set<String>) getServletContext().getAttribute(key);
+        Set<Long> currentState = (Set<Long>) getServletContext().getAttribute(key);
         if (currentState == null) {
             currentState = new HashSet<>(10);
             getServletContext().setAttribute(key, currentState);
         }
-        updateFigureAnnotationSessionSet(checkedExpression.getUniqueID(), currentState, checked);
+        updateFigureAnnotationSessionSet(checkedExpression.getID(), currentState, checked);
     }
 
 
@@ -803,7 +674,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param currentState set of unique ids
      * @param checked      add or remove object
      */
-    public void updateFigureAnnotationSessionSet(String uniqueID, Set<String> currentState, boolean checked) {
+    public void updateFigureAnnotationSessionSet(Long uniqueID, Set<Long> currentState, boolean checked) {
         if (checked) {
             boolean success = currentState.add(uniqueID);
             if (!success)
@@ -911,15 +782,13 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             return null;
 
 
-        List<ExpressionFigureStageDTO> updatedAnnotations = new ArrayList<>(figureAnnotations.size());
+        List<ExpressionFigureStage> updatedAnnotationList = new ArrayList<>(figureAnnotations.size());
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             // for each figure annotation check which structures need to be added or removed
             for (ExpressionFigureStageDTO dto : figureAnnotations) {
-                ExpressionFigureStage experiment = expRepository.getExperimentFigureStage(dto.getExperiment().getExperimentZdbID(),
-                        dto.getFigure().getZdbID(),
-                        dto.getStart().getZdbID(),
-                        dto.getEnd().getZdbID());
+                ExpressionFigureStage experiment = expRepository.getExperimentFigureStage(dto.getID());
+                updatedAnnotationList.add(experiment);
                 // sort: first deletions then additions. This will allow to remove a non-EaP structure and replace it with an eap.
                 // we do not allow to add an eap to a non-EaP annotation.
                 Collections.sort(pileStructures);
@@ -941,7 +810,6 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                             throw new ValidationException("Cannot add 'absent phenotypic with a non-absent phenotypic term");
                         if (expTerm != null) {
                             dto.addExpressedTerm(expTerm);
-                            updatedAnnotations.add(dto);
                         }
                     }
                     // remove expression if marked as such
@@ -962,6 +830,17 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         for (ExpressionFigureStageDTO dto : figureAnnotations) {
             setFigureAnnotationStatus(dto, false);
         }
+        List<ExpressionFigureStageDTO> updatedAnnotations =
+                updatedAnnotationList.stream()
+                        .map(expressionFigureStage ->
+                                {
+                                    ExpressionFigureStageDTO dto = DTOConversionService.convertToExpressionFigureStageDTO(expressionFigureStage);
+                                    dto.setPatoExists(getMutantRepository().isPatoExists(expressionFigureStage));
+                                    return dto;
+                                }
+                        )
+                        .collect(toList());
+
         return updatedAnnotations;
     }
 

@@ -59,7 +59,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     private String publicComments;
     @Column(name = "feature_line_number")
     private String lineNumber;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feature_lab_prefix_id")
     private FeaturePrefix featurePrefix;
     @Column(name = "feature_abbrev", nullable = false)
@@ -98,7 +98,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
     @org.hibernate.annotations.OrderBy(clause = "dalias_alias_lower")
     private Set<FeatureAlias> aliases;
-    @OneToOne(mappedBy = "feature")
+    @OneToOne(mappedBy = "feature", fetch = FetchType.EAGER)
     private FeatureAssay featureAssay;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureDBLink> dbLinks;

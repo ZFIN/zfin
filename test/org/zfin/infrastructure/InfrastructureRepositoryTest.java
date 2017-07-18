@@ -14,7 +14,6 @@ import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.Figure;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
@@ -52,42 +51,29 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void persistActiveData() {
-        try {
-            HibernateUtil.createTransaction();
-
-            String testZdbID = "ZDB-GENE-123";
-            ActiveData testActiveData = infrastructureRepository.getActiveData(testZdbID);
-            assertNull("ActiveData not found prior to insert", testActiveData);
-            infrastructureRepository.insertActiveData(testZdbID);
-            testActiveData = infrastructureRepository.getActiveData(testZdbID);
-            assertNotNull("ActiveData found after insert", testActiveData);
-            infrastructureRepository.deleteActiveData(testActiveData);
-            testActiveData = infrastructureRepository.getActiveData(testZdbID);
-            assertNull("ActiveData found after delete", testActiveData);
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
-
+        String testZdbID = "ZDB-GENE-123";
+        ActiveData testActiveData = infrastructureRepository.getActiveData(testZdbID);
+        assertNull("ActiveData not found prior to insert", testActiveData);
+        infrastructureRepository.insertActiveData(testZdbID);
+        testActiveData = infrastructureRepository.getActiveData(testZdbID);
+        assertNotNull("ActiveData found after insert", testActiveData);
+        infrastructureRepository.deleteActiveData(testActiveData);
+        testActiveData = infrastructureRepository.getActiveData(testZdbID);
+        assertNull("ActiveData found after delete", testActiveData);
     }
 
     @Test
     public void persistRecordAttribution() {
 
-        try {
-            HibernateUtil.createTransaction();
-            String dataZdbID = "ZDB-DALIAS-uuiouy";
-            String sourceZdbID = "ZDB-PUB-000104-1";
-            infrastructureRepository.insertActiveData(dataZdbID);
-            // should already exist in active source as a valid pub, so no need to insert
-            RecordAttribution attribute = infrastructureRepository.getRecordAttribution(dataZdbID, sourceZdbID, null);
-            assertNull("RecordAttribution not found prior to insert", attribute);
-            infrastructureRepository.insertRecordAttribution(dataZdbID, sourceZdbID);
-            attribute = infrastructureRepository.getRecordAttribution(dataZdbID, sourceZdbID, null);
-            assertNotNull("RecordAttribution found after insert", attribute);
-        } finally {
-            // rollback on success or exception to leave no new records in the database
-            HibernateUtil.rollbackTransaction();
-        }
+        String dataZdbID = "ZDB-DALIAS-uuiouy";
+        String sourceZdbID = "ZDB-PUB-000104-1";
+        infrastructureRepository.insertActiveData(dataZdbID);
+        // should already exist in active source as a valid pub, so no need to insert
+        RecordAttribution attribute = infrastructureRepository.getRecordAttribution(dataZdbID, sourceZdbID, null);
+        assertNull("RecordAttribution not found prior to insert", attribute);
+        infrastructureRepository.insertRecordAttribution(dataZdbID, sourceZdbID);
+        attribute = infrastructureRepository.getRecordAttribution(dataZdbID, sourceZdbID, null);
+        assertNotNull("RecordAttribution found after insert", attribute);
     }
 
     @Test
@@ -311,8 +297,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void callJdbcStatement() {
-        String query = "create temp table tmp_syndef (namespace varchar(30), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))" +
-                "with no log;";
+        String query = "create temp table tmp_syndef (namespace varchar(30), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))";
         DatabaseJdbcStatement statement = new DatabaseJdbcStatement();
         statement.addQueryPart(query);
         infrastructureRepository.executeJdbcStatement(statement);
@@ -328,13 +313,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
 
-        HibernateUtil.createTransaction();
-        try {
-            infrastructureRepository.executeJdbcStatement(queries.get(0));
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
-
+        infrastructureRepository.executeJdbcStatement(queries.get(0));
     }
 
     @Test
@@ -347,13 +326,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
         List<List<String>> list = null;
-        HibernateUtil.createTransaction();
-        try {
-            list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
-
+        list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
         assertNotNull(list);
     }
 
@@ -367,13 +340,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
         List<List<String>> list = null;
-        HibernateUtil.createTransaction();
-        try {
-            list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
-
+        list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
         assertNotNull(list);
     }
 
@@ -458,39 +425,29 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void removeAttributionsNotFound() {
-        try {
-            HibernateUtil.createTransaction();
-            infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
-            Set<String> datas = new HashSet<>();
-            datas.add("ZDB-GENE-000607-47");
-            datas.add("ZDB-GENE-000607-71");
-            datas.add("ZDB-GENE-030131-10076");
-            for (String data : datas) {
-                infrastructureRepository.insertRecordAttribution(data, MicroarrayWebserviceJob.MICROARRAY_PUB);
-            }
-            int removed = infrastructureRepository.removeAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
-            assertEquals(3, removed);
-        } finally {
-            HibernateUtil.rollbackTransaction();
+        infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
+        Set<String> datas = new HashSet<>();
+        datas.add("ZDB-GENE-000607-47");
+        datas.add("ZDB-GENE-000607-71");
+        datas.add("ZDB-GENE-030131-10076");
+        for (String data : datas) {
+            infrastructureRepository.insertRecordAttribution(data, MicroarrayWebserviceJob.MICROARRAY_PUB);
         }
+        int removed = infrastructureRepository.removeAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
+        assertEquals(3, removed);
     }
 
 
     public void addAttributionsNotFound() {
-        try {
-            HibernateUtil.createTransaction();
-            infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
-            Set<String> datas = new HashSet<>();
-            datas.add("ZDB-GENE-000607-47");
-            datas.add("ZDB-GENE-000607-71");
-            datas.add("ZDB-GENE-030131-10076");
-            int added = infrastructureRepository.addAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
-            assertEquals(datas.size(), added);
-            List<String> numMarkersAttributed = infrastructureRepository.getPublicationAttributionsForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
-            assertEquals(datas.size(), numMarkersAttributed.size());
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        infrastructureRepository.deleteRecordAttributionForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
+        Set<String> datas = new HashSet<>();
+        datas.add("ZDB-GENE-000607-47");
+        datas.add("ZDB-GENE-000607-71");
+        datas.add("ZDB-GENE-030131-10076");
+        int added = infrastructureRepository.addAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
+        assertEquals(datas.size(), added);
+        List<String> numMarkersAttributed = infrastructureRepository.getPublicationAttributionsForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
+        assertEquals(datas.size(), numMarkersAttributed.size());
     }
 
 

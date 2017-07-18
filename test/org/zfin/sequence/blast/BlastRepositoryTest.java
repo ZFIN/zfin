@@ -2,7 +2,6 @@ package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -180,33 +179,28 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void handlePreviousAccessions() {
-        try {
-            HibernateUtil.createTransaction();
-            Database database = blastRepository.getDatabase(Database.AvailableAbbrev.CURATEDMICRORNAMATURE);
-            Set<String> validAccessions = blastRepository.getAllValidAccessionNumbers(database);
-            assertTrue(validAccessions.size() > 0);
-            List<String> previousAccessions = blastRepository.getPreviousAccessionsForDatabase(database);
-            assertTrue(previousAccessions.size() > 0);
-            int previousAccessionSize = previousAccessions.size();
-            List<String> accessionsToAdd = new ArrayList<String>();
-            accessionsToAdd.add("A");
-            accessionsToAdd.add("B");
-            accessionsToAdd.add("C");
+        Database database = blastRepository.getDatabase(Database.AvailableAbbrev.CURATEDMICRORNAMATURE);
+        Set<String> validAccessions = blastRepository.getAllValidAccessionNumbers(database);
+        assertTrue(validAccessions.size() > 0);
+        List<String> previousAccessions = blastRepository.getPreviousAccessionsForDatabase(database);
+        assertTrue(previousAccessions.size() > 0);
+        int previousAccessionSize = previousAccessions.size();
+        List<String> accessionsToAdd = new ArrayList<String>();
+        accessionsToAdd.add("A");
+        accessionsToAdd.add("B");
+        accessionsToAdd.add("C");
 
-            blastRepository.addPreviousAccessions(database, accessionsToAdd);
-            assertEquals(previousAccessionSize + accessionsToAdd.size(), blastRepository.getPreviousAccessionsForDatabase(database).size());
+        blastRepository.addPreviousAccessions(database, accessionsToAdd);
+        assertEquals(previousAccessionSize + accessionsToAdd.size(), blastRepository.getPreviousAccessionsForDatabase(database).size());
 
-            List<String> accessionsToRemove = new ArrayList<String>();
-            accessionsToRemove.add("A");
-            accessionsToRemove.add("B");
-            blastRepository.removePreviousAccessions(database, accessionsToRemove);
-            List<String> previosAcStringList = blastRepository.getPreviousAccessionsForDatabase(database);
-            assertEquals(previousAccessionSize + accessionsToAdd.size() - accessionsToRemove.size(), previosAcStringList.size());
-            MountedWublastBlastService.getInstance().updatePreviousAccessions(database, validAccessions, blastRepository.getPreviousAccessionsForDatabase(database));
-            assertTrue(CollectionUtils.isEqualCollection(validAccessions, blastRepository.getPreviousAccessionsForDatabase(database)));
-        } finally {
-            HibernateUtil.rollbackTransaction();
-        }
+        List<String> accessionsToRemove = new ArrayList<String>();
+        accessionsToRemove.add("A");
+        accessionsToRemove.add("B");
+        blastRepository.removePreviousAccessions(database, accessionsToRemove);
+        List<String> previosAcStringList = blastRepository.getPreviousAccessionsForDatabase(database);
+        assertEquals(previousAccessionSize + accessionsToAdd.size() - accessionsToRemove.size(), previosAcStringList.size());
+        MountedWublastBlastService.getInstance().updatePreviousAccessions(database, validAccessions, blastRepository.getPreviousAccessionsForDatabase(database));
+        assertTrue(CollectionUtils.isEqualCollection(validAccessions, blastRepository.getPreviousAccessionsForDatabase(database)));
     }
 
     @Test

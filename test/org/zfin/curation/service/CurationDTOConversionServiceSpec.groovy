@@ -7,14 +7,13 @@ import org.zfin.curation.Correspondence
 import org.zfin.curation.Curation
 import org.zfin.curation.PublicationNote
 import org.zfin.profile.Person
+import org.zfin.properties.ZfinPropertiesEnum
 import org.zfin.publication.Publication
 import org.zfin.publication.PublicationTrackingHistory
 import org.zfin.publication.PublicationTrackingLocation
 import org.zfin.publication.PublicationTrackingStatus
 import spock.lang.Shared
 import spock.lang.Unroll
-
-import javax.sql.rowset.serial.SerialBlob
 
 class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
 
@@ -33,7 +32,7 @@ class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
                 firstName: "Monte",
                 lastName: "Westerfield",
                 shortName: "Westerfield-M.",
-                snapshot: new SerialBlob(new byte[0])
+                image: "vacation-picture-1.jpg"
             )
     ]
 
@@ -104,7 +103,7 @@ class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
         !dto.editable
     }
 
-    def "convert Person to DTO for person without snapshot"() {
+    def "convert Person to DTO for person without image"() {
         when:
         def dto = converter.toPersonDTO(person.patrick)
 
@@ -114,14 +113,14 @@ class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
         dto.imageURL == "/images/LOCAL/smallogo.gif"
     }
 
-    def "convert Person to DTO for person with snapshot"() {
+    def "convert Person to DTO for person with image"() {
         when:
         def dto = converter.toPersonDTO(person.monte)
 
         then:
         dto.name == "$person.monte.firstName $person.monte.lastName"
         dto.zdbID == person.monte.zdbID
-        dto.imageURL == "/action/profile/image/view/${person.monte.zdbID}.jpg"
+        dto.imageURL == "$ZfinPropertiesEnum.IMAGE_LOAD/${person.monte.image}"
     }
 
     @Unroll

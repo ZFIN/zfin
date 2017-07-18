@@ -85,6 +85,7 @@ public class PublicationTrackingController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Track Pub: " + publication.getTitle());
         model.addAttribute("publication", publication);
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
         model.addAttribute("loggedInUser", ProfileService.getCurrentSecurityUser());
         return "publication/track-publication.page";
     }
@@ -173,12 +174,11 @@ public class PublicationTrackingController {
     @ResponseBody
     @RequestMapping(value = "/curators", method = RequestMethod.GET)
     public Collection<PersonDTO> getAllCurators() {
-        List<PersonDTO> curatorDTOs = profileRepository.getCurators().stream()
+        SortedSet<PersonDTO> curatorDTOs = profileRepository.getCurators().stream()
                 .map(converter::toPersonDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(TreeSet::new));
         // Add currently logged in user to allow developers to act like curators on their own sites
         curatorDTOs.add(converter.toPersonDTO(ProfileService.getCurrentSecurityUser()));
-        Collections.sort(curatorDTOs);
         return curatorDTOs;
     }
 
@@ -370,8 +370,7 @@ public class PublicationTrackingController {
             if (Boolean.valueOf(ZfinPropertiesEnum.SEND_AUTHOR_NOTIF_EMAIL.value())) {
                 recipients.addAll(externalRecipients);
             } else {
-                message = "[[ Recipient list on production environment: " + String.join(", ", externalRecipients) + " ]]<br><br>" +
-                        "------------------<br><br>" +
+                message = "[[ Recipient list on production environment: " + String.join(", ", externalRecipients) + " ]]\n\n" +
                         message;
             }
 
@@ -379,7 +378,7 @@ public class PublicationTrackingController {
                     correspondence.getFrom().getLastName() +
                     " <" + correspondence.getFrom().getEmail() + ">";
 
-            boolean sent = mailer.sendHtmlMail(correspondence.getMessage().getSubject(),
+            boolean sent = mailer.sendMail(correspondence.getMessage().getSubject(),
                     message, false, sender, recipients.toArray(new String[]{}));
 
             if (!sent) {

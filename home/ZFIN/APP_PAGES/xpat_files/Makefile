@@ -24,11 +24,11 @@ GENERICS = xpatselect.apg \
 xpatselect_detailedresults.apg xpatselect_note.apg xpatselect_summaryresults.apg \
 xpatselectanatverify.apg
 
-STATICS = xpatselectquery.apg xpatexdisplayname.apg \
+STATICS = xpatselectquery.apg \
 fxfigstgrng.apg fxfigfishlist.apg \
 fxgenestgrng.apg \
 xpatselect_resultsasimages.apg \
-fxfiganatlist.apg fxfiggenelist.apg 
+fxfiganatlist.apg
 
 # Use default rules for app page directories.
 

@@ -60,8 +60,8 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     public void handleCurationEvent(CurationEvent event) {
         if (event == null)
             return;
-        if (event.getEventType().equals(EventType.CREATE_MARKER) ||
-                event.getEventType().equals(EventType.CREATE_FEATURE) ||
+        if (event.getEventType().is(EventType.CREATE_MARKER) ||
+                event.getEventType().is(EventType.CUD_FEATURE) ||
                 event.getEventType().equals(EventType.CREATE_FISH)) {
             populateAttributeRemoval();
         }
@@ -279,10 +279,18 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private boolean checkAttributionExists(String attribution) {
         if (removeListBox.setIndexForValue(attribution) >= 0) {
             setError("'" + attribution + "' is already attributed.");
+
             return true;
         }
         return false;
     }
+
+    @Override
+    public void setError(String message) {
+        super.setError(message);
+        clearMessage();
+    }
+
 
     private void addFeatureAttribution(final String value) {
         // should cancel second submit (case 5943)
@@ -364,6 +372,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
         public DeAttributionRuleCallBack(String entityID, HandlesError errorLabel) {
             super(entityID, null);
+            this.errorLabel = errorLabel;
             this.entityID = entityID;
         }
 
@@ -408,9 +417,10 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
         @Override
         public void onFailure(Throwable throwable) {
-            if (throwable instanceof DeAttributionException)
+            if (throwable instanceof DeAttributionException) {
                 GWT.log(throwable.getMessage());
-            else
+                errorLabel.setError(throwable.getMessage());
+            }else
                 super.onFailure(throwable);
             notWorking();
         }

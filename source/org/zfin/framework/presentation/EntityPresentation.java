@@ -80,10 +80,27 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
-    public static String getViewLink(String zdbID, String abbreviation, String name, String cssClassName) {
+    public static String getViewLink(String zdbID, String linkText) {
+        return getViewLink(zdbID, linkText, null, null);
+    }
+
+    public static String getViewLink(String zdbID, String linkText, String name) {
+        return getViewLink(zdbID, linkText, name, null);
+    }
+
+    public static String getViewLink(String zdbID, String linkText, String name, String cssClassName) {
+        return getViewLink(zdbID, linkText, name, cssClassName, null);
+    }
+
+    public static String getViewLink(String zdbID, String linkText, String name, String cssClassName, String domID) {
         StringBuilder sb = getViewHyperlinkStart();
         sb.append(zdbID);
         sb.append("\"");
+        if (domID != null) {
+            sb.append(" id=\"");
+            sb.append(domID);
+            sb.append("\"");
+        }
         if (name != null) {
             sb.append(" title=\"");
             sb.append(name);
@@ -95,7 +112,7 @@ public abstract class EntityPresentation {
             sb.append("\" ");
         }
         sb.append(">");
-        sb.append(abbreviation);
+        sb.append(linkText);
         sb.append("</a>");
         return sb.toString();
     }

@@ -10,7 +10,7 @@
 <span class="primary-entity-attributes">
 <b>${formBean.entity.entityType}:</b>
         <zfin:link entity="${formBean.entity}"/>
-</span>
+</span> <br/>
 
 <zfin2:citationList pubListBean="${formBean}" url="?">
 

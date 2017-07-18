@@ -46,10 +46,10 @@ public class StageRangeUnion implements IsSerializable {
         int index = 0;
         for (ExpressionFigureStageDTO efs : efses) {
             if (efs.getStart().getStartHours() < 0.0f || efs.getEnd().getStartHours() < 0.0f)
-                throw new RuntimeException("Stage hours are not initialized " + efs.getUniqueID());
+                throw new RuntimeException("Stage hours are not initialized " + efs.getID());
             // check that start <= end
             if (efs.getStart().getStartHours() > efs.getEnd().getStartHours())
-                throw new RuntimeException("Start stage is before end stage! " + efs.getUniqueID());
+                throw new RuntimeException("Start stage is before end stage! " + efs.getID());
             // if first element
             if (index == 0) {
                 startHours = efs.getStart().getStartHours();

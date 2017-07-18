@@ -1,8 +1,15 @@
 package org.zfin.publication.repository;
 
 import org.hibernate.Session;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.AppConfig;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
@@ -28,21 +35,28 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingHistory;
 import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
+import org.zfin.publication.presentation.DashboardPublicationBean;
+import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.Calendar;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {AppConfig.class})
+@WebAppConfiguration
 public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
-    private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+    @Autowired
+    private PublicationRepository publicationRepository;
+
     private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private static AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
@@ -54,6 +68,15 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String pubZdbId = "ZDB-PUB-050607-10";
         Publication testPublication = publicationRepository.getPublication(pubZdbId);
 
+        assertNotNull("Test publication is retrieved", testPublication);
+        assertEquals("Test publication has the right title", "LZIC regulates neuronal survival during zebrafish development", testPublication.getTitle());
+    }
+
+    @Test
+    public void getMappingDetailsCount() {
+        String pubZdbId = "ZDB-PUB-050607-10";
+        Publication testPublication = publicationRepository.getPublication(pubZdbId);
+        long number = publicationRepository.getMappingDetailsCount(testPublication);
         assertNotNull("Test publication is retrieved", testPublication);
         assertEquals("Test publication has the right title", "LZIC regulates neuronal survival during zebrafish development", testPublication.getTitle());
     }
@@ -184,6 +207,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore("postgres")
     public void getNumOfPublicationsPerAOAndGli1Mutant() {
         // lateral floor plate
         String aoZdbID = "ZDB-TERM-100331-1214";
@@ -362,7 +386,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getFeatureCountForPub() {
         //  genotype adss^hi1433Tg
-        String pubZdbID = "ZDB-PUB-140403-2 ";
+        String pubZdbID = "ZDB-PUB-140403-2";
         Publication pub = publicationRepository.getPublication(pubZdbID);
         long ftrCount = publicationRepository.getFeatureCount(pub);
         assertTrue(ftrCount > 0);
@@ -624,7 +648,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getPubByPubmedID() {
-        assertEquals(1, publicationRepository.getPublicationByPmid("18056260").size());
+        assertEquals(1, publicationRepository.getPublicationByPmid(18056260).size());
     }
 
     @Test
@@ -792,36 +816,44 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getPublicationsByStatusShouldOnlyReturnCurrentStatuses() {
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, null, 20, 0, null);
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.isCurrent(), is(true));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(null, null, null, 20, 0, null)
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().isCurrent(), is(true));
         }
     }
 
     @Test
     public void getPublicationsByStatusShouldReturnObjectsWithSpecifiedStatus() {
         long statusId = 1;
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(statusId, null, null, 20, 0, null);
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.getStatus().getId(), is(statusId));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(statusId, null, null, 20, 0, null)
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().getStatus().getId(), is(statusId));
         }
     }
 
     @Test
     public void getPublicationsByStatusShouldReturnObjectsWithSpecifiedLocation() {
         long locationId = 1;
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, locationId, null, 20, 0, null);
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.getLocation().getId(), is(locationId));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(null, locationId, null, 20, 0, null)
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().getLocation().getId(), is(locationId));
         }
     }
 
     @Test
     public void getPublicationsByStatusShouldInterpretZeroAsNullForLocation() {
         long locationId = 0;
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, locationId, null, 20, 0, "location");
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.getLocation(), is(nullValue()));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(null, locationId, null, 20, 0, "location")
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().getLocation(), is(nullValue()));
         }
     }
 
@@ -831,40 +863,43 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // The test uses Holly's id. Hopefully she continues to exist and has something
         // assigned to her otherwise this test isn't doing anything.
         String ownerId = "ZDB-PERS-100329-1";
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, ownerId, 20, 0, null);
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.getOwner().getZdbID(), is(ownerId));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(null, null, ownerId, 20, 0, null)
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().getOwner().getZdbID(), is(ownerId));
         }
     }
 
     @Test
     public void getPublicationsByStatusShouldInterpretStarAsAnyOwner() {
         String ownerId = "*";
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, ownerId, 50, 0, "-owner");
-        for (PublicationTrackingHistory status : statuses.getPopulatedResults()) {
-            assertThat(status.getOwner(), is(notNullValue()));
+        List<DashboardPublicationBean> statuses = publicationRepository
+                .getPublicationsByStatus(null, null, ownerId, 50, 0, "-owner")
+                .getPublications();
+        for (DashboardPublicationBean status : statuses) {
+            assertThat(status.getStatus().getOwner(), is(notNullValue()));
         }
     }
 
     @Test
     public void getPublicationsByStatusShouldReturnSpecifiedNumberOfObjectsAndPopulateTotalCount() {
         int count = 33;
-        PaginationResult<PublicationTrackingHistory> statuses = publicationRepository.getPublicationsByStatus(null, null, null, count, 0, null);
-        assertThat(statuses.getPopulatedResults(), hasSize(count));
+        DashboardPublicationList statuses = publicationRepository
+                .getPublicationsByStatus(null, null, null, count, 0, null);
+        assertThat(statuses.getPublications(), hasSize(count));
         assertThat(statuses.getTotalCount(), is(greaterThanOrEqualTo(count)));
     }
 
     @Test
     public void getPublicationsByStatusShouldPaginateCorrectly() {
         int count = 27;
-        PaginationResult<PublicationTrackingHistory> firstPage = publicationRepository.getPublicationsByStatus(null, null, null, count, 0, null);
-        PaginationResult<PublicationTrackingHistory> secondPage = publicationRepository.getPublicationsByStatus(null, null, null, count, count, null);
-        assertThat(firstPage.getStart(), is(0));
-        assertThat(secondPage.getStart(), is(0));
-        assertThat(firstPage.getPopulatedResults(), is(not(empty())));
-        assertThat(secondPage.getPopulatedResults(), is(not(empty())));
-        assertThat(secondPage.getPopulatedResults().get(0), not(equalTo(firstPage.getPopulatedResults().get(0))));
-        assertThat(secondPage.getPopulatedResults().get(0), not(equalTo(firstPage.getPopulatedResults().get(firstPage.getPopulatedResults().size() - 1))));
+        DashboardPublicationList firstPage = publicationRepository.getPublicationsByStatus(null, null, null, count, 0, null);
+        DashboardPublicationList secondPage = publicationRepository.getPublicationsByStatus(null, null, null, count, count, null);
+        assertThat(firstPage.getPublications(), is(not(empty())));
+        assertThat(secondPage.getPublications(), is(not(empty())));
+        assertThat(secondPage.getPublications().get(0), not(equalTo(firstPage.getPublications().get(0))));
+        assertThat(secondPage.getPublications().get(0), not(equalTo(firstPage.getPublications().get(firstPage.getPublications().size() - 1))));
     }
 }
 

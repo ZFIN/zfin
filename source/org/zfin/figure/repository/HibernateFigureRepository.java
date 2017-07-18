@@ -62,22 +62,28 @@ public class HibernateFigureRepository implements FigureRepository {
         List<Person> submitters = new ArrayList<>();
 
         String probeZdbID = null;
-        if (probe != null)
+        if (probe != null) {
             probeZdbID = probe.getZdbID();
-
+        }
+        
         Session session = HibernateUtil.currentSession();
 
         String sql = "SELECT ids_source_zdb_id " +
                 "FROM int_data_source, expression_experiment " +
-                "WHERE xpatex_probe_feature_zdb_id = :probeZdbID " +
+                "WHERE xpatex_zdb_id = ids_data_zdb_id " +
                 "  and xpatex_source_zdb_id = :pubZdbID " +
-                "  and xpatex_zdb_id=ids_data_zdb_id " +
-                "  and ids_source_zdb_id like :sourceZdbIDPrefix";
+                "  and substring(ids_source_zdb_id from 1 for 8) = 'ZDB-PERS'";
+
+        if (probeZdbID != null) {
+            sql += "  and xpatex_probe_feature_zdb_id = :probeZdbID ";
+        }
 
         Query query = session.createSQLQuery(sql);
         query.setParameter("pubZdbID",publication.getZdbID());
-        query.setParameter("probeZdbID", probeZdbID);
-        query.setParameter("sourceZdbIDPrefix", "ZDB-PERS%");
+        if (probeZdbID != null) {
+            query.setParameter("probeZdbID", probeZdbID);
+        }
+
 
         for (Object o : query.list()) {
             String personZdbID = (String)o;

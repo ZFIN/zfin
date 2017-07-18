@@ -100,11 +100,13 @@ public class SearchPrototypeController {
 
         if (StringUtils.isNotEmpty(q)) {
             String url = null;
+            //support for ZFIN:ZDB-... ID format
+            String zdbQuery = q.replace("ZFIN:ZDB","ZDB");
 
-            String replacementZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(q);
+            String replacementZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbQuery);
 
-            if (zdbIDService.isActiveZdbID(q)) {
-                url = "/" + q;
+            if (zdbIDService.isActiveZdbID(zdbQuery)) {
+                url = "/" + zdbQuery;
             } else if (StringUtils.isNotEmpty(replacementZdbID)) {
                 url = "/" + replacementZdbID;
             }
@@ -119,7 +121,7 @@ public class SearchPrototypeController {
             model.addAttribute("newQuery", q.substring(1));
         }
 
-        SolrClient client = SolrService.getSolrClient("prototype");
+        SolrClient client = SolrService.getSolrClient();
         SolrQuery query = new SolrQuery();
 
         String queryStringInput;
@@ -131,7 +133,7 @@ public class SearchPrototypeController {
         model.addAttribute("request", request);
 
         if (explain) {
-            query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]", "pgcmid");
+            query.set("fl", "name, type, id, category, full_name, url, thumbnail, image, profile_image, date, attribution_count, screen, has_orthology, score, xpat_zdb_id, fig_zdb_id, [explain]", "pgcmid");
         }
 
         URLCreator resubmitUrlCreator = new URLCreator(baseUrl);
@@ -365,6 +367,8 @@ public class SearchPrototypeController {
 
         List<String> categories = new ArrayList<>();
         categories.addAll(org.zfin.search.Category.getFacetMap().keySet());
+        categories.remove(Category.STR_RELATIONSHIP.getName());
+
         Collections.sort(categories, new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
@@ -403,7 +407,7 @@ public class SearchPrototypeController {
                       HttpServletRequest request) {
         List<FacetLookupEntry> facets = new ArrayList<FacetLookupEntry>();
 
-        SolrClient server = SolrService.getSolrClient("prototype");
+        SolrClient server = SolrService.getSolrClient();
         SolrQuery query = new SolrQuery();
 
         query = handleFacetSorting(query, request);
@@ -450,20 +454,22 @@ public class SearchPrototypeController {
 
         if (facetField != null && facetField.getValues() != null) {
 
-            List<FacetField.Count> facetValues = new ArrayList<>();
+            List<FacetValue> facetValues = new ArrayList<>();
 
-            facetValues.addAll(facetField.getValues());
+            for (FacetField.Count count : facetField.getValues()) {
+                facetValues.add(new FacetValue(count));
+            }
 
             facetBuilderService.sortFacetValues(facetField.getName(), facetValues);
 
-            for (FacetField.Count count : facetValues) {
+            for (FacetValue facetValue : facetValues) {
                 FacetLookupEntry entry = new FacetLookupEntry();
-                entry.setName(SolrService.encode(count.getName()));
-                entry.setLabel(count.getName().replace("\"", "") + " (" + count.getCount() + ") ");
-                String fq = SolrService.encode(facetField.getName() + ":\"" + count.getName() + "\"");
+                entry.setName(SolrService.encode(facetValue.getLabel()));
+                entry.setLabel(facetValue.getLabel().replace("\"", "") + " (" + facetValue.getCount() + ") ");
+                String fq = SolrService.encode(facetField.getName() + ":\"" + facetValue.getLabel() + "\"");
                 entry.setFq(fq);
-                entry.setValue(count.getName());
-                entry.setCount(String.valueOf(count.getCount()));
+                entry.setValue(facetValue.getLabel());
+                entry.setCount(String.valueOf(facetValue.getCount()));
                 facets.add(entry);
             }
         }
@@ -531,6 +537,7 @@ public class SearchPrototypeController {
                 label.append(result.getMatchingText());
                 label.append("]");
             }
+            entry.setId(result.getId());
             entry.setLabel(label.toString());
             entry.setValue(result.getName());
             entry.setName(result.getFullName());
@@ -560,6 +567,9 @@ public class SearchPrototypeController {
 
         category = getCategory(filterQuery, category);
 
+        if (StringUtils.isNotEmpty(category)) {
+            query.addFilterQuery("category:\"" + category + "\"");
+        }
 
         //this should do everything exactly the same as regular controller method to build the result set,
         //but...

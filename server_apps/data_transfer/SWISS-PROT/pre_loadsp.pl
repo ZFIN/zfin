@@ -6,8 +6,10 @@ use strict ;
 #
  
 use MIME::Lite;
+use LWP::Simple;
 use DBI;
-
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 #------------------- Download -----------
 
@@ -53,28 +55,8 @@ sub downloadGOtermFiles () {
 #   $    Error message 
 
 sub sendErrorReport ($) {
-  
-  my $SUBJECT="Auto from SWISS-PROT:".$_[0];
-  my $MAILTO="<!--|SWISSPROT_EMAIL_ERR|-->";
-  my $TXTFILE="./report.txt";
- 
-  # Create a new multipart message:
-  my $msg1 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
- 
-  attach $msg1 
-   Type     => 'text/plain',   
-   Path     => "$TXTFILE";
-
-  # Output the message to sendmail
-
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg1->print(\*SENDMAIL);
-  close (SENDMAIL);
-
+    my $subject = "Auto from SWISS-PROT:".$_[0];
+    ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","report.txt");  
 }
 
 #------------------ Send Running Result ----------------
@@ -82,100 +64,21 @@ sub sendErrorReport ($) {
 #
 sub sendRunningResult {
   my $dbname = $_[0];
+  #----- One mail send out the checking report----
+  my $subject = "Auto from $dbname: SWISS-PROT check report";
+  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","checkreport.txt");
   		
- #----- One mail send out the checking report----
+  #----- Another mail send out problem files ----
+  $subject = "Auto from $dbname: SWISS-PROT problem file";
+  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","allproblems.txt");
 
-  my $SUBJECT="Auto from $dbname: SWISS-PROT check report";
-  my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";
-  my $TXTFILE="./checkreport.txt";
- 
-  # Create a new multipart message:
-  my $msg2 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
- 
-  attach $msg2 
-   Type     => 'text/plain',   
-   Path     => "$TXTFILE";
+  #----- Another mail send out problem files ----
+  $subject = "Auto from $dbname: PubMed not in ZFIN";
+  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","pubmed_not_in_zfin");  
 
-  # Output the message to sendmail
-
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg2->print(\*SENDMAIL);
-
-  
- #----- Another mail send out problem files ----
-
-  my $SUBJECT="Auto from $dbname: SWISS-PROT problem file";
-  my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
-  my $ATTFILE = "allproblems.txt";
-
-  # Create another new multipart message:
-  my $msg3 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
-
-  attach $msg3 
-    Type     => 'application/octet-stream',
-    Encoding => 'base64',
-    Path     => "./$ATTFILE",
-    Filename => "$ATTFILE";
-
-  # Output the message to sendmail
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg3->print(\*SENDMAIL);
-
- #----- Another mail send out problem files ----
-
-  my $SUBJECT="Auto from $dbname: PubMed not in ZFIN";
-  my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
-  my $ATTFILE = "pubmed_not_in_zfin";
-
-  # Create another new multipart message:
-  my $msg4 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
-
-  attach $msg4 
-    Type     => 'application/octet-stream',
-    Encoding => 'base64',
-    Path     => "./$ATTFILE",
-    Filename => "$ATTFILE";
-
-  # Output the message to sendmail
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg4->print(\*SENDMAIL);
-
- #----- Another mail send out problem files ----
-
-  my $SUBJECT="Auto from $dbname: report of processing pre_zfin.org";
-  my $MAILTO="<!--|SWISSPROT_EMAIL_REPORT|-->";     
-  my $ATTFILE = "redGeneReport.txt";
-
-  # Create another new multipart message:
-  my $msg5 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
-
-  attach $msg5 
-    Type     => 'application/octet-stream',
-    Encoding => 'base64',
-    Path     => "./$ATTFILE",
-    Filename => "$ATTFILE";
-
-  # Output the message to sendmail
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg5->print(\*SENDMAIL);
-
-  close(SENDMAIL);
+  #----- Another mail send out problem files ----
+  $subject = "Auto from $dbname: report of processing pre_zfin.org";
+  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","redGeneReport.txt");
 }
 
 
@@ -260,12 +163,100 @@ system("rm -f *.dat");
 system("mkdir ./ccnote");
 
 
-&downloadGOtermFiles();
-
-
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
+
+########################################################################################################
+#
+#  for FB case 15015, Validate manually-added UniProt IDs attributed to the new publication, ZDB-PUB-170131-9
+#
+########################################################################################################
+
+### open a handle on the db
+my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
+    or die "Cannot connect to Informix database: $DBI::errstr\n";
+
+my $sqlGetManuallyEnteredUniProtIDsWithMultGenes = "select distinct db1.dblink_acc_num from db_link db1
+                                                     where exists(select 'x' from record_attribution
+                                                                   where db1.dblink_zdb_id = recattrib_data_zdb_id
+                                                                     and recattrib_source_zdb_id = 'ZDB-PUB-170131-9')
+                                                       and exists(select 'x' from db_link db2
+                                                                   where db2.dblink_acc_num = db1.dblink_acc_num
+                                                                     and db2.dblink_linked_recid != db1.dblink_linked_recid);";
+
+my $curGetManuallyEnteredUniProtIDsWithMultGenes = $dbh->prepare_cached($sqlGetManuallyEnteredUniProtIDsWithMultGenes);
+$curGetManuallyEnteredUniProtIDsWithMultGenes->execute();
+my $manuallyEnteredUniProtIDWithMultGenes;
+$curGetManuallyEnteredUniProtIDsWithMultGenes->bind_columns(\$manuallyEnteredUniProtIDWithMultGenes);
+open MULTIPLE, ">manuallyCuratedUniProtIDsWithMultipleGenes.txt" || die ("Cannot open manuallyCuratedUniProtIDsWithMultipleGenes.txt !");
+my $ctManuallyEnteredUniProtIDsWithMultGenes = 0;
+while ($curGetManuallyEnteredUniProtIDsWithMultGenes->fetch()) {
+    print MULTIPLE "$manuallyEnteredUniProtIDWithMultGenes\n";
+    $ctManuallyEnteredUniProtIDsWithMultGenes++;
+}
+$curGetManuallyEnteredUniProtIDsWithMultGenes->finish();
+
+close(MULTIPLE);
+
+print "\nNumber of manually curated UniProt IDs with multiple genes: $ctManuallyEnteredUniProtIDsWithMultGenes\n\n";
+
+if ($ctManuallyEnteredUniProtIDsWithMultGenes > 0) {
+  my $subject = "Auto from SWISS-PROT: manually curated UniProt IDs with multiple genes";
+  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","manuallyCuratedUniProtIDsWithMultipleGenes.txt");
+}
+
+my $sqlGetManuallyEnteredUniProtIDs = "select dblink_acc_num from db_link
+                                        where exists(select 'x' from record_attribution
+                                                      where dblink_zdb_id = recattrib_data_zdb_id
+                                                        and recattrib_source_zdb_id = 'ZDB-PUB-170131-9');";
+
+my $curGetManuallyEnteredUniProtIDs = $dbh->prepare_cached($sqlGetManuallyEnteredUniProtIDs);
+$curGetManuallyEnteredUniProtIDs->execute();
+my $manuallyEnteredUniProtID;
+$curGetManuallyEnteredUniProtIDs->bind_columns(\$manuallyEnteredUniProtID);
+my @manuallyEnteredUniProtIDs = ();
+my $ctManuallyEnteredUniProtIDs = 0;
+open MCIDS, ">manuallyCuratedUniProtIDs.txt" || die ("Cannot open manuallyCuratedUniProtIDs.txt !");
+while ($curGetManuallyEnteredUniProtIDs->fetch()) {
+    $manuallyEnteredUniProtIDs[$ctManuallyEnteredUniProtIDs] = $manuallyEnteredUniProtID;
+    print MCIDS "$manuallyEnteredUniProtID\n";
+    $ctManuallyEnteredUniProtIDs++;
+}
+$curGetManuallyEnteredUniProtIDs->finish();
+close(MCIDS);
+
+print "\nNumber of manually curated UniProt IDs: $ctManuallyEnteredUniProtIDs\n\n";
+
+my $uniprotId;
+my $url;
+my $uniProtURL = "http://www.uniprot.org/uniprot/";
+open INVALID, ">invalidManuallyCuratedUniProtIDs.txt" || die ("Cannot open invalidManuallyCuratedUniProtIDs.txt !");
+my $numInvalidUniProtIDs = 0;
+if ($ctManuallyEnteredUniProtIDs > 0) {
+  foreach $uniprotId (@manuallyEnteredUniProtIDs) {
+     $url = $uniProtURL . $uniprotId;
+     my $content = get $url;
+     if (defined $content) {
+       if ($content =~ m/this page was not found/) {
+          print INVALID "$uniprotId\n";
+          $numInvalidUniProtIDs++;
+        }
+      }
+      undef $content;
+  }
+}
+
+close(INVALID);
+
+print "\nNumber of Invalid Manually curated UniProt IDs: $numInvalidUniProtIDs\n\n";
+
+if ($numInvalidUniProtIDs > 0) {
+  my $subject = "Auto from SWISS-PROT: invalid manually curated UniProt IDs";
+  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","invalidManuallyCuratedUniProtIDs.txt");
+}
+
+&downloadGOtermFiles();
 
 ########################################################################################################
 #
@@ -273,10 +264,6 @@ my $password = "";
 #
 ########################################################################################################
 
-### open a handle on the db
-my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
-    
 my $cur;
 
 $/ = "//\n";
@@ -533,6 +520,8 @@ print "\nfailed to run sp_check.pl.............\n\n";
 
 # concatenate all the sub problem files
 system("cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 > allproblems.txt");
+
+system("sp_match.pl manuallyCuratedUniProtIDs.txt");
 
 &sendRunningResult($dbname);
 

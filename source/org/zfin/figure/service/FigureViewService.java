@@ -20,6 +20,7 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This will likely end up merged with the existing FigureService
@@ -294,11 +295,17 @@ public class FigureViewService {
         List<Fish> fishList = new ArrayList<>();
 
         for (PhenotypeWarehouse phenotypeExperiment : phenotypeRepository.getPhenotypeWarehouse(figure.getZdbID())) {
-            if (!fishList.contains(phenotypeExperiment.getFishExperiment().getFish())) {
-                fishList.add(phenotypeExperiment.getFishExperiment().getFish());
+            Fish fish = phenotypeExperiment.getFishExperiment().getFish();
+            if (fish != null && !fishList.contains(fish)) {
+                fishList.add(fish);
             }
         }
-
+        
+        HashSet hs = new HashSet();
+        hs.addAll(fishList);
+        fishList.clear();
+        fishList.addAll(hs);
+fishList.stream().distinct().collect(Collectors.toList());;
         Collections.sort(fishList);
         return fishList;
     }

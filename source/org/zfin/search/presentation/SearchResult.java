@@ -43,8 +43,8 @@ public class SearchResult implements ProvidesLink {
     List<String> thumbnails;
     @Field("img_zdb_id")
     List<String> imageZdbIds;
-    @Field
-    String snapshot;
+    @Field("profile_image")
+    String profileImage;
     @Field
     Float score;
     @Field
@@ -89,7 +89,7 @@ public class SearchResult implements ProvidesLink {
 
     public String getLink() {
         String cssClass = "";
-        if (id.startsWith("ZDB-GENE"))
+        if (id.startsWith("GENE")||id.contains("RNAG"))
             cssClass = " class = \"genedom\" ";
         if (id.contains("CONSTRCT"))
             cssClass = " class = \"genedom\" ";
@@ -196,12 +196,12 @@ public class SearchResult implements ProvidesLink {
         this.imageZdbIds = imageZdbIds;
     }
 
-    public String getSnapshot() {
-        return snapshot;
+    public String getProfileImage() {
+        return profileImage;
     }
 
-    public void setSnapshot(String snapshot) {
-        this.snapshot = snapshot;
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
     public Float getScore() {

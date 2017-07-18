@@ -15,6 +15,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeService;
 import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.mutant.repository.MutantRepository;
 
@@ -23,8 +24,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class ConstructViewController {
@@ -40,14 +39,15 @@ public class ConstructViewController {
     @Autowired
     private MutantRepository mutantRepository;
 
+    @Autowired
+    private MarkerService markerService;
+
     @RequestMapping(value = "/construct/view/{zdbID}")
-    public String getGeneView(
-            Model model
-            , @PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         ConstructBean markerBean = new ConstructBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker construct = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + construct);
@@ -61,7 +61,7 @@ public class ConstructViewController {
                 construct, true
                 , MarkerRelationship.Type.PROMOTER_OF
                 , MarkerRelationship.Type.CODING_SEQUENCE_OF
-                , MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION
+                , MarkerRelationship.Type.CONTAINS_REGION
         ));
 
         for (MarkerRelationshipPresentation markerRelationshipPresentation : cloneRelationships) {
@@ -116,7 +116,9 @@ public class ConstructViewController {
                 List<GenotypeFishResult> fishSummaryList = FishService.getFishExperiementSummaryForGenotype(genotype);
                 for (GenotypeFishResult fishSummary : fishSummaryList) {
                     if (fishSummary.getFish().getStrList().isEmpty()) {
+                        fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));
                         allFish.add(fishSummary);
+
                     }
                 }
             }

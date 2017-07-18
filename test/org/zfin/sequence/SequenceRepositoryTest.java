@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
@@ -33,30 +34,25 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void testAccessionEntity() {
         Session session = HibernateUtil.currentSession();
-        try {
-            session.beginTransaction();
-            Accession accession1 = new Accession();
-            String number = "AC:TEST";
-            String abbrev = "AC:TEST_ABBREV";
-            accession1.setNumber(number);
-            accession1.setAbbreviation(abbrev);
-            ReferenceDatabase genBankRefDB = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                    ForeignDB.AvailableName.GENBANK,
-                    ForeignDBDataType.DataType.GENOMIC,
-                    ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.Type.ZEBRAFISH);
-            accession1.setReferenceDatabase(genBankRefDB);
-            session.save(accession1);
-            String hsqlString = "from Accession acc where acc.number = :number";
-            Query query = session.createQuery(hsqlString);
-            query.setString("number", number);
+        Accession accession1 = new Accession();
+        String number = "AC:TEST";
+        String abbrev = "AC:TEST_ABBREV";
+        accession1.setNumber(number);
+        accession1.setAbbreviation(abbrev);
+        ReferenceDatabase genBankRefDB = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
+        accession1.setReferenceDatabase(genBankRefDB);
+        session.save(accession1);
+        String hsqlString = "from Accession acc where acc.number = :number";
+        Query query = session.createQuery(hsqlString);
+        query.setString("number", number);
 //            query.setMaxResults(1) ;
-            Accession accession = (Accession) query.uniqueResult();
-            assertNotNull("database contains at least one accession", accession);
-            assertEquals("abbrevs are equal", abbrev, accession.getAbbreviation());
-        } finally {
-            session.getTransaction().rollback();
-        }
+        Accession accession = (Accession) query.uniqueResult();
+        assertNotNull("database contains at least one accession", accession);
+        assertEquals("abbrevs are equal", abbrev, accession.getAbbreviation());
     }
 
     @Test
@@ -145,7 +141,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         assertFalse(dblinks.contains("EE708906"));
     }
 
-    @Test
+    @Ignore(value = "This methods takes a long time")
     public void getGenbankXpatCdnaDBLinks() {
         Set<String> dblinks = sequenceRepository.getGenbankXpatCdnaDBLinks();
         assertNotNull(dblinks);
@@ -291,7 +287,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void testSeq(){
+    public void testSeq() {
         List<Accession> accessions = RepositoryFactory.getSequenceRepository().getAccessionsByNumber("ENSDARG00000002898");
         assertNotNull(accessions);
     }

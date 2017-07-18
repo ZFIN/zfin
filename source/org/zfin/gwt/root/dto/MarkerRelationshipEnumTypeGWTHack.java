@@ -6,12 +6,13 @@ package org.zfin.gwt.root.dto;
  */
 public enum MarkerRelationshipEnumTypeGWTHack {
     CLONE_CONTAINS_GENE("clone contains gene"),
-    CLONE_CONTAINS_SMALL_SEGMENT("clone contains small segment"),
+    CLONE_CONTAINS_SMALL_SEGMENT("clone contains small segment"),    
     CLONE_CONTAINS_TRANSCRIPT("clone contains transcript"),
     CLONE_OVERLAP("clone overlap"),
     CODING_SEQUENCE_OF("coding sequence of"),
-    CONTAINS_ENGINEERED_REGION("contains engineered region"),
+    CONTAINS_REGION("contains region"),
     CONTAINS_POLYMORPHISM("contains polymorphism"),
+    CRISPR_TARGETS_REGION("crispr targets region"),
     GENE_CONTAINS_SMALL_SEGMENT("gene contains small segment"),
     GENE_PRODUCES_TRANSCRIPT("gene produces transcript"),
     GENE_ENCODES_SMALL_SEGMENT("gene encodes small segment"),
@@ -19,8 +20,9 @@ public enum MarkerRelationshipEnumTypeGWTHack {
     GENE_HYBRIDIZED_BY_SMALL_SEGMENT("gene hybridized by small segment"),
     GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY("gene product recognized by antibody"),
     KNOCKDOWN_REAGENT_TARGETS_GENE("knockdown reagent targets gene"),
+    TALEN_TARGETS_REGION("talen targets gene"),
     TRANSCRIPT_TARGETS_GENE("transcript targets gene"),
-    PROMOTER_OF("promoter of"),
+    PROMOTER_OF("promoter of")
     ;
 
     private final String value;

@@ -22,10 +22,13 @@
                         <input class="search-form-input input form-control"
                                placeholder="bmp2a, hindbrain development disrupted, pax morpholino"
                                name="q" id="search-query-input" autocomplete="off" type="text"/>
-                        <button type="submit" class="btn btn-primary btn-zfin btn-search">Go</button>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary btn-zfin btn-search">Go</button>
+                        </div>
                         <a href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
                             <i class="fa fa-question-circle fa-lg"></i>
                         </a>
+
                     </form>
                     <script>
                         jQuery(document).ready(function() {

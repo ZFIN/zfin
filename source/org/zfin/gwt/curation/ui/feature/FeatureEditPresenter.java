@@ -1,10 +1,14 @@
 package org.zfin.gwt.curation.ui.feature;
 
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
-import org.zfin.gwt.curation.ui.*;
+import org.zfin.gwt.curation.ui.FeatureRPCService;
+import org.zfin.gwt.curation.ui.FeatureServiceGWT;
+import org.zfin.gwt.curation.ui.FeatureValidationService;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.BooleanCollector;
@@ -57,6 +61,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     }
 
     public void loadFeaturesForPub(boolean forceLoad) {
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_START);
         FeatureServiceGWT.getFeatureList(publicationID,
                 new FeatureEditCallBack<List<FeatureDTO>>("Failed to find features for pub: " + publicationID, this) {
 
@@ -64,12 +69,14 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                     public void onFailure(Throwable throwable) {
                         super.onFailure(throwable);
                         view.featureEditList.setEnabled(true);
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                     }
 
                     @Override
                     public void onSuccess(List<FeatureDTO> results) {
                         if (results == null || results.size() == 0) {
                             view.showHideToggle.setVisibility(false);
+                            AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                             return;
                         }
                         view.featureEditList.clear();
@@ -86,6 +93,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                         view.featureSequenceList.setDTO(dto);
                         revertGUI();
                         view.onChangeFeatureType();
+                        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_STOP);
                     }
                 }, forceLoad);
 
@@ -134,6 +142,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         col.addBoolean(view.mutageeBox.isDirty(dto.getMutagee()));
         col.addBoolean(view.mutagenBox.isDirty(dto.getMutagen()));
         col.addBoolean(view.labDesignationBox.isDirty(dto.getLabPrefix()));
+        col.addBoolean(view.featureSuffixBox.isDirty(dto.getTransgenicSuffix()));
         col.addBoolean(view.lineNumberBox.isDirty(dto.getLineNumber()));
         col.addBoolean(view.labOfOriginBox.isDirty(dto.getLabOfOrigin()));
         col.addBoolean(mutationDetailPresenter.isDirty());
@@ -199,6 +208,10 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
     public void updateFeature() {
         FeatureDTO featureDTO = createDTOFromGUI();
+        // if a public note was added (they persist immedately) update this feature with it
+        // so validation can happen correctly
+        if (featureDTO.getPublicNoteList() == null || featureDTO.getPublicNoteList().size() == 0)
+            featureDTO.setPublicNoteList(featureNotesPresenter.featureDTO.getPublicNoteList());
         String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
         if (errorMessage != null) {
             setError(errorMessage);

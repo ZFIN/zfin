@@ -6,10 +6,17 @@
 <%@ attribute name="title" type="java.lang.String" rtexprvalue="true" required="false" %>
 
 <c:if test="${empty title}">
+
     <c:set var="title">
         OTHER&nbsp;<zfin:abbrev
             entity="${marker}"/>&nbsp;${marker.markerType.displayName eq 'cDNA' ? marker.markerType.displayName : fn:toUpperCase(marker.markerType.displayName)}&nbsp;PAGES
     </c:set>
+    <c:if test="${marker.markerType.displayName.contains('Construct')}">
+        <c:set var="title">
+            OTHER&nbsp;<i>${marker.name}</i>&nbsp;${marker.markerType.displayName eq 'cDNA' ? marker.markerType.displayName : fn:toUpperCase(marker.markerType.displayName)}&nbsp;PAGES
+        </c:set>
+
+    </c:if>
 </c:if>
 
 <c:set var="loggedIn">no</c:set>

@@ -51,11 +51,11 @@ class ResultAttributesSpec extends ZfinIntegrationSpec {
 
         Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-MRPHLNO-051220-2"    | ResultService.SYNONYMS       | "six3-AMO"
         Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-MRPHLNO-051220-2"    | ResultService.TYPE           | "Morpholino"
-        Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-MRPHLNO-051220-2"    | ResultService.TARGETED_GENES | "six3a"
-        Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-MRPHLNO-051220-2"    | ResultService.TARGETED_GENES | "six3b"
+        Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-MRPHLNO-051220-2"    | ResultService.TARGETS        | "six3a"
+        Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-MRPHLNO-051220-2"    | ResultService.TARGETS        | "six3b"
         Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-MRPHLNO-051220-2"    | ResultService.SEQUENCE       | "GCTCTAAAGGAGACCTGAAAACCAT"
         Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-TALEN-131125-1"      | ResultService.TYPE           | "TALEN"
-        Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-TALEN-131125-1"      | ResultService.TARGETED_GENES | "apoea"
+        Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-TALEN-131125-1"      | ResultService.TARGETS        | "apoea"
         Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-TALEN-131125-1"      | ResultService.SEQUENCE       | "TCATGAAGTTTGTGGCTGT"
         Category.SEQUENCE_TARGETING_REAGENT.name | "ZDB-TALEN-131125-1"      | ResultService.SEQUENCE       | "TTTCCTACCTGAAATGAC"
 

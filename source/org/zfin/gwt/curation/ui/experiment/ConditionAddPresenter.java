@@ -4,11 +4,15 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
+import org.fusesource.restygwt.client.Method;
+import org.fusesource.restygwt.client.REST;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.ConditionDTO;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.TermNotFoundException;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.event.SelectAutoCompleteEvent;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.AppUtils;
@@ -16,6 +20,8 @@ import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.LookupRPCService;
 
 import java.util.*;
+
+import static org.zfin.gwt.curation.ui.CurationEntryPoint.experimentService;
 
 public class ConditionAddPresenter implements HandlesError {
 
@@ -45,19 +51,31 @@ public class ConditionAddPresenter implements HandlesError {
 
     private void loadChildMap() {
 
-        ExperimentRPCService.App.getInstance().getChildMap(new ZfinAsyncCallback<Map<String, Set<String>>>("Failed to load child map: ", view.errorLabel) {
-            public void onSuccess(Map<String, Set<String>> childrenMap) {
+        AppUtils.fireAjaxCall(ExperimentModule.getModuleInfo(), AjaxCallEventType.GET_CHILD_MAP_START);
+        REST.withCallback(new ZfinAsynchronousCallback<Map<String, Set<String>>>("Failed to load child map: ", view.errorLabel,
+                ExperimentModule.getModuleInfo(), AjaxCallEventType.GET_CHILD_MAP_STOP) {
+            public void onSuccess(Method method, Map<String, Set<String>> childrenMap) {
+                super.onFinish();
                 childMap = childrenMap;
                 updateExperimentList();
             }
-        });
+        })
+                .call(experimentService)
+                .getZecoChildMap();
     }
 
     // notify means: calling this form within this module, notification needed for other part,
     // or it is called from outside then no notification needed.
     public void loadExperiments(boolean notify) {
-        ExperimentRPCService.App.getInstance().getExperimentList(publicationID,
-                new ExperimentListCallBack(notify, "Failed to retrieve experiments: ", null));
+        AppUtils.fireAjaxCall(ExperimentModule.getModuleInfo(), AjaxCallEventType.GET_EXPERIMENT_LIST_START);
+        try {
+            REST.withCallback(new ExperimentListCallBack(notify, "Failed to retrieve experiments: ", null,
+                    ExperimentModule.getModuleInfo(), AjaxCallEventType.GET_EXPERIMENT_LIST_STOP))
+                    .call(experimentService)
+                    .getExperiments(publicationID);
+        } catch (ValidationException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -121,8 +139,15 @@ public class ConditionAddPresenter implements HandlesError {
                 copyConditionIdList.add(checkBox.getTitle());
         }
         String experimentID = view.experimentCopyToSelectionList.getSelected();
-        ExperimentRPCService.App.getInstance().copyConditions(experimentID, copyConditionIdList,
-                new ExperimentListCallBack(true, "Failed to copy conditions: ", null));
+        AppUtils.fireAjaxCall(ExperimentModule.getModuleInfo(), AjaxCallEventType.COPY_CONDITION_START);
+        try {
+            REST.withCallback(new ExperimentListCallBack(true, "Failed to copy conditions: ", null,
+                    ExperimentModule.getModuleInfo(), AjaxCallEventType.COPY_CONDITION_STOP))
+                    .call(experimentService)
+                    .copyConditions(experimentID, copyConditionIdList);
+        } catch (ValidationException | TermNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void enableCopyControls(boolean enable) {
@@ -238,17 +263,24 @@ public class ConditionAddPresenter implements HandlesError {
 
         ConditionDTO conditionDTO = getConditionFromFrom();
         view.clearError();
-        ExperimentRPCService.App.getInstance().createCondition(publicationID, conditionDTO,
-                new ExperimentListCallBack(true, "Failed to save condition: ", conditionDTO));
+        AppUtils.fireAjaxCall(ExperimentModule.getModuleInfo(), AjaxCallEventType.CREATE_CONDITION_START);
+        try {
+            REST.withCallback(new ExperimentListCallBack(true, "Failed to save condition: ", conditionDTO,
+                    ExperimentModule.getModuleInfo(), AjaxCallEventType.CREATE_CONDITION_STOP))
+                    .call(experimentService)
+                    .createCondition(publicationID, conditionDTO);
+        } catch (ValidationException | TermNotFoundException e) {
+            // ignore as this is an asynchronous call.
+        }
     }
 
     private String validatePostCompositions() {
 
-        if (!view.aoTermEntry.getTermTextBox().hasValidateTerm() && view.aoTermEntry.isVisible())
+        if (!view.aoTermEntry.getTermTextBox().hasValidNonNullTerm() && view.aoTermEntry.isVisible())
             return "Zeco term requires an AO term ";
-        if (!view.chebiTermEntry.getTermTextBox().hasValidateTerm() && view.chebiTermEntry.isVisible())
+        if (!view.chebiTermEntry.getTermTextBox().hasValidNonNullTerm() && view.chebiTermEntry.isVisible())
             return "Zeco term requires a Chebi term ";
-        if (!view.taxonTermEntry.getTermTextBox().hasValidateTerm() && view.taxonTermEntry.isVisible())
+        if (!view.taxonTermEntry.getTermTextBox().hasValidNonNullTerm() && view.taxonTermEntry.isVisible())
             if (view.zecoTermEntry.getTermText().equals("bacterial treatment") || view.zecoTermEntry.getTermText().equals("viral treatment") || view.zecoTermEntry.getTermText().equals("fungal treatment") ||
                     view.zecoTermEntry.getTermText().equals("bacterial treatment by exposure to environment") || view.zecoTermEntry.getTermText().equals("viral treatment by exposure to environment") || view.zecoTermEntry.getTermText().equals("fungal treatment by exposure to environment") ||
                     view.zecoTermEntry.getTermText().equals("bacterial treatment by injection") || view.zecoTermEntry.getTermText().equals("viral treatment by injection") || view.zecoTermEntry.getTermText().equals("fungal treatment by injection")) {
@@ -310,33 +342,44 @@ public class ConditionAddPresenter implements HandlesError {
                 return;
             view.loadingImage.setVisible(true);
 
-            ExperimentRPCService.App.getInstance().deleteCondition(conditionDTO, new FeatureEditCallBack<List<ExperimentDTO>>("Failed to remove condition: ", presenter) {
-                @Override
-                public void onSuccess(List<ExperimentDTO> list) {
-                    dtoList.clear();
-                    dtoList = list;
-                    populateData();
-                    view.loadingImage.setVisible(false);
-                    // notify the create-experiment section
-                    AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.REMOVE_EXPERIMENT_CONDITION, conditionDTO.getName()));
-                }
-            });
+            AppUtils.fireAjaxCall(ExperimentModule.getModuleInfo(), AjaxCallEventType.DELETE_CONDITION_START);
+            try {
+                REST.withCallback(new ZfinAsynchronousCallback<List<ExperimentDTO>>("Failed to remove condition: ", view.errorLabel,
+                        ExperimentModule.getModuleInfo(), AjaxCallEventType.DELETE_CONDITION_STOP) {
+                    @Override
+                    public void onSuccess(Method method, List<ExperimentDTO> list) {
+                        super.onFinish();
+                        dtoList.clear();
+                        dtoList = list;
+                        populateData();
+                        view.loadingImage.setVisible(false);
+                        // notify the create-experiment section
+                        AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.REMOVE_EXPERIMENT_CONDITION, conditionDTO.getName()));
+                    }
+                })
+                        .call(experimentService)
+                        .deleteCondition(publicationID, conditionDTO);
+            } catch (ValidationException | TermNotFoundException e) {
+                // ignore as this call is asynchronous
+            }
         }
     }
 
 
-    private class ExperimentListCallBack extends ZfinAsyncCallback<List<ExperimentDTO>> {
+    private class ExperimentListCallBack extends ZfinAsynchronousCallback<List<ExperimentDTO>> {
         private boolean notify;
         private ConditionDTO conditionDTO;
 
-        public ExperimentListCallBack(boolean notify, String errorMessage, ConditionDTO conditionDTO) {
-            super(errorMessage, ConditionAddPresenter.this.view.errorLabel);
+        public ExperimentListCallBack(boolean notify, String errorMessage, ConditionDTO conditionDTO, ZfinModule module, AjaxCallEventType eventType) {
+            super(errorMessage, ConditionAddPresenter.this.view.errorLabel,
+                    module, eventType);
             view.loadingImage.setVisible(false);
             this.notify = notify;
             this.conditionDTO = conditionDTO;
         }
 
-        public void onSuccess(List<ExperimentDTO> experimentList) {
+        public void onSuccess(Method method, List<ExperimentDTO> experimentList) {
+            super.onFinish();
             dtoList = experimentList;
             view.experimentSelectionList.clear();
             view.experimentCopyToSelectionList.clear();

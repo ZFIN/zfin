@@ -49,6 +49,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
     public ReferenceDatabase getReferenceDatabase(ForeignDB.AvailableName foreignDBName, ForeignDBDataType.DataType type, ForeignDBDataType.SuperType superType, Species.Type organism) {
 
         String hql = " from ReferenceDatabase referenceDatabase " +
+                " join fetch referenceDatabase.foreignDB " +
                 " where referenceDatabase.foreignDB.dbName = :dbName " +
                 " and referenceDatabase.foreignDBDataType.dataType = :type" +
                 " and referenceDatabase.foreignDBDataType.superType = :superType" +
@@ -273,14 +274,14 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 "      where dbl.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id " +
                 "      and g.mrkr_zdb_id=mr.mrel_mrkr_1_zdb_id " +
                 "      and mr.mrel_type='gene encodes small segment' " +
-                "      and g.mrkr_name[1,8] <> 'microRNA' " +
+                "      and substring(g.mrkr_name from 1 for 7)  <> 'microRNA' " +
                 "      and ee.xpatex_gene_zdb_id =  g.mrkr_zdb_id " +
                 "      and exists (select er.xpatres_zdb_id from expression_result er where er.xpatres_xpatex_zdb_id = ee.xpatex_zdb_id) " +
                 "      union " +
                 "      select g.mrkr_zdb_id " +
                 "      from expression_experiment ee, marker g " +
                 "      where dbl.dblink_linked_recid = ee.xpatex_gene_zdb_id " +
-                "      and g.mrkr_name[1,8] <> 'microRNA' " +
+                "      and substring(g.mrkr_name from 1 for 7) <> 'microRNA' " +
                 "      and ee.xpatex_gene_zdb_id =  g.mrkr_zdb_id " +
                 "      and exists (select er.xpatres_zdb_id from expression_result er where er.xpatres_xpatex_zdb_id = ee.xpatex_zdb_id) " +
                 "     ) " +
@@ -819,7 +820,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 "    and fdbcont_fdb_db_id = fdb_db_pk_id " +
                 "    and mrel_type in ('clone contains gene') " +
                 "    and mrel_mrkr_1_zdb_id not in ('$chimeric_clone_list') " +
-                "    ) ";
+                "    ) as query ";
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("markerZdbId", marker.getZdbID())
                 .uniqueResult().toString());

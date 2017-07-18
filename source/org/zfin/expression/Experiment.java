@@ -36,8 +36,6 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @JoinColumn(name = "exp_source_zdb_id")
     private Publication publication;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
-    @Sort(type = SortType.NATURAL)
-    //private Set<ExperimentCondition> experimentConditions;
     private List<ExperimentCondition> experimentConditions;
 
 

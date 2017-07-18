@@ -1,6 +1,7 @@
 package org.zfin.figure.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,6 +19,7 @@ import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.repository.PublicationRepository;
 
 import java.io.IOException;
@@ -31,10 +33,13 @@ public class FigureEditController {
     public static final Logger LOG = Logger.getLogger(FigureEditController.class);
 
     @Autowired
-    InfrastructureRepository infrastructureRepository;
+    private InfrastructureRepository infrastructureRepository;
 
     @Autowired
-    PublicationRepository publicationRepository;
+    private PublicationRepository publicationRepository;
+
+    @Autowired
+    private PublicationService publicationService;
 
     @ResponseBody
     @RequestMapping(value = "/publication/{zdbID}/figures", method = RequestMethod.GET)
@@ -67,8 +72,7 @@ public class FigureEditController {
             throw new InvalidWebRequestException("Invalid publication");
         }
 
-        boolean existingLabel = publication.getFigures().stream().anyMatch(fig -> fig.getLabel().equals(label));
-        if (existingLabel) {
+        if (publicationService.publicationHasFigureWithLabel(publication, label)) {
             throw new InvalidWebRequestException(label + " already exists");
         }
 
@@ -90,6 +94,8 @@ public class FigureEditController {
             }
         }
 
+        infrastructureRepository.insertUpdatesTable(publication, "fig_zdb_id", "create new record", newFigure.getZdbID(), null);
+
         tx.commit();
         return FigureService.convertToFigurePresentationBean(newFigure);
     }
@@ -98,6 +104,7 @@ public class FigureEditController {
     @RequestMapping(value = "/figure/{zdbID}", method = RequestMethod.DELETE)
     public String deleteFigure(@PathVariable String zdbID) {
         Figure figure = publicationRepository.getFigure(zdbID);
+        Publication pub = figure.getPublication();
 
         if (CollectionUtils.isNotEmpty(figure.getExpressionResults()) ||
                 CollectionUtils.isNotEmpty(figure.getPhenotypeExperiments())) {
@@ -106,6 +113,7 @@ public class FigureEditController {
 
         Transaction tx = HibernateUtil.createTransaction();
         infrastructureRepository.deleteActiveDataByZdbID(figure.getZdbID());
+        infrastructureRepository.insertUpdatesTable(pub, "figure", "deleted", null, zdbID);
         tx.commit();
 
         return "OK";
@@ -116,10 +124,22 @@ public class FigureEditController {
     public FigurePresentationBean updateFigure(@PathVariable String zdbID,
                                                @RequestBody FigurePresentationBean figureUpdates) {
         Figure figure = publicationRepository.getFigure(zdbID);
+
+        if (!StringUtils.equals(figure.getLabel(), figureUpdates.getLabel()) &&
+                publicationService.publicationHasFigureWithLabel(figure.getPublication(), figureUpdates.getLabel())) {
+            throw new InvalidWebRequestException(figureUpdates.getLabel() + " already exists");
+        }
+
+        String oldValue = getFigureUpdateValue(figure);
+
         figure.setCaption(figureUpdates.getCaption());
+        figure.setLabel(figureUpdates.getLabel());
 
         Transaction tx = HibernateUtil.createTransaction();
         HibernateUtil.currentSession().save(figure);
+
+        String newValue = getFigureUpdateValue(figure);
+        infrastructureRepository.insertUpdatesTable(figure.getPublication(), "figure", "update", newValue, oldValue);
         tx.commit();
 
         return FigureService.convertToFigurePresentationBean(figure);
@@ -129,9 +149,11 @@ public class FigureEditController {
     @RequestMapping(value = "/image/{zdbID}", method = RequestMethod.DELETE)
     public String deleteImage(@PathVariable String zdbID) {
         Image image = publicationRepository.getImageById(zdbID);
+        Publication pub = image.getFigure().getPublication();
 
         Transaction tx = HibernateUtil.createTransaction();
         HibernateUtil.currentSession().delete(image);
+        infrastructureRepository.insertUpdatesTable(pub, "img_zdb_id", "deleted", null, zdbID);
         tx.commit();
 
         return "OK";
@@ -157,6 +179,12 @@ public class FigureEditController {
         tx.commit();
 
         return FigureService.convertToImagePresentationBean(image);
+    }
+
+    private String getFigureUpdateValue(Figure figure) {
+        return figure.getZdbID() + "<BR>" +
+                figure.getLabel() + "<BR>" +
+                figure.getCaption();
     }
 
 }

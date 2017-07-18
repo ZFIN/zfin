@@ -180,6 +180,7 @@ public class OntologyTermDetailController {
             model.addAttribute("fishModels", OntologyService.getDiseaseModelsWithFishModel(term));
         }
         model.addAttribute("isDiseaseTerm", isDiseaseTerm);
+        model.addAttribute("showPhenotypeSection", !term.getOntology().equals(Ontology.ECO));
         return "ontology/ontology-term.page";
 
     }
@@ -302,12 +303,7 @@ public class OntologyTermDetailController {
 
     private boolean hasPhenotypeData(Term anatomyTerm) {
         GenericTerm term = getOntologyRepository().getTermByOboID(anatomyTerm.getOboID());
-        List<PhenotypeStatementWarehouse> phenotypes = getMutantRepository().getPhenotypeWithEntity(term);
-        if (phenotypes != null && phenotypes.size() > 0) {
-            return true;
-        }
-
-        return false;
+        return getMutantRepository().hasPhenotype(term);
     }
 
     @RequestMapping("/disease-publication-list/{termID}")

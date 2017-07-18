@@ -18,12 +18,12 @@ public class WebServiceSoapClientTest {
 
     @Test
     public void useEfetchForProtein() {
-        doAccessionTest("P26630");
+        doAccessionTest("P26630", NCBIEfetch.Type.POLYPEPTIDE);
     }
 
     @Test
     public void useEfetchForProtein2() {
-        doAccessionTest("NP_571379");
+        doAccessionTest("NP_571379", NCBIEfetch.Type.POLYPEPTIDE);
     }
 
     @Test
@@ -34,33 +34,33 @@ public class WebServiceSoapClientTest {
 
     @Test
     public void useEfetchForNucleotide() {
-        doAccessionTest("AY627769");
+        doAccessionTest("AY627769", NCBIEfetch.Type.NUCLEOTIDE);
     }
 
     @Test
     public void useEfetchForNewSequence() {
-        doAccessionTest("JF828767");
+        doAccessionTest("JF828767", NCBIEfetch.Type.NUCLEOTIDE);
     }
 
     @Test
     public void useEfetchForBadSequence() {
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("notasequencethatIknowof");
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("notasequencethatIknowof", NCBIEfetch.Type.POLYPEPTIDE);
         assertThat(sequences, is(empty()));
     }
 
     @Test
     public void useEfetchForNucleotide2() {
-        doAccessionTest("FN428721");
+        doAccessionTest("FN428721", NCBIEfetch.Type.NUCLEOTIDE);
     }
 
     @Test
     public void useEfetchForNucleotideWithMultipleReturn() {
-        doAccessionTest("X63183");
+        doAccessionTest("X63183", NCBIEfetch.Type.NUCLEOTIDE);
     }
 
     @Test
     public void validateAccessions() {
-        String[] goodAccessions = {"NP_571379", "AY627769", "FN428721", "X63183"};
+        String[] goodAccessions = {"NP_571379", "XP_009296153"};
         for (String accession : goodAccessions) {
             assertThat(accession + " should validate", NCBIEfetch.validateAccession(accession), is(true));
         }
@@ -73,8 +73,8 @@ public class WebServiceSoapClientTest {
 
     @Test
     public void hasMicroarray() {
-        assertThat("rpf1 should have microarray data", NCBIEfetch.hasMicroarrayData(new HashSet<String>(), "rpf1"), is(true));
-        assertThat("abcdefg should not have microarray data", NCBIEfetch.hasMicroarrayData(new HashSet<String>(), "abcdefg"), is(false));
+        assertThat("rpf1 should have microarray data", NCBIEfetch.hasMicroarrayData(new HashSet<>(), "rpf1"), is(true));
+        assertThat("abcdefg should not have microarray data", NCBIEfetch.hasMicroarrayData(new HashSet<>(), "abcdefg"), is(false));
 
         // for ZDB-EST-010111-34 a rare clone with GEO expression
         Set<String> strings = new HashSet<>();
@@ -102,8 +102,8 @@ public class WebServiceSoapClientTest {
         assertThat(sequences, not(empty()));
     }
 
-    private void doAccessionTest(String accession) {
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession(accession);
+    private void doAccessionTest(String accession, NCBIEfetch.Type type) {
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession(accession, type);
         assertThat("One sequence should be found for accession " + accession, sequences, hasSize(1));
 
         Sequence sequence = sequences.get(0);

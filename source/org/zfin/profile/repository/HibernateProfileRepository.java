@@ -372,15 +372,21 @@ public class HibernateProfileRepository implements ProfileRepository {
     @Override
     public List<OrganizationLink> getSupplierLinksForZdbId(String zdbID) {
         String sql = "" +
-                "select id.idsup_supplier_zdb_id, su.srcurl_url, " +
-                "su.srcurl_display_text, id.idsup_acc_num, comp.name as cname, l.name as lname " +
-                "from int_data_supplier id, outer source_url su, outer company comp, outer lab l " +
-                "where id.idsup_supplier_zdb_id = su.srcurl_source_zdb_id " +
-                "and id.idsup_data_zdb_id = :OID  " +
-                "and su.srcurl_purpose = 'order' " +
-                "and comp.zdb_id=id.idsup_supplier_zdb_id " +
-                "and l.zdb_id=id.idsup_supplier_zdb_id " +
-                " ";
+                "SELECT id.idsup_supplier_zdb_id," +
+                "       su.srcurl_url," +
+                "       su.srcurl_display_text," +
+                "       id.idsup_acc_num," +
+                "       comp.NAME AS cname," +
+                "       l.NAME    AS lname " +
+                "FROM   int_data_supplier id" +
+                "       LEFT OUTER JOIN source_url su" +
+                "                    ON id.idsup_supplier_zdb_id = su.srcurl_source_zdb_id" +
+                "                       AND su.srcurl_purpose = 'order'" +
+                "       LEFT OUTER JOIN company comp" +
+                "                    ON comp.zdb_id = id.idsup_supplier_zdb_id" +
+                "       LEFT OUTER JOIN lab l" +
+                "                    ON l.zdb_id = id.idsup_supplier_zdb_id " +
+                "WHERE  id.idsup_data_zdb_id =  :OID  " ;
 
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("OID", zdbID)
@@ -507,7 +513,11 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     @Override
     public List<Publication> getPublicationsForLab(String zdbID) {
-        String hql = " select distinct pub , pub.publicationDate, lower(pub.authors) from Person pers join pers.publications pub join pers.labs l " +
+        String hql = " select distinct pub , pub.publicationDate, lower(pub.authors) " +
+                " from Person pers " +
+                " join pers.publications pub " +
+                " join pers.labs l " +
+                " join fetch pub.journal " +
                 "  where l.zdbID = :zdbID " +
                 "  order by pub.publicationDate desc, lower(pub.authors) " +
                 " ";
@@ -952,7 +962,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     public List<String> getSourcedDataIds(Organization organization) {
         return HibernateUtil.currentSession().createSQLQuery("select ids_data_zdb_id from int_data_source " +
-                "where ids_source_zdb_id = :sourId and ids_data_zdb_id[5,8] not in (:exclusion1,:exclusion2) order by ids_data_zdb_id ")
+                "where ids_source_zdb_id = :sourId and substring(ids_data_zdb_id from 5 for 8) not in (:exclusion1,:exclusion2) order by ids_data_zdb_id ")
                 .setString("sourId", organization.getZdbID())
                 .setString("exclusion1", "XPAT")
                 .setString("exclusion2", "GENO")
@@ -996,4 +1006,5 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .add(Restrictions.eq("accountInfo.curator", true))
                 .list();
     }
+
 }

@@ -35,7 +35,8 @@ public class LineDesignationController {
 
     @RequestMapping(value = "/features-for-lab/{zdbID}")
     public String getFeatureForLab(@PathVariable String zdbID, Model model) throws Exception {
-        model.addAttribute("features", RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID));
+        model.addAttribute("features", RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID, 50));
+        model.addAttribute("labID", zdbID);
         return "feature/features-for-lab.insert";
     }
 

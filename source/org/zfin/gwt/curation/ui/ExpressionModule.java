@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.curation.event.*;
 import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.ZfinModule;
 import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.ArrayList;
@@ -125,12 +126,16 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
         if (event.getEventType().is(EventType.CUD_EXPERIMENT_CONDITION)) {
             expressionExperimentZonePresenter.updateEnvironmentList();
         }
+        if (event.getEventType().is(EventType.CUD_EXPERIMENT)) {
+            expressionExperimentZonePresenter.updateEnvironmentList();
+        }
         if (event.getEventType().is(EventType.REMOVE_PHENTOTYPE_EXPERIMENT)) {
             // update possible push-to-pato reversals
             expressionZonePresenter.retrieveExpressions();
         }
         if (event.getEventType().is(EventType.MARKER_ATTRIBUTION) || event.getEventType().is(EventType.MARKER_DEATTRIBUTION)) {
             expressionExperimentZonePresenter.updateGenes();
+            expressionExperimentZonePresenter.antibodyRefresh(null);
             curationFilterPresenter.refreshGeneList();
         }
         if (event.getEventType().is(EventType.ADD_REMOVE_ATTRIBUTION_FISH)) {
@@ -186,7 +191,8 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
                 new CreateExpressionEventHandler() {
                     @Override
                     public void onEvent(CreateExpressionEvent event) {
-                        expressionZonePresenter.postUpdateStructuresOnExpression();
+                        expressionZonePresenter.postUpdateStructuresOnExpression(event.getFigureStageDTOList());
+                        expressionExperimentZonePresenter.finishExpressionNotification();
                     }
                 });
         AppUtils.EVENT_BUS.addHandler(AddExpressionExperimentEvent.TYPE,
@@ -241,4 +247,7 @@ public class ExpressionModule implements ZfinCurationModule, HandlesError {
         handlesErrorListeners.add(handlesError);
     }
 
+    public static ZfinModule getModuleInfo() {
+        return new ZfinModule(CurationTab.FX.getName(), ExpressionModule.class.getName());
+    }
 }

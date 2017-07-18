@@ -1002,8 +1002,8 @@
             <Column id="5">Chebi Term ID (Chebi:ID)</Column>
             <Column id="6">ZFA Term Name</Column>  
             <Column id="7">ZFA Term ID (ZFA:ID)</Column>  
-            <Column id="8">Altered Structure Name</Column>
-            <Column id="9">Altered Structure ID (ZFA:ID)</Column>
+            <Column id="8">Affected Structure Subterm Name</Column>
+            <Column id="9">Affected Structure Subterm ID (GO-CC:ID)</Column>
             <Column id="10">NCBI Taxon Name</Column>
             <Column id="11">NCBI Taxon ID (NCBI Taxon:ID)</Column>
         </Download>
@@ -1056,6 +1056,11 @@
                      from expression_result, term superterm, OUTER term subterm
                      where superterm.term_zdb_id = xpatres_superterm_zdb_id
                        and subterm.term_zdb_id = xpatres_subterm_zdb_id
+                       and not exists(select "x" from expression_experiment, marker 
+                                       where xpatex_zdb_id = xpatres_xpatex_zdb_id
+                                         and xpatex_gene_zdb_id is not null
+                                         and xpatex_gene_zdb_id = mrkr_zdb_id
+                                         and mrkr_abbrev like "WITHDRAWN%")
                      order by xpatres_xpatex_zdb_id
                 ]]>
             </Query>
@@ -1382,8 +1387,8 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="5">Chebi Term ID (Chebi:ID)</Column>
             <Column id="6">ZFA Term Name</Column>
             <Column id="7">ZFA Term ID (ZFA:ID)</Column>
-            <Column id="8">Altered Structure Name</Column> 
-            <Column id="9">Altered Structure ID (ZFA:ID)</Column>
+            <Column id="8">Affected Structure Subterm Name</Column> 
+            <Column id="9">Affected Structure Subterm ID (GO-CC:ID)</Column>
             <Column id="10">NCBI Taxon Name</Column>
             <Column id="11">NCBI Taxon ID (NCBI Taxon:ID)</Column>
         </Download>
@@ -1631,7 +1636,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="1" unique="true">Genotype ID</Column>
             <Column id="2">Genotype Name</Column>
             <Column id="3">Genotye Unique Name</Column>
-            <Column id="4">Affected Gene Symbol</Column>
+            <Column id="4">Affected Genomic Region Symbol</Column>
             <Column id="5">Corresponding ZFIN Gene ID</Column>
         </Download>
         <Download orderIndex="5">
@@ -2501,7 +2506,12 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
                            term_ont_id,
                            term_name,
                            da_pub_zdb_id,
-                           accession_no
+                           accession_no,
+                           CASE dat_evidence_code
+                             WHEN "IC" THEN "IC, ECO:0000205"
+                             WHEN "TAS" THEN "TAS, ECO:0000033"
+                             ELSE dat_evidence_code
+                           END  
                     FROM   disease_annotation,
                            publication,
                            term,
@@ -2518,6 +2528,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="5">DO Term Name</Column>
             <Column id="6">Publication ZDB ID</Column>
             <Column id="7">PubMed ID</Column>
+            <Column id="8">Evidence Code</Column>
         </Download>
     </DownloadDefinitions>
     <DownloadCategories>

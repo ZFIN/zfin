@@ -26,6 +26,7 @@ import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.Fish;
+import org.zfin.fish.FeatureGene;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
@@ -233,7 +234,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
         assertNotNull(matchingTextList);
         assertTrue("One Match", matchingTextList.size() == 1);
-        assertEquals("Affected Gene Name", matchingTextList.iterator().next().getDescriptor());
+        assertEquals("Affected Genomic Region Name", matchingTextList.iterator().next().getDescriptor());
     }
 
     @Test

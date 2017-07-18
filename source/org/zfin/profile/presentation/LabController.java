@@ -49,9 +49,10 @@ public class LabController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
-
     public static enum TAB_INDEX {
-        INFORMATION("information", 0), MEMBERS("members", 1), PICTURE("picture", 2);
+        INFORMATION("information", 0),
+        MEMBERS("members", 1),
+        PICTURE("picture", 2);
 
         private String label;
         private int index;
@@ -85,6 +86,7 @@ public class LabController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.LAB.getTitleString() + lab.getName());
         model.addAttribute("members", profileRepository.getLabMembers(zdbID));
         model.addAttribute("positions", profileRepository.getLabPositions());
+        model.addAttribute("countryList", profileService.getCountries());
         List<String> prefixes = featureRepository.getAllFeaturePrefixes();
         prefixes.add(0, "- None -");
         model.addAttribute("prefixes", prefixes);
@@ -108,6 +110,7 @@ public class LabController {
         model.addAttribute("members", profileRepository.getLabMembers(zdbID));
         model.addAttribute(LookupStrings.SELECTED_TAB, TAB_INDEX.INFORMATION.getLabel());
         model.addAttribute("positions", profileRepository.getLabPositions());
+        model.addAttribute("countryList", profileService.getCountries());
         List<String> prefixes = featureRepository.getAllFeaturePrefixes();
         prefixes.add(0, "- None -");
         model.addAttribute("prefixes", prefixes);
@@ -117,8 +120,9 @@ public class LabController {
 
         //convert from none to null
         if (newLab.getContactPerson() != null &&
-                StringUtils.equals(newLab.getContactPerson().getZdbID(), "none"))
+                StringUtils.equals(newLab.getContactPerson().getZdbID(), "none")) {
             newLab.setContactPerson(null);
+        }
 
         if (errors.hasErrors()) {
             return "profile/profile-edit.page";
@@ -137,7 +141,7 @@ public class LabController {
             return "profile/profile-edit.page";
         }
 
-        return profileService.handleInfoUpdate(errors/*,profileTopic*/, lab.getZdbID(), fields, securityPersonZdbId);
+        return profileService.handleInfoUpdate(errors, lab.getZdbID(), fields, securityPersonZdbId);
 
     }
 
@@ -165,23 +169,26 @@ public class LabController {
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixesById(lab.getZdbID(), false);
         logger.info("featurePrefixCount" + featurePrefixes.size());
         model.addAttribute("prefixes", featurePrefixes);
+        model.addAttribute("country", profileService.getCountryDisplayName(lab.getCountry()));
 
         boolean noPrefixes = featurePrefixes.isEmpty();
         if (!noPrefixes) {
             int ctNoneActiveForSet = 0;
             for (FeaturePrefix fpf : featurePrefixes) {
-                logger.info("featurePrefix is:" + fpf.getPrefixString().toString());
-                if (!fpf.isActiveForSet())
+                logger.info("featurePrefix is:" + fpf.getPrefixString());
+                if (!fpf.isActiveForSet()) {
                     ctNoneActiveForSet++;
+                }
             }
 
-            if (ctNoneActiveForSet == featurePrefixes.size())
+            if (ctNoneActiveForSet == featurePrefixes.size()) {
                 noPrefixes = true;
+            }
         }
         model.addAttribute("noPrefixes", noPrefixes);
 
         // a lab could have prefixes while having no features (example as of 2013-01-24: ZDB-LAB-111031-1
-        model.addAttribute("featuresForTheLab", RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID));
+        model.addAttribute("numOfFeatures", RepositoryFactory.getFeatureRepository().getFeaturesForLabCount(zdbID));
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.LAB.getTitleString() + lab.getName());
         return "profile/profile-view.page";

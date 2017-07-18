@@ -3,14 +3,7 @@ package org.zfin.database;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.*;
-import org.hibernate.mapping.*;
 import org.zfin.database.presentation.*;
-import org.zfin.database.presentation.ForeignKey;
-import org.zfin.database.presentation.Table;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DbScriptFileParser;
 
@@ -18,8 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.*;
-import java.util.List;
-import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.util.SqlQueryKeywords.*;
@@ -54,23 +45,26 @@ public class DatabaseService {
                 }
             } else {
                 String entityValue = getEntityColumnValue(ID, table);
-                if (StringUtils.isEmpty(entityValue))
+                if (StringUtils.isEmpty(entityValue)) {
                     continue;
+                }
                 entityNameBuilder.append(entityValue);
                 // add delimiter
                 entityNameBuilder.append(DELIMITER);
             }
         }
-        if (entityNameBuilder.indexOf(DELIMITER) > -1)
+        if (entityNameBuilder.indexOf(DELIMITER) > -1) {
             entityNameBuilder.delete(entityNameBuilder.length() - DELIMITER.length(), entityNameBuilder.length());
+        }
         return entityNameBuilder.toString();
     }
 
     private static String getEntityColumnValue(Object ID, Table table) {
         DatabaseJdbcStatement statement = createJdbcStatement(ID, table);
         List<List<String>> list = getInfrastructureRepository().executeNativeQuery(statement);
-        if (list == null)
+        if (list == null) {
             return null;
+        }
         return list.get(0).get(0);
     }
 
@@ -92,11 +86,13 @@ public class DatabaseService {
         queryBuilder.append(" where ");
         queryBuilder.append(table.getPkName());
         queryBuilder.append(" = ");
-        if (ID instanceof String)
+        if (ID instanceof String) {
             queryBuilder.append("'");
+        }
         queryBuilder.append(ID);
-        if (ID instanceof String)
+        if (ID instanceof String) {
             queryBuilder.append("'");
+        }
         statement.addQueryPart(queryBuilder.toString());
         return statement;
     }
@@ -115,8 +111,9 @@ public class DatabaseService {
         DatabaseJdbcStatement statement = new DatabaseJdbcStatement();
         statement.addQueryPart(queryBuilder.toString());
         List<List<String>> list = getInfrastructureRepository().executeNativeQuery(statement);
-        if (list == null)
+        if (list == null) {
             return null;
+        }
         return list.get(0).get(0);
     }
 
@@ -159,8 +156,9 @@ public class DatabaseService {
         Table rootTable = lookup.getTable();
         queryBuilder.addTable(rootTable);
         if (!CollectionUtils.isEmpty(lookup.getColumnValues())) {
-            for (ColumnValue colValue : lookup.getColumnValues())
+            for (ColumnValue colValue : lookup.getColumnValues()) {
                 queryBuilder.addPKWhereClause(colValue);
+            }
         }
         if (foreignKeys != null) {
             for (ForeignKey foreignKey : foreignKeys) {
@@ -205,8 +203,9 @@ public class DatabaseService {
                 foreignKeyResultList.add(foreignKeyResult);
                 // has more children
                 if (foreignKeyTable.hasForeignKeys()) {
-                    if (!foreignKey.isManyToManyRelationship())
+                    if (!foreignKey.isManyToManyRelationship()) {
                         addChildTableResults(foreignKeyTable, foreignKeyResult, lookup, foreignKeyList);
+                    }
                 }
                 foreignKeyList.remove(foreignKeyList.size() - 1);
             }
@@ -218,8 +217,9 @@ public class DatabaseService {
     private static void addChildTableResults(Table table, ForeignKeyResult parentFKResult, TableValueLookup lookup, List<ForeignKey> foreignKeyHierarchy) {
         List<ForeignKey> foreignKeys = ForeignKey.getForeignKeys(table);
         for (ForeignKey foreignKey : foreignKeys) {
-            if (foreignKeyHierarchy.contains(foreignKey))
+            if (foreignKeyHierarchy.contains(foreignKey)) {
                 continue;
+            }
             foreignKeyHierarchy.add(foreignKey);
             DatabaseJdbcStatement statement = DatabaseService.createJoinJdbcStatement(lookup, foreignKeyHierarchy, true);
             List<List<String>> result = getInfrastructureRepository().executeNativeQuery(statement);
@@ -227,8 +227,9 @@ public class DatabaseService {
             parentFKResult.add(foreignKeyResult);
             // has more children
             if (foreignKey.getForeignKeyTable().hasForeignKeys()) {
-                if (!foreignKey.isManyToManyRelationship())
+                if (!foreignKey.isManyToManyRelationship()) {
                     addChildTableResults(foreignKey.getForeignKeyTable(), foreignKeyResult, lookup, foreignKeyHierarchy);
+                }
             }
             foreignKeyHierarchy.remove(foreignKeyHierarchy.size() - 1);
         }
@@ -242,22 +243,25 @@ public class DatabaseService {
      * @return list of foreign key id
      */
     public static List<ForeignKeyResult> createFKResultList(String foreignKeyName, String parentPkValue) {
-        if (foreignKeyName == null)
+        if (foreignKeyName == null) {
             return null;
+        }
         String foreignKeyNameList = ForeignKey.getForeignKeyHierarchyName(foreignKeyName);
         ForeignKey foreignKey = ForeignKey.getForeignKeyByColumnName(foreignKeyName.split(ForeignKey.DELIMITER)[0]);
         Table rootTable = foreignKey.getEntityTable();
         List<ForeignKeyResult> fullList = createFKResultList(rootTable, parentPkValue);
         ForeignKeyResult subTree = getSubTree(fullList, foreignKeyNameList);
-        if (subTree == null)
+        if (subTree == null) {
             return null;
+        }
         return subTree.getChildren();
     }
 
     private static ForeignKeyResult getSubTree(List<ForeignKeyResult> fullList, String foreignKeyList) {
         for (ForeignKeyResult keyResult : fullList) {
-            if (keyResult.hasChildNode(foreignKeyList))
+            if (keyResult.hasChildNode(foreignKeyList)) {
                 return keyResult.getChildKeyResult(foreignKeyList);
+            }
         }
         return null;
     }
@@ -334,7 +338,10 @@ public class DatabaseService {
         return runDbScriptFile(dbScriptFile, dataMap, null);
     }
 
+    private TraceFileService trace;
+
     public List<String> runDbScriptFile(File dbScriptFile, Map<String, List<List<String>>> dataMap, Map<String, String> variableMap) {
+        trace = new TraceFileService("load");
         List<String> errorMessage = new ArrayList<>(2);
         if (!dbScriptFile.exists()) {
             String message = "Could not find script file " + dbScriptFile.getAbsolutePath();
@@ -343,21 +350,23 @@ public class DatabaseService {
             return errorMessage;
         }
 
-        if (dataMap == null)
+        if (dataMap == null) {
             dataMap = new HashMap<>(5);
+        }
         DbScriptFileParser parser = new DbScriptFileParser(dbScriptFile);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
-        InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();
-        if (!LOG.isDebugEnabled())
+        if (!LOG.isDebugEnabled()) {
             LOG.info("No Debugging enabled: To see more debug data enable the logger to leg level debug.");
+        }
         for (DatabaseJdbcStatement statement : queries) {
             statement.setDataMap(variableMap);
             LOG.info("Statement " + statement.getLocationInfo() + "\n" + statement.getHumanReadableQueryString());
-            if (statement.isInformixWorkStatement())
+            if (statement.isInformixWorkStatement()) {
                 continue;
+            }
             if (statement.isLoadStatement()) {
                 if (statement.isSelectIntoStatement()) {
-                    infrastructureRep.executeJdbcStatement(statement);
+                    getInfrastructureRepository().executeJdbcStatement(statement);
                 } else {
                     List<List<String>> data = dataMap.get(statement.getDataKey());
                     if (data == null) {
@@ -365,31 +374,31 @@ public class DatabaseService {
                         continue;
                     }
                     statement = statement.completeInsertStatement(data.get(0).size());
-                    infrastructureRep.executeJdbcStatement(statement, data);
+                    getInfrastructureRepository().executeJdbcStatement(statement, data);
                     LOG.info(data.size() + " records inserted");
                 }
             } else if (statement.isDebug()) {
                 List<List<String>> dataReturn;
                 if (LOG.isDebugEnabled()) {
-                    dataReturn = infrastructureRep.executeNativeQuery(statement);
+                    dataReturn = getInfrastructureRepository().executeNativeQuery(statement);
                     listOfResultRecords.add(dataReturn);
-                    if (dataReturn == null)
+                    if (dataReturn == null) {
                         LOG.debug("  Debug data: No records found.");
-                    else {
+                    } else {
                         LOG.debug("  Debug data:\n " + dataReturn.size() + " records.");
-                        for (List<String> row : dataReturn)
+                        for (List<String> row : dataReturn) {
                             LOG.debug("\n  " + row);
+                        }
                     }
                 }
             } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
                 List<List<String>> dataReturn;
-                dataReturn = infrastructureRep.executeNativeDynamicQuery(statement);
-                if (CollectionUtils.isNotEmpty(dataReturn)) {
-                    listOfResultRecords.add(dataReturn);
-                    if (statement.getDataKey() != null)
-                        resultMap.put(statement.getDataKey(), dataReturn);
-                    else
-                        resultMap.put("_NO-KEY", dataReturn);
+                dataReturn = getInfrastructureRepository().executeNativeDynamicQuery(statement);
+                listOfResultRecords.add(dataReturn);
+                if (statement.getDataKey() != null) {
+                    resultMap.put(statement.getDataKey(), dataReturn);
+                } else {
+                    resultMap.put("_NO-KEY", dataReturn);
                 }
                 if (dataReturn == null) {
                     LOG.info("  Debug data: No records found.");
@@ -397,23 +406,36 @@ public class DatabaseService {
                     LOG.info("\n" + dataReturn.size() + " records retrieved");
                 } else if (statement.getDataKey().toUpperCase().equals(DatabaseJdbcStatement.DEBUG)) {
                     LOG.info("  Debug data:\n " + dataReturn.size() + " records.");
-                    for (List<String> row : dataReturn)
+                    for (List<String> row : dataReturn) {
                         LOG.info("\n  " + row);
-                } else
+                    }
+                } else {
                     dataMap.put(statement.getDataKey(), dataReturn);
+                }
             } else if (statement.isEcho()) {
                 LOG.info("\n  " + statement.getQuery());
             } else if (statement.isTest()) {
                 LOG.info("\n  " + statement.getQuery());
                 String key = statement.getDataKey();
                 int value = Integer.valueOf(dataMap.get(key).get(0).get(0));
-                if (statement.isTestTrue(value))
+                if (statement.isTestTrue(value)) {
                     errorMessage.add(statement.getErrorMessage(value));
+                }
             } else {
-                infrastructureRep.executeJdbcStatement(statement);
+                if (statement.isInsertStatement() || statement.isDeleteStatement()) {
+                    runDebugStatement(statement);
+                }
+                int affectedRows = getInfrastructureRepository().executeJdbcStatement(statement);
+                if (statement.isDeleteStatement()) {
+                    trace.writeToTraceFile("Deleted Rows: " + affectedRows);
+                    trace.writeToTraceFile("After Delete Statement: ");
+                    runDebugStatementAfterDelete(statement);
+                    LOG.info("  Deleted data:\n " + affectedRows);
+                }
             }
             DbSystemUtil.logLockInfo();
         }
+        trace.closeTraceFile();
         return errorMessage;
     }
 
@@ -441,6 +463,35 @@ public class DatabaseService {
             return;
         }
         LOG.getRootLogger().addAppender(appender);
+    }
+
+    private boolean debugMode = true;
+
+    private void runDebugStatement(DatabaseJdbcStatement statement) {
+        if (debugMode == false) {
+            return;
+        }
+        try {
+            DatabaseJdbcStatement debugStatement = statement.getDebugStatement();
+            List<List<String>> dataReturn = getInfrastructureRepository().executeNativeQuery(debugStatement);
+            trace.writeToTraceFile(debugStatement, dataReturn);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+    }
+
+
+    private void runDebugStatementAfterDelete(DatabaseJdbcStatement statement) {
+        if (debugMode == false) {
+            return;
+        }
+        try {
+            DatabaseJdbcStatement debugStatement = statement.getDebugDeleteStatement();
+            List<List<String>> dataReturn = getInfrastructureRepository().executeNativeQuery(debugStatement);
+            trace.writeToTraceFile(debugStatement, dataReturn, false);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
     }
 
     private final Logger LOG = Logger.getLogger(DatabaseService.class);

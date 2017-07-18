@@ -154,8 +154,13 @@ public class HibernateSessionCreator {
     private Configuration createConfiguration(String db) {
         Configuration config = new AnnotationConfiguration();
         config.setInterceptor(new StringCleanInterceptor());
-        config.setProperty("hibernate.dialect", "org.zfin.database.ZfinInformixDialect");
-        config.setProperty("hibernate.connection.driver_class", "com.informix.jdbc.IfxDriver");
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("true")) {
+            config.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL9Dialect");
+            config.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
+        } else {
+            config.setProperty("hibernate.dialect", "org.zfin.database.ZfinInformixDialect");
+            config.setProperty("hibernate.connection.driver_class", "com.informix.jdbc.IfxDriver");
+        }
 
         config.setProperty("hibernate.connection.autocommit", String.valueOf(autocommit));
         config.setProperty("hibernate.connection.url", getJdbcUrl(db));
@@ -163,7 +168,7 @@ public class HibernateSessionCreator {
 //        config.setProperty("hibernate.cglib.use_reflection_optimizer", "false");
         config.setProperty("hibernate.show_sql", Boolean.toString(showSql));
         config.setProperty("hibernate.format_sql", "true");
-        config.setProperty("hibernate.connection.pool_size", "2");
+        config.setProperty("hibernate.connection.pool_size", "20");
 //        config.setProperty("hibernate.cglib.use_reflection_optimizer", "false");
 //        config.setProperty("hibernate.cache.provider_class", "net.sf.ehcache.hibernate.EhCacheProvider");
         config.setProperty("hibernate.cache.provider_configuration_file_resource_path", "conf");
@@ -194,6 +199,8 @@ public class HibernateSessionCreator {
             ComboPooledDataSource cpds = new ComboPooledDataSource();
             cpds.setDriverClass("com.informix.jdbc.IfxDriver"); //loads the jdbc driver
             cpds.setJdbcUrl(jdbcUrl);
+            cpds.setUser("zfinner");
+            cpds.setPassword("Rtwm4ts");
             cpds.setMaxPoolSize(4);
             cpds.setMinPoolSize(2);
             cpds.setIdleConnectionTestPeriod(1200);
@@ -212,8 +219,14 @@ public class HibernateSessionCreator {
         String informixPort = ZfinPropertiesEnum.INFORMIX_PORT.value();
         String sqlHostsHost = ZfinPropertiesEnum.SQLHOSTS_HOST.value();
 
-        String jdbcUrl = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer;
-	jdbcUrl += ";IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=20;IFX_ISOLATION_LEVEL=DR;IFX_DIRTY_WAIT=10;CLIENT_LOCALE=en_US.utf8;DB_LOCALE=en_US.utf8";
+        String jdbcUrl;
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("true")) {
+            jdbcUrl = "jdbc:postgresql://localhost:5432/" + db;
+        } else {
+            jdbcUrl = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer;
+            jdbcUrl += ";IFX_LOCK_MODE_WAIT=6;PDQPRIORITY=20;IFX_ISOLATION_LEVEL=DR;IFX_DIRTY_WAIT=10;CLIENT_LOCALE=en_US.utf8;DB_LOCALE=en_US.utf8";
+            jdbcUrl += ";user=zfinner;password=Rtwm4ts";
+        }
         return jdbcUrl;
     }
 

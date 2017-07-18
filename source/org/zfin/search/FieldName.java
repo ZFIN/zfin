@@ -1,6 +1,10 @@
 package org.zfin.search;
 
+import org.apache.commons.lang.StringUtils;
 import org.zfin.ontology.Ontology;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This enumeration lists all field names used in SOLR
@@ -17,8 +21,11 @@ public enum FieldName {
     AFFECTED_MOLECULAR_FUNCTION("affected_molecular_function"),
     AFFECTED_MOLECULAR_FUNCTION_TF("affected_molecular_function_tf"),
     ALIAS_KEYWORD("alias_k"),
+    ALIAS("alias", "synonym"),
+    ALIAS_AC("alias_ac", "synonym"),
     ANATOMY("anatomy"),
     ANATOMY_TF("anatomy_tf"),
+    ANTIBODY_TYPE("antibody_type","Type"),
     ANTIGEN_GENE("antigen_gene"),
     ASSAY("assay"),
     AUTHOR("registered_author"),
@@ -45,7 +52,11 @@ public enum FieldName {
     EXPRESSION_ANATOMY("expression_anatomy"),
     FIGURE_ID("figure_id"),
     FISH("fish"),
+    FULL_NAME("full_name", "name"),
+    FULL_NAME_AC("full_name_ac", "name"),
     GENE("gene"),
+    GENE_FULL_NAME("gene_full_name"),
+    GENE_PREVIOUS_NAME("gene_previous_name"),
     GENES_WITH_ALTERED_EXPRESSION("genes_with_altered_expression"),
     GENOTYPE("genotype"),
     GENOTYPE_FULL_NAME("genotype_full_name"),
@@ -70,9 +81,12 @@ public enum FieldName {
     MUTAGEN("mutagen"),
     MUTATION_TYPE("mutation_type"),
     NAME("name"),
+    NAME_SORT("name_sort"),
+    NOTE("note"),
     ONTOLOGY("ontology"),
     PHENOTYPE_QUALITY_TF("phenotype_quality_tf"),
     PHENOTYPE_STATEMENT("phenotype_statement"),
+    PROPER_NAME("proper_name"),
     PUBLICATION_STATUS("publication_status"),
     PUBLICATION_TYPE("publication_type"),
     PUB_OWNER("owner"),
@@ -82,29 +96,48 @@ public enum FieldName {
     REPORTER_COLOR("reporter_color"),
     REPORTER_EXPRESSION_ANATOMY_TF("reporter_expression_anatomy_tf", "Expressed In"),
     REPORTER_GENE("reporter_gene"),
+    SCREEN("screen"),
     SEQUENCE_ALTERATION("sequence_alteration", "Mutation / Tg"),
     SEQUENCE_TARGETING_REAGENT("sequence_targeting_reagent"),
     SOURCE("source"),
     STAGE("stage"),
     STATUS("pub_status"),
-    TARGETED_GENE("targeted_gene"),
+    TARGET("target"),
+    TARGET_FULL_NAME("target_full_name"),
+    TARGET_PREVIOUS_NAME("target_previous_name"),
     TERM_STATUS("term_status"),
     THUMBNAIL("thumbnail"),
     TOPIC("topic"),
     TYPE("type"),
+    TYPE_TREE("type", 3, "Type"),
+    TYPEGROUP("typegroup"),
     URL("url"),
     XREF("xref"),
     ZEBRAFISH_GENE("zebrafish_gene");
 
     private String name;
     private String prettyName;
+    private Integer depth;
 
     FieldName(String name) {
         this.name = name;
+        this.depth = 1;
     }
 
     FieldName(String name, String prettyName) {
         this.name = name;
+        this.prettyName = prettyName;
+        this.depth = 1;
+    }
+
+    FieldName(String name, Integer depth) {
+        this.name = name;
+        this.depth = depth;
+    }
+
+    FieldName(String name, Integer depth, String prettyName) {
+        this.name = name;
+        this.depth = depth;
         this.prettyName = prettyName;
     }
 
@@ -116,6 +149,8 @@ public enum FieldName {
     public boolean isTermFacet() {
         return name.endsWith("tf");
     }
+    public boolean isHierarchical() { return (depth > 1); }
+
 
     public static FieldName getFieldName(String name) {
         if (name == null)
@@ -125,6 +160,14 @@ public enum FieldName {
                 return fieldName;
         }
         return null;
+    }
+
+    public String getPivotKey() {
+        List<String> fields = new ArrayList<>();
+        for (int i = 0 ; i < depth ; i++) {
+            fields.add(getName() + "_" + i);
+        }
+        return StringUtils.join(fields, ",");
     }
 
     public String getPrettyName() {

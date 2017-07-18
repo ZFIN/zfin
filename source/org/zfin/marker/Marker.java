@@ -7,7 +7,9 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
@@ -23,7 +25,7 @@ import java.util.*;
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
  * ToDo: needs more modelling...
  */
-public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityZdbID {
+public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityID {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
     private static Logger LOG = Logger.getLogger(Marker.class);
@@ -52,6 +54,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private Set<MarkerSupplier> suppliers;
     private String chromosome;
     private Set<MarkerGoTermEvidence> goTermEvidence;
+    private Set<SecondaryMarker> secondaryMarkerSet;
 
     // cashed attribute
     private transient List<Marker> markers;
@@ -189,7 +192,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return null;
 
         if (orthologyNotes.size() > 1) {
-            String message = "More than one Ortholgoy notes found. This is not allowed!";
+            String message = "More than one Orthology note found. This is not allowed!";
             LOG.error(message);
         }
 
@@ -221,6 +224,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return markers;
     }
 
+
+    public GenericTerm getSoTerm() {
+        return MarkerService.getSoTerm(this);
+    }
 
     public Set<Figure> getFigures() {
         return figures;
@@ -266,7 +273,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     }
 
     public boolean isGenedom() {
-        return isInTypeGroup(Marker.TypeGroup.GENEDOM);
+        return isInTypeGroup(TypeGroup.GENEDOM_AND_NTR);
+    };
+    public boolean isNontranscribed() {
+        return isInTypeGroup(TypeGroup.NONTSCRBD_REGION);
     };
 
     public MarkerType getMarkerType() {
@@ -404,7 +414,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         PAC_END("PAC_END"),
         PTCONSTRCT("PTCONSTRCT"),
         RAPD("RAPD"),
-        REGION("REGION"),
+        EREGION("EREGION"),
         SNP("SNP"),
         SSLP("SSLP"),
         STS("STS"),
@@ -412,7 +422,40 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         TSCRIPT("TSCRIPT"),
         TALEN("TALEN"),
         CRISPR("CRISPR"),
-        CNE("CNE");
+        CNE("CNE"),
+        LNCRNAG("LNCRNAG"),
+        LINCRNAG("LINCRNAG"),
+        MIRNAG("MIRNAG"),
+        PIRNAG("PIRNAG"),
+        SCRNAG("SCRNAG"),
+        SNORNAG("SNORNAG"),
+        TRNAG("TRNAG"),
+        RRNAG("RRNAG"),
+        NCRNAG("NCRNAG"),
+        HISTBS("HISTBS"),
+        PROTBS("PROTBS"),
+	NCCR("NCCR"),
+	BR("BR"),
+	BINDSITE("BINDSITE"),
+	LIGANDBS("LIGANDBS"),
+	TFBS("TFBS"),
+	EBS("EBS"),
+	NCBS("NCBS"),
+	EMR("EMR"),
+	HMR("HMR"),
+	MDNAB("MDNAB"),
+	RR("RR"),
+	TRR("TRR"),
+	TLNRR("TLNRR"),
+	PROMOTER("PROMOTER"),
+	ENHANCER("ENHANCER"),
+	LCR("LCR"),
+	NUCMO("NUCMO"),
+	DNAMO("DNAMO"),
+	RNAMO("RNAMO"),
+        CPGISLAND("CPGISLAND"),
+        SRPRNAG("SRPRNAG")
+        ;
 
         private final String value;
 
@@ -462,6 +505,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         CLONE("CLONE"),
         CLONEDOM("CLONEDOM"),
         CONSTRUCT("CONSTRUCT"),
+	CRISPR("CRISPR"),
         EFG("EFG"),
         EST("EST"),
         FEATURE("FEATURE"),
@@ -477,28 +521,83 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         PAC_END("PAC_END"),
         POLYMORPH("POLYMORPH"),
         RAPD("RAPD"),
-        REGION("REGION"),
         SEARCH_MK("SEARCH_MK"),
         SEARCH_MKSEG("SEARCH_MKSEG"),
         SEARCH_SEG("SEARCH_SEG"),
         SMALLSEG("SMALLSEG"),
+	SMALLSEG_NO_ESTCDNA("SMALLSEG_NO_ESTCDNA"),
         SSLP("SSLP"),
         STS("STS"),
+	TALEN("TALEN"),
         TGCONSTRUCT("TGCONSTRUCT"),
         TRANSCRIPT("TRANSCRIPT"),
         DEFICIENCY_TLOC_MARK("DEFICIENCY_TLOC_MARK"),
-        GENEDOM_EFG_REGION("GENEDOM_EFG_REGION"),
-        GENEDOM_EFG_REGION_K("GENEDOM_EFG_REGION_K");
+        GENEDOM_EFG_EREGION("GENEDOM_EFG_EREGION"),
+        GENEDOM_EFG_EREGION_K("GENEDOM_EFG_EREGION_K"),
+        SRPRNAG("SRPRNAG"),
+        LNCRNAG("LNCRNAG"),
+        LINCRNAG("LINCRNAG"),
+        MIRNAG("MIRNAG"),
+        PIRNAG("PIRNAG"),
+        SCRNAG("SCRNAG"),
+        SNORNAG("SNORNAG"),
+        TRNAG("TRNAG"),
+        RRNAG("RRNAG"),
+        NCRNAG("NCRNAG"),
+        HISTBS("HISTBS"),
+        PROTBS("PROTBS"),
+	NCCR("NCCR"),
+	BR("BR"),
+	BINDSITE("BINDSITE"),
+	LIGANDBS("LIGANDBS"),
+	TFBS("TFBS"),
+	EBS("EBS"),
+	NCBS("NCBS"),
+	EMR("EMR"),
+	HMR("HMR"),
+	MDNAB("MDNAB"),
+	RR("RR"),
+	TRR("TRR"),
+	TLNRR("TLNRR"),
+	PROMOTER("PROMOTER"),
+	ENHANCER("ENHANCER"),
+	LCR("LCR"),
+	NUCMO("NUCMO"),
+	DNAMO("DNAMO"),
+	RNAMO("RNAMO"),
+    CPGISLAND("CPGISLAND"),
+    ENGINEERED_REGION("ENGINEERED_REGION"),
+    GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
+    NONTSCRBD_REGION("NONTSCRBD_REGION"),
+	GENEDOM_AND_NTR("GENEDOM_AND_NTR"),
+    CONSTRUCT_COMPONENTS("CONSTRUCT_COMPONENTS"),
+    SEARCHABLE_ANTIBODY("SEARCHABLE_ANTIBODY", "Antibody"),
+    SEARCHABLE_CLONE("SEARCHABLE_CLONE", "Clone"),
+    SEARCHABLE_CONSTRUCT("SEARCHABLE_CONSTRUCT","Construct"),
+    SEARCHABLE_SMALL_SEGMENT("SEARCHABLE_SMALL_SEGMENT", "Small Segment"),
+    SEARCHABLE_GENE("SEARCHABLE_GENE", "Gene"),
+    SEARCHABLE_REGION("SEARCHABLE_REGION","Region"),
+    SEARCHABLE_STR("SEARCHABLE_STR","Sequence Targeting Reagent"),
+	SEARCHABLE_TRANSCRIPT("SEARCHABLE_TRANSCRIPT", "Transcript"),
+	RNAGENE("RNAGENE")
+        ;
 
         private final String value;
+        private final String displayName;
 
         private TypeGroup(String type) {
             this.value = type;
+            this.displayName = null;
+        }
+        private TypeGroup(String type, String displayName) {
+            this.value = type;
+            this.displayName = displayName;
         }
 
         public String toString() {
             return this.value;
         }
+        public String getDisplayName() { return this.displayName; }
 
         public static TypeGroup getType(String type) {
             for (TypeGroup t : values()) {
@@ -507,6 +606,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             }
             throw new RuntimeException("No run type of string " + type + " found.");
         }
+
 
     }
 
@@ -575,5 +675,13 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     public void setGoTermEvidence(Set<MarkerGoTermEvidence> goTermEvidence) {
         this.goTermEvidence = goTermEvidence;
+    }
+
+    public Set<SecondaryMarker> getSecondaryMarkerSet() {
+        return secondaryMarkerSet;
+    }
+
+    public void setSecondaryMarkerSet(Set<SecondaryMarker> secondaryMarkerSet) {
+        this.secondaryMarkerSet = secondaryMarkerSet;
     }
 }

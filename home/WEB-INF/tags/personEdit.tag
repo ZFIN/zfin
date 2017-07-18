@@ -6,6 +6,7 @@
 <%@ attribute name="person" type="org.zfin.profile.Person" required="true" %>
 <%@ attribute name="securityPersonZdbID" type="java.lang.String" required="true" %>
 <%@ attribute name="showDeceasedCheckBox" type="java.lang.Boolean" required="true" %>
+<%@ attribute name="countryList" type="java.util.HashMap" required="false" %>
 <%@ attribute name="selected" type="java.lang.String" required="false" %>
 
 
@@ -28,7 +29,7 @@
         </li>
         <li><a href="#login">Login</a></li>
         <li>
-            <a href="#picture" ${empty person.snapshot ? 'style="color: red;"' : '' }>Picture</a>
+            <a href="#picture" ${empty person.image ? 'style="color: red;"' : '' }>Picture</a>
         </li>
     </ul>
 
@@ -110,6 +111,17 @@
                         </td>
                         <td>
                             <form:textarea path="address" rows="5" cols="80"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label path="country">Country:</form:label>
+                        </td>
+                        <td>
+                            <form:select path="country">
+                                <form:option value="" />
+                                <form:options items="${countryList}" />
+                            </form:select>
                         </td>
                     </tr>
                     <tr>
@@ -249,7 +261,7 @@
         </div>
 
         <div id='picture'>
-            <zfin2:editSnapshot value='${person}'/>
+            <zfin2:editProfileImage value='${person}'/>
         </div>
     </div>
 </div>

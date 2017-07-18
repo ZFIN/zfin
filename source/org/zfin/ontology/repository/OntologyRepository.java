@@ -61,14 +61,6 @@ public interface OntologyRepository {
     GenericTerm getTermByOboID(String termID);
 
     /**
-     * Retrieve all related Terms.
-     *
-     * @param genericTerm term
-     * @return list of relationships
-     */
-    List<GenericTermRelationship> getTermRelationships(Term genericTerm);
-
-    /**
      * @param terms
      * @return
      */

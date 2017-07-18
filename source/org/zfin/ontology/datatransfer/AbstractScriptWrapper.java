@@ -7,6 +7,7 @@ import org.apache.log4j.spi.RootLogger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
+import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.SysmasterHibernateUtil;
@@ -94,7 +95,7 @@ public class AbstractScriptWrapper {
         DOMConfigurator.configure(log4jFilename);
     }
 
-    private static final Logger LOG = Logger.getLogger(AbstractScriptWrapper.class);
+    protected static final Logger LOG = Logger.getLogger(AbstractScriptWrapper.class);
     public static final String NEWLINE = System.getProperty("line.separator");
 
     protected static void setLoggerToInfoLevel(Logger logger) {
@@ -107,7 +108,7 @@ public class AbstractScriptWrapper {
      */
     protected static void initLog4J() {
         Logger rootLogger = RootLogger.getRootLogger();
-        rootLogger.setLevel(Level.WARN);
+        rootLogger.setLevel(Level.INFO);
         rootLogger.removeAppender("console");
     }
 

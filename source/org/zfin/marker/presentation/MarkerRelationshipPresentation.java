@@ -4,9 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.publication.presentation.PublicationPresentation;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -59,18 +57,13 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
             sb.append(PublicationPresentation.getLink(attributionZdbIDs.iterator().next(), "1"));
             sb.append(")");
         } else if (attributionZdbIDs.size() > 1) {
-            /* todo: there should be some more infrastructure for the showpubs links */
-            StringBuilder uri = new StringBuilder("?MIval=aa-showpubs.apg");
-            uri.append("&orgOID=");
-            uri.append(zdbId);
-            uri.append("&recattrsrctype=standard");
-            uri.append("&OID=");
             String count = String.valueOf(attributionZdbIDs.size());
 
-            sb.append(" (");
-//            sb.append(EntityPresentation.getWebdriverLink(uri.toString(), zdbId, count));
-            sb.append(EntityPresentation.getWebdriverLink(uri.toString(), markerRelationshipZdbId, count));
-            sb.append(")");
+            sb.append(" (<a href=\"/action/infrastructure/data-citation-list/");
+            sb.append(markerRelationshipZdbId);
+            sb.append("\">");
+            sb.append(count);
+            sb.append("</a>)");
         }
 
         return sb.toString();
@@ -193,10 +186,10 @@ else
 
             if (link == null) {
                 if (markerType != null && markerType.toLowerCase().contains("gene")) {
-                    return "<i><a href=\"/action/marker/view/" + zdbId + "\">" + abbreviation + "</a></i>";
+                    return "<i><a href=\"/" + zdbId + "\">" + abbreviation + "</a></i>";
             } else {
                     if (markerType != null && isSTR()) {
-                        return "<a href=\"/action/marker/view/" + zdbId + "\">" + name + "</a>" +
+                        return "<a href=\"/" + zdbId + "\">" + name + "</a>" +
                                 "<a class='popup-link data-popup-link' " +
                                 " href='/action/marker/popup/" + zdbId + "'></a>";
                     }
@@ -205,7 +198,7 @@ else
                 }
 
                 {
-                    return "<a href=\"/action/marker/view/" + zdbId + "\">" + name + "</a>";
+                    return "<a href=\"/" + zdbId + "\">" + name + "</a>";
                 }
             }
         else {

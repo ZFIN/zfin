@@ -12,7 +12,7 @@
                 Genotype (Background)
             </TD>
             <TD width="20%">
-                Affected Genes
+                Affected Genomic Regions
             </TD>
             <TD width="20%">
                 Phenotype

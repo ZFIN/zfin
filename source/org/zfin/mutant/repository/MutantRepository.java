@@ -1,5 +1,6 @@
 package org.zfin.mutant.repository;
 
+import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.feature.Feature;
@@ -96,14 +97,10 @@ public interface MutantRepository {
     /**
      * Check if for a given figure annotation a pato record (Phenotype)
      *
-     * @param genotypeExperimentID expression experiment
-     * @param figureID             figure
-     * @param startID              start   stage
-     * @param endID                end     stage
-     * @param publicationID        publication
+     * @param efs ExpressionFigureStage
      * @return boolean
      */
-    boolean isPatoExists(String genotypeExperimentID, String figureID, String startID, String endID, String publicationID);
+    boolean isPatoExists(ExpressionFigureStage efs);
 
     /**
      * Lookup a term by name. Term must not be obsolete.
@@ -178,6 +175,8 @@ public interface MutantRepository {
      * @return list of phenotypes
      */
     List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(GenericTerm term);
+
+    public boolean hasPhenotype(GenericTerm term);
 
     List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(List<GenericTerm> terms);
 
@@ -506,5 +505,11 @@ public interface MutantRepository {
     List<PhenotypeStatementWarehouse> getPhenotypeObserved(GenericTerm term, Fish fish, boolean includeSubstructures);
 
     List<PhenotypeStatementWarehouse> getPhenotypeStatementObservedForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures);
+
+    List<DiseaseAnnotationModel> getDiseaseAnnotationModels(int numfOfRecords);
+
+    List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords);
+
+    List<GeneGenotypeExperiment> getGeneDiseaseAnnotationModels(int numberOfRecords);
 }
 

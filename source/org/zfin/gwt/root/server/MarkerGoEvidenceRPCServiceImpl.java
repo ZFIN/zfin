@@ -434,10 +434,10 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
         List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution(publicationID);
         if (CollectionUtils.isNotEmpty(markers)) {
             for (Marker m : markers) {
-                if (m.getZdbID().startsWith("ZDB-GENE-")) {
+                if (m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                     markerDTOs.add(DTOConversionService.convertToMarkerDTO(m));
                 }
-            }
+                            }
         }
 
         return markerDTOs;

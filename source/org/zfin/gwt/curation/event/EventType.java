@@ -21,6 +21,7 @@ public enum EventType {
             PHENO_TAB(ROOT),
                 FILTER_PHENO(FILTER_ENTITY, PHENO_TAB),
             GO_TAB(ROOT),
+                CREATE_MARKER_GO_EVIDENCE(GO_TAB),
             DISEASE_TAB(ROOT),
                 CREATE_DISEASE_MODEL(DISEASE_TAB),
             FX(ROOT),

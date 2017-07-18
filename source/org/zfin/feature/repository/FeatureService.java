@@ -68,22 +68,23 @@ public class FeatureService {
         return genbankLinks;
     }
 
-    public static FeatureMarkerRelationship getCreatedByRelationship(Feature feature) {
+    public static Set<FeatureMarkerRelationship> getCreatedByRelationship(Feature feature) {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
         if (fmrelationships == null) {
             return null;
         }
-
+        Set<FeatureMarkerRelationship> createdByRelationship=new HashSet<>();
         for (FeatureMarkerRelationship ftrmrkrRelationship : fmrelationships) {
             if (ftrmrkrRelationship != null) {
                 if (ftrmrkrRelationship.getMarker().getMarkerType().getType() == Marker.Type.CRISPR
                         || ftrmrkrRelationship.getMarker().getMarkerType().getType() == Marker.Type.TALEN) {
-                    return ftrmrkrRelationship;
+                    createdByRelationship.add(ftrmrkrRelationship);
+
                 }
             }
         }
+        return createdByRelationship;
 
-        return null;
     }
 
     public static List<FeatureGenomeLocation> getFeatureGenomeLocationsInGbrowse(Feature feature) {

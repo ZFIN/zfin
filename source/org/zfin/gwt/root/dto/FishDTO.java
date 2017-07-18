@@ -7,30 +7,12 @@ import java.util.List;
  */
 public class FishDTO extends RelatedEntityDTO implements Comparable, FilterSelectionBoxEntry {
 
-    private String zdbID;
-    private String name;
     private String handle;
     private GenotypeDTO genotypeDTO;
     private List<RelatedEntityDTO> strList;
     private long order;
     private String nameOrder;
     private boolean wildtype;
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public List<RelatedEntityDTO> getStrList() {
         return strList;
@@ -90,7 +72,9 @@ public class FishDTO extends RelatedEntityDTO implements Comparable, FilterSelec
         if (!super.equals(o)) return false;
 
         FishDTO fishDTO = (FishDTO) o;
-        if (!genotypeDTO.equals(fishDTO.genotypeDTO)) return false;
+        if(!nameOrder.equals(fishDTO.getNameOrder())){
+            return false;
+        }
         if (strList != null ? !strList.equals(fishDTO.strList) : fishDTO.strList != null) return false;
 
         return true;
@@ -118,9 +102,9 @@ public class FishDTO extends RelatedEntityDTO implements Comparable, FilterSelec
     }
 
     public int compareToWildtypeFirst(FishDTO fish) {
-        if (genotypeDTO.isWildtype() && !fish.getGenotypeDTO().isWildtype())
+        if (wildtype && !fish.isWildtype())
             return -1;
-        if (!genotypeDTO.isWildtype() && fish.getGenotypeDTO().isWildtype())
+        if (!wildtype && fish.isWildtype())
             return 1;
         return fish.getNameOrder().compareTo(fish.getNameOrder());
 

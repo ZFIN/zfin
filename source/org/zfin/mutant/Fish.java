@@ -163,4 +163,19 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     public boolean isClean() {
         return fishFunctionalAffectedGeneCount == 0;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Fish)) return false;
+
+        Fish fish = (Fish) o;
+
+        return zdbID != null ? zdbID.equals(fish.zdbID) : fish.zdbID == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return zdbID != null ? zdbID.hashCode() : 0;
+    }
 }

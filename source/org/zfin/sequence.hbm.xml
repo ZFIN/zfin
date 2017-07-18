@@ -102,7 +102,6 @@
         </set>
     </class>
 
-
     <class name="org.zfin.sequence.ForeignDB" table="foreign_db">
         <id name="dbID" type="long">
             <column name="fdb_db_pk_id" not-null="true"/>
@@ -166,7 +165,7 @@
         <!--CASE substr(dblink_linked_recid,0,9)-->
         <discriminator type="string"
                        formula="(
-                    CASE dblink_linked_recid[1,9]
+                    CASE substring(dblink_linked_recid from 1 for 9)
                     WHEN 'ZDB-ORTHO' THEN 'ORTH'
                     WHEN 'ZDB-ANAT-' THEN 'ANAT'
                     WHEN 'ZDB-TSCRI' THEN 'TSCR'

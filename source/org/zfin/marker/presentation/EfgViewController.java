@@ -20,8 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class EfgViewController {
@@ -34,14 +32,15 @@ public class EfgViewController {
     @Autowired
     private MarkerRepository markerRepository;
 
+    @Autowired
+    private MarkerService markerService;
+
     @RequestMapping(value = "/efg/view/{zdbID}")
-    public String getView(
-            Model model
-            , @PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         MarkerBean markerBean = new MarkerBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker efg = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + efg);
@@ -79,7 +78,7 @@ public class EfgViewController {
         Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        types.add(MarkerRelationship.Type.CONTAINS_REGION);
         Set<Marker> markerSet = new TreeSet<>();
         PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(efg, types, 7);
         markerSet.addAll(relatedMarker.getPopulatedResults());
@@ -100,7 +99,7 @@ public class EfgViewController {
         Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        types.add(MarkerRelationship.Type.CONTAINS_REGION);
         Set<Marker> markerSet = new TreeSet<>();
         // get all constructs
         PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(efg, types, -1);

@@ -4,6 +4,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.feature.repository.FeatureService;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
 import org.zfin.marker.Marker;
 
@@ -17,22 +19,19 @@ public class GenotypeService {
     public static final String DELIMITER = ", ";
 
     public static SortedSet<Marker> getAffectedMarker(Genotype genotype) {
-        Set<GenotypeFeature> features = genotype.getGenotypeFeatures();
-        SortedSet<Marker> markers = new TreeSet<>();
-        for (GenotypeFeature feat : features) {
-            Feature feature = feat.getFeature();
-            Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
-            for (FeatureMarkerRelationship rel : rels) {
-                if (rel.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
-                    Marker marker = rel.getMarker();
-                    // Only add true genes
-                    if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                        markers.add(marker);
-                    }
+SortedSet<Marker> affectedGenes=new TreeSet<>();
+        for (GenotypeFeature genotypeFeature : genotype.getGenotypeFeatures()) {
+            Feature feature = genotypeFeature.getFeature();
+            SortedSet<Marker> genes = feature.getAffectedGenes();
+            for (Marker mkr : genes) {
+                if (mkr.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                    affectedGenes.add(mkr);
                 }
             }
+
         }
-        return markers;
+return  affectedGenes;
+
     }
 
     public static void createGenotypeNames(Genotype genotype, List<Genotype> genotypeBackgroundList) {

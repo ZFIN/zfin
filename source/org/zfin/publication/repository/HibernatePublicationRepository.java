@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import org.zfin.antibody.Antibody;
 import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.PersonDTO;
+import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
@@ -25,34 +26,45 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.feature.FeatureMarkerRelationshipType;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
+import org.zfin.infrastructure.*;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.repository.ProfileRepository;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.*;
+import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
  * ToDO: include documentation
  */
 @Repository
 public class HibernatePublicationRepository extends PaginationUtil implements PublicationRepository {
+
+    @Autowired
+    private CurationDTOConversionService converter;
 
     Logger logger = Logger.getLogger(HibernatePublicationRepository.class);
 
@@ -276,34 +288,30 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         // todo: note that when in SQL, start at 1 (current) , but when in HQL, start at 0
         String hql = "SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol, " +
                 "count(distinct fig.fig_zdb_id) as numOfFig  " +
-                "FROM  Expression_Experiment exp, outer marker probe, Term item_, Marker gene, Figure fig," +
-                "      Genotype geno, fish_Experiment genox, expression_pattern_figure results, expression_result result, fish fish " +
-                "WHERE  exp.xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id AND" +
-                "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND         " +
-                "       item_.term_zdb_id = :termID AND " +
-                "       result.xpatres_xpatex_zdb_id = exp.xpatex_zdb_id AND " +
-                "       (result.xpatres_superterm_zdb_id = item_.term_zdb_id OR result.xpatres_subterm_zdb_id = item_.term_zdb_id) AND " +
+                "FROM  Expression_Experiment exp " +
+                "      join FISH_EXPERIMENT as genox on genox.genox_zdb_id=exp.xpatex_genox_zdb_id " +
+                "      join EXPRESSION_RESULT as result on result.xpatres_xpatex_zdb_id = exp.xpatex_zdb_id " +
+                "      join EXPRESSION_PATTERN_FIGURE as results on results.xpatfig_xpatres_zdb_id=result.xpatres_zdb_id " +
+                "      join Figure as fig on fig.fig_zdb_id=results.xpatfig_fig_zdb_id " +
+                "      join MARKER as gene on exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id " +
+                "      join FISH as fish on fish.fish_zdb_Id = genox.genox_fish_zdb_id " +
+                "      join GENOTYPE as geno on fish.fish_genotype_zdb_id=geno.geno_zdb_id  " +
+                "      join TERM as item_ on (result.xpatres_superterm_zdb_id = item_.term_zdb_id OR result.xpatres_subterm_zdb_id = item_.term_zdb_id) " +
+                "WHERE  item_.term_zdb_id = :termID AND " +
                 "       result.xpatres_expression_found = :expressionFound AND " +
-                "       fig.fig_zdb_id=results.xpatfig_fig_zdb_id AND " +
-                "       results.xpatfig_xpatres_zdb_id=result.xpatres_zdb_id AND " +
-                "       genox.genox_zdb_id=exp.xpatex_genox_zdb_id AND " +
-                "       genox.genox_fish_zdb_id=fish.fish_zdb_id AND " +
-                "       fish.fish_genotype_zdb_id=geno.geno_zdb_id AND " +
                 "       geno.geno_is_wildtype = :isWildtype AND " +
                 "       fish.fish_is_wildtype = :isWildtype AND " +
-                "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND " +
                 "       genox.genox_is_std_or_generic_control = :condition AND " +
-                "       gene.mrkr_abbrev[1,10] <> :withdrawn  AND   " +
+                "       SUBSTRING (gene.mrkr_abbrev from  1 for 9) <> :withdrawn  AND   " +
                 "       not exists( " +
                 "           select 'x' from clone " +
                 "           where clone.clone_mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
                 "           and clone.clone_problem_type = :chimeric " +
                 "       ) AND " +
-                // todo: fix this query
                 "       not exists( " +
                 "           select 'x' from marker m2" +
                 "           where m2.mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
-                "           and m2.mrkr_abbrev[1,10] = :withdrawn  " +
+                "           and SUBSTRING (m2.mrkr_abbrev from 1 for 9) = :withdrawn  " +
                 "       ) " +
                 "GROUP BY exp.xpatex_gene_zdb_id, gene.mrkr_abbrev " +
                 "ORDER BY numOfFig DESC, geneSymbol ";
@@ -321,7 +329,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         results.last();
         int totalResults = results.getRowNumber() + 1;
 
-        List<Object[]> list = new ArrayList<Object[]>();
+        List<Object[]> list = new ArrayList<>();
 
         results.beforeFirst();
         while (results.next() && results.getRowNumber() < numberOfRecords) {
@@ -839,7 +847,38 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (Journal) criteria.uniqueResult();
     }
 
+    public void createJournal(Journal journal) {
+        if (journal.getName() == null) {
+            throw new RuntimeException("Cannot create a new journal without a name.");
+        }
+        if (journal == null) {
+            throw new RuntimeException("No journal object provided.");
+        }
 
+
+        currentSession().save(journal);
+        // Need to flush here to make the trigger fire as that will
+        // create a MarkerHistory record needed.
+       currentSession().flush();
+
+        //add publication to attribution list.
+
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(journal, "New " + journal.getName(), "");
+    }
+
+    public Journal getJournalByPrintIssn(String pIssn) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Journal.class);
+        criteria.add(Restrictions.eq("printIssn", pIssn));
+        return (Journal) criteria.uniqueResult();
+    }
+
+    public Journal getJournalByEIssn(String eIssn) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Journal.class);
+        criteria.add(Restrictions.eq("onlineIssn", eIssn));
+        return (Journal) criteria.uniqueResult();
+    }
     /**
      * Utility method for filling list to a max amount.  This is a destructive method on fillList.
      *
@@ -958,7 +997,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                     " from record_attribution ra, marker_history mh " +
                     " where mh.mhist_zdb_id  = ra.recattrib_data_zdb_id " +
                     " and  :markerZdbID = mh.mhist_mrkr_zdb_id ";
-        commonPubSQL += " ) where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
+        commonPubSQL += " ) as qt where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
         return commonPubSQL;
     }
 
@@ -990,7 +1029,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public int getNumberAssociatedPublicationsForZdbID(String zdbID) {
-        String sql = " select count(*) from ( " + getCommonPublicationSQL(zdbID) + " )";
+        String sql = " select count(*) from ( " + getCommonPublicationSQL(zdbID) + " ) as query ";
 
         int count = Integer.valueOf(HibernateUtil.currentSession()
                 .createSQLQuery(sql)
@@ -1132,6 +1171,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @SuppressWarnings("unchecked")
     public List<Marker> getGenesByPublication(String pubID) {
         return getGenesByPublication(pubID, true);
+        //return getGenesByPublication(pubID, false);
     }
 
     /**
@@ -1142,25 +1182,77 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param includeEfgs boolean
      * @return list of markers
      */
-    // ToDo: There must be a better way to retrieve GENEs versus all markers.
-    // GENE should be a subclass of Marker
-    @SuppressWarnings("unchecked")
     public List<Marker> getGenesByPublication(String pubID, boolean includeEFGs) {
-        Session session = HibernateUtil.currentSession();
-
-        Marker.TypeGroup typeGroup = includeEFGs ? Marker.TypeGroup.GENEDOM_AND_EFG : Marker.TypeGroup.GENEDOM;
+        Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM;
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
+        if (includeEFGs){
+            markerTypes.add(markerRepository.getMarkerTypeByName(Marker.Type.EFG.toString()));
+        }
+        return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
+    }
 
-        String hql = "select distinct marker from Marker marker, PublicationAttribution pub" +
-                "     where pub.dataZdbID = marker.zdbID" +
-                "           and pub.publication.zdbID = :pubID " +
+    public List<Marker> getGenesAndMarkersByPublication(String pubID) {
+        // directly annotated markers
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM);
+        markerTypes.addAll(markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MK));
+        Set<Marker> markers = new TreeSet<>(getMarkersByPublication(pubID, markerTypes));
+
+        // markers pulled through features
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct marker from Marker marker, RecordAttribution attr, Feature feature, FeatureMarkerRelationship fmrel " +
+                "where attr.dataZdbID = feature.zdbID " +
+                "and attr.sourceZdbID = :pubID " +
+                "and fmrel.type = :isAllele " +
+                "and fmrel.feature = feature " +
+                "and fmrel.marker = marker ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setParameter("isAllele", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
+        markers.addAll(query.list());
+
+        // markers pulled through STRs
+        hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
+                "where attr.sourceZdbID = :pubID " +
+                "and attr.dataZdbID = mrel.firstMarker " +
+                "and mrel.secondMarker = marker " +
+                "and mrel.type = :type ";
+        query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+        markers.addAll(query.list());
+
+        return new ArrayList<>(markers);
+    }
+
+    public List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType) {
+        return (List<Marker>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
+    }
+
+    public List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType) {
+        return (List<SequenceTargetingReagent>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
+    }
+
+    public PaginationResult<Clone> getClonesByPublication(String pubID, PaginationBean paginationBean) {
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_SEG);
+        ScrollableResults results = getMarkersByPublicationQuery(pubID, markerTypes).scroll();
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, results);
+    }
+
+    private List getMarkersByPublication(String pubID, List<MarkerType> markerTypes) {
+        return getMarkersByPublicationQuery(pubID, markerTypes).list();
+    }
+
+    private Query getMarkersByPublicationQuery(String pubID, List<MarkerType> markerTypes) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct marker from Marker marker, RecordAttribution attr" +
+                "     where attr.dataZdbID = marker.zdbID" +
+                "           and attr.sourceZdbID = :pubID " +
                 "           and marker.markerType in (:markerType)  " +
                 "    order by marker.abbreviationOrder ";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameterList("markerType", markerTypes);
-
-        return (List<Marker>) query.list();
+        return query;
     }
 
     public List<Feature> getFeaturesByPublication(String pubID) {
@@ -1585,7 +1677,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return paginationResult;
     }
 
-    public List<Publication> getPublicationByPmid(String pubMedID) {
+    public List<Publication> getPublicationByPmid(Integer pubMedID) {
         return (List<Publication>) HibernateUtil.currentSession().createCriteria(Publication.class)
                 .add(Restrictions.eq("accessionNumber", pubMedID))
                 .list();
@@ -1809,45 +1901,106 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public void addPublication(Publication publication) {
+        Session session = HibernateUtil.currentSession();
         HibernateUtil.createTransaction();
-        HibernateUtil.currentSession().save(publication);
+        session.save(publication);
+        PublicationTrackingHistory trackingEntry = new PublicationTrackingHistory();
+        PublicationTrackingStatus newStatus = getPublicationStatusByName("New");
+        trackingEntry.setPublication(publication);
+        trackingEntry.setStatus(newStatus);
+        trackingEntry.setUpdater(ProfileService.getCurrentSecurityUser());
+        trackingEntry.setDate(new GregorianCalendar());
+        session.save(trackingEntry);
         HibernateUtil.flushAndCommitCurrentSession();
+
     }
 
+
+    public SourceAlias addJournalAlias(Journal journal, String alias) {
+        //first handle the alias..
+        
+        SourceAlias journalAlias = new SourceAlias();
+        journalAlias.setDataZdbID(journal.getZdbID());
+        journalAlias.setAlias(alias);
+
+        if (journal.getAliases() == null) {
+            Set<SourceAlias> sourceAliases = new HashSet<>();
+            sourceAliases.add(journalAlias);
+            journal.setAliases(sourceAliases);
+        } else {
+            // if alias exists do not add continue...
+            if (!journal.getAliases().add(journalAlias))
+                return null;
+        }
+
+        currentSession().save(journalAlias);
+
+        //now handle the attribution
+     /*   String updateComment;
+
+        updateComment = "Added alias: '" + journalAlias.getAlias() + " with no attribution";
+
+
+        InfrastructureService.insertUpdate(journal, updateComment);
+*/
+        return journalAlias;
+    }
+
+
     public Long getMarkerCount(Publication publication) {
-        String sql = "select count(*) FROM (\n" +
-                "  SELECT fmrel_mrkr_zdb_id\n" +
-                "  FROM record_attribution, feature_marker_relationship\n" +
-                "  WHERE recattrib_source_zdb_id = :zdbID\n" +
-                "        AND recattrib_data_zdb_id = fmrel_ftr_zdb_id\n" +
-                "        AND fmrel_type = 'is allele of'\n" +
-                "\n" +
-                "  UNION\n" +
-                "\n" +
-                "  SELECT mrkr_zdb_id\n" +
-                "  FROM record_attribution, marker\n" +
-                "  WHERE recattrib_source_zdb_id = :zdbID\n" +
-                "        AND recattrib_data_zdb_id = mrkr_zdb_id\n" +
-                "        AND mrkr_type IN\n" +
-                "            (\n" +
-                "              SELECT mtgrpmem_mrkr_type\n" +
-                "              FROM marker_type_group_member\n" +
-                "              WHERE mtgrpmem_mrkr_type_group = 'SEARCH_MK'\n" +
-                "            )\n" +
-                "        AND (mrkr_type <> 'MRPHLNO' AND mrkr_type <> 'EFG')\n" +
-                "\n" +
-                "  UNION\n" +
-                "\n" +
-                "  SELECT mr.mrel_mrkr_2_zdb_id\n" +
-                "  FROM record_attribution ra, marker m, marker_relationship mr\n" +
-                "  WHERE recattrib_source_zdb_id = :zdbID\n" +
-                "        AND recattrib_data_zdb_id = mrkr_zdb_id\n" +
-                "        AND m.mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id\n" +
-                "        AND mrkr_type = 'MRPHLNO'\n" +
-                "\n" +
-                ");";
+        String sql = "select count(*) FROM (" +
+                "  SELECT fmrel_mrkr_zdb_id" +
+                "  FROM record_attribution, feature_marker_relationship" +
+                "  WHERE recattrib_source_zdb_id = :zdbID" +
+                "        AND recattrib_data_zdb_id = fmrel_ftr_zdb_id" +
+                "        AND fmrel_type = 'is allele of'" +
+                "" +
+                "  UNION" +
+                "" +
+                "  SELECT mrkr_zdb_id" +
+                "  FROM record_attribution, marker" +
+                "  WHERE recattrib_source_zdb_id = :zdbID" +
+                "        AND recattrib_data_zdb_id = mrkr_zdb_id" +
+                "        AND mrkr_type IN" +
+                "            (" +
+                "              SELECT mtgrpmem_mrkr_type" +
+                "              FROM marker_type_group_member" +
+                "              WHERE mtgrpmem_mrkr_type_group in ('GENEDOM_AND_NTR','SEARCH_MK')" +
+                "            )" +
+                "        AND (mrkr_type <> 'MRPHLNO' AND mrkr_type <> 'EFG')  " +
+                "" +
+                "  UNION" +
+                "" +
+                "  SELECT mr.mrel_mrkr_2_zdb_id" +
+                "  FROM record_attribution ra, marker m, marker_relationship mr" +
+                "  WHERE recattrib_source_zdb_id = :zdbID" +
+                "        AND recattrib_data_zdb_id = mrkr_zdb_id" +
+                "        AND m.mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id" +
+                "        AND mrel_type = 'knockdown reagent targets gene'  " +
+                ") as q3 ;";
 
         return getCount(sql, publication.getZdbID());
+    }
+
+    public List<Marker> getMarkers(Publication publication) {
+        //return new ArrayList<Marker>();
+        String hql = "from PublicationAttribution pa where pa.publication.zdbID = :pubZdbID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("pubZdbID", publication.getZdbID() );
+        List<PublicationAttribution> publicationAttributionList = query.list();
+        List<Marker> markerList = new ArrayList<>();
+        logger.error(publicationAttributionList);
+/*        for (PublicationAttribution pa : publicationAttributionList) {
+            if (!markerList.contains(pa.getMarker())) {
+                markerList.add(pa.getMarker());
+            }
+        }
+        logger.error(markerList);*/
+        return markerList;
+/*        return publicationAttributionList
+                .stream()
+                .map(PublicationAttribution::getMarker)
+                .collect(Collectors.toList());*/
     }
 
 
@@ -1872,53 +2025,53 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Long getCloneProbeCount(Publication publication) {
-        String sql = "\tselect count(recattrib_data_zdb_id)\n" +
-                "\t from  record_attribution, marker\n" +
-                "\t where recattrib_source_zdb_id = :zdbID\n" +
-                "\t  and  recattrib_data_zdb_id   = mrkr_zdb_id\n" +
-                "\t  and  mrkr_type in \n" +
-                "\t\t  (select mtgrpmem_mrkr_type from marker_type_group_member\n" +
+        String sql = "\tselect count(recattrib_data_zdb_id)" +
+                "\t from  record_attribution, marker" +
+                "\t where recattrib_source_zdb_id = :zdbID" +
+                "\t  and  recattrib_data_zdb_id   = mrkr_zdb_id" +
+                "\t  and  mrkr_type in " +
+                "\t\t  (select mtgrpmem_mrkr_type from marker_type_group_member" +
                 "                    where mtgrpmem_mrkr_type_group = 'SEARCH_SEG');";
         return getCount(sql, publication.getZdbID());
     }
 
     public Long getExpressionCount(Publication publication) {
-        String sql = "\tselect count(distinct xpatfig_fig_zdb_id)\n" +
-                " \t  from figure, expression_pattern_figure\n" +
-                " \t where fig_source_zdb_id = :zdbID\n" +
+        String sql = "\tselect count(distinct xpatfig_fig_zdb_id)" +
+                " \t  from figure, expression_pattern_figure" +
+                " \t where fig_source_zdb_id = :zdbID" +
                 "         and fig_zdb_id=xpatfig_fig_zdb_id";
         return getCount(sql, publication.getZdbID());
     }
 
     public Long getPhenotypeCount(Publication publication) {
-        String sql = "\tselect count(distinct pg_fig_zdb_id)\n" +
-                " \t  from figure, phenotype_source_generated\n" +
-                " \t where fig_source_zdb_id = :zdbID\n" +
+        String sql = "\tselect count(distinct pg_fig_zdb_id)" +
+                " \t  from figure, phenotype_source_generated" +
+                " \t where fig_source_zdb_id = :zdbID" +
                 "         and pg_fig_zdb_id = fig_zdb_id";
         return getCount(sql, publication.getZdbID());
     }
 
     public Long getFeatureCount(Publication publication) {
-        String sql = "\tselect count(distinct recattrib_data_zdb_id)\n" +
-                "\t from  record_attribution\n" +
-                "\t where recattrib_source_zdb_id = :zdbID\n" +
+        String sql = "\tselect count(distinct recattrib_data_zdb_id)" +
+                "\t from  record_attribution" +
+                "\t where recattrib_source_zdb_id = :zdbID" +
                 "\t  and  recattrib_data_zdb_id like 'ZDB-ALT-%';";
         return getCount(sql, publication.getZdbID());
     }
 
     public Long getPhenotypeAlleleCount(Publication publication) {
-        String sql = "\tselect count(distinct geno_zdb_id)\n" +
-                "\tfrom   record_attribution, genotype\n" +
-                "\twhere  recattrib_source_zdb_id = :zdbID\n" +
-                "\t  and  recattrib_data_zdb_id = geno_zdb_id\n" +
+        String sql = "\tselect count(distinct geno_zdb_id)" +
+                "\tfrom   record_attribution, genotype" +
+                "\twhere  recattrib_source_zdb_id = :zdbID" +
+                "\t  and  recattrib_data_zdb_id = geno_zdb_id" +
                 "\t  and  geno_is_wildtype = 'f';";
         return getCount(sql, publication.getZdbID());
     }
 
     public Long getFishCount(Publication publication) {
-        String sql = "\tselect count(distinct fish_zdb_id)\n" +
-                "\tfrom   record_attribution, fish\n" +
-                "\twhere  recattrib_source_zdb_id = :zdbID\n" +
+        String sql = "\tselect count(distinct fish_zdb_id)" +
+                "\tfrom   record_attribution, fish" +
+                "\twhere  recattrib_source_zdb_id = :zdbID" +
                 "\t  and  recattrib_data_zdb_id = fish_zdb_id;";
         return getCount(sql, publication.getZdbID());
     }
@@ -1932,41 +2085,42 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Long getMappingDetailsCount(Publication publication) {
-        String sql = "select (\n" +
-                "select count(distinct lms_member_1_zdb_id)\n" +
-                "    \t  from linkage, linkage_membership_search\n" +
-                "    \t where lnkg_source_zdb_id = :zdbID\n" +
-                "    \t and lms_lnkg_zdb_id = lnkg_zdb_id    \n" +
-                ") +\n" +
-                "(select  count(distinct lsingle_member_zdb_id)\n" +
-                "    \t  from linkage, linkage_single\n" +
-                "    \t where lnkg_source_zdb_id = :zdbID\n" +
-                "    \t and lsingle_lnkg_zdb_id = lnkg_zdb_id\n" +
-                "    \t and not exists (select 'x' from linkage_membership_search \n" +
-                "    \t where lms_lnkg_zdb_id = lnkg_zdb_id)\n" +
-                ") from systables where tabid = 1\n" +
-                "\t  ;";
+        String sql = "SELECT Count(tem.member_id)" +
+	                 "FROM   (select distinct lms_member_1_zdb_id as member_id " +
+	                            "from linkage, linkage_membership_search " +          
+		       	               "WHERE  lnkg_source_zdb_id = :zdbID "+
+			               "AND lms_lnkg_zdb_id = lnkg_zdb_id " +  
+			           "UNION "      +  
+			           "SELECT  distinct lsingle_member_zdb_id " +       
+			             "FROM   linkage, linkage_single "  +         
+			             "WHERE  lnkg_source_zdb_id =  :zdbID "  +    
+			               "AND lsingle_lnkg_zdb_id = lnkg_zdb_id " +        
+			               "AND NOT EXISTS (SELECT 'x' " +
+			       	       	      	          "FROM   linkage_membership_search "  +   
+						          "WHERE  lms_lnkg_zdb_id = lnkg_zdb_id) " +
+		 	          ") as tem" ;
+
         return getCount(sql, publication.getZdbID());
     }
 
     public Boolean canDeletePublication(Publication publication) {
 
-        String sql = "select count(recattrib_source_zdb_id) \n" +
-                "               from record_attribution, figure \n" +
-                "              where recattrib_source_zdb_id = :zdbID\n" +
-                "                and recattrib_data_zdb_id = fig_zdb_id\n" +
-                "                and (exists (select 'x' \n" +
-                "                               from phenotype_experiment\n" +
-                "                              where phenox_fig_zdb_id = fig_zdb_id)\n" +
-                "                  or exists (select 'x' \n" +
-                "\t\t               from construct_figure\n" +
-                "                              where consfig_fig_zdb_id = fig_zdb_id)\n" +
-                "                  or exists (select 'x' \n" +
-                "\t\t               from expression_pattern_figure\n" +
-                "                              where xpatfig_fig_zdb_id = fig_zdb_id)\n" +
-                "                  or exists (select 'x' \n" +
-                "\t\t               from genotype_figure_fast_search\n" +
-                "                              where gffs_fig_zdb_id = fig_zdb_id)\n" +
+        String sql = "select count(recattrib_source_zdb_id) " +
+                "               from record_attribution, figure " +
+                "              where recattrib_source_zdb_id = :zdbID" +
+                "                and recattrib_data_zdb_id = fig_zdb_id" +
+                "                and (exists (select 'x' " +
+                "                               from phenotype_experiment" +
+                "                              where phenox_fig_zdb_id = fig_zdb_id)" +
+                "                  or exists (select 'x' " +
+                "               from construct_figure" +
+                "                              where consfig_fig_zdb_id = fig_zdb_id)" +
+                "                  or exists (select 'x' " +
+                "               from expression_pattern_figure" +
+                "                              where xpatfig_fig_zdb_id = fig_zdb_id)" +
+                "                  or exists (select 'x' " +
+                "               from genotype_figure_fast_search" +
+                "                              where gffs_fig_zdb_id = fig_zdb_id)" +
                 "                    );";
 
         Long figureDataCount = getCount(sql, publication.getZdbID());
@@ -2087,11 +2241,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     private Long getMarkerCountByMarkerType(String zdbID, String type) {
-        String sql = "select count(recattrib_data_zdb_id)\n" +
-                "\tfrom  record_attribution, marker\n" +
-                "\twhere recattrib_source_zdb_id = :zdbID\n" +
-                "\t  and recattrib_data_zdb_id = mrkr_zdb_id\n" +
-                "\t  and mrkr_type = :mrkrType\n" +
+        String sql = "select count(recattrib_data_zdb_id) " +
+                "from  record_attribution, marker " +
+                "where recattrib_source_zdb_id = :zdbID" +
+                "  and recattrib_data_zdb_id = mrkr_zdb_id" +
+                "  and mrkr_type = :mrkrType" +
                 "      ; ";
 
         SQLQuery query = HibernateUtil.currentSession().createSQLQuery(sql);
@@ -2146,12 +2300,51 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (PublicationTrackingLocation) HibernateUtil.currentSession().get(PublicationTrackingLocation.class, id);
     }
 
-    public PaginationResult<PublicationTrackingHistory> getPublicationsByStatus(Long status,
-                                                                                Long location,
-                                                                                String owner,
-                                                                                int count,
-                                                                                int offset,
-                                                                                String sort) {
+    public DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count,
+                                                            int offset, String sort) {
+
+        Criteria listCriteria = createPubsByStatusCriteria(status, location, owner);
+        listCriteria.addOrder(Order.asc("status"));
+        if (StringUtils.isNotEmpty(sort)) {
+            boolean isAscending = true;
+            if (sort.startsWith("-")) {
+                isAscending = false;
+                sort = sort.substring(1);
+            }
+            Order order;
+            if (isAscending) {
+                order = Order.asc(sort);
+            } else {
+                order = Order.desc(sort);
+            }
+            listCriteria.addOrder(order);
+        }
+        PaginationResult<PublicationTrackingHistory> histories = PaginationResultFactory
+                .createResultFromScrollableResultAndClose(offset, offset + count, listCriteria.scroll());
+
+        Criteria countsCriteria = createPubsByStatusCriteria(status, location, owner);
+        List countList = countsCriteria.setProjection(Projections.projectionList()
+                .add(Projections.groupProperty("status"))
+                .add(Projections.rowCount()))
+                .list();
+        Map<String, Long> counts = new HashMap<>();
+        for (Object item : countList) {
+            Object[] tuple = (Object []) item;
+            PublicationTrackingStatus pubStatus = (PublicationTrackingStatus) tuple[0];
+            counts.put(pubStatus.getName(), (long) tuple[1]);
+        }
+
+        DashboardPublicationList result = new DashboardPublicationList();
+        result.setTotalCount(histories.getTotalCount());
+        result.setPublications(histories.getPopulatedResults().stream()
+                .map(converter::toDashboardPublicationBean)
+                .collect(Collectors.toList()));
+        result.setStatusCounts(counts);
+
+        return result;
+    }
+
+    private Criteria createPubsByStatusCriteria(Long status, Long location, String owner) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(PublicationTrackingHistory.class)
                 .add(Restrictions.eq("isCurrent", true))
                 .createAlias("publication", "pub");
@@ -2175,24 +2368,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 criteria.add(Restrictions.eq("owner", profileRepository.getPerson(owner)));
             }
         }
-
-        criteria.addOrder(Order.asc("status"));
-        if (StringUtils.isNotEmpty(sort)) {
-            boolean isAscending = true;
-            if (sort.startsWith("-")) {
-                isAscending = false;
-                sort = sort.substring(1);
-            }
-            Order order;
-            if (isAscending) {
-                order = Order.asc(sort);
-            } else {
-                order = Order.desc(sort);
-            }
-            criteria.addOrder(order);
-        }
-
-        return PaginationResultFactory.createResultFromScrollableResultAndClose(offset, offset + count, criteria.scroll());
+        return criteria;
     }
 
     public List<PublicationFileType> getAllPublicationFileTypes() {
@@ -2289,5 +2465,39 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         correspondence.setText(dto.getMessage());
         HibernateUtil.currentSession().save(correspondence);
         return correspondence;
+    }
+
+    @Override
+    public List<String> getPublicationIdsForMarkerGo(String markerZdbID, String markerGoEvdTermZdbID, String evidenceCode, String inference) {
+        Session session = HibernateUtil.currentSession();
+        String sql =  " select ra.recattrib_source_zdb_id  " +
+                " from record_attribution ra ,  marker_go_term_evidence ev, inference_group_member inf " +
+                " where  ev.mrkrgoev_zdb_id  = ra.recattrib_data_zdb_id " +
+                " and inf.infgrmem_mrkrgoev_zdb_id = ev.mrkrgoev_zdb_id " +
+                " and  :markerZdbID = ev.mrkrgoev_mrkr_zdb_id " +
+                " and :markerGoEvdTermZdbID = ev.mrkrgoev_term_zdb_id" +
+                " and :evidenceCode = ev.mrkrgoev_evidence_code" +
+                " and :inference = inf.infgrmem_inferred_from";
+        SQLQuery query = session.createSQLQuery(sql);
+        query.setString("markerZdbID", markerZdbID);
+        query.setString("markerGoEvdTermZdbID", markerGoEvdTermZdbID);
+        query.setString("evidenceCode", evidenceCode);
+        query.setString("inference", inference);
+        List<String> pubIDs = query.list();
+        return pubIDs;
+    }
+
+    @Override
+    public List<String> getPublicationIdsForFeatureType(String featureZdbID) {
+        Session session = HibernateUtil.currentSession();
+        String sql =  " select ra.recattrib_source_zdb_id  " +
+                " from record_attribution ra" +
+                " where :featureType = ra.recattrib_source_type " +
+                " and :featureID = ra.recattrib_data_zdb_id";
+        SQLQuery query = session.createSQLQuery(sql);
+        query.setString("featureType", "feature type");
+        query.setString("featureID", featureZdbID);
+        List<String> pubIDs = query.list();
+        return pubIDs;
     }
 }

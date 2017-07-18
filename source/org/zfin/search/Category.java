@@ -1,5 +1,7 @@
 package org.zfin.search;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +16,8 @@ import static org.zfin.search.FieldName.*;
 public enum Category {
 
     GENE("Gene / Transcript",
-            TYPE,
+            new ArrayList<FacetQueryEnum>(),
+            TYPE_TREE,
             ANATOMY_TF,
             STAGE,
             AFFECTED_ANATOMY_TF,
@@ -39,7 +42,7 @@ public enum Category {
             ENGINEERED_REGION
     ),
     ANTIBODY("Antibody",
-            TYPE,
+            ANTIBODY_TYPE,
             ANTIGEN_GENE,
             LABELED_STRUCTURE_TF,
             ASSAY,
@@ -110,13 +113,15 @@ public enum Category {
     ),
     SEQUENCE_TARGETING_REAGENT("Sequence Targeting Reagent (STR)",
             TYPE,
-            TARGETED_GENE
+            TARGET
     ),
     EXPRESSIONS("Expression",
             asList( FacetQueryEnum.ANY_ZEBRAFISH_GENE,
                     FacetQueryEnum.ANY_REPORTER_GENE,
                     FacetQueryEnum.ANY_WILDTYPE,
-                    FacetQueryEnum.ANY_MUTANT),
+                    FacetQueryEnum.ANY_MUTANT,
+                    FacetQueryEnum.NONE_SEQUENCE_TARGETING_REAGENT),
+            TYPE,
             REPORTER_GENE,
             ZEBRAFISH_GENE,
             EXPRESSION_ANATOMY_TF,
@@ -161,8 +166,8 @@ public enum Category {
             SEQUENCE_ALTERATION,
             BACKGROUND),
     REPORTER_LINE("Reporter Line", REPORTER_GENE, EXPRESSION_ANATOMY_TF,REGULATORY_REGION, STAGE),
-    JOURNAL("Journal", RELATED_ACCESSION);
-
+    JOURNAL("Journal", RELATED_ACCESSION),
+    STR_RELATIONSHIP("STR Relationship");
 
 
     Category(String name, FieldName... fieldNames) {
@@ -170,8 +175,10 @@ public enum Category {
         this.fieldNames = fieldNames;
         this.facetQueries = new ArrayList<>();
     }
-
-    Category(String name, List<FacetQueryEnum> facetQueries, FieldName... fieldNames) {
+    
+    Category(String name,
+             List<FacetQueryEnum> facetQueries,
+             FieldName... fieldNames) {
         this.name = name;
         this.fieldNames = fieldNames;
         this.facetQueries = facetQueries;
@@ -217,10 +224,22 @@ public enum Category {
     public String[] getFieldArray() {
         List<String> fields = new ArrayList<>();
         for (FieldName fieldName : fieldNames) {
-            fields.add(fieldName.getName());
+            if (!fieldName.isHierarchical()) {
+                fields.add(fieldName.getName());
+            }
         }
 
         return fields.toArray(new String[fields.size()]);
+    }
+
+    public List<String> getPivotFacetStrings() {
+        List<String> pivotStrings = new ArrayList<>();
+        for (FieldName fieldName : fieldNames) {
+            if (fieldName.isHierarchical()) {
+                pivotStrings.add(fieldName.getPivotKey());
+            }
+        }
+        return pivotStrings;
     }
 
     public List<FacetQueryEnum> getFacetQueriesForField(FieldName fieldName) {

@@ -168,46 +168,32 @@ insert into term_relationship (termrel_zdb_id,
 --!!! safe to check for deletions. Don't want to delete other load relationships.
 
 unload to removed_relationships
-select parent.term_ont_id,
+SELECT parent.term_ont_id,
        parent.term_name,
        child.term_ont_id,
        child.term_name,
        termrel_type,
        termrel_zdb_id
- from term_relationship, term as parent, term as child
- where not exists (Select 'x' from term a, term b, tmp_rels
-       	   	  	  where a.term_ont_id = termrel_term_1_id
-			  and b.term_ont_id = termrel_term_2_id
-			  and termrel_term_1_Zdb_id = a.term_zdb_id
-			  and termrel_term_2_zdb_id = b.term_zdb_id
-			  and term_relationship.termrel_type = tmp_rels.termrel_type)
- and exists (select 'x' from tmp_term_onto_no_dups, term
-     	    	    	where term_id = term_ont_id
-			and term_zdb_id = termrel_term_2_zdb_id)
-			and parent.term_zdb_id = termrel_term_1_zdb_id
-			and child.term_zdb_id = termrel_term_2_zdb_id			;
-
-
-unload to removed_relationships
-select parent.term_ont_id,
-       parent.term_name,
-       child.term_ont_id,
-       child.term_name,
-       termrel_type,
-       termrel_zdb_id
- from term_relationship, term as parent, term as child
- where not exists (Select 'x' from term a, term b, tmp_rels
-       	   	  	  where a.term_ont_id = termrel_term_1_id
-			  and b.term_ont_id = termrel_term_2_id
-			  and termrel_term_1_Zdb_id = a.term_zdb_id
-			  and termrel_term_2_zdb_id = b.term_zdb_id
-			  and term_relationship.termrel_type = tmp_rels.termrel_type)
- and exists (select 'x' from tmp_term_onto_no_dups, term
-     	    	    	where term_id = term_ont_id
-			and term_zdb_id = termrel_term_1_zdb_id)
-			and parent.term_zdb_id = termrel_term_1_zdb_id
-			and child.term_zdb_id = termrel_term_2_zdb_id			;
-
+FROM   term_relationship,
+       term AS parent,
+       term AS child
+WHERE  NOT EXISTS (SELECT 'x'
+                   FROM   term a,
+                          term b,
+                          tmp_rels
+                   WHERE  a.term_ont_id = termrel_term_1_id
+                          AND b.term_ont_id = termrel_term_2_id
+                          AND termrel_term_1_zdb_id = a.term_zdb_id
+                          AND termrel_term_2_zdb_id = b.term_zdb_id
+                          AND term_relationship.termrel_type =
+                              tmp_rels.termrel_type)
+       AND EXISTS (SELECT 'x'
+                   FROM   tmp_term_onto_no_dups,
+                          term
+                   WHERE  term_id = term_ont_id
+                          AND term_zdb_id = termrel_term_2_zdb_id)
+       AND parent.term_zdb_id = termrel_term_1_zdb_id
+       AND child.term_zdb_id = termrel_term_2_zdb_id;
 
 !echo "delete from term relationship";
 
@@ -221,15 +207,3 @@ delete from term_relationship
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_2_zdb_id);
-
-
-delete from term_relationship
- where not exists (Select 'x' from term a, term b, tmp_rels
-       	   	  	  where a.term_ont_id = termrel_term_1_id
-			  and b.term_ont_id = termrel_term_2_id
-			  and termrel_term_1_Zdb_id = a.term_zdb_id
-			  and termrel_term_2_zdb_id = b.term_zdb_id
-			  and term_relationship.termrel_type = tmp_rels.termrel_type)
- and exists (select 'x' from tmp_term_onto_no_dups, term
-     	    	    	where term_id = term_ont_id
-			and term_zdb_id = termrel_term_1_zdb_id);

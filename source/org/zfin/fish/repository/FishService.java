@@ -548,10 +548,11 @@ public class FishService {
         Map<Fish, GenotypeFishResult> statisticsMap = new TreeMap<>();
         for (FishExperiment fishExperiment : fishExperimentList) {
             Fish fish = fishExperiment.getFish();
+
             GenotypeFishResult stat = statisticsMap.get(fish);
             if (stat == null) {
                 stat = new GenotypeFishResult(fish);
-                stat.setAffectedMarkers(getAffectedGenes(fish));
+//                stat.setAffectedMarkers(getAffectedGenes(fish));
                 FishGenotypePhenotypeStatistics pheno = stat.getFishGenotypePhenotypeStatistics();
                 if (pheno == null) {
                     pheno = new FishGenotypePhenotypeStatistics(fish);

@@ -72,6 +72,9 @@ public interface MarkerRepository {
     MarkerRelationship getMarkerRelationship(Marker firstMarker,
                                              Marker secondMarker,
                                              MarkerRelationship.Type type);
+    MarkerRelationship getMarkerRelationship(Marker firstMarker,
+                                             Marker secondMarker
+                                             );
 
     List<MarkerRelationship> getMarkerRelationshipsByPublication(String publicationZdbID);
 
@@ -162,6 +165,8 @@ public interface MarkerRepository {
     MarkerHistory createMarkerHistory(Marker newMarker, Marker oldMarker, MarkerHistory.Event event, MarkerHistory.Reason resason, MarkerAlias markerAlias);
 
     MarkerType getMarkerTypeByName(String name);
+
+    MarkerType getMarkerTypeByDisplayName(String displayName);
 
     MarkerTypeGroup getMarkerTypeGroupByName(String name);
 
@@ -364,6 +369,7 @@ public interface MarkerRepository {
     List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName);
 
     List<MarkerRelationshipPresentation> getRelatedMarkerDisplayForTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types);
+    List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker,Boolean interacts);
 
     List<GeneProductsBean> getGeneProducts(String zdbID);
 
@@ -425,8 +431,8 @@ public interface MarkerRepository {
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 
     List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
-
-
+    List<TargetGeneLookupEntry> getRelationshipTargetsForString(String lookupString);
+    List<String> getMarkerTypesforRelationship(String relType);
     List<LookupEntry> getConstructComponentsForString(String lookupString, String pubZdbId);
 
 
@@ -488,4 +494,15 @@ public interface MarkerRepository {
     MarkerHistory getMarkerHistory(String zdbID);
 
     DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
+
+    List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number);
+
+    Map<String,GenericTerm> getSoTermMapping();
+
+    void copyStrSequence(SequenceTargetingReagent str1, SequenceTargetingReagent str2);
+
+    List<LookupEntry> getRegionListForString(String lookupString, String type);
+
+    ZfinSoTerm getSoIdByMarkerType(String markerType);
+
 }

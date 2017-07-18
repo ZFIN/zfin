@@ -87,6 +87,7 @@ public class WatchOntologyRefresh {
                         OntologyManager.getInstance().reloadOntology(ontology);
                         child.toFile().delete();
                     }
+                    HibernateUtil.closeSession();
                 }
             }
 

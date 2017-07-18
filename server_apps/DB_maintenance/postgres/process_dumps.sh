@@ -1,29 +1,58 @@
 #!/bin/bash
 
-unloadDirectory=$1
+startTime=$(date)
+echo $startTime
+echo ${DBNAME}
 
-if [[ -d $1 ]]; then
-    echo "$1 is a directory"
-   
-else
-    echo "$1 is not valid"
-    exit 1
-fi
+cd /research/zunloads/databases/$DBNAME/
+
+latestDump=`ls -td -- */ | head -n 1 | cut -d'/' -f1`
+echo $latestDump
+
+
+echo "*** Removing previous working directories"
+dumpToRemove=/research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump;
+
+echo "*** Dump to remove"
+echo $dumpToRemove
+
+rm -rf $dumpToRemove;
+
+echo "removed"  
+
+dirToCopy=/research/zunloads/databases/${DBNAME}/$latestDump;
+echo "*** Directory to cp:"
+echo $dirToCopy
+
+destination=/research/zunloads/databases/postgres_dumps/${DBNAME};
+echo "*** Destination to cp:"
+
+echo $destination
+
+cp -R $dirToCopy $destination
+echo "copied"
+
+echo "*** latest db specific dump to process: "
+unloadDirectory=/research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump
+
+echo $unloadDirectory
 
 cd $unloadDirectory
+
+echo "in current directory:"
+pwd
 
 rm unload_*
 rm *.err
 rm *.out
 rm btsfse*
 rm done
-rm environment_staging
-rm fish_staging
 #not sure why these two didn't come thru in the schema file
-rm paneled_markers
-rm pub_db_xref
+#rm paneled_markers
+#rm pub_db_xref
 #remove more datablade bits
 #also had to remove most recent schema changes: TODO: apply liquibase changes to postgres schema as well.
+rm affected_gene_group
 rm staging_webpages
 rm sysblderrorlog
 rm sysbldiprovided
@@ -43,22 +72,35 @@ rm webpages
 rm webtags
 rm webudrs
 
-data_files=`ls *`
+echo "*** save off blobs/clobs so they don't have to be processed for special characters."
 
 ls --hide="*.*" > filenames.txt
 
-for f in $data_files
+data_files=`ls *`
+
+echo "*** for each file, weed out characters: "
+
+for loadFile in $data_files
 do
-    echo $f
-    sed 's/|$//' $f > $f.t
-# data_note needs not to have \r replaced.
-#external_note had to hand edit file to remove ^M line 1331 then look for ^M
-  #  sed 's/\r/\\r/g' $f.t > $f.txt
-    sed 's/\r/\n/g' $f.t > $f.txt
-    #this is just for figure, lab, lab_address_update_tracking, publication, updates so far...
-    #sed 's/\r//g' $f.txt > temp
-    mv temp $f.txt
-    rm f.t
+    echo $loadFile
+    
+    #remove pipe at the end of the file b/c postgres thinks end of line pile is a delimiter 
+    sed 's/|$//' $loadFile > $loadFile.t
+
+    # data_note needs not to have \r replaced.
+    # external_note had to hand edit file to remove ^M line 1331 then look for ^M
+    sed 's/\r/\\r/g' $loadFile.t > $f.txt
+
+    #replace ^M with newline characters
+    sed 's/\r/\n/g' $f.txt > $loadFile.txt
+
+    #this is just for figure, lab, lab_address_update_tracking, publication, updates so far...strip
+    #^M inline if necessary.
+    sed 's/\r//g' $loadFile.txt > temp
+
+    mv temp $loadFile.txt
+    
+    #clean up processing steps
+    
+    rm $loadFile.t
 done
-
-

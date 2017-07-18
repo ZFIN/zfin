@@ -20,7 +20,7 @@
     </tiles:insertTemplate>
 </div>
 
-    <zfin2:cloneHead cloneBean="${formBean}"/>
+    <zfin2:cloneHead cloneBean="${formBean}" soTerm="${formBean.zfinSoTerm}"/>
 
     <zfin2:uninformativeCloneName name="${formBean.marker.abbreviation}" chimericClone="${formBean.marker.chimeric}"/>
 
@@ -52,7 +52,7 @@
 
     <zfin2:markerRelationshipsLight marker="${formBean.clone}"
                                     relationships="${formBean.markerRelationshipPresentationList}"
-                                    title="MARKER RELATIONSHIPS"
+                                    title="MARKER RELATIONSHIPS" interactsWith="no"
             />
 
     <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}"

@@ -9,14 +9,22 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Widget;
+import org.fusesource.restygwt.client.Defaults;
+import org.fusesource.restygwt.client.Method;
+import org.fusesource.restygwt.client.REST;
 import org.zfin.gwt.curation.event.*;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.ui.ZfinAsynchronousCallback;
 import org.zfin.gwt.root.util.AppUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.*;
+
+import static org.zfin.gwt.curation.ui.CurationEntryPoint.curationService;
+import static org.zfin.gwt.curation.ui.CurationEntryPoint.expressionService;
 
 /**
  * construction zone
@@ -48,6 +56,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         experimentFilter = new ExpressionExperimentDTO();
         experimentFilter.setPublicationID(publicationID);
         view.setPresenter(this);
+        Defaults.setServiceRoot(GWT.getHostPageBaseURL());
     }
 
     public void updateExperimentOnCurationFilter(ExpressionExperimentDTO experimentFilter) {
@@ -70,7 +79,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         finishExpressionNotification();
     }
 
-    private void finishExpressionNotification() {
+    protected void finishExpressionNotification() {
         unselectAllExperiments();
         if (view.showHideToggle.isVisible())
             populateDataTable();
@@ -118,8 +127,10 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             return;
         }
 
-        curationExperimentRPCAsync.createExpressionExperiment(zoneExperiment, new AddExperimentCallback());
-
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_EXPERIMENTS_BY_FILTER_START);
+        REST.withCallback(new AddExperimentCallback())
+                .call(expressionService)
+                .createExpressionExperiment(publicationID, zoneExperiment);
     }
 
     private boolean isEfgWildtypeCombo(ExpressionExperimentDTO experimentDTO) {
@@ -132,6 +143,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
 
     protected void populateDataTable() {
+        Collections.sort(experimentList);
         int elementIndex = 0;
         for (ExpressionExperimentDTO experiment : experimentList) {
             if (showSelectedExperimentsOnly && !selectedExperiments.contains(experiment))
@@ -159,8 +171,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         //Window.alert(itemText);
         if (ExpressionAssayDTO.isAntibodyAssay(itemText)) {
             view.getAntibodyList().setEnabled(true);
-            String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
-            curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
+            antibodyRefresh();
         } else {
             view.getAntibodyList().setEnabled(false);
 
@@ -170,18 +181,44 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     public void onAntibodyChange() {
         String antibodyID = view.getAntibodyList().getValue(view.getAntibodyList().getSelectedIndex());
         //Window.alert(antibodyID);
-        curationExperimentRPCAsync.readGenesByAntibody(publicationID, antibodyID, new RetrieveGeneListByAntibodyCallBack());
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_GENES_BY_ANTIBODY_START);
+        REST.withCallback(new RetrieveGeneListByAntibodyCallBack())
+                .call(expressionService)
+                .getGenesByAntibody(publicationID, antibodyID);
     }
 
     public void onGeneChange() {
         String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
         String assayName = view.getAssayList().getItemText(view.getAssayList().getSelectedIndex());
-        //Window.alert(itemText);
         // only fetch antibodies if the right assay is selected
         if (ExpressionAssayDTO.isAntibodyAssay(assayName)) {
-            curationExperimentRPCAsync.readAntibodiesByGene(publicationID, geneID, new RetrieveAntibodyList());
+            antibodyRefresh(geneID);
         }
-        curationExperimentRPCAsync.readGenbankAccessions(publicationID, geneID, new GenbankSelectionListAsyncCallback(null));
+        if (StringUtils.isNotEmpty(geneID)) {
+            AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_GENBANK_ACCESSIONS_START);
+            REST.withCallback(new GenbankSelectionListAsyncCallback())
+                    .call(expressionService)
+                    .getGenbankAccessions(publicationID, geneID);
+        } else {
+            view.getGenbankList().clear();
+        }
+    }
+
+    public void antibodyRefresh() {
+        String geneID = view.getGeneList().getValue(view.getGeneList().getSelectedIndex());
+        antibodyRefresh(geneID);
+    }
+
+    public void antibodyRefresh(String geneID) {
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_ANTIBODIES_BY_GENE_START);
+        if (StringUtils.isNotEmpty(geneID))
+            REST.withCallback(new RetrieveAntibodyList())
+                    .call(expressionService)
+                    .getAntibodiesByGene(publicationID, geneID);
+        else
+            REST.withCallback(new RetrieveAntibodyList())
+                    .call(curationService)
+                    .getAntibodies(publicationID);
     }
 
 
@@ -316,6 +353,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             return;
         }
 
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.UPDATE_EXPRESSIONS_EXPERIMENTS_START);
         curationExperimentRPCAsync.updateExperiment(updatedExperiment, new UpdateExperimentAsyncCallback());
 
     }
@@ -355,7 +393,14 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     private void retrieveConstructionZoneValues() {
         // gene list
-        curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_GENE_LIST_START);
+        try {
+            REST.withCallback(new GeneSelectionListAsyncCallback())
+                    .call(curationService)
+                    .getGenes(publicationID);
+        } catch (PublicationNotFoundException e) {
+            e.printStackTrace();
+        }
 
         // fish (genotype) list
         retrieveFishList();
@@ -366,7 +411,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
         // assay list
         message = "Error while reading the assay list";
-        curationExperimentRPCAsync.getAssays(new RetrieveAssayListCallback(message));
+        REST.withCallback(new RetrieveAssayListCallback(message))
+                .call(curationService)
+                .getAssays();
 
         // antibody list
         updateAntibodyList();
@@ -380,21 +427,28 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     public void updateEnvironmentList() {
         String message = "Error while reading the environment";
-        curationExperimentRPCAsync.getEnvironments(publicationID,
-                new RetrieveEnvironmentListCallBack(view.getEnvironmentList(), message, view.errorElement));
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_ENVIRONMENT_LIST_START);
+        REST.withCallback(new RetrieveEnvironmentListCallBack(view.getEnvironmentList(), message, view.errorElement, ExpressionModule.getModuleInfo()))
+                .call(expressionService)
+                .getExperiments(publicationID);
     }
 
     public void updateAntibodyList() {
-        curationExperimentRPCAsync.getAntibodies(publicationID, new AntibodySelectionListAsyncCallback(null));
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_ANTIBODY_LIST_START);
+        REST.withCallback(new AntibodySelectionListAsyncCallback())
+                .call(curationService)
+                .getAntibodies(publicationID);
     }
 
     public void retrieveFishList() {
-        curationExperimentRPCAsync.getFishList(publicationID, new FishSelectionListAsyncCallback());
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_FISH_LIST_START);
+        FishServiceGWT.callServer(publicationID, new FishSelectionListAsyncCallback(fishMap, view.getFishList(), view.errorElement));
     }
 
     // Retrieve experiments from the server
 
     protected void retrieveExperiments() {
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_EXPERIMENTS_BY_FILTER_START);
         curationExperimentRPCAsync.getExperimentsByFilter(experimentFilter, new RetrieveExperimentsCallback());
     }
 
@@ -428,31 +482,52 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
 
     public void selectAntibody(ExpressionExperimentDTO selectedExperiment) {
-        curationExperimentRPCAsync.getAntibodies(publicationID,
-                new AntibodySelectionListAsyncCallback(selectedExperiment.getAntibodyMarker().getZdbID()));
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_ANTIBODY_LIST_START);
+        REST.withCallback(new AntibodySelectionListAsyncCallback(selectedExperiment.getAntibodyMarker().getZdbID()))
+                .call(curationService)
+                .getAntibodies(publicationID);
     }
 
     public void setGene(ExpressionExperimentDTO selectedExperiment) {
-        curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(selectedExperiment.getGene()));
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_GENE_LIST_START);
+        getGenesAjax(selectedExperiment);
+    }
+
+    private void getGenesAjax(ExpressionExperimentDTO selectedExperiment) {
+        try {
+            if (selectedExperiment != null)
+                REST.withCallback(new GeneSelectionListAsyncCallback(selectedExperiment.getGene()))
+                        .call(curationService)
+                        .getGenes(publicationID);
+            else
+                REST.withCallback(new GeneSelectionListAsyncCallback())
+                        .call(curationService)
+                        .getGenes(publicationID);
+        } catch (PublicationNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void readGenbankAccessions(ExpressionExperimentDTO selectedExperiment) {
         String geneID = selectedExperiment.getGene().getZdbID();
         String genBankID = selectedExperiment.getGenbankID();
-        curationExperimentRPCAsync.readGenbankAccessions(publicationID, geneID, new GenbankSelectionListAsyncCallback(genBankID));
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_GENBANK_ACCESSIONS_START);
+        REST.withCallback(new GenbankSelectionListAsyncCallback(genBankID))
+                .call(expressionService)
+                .getGenbankAccessions(publicationID, geneID);
     }
 
     public void deleteExperiment(final ExpressionExperimentDTO experiment) {
-        curationExperimentRPCAsync.deleteExperiment(experiment.getExperimentZdbID(), new DeleteExperimentCallback(experiment));
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.DELETE_EXPRESSION_EXPERIMENT_START);
+        REST.withCallback(new DeleteExperimentCallback(experiment))
+                .call(expressionService)
+                .deleteExperiment(publicationID, experiment.getExperimentZdbID());
     }
 
 
     public void updateGenes() {
-        if (lastSelectedExperiment != null)
-            curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(lastSelectedExperiment.getGene()));
-        else
-            curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));
-
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_GENE_LIST_START);
+        getGenesAjax(lastSelectedExperiment);
     }
 
     public void onShowHideClick(boolean visibility) {
@@ -482,13 +557,14 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
 //////////////////////// Handler
 
-    private class RetrieveAssayListCallback extends ZfinAsyncCallback<List<String>> {
+    private class RetrieveAssayListCallback extends ZfinAsynchronousCallback<List<String>> {
         public RetrieveAssayListCallback(String message) {
             super(message, view.errorElement);
         }
 
+
         @Override
-        public void onSuccess(List<String> assays) {
+        public void onSuccess(Method method, List<String> assays) {
             //Window.alert("brought back: " + experiments.size() );
             StringListBox assayList = view.getAssayList();
             assayList.clear();
@@ -639,52 +715,51 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
-    private class AddExperimentCallback extends ZfinAsyncCallback<ExpressionExperimentDTO> {
+    private class AddExperimentCallback extends ZfinAsynchronousCallback<ExpressionExperimentDTO> {
         public AddExperimentCallback() {
-            super("Error while creating experiment", view.errorElement);
+            super("Error while creating experiment", view.errorElement,
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_EXPERIMENTS_BY_FILTER_STOP);
         }
 
         @Override
-        public void onSuccess(ExpressionExperimentDTO newExperiment) {
-            super.onSuccess(newExperiment);
+        public void onSuccess(Method method, ExpressionExperimentDTO newExperiment) {
+            super.onSuccess(method, newExperiment);
             addButtonInProgress = false;
-            retrieveExperiments();
+            experimentList.add(newExperiment);
+            populateDataTable();
             AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CREATE_EXPRESSION_EXPERIMENT, newExperiment.toString()));
         }
 
     }
 
-
     private class RetrieveExperimentsCallback extends ZfinAsyncCallback<List<ExpressionExperimentDTO>> {
 
         public RetrieveExperimentsCallback() {
-            super("Error while reading Experiment Filters", view.errorElement, view.loadingImage);
+            super("Error while reading Experiment Filters", view.errorElement, view.loadingImage,
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_EXPERIMENTS_BY_FILTER_STOP);
         }
 
         @Override
         public void onSuccess(List<ExpressionExperimentDTO> list) {
             super.onSuccess(list);
             experimentList.clear();
-            for (ExpressionExperimentDTO experiment : list) {
-                if (experiment.getEnvironment().getName().startsWith("_"))
-                    experiment.getEnvironment().setName(experiment.getEnvironment().getName().substring(1));
-                experimentList.add(experiment);
-            }
-            Collections.sort(experimentList);
+            experimentList.addAll(list);
             //Window.alert("SIZE: " + experiments.size());
             populateDataTable();
         }
 
     }
 
-    private class RetrieveGeneListByAntibodyCallBack extends ZfinAsyncCallback<List<MarkerDTO>> {
+    private class RetrieveGeneListByAntibodyCallBack extends ZfinAsynchronousCallback<List<MarkerDTO>> {
         public RetrieveGeneListByAntibodyCallBack() {
-            super("Error while reading genes by antibodies", view.errorElement);
+            super("Error while reading genes by antibodies", view.errorElement,
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_GENES_BY_ANTIBODY_STOP);
         }
 
         @Override
-        public void onSuccess(List<MarkerDTO> genes) {
+        public void onSuccess(Method method, List<MarkerDTO> genes) {
             //                Window.alert("brought back: " + genes.size() );
+            super.onFinish();
             StringListBox geneList = view.getGeneList();
             String selectedGeneID = geneList.getValue(geneList.getSelectedIndex());
             //Window.alert("Selected Gene: " + selectedGeneID);
@@ -702,17 +777,19 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
-    private class DeleteExperimentCallback extends ZfinAsyncCallback<Void> {
+    private class DeleteExperimentCallback extends ZfinAsynchronousCallback<Void> {
 
         private ExpressionExperimentDTO experiment;
 
         DeleteExperimentCallback(ExpressionExperimentDTO experiment) {
-            super("Error while deleting Experiment", view.errorElement);
+            super("Error while deleting Experiment", view.errorElement,
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.DELETE_EXPRESSION_EXPERIMENT_STOP);
             this.experiment = experiment;
         }
 
         @Override
-        public void onSuccess(Void exp) {
+        public void onSuccess(Method method, Void exp) {
+            super.onFinish();
             experimentList.remove(experiment);
             populateDataTable();
             // also remove the figure annotations that were used with this experiments
@@ -722,17 +799,23 @@ public class ExpressionExperimentZonePresenter implements Presenter {
 
     }
 
-    private class GenbankSelectionListAsyncCallback extends ZfinAsyncCallback<List<ExpressionExperimentDTO>> {
+    private class GenbankSelectionListAsyncCallback extends ZfinAsynchronousCallback<List<ExpressionExperimentDTO>> {
 
         private String selectedGenBankID;
 
+        public GenbankSelectionListAsyncCallback() {
+            super("Error retrieving GenBank list", view.errorElement,
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_GENBANK_ACCESSIONS_STOP);
+        }
+
         public GenbankSelectionListAsyncCallback(String genBankID) {
-            super("Error retrieving GenBank list", view.errorElement);
+            this();
             this.selectedGenBankID = genBankID;
         }
 
         @Override
-        public void onSuccess(List<ExpressionExperimentDTO> accessions) {
+        public void onSuccess(Method method, List<ExpressionExperimentDTO> accessions) {
+            super.onFinish();
             StringListBox genbankList = view.getGenbankList();
             genbankList.clear();
             genbankList.addItem("");
@@ -757,17 +840,23 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      * 2) copying an existing experiment into the construction zone and
      * selecting the antibody of the selected experiment
      */
-    class AntibodySelectionListAsyncCallback extends ZfinAsyncCallback<List<MarkerDTO>> {
+    class AntibodySelectionListAsyncCallback extends ZfinAsynchronousCallback<List<MarkerDTO>> {
 
         private String selectedAntibodyID;
 
+        private AntibodySelectionListAsyncCallback() {
+            super("Error reading antibody list", view.errorElement,
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_ANTIBODY_LIST_STOP);
+        }
+
         private AntibodySelectionListAsyncCallback(String selectedAntibodyID) {
-            super("Error reading antibody list", view.errorElement);
+            this();
             this.selectedAntibodyID = selectedAntibodyID;
         }
 
         @Override
-        public void onSuccess(List<MarkerDTO> antibodies) {
+        public void onSuccess(Method method, List<MarkerDTO> antibodies) {
+            super.onFinish();
             //Window.alert("brought back: " + experiments.size() );
             StringListBox antibodyList = view.getAntibodyList();
             StringListBox assayList = view.getAssayList();
@@ -795,15 +884,17 @@ public class ExpressionExperimentZonePresenter implements Presenter {
         }
     }
 
-    private class RetrieveAntibodyList extends ZfinAsyncCallback<List<MarkerDTO>> {
+    private class RetrieveAntibodyList extends ZfinAsynchronousCallback<List<MarkerDTO>> {
 
         public RetrieveAntibodyList() {
-            super("Error retrieving Antibody list", view.errorElement);
+            super("Error retrieving Antibody list", view.errorElement,
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.READ_ANTIBODIES_BY_GENE_STOP);
         }
 
         @Override
-        public void onSuccess(List<MarkerDTO> antibodies) {
+        public void onSuccess(Method method, List<MarkerDTO> antibodies) {
 //                Window.alert("brought back: " + antibodies.size() );
+            super.onFinish();
             StringListBox antibodyList = view.getAntibodyList();
             String selectedAntibodyID = antibodyList.getValue(antibodyList.getSelectedIndex());
             //Window.alert("Selected Antibody: " + selectedAntibodyID);
@@ -829,54 +920,36 @@ public class ExpressionExperimentZonePresenter implements Presenter {
      * 2) copying an existing experiment into the construction zone and
      * selecting the gene of the selected experiment
      */
-    private class GeneSelectionListAsyncCallback extends ZfinAsyncCallback<List<FilterSelectionBoxEntry>> {
+    private class GeneSelectionListAsyncCallback extends ZfinAsynchronousCallback<List<MarkerDTO>> {
 
         private MarkerDTO selectedGene;
 
+        private GeneSelectionListAsyncCallback() {
+            super("Error retrieving gene selection list", view.errorElement,
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_GENE_LIST_STOP);
+        }
+
         private GeneSelectionListAsyncCallback(MarkerDTO selectedGene) {
-            super("Error retrieving gene selection list", view.errorElement);
+            this();
             this.selectedGene = selectedGene;
         }
 
         @Override
-        public void onSuccess(List<FilterSelectionBoxEntry> genes) {
+        public void onSuccess(Method method, List<MarkerDTO> genes) {
+            super.onFinish();
             //Window.alert("brought back genes: " + genes.size());
             StringListBox geneList = view.getGeneList();
             geneList.clear();
             geneMap.clear();
             geneList.addItem("");
             int rowIndex = 1;
-            for (MarkerDTO gene : (List<MarkerDTO>) (List<?>) genes) {
+            for (MarkerDTO gene : genes) {
                 geneList.addItem(gene.getName(), gene.getZdbID());
                 if (selectedGene != null && selectedGene.getZdbID() != null && gene.getZdbID().equals(selectedGene.getZdbID())) {
                     geneList.setSelectedIndex(rowIndex);
                 }
                 geneMap.put(gene.getZdbID(), gene);
                 rowIndex++;
-            }
-        }
-    }
-
-    private class FishSelectionListAsyncCallback extends ZfinAsyncCallback<List<FilterSelectionBoxEntry>> {
-
-        private FishSelectionListAsyncCallback() {
-            super("Error retrieving fish selection list", view.errorElement);
-        }
-
-        @Override
-        public void onSuccess(List<FilterSelectionBoxEntry> fishDTOList) {
-            fishMap.clear();
-            int index = 0;
-            StringListBox listBox = view.getFishList();
-            listBox.clear();
-            for (FishDTO fish : (List<FishDTO>) (List<?>) fishDTOList) {
-                if (fish.getName().startsWith("---")) {
-                    listBox.addItem(fish.getHandle(), fish.getZdbID());
-                    listBox.getElement().getElementsByTagName("option").getItem(index).setAttribute("disabled", "disabled");
-                } else
-                    listBox.addItem(fish.getHandle(), fish.getZdbID());
-                index++;
-                fishMap.put(fish.getZdbID(), fish);
             }
         }
     }
@@ -925,7 +998,8 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     private class UpdateExperimentAsyncCallback extends ZfinAsyncCallback<ExpressionExperimentDTO> {
 
         private UpdateExperimentAsyncCallback() {
-            super("Error while updating experiment", view.errorElement);
+            super("Error while updating experiment", view.errorElement,
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.UPDATE_EXPRESSIONS_EXPERIMENTS_STOP);
         }
 
         @Override

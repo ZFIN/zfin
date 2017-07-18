@@ -11,6 +11,7 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
@@ -36,12 +37,15 @@ public class PseudoGeneViewController {
     @Autowired
     private MarkerRepository markerRepository;
 
-    @RequestMapping(value = "/pseudogene/view")
-    public String getGeneView(Model model,
-                              @PathVariable("zdbID") String zdbID) throws Exception {
+    @Autowired
+    private MarkerService markerService;
+
+    @RequestMapping(value = "/pseudogene/view/{zdbID}")
+    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
+        zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
         Marker gene = markerRepository.getMarkerByID(zdbID);
         logger.info("gene: " + gene);
@@ -66,6 +70,9 @@ public class PseudoGeneViewController {
 
         // (Transcripts)
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
+        geneBean.setRelatedInteractions(markerRepository.getRelatedMarkerDisplayForTypes(
+                gene, true, MarkerRelationship.Type.RNAGENE_INTERACTS_WITH_GENEP));
+
 
         // ORTHOLOGY
         geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));

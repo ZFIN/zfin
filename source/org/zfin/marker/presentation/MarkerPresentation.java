@@ -5,22 +5,20 @@ import org.apache.log4j.Logger;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.Transcript;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationPresentation;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.Sequence;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Presentation Class to create output from a marker object.
@@ -30,7 +28,6 @@ import java.util.*;
 public class MarkerPresentation extends EntityPresentation {
 
     private static final Logger logger = Logger.getLogger(MarkerPresentation.class);
-    public static final String marker_uri = "marker/view/";
     public static final String MARKER_NAME = "markerName";
 
     /**
@@ -41,14 +38,19 @@ public class MarkerPresentation extends EntityPresentation {
      */
     public static String getName(Marker marker) {
         String cssClassName;
-        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM) || marker.isInTypeGroup(Marker.TypeGroup.EFG)) {
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM) || marker.isInTypeGroup(Marker.TypeGroup.EFG)|| marker.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
             cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
         } else if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
             cssClassName = Marker.TypeGroup.CONSTRUCT.toString().toLowerCase();
         } else {
             cssClassName = NONGENEDOMMARKER;
         }
-        return getSpanTagWithID(cssClassName, marker.getAbbreviation(), marker.getName(), MARKER_NAME);
+        if(marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
+            return getSpanTagWithID(cssClassName, marker.getName(), marker.getName(), MARKER_NAME);
+        }
+        else{
+            return getSpanTagWithID(cssClassName, marker.getAbbreviation(), marker.getName(), MARKER_NAME);
+        }
     }
 
     /**
@@ -90,7 +92,7 @@ public class MarkerPresentation extends EntityPresentation {
 
     /**
      * Should be of the form.
-     * [atp6va0a1|http://zfin.org/action/marker/view/ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
+     * [atp6va0a1|http://zfin.org/ZDB-GENE-030131-302|ATPase, H+ transporting, lysosomal V0 subunit a isoform 1]
      *
      * @param marker Marker to render.
      * @return A rendered wiki link.
@@ -101,7 +103,9 @@ public class MarkerPresentation extends EntityPresentation {
 
 
     public static String getMarkerLink(Marker marker) {
-        return getTomcatLink(marker_uri, marker.getZdbID(), getAbbreviation(marker), marker.getName());
+
+            return getViewLink(marker.getZdbID(), getAbbreviation(marker), marker.getName(), null, marker.getZdbID());
+
     }
 
     public static String getMarkerLinkByZfinEntity(ZfinEntity entity) {
@@ -180,16 +184,15 @@ public class MarkerPresentation extends EntityPresentation {
     }
 
     public static String getTranscriptLink(Transcript transcript) {
-        return getTomcatLink(marker_uri, transcript.getZdbID(), getName(transcript), null) + (transcript.isWithdrawn() ? WITHDRAWN : "");
+        return getViewLink(transcript.getZdbID(), getName(transcript)) + (transcript.isWithdrawn() ? WITHDRAWN : "");
     }
 
     public static String getCloneLink(Marker marker) {
-//        return getTomcatLink(clone_uri, marker.getZdbID(), getAbbreviation(marker));
-        return getTomcatLink(marker_uri, marker.getZdbID(), getAbbreviation(marker));
+        return getViewLink(marker.getZdbID(), getAbbreviation(marker));
     }
 
     public static String getAntibodyLink(Marker marker) {
-        return getTomcatLink(marker_uri, marker.getZdbID(), marker.getName(), null, marker.getAbbreviation());
+        return getViewLink(marker.getZdbID(), marker.getName(), marker.getZdbID(), null, marker.getAbbreviation());
     }
 
     /**
@@ -257,7 +260,7 @@ public class MarkerPresentation extends EntityPresentation {
      */
     public static String getAbbreviation(Marker marker) {
         String cssClassName;
-        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)||marker.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
             cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
         } else if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
             cssClassName = Marker.TypeGroup.CONSTRUCT.toString().toLowerCase();
@@ -341,8 +344,7 @@ public class MarkerPresentation extends EntityPresentation {
         if (publicationCount == 1) {
             return PublicationPresentation.getSingleAttributionLink(publicationZdbID, publicationCount);
         } else {
-            return PublicationPresentation.getMultipleAttributionLink(markerZdbID, additionalZdbID,
-                    "marker", "standard", publicationCount);
+            return PublicationPresentation.getMultipleAttributionLink(markerZdbID, additionalZdbID, publicationCount);
         }
     }
 

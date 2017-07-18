@@ -1,13 +1,11 @@
 package org.zfin.marker.presentation;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
@@ -26,9 +24,6 @@ import org.zfin.sequence.service.TranscriptService;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- */
 @Controller
 @RequestMapping("/marker")
 public class TranscriptViewController {
@@ -36,14 +31,14 @@ public class TranscriptViewController {
     private Logger logger = Logger.getLogger(TranscriptViewController.class);
 
     @Autowired
-    private MarkerRepository markerRepository ;
+    private MarkerRepository markerRepository;
 
-    @RequestMapping(value = "/transcript-view")
-    String getTranscriptView(Model model
-            , @RequestParam("zdbID") String zdbID
-            , @RequestHeader("User-Agent") String userAgent)
-            throws Exception {
+    @Autowired
+    private MarkerService markerService;
 
+    @RequestMapping(value = "/transcript/view/{zdbID}")
+    public String getTranscriptView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        zdbID = markerService.getActiveMarkerID(zdbID);
         // set base bean
         TranscriptBean transcriptBean = new TranscriptBean();
         transcriptBean.setZdbID(zdbID);
@@ -99,11 +94,6 @@ public class TranscriptViewController {
         } else {
             //build the collection of relatedTranscripts for each gene
             boolean showGBrowse = true;
-            logger.debug("User-Agent: " + userAgent);
-            if (StringUtils.contains(userAgent, "Java") || StringUtils.contains(userAgent, "Indexer")) {
-                logger.debug("getting viewed by indexer, load less data");
-                showGBrowse = false;
-            }
 
             List<RelatedTranscriptDisplay> relatedTranscriptDisplayList = new ArrayList<RelatedTranscriptDisplay>();
 
@@ -129,7 +119,7 @@ public class TranscriptViewController {
         //the targets of the transcript, should only get filled for
         //microRNA - but should that restriction come from the DB or code?
 //        if (transcript.getTranscriptType().getType().equals(TranscriptType.Type.MIRNA.toString())) {
-        if (transcript.getTranscriptType().getType() == TranscriptType.Type.MIRNA){
+        if (transcript.getTranscriptType().getType() == TranscriptType.Type.MIRNA) {
             transcriptBean.setTranscriptTargets(TranscriptService.getTranscriptTargets(transcript));
         }
 

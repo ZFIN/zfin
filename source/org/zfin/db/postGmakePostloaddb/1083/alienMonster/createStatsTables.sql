@@ -9,9 +9,11 @@ create table daily_indexed_metric (dim_pk_id serial8 not null constraint dim_pk_
 				    dim_number_phenotype_bin int default 0 not null constraint dim_number_phenotype_bin_not_null,
 				    dim_number_expression_bin int default 0 not null constraint dim_number_expression_bin_not_null,
 				    dim_number_closed_no_data int default 0 not null constraint dim_number_closed_no_data_not_null,
+				    dim_number_closed_no_pdf int default 0 not null constraint dim_number_closed_no_pdf_not_null,
 				    dim_date_captured datetime year to second default current year to second not null constraint dim_date_captured_not_null)
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 2048 next size 2048;
+
 
 create unique index daily_indexed_metric_pk_index
   on daily_indexed_metric (dim_pk_id)

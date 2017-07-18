@@ -10,8 +10,9 @@
             scope: {
                 markerId: '@',
                 edit: '=',
-                markerAbbrev: '@'
-                },
+                markerAbbrev: '@',
+                interacts: '@'
+            },
             controller: GeneMarkerRelationshipController,
             controllerAs: 'mkrreln',
             bindToController: true
@@ -40,21 +41,34 @@
 
         function init() {
 
-            MarkerService.getRelationshipsForEdit(mkrreln.markerId)
-                
-                .then(function (relationships) {
-                    mkrreln.relationships = relationships;
-                    })
-              
+            MarkerService.getRelationshipTypes(mkrreln.markerId, mkrreln.interacts)
+
+                .then(function (relationshipTypes) {
+                    mkrreln.relationshipTypes = relationshipTypes;
+                })
+
                 .catch(function (error) {
                     console.error(error);
                 });
-           
+
+
+            MarkerService.getRelationshipsForEdit(mkrreln.markerId, mkrreln.interacts)
+
+                .then(function (relationships) {
+
+                    mkrreln.relationships = relationships;
+                })
+
+                .catch(function (error) {
+                    console.error(error);
+                });
+
         }
-        
+
         function openAddNewRelationship() {
             MarkerService.openModalPopup('new-relationship-modal');
         }
+
         function addNewRelationship() {
             if (!mkrreln.newRelationship) {
                 mkrreln.errorMessage = 'Relationship cannot be empty.';
@@ -63,16 +77,17 @@
             } else if (!mkrreln.newAttribution) {
                 mkrreln.errorMessage = 'Reference cannot be empty.';
             } else {
+                mkrreln.errorMessage = '';
                 mkrreln.processing = true;
                 var first = {zdbID: mkrreln.markerId};
                 var second = {name: mkrreln.newGene};
                 //var reln="gene contains small segment"
                 MarkerService.addGeneRelationship(first, second, mkrreln.newRelationship, mkrreln.newAttribution)
                     .then(function (relationship) {
-                         mkrreln.relationships.unshift(relationship);
+                        mkrreln.relationships.unshift(relationship);
                         mkrreln.newGene = '';
                         mkrreln.newAttribution = '';
-                        mkrreln.errorMessage='';
+                        mkrreln.errorMessage = '';
                         close();
                         init();
                     })
@@ -128,6 +143,7 @@
             MarkerService.openModalPopup('delete-relationship-modal');
         }
 
+
         function deleteRelationship() {
             MarkerService.removeRelationship(mkrreln.otherLink)
                 .then(function () {
@@ -138,9 +154,9 @@
                     mkrreln.errorMessage = error.data.message;
                 });
         }
-        
+
         function close() {
-        
+
             mkrreln.errorMessage = '';
             mkrreln.newGene = '';
             mkrreln.newAttribution = '';

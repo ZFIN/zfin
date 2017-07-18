@@ -82,15 +82,17 @@ public class PublicationEditController {
 
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public String showNewPublicationForm(@ModelAttribute Publication publication) {
+    public String showNewPublicationForm(@ModelAttribute PublicationBean publicationBean) {
         // default type should be journal
+        Publication publication = new Publication();
         publication.setType(Publication.Type.JOURNAL);
+        publicationBean.setPublication(publication);
         return "publication/add-publication.page";
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String processNewPublication(Model model,
-                                        @Valid @ModelAttribute Publication publication,
+                                        @Valid @ModelAttribute PublicationBean publication,
                                         BindingResult result,
                                         RedirectAttributes ra) { // keeps the query parameters off of the redirect URL
 
@@ -100,7 +102,7 @@ public class PublicationEditController {
 
         Publication newPublication = new Publication();
         try {
-            Collection<BeanFieldUpdate> updates = publicationService.mergePublicationFromForm(publication, newPublication);
+            Collection<BeanFieldUpdate> updates = publicationService.mergePublicationFromForm(publication.getPublication(), newPublication);
             publicationRepository.addPublication(newPublication);
             for (BeanFieldUpdate update : updates) {
                 infrastructureRepository.insertUpdatesTable(newPublication, update, "Add pub");
@@ -119,16 +121,22 @@ public class PublicationEditController {
         if (publication == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
-        model.addAttribute("publication", publication);
+        PublicationBean publicationBean = new PublicationBean();
+        publicationBean.setPublication(publication);
+        if (publication.getAccessionNumber() != null)
+            publicationBean.setAccessionNumber(publication.getAccessionNumber().toString());
+
+        model.addAttribute("publicationBean", publicationBean);
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Editing " + publication.getCitation());
+        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Pub: " + publication.getTitle());
         return "publication/edit-publication.page";
     }
 
     @RequestMapping(value = "/{zdbID}/edit", method = RequestMethod.POST)
     public String processUpdatedPublication(Model model,
                                             @PathVariable String zdbID,
-                                            @Valid @ModelAttribute Publication publication,
+                                            @Valid @ModelAttribute PublicationBean publicationBean,
                                             BindingResult result,
                                             RedirectAttributes ra) {
         Publication existingPublication = publicationRepository.getPublication(zdbID);
@@ -137,6 +145,7 @@ public class PublicationEditController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
+        Publication publication = publicationBean.getPublication();
         boolean hasFigureWithImages = existingPublication.getFigures().stream().anyMatch(f -> !f.isImgless());
         if (!publication.isCanShowImages() && existingPublication.isCanShowImages() && hasFigureWithImages) {
             result.rejectValue("canShowImages", "canShowImages.existingFigures");
@@ -172,10 +181,6 @@ public class PublicationEditController {
 
     @RequestMapping(value = "/{zdbID}/link")
     public String linkAuthors(@PathVariable String zdbID, Model model, HttpServletResponse response) {
-
-        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-
-
         Publication publication = publicationRepository.getPublication(zdbID);
         //try zdb_replaced data if necessary
         if (publication == null) {
@@ -191,10 +196,15 @@ public class PublicationEditController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-
-        model.addAttribute("publication",publication);
-
+        PublicationBean bean = new PublicationBean();
+        bean.setPublication(publication);
+        if (publication.getAccessionNumber() != null)
+            bean.setAccessionNumber(publication.getAccessionNumber().toString());
+        model.addAttribute("publicationBean", bean);
         model.addAttribute("authorStrings", publicationService.splitAuthorListString(publication.getAuthors()));
+        model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Link Authors: " + publication.getTitle());
 
         return "publication/link-authors.page";
     }
@@ -309,7 +319,7 @@ public class PublicationEditController {
             logger.error("Error in Transaction", exception);
             throw new RuntimeException("Error during transaction. Rolled back.", exception);
         }
-        
+
 
     }
 
@@ -338,7 +348,6 @@ public class PublicationEditController {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-
 
 
         Transaction tx = null;

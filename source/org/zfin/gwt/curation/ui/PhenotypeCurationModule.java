@@ -3,9 +3,11 @@ package org.zfin.gwt.curation.ui;
 import org.zfin.gwt.curation.event.ChangeCurationFilterEvent;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
+import org.zfin.gwt.curation.ui.fish.FishModule;
 import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.ZfinModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +70,9 @@ public class PhenotypeCurationModule implements ZfinCurationModule, HandlesError
             curationFilterModule.refreshFishList();
         }
         if (event.getEventType().is(EventType.CUD_EXPERIMENT_CONDITION)) {
+            mutantExpressionModule.retrieveExperimentConditionList();
+        }
+        if (event.getEventType().is(EventType.CUD_EXPERIMENT)) {
             mutantExpressionModule.retrieveExperimentConditionList();
         }
         if (event.getEventType().is(EventType.ADD_REMOVE_ATTRIBUTION_FEATURE)) {
@@ -157,4 +162,7 @@ public class PhenotypeCurationModule implements ZfinCurationModule, HandlesError
         handlesErrorListeners.add(handlesError);
     }
 
+    public static ZfinModule getModuleInfo() {
+        return new ZfinModule(CurationTab.PHENO.getName(), PhenotypeCurationModule.class.getName());
+    }
 }
