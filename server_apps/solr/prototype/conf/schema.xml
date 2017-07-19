@@ -403,7 +403,7 @@
               <tokenizer class="solr.KeywordTokenizerFactory"/>
               <filter class="solr.ASCIIFoldingFilterFactory"/>
               <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.PatternReplaceFilterFactory" pattern="([^a-zA-Z0-9])" replacement="" replace="all"/>
+              <filter class="solr.PatternReplaceFilterFactory" pattern="([^a-zA-Z0-9 ])" replacement="" replace="all"/>
           </analyzer>
       </fieldType>
 
