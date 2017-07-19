@@ -1038,3 +1038,12 @@ input + label {
     color: red !important;
     font-weight: normal !important;
 }
+
+.pub-search-results {
+    width: 100%;
+    margin-bottom: 1.5em;
+}
+
+.pub-search-results > caption {
+    margin-bottom: 1.5em;
+}

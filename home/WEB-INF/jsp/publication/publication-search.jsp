@@ -3,7 +3,7 @@
 <jsp:useBean id="formBean" class="org.zfin.publication.presentation.PublicationSearchBean" scope="request"/>
 
 <c:if test="${!formBean.isEmpty()}">
-    <table>
+    <table class="pub-search-results">
         <caption>
             Publication Search Results<br>
             (<b>${formBean.totalRecords}</b> records found)
