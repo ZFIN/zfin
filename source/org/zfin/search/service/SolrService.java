@@ -504,7 +504,7 @@ public class SolrService {
         urlCreator.removeNameValuePair("page");
         if (StringUtils.equals("category", fieldName)) {
             urlCreator.removeNameValuePair("category");
-            urlCreator.addNamevaluePair("category", value);
+            urlCreator.addNameValuePair("category", value);
         }
         return urlCreator.getURL();
     }
