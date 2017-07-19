@@ -103,16 +103,31 @@
             <td class="submitbar" bgcolor="#cccccc" colspan="2">
                 <input value="Search" type="submit">
                 <input value="Reset" type="reset">
+                <input value="List all publications" type="button" id="list-all-pubs">
             </td>
         </tr>
     </table>
 </form:form>
 
 <script>
-    var $form = $("#pub-search-form");
-    $form.find(":reset").click(function (evt) {
-        evt.preventDefault();
-        $form.find('input:text').val('');
-        $form.find('select option:first-child').attr('selected', true);
+    $(function () {
+        function resetForm($form) {
+            $form.find('input:text').val('');
+            $form.find('select option:first-child').attr('selected', true);
+        }
+
+        var $form = $("#pub-search-form");
+        $form.find(":reset").click(function (evt) {
+            evt.preventDefault();
+            resetForm($form);
+        });
+        $('#list-all-pubs').click(function (evt) {
+            evt.preventDefault();
+            resetForm($form);
+            $form.submit();
+        });
     });
+
+
+
 </script>
