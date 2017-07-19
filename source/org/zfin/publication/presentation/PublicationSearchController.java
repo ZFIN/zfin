@@ -35,6 +35,7 @@ public class PublicationSearchController {
         model.addAttribute("yearTypes", PublicationSearchBean.YearType.values());
         model.addAttribute("centuries", PublicationSearchBean.Century.values());
         model.addAttribute("pubTypes", Publication.Type.values());
+        model.addAttribute("sortOrders", PublicationSearchBean.Sort.values());
         return "publication/publication-search.page";
     }
 

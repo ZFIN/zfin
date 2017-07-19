@@ -49,8 +49,16 @@ public class PublicationSearchService {
                     break;
             }
         }
-        query.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
-        query.addSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
+        switch (formBean.getSort()) {
+            case YEAR:
+                query.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
+                query.addSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
+                break;
+            case AUTHOR:
+                query.addSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
+                query.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
+                break;
+        }
         query.setRows(formBean.getMaxDisplayRecordsInteger());
         query.setStart((formBean.getPageInteger() - 1) * formBean.getMaxDisplayRecordsInteger());
 

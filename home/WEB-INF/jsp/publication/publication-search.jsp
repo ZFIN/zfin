@@ -88,6 +88,14 @@
                             </form:select>
                         </td>
                     </tr>
+                    <tr>
+                        <th><form:label path="sort" cssClass="namesearchLabel">Order by</form:label></th>
+                        <td>
+                            <form:select path="sort">
+                                <form:options items="${sortOrders}" itemLabel="display" />
+                            </form:select>
+                        </td>
+                    </tr>
                 </table>
             </td>
         </tr>

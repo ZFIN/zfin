@@ -39,6 +39,21 @@ public class PublicationSearchBean extends PaginationBean {
         }
     }
 
+    public enum Sort {
+        YEAR("Pub Date"),
+        AUTHOR("Author");
+
+        private final String display;
+
+        Sort(String display) {
+            this.display = display;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
+    }
+
     private String author;
     private String title;
     private String journal;
@@ -48,6 +63,7 @@ public class PublicationSearchBean extends PaginationBean {
     private Century century;
     private String twoDigitYear;
     private Publication.Type pubType;
+    private Sort sort;
 
     private List<Publication> results;
 
@@ -121,6 +137,14 @@ public class PublicationSearchBean extends PaginationBean {
 
     public void setPubType(Publication.Type pubType) {
         this.pubType = pubType;
+    }
+
+    public Sort getSort() {
+        return sort;
+    }
+
+    public void setSort(Sort sort) {
+        this.sort = sort;
     }
 
     public List<Publication> getResults() {
