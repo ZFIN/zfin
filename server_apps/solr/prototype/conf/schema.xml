@@ -506,6 +506,7 @@
    <field name="tdate" type="tdate" indexed="true" stored="false"   />
 
      <field name="name_sort" type="sortable-string" indexed="true" stored="true"  />
+     <field name="author_sort" type="sortable-string" indexed="true" stored="true" />
 
    <field name="regulatory_region" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="coding_sequence" type="keyword" indexed="true" stored="true" multiValued="true"   />
@@ -929,6 +930,7 @@
    <copyField source="journal" dest="journal_t"/>
     <copyField source="journal_name" dest="journal_name_t"/>
    <copyField source="registered_author" dest="registered_author_t"/>
+   <copyField source="author_string" dest="author_sort" />
    <copyField source="id" dest="id_t"/>
    <copyField source="name" dest="name_t"/>
    <copyField source="disease_model" dest="disease_model_t"/>

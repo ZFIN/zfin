@@ -29,6 +29,7 @@ public enum FieldName {
     ANTIGEN_GENE("antigen_gene"),
     ASSAY("assay"),
     AUTHOR("registered_author"),
+    AUTHOR_SORT("author_sort"),
     AUTHOR_STRING("author_string","Author List"),
     BACKGROUND("background"),
     BIOLOGICAL_PROCESS("biological_process"),
