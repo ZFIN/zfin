@@ -3,6 +3,9 @@
 startTime=$(date)
 echo $startTime
 
+mkdir -p /tmp/abstracts/
+mkdir -p /tmp/nonzf_pubs/
+
 echo "drop tables in informixd that are not migrating to postgres"
 
 ${INFORMIXDIR}/bin/dbaccess ${DBNAME} ${SOURCEROOT}/server_apps/DB_maintenance/postgres/dropTables.sql
@@ -96,7 +99,17 @@ sed 's/(142 rows)//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sq
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql
 
+# unload the clobs and store in /tmp/abstracts and /tmp/nonzf_pubs
+${INFORMIXDIR}/bin/dbaccess ${DBNAME} ${SOURCEROOT}/server_apps/DB_maintenance/postgres/unloadAbstract.sql
+
+# update the schema definition in postgres to use 'bytea' as per the postgres doc suggestions
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/changeSmartLargeObjects.sql
 
+# create the update statements that we need to load up the clobs.
+${SOURCEROOT}/server_apps/DB_maintenance/postgres/createClobLoadStatements.sh
 
+# load up the clobs into postgres
+${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/clobLoad.sql
+
+# dump the fixed database
 ${PGBINDIR}/pg_dump ${DBNAME} > /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump
