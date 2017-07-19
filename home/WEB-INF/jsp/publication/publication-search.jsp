@@ -38,7 +38,7 @@
     </span>
 </div>
 
-<form:form method="get" modelAttribute="formBean">
+<form:form method="get" modelAttribute="formBean" id="pub-search-form">
     <table width="100%">
         <tr valign="top">
             <td width="50%">
@@ -107,3 +107,12 @@
         </tr>
     </table>
 </form:form>
+
+<script>
+    var $form = $("#pub-search-form");
+    $form.find(":reset").click(function (evt) {
+        evt.preventDefault();
+        $form.find('input:text').val('');
+        $form.find('select option:first-child').attr('selected', true);
+    });
+</script>
