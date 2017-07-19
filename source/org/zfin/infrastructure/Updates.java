@@ -29,7 +29,7 @@ public class Updates {
     private String newValue;
     @Column(name = "comments")
     private String comments;
-    @Column(name = "when")
+    @Column(name = "upd_when")
     private Date whenUpdated;
     @Column(name = "submitter_name")
     private String submitterName;
