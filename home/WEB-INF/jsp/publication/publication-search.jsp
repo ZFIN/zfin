@@ -3,7 +3,7 @@
 <jsp:useBean id="formBean" class="org.zfin.publication.presentation.PublicationSearchBean" scope="request"/>
 
 <c:if test="${!formBean.isEmpty()}">
-    <div class="center">
+    <div class="pub-export-controls">
         <input type="button" value="Format into a printable listing" id="pub-printable-results">
         <input type="button" value="Output as REFER format file">
         <a href="/ZFIN/misc_html/refer_info.html" class="popup-link help-popup-link"></a>
