@@ -50,6 +50,7 @@ public class ExpressionSearchController {
         return "expression/search.page";
     }
 
+
     @RequestMapping("/results")
     public String results(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
 
@@ -94,6 +95,9 @@ public class ExpressionSearchController {
 
     private PaginationBean generatePaginationBean(ExpressionSearchCriteria criteria, String queryString) {
         PaginationBean paginationBean = new PaginationBean();
+
+        if (queryString == null) { queryString = ""; }
+
         URLCreator paginationUrlCreator = new URLCreator(BASE_URL + queryString);
         paginationUrlCreator.removeNameValuePair("page");
         if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
