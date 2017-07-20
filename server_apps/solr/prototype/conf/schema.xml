@@ -696,6 +696,8 @@
    <field name="pub_status" type="keyword" indexed="true" stored="true"   multiValued="true" />
    <field name="pet_date" type="date" indexed="true" stored="true"/>
    <field name="year" type="string" indexed="true" stored="true" />
+   <field name="pages" type="string" indexed="false" stored="true" />
+   <field name="volume" type="string" indexed="false" stored="true" />
 
    <field name="publication_status" type="keyword" indexed="true" stored="true" />
      <field name="location" type="keyword" indexed="true" stored="true" multiValued="true"/>

@@ -3,6 +3,11 @@
 <jsp:useBean id="formBean" class="org.zfin.publication.presentation.PublicationSearchBean" scope="request"/>
 
 <c:if test="${!formBean.isEmpty()}">
+    <div class="center">
+        <input type="button" value="Format into a printable listing" id="pub-printable-results">
+        <input type="button" value="Output as REFER format file">
+        <a href="/ZFIN/misc_html/refer_info.html" class="popup-link help-popup-link"></a>
+    </div>
     <table class="pub-search-results">
         <caption>
             Publication Search Results<br>
@@ -124,6 +129,11 @@
         $('#list-all-pubs').click(function (evt) {
             evt.preventDefault();
             resetForm($form);
+            $form.submit();
+        });
+        $('#pub-printable-results').click(function (evt) {
+            evt.preventDefault();
+            $form.attr('action', '/action/publication/search/printable');
             $form.submit();
         });
     });

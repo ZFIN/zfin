@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.publication.Publication;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 @Controller
 @RequestMapping("/publication")
@@ -37,6 +38,17 @@ public class PublicationSearchController {
         model.addAttribute("pubTypes", Publication.Type.values());
         model.addAttribute("sortOrders", PublicationSearchBean.Sort.values());
         return "publication/publication-search.page";
+    }
+
+    @RequestMapping(value = "/search/printable", method = RequestMethod.GET)
+    public String returnPrintableResults(Model model,
+                                         @ModelAttribute PublicationSearchBean formBean) {
+        formBean.setMaxDisplayRecords(Integer.MAX_VALUE);
+        model.addAttribute("formBean", formBean);
+        model.addAttribute("resultBeans", publicationSearchService.getResultsAsResultBeans(formBean));
+        model.addAttribute("today", new Date());
+        // this isn't really called via an ajax request, but this is how you get an unstyled page so...
+        return "publication/printable-results.ajax";
     }
 
 }

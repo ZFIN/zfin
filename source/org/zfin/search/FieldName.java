@@ -86,6 +86,7 @@ public enum FieldName {
     NAME_SORT("name_sort"),
     NOTE("note"),
     ONTOLOGY("ontology"),
+    PAGES("pages"),
     PHENOTYPE_QUALITY_TF("phenotype_quality_tf"),
     PHENOTYPE_STATEMENT("phenotype_statement"),
     PROPER_NAME("proper_name"),
@@ -114,6 +115,7 @@ public enum FieldName {
     TYPE_TREE("type", 3, "Type"),
     TYPEGROUP("typegroup"),
     URL("url"),
+    VOLUME("volume"),
     XREF("xref"),
     YEAR("year"),
     ZEBRAFISH_GENE("zebrafish_gene");

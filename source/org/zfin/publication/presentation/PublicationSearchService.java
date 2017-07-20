@@ -12,6 +12,7 @@ import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,9 +25,24 @@ public class PublicationSearchService {
     private PublicationRepository publicationRepository;
 
     public void populateSearchResults(PublicationSearchBean formBean) {
+        QueryResponse response = makeSolrQuery(formBean, FieldName.ID);
+        List<Publication> results = response.getResults().stream()
+                .map(doc -> publicationRepository.getPublication(doc.getFieldValue(FieldName.ID.getName()).toString()))
+                .collect(Collectors.toList());
+        formBean.setResults(results);
+        formBean.setTotalRecords((int) response.getResults().getNumFound());
+    }
+
+    public List<PublicationSearchResultBean> getResultsAsResultBeans(PublicationSearchBean formBean) {
+        QueryResponse response = makeSolrQuery(formBean, FieldName.ID, FieldName.AUTHOR_STRING, FieldName.YEAR,
+                FieldName.NAME, FieldName.JOURNAL, FieldName.PAGES, FieldName.VOLUME, FieldName.PUBLICATION_STATUS);
+        return response.getBeans(PublicationSearchResultBean.class);
+    }
+
+    private QueryResponse makeSolrQuery(PublicationSearchBean formBean, FieldName... fields) {
         SolrQuery query = new SolrQuery();
         query.addFilterQuery(fq(FieldName.CATEGORY, Category.PUBLICATION.getName()));
-        query.setFields(FieldName.ID.getName());
+        query.setFields(Arrays.stream(fields).map(FieldName::getName).toArray(String[]::new));
         addFq(query, FieldName.AUTHOR_STRING, formBean.getAuthor());
         addFq(query, FieldName.NAME, formBean.getTitle());
         addFq(query, FieldName.JOURNAL, formBean.getJournal());
@@ -68,18 +84,14 @@ public class PublicationSearchService {
         } catch (Exception e) {
             LOG.error(e);
         }
-        List<Publication> results = response.getResults().stream()
-                .map(doc -> publicationRepository.getPublication(doc.getFieldValue(FieldName.ID.getName()).toString()))
-                .collect(Collectors.toList());
-        formBean.setResults(results);
-        formBean.setTotalRecords((int) response.getResults().getNumFound());
+        return response;
     }
 
-    private static String fq(FieldName fieldName, String value) {
+    private String fq(FieldName fieldName, String value) {
         return fieldName.getName() + ":(\"" + SolrService.luceneEscape(value) + "\")";
     }
 
-    private static void addFq(SolrQuery query, FieldName fieldName, String value) {
+    private void addFq(SolrQuery query, FieldName fieldName, String value) {
         if (StringUtils.isNotEmpty(value)) {
             query.addFilterQuery(fq(fieldName, value));
         }
