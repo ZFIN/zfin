@@ -20,5 +20,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1085/ghost/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1086/hotPepper/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1089/Lemon/db.changelog.master.xml"/>
 
 </databaseChangeLog>
