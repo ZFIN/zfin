@@ -14,6 +14,7 @@ import org.zfin.search.service.SolrService;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +38,15 @@ public class PublicationSearchService {
         QueryResponse response = makeSolrQuery(formBean, FieldName.ID, FieldName.AUTHOR_STRING, FieldName.YEAR,
                 FieldName.NAME, FieldName.JOURNAL, FieldName.PAGES, FieldName.VOLUME, FieldName.PUBLICATION_STATUS);
         return response.getBeans(PublicationSearchResultBean.class);
+    }
+
+    public String formatAsRefer(PublicationSearchResultBean searchResult) {
+        return  referField("A", searchResult.getAuthors()) +
+                referField("D", searchResult.getYear()) +
+                referField("T", searchResult.getTitle()) +
+                referField("J", searchResult.getJournal()) +
+                referField("V", searchResult.getVolume()) +
+                referField("P", searchResult.getPages());
     }
 
     private QueryResponse makeSolrQuery(PublicationSearchBean formBean, FieldName... fields) {
@@ -95,6 +105,10 @@ public class PublicationSearchService {
         if (StringUtils.isNotEmpty(value)) {
             query.addFilterQuery(fq(fieldName, value));
         }
+    }
+
+    private String referField(String tag, String value) {
+        return "%" + tag + " " + Optional.ofNullable(value).orElse("") + "\n";
     }
 
 }

@@ -5,7 +5,7 @@
 <c:if test="${!formBean.isEmpty()}">
     <div class="pub-export-controls">
         <input type="button" value="Format into a printable listing" id="pub-printable-results">
-        <input type="button" value="Output as REFER format file">
+        <input type="button" value="Output as REFER format file" id="pub-refer-results">
         <a href="/ZFIN/misc_html/refer_info.html" class="popup-link help-popup-link"></a>
     </div>
     <table class="pub-search-results">
@@ -133,11 +133,11 @@
         });
         $('#pub-printable-results').click(function (evt) {
             evt.preventDefault();
-            $form.attr('action', '/action/publication/search/printable');
-            $form.submit();
+            window.location.href = '/action/publication/search/printable?' + $form.serialize();
+        });
+        $('#pub-refer-results').click(function (evt) {
+            evt.preventDefault();
+            window.location.href = '/action/publication/search/refer?' + $form.serialize();
         });
     });
-
-
-
 </script>
