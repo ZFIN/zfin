@@ -67,7 +67,7 @@ table.search {
     margin: 0.2em;
 }
 
-td.submitbar {
+.submitbar {
     vertical-align: top;
     text-align: left;
     background-color: #efefef;

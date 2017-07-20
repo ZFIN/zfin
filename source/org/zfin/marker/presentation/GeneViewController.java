@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.expression.FigureService;
+import org.zfin.expression.presentation.ExpressionSearchController;
+import org.zfin.expression.presentation.ExpressionSearchCriteria;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
@@ -32,6 +34,7 @@ import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.sequence.service.TranscriptService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -61,6 +64,9 @@ public class GeneViewController {
 
     @Autowired
     private EfgViewController efgViewController;
+
+    @Autowired
+    private ExpressionSearchController expressionSearchController;
 
     @RequestMapping(value = "/gene/view/{zdbID}")
     public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
@@ -164,6 +170,21 @@ public class GeneViewController {
         //model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute("marker", marker);
         return "marker/phenotype-summary.page";
+    }
+
+    @RequestMapping("/{geneID}/expression")
+    public String getExpression(Model model, @PathVariable String geneID, HttpServletRequest request) {
+        Marker marker = getMarkerRepository().getMarkerByID(geneID);
+        if (marker == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, geneID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        ExpressionSearchCriteria criteria = new ExpressionSearchCriteria();
+        criteria.setGeneField(marker.getAbbreviation());
+        criteria.setGeneZdbID(marker.getZdbID());
+
+        return expressionSearchController.results(model, criteria, request);
     }
 
     @RequestMapping(value = "/{geneID}/download/orthology")
