@@ -16,17 +16,26 @@
         <tbody>
         <c:forEach items="${formBean.results}" var="pub">
             <tr>
+                <authz:authorize access="hasRole('root')">
+                    <td>
+                        <div><a href="/action/publication/${pub.zdbID}/edit">EDIT</a></div>
+                        <div><a href="/action/publication/${pub.zdbID}/link">LINK</a></div>
+                        <div><a href="/action/publication/${pub.zdbID}/track">TRACK</a></div>
+                        <div><a href="/action/curation/${pub.zdbID}">CURATE</a></div>
+                    </td>
+                </authz:authorize>
                 <td>
                     <div class="show_pubs">
-                        <a href="/${pub.zdbID}"
-                           id="${pub.zdbID}">${pub.citation}</a>
-                        <authz:authorize access="hasRole('root')"><c:if
-                                test="${pub.open}">OPEN</c:if><c:if
-                                test="${!pub.open}">CLOSED</c:if><c:if
-                                test="${pub.indexed}">, INDEXED</c:if>
-                        </authz:authorize>
+                        <a href="/${pub.zdbID}" id="${pub.zdbID}">${pub.citation}</a>
                     </div>
                 </td>
+                <authz:authorize access="hasRole('root')">
+                    <td>
+                        <c:if test="${pub.open}">OPEN</c:if>
+                        <c:if test="${!pub.open}">CLOSED</c:if>
+                        <c:if test="${pub.indexed}">, INDEXED</c:if>
+                    </td>
+                </authz:authorize>
             </tr>
         </c:forEach>
         </tbody>
