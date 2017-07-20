@@ -31,7 +31,7 @@ public class RemovePhenotypePileStructureClickHandler implements ClickHandler {
     public void onClick(ClickEvent event) {
         PhenotypeStatementDTO dto = structure.getPhenotypeTerm();
         if (expressionModule.getExpressedTermDTOs().contains(dto)) {
-            Window.alert("Please remove the expression records first");
+            Window.alert("Please remove the phenotype records first");
             errorMessage.setError("Please remove the phenotype records that use this structure first.");
             expressionModule.markStructuresForDeletion(dto, true);
         } else {
