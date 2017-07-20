@@ -20,7 +20,7 @@
 
 <%--MARKER RELATIONSHIPTS--%>
 <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}" marker="${formBean.marker}"
-                                title="${fn:toUpperCase('MARKER RELATIONSHIPS')}" />
+                                title="${fn:toUpperCase('MARKER RELATIONSHIPS')}" interactsWith="no"/> 
 
 <%--OTHER GENE/Marker Pages--%>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />

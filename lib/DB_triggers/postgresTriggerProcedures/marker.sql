@@ -1,26 +1,22 @@
 drop trigger if exists marker_trigger on marker;
+drop trigger if exists marker_name_order on marker;
 
-create or replace function marker()
-returns trigger as
+create or replace function marker_name_order()
+returns trigger as 
 $BODY$
+
 declare mrkr_name marker.mrkr_name%TYPE;
 declare mrkr_abbrev marker.mrkr_abbrev%TYPE;
-declare mrkr_comments marker.mrkr_comments%TYPE;
 declare mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE;
 declare mrkr_name_order marker.mrkr_name_order%TYPE;
+declare mrkr_comments marker.mrkr_comments%TYPE;
 
-begin
+begin 
+
      mrkr_name = (select scrub_char(NEW.mrkr_name));
      NEW.mrkr_name = mrkr_name;
 
      mrkr_abbrev = (select scrub_char(NEW.mrkr_abbrev));
-     mrkr_abbrev = (select updateAbbrevEqualName (NEW.mrkr_zdb_id, 
-     	    			   NEW.mrkr_name, 
-				   NEW.mrkr_type, 
-				   NEW.mrkr_abbrev));
-
-     NEW.mrkr_abbrev = mrkr_abbrev;
- 
      mrkr_abbrev_order = (Select zero_pad(NEW.mrkr_abbrev));
      NEW.mrkr_abbrev_order = mrkr_abbrev_order;
 
@@ -29,6 +25,31 @@ begin
      
      mrkr_comments = (select scrub_char(NEW.mrkr_comments));
      NEW.mrkr_comments = mrkr_comments;
+
+     RETURN NEW;
+
+end;
+$BODY$ LANGUAGE plpgsql;
+
+
+create or replace function marker()
+returns trigger as
+$BODY$
+declare mrkr_name marker.mrkr_name%TYPE;
+declare mrkr_abbrev marker.mrkr_abbrev%TYPE;
+declare mrkr_comments marker.mrkr_comments%TYPE;
+
+
+begin
+     
+     mrkr_abbrev = (select updateAbbrevEqualName (NEW.mrkr_zdb_id, 
+     	    			   NEW.mrkr_name, 
+				   NEW.mrkr_type, 
+				   NEW.mrkr_abbrev));
+
+     NEW.mrkr_abbrev = mrkr_abbrev;
+ 
+     
 
      perform p_check_mrkr_abbrev(NEW.mrkr_name,
 				NEW.mrkr_abbrev,
@@ -44,6 +65,10 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger marker_trigger before insert on marker
+create trigger marker_name_order_trigger before insert on marker
+ for each row
+ execute procedure marker_name_order();
+
+create trigger marker_trigger after insert on marker
  for each row
  execute procedure marker();
