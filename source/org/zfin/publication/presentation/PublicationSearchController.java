@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +17,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @Controller
@@ -29,6 +32,9 @@ public class PublicationSearchController {
     @Autowired
     private PublicationSearchService publicationSearchService;
 
+    @Autowired
+    private PublicationRepository publicationRepository;
+
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String showSearchForm(Model model,
                                  @ModelAttribute PublicationSearchBean formBean,
@@ -36,7 +42,16 @@ public class PublicationSearchController {
         formBean.setMaxDisplayRecords(PAGE_SIZE);
         formBean.setRequestUrl(request.getRequestURL());
         formBean.setQueryString(request.getQueryString());
-        if (!formBean.isEmpty()) {
+        GregorianCalendar oldestPubEntryDate = publicationRepository.getOldestPubEntryDate();
+        GregorianCalendar newestPubEntryDate = publicationRepository.getNewestPubEntryDate();
+        if (formBean.isEmpty()) {
+            formBean.setPetFromMonth(oldestPubEntryDate.get(Calendar.MONTH) + 1);
+            formBean.setPetFromDay(oldestPubEntryDate.get(Calendar.DAY_OF_MONTH));
+            formBean.setPetFromYear(oldestPubEntryDate.get(Calendar.YEAR));
+            formBean.setPetToMonth(newestPubEntryDate.get(Calendar.MONTH) + 1);
+            formBean.setPetToDay(newestPubEntryDate.get(Calendar.DAY_OF_MONTH));
+            formBean.setPetToYear(newestPubEntryDate.get(Calendar.YEAR));
+        } else {
             publicationSearchService.populateSearchResults(formBean);
         }
         model.addAttribute("formBean", formBean);
@@ -44,6 +59,8 @@ public class PublicationSearchController {
         model.addAttribute("centuries", PublicationSearchBean.Century.values());
         model.addAttribute("pubTypes", Publication.Type.values());
         model.addAttribute("sortOrders", PublicationSearchBean.Sort.values());
+        model.addAttribute("oldestPubEntryYear", oldestPubEntryDate.get(Calendar.YEAR));
+        model.addAttribute("newestPubEntryYear", newestPubEntryDate.get(Calendar.YEAR));
         return "publication/publication-search.page";
     }
 

@@ -12,6 +12,8 @@ import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -74,6 +76,19 @@ public class PublicationSearchService {
                     query.addFilterQuery("year:[" + (fullYear + 1) + " TO *]");
                     break;
             }
+        }
+        DateTimeFormatter parser = DateTimeFormatter.ofPattern("yyyy-M-d");
+        ZonedDateTime petFrom = parser
+                .parse(formBean.getPetFromYear() + "-" + formBean.getPetFromMonth() + "-" + formBean.getPetFromDay(), LocalDate::from)
+                .atStartOfDay(ZoneOffset.UTC);
+        ZonedDateTime petTo = parser
+                .parse(formBean.getPetToYear() + "-" + formBean.getPetToMonth() + "-" + formBean.getPetToDay(), LocalDate::from)
+                .atStartOfDay(ZoneOffset.UTC);
+        if (petFrom.isAfter(petTo)) {
+            query.addFilterQuery("-pet_date:[* TO *]");
+        } else {
+            query.addFilterQuery("pet_date:[" + DateTimeFormatter.ISO_INSTANT.format(petFrom) +
+                    " TO " + DateTimeFormatter.ISO_INSTANT.format(petTo) + "]");
         }
         switch (formBean.getSort()) {
             case YEAR:

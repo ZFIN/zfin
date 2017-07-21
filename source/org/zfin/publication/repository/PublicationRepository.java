@@ -25,6 +25,7 @@ import org.zfin.publication.*;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -555,5 +556,9 @@ public interface PublicationRepository extends PaginationParameter {
     CorrespondenceSentMessage addResentCorrespondence(Publication publication, CorrespondenceDTO dto);
 
     CorrespondenceReceivedMessage addReceivedCorrespondence(Publication publication, CorrespondenceDTO dto);
+
+    GregorianCalendar getNewestPubEntryDate();
+
+    GregorianCalendar getOldestPubEntryDate();
 
 }

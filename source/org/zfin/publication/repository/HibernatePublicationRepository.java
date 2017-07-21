@@ -2365,4 +2365,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         HibernateUtil.currentSession().save(correspondence);
         return correspondence;
     }
+
+    public GregorianCalendar getNewestPubEntryDate() {
+        return (GregorianCalendar) HibernateUtil
+                .currentSession()
+                .createQuery("select max(pub.entryDate) from Publication pub")
+                .uniqueResult();
+    }
+
+    public GregorianCalendar getOldestPubEntryDate() {
+        return (GregorianCalendar) HibernateUtil
+                .currentSession()
+                .createQuery("select min(pub.entryDate) from Publication pub")
+                .uniqueResult();
+    }
 }

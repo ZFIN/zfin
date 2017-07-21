@@ -110,6 +110,47 @@
                             </form:select>
                         </td>
                     </tr>
+                    <authz:authorize access="hasRole('root')">
+                    <tr>
+                        <th><label class="namesearchLabel">PET Date</label></th>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td>From:</td>
+                                    <td>
+                                        <form:select path="petFromMonth">
+                                            <c:forEach begin="1" end="12" var="month"><form:option value="${month}"/></c:forEach>
+                                        </form:select>
+                                        /
+                                        <form:select path="petFromDay">
+                                            <c:forEach begin="1" end="31" var="day"><form:option value="${day}"/></c:forEach>
+                                        </form:select>
+                                        /
+                                        <form:select path="petFromYear">
+                                            <c:forEach begin="${oldestPubEntryYear}" end="${newestPubEntryYear}" var="year"><form:option value="${year}"/></c:forEach>
+                                        </form:select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>To:</td>
+                                    <td>
+                                        <form:select path="petToMonth">
+                                            <c:forEach begin="1" end="12" var="month"><form:option value="${month}"/></c:forEach>
+                                        </form:select>
+                                        /
+                                        <form:select path="petToDay">
+                                            <c:forEach begin="1" end="31" var="day"><form:option value="${day}"/></c:forEach>
+                                        </form:select>
+                                        /
+                                        <form:select path="petToYear">
+                                            <c:forEach begin="${oldestPubEntryYear}" end="${newestPubEntryYear}" var="year"><form:option value="${year}"/></c:forEach>
+                                        </form:select>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </authz:authorize>
                 </table>
             </td>
         </tr>

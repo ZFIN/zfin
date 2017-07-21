@@ -64,6 +64,12 @@ public class PublicationSearchBean extends PaginationBean {
     private String twoDigitYear;
     private Publication.Type pubType;
     private Sort sort;
+    private Integer petFromMonth;
+    private Integer petFromDay;
+    private Integer petFromYear;
+    private Integer petToMonth;
+    private Integer petToDay;
+    private Integer petToYear;
 
     private List<Publication> results;
 
@@ -145,6 +151,54 @@ public class PublicationSearchBean extends PaginationBean {
 
     public void setSort(Sort sort) {
         this.sort = sort;
+    }
+
+    public Integer getPetFromMonth() {
+        return petFromMonth;
+    }
+
+    public void setPetFromMonth(Integer petFromMonth) {
+        this.petFromMonth = petFromMonth;
+    }
+
+    public Integer getPetFromDay() {
+        return petFromDay;
+    }
+
+    public void setPetFromDay(Integer petFromDay) {
+        this.petFromDay = petFromDay;
+    }
+
+    public Integer getPetFromYear() {
+        return petFromYear;
+    }
+
+    public void setPetFromYear(Integer petFromYear) {
+        this.petFromYear = petFromYear;
+    }
+
+    public Integer getPetToMonth() {
+        return petToMonth;
+    }
+
+    public void setPetToMonth(Integer petToMonth) {
+        this.petToMonth = petToMonth;
+    }
+
+    public Integer getPetToDay() {
+        return petToDay;
+    }
+
+    public void setPetToDay(Integer petToDay) {
+        this.petToDay = petToDay;
+    }
+
+    public Integer getPetToYear() {
+        return petToYear;
+    }
+
+    public void setPetToYear(Integer petToYear) {
+        this.petToYear = petToYear;
     }
 
     public List<Publication> getResults() {
