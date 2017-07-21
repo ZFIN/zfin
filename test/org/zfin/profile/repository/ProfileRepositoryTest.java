@@ -311,10 +311,12 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
             if (info != null) {
                 String saltedLogin = new Md5PasswordEncoder().encodePassword(info.getLogin(), "dedicated to George Streisinger");
                 if (info.getPassword() != null && info.getPassword().equals(saltedLogin) && info.getPreviousLoginDate() != null
-                        && info.getPreviousLoginDate().after(when))
+		    && info.getPreviousLoginDate().after(when)){
                     //System.out.println(index++ +": "+person.getZdbID()+": "+info.getPreviousLoginDate().toString());
                     //System.out.println(index++ +": "+person.getEmail());
                 //System.out.println(person.getFullName());
+		}
+
             }
 
         };
