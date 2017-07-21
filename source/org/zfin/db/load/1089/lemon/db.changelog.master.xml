@@ -5,5 +5,5 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
    <include file="source/org/zfin/db/load/1089/lemon/INF-3025.sql"/>
-   
+   <include file="source/org/zfin/db/load/1089/lemon/updateSearchableGeneTypeGroup.sql"/>
 </databaseChangeLog>
