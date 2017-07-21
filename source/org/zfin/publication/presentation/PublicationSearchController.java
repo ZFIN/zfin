@@ -59,8 +59,8 @@ public class PublicationSearchController {
         model.addAttribute("centuries", PublicationSearchBean.Century.values());
         model.addAttribute("pubTypes", Publication.Type.values());
         model.addAttribute("sortOrders", PublicationSearchBean.Sort.values());
-        model.addAttribute("oldestPubEntryYear", oldestPubEntryDate.get(Calendar.YEAR));
-        model.addAttribute("newestPubEntryYear", newestPubEntryDate.get(Calendar.YEAR));
+        model.addAttribute("oldestPubEntryDate", oldestPubEntryDate.getTime());
+        model.addAttribute("newestPubEntryDate", newestPubEntryDate.getTime());
         return "publication/publication-search.page";
     }
 

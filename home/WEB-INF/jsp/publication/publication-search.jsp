@@ -2,6 +2,13 @@
 
 <jsp:useBean id="formBean" class="org.zfin.publication.presentation.PublicationSearchBean" scope="request"/>
 
+<c:set var="newestPubEntryYear"><fmt:formatDate value="${newestPubEntryDate}" pattern="yyyy"/></c:set>
+<c:set var="newestPubEntryMonth"><fmt:formatDate value="${newestPubEntryDate}" pattern="M"/></c:set>
+<c:set var="newestPubEntryDay"><fmt:formatDate value="${newestPubEntryDate}" pattern="d"/></c:set>
+<c:set var="oldestPubEntryYear"><fmt:formatDate value="${oldestPubEntryDate}" pattern="yyyy"/></c:set>
+<c:set var="oldestPubEntryMonth"><fmt:formatDate value="${oldestPubEntryDate}" pattern="M"/></c:set>
+<c:set var="oldestPubEntryDay"><fmt:formatDate value="${oldestPubEntryDate}" pattern="d"/></c:set>
+
 <c:if test="${!formBean.isEmpty()}">
     <div class="pub-export-controls">
         <input type="button" value="Format into a printable listing" id="pub-printable-results">
@@ -169,6 +176,13 @@
         function resetForm($form) {
             $form.find('input:text').val('');
             $form.find('select option:first-child').attr('selected', true);
+            // pet date is special
+            $('#petFromMonth').val(${oldestPubEntryMonth});
+            $('#petFromDay').val(${oldestPubEntryDay});
+            $('#petFromYear').val(${oldestPubEntryYear});
+            $('#petToMonth').val(${newestPubEntryMonth});
+            $('#petToDay').val(${newestPubEntryDay});
+            $('#petToYear').val(${newestPubEntryYear});
         }
 
         var $form = $("#pub-search-form");
