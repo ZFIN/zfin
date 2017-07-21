@@ -21,6 +21,8 @@ import org.zfin.gwt.root.util.WidgetUtil;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.zfin.gwt.root.dto.FeatureTypeEnum.SEQUENCE_VARIANT;
+
 public class MutationDetailDNAView extends AbstractViewComposite {
 
     public static final String SPLICE_JUNCTION = "SO:0001421";
@@ -238,6 +240,9 @@ public class MutationDetailDNAView extends AbstractViewComposite {
                 showPlusMinusBP();
                 break;
             case TRANSGENIC_INSERTION:
+                showTgFields();
+                break;
+            case SEQUENCE_VARIANT:
                 showTgFields();
                 break;
         }

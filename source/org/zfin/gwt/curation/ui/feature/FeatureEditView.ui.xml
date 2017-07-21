@@ -121,7 +121,7 @@
                 </g:customCell>
                 <g:customCell>
                     <g:HTML ui:field="noMutationDetailMessage" styleName="{style.grey-text}">Only for feature type:
-                        Point Mutation, Insertion, Indel , Deletion and Transgenic Insertion with known insertion site</g:HTML>
+                        Point Mutation, Insertion, Indel , Deletion, Unknown and Transgenic Insertion with known insertion site</g:HTML>
                 </g:customCell>
             </g:row>
             <g:row>
