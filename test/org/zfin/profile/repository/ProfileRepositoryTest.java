@@ -303,7 +303,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date when = sdf.parse("2017-3-31");
 
-        System.out.println("date1 : " + sdf.format(when));
+        //System.out.println("date1 : " + sdf.format(when));
         Iterator<Person> iterator = list.iterator();
         while (iterator.hasNext()) {
             Person person = iterator.next();
@@ -313,7 +313,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
                 if (info.getPassword() != null && info.getPassword().equals(saltedLogin) && info.getPreviousLoginDate() != null
                         && info.getPreviousLoginDate().after(when))
                     //System.out.println(index++ +": "+person.getZdbID()+": "+info.getPreviousLoginDate().toString());
-                    System.out.println(index++ +": "+person.getEmail());
+                    //System.out.println(index++ +": "+person.getEmail());
                 //System.out.println(person.getFullName());
             }
 
