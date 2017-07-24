@@ -25,6 +25,7 @@ import org.zfin.util.URLCreator;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -486,7 +487,7 @@ public class SolrService {
         //if this is the category breadbox link, set category to Any
         if (StringUtils.equals(nameValuePair.getName(), "category")) {
             urlCreator.removeNameValuePair("category");
-            urlCreator.addNamevaluePair("category", "Any");
+            urlCreator.addNameValuePair("category", "Any");
         }
         out.append(urlCreator.getURL());
 
@@ -499,11 +500,11 @@ public class SolrService {
         String quotedFq = fieldName + ":\"" + value + "\"";
 
         URLCreator urlCreator = new URLCreator(baseUrl);
-        urlCreator.addNamevaluePair("fq", quotedFq);
+        urlCreator.addNameValuePair("fq", quotedFq);
         urlCreator.removeNameValuePair("page");
         if (StringUtils.equals("category", fieldName)) {
             urlCreator.removeNameValuePair("category");
-            urlCreator.addNamevaluePair("category", value);
+            urlCreator.addNameValuePair("category", value);
         }
         return urlCreator.getURL();
     }
@@ -511,7 +512,7 @@ public class SolrService {
     public static String getNotFacetUrl(String fieldName, String value, String baseUrl) {
         String quotedFq = "-" + fieldName + ":\"" + value + "\"";
         URLCreator urlCreator = new URLCreator(baseUrl);
-        urlCreator.addNamevaluePair("fq", quotedFq);
+        urlCreator.addNameValuePair("fq", quotedFq);
         urlCreator.removeNameValuePair("page");
         if (StringUtils.equals("category", fieldName)) {
             urlCreator.removeNameValuePair("category");
@@ -834,6 +835,22 @@ public class SolrService {
     public static boolean queryHasFilterQueries(SolrQuery query) {
         String[] filterQueries = query.getFilterQueries();
         return filterQueries != null && !(filterQueries.length == 1 && filterQueries[0].startsWith("root_only:"));
+    }
+
+    public static String buildStageRangeQuery(FieldName fieldName, String leftBracket,
+                                              float start, float end, String rightBracket) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(fieldName.getName());
+        sb.append(":");
+        sb.append(leftBracket);
+        sb.append(start);
+        sb.append(" TO ");
+        sb.append(end);
+        sb.append(rightBracket);
+        sb.append(" ");
+
+        return sb.toString();
     }
 
     public static void addDocument(Map<FieldName, Object> fields) throws IOException, SolrServerException {

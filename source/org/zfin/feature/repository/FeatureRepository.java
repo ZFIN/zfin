@@ -182,4 +182,6 @@ public interface FeatureRepository {
     Long getFeaturesForLabCount(String zdbID);
 
     List<Feature> getFeaturesForLab(String zdbID, int i);
+
+    int getNumberOfFeaturesForConstruct(Marker construct);
 }

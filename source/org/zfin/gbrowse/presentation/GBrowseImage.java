@@ -48,19 +48,19 @@ public class GBrowseImage {
             URLCreator url = new URLCreator(imageUrlBase);
 
             if (StringUtils.isNotBlank(landmark)) {
-                url.addNamevaluePair("name", landmark);
+                url.addNameValuePair("name", landmark);
             }
 
             if (CollectionUtils.isNotEmpty(tracks)) {
-                url.addNamevaluePair("type", StringUtils.join(tracks, " "));
+                url.addNameValuePair("type", StringUtils.join(tracks, " "));
             }
 
             String highlight = getHighlightString();
             if (StringUtils.isNotBlank(highlight)) {
-                url.addNamevaluePair("h_feat", highlight);
+                url.addNameValuePair("h_feat", highlight);
             }
 
-            url.addNamevaluePair("grid", grid ? "1" : "0");
+            url.addNameValuePair("grid", grid ? "1" : "0");
 
             imageUrl = "/" + url.getURL();
         }
@@ -72,12 +72,12 @@ public class GBrowseImage {
             URLCreator url = new URLCreator(linkUrlBase);
 
             if (StringUtils.isNotBlank(landmark)) {
-                url.addNamevaluePair("name", landmark);
+                url.addNameValuePair("name", landmark);
             }
 
             String highlight = getHighlightString();
             if (StringUtils.isNotBlank(highlight)) {
-                url.addNamevaluePair("h_feat", highlight);
+                url.addNameValuePair("h_feat", highlight);
             }
 
             linkUrl = "/" + url.getURL();

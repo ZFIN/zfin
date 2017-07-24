@@ -38,6 +38,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1100,6 +1101,19 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String hql = " select count(*) from Feature f join f.sources s " +
                 " where s.organization.zdbID = :zdbID ";
         return (Long) HibernateUtil.currentSession().createQuery(hql).setString("zdbID", zdbID).uniqueResult();
+    }
+
+    @Override
+    public int getNumberOfFeaturesForConstruct(Marker construct) {
+        String sql = "select count(distinct fmrel_ftr_zdb_id) " +
+                     "  from feature_marker_relationship " +
+                     " where fmrel_mrkr_zdb_id = :zdbID" +
+                     "   and fmrel_type in (:relation1, :relation2) ";
+        Query query = currentSession().createSQLQuery(sql);
+        query.setString("zdbID", construct.getZdbID());
+        query.setString("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
+        query.setString("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
+        return ((BigDecimal)query.uniqueResult()).intValue();
     }
 }
 

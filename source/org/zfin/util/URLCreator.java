@@ -44,12 +44,18 @@ public class URLCreator {
      * @param value value parameter
      * @return if name already exists in the hashmap do not add it -> false
      */
-    public boolean addNamevaluePair(String name, String value) {
+    public boolean addNameValuePair(String name, String value) {
         NameValuePair nameValuePair = new BasicNameValuePair(name, value);
         if (!nameValuePairs.contains(nameValuePair)) {
             nameValuePairs.add(nameValuePair);
         }
         return true;
+    }
+
+    public void replaceNameValuePair(String name, String value) {
+        NameValuePair nameValuePair = new BasicNameValuePair(name, value);
+        removeNameValuePair(nameValuePair.getName());
+        nameValuePairs.add(nameValuePair);
     }
 
     /**

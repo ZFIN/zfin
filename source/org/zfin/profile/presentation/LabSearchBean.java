@@ -12,31 +12,31 @@ public class LabSearchBean extends AbstractProfileSearchBean{
     @Override
     public String getActionUrl() {
         if (StringUtils.isNotEmpty(name)) {
-            creator.addNamevaluePair("name", name);
+            creator.addNameValuePair("name", name);
         } else {
             creator.removeNameValuePair("name");
         }
         if (StringUtils.isNotEmpty(address)) {
-            creator.addNamevaluePair("address", address);
+            creator.addNameValuePair("address", address);
         } else {
             creator.removeNameValuePair("address");
         }
         if (StringUtils.isNotEmpty(contains)) {
-            creator.addNamevaluePair("contains", contains);
+            creator.addNameValuePair("contains", contains);
         } else {
             creator.removeNameValuePair("contains");
         }
         if (StringUtils.isNotEmpty(containsType)) {
-            creator.addNamevaluePair("containsType", containsType);
+            creator.addNameValuePair("containsType", containsType);
         } else {
             creator.removeNameValuePair("containsType");
         }
         if (StringUtils.isNotEmpty(view)) {
-            creator.addNamevaluePair("view", view);
+            creator.addNameValuePair("view", view);
         } else {
             creator.removeNameValuePair("view");
         }
-        creator.addNamevaluePair("maxDisplayRecords", String.valueOf(getMaxDisplayRecords()));
+        creator.addNameValuePair("maxDisplayRecords", String.valueOf(getMaxDisplayRecords()));
         return creator.getFullURLPlusSeparator();
     }
 }

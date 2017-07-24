@@ -106,24 +106,28 @@ public class ConstructViewController {
         markerBean.setMarkerRelationshipPresentationList(cloneRelationships);
 
         // Transgenics that utilize the construct
-        List<Feature> features = featureRepository.getFeaturesByConstruct(construct);
-        markerBean.setTransgenics(features);
+        int numFeatures = featureRepository.getNumberOfFeaturesForConstruct(construct);
+        model.addAttribute("numberOfFeatures",numFeatures);
+        if (numFeatures <= 50) {
+            List<Feature> features = featureRepository.getFeaturesByConstruct(construct);
+            markerBean.setTransgenics(features);
 
-        List<GenotypeFishResult> allFish = new ArrayList<>();
-        for (Feature feature : features) {
-            List<Genotype> genotypes = mutantRepository.getGenotypesByFeature(feature);
-            for (Genotype genotype : genotypes) {
-                List<GenotypeFishResult> fishSummaryList = FishService.getFishExperiementSummaryForGenotype(genotype);
-                for (GenotypeFishResult fishSummary : fishSummaryList) {
-                    if (fishSummary.getFish().getStrList().isEmpty()) {
-                        fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));
-                        allFish.add(fishSummary);
+            List<GenotypeFishResult> allFish = new ArrayList<>();
+            for (Feature feature : features) {
+                List<Genotype> genotypes = mutantRepository.getGenotypesByFeature(feature);
+                for (Genotype genotype : genotypes) {
+                    List<GenotypeFishResult> fishSummaryList = FishService.getFishExperiementSummaryForGenotype(genotype);
+                    for (GenotypeFishResult fishSummary : fishSummaryList) {
+                        if (fishSummary.getFish().getStrList().isEmpty()) {
+                            fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));
+                            allFish.add(fishSummary);
 
+                        }
                     }
                 }
             }
+            markerBean.setFish(allFish);
         }
-        markerBean.setFish(allFish);
 
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + construct.getName());

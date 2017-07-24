@@ -69,6 +69,7 @@ public class SearchPrototypeController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
+
     @RequestMapping(value = "/prototype")
     public String viewResults(@RequestParam(value = "q", required = false) String q,
                               @RequestParam(value = "fq", required = false) String[] filterQuery,
@@ -138,7 +139,7 @@ public class SearchPrototypeController {
 
         URLCreator resubmitUrlCreator = new URLCreator(baseUrl);
         resubmitUrlCreator.removeNameValuePair("q");
-        resubmitUrlCreator.addNamevaluePair("q", "");
+        resubmitUrlCreator.addNameValuePair("q", "");
         model.addAttribute("baseUrlWithoutQ", resubmitUrlCreator.getURL());
 
         query = handleFacetSorting(query, request);
@@ -185,7 +186,7 @@ public class SearchPrototypeController {
         if (appendCategoryToBaseUrl) {
             URLCreator baseUrlWithCategory = new URLCreator(baseUrl);
             baseUrlWithCategory.removeNameValuePair("category");
-            baseUrlWithCategory.addNamevaluePair("category", category);
+            baseUrlWithCategory.addNameValuePair("category", category);
             baseUrl = baseUrlWithCategory.getURL();
         }
 

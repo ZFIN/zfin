@@ -24,7 +24,7 @@ open LOG, '>', "logCompareNcbiMgiOmim.rpt" or die "can not open logCompareNcbiMg
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz");
 &doSystemCommand("/local/bin/gunzip Mus_musculus.gene_info.gz");
 
-&doSystemCommand("/local/bin/wget ftp://ftp.informatics.jax.org/pub/reports/HGNC_homologene.rpt -O MGIgene.gene_info");
+&doSystemCommand("/local/bin/wget http://www.informatics.jax.org/downloads/reports/HGNC_homologene.rpt -O MGIgene.gene_info");
 
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
 &doSystemCommand("/local/bin/gunzip Homo_sapiens.gene_info.gz");

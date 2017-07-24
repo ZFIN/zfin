@@ -421,6 +421,7 @@
               <filter class="solr.LowerCaseFilterFactory"/>
           </analyzer>
       </fieldType>
+
 <!--
       &lt;!&ndash; experimental, can be removed &ndash;&gt;
       <fieldtype name="phrase_suggest" class="solr.TextField">
@@ -675,6 +676,8 @@
    <field name="clone" type="keyword" indexed="true" stored="true" multiValued="true" />
 
    <field name="stage" type="superstage" indexed="true" stored="true" multiValued="true" />
+   <field name="stage_hours_start" type="tfloat" indexed="true" stored="true" />
+   <field name="stage_hours_end" type="tfloat" indexed="true" stored="true" />
 
    <field name="conditions" type="keyword" indexed="true" stored="true" multiValued="true" />
 
@@ -737,10 +740,14 @@
 
    <!-- these are used to join expression records by natural key rather than primary key -->
    <field name="xpat_zdb_id" type="string" indexed="false" stored="true" />
-   <field name="fig_zdb_id" type="keyword" indexed="true" stored="true" />
+   <field name="fig_zdb_id" type="string" indexed="true" stored="true" />
 
    <!-- used for the figure gallery -->
    <field name="img_zdb_id" type="string" indexed="true" stored="true" multiValued="true"/>
+
+   <field name="pub_zdb_id" type="string" indexed="true" stored="true"/>
+   <field name="fish_zdb_id" type="string" indexed="true" stored="true"/>
+   <field name="gene_zdb_id" type="string" indexed="true" stored="true"/>
 
    <field name="attribution_count" type="sint" indexed="true" stored="true"/>
 
@@ -991,6 +998,7 @@
     <copyField source="ortholog_other_species_symbol" dest="ortholog_other_species_symbol_ac"/>
     <copyField source="ortholog_other_species_name" dest="ortholog_other_species_name_ac"/>
 
+    <copyField source="fish" dest="fish_t" />
 
     <copyField source="coding_sequence" dest="related_gene_symbol"/>
     <copyField source="regulatory_region" dest="related_gene_symbol"/>

@@ -359,7 +359,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         DELETION,
         INSERTION,
         INDEL,
-        TRANSGENIC_INSERTION;
+        TRANSGENIC_INSERTION,
+        SEQUENCE_VARIANT;
 
         public static boolean hasFeatureType(String featureType, boolean knownInsertionSite) {
             for (MutationDetailType type : values()) {

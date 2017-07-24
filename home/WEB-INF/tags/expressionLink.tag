@@ -15,16 +15,16 @@
             <c:when test="${marker.markerType.type != 'EFG'  }">
                 <a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&query_results=true&gene_name=${marker.abbreviation}&searchtype=equals"
                 >${markerExpression.allExpressionData.figureCount}
-                figures
+                figures</a>
             </c:when>
             <c:otherwise>
                 <a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&query_results=true&gene_name=${marker.name}&searchtype=equals"
-                >${markerExpression.allExpressionData.figureCount} figures
+                >${markerExpression.allExpressionData.figureCount} figures</a>
             </c:otherwise>
         </c:choose>
     </c:otherwise>
 </c:choose>
-</a> from
+ from
 <c:choose>
     <c:when test="${markerExpression.allExpressionData.publicationCount eq 1}">
         <zfin:link entity="${markerExpression.allExpressionData.singlePublication}"/>
@@ -33,3 +33,8 @@
         ${markerExpression.allExpressionData.publicationCount} publications
     </c:otherwise>
 </c:choose>
+
+
+<authz:authorize access="hasRole('root')">
+    <a class="small" style="padding-right: 50px;" href="/action/marker/${marker.zdbID}/expression">(New Expression Search)</a>
+</authz:authorize>
