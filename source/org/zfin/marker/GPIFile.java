@@ -4,7 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;
-
+import java.util.Calendar;
 import java.io.*;
 import java.util.List;
 
@@ -40,6 +40,11 @@ public class GPIFile extends AbstractScriptWrapper{
 
             List<Marker> genes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM, numfOfRecords);
 
+            bw.write("!gpi-version:1.2");
+            bw.write('\n');
+            bw.write("!" + Calendar.getInstance().getTime());
+            bw.write('\n');
+            bw.write('\n');
             System.out.println("Total genes to return: " + genes.size());
             for (Marker gene : genes) {
                 StringBuilder geneRow = new StringBuilder();
