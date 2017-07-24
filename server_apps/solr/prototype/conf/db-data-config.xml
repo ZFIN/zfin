@@ -4630,6 +4630,14 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
 
+           <entity name="pub_curator"
+                   datasource="db" query="select distinct cur_pub_zdb_id as pub_zdb_id, cur_curator_zdb_id as curator
+                   from curation
+                   where (cur_closed_date is not NULL or cur_data_found = 't')
+                     and cur_topic != 'Linked Authors';"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pub_zdb_id=publication.id"/>
+
            <entity name="pub_tracking_location"
                    datasource="db" query="select nvl(ptl_location_display,'') as location, pth_pub_zdb_id as pub_zdb_id
                    from pub_tracking_history,pub_tracking_location

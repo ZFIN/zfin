@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 
@@ -35,6 +36,9 @@ public class PublicationSearchController {
     @Autowired
     private PublicationRepository publicationRepository;
 
+    @Autowired
+    private ProfileRepository profileRepository;
+
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String showSearchForm(Model model,
                                  @ModelAttribute PublicationSearchBean formBean,
@@ -59,6 +63,7 @@ public class PublicationSearchController {
         model.addAttribute("centuries", PublicationSearchBean.Century.values());
         model.addAttribute("pubTypes", Publication.Type.values());
         model.addAttribute("sortOrders", PublicationSearchBean.Sort.values());
+        model.addAttribute("curators", profileRepository.getCurators());
         model.addAttribute("oldestPubEntryDate", oldestPubEntryDate.getTime());
         model.addAttribute("newestPubEntryDate", newestPubEntryDate.getTime());
         return "publication/publication-search.page";

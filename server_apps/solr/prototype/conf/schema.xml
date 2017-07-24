@@ -693,6 +693,7 @@
    <field name="journal" type="keyword" indexed="true" stored="true"   />
      <field name="journal_name" type="text" indexed="true" stored="true"   />
    <field name="topic" type="keyword" indexed="true" stored="true"   multiValued="true" />
+   <field name="curator" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="pub_status" type="keyword" indexed="true" stored="true"   multiValued="true" />
    <field name="pet_date" type="date" indexed="true" stored="true"/>
    <field name="year" type="string" indexed="true" stored="true" />

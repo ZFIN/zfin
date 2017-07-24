@@ -44,6 +44,7 @@ public enum FieldName {
     CONSTRUCT("construct"),
     CURATION_STATUS("curation_status"),
     CURATION_LOCATION("location"),
+    CURATOR("curator"),
     DATE("date"),
     DISEASE("disease", "Human Disease"),
     DISEASE_MODEL("disease_model"),

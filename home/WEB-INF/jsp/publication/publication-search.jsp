@@ -86,6 +86,15 @@
                     </tr>
                     <authz:authorize access="hasRole('root')">
                     <tr>
+                        <th><form:label path="curator" cssClass="namesearchLabel">Curator</form:label></th>
+                        <td>
+                            <form:select path="curator">
+                                <form:option value="" label="Anyone"/>
+                                <form:options items="${curators}" itemLabel="fullName" itemValue="zdbID"/>
+                            </form:select>
+                        </td>
+                    </tr>
+                    <tr>
                         <th><form:label path="pubStatus" cssClass="namesearchLabel">Publication Status</form:label></th>
                         <td>
                             <form:select path="pubStatus">
