@@ -95,6 +95,17 @@
                         </td>
                     </tr>
                     <tr>
+                        <th><form:label path="curationStatus" cssClass="namesearchLabel">Curation Status</form:label></th>
+                        <td>
+                            <form:select path="curationStatus">
+                                <form:option value="" label="Any"/>
+                                <form:option value="Closed"/>
+                                <form:option value="Open"/>
+                                <form:option value="Indexed"/>
+                            </form:select>
+                        </td>
+                    </tr>
+                    <tr>
                         <th><form:label path="pubStatus" cssClass="namesearchLabel">Publication Status</form:label></th>
                         <td>
                             <form:select path="pubStatus">

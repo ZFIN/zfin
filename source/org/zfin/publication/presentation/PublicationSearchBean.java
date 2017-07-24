@@ -71,6 +71,7 @@ public class PublicationSearchBean extends PaginationBean {
     private Integer petToDay;
     private Integer petToYear;
     private String curator;
+    private String curationStatus;
     private String pubStatus;
 
     private List<Publication> results;
@@ -209,6 +210,14 @@ public class PublicationSearchBean extends PaginationBean {
 
     public void setCurator(String curator) {
         this.curator = curator;
+    }
+
+    public String getCurationStatus() {
+        return curationStatus;
+    }
+
+    public void setCurationStatus(String curationStatus) {
+        this.curationStatus = curationStatus;
     }
 
     public String getPubStatus() {
