@@ -11,7 +11,7 @@ begin
      mrkr_abbrev = (select scrub_char(NEW.mrkr_abbrev));     
      NEW.mrkr_abbrev = mrkr_abbrev;
      
-     select p_check_mrkr_abbrev(NEW.mrkr_name,
+     perform p_check_mrkr_abbrev(NEW.mrkr_name,
 			        NEW.mrkr_abbrev,
 				NEW.mrkr_type );
 
@@ -19,18 +19,18 @@ begin
      NEW.mrkr_abbrev_order = mrkr_abbrev_order;
 
 
-     select mhist_event(NEW.mrkr_zdb_id,OLD.mrkr_name,
+     perform mhist_event(NEW.mrkr_zdb_id,OLD.mrkr_name,
 					NEW.mrkr_name, 
 					OLD.mrkr_abbrev, 
 					NEW.mrkr_abbrev);
 
-     select p_update_related_names(NEW.mrkr_zdb_id,
+     perform p_update_related_names(NEW.mrkr_zdb_id,
 				   OLD.mrkr_abbrev,
 				   NEW.mrkr_abbrev );
 
-     select update_construct_name_component(NEW.mrkr_zdb_id, 
+     perform update_construct_name_component(NEW.mrkr_zdb_id, 
 					    NEW.mrkr_abbrev);
-     select p_update_related_fish_names(NEW.mrkr_zdb_id);
+     perform p_update_related_fish_names(NEW.mrkr_zdb_id);
 
      RETURN NEW;
 end;

@@ -4,14 +4,14 @@ startTime=$(date)
 echo $startTime
 echo ${DBNAME}
 
-cd /research/zunloads/databases/$DBNAME/
+cd /research/zunloads/databases/trunkdb/
 
 latestDump=`ls -td -- */ | head -n 1 | cut -d'/' -f1`
 echo $latestDump
 
 
 echo "*** Removing previous working directories"
-dumpToRemove=/research/zunloads/databases/postgres_dumps/${DBNAME}/$latestDump;
+dumpToRemove=/research/zunloads/databases/postgres_dumps/trunkdb/$latestDump;
 
 echo "*** Dump to remove"
 echo $dumpToRemove
@@ -20,7 +20,7 @@ rm -rf $dumpToRemove;
 
 echo "removed"  
 
-dirToCopy=/research/zunloads/databases/${DBNAME}/$latestDump;
+dirToCopy=/research/zunloads/databases/trunkdb/$latestDump;
 echo "*** Directory to cp:"
 echo $dirToCopy
 
