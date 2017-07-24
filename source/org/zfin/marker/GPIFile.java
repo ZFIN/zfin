@@ -4,9 +4,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;
-import java.util.Calendar;
 import java.io.*;
 import java.util.List;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -42,7 +43,12 @@ public class GPIFile extends AbstractScriptWrapper{
 
             bw.write("!gpi-version:1.2");
             bw.write('\n');
-            bw.write("!" + Calendar.getInstance().getTime());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+            Date date = new Date();
+            String dateOutput = sdf.format(date);
+
+            bw.write("!" + dateOutput + " $");
             bw.write('\n');
             bw.write('\n');
             System.out.println("Total genes to return: " + genes.size());
