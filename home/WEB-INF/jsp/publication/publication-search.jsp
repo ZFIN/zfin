@@ -84,6 +84,20 @@
                         <th><form:label path="zdbID" cssClass="namesearchLabel">ZFIN ID</form:label></th>
                         <td><form:input type="text" path="zdbID"/></td>
                     </tr>
+                    <authz:authorize access="hasRole('root')">
+                    <tr>
+                        <th><form:label path="pubStatus" cssClass="namesearchLabel">Publication Status</form:label></th>
+                        <td>
+                            <form:select path="pubStatus">
+                                <form:option value="" label="Any"/>
+                                <form:option value="Active" />
+                                <form:option value="Inactive" />
+                                <form:option value="Epub ahead of print" />
+                                <form:option value="in press" />
+                            </form:select>
+                        </td>
+                    </tr>
+                    </authz:authorize>
                 </table>
             </td>
             <td width="50%">

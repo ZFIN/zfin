@@ -60,6 +60,7 @@ public class PublicationSearchService {
         addFq(query, FieldName.JOURNAL, formBean.getJournal());
         addFq(query, FieldName.KEYWORD, formBean.getKeywords());
         addFq(query, FieldName.ID_T, formBean.getZdbID());
+        addFq(query, FieldName.PUBLICATION_STATUS, formBean.getPubStatus());
         if (formBean.getPubType() != null) {
             addFq(query, FieldName.PUBLICATION_TYPE, formBean.getPubType().getDisplay());
         }
