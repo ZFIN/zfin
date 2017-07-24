@@ -23,22 +23,6 @@ public class PublicationSearchBean extends PaginationBean {
         }
     }
 
-    public enum Century {
-        TWENTY("20"),
-        NINETEEN("19"),
-        EIGHTEEN("18");
-
-        private final String display;
-
-        Century(String display) {
-            this.display = display;
-        }
-
-        public String getDisplay() {
-            return display;
-        }
-    }
-
     public enum Sort {
         YEAR("Pub Date"),
         AUTHOR("Author");
@@ -60,7 +44,7 @@ public class PublicationSearchBean extends PaginationBean {
     private String keywords;
     private String zdbID;
     private YearType yearType;
-    private Century century;
+    private String century;
     private String twoDigitYear;
     private Publication.Type pubType;
     private Sort sort;
@@ -124,11 +108,11 @@ public class PublicationSearchBean extends PaginationBean {
         this.yearType = yearType;
     }
 
-    public Century getCentury() {
+    public String getCentury() {
         return century;
     }
 
-    public void setCentury(Century century) {
+    public void setCentury(String century) {
         this.century = century;
     }
 

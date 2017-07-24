@@ -129,7 +129,9 @@
                                 <form:options itmes="${yearTypes}" itemLabel="display" />
                             </form:select>
                             <form:select path="century">
-                                <form:options items="${centuries}" itemLabel="display" />
+                                <form:option value="20"/>
+                                <form:option value="19"/>
+                                <form:option value="18"/>
                             </form:select>
                             <form:input type="text" path="twoDigitYear" size="2" maxlength="2" />
                         </td>
@@ -138,7 +140,7 @@
                         <th><form:label path="pubType" cssClass="namesearchLabel">Type</form:label></th>
                         <td>
                             <form:select path="pubType">
-                                <form:option value="" label="ALL" />
+                                <form:option value="" label="Any" />
                                 <form:options items="${pubTypes}" itemLabel="display" />
                             </form:select>
                         </td>

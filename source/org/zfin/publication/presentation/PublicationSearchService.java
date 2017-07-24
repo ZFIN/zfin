@@ -67,7 +67,7 @@ public class PublicationSearchService {
             addFq(query, FieldName.PUBLICATION_TYPE, formBean.getPubType().getDisplay());
         }
         if (StringUtils.isNotEmpty(formBean.getTwoDigitYear()) && formBean.getTwoDigitYear().matches("[0-9]+")) {
-            int fullYear = Integer.parseInt(formBean.getCentury().getDisplay() + formBean.getTwoDigitYear());
+            int fullYear = Integer.parseInt(formBean.getCentury() + formBean.getTwoDigitYear());
             switch (formBean.getYearType()) {
                 case EQUALS:
                     query.addFilterQuery("year:" + fullYear);

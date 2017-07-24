@@ -60,7 +60,6 @@ public class PublicationSearchController {
         }
         model.addAttribute("formBean", formBean);
         model.addAttribute("yearTypes", PublicationSearchBean.YearType.values());
-        model.addAttribute("centuries", PublicationSearchBean.Century.values());
         model.addAttribute("pubTypes", Publication.Type.values());
         model.addAttribute("sortOrders", PublicationSearchBean.Sort.values());
         model.addAttribute("curators", profileRepository.getCurators());
