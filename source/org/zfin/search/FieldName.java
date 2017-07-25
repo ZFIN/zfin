@@ -74,6 +74,7 @@ public enum FieldName {
     IS_WILDTYPE("is_wildtype"),
     JOURNAL("journal"),
     KEYWORD("keyword"),
+    KEYWORD_T("keyword_t"),
     LAB_OF_ORIGIN("lab_of_origin"),
     LABELED_STRUCTURE_TF("labeled_structure_tf"),
     MESH_TERM("full_mesh_term","MeSH Term"),

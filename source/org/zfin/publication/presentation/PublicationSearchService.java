@@ -58,7 +58,7 @@ public class PublicationSearchService {
         addFq(query, FieldName.AUTHOR_STRING, formBean.getAuthor());
         addFq(query, FieldName.NAME, formBean.getTitle());
         addFq(query, FieldName.JOURNAL, formBean.getJournal());
-        addFq(query, FieldName.KEYWORD, formBean.getKeywords());
+        addFq(query, FieldName.KEYWORD_T, formBean.getKeywords());
         addFq(query, FieldName.ID_T, formBean.getZdbID());
         addFq(query, FieldName.PUBLICATION_STATUS, formBean.getPubStatus());
         addFq(query, FieldName.PUB_SIMPLE_STATUS, formBean.getCurationStatus());
@@ -80,18 +80,21 @@ public class PublicationSearchService {
                     break;
             }
         }
-        DateTimeFormatter parser = DateTimeFormatter.ofPattern("yyyy-M-d");
-        ZonedDateTime petFrom = parser
-                .parse(formBean.getPetFromYear() + "-" + formBean.getPetFromMonth() + "-" + formBean.getPetFromDay(), LocalDate::from)
-                .atStartOfDay(ZoneOffset.UTC);
-        ZonedDateTime petTo = parser
-                .parse(formBean.getPetToYear() + "-" + formBean.getPetToMonth() + "-" + formBean.getPetToDay(), LocalDate::from)
-                .atStartOfDay(ZoneOffset.UTC);
-        if (petFrom.isAfter(petTo)) {
-            query.addFilterQuery("-pet_date:[* TO *]");
-        } else {
-            query.addFilterQuery("pet_date:[" + DateTimeFormatter.ISO_INSTANT.format(petFrom) +
-                    " TO " + DateTimeFormatter.ISO_INSTANT.format(petTo) + "]");
+        if (formBean.getPetFromYear() != null && formBean.getPetFromMonth() != null && formBean.getPetFromDay() != null &&
+                formBean.getPetToYear() != null && formBean.getPetToMonth() != null && formBean.getPetToDay() != null) {
+            DateTimeFormatter parser = DateTimeFormatter.ofPattern("yyyy-M-d");
+            ZonedDateTime petFrom = parser
+                    .parse(formBean.getPetFromYear() + "-" + formBean.getPetFromMonth() + "-" + formBean.getPetFromDay(), LocalDate::from)
+                    .atStartOfDay(ZoneOffset.UTC);
+            ZonedDateTime petTo = parser
+                    .parse(formBean.getPetToYear() + "-" + formBean.getPetToMonth() + "-" + formBean.getPetToDay(), LocalDate::from)
+                    .atStartOfDay(ZoneOffset.UTC);
+            if (petFrom.isAfter(petTo)) {
+                query.addFilterQuery("-pet_date:[* TO *]");
+            } else {
+                query.addFilterQuery("pet_date:[" + DateTimeFormatter.ISO_INSTANT.format(petFrom) +
+                        " TO " + DateTimeFormatter.ISO_INSTANT.format(petTo) + "]");
+            }
         }
         switch (formBean.getSort()) {
             case YEAR:
