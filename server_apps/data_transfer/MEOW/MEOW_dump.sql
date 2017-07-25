@@ -34,16 +34,16 @@ create temp table meow_exp1_dup (
 -- get panel mappings
 insert into meow_exp1_dup 
   select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mm_chromosome, p.zdb_id
-    from marker, mapped_marker, panels p
-   where mrkr_type[1,4] == 'GENE'
+    from marker, marker_type_group_member, mapped_marker, panels p
+     where mtgrpmem_mrkr_type=mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM'
      and mrkr_zdb_id = marker_id
      and marker_type <> 'SNP'
      and refcross_id = p.zdb_id;
 
 insert into meow_exp1_dup 
   select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, mm_chromosome, p.zdb_id
-    from marker a, marker b, mapped_marker, marker_relationship, panels p
-   where a.mrkr_type[1,4] == 'GENE'
+    from marker a, marker b, marker_type_group_member, mapped_marker, marker_relationship, panels p
+   where mtgrpmem_mrkr_type=a.mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM'
      and b.mrkr_zdb_id = marker_id
      and a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
      and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
@@ -69,10 +69,10 @@ drop table meow_exp1_dup;
 
 insert into meow_exp1 
   select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, lnkg_chromosome, recattrib_source_zdb_id
-    from marker a, marker b, linkage_member, linkage, marker_relationship, record_attribution
+    from marker a, marker b, marker_type_group_member, linkage_member, linkage, marker_relationship, record_attribution
    where b.mrkr_zdb_id = lnkgmem_member_zdb_id 
      and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-     and a.mrkr_type[1,4] == 'GENE'
+     and mtgrpmem_mrkr_type=a.mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM'
      and a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
      and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
      and recattrib_data_zdb_id = lnkg_zdb_id;
@@ -81,10 +81,10 @@ insert into meow_exp1
 
 insert into meow_exp1 
   select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, lnkg_chromosome, recattrib_source_zdb_id
-    from marker a, marker b, linkage_member, linkage,marker_relationship, record_attribution
+    from marker a, marker b, marker_type_group_member, linkage_member, linkage,marker_relationship, record_attribution
    where b.mrkr_zdb_id = lnkgmem_member_zdb_id 
      and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-     and a.mrkr_type[1,4] == 'GENE'
+     and mtgrpmem_mrkr_type=a.mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM'
      and a.mrkr_zdb_id = mrel_mrkr_2_zdb_id
      and b.mrkr_zdb_id = mrel_mrkr_1_zdb_id
      and mrel_type = 'clone contains gene'
@@ -92,17 +92,17 @@ insert into meow_exp1
 
 insert into meow_exp1 
   select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, lnkg_chromosome, recattrib_source_zdb_id
-    from marker, linkage_member, linkage, record_attribution
+    from marker, marker_type_group_member, linkage_member, linkage, record_attribution
    where mrkr_zdb_id = lnkgmem_member_zdb_id 
      and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-     and mrkr_type[1,4] == 'GENE'
+     and mtgrpmem_mrkr_type=mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM'
      and recattrib_data_zdb_id = lnkg_zdb_id;
 
 --  Add in  unmapped genes
 insert into meow_exp1 
   select mrkr_zdb_id,mrkr_name,mrkr_abbrev,'0','0'
-    from marker
-   where mrkr_type[1,4] == 'GENE'
+    from marker,marker_type_group_member
+   where mtgrpmem_mrkr_type=mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM'
      and not exists (
                 select 't'
                   from linkage_member
