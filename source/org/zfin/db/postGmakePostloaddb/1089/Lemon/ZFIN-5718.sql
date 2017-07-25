@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset prita:ZFIN-5671
+--changeset prita:ZFIN-5718
 
 update construct set construct_name='Tg(UAS:Hsa.JAG1,myl7:EGFP)' where construct_zdb_id='ZDB-TGCONSTRCT-100726-2';
 update marker set mrkr_name='Tg(UAS:Hsa.JAG1,myl7:EGFP)' where mrkr_zdb_id='ZDB-TGCONSTRCT-100726-2';
