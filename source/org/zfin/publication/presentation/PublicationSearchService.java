@@ -12,12 +12,16 @@ import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.zfin.search.service.SolrQueryFacade.addTo;
 
 @Service
 public class PublicationSearchService {
@@ -53,30 +57,31 @@ public class PublicationSearchService {
 
     private QueryResponse makeSolrQuery(PublicationSearchBean formBean, FieldName... fields) {
         SolrQuery query = new SolrQuery();
-        query.addFilterQuery(fq(FieldName.CATEGORY, Category.PUBLICATION.getName()));
         query.setFields(Arrays.stream(fields).map(FieldName::getName).toArray(String[]::new));
-        addFq(query, FieldName.AUTHOR_STRING, formBean.getAuthor());
-        addFq(query, FieldName.NAME, formBean.getTitle());
-        addFq(query, FieldName.JOURNAL, formBean.getJournal());
-        addFq(query, FieldName.KEYWORD_T, formBean.getKeywords());
-        addFq(query, FieldName.ID_T, formBean.getZdbID());
-        addFq(query, FieldName.PUBLICATION_STATUS, formBean.getPubStatus());
-        addFq(query, FieldName.PUB_SIMPLE_STATUS, formBean.getCurationStatus());
-        addFq(query, FieldName.CURATOR, formBean.getCurator());
+        addTo(query)
+                .category(Category.PUBLICATION)
+                .fqParsed(formBean.getAuthor(), FieldName.AUTHOR_STRING)
+                .fqParsed(formBean.getKeywords(), FieldName.KEYWORD_T)
+                .fq(formBean.getTitle(), FieldName.NAME)
+                .fq(formBean.getJournal(), FieldName.JOURNAL_T, FieldName.JOURNAL_NAME_T)
+                .fq(formBean.getZdbID(), FieldName.ID_T)
+                .fq(formBean.getPubStatus(), FieldName.PUBLICATION_STATUS)
+                .fq(formBean.getCurationStatus(), FieldName.PUB_SIMPLE_STATUS)
+                .fq(formBean.getCurator(), FieldName.CURATOR);
         if (formBean.getPubType() != null) {
-            addFq(query, FieldName.PUBLICATION_TYPE, formBean.getPubType().getDisplay());
+            addTo(query).fq(formBean.getPubType().getDisplay(), FieldName.PUBLICATION_TYPE);
         }
         if (StringUtils.isNotEmpty(formBean.getTwoDigitYear()) && formBean.getTwoDigitYear().matches("[0-9]+")) {
             int fullYear = Integer.parseInt(formBean.getCentury() + formBean.getTwoDigitYear());
             switch (formBean.getYearType()) {
                 case EQUALS:
-                    query.addFilterQuery("year:" + fullYear);
+                    addTo(query).fq(Integer.toString(fullYear), FieldName.YEAR);
                     break;
                 case BEFORE:
-                    query.addFilterQuery("year:[* TO " + (fullYear - 1) + "]");
+                    addTo(query).fqLessThanOrEqual(Integer.toString(fullYear - 1), FieldName.YEAR);
                     break;
                 case AFTER:
-                    query.addFilterQuery("year:[" + (fullYear + 1) + " TO *]");
+                    addTo(query).fqGreaterThanOrEqual(Integer.toString(fullYear + 1), FieldName.YEAR);
                     break;
             }
         }
@@ -90,10 +95,12 @@ public class PublicationSearchService {
                     .parse(formBean.getPetToYear() + "-" + formBean.getPetToMonth() + "-" + formBean.getPetToDay(), LocalDate::from)
                     .atStartOfDay(ZoneOffset.UTC);
             if (petFrom.isAfter(petTo)) {
-                query.addFilterQuery("-pet_date:[* TO *]");
+                addTo(query).fqNotAny(FieldName.PET_DATE);
             } else {
-                query.addFilterQuery("pet_date:[" + DateTimeFormatter.ISO_INSTANT.format(petFrom) +
-                        " TO " + DateTimeFormatter.ISO_INSTANT.format(petTo) + "]");
+                addTo(query).fqRange(
+                        DateTimeFormatter.ISO_INSTANT.format(petFrom),
+                        DateTimeFormatter.ISO_INSTANT.format(petTo),
+                        FieldName.PET_DATE);
             }
         }
         switch (formBean.getSort()) {
@@ -116,16 +123,6 @@ public class PublicationSearchService {
             LOG.error(e);
         }
         return response;
-    }
-
-    private String fq(FieldName fieldName, String value) {
-        return fieldName.getName() + ":(\"" + SolrService.luceneEscape(value) + "\")";
-    }
-
-    private void addFq(SolrQuery query, FieldName fieldName, String value) {
-        if (StringUtils.isNotEmpty(value)) {
-            query.addFilterQuery(fq(fieldName, value));
-        }
     }
 
     private String referField(String tag, String value) {
