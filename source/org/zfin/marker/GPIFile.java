@@ -84,7 +84,16 @@ public class GPIFile extends AbstractScriptWrapper{
                         String dbName = dblink.getReferenceDatabase().getForeignDB().getDbName().toString();
                         if (dbName == null)
                             continue;
-                        geneRow.append(dbName + dblink.getAccessionNumber());
+                        if (dbName == "Ensembl(GRCz10)"){
+                            dbName = "ENSEMBL";
+                        }
+                        if (dbName == "UniProtKB-KW") {
+                            dbName = "UniProtKB";
+                        }
+                        if (dbName == "Gene"){
+                            dbName = "NCBIGene";
+                        }
+                        geneRow.append(dbName + ":" + dblink.getAccessionNumber());
                         geneRow.append("|");
                     }
                     Integer lastPipe = geneRow.length();
