@@ -378,7 +378,7 @@
 
       <fieldType name="edgytext" class="solr.TextField" positionIncrementGap="100">
        <analyzer type="index">
-         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+         <tokenizer class="solr.StandardTokenizerFactory"/>
          <filter class="solr.ASCIIFoldingFilterFactory"/>
          <filter class="solr.LowerCaseFilterFactory"/>
          <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
