@@ -58,7 +58,7 @@ insert into tmp_go (mv_zdb_id,
 select mrkrgoev_zdb_id,
 				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by, szm_term_ont_id
+				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by, lower(szm_term_name)
 			   from marker_go_term_evidence, marker, term, publication, so_zfin_mapping,
 					   outer inference_group_member
 			  where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
@@ -66,6 +66,8 @@ select mrkrgoev_zdb_id,
 			    and mrkrgoev_source_zdb_id  = zdb_id
 			    and mrkr_type = szm_object_type
 			    and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id ;
+
+select distinct gene_type from tmp_go where gene_type is not null;
 
 update tmp_go
   set id2 = (select id2 from tmp_identifiers
