@@ -77,7 +77,7 @@ public enum FieldName {
     JOURNAL_NAME("journal_name"),
     JOURNAL_NAME_T("journal_name_t"),
     KEYWORD("keyword"),
-    KEYWORD_T("keyword_t"),
+    KEYWORD_AC("keyword_ac"),
     LAB_OF_ORIGIN("lab_of_origin"),
     LABELED_STRUCTURE_TF("labeled_structure_tf"),
     MESH_TERM("full_mesh_term","MeSH Term"),

@@ -934,7 +934,7 @@
     <copyField source="journal_name" dest="journal_name_t"/>
    <copyField source="registered_author" dest="registered_author_t"/>
    <copyField source="author_string" dest="author_sort" />
-   <copyField source="keyword" dest="keyword_t" />
+   <copyField source="keyword" dest="keyword_ac" />
    <copyField source="id" dest="id_t"/>
    <copyField source="name" dest="name_t"/>
    <copyField source="disease_model" dest="disease_model_t"/>

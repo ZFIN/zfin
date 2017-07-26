@@ -61,7 +61,7 @@ public class PublicationSearchService {
         addTo(query)
                 .category(Category.PUBLICATION)
                 .fqParsed(formBean.getAuthor(), FieldName.AUTHOR_STRING)
-                .fqParsed(formBean.getKeywords(), FieldName.KEYWORD_T)
+                .fqParsed(formBean.getKeywords(), FieldName.KEYWORD_AC)
                 .fqParsed(formBean.getTitle(), FieldName.FULL_NAME_AC)
                 .fq(formBean.getJournal(), FieldName.JOURNAL_T, FieldName.JOURNAL_NAME_T)
                 .fq(formBean.getZdbID(), FieldName.ID_T)
