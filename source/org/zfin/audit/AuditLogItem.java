@@ -26,7 +26,7 @@ public class AuditLogItem {
     private String oldValue;
     @Column(name = "comments")
     private String comment;
-    @Column(name = "when")
+    @Column(name = "upd_when")
     private Date dateUpdated;
     @ManyToOne()
     @JoinColumn(name = "submitter_id")

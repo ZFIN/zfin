@@ -54,6 +54,8 @@ public class GPIFile extends AbstractScriptWrapper{
             System.out.println("Total genes to return: " + genes.size());
             for (Marker gene : genes) {
                 StringBuilder geneRow = new StringBuilder();
+                geneRow.append("ZFIN");
+                geneRow.append('\t');
                 geneRow.append(gene.getZdbID());
                 geneRow.append('\t');
                 geneRow.append(gene.getAbbreviation());
@@ -68,22 +70,30 @@ public class GPIFile extends AbstractScriptWrapper{
                     Integer lastPipe = geneRow.length();
                     geneRow.deleteCharAt(lastPipe-1);
                 }
-
+                else {geneRow.append (" ");}
                 geneRow.append('\t');
                 geneRow.append(gene.getSoTerm().getTermName().toLowerCase());
                 geneRow.append('\t');
-                geneRow.append("7955");
+                geneRow.append("taxon:7955");
+                geneRow.append('\t');
+                //purposeful tab here, to represent parent id that we don't have
+                geneRow.append("");
                 geneRow.append('\t');
                 if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
                     for (DBLink dblink : gene.getDbLinks()) {
-                        geneRow.append(dblink.getAccessionNumberDisplay());
+                        String dbName = dblink.getReferenceDatabase().getForeignDB().getDbName().toString();
+                        if (dbName == null)
+                            continue;
+                        geneRow.append(dbName + dblink.getAccessionNumber());
                         geneRow.append("|");
                     }
                     Integer lastPipe = geneRow.length();
                     geneRow.deleteCharAt(lastPipe-1);
                 }
-
-
+                else {geneRow.append ("");}
+                //purposeful tab here, to represent the field 'Properties' that we don't have
+                geneRow.append('\t');
+                geneRow.append("");
                 geneRow.append('\n');
                 bw.write(geneRow.toString());
             }
