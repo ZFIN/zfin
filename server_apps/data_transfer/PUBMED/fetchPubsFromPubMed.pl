@@ -78,7 +78,7 @@ sub pubMedArticle {
         my $medlineCitation = $pubMedArticle->first_child('MedlineCitation');
 
         $row{'pmid'} = $medlineCitation->first_child_text('PMID');
-        if ($row{'pmid'} = '28539358') {
+        if ($row{'pmid'} == '28539358') {
             # 28539358 has a character in the title that is part of a higher unicode version than what
             # informix supports, so we have to blacklist it.
             return;
