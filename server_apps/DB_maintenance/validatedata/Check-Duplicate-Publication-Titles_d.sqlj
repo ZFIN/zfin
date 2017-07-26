@@ -1,4 +1,4 @@
-SELECT title
+SELECT lower(title)
 FROM publication
     ,journal
 WHERE zdb_id NOT IN (
@@ -34,7 +34,7 @@ WHERE zdb_id NOT IN (
 )
     AND jrnl_abbrev <> "ZFIN Direct Data Submission"
     AND jrnl_zdb_id = pub_jrnl_zdb_id
-GROUP BY title
+GROUP BY lower(title)
 HAVING count(*) > 1
 subquery
 list subquery
@@ -49,7 +49,7 @@ SELECT p.title,
        p.pub_pages
 FROM   publication p,
        journal
-WHERE  p.title = '$0'
+WHERE  lower(p.title) = '$0'
        AND jrnl_zdb_id = pub_jrnl_zdb_id
 ORDER  BY p.title,
           p.zdb_id
