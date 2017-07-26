@@ -1,5 +1,6 @@
 package org.zfin.publication.presentation;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -48,14 +50,13 @@ public class PublicationSearchController {
         formBean.setQueryString(request.getQueryString());
         GregorianCalendar oldestPubEntryDate = publicationRepository.getOldestPubEntryDate();
         GregorianCalendar newestPubEntryDate = publicationRepository.getNewestPubEntryDate();
-        if (formBean.isEmpty()) {
-            formBean.setPetFromMonth(oldestPubEntryDate.get(Calendar.MONTH) + 1);
-            formBean.setPetFromDay(oldestPubEntryDate.get(Calendar.DAY_OF_MONTH));
-            formBean.setPetFromYear(oldestPubEntryDate.get(Calendar.YEAR));
-            formBean.setPetToMonth(newestPubEntryDate.get(Calendar.MONTH) + 1);
-            formBean.setPetToDay(newestPubEntryDate.get(Calendar.DAY_OF_MONTH));
-            formBean.setPetToYear(newestPubEntryDate.get(Calendar.YEAR));
-        } else {
+        setDefaultValue(formBean, "petFromMonth", oldestPubEntryDate.get(Calendar.MONTH) + 1);
+        setDefaultValue(formBean, "petFromDay", oldestPubEntryDate.get(Calendar.DAY_OF_MONTH));
+        setDefaultValue(formBean, "petFromYear", oldestPubEntryDate.get(Calendar.YEAR));
+        setDefaultValue(formBean, "petToMonth", newestPubEntryDate.get(Calendar.MONTH) + 1);
+        setDefaultValue(formBean, "petToDay", newestPubEntryDate.get(Calendar.DAY_OF_MONTH));
+        setDefaultValue(formBean, "petToYear", newestPubEntryDate.get(Calendar.YEAR));
+        if (!request.getParameterMap().isEmpty()) {
             publicationSearchService.populateSearchResults(formBean);
         }
         model.addAttribute("formBean", formBean);
@@ -96,4 +97,13 @@ public class PublicationSearchController {
         writer.close();
     }
 
+    private void setDefaultValue(PublicationSearchBean formBean, String property, Object value) {
+        try {
+            if (PropertyUtils.getProperty(formBean, property) == null) {
+                PropertyUtils.setProperty(formBean, property, value);
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LOG.error("Unable to set property " + property + " on pub form search bean", e);
+        }
+    }
 }

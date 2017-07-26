@@ -9,7 +9,7 @@
 <c:set var="oldestPubEntryMonth"><fmt:formatDate value="${oldestPubEntryDate}" pattern="M"/></c:set>
 <c:set var="oldestPubEntryDay"><fmt:formatDate value="${oldestPubEntryDate}" pattern="d"/></c:set>
 
-<c:if test="${!formBean.isEmpty()}">
+<c:if test="${formBean.results != null}">
     <div class="pub-export-controls">
         <input type="button" value="Format into a printable listing" id="pub-printable-results">
         <input type="button" value="Output as REFER format file" id="pub-refer-results">
@@ -51,7 +51,7 @@
 </c:if>
 
 <div class="titlebar">
-    <h1>${formBean.isEmpty() ? "Search for Publications" : "Modify your search"}</h1>
+    <h1>${formBean.results == null ? "Search for Publications" : "Modify your search"}</h1>
     <span class="yourinputwelcome">
         <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
             <tiles:putAttribute name="subjectName" value="Publication search"/>

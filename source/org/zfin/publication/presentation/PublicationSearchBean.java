@@ -220,10 +220,6 @@ public class PublicationSearchBean extends PaginationBean {
         this.results = results;
     }
 
-    public boolean isEmpty() {
-        return author == null && title == null && journal == null && keywords == null && zdbID == null;
-    }
-
     @Override
     public String toString() {
         return "PublicationSearchBean{" +
