@@ -71,7 +71,6 @@ if (scalar @ARGV > 0) {
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadNewPubs.sql >loadSQLOutput.log 2> loadSQLError.log") && die "loading the pubs failed.";
 
 sub pubMedArticle {
-    $pubCount++;
     my ($twig, $pubMedArticle) = @_;
 
     my %row = {};
@@ -79,6 +78,11 @@ sub pubMedArticle {
         my $medlineCitation = $pubMedArticle->first_child('MedlineCitation');
 
         $row{'pmid'} = $medlineCitation->first_child_text('PMID');
+        if ($row{'pmid'} == '28539358') {
+            # 28539358 has a character in the title that is part of a higher unicode version than what
+            # informix supports, so we have to blacklist it.
+            return;
+        }
 
         if (defined $medlineCitation->first_child('KeywordList')) {
             my $keywordList = $medlineCitation->first_child('KeywordList');
@@ -208,6 +212,7 @@ sub pubMedArticle {
                   'numAuthors', 'year', 'month', 'day', 'issn', 'volume',
                   'issue', 'journaltitle', 'iso', 'status');
 
+    $pubCount++;
     print $log join('|', map { $row{$_} =~ s/\|/\\\|/rg } @fields), "\n";
 }
 
