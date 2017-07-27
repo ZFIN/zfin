@@ -1,1 +1,0 @@
-update warehouse_run_tracking set (wrt_mart_load_successful, wrt_last_loaded_date) = ("t",current year to second) where wrt_mart_name = 'fish mart';
