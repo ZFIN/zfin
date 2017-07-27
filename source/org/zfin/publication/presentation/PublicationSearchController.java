@@ -30,7 +30,9 @@ import java.util.List;
 public class PublicationSearchController {
 
     private final static Logger LOG = Logger.getLogger(PublicationSearchController.class);
-    private final static int PAGE_SIZE = 10;
+    private final static int MIN_PAGE_SIZE = 1;
+    private final static int DEFAULT_PAGE_SIZE = 10;
+    private final static int MAX_PAGE_SIZE = 1000;
 
     @Autowired
     private PublicationSearchService publicationSearchService;
@@ -45,9 +47,6 @@ public class PublicationSearchController {
     public String showSearchForm(Model model,
                                  @ModelAttribute PublicationSearchBean formBean,
                                  HttpServletRequest request) {
-        formBean.setMaxDisplayRecords(PAGE_SIZE);
-        formBean.setRequestUrl(request.getRequestURL());
-        formBean.setQueryString(request.getQueryString());
         GregorianCalendar oldestPubEntryDate = publicationRepository.getOldestPubEntryDate();
         GregorianCalendar newestPubEntryDate = publicationRepository.getNewestPubEntryDate();
         setDefaultValue(formBean, "petFromMonth", oldestPubEntryDate.get(Calendar.MONTH) + 1);
@@ -56,6 +55,22 @@ public class PublicationSearchController {
         setDefaultValue(formBean, "petToMonth", newestPubEntryDate.get(Calendar.MONTH) + 1);
         setDefaultValue(formBean, "petToDay", newestPubEntryDate.get(Calendar.DAY_OF_MONTH));
         setDefaultValue(formBean, "petToYear", newestPubEntryDate.get(Calendar.YEAR));
+        int count;
+        try {
+            count = Integer.parseInt(formBean.getCount());
+            if (count < MIN_PAGE_SIZE) {
+                count = MIN_PAGE_SIZE;
+            }
+            if (count > MAX_PAGE_SIZE) {
+                count = MAX_PAGE_SIZE;
+            }
+        } catch (NumberFormatException e) {
+            count = DEFAULT_PAGE_SIZE;
+        }
+        formBean.setCount(Integer.toString(count));
+        formBean.setMaxDisplayRecords(count);
+        formBean.setRequestUrl(request.getRequestURL());
+        formBean.setQueryString(request.getQueryString());
         if (!request.getParameterMap().isEmpty()) {
             publicationSearchService.populateSearchResults(formBean);
         }

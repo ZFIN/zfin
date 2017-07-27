@@ -57,6 +57,7 @@ public class PublicationSearchBean extends PaginationBean {
     private String curator;
     private String curationStatus;
     private String pubStatus;
+    private String count;
 
     private List<Publication> results;
 
@@ -210,6 +211,14 @@ public class PublicationSearchBean extends PaginationBean {
 
     public void setPubStatus(String pubStatus) {
         this.pubStatus = pubStatus;
+    }
+
+    public String getCount() {
+        return count;
+    }
+
+    public void setCount(String count) {
+        this.count = count;
     }
 
     public List<Publication> getResults() {

@@ -194,6 +194,12 @@
                         </td>
                     </tr>
                     </authz:authorize>
+                    <tr>
+                        <td colspan="2">
+                            <form:label path="count">Display results in groups of </form:label>
+                            <form:input type="text" path="count" size="3"/>
+                        </td>
+                    </tr>
                 </table>
             </td>
         </tr>
@@ -219,6 +225,8 @@
             $('#petToMonth').val(${newestPubEntryMonth});
             $('#petToDay').val(${newestPubEntryDay});
             $('#petToYear').val(${newestPubEntryYear});
+            // count is also special
+            $('#count').val('10');
         }
 
         var $form = $("#pub-search-form");
