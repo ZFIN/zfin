@@ -21,9 +21,9 @@ unload to nonKeyIndexes.sql
 		d.colno = c.part14 or
 		d.colno = c.part15 or
 		d.colno = c.part16)
-        and not exists (Select 'x' 
-	    	       	       from sysconstraints f 
-			       where f.idxname = c.idxname)
+        --and not exists (Select 'x' 
+	--    	       	       from sysconstraints f 
+	--		       where f.idxname = c.idxname)
 	ORDER BY a.tabname, d.colname;
 
 commit work;
