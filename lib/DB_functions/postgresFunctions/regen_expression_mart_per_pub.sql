@@ -1,5 +1,5 @@
 create or replace function regen_expression_mart_per_pub (vPubZdbId text)
-returns text as $regen_expression_mart_per_pub$
+returns void as $regen_expression_mart_per_pub$
 
 declare vResid int8;
         vXpatex text; 
