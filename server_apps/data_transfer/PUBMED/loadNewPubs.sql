@@ -131,7 +131,8 @@ select iso,journaltitle from tmp_new_pubs
 
 update tmp_new_pubs
   set status = 'active'
-  where status = 'ppublish'; -- no, this is not a typo. it really has two p's.
+  where status = 'ppublish' -- no, this is not a typo. it really has two p's.
+  or stuatus = 'epublish';
 
 update tmp_new_pubs
   set status = 'Epub ahead of print'
