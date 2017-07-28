@@ -30,7 +30,7 @@
         <th>Synonyms:</th>
         <td>
             <c:forEach var="alias" items="${journal.aliases}" varStatus="loop">
-            ${alias}<c:if test="${!loop.last}">,</c:if>
+            ${alias}<c:if test="${!loop.last}">, </c:if>
             </c:forEach>
         </td>
     </tr>
