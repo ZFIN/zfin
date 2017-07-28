@@ -9,6 +9,6 @@
 
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1089/Lemon/ZFIN-5718.sql" />
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1089/Lemon/JENK-262.sql" />
 
 </databaseChangeLog>
