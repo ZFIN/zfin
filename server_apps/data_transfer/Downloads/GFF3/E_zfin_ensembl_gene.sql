@@ -42,11 +42,15 @@ select distinct ----------------------- ottdarT <--> ensdarT -------------------
 	"1" score ,
 	et.gff_strand strand,
 	"." frame,
-	'gene_id=' || gene.mrkr_zdb_id ||';Name=' || gene.mrkr_abbrev id_name,
+	'gene_id=' || gene.mrkr_zdb_id
+	   ||';Name=' || gene.mrkr_abbrev
+	   || ';so_term_name=' || szm_term_name
+	   || ';curie=' || 'ZFIN:' || mrkr_zdb_id as id_name,
 	gene.mrkr_zdb_id alias
- from  marker gene, marker_relationship, gff3 vt, gff3 et, db_link vTdbl, db_link eTdbl
+ from  marker gene, marker_relationship, gff3 vt, gff3 et, db_link vTdbl, db_link eTdbl, so_zfin_mapping
  where gene.mrkr_type[1,4] == 'GENE'
    and mrel_mrkr_1_zdb_id == gene.mrkr_zdb_id
+   and gene.mrkr_type = szm_object_type
    and vTdbl.dblink_linked_recid == mrel_mrkr_2_zdb_id
    and vTdbl.dblink_acc_num == vt.gff_id
    and vt.gff_source  == 'vega'
@@ -342,10 +346,14 @@ select ----------------- Extra ensdarG 1:1 ----------------------------
 	"2" score,
 	gff_strand,
 	"." frame,
-	'gene_id=' || gene.mrkr_zdb_id || ';Name=' || gene.mrkr_abbrev id_name,
+		'gene_id=' || gene.mrkr_zdb_id
+	   ||';Name=' || gene.mrkr_abbrev
+	   || ';so_term_name=' || szm_term_name
+	   || ';curie=' || 'ZFIN:' || mrkr_zdb_id as id_name,
 	gene.mrkr_zdb_id alias
- from  marker gene, db_link eGdbl, gff3
+ from  marker gene, db_link eGdbl, gff3, so_zfin_mapping
  where gene.mrkr_type[1,4] == 'GENE'
+   and gene.mrkr_type = szm_object_type
    and gene.mrkr_zdb_id == eGdbl.dblink_linked_recid
    and eGdbl.dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-061018-1' -- Ensembl(ZvN) Gene
    and eGdbl.dblink_acc_num == gff_parent

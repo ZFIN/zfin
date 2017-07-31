@@ -9,7 +9,7 @@ BEGIN {
 #either the next row matches and append alias or print and start new
 {	if ($1==A && $4==B && $5==C){ # LG start, stop all match
 		split($9,alias,"=");
-		row = row "," alias[4]
+		row = row "," alias[6]
 	}
 	else{
 		print row;
