@@ -57,6 +57,7 @@ import org.zfin.properties.ZfinPropertiesTest;
 import org.zfin.publication.MeshHeadingSpec;
 import org.zfin.publication.PubMedValidationReportTest;
 import org.zfin.publication.PublicationTest;
+import org.zfin.search.service.SolrQueryFacadeSpec;
 import org.zfin.search.service.SolrServiceSpec;
 import org.zfin.security.Md5PasswordEncoderTest;
 import org.zfin.sequence.blast.BlastNonDBTest;
@@ -139,6 +140,7 @@ import org.zfin.util.*;
         SequenceTest.class,
         SerializationTests.class,
         SiteSearchTest.class,
+        SolrQueryFacadeSpec.class,
         SolrServiceSpec.class,
         SortAnatomyResultsTest.class,
         StagePresentationTest.class,

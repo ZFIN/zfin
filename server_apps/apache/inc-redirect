@@ -168,7 +168,7 @@ RewriteCond %{QUERY_STRING}     ^record=JUMPTOPERSON$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOPUB$    [NC]
-RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg [NC,R=301]
+RewriteRule ^/cgi-bin/ZFIN_jump /action/publication/search [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOREFCROSS$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /action/mapping/all-panels [NC,R=301]

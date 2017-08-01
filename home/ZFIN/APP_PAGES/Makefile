@@ -23,7 +23,6 @@ SUBDIRS = \
 	fish_files \
 	marker_files \
 	misc_files \
-	pubbrowser \
 	security_files \
 	selection \
 	xpat_files

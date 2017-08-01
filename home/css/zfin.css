@@ -1060,3 +1060,16 @@ input + label {
     color: white;
     visibility: visible;
 }
+.pub-search-results {
+    width: 100%;
+    margin-bottom: 1.5em;
+}
+
+.pub-search-results > caption {
+    margin-bottom: 1.5em;
+}
+
+.pub-export-controls {
+    text-align: center;
+    margin-bottom: 1.5em;
+}

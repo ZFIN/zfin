@@ -4352,7 +4352,10 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                              'Publication' as category,
                              '/' || zdb_id as url,
                              pub_date as date,
+                             year(pub_date) as year,
                              pub_arrival_date as pet_date,
+                             pub_pages as pages,
+                             pub_volume as volume,
                              jtype as publication_type,
                              pub_abstract as abstract,
                              pub_jrnl_zdb_id as xref,
@@ -4674,6 +4677,14 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
 
+           <entity name="pub_curator"
+                   datasource="db" query="select distinct cur_pub_zdb_id as pub_zdb_id, cur_curator_zdb_id as curator
+                   from curation
+                   where (cur_closed_date is not NULL or cur_data_found = 't')
+                     and cur_topic != 'Linked Authors';"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pub_zdb_id=publication.id"/>
+
            <entity name="pub_tracking_location"
                    datasource="db" query="select nvl(ptl_location_display,'') as location, pth_pub_zdb_id as pub_zdb_id
                    from pub_tracking_history,pub_tracking_location
@@ -4689,6 +4700,17 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    and pth_status_is_current='t';"
                    cacheImpl="SortedMapBackedCache"
                    where="pub_zdb_id=publication.id"/>
+
+           <entity name="pub_simple_status"
+                   datasource="db" query="SELECT
+                       zdb_id as pub_zdb_id, CASE pub_completion_date WHEN NULL THEN 'Open' ELSE 'Closed' END as pub_simple_status
+                       FROM publication
+                       UNION
+                       SELECT zdb_id as pub_zdb_id, 'Indexed' as pub_simple_status
+                       FROM publication
+                       WHERE pub_is_indexed = 't'"
+                   cacheImpl="SortedMapBackedCache"
+                   where="pub_zdb_id=publication.id" />
 
            <entity name="pub_owner"
                    datasource="db" query="select nvl(first_name || ' ' || last_name,'None') as owner,
