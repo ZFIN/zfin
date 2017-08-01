@@ -19,11 +19,9 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
 GENERICS = js-delete_attrib.apg \
-	pubselect2.apg \
 	showpubs.apg
 
-STATICS= REFERinfo.apg pubprintable.apg \
-	citselectlist.apg \
+STATICS= citselectlist.apg \
 	citjtypeoption.apg citgeneric.apg cittotalcount.apg pub_rowdisplay.apg \
 
 # use default rules for app page directories.

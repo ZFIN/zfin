@@ -57,9 +57,11 @@ public class SolrQueryFacade {
     }
 
     public SolrQueryFacade fqParsed(String value, FieldName... fields) {
-        query.addFilterQuery("{!edismax qf='" +
-                Arrays.stream(fields).map(FieldName::getName).collect(Collectors.joining(" ")) +
-                "'}" + SolrService.luceneEscape(value));
+        if (StringUtils.isNotEmpty(value)) {
+            query.addFilterQuery("{!edismax qf='" +
+                    Arrays.stream(fields).map(FieldName::getName).collect(Collectors.joining(" ")) +
+                    "'}" + SolrService.luceneEscape(value));
+        }
         return this;
     }
 

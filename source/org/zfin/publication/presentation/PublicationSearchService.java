@@ -103,15 +103,12 @@ public class PublicationSearchService {
                         FieldName.PET_DATE);
             }
         }
-        switch (formBean.getSort()) {
-            case YEAR:
-                query.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
-                query.addSort(FieldName.AUTHOR_SORT.getName(), SolrQuery.ORDER.asc);
-                break;
-            case AUTHOR:
-                query.addSort(FieldName.AUTHOR_SORT.getName(), SolrQuery.ORDER.asc);
-                query.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
-                break;
+        if (formBean.getSort() == null || formBean.getSort() == PublicationSearchBean.Sort.YEAR) {
+            query.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
+            query.addSort(FieldName.AUTHOR_SORT.getName(), SolrQuery.ORDER.asc);
+        } else if (formBean.getSort() == PublicationSearchBean.Sort.AUTHOR) {
+            query.addSort(FieldName.AUTHOR_SORT.getName(), SolrQuery.ORDER.asc);
+            query.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
         }
         query.setRows(formBean.getMaxDisplayRecordsInteger());
         query.setStart((formBean.getPageInteger() - 1) * formBean.getMaxDisplayRecordsInteger());
