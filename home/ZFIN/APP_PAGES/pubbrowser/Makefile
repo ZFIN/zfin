@@ -18,10 +18,6 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
-GENERICS = pubselect2.apg \
-
-STATICS= REFERinfo.apg pubprintable.apg
-
 # use default rules for app page directories.
 
 include $(TOP)/make.default.apg.rules

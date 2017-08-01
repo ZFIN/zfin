@@ -24,7 +24,7 @@
         <zfin:link entity="${submitters}"/>
         <a style="margin-left: 5em"
            class="citing-this-work-link"
-           href=/cgi-bin/webdriver?MIval=aa-pubprintable.apg&OID=${publication.zdbID}&printable=yes>(Citing this work)</a>
+           href=/action/publication/search/printable?zdbID=${publication.zdbID}>(Citing this work)</a>
     </zfin2:subsection>
 </c:if>
 

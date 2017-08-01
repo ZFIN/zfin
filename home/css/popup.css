@@ -65,19 +65,19 @@ hr.popup-divider {
 }
 
 .info-popup-link:after {
-    content: url(/images/info.gif);
     padding-top: 2px;
     margin-left: 3px;
     margin-right: 5px;
-    opacity: 0.99 ; /*see case 7376*/
+    font-family: FontAwesome;
+    content: "\f05a";
 }
 
 .help-popup-link:after {
-    content: url(/images/help.gif);
     padding-top: 2px;
     margin-left: 2px;
     margin-right: 5px;
-    opacity: 0.99; /*see case 7376*/
+    font-family: FontAwesome;
+    content: "\f059";
 }
 
 a.gbrowse_hover{

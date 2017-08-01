@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/help_files
 
 GENERICS = label.html
 STATICS  = fishselecthelp.html mut_intro.html help-fish.html \
-	   generichelp.html mapperselecthelp.html international_characters.html \
+	   generichelp.html mapperselecthelp.html \
 	   sequence_tools_help.html
 
 # --------------------------  Rules  ------------------------------------
