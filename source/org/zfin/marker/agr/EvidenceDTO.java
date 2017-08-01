@@ -4,23 +4,22 @@ import java.util.List;
 
 public class EvidenceDTO {
 
-    private String evidenceCode;
-    private List<PublicationAgrDTO> publications;
+    private PublicationAgrDTO publication;
+    private List<String> evidenceCodes;
 
-    public EvidenceDTO(String evidenceCode) {
-        this.evidenceCode = evidenceCode;
+    public EvidenceDTO(PublicationAgrDTO publication) {
+        this.publication = publication;
     }
 
-
-    public List<PublicationAgrDTO> getPublications() {
-        return publications;
+    public List<String> getEvidenceCodes() {
+        return evidenceCodes;
     }
 
-    public void setPublications(List<PublicationAgrDTO> publications) {
-        this.publications = publications;
+    public void setEvidenceCodes(List<String> evidenceCodes) {
+        this.evidenceCodes = evidenceCodes;
     }
 
-    public String getEvidenceCode() {
-        return evidenceCode;
+    public PublicationAgrDTO getPublication() {
+        return publication;
     }
 }

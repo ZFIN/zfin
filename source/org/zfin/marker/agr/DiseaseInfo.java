@@ -86,22 +86,20 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             relationship.setInferredGeneAssociation(inferredSet);
 
             termMap.forEach((disease, diseaseAnnotationEvSet) -> {
-                Map<String, List<Publication>> evidenceMap = diseaseAnnotationEvSet
+                Map<Publication, List<String>> evidenceMap = diseaseAnnotationEvSet
                         .stream()
                         .collect(
-                                Collectors.groupingBy(DiseaseAnnotation::getEvidenceCode,
-                                        Collectors.mapping(DiseaseAnnotation::getPublication, Collectors.toList())
+                                Collectors.groupingBy(DiseaseAnnotation::getPublication,
+                                        Collectors.mapping(DiseaseAnnotation::getEvidenceCode, Collectors.toList())
                                 )
                         );
                 dto.setDoid(disease.getOboID());
                 List<EvidenceDTO> evidenceList = new ArrayList<>();
                 dto.setEvidence(evidenceList);
-                evidenceMap.forEach((evidence, publicationList) -> {
-                    EvidenceDTO evDto = new EvidenceDTO(evidence);
-                    List<PublicationAgrDTO> pubDtoList = publicationList.stream()
-                            .map(p -> new PublicationAgrDTO(p.getZdbID(), p.getAccessionNumber()))
-                            .collect(Collectors.toList());
-                    evDto.setPublications(pubDtoList);
+                evidenceMap.forEach((publication, evidences) -> {
+                    PublicationAgrDTO pubDto = new PublicationAgrDTO(publication.getZdbID(), publication.getAccessionNumber());
+                    EvidenceDTO evDto = new EvidenceDTO(pubDto);
+                    evDto.setEvidenceCodes(evidences);
                     evidenceList.add(evDto);
                 });
 
@@ -109,12 +107,24 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
             // experimental conditions
             Set<ExperimentCondition> expConditionSet = new HashSet<>();
-            fish.getFishExperiments().forEach(fishExperiment -> {
-                if (fishExperiment.getExperiment() != null)
-                    expConditionSet.addAll(fishExperiment.getExperiment().getExperimentConditions());
+            diseaseAnnotationSet.forEach(diseaseAnnotation -> {
+                diseaseAnnotation.getDiseaseAnnotationModel().forEach(diseaseAnnotationModel -> {
+                    expConditionSet.addAll(diseaseAnnotationModel.getFishExperiment().getExperiment().getExperimentConditions());
+                });
             });
             Set<ExperimentalConditionDTO> experimentalConditionDTOS = expConditionSet.stream()
-                    .map(expCondition -> new ExperimentalConditionDTO(expCondition.getDisplayName(), expCondition.getZecoTerm().getOboID()))
+                    .map(expCondition -> {
+                        ExperimentalConditionDTO condition = new ExperimentalConditionDTO(expCondition.getDisplayName(), expCondition.getZecoTerm().getOboID());
+                        if (expCondition.getAoTerm() != null)
+                            condition.setAnatomicalId(expCondition.getAoTerm().getOboID());
+                        if (expCondition.getGoCCTerm() != null)
+                            condition.setGeneOntologyId(expCondition.getGoCCTerm().getOboID());
+                        if (expCondition.getChebiTerm() != null)
+                            condition.setChebiOntologyId(expCondition.getChebiTerm().getOboID());
+                        if (expCondition.getTaxaonymTerm() != null)
+                            condition.setNcbiTaxonIdId(expCondition.getTaxaonymTerm().getOboID());
+                        return condition;
+                    })
                     .collect(Collectors.toSet());
             dto.setExperimentalConditions(experimentalConditionDTOS);
             diseaseDTOList.add(dto);
@@ -159,25 +169,21 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             dto.setDataProvider(DataProvider.ZFIN);
 
             termMap.forEach((disease, diseaseAnnotationEvSet) -> {
-                Map<String, List<Publication>> evidenceMap = diseaseAnnotationEvSet
+                Map<Publication, List<String>> evidenceMap = diseaseAnnotationEvSet
                         .stream()
                         .collect(
-                                Collectors.groupingBy(DiseaseAnnotation::getEvidenceCode,
-                                        Collectors.mapping(DiseaseAnnotation::getPublication, Collectors.toList())
+                                Collectors.groupingBy(DiseaseAnnotation::getPublication,
+                                        Collectors.mapping(DiseaseAnnotation::getEvidenceCode, Collectors.toList())
                                 )
                         );
                 dto.setDoid(disease.getOboID());
                 List<EvidenceDTO> evidenceList = new ArrayList<>();
                 dto.setEvidence(evidenceList);
-                evidenceMap.forEach((evidence, publicationList) -> {
-                    EvidenceDTO evDto = new EvidenceDTO(evidence);
-                    List<PublicationAgrDTO> pubDtoList = publicationList.stream()
-                            .map(p -> new PublicationAgrDTO(p.getZdbID(), p.getAccessionNumber()))
-                            .collect(Collectors.toList());
-                    evDto.setPublications(pubDtoList);
+                evidenceMap.forEach((publication, evidences) -> {
                     // hard-coded pub added to every evidence
                     PublicationAgrDTO fixedPub = new PublicationAgrDTO("ZDB-PUB-170406-10", null);
-                    evDto.getPublications().add(fixedPub);
+                    EvidenceDTO evDto = new EvidenceDTO(fixedPub);
+                    evDto.setEvidenceCodes(evidences);
                     evidenceList.add(evDto);
                 });
 
