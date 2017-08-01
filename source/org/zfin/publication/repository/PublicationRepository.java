@@ -308,7 +308,7 @@ public interface PublicationRepository extends PaginationParameter {
     Journal getJournalByPrintIssn(String pIssn);
 
     Journal getJournalByEIssn(String eIssn);
-    
+
     SourceAlias addJournalAlias(Journal journal, String alias);
 
     int getNumberAssociatedPublicationsForZdbID(String zdbID) ;
