@@ -18,6 +18,7 @@ let fishOrder = 9999999999;
 let existingMrkr = "none";
 
 --find the functional number of affected genes.
+--hardcoding any MO's  that contain tp-53 (CLNDTY-7)
 foreach 
 	select  fmrel_mrkr_zdb_id into workingMrkr
 	   from fish, genotype_Feature, feature_marker_Relationship
@@ -25,11 +26,16 @@ foreach
    	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
 	   and fish_zdb_id = vFishId
 	   and fmrel_type in ('is allele of','markers missing','markers present','markers moved')
-	 union
-	select  mrel_mrkr_2_zdb_id 
+	  union
+        select  mrel_mrkr_2_zdb_id
            from marker_relationship, fish_str
-	   where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
-	   and fishstr_fish_zdb_id = vFishId
+           where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
+           and fishstr_fish_zdb_id = vFishId
+and mrel_mrkr_2_zdb_id not in (select mrel_mrkr_2_Zdb_id from marker_relationship where mrel_mrkr_1_zdb_id like 'ZDB-MRPH%' and mrel_mrkr_2_zdb_id='ZDB-GENE-990415-270')
+and exists (Select 'x' from fish_Experiment where genox_fish_Zdb_id = fishstr_fish_Zdb_id
+                   and genox_is_std_or_generic_control = 't')
+
+
 	   
 	   if (existingMrkr = "none")
 	   then
