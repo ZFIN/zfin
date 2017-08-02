@@ -570,4 +570,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     GregorianCalendar getOldestPubEntryDate();
 
+    List<String> getDirectlyAttributedZdbids(String publicationId);
+
+    public Long getDirectlyAttributed(Publication publication);
+
 }
