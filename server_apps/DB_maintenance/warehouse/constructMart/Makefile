@@ -13,13 +13,12 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../../..
+TOP = ../../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse
-SUBDIRS = chromosomeMart expressionMart phenotypeMart  constructMart
-GENERICS = who_is.sh who_is_not.sh switch.sh  regenChromosomeMart.sh regenConstructMart.sh regenExpressionMart.sh regenPhenotypeMart.sh
-STATICS = getUnloadDir.sh char regenChromosomeMartReport.txt runChromosomeMartReport.txt regenExpressionMartReport.txt runExpressionMartReport.txt regenConstructMartReport.txt runConstructMartReport.txt
+TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse/constructMart
+GENERICS = runConstructMart.sh
+STATICS = begin.sql dropTables.sql schemaTables.sql populateTables.sql createBtsIndexes.sql createTempBtsIndexes.sql dropBtsIndexes.sql commit.sql constructMartRegen.sql refreshConstructMart.sql constructmart-integrity-tests.sql
 
 
 # ---------------  Production Rules  ------------------------------------
