@@ -1,0 +1,6 @@
+drop index construct_search_all_names_bts_index;
+drop index construct_component_search_all_promoter_names_bts_index;
+drop index construct_component_search_all_coding_names_bts_index;
+drop index construct_component_search_all_engineered_names_bts_index;
+drop index construct_gene_feature_result_view_all_allele_gene_names_bts_index;
+drop index figure_term_construct_search_bts_index;
