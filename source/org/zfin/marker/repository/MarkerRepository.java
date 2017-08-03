@@ -505,4 +505,6 @@ public interface MarkerRepository {
 
     ZfinSoTerm getSoIdByMarkerType(String markerType);
 
+    String getDbsnps(String cloneId);
+
 }

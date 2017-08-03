@@ -27,8 +27,11 @@ public class SnpMarkerRelationshipPresentation extends MarkerRelationshipPresent
     @Override
     public String getLink() {
         StringBuilder sb = new StringBuilder();
-        String uri = "/";
-        sb.append(EntityPresentation.getWebdriverLink(uri, getZdbId(), "Retrieval Details"));
+        sb.append(" (<a href=\"/action/marker/dbsnp?cloneId=");
+        sb.append(getZdbId());
+        sb.append("\">");
+        sb.append("Retrieval Details");
+        sb.append("</a>)");
         return sb.toString();
     }
 

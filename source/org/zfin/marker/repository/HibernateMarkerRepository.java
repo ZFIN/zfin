@@ -3263,5 +3263,21 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (ZfinSoTerm) query.uniqueResult();
     }
 
+    @Override
+    public String getDbsnps(String cloneId) {
+        String sql = "SELECT snpd_rs_acc_num " +
+                "    FROM snp_download " +
+                "    WHERE snpd_mrkr_zdb_id = :cloneId ";
+
+
+        List<String> dbsnps = (List<String>) HibernateUtil.currentSession().createSQLQuery(sql).setString("cloneId", cloneId).list();
+        StringBuilder sb = new StringBuilder();
+        for (String dbsnp : dbsnps) {
+            sb.append(dbsnp);
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
 }
 
