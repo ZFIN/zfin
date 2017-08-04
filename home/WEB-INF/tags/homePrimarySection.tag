@@ -79,7 +79,7 @@
 </ul>
 
 <ul>
-    <li><a href="/cgi-bin/webdriver?MIval=aa-pubselect2.apg&select_from=PUBLICATION"
+    <li><a href="/action/publication/search"
            title="Search for zebrafish research publications by author, title or citation">
         <strong>Publications</strong></a></li>
     <ul>

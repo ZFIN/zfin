@@ -1004,6 +1004,7 @@ public class HibernateProfileRepository implements ProfileRepository {
         return HibernateUtil.currentSession()
                 .createCriteria(Person.class)
                 .add(Restrictions.eq("accountInfo.curator", true))
+                .addOrder(Order.asc("fullName"))
                 .list();
     }
 

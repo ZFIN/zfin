@@ -34,6 +34,7 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -98,6 +99,7 @@ public class PublicationViewController {
         Long fishCount = publicationRepository.getFishCount(publication);
         Long orthologyCount = publicationRepository.getOrthologyCount(publication);
         Long mappingDetailsCount = publicationRepository.getMappingDetailsCount(publication);
+        Long numDirectlyAttributed = publicationRepository.getDirectlyAttributed(publication);
 
         model.addAttribute("markerCount", markerCount);
         model.addAttribute("morpholinoCount", morpholinoCount);
@@ -113,6 +115,7 @@ public class PublicationViewController {
         model.addAttribute("fishCount", fishCount);
         model.addAttribute("orthologyCount", orthologyCount);
         model.addAttribute("mappingDetailsCount", mappingDetailsCount);
+        model.addAttribute("numDirectlyAttributed", numDirectlyAttributed);
 
         List<DiseaseAnnotation> diseaseAnnotationList = phenotypeRepository.getHumanDiseaseModels(zdbID);
         model.addAttribute("diseaseCount", diseaseAnnotationList.size());
@@ -498,6 +501,32 @@ public class PublicationViewController {
             title += ": " + subPage;
         }
         return title;
+    }
+
+    @RequestMapping("/publication/{pubID}/directly-attributed")
+    public String showDirectlyAttributed(@PathVariable String pubID,
+                                    @ModelAttribute("formBean") GeneBean geneBean,
+                                    Model model,
+                                    HttpServletResponse response) {
+        logger.info("zdbID: " + pubID);
+
+        if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
+            return "redirect:/" + pubID;
+        }
+
+        Publication publication = getPublication(pubID);
+
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        Long numberOfDirectlyAttributed = publicationRepository.getDirectlyAttributed(publication);
+        model.addAttribute("totalRecords", numberOfDirectlyAttributed);
+        List<String> directedAttributedIds = RepositoryFactory.getPublicationRepository().getDirectlyAttributedZdbids(pubID);
+        model.addAttribute("directedAttributedData", directedAttributedIds);
+        model.addAttribute("publication", publication);
+        return "publication/publication-directly-attributed.page";
     }
 }
 

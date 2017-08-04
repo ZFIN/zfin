@@ -72,6 +72,32 @@ and not exists (Select 'x' from regen_genox_temp
       	  	 	 where mrel_mrkr_2_zdb_id = rggt_mrkr_Zdb_id
 			 and genox_zdb_id = rggt_genox_zdb_id);
 
+insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
+  select fishstr_str_zdb_id, genox_zdb_id
+    from fish, fish_str a, fish_experiment,feature_marker_relationship, genotype_Feature, feature, experiment_condition,marker,all_term_contains, regen_genox_input_zdb_id_temp
+    where fish_Zdb_id =a.fishstr_fish_Zdb_id
+    and fish_zdb_id = genox_fish_zdb_id
+    and fish_genotype_zdb_id = genofeat_geno_zdb_id
+    and genofeat_feature_Zdb_id = fmrel_ftr_zdb_id
+    and genofeat_feature_zdb_id=feature_zdb_id
+    and feature_type not in ('DEFICIENCY','TRANSLOC')
+    and fish_functional_affected_gene_count =1
+    and genox_exp_zdb_id = expcond_exp_zdb_id
+     and genox_exp_zdb_id = expcond_exp_zdb_id
+     and expcond_zeco_term_Zdb_id = alltermcon_contained_zdb_id
+        and alltermcon_container_zdb_id ='ZDB-TERM-160831-68'
+    and fmrel_mrkr_zdb_id =mrkr_zdb_id
+    and mrkr_abbrev like '%Tg(%hsp70%)'
+    and genox_zdb_id = rggz_zdb_id
+and not exists (Select 'x' from regen_genox_temp
+      	  	 	 where fishstr_str_zdb_id = rggt_mrkr_Zdb_id
+			 and genox_zdb_id = rggt_genox_zdb_id)
+ and not exists (Select 'x' from fish_str b
+     	 		    where a.fishstr_fish_zdb_id = b.fishstr_fish_zdb_id
+			    and a.fishstr_str_zdb_id != b.fishstr_str_zdb_id);
+
+
+
 
 --    end if
 

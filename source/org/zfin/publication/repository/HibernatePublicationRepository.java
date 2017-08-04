@@ -1918,7 +1918,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public SourceAlias addJournalAlias(Journal journal, String alias) {
         //first handle the alias..
-        
+
         SourceAlias journalAlias = new SourceAlias();
         journalAlias.setDataZdbID(journal.getZdbID());
         journalAlias.setAlias(alias);
@@ -2499,5 +2499,40 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("featureID", featureZdbID);
         List<String> pubIDs = query.list();
         return pubIDs;
+    }
+
+    public GregorianCalendar getNewestPubEntryDate() {
+        return (GregorianCalendar) HibernateUtil
+                .currentSession()
+                .createQuery("select max(pub.entryDate) from Publication pub")
+                .uniqueResult();
+    }
+
+    public GregorianCalendar getOldestPubEntryDate() {
+        return (GregorianCalendar) HibernateUtil
+                .currentSession()
+                .createQuery("select min(pub.entryDate) from Publication pub")
+                .uniqueResult();
+    }
+
+    @Override
+    public List<String> getDirectlyAttributedZdbids(String publicationId) {
+        Session session = HibernateUtil.currentSession();
+        String sql =  " select ra.recattrib_data_zdb_id  " +
+                " from record_attribution ra " +
+                " where :publicationZdbID = ra.recattrib_source_zdb_id " +
+                " order by ra.recattrib_data_zdb_id ";
+        SQLQuery query = session.createSQLQuery(sql);
+        query.setString("publicationZdbID", publicationId);
+        List<String> dataIds = query.list();
+        return dataIds;
+    }
+
+    @Override
+    public Long getDirectlyAttributed(Publication publication) {
+        String sql = "select count(*) " +
+                " from record_attribution " +
+                " where recattrib_source_zdb_id = :zdbID ";
+        return getCount(sql, publication.getZdbID());
     }
 }

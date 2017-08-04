@@ -238,6 +238,10 @@
             <li><a href="/action/publication/${publication.zdbID}/disease">Human Disease / Zebrafish Model Data</a>
             </li>
         </c:if>
+        <authz:authorize access="hasRole('root')">
+            <li><a href="/action/publication/${publication.zdbID}/directly-attributed">Directly Attributed Data (${numDirectlyAttributed})</a>
+            </li>
+        </authz:authorize>
     </ul>
 
 </zfin2:subsection>

@@ -4,8 +4,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.Species;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
@@ -14,6 +14,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.marker.Clone;
+import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
@@ -100,5 +101,25 @@ public class CloneViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());
 
         return "marker/clone-view.page";
+    }
+
+    @RequestMapping( value = "/dbsnp",method = RequestMethod.GET)
+    protected String getDbsnpView(
+            Model model
+            ,@RequestParam("cloneId") String cloneId
+            ,@ModelAttribute("formBean") MarkerBean formBean
+            ,BindingResult result
+    ) throws Exception {
+
+        Marker clone = RepositoryFactory.getMarkerRepository().getMarkerByID(cloneId);
+
+        formBean.setMarker(clone);
+
+        String snpsString = RepositoryFactory.getMarkerRepository().getDbsnps(cloneId);
+        model.addAttribute("dbsnps", snpsString);
+        model.addAttribute(LookupStrings.FORM_BEAN, formBean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, clone.getAbbreviation());
+
+        return "marker/dbsnp-view.page";
     }
 }

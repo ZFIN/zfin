@@ -27,6 +27,7 @@ import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -301,10 +302,14 @@ public interface PublicationRepository extends PaginationParameter {
     Journal getJournalByTitle(String journalTitle);
 
     Journal findJournalByAbbreviation(String abbrevation);
+
     void createJournal(Journal journal);
+
     Journal getJournalByPrintIssn(String pIssn);
+
     Journal getJournalByEIssn(String eIssn);
-   SourceAlias addJournalAlias(Journal journal, String alias);
+
+    SourceAlias addJournalAlias(Journal journal, String alias);
 
     int getNumberAssociatedPublicationsForZdbID(String zdbID) ;
 
@@ -560,5 +565,13 @@ public interface PublicationRepository extends PaginationParameter {
     List<String> getPublicationIdsForMarkerGo(String markerZdbID, String markerGoEvdTermZdbID, String evidenceCode, String inference);
 
     List<String> getPublicationIdsForFeatureType(String featureZdbID);
+
+    GregorianCalendar getNewestPubEntryDate();
+
+    GregorianCalendar getOldestPubEntryDate();
+
+    List<String> getDirectlyAttributedZdbids(String publicationId);
+
+    public Long getDirectlyAttributed(Publication publication);
 
 }

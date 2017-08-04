@@ -54,6 +54,7 @@ FISH_STATS   = get_image_stats.sql \
 	       get_fish_name.sql \
 	       get_fish_handle.sql \
 	       getFishOrder.sql \
+               updateFishCount.sql \
 	       get_genotype_backgrounds.sql \
 	       get_genotype_display.sql \
 	       get_genotype_handle.sql \
