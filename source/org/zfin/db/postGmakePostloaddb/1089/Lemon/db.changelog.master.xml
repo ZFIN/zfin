@@ -12,8 +12,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1089/Lemon/CLNDTY-10.sql" />
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1089/Lemon/CLNDTY-7.sql" />
-<include file="source/org/zfin/db/postGmakePostloaddb/1089/Lemon/removeConstructMart.sql" />
-
     <include file="source/org/zfin/db/postGmakePostloaddb/1089/Lemon/JENK-262.sql" />
 
 
