@@ -47,8 +47,9 @@ select distinct ----------------------- ottdarT <--> ensdarT -------------------
 	   || ';so_term_name=' || szm_term_name
 	   || ';curie=' || 'ZFIN:' || mrkr_zdb_id as id_name,
 	gene.mrkr_zdb_id alias
- from  marker gene, marker_relationship, gff3 vt, gff3 et, db_link vTdbl, db_link eTdbl, so_zfin_mapping
- where gene.mrkr_type[1,4] == 'GENE'
+ from  marker gene, marker_type_group_member, marker_relationship, gff3 vt, gff3 et, db_link vTdbl, db_link eTdbl, so_zfin_mapping
+ where mtgrpmem_mrkr_type = mrkr_type
+   and mtgrpmem_mrkr_type_group = 'GENEDOM'
    and mrel_mrkr_1_zdb_id == gene.mrkr_zdb_id
    and gene.mrkr_type = szm_object_type
    and vTdbl.dblink_linked_recid == mrel_mrkr_2_zdb_id

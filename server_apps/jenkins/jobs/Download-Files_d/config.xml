@@ -22,6 +22,9 @@
       <hudson.tasks.Shell>
           <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3 &amp;&amp; GenerateZFINGFF3.pl</command>
       </hudson.tasks.Shell>
+      <hudson.tasks.Shell>
+          <command>cd $SOURCEROOT/server_apps/data_transfer/Downloads/GFF3 &amp;&amp; generateAgrGff3.groovy</command>
+      </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">

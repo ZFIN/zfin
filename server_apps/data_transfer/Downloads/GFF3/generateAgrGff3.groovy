@@ -9,8 +9,10 @@ import org.zfin.sequence.GenomeFeature
 
 ZfinProperties.init("${System.getenv()['SOURCEROOT']}/home/WEB-INF/zfin.properties")
 
-
 String gff3Dir = ZfinPropertiesEnum.TARGETROOT.value + "/home/data_transfer/Downloads"
+String outputDir = ZfinPropertiesEnum.TARGETROOT.value + "/server_apps/data_transfer/Downloads/GFF3/"
+
+def out = new File("$outputDir/zfin_genes.gff3").newWriter()
 
 List<GenomeFeature> genes = loadFile("$gff3Dir/E_zfin_gene_alias.gff3")
 Map transcripts = loadFileWithParentMap("$gff3Dir/E_drerio_transcript.gff3")
@@ -20,28 +22,35 @@ List ensdargMaps = getEnsdargMaps()
 Map ensdargToGene = ensdargMaps[0]
 Map geneToEnsdarg = ensdargMaps[1]
 
+printHeader("$gff3Dir/ensembl_contig.gff3", out)
+
+genes.each { GenomeFeature gene ->
+
+    String ensdarg = geneToEnsdarg.get(gene.id)
+    gene.addAttribute(GenomeFeature.ID,ensdarg)
+    out.println gene
+    transcripts.get(ensdarg).each { GenomeFeature transcript ->
+        String ensdart = transcript.id
+
+        //we only want transcripts that have a zdb_id in this file
+        if (transcript.getAttributes().get(GenomeFeature.ZDB_ID) != null) {
+
+            //replace the ENSDART id with a ZDB_ID
+            transcript.addAttribute(GenomeFeature.ID, transcript.getAttributes().get(GenomeFeature.ZDB_ID))
+            transcript.addAttribute(GenomeFeature.PARENT, gene.id)
+            out.println transcript
+            exons.get(ensdart).each { GenomeFeature exon ->
+                exon.addAttribute(GenomeFeature.ID, exon.id.replace(ensdart,transcript.id))
+                exon.addAttribute(GenomeFeature.PARENT, transcript.id)
+                out.println exon
+            }
+
+        }
 
 
-printHeader("$gff3Dir/ensembl_contig.gff3")
-
-GenomeFeature gene = genes.first()
-
-String ensdarg = geneToEnsdarg.get(gene.id)
-gene.addAttribute(GenomeFeature.ID,ensdarg)
-println gene
-transcripts.get(ensdarg).each { GenomeFeature transcript ->
-    String ensdart = transcript.id
-    //replace the ENSDART id with a ZDB_ID
-    transcript.addAttribute(GenomeFeature.ID, transcript.getAttributes().get(GenomeFeature.ZDB_ID))
-    transcript.addAttribute(GenomeFeature.PARENT, gene.id)
-    println transcript
-    exons.get(ensdart).each { GenomeFeature exon ->
-        exon.addAttribute(GenomeFeature.ID, exon.id.replace(ensdart,transcript.id))
-        exon.addAttribute(GenomeFeature.PARENT, transcript.id)
-        println exon
     }
-}
 
+}
 
 
 
@@ -100,8 +109,8 @@ def getEnsdargMaps() {
 }
 
 
-def printHeader(String contigs) {
-    println "##gff-version\t3"
+def printHeader(String contigs, BufferedWriter out) {
+    out.println "##gff-version\t3"
 
     def chromosomes = (1..25).collect { it.toString() }
     chromosomes.add("MT")
@@ -110,7 +119,7 @@ def printHeader(String contigs) {
         if (!line.startsWith("##gff-version")) {
             def fields = line.split("\\t")
             if (fields.size() == 4 && chromosomes.contains(fields[1])) {
-                println line
+                out.println line
             }
         }
     }
