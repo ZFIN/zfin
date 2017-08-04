@@ -15,17 +15,21 @@ declare fishOrder fish.fish_order%TYPE := '9999999999';
 begin
 --find the functional number of affected genes.
 for workingMrkr in
-	select fmrel_mrkr_zdb_id 
-	   from fish, genotype_Feature, feature_marker_Relationship
-	   where fish_genotype_zdb_id =genofeat_geno_zdb_id
-   	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-	   and fish_zdb_id = vFishId
-	   and fmrel_type in ('is allele of','markers missing','markers present','markers moved')
-	 union
-	select  mrel_mrkr_2_zdb_id 
+	select fmrel_mrkr_zdb_id
+           from fish, genotype_Feature, feature_marker_Relationship
+           where fish_genotype_zdb_id =genofeat_geno_zdb_id
+           and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+                   and fish_zdb_id = vFishId
+           and fmrel_type in ('is allele of','markers missing','markers present','markers moved')
+         union
+        select  mrel_mrkr_2_zdb_id
            from marker_relationship, fish_str
-	   where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
-	   and fishstr_fish_zdb_id = vFishId
+           where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
+           and fishstr_fish_zdb_id = vFishId
+and mrel_mrkr_2_zdb_id not in (select mrel_mrkr_2_Zdb_id from marker_relationship where mrel_mrkr_1_zdb_id like 'ZDB-MRPH%' and mrel_mrkr_2_zdb_id='ZDB-GENE-990415-270')
+and exists (Select 'x' from fish_Experiment where genox_fish_Zdb_id = fishstr_fish_Zdb_id
+                   and genox_is_std_or_generic_control = 't')
+
     loop 
 	   if (existingMrkr = 'none')
 	   then

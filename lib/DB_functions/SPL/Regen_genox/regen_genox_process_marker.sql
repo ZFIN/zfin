@@ -88,7 +88,7 @@ select mrel_mrkr_2_zdb_id, genox_zdb_id
     and feature_type not in ('DEFICIENCY','TRANSLOC')
     and fish_functional_affected_gene_count = 1
     and fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
-    and get_obj_type(mrel_mrkr_2_Zdb_id) in ('GENE')
+    and get_obj_type(mrel_mrkr_2_Zdb_id) in ('GENE','LNCRNAG', 'LINCRNAG','MIRNAG','PIRNAG','SCRNAG','SNORNAG', 'TRNAG','RRNAG','NCRNAG','SRPRNAG')
  and genox_is_std_or_generic_control = 't' 
    and mrel_mrkr_2_zdb_id = rggz_zdb_id
 and not exists (Select 'x' from regen_genox_temp
