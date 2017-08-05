@@ -548,6 +548,7 @@
                             <include name="*.html.template"/>
                             <include name="*.sql"/>
                             <include name="*.sqlj"/>
+                            <include name="*.groovy"/>
                             <include name="*.properties"/>
                         </fileset>
                     </copy>

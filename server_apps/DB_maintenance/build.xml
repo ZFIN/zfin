@@ -25,6 +25,10 @@
              classname="org.zfin.properties.ant.LoadPropertiesTask"
              classpathref="classpath"/>
 
+    <taskdef name="groovy"
+             classname="org.codehaus.groovy.ant.Groovy"
+             classpathref="classpath"/>
+
     <loadProperties file="${web-inf.dir}/zfin.properties"/>
 
 
@@ -48,6 +52,17 @@
         <echo message="Update time stamp in DATABASE_INFO table:"/>
         <echo message="Use database: ${DBNAME}"/>
         <run-db-query db-query-file="set_unload_timestamp.sql" instanceName="${DBNAME}"/>
+    </target>
+
+    <target name="checkUrls">
+	<exec executable="${validateData}/validatedata/CheckUrls.groovy">
+            <arg value="-propertyFilePath"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="-dataDirectory"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="-jobName"/>
+            <arg value="Check-Urls_m"/>
+	</exec>
     </target>
 
     <target name="load-gaf-paint" description="">

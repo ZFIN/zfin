@@ -4,7 +4,9 @@ ok /not really/
 error /(?i)error /
 
 # the '-1' for a function call error
-error /(\s{8,10})(-1)/
+#error /(\s{8,10})(-1)/
+
+error /(\s{10})(-1)/
 
 # list of warnings here...
 warning /Validation Errors found/
