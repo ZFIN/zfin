@@ -316,6 +316,13 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getNumberOfFeaturesForConstruct() {
+        Marker construct = getMarkerRepository().getMarkerByID("ZDB-TGCONSTRCT-070117-94");
+        int numFeatures = featureRepository.getNumberOfFeaturesForConstruct(construct);
+        assertTrue(numFeatures > 0);
+    }
+
+    @Test
     public void deleteLabOfOriginForFeature() {
 
         String lab1ZdbID = "ZDB-LAB-970408-1"; // monte
