@@ -139,17 +139,7 @@ public class PublicationService {
     }
 
     public static Boolean allowCuration(Publication publication) {
-        if (publication.isUnpublished()) {
-            return false;
-        }
-        if (publication.getType() == Publication.Type.ACTIVE_CURATION) {
-            return false;
-        }
-        if (publication.getType() == Publication.Type.CURATION) {
-            return false;
-        }
-
-        return true;
+        return publication.getType().isCurationAllowed();
     }
 
     /* Rather than take a pub, this takes all of the separately generated counts

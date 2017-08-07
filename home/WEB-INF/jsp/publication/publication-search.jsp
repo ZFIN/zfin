@@ -28,7 +28,9 @@
                         <div><a href="/action/publication/${pub.zdbID}/edit">EDIT</a></div>
                         <div><a href="/action/publication/${pub.zdbID}/link">LINK</a></div>
                         <div><a href="/action/publication/${pub.zdbID}/track">TRACK</a></div>
-                        <div><a href="/action/curation/${pub.zdbID}">CURATE</a></div>
+                        <c:if test="${pub.type.curationAllowed}">
+                            <div><a href="/action/curation/${pub.zdbID}">CURATE</a></div>
+                        </c:if>
                     </td>
                 </authz:authorize>
                 <td>

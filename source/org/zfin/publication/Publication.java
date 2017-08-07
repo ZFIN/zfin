@@ -457,27 +457,33 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     }
 
     public enum Type {
-        ABSTRACT("Abstract", false),
+        ABSTRACT("Abstract", true),
         ACTIVE_CURATION("Active Curation", false),
-        BOOK("Book", false),
-        CHAPTER("Chapter", false),
+        BOOK("Book", true),
+        CHAPTER("Chapter", true),
         CURATION("Curation", false),
         JOURNAL("Journal", true),
-        MOVIE("Movie", false),
-        OTHER("Other", false),
-        REVIEW("Review", false),
-        UNKNOWN("Unknown", false),
+        MOVIE("Movie", true),
+        OTHER("Other", true),
+        REVIEW("Review", true),
+        UNKNOWN("Unknown", true),
         UNPUBLISHED("Unpublished", false),
-        THESIS("Thesis", false);
+        THESIS("Thesis", true);
 
         private final String display;
+        private final boolean curationAllowed;
 
-        Type(String type, Boolean allowCuration) {
+        Type(String type, Boolean curationAllowed) {
             this.display = type;
+            this.curationAllowed = curationAllowed;
         }
 
         public String getDisplay() {
             return display;
+        }
+
+        public boolean isCurationAllowed() {
+            return curationAllowed;
         }
 
         @Override
