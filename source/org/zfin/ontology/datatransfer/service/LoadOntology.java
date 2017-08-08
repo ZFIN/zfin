@@ -875,7 +875,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     }
 
     private boolean processOboFile() {
-        if ((!newerVersionFound() && !forceLoad) && productionMode ) {
+        if ((!newerVersionFound() && !forceLoad) && productionMode) {
             String message = ontology.getOntologyName() + " ontology in the database is up-to-date. \n";
             message += oboMetadata.toString();
             LOG.info(message);
@@ -904,6 +904,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                     RelationshipsValidator validator = new RelationshipsValidator(term.getID());
                     for (Link parentTerm : term.getParents()) {
                         String type = parentTerm.getType().getName();
+                        // ignore types that are null
+                        if (type == null)
+                            continue;
                         String parentTermID = parentTerm.getParent().getID();
                         validator.addParentRelationship(parentTermID, type);
                         if (!validator.isValidParentRelationshipUnit())
