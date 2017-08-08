@@ -906,10 +906,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                         String type = parentTerm.getType().getName();
                         String parentTermID = parentTerm.getParent().getID();
                         validator.addParentRelationship(parentTermID, type);
-                    //    if (!validator.isValidParentRelationshipUnit())
-                    //        throw new RuntimeException(validator.getErrorMessage());
-                        if (validator.isValidParentRelationshipUnit())
-                           appendFormattedRecord(UnloadFile.TERM_RELATIONSHIPS, parentTermID, term.getID(), type);
+                        if (!validator.isValidParentRelationshipUnit())
+                            throw new RuntimeException(validator.getErrorMessage());
+                        appendFormattedRecord(UnloadFile.TERM_RELATIONSHIPS, parentTermID, term.getID(), type);
                     }
                     if (term.getReplacedBy() != null) {
                         for (org.obo.datamodel.ObsoletableObject replacedByID : term.getReplacedBy())
@@ -1008,15 +1007,11 @@ public class LoadOntology extends AbstractValidateDataReportTask {
 
         private boolean hasMoreThanOneType(String relationshipType) {
             boolean hasType = false;
-            if (relationshipTypeList != null && relationshipTypeList.size() > 0)  {
-                for (String type : relationshipTypeList) {
-                    if (type == null)
+            for (String type : relationshipTypeList) {
+                if (type.equals(relationshipType)) {
+                    if (hasType)
                         return true;
-                    if (type.equals(relationshipType)) {
-                        if (hasType)
-                            return true;
-                        hasType = true;
-                    }
+                    hasType = true;
                 }
             }
             return false;
