@@ -112,7 +112,7 @@
 
     <div class="submitbar">
         <button type="submit">Search</button>
-        <button type="reset">Reset</button>
+        <a href="/action/expression/search"><button type="button">Reset</button></a>
     </div>
 </form:form>
 
