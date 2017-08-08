@@ -14,6 +14,6 @@ end;
 
 $BODY$ LANGUAGE plpgsql;
 
-create trigger zdb_object_type_trigger before insert or update on zdb_object_type
+create trigger zdb_object_type_trigger after insert or update on zdb_object_type
  for each row
  execute procedure zdb_object_type();
