@@ -10,9 +10,8 @@ import org.zfin.sequence.GenomeFeature
 ZfinProperties.init("${System.getenv()['SOURCEROOT']}/home/WEB-INF/zfin.properties")
 
 String gff3Dir = ZfinPropertiesEnum.TARGETROOT.value + "/home/data_transfer/Downloads"
-String outputDir = ZfinPropertiesEnum.TARGETROOT.value + "/server_apps/data_transfer/Downloads/GFF3/"
 
-def out = new File("$outputDir/zfin_genes.gff3").newWriter()
+def out = new File("$gff3Dir/zfin_genes.gff3").newWriter()
 
 List<GenomeFeature> genes = loadFile("$gff3Dir/E_zfin_gene_alias.gff3")
 Map transcripts = loadFileWithParentMap("$gff3Dir/E_drerio_transcript.gff3")
