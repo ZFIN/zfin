@@ -164,7 +164,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             DiseaseDTO dto = new DiseaseDTO();
             dto.setObjectId(gene.getZdbID());
             dto.setObjectName(gene.getAbbreviation());
-            RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.CONTRIBUTES_TO_CONDITION, RelationshipDTO.GENE);
+            RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IMPLICATED_IN, RelationshipDTO.GENE);
             dto.setObjectRelation(relationship);
             dto.setDataProvider(DataProvider.ZFIN);
 
