@@ -18,10 +18,10 @@ alter table pre_foreign_db_contains add prefbct_fdbcont_zdb_id varchar(50);
 
 update pre_foreign_db_contains set prefbct_fdbcont_zdb_id = get_id('FDBCONT');
 
-unload to 'pre_foreign_db_contains.unl' select * from pre_foreign_db_contains;
+
 
 insert into zdb_active_data select prefbct_fdbcont_zdb_id from pre_foreign_db_contains;
-! echo "         into zdb_active_data table."
+
 
 insert into foreign_db_contains (fdbcont_organism_common_name, fdbcont_zdb_id, fdbcont_fdbdt_id, fdbcont_fdb_db_id)
   select prefbct_fdbcont_organism_common_name, prefbct_fdbcont_zdb_id, prefbct_fdbcont_fdbdt_id, prefbct_fdbcont_fdb_db_id
