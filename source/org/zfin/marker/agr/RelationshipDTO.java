@@ -8,7 +8,7 @@ import java.util.Set;
 public class RelationshipDTO {
 
     public static final String IS_MODEL_OF = "is_model_of";
-    public static final String IMPLICATED_IN = "implicated_in";
+    public static final String IS_IMPLICATED_IN = "is_implicated_in";
     public static final String IS_MARKER_OF = "is_marker_of";
     public static final String FISH = "fish";
     public static final String ALELLE = "allele";

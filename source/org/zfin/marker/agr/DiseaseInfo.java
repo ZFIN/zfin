@@ -69,21 +69,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                     Collectors.mapping(d -> d, Collectors.toSet())
                             )
                     );
-            DiseaseDTO dto = new DiseaseDTO();
-            dto.setObjectId(fish.getZdbID());
-            dto.setObjectName(fish.getName());
-            RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
-            dto.setObjectRelation(relationship);
-            dto.setDataProvider(DataProvider.ZFIN);
-            Set<String> inferredSet = new HashSet<>();
-            fish.getFishExperiments().forEach(fishExperiment -> {
-                fishExperiment.getGeneGenotypeExperiments()
-                        .stream()
-                        .filter(geneGenotypeExperiment -> geneGenotypeExperiment.getGene().isGenedom())
-                        .forEach(geneGenotypeExperiment ->
-                                inferredSet.add(ZfinDTO.ZFIN + geneGenotypeExperiment.getGene().getZdbID()));
-            });
-            relationship.setInferredGeneAssociation(inferredSet);
+
 
             termMap.forEach((disease, diseaseAnnotationEvSet) -> {
                 Map<Publication, List<String>> evidenceMap = diseaseAnnotationEvSet
@@ -93,41 +79,62 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                         Collectors.mapping(DiseaseAnnotation::getEvidenceCode, Collectors.toList())
                                 )
                         );
-                dto.setDoid(disease.getOboID());
-                List<EvidenceDTO> evidenceList = new ArrayList<>();
-                dto.setEvidence(evidenceList);
                 evidenceMap.forEach((publication, evidences) -> {
+                    DiseaseDTO dto = new DiseaseDTO();
+                    dto.setObjectId(fish.getZdbID());
+                    dto.setObjectName(fish.getName());
+
+                    RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
+                    Set<String> inferredSet = new HashSet<>();
+                    fish.getFishExperiments().forEach(fishExperiment -> {
+                        fishExperiment.getGeneGenotypeExperiments()
+                                .stream()
+                                .filter(geneGenotypeExperiment -> geneGenotypeExperiment.getGene().isGenedom())
+                                .forEach(geneGenotypeExperiment ->
+                                        inferredSet.add(ZfinDTO.ZFIN + geneGenotypeExperiment.getGene().getZdbID()));
+                    });
+                    relationship.setInferredGeneAssociation(inferredSet);
+                    dto.setObjectRelation(relationship);
+
+                    dto.setDataProvider(DataProvider.ZFIN);
+
+                    dto.setDoid(disease.getOboID());
+
+                    // Evidence
                     PublicationAgrDTO pubDto = new PublicationAgrDTO(publication.getZdbID(), publication.getAccessionNumber());
                     EvidenceDTO evDto = new EvidenceDTO(pubDto);
                     evDto.setEvidenceCodes(evidences);
-                    evidenceList.add(evDto);
-                });
+                    dto.setEvidence(evDto);
 
+                    // experimental conditions
+                    Set<ExperimentCondition> expConditionSet = new HashSet<>();
+                    diseaseAnnotationEvSet.forEach(diseaseAnnotation -> {
+                        diseaseAnnotation.getDiseaseAnnotationModel().forEach(diseaseAnnotationModel -> {
+                            if (diseaseAnnotation.getPublication().equals(publication))
+                                expConditionSet.addAll(diseaseAnnotationModel.getFishExperiment().getExperiment().getExperimentConditions());
+                        });
+                    });
+                    Set<ExperimentalConditionDTO> experimentalConditionDTOS = expConditionSet.stream()
+                            .map(expCondition -> {
+                                ExperimentalConditionDTO condition = new ExperimentalConditionDTO(expCondition.getDisplayName(), expCondition.getZecoTerm().getOboID());
+                                if (expCondition.getAoTerm() != null)
+                                    condition.setAnatomicalId(expCondition.getAoTerm().getOboID());
+                                if (expCondition.getGoCCTerm() != null)
+                                    condition.setGeneOntologyId(expCondition.getGoCCTerm().getOboID());
+                                if (expCondition.getChebiTerm() != null)
+                                    condition.setChebiOntologyId(expCondition.getChebiTerm().getOboID());
+                                if (expCondition.getTaxaonymTerm() != null)
+                                    condition.setNcbiTaxonIdId(expCondition.getTaxaonymTerm().getOboID());
+                                return condition;
+                            })
+                            .collect(Collectors.toSet());
+                    dto.setExperimentalConditions(experimentalConditionDTOS);
+
+                    diseaseDTOList.add(dto);
+                });
             });
 
-            // experimental conditions
-            Set<ExperimentCondition> expConditionSet = new HashSet<>();
-            diseaseAnnotationSet.forEach(diseaseAnnotation -> {
-                diseaseAnnotation.getDiseaseAnnotationModel().forEach(diseaseAnnotationModel -> {
-                    expConditionSet.addAll(diseaseAnnotationModel.getFishExperiment().getExperiment().getExperimentConditions());
-                });
-            });
-            Set<ExperimentalConditionDTO> experimentalConditionDTOS = expConditionSet.stream()
-                    .map(expCondition -> {
-                        ExperimentalConditionDTO condition = new ExperimentalConditionDTO(expCondition.getDisplayName(), expCondition.getZecoTerm().getOboID());
-                        if (expCondition.getAoTerm() != null)
-                            condition.setAnatomicalId(expCondition.getAoTerm().getOboID());
-                        if (expCondition.getGoCCTerm() != null)
-                            condition.setGeneOntologyId(expCondition.getGoCCTerm().getOboID());
-                        if (expCondition.getChebiTerm() != null)
-                            condition.setChebiOntologyId(expCondition.getChebiTerm().getOboID());
-                        if (expCondition.getTaxaonymTerm() != null)
-                            condition.setNcbiTaxonIdId(expCondition.getTaxaonymTerm().getOboID());
-                        return condition;
-                    })
-                    .collect(Collectors.toSet());
-            dto.setExperimentalConditions(experimentalConditionDTOS);
-            diseaseDTOList.add(dto);
+
         });
 
 
@@ -161,13 +168,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                     Collectors.mapping(d -> d, Collectors.toSet())
                             )
                     );
-            DiseaseDTO dto = new DiseaseDTO();
-            dto.setObjectId(gene.getZdbID());
-            dto.setObjectName(gene.getAbbreviation());
-            RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IMPLICATED_IN, RelationshipDTO.GENE);
-            dto.setObjectRelation(relationship);
-            dto.setDataProvider(DataProvider.ZFIN);
-
             termMap.forEach((disease, diseaseAnnotationEvSet) -> {
                 Map<Publication, List<String>> evidenceMap = diseaseAnnotationEvSet
                         .stream()
@@ -176,32 +176,41 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                         Collectors.mapping(DiseaseAnnotation::getEvidenceCode, Collectors.toList())
                                 )
                         );
-                dto.setDoid(disease.getOboID());
-                List<EvidenceDTO> evidenceList = new ArrayList<>();
-                dto.setEvidence(evidenceList);
                 evidenceMap.forEach((publication, evidences) -> {
-                    // hard-coded pub added to every evidence
+                    DiseaseDTO dto = new DiseaseDTO();
+                    dto.setObjectId(gene.getZdbID());
+                    dto.setObjectName(gene.getAbbreviation());
+
+                    RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
+                    dto.setObjectRelation(relationship);
+                    dto.setDataProvider(DataProvider.ZFIN);
+
+                    dto.setDoid(disease.getOboID());
+
+                   // evidence
                     PublicationAgrDTO fixedPub = new PublicationAgrDTO("ZDB-PUB-170406-10", null);
                     EvidenceDTO evDto = new EvidenceDTO(fixedPub);
                     evDto.setEvidenceCodes(evidences);
-                    evidenceList.add(evDto);
+                    dto.setEvidence(evDto);
+
+                    // experimental conditions
+                    Set<ExperimentCondition> expConditionSet = new HashSet<>();
+                    diseaseModelMap.get(gene).forEach(fishExperiment -> {
+                        if (fishExperiment.getExperiment() != null)
+                            expConditionSet.addAll(fishExperiment.getExperiment().getExperimentConditions());
+                    });
+                    Set<ExperimentalConditionDTO> experimentalConditionDTOS = expConditionSet.stream()
+                            .map(expCondition -> new ExperimentalConditionDTO(expCondition.getDisplayName(), expCondition.getZecoTerm().getOboID()))
+                            .collect(Collectors.toSet());
+                    dto.setExperimentalConditions(experimentalConditionDTOS);
+
+                    diseaseDTOList.add(dto);
                 });
 
-                // experimental conditions
-                Set<ExperimentCondition> expConditionSet = new HashSet<>();
-                diseaseModelMap.get(gene).forEach(fishExperiment -> {
-                    if (fishExperiment.getExperiment() != null)
-                        expConditionSet.addAll(fishExperiment.getExperiment().getExperimentConditions());
-                });
-                Set<ExperimentalConditionDTO> experimentalConditionDTOS = expConditionSet.stream()
-                        .map(expCondition -> new ExperimentalConditionDTO(expCondition.getDisplayName(), expCondition.getZecoTerm().getOboID()))
-                        .collect(Collectors.toSet());
-                dto.setExperimentalConditions(experimentalConditionDTOS);
+
 
             });
 
-            // experimental conditions
-            diseaseDTOList.add(dto);
         });
 
 

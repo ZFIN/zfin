@@ -20,7 +20,7 @@ public class DiseaseDTO extends ZfinDTO {
     @JsonSerialize(using = JsonDateSerializer.class)
     private GregorianCalendar dateAssigned = new GregorianCalendar();
     private DataProvider dataProvider;
-    private List<EvidenceDTO> evidence;
+    private EvidenceDTO evidence;
     private Set<ExperimentalConditionDTO> experimentalConditions;
     private RelationshipDTO objectRelation;
 
@@ -66,11 +66,11 @@ public class DiseaseDTO extends ZfinDTO {
         this.dataProvider = dataProvider;
     }
 
-    public List<EvidenceDTO> getEvidence() {
+    public EvidenceDTO getEvidence() {
         return evidence;
     }
 
-    public void setEvidence(List<EvidenceDTO> evidence) {
+    public void setEvidence(EvidenceDTO evidence) {
         this.evidence = evidence;
     }
 
