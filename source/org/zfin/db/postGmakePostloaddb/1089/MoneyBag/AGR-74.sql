@@ -10,7 +10,7 @@ create table pre_foreign_db_contains (
 );
 
 insert into pre_foreign_db_contains (prefbct_fdbcont_organism_common_name, prefbct_fdbcont_fdbdt_id, prefbct_fdbcont_fdb_db_id)
-  select 'Zebrafish', '25', fdb_db_pk_id
+  select 'Zebrafish',13, fdb_db_pk_id
     from foreign_db
    where fdb_db_name = 'PANTHER';
 
