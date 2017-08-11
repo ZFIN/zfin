@@ -484,6 +484,12 @@
         </exec>
     </target>
 
+    <target name="kill-jenkins" depends="create-jenkins-symlink" description="Stop Jenkins ">
+        <exec executable="${jenkins}/jenkins.sh">
+            <arg value="kill"/>
+        </exec>
+    </target>
+
     <target name="restart-jenkins" depends="copy-certificate,create-jenkins-symlink" description="Restart up Jenkins">
         <exec executable="${jenkins}/jenkins.sh">
             <arg value="restart"/>
