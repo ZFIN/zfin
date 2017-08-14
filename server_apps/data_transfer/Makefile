@@ -28,7 +28,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
 SUBDIRS = MEOW SWISS-PROT GO DAF ResourceCenters Downloads Ensembl LoadOntology \
 	  Genbank ORTHO Load BurgessLin SNP zfishbook SangerMutants \
-	  OMIM PUBMED Dorsky NCBIGENE VegaStartEnd NCBIStartEnd VegaStartEnd Addgene Signafish BLAST RRID maintainTermDisplay
+	  OMIM PUBMED Dorsky NCBIGENE VegaStartEnd NCBIStartEnd VegaStartEnd Addgene Signafish Panther BLAST RRID maintainTermDisplay
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
