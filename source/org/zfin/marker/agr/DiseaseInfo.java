@@ -173,7 +173,10 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                         .stream()
                         .collect(
                                 Collectors.groupingBy(DiseaseAnnotation::getPublication,
-                                        Collectors.mapping(DiseaseAnnotation::getEvidenceCode, Collectors.toList())
+                                        Collectors.mapping(diseaseAnnotations ->{
+                                            if(diseaseAnnotations.getEvidenceCode().equals("TAS"))
+                                                return "IC";
+                                            return diseaseAnnotations.getEvidenceCode();}, Collectors.toList())
                                 )
                         );
                 evidenceMap.forEach((publication, evidences) -> {
