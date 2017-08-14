@@ -58,9 +58,7 @@ public class SolrQueryFacade {
 
     public SolrQueryFacade fqParsed(String value, FieldName... fields) {
         if (StringUtils.isNotEmpty(value)) {
-            query.addFilterQuery("{!edismax qf='" +
-                    Arrays.stream(fields).map(FieldName::getName).collect(Collectors.joining(" ")) +
-                    "'}" + SolrService.luceneEscape(value));
+            query.addFilterQuery(SolrService.dismax(value, fields));
         }
         return this;
     }

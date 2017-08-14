@@ -24,10 +24,9 @@ import org.zfin.search.presentation.FacetValue;
 import org.zfin.search.presentation.MarkerSearchCriteria;
 import org.zfin.search.presentation.MarkerSearchResult;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import static org.zfin.search.service.SolrQueryFacade.addTo;
 
 
 @Service
@@ -85,7 +84,7 @@ public class MarkerSearchService {
         SolrClient client = SolrService.getSolrClient();
         SolrQuery query = new SolrQuery();
 
-        query.setQuery(buildQuery(criteria, query));
+        applyQuery(criteria, query);
 
         query.setRequestHandler("/marker-search");
 
@@ -103,8 +102,9 @@ public class MarkerSearchService {
         }
 
         //sorting, handled here so that the name query can be dropped in
+        //starts with matches against the abbrev will get alphabetized first, everything else alphabetized after
         if (StringUtils.isNotEmpty(criteria.getName())) {
-            String symbolMatch = "mul(termfreq(name, '" + SolrService.luceneEscape(criteria.getName()) + "'),1000)";
+            String symbolMatch = "mul(termfreq(name_ac, '" + SolrService.luceneEscape(criteria.getName()) + "'),1000)";
             String alphaRank = "scale(rord(name_sort),1,100)";
             String computedScore = "sum(" + symbolMatch + "," + alphaRank + ")";
 
@@ -155,46 +155,42 @@ public class MarkerSearchService {
         return criteria;
     }
 
-    public String buildQuery(MarkerSearchCriteria criteria, SolrQuery query) {
+    public void applyQuery(MarkerSearchCriteria criteria, SolrQuery query) {
 
-        StringBuilder q = new StringBuilder();
+        Map<FieldName, String> startsWithFields = new HashMap<>();
+        startsWithFields.put(FieldName.NAME_AC,"^10");
+        startsWithFields.put(FieldName.FULL_NAME_AC,"^3");
+        startsWithFields.put(FieldName.ALIAS_AC,"^5");
+        startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_SYMBOL_AUTOCOMPLETE,"^2");
+        startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_NAME_AUTOCOMPLETE,"");
+        Map<FieldName, String> matchesFields = new HashMap<>();
+        matchesFields.putAll(startsWithFields);
+        matchesFields.put(FieldName.FULL_NAME,"^3");
 
         if (StringUtils.isNotEmpty(criteria.getName())) {
-            String nameQuery = criteria.getName();
-
-            nameQuery = SolrService.luceneEscape(nameQuery);
 
             if (StringUtils.equals(criteria.getMatchType(), MATCHES)) {
-                q.append(nameQuery);
+                query.setQuery(SolrService.dismax(criteria.getName(), matchesFields));
             } else if (StringUtils.equals(criteria.getMatchType(),BEGINS_WITH)) {
-                q.append(nameQuery + "*");
+                query.setQuery(SolrService.dismax(criteria.getName(),startsWithFields));
             } else if (StringUtils.equals(criteria.getMatchType(),CONTAINS)) {
-                q.append("*" + nameQuery + "*");
+                //String wildcardQuery = "*" + SolrService.luceneEscape(criteria.getName() + "*");
+                String wildcardQuery = "*" + criteria.getName();
+                query.setQuery(SolrService.dismax(wildcardQuery, matchesFields, false));
             }
 
-            q.append(" ");
+
         }
 
         if (StringUtils.isNotEmpty(criteria.getAccession())) {
-            q.append("(");
-
-            q.append(FieldName.RELATED_ACCESSION.getName());
-            q.append(":(");
-            q.append(criteria.getAccession());
-            q.append(") ");
-
-            q.append(" OR ");
-            q.append(FieldName.RELATED_ACCESSION_TEXT.getName());
-            q.append(":(");
-            q.append(criteria.getAccession());
-            q.append(") ");
-
-            q.append(")");
-
+            addTo(query)
+                    .fq(criteria.getAccession(),
+                            FieldName.RELATED_ACCESSION,
+                            FieldName.RELATED_ACCESSION_TEXT);
         }
-
-        return q.toString();
     }
+
+
 
     public MarkerSearchResult buildResult(SolrDocument doc) {
         String id = (String) doc.get(FieldName.ID.getName());
