@@ -31,6 +31,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 /**
@@ -548,6 +549,7 @@ public class SolrService {
         fieldName = fieldName.replaceAll("_t$", "");
         fieldName = StringUtils.replace(fieldName, "_tf", "");
         fieldName = StringUtils.replace(fieldName, "_hl", "");
+        fieldName = StringUtils.replace(fieldName, "_ac", "");
         fieldName = fieldName.replaceAll("_([0-9]+)$", "");
 
         /* these should only get replaced at the end of the word! */
@@ -884,5 +886,25 @@ public class SolrService {
         return !getServerStatus().equals(IDLE);
     }
 
+    public static String dismax(String value, FieldName... fields) {
+        return dismax(value, Arrays.asList(fields));
+    }
+
+    public static String dismax(String value, List<FieldName> fields) {
+        return "{!edismax qf='" +
+                fields.stream().map(FieldName::getName).collect(Collectors.joining(" ")) +
+                "'}" + SolrService.luceneEscape(value);
+    }
+
+    public static String dismax(String value, Map<FieldName, String> fields) {
+        return dismax(value, fields, true);
+    }
+
+    public static String dismax(String value, Map<FieldName, String> fields, boolean escapeQuery) {
+        if (escapeQuery) { value = luceneEscape(value); }
+        return "{!edismax qf='" +
+                fields.keySet().stream().map(fieldName -> fieldName.getName() + fields.get(fieldName)).collect(Collectors.joining(" ")) +
+                "'}" + value;
+    }
 
 }
