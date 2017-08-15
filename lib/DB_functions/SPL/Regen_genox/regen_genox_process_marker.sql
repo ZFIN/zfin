@@ -71,6 +71,15 @@ delete from regen_genox_temp
 		       and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
 		       and fmrel_type = 'contains phenotypic sequence feature');
 
+
+	delete from regen_genox_temp
+	  where exists (Select 'x' from fish_experiment, fish,genotype_feature, feature_marker_relationship,feature
+  	       	       where rggt_genox_zdb_id = genox_zdb_id
+		       and genox_fish_zdb_id = fish_Zdb_id
+		       and fish_genotype_zdb_id = genofeat_geno_zdb_id
+		       and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+		       and fmrel_ftr_zdb_id = feature_zdb_id and feature_type in ('DEFICIENCY','TRANSLOC'));
+
 --    end if
 
 --  end foreach  -- foreach record in regen_genox_input_zdb_id_temp
