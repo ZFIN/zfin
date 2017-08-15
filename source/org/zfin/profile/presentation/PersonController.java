@@ -278,7 +278,7 @@ public class PersonController {
     @RequestMapping(value = "/person/view/{zdbID}", method = RequestMethod.GET)
     public String viewPerson(@PathVariable String zdbID, Model model) {
         Person person = profileRepository.getPerson(zdbID);
-        if (person == null) {
+        if (person == null || (person.isHidden() && !profileService.isCurrentSecurityUserRoot())) {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }

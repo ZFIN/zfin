@@ -5340,7 +5340,8 @@ where fig_zdb_id=xpatfig_fig_zdb_id
                               pers_bio as biography,
                               address as postal_address,
                               email as email_address
-                       from person;
+                       from person
+                       where pers_is_hidden = 'f';
                               ">
             <field column="biography" stripHTML="true"/>
 
