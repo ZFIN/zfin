@@ -124,7 +124,8 @@ public class ExpressionSearchService {
 
         solrQuery.setFields(FieldName.GENE_ZDB_ID.getName());
 
-        solrQuery.setRows(100);
+        solrQuery.setRows(1000);
+        solrQuery.addSort(FieldName.ZEBRAFISH_GENE_SORT.getName(), SolrQuery.ORDER.asc);
 
         QueryResponse queryResponse = null;
         try {

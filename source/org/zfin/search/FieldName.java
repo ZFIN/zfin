@@ -143,6 +143,7 @@ public enum FieldName {
     XREF("xref"),
     YEAR("year"),
     ZEBRAFISH_GENE("zebrafish_gene"),
+    ZEBRAFISH_GENE_SORT("zebrafish_gene_sort"),
     ZEBRAFISH_GENE_T("zebrafish_gene_t");
 
     private String name;
