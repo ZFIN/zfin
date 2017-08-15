@@ -9,6 +9,7 @@ import java.util.List;
 
 public class ExpressionSearchCriteria {
 
+    private String authorField;
     private String geneField;
     private String geneZdbID;
     private Marker gene;
@@ -57,7 +58,6 @@ public class ExpressionSearchCriteria {
         if (anatomyTermNames == null || anatomyTermNames.equals("")) { return null; }
         return Arrays.asList(anatomyTermNames.split("\\|"));
     }
-
 
     public String getGeneField() {
         return geneField;
