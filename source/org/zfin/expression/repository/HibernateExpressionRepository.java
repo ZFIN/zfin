@@ -41,6 +41,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.FigurePresentation;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
@@ -2177,5 +2178,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public ExpressionFigureStage getExperimentFigureStage(long id) {
         return (ExpressionFigureStage) HibernateUtil.currentSession().get(ExpressionFigureStage.class, id);
+    }
+
+    @Override
+    public List<MarkerDBLink> getAllDbLinks(ForeignDB.AvailableName database) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("from MarkerDBLink " +
+                "where referenceDatabase.foreignDB.dbName = :database");
+        query.setParameter("database", database);
+        return (List<MarkerDBLink>) query.list();
     }
 }

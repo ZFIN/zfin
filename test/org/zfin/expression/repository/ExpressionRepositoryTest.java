@@ -26,6 +26,8 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
@@ -67,6 +69,13 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String dbLinkID = "ZDB-DBLINK-020710-33129";
         MarkerDBLink experiment = expRep.getMarkDBLink(dbLinkID);
         assertTrue(experiment != null);
+
+    }
+
+    @Test
+    public void getAllPantherIds() {
+        List<MarkerDBLink> dbLinks = expRep.getAllDbLinks(ForeignDB.AvailableName.PANTHER);
+        assertTrue(dbLinks != null);
 
     }
 
