@@ -1,5 +1,9 @@
 package org.zfin.sequence;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "FOREIGN_DB_DATA_TYPE")
 public class ForeignDBDataType {
 
     public enum SuperType{
@@ -67,9 +71,20 @@ public class ForeignDBDataType {
 
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "fdbdt_pk_id")
     private Long dataTypeID ;
+
+    @Column(name = "fdbdt_data_type")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDBDataType$DataType")})
     private DataType dataType;
+    @Column(name = "fdbdt_super_type")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDBDataType$SuperType")})
     private SuperType superType;
+    @Column(name = "fdbdt_display_order")
     private int displayOrder;
 
     public Long getDataTypeID() {
