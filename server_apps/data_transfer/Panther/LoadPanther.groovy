@@ -89,18 +89,22 @@ dbaccess dbname, """
 
 
 
-update tmp_terms set id = (select zrepld_new_zdb_id from zdb_replaced_data where id=zrepld_old_zdb_id and id not in (Select mrkr_zdb_id from marker where mrkr_type='GENE'));
-delete from db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-170810-1' and dblink_acc_num not in (select name from tmp_terms);
+update tmp_terms set id = (select zrepld_new_zdb_id from zdb_replaced_data where id=zrepld_old_zdb_id) where id in (select zrepld_old_zdb_id
+                                  from zdb_replaced_data);
+unload to 'test.unl' select id from tmp_terms where id not in (select mrkr_zdb_id from marker where mrkr_type='GENE');
+delete from tmp_terms where id not in (select mrkr_zdb_id from marker where mrkr_type='GENE');
+delete from db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-170810-1';
+
 update tmp_terms set dblinkid = get_id('DBLINK');
 
 insert into zdb_active_data select dblinkid from tmp_terms;
 
 insert into db_link (dblink_linked_recid,dblink_acc_num, dblink_zdb_id ,dblink_acc_num_display,dblink_fdbcont_zdb_id)
-  select id,name,dblinkid,name, 'ZDB-FDBCONT-170810-1'
+  select distinct id,name,dblinkid,name, 'ZDB-FDBCONT-170810-1'
     from tmp_terms ;
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-  select dblinkid,'ZDB-PUB-130425-4' from tmp_terms;
+  select dblinkid,'ZDB-PUB-170810-14' from tmp_terms;
 
 
 
