@@ -851,7 +851,7 @@ public class MarkerService {
         Marker marker = markerBean.getMarker();
         logger.debug("marker is:" + marker.getZdbID());
         String zdbID = marker.getZdbID();
-        if (Marker.Type.GENE == marker.getType()) {
+        if (marker.isGenedom()) {
             List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotype(marker);
             if (omimPhenotypes == null || omimPhenotypes.size() == 0) {
                 markerBean.setDiseaseDisplays(null);
