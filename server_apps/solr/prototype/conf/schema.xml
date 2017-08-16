@@ -506,8 +506,9 @@
    <field name="date" type="date" indexed="true" stored="true"   />
    <field name="tdate" type="tdate" indexed="true" stored="false"   />
 
-     <field name="name_sort" type="sortable-string" indexed="true" stored="true"  />
-     <field name="author_sort" type="sortable-string" indexed="true" stored="true" />
+   <field name="name_sort" type="sortable-string" indexed="true" stored="true" />
+   <field name="author_sort" type="sortable-string" indexed="true" stored="true" />
+   <field name="gene_sort" type="sortable-string" indexed="true" stored="true" />
 
    <field name="regulatory_region" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="coding_sequence" type="keyword" indexed="true" stored="true" multiValued="true"   />
@@ -800,7 +801,6 @@
    <dynamicField name="*_d"  type="sdouble" indexed="true"  stored="true"/>
    <dynamicField name="*_dt" type="date"    indexed="true"  stored="true"/>
    <dynamicField name="*_ac"  type="edgytext"    indexed="true"  stored="true" multiValued="true" />
-   <dynamicField name="*_sort"  type="sortable-string" indexed="true"  stored="true" />
    <dynamicField name="*_tf"  type="term_facet"    indexed="true" stored="true" multiValued="true" />
    <dynamicField name="type_*" type="string" indexed="true" stored="true" />
 <!--
@@ -953,7 +953,6 @@
    <copyField source="sequence_targeting_reagent" dest="sequence_targeting_reagent_t"/>
    <copyField source="gene" dest="gene_t"/>
    <copyField source="zebrafish_gene" dest="zebrafish_gene_t"/>
-   <copyField source="zebrafish_gene" dest="zebrafish_gene_sort"/>
    <copyField source="reporter_gene" dest="reporter_gene_t"/>
    <copyField source="affected_gene" dest="gene_t"/>
    <copyField source="antigen_gene" dest="gene_t"/>

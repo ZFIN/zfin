@@ -64,6 +64,7 @@ public enum FieldName {
     GENE("gene"),
     GENE_FULL_NAME("gene_full_name"),
     GENE_PREVIOUS_NAME("gene_previous_name"),
+    GENE_SORT("gene_sort"),
     GENE_ZDB_ID("gene_zdb_id"),
     GENES_WITH_ALTERED_EXPRESSION("genes_with_altered_expression"),
     GENOTYPE("genotype"),
@@ -143,7 +144,6 @@ public enum FieldName {
     XREF("xref"),
     YEAR("year"),
     ZEBRAFISH_GENE("zebrafish_gene"),
-    ZEBRAFISH_GENE_SORT("zebrafish_gene_sort"),
     ZEBRAFISH_GENE_T("zebrafish_gene_t");
 
     private String name;
