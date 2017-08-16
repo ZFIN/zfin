@@ -61,8 +61,9 @@ pantherIDs.each { csv ->
         def colon = (pantid[2].indexOf(':'))
         def panthid = pantid[2]
         def pantherID = panthid.substring(0, colon)
+      def fdbcontid='ZDB-FDBCONT'
         if (zfinID.startsWith('ZDB')) {
-            outFile.writeLine("$zfinID|$zfinID|$pantherID")
+            outFile.writeLine("$zfinID|$zfinID|$pantherID|$fdbcontid")
         }
 
     }
@@ -74,12 +75,13 @@ println("Loading terms into $dbname")
 dbaccess dbname, """
   UNLOAD TO $PRE_FILE
     SELECT dblink_linked_recid,dblink_acc_num
-    FROM db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-170810-1';
+    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
 
   CREATE TEMP TABLE tmp_terms(
     dblinkid varchar(50),
     id varchar(50),
-    name varchar(50)
+    name varchar(50),
+    fdbcontid varchar(50)
       ) with no log;
 
   LOAD FROM $OUTFILE
@@ -92,15 +94,17 @@ dbaccess dbname, """
 update tmp_terms set id = (select zrepld_new_zdb_id from zdb_replaced_data where id=zrepld_old_zdb_id) where id in (select zrepld_old_zdb_id
                                   from zdb_replaced_data);
 unload to 'test.unl' select id from tmp_terms where id not in (select mrkr_zdb_id from marker where mrkr_type='GENE');
+update tmp_terms set fdbcontid = (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
+
 delete from tmp_terms where id not in (select mrkr_zdb_id from marker where mrkr_type='GENE');
-delete from db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-170810-1';
+delete from db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
 
 update tmp_terms set dblinkid = get_id('DBLINK');
 
 insert into zdb_active_data select dblinkid from tmp_terms;
 
 insert into db_link (dblink_linked_recid,dblink_acc_num, dblink_zdb_id ,dblink_acc_num_display,dblink_fdbcont_zdb_id)
-  select distinct id,name,dblinkid,name, 'ZDB-FDBCONT-170810-1'
+  select distinct id,name,dblinkid,name, fdbcontid
     from tmp_terms ;
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
@@ -111,7 +115,7 @@ insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 
   UNLOAD TO $POST_FILE
     SELECT dblink_linked_recid,dblink_acc_num
-    FROM db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-170810-1';
+    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
 """
 
 if (args) {
