@@ -10,6 +10,7 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1089/MoneyBag/ZFIN-5730.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1089/MoneyBag/AGR-74.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1089/MoneyBag/ZFIN-5733.sql" />
 
 
 
