@@ -95,17 +95,6 @@ public class MarkerGoEvidencePresentation {
         return unipathwayReferenceDatabase;
     }
 
-    public static ReferenceDatabase getUniruleReferenceDatabase() {
-        if (uniruleReferenceDatabase == null) {
-            uniruleReferenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                    ForeignDB.AvailableName.UNIRULE,
-                    ForeignDBDataType.DataType.GENE_ONTOLOGY,
-                    ForeignDBDataType.SuperType.INFERENCE,
-                    Species.Type.ZEBRAFISH);
-        }
-        return uniruleReferenceDatabase;
-    }
-
     public static ReferenceDatabase getEcReferenceDatabase() {
         if (ecReferenceDatabase == null) {
             ecReferenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
@@ -211,7 +200,7 @@ public class MarkerGoEvidencePresentation {
             case UNIPATHWAY:
                 return createLink(accession, getUnipathwayReferenceDatabase().getForeignDB(), inferenceCategory);
             case UNIRULE:
-                return createLink(accession, getUniruleReferenceDatabase().getForeignDB(), inferenceCategory);
+                return createUniRuleLink(accession, inferenceCategory);
             default:
                 return inferredFrom;
         }
@@ -253,6 +242,17 @@ public class MarkerGoEvidencePresentation {
         }
         sb.append("\">");
 
+        sb.append(inferenceCategory.prefix());
+        sb.append(accession);
+        sb.append("</a>");
+        return sb.toString();
+    }
+
+    public static String createUniRuleLink(String accession, InferenceCategory inferenceCategory) {
+        StringBuilder sb = new StringBuilder("");
+        sb.append("<a href=\"http://prosite.expasy.org/unirule/");
+        sb.append(accession);
+        sb.append("\">");
         sb.append(inferenceCategory.prefix());
         sb.append(accession);
         sb.append("</a>");
