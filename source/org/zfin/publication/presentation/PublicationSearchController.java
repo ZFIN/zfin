@@ -20,10 +20,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/publication")
@@ -76,7 +73,9 @@ public class PublicationSearchController {
         }
         model.addAttribute("formBean", formBean);
         model.addAttribute("yearTypes", PublicationSearchBean.YearType.values());
-        model.addAttribute("pubTypes", Publication.Type.values());
+        Publication.Type[] pubTypes = Publication.Type.values();
+        Arrays.sort(pubTypes, Comparator.comparingInt(Publication.Type::getDisplayOrder));
+        model.addAttribute("pubTypes", pubTypes);
         model.addAttribute("sortOrders", PublicationSearchBean.Sort.values());
         model.addAttribute("curators", profileRepository.getCurators());
         model.addAttribute("oldestPubEntryDate", oldestPubEntryDate.getTime());

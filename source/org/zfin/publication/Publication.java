@@ -457,25 +457,27 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     }
 
     public enum Type {
-        ABSTRACT("Abstract", true),
-        ACTIVE_CURATION("Active Curation", false),
-        BOOK("Book", true),
-        CHAPTER("Chapter", true),
-        CURATION("Curation", false),
-        JOURNAL("Journal", true),
-        MOVIE("Movie", true),
-        OTHER("Other", true),
-        REVIEW("Review", true),
-        UNKNOWN("Unknown", true),
-        UNPUBLISHED("Unpublished", false),
-        THESIS("Thesis", true);
+        ABSTRACT("Abstract", true, 3),
+        ACTIVE_CURATION("Active Curation", false, 9),
+        BOOK("Book", true, 5),
+        CHAPTER("Chapter", true, 6),
+        CURATION("Curation", false, 8),
+        JOURNAL("Journal", true, 1),
+        MOVIE("Movie", true, 4),
+        OTHER("Other", true, 10),
+        REVIEW("Review", true, 2),
+        UNKNOWN("Unknown", true, 12),
+        UNPUBLISHED("Unpublished", false, 11),
+        THESIS("Thesis", true, 7);
 
         private final String display;
         private final boolean curationAllowed;
+        private final int displayOrder;
 
-        Type(String type, Boolean curationAllowed) {
+        Type(String type, Boolean curationAllowed, int displayOrder) {
             this.display = type;
             this.curationAllowed = curationAllowed;
+            this.displayOrder = displayOrder;
         }
 
         public String getDisplay() {
@@ -484,6 +486,10 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
         public boolean isCurationAllowed() {
             return curationAllowed;
+        }
+
+        public int getDisplayOrder() {
+            return displayOrder;
         }
 
         @Override
