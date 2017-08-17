@@ -158,7 +158,8 @@ public class ForeignDB implements Comparable<ForeignDB> {
         UBERON("UBERON"),
         ISBN("ISBN"),
         ZMP("ZMP"),
-        CRISPRZ("CRISPRz");
+        CRISPRZ("CRISPRz"),
+        UNIRULE("UniRule");
 
 
         private final String value;

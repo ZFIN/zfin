@@ -25,7 +25,7 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
             case IDA:
                 return new InferenceCategory[]{};
             case IEA:
-                return new InferenceCategory[]{InferenceCategory.SP_KW, InferenceCategory.UNIPROTKB_KW, InferenceCategory.UNIPROTKB_SUBCELL, InferenceCategory.UNIPATHWAY, InferenceCategory.EC,
+                return new InferenceCategory[]{InferenceCategory.SP_KW, InferenceCategory.UNIPROTKB_KW, InferenceCategory.UNIPROTKB_SUBCELL, InferenceCategory.UNIPATHWAY, InferenceCategory.UNIRULE, InferenceCategory.EC,
                         InferenceCategory.INTERPRO};
             case IEP:
                 return new InferenceCategory[]{};

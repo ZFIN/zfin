@@ -22,6 +22,7 @@ public class MarkerGoEvidencePresentation {
     public static ReferenceDatabase uniprotReferenceDatabase;
     public static ReferenceDatabase spkwReferenceDatabase;
     public static ReferenceDatabase unipathwayReferenceDatabase;
+    public static ReferenceDatabase uniruleReferenceDatabase;
     public static ReferenceDatabase ecReferenceDatabase;
     public static ReferenceDatabase interproReferenceDatabase;
     public static ReferenceDatabase goReferenceDatabase;
@@ -92,6 +93,17 @@ public class MarkerGoEvidencePresentation {
                     Species.Type.ZEBRAFISH);
         }
         return unipathwayReferenceDatabase;
+    }
+
+    public static ReferenceDatabase getUniruleReferenceDatabase() {
+        if (uniruleReferenceDatabase == null) {
+            uniruleReferenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+                    ForeignDB.AvailableName.UNIRULE,
+                    ForeignDBDataType.DataType.GENE_ONTOLOGY,
+                    ForeignDBDataType.SuperType.INFERENCE,
+                    Species.Type.ZEBRAFISH);
+        }
+        return uniruleReferenceDatabase;
     }
 
     public static ReferenceDatabase getEcReferenceDatabase() {
@@ -198,6 +210,8 @@ public class MarkerGoEvidencePresentation {
                 return createLink(accession, getSpslForeignDBDatabase(), inferenceCategory);
             case UNIPATHWAY:
                 return createLink(accession, getUnipathwayReferenceDatabase().getForeignDB(), inferenceCategory);
+            case UNIRULE:
+                return createLink(accession, getUniruleReferenceDatabase().getForeignDB(), inferenceCategory);
             default:
                 return inferredFrom;
         }

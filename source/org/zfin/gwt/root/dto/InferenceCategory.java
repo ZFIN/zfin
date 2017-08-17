@@ -28,6 +28,7 @@ public enum InferenceCategory {
     SP_SL("SP_SL"),
     UNIPROTKB_SUBCELL("UniProtKB-SubCell"),
     UNIPATHWAY("UniPathway"),
+    UNIRULE("UniRule"),
     ENSEMBL("Ensembl"),
     PANTHER("PANTHER",false),
     ;
