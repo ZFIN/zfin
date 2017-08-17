@@ -219,7 +219,7 @@
     $(function () {
         function resetForm($form) {
             $form.find('input:text').val('');
-            $form.find('select option:first-child').attr('selected', true);
+            $form.find('select').prop("selectedIndex", 0);
             // pet date is special
             $('#petFromMonth').val(${oldestPubEntryMonth});
             $('#petFromDay').val(${oldestPubEntryDay});
