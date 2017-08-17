@@ -18,7 +18,7 @@ public enum GoDefaultPublication implements PubEnum {
     GOREF_UNIPROTKB_SUBCELL1("GO_REF:0000039", "ZDB-PUB-120306-2", InferenceCategory.UNIPROTKB_SUBCELL, false),
     GOREF_UNIPROTKB_SUBCELL2("GO_REF:0000040", "ZDB-PUB-120306-4", InferenceCategory.UNIPROTKB_SUBCELL, false),
     GOREF_UNIPATHWAY("GO_REF:0000041","ZDB-PUB-130131-1",InferenceCategory.UNIPATHWAY,false),
-    GOREF_UNIRULE("GO:REF:0000104","ZDB-PUB-170525-1",InferenceCategory.UNIRULE,false),
+    GOREF_UNIRULE("GO_REF:0000104","ZDB-PUB-170525-1",InferenceCategory.UNIRULE,false),
     GOREF_UNIPROT("GO_REF:0000024", "ZDB-PUB-110105-1", InferenceCategory.UNIPROTKB, false),
     GOREF_PAINT("GO_REF:0000033", "ZDB-PUB-110330-1", InferenceCategory.PANTHER, false),
     ;
