@@ -64,6 +64,27 @@ and not exists (Select 'x' from regen_genox_temp
       	  	 	 where mrel_mrkr_2_zdb_id = rggt_mrkr_Zdb_id
 			 and genox_zdb_id = rggt_genox_zdb_id);
 
+insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
+  select distinct fmrel_mrkr_zdb_id , genox_zdb_id
+    from fish, fish_experiment,  genotype_Feature, feature_marker_relationship, regen_genox_input_zdb_id_temp,experiment_condition,all_term_contains
+    where fish_zdb_id = genox_fish_Zdb_id
+        and fish_genotype_zdb_id = genofeat_geno_zdb_id
+    and fmrel_ftr_Zdb_id=genofeat_feature_zdb_id
+
+        and genox_exp_zdb_id = expcond_exp_zdb_id
+     and genox_exp_zdb_id = expcond_exp_zdb_id
+     and expcond_zeco_term_Zdb_id = alltermcon_contained_zdb_id
+        and alltermcon_container_zdb_id ='ZDB-TERM-160831-68'
+
+    and fish_functional_affected_gene_count = 1
+
+
+    and genox_zdb_id = rggz_zdb_id
+and not exists (Select 'x' from regen_genox_temp
+      	  	 	 where fmrel_mrkr_zdb_id = rggt_mrkr_Zdb_id
+			 and genox_zdb_id = rggt_genox_zdb_id);
+
+
 
 --    end if
 
