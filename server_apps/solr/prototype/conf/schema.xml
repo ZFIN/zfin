@@ -696,6 +696,7 @@
 
    <field name="journal" type="keyword" indexed="true" stored="true"   />
      <field name="journal_name" type="text" indexed="true" stored="true"   />
+   <field name="journal_type" type="keyword" indexed="true" stored="true" />
    <field name="topic" type="keyword" indexed="true" stored="true"   multiValued="true" />
    <field name="curator" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="pub_simple_status" type="keyword" indexed="true" stored="true" multiValued="true" />
@@ -941,6 +942,7 @@
    <copyField source="journal" dest="journal_t"/>
     <copyField source="journal_name" dest="journal_name_t"/>
    <copyField source="registered_author" dest="registered_author_t"/>
+   <copyField source="registered_author" dest="registered_author_ac"/>
    <copyField source="author_string" dest="author_sort" />
    <copyField source="keyword" dest="keyword_ac" />
    <copyField source="id" dest="id_t"/>

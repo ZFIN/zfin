@@ -2937,7 +2937,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                             from expression_experiment2
                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                 join marker on xpatex_gene_zdb_id = mrkr_zdb_id
-                            where substring(xpatex_gene_zdb_id from 1 for 8) = 'ZDB-EFG'
+                            where substring(xpatex_gene_zdb_id from 1 for 7) = 'ZDB-EFG'
                             ;
                    "
                    where="efs_pk_id=expression.id"
@@ -3015,7 +3015,15 @@ term_name as expression_anatomy_direct,
                             join int_person_pub on xpatex_source_zdb_id = int_person_pub.target_id
                             join person on person.zdb_id = int_person_pub.source_id;"
                    cacheImpl="SortedMapBackedCache"
-                   where="xpatex_zdb_id=expression.id"/>
+                   where="efs_pk_id=expression.id"/>
+
+           <entity name="expression_journal_type" datasource="db"
+                   query="select jtype as journal_type, 'xpatex-' || efs_pk_id as efs_pk_id
+                       from expression_experiment2
+                            join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                            join publication as pub on xpatex_source_zdb_id = pub.zdb_id;"
+                   cacheImpl="SortedMapBackedCache"
+                   where="efs_pk_id=expression.id"/>
 
            <entity name="expression_stage_hours"
                    datasource="db" query="select start_stage.stg_hours_start as stage_hours_start,

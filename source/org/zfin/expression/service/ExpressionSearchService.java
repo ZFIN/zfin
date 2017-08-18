@@ -25,6 +25,8 @@ import org.zfin.search.service.SolrService;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import static org.zfin.search.service.SolrQueryFacade.addTo;
+
 
 @Service
 public class ExpressionSearchService {
@@ -39,8 +41,10 @@ public class ExpressionSearchService {
 
         solrQuery.addFilterQuery(fq(FieldName.CATEGORY, Category.EXPRESSIONS.getName()));
 
-        //only interested in expression where there is a zebrafish gene, no reporter & no AB expression
-        solrQuery.addFilterQuery(FieldName.ZEBRAFISH_GENE.getName() + ":[* TO *]");
+        //only interested in expression where there is a zebrafish gene or no reporter, no ATB expression
+        solrQuery.addFilterQuery("(" + FieldName.ZEBRAFISH_GENE.getName()
+                                     + ":[* TO *] OR "
+                                     + FieldName.REPORTER_GENE + ":[* TO *])");
 
         if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
             String termQuery = criteria.getAnatomy().stream()
@@ -98,6 +102,11 @@ public class ExpressionSearchService {
             solrQuery.addFilterQuery(fq(FieldName.FISH_T, fish));
         }
 
+        String author = criteria.getAuthorField();
+        if (StringUtils.isNotEmpty(author)) {
+            addTo(solrQuery).fq(author, FieldName.REGISTERED_AUTHOR_AUTOCOMPLETE);
+        }
+
         if (criteria.isOnlyFiguresWithImages()) {
             solrQuery.addFilterQuery(fq(FieldName.HAS_IMAGE, TRUE));
         }
@@ -105,7 +114,16 @@ public class ExpressionSearchService {
         if (criteria.isOnlyWildtype()) {
             solrQuery.addFilterQuery(fq(FieldName.IS_WILDTYPE, TRUE));
         }
-        
+
+        if (criteria.isOnlyReporter()) {
+            addTo(solrQuery).fqAny(FieldName.REPORTER_GENE);
+        }
+
+        String journalType = criteria.getJournalType();
+        if (StringUtils.isNotEmpty(journalType) && !StringUtils.equals(journalType,"all")) {
+            addTo(solrQuery).fq(criteria.getJournalType(),FieldName.JOURNAL_TYPE);
+        }
+
         solrQuery.setRows(criteria.getRows());
         solrQuery.setStart((criteria.getPage() - 1) * criteria.getRows());
 

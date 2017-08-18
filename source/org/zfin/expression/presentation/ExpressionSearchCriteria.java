@@ -16,10 +16,12 @@ public class ExpressionSearchCriteria {
     private String targetGeneField;
     private boolean onlyFiguresWithImages;
     private boolean onlyWildtype;
+    private boolean onlyReporter;
     private String startStageId;
     private String endStageId;
     private String assayName;
     private String fish;
+    private String journalType;
 
     private String anatomyTermNames;
     private String anatomyTermIDs;
@@ -36,7 +38,6 @@ public class ExpressionSearchCriteria {
     private String linkWithImagesOnly;
 
     public String getUrl(Marker gene) {
-        //todo: put all of the criteria into the url
 
         URLCreator urlCreator = new URLCreator("/action/expression/results");
         urlCreator.addNameValuePair("geneZdbID", gene.getZdbID());
@@ -48,15 +49,43 @@ public class ExpressionSearchCriteria {
         urlCreator.addNameValuePair("targetGeneField", getTargetGeneField());
         urlCreator.addNameValuePair("assayName", getAssayName());
         urlCreator.addNameValuePair("fish", getFish());
-        if (onlyFiguresWithImages) {
-            urlCreator.addNameValuePair("onlyFiguresWithImages", "true");
-        }
+        urlCreator.addNameValuePair("authorField", getAuthorField());
+        urlCreator.addNameValuePair("journalType", getJournalType());
+        if (onlyFiguresWithImages) { urlCreator.addNameValuePair("onlyFiguresWithImages", "true"); }
+        if (onlyWildtype) { urlCreator.addNameValuePair("onlyWildtype", "true"); }
+        if (onlyReporter) { urlCreator.addNameValuePair("onlyReporter", "true"); }
+
+
         return urlCreator.getURL();
     }
 
     public List<String> getAnatomy() {
         if (anatomyTermNames == null || anatomyTermNames.equals("")) { return null; }
         return Arrays.asList(anatomyTermNames.split("\\|"));
+    }
+
+    public String getAuthorField() {
+        return authorField;
+    }
+
+    public void setAuthorField(String authorField) {
+        this.authorField = authorField;
+    }
+
+    public String getJournalType() {
+        return journalType;
+    }
+
+    public void setJournalType(String journalType) {
+        this.journalType = journalType;
+    }
+
+    public boolean isOnlyReporter() {
+        return onlyReporter;
+    }
+
+    public void setOnlyReporter(boolean onlyReporter) {
+        this.onlyReporter = onlyReporter;
     }
 
     public String getGeneField() {
