@@ -50,7 +50,7 @@ public class PhenotypeSummarySmokeTest extends AbstractSmokeTest {
     @Test
     public void testPhenotypeSummaryPageRegionGenes() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/marker/ZDB-MIRNAG-081210-16/phenotype-summary");
-        
+
         // check that publication O'Brien et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-140513-339"));
         assertThat(page.getAnchorByText("s896Tg; y7Tg + MO1-mir30a"), is(notNullValue()));
