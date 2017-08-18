@@ -27,7 +27,7 @@ public class PhenotypeSummarySmokeTest extends AbstractSmokeTest {
     @Test
     public void testPhenotypeSummaryPagetp53Morphos() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/marker/ZDB-GENE-060503-803/phenotype-summary");
-        assertEquals("Phenotype summary", "Phenotype Figure summary", page.getTitleText());
+
         // check that publication Ashraf et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-140108-19"));
         assertThat(page.getAnchorByText("s896Tg; y7Tg + MO1-mir30a"), is(notNullValue()));
@@ -39,7 +39,7 @@ public class PhenotypeSummarySmokeTest extends AbstractSmokeTest {
     @Test
     public void testPhenotypeSummaryPageHsp70HeatShock() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/marker/ZDB-GENE-001103-3/phenotype-summary");
-        assertEquals("Phenotype summary", "Phenotype Figure summary", page.getTitleText());
+
         // check that fish is present.
         assertThat(page.getAnchorByText("AB + MO1-adck4 + MO4-tp53"), is(notNullValue()));
     }
@@ -50,7 +50,7 @@ public class PhenotypeSummarySmokeTest extends AbstractSmokeTest {
     @Test
     public void testPhenotypeSummaryPageRegionGenes() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/marker/ZDB-MIRNAG-081210-16/phenotype-summary");
-        assertEquals("Phenotype summary", "Phenotype Figure summary", page.getTitleText());
+        
         // check that publication O'Brien et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-140513-339"));
         assertThat(page.getAnchorByText("s896Tg; y7Tg + MO1-mir30a"), is(notNullValue()));
