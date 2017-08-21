@@ -30,7 +30,7 @@ public class PhenotypeSummarySmokeTest extends AbstractSmokeTest {
 
         // check that publication Ashraf et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-140108-19"));
-        assertThat(page.getAnchorByText("s896Tg; y7Tg + MO1-mir30a"), is(notNullValue()));
+        assertThat(page.getAnchorByText("AB + MO1-adck4 + MO4-tp53"), is(notNullValue()));
     }
 
     /**
@@ -41,7 +41,7 @@ public class PhenotypeSummarySmokeTest extends AbstractSmokeTest {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/marker/ZDB-GENE-001103-3/phenotype-summary");
 
         // check that fish is present.
-        assertThat(page.getAnchorByText("AB + MO1-adck4 + MO4-tp53"), is(notNullValue()));
+        assertThat(page.getAnchorByText("s2506Tg"), is(notNullValue()));
     }
 
     /**
