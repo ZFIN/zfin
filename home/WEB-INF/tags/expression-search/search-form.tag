@@ -108,9 +108,9 @@
                     </form:select>
                 </div>
                 <div class="form-group">
-                    <div><form:checkbox path="onlyWildtype" /> <label>Show only WT expression</label></div>
-                    <div><form:checkbox path="onlyReporter" /> <label>Show only reporter genes in transgenic fish</label></div>
-                    <div><form:checkbox path="onlyFiguresWithImages"/> <label>Show only figures with images</label></div>
+                    <div><form:checkbox path="onlyWildtype" id="onlyWildtype"/> <label for="onlyWildtype">Show only WT expression</label></div>
+                    <div><form:checkbox path="onlyReporter" id="onlyReporter"/> <label for="onlyReporter">Show only reporter genes in transgenic fish</label></div>
+                    <div><form:checkbox path="onlyFiguresWithImages" id="onlyFiguresWithImages"/> <label for="onlyFiguresWithImages">Show only figures with images</label></div>
                 </div>
                 <div class="form-group">
                     <div><form:radiobutton path="journalType" value="${Publication.Type.UNPUBLISHED}" label="Show only direct submission data"/> </div>
