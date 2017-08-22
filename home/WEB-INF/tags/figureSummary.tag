@@ -68,8 +68,9 @@
                     <td>
                     <c:if test="${!empty figureExpressionSummaryDisplay.fishList}">
                         <c:forEach var="fish" items="${figureExpressionSummaryDisplay.fishList}" varStatus="status">
-                            <zfin:link entity="${figureExpressionSummaryDisplay.fishList[status.index]}"/>
 
+
+                            <a id="${figureExpressionSummaryDisplay.fishList[status.index].zdbID}" href="/${figureExpressionSummaryDisplay.fishList[status.index].zdbID}">${figureExpressionSummaryDisplay.fishList[status.index].displayName}</a>
 
                             <c:if test="${!status.last}">,&nbsp&nbsp;</c:if>
                         </c:forEach>
