@@ -6,10 +6,9 @@ import org.zfin.expression.Figure;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.ConstructSearchCriteria;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.Construct;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
@@ -33,7 +32,6 @@ public class PhenotypeSummaryCriteria {
     private Construct construct;
     private List<FishExperiment> fishExperiments;
     private FishSearchCriteria criteria;
-    private ConstructSearchCriteria constructCriteria;
     private Genotype genotype;
 
 
@@ -167,14 +165,6 @@ public class PhenotypeSummaryCriteria {
 
     public void setConstruct(Construct construct) {
         this.construct = construct;
-    }
-
-    public ConstructSearchCriteria getConstructCriteria() {
-        return constructCriteria;
-    }
-
-    public void setConstructCriteria(ConstructSearchCriteria constructCriteria) {
-        this.constructCriteria = constructCriteria;
     }
 
     public Fish getFish() {

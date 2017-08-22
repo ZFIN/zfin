@@ -50,69 +50,21 @@
         </set>
     </class>
 
-        <class name="ConstructSearch" table="construct_search">
+    <class name="org.zfin.construct.ConstructComponent" table="construct_component">
+        <id name="ID">
+            <column name="cc_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <property name="constructZdbID" column="cc_construct_zdb_id"/>
+        <property name="type" column="cc_component_type" type="constructComponentType"/>
+        <property name="componentZdbID" column="cc_component_zdb_id"/>
+        <property name="componentValue" column="cc_component"/>
+        <!--<property name="category" column="cc_component_category" type="constructComponentCategory"/>-->
+        <property name="componentCategory" column="cc_component_category" />
+        <property name="componentOrder" column="cc_order"/>
+        <property name="componentCassetteNum" column="cc_cassette_number"/>
+    </class>
 
-            <id name="ID">
-                <column name="cons_pk_id" not-null="true"/>
-                <generator class="identity"/>
-            </id>
-
-            <property name="constructID" column="cons_construct_zdb_id"/>
-            <property name="constructName" column="cons_all_names"/>
-            <property name="constructAbbrev" column="cons_abbrev"/>
-
-        </class>
-
-        <class name="ConstructGeneFeature" table="construct_gene_feature_result_View">
-            <cache usage="read-only"/>
-            <id name="ID">
-                <column name="cgfrv_pk_id" not-null="true"/>
-                <generator class="identity"/>
-            </id>
-
-            <many-to-one name="constructSearch" column="cgfrv_cs_id"/>
-
-
-            <component name="feature">
-                <property name="ID" column="cgfrv_feature_zdb_id"/>
-                <property name="name" column="cgfrv_feature_abbrev"/>
-                <property name="nameOrder" column="cgfrv_feature_order"/>
-            </component>
-            <component name="alleleGene">
-                <property name="ID" column="cgfrv_allele_gene_zdb_id"/>
-                <property name="name" column="cgfrv_allele_gene_abbrev"/>
-                <property name="nameOrder" column="cgfrv_allele_gene_order"/>
-                <!--<property name="nameOrder" column="gfrv_construct_abbrev_order"/>-->
-            </component>
-            <property name="lab" column="cgfrv_available"/>
-        </class>
-
-        <class name="org.zfin.construct.ConstructComponent" table="construct_component">
-            <id name="ID">
-                <column name="cc_pk_id" not-null="true"/>
-                <generator class="identity"/>
-            </id>
-            <property name="constructZdbID" column="cc_construct_zdb_id"/>
-            <property name="type" column="cc_component_type" type="constructComponentType"/>
-            <property name="componentZdbID" column="cc_component_zdb_id"/>
-            <property name="componentValue" column="cc_component"/>
-            <!--<property name="category" column="cc_component_category" type="constructComponentCategory"/>-->
-            <property name="componentCategory" column="cc_component_category" />
-            <property name="componentOrder" column="cc_order"/>
-            <property name="componentCassetteNum" column="cc_cassette_number"/>
-
-        </class>
-
-        <!--<class name="org.zfin.construct.ConstructNameGroup" table="construct_name_group">
-            <id name="zdbID" type="string">
-                <column name="cng_construct_zdb_id" not-null="true"/>
-                <generator class="org.zfin.database.ZdbIdGenerator">
-                    <param name="isConstruct">true</param>
-                    <param name="insertActiveData">true</param>
-                </generator>
-            </id>
-
-        </class>-->
     <class name="org.zfin.construct.ConstructRelationship" table="construct_marker_relationship">
         <id name="zdbID" type="string">
             <column name="conmrkrrel_zdb_id" not-null="true"/>
@@ -121,9 +73,6 @@
                 <param name="insertActiveData">true</param>
             </generator>
         </id>
-
-
-        <!--<property name="type" column="conmrkrrel_relationship_type" type="markerRelationshipType"/>-->
 
         <many-to-one name="construct" class="org.zfin.construct.ConstructCuration" column="conmrkrrel_construct_zdb_id" lazy="no-proxy"/>
         <many-to-one name="marker" class="org.zfin.marker.Marker" column="conmrkrrel_mrkr_zdb_id" lazy="no-proxy"/>
