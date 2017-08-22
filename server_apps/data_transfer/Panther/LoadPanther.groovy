@@ -1,22 +1,6 @@
 #!/bin/bash
-import org.hibernate.Session
-import org.zfin.Species
-import org.zfin.framework.HibernateSessionCreator
-import org.zfin.framework.HibernateUtil
-import org.zfin.gwt.root.util.StringUtils
-import org.zfin.infrastructure.RecordAttribution
-import org.zfin.marker.Marker
-
-//usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
-
+//private/apps/groovy/bin/groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 import org.zfin.properties.ZfinProperties
-import org.zfin.publication.Publication
-import org.zfin.repository.RepositoryFactory
-import org.zfin.sequence.DBLink
-import org.zfin.sequence.ForeignDB
-import org.zfin.sequence.ForeignDBDataType
-import org.zfin.sequence.MarkerDBLink
-import org.zfin.sequence.ReferenceDatabase
 import org.zfin.util.ReportGenerator
 import static com.xlson.groovycsv.CsvParser.parseCsv
 
@@ -129,8 +113,8 @@ if (args) {
     new ReportGenerator().with {
         setReportTitle("Report for ${args[0]}")
         includeTimestamp()
-        addDataTable("${added.size()} terms added", ["ID", "Term", "Type"], added.collect { it.split("\\|") as List })
-        addDataTable("${removed.size()} terms removed", ["ID", "Term", "Type"], removed.collect { it.split("\\|") as List })
+        addDataTable("${added.size()} terms added", ["ID", "Term"], added.collect { it.split("\\|") as List })
+        addDataTable("${removed.size()} terms removed", ["ID", "Term"], removed.collect { it.split("\\|") as List })
         writeFiles(new File("."), "loadPantherReport")
     }
 }
