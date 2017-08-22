@@ -41,7 +41,7 @@ public class PhenotypeSummarySmokeTest extends AbstractSmokeTest {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/marker/ZDB-GENE-001103-3/phenotype-summary");
 
         // check that fish is present.
-        assertThat(page.getAnchorByText("fezf2<sup>m808/m808</sup>; s2506Tg"), is(notNullValue()));
+        assertNotNull(page.getByXPath("//a[@id='ZDB-FISH-150901-27836']").get(0));
     }
 
     /**
