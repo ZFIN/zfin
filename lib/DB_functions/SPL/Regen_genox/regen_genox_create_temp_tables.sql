@@ -78,8 +78,8 @@ create procedure regen_genox_create_temp_tables()
     -- -------------------------------------------------------------------    
    create temp table regen_genox_construct_temp
       (
-	rggt_construct_zdb_id         varchar(50) not null,
-	rggt_genox_zdb_id        varchar(50) not null
+	rgct_construct_zdb_id         varchar(50) not null,
+	rgct_genox_zdb_id        varchar(50) not null
       ) with no log;
 
     create temp table regen_genox_temp
