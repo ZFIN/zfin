@@ -18,8 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/Panther
-./LoadPanther.groovy -jobName Load-Panther_m</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/Panther &amp;&amp; ./LoadPanther.groovy -jobName Load-Panther_m</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
