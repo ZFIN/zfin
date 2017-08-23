@@ -58,7 +58,7 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/feature/wildtype-list [N
 RewriteCond %{QUERY_STRING}     ^Mival=aa-markerview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 
-RewriteCond %{QUERY_STRING}     ^Mival=aa-aa-showpubs.apg.apg&OID=([\w-]+)$    [NC]
+RewriteCond %{QUERY_STRING}     ^Mival=aa-showpubs.apg.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/action/marker/citation-list/ %1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-genotypeview.apg&OID=([\w-]+)$    [NC]
