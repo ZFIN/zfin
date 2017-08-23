@@ -2,836 +2,875 @@
 
 <schema name="solr" version="1.1">
 
-  <types>
+    <types>
 
-    <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" omitNorms="true"/>
+        <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
+        <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" omitNorms="true"/>
 
-    <!-- numeric field types that store and index the text
-         value verbatim (and hence don't support range queries, since the
-         lexicographic ordering isn't equal to the numeric ordering) -->
+        <!-- numeric field types that store and index the text
+             value verbatim (and hence don't support range queries, since the
+             lexicographic ordering isn't equal to the numeric ordering) -->
+        <fieldType name="integer" class="solr.TrieIntField" omitNorms="true"/>
+        <fieldType name="long" class="solr.TrieLongField" omitNorms="true"/>
+        <fieldType name="float" class="solr.TrieFloatField" omitNorms="true"/>
+        <fieldType name="double" class="solr.TrieDoubleField" omitNorms="true"/>
 
-    <fieldType name="integer" class="solr.TrieIntField" omitNorms="true"/>
-    <fieldType name="long" class="solr.TrieLongField" omitNorms="true"/>
-    <fieldType name="float" class="solr.TrieFloatField" omitNorms="true"/>
-    <fieldType name="double" class="solr.TrieDoubleField" omitNorms="true"/>
+        <!-- Numeric field types that manipulate the value into
+             a string value that isn't human-readable in its internal form,
+             but with a lexicographic ordering the same as the numeric ordering,
+             so that range queries work correctly. -->
+        <fieldType name="sint" class="solr.TrieIntField" sortMissingLast="true" omitNorms="true"/>
+        <fieldType name="slong" class="solr.TrieLongField" sortMissingLast="true" omitNorms="true"/>
+        <fieldType name="sfloat" class="solr.TrieFloatField" sortMissingLast="true" omitNorms="true"/>
+        <fieldType name="sdouble" class="solr.TrieDoubleField" sortMissingLast="true" omitNorms="true"/>
 
-    <!-- Numeric field types that manipulate the value into
-         a string value that isn't human-readable in its internal form,
-         but with a lexicographic ordering the same as the numeric ordering,
-         so that range queries work correctly. -->
-    <fieldType name="sint" class="solr.TrieIntField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="slong" class="solr.TrieLongField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="sfloat" class="solr.TrieFloatField" sortMissingLast="true" omitNorms="true"/>
-    <fieldType name="sdouble" class="solr.TrieDoubleField" sortMissingLast="true" omitNorms="true"/>
+        <!-- Trie Fields -->
+        <fieldType name="tint"
+                   class="solr.TrieIntField"
+                   precisionStep="8"
+                   omitNorms="true"
+                   positionIncrementGap="0"
+        />
+        <fieldType name="tfloat"
+                   class="solr.TrieFloatField"
+                   precisionStep="8"
+                   omitNorms="true"
+                   positionIncrementGap="0"
+        />
+        <fieldType name="tlong"
+                   class="solr.TrieLongField"
+                   precisionStep="8"
+                   omitNorms="true"
+                   positionIncrementGap="0"
+        />
+        <fieldType name="tdouble"
+                   class="solr.TrieDoubleField"
+                   precisionStep="8"
+                   omitNorms="true"
+                   positionIncrementGap="0"
+        />
+        <fieldType name="tdate"
+                   class="solr.TrieDateField"
+                   precisionStep="6"
+                   omitNorms="true"
+                   positionIncrementGap="0"
+        />
+
+        <!-- The format for this date field is of the form 1995-12-31T23:59:59Z, and
+             is a more restricted form of the canonical representation of dateTime
+             http://www.w3.org/TR/xmlschema-2/#dateTime
+             The trailing "Z" designates UTC time and is mandatory.
+             Optional fractional seconds are allowed: 1995-12-31T23:59:59.999Z
+             All other components are mandatory.
+
+             Expressions can also be used to denote calculations that should be
+             performed relative to "NOW" to determine the value, ie...
+
+                   NOW/HOUR
+                      ... Round to the start of the current hour
+                   NOW-1DAY
+                      ... Exactly 1 day prior to now
+                   NOW/DAY+6MONTHS+3DAYS
+                      ... 6 months and 3 days in the future from the start of
+                          the current day
+
+             Consult the DateField javadocs for more information.
+          -->
+
+        <fieldType name="date" class="solr.TrieDateField" sortMissingLast="true" omitNorms="true"/>
+
+        <!-- A text field that only splits on whitespace for exact matching of words -->
+        <fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100">
+            <analyzer>
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <!-- A text field that uses WordDelimiterFilter to enable splitting and matching of
+            words on case-change, alpha numeric boundaries, and non-alphanumeric chars,
+            so that a query of "wifi" or "wi fi" could match a document containing "Wi-Fi".
+            Synonyms and stopwords are customized by external files, and stemming is enabled.
+            Duplicate tokens at the same position (which may result from Stemmed Synonyms or
+            WordDelim parts) are removed.
+            -->
+        <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <!-- in this example, we will only use synonyms at query time
+                <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
+                -->
+                <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+                <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1" splitOnCaseChange="0" preserveOriginal="1"/>
+                <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+                <filter class="solr.EnglishMinimalStemFilterFactory"/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+                <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+                <!-- it's possible that we don't want preserveOriginal here, since it puts in a pair of queries that both need to match....but then, because preserve original is on above,
+                     they both sould be in there... something to consider at least -->
+                <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="1" splitOnCaseChange="0" preserveOriginal="1"/>
+                <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+                <filter class="solr.EnglishMinimalStemFilterFactory"/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <!-- Less flexible matching, but less false matches.  Probably not ideal for product names,
+             but may be good for SKUs.  Can insert dashes in the wrong place and still match. -->
+        <fieldType name="textTight" class="solr.TextField" positionIncrementGap="100" >
+            <analyzer>
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="false"/>
+                <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+                <filter class="solr.WordDelimiterFilterFactory" generateWordParts="0" generateNumberParts="0" catenateWords="1" catenateNumbers="1" catenateAll="0"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+                <filter class="solr.EnglishMinimalStemFilterFactory"/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="abbrev" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="tokenized_abbrev" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.PatternTokenizerFactory" pattern="-" />
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.PatternTokenizerFactory" pattern="-" />
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="construct_name" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.WordDelimiterFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.WordDelimiterFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="tokenized_author" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.PatternTokenizerFactory" pattern="," />
+                <filter class="solr.LowerCaseFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.PatternTokenizerFactory" pattern="," />
+                <filter class="solr.LowerCaseFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="gene_symbol" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="25" />
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="shingled_text" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.WordDelimiterFilterFactory"
+                        generateWordParts="1"
+                        generateNumberParts="1"
+                        catenateWords="0"
+                        catenateNumbers="0"
+                        catenateAll="0"
+                        splitOnCaseChange="0"
+                        preserveOriginal="0"
+                />
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.WordDelimiterFilterFactory"
+                        generateWordParts="1"
+                        generateNumberParts="1"
+                        catenateWords="0"
+                        catenateNumbers="0"
+                        catenateAll="0"
+                        splitOnCaseChange="0"
+                        preserveOriginal="0"
+                />
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <!-- not currently used, an experiment to improve -->
+        <fieldType name="split_ngram" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.LetterTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.LetterTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="keyword" class="solr.TextField"  positionIncrementGap="100">
+            <analyzer>
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="publication_keyword" class="solr.TextField"  positionIncrementGap="100">
+            <analyzer>
+                <tokenizer class="solr.PatternTokenizerFactory" pattern="[,;]\s+" />
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+                <filter class="solr.StopFilterFactory" words="publication-keyword-stopwords.txt"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="all_headless_anatomy" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.SynonymFilterFactory"
+                        synonyms="all-term-contains-synonyms.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                        ignoreCase="false"
+                        expand="true"
+                />
+                <filter class="solr.StopFilterFactory" words="term_stopwords.txt" ignoreCase="true"/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.SynonymFilterFactory"
+                        synonyms="all-term-contains-synonyms-reversed.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                        ignoreCase="false"
+                        expand="true"
+                />
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <!-- This is pretty complicated, can I get query expansion of multiword terms and still leave the other words in? -->
+
+        <fieldType name="term_observation" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.WhitespaceTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.SynonymFilterFactory"
+                        synonyms="all-term-contains-synonyms.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                        ignoreCase="false"
+                        expand="true"
+                />
+                <filter class="solr.StopFilterFactory" words="term_stopwords.txt" ignoreCase="true"/>
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.WhitespaceTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.SynonymFilterFactory"
+                        synonyms="all-term-contains-synonyms-reversed.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                        ignoreCase="false"
+                        expand="true"
+                />
+                <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="term_facet" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.StopFilterFactory" words="term_stopwords.txt" ignoreCase="true"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="organism_abbrev" class="solr.TextField" omitNorms="true">
+            <analyzer type="index">
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="3" />
+                <filter class="solr.KeepWordFilterFactory" words="organism-abbrev.txt" ignoreCase="true"/>
+                <filter class="solr.SynonymFilterFactory"
+                        synonyms="organism-synonyms.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                        ignoreCase="false"
+                        expand="true"
+                />
+                <filter class="solr.KeepWordFilterFactory" words="organism-name.txt" ignoreCase="true"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.SynonymFilterFactory"
+                        synonyms="organism-synonyms.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                        ignoreCase="false"
+                        expand="true"
+                />
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="reporter_color" class="solr.TextField" omitNorms="true">
+            <analyzer type="index">
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="20" />
+                <filter class="solr.KeepWordFilterFactory" words="reporter-names.txt" ignoreCase="true"/>
+                <filter class="solr.SynonymFilterFactory"
+                        synonyms="reporter-color-synonyms.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                        ignoreCase="false"
+                        expand="true"
+                />
+                <filter class="solr.KeepWordFilterFactory" words="colors.txt" ignoreCase="true"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.SynonymFilterFactory"
+                        synonyms="reporter-color-synonyms.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                        ignoreCase="false"
+                        expand="true"
+                />
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="superstage" class="solr.TextField" omitNorms="true">
+            <analyzer type="index">
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.SynonymFilterFactory"
+                        synonyms="superstage-synonyms.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                        ignoreCase="false"
+                        expand="true"
+                />
+                <filter class="solr.KeepWordFilterFactory" words="superstage-keepwords.txt" ignoreCase="true"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.SynonymFilterFactory"
+                        synonyms="superstage-synonyms.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                        ignoreCase="false"
+                        expand="true"
+                />
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="chromosome" class="solr.TextField" omitNorms="true" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.KeywordTokenizerFactory" />
+                <filter class="solr.KeepWordFilterFactory" words="chromosome_keepwords.txt" ignoreCase="true"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="file"
+                   class="solr.ExternalFileField"
+                   keyField="id"
+                   defVal="1"
+                   indexed="false"
+                   stored="false"
+                   valType="pfloat"
+        />
+
+        <fieldType name="edgytext" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="simplified-international-text" class="solr.TextField" positionIncrementGap="100">
+            <analyzer>
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="sortable-string" class="solr.TextField">
+            <analyzer>
+                <tokenizer class="solr.KeywordTokenizerFactory"/>
+                <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.PatternReplaceFilterFactory" pattern="([^a-zA-Z0-9 ])" replacement="" replace="all"/>
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="word-delimited-keyword" class="solr.TextField" positionIncrementGap="100">
+            <analyzer>
+                <tokenizer class="solr.KeywordTokenizerFactory"/>
+                <filter class="solr.WordDelimiterFilterFactory"
+                        generateWordParts="1"
+                        generateNumberParts="1"
+                        catenateWords="0"
+                        catenateNumbers="0"
+                        catenateAll="0"
+                        preserveOriginal="1"
+                />
+                <filter class="solr.LowerCaseFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <!--
+              &lt;!&ndash; experimental, can be removed &ndash;&gt;
+              <fieldtype name="phrase_suggest" class="solr.TextField">
+                  <analyzer>
+                      <tokenizer class="solr.KeywordTokenizerFactory"/>
+                      <filter class="solr.PatternReplaceFilterFactory"
+                              pattern="([^\p{L}\p{M}\p{N}\p{Cs}]*[\p{L}\p{M}\p{N}\p{Cs}\_]+:)|([^\p{L}\p{M}\p{N}\p{Cs}])+"
+                              replacement=" " replace="all"/>
+                      <filter class="solr.LowerCaseFilterFactory"/>
+                      <filter class="solr.TrimFilterFactory"/>
+                  </analyzer>
+              </fieldtype>
+
+              <fieldtype name="word_suggest" class="solr.TextField">
+                  <analyzer>
+                      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                      <filter class="solr.PatternReplaceFilterFactory"
+                              pattern="([^\p{L}\p{M}\p{N}\p{Cs}]*[\p{L}\p{M}\p{N}\p{Cs}\_]+:)|([^\p{L}\p{M}\p{N}\p{Cs}])+"
+                              replacement=" " replace="all"/>
+                      <filter class="solr.LowerCaseFilterFactory"/>
+                      <filter class="solr.TrimFilterFactory"/>
+                  </analyzer>
+              </fieldtype>
+        -->
+    </types>
+
+    <fields>
+        <!-- Valid attributes for fields:
+          name: mandatory - the name for the field
+          type: mandatory - the name of a previously defined type from the <types> section
+          indexed: true if this field should be indexed (searchable or sortable)
+          stored: true if this field should be retrievable
+          compressed: [false] if this field should be stored using gzip compression
+            (this will only apply if the field type is compressable; among
+            the standard field types, only TextField and StrField are)
+          multiValued: true if this field may contain multiple values per document
+          omitNorms: (expert) set to true to omit the norms associated with
+            this field (this disables length normalization and index-time
+            boosting for the field, and saves some memory).  Only full-text
+            fields or fields that need an index-time boost need norms.
+          termVectors: [false] set to true to store the term vector for a given field.
+            When using MoreLikeThis, fields used for similarity should be stored for
+            best performance.
+        -->
+        <field name="id" type="string" indexed="true" stored="true" required="true" />
+        <field name="popularity" type="file" default="1.0"/>
+
+        <field name="url" type="string" indexed="true" stored="true"   />
+        <field name="category" type="keyword" indexed="true" stored="true" required="true" multiValued="true"/>
+
+        <field name="name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="proper_name" type="abbrev" indexed="true" stored="true" termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="full_name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="genotype_full_name" type="string" indexed="true" stored="true"/>
+        <field name="ortholog_other_species_symbol" type="abbrev" indexed="true" stored="true" multiValued="true"   />
+        <field name="ortholog_other_species_name" type="abbrev" indexed="true" stored="true" multiValued="true"   />
+        <field name="ortholog_organism" type="keyword" indexed="true" stored="true" multiValued="true"  />
+
+        <field name="disease_model" type="keyword" indexed="true" stored="true" multiValued="true"  />
+        <field name="disease" type="keyword" indexed="true" stored="true" multiValued="true"  />
+        <field name="omim_id" type="keyword" indexed="true" stored="true" multiValued="true" />
+
+        <!-- feature type? marker type? whatever!-->
+        <field name="type" type="keyword" indexed="true" stored="true"   />
+        <field name="typegroup" type="keyword" indexed="true" stored="true" multiValued="true" />
+        <field name="antibody_type" type="keyword" indexed="true" stored="true"   />
+        <field name="publication_type" type="keyword" indexed="true" stored="true"   />
+        <field name="ontology" type="keyword" indexed="true" stored="true"   />
+        <field name="root_only" type="boolean" indexed="true" stored="true" default="false"/>
+
+        <!-- this field is intended to split STR and antibody names on dashes so that we'll have a starts-with match on the second portion -->
+        <field name="marker_abbrev" type="tokenized_abbrev" indexed="true" stored="true" multiValued="true"/>
+
+        <field name="related_accession" type="string" indexed="true" stored="true" multiValued="true" />
+        <!--adding a field for related markers case 11289-->
+        <field name="related_marker" type="text" indexed="true" stored="true" multiValued="true" />
+
+        <field name="date" type="date" indexed="true" stored="true"   />
+        <field name="tdate" type="tdate" indexed="true" stored="false"   />
+
+        <field name="name_sort" type="sortable-string" indexed="true" stored="true" />
+        <field name="author_sort" type="sortable-string" indexed="true" stored="true" />
+        <field name="gene_sort" type="sortable-string" indexed="true" stored="true" />
+
+        <field name="regulatory_region" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="coding_sequence" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="engineered_region" type="keyword" indexed="true" stored="true" multiValued="true"   />
+
+        <field name="inserted_in_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="inserted_in_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
+        <field name="inserted_in_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
+
+        <field name="fish" type="keyword" indexed="true" stored="true" multiValued="true"   />
+
+        <field name="lab" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="reporter_color" type="reporter_color" indexed="true" stored="true" multiValued="true"   />
+
+        <field name="promoter_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
+        <field name="coding_sequence_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
+        <field name="engineered_region_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
+
+        <field name="prefix" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="institution" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="lab_of_origin" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <!--<field name="screen" type="keyword" indexed="true" stored="true" />-->
+        <field name="rna_consequence" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="mutagen" type="keyword" indexed="true" stored="true" />
+
+        <field name="allele" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="sequence_alteration" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <!-- this means it'll do starts-with matching of feature aliases, but not features, that seems a little odd... -->
+        <!--
+           <field name="sequence_alteration_alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        -->
+        <field name="background" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="complexity" type="long" indexed="true" stored="true" multiValued="false" default="10000000000"/>
+
+        <field name="affected_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="affected_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
+        <field name="affected_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
+
+        <field name="antigen_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="antigen_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
+        <field name="antigen_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
+
+        <!--<field name="genes_with_altered_expression" type="keyword" indexed="true" stored="true" multiValued="true" />-->
+
+        <field name="gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
+        <field name="gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
+
+        <field name="zebrafish_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="zebrafish_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
+        <field name="zebrafish_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
+
+        <field name="reporter_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="reporter_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
+        <field name="reporter_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
+
+        <field name="expressed_gene" type="keyword" indexed="true" stored="true" multiValued="true"  />
+        <field name="expressed_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
+        <field name="expressed_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"  />
+
+        <field name="misexpressed_gene" type="keyword" indexed="true" stored="true" multiValued="true"  />
+
+        <field name="sequence_targeting_reagent" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
 
-    <!-- Trie Fields -->
-      <fieldType name="tint" class="solr.TrieIntField" precisionStep="8"
-                 omitNorms="true" positionIncrementGap="0"/>
-      <fieldType name="tfloat" class="solr.TrieFloatField" precisionStep="8"
-                 omitNorms="true" positionIncrementGap="0"/>
-      <fieldType name="tlong" class="solr.TrieLongField" precisionStep="8"
-                 omitNorms="true" positionIncrementGap="0"/>
-      <fieldType name="tdouble" class="solr.TrieDoubleField" precisionStep="8"
-                 omitNorms="true" positionIncrementGap="0"/>
-      <fieldType name="tdate" class="solr.TrieDateField" precisionStep="6"
-                 omitNorms="true" positionIncrementGap="0"/>
+        <field name="target" type="keyword" indexed="true" stored="true" multiValued="true" />
+        <field name="target_full_name" type="text" indexed="true" stored="true" multiValued="true" />
+        <field name="target_previous_name" type="text" indexed="true" stored="true" multiValued="true" />
 
-    <!-- The format for this date field is of the form 1995-12-31T23:59:59Z, and
-         is a more restricted form of the canonical representation of dateTime
-         http://www.w3.org/TR/xmlschema-2/#dateTime    
-         The trailing "Z" designates UTC time and is mandatory.
-         Optional fractional seconds are allowed: 1995-12-31T23:59:59.999Z
-         All other components are mandatory.
 
-         Expressions can also be used to denote calculations that should be
-         performed relative to "NOW" to determine the value, ie...
+        <field name="construct" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="affected_gene_count" type="integer" indexed="true" stored="true"  />
 
-               NOW/HOUR
-                  ... Round to the start of the current hour
-               NOW-1DAY
-                  ... Exactly 1 day prior to now
-               NOW/DAY+6MONTHS+3DAYS
-                  ... 6 months and 3 days in the future from the start of
-                      the current day
-                      
-         Consult the DateField javadocs for more information.
+        <!-- this is an experiment, should read like '[gene] has expression in [anatomy term] '-->
+        <field name="expression_observation" type="text" indexed="true" stored="true" multiValued="true" termVectors="true" termPositions="true" termOffsets="true"  />
+
+        <field name="chromosome" type="chromosome" stored="true" indexed="true" multiValued="true" default="unmapped" />
+
+        <field name="fly_ortho_chromosome" type="keyword" stored="true" indexed="true" multiValued="true"  />
+        <field name="human_ortho_chromosome" type="keyword" stored="true" indexed="true" multiValued="true"  />
+        <field name="mouse_ortho_chromosome" type="keyword" stored="true" indexed="true" multiValued="true"  />
+
+        <field name="note" type="text" stored="true" indexed="true" multiValued="true"  />
+
+        <field name="registered_author" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="author_string" type="simplified-international-text" indexed="true"/>"
+        <field name="author_year" type="simplified-international-text" indexed="true"/>"
+
+        <field name="phenotype_statement" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="pgcmid" type="keyword" indexed="true" stored="true"  />
+        <field name="synonym_phenotype_statement" type="keyword" indexed="true" stored="true" multiValued="true"   />
+
+        <field name="expression_anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="expression_anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="expression_anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="expressed_in" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="expressed_in_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="expressed_in_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="affected_anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="affected_anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="affected_anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="phenotype_quality" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="phenotype_quality_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="phenotype_quality_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="quality_alias" type="keyword" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="molecular_function" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="molecular_function_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="molecular_function_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="biological_process" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="biological_process_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="biological_process_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="cellular_component" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="cellular_component_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="cellular_component_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="affected_molecular_function" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="affected_molecular_function_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="affected_molecular_function_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="affected_biological_process" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="affected_biological_process_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="affected_biological_process_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="affected_cellular_component" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="affected_cellular_component_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="affected_cellular_component_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="labeled_anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="labeled_anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="labeled_anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="labeled_cellular_component" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="labeled_cellular_component_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="labeled_cellular_component_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <field name="source" type="keyword" indexed="true" stored="true"  multiValued="true"   />
+
+        <field name="host_organism" type="keyword" indexed="true" stored="true"   />
+        <field name="organism" type="organism_abbrev" indexed="true" stored="true" multiValued="true"   />
+
+        <field name="assay_abbrev" type="keyword" indexed="true" stored="true" multiValued="true"  />
+        <field name="assay" type="keyword" indexed="true" stored="true" multiValued="true"  />
+
+        <field name="probe" type="keyword" indexed="true" stored="true" multiValued="true" />
+        <field name="clone" type="keyword" indexed="true" stored="true" multiValued="true" />
+
+        <field name="stage" type="superstage" indexed="true" stored="true" multiValued="true" />
+        <field name="stage_hours_start" type="tfloat" indexed="true" stored="true" />
+        <field name="stage_hours_end" type="tfloat" indexed="true" stored="true" />
+
+        <field name="conditions" type="keyword" indexed="true" stored="true" multiValued="true" />
+
+        <field name="definition" type="text" indexed="true" stored="true" />
+
+        <field name="term_usage" type="keyword" indexed="true" stored="true" multiValued="true" default="None"/>
+        <field name="term_usage_with_children" type="keyword" indexed="true" stored="true" multiValued="true" default="None"/>
+
+        <field name="term_status" type="keyword" indexed="true" stored="true" />
+
+        <field name="abstract" type="text" indexed="true" stored="true"   />
+        <field name="keyword" type="publication_keyword" indexed="true" stored="true"  multiValued="true"   />
+        <field name="full_mesh_term" type="keyword" indexed="true" stored="true" multiValued="true" />
+
+        <field name="journal" type="keyword" indexed="true" stored="true"   />
+        <field name="journal_name" type="text" indexed="true" stored="true"   />
+        <field name="journal_type" type="keyword" indexed="true" stored="true" />
+        <field name="topic" type="keyword" indexed="true" stored="true"   multiValued="true" />
+        <field name="curator" type="string" indexed="true" stored="true" multiValued="true" />
+        <field name="pub_simple_status" type="keyword" indexed="true" stored="true" multiValued="true" />
+        <field name="pet_date" type="date" indexed="true" stored="true"/>
+        <field name="year" type="string" indexed="true" stored="true" />
+        <field name="pages" type="string" indexed="false" stored="true" />
+        <field name="volume" type="string" indexed="false" stored="true" />
+
+        <field name="publication_status" type="keyword" indexed="true" stored="true" />
+        <field name="location" type="keyword" indexed="true" stored="true" multiValued="true"/>
+        <field name="curation_status" type="keyword" indexed="true" stored="true" multiValued="true" />
+        <field name="owner" type="keyword" indexed="true" stored="true" />
+
+        <field name="publication" type="string" indexed="true" stored="true"/>
+        <field name="genotype" type="string" indexed="true" stored="true"  multiValued="true"/>
+
+        <field name="caption" type="text" indexed="true" stored="true"  />
+        <field name="thumbnail" type="string" indexed="true" stored="true" multiValued="true"  />
+        <field name="image" type="string" indexed="true" stored="true" multiValued="true"  />
+
+        <!-- used by parameterized fish search -->
+        <field name="figure_id" type="string" indexed="true" stored="true" />
+
+        <field name="mutation_type" type="keyword" indexed="true" stored="true" />
+
+        <!-- using string rather than boolean so these can be facet values -->
+        <field name="has_image" type="string" indexed="true" stored="true" />
+        <field name="is_wildtype" type="string" indexed="true" stored="true" />
+        <field name="is_genotype_wildtype" type="boolean" indexed="true" stored="true" />
+        <field name="is_monogenic" type="string" indexed="true" stored="true" />
+        <field name="has_orthology" type="string" indexed="true" stored="true" />
+
+        <field name="attributed_publication" type="text" indexed="true" stored="true" multiValued="true"/>
+
+        <field name="person_name" type="simplified-international-text" indexed="true"/>
+
+        <field name="lab_member_name" type="simplified-international-text" indexed="true"/>
+        <field name="profile_image" type="string" stored="true" indexed="true" multiValued="false"   />
+        <field name="biography" type="text" indexed="true" stored="true"   />
+        <field name="postal_address" type="text" indexed="true" stored="true"   />
+        <field name="email_address" type="text" indexed="true" stored="true"   />
+        <!-- only bringing this in for joining at index time, and maybe debugging... -->
+        <field name="internal_id" type="string" indexed="true" stored="true"   />
+
+        <!-- these are used to join expression records by natural key rather than primary key -->
+        <field name="xpat_zdb_id" type="string" indexed="false" stored="true" />
+        <field name="fig_zdb_id" type="string" indexed="true" stored="true" />
+
+        <!-- used for the figure gallery -->
+        <field name="img_zdb_id" type="string" indexed="true" stored="true" multiValued="true"/>
+
+        <field name="pub_zdb_id" type="string" indexed="true" stored="true"/>
+        <field name="fish_zdb_id" type="string" indexed="true" stored="true"/>
+        <field name="gene_zdb_id" type="string" indexed="true" stored="true"/>
+
+        <field name="attribution_count" type="sint" indexed="true" stored="true"/>
+
+        <field name="xref" type="string" indexed="true" stored="true" multiValued="true"/>
+
+        <field name="related_gene_symbol" type="gene_symbol" indexed="true" stored="true" multiValued="true"/>
+
+        <field name="construct_name" type="construct_name" indexed="true" stored="true" multiValued="false" />
+        <field name="construct_alias" type="construct_name" indexed="true" stored="true" multiValued="true" />
+
+        <!-- catchall field, containing all other searchable text fields (implemented
+             via copyField further on in this schema  -->
+        <field name="text" type="text" indexed="true" stored="true" multiValued="true" termVectors="true" termPositions="true" termOffsets="true" />
+
+        <!-- Here, default is used to create a "timestamp" field indicating
+             When each document was indexed.
+          -->
+        <field name="timestamp"
+               type="date"
+               indexed="true"
+               stored="true"
+               default="NOW"
+               multiValued="false"
+               termVectors="true"
+               termPositions="true"
+               termOffsets="true"
+        />
+
+        <!-- This field is required by solr for atomic updates -->
+        <field name="_version_" type="long" indexed="true" stored="true"/>
+
+        <!-- Dynamic field definitions.  If a field name is not found, dynamicFields
+             will be used if the name matches any of the patterns.
+             RESTRICTION: the glob-like pattern in the name attribute must have
+             a "*" only at the start or the end.
+             EXAMPLE:  name="*_i" will match any field ending in _i (like myid_i, z_i)
+             Longer patterns will be matched first.  if equal size patterns
+             both match, the first appearing in the schema will be used.  -->
+        <dynamicField name="*_i"  type="sint"    indexed="true"  stored="true"/>
+        <dynamicField name="*_s"  type="string"  indexed="true"  stored="true" multiValued="true"   />
+        <dynamicField name="*_k"  type="keyword"  indexed="true"  stored="true" multiValued="true"   />
+
+        <dynamicField name="*_l"  type="slong"   indexed="true"  stored="true"/>
+        <dynamicField name="*_t"  type="text"    indexed="true"  stored="true" multiValued="true"  />
+        <dynamicField name="*_st"  type="shingled_text"    indexed="true"  stored="true" multiValued="true"  />
+        <dynamicField name="*_sn"  type="split_ngram"    indexed="true"  stored="true" multiValued="true"  />
+        <dynamicField name="*_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+
+        <dynamicField name="*_b"  type="boolean" indexed="true"  stored="true"/>
+        <dynamicField name="*_f"  type="sfloat"  indexed="true"  stored="true"/>
+        <dynamicField name="*_d"  type="sdouble" indexed="true"  stored="true"/>
+        <dynamicField name="*_dt" type="date"    indexed="true"  stored="true"/>
+        <dynamicField name="*_ac"  type="edgytext"    indexed="true"  stored="true" multiValued="true" />
+        <dynamicField name="*_tf"  type="term_facet"    indexed="true" stored="true" multiValued="true" />
+        <dynamicField name="type_*" type="string" indexed="true" stored="true" />
+        <!--
+           <dynamicField name="*_suggest" type="word_suggest" indexed="true"  stored="true" multiValued="true"/>
+        -->
+    </fields>
+
+    <!-- Field to use to determine and enforce document uniqueness.
+         Unless this field is marked with required="false", it will be a required field
       -->
+    <uniqueKey>id</uniqueKey>
 
-    <fieldType name="date" class="solr.TrieDateField" sortMissingLast="true" omitNorms="true"/>
+    <!-- field for the QueryParser to use when an explicit fieldname is absent -->
+    <defaultSearchField>text</defaultSearchField>
 
-    <!-- A text field that only splits on whitespace for exact matching of words -->
-    <fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100">
-      <analyzer>
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-      </analyzer>
-    </fieldType>
-    
-    <!-- A text field that uses WordDelimiterFilter to enable splitting and matching of
-        words on case-change, alpha numeric boundaries, and non-alphanumeric chars,
-        so that a query of "wifi" or "wi fi" could match a document containing "Wi-Fi".
-        Synonyms and stopwords are customized by external files, and stemming is enabled.
-        Duplicate tokens at the same position (which may result from Stemmed Synonyms or
-        WordDelim parts) are removed.
-        -->
-    <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index">
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <!-- in this example, we will only use synonyms at query time
-        <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
-        -->
-        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1" splitOnCaseChange="0" preserveOriginal="1"/>
-        <filter class="solr.ASCIIFoldingFilterFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
-        <filter class="solr.EnglishMinimalStemFilterFactory"/>
-        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-      </analyzer>
-      <analyzer type="query">
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
-        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
-         <!-- it's possible that we don't want preserveOriginal here, since it puts in a pair of queries that both need to match....but then, because preserve original is on above,
-              they both sould be in there... something to consider at least -->
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="1" splitOnCaseChange="0" preserveOriginal="1"/>
-        <filter class="solr.ASCIIFoldingFilterFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
-        <filter class="solr.EnglishMinimalStemFilterFactory"/>
-        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-      </analyzer>
-    </fieldType>
-
-
-    <!-- Less flexible matching, but less false matches.  Probably not ideal for product names,
-         but may be good for SKUs.  Can insert dashes in the wrong place and still match. -->
-    <fieldType name="textTight" class="solr.TextField" positionIncrementGap="100" >
-      <analyzer>
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="false"/>
-        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="0" generateNumberParts="0" catenateWords="1" catenateNumbers="1" catenateAll="0"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
-        <filter class="solr.EnglishMinimalStemFilterFactory"/>
-        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-      </analyzer>
-    </fieldType>
-
-
-      <fieldType name="abbrev" class="solr.TextField" positionIncrementGap="100">
-          <analyzer type="index">
-              <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.ASCIIFoldingFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-          <analyzer type="query">
-              <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.ASCIIFoldingFilterFactory"/>
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-      </fieldType>
-
-      <fieldType name="tokenized_abbrev" class="solr.TextField" positionIncrementGap="100">
-          <analyzer type="index">
-              <tokenizer class="solr.PatternTokenizerFactory" pattern="-" />
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-          <analyzer type="query">
-              <tokenizer class="solr.PatternTokenizerFactory" pattern="-" />
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-      </fieldType>
-
-      <fieldType name="construct_name" class="solr.TextField" positionIncrementGap="100">
-          <analyzer type="index">
-              <tokenizer class="solr.StandardTokenizerFactory"/>
-              <filter class="solr.WordDelimiterFilterFactory"/>
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-          <analyzer type="query">
-              <tokenizer class="solr.StandardTokenizerFactory"/>
-              <filter class="solr.WordDelimiterFilterFactory"/>
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-
-      </fieldType>
-
-      <fieldType name="tokenized_author" class="solr.TextField" positionIncrementGap="100">
-          <analyzer type="index">
-              <tokenizer class="solr.PatternTokenizerFactory" pattern="," />
-              <filter class="solr.LowerCaseFilterFactory"/>
-          </analyzer>
-          <analyzer type="query">
-              <tokenizer class="solr.PatternTokenizerFactory" pattern="," />
-              <filter class="solr.LowerCaseFilterFactory"/>
-          </analyzer>
-      </fieldType>
-
-
-      <fieldType name="gene_symbol" class="solr.TextField" positionIncrementGap="100">
-          <analyzer type="index">
-              <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="25" />
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-          <analyzer type="query">
-              <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-      </fieldType>
-
-
-      <fieldType name="shingled_text" class="solr.TextField" positionIncrementGap="100">
-          <analyzer type="index">
-            <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-            <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1"
-                    generateNumberParts="1" catenateWords="0" catenateNumbers="0"
-                    catenateAll="0" splitOnCaseChange="0" preserveOriginal="0"/>
-            <filter class="solr.LowerCaseFilterFactory"/>
-            <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
-            <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-          <analyzer type="query">
-            <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-              <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1"
-                      generateNumberParts="1" catenateWords="0" catenateNumbers="0"
-                      catenateAll="0" splitOnCaseChange="0" preserveOriginal="0"/>
-            <filter class="solr.LowerCaseFilterFactory"/>
-            <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
-            <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-        </fieldType>
-
-
-      <!-- not currently used, an experiment to improve -->
-      <fieldType name="split_ngram" class="solr.TextField" positionIncrementGap="100">
-          <analyzer type="index">
-            <tokenizer class="solr.LetterTokenizerFactory"/>
-            <filter class="solr.LowerCaseFilterFactory"/>
-            <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
-            <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
-            <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-          <analyzer type="query">
-            <tokenizer class="solr.LetterTokenizerFactory"/>
-            <filter class="solr.LowerCaseFilterFactory"/>
-            <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" tokenSeparator=""/>
-            <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-          </analyzer>
-        </fieldType>
-
-
-      <fieldType name="keyword" class="solr.TextField"  positionIncrementGap="100">
-      <analyzer>
-        <tokenizer class="solr.KeywordTokenizerFactory" />
-          <filter class="solr.TrimFilterFactory" />
-          <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-      </analyzer>
-      </fieldType>
-
-      <fieldType name="publication_keyword" class="solr.TextField"  positionIncrementGap="100">
-          <analyzer>
-              <tokenizer class="solr.PatternTokenizerFactory" pattern="[,;]\s+" />
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.TrimFilterFactory" />
-              <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-              <filter class="solr.StopFilterFactory" words="publication-keyword-stopwords.txt"/>
-          </analyzer>
-      </fieldType>
-
-
-      <fieldType name="all_headless_anatomy" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index">
-          <tokenizer class="solr.KeywordTokenizerFactory" />
-          <filter class="solr.TrimFilterFactory" />
-          <filter class="solr.SynonymFilterFactory" synonyms="all-term-contains-synonyms.txt"
-                  tokenizerFactory="solr.KeywordTokenizerFactory" ignoreCase="false" expand="true"/>
-          <filter class="solr.StopFilterFactory" words="term_stopwords.txt" ignoreCase="true"/>
-          <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-      </analyzer>
-      <analyzer type="query">
-          <tokenizer class="solr.KeywordTokenizerFactory" />
-          <filter class="solr.TrimFilterFactory" />
-          <filter class="solr.SynonymFilterFactory" synonyms="all-term-contains-synonyms-reversed.txt"
-                  tokenizerFactory="solr.KeywordTokenizerFactory" ignoreCase="false" expand="true"/>
-          <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-      </analyzer>
-      </fieldType>
-
-      <!-- This is pretty complicated, can I get query expansion of multiword terms and still leave the other words in? -->
-
-      <fieldType name="term_observation" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index">
-          <tokenizer class="solr.WhitespaceTokenizerFactory" />
-          <filter class="solr.TrimFilterFactory" />
-          <filter class="solr.SynonymFilterFactory" synonyms="all-term-contains-synonyms.txt"
-                  tokenizerFactory="solr.KeywordTokenizerFactory" ignoreCase="false" expand="true"/>
-          <filter class="solr.StopFilterFactory" words="term_stopwords.txt" ignoreCase="true"/>
-          <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-      </analyzer>
-      <analyzer type="query">
-          <tokenizer class="solr.WhitespaceTokenizerFactory" />
-          <filter class="solr.TrimFilterFactory" />
-          <filter class="solr.SynonymFilterFactory" synonyms="all-term-contains-synonyms-reversed.txt"
-                  tokenizerFactory="solr.KeywordTokenizerFactory" ignoreCase="false" expand="true"/>
-          <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-      </analyzer>
-      </fieldType>
-
-
-      <fieldType name="term_facet" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index">
-          <tokenizer class="solr.KeywordTokenizerFactory" />
-          <filter class="solr.TrimFilterFactory" />
-          <filter class="solr.StopFilterFactory" words="term_stopwords.txt" ignoreCase="true"/>
-      </analyzer>
-      </fieldType>
-
-
-
-      <fieldType name="organism_abbrev" class="solr.TextField" omitNorms="true">
-          <analyzer type="index">
-              <tokenizer class="solr.KeywordTokenizerFactory" />
-              <filter class="solr.TrimFilterFactory" />
-              <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="3" />
-              <filter class="solr.KeepWordFilterFactory" words="organism-abbrev.txt" ignoreCase="true"/>
-              <filter class="solr.SynonymFilterFactory" synonyms="organism-synonyms.txt"
-                      tokenizerFactory="solr.KeywordTokenizerFactory" ignoreCase="false" expand="true"/>
-              <filter class="solr.KeepWordFilterFactory" words="organism-name.txt" ignoreCase="true"/>
-          </analyzer>
-          <analyzer type="query">
-              <tokenizer class="solr.KeywordTokenizerFactory" />
-              <filter class="solr.TrimFilterFactory" />
-              <filter class="solr.SynonymFilterFactory" synonyms="organism-synonyms.txt"
-                      tokenizerFactory="solr.KeywordTokenizerFactory" ignoreCase="false" expand="true"/>
-
-          </analyzer>
-      </fieldType>
-
-     <fieldType name="reporter_color" class="solr.TextField" omitNorms="true">
-      <analyzer type="index">
-          <tokenizer class="solr.KeywordTokenizerFactory" />
-          <filter class="solr.TrimFilterFactory" />
-          <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="20" />
-          <filter class="solr.KeepWordFilterFactory" words="reporter-names.txt" ignoreCase="true"/>
-         <filter class="solr.SynonymFilterFactory" synonyms="reporter-color-synonyms.txt"
-                  tokenizerFactory="solr.KeywordTokenizerFactory" ignoreCase="false" expand="true"/>
-          <filter class="solr.KeepWordFilterFactory" words="colors.txt" ignoreCase="true"/>
-
-      </analyzer>
-      <analyzer type="query">
-          <tokenizer class="solr.KeywordTokenizerFactory" />
-          <filter class="solr.TrimFilterFactory" />
-          <filter class="solr.SynonymFilterFactory" synonyms="reporter-color-synonyms.txt"
-                   tokenizerFactory="solr.KeywordTokenizerFactory" ignoreCase="false" expand="true"/>
-
-      </analyzer>
-      </fieldType>
-
-      <fieldType name="superstage" class="solr.TextField" omitNorms="true">
-          <analyzer type="index">
-              <tokenizer class="solr.KeywordTokenizerFactory" />
-              <filter class="solr.TrimFilterFactory" />
-              <filter class="solr.SynonymFilterFactory" synonyms="superstage-synonyms.txt"
-                      tokenizerFactory="solr.KeywordTokenizerFactory" ignoreCase="false" expand="true"/>
-              <filter class="solr.KeepWordFilterFactory" words="superstage-keepwords.txt" ignoreCase="true"/>
-
-          </analyzer>
-          <analyzer type="query">
-              <tokenizer class="solr.KeywordTokenizerFactory" />
-              <filter class="solr.TrimFilterFactory" />
-              <filter class="solr.SynonymFilterFactory" synonyms="superstage-synonyms.txt"
-                      tokenizerFactory="solr.KeywordTokenizerFactory" ignoreCase="false" expand="true"/>
-
-          </analyzer>
-      </fieldType>
-
-
-
-
-
-      <fieldType name="chromosome" class="solr.TextField" omitNorms="true" positionIncrementGap="100">
-          <analyzer type="index">
-              <tokenizer class="solr.KeywordTokenizerFactory" />
-              <filter class="solr.KeepWordFilterFactory" words="chromosome_keepwords.txt" ignoreCase="true"/>
-          </analyzer>
-      </fieldType>
-
-      <fieldType name="file" class="solr.ExternalFileField"
-                 keyField="id" defVal="1" indexed="false"
-                 stored="false" valType="pfloat" />
-
-
-      <fieldType name="edgytext" class="solr.TextField" positionIncrementGap="100">
-       <analyzer type="index">
-         <tokenizer class="solr.StandardTokenizerFactory"/>
-         <filter class="solr.ASCIIFoldingFilterFactory"/>
-         <filter class="solr.LowerCaseFilterFactory"/>
-         <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
-       </analyzer>
-       <analyzer type="query">
-         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-         <filter class="solr.ASCIIFoldingFilterFactory"/>
-         <filter class="solr.LowerCaseFilterFactory"/>
-       </analyzer>
-      </fieldType>
-
-      <fieldType name="simplified-international-text" class="solr.TextField" positionIncrementGap="100">
-          <analyzer>
-              <tokenizer class="solr.StandardTokenizerFactory"/>
-              <filter class="solr.ASCIIFoldingFilterFactory"/>
-              <filter class="solr.LowerCaseFilterFactory"/>
-          </analyzer>
-      </fieldType>
-
-      <fieldType name="sortable-string" class="solr.TextField">
-          <analyzer>
-              <tokenizer class="solr.KeywordTokenizerFactory"/>
-              <filter class="solr.ASCIIFoldingFilterFactory"/>
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.PatternReplaceFilterFactory" pattern="([^a-zA-Z0-9 ])" replacement="" replace="all"/>
-          </analyzer>
-      </fieldType>
-
-      <fieldType name="word-delimited-keyword" class="solr.TextField" positionIncrementGap="100">
-          <analyzer>
-              <tokenizer class="solr.KeywordTokenizerFactory"/>
-              <filter class="solr.WordDelimiterFilterFactory"
-                              generateWordParts="1"
-                              generateNumberParts="1"
-                              catenateWords="0"
-                              catenateNumbers="0"
-                              catenateAll="0"
-                              preserveOriginal="1"
-                              />
-              <filter class="solr.LowerCaseFilterFactory"/>
-          </analyzer>
-      </fieldType>
-
-<!--
-      &lt;!&ndash; experimental, can be removed &ndash;&gt;
-      <fieldtype name="phrase_suggest" class="solr.TextField">
-          <analyzer>
-              <tokenizer class="solr.KeywordTokenizerFactory"/>
-              <filter class="solr.PatternReplaceFilterFactory"
-                      pattern="([^\p{L}\p{M}\p{N}\p{Cs}]*[\p{L}\p{M}\p{N}\p{Cs}\_]+:)|([^\p{L}\p{M}\p{N}\p{Cs}])+"
-                      replacement=" " replace="all"/>
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.TrimFilterFactory"/>
-          </analyzer>
-      </fieldtype>
-
-      <fieldtype name="word_suggest" class="solr.TextField">
-          <analyzer>
-              <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-              <filter class="solr.PatternReplaceFilterFactory"
-                      pattern="([^\p{L}\p{M}\p{N}\p{Cs}]*[\p{L}\p{M}\p{N}\p{Cs}\_]+:)|([^\p{L}\p{M}\p{N}\p{Cs}])+"
-                      replacement=" " replace="all"/>
-              <filter class="solr.LowerCaseFilterFactory"/>
-              <filter class="solr.TrimFilterFactory"/>
-          </analyzer>
-      </fieldtype>
--->
-
-
- </types>
-
-
- <fields>
-   <!-- Valid attributes for fields:
-     name: mandatory - the name for the field
-     type: mandatory - the name of a previously defined type from the <types> section
-     indexed: true if this field should be indexed (searchable or sortable)
-     stored: true if this field should be retrievable
-     compressed: [false] if this field should be stored using gzip compression
-       (this will only apply if the field type is compressable; among
-       the standard field types, only TextField and StrField are)
-     multiValued: true if this field may contain multiple values per document
-     omitNorms: (expert) set to true to omit the norms associated with
-       this field (this disables length normalization and index-time
-       boosting for the field, and saves some memory).  Only full-text
-       fields or fields that need an index-time boost need norms.
-     termVectors: [false] set to true to store the term vector for a given field.
-       When using MoreLikeThis, fields used for similarity should be stored for 
-       best performance.
-   -->
-   <field name="id" type="string" indexed="true" stored="true" required="true" />
-   <field name="popularity" type="file" default="1.0"/>
-
-   <field name="url" type="string" indexed="true" stored="true"   />
-   <field name="category" type="keyword" indexed="true" stored="true" required="true" multiValued="true"/>
-
-   <field name="name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="proper_name" type="abbrev" indexed="true" stored="true" termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="full_name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="genotype_full_name" type="string" indexed="true" stored="true"/>
-   <field name="ortholog_other_species_symbol" type="abbrev" indexed="true" stored="true" multiValued="true"   />
-   <field name="ortholog_other_species_name" type="abbrev" indexed="true" stored="true" multiValued="true"   />
-   <field name="ortholog_organism" type="keyword" indexed="true" stored="true" multiValued="true"  />
-
-   <field name="disease_model" type="keyword" indexed="true" stored="true" multiValued="true"  />
-   <field name="disease" type="keyword" indexed="true" stored="true" multiValued="true"  />
-   <field name="omim_id" type="keyword" indexed="true" stored="true" multiValued="true" />
-
-     <!-- feature type? marker type? whatever!-->
-   <field name="type" type="keyword" indexed="true" stored="true"   />
-   <field name="typegroup" type="keyword" indexed="true" stored="true" multiValued="true" />
-   <field name="antibody_type" type="keyword" indexed="true" stored="true"   />
-   <field name="publication_type" type="keyword" indexed="true" stored="true"   />
-   <field name="ontology" type="keyword" indexed="true" stored="true"   />
-   <field name="root_only" type="boolean" indexed="true" stored="true" default="false"/>
-
-   <!-- this field is intended to split STR and antibody names on dashes so that we'll have a starts-with match on the second portion -->
-   <field name="marker_abbrev" type="tokenized_abbrev" indexed="true" stored="true" multiValued="true"/>
-
-   <field name="related_accession" type="string" indexed="true" stored="true" multiValued="true" />
-   <!--adding a field for related markers case 11289-->
-     <field name="related_marker" type="text" indexed="true" stored="true" multiValued="true" />
-
-   <field name="date" type="date" indexed="true" stored="true"   />
-   <field name="tdate" type="tdate" indexed="true" stored="false"   />
-
-   <field name="name_sort" type="sortable-string" indexed="true" stored="true" />
-   <field name="author_sort" type="sortable-string" indexed="true" stored="true" />
-   <field name="gene_sort" type="sortable-string" indexed="true" stored="true" />
-
-   <field name="regulatory_region" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="coding_sequence" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="engineered_region" type="keyword" indexed="true" stored="true" multiValued="true"   />
-
-   <field name="inserted_in_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="inserted_in_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
-   <field name="inserted_in_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
-
-   <field name="fish" type="keyword" indexed="true" stored="true" multiValued="true"   />
-
-   <field name="lab" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="reporter_color" type="reporter_color" indexed="true" stored="true" multiValued="true"   />
-
-   <field name="promoter_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
-   <field name="coding_sequence_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
-   <field name="engineered_region_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
-
-   <field name="prefix" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="institution" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="lab_of_origin" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <!--<field name="screen" type="keyword" indexed="true" stored="true" />-->
-   <field name="rna_consequence" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="mutagen" type="keyword" indexed="true" stored="true" />
-
-   <field name="allele" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="sequence_alteration" type="keyword" indexed="true" stored="true" multiValued="true"   />
-     <!-- this means it'll do starts-with matching of feature aliases, but not features, that seems a little odd... -->
-<!--
-   <field name="sequence_alteration_alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
--->
-   <field name="background" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="complexity" type="long" indexed="true" stored="true" multiValued="false" default="10000000000"/>
-
-   <field name="affected_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="affected_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
-   <field name="affected_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
-
-   <field name="antigen_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="antigen_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
-   <field name="antigen_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
-
-   <!--<field name="genes_with_altered_expression" type="keyword" indexed="true" stored="true" multiValued="true" />-->
-
-   <field name="gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
-   <field name="gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
-
-   <field name="zebrafish_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="zebrafish_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
-   <field name="zebrafish_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
-
-   <field name="reporter_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="reporter_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
-   <field name="reporter_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
-
-   <field name="expressed_gene" type="keyword" indexed="true" stored="true" multiValued="true"  />
-   <field name="expressed_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
-   <field name="expressed_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"  />
-
-   <field name="misexpressed_gene" type="keyword" indexed="true" stored="true" multiValued="true"  />
-
-   <field name="sequence_targeting_reagent" type="keyword" indexed="true" stored="true" multiValued="true"   />
-
-
-   <field name="target" type="keyword" indexed="true" stored="true" multiValued="true" />
-   <field name="target_full_name" type="text" indexed="true" stored="true" multiValued="true" />
-   <field name="target_previous_name" type="text" indexed="true" stored="true" multiValued="true" />
-
-
-   <field name="construct" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="affected_gene_count" type="integer" indexed="true" stored="true"  />
-
-     <!-- this is an experiment, should read like '[gene] has expression in [anatomy term] '-->
-   <field name="expression_observation" type="text" indexed="true" stored="true" multiValued="true" termVectors="true" termPositions="true" termOffsets="true"  />
-
-   <field name="chromosome" type="chromosome" stored="true" indexed="true" multiValued="true" default="unmapped" />
-
-   <field name="fly_ortho_chromosome" type="keyword" stored="true" indexed="true" multiValued="true"  />
-   <field name="human_ortho_chromosome" type="keyword" stored="true" indexed="true" multiValued="true"  />
-   <field name="mouse_ortho_chromosome" type="keyword" stored="true" indexed="true" multiValued="true"  />
-
-
-
-   <field name="note" type="text" stored="true" indexed="true" multiValued="true"  />
-
-
-   <field name="registered_author" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="author_string" type="simplified-international-text" indexed="true"/>"
-   <field name="author_year" type="simplified-international-text" indexed="true"/>"
-
-
-
-   <field name="phenotype_statement" type="keyword" indexed="true" stored="true" multiValued="true"   />
-     <field name="pgcmid" type="keyword" indexed="true" stored="true"  />
-   <field name="synonym_phenotype_statement" type="keyword" indexed="true" stored="true" multiValued="true"   />
-
-
-   <field name="expression_anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="expression_anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="expression_anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="expressed_in" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="expressed_in_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="expressed_in_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="affected_anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="phenotype_quality" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="phenotype_quality_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="phenotype_quality_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="quality_alias" type="keyword" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="molecular_function" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="molecular_function_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="molecular_function_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="biological_process" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="biological_process_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="biological_process_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="cellular_component" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="cellular_component_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="cellular_component_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="affected_molecular_function" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_molecular_function_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_molecular_function_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="affected_biological_process" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_biological_process_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_biological_process_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="affected_cellular_component" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_cellular_component_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="affected_cellular_component_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="labeled_anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="labeled_anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="labeled_anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-   <field name="labeled_cellular_component" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="labeled_cellular_component_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-   <field name="labeled_cellular_component_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-
-
-
-   <field name="source" type="keyword" indexed="true" stored="true"  multiValued="true"   />
-
-
-   <field name="host_organism" type="keyword" indexed="true" stored="true"   />
-   <field name="organism" type="organism_abbrev" indexed="true" stored="true" multiValued="true"   />
-
-
-   <field name="assay_abbrev" type="keyword" indexed="true" stored="true" multiValued="true"  />
-   <field name="assay" type="keyword" indexed="true" stored="true" multiValued="true"  />
-
-   <field name="probe" type="keyword" indexed="true" stored="true" multiValued="true" />
-   <field name="clone" type="keyword" indexed="true" stored="true" multiValued="true" />
-
-   <field name="stage" type="superstage" indexed="true" stored="true" multiValued="true" />
-   <field name="stage_hours_start" type="tfloat" indexed="true" stored="true" />
-   <field name="stage_hours_end" type="tfloat" indexed="true" stored="true" />
-
-   <field name="conditions" type="keyword" indexed="true" stored="true" multiValued="true" />
-
-   <field name="definition" type="text" indexed="true" stored="true" />
-
-   <field name="term_usage" type="keyword" indexed="true" stored="true" multiValued="true" default="None"/>
-   <field name="term_usage_with_children" type="keyword" indexed="true" stored="true" multiValued="true" default="None"/>
-
-   <field name="term_status" type="keyword" indexed="true" stored="true" />
-
-   <field name="abstract" type="text" indexed="true" stored="true"   />
-   <field name="keyword" type="publication_keyword" indexed="true" stored="true"  multiValued="true"   />
-   <field name="full_mesh_term" type="keyword" indexed="true" stored="true" multiValued="true" />
-
-   <field name="journal" type="keyword" indexed="true" stored="true"   />
-     <field name="journal_name" type="text" indexed="true" stored="true"   />
-   <field name="journal_type" type="keyword" indexed="true" stored="true" />
-   <field name="topic" type="keyword" indexed="true" stored="true"   multiValued="true" />
-   <field name="curator" type="string" indexed="true" stored="true" multiValued="true" />
-   <field name="pub_simple_status" type="keyword" indexed="true" stored="true" multiValued="true" />
-   <field name="pet_date" type="date" indexed="true" stored="true"/>
-   <field name="year" type="string" indexed="true" stored="true" />
-   <field name="pages" type="string" indexed="false" stored="true" />
-   <field name="volume" type="string" indexed="false" stored="true" />
-
-   <field name="publication_status" type="keyword" indexed="true" stored="true" />
-     <field name="location" type="keyword" indexed="true" stored="true" multiValued="true"/>
-     <field name="curation_status" type="keyword" indexed="true" stored="true" multiValued="true" />
-     <field name="owner" type="keyword" indexed="true" stored="true" />
-
-
-
-
-
-   <field name="publication" type="string" indexed="true" stored="true"/>
-   <field name="genotype" type="string" indexed="true" stored="true"  multiValued="true"/>
-
-   <field name="caption" type="text" indexed="true" stored="true"  />
-   <field name="thumbnail" type="string" indexed="true" stored="true" multiValued="true"  />
-   <field name="image" type="string" indexed="true" stored="true" multiValued="true"  />
-
-     <!-- used by parameterized fish search -->
-   <field name="figure_id" type="string" indexed="true" stored="true" />
-
-   <field name="mutation_type" type="keyword" indexed="true" stored="true" />
-
-   <!-- using string rather than boolean so these can be facet values -->
-   <field name="has_image" type="string" indexed="true" stored="true" />
-   <field name="is_wildtype" type="string" indexed="true" stored="true" />
-   <field name="is_genotype_wildtype" type="boolean" indexed="true" stored="true" />
-   <field name="is_monogenic" type="string" indexed="true" stored="true" />
-   <field name="has_orthology" type="string" indexed="true" stored="true" />
-
-   <field name="attributed_publication" type="text" indexed="true" stored="true" multiValued="true"/>
-
-   <field name="person_name" type="simplified-international-text" indexed="true"/>
-
-   <field name="lab_member_name" type="simplified-international-text" indexed="true"/>
-   <field name="profile_image" type="string" stored="true" indexed="true" multiValued="false"   />
-   <field name="biography" type="text" indexed="true" stored="true"   />
-   <field name="postal_address" type="text" indexed="true" stored="true"   />
-   <field name="email_address" type="text" indexed="true" stored="true"   />
-   <!-- only bringing this in for joining at index time, and maybe debugging... -->
-   <field name="internal_id" type="string" indexed="true" stored="true"   />
-
-   <!-- these are used to join expression records by natural key rather than primary key -->
-   <field name="xpat_zdb_id" type="string" indexed="false" stored="true" />
-   <field name="fig_zdb_id" type="string" indexed="true" stored="true" />
-
-   <!-- used for the figure gallery -->
-   <field name="img_zdb_id" type="string" indexed="true" stored="true" multiValued="true"/>
-
-   <field name="pub_zdb_id" type="string" indexed="true" stored="true"/>
-   <field name="fish_zdb_id" type="string" indexed="true" stored="true"/>
-   <field name="gene_zdb_id" type="string" indexed="true" stored="true"/>
-
-   <field name="attribution_count" type="sint" indexed="true" stored="true"/>
-
-   <field name="xref" type="string" indexed="true" stored="true" multiValued="true"/>
-
-   <field name="related_gene_symbol" type="gene_symbol" indexed="true" stored="true" multiValued="true"/>
-
-   <field name="construct_name" type="construct_name" indexed="true" stored="true" multiValued="false" />
-   <field name="construct_alias" type="construct_name" indexed="true" stored="true" multiValued="true" />
-
-   <!-- catchall field, containing all other searchable text fields (implemented
-        via copyField further on in this schema  -->
-   <field name="text" type="text" indexed="true" stored="true" multiValued="true" termVectors="true" termPositions="true" termOffsets="true" />
-   
-
-   <!-- Here, default is used to create a "timestamp" field indicating
-        When each document was indexed.
-     -->
-   <field name="timestamp" type="date" indexed="true" stored="true" default="NOW"
-          multiValued="false"  termVectors="true" termPositions="true" termOffsets="true" />
-
-     <!-- This field is required by solr for atomic updates -->
-   <field name="_version_" type="long" indexed="true" stored="true"/>
-
-   <!-- Dynamic field definitions.  If a field name is not found, dynamicFields
-        will be used if the name matches any of the patterns.
-        RESTRICTION: the glob-like pattern in the name attribute must have
-        a "*" only at the start or the end.
-        EXAMPLE:  name="*_i" will match any field ending in _i (like myid_i, z_i)
-        Longer patterns will be matched first.  if equal size patterns
-        both match, the first appearing in the schema will be used.  -->
-   <dynamicField name="*_i"  type="sint"    indexed="true"  stored="true"/>
-   <dynamicField name="*_s"  type="string"  indexed="true"  stored="true" multiValued="true"   />
-   <dynamicField name="*_k"  type="keyword"  indexed="true"  stored="true" multiValued="true"   />
-
-   <dynamicField name="*_l"  type="slong"   indexed="true"  stored="true"/>
-   <dynamicField name="*_t"  type="text"    indexed="true"  stored="true" multiValued="true"  />
-   <dynamicField name="*_st"  type="shingled_text"    indexed="true"  stored="true" multiValued="true"  />
-   <dynamicField name="*_sn"  type="split_ngram"    indexed="true"  stored="true" multiValued="true"  />
-   <dynamicField name="*_hl" type="all_headless_anatomy" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-
-
-     <dynamicField name="*_b"  type="boolean" indexed="true"  stored="true"/>
-   <dynamicField name="*_f"  type="sfloat"  indexed="true"  stored="true"/>
-   <dynamicField name="*_d"  type="sdouble" indexed="true"  stored="true"/>
-   <dynamicField name="*_dt" type="date"    indexed="true"  stored="true"/>
-   <dynamicField name="*_ac"  type="edgytext"    indexed="true"  stored="true" multiValued="true" />
-   <dynamicField name="*_tf"  type="term_facet"    indexed="true" stored="true" multiValued="true" />
-   <dynamicField name="type_*" type="string" indexed="true" stored="true" />
-<!--
-   <dynamicField name="*_suggest" type="word_suggest" indexed="true"  stored="true" multiValued="true"/>
--->
-
-
-   
- </fields>
-
- <!-- Field to use to determine and enforce document uniqueness.
-      Unless this field is marked with required="false", it will be a required field
-   -->
- <uniqueKey>id</uniqueKey>
-
- <!-- field for the QueryParser to use when an explicit fieldname is absent -->
- <defaultSearchField>text</defaultSearchField>
-
- <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
- <solrQueryParser defaultOperator="AND"/>
+    <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
+    <solrQueryParser defaultOperator="AND"/>
 
     <copyField source="proper_name" dest="proper_name_k"/>
 
-   <copyField source="labeled_anatomy_direct" dest="labeled_anatomy"/>
-   <copyField source="labeled_anatomy_parent" dest="labeled_anatomy"/>
-   <copyField source="labeled_anatomy_direct" dest="labeled_anatomy_t"/>
-   <copyField source="labeled_anatomy_direct" dest="labeled_anatomy_hl"/>
-   <copyField source="labeled_anatomy_parent" dest="labeled_anatomy_t"/>
-   <copyField source="labeled_anatomy_direct" dest="labeled_anatomy_tf"/>
-   <copyField source="labeled_anatomy_parent" dest="labeled_anatomy_tf"/>
+    <copyField source="labeled_anatomy_direct" dest="labeled_anatomy"/>
+    <copyField source="labeled_anatomy_parent" dest="labeled_anatomy"/>
+    <copyField source="labeled_anatomy_direct" dest="labeled_anatomy_t"/>
+    <copyField source="labeled_anatomy_direct" dest="labeled_anatomy_hl"/>
+    <copyField source="labeled_anatomy_parent" dest="labeled_anatomy_t"/>
+    <copyField source="labeled_anatomy_direct" dest="labeled_anatomy_tf"/>
+    <copyField source="labeled_anatomy_parent" dest="labeled_anatomy_tf"/>
 
     <copyField source="labeled_cellular_component_direct" dest="labeled_cellular_component"/>
     <copyField source="labeled_cellular_component_parent" dest="labeled_cellular_component"/>
@@ -846,7 +885,6 @@
     <copyField source="labeled_anatomy_parent" dest="labeled_structure_tf"/>
     <copyField source="labeled_cellular_component_direct" dest="labeled_structure_tf"/>
     <copyField source="labeled_cellular_component_parent" dest="labeled_structure_tf"/>
-
 
     <copyField source="expression_anatomy_direct" dest="expression_anatomy"/>
     <copyField source="expression_anatomy_parent" dest="expression_anatomy"/>
@@ -938,49 +976,48 @@
 
     <copyField source="quality_alias" dest="term_t"/>
 
-
-   <copyField source="journal" dest="journal_t"/>
+    <copyField source="journal" dest="journal_t"/>
     <copyField source="journal_name" dest="journal_name_t"/>
-   <copyField source="registered_author" dest="registered_author_t"/>
-   <copyField source="registered_author" dest="registered_author_ac"/>
-   <copyField source="author_string" dest="author_sort" />
-   <copyField source="keyword" dest="keyword_ac" />
-   <copyField source="id" dest="id_t"/>
-   <copyField source="name" dest="name_t"/>
-   <copyField source="disease_model" dest="disease_model_t"/>
-   <copyField source="disease" dest="disease_t"/>
-   <copyField source="category" dest="category_t"/>
-   <copyField source="type" dest="type_t"/>
-   <copyField source="source" dest="source_t"/>
-   <copyField source="sequence_targeting_reagent" dest="sequence_targeting_reagent_t"/>
-   <copyField source="gene" dest="gene_t"/>
-   <copyField source="zebrafish_gene" dest="zebrafish_gene_t"/>
-   <copyField source="reporter_gene" dest="reporter_gene_t"/>
-   <copyField source="affected_gene" dest="gene_t"/>
-   <copyField source="antigen_gene" dest="gene_t"/>
-   <copyField source="regulatory_region" dest="regulatory_region_t"/>
-   <copyField source="coding_sequence" dest="coding_sequence_t"/>
-   <copyField source="inserted_in_gene" dest="inserted_in_gene_t"/>
-   <copyField source="lab" dest="lab_t"/>
-   <!--<copyField source="curator" dest="curator_t"/>-->
-   <copyField source="sequence_alteration" dest="sequence_alteration_t"/>
-   <copyField source="background" dest="background_t"/>
-   <copyField source="full_mesh_term" dest="full_mesh_term_t"/>
-   <copyField source="conditions" dest="conditions_t"/>
-   <copyField source="engineered_region" dest="engineered_region_t"/>
-   <copyField source="expressed_in" dest="expressed_in_t"/>
-   <copyField source="assay" dest="assay_t"/>
-   <copyField source="assay_abbrev" dest="assay_abbrev_t"/>
-   <copyField source="allele" dest="allele_t"/>
-   <copyField source="construct" dest="construct_t"/>
-   <copyField source="phenotype_statement" dest="phenotype_statement_t"/>
-   <copyField source="synonym_phenotype_statement" dest="synonym_phenotype_statement_t"/>
-   <copyField source="affected_anatomy" dest="affected_anatomy_t"/>
-   <copyField source="anatomy" dest="anatomy_t"/>
-   <copyField source="expression_anatomy" dest="expression_anatomy_t"/>
-   <copyField source="expressed_gene" dest="expressed_gene_t"/>
-   <copyField source="institution" dest="institution_t"/>
-   <copyField source="related_accession" dest="related_accession_t"/>
+    <copyField source="registered_author" dest="registered_author_t"/>
+    <copyField source="registered_author" dest="registered_author_ac"/>
+    <copyField source="author_string" dest="author_sort" />
+    <copyField source="keyword" dest="keyword_ac" />
+    <copyField source="id" dest="id_t"/>
+    <copyField source="name" dest="name_t"/>
+    <copyField source="disease_model" dest="disease_model_t"/>
+    <copyField source="disease" dest="disease_t"/>
+    <copyField source="category" dest="category_t"/>
+    <copyField source="type" dest="type_t"/>
+    <copyField source="source" dest="source_t"/>
+    <copyField source="sequence_targeting_reagent" dest="sequence_targeting_reagent_t"/>
+    <copyField source="gene" dest="gene_t"/>
+    <copyField source="zebrafish_gene" dest="zebrafish_gene_t"/>
+    <copyField source="reporter_gene" dest="reporter_gene_t"/>
+    <copyField source="affected_gene" dest="gene_t"/>
+    <copyField source="antigen_gene" dest="gene_t"/>
+    <copyField source="regulatory_region" dest="regulatory_region_t"/>
+    <copyField source="coding_sequence" dest="coding_sequence_t"/>
+    <copyField source="inserted_in_gene" dest="inserted_in_gene_t"/>
+    <copyField source="lab" dest="lab_t"/>
+    <!--<copyField source="curator" dest="curator_t"/>-->
+    <copyField source="sequence_alteration" dest="sequence_alteration_t"/>
+    <copyField source="background" dest="background_t"/>
+    <copyField source="full_mesh_term" dest="full_mesh_term_t"/>
+    <copyField source="conditions" dest="conditions_t"/>
+    <copyField source="engineered_region" dest="engineered_region_t"/>
+    <copyField source="expressed_in" dest="expressed_in_t"/>
+    <copyField source="assay" dest="assay_t"/>
+    <copyField source="assay_abbrev" dest="assay_abbrev_t"/>
+    <copyField source="allele" dest="allele_t"/>
+    <copyField source="construct" dest="construct_t"/>
+    <copyField source="phenotype_statement" dest="phenotype_statement_t"/>
+    <copyField source="synonym_phenotype_statement" dest="synonym_phenotype_statement_t"/>
+    <copyField source="affected_anatomy" dest="affected_anatomy_t"/>
+    <copyField source="anatomy" dest="anatomy_t"/>
+    <copyField source="expression_anatomy" dest="expression_anatomy_t"/>
+    <copyField source="expressed_gene" dest="expressed_gene_t"/>
+    <copyField source="institution" dest="institution_t"/>
+    <copyField source="related_accession" dest="related_accession_t"/>
 
     <copyField source="date" dest="tdate"/>
 
@@ -995,16 +1032,16 @@
     <copyField source="alias" dest="alias_t"/>
 
     <!-- DANGER! unintended consequence!! -->
-<!--
-    <copyField source="name" dest="name_sn"/>
-    <copyField source="full_name" dest="full_name_sn"/>
-    <copyField source="alias" dest="alias_sn"/>
--->
+    <!--
+        <copyField source="name" dest="name_sn"/>
+        <copyField source="full_name" dest="full_name_sn"/>
+        <copyField source="alias" dest="alias_sn"/>
+    -->
 
 
-<!--
-    <copyField source="disease_model" dest="nomenclature_suggest"/>
--->
+    <!--
+        <copyField source="disease_model" dest="nomenclature_suggest"/>
+    -->
     <copyField source="ortholog_other_species_symbol" dest="ortholog_other_species_symbol_ac"/>
     <copyField source="ortholog_other_species_name" dest="ortholog_other_species_name_ac"/>
 
@@ -1023,9 +1060,8 @@
     <copyField source="zebrafish_gene" dest="related_gene_symbol"/>
     <copyField source="reporter_gene" dest="related_gene_symbol"/>
     <copyField source="target" dest="related_gene_symbol"/>
-<!--    <copyField source="expressed_gene" dest="related_gene_symbol"/>-->
-
-
+    <!--    <copyField source="expressed_gene" dest="related_gene_symbol"/>-->
+    
     <!-- experimenting with joins -->
     <copyField source="name" dest="name_s"/>
     <copyField source="name" dest="name_k"/>
