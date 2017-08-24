@@ -33,16 +33,14 @@ foreach
            and fishstr_fish_zdb_id = vFishId
 and mrel_mrkr_2_zdb_id !='ZDB-GENE-990415-270'
  and mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'
-and exists (Select 'x' from fish_Experiment where genox_fish_Zdb_id = fishstr_fish_Zdb_id
-                   and genox_is_std_or_generic_control = 't')
+
 	  union
         select  mrel_mrkr_2_zdb_id
            from marker_relationship, fish_str
            where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
            and fishstr_fish_zdb_id = vFishId
 	   and (mrel_mrkr_1_zdb_id like 'ZDB-CRISPR%' or mrel_mrkr_1_zdb_id like 'ZDB-TALEN%')
-	   and exists (Select 'x' from fish_Experiment where genox_fish_Zdb_id = fishstr_fish_Zdb_id
-                   and genox_is_std_or_generic_control = 't')
+	   
 
 
 	   
