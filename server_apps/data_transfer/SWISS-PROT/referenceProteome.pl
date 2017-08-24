@@ -30,7 +30,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"CLIENT_LOCALE"}="en_US.utf8";
 $ENV{"DB_LOCALE"}="en_US.utf8";
 
-chdir "/opt/zfin/www_homes/manx/server_apps/data_transfer/SWISS-PROT/";
+chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
 
 system("/bin/rm -f *.tab");
 system("/bin/rm -f UP000000437_7955.fasta");
