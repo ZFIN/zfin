@@ -34,7 +34,7 @@ public class PhenotypeSummarySmokeTest extends AbstractSmokeTest {
     }
 
     /**
-     * Check that antibody figure summary page comes up.
+     * Check that phenotype figure summary page comes up. This case specifically tests heat shcok innocuous TG. (Refer CLNDTY-8)
      */
     @Test
     public void testPhenotypeSummaryPageHsp70HeatShock() throws IOException {
