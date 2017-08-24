@@ -77,12 +77,7 @@
 -->
     </target>
 
-    <target name="run-mart-tests" depends="run-constructmart-unittests,run-chromosomemart-unittests"/>
-
-   <target name="run-constructmart-unittests">
-        <echo message="Run unit tests for constructmart"/>
-	<run-sql-query-tests sql-query-file="constructmart-integrity-tests.sql" directory="${warehouseDir}/constructMart"/>
-    </target>
+    <target name="run-mart-tests" depends="run-chromosomemart-unittests"/>
 
    <target name="run-chromosomemart-unittests">
         <echo message="Run unit tests for chromosomemart"/>
