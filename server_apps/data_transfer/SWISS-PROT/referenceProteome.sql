@@ -6,14 +6,14 @@ create temp table refProteome (
 
 load from refProteome.tab insert into refProteome;
 
-unload to '/opt/zfin/www_homes/manx/server_apps/data_transfer/SWISS-PROT/refProteomeSorted.tab'
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/refProteomeSorted.tab'
  DELIMITER "	"
   select distinct uniprot_id
     from refProteome
    where uniprot_id is not null
  order by uniprot_id;
 
-unload to '/opt/zfin/www_homes/manx/server_apps/data_transfer/SWISS-PROT/genesWithProteinAndWithXpatOrPhenoNotWithRefPr.tab'
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/genesWithProteinAndWithXpatOrPhenoNotWithRefPr.tab'
  DELIMITER "	"
   select distinct mrkr_abbrev, mrkr_zdb_id
     from marker 
