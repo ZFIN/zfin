@@ -84,6 +84,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     private Set<Publication> publications;
     private AccountInfo accountInfo;
     private String image;
+    private boolean hidden;
 
     public String getPutativeLoginName() {
         return putativeLoginName;
@@ -292,6 +293,14 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
 
     public void setAccountInfo(AccountInfo accountInfo) {
         this.accountInfo = accountInfo;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     public Collection<GrantedAuthority> getAuthorities() {

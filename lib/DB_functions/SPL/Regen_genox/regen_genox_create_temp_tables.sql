@@ -68,20 +68,32 @@ create procedure regen_genox_create_temp_tables()
       drop table regen_genox_temp ;
     end if
 
+ if (exists (select * from systables where tabname = "regen_genox_construct_temp ")) then
+      drop table regen_genox_construct_temp ;
+    end if
 
 
     -- -------------------------------------------------------------------
     --   create regen_genox_temp
     -- -------------------------------------------------------------------    
+   create temp table regen_genox_construct_temp
+      (
+	rgct_construct_zdb_id         varchar(50) not null,
+	rgct_genox_zdb_id        varchar(50) not null
+      ) with no log;
+
     create temp table regen_genox_temp
       (
 	rggt_mrkr_zdb_id         varchar(50) not null,
 	rggt_genox_zdb_id        varchar(50) not null
       ) with no log;
 
-  end 
+  end
+
+
 
   delete from regen_genox_input_zdb_id_temp;
+  delete from regen_genox_construct_temp;
   delete from regen_genox_temp;
 
 end procedure;

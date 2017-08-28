@@ -22,6 +22,7 @@ public class MarkerGoEvidencePresentation {
     public static ReferenceDatabase uniprotReferenceDatabase;
     public static ReferenceDatabase spkwReferenceDatabase;
     public static ReferenceDatabase unipathwayReferenceDatabase;
+    public static ReferenceDatabase uniruleReferenceDatabase;
     public static ReferenceDatabase ecReferenceDatabase;
     public static ReferenceDatabase interproReferenceDatabase;
     public static ReferenceDatabase goReferenceDatabase;
@@ -198,6 +199,8 @@ public class MarkerGoEvidencePresentation {
                 return createLink(accession, getSpslForeignDBDatabase(), inferenceCategory);
             case UNIPATHWAY:
                 return createLink(accession, getUnipathwayReferenceDatabase().getForeignDB(), inferenceCategory);
+            case UNIRULE:
+                return createUniRuleLink(accession, inferenceCategory);
             default:
                 return inferredFrom;
         }
@@ -239,6 +242,17 @@ public class MarkerGoEvidencePresentation {
         }
         sb.append("\">");
 
+        sb.append(inferenceCategory.prefix());
+        sb.append(accession);
+        sb.append("</a>");
+        return sb.toString();
+    }
+
+    public static String createUniRuleLink(String accession, InferenceCategory inferenceCategory) {
+        StringBuilder sb = new StringBuilder("");
+        sb.append("<a href=\"http://prosite.expasy.org/unirule/");
+        sb.append(accession);
+        sb.append("\">");
         sb.append(inferenceCategory.prefix());
         sb.append(accession);
         sb.append("</a>");

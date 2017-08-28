@@ -8,17 +8,6 @@
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="recordAttributionSourceType">
         <param name="enumClassname">org.zfin.infrastructure.RecordAttribution$SourceType</param>
     </typedef>
-    <typedef class="org.zfin.framework.StringEnumValueUserType" name="foreignDatabaseSuperType">
-        <param name="enumClassname">org.zfin.sequence.ForeignDBDataType$SuperType</param>
-    </typedef>
-
-    <typedef class="org.zfin.framework.StringEnumValueUserType" name="foreignDatabaseDataType">
-        <param name="enumClassname">org.zfin.sequence.ForeignDBDataType$DataType</param>
-    </typedef>
-
-    <typedef class="org.zfin.framework.StringEnumValueUserType" name="foreignDBAvailableName">
-        <param name="enumClassname">org.zfin.sequence.ForeignDB$AvailableName</param>
-    </typedef>
 
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="displayGroupName">
         <param name="enumClassname">org.zfin.sequence.DisplayGroup$GroupName</param>
@@ -102,20 +91,6 @@
         </set>
     </class>
 
-    <class name="org.zfin.sequence.ForeignDB" table="foreign_db">
-        <id name="dbID" type="long">
-            <column name="fdb_db_pk_id" not-null="true"/>
-            <generator class="identity"/>
-        </id>
-        <!--<property name="baseURL" column=""/> -->
-        <property name="dbName" column="fdb_db_name" type="foreignDBAvailableName"/>
-        <property name="dbUrlPrefix" column="fdb_db_query"/>
-        <property name="dbUrlSuffix" column="fdb_url_suffix"/>
-        <property name="significance" column="fdb_db_significance"/>
-        <property name="displayName" column="fdb_db_display_name"/>
-    </class>
-
-
     <class name="org.zfin.sequence.DisplayGroup" table="foreign_db_contains_display_group">
         <id name="id">
             <column name="fdbcdg_pk_id" not-null="true"/>
@@ -129,26 +104,6 @@
             <key column="fdbcdgm_group_id"/>
             <many-to-many class="org.zfin.sequence.ReferenceDatabase" column="fdbcdgm_fdbcont_zdb_id"/>
         </set>
-    </class>
-
-    <!--<class name="org.zfin.sequence.DisplayGroupMember" table="foreign_db_contains_display_group_member">-->
-    <!--<id name="id">-->
-    <!--<column name="fdbcdgm_pk_id" not-null="true"/>-->
-    <!--</id>-->
-    <!--<many-to-one name="referenceDatabase" class="org.zfin.sequence.ReferenceDatabase" column="fdbcdgm_fdbcont_zdb_id" not-null="true"/>-->
-    <!--<many-to-one name="displayGroup" class="org.zfin.sequence.DisplayGroup" column="fdbcdgm_group_id" not-null="true"/>-->
-    <!--</class>-->
-
-    <class name="org.zfin.sequence.ForeignDBDataType" table="foreign_db_data_type">
-        <id name="dataTypeID" type="long">
-            <column name="fdbdt_pk_id" not-null="true"/>
-            <generator class="identity"/>
-        </id>
-
-        <property name="dataType" column="fdbdt_data_type" type="foreignDatabaseDataType"/>
-        <property name="superType" column="fdbdt_super_type" type="foreignDatabaseSuperType"/>
-        <property name="displayOrder" column="fdbdt_display_order"/>
-
     </class>
 
     <class name="org.zfin.sequence.DBLink" table="db_link" abstract="true">

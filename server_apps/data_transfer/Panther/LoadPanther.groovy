@@ -1,35 +1,10 @@
 #!/bin/bash
-import org.hibernate.Session
-import org.zfin.Species
-import org.zfin.framework.HibernateSessionCreator
-import org.zfin.framework.HibernateUtil
-import org.zfin.gwt.root.util.StringUtils
-import org.zfin.infrastructure.RecordAttribution
-import org.zfin.marker.Marker
-
-//usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
-
+//private/apps/groovy/bin/groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 import org.zfin.properties.ZfinProperties
-import org.zfin.publication.Publication
-import org.zfin.repository.RepositoryFactory
-import org.zfin.sequence.DBLink
-import org.zfin.sequence.ForeignDB
-import org.zfin.sequence.ForeignDBDataType
-import org.zfin.sequence.MarkerDBLink
-import org.zfin.sequence.ReferenceDatabase
 import org.zfin.util.ReportGenerator
 import static com.xlson.groovycsv.CsvParser.parseCsv
 
 
-cli = new CliBuilder(usage: 'LoadPanther')
-cli.jobName(args:1, 'Name of the job to be displayed in report')
-cli.localData('Attempt to load a local panther file instead of downloading')
-cli.commit('Commits changes, otherwise rollback will be performed')
-cli.report('Generates an HTML report')
-options = cli.parse(args)
-if (!options) {
-    System.exit(1)
-}
 
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
@@ -39,95 +14,107 @@ def out = new BufferedOutputStream(file)
 out << new URL(DOWNLOAD_URL).openStream()
 out.close()
 
-new HibernateSessionCreator()
+def dbaccess (String dbname, String sql) {
+    proc = "dbaccess -a $dbname".execute()
+    proc.getOutputStream().with {
+        write(sql.bytes)
+        close()
+    }
+    proc.waitFor()
+    proc.getErrorStream().eachLine { println(it) }
+    if (proc.exitValue()) {
+        throw new RuntimeException("dbaccess call failed")
+    }
+    proc
+}
 
 
+println "done"
 File inputFile=new File("PTHR12.0_zebrafish")
+OUTFILE = "panther.unl"
+PRE_FILE = "prepanther.unl"
+POST_FILE = "postpanther.unl"
 
-Session session = HibernateUtil.currentSession()
-tx = session.beginTransaction()
-
-
-ReferenceDatabase pantherDb = RepositoryFactory.sequenceRepository.getReferenceDatabase(
-        ForeignDB.AvailableName.PANTHER,
-        ForeignDBDataType.DataType.OTHER,
-        ForeignDBDataType.SuperType.SUMMARY_PAGE,
-        Species.Type.ZEBRAFISH)
 
 def pantherIDs = parseCsv(new FileReader(inputFile), separator: '|')
-
+new File(OUTFILE).withWriter { outFile ->
 pantherIDs.each { csv ->
 
-    def zfinID = csv[1].substring(csv[1].lastIndexOf('=') + 1)
-    def pantid = csv[2].split('\t')
-    def colon = (pantid[2].indexOf(':'))
-    def panthid = pantid[2]
-    def pantherID = panthid.substring(0, colon)
-    if (zfinID.startsWith("ZDB")) {
-        println zfinID
-        Marker pantGene = RepositoryFactory.getMarkerRepository().getMarkerOrReplacedByID(zfinID)
-         MarkerDBLink pantDbId = RepositoryFactory.getMarkerRepository().getDBLink(pantGene, pantherID, pantherDb)
-        if (pantDbId == null) {
-            DBLink newDBLink=createNewDBLink(pantGene,pantherID,pantherDb)
-            RepositoryFactory.infrastructureRepository.insertRecordAttribution(newDBLink.zdbID, 'ZDB-PUB-170810-14')
-                    } else {
-            if (pantherID != pantDbId.accessionNumber) {
-                pantDbId.setAccessionNumber(pantherID)
-            }
+        def zfinID = csv[1].substring(csv[1].lastIndexOf('=') + 1)
+        def pantid = csv[2].split('\t')
+        def colon = (pantid[2].indexOf(':'))
+        def panthid = pantid[2]
+        def pantherID = panthid.substring(0, colon)
+      def fdbcontid='ZDB-FDBCONT'
+        if (zfinID.startsWith('ZDB')) {
+            outFile.writeLine("$zfinID|$zfinID|$pantherID|$fdbcontid")
         }
 
     }
-}
-if (options.report) {
-    // one more query that only matters if we're doing a report
-    hql = """select count(*)
-             from MarkerDBLink
-             where referenceDatabase = :pantDb"""
-    query =  session.createQuery(hql)
-    query.setParameter("pantDb", pantherDb)
-    count = query.uniqueResult()
 
-    print "Generating report ... "
-    ReportGenerator rg = new ReportGenerator();
-    rg.setReportTitle("Report for $options.jobName")
-    rg.includeTimestamp();
-    rg.addIntroParagraph("With this load there are now $count Panther records in total.")
-    //rg.addDataTable("${linksToDelete.size()} Links Removed", ["Gene", "Accession Number"], linksToDelete.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
-    //rg.addDataTable("${linksAdded.size()} Links Added", ["Gene", "Accession Number"], linksAdded.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
-    new File("panther-report.html").withWriter { writer ->
-        rg.write(writer, ReportGenerator.Format.HTML)
+}
+dbname = System.getenv("DBNAME")
+println("Loading terms into $dbname")
+
+dbaccess dbname, """
+  UNLOAD TO $PRE_FILE
+    SELECT dblink_linked_recid,dblink_acc_num
+    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
+
+  CREATE TEMP TABLE tmp_terms(
+    dblinkid varchar(50),
+    id varchar(50),
+    name varchar(50),
+    fdbcontid varchar(50)
+      ) with no log;
+
+  LOAD FROM $OUTFILE
+    INSERT INTO tmp_terms;
+
+
+
+
+
+update tmp_terms set id = (select zrepld_new_zdb_id from zdb_replaced_data where id=zrepld_old_zdb_id) where id in (select zrepld_old_zdb_id
+                                  from zdb_replaced_data);
+unload to 'test.unl' select id from tmp_terms where id not in (select mrkr_zdb_id from marker where mrkr_type='GENE');
+update tmp_terms set fdbcontid = (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
+
+delete from tmp_terms where id not in (select mrkr_zdb_id from marker where mrkr_type='GENE');
+delete from db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
+
+update tmp_terms set dblinkid = get_id('DBLINK');
+
+insert into zdb_active_data select dblinkid from tmp_terms;
+
+insert into db_link (dblink_linked_recid,dblink_acc_num, dblink_zdb_id ,dblink_acc_num_display,dblink_fdbcont_zdb_id)
+  select distinct id,name,dblinkid,name, fdbcontid
+    from tmp_terms ;
+
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+  select dblinkid,'ZDB-PUB-170810-14' from tmp_terms;
+
+
+
+
+  UNLOAD TO $POST_FILE
+    SELECT dblink_linked_recid,dblink_acc_num
+    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
+"""
+
+if (args) {
+    // means we're (probably) running from Jenkins, so make a report.
+    preLines = new File(PRE_FILE).readLines()
+    postLines = new File(POST_FILE).readLines()
+
+    added = postLines - preLines
+    removed = preLines - postLines
+
+    new ReportGenerator().with {
+        setReportTitle("Report for ${args[0]}")
+        includeTimestamp()
+        addDataTable("${added.size()} terms added", ["ID", "Term"], added.collect { it.split("\\|") as List })
+        addDataTable("${removed.size()} terms removed", ["ID", "Term"], removed.collect { it.split("\\|") as List })
+        writeFiles(new File("."), "loadPantherReport")
     }
-    println "done"
-}
-
-
-
-if (options.commit) {
-    print "Committing changes ... "
-    tx.commit()
-} else {
-    print "Rolling back changes ... "
-    tx.rollback()
-}
-session.close()
-println "done"
-
-System.exit(0)
-
-DBLink createNewDBLink(Marker newCrispr, String accession, ReferenceDatabase pantDB) {
-    MarkerDBLink mdb = new MarkerDBLink();
-    mdb.setMarker(newCrispr);
-    mdb.setAccessionNumber(accession);
-
-    mdb.setReferenceDatabase(pantDB);
-    Set<MarkerDBLink> markerDBLinks = newCrispr.getDbLinks();
-    if (markerDBLinks == null) {
-        markerDBLinks = new HashSet<MarkerDBLink>();
-        markerDBLinks.add(mdb);
-        newCrispr.setDbLinks(markerDBLinks);
-    } else
-        newCrispr.getDbLinks().add(mdb);
-    HibernateUtil.currentSession().save(mdb);
-    return mdb;
-
 }

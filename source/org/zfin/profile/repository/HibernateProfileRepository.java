@@ -898,6 +898,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
         Criteria criteria = HibernateUtil.currentSession()
                 .createCriteria(Person.class)
+                .add(Restrictions.eq("hidden", false))
                 .addOrder(Order.asc("lastName"))
                 .addOrder(Order.asc("firstName"));
         if (StringUtils.isNotEmpty(searchBean.getName())) {

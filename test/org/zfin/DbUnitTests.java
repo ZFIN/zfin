@@ -83,8 +83,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         AntibodyServiceTest.class,
         AntibodyWikiWebServiceTest.class,
         BlastRepositoryTest.class,
-        ConstructRepositoryTest.class,
-        ConstructServiceTest.class,
         CurationDTOConversionServiceSpec.class,
         CurationRepositoryTest.class,
         CurationRPCTest.class,

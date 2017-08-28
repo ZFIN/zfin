@@ -1,15 +1,26 @@
 package org.zfin.sequence;
 
-/**
+import javax.persistence.*;
 
- */
+@Entity
+@Table(name = "FOREIGN_DB")
 public class ForeignDB implements Comparable<ForeignDB> {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "fdb_db_pk_id")
     private Long dbID;
+    @Column(name = "fdb_db_name")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDB$AvailableName")})
     private AvailableName dbName;
+    @Column(name = "fdb_db_query")
     private String dbUrlPrefix;
+    @Column(name = "fdb_url_suffix")
     private String dbUrlSuffix;
+    @Column(name = "fdb_db_significance")
     private Integer significance;
+    @Column(name = "fdb_db_display_name")
     private String displayName;
 
     public Long getDbID() {
@@ -147,7 +158,8 @@ public class ForeignDB implements Comparable<ForeignDB> {
         UBERON("UBERON"),
         ISBN("ISBN"),
         ZMP("ZMP"),
-        CRISPRZ("CRISPRz");
+        CRISPRZ("CRISPRz"),
+        UNIRULE("UniRule");
 
 
         private final String value;

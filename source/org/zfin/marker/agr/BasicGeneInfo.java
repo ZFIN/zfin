@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -61,7 +62,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
     public AllGeneDTO getAllGeneInfo() {
         List<Marker> allGenes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM, numfOfRecords);
         System.out.println(allGenes.size());
-        //List<GeneDTO> allGeneDTOList = new ArrayList<>(allGenes.size());
+
         List<GeneDTO> allGeneDTOList = allGenes.parallelStream()
                 .map(
                         gene -> {

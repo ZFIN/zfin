@@ -31,6 +31,7 @@ public class CrossReferenceDTO {
         dbNameMap.put("UniProtKB", "UniProtKB");
         dbNameMap.put("Ensembl", "ENSEMBL");
         dbNameMap.put("PMID", "PMID");
+        dbNameMap.put("PANTHER", "PANTHER");
     }
 
 

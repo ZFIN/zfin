@@ -63,8 +63,7 @@ $ctUpdated = 0;
 %updatedPublications = ();
 
 $cur_update_pub = $dbh->prepare_cached('update publication set status = "active" where accession_no = ?;');
-$cur_insert_update = $dbh->prepare_cached('insert into updates (rec_id,field_name,new_value,upd_when) select zdb_id,"status","active",current from publication where accession_no = ?;');
-$cur_insert_tracking = $dbh->prepare_cached('insert into pub_tracking_history (pth_pub_zdb_id, pth_status_id,  pth_status_set_by) select zdb_id, (select pts_pk_id from pub_tracking_status where pts_status= "NEW"), "ZDB-PERS-030612-1" from publication where accession_no = ?;');
+$cur_insert_update = $dbh->prepare_cached('insert into updates (submitter_id, rec_id,field_name,new_value,upd_when) select (select zdb_id from person where full_name = "Pub Activation Script"), zdb_id,"status","active",current from publication where accession_no = ?;');
 
 foreach $pubZDBid (sort keys %nonActivePubAccessions) {
     $pubmedId = $nonActivePubAccessions{$pubZDBid};
@@ -76,7 +75,6 @@ foreach $pubZDBid (sort keys %nonActivePubAccessions) {
         if ($status eq "ppublish" || $status eq "epublish") {
           $cur_update_pub->execute($pubmedId);
           $cur_insert_update->execute($pubmedId);
-          $cur_insert_tracking->execute($pubmedId);
           $updatedPublications{$pubZDBid} = $pubmedId;
           $ctUpdated++;
         }

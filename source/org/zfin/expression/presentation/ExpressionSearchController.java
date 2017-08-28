@@ -45,6 +45,7 @@ public class ExpressionSearchController {
         model.addAttribute("stages", stages);
         criteria.setStartStageId(stages.firstKey());
         criteria.setEndStageId(stages.lastKey());
+        criteria.setJournalType("all");
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search");
         return "expression/search.page";

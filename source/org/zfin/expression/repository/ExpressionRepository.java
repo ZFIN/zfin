@@ -16,6 +16,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
+import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
@@ -437,4 +438,6 @@ public interface ExpressionRepository {
     void saveExperiment(Experiment experiment);
 
     ExpressionFigureStage getExperimentFigureStage(long id);
+
+    List<MarkerDBLink> getAllDbLinks(ForeignDB.AvailableName database);
 }

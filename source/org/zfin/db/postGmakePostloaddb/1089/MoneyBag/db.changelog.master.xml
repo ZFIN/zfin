@@ -5,12 +5,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-
-
-
-    <include file="source/org/zfin/db/postGmakePostloaddb/1089/MoneyBag/ZFIN-5730.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1089/MoneyBag/AGR-74.sql" />
-
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1089/MoneyBag/ZFIN-5733.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1089/MoneyBag/DLOAD-492.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1089/MoneyBag/removeConstructMart.sql" />
 
 </databaseChangeLog>

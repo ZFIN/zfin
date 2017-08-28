@@ -18,13 +18,12 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/Panther
-./LoadPanther.groovy -jobName Load-Panther_m -commit -report</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/Panther &amp;&amp; ./LoadPanther.groovy -jobName Load-Panther_m</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/Panther/*.html</artifacts>
+      <artifacts>server_apps/data_transfer/Panther/loadPantherReport*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -35,7 +34,7 @@
           <email>
             <recipientList>pm@zfin.org</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;$TARGETROOT/server_apps/data_transfer/Panther/panther-report.html&quot;}
+            <body>${FILE,path=&quot;$TARGETROOT/server_apps/data_transfer/Panther/loadPantherReport.html&quot;}
 
               See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
             </body>
