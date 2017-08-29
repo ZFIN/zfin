@@ -141,8 +141,6 @@ public class ExpressionSearchService {
         solrQuery.add("group.field", FieldName.GENE_ZDB_ID.getName());
 
         solrQuery.setFields(FieldName.GENE_ZDB_ID.getName());
-
-        solrQuery.setRows(100);
         solrQuery.addSort(FieldName.GENE_SORT.getName(), SolrQuery.ORDER.asc);
 
         QueryResponse queryResponse = null;

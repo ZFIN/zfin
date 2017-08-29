@@ -26,6 +26,7 @@ public class ExpressionSearchController {
     private static Logger logger = Logger.getLogger(ExpressionSearchController.class);
 
     private static final String BASE_URL = "/action/expression/results?";
+    private static final int DEFAULT_PAGE_SIZE = 25;
 
     @Autowired
     private MarkerRepository markerRepository;
@@ -58,7 +59,7 @@ public class ExpressionSearchController {
         model.addAttribute("stages", ExpressionSearchService.getStageOptions());
 
         if (criteria.getRows() == null) {
-            criteria.setRows(20);
+            criteria.setRows(DEFAULT_PAGE_SIZE);
         }
         if (criteria.getPage() == null) {
             criteria.setPage(1);
@@ -110,7 +111,7 @@ public class ExpressionSearchController {
             criteria.setPage(1);
         }
         if (criteria.getRows() == null) {
-            criteria.setRows(20);
+            criteria.setRows(DEFAULT_PAGE_SIZE);
         }
 
         paginationBean.setPage(criteria.getPage().toString());
