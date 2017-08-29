@@ -37,7 +37,8 @@ project.ext.set("sourceroot", sourceroot)
 project.ext.set("pgdata", pgdata)
 project.ext.set("pgbindir", pgbindir)
 
-task loadDb(dependsOn: ['lib:DB_functions:postgresFunctions:killConnectionsToPostgres']) {
+//dependsOn: ['lib:DB_functions:postgresFunctions:killConnectionsToPostgres']
+task loadDb() {
     doLast {
         File unloads = file('/research/zunloads/databases/postgres_self_dumps/darwindb/')
         String unloadPath;
