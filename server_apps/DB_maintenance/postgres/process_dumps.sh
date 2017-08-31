@@ -20,7 +20,7 @@ rm -rf $dumpToRemove;
 
 echo "removed"  
 
-dirToCopy=/research/zunloads/databases/trunkdb/$latestDump;
+dirToCopy=/research/zunloads/databases/${DBNAME}/$latestDump;
 echo "*** Directory to cp:"
 echo $dirToCopy
 
