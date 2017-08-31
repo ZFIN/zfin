@@ -218,17 +218,15 @@
 <script>
     $(function () {
         function resetForm($form) {
-            $form.find('input:text').val('');
-            $form.find('select').prop("selectedIndex", 0);
-            // pet date is special
-            $('#petFromMonth').val(${oldestPubEntryMonth});
-            $('#petFromDay').val(${oldestPubEntryDay});
-            $('#petFromYear').val(${oldestPubEntryYear});
-            $('#petToMonth').val(${newestPubEntryMonth});
-            $('#petToDay').val(${newestPubEntryDay});
-            $('#petToYear').val(${newestPubEntryYear});
-            // count is also special
-            $('#count').val('10');
+            $form.resetForm({
+                petFromMonth: ${oldestPubEntryMonth},
+                petFromDay: ${oldestPubEntryDay},
+                petFromYear: ${oldestPubEntryYear},
+                petToMonth: ${newestPubEntryMonth},
+                petToDay: ${newestPubEntryDay},
+                petToYear: ${newestPubEntryYear},
+                count: '10'
+            });
         }
 
         var $form = $("#pub-search-form");

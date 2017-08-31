@@ -20,7 +20,7 @@
        id="xpatsel_expression_tips" rel="#searchtips"></a>
 </div>
 
-<form:form action="/action/expression/results" method="get" modelAttribute="criteria">
+<form:form action="/action/expression/results" id="expression-search-form" method="get" modelAttribute="criteria">
     <form:hidden path="rows"/>
     <table width="100%">
         <tr valign="top">
@@ -123,38 +123,33 @@
 
     <div class="submitbar">
         <button type="submit">Search</button>
-        <a href="/action/expression/search"><button type="button">Reset</button></a>
+        <button type="reset">Reset</button>
     </div>
 </form:form>
 
 <script>
-
-    function decorateTermList() {
-        termCount = jQuery('#searchTermList .gwt-Hyperlink').size();
-
-        if (termCount == 0) {
-            jQuery('#searchTermList').hide();
-            jQuery('#term-list-remove-all-link').hide();
-
-
-        } else if (termCount == 1) {
-            jQuery('#searchTermList').show();
-            jQuery('#term-list-remove-all-link').hide();
-
-        } else {
-            jQuery('#searchTermList').show();
-            jQuery('#term-list-remove-all-link').show();
-        }
-
-
-    }
-
-    jQuery(document).ready(function() {
-
-        jQuery('input[name=anatomyTermIDs]').change(function () {
-            decorateTermList();
+    $(function() {
+        var $form = $('#expression-search-form');
+        $form.find(':reset').click(function (evt) {
+            evt.preventDefault();
+            $form.resetForm({
+                endStageId: function () { return $(this).find('option:last').val(); },
+                journalType3: function () { $(this).prop('checked', true); }
+            });
+            clearTable();
         });
-
+        $('input[name=anatomyTermIDs]').change(function () {
+            var termCount = $('#searchTermList .gwt-Hyperlink').size();
+            if (termCount === 0) {
+                $('#searchTermList').hide();
+                $('#term-list-remove-all-link').hide();
+            } else if (termCount === 1) {
+                $('#searchTermList').show();
+                $('#term-list-remove-all-link').hide();
+            } else {
+                $('#searchTermList').show();
+                $('#term-list-remove-all-link').show();
+            }
+        });
     });
-
 </script>

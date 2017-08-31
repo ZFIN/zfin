@@ -46,6 +46,7 @@
     <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
     <script type="text/javascript" src="/javascript/sorttable.js"></script>
+    <script src="/javascript/form-reset.js"></script>
 
     <script>
         if (hdrGetCookie("tabCookie") === "Motto") {
