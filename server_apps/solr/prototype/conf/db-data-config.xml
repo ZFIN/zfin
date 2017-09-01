@@ -2933,6 +2933,7 @@
                     query="select
                             mrkr_abbrev as zebrafish_gene,
                             mrkr_name as zebrafish_gene_full_name,
+                            mrkr_name as expressed_gene_full_name,
                             mrkr_zdb_id as xref,
                             'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
@@ -2948,9 +2949,9 @@
                     cacheImpl="SortedMapBackedCache"
             />
 
-            <entity name="expression_zebrafish_gene_alias"
+            <entity name="expression_zebrafish_gene_previous_name"
                     query="select
-                            dalias_alias as zebrafish_gene_alias,
+                            dalias_alias as expressed_gene_previous_name,
                             'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
