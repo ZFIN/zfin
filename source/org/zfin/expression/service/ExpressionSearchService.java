@@ -119,9 +119,10 @@ public class ExpressionSearchService {
             addTo(solrQuery).fqAny(FieldName.REPORTER_GENE);
         }
 
-        String journalType = criteria.getJournalType();
-        if (StringUtils.isNotEmpty(journalType) && !StringUtils.equals(journalType,"all")) {
-            addTo(solrQuery).fq(criteria.getJournalType(),FieldName.JOURNAL_TYPE);
+        if (criteria.getJournalType() == ExpressionSearchCriteria.JournalTypeOption.DIRECT) {
+            addTo(solrQuery).fq(Publication.Type.UNPUBLISHED.getDisplay(), FieldName.JOURNAL_TYPE);
+        } else if (criteria.getJournalType() == ExpressionSearchCriteria.JournalTypeOption.PUBLISHED) {
+            addTo(solrQuery).fqNot(Publication.Type.UNPUBLISHED.getDisplay(), FieldName.JOURNAL_TYPE);
         }
 
         solrQuery.setRows(criteria.getRows());

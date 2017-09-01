@@ -21,7 +21,7 @@ public class ExpressionSearchCriteria {
     private String endStageId;
     private String assayName;
     private String fish;
-    private String journalType;
+    private JournalTypeOption journalType;
 
     private String anatomyTermNames;
     private String anatomyTermIDs;
@@ -50,7 +50,7 @@ public class ExpressionSearchCriteria {
         urlCreator.addNameValuePair("assayName", getAssayName());
         urlCreator.addNameValuePair("fish", getFish());
         urlCreator.addNameValuePair("authorField", getAuthorField());
-        urlCreator.addNameValuePair("journalType", getJournalType());
+        urlCreator.addNameValuePair("journalType", getJournalType().toString());
         if (onlyFiguresWithImages) { urlCreator.addNameValuePair("onlyFiguresWithImages", "true"); }
         if (onlyWildtype) { urlCreator.addNameValuePair("onlyWildtype", "true"); }
         if (onlyReporter) { urlCreator.addNameValuePair("onlyReporter", "true"); }
@@ -72,11 +72,11 @@ public class ExpressionSearchCriteria {
         this.authorField = authorField;
     }
 
-    public String getJournalType() {
+    public JournalTypeOption getJournalType() {
         return journalType;
     }
 
-    public void setJournalType(String journalType) {
+    public void setJournalType(JournalTypeOption journalType) {
         this.journalType = journalType;
     }
 
@@ -250,5 +250,21 @@ public class ExpressionSearchCriteria {
 
     public void setLinkWithImagesOnly(String linkWithImagesOnly) {
         this.linkWithImagesOnly = linkWithImagesOnly;
+    }
+
+    public enum JournalTypeOption {
+        DIRECT("Show only direct submission data"),
+        PUBLISHED("Show only published literature"),
+        ALL("Show all");
+
+        private String label;
+
+        JournalTypeOption(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
     }
 }

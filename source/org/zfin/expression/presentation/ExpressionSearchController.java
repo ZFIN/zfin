@@ -39,6 +39,11 @@ public class ExpressionSearchController {
         return infrastructureRepository.getAllAssays();
     }
 
+    @ModelAttribute("journalTypeOptions")
+    public ExpressionSearchCriteria.JournalTypeOption[] populateJournalTypeOptions() {
+        return ExpressionSearchCriteria.JournalTypeOption.values();
+    }
+
     @RequestMapping("/search")
     public String search(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria) {
 
@@ -46,7 +51,7 @@ public class ExpressionSearchController {
         model.addAttribute("stages", stages);
         criteria.setStartStageId(stages.firstKey());
         criteria.setEndStageId(stages.lastKey());
-        criteria.setJournalType("all");
+        criteria.setJournalType(ExpressionSearchCriteria.JournalTypeOption.ALL);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search");
         return "expression/search.page";

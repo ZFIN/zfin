@@ -34,6 +34,11 @@ public class SolrQueryFacade {
         return this;
     }
 
+    public SolrQueryFacade fqNot(String value, FieldName field) {
+        query.addFilterQuery("-" + fqString(value, field));
+        return this;
+    }
+
     public SolrQueryFacade fqAny(FieldName field) {
         return fqRange("*", "*", field);
     }

@@ -113,9 +113,9 @@
                     <div><form:checkbox path="onlyFiguresWithImages" id="onlyFiguresWithImages"/> <label for="onlyFiguresWithImages">Show only figures with images</label></div>
                 </div>
                 <div class="form-group">
-                    <div><form:radiobutton path="journalType" value="${Publication.Type.UNPUBLISHED}" label="Show only direct submission data"/> </div>
-                    <div><form:radiobutton path="journalType" value="${Publication.Type.PUBLISHED}" label="Show only published literature"/> </div>
-                    <div><form:radiobutton path="journalType" value="all" label="Show all"/> </div>
+                    <c:forEach items="${journalTypeOptions}" var="type">
+                        <div><form:radiobutton path="journalType" value="${type}" label="${type.label}"/> </div>
+                    </c:forEach>
                 </div>
             </td>
         </tr>
