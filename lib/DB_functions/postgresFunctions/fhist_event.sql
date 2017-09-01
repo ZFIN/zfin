@@ -1,9 +1,11 @@
-create or replace procedure 
+create or replace function 
 fhist_event( active_feature text, 
-	     event varchar(40), 
-	     new_value varchar(255), 
-             old_value varchar(255) )
+	     event text, 
+	     new_value text, 
+             old_value text )
 returns void as $$
+
+
 
 -- This procedure is triggered by updates to Feature.ftr_name and 
 -- Feature.ftr_abbrev.
@@ -45,7 +47,7 @@ IF (new_value != old_value or event = 'assigned') THEN
   IF (vfeature_type <> '') THEN  
   --------------------------------------------------------------------
       --Get FEATURE_HISTORY zdb_id
-      LET nomen_zdb_id = get_id('FHIST');
+      nomen_zdb_id = get_id('FHIST');
       INSERT INTO zdb_active_data VALUES(nomen_zdb_id);
 
       IF (event = 'assigned')  THEN
@@ -73,7 +75,7 @@ IF (new_value != old_value or event = 'assigned') THEN
       ----------------------------------------------------------------
           --Get DALIAS zdb_id if alias doesn't exist
           ------------------------------------------
-          LET count = 0;
+          count = 0;
  
           SELECT count(*)::INTEGER
           INTO count
@@ -82,7 +84,7 @@ IF (new_value != old_value or event = 'assigned') THEN
             AND dalias_alias = old_value;
 
           IF (count = 0) THEN
-            LET data_zdb_id  = get_id('DALIAS');
+            data_zdb_id  = get_id('DALIAS');
             INSERT INTO zdb_active_data VALUES(data_zdb_id);
             INSERT INTO data_alias (dalias_zdb_id, dalias_data_zdb_id,
 					dalias_alias,dalias_group_id,
@@ -148,6 +150,6 @@ IF (new_value != old_value or event = 'assigned') THEN
 
 END IF;  -------(new != old or assigned)--------
 
-END
+END;
 
-$$ LANGUAGE plpgsql
+$$ LANGUAGE plpgsql;
