@@ -2,7 +2,7 @@ create or replace function update_construct_name (constructId text, componentId 
 returns void as $$
 
    declare name varchar(255);
-    addName  construct_component.cc_component%TYPE := '';
+    	   addName  construct_component.cc_component%TYPE := '';
 
  begin  
    for addName in
@@ -11,13 +11,12 @@ returns void as $$
 	   where cc_construct_zdb_id = constructId
 	   order by cc_order asc
 	loop
-	name := name||addName;
-	addName := '';
+	name = name||addName;
+	addName = '';
         
-
    end loop;
    
-   name := trim(name);
+   select trim(name) into name from single;
    update construct
      set construct_name = name
      where construct_zdb_id = constructId;

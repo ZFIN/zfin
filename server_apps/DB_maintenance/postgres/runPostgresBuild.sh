@@ -113,3 +113,5 @@ ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/lib/DB_functions/postgresFunctions/by
 # load up the clobs into postgres
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/clobLoad.sql
 
+# create the update statements that we need to load up the clobs.
+${SOURCEROOT}/server_apps/DB_maintenance/postgres/createBinaryDump.sh
