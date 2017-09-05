@@ -10,10 +10,11 @@ cd $dumpLocation
 latestDump=`ls -td -- */ | head -n 1 | cut -d'/' -f1`
 echo $latestDump
 
+mkdir /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump
 # dump the fixed database
-${PGBINDIR}/pg_dump ${DBNAME} > /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump
+${PGBINDIR}/pg_dump -j 4 -F d -f /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump ${DBNAME}
 
-latestBinaryDump=$latestDump.bak
+#latestBinaryDump=$latestDump.bak
 
-pg_dump -Fc ${DBNAME} >  /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestBinaryDump
+#pg_dump -Fc ${DBNAME} >  /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump/$latestDump.bak
 
