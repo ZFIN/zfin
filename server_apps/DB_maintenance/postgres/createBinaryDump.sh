@@ -12,7 +12,7 @@ echo $latestDump
 
 mkdir /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump
 # dump the fixed database
-${PGBINDIR}/pg_dump -j 4 -Fc d -f /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump ${DBNAME}
+${PGBINDIR}/pg_dump -j 4 -Fc /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump ${DBNAME}
 
 #latestBinaryDump=$latestDump.bak
 
