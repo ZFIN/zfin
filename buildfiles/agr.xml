@@ -68,20 +68,23 @@
         </java>
     </target>
 
-    <property name="version" value="0.6.1"/>
-    <property name="index" value="10"/>
+    <property name="version" value="1.0"/>
+    <property name="index" value="1"/>
     <property name="daf-file" value="ZFIN_${version}_DAF.json"/>
     <property name="bgi-file" value="ZFIN_${version}_BGI.json"/>
+    <property name="gff-file" value="ZFIN_${version}_GFF.gff3"/>
     <property name="agr-file" value="ZFIN_${version}_${index}"/>
 
     <target name="archive-agr" depends="">
         <copy file="basic-gene-info-zfin.json" tofile="${bgi-file}"/>
         <copy file="disease-info-zfin.json" tofile="${daf-file}"/>
+        <copy file="zfin_genes.gff3" tofile="${gff-file}"/>
         <echo message="Create tar/gzip file of BGI"/>
         <tar compression="gzip" destfile="${agr-file}.tar.gz" >
             <tarfileset dir="${basedir}" >
                 <include name="${bgi-file}" />
                 <include name="${daf-file}" />
+                <include name="${gff-file}" />
             </tarfileset>
         </tar>
     </target>

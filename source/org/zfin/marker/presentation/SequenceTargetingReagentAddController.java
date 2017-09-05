@@ -18,6 +18,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.marker.service.MarkerSolrService;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.Organization;
 import org.zfin.profile.repository.ProfileRepository;
@@ -26,6 +27,7 @@ import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
 import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.sequence.repository.SequenceRepository;
 
@@ -46,6 +48,9 @@ public class SequenceTargetingReagentAddController {
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
     private static SequenceRepository sr = RepositoryFactory.getSequenceRepository();
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
+
+    @Autowired
+    MarkerSolrService markerSolrService;
 
     @ModelAttribute("formBean")
     private SequenceTargetingReagentAddBean getDefaultSearchForm(@RequestParam(value = "sequenceTargetingReagentType", required = false) String type,
@@ -169,6 +174,9 @@ public class SequenceTargetingReagentAddController {
             }
 
             HibernateUtil.flushAndCommitCurrentSession();
+
+            markerSolrService.addMarkerStub(newSequenceTargetingReagent, Category.SEQUENCE_TARGETING_REAGENT);
+
         } catch (Exception e) {
             try {
                 HibernateUtil.rollbackTransaction();

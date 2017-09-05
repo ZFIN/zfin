@@ -1,2 +1,0 @@
-create index construct_component_search_temp_all_engineered_names_bts_index
-  on construct_component_search_temp (ccs_engineered_region_all_names bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs_bts;

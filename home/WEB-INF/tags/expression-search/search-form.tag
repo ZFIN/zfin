@@ -38,6 +38,11 @@
                         <th><form:label path="targetGeneField" cssClass="namesearchLabel">Target Gene</form:label></th>
                         <td><form:input type="text" path="targetGeneField"/></td>
                     </tr>
+                    <tr>
+                        <th><form:label path="authorField" cssClass="namesearchLabel">Author</form:label></th>
+                        <td><form:input type="text" path="authorField"/></td>
+                    </tr>
+
                 </table>
                 <table border="0" bgcolor="#EEEEEE">
                     <tr>
@@ -103,8 +108,14 @@
                     </form:select>
                 </div>
                 <div class="form-group">
-                    <div><form:checkbox path="onlyWildtype" /> <label>Show only WT expression</label></div>
-                    <div><form:checkbox path="onlyFiguresWithImages"/> <label>Show only figures with images</label></div>
+                    <div><form:checkbox path="onlyWildtype" id="onlyWildtype"/> <label for="onlyWildtype">Show only WT expression</label></div>
+                    <div><form:checkbox path="onlyReporter" id="onlyReporter"/> <label for="onlyReporter">Show only reporter genes in transgenic fish</label></div>
+                    <div><form:checkbox path="onlyFiguresWithImages" id="onlyFiguresWithImages"/> <label for="onlyFiguresWithImages">Show only figures with images</label></div>
+                </div>
+                <div class="form-group">
+                    <div><form:radiobutton path="journalType" value="${Publication.Type.UNPUBLISHED}" label="Show only direct submission data"/> </div>
+                    <div><form:radiobutton path="journalType" value="${Publication.Type.PUBLISHED}" label="Show only published literature"/> </div>
+                    <div><form:radiobutton path="journalType" value="all" label="Show all"/> </div>
                 </div>
             </td>
         </tr>

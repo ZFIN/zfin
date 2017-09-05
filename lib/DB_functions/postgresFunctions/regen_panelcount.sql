@@ -34,6 +34,7 @@ begin
         group by refcross_id, mm_chromosome, marker_type;
 	
 
+
       drop table panel_count;
 
       alter table panel_count_new rename to panel_count;

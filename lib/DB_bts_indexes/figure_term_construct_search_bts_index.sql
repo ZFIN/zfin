@@ -1,2 +1,0 @@
-create index figure_term_construct_search_bts_index
-  on figure_term_construct_search (ftcs_term_group bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs_bts;

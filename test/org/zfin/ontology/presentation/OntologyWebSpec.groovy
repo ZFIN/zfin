@@ -30,7 +30,7 @@ class OntologyWebSpec extends AbstractZfinSmokeSpec {
         title == "ZFIN GO: Biological Process: developmental process"
         expect ontologyName.text(), startsWith("GO: Biological Process")
         expect termSynonyms.size(), is(1)
-        expect termSynonyms.text(), is("development")
+        expect termSynonyms.text(), containsString("development")
     }
 
     def "post-composed statement page"() {

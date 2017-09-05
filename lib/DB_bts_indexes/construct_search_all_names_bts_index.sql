@@ -1,2 +1,0 @@
-create index construct_search_all_names_bts_index
-  on construct_search (cons_all_names bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs_bts;

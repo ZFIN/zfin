@@ -1228,8 +1228,6 @@ public class HibernateMutantRepository implements MutantRepository {
                 "join fetch model.fishExperiment " +
                 "join fetch model.fishExperiment.fish " +
                 "join fetch model.fishExperiment.experiment " +
-                "join fetch model.fishExperiment.geneGenotypeExperiments " +
-                "join fetch model.fishExperiment.experiment.experimentConditions " +
                 "join fetch model.diseaseAnnotation " +
                 "join fetch model.diseaseAnnotation.disease " +
                 "join fetch model.diseaseAnnotation.publication ";

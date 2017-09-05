@@ -44,6 +44,10 @@ public class MarkerNotesController {
     public String getPhenotypeSelectNote() {
         return "marker/phenotype-note.insert";
     }
+    @RequestMapping("/note/phenotype-summary-note")
+    public String getPhenotypeSummarySelectNote() {
+        return "marker/phenotype-summary-note.insert";
+    }
 
     @RequestMapping("/note/omim-phenotype")
     public String getOmimPhenotypeNote() {

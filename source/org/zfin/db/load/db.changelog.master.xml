@@ -22,4 +22,5 @@
     <include file="source/org/zfin/db/load/1087/jackOlatern/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1088/kissingFace/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1089/lemon/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1089/moneyBag/db.changelog.master.xml"/>
 </databaseChangeLog>

@@ -6,7 +6,7 @@
 
 <c:if test="${!empty criteria.imageResults}">
   <div id="xpresimg_all">
-    <input type="hidden" name="xpatsel_thumbnail_page" id="xpatsel_thumbnail_page_hidden_field">
+    <input type="hidden" name="xpatsel_thumbnail_page" id="xpatsel_thumbnail_page_hidden_field" value="1"/>
     <div id="xpresimg_control_box">
       <span id="xpresimg_thumbs_title">Figure Gallery</span>
       <span id="xpresimg_controls"></span>
@@ -33,7 +33,7 @@
       document.getElementById('xpresimg_thumbs_title').innerHTML = "Figure Gallery (${fn:length(criteria.imageResults)} images)";
       function loadImages() {
           storedpage = imageBox.getHiddenCountInput().value;
-          if ((storedpage != null) && (storedpage != "")) {
+          if ((storedpage != null) && (storedpage != "") && Number.isInteger(storedpage)) {
               imageBox.jumpToPage(storedpage);
           } else {
               imageBox.displayFirstSet();

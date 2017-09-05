@@ -1,16 +1,15 @@
 package org.zfin.mutant.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.zfin.fish.FeatureGene;
-import org.zfin.mutant.ConstructGeneFeature;
 import org.zfin.feature.Feature;
-import org.zfin.marker.Marker;
-import org.zfin.fish.MutationType;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
+import org.zfin.marker.Marker;
 import org.zfin.profile.Organization;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Zfin Entity that only exists in the warehouse context at this time.
@@ -60,8 +59,6 @@ public class Construct extends ZfinEntity {
         this.alleles = alleles;
     }
 
-    private List<ConstructGeneFeature> featureGenes = new ArrayList<ConstructGeneFeature>();
-
     private List<String> genotypeExperimentIDs;
 
     public List<String> getGenotypeExperimentIDs() {
@@ -110,20 +107,6 @@ public class Construct extends ZfinEntity {
 
     private List<ZfinEntity> genes;
     private List<ZfinEntity> affectedGenes;
-    public void addFeatureGene(ConstructGeneFeature geneFeature) {
-        featureGenes.add(geneFeature);
-    }
-    public void addFeature(ConstructGeneFeature feature) {
-        featureGenes.add(feature);
-    }
-
-    public List<ConstructGeneFeature> getFeatureGenes() {
-        return featureGenes;
-    }
-
-    public void setFeatureGenes(List<ConstructGeneFeature> featureGenes) {
-        this.featureGenes = featureGenes;
-    }
 
     public int getExpressionFigureCount() {
         return expressionFigureCount;
