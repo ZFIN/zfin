@@ -70,7 +70,7 @@ public class Genotype implements Comparable, EntityZdbID {
     private Set<GenotypeAlias> aliases;
 
     @Column(name = "geno_complexity_order")
-    private String complexity;
+    private Integer complexity;
     @Transient
     private List<Publication> associatedPulications;
 
@@ -216,11 +216,11 @@ public class Genotype implements Comparable, EntityZdbID {
         this.aliases = aliases;
     }
 
-    public String getComplexity() {
+    public Integer getComplexity() {
         return complexity;
     }
 
-    public void setComplexity(String complexity) {
+    public void setComplexity(Integer complexity) {
         this.complexity = complexity;
     }
 
