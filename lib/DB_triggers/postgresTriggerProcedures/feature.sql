@@ -4,7 +4,7 @@ create or replace function feature()
 returns trigger as
 $BODY$
 declare feature_name feature.feature_name%TYPE;
-declare feature_abbrev feature.feature_abbrev%TYPE;
+--declare feature_abbrev feature.feature_abbrev%TYPE;
 declare feature_name_order feature.feature_name_order%TYPE;
 declare feature_abbrev_order feature.feature_abbrev_order%TYPE;
 
@@ -13,8 +13,8 @@ begin
      feature_name = (select scrub_char(NEW.feature_name));
      NEW.feature_name = feature_name;
 
-     feature_abbrev = (Select scrub_char(NEW.feature_abbrev));
-     NEW.feature_abbrev = feature_name;
+     --feature_abbrev = (Select scrub_char(NEW.feature_abbrev));
+     --NEW.feature_abbrev = feature_abbrev;
  
      feature_name_order = (Select zero_pad(NEW.feature_name_order));
      NEW.feature_name_order = feature_name_order;
@@ -37,6 +37,7 @@ begin
      perform fhist_event(NEW.feature_zdb_id,
        		'assigned', NEW.feature_name,NEW.feature_abbrev);
 
+     raise notice 'feature abbrev: %', NEW.feature_abbrev;
      perform checkDupFeaturePrefixLineDesignation (NEW.feature_lab_prefix_id, NEW.feature_line_number);
      perform populate_feature_Tracking(NEW.feature_abbrev, NEW.feature_name, NEW.feature_zdb_id);
 
@@ -45,6 +46,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger feature_trigger after insert on feature
+create trigger feature_trigger before insert on feature
  for each row
  execute procedure feature();
