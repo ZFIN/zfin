@@ -45,6 +45,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger feature_trigger before insert on feature
+create trigger feature_trigger after insert on feature
  for each row
  execute procedure feature();
