@@ -944,17 +944,22 @@
             />
 
             <entity name="marker_relations_1"
-                    query="select mrel_mrkr_1_zdb_id as marker_zdb_id,mrkr_abbrev as gene,mrkr_name as gene_full_name
+                    query="select
+                                mrel_mrkr_1_zdb_id as marker_zdb_id,
+                                mrkr_abbrev as gene,
+                                mrkr_name as gene_full_name
                               from marker , marker_relationship
                              where mrel_mrkr_2_zdb_id = mrkr_zdb_id
-                              and mrel_type in ('clone contains gene','clone contains small segment');"
+                              and mrel_type in ('clone contains gene','clone contains small segment', 'clone);"
                     cacheImpl="SortedMapBackedCache"
                     where="marker_zdb_id=marker.id"
             />
 
             <entity name="marker_related_genes"
                     query="select gene.mrkr_abbrev as gene,
+                             gene.mrkr_abbrev as related_gene_symbol,
                              gene.mrkr_name as gene_full_name,
+                             gene.mrkr_name as gene_full_name_ac,
                              c_contains_t.mrel_mrkr_1_zdb_id as marker_zdb_id
                       from marker_relationship g_produces_t, marker_relationship c_contains_t, marker gene
                       where g_produces_t.mrel_type = 'gene produces transcript'
@@ -962,12 +967,20 @@
                         and g_produces_t.mrel_mrkr_2_zdb_id = c_contains_t.mrel_mrkr_2_zdb_id
                         and g_produces_t.mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
                       UNION
-                        select mrkr_abbrev as gene,mrkr_name as gene_full_name, mrel_mrkr_2_zdb_id as marker_zdb_id
+                        select mrkr_abbrev as gene,
+                               mrkr_abbrev as related_gene_symbol,
+                        mrkr_name as gene_full_name,
+                        mrkr_name as gene_full_name_ac,
+                        mrel_mrkr_2_zdb_id as marker_zdb_id
                                               from marker , marker_relationship
                                              where mrel_mrkr_1_zdb_id = mrkr_zdb_id
-                                              and mrel_type in ('gene contains small segment','gene encodes small segment')
+                                              and mrel_type in ('gene produces transcript','gene encodes small segment','gene contains small segment')
                       UNION
-                        select mrkr_abbrev as gene,mrkr_name as gene_full_name, mrel_mrkr_2_zdb_id as marker_zdb_id
+                        select mrkr_abbrev as gene,
+                               mrkr_abbrev as related_gene_symbol,
+                        mrkr_name as gene_full_name,
+                        mrkr_name as gene_full_name_ac,
+                        mrel_mrkr_2_zdb_id as marker_zdb_id
                                               from marker , marker_relationship
                                              where mrel_mrkr_2_zdb_id = mrkr_zdb_id
                                              and mrel_type in ('clone contains gene');"
@@ -977,6 +990,7 @@
 
             <entity name="marker_related_gene_aliases"
                     query="select dalias_alias as gene_previous_name,
+                                  dalias_alias as gene_previous_name_ac,
                              c_contains_t.mrel_mrkr_1_zdb_id as marker_zdb_id
                       from marker_relationship g_produces_t, marker_relationship c_contains_t, data_alias
                       where g_produces_t.mrel_type = 'gene produces transcript'
@@ -984,12 +998,18 @@
                         and g_produces_t.mrel_mrkr_2_zdb_id = c_contains_t.mrel_mrkr_2_zdb_id 
                         and g_produces_t.mrel_mrkr_1_zdb_id = dalias_data_zdb_id
                     UNION
-                    select dalias_alias as gene_previous_name, mrel_mrkr_2_zdb_id as marker_zdb_id
+                    select dalias_alias as gene_previous_name,
+                           dalias_alias as gene_previous_name_ac,
+                    mrel_mrkr_2_zdb_id as marker_zdb_id
                                           from data_alias , marker_relationship
                                          where mrel_mrkr_1_zdb_id = dalias_data_zdb_id
-                                          and mrel_type in ('gene contains small segment','gene encodes small segment')
+                                          and mrel_type in ('gene produces transcript','gene encodes small segment','gene contains small segment')
+
                     UNION
-                    select dalias_alias as gene_previous_name, mrel_mrkr_2_zdb_id as marker_zdb_id
+                    select
+                    dalias_alias as gene_previous_name,
+                    dalias_alias as gene_previous_name_ac,
+                    mrel_mrkr_2_zdb_id as marker_zdb_id
                                           from data_alias, marker_relationship
                                          where mrel_mrkr_2_zdb_id = dalias_data_zdb_id
                                          and mrel_type in ('clone contains gene');"
@@ -5722,6 +5742,7 @@ and child.term_ontology = 'disease_ontology';
                     query="select
                             mrkr_abbrev as target,
                             mrkr_name as target_full_name,
+                            mrkr_name as gene_full_name_ac,
                             mrel_zdb_id
                             from marker_relationship
                                  join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id
@@ -5729,10 +5750,10 @@ and child.term_ontology = 'disease_ontology';
                     where="mrel_zdb_id=str_relationship.id"
                     cacheImpl="SortedMapBackedCache"
             />
-
             <entity name="str_target_previous_name"
                     query="select
                             dalias_alias as target_previous_name,
+                            dalias_alias as gene_previous_name_ac,
                             mrel_zdb_id
                             from data_alias
                                  join marker_relationship on mrel_mrkr_2_zdb_id = dalias_data_zdb_id
