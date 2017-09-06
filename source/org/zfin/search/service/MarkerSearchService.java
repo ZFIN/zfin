@@ -163,20 +163,24 @@ public class MarkerSearchService {
         startsWithFields.put(FieldName.ALIAS_AC,"^5");
         startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_SYMBOL_AUTOCOMPLETE,"^2");
         startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_NAME_AUTOCOMPLETE,"");
+        startsWithFields.put(FieldName.RELATED_GENE_SYMBOL,"");
+        startsWithFields.put(FieldName.GENE_PREVIOUS_NAME_AUTOCOMPLETE,"");
+        startsWithFields.put(FieldName.GENE_FULL_NAME_AUTOCOMPLETE,"");
+        startsWithFields.put(FieldName.CLONE_AUTOCOMPLETE,"");
         Map<FieldName, String> matchesFields = new HashMap<>();
         matchesFields.putAll(startsWithFields);
         matchesFields.put(FieldName.FULL_NAME,"^3");
 
         if (StringUtils.isNotEmpty(criteria.getName())) {
 
-            if (StringUtils.equals(criteria.getMatchType(), MATCHES)) {
-                query.setQuery(SolrService.dismax(criteria.getName(), matchesFields));
-            } else if (StringUtils.equals(criteria.getMatchType(),BEGINS_WITH)) {
+            if (StringUtils.equals(criteria.getMatchType(),BEGINS_WITH)) {
                 query.setQuery(SolrService.dismax(criteria.getName(),startsWithFields));
             } else if (StringUtils.equals(criteria.getMatchType(),CONTAINS)) {
                 //String wildcardQuery = "*" + SolrService.luceneEscape(criteria.getName() + "*");
                 String wildcardQuery = "*" + criteria.getName();
                 query.setQuery(SolrService.dismax(wildcardQuery, matchesFields, false));
+            } else {  //default to MATCHES
+                query.setQuery(SolrService.dismax(criteria.getName(), matchesFields));
             }
 
 

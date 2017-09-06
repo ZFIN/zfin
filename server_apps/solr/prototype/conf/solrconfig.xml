@@ -240,7 +240,7 @@
          <str name="f.related_accession.facet.limit">50</str>
          <!-- This is essentially the page size of the gallery mode pages-->
          <str name="f.img_zdb_id.facet.limit">50</str>
-
+         <str name="f.type_0.facet.sort">index</str>
 
 
         <str name="q.alt">*:*</str>

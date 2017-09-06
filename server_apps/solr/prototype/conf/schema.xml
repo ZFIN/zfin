@@ -606,7 +606,9 @@
 
         <field name="gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
+        <field name="gene_full_name_ac" type="edgytext" indexed="true" stored="true" multiValued="true"   />
         <field name="gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
+        <field name="gene_previous_name_ac" type="edgytext" indexed="true" stored="true" multiValued="true"   />
 
         <field name="zebrafish_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="zebrafish_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
@@ -1054,14 +1056,33 @@
     <copyField source="inserted_in_gene" dest="related_gene_symbol"/>
     <copyField source="affected_gene" dest="related_gene_symbol"/>
     <copyField source="affected_gene_previous_name" dest="related_gene_symbol"/>
+    <copyField source="gene_previous_name" dest="related_gene_symbol"/>
     <copyField source="antigen_gene" dest="related_gene_symbol"/>
     <!--<copyField source="genes_with_altered_expression" dest="related_gene_symbol"/>-->
     <copyField source="gene" dest="related_gene_symbol"/>
     <copyField source="zebrafish_gene" dest="related_gene_symbol"/>
     <copyField source="reporter_gene" dest="related_gene_symbol"/>
-    <copyField source="target" dest="related_gene_symbol"/>
+
+
     <!--    <copyField source="expressed_gene" dest="related_gene_symbol"/>-->
-    
+
+    <copyField source="gene_previous_name" dest="gene_previous_name_ac"/>
+    <copyField source="gene_full_name" dest="gene_full_name_ac"/>
+
+    <copyField source="target" dest="related_gene_symbol"/>
+    <copyField source="target_full_name" dest="gene_full_name_ac"/>
+    <copyfield source="target_previous_name" dest="gene_previous_name_ac"/>
+
+    <copyField source="inserted_in_gene" dest="related_gene_symbol"/>
+    <copyField source="inserted_in_gene_full_name" dest="gene_full_name_ac"/>
+    <copyfield source="inserted_in_gene_previous_name" dest="gene_previous_name_ac"/>
+
+    <copyField source="inserted_in_gene" dest="related_gene_symbol"/>
+    <copyField source="inserted_in_gene_full_name" dest="gene_full_name_ac"/>
+    <copyfield source="inserted_in_gene_previous_name" dest="gene_previous_name_ac"/>
+
+    <copyField source="clone" dest="clone_ac"/>
+
     <!-- experimenting with joins -->
     <copyField source="name" dest="name_s"/>
     <copyField source="name" dest="name_k"/>
