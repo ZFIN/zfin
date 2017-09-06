@@ -3,14 +3,12 @@ drop trigger if exists source_alias_trigger on source_alias;
 create or replace function source_alias()
 returns trigger as
 $BODY$
-declare salias_alias text;
-declare salias_alias_lower text;
+declare salias_alias text := scrub_char(NEW.salias_alias);
+declare salias_alias_lower text := lower(NEW.salias_alias_lower);
 begin
 
-     salias_alias = (select scrub_char(NEW.salias_alias));
      NEW.salias_alias = salias_alias;
 
-     salias_alias_lower = lower(NEW.salias_alias_lower);
      NEW.salias_alias_lower = salias_alias_lower;
      RETURN NEW;
 
