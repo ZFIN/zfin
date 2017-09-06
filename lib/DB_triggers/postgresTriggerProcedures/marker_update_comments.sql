@@ -3,10 +3,9 @@ drop trigger if exists marker_update_comments_trigger on marker;
 create or replace function marker_update_comments()
 returns trigger as
 $BODY$
-declare mrkr_comments marker.mrkr_comments%TYPE;
+declare mrkr_comments marker.mrkr_comments%TYPE := scrub_char(NEW.mrkr_comments);
 begin
 
-     mrkr_comments = (select scrub_char(NEW.mrkr_comments));
      NEW.mrkr_comments = mrkr_comments;
 
      return new;

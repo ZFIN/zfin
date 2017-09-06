@@ -3,15 +3,13 @@ drop trigger if exists genotype_handle_trigger on genotype;
 create or replace function genotype_handle()
 returns trigger as
 $BODY$
-declare geno_handle genotype.geno_handle%TYPE;
-declare geno_complexity_order genotype.geno_complexity_order%TYPE;
+declare geno_handle genotype.geno_handle%TYPE := scrub_char(NEW.geno_handle);
+declare geno_complexity_order genotype.geno_complexity_order%TYPE := update_geno_sort_order(NEW.geno_zdb_id);
 
 begin
 
-    geno_handle = (select scrub_char(NEW.geno_handle));
     NEW.geno_handle = geno_handle;
 
-    geno_complexity_order = (Select update_geno_sort_order(NEW.geno_zdb_id));
     NEW.geno_complexity_order = geno_complexity_order;
 
     perform p_update_related_fish_names(NEW.geno_zdb_id);

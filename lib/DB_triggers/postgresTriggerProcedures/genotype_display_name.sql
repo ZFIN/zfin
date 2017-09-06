@@ -3,15 +3,13 @@ drop trigger if exists genotype_display_name_trigger on genotype;
 create or replace function genotype_display_name()
 returns trigger as
 $BODY$
-declare geno_display_name genotype.geno_display_name%TYPE;
-declare geno_name_order genotype.geno_name_order%TYPE;
+declare geno_display_name genotype.geno_display_name%TYPE := scrub_char(NEW.geno_display_name);
+declare geno_name_order genotype.geno_name_order%TYPE := zero_pad(NEW.geno_name_order);
 
 begin
 
-    geno_display_name = (select scrub_char(NEW.geno_display_name));
     NEW.geno_display_name = geno_display_name;
 
-    geno_name_order = (Select zero_pad(NEW.geno_name_order));
     NEW.geno_name_order = geno_name_order;
 
     perform regen_names_genotype(NEW.geno_zdb_id);
