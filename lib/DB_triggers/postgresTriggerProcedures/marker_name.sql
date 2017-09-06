@@ -4,10 +4,10 @@ drop trigger if exists marker_name_trigger on marker;
 create or replace function marker_name()
 returns trigger as
 $BODY$
-declare mrkr_name marker.mrkr_name%TYPE;
-declare	mrkr_name_order marker.mrkr_name_order%TYPE;
+declare mrkr_name marker.mrkr_name%TYPE := scrub_char(NEW.mrkr_name);
+declare	mrkr_name_order marker.mrkr_name_order%TYPE := zero_pad(NEW.mrkr_name);
 begin
-     mrkr_name = (select scrub_char(NEW.mrkr_name));     
+     
      NEW.mrkr_name = mrkr_name;
      
      perform updateAbbrevEqualName (NEW.mrkr_zdb_id, 
@@ -18,7 +18,7 @@ begin
      	    			 NEW.mrkr_abbrev,
 				 NEW.mrkr_type);
      
-     mrkr_name_order = zero_pad(NEW.mrkr_name);
+
      NEW.mrkr_name_order = mrkr_name_lower;
 
      perform p_update_related_fish_names(NEW.mrkr_zdb_id);
