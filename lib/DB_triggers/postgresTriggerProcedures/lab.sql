@@ -4,27 +4,22 @@ create or replace function lab()
 returns trigger as
 $BODY$
 
-declare phone lab.phone%TYPE;
-declare fax lab.fax%TYPE;
-declare email lab.email%TYPE;
-declare url lab.url%TYPE;
-declare name lab.name%TYPE;
+declare phone lab.phone%TYPE := scrub_char(NEW.phone);
+declare fax lab.fax%TYPE := scrub_char(NEW.fax);
+declare email lab.email%TYPE := scrub_char(NEW.email);
+declare url lab.url%TYPE := scrub_char(NEW.url);
+declare name lab.name%TYPE :=scrub_char(NEW.name);
 
 begin
 
-     phone = (select scrub_char(NEW.phone));
      NEW.phone = phone;
 
-     fax = (select scrub_char(NEW.fax));
      NEW.fax = fax;
 
-     url = (select scrub_char(NEW.url));
      NEW.url = url;
 
-     name = (Select scrub_char(NEW.name));
      NEW.name = name;
 
-     email = (select scrub_char(NEW.email));
      NEW.email = email;
      
      RETURN NEW;

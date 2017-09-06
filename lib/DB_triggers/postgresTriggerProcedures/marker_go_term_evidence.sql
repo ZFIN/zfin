@@ -3,7 +3,7 @@ drop trigger if exists marker_go_term_evidence_trigger on marker_go_term_evidenc
 create or replace function marker_go_term_evidence()
 returns trigger as
 $BODY$
-declare mrkrgoev_notes marker_go_term_evidence.mrkrgoev_notes%TYPE;
+declare mrkrgoev_notes marker_go_term_evidence.mrkrgoev_notes%TYPE := scrub_char(NEW.mrkrgoev_notes);
 begin
 
      select p_goterm_not_obsolete (
@@ -22,7 +22,6 @@ begin
 			NEW.mrkrgoev_mrkr_zdb_id,
 			NEW.mrkrgoev_source_zdb_id);
 
-     mrkrgoev_notes = (select scrub_char(NEW.mrkrgoev_notes));
      NEW.mrkrgoev_notes = mrkrgoev_notes;
      
      RETURN NEW;
