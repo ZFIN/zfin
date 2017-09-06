@@ -20,6 +20,8 @@ Redirect  /zf_info/news/jobs.rss https://wiki.zfin.org/spaces/createrssfeed.acti
 Redirect /zf_info/news/mtgs.rss https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=meetings&title=Zebrafish+Meetings&publicFeed=true&maxResults=-1&sort=created&timeSpan=-1
 Redirect /zf_info/news/siteNews.rss https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=news&title=Zebrafish+News&publicFeed=true&maxResults=-1&sort=created&timeSpan=120
 
+Redirect /zf_info/submissions.html https://wiki.zfin.org/display/general/ZFIN+Data+Submissions
+
 #version independent gbrowse link
 RewriteRule ^/genome-browser    /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
 RewriteRule ^/cgi-perl/gbrowse  /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
