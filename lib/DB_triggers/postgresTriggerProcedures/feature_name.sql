@@ -4,13 +4,12 @@ drop trigger if exists feature_name_trigger on publication;
 create or replace function feature_name()
 returns trigger as
 $BODY$
-declare feature_name feature.feature_name%TYPE;
-declare feature_name_order feature.feature_name_order%TYPE;
+declare feature_name feature.feature_name%TYPE := scrub_char(feature_name);
+declare feature_name_order feature.feature_name_order%TYPE := zero_pad(feature_name_order);
 begin
-     feature_name = (select scrub_char(feature_name));
+     
      NEW.feature_name = feature_name;
      
-     feature_name_order = (select zero_pad(feature_name_order));
      NEW.feature_name_order = feature_name_order;
 
      perform fhist_event(NEW.feature_zdb_id,

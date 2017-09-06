@@ -3,10 +3,9 @@ drop trigger if exists updates_trigger on updates;
 create or replace function updates()
 returns trigger as
 $BODY$
-declare rec_id text;
+declare rec_id text := scrub_char(NEW.rec_id);
 begin
      
-     rec_id = (select scrub_char(NEW.rec_id));
      NEW.rec_id = rec_id;
      RETURN NEW;
 

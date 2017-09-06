@@ -3,10 +3,9 @@ drop trigger if exists zdb_submitters_trigger on zdb_submitters;
 create or replace function zdb_submitters()
 returns trigger as
 $BODY$
-declare name text;
+declare name text := scrub_char(NEW.name);
 begin
      
-     name = (select scrub_char(NEW.name));
      NEW.name = name;
      RETURN NEW;
 

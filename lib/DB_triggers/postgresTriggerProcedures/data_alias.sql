@@ -4,15 +4,13 @@ create or replace function data_alias()
 returns trigger as
 $BODY$
 
-declare dalias_alias data_alias.dalias_alias%TYPE;
-declare dalias_alias_lower data_alias.dalias_alias_lower%TYPE;
+declare dalias_alias data_alias.dalias_alias%TYPE := scrub_char(NEW.dalias_alias);
+declare dalias_alias_lower data_alias.dalias_alias_lower%TYPE := lower(NEW.dalias_alias);
 
 begin
 
-     dalias_alias = (Select scrub_char(NEW.dalias_alias));
      NEW.dalias_alias = dalias_alias;
      
-     dalias_alias_lower = lower(NEW.dalias_alias);
      NEW.dalias_alias_lower = dalias_alias_lower;
    
      RETURN NEW;
