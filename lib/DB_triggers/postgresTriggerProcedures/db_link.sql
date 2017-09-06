@@ -4,25 +4,21 @@ create or replace function db_link()
 returns trigger as
 $BODY$
 
-declare dblink_acc_num db_link.dblink_acc_num%TYPE;
-declare dblink_acc_num_display db_link.dblink_acc_num_display%TYPE;
+declare dblink_acc_num db_link.dblink_acc_num%TYPE := scrub_char(new_db_link.dblink_acc_num);
+
+declare dblink_acc_num_display db_link.dblink_acc_num_display%TYPE := get_dblink_acc_num_display(NEW.dblink_fdbcont_zdb_id, NEW.dblink_acc_num)) ;
 
 
 begin
 
-     dblink_Acc_num = (select scrub_char(new_db_link.dblink_acc_num) );
      NEW.dblink_acc_num = dblink_acc_num;
-
-     dblink_acc_num_display = (select get_dblink_acc_num_display(
-	NEW.dblink_fdbcont_zdb_id,
-	NEW.dblink_acc_num)) ;
      NEW.dblink_acc_num_display = dblink_acc_num_display;
-   
-     perform  p_dblink_has_parent(NEW.dblink_linked_recid) ;
 
-     perform  p_check_caps_acc_num(NEW.dblink_fdbcont_zdb_id, NEW.dblink_acc_num);
+     perform p_dblink_has_parent(NEW.dblink_linked_recid) ;
 
-     perform  checkDblinkTranscriptWithdrawn(NEW.dblink_zdb_id,
+     perform p_check_caps_acc_num(NEW.dblink_fdbcont_zdb_id, NEW.dblink_acc_num);
+
+     perform checkDblinkTranscriptWithdrawn(NEW.dblink_zdb_id,
 					    NEW.dblink_linked_recid,
 					    NEW.dblink_fdbcont_zdb_id);
  --TODO: return into two variables
