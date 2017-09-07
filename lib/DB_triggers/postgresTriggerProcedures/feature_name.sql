@@ -1,4 +1,4 @@
-drop trigger if exists feature_name_trigger on publication;
+drop trigger if exists feature_name_trigger on feature;
 
 
 create or replace function feature_name()
