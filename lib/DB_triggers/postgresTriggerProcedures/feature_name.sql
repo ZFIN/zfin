@@ -4,8 +4,8 @@ drop trigger if exists feature_name_trigger on feature;
 create or replace function feature_name()
 returns trigger as
 $BODY$
-declare feature_name feature.feature_name%TYPE := scrub_char(feature_name);
-declare feature_name_order feature.feature_name_order%TYPE := zero_pad(feature_name_order);
+declare feature_name feature.feature_name%TYPE := scrub_char(NEW.feature_name);
+declare feature_name_order feature.feature_name_order%TYPE := zero_pad(NEW.feature_name_order);
 begin
      
      NEW.feature_name = feature_name;

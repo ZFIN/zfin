@@ -9,7 +9,9 @@ declare feature_abbrev_order feature.feature_abbrev_order%TYPE :=scrub_char(NEW.
 
 begin
 
-     
+     NEW.feature_abbrev = feature_abbrev;
+     NEW.feature_abbrev_order = feature_abbrev_order;
+
      perform checkFeatureAbbrev(NEW.feature_zdb_id,
        		 		     NEW.feature_type, 
        		 		     NEW.feature_abbrev, 
@@ -28,7 +30,7 @@ begin
      
      perform checkDupFeaturePrefixLineDesignation (NEW.feature_lab_prefix_id, NEW.feature_line_number);
 
-     perform populate_feature_tracking(feature_abbrev, NEW.feature_name, NEW.feature_zdb_id); 
+     perform populate_feature_tracking(NEW.feature_abbrev, NEW.feature_name, NEW.feature_zdb_id); 
 
      RETURN NEW;
 end;
