@@ -6,7 +6,7 @@ FROM   marker
         FROM   db_link dbl1
         WHERE  dblink_acc_num LIKE 'ENSDARG%'
         GROUP  BY dblink_linked_recid
-        HAVING Count(*) > 1)
+        HAVING Count(*) > 1) as query
     ON mrkr_zdb_id = troublemaker_zdb_id
   JOIN db_link
     ON dblink_linked_recid = mrkr_zdb_id
