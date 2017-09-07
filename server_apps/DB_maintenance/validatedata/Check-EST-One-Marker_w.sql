@@ -2,7 +2,7 @@ SELECT mrkr_zdb_id,
        mrkr_name, 
        mrkr_abbrev 
 FROM   marker m2 
-WHERE  mrkr_type = "EST"
+WHERE  mrkr_type = 'EST'
        AND 1 < (SELECT count(*)
                 FROM   marker m1, 
                        marker_relationship 
@@ -11,7 +11,7 @@ WHERE  mrkr_type = "EST"
                        AND m1.mrkr_type IN (SELECT mtgrpmem_mrkr_type 
                                             FROM   marker_type_group_member 
                                             WHERE  mtgrpmem_mrkr_type_group = 
-                                                   "GENEDOM"
+                                                   'GENEDOM'
                                            ) 
                        AND mrel_type = 'gene encodes small segment') 
 ORDER  BY mrkr_name; 
