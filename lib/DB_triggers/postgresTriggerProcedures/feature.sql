@@ -3,23 +3,20 @@ drop trigger if exists feature_trigger on feature;
 create or replace function feature()
 returns trigger as
 $BODY$
-declare feature_name feature.feature_name%TYPE;
---declare feature_abbrev feature.feature_abbrev%TYPE;
-declare feature_name_order feature.feature_name_order%TYPE;
-declare feature_abbrev_order feature.feature_abbrev_order%TYPE;
+declare feature_name feature.feature_name%TYPE := scrub_char(NEW.feature_name);
+declare feature_abbrev feature.feature_abbrev%TYPE := scrub_char(NEW.feature_abbrev);
+declare feature_name_order feature.feature_name_order%TYPE := zero_pad(NEW.feature_name_order);
+declare feature_abbrev_order feature.feature_abbrev_order%TYPE := zero_pad(NEW.feature_abbrev_order);
 
 begin
 
-     feature_name = (select scrub_char(NEW.feature_name));
      NEW.feature_name = feature_name;
 
-     --feature_abbrev = (Select scrub_char(NEW.feature_abbrev));
-     --NEW.feature_abbrev = feature_abbrev;
+     
+     NEW.feature_abbrev = feature_abbrev;
  
-     feature_name_order = (Select zero_pad(NEW.feature_name_order));
      NEW.feature_name_order = feature_name_order;
    
-     feature_abbrev_order = (Select zero_pad(NEW.feature_abbrev_order));
      NEW.feature_abbrev_order = feature_abbrev_order;
 
      perform checkFeatureAbbrev(NEW.feature_zdb_id,
@@ -37,7 +34,6 @@ begin
      perform fhist_event(NEW.feature_zdb_id,
        		'assigned', NEW.feature_name,NEW.feature_abbrev);
 
-     raise notice 'feature abbrev: %', NEW.feature_abbrev;
      perform checkDupFeaturePrefixLineDesignation (NEW.feature_lab_prefix_id, NEW.feature_line_number);
      perform populate_feature_Tracking(NEW.feature_abbrev, NEW.feature_name, NEW.feature_zdb_id);
 
