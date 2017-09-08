@@ -7,6 +7,7 @@ import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.curation.repository.CurationRepositoryTest;
 import org.zfin.curation.service.CurationDTOConversionServiceSpec;
+import org.zfin.database.InformixUtil;
 import org.zfin.database.presentation.DatabaseServiceDbTest;
 import org.zfin.datatransfer.go.GafParserUnitTest;
 import org.zfin.datatransfer.go.service.FpInferenceGafServiceTest;
@@ -23,7 +24,6 @@ import org.zfin.figure.service.FigureViewServiceSpec;
 import org.zfin.figure.service.ImageServiceSpec;
 import org.zfin.figure.service.VideoServiceSpec;
 import org.zfin.fish.repository.FishRepositoryTest;
-//import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.framework.presentation.ZfinJSPFunctionsTest;
 import org.zfin.gbrowse.GBrowseServiceTest;
@@ -43,7 +43,9 @@ import org.zfin.marker.presentation.SequenceTargetingReagentAddBeanValidatorSpec
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.PhenotypeServiceDBTest;
-import org.zfin.mutant.repository.*;
+import org.zfin.mutant.repository.MarkerGoTermEvidenceRepositoryTest;
+import org.zfin.mutant.repository.MutantRepositoryTest;
+import org.zfin.mutant.repository.PhenotypeRepositoryTest;
 import org.zfin.ontology.OntologyManagerTest;
 import org.zfin.ontology.OntologySerializationTest;
 import org.zfin.ontology.repository.OntologyRepositoryTest;
@@ -68,6 +70,8 @@ import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
 import org.zfin.uniquery.SequenceIdListTest;
 import org.zfin.webservice.MarkerSoapDbTest;
 import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
+
+//import org.zfin.fish.repository.FishServiceTest;
 
 
 /**
@@ -109,6 +113,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         GoEvidenceTest.class,
         GwtConversionTest.class,
         ImageServiceSpec.class,
+        InformixUtil.class,
         InfrastructureRepositoryTest.class,
         LinkageRepositoryTest.class,
         MapAccessionDbLinkTest.class,

@@ -3,6 +3,7 @@ package org.zfin.database;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.LoggingUtil;
 
 import java.sql.CallableStatement;
@@ -34,7 +35,11 @@ public class InformixUtil {
             @Override
             public void execute(Connection connection) throws SQLException {
                 CallableStatement statement = null;
-                StringBuffer sql = new StringBuffer("EXECUTE PROCEDURE ");
+                StringBuffer sql = new StringBuffer();
+                if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("true"))
+                    sql = sql.append("SELECT ");
+                else
+                    sql = sql.append("EXECUTE PROCEDURE ");
                 sql.append(procedureName);
                 StringBuilder argumentString = new StringBuilder();
                 if (arguments != null) {
