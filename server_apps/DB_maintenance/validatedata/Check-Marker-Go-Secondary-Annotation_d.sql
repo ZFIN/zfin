@@ -11,6 +11,6 @@ from
    marker  
 where
    mrkrgoev_term_zdb_id = term_zdb_id      
-   and term_is_secondary = "t"      
+   and term_is_secondary = 't'
    and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id
 order by mrkr_abbrev, mrkrgoev_evidence_code
