@@ -212,4 +212,8 @@
 
 <img id="zdbhome-fishimg" src="/images/betterfish.jpg">
 
-
+<div class="agr-logo-container">
+    <a href="http://www.alliancegenome.org">
+        <img src="/images/ALLIANCE-logo-nobackground_foundingmember.png">
+    </a>
+</div>

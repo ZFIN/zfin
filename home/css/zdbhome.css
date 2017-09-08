@@ -147,3 +147,10 @@
     position:relative;
     top: -1px;
 }
+
+.agr-logo-container {
+    text-align: center;
+}
+.agr-logo-container img {
+    width: 65%;
+}
