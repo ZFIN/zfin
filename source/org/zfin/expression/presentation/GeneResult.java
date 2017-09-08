@@ -1,13 +1,18 @@
 package org.zfin.expression.presentation;
 
+import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
+import org.zfin.publication.Publication;
 
 public class GeneResult extends ExpressionSearchResult {
 
     private String symbol;
     private String id;
     private Integer publicationCount;
+    private Publication singlePublication;
     private Integer figureCount;
+    private Figure singleFigure;
+    private boolean hasImage;
     private Marker gene;
     private String matchingText;
     private String figureResultUrl;
@@ -38,12 +43,36 @@ public class GeneResult extends ExpressionSearchResult {
         this.publicationCount = publicationCount;
     }
 
+    public Publication getSinglePublication() {
+        return singlePublication;
+    }
+
+    public void setSinglePublication(Publication singlePublication) {
+        this.singlePublication = singlePublication;
+    }
+
     public Integer getFigureCount() {
         return figureCount;
     }
 
     public void setFigureCount(Integer figureCount) {
         this.figureCount = figureCount;
+    }
+
+    public Figure getSingleFigure() {
+        return singleFigure;
+    }
+
+    public void setSingleFigure(Figure singleFigure) {
+        this.singleFigure = singleFigure;
+    }
+
+    public boolean isHasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 
     public Marker getGene() {

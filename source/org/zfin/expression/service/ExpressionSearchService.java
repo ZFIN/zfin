@@ -4,10 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.FieldStatsInfo;
-import org.apache.solr.client.solrj.response.Group;
-import org.apache.solr.client.solrj.response.GroupCommand;
-import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.*;
 import org.apache.solr.common.SolrDocument;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
@@ -24,7 +21,9 @@ import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import static org.zfin.search.service.SolrQueryFacade.addTo;
 
 
@@ -270,10 +269,8 @@ public class ExpressionSearchService {
         if (gene == null) {
             return geneResult;
         }
-
-        Map<String, Integer> counts = getCounts(gene, criteria, FieldName.PUBLICATION, FieldName.FIG_ZDB_ID);
-        geneResult.setPublicationCount(counts.get(FieldName.PUBLICATION.getName()));
-        geneResult.setFigureCount(counts.get(FieldName.FIG_ZDB_ID.getName()));
+        
+        populateFigureInfo(geneResult, criteria);
         populateStageRange(geneResult, criteria, AND, fq(FieldName.GENE_ZDB_ID, gene.getZdbID()));
 
         return geneResult;
@@ -294,17 +291,16 @@ public class ExpressionSearchService {
         return imageResults;
     }
 
-    private static Map<String, Integer> getCounts(Marker gene, ExpressionSearchCriteria criteria, FieldName... fields) {
+    private static void populateFigureInfo(GeneResult result, ExpressionSearchCriteria criteria) {
         SolrQuery solrQuery = new SolrQuery();
-
-        solrQuery = applyCriteria(solrQuery, criteria, OR);
-        solrQuery.addFilterQuery(fq(FieldName.GENE_ZDB_ID, gene.getZdbID()));
+        solrQuery = applyCriteria(solrQuery, criteria, AND);
+        solrQuery.addFilterQuery(fq(FieldName.GENE_ZDB_ID, result.getGene().getZdbID()));
         solrQuery.add("group", TRUE);
         solrQuery.add("group.ngroups", TRUE);
-        for (FieldName field : fields) {
-            solrQuery.add("group.field", field.getName());
-        }
-        solrQuery.setRows(0);
+        solrQuery.add("group.field", FieldName.PUB_ZDB_ID.getName());
+        solrQuery.add("group.field", FieldName.FIG_ZDB_ID.getName());
+        solrQuery.add("group.field", FieldName.HAS_IMAGE.getName());
+        solrQuery.setRows(3);
 
         QueryResponse queryResponse = null;
         try {
@@ -312,10 +308,22 @@ public class ExpressionSearchService {
         } catch (SolrServerException | IOException e) {
             e.printStackTrace();
         }
-
-        return queryResponse.getGroupResponse().getValues()
-                .stream()
-                .collect(Collectors.toMap(GroupCommand::getName, GroupCommand::getNGroups));
+        Map<String, GroupCommand> groups =  queryResponse.getGroupResponse().getValues().stream()
+                .collect(Collectors.toMap(GroupCommand::getName, Function.identity()));
+        GroupCommand pubGroup = groups.get(FieldName.PUB_ZDB_ID.getName());
+        result.setPublicationCount(pubGroup.getNGroups());
+        if (pubGroup.getNGroups() == 1) {
+            String pubId = pubGroup.getValues().get(0).getGroupValue();
+            Publication publication = RepositoryFactory.getPublicationRepository().getPublication(pubId);
+            result.setSinglePublication(publication);
+        }
+        GroupCommand figGroup = groups.get(FieldName.FIG_ZDB_ID.getName());
+        result.setFigureCount(figGroup.getNGroups());
+        if (figGroup.getNGroups() == 1) {
+            String figId = figGroup.getValues().get(0).getGroupValue();
+            Figure figure = RepositoryFactory.getPublicationRepository().getFigure(figId);
+            result.setSingleFigure(figure);
+        }
     }
 
     private static void populateStageRange(ExpressionSearchResult result, ExpressionSearchCriteria criteria,

@@ -18,11 +18,27 @@
         <zfin:alternating-tr loopName="loop" groupBeanCollection="${criteria.geneResults}" groupByBean="gene.zdbID">
             <td><zfin:link entity="${result.gene}"/></td>
             <td>
-                <a href="${criteria.getUrl(result.gene)}">
-                        ${result.figureCount} Figures
-                </a>
+                <c:choose>
+                    <c:when test="${result.figureCount == 1}">
+                        <zfin:link entity="${result.singleFigure}" />
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${criteria.getUrl(result.gene)}">
+                                ${result.figureCount} Figures
+                        </a>
+                    </c:otherwise>
+                </c:choose>
 
-                from ${result.publicationCount} Publications
+                from
+
+                <c:choose>
+                    <c:when test="${result.publicationCount == 1}">
+                        <zfin:link entity="${result.singlePublication}" />
+                    </c:when>
+                    <c:otherwise>
+                        ${result.publicationCount} Publications
+                    </c:otherwise>
+                </c:choose>
             </td>
             <td>
                 <zfin2:stageRange earliestStartStage="${result.startStage}" latestEndStage="${result.endStage}" />
