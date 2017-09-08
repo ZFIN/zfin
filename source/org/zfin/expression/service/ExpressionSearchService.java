@@ -48,8 +48,9 @@ public class ExpressionSearchService {
 
         if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
             String termQuery = criteria.getAnatomy().stream()
+                    .map(t -> "\"" + SolrService.luceneEscape(t) + "\"")
                     .collect(Collectors.joining(" " + anatomyBoolean + " "));
-            solrQuery.addFilterQuery(fq(FieldName.EXPRESSION_ANATOMY_TF, termQuery));
+            solrQuery.addFilterQuery(FieldName.EXPRESSION_ANATOMY_TF.getName() + ":(" + termQuery + ")");
         }
 
         String geneField = criteria.getGeneField();
