@@ -269,7 +269,7 @@ public class ExpressionSearchService {
         if (gene == null) {
             return geneResult;
         }
-        
+
         populateFigureInfo(geneResult, criteria);
         populateStageRange(geneResult, criteria, AND, fq(FieldName.GENE_ZDB_ID, gene.getZdbID()));
 
@@ -323,6 +323,12 @@ public class ExpressionSearchService {
             String figId = figGroup.getValues().get(0).getGroupValue();
             Figure figure = RepositoryFactory.getPublicationRepository().getFigure(figId);
             result.setSingleFigure(figure);
+        }
+        GroupCommand imageGroup = groups.get(FieldName.HAS_IMAGE.getName());
+        for (Group group : imageGroup.getValues()) {
+            if (StringUtils.equals(group.getGroupValue(), "true")) {
+                result.setHasImage(true);
+            }
         }
     }
 

@@ -39,6 +39,8 @@
                         ${result.publicationCount} Publications
                     </c:otherwise>
                 </c:choose>
+                <c:out value=" "/>
+                <zfin2:showCameraIcon hasImage="${result.hasImage}" />
             </td>
             <td>
                 <zfin2:stageRange earliestStartStage="${result.startStage}" latestEndStage="${result.endStage}" />
