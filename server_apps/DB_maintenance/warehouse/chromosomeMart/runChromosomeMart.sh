@@ -44,10 +44,10 @@ end
 
 if ("X$1" == "X") then
 echo "ready to start dropTables.sql DBNAME from environment." ;
-/private/apps/Informix/informix/bin/dbaccess -a $DBNAME $FULL_SCRIPT_FILE
+${PGBINDIR}/psql $DBNAME $FULL_SCRIPT_FILE
 else
 echo "ready to start dropTables.sql DBNAME provided from script call." ;
-/private/apps/Informix/informix/bin/dbaccess -a $1 $FULL_SCRIPT_FILE
+${PGBINDIR}/psql $1 $FULL_SCRIPT_FILE
 
 endif 
 

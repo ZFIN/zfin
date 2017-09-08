@@ -61,7 +61,7 @@ task loadDb() {
         println "Loading $unloadPath into $dbname"
         exec { commandLine 'dropdb', dbname }
         exec { commandLine 'createdb', dbname }
-        exec { commandLine "bash", "-c", "psql --set ON_ERROR_STOP=on $dbname < $unloadPath" }
+        exec { commandLine "bash", "-c", "pg_restore -j 4 -d $dbname < $unloadPath" }
     }
 }
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
