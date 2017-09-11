@@ -20,8 +20,6 @@ Redirect  /zf_info/news/jobs.rss https://wiki.zfin.org/spaces/createrssfeed.acti
 Redirect /zf_info/news/mtgs.rss https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=meetings&title=Zebrafish+Meetings&publicFeed=true&maxResults=-1&sort=created&timeSpan=-1
 Redirect /zf_info/news/siteNews.rss https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=news&title=Zebrafish+News&publicFeed=true&maxResults=-1&sort=created&timeSpan=120
 
-Redirect /zf_info/submissions.html https://wiki.zfin.org/display/general/ZFIN+Data+Submissions
-
 #version independent gbrowse link
 RewriteRule ^/genome-browser    /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
 RewriteRule ^/cgi-perl/gbrowse  /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
@@ -59,9 +57,6 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/feature/wildtype-list [N
 # retired apg urls
 RewriteCond %{QUERY_STRING}     ^Mival=aa-markerview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
-
-RewriteCond %{QUERY_STRING}     ^Mival=aa-showpubs.apg&(.*)$   [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/citation-list/ %1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-genotypeview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/genotype/genotype-detail?zdbID=%1 [NC,R=301]
