@@ -19,9 +19,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/OMIM
 
-GENERICS = OMIM.pl                               
+GENERICS = OMIM.pl OMIM_PG.pl loadOMIM_PG.sql                              
            
-STATICS = loadOMIM.sql README update_omimp_termxref_mapping.sql
+STATICS = loadOMIM.sql README update_omimp_termxref_mapping.sql update_omimp_termxref_mapping_PG.sql
 
 # Define targets that require special handling.
 
