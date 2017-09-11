@@ -21,7 +21,7 @@ WHERE  zdb_id = rec_id
        AND jrnl_zdb_id = pub_jrnl_zdb_id
        AND field_name = 'status'
        AND new_value = 'active'
-       AND Month(upd_when) = $MONTH
-       AND Day(upd_when) = $DAY
-       AND Year(upd_when) = $YEAR
+       AND to_char(upd_when, 'MM') = '$MONTH'
+       AND to_char(upd_when, 'DD') = '$DAY'
+       AND to_char(upd_when, 'YYYY') = '$YEAR'
 ORDER  BY zdb_id  
