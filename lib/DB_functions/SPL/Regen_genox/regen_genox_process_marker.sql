@@ -42,9 +42,9 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
 and not exists (Select 'x' from regen_genox_temp
       	  	 	 where a.fishstr_str_zdb_id = rggt_mrkr_Zdb_id
 			 and genox_zdb_id = rggt_genox_zdb_id)
- and not exists (Select 'x' from fish_str b 
-     	 		    where a.fishstr_fish_zdb_id = b.fishstr_fish_zdb_id
-			    and a.fishstr_str_zdb_id != b.fishstr_str_zdb_id);
+  and not exists (Select 'x' from fish_str b
+                            where a.fishstr_fish_zdb_id = b.fishstr_fish_zdb_id
+                            and a.fishstr_str_zdb_id != b.fishstr_str_zdb_id and b.fishstr_str_zdb_id not in (select mrel_mrkr_1_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id='ZDB-GENE-990415-270' and mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'));
 
 insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
 select mrel_mrkr_2_zdb_id, genox_zdb_id
@@ -55,10 +55,30 @@ select mrel_mrkr_2_zdb_id, genox_zdb_id
     and fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
     and get_obj_type(mrel_mrkr_2_Zdb_id) in ('GENE', 'LNCRNAG', 'LINCRNAG','MIRNAG','PIRNAG','SCRNAG','SNORNAG', 'TRNAG','RRNAG','NCRNAG','SRPRNAG')
  and genox_is_std_or_generic_control = 't' 
-   and mrel_mrkr_2_zdb_id = rggz_zdb_id
+   and mrel_mrkr_2_zdb_id = rggz_zdb_id and mrel_mrkr_2_zdb_id !='ZDB-GENE-990415-270'
+ and mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'
 and not exists (Select 'x' from regen_genox_temp
       	  	 	 where mrel_mrkr_2_zdb_id = rggt_mrkr_Zdb_id
 			 and genox_zdb_id = rggt_genox_zdb_id);
+
+insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
+			 select mrel_mrkr_2_zdb_id, genox_zdb_id
+    from marker_relationship, fish_str a,fish,genotype,fish_experiment, regen_genox_input_zdb_id_temp
+    where fish_Zdb_id =fishstr_fish_Zdb_id
+    and fish_zdb_id = genox_fish_zdb_id
+    and fish_functional_affected_gene_count = 1
+    and fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
+    and get_obj_type(mrel_mrkr_2_Zdb_id) in ('GENE', 'LNCRNAG', 'LINCRNAG','MIRNAG','PIRNAG','SCRNAG','SNORNAG', 'TRNAG','RRNAG','NCRNAG','SRPRNAG')
+ and genox_is_std_or_generic_control = 't'
+ and fish_genotype_zdb_id=geno_zdb_id
+                     and geno_is_wildtype='t'
+   and mrel_mrkr_2_zdb_id = rggz_zdb_id  and mrel_mrkr_2_zdb_id ='ZDB-GENE-990415-270' and  not exists (Select 'x' from fish_str b
+                            where a.fishstr_fish_zdb_id = b.fishstr_fish_zdb_id
+                            and a.fishstr_str_zdb_id != b.fishstr_str_zdb_id)
+and not exists (Select 'x' from regen_genox_temp
+      	  	 	 where mrel_mrkr_2_zdb_id = rggt_mrkr_Zdb_id
+			 and genox_zdb_id = rggt_genox_zdb_id);
+
 
 insert into regen_genox_construct_temp (rgct_construct_zdb_id, rgct_genox_zdb_id)
 select   b.fmrel_mrkr_zdb_id,genox_zdb_id
@@ -94,6 +114,16 @@ and not exists (Select 'x' from regen_genox_temp
      	 		    where a.fishstr_fish_zdb_id = b.fishstr_fish_zdb_id
 			    and a.fishstr_str_zdb_id != b.fishstr_str_zdb_id);
 
+
+	insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
+  select fishstr_str_zdb_id, rgct_genox_zdb_id
+    from fish, fish_str a, fish_experiment, regen_genox_input_zdb_id_temp,regen_genox_construct_temp
+        where fish_Zdb_id =a.fishstr_fish_Zdb_id
+    and fish_zdb_id = genox_fish_zdb_id
+ and genox_zdb_id=rgct_genox_zdb_id
+    and fishstr_str_zdb_id = rggz_zdb_id
+and fishstr_fish_zdb_id = fish_zdb_id and a.fishstr_str_zdb_id not in (select mrel_mrkr_1_zdb_id from marker_relationship where mrel_mrkr_2_zdb_id='ZDB-GENE-990415-270' and mrel_mrkr_1_zdb_id like 'ZDB-MRPH%');
+
 insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
 select mrel_mrkr_2_zdb_id, rgct_genox_zdb_id
     from fish, fish_str, fish_experiment, marker_relationship, regen_genox_input_zdb_id_temp,regen_genox_construct_temp
@@ -103,6 +133,8 @@ select mrel_mrkr_2_zdb_id, rgct_genox_zdb_id
      and fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
     and get_obj_type(mrel_mrkr_2_Zdb_id) in ('GENE', 'LNCRNAG', 'LINCRNAG','MIRNAG','PIRNAG','SCRNAG','SNORNAG', 'TRNAG','RRNAG','NCRNAG','SRPRNAG')
     and mrel_mrkr_2_zdb_id = rggz_zdb_id
+    and mrel_mrkr_2_zdb_id = rggz_zdb_id and mrel_mrkr_2_zdb_id !='ZDB-GENE-990415-270'
+ and mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'
 and not exists (Select 'x' from regen_genox_temp
       	  	 	 where mrel_mrkr_2_zdb_id = rggt_mrkr_Zdb_id
 			 and genox_zdb_id = rggt_genox_zdb_id);
