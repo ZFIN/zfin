@@ -10,6 +10,7 @@ define affectorType varchar(20);
 define numFeatures int8;
 define affectiveZygosity like zygocity.zyg_name;
 define strExists int8;
+define tp53Exists int8;
 define genoIsWT boolean;
 
 let genoIsWT = 'f';
@@ -19,29 +20,55 @@ let existingMrkr = "none";
 
 --find the functional number of affected genes.
 --hardcoding any MO's  that contain tp-53 (CLNDTY-7)
-foreach 
-	select  fmrel_mrkr_zdb_id into workingMrkr
+foreach
+
+	--get the allele-ish genes
+	select  fmrel_mrkr_zdb_id  into workingMrkr
 	   from fish, genotype_Feature, feature_marker_Relationship
 	   where fish_genotype_zdb_id =genofeat_geno_zdb_id
    	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
 	   and fish_zdb_id = vFishId
 	   and fmrel_type in ('is allele of','markers missing','markers present','markers moved')
-	  union
-        select  mrel_mrkr_2_zdb_id
+	 union
+--get the non-tp53 morph genes
+	select  mrel_mrkr_2_zdb_id 
            from marker_relationship, fish_str
-           where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
-           and fishstr_fish_zdb_id = vFishId
-and mrel_mrkr_2_zdb_id !='ZDB-GENE-990415-270'
- and mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'
-
-	  union
-        select  mrel_mrkr_2_zdb_id
+	   where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
+	   and fishstr_fish_zdb_id = vFishId
+ 	   and mrel_mrkr_2_zdb_id !='ZDB-GENE-990415-270'
+	   and mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'
+	 union
+-- get the non-mrph str genes
+	select  mrel_mrkr_2_zdb_id 
            from marker_relationship, fish_str
-           where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
-           and fishstr_fish_zdb_id = vFishId
+	   where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
+	   and fishstr_fish_zdb_id = vFishId
 	   and (mrel_mrkr_1_zdb_id like 'ZDB-CRISPR%' or mrel_mrkr_1_zdb_id like 'ZDB-TALEN%')
-	   
-
+	union
+-- get the tp53-single mprhants 
+	select mrel_mrkr_2_zdb_id
+	  	 from marker_relationship, fish_str a,fish
+		 where a.fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
+		 and a.fishstr_fish_zdb_id = vFishId
+		 and a.fishstr_fish_zdb_id=fish_zdb_id
+		 and mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'
+		 and mrel_mrkr_2_zdb_id ='ZDB-GENE-990415-270' 
+		 and not exists (Select 'x' 
+		     	 	     from fish_str b
+		       	       	     where a.fishstr_fish_zdb_id = b.fishstr_fish_zdb_id
+				     and a.fishstr_str_zdb_id != b.fishstr_str_zdb_id)
+-- get the double/triple morphant tp53 genes
+ 	union
+	  select a.mrel_mrkr_2_zdb_id
+	  	 from marker_relationship a, fish_str b, marker_relationship a2, fish_str b2
+		 where b.fishstr_str_zdb_id = a.mrel_mrkr_1_zdb_id
+		 and b.fishstr_fish_zdb_id = vFishId
+		 and a.mrel_mrkr_2_zdb_id !='ZDB-GENE-990415-270'
+		 and a.mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'
+		 and a2.mrel_mrkr_2_zdb_id = 'ZDB-GENE-990415-270'
+		 and a2.mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'
+		 and b.fishstr_str_zdb_id != b2.fishstr_str_zdb_id
+		 and b.fishstr_fish_zdb_id = b2.fishstr_fish_zdb_id
 
 	   
 	   if (existingMrkr = "none")
