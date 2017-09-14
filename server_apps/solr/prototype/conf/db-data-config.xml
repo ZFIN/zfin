@@ -950,7 +950,7 @@
                                 mrkr_name as gene_full_name
                               from marker , marker_relationship
                              where mrel_mrkr_2_zdb_id = mrkr_zdb_id
-                              and mrel_type in ('clone contains gene','clone contains small segment', 'clone);"
+                              and mrel_type in ('clone contains gene','clone contains small segment', 'clone');"
                     cacheImpl="SortedMapBackedCache"
                     where="marker_zdb_id=marker.id"
             />
