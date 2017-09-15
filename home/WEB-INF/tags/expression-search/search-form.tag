@@ -133,7 +133,7 @@
         $form.find(':reset').click(function (evt) {
             evt.preventDefault();
             $form.resetForm({
-                endStageId: function () { return $(this).find('option:last').val(); },
+                endStageId: function () { $(this).find('option:last').prop('selected', true); },
                 journalType3: function () { $(this).prop('checked', true); }
             });
             clearTable();
