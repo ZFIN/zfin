@@ -215,7 +215,7 @@ public class ExpressionSearchService {
         solrQuery.add("group.ngroups", TRUE);
         solrQuery.add("group.field", FieldName.FIG_ZDB_ID.getName());
         solrQuery.setRows(5000);
-        solrQuery.setStart(1);
+        solrQuery.setStart(0);
         solrQuery.addSort("date", SolrQuery.ORDER.asc);
 
         QueryResponse queryResponse = null;
@@ -301,6 +301,7 @@ public class ExpressionSearchService {
         solrQuery.add("group.field", FieldName.FIG_ZDB_ID.getName());
         solrQuery.add("group.field", FieldName.HAS_IMAGE.getName());
         solrQuery.setRows(3);
+        solrQuery.setStart(0);
 
         QueryResponse queryResponse = null;
         try {
