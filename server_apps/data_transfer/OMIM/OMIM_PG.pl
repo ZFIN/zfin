@@ -198,7 +198,7 @@ $password = "";
 
 ### open a handle on the db
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $cur = $dbh->prepare('select distinct omimp_name, omimp_ortho_zdb_id from omim_phenotype;');
 $cur->execute();
