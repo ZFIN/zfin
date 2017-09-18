@@ -5,7 +5,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfin_gene_alias_scatt
 select  -----------------------------ZDBID ---------------------------    
 			vg.gff_seqname,
            "ZFIN" source,
-           case gene.mrkr_type when 'GENEP' then 'pseudogene' else  'gene' end  feature,
+           szm_term_name     feature,
            min(vg.gff_start) gstart,
            max(vg.gff_end)   gend,
            "." score,
@@ -14,20 +14,22 @@ select  -----------------------------ZDBID ---------------------------
        'gene_id=' || gene.mrkr_zdb_id
        ||';Name=' || gene.mrkr_abbrev
        ||';Alias='|| gene.mrkr_zdb_id  attribute
- from  gff3 vt, gff3 vg, db_link tscript ,marker_relationship, marker gene
- where gene.mrkr_type[1,4] = "GENE"  -- & GENEP
-   and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+ from  gff3 vt, gff3 vg, db_link tscript ,marker_relationship, marker gene, so_zfin_mapping, marker_type_group_member
+ where mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
    and tscript.dblink_linked_recid = mrel_mrkr_2_zdb_id
    and vt.gff_source = 'vega' and vt.gff_feature = 'transcript'
    and vg.gff_source = 'vega' and vg.gff_feature = 'gene'
    and tscript.dblink_acc_num = vt.gff_ID
    and vt.gff_Parent = vg.gff_ID
+   and szm_object_type = gene.mrkr_type
+   and mtgrpmem_mrkr_type = gene.mrkr_type
+   and mtgrpmem_mrkr_type_group = 'GENEDOM'
  group by 1,3,7,9
 -- RefSeq
 union
 select    vg.gff_seqname,
            "ZFIN" gff_source,
-           case gene.mrkr_type when 'GENEP' then 'pseudogene' else  'gene' end  feature,
+           szm_term_name     feature,
            min(vg.gff_start) gstart,
            max(vg.gff_end)   gend,
            '.' gff_score,
@@ -37,9 +39,8 @@ select    vg.gff_seqname,
        ||';Name=' || gene.mrkr_abbrev
        ||';Alias='|| refseq.dblink_acc_num
        attribute
- from  gff3 vt, gff3 vg, db_link tscript ,marker_relationship, marker gene , db_link refseq
- where gene.mrkr_type[1,4] = "GENE"
-   and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+ from  gff3 vt, gff3 vg, db_link tscript ,marker_relationship, marker gene , db_link refseq, so_zfin_mapping, marker_type_group_member
+ where mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
    and tscript.dblink_linked_recid = mrel_mrkr_2_zdb_id
    and refseq.dblink_fdbcont_zdb_id  in ('ZDB-FDBCONT-040412-38','ZDB-FDBCONT-040412-39') -- protein as well?
    and refseq.dblink_linked_recid =  gene.mrkr_zdb_id
@@ -47,12 +48,14 @@ select    vg.gff_seqname,
    and vg.gff_source = 'vega' and vg.gff_feature = 'gene'
    and tscript.dblink_acc_num = vt.gff_ID
    and vt.gff_Parent = vg.gff_ID
+   and szm_object_type = gene.mrkr_type
+   and mtgrpmem_mrkr_type_group = 'GENEDOM'
 group by 1,3,7,9
 ---------------------------------------------------------
 union -- ottdarG
 select vg.gff_seqname,
            "ZFIN" gff_source,
-           case gene.mrkr_type when 'GENEP' then 'pseudogene' else 'gene' end  feature,
+           szm_term_name     feature,
            min(vg.gff_start) gstart,
            max(vg.gff_end)   gend,
            "." gff_score,
@@ -62,9 +65,8 @@ select vg.gff_seqname,
        ||';Name='  || gene.mrkr_abbrev
        ||';Alias=' || vg.gff_ID
        attribute
- from  gff3 vt, gff3 vg, db_link, marker_relationship, marker gene
- where mrkr_type[1,4] = "GENE"
-   and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+ from  gff3 vt, gff3 vg, db_link, marker_relationship, marker gene, so_zfin_mapping, marker_type_group_member
+ where mrel_mrkr_1_zdb_id = mrkr_zdb_id
    and dblink_linked_recid = mrel_mrkr_2_zdb_id
    and vt.gff_source = 'vega'
    and vg.gff_source = 'vega'
@@ -72,12 +74,14 @@ select vg.gff_seqname,
    and vg.gff_feature = 'gene'
    and dblink_acc_num = vt.gff_ID
    and vt.gff_Parent = vg.gff_ID
+   and szm_object_type = gene.mrkr_type
+   and mtgrpmem_mrkr_type_group = 'GENEDOM'
  group by 1,3,7,9
 ---------------------------------------------------------
 union -- data alias
 select vg.gff_seqname,
            "ZFIN" gff_source,
-           case gene.mrkr_type when 'GENEP' then 'pseudogene' else 'gene' end  feature,
+           szm_term_name     feature,
            min(vg.gff_start) gstart,
            max(vg.gff_end)   gend,
            "." gff_score,
@@ -87,9 +91,8 @@ select vg.gff_seqname,
        ||';Name='  || gene.mrkr_abbrev
        ||';Alias=' || dalias_alias_lower
        attribute
- from  gff3 vt, gff3 vg,  db_link, marker_relationship,marker gene, data_alias
- where mrkr_type[1,4] = "GENE"
-   and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+ from  gff3 vt, gff3 vg,  db_link, marker_relationship,marker gene, data_alias, so_zfin_mapping, marker_type_group_member
+ where mrel_mrkr_1_zdb_id = mrkr_zdb_id
    and dblink_linked_recid = mrel_mrkr_2_zdb_id
    and dalias_data_zdb_id = mrkr_zdb_id
    and dalias_group_id = 1 --'alias'
@@ -101,6 +104,8 @@ select vg.gff_seqname,
    and vg.gff_feature = 'gene'
    and dblink_acc_num = vt.gff_ID
    and vt.gff_Parent = vg.gff_ID
+   and szm_object_type = gene.mrkr_type
+   and mtgrpmem_mrkr_type_group = 'GENEDOM'
  group by 1,3,7,9
  order by 1,3,5,9
 ;
