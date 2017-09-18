@@ -31,4 +31,4 @@ SELECT expcond_zdb_id,
 FROM   experiment_condition,
        term
 WHERE  expcond_go_cc_term_zdb_id= term_zdb_id
-       AND term_is_obsolete = 't'
+       AND term_is_obsolete = 't';

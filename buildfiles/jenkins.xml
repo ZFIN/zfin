@@ -558,6 +558,11 @@
                             <include name="*.properties"/>
                         </fileset>
                     </copy>
+                    <chmod perm="ug+x">
+                        <fileset dir="${validateDataDirTarget}">
+                            <include name="*.groovy" />
+                        </fileset>
+                    </chmod>
                 </then>
             </if>
         </sequential>

@@ -1,6 +1,7 @@
 /*
  * Reset forms The ZFIN Way (tm). Clears text inputs, selects first option from selects. Pass an
- * object mapping element ids to values for custom reset values.
+ * object mapping element ids to values for custom reset values. Passing a function will execute
+ * the function with the element passed as `this`. The return value of the function is not utilized.
  */
 
 (function ($) {
@@ -12,7 +13,12 @@
             $form.find('input:radio').prop('checked', false);
             $form.find('select').prop("selectedIndex", 0);
             $.each(customValues, function (id, value) {
-                $('#' + id).val(value);
+                var $el = $('#' + id);
+                if (typeof value === 'function') {
+                    value.call($el[0]);
+                } else {
+                    $el.val(value);
+                }
             });
         });
         return this;
