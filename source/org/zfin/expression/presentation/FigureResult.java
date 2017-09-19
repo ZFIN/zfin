@@ -2,17 +2,17 @@ package org.zfin.expression.presentation;
 
 import org.zfin.expression.Figure;
 import org.zfin.mutant.Fish;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.publication.Publication;
 
-import java.util.List;
+import java.util.Collection;
 
 public class FigureResult extends ExpressionSearchResult {
 
     private Publication publication;
     private Figure figure;
     private Fish fish;
-    private List<Term> anatomy;
+    private Collection<PostComposedEntity> anatomy;
 
     public Publication getPublication() {
         return publication;
@@ -38,11 +38,11 @@ public class FigureResult extends ExpressionSearchResult {
         this.fish = fish;
     }
 
-    public List<Term> getAnatomy() {
+    public Collection<PostComposedEntity> getAnatomy() {
         return anatomy;
     }
 
-    public void setAnatomy(List<Term> anatomy) {
+    public void setAnatomy(Collection<PostComposedEntity> anatomy) {
         this.anatomy = anatomy;
     }
 }
