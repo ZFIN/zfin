@@ -181,6 +181,9 @@ public class ExpressionSearchService {
                 FieldName.FISH_ZDB_ID.getName()
         );
 
+        solrQuery.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
+        solrQuery.addSort(FieldName.AUTHOR_SORT.getName(), SolrQuery.ORDER.asc);
+
         QueryResponse queryResponse = null;
         try {
             queryResponse = SolrService.getSolrClient().query(solrQuery);
