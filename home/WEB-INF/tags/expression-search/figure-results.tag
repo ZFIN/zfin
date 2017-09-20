@@ -45,7 +45,13 @@
                     </a>
                 </c:if>
             </td>
-            <td><zfin:link entity="${result.fish}"/></td>
+            <td>
+                <c:forEach items="${result.fish}" var="fish">
+                    <div class="nowrap">
+                        <zfin:link entity="${fish}" />
+                    </div>
+                </c:forEach>
+            </td>
             <td>
                 <zfin2:stageRange earliestStartStage="${result.startStage}" latestEndStage="${result.endStage}" />
             </td>

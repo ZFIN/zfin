@@ -11,7 +11,7 @@ public class FigureResult extends ExpressionSearchResult {
 
     private Publication publication;
     private Figure figure;
-    private Fish fish;
+    private Collection<Fish> fish;
     private Collection<PostComposedEntity> anatomy;
 
     public Publication getPublication() {
@@ -30,11 +30,11 @@ public class FigureResult extends ExpressionSearchResult {
         this.figure = figure;
     }
 
-    public Fish getFish() {
+    public Collection<Fish> getFish() {
         return fish;
     }
 
-    public void setFish(Fish fish) {
+    public void setFish(Collection<Fish> fish) {
         this.fish = fish;
     }
 

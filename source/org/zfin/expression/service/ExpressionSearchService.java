@@ -247,10 +247,17 @@ public class ExpressionSearchService {
 
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure((String) document.get(FieldName.FIG_ZDB_ID.getName()));
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication((String) document.get(FieldName.PUB_ZDB_ID.getName()));
-        Fish fish = RepositoryFactory.getMutantRepository().getFish((String) document.get(FieldName.FISH_ZDB_ID.getName()));
-        Set<PostComposedEntity> anatomy = figure.getExpressionResults().stream()
-                .filter(ExpressionResult::isExpressionFound)
+
+        List<ExpressionResult> results = figure.getExpressionResults().stream()
                 .filter(er -> er.getExpressionExperiment().getGene() != null && er.getExpressionExperiment().getGene().getZdbID().equals(criteria.getGeneZdbID()))
+                .collect(Collectors.toList());
+
+        Set<Fish> fish = results.stream()
+                .map(er -> er.getExpressionExperiment().getFishExperiment().getFish())
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        Set<PostComposedEntity> anatomy = results.stream()
+                .filter(ExpressionResult::isExpressionFound)
                 .map(ExpressionResult::getEntity)
                 .collect(Collectors.toCollection(TreeSet::new));
 
