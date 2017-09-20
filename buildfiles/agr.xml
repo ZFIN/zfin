@@ -69,10 +69,10 @@
     </target>
 
     <property name="version" value="1.0"/>
-    <property name="index" value="1"/>
-    <property name="daf-file" value="ZFIN_${version}_DAF.json"/>
-    <property name="bgi-file" value="ZFIN_${version}_BGI.json"/>
-    <property name="gff-file" value="ZFIN_${version}_GFF.gff3"/>
+    <property name="index" value="2"/>
+    <property name="daf-file" value="ZFIN_${version}_disease_daf.json"/>
+    <property name="bgi-file" value="ZFIN_${version}_basicGeneInformation.json"/>
+    <property name="gff-file" value="ZFIN_${version}_gff3.gff3"/>
     <property name="agr-file" value="ZFIN_${version}_${index}"/>
 
     <target name="archive-agr" depends="">
