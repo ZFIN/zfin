@@ -1606,7 +1606,7 @@ and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
 and fdb.fdb_db_name = 'UniProtKB'
 and mfs_mrkr_zdb_id = geneid
-and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+and mfs_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-", "ZDB-LNCR","ZDB-LINC","ZDB-TRNA","ZDB-RRNA","ZDB-MIRN","ZDB-SNOR","ZDB-NCRN","ZDB-PIRN")
 and phenos_phenox_pk_id = phenox_pk_id
 and phenox_fig_zdb_id = fig_zdb_id
 and fig_source_zdb_id = zdb_id
@@ -1690,7 +1690,7 @@ and fdb.fdb_db_name = 'UniProtKB'
 and mfs_mrkr_zdb_id = geneid
 and szm_object_type = mrkr_type
 and mrkr_zdb_id = geneid
-and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+and mfs_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-", "ZDB-LNCR","ZDB-LINC","ZDB-TRNA","ZDB-RRNA","ZDB-MIRN","ZDB-SNOR","ZDB-NCRN","ZDB-PIRN")
 and phenos_phenox_pk_id = phenox_pk_id
 and phenox_fig_zdb_id = fig_zdb_id
 and fig_source_zdb_id = zdb_id
@@ -2048,7 +2048,7 @@ DROP TABLE tmp_mutation_details;
     and psg_pg_id = pg_id
     and mfs_genox_zdb_id = genox_zdb_id
     and fig_zdb_id = pg_fig_zdb_id
-    and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+    and mfs_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-", "ZDB-LNCR","ZDB-LINC","ZDB-TRNA","ZDB-RRNA","ZDB-MIRN","ZDB-SNOR","ZDB-NCRN","ZDB-PIRN")
     and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
 union
  select  psg_id,
@@ -2073,7 +2073,7 @@ union
     and psg_pg_id = pg_id
     and genox_fish_zdb_id = fishstr_fish_Zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
-    and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+    and mfs_mrkr_zdb_id[1,8] in ("ZDB-GENE", "ZDB-EFG-", "ZDB-LNCR","ZDB-LINC","ZDB-TRNA","ZDB-RRNA","ZDB-MIRN","ZDB-SNOR","ZDB-NCRN","ZDB-PIRN")
 
 
 into temp tmp_dumpCleanPheno;
