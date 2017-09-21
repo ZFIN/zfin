@@ -130,7 +130,7 @@ static void main(String... args) {
     summary.put("Company", brokenCompanyUrls.size)
     summary.put("Person", brokenPersonUrls.size)
     rg.addSummaryTable("Summary: Broken URL links (404)", summary)
-    rg.addDataTable("Borken Lab URLs: ${brokenLabUrls.size()}", ["ID", "Name", "URL"], brokenLabUrls.collect { link -> [link.get(0), link.get(1), link.get(2)] })
+    rg.addDataTable("Broken Lab URLs: ${brokenLabUrls.size()}", ["ID", "Name", "URL"], brokenLabUrls.collect { link -> [link.get(0), link.get(1), link.get(2)] })
     rg.addDataTable("Broken Person URLs: ${brokenPersonUrls.size()}", ["ID", "Name", "URL"], brokenPersonUrls.collect { link -> [link.get(0), link.get(1), link.get(2)] })
     rg.addDataTable("Broken Company URLs: ${brokenCompanyUrls.size()}", ["ID", "Name", "URL"], brokenCompanyUrls.collect { link -> [link.get(0), link.get(1), link.get(2)] })
     new File(reportDir, "check-urls-report.html").withWriter { writer ->
