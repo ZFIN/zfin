@@ -5,6 +5,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
+import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
@@ -167,7 +168,8 @@ public class MarkerGoEvidencePresentation {
                     Genotype genotype = (Genotype) HibernateUtil.currentSession().get(Genotype.class, accession);
                     return GenotypePresentation.getLink(genotype, false);
                 } else if (accession.startsWith("ZDB-GENE-")||accession.contains("RNAG")){
-                    Marker gene = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
+                    //Marker gene = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
+                    Marker gene = RepositoryFactory.getMarkerRepository().getMarkerOrReplacedByID(accession);
                     return MarkerPresentation.getLink(gene);
                 }
                 else {
