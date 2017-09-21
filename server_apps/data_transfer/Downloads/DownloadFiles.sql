@@ -2168,8 +2168,8 @@ SELECT genox_fish_zdb_id,
        dat_source_zdb_id,
        accession_no,
        CASE dat_evidence_code
-         WHEN "IC" THEN "IC, ECO:0000205"
-         WHEN "TAS" THEN "TAS, ECO:0000033"
+         WHEN "IC" THEN "IC, ECO:ECO:0000305"
+         WHEN "TAS" THEN "TAS, ECO:ECO:0000304"
          ELSE dat_evidence_code
        END
 FROM   disease_annotation_model,
