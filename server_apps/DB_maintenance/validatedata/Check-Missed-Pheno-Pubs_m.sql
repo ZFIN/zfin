@@ -12,7 +12,7 @@ select zdb_id, pub_arrival_date, b.mrkr_zdb_id, b.mrkr_abbrev, a.mrkr_zdb_id, a.
         and mrel_mrkr_2_zdb_id not in (select fmrel_mrkr_Zdb_id from
                     feature_marker_relationship)
         and a.mrkr_zdb_id not in (select fishstr_str_zdb_id from fish_str)
-and pub_arrival_date >='2009-01-01 00:00:00.000'
+       AND to_char(pub_arrival_date,'YYY-MM-DD') >= '2009-01-01'
 and pub_completion_date is null
 and not exists (Select 'x' from data_reporting
     	       	       where dr_data_zdb_id = zdb_id)
@@ -48,7 +48,7 @@ AND             a.mrkr_zdb_id NOT IN
                 (
                        SELECT fishstr_str_zdb_id
                        FROM   fish_str)
-AND             pub_arrival_date >='2009-01-01'
+AND to_char(pub_arrival_date,'YYY-MM-DD') >= '2009-01-01'
 AND             pub_completion_date IS NULL
 AND             NOT EXISTS
                 (
