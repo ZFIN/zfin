@@ -5,6 +5,6 @@ FROM   zdb_object_type
 subquery
 list query
 not exists
-select first 1 get_obj_name($2)
-from $1
+select get_obj_name($2)
+from $1 limit 1
               
