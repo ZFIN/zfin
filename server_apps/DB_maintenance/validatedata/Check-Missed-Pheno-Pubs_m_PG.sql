@@ -35,7 +35,7 @@ INSERT INTO data_reporting
                         dr_report_name
             )
 SELECT DISTINCT zdb_id,
-                to_Char(now(), 'YYYY-MM-DD HH:mm:ss' ),
+                now(),
                 'Check-Missed-Pheno-Pubs'
 FROM            publication,
                 record_attribution,
