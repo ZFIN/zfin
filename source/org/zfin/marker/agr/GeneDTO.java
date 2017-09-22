@@ -2,7 +2,6 @@ package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.zfin.infrastructure.ActiveData;
-import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.util.List;
 import java.util.Set;
@@ -113,9 +112,7 @@ public class GeneDTO extends ZfinDTO {
     public String getGeneLiteratureUrl() {
         String returnString = geneLiteratureUrlPrefix;
         if (primaryId.startsWith(ZFIN))
-            returnString += "&OID=" + primaryId.replace(ZFIN, "");
-        returnString += "&name=" + name;
-        returnString += "&abbrev=" + symbol;
+            returnString += primaryId.replace(ZFIN, "");
         return returnString;
     }
 }

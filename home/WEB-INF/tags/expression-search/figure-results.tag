@@ -36,7 +36,7 @@
             <td>
                 <zfin:link entity="${result.figure}"/>
             </td>
-            <td>
+            <td nowrap>
                 <c:if test="${!empty result.figure.images}">
                     <a href="/${result.figure.zdbID}">
                         <img border="1" height="50" src="${result.figure.img.thumbnailUrl}"/><c:if test="${fn:length(result.figure.images) > 1}">
@@ -45,11 +45,19 @@
                     </a>
                 </c:if>
             </td>
-            <td><zfin:link entity="${result.fish}"/></td>
+            <td>
+                <c:forEach items="${result.fish}" var="fish">
+                    <div class="nowrap">
+                        <zfin:link entity="${fish}" />
+                    </div>
+                </c:forEach>
+            </td>
             <td>
                 <zfin2:stageRange earliestStartStage="${result.startStage}" latestEndStage="${result.endStage}" />
             </td>
-            <td></td>
+            <td>
+                <zfin2:toggledPostcomposedList entities="${result.anatomy}" maxNumber="4" />
+            </td>
         </zfin:alternating-tr>
     </c:forEach>
 

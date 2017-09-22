@@ -2872,6 +2872,8 @@
                         fig_zdb_id as xref,
                         pub_mini_ref as publication,
                         publication.zdb_id as pub_zdb_id,
+                        authors as author_string,
+                        year(pub_date) as year,
                         (select mrkr_abbrev_order from marker where mrkr_zdb_id = xpatex_gene_zdb_id) as gene_sort,
                         case
                              when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id)

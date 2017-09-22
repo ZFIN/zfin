@@ -9,10 +9,12 @@ import org.apache.solr.common.SolrDocument;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.*;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
@@ -179,6 +181,9 @@ public class ExpressionSearchService {
                 FieldName.FISH_ZDB_ID.getName()
         );
 
+        solrQuery.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
+        solrQuery.addSort(FieldName.AUTHOR_SORT.getName(), SolrQuery.ORDER.asc);
+
         QueryResponse queryResponse = null;
         try {
             queryResponse = SolrService.getSolrClient().query(solrQuery);
@@ -242,11 +247,24 @@ public class ExpressionSearchService {
 
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure((String) document.get(FieldName.FIG_ZDB_ID.getName()));
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication((String) document.get(FieldName.PUB_ZDB_ID.getName()));
-        Fish fish = RepositoryFactory.getMutantRepository().getFish((String) document.get(FieldName.FISH_ZDB_ID.getName()));
+
+        List<ExpressionResult> results = figure.getExpressionResults().stream()
+                .filter(er -> er.getExpressionExperiment().getGene() != null && er.getExpressionExperiment().getGene().getZdbID().equals(criteria.getGeneZdbID()))
+                .collect(Collectors.toList());
+
+        Set<Fish> fish = results.stream()
+                .map(er -> er.getExpressionExperiment().getFishExperiment().getFish())
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        Set<PostComposedEntity> anatomy = results.stream()
+                .filter(ExpressionResult::isExpressionFound)
+                .map(ExpressionResult::getEntity)
+                .collect(Collectors.toCollection(TreeSet::new));
 
         figureResult.setFigure(figure);
         figureResult.setPublication(publication);
         figureResult.setFish(fish);
+        figureResult.setAnatomy(anatomy);
         populateStageRange(figureResult, criteria, OR, fq(FieldName.FIG_ZDB_ID, figure.getZdbID()));
 
         return figureResult;
