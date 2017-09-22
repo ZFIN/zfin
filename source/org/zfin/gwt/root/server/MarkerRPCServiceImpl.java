@@ -909,8 +909,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                 if (secondMarker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                     if (firstMarker.getType()== Marker.Type.BAC) {
                        MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.BAC_CONTAINS_GENEDOM);
-
-
                     }
                     if (firstMarker.getType()== Marker.Type.PAC) {
                        MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.PAC_CONTAINS_GENEDOM);
@@ -934,6 +932,13 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                 if (secondMarker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
                     MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
                 }
+            }
+            if (firstMarker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)){
+                if (secondMarker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                    MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE);
+                }
+
+
             }
 
           //  MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
@@ -1127,7 +1132,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
             InfrastructureService.insertUpdate(gene, "Name", oldName, gene.getName());
             //run regen script
-            markerRepository.runMarkerNameFastSearchUpdate(gene);
+//            markerRepository.runMarkerNameFastSearchUpdate(gene);
         }
 
 
