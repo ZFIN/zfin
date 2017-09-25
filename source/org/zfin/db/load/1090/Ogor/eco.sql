@@ -13,11 +13,11 @@ alter table disease_annotation
  term constraint dat_evidence_term_zdb_id_fk);
 
 update disease_annotation
-  set dat_evidence_term_zdb_id = 'ECO:0000205'
+  set dat_evidence_term_zdb_id = 'ZDB-TERM-170419-151'
  where dat_evidence_code = 'IC';
 
 update disease_annotation
- set dat_evidence_term_zdb_id = 'ECO:0000033'
+ set dat_evidence_term_zdb_id = 'ZDB-TERM-170419-33'
 where dat_evidence_code = 'TAS';
 
 alter table disease_annotation
