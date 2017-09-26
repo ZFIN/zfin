@@ -61,7 +61,7 @@
                 <param name="insertActiveData">true</param>
             </generator>
         </id>
-        <property name="evidenceCode" column="dat_evidence_code"/>
+        <property name="evidenceCode" column="dat_evidence_term_zdb_id"/>
         <many-to-one name="publication" column="dat_source_zdb_id" class="org.zfin.publication.Publication"/>
         <many-to-one name="disease" column="dat_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>
         <bag name="diseaseAnnotationModel" lazy="true" table="disease_annotation_model">
