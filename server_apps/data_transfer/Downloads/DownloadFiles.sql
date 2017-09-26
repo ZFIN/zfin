@@ -2167,10 +2167,10 @@ SELECT genox_fish_zdb_id,
        term_name,
        dat_source_zdb_id,
        accession_no,
-       CASE dat_evidence_code
-         WHEN "IC" THEN "IC, ECO:ECO:0000305"
-         WHEN "TAS" THEN "TAS, ECO:ECO:0000304"
-         ELSE dat_evidence_code
+       CASE dat_evidence_term_zdb_id
+         WHEN "ZDB-TERM-170419-151" THEN "IC, ECO:ECO:0000305"
+         WHEN "ZDB-TERM-170419-33" THEN "TAS, ECO:ECO:0000304"
+         ELSE dat_evidence_term_zdb_id
        END
 FROM   disease_annotation_model,
        disease_annotation,publication,
