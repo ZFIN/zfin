@@ -79,7 +79,7 @@ load from term_consider.unl
 
 create temp table tmp_term_onto_with_dups (
 		term_id			varchar(50),
-		term_name		varchar(255),
+		term_name		text,
 		term_onto		varchar(50),
 		term_definition		text,
 		term_comment		text,
@@ -98,7 +98,7 @@ where term_onto is null;
 
 create temp table tmp_term_onto_no_dups (
 		term_id			varchar(50),
-		term_name		varchar(255),
+		term_name		text,
 		term_onto		varchar(50),
 		term_definition		text,
 		term_comment		text,
@@ -131,7 +131,7 @@ select * from term
 create temp table tmp_term 	(
 			 term_zdb_id		varchar(50),
 			 term_id		varchar(50),
-			 term_name		varchar(255),
+			 term_name		text,
 			 term_ontology		varchar(50),
 			 term_definition	text,
 			 term_comment		text,
@@ -191,7 +191,7 @@ unload to updated_term_names_count
 
 create temp table tmp_term_name_changed 	(
 			 term_id		varchar(50),
-			 term_name		varchar(255)
+			 term_name		text
 	);
 
 --unload to debug
