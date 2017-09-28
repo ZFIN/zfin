@@ -113,9 +113,11 @@ ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/lib/DB_functions/postgresFunctions/by
 # load up the clobs into postgres
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/clobLoad.sql
 
+# add zactvd_zdb_id_unique_constraint -- to solve ODC problem.
+echo 'create unique index zactvd_zdb_id_pk_index on zdb_active_data(zactvd_zdb_id)' | ${PGBINDIR}/psql ${DBNAME}
+
 # analyze db (aka:update statistics high)
 echo 'vacuum (analyze)' | ${PGBINDIR}/psql ${DBNAME}
-
 
 # create the update statements that we need to load up the clobs.
 ${SOURCEROOT}/server_apps/DB_maintenance/postgres/createBinaryDump.sh
