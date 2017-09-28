@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/NCBIGENE
 
-GENERICS = NCBI_gene_load.pl prepareNCBIgeneLoad.sql loadNCBIgeneAccs.sql
+GENERICS = NCBI_gene_load.pl prepareNCBIgeneLoad.sql loadNCBIgeneAccs.sql NCBI_gene_load_PG.pl prepareNCBIgeneLoad_PG.sql loadNCBIgeneAccs_PG.sql
 
 STATICS = README
 
