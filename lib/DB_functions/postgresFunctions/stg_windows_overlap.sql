@@ -1,5 +1,5 @@
 create or replace function stg_windows_overlap(
-  w1StartStageZdbId text),
+  w1StartStageZdbId text,
   w1EndStageZdbId text,
   w2StartStageZdbId text,
   w2EndStageZdbId text)
