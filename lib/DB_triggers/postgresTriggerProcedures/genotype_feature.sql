@@ -14,6 +14,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger genotype_feature_trigger before insert or update on genotype_feature
+create trigger genotype_feature_trigger after insert or update on genotype_feature
  for each row
  execute procedure genotype_feature();
