@@ -10,23 +10,33 @@
 
 begin work;
 
-create temp table ncbi_gene_delete (
+create temporary table ncbi_gene_delete (
   delete_dblink_zdb_id    text not null
 );
 
 copy ncbi_gene_delete from '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/toDelete.unl';
 
-create temp table ncbi_gene_load (
+create index t_id_index on ncbi_gene_delete (delete_dblink_zdb_id);
+
+
+create temporary table ncbi_gene_load (
   mapped_zdb_gene_id    text not null,
   ncbi_accession        varchar(50),
   zdb_id                text,
-  seqence_length        text,      
+  sequence_length        text,      
   fdbcont_zdb_id        text not null,
   load_pub_zdb_id       text not null
 );
 
 copy ncbi_gene_load from '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/toLoad.unl' (delimiter '|');
-  
+
+update ncbi_gene_load 
+ set sequence_length = null
+ where sequence_length = '';
+
+alter table ncbi_gene_load 
+  alter column sequence_length type integer USING sequence_length::integer;
+
 update ncbi_gene_load set zdb_id = get_id('DBLINK');
 
 --!echo 'CHECK: how many RefSeq and GenBank accessions missing length before the load'
@@ -59,7 +69,7 @@ insert into zdb_active_data select zdb_id from ncbi_gene_load;
 --!echo 'Insert the new records into db_link table'
 
 insert into db_link (dblink_linked_recid, dblink_acc_num, dblink_info, dblink_zdb_id, dblink_length, dblink_fdbcont_zdb_id) 
-select mapped_zdb_gene_id, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, seqence_length, fdbcont_zdb_id 
+select mapped_zdb_gene_id, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, sequence_length, fdbcont_zdb_id 
   from ncbi_gene_load;
     
 --! echo "Attribute the new db_link records to one of the 2 load publications, depending on what kind of mapping"
