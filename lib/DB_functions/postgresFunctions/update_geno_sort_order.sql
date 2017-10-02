@@ -7,7 +7,7 @@ create or replace function update_geno_sort_order (genoZdbId text)
    	  featureType     feature_type.ftrtype_type_display%TYPE; 
    	  alleleCount int;
   begin 
-  complexitySortValue := '999999999';
+  complexitySortValue := 999999999;
    	
 	   for featureId, featureType in
 		select feature_zdb_id, ftrtype_type_display
@@ -37,10 +37,11 @@ create or replace function update_geno_sort_order (genoZdbId text)
 			
 		complexitySortValue := complexitySortValue + priority;
 
+
 	   end loop;
 
   if (complexitySortValue is null)
-     then complexitySortValue := '999999999';
+     then complexitySortValue := 999999999;
   end if;
 
   return complexitySortValue;
