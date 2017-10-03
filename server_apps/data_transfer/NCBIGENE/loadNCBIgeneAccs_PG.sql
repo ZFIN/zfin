@@ -16,7 +16,7 @@ create temporary table ncbi_gene_delete (
 
 create index t_id_index on ncbi_gene_delete (delete_dblink_zdb_id);
 
-
+copy ncbi_gene_delete from '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/toDelete.unl';
 
 create temporary table ncbi_gene_load (
   mapped_zdb_gene_id    text not null,
