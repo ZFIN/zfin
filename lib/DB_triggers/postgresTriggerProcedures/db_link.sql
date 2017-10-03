@@ -4,7 +4,7 @@ create or replace function db_link()
 returns trigger as
 $BODY$
 
-declare dblink_acc_num db_link.dblink_acc_num%TYPE := scrub_char(new_db_link.dblink_acc_num);
+declare dblink_acc_num db_link.dblink_acc_num%TYPE := scrub_char(NEW.dblink_acc_num);
 
 declare dblink_acc_num_display db_link.dblink_acc_num_display%TYPE := get_dblink_acc_num_display(NEW.dblink_fdbcont_zdb_id, NEW.dblink_acc_num)) ;
 
