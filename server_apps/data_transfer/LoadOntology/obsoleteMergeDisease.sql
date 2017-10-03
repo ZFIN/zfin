@@ -13,11 +13,10 @@ SELECT dat_source_zdb_id,
          AND genox_fish_zdb_id = fish_zdb_id)
          ELSE '--'
        END
-FROM   term,
-       disease_annotation,
-       outer disease_annotation_model
-WHERE  dat_term_zdb_id = term_zdb_id
-       AND damo_dat_zdb_id = dat_zdb_id
+FROM   term
+       join disease_annotation on dat_term_zdb_id = term_zdb_id
+       left outer join disease_annotation_model on damo_dat_zdb_id = dat_zdb_id
+WHERE
        AND term_is_obsolete = 't';
 
 -- report secondary disease term usage
@@ -35,10 +34,8 @@ SELECT dat_source_zdb_id,
          AND genox_fish_zdb_id = fish_zdb_id)
          ELSE '--'
        END
-FROM   term,
-       disease_annotation,
-       outer disease_annotation_model
-WHERE  dat_term_zdb_id = term_zdb_id
-       AND damo_dat_zdb_id = dat_zdb_id
-       AND term_is_secondary= 't';
+FROM   term
+       join disease_annotation on dat_term_zdb_id = term_zdb_id
+       left outer join disease_annotation_model on damo_dat_zdb_id = dat_zdb_id
+WHERE  term_is_secondary= 't';
 
