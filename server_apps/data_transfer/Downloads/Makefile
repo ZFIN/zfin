@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads
 
 SUBDIRS = GFF3 intermineData
 
-GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql patoNumbers.sql FBcase8787.pl patoNumbers.pl DownloadFiles_PG.sql generateStagedAnatomy_PG.pl patoNumbers_PG.pl patoNumbers_PG.sql DownloadFiles_PG.pl testDownloadIndentifiers.pl
+GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql patoNumbers.sql FBcase8787.pl patoNumbers.pl DownloadFiles_PG.sql generateStagedAnatomy_PG.pl patoNumbers_PG.pl patoNumbers_PG.sql DownloadFiles_PG.pl
 
 STATICS = build.xml set_download_timestamp.sql 
 
