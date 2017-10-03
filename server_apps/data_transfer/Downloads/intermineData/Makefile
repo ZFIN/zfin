@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads/intermineData
 
-GENERICS = dump.sql dumper.sh
+GENERICS = dump.sql dumper.sh dump_PG.sql dumper_PG.sh
 
 # ---------------  Production Rules  ------------------------------------
 
