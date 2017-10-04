@@ -1,5 +1,5 @@
-create or replace function get_dblink_acc_num_display (dblinkFdbcontId varchar,
-                                            dblinkAccNum varchar)
+create or replace function get_dblink_acc_num_display (dblinkFdbcontId text,
+                                            dblinkAccNum text)
 returns varchar as $dblinkAccNumDisplay$
 
   -- For most db links we display the link as db_name:acc_num
@@ -21,7 +21,7 @@ returns varchar as $dblinkAccNumDisplay$
           ch char(1);
           contigId db_link.dblink_acc_num_display%TYPE;
           dblinkAccNumDisplay  db_link.dblink_acc_num_display%TYPE;
-          dblinkDbName varchar;
+          dblinkDbName text;
   begin
   select distinct fdb_db_name 
     into dblinkDbName 
@@ -42,7 +42,7 @@ returns varchar as $dblinkAccNumDisplay$
  
   else
     -- spew out exactly what came in
-    dblinkAccNumDisplay := dblinkAccNum;
+    dblinkAccNumDisplay = dblinkAccNum;
   end if;
 
   return dblinkAccNumDisplay;
