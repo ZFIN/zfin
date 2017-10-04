@@ -2319,10 +2319,8 @@ if (!-e "toLoad.unl" || $ctToLoad == 0) {
    &reportErrAndExit($subjectLine);
 }
 
-##$cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadNCBIgeneAccs.sql >loadLog1 2> loadLog2";
-##&doSystemCommand($cmd);
 
-#&doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadNCBIgeneAccs_PG.sql >loadLog1 2> loadLog2");
+&doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadNCBIgeneAccs_PG.sql >loadLog1 2> loadLog2");
 
 print LOG "\nDone with the deltion and loading!\n\n";
 

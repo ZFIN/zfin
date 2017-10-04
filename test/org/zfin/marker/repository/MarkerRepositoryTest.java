@@ -722,7 +722,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void getGeneProducts() {
         List<GeneProductsBean> geneProductsBean = markerRepository.getGeneProducts("ZDB-GENE-980526-561");
         assertNotNull(geneProductsBean);
-        assertEquals(1, geneProductsBean.size());
+        assertThat(geneProductsBean.size(), greaterThan(1));
         assertEquals("Q90477", geneProductsBean.get(0).getAccession());
 
         List<GeneProductsBean> geneProductsBean2 = markerRepository.getGeneProducts("ZDB-GENE-000405-1");
