@@ -98,7 +98,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             ChromosomeService<MarkerGenomeLocation> chromosomeService = new ChromosomeService<>(locations);
                             if (locations != null && chromosomeService.isTrustedValue()) {
                                 for (MarkerGenomeLocation loc : locations) {
-                                    // ignore records that do not equal the ofifical chromosome number
+                                    // ignore records that do not equal the official chromosome number
                                     if (!loc.getChromosome().equals(chromosomeService.getChromosomeNumber()))
                                         continue;
                                     GenomeLocationDTO genomeDto = new GenomeLocationDTO(loc.getAssembly(), loc.getChromosome());
