@@ -343,7 +343,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return markerRelationships;
     }
 
-    public List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker,Boolean interacts) {
+    public List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker, Boolean interacts) {
 
         List<String> mTypeGroup = new ArrayList<String>();
         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
@@ -359,15 +359,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
             mTypeGroup.add("NONTSCRBD_REGION");
         }
         Session session = currentSession();
-        if (interacts==true) {
+        if (interacts == true) {
             String hql = "select mr.name from MarkerRelationshipType mr " +
                     " where mr.firstMarkerTypeGroup.name in (:mTypeGroup) and mr.name like '%interacts%'";
             Query query = session.createQuery(hql);
             query.setParameterList("mTypeGroup", mTypeGroup);
             return (List<String>) query.list();
-        }
-        else
-        {
+        } else {
             String hql = "select mr.name from MarkerRelationshipType mr " +
                     " where mr.firstMarkerTypeGroup.name in (:mTypeGroup) and mr.name not like '%interacts%'";
             Query query = session.createQuery(hql);
@@ -1278,15 +1276,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "                       gene.mrkr_abbrev,stat.fstat_fig_zdb_id, fig.fig_label, stat.fstat_pub_zdb_id, " +
                 "                       probe.mrkr_type, gene.mrkr_abbrev_order, pub.zdb_id, pub.pub_mini_ref," +
                 "                       gene.mrkr_name, probe.mrkr_name as probeName, img.img_zdb_id  " +
-                "from feature_stats as stat, marker as gene, marker as probe, figure as fig, publication as pub, " +
-                "     OUTER image as img " +
+                "from " +
+                "        feature_stats as stat" +
+                "        join marker as gene on fstat_gene_zdb_id = gene.mrkr_zdb_id" +
+                "        join marker as probe on fstat_feat_zdb_id = probe.mrkr_zdb_id            " +
+                "        join figure as fig on fstat_fig_zdb_id = fig.fig_zdb_id" +
+                "        join publication as pub on fstat_pub_zdb_id = pub.zdb_id        " +
+                "        left outer join image as img on fstat_img_zdb_id = img.img_zdb_id    " +
                 "     where fstat_superterm_zdb_id = :aoterm " +
-                "           and fstat_gene_zdb_id = gene.mrkr_zdb_id " +
-                "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
-                "           and fstat_type = :type " +
-                "           and fstat_fig_zdb_id = fig.fig_zdb_id " +
-                "           and fstat_pub_zdb_id = pub.zdb_id " +
-                "           and fstat_img_zdb_id = img.img_zdb_id ";
+                "           and fstat_type = :type ";
         if (!includeSubstructures) {
             sqlQueryAllStr += "  and fstat_subterm_zdb_id = :aoterm ";
         }
@@ -1390,7 +1388,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         } else {
 
             types.add(Marker.Type.GENE.name());
-            List<MarkerType> mkrType=getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM);
+            List<MarkerType> mkrType = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM);
             for (MarkerType markerType : mkrType) {
                 types.add(markerType.getName());
             }
@@ -3183,7 +3181,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         // max number of records.
         if (number < 1)
             hql += "left join fetch marker.dbLinks ";
-        hql += "where marker.markerType.name in (:names) ";
+        hql += "where marker.markerType.name in (:names) and marker.abbreviation = 'cdk1' ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("names", type.getTypeStrings());
         if (number > 0) {
