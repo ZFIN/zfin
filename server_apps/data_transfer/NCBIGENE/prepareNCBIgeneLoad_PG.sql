@@ -143,8 +143,8 @@ select count(gene) as numberOfGenesWithRNAevidence from genes_supported_by_rna;
 
 drop view genes_supported_by_rna;
 
---rollback work;
+rollback work;
 
-commit work;
+--commit work;
 
 
