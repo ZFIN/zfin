@@ -1,5 +1,5 @@
-create or replace function get_fish_full_name (vFishZdbId varchar,
-       		 		    vFishGenoZdbId varchar,
+create or replace function get_fish_full_name (vFishZdbId text,
+       		 		    vFishGenoZdbId text,
 				    vFishName varchar) returns varchar as $fullName$
 
 declare backgroundList varchar := get_genotype_backgrounds(vFishGenoZdbId);
