@@ -111,8 +111,8 @@ select count(dblink_zdb_id) as noLenLoadedGenBank
                where recattrib_data_zdb_id = dblink_zdb_id
                  and recattrib_source_zdb_id in ('ZDB-PUB-020723-3','ZDB-PUB-020723-3'));
 
-rollback work;
+--rollback work;
 
---commit work;
+commit work;
 
 
