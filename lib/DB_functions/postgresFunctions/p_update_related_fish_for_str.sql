@@ -13,9 +13,8 @@ if (get_obj_type(vZdbId) in ('TALEN','CRISPR','MRPHLNO'))
       	  	       	       where fishstr_str_zdb_id = vZdbId);
       if (vFishCount > 0)
         then
-	  for vFish in 
-	     select distinct fishstr_fish_zdb_id
-	     	    into vFish
+	  for vFish in
+	      select distinct fishstr_fish_zdb_id
 		    from fish_str
 		    where fishstr_str_zdb_id = vZdbId
 	     loop	    
