@@ -2692,6 +2692,6 @@ sub sendLoadLogs {
   $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog1 file";
   ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","loadLog1");
 
-  $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog2 file";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","loadLog2");
+##  $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog2 file";
+##  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","loadLog2");
 }
