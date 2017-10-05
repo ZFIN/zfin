@@ -4,7 +4,7 @@ create or replace function checkDblinkTranscriptWithdrawn (vDblinkZdbId text,
 )
 returns void as $$
 begin
-        if ( vFDBContZdbId = "ZDB-FDBCONT-100114-1")        
+        if ( vFDBContZdbId = 'ZDB-FDBCONT-100114-1')        
 	then   	
 		
 		if (not exists (Select 'x' from transcript

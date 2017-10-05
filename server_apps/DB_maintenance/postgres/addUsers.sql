@@ -7,3 +7,5 @@ create user kschaper with superuser;
 create user cmpich with superuser;
 create user xshao with superuser;
 create user informix with superuser;
+create user zfishweb with superuser;
+create user zfinner with superuser;
