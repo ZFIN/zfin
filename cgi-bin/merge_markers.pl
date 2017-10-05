@@ -768,7 +768,7 @@ foreach $sqlID (keys %recAttrSQLs) {
      $curRecAttrSQL->execute();
      $curRecAttrSQL->finish();
 
-     $insertUpdatesSQL = "insert into updates(submitter_id,rec_id,new_value,comments,when,submitter_name)
+     $insertUpdatesSQL = "insert into updates(submitter_id,rec_id,new_value,comments,upd_when,submitter_name)
 			  values(?,?,'DELETE',?,CURRENT,?);";
      $curInsertUpdates = $dbh->prepare($insertUpdatesSQL);
      $curInsertUpdates->execute($person_id,$intoId,$recAttrMergeSQL,$personFullName); 
@@ -1029,7 +1029,7 @@ foreach $sqlID (keys %nonRecAttrSQLs) {
    $curNonRecAttrSQL->finish();
     
    if ($nonRecAttrMergeSQL =~ m/delete/i) {
-     $insertUpdatesSQL = "insert into updates(submitter_id,rec_id,new_value,comments,when,submitter_name)
+     $insertUpdatesSQL = "insert into updates(submitter_id,rec_id,new_value,comments,upd_when,submitter_name)
                           values(?,?,'DELETE',?,CURRENT,?);";
      $curInsertUpdates = $dbh->prepare($insertUpdatesSQL);
      $curInsertUpdates->execute($person_id,$intoId,$nonRecAttrMergeSQL,$personFullName);
