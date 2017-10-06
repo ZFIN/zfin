@@ -1,9 +1,7 @@
-create or replace function getFishOrder (vFishId text,  out fishOrder1 varchar,  out numAffectedGene1  int) returns RECORD as $func$
+create or replace function getFishOrder (vFishId text,  out fishOrder varchar,  out numAffectedGene  int) as $func$
 
 
-declare fishOrder fish.fish_order%TYPE := '9999999999';
- numAffectedGene int8 := 0;
- workingZyg  zygocity.zyg_name%TYPE;
+declare workingZyg  zygocity.zyg_name%TYPE;
  workingMrkr  genotype_feature.genofeat_feature_zdb_id%TYPE;
  existingMrkr  genotype_feature.genofeat_feature_zdb_id%TYPE := 'none';
  affectorType varchar(20);
@@ -14,6 +12,7 @@ declare fishOrder fish.fish_order%TYPE := '9999999999';
 
 begin
 --find the functional number of affected genes.
+numAffectedGene = 0;
 for workingMrkr in
 	--get the allele-ish genes
 	select  fmrel_mrkr_zdb_id  
@@ -147,12 +146,9 @@ end if;
 raise notice 'end: %', fishOrder;
 raise notice 'end: %', numAffectedGene;
 
-fishOrder1 := fishOrder
-numAffectedGene1 := numAffectedGene;
-
 --return fishOrder, numAffectedGene;
 
 end;
 
 
-$func$ LANGUAGE plpgsql;
+$func$ LANGUAGE plpgsql ;
