@@ -2487,6 +2487,28 @@ $sql = "select distinct dblink_acc_num
 
 $numRefSeqDNAAfter = ZFINPerlModules->countData($sql);
 
+# GenBank RNA (only those loaded - excluding curated ones)
+$sql = "select distinct dblink_acc_num
+          from db_link
+         where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37'
+           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
+           and exists(select 1 from record_attribution
+                       where recattrib_data_zdb_id = dblink_zdb_id
+                         and recattrib_source_zdb_id in ('ZDB-PUB-020723-3','ZDB-PUB-130725-2'));";
+
+$numGenBankRNAAfter = ZFINPerlModules->countData($sql);
+
+# GenPept (only those loaded - excluding curated ones)
+$sql = "select distinct dblink_acc_num
+          from db_link
+         where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-42'
+           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
+           and exists(select 1 from record_attribution
+                       where recattrib_data_zdb_id = dblink_zdb_id
+                         and recattrib_source_zdb_id in ('ZDB-PUB-020723-3','ZDB-PUB-130725-2'));";
+
+$numGenPeptAfter = ZFINPerlModules->countData($sql);
+
 # GenBank DNA (only those loaded - excluding curated ones)
 $sql = "select distinct dblink_acc_num
           from db_link
