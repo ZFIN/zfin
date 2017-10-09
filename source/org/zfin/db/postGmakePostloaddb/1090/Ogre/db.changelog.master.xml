@@ -7,6 +7,8 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1090/Ogre/CUR-427.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1090/Ogre/ZFIN-5749.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1090/Ogre/AGR-92a.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1090/Ogre/AGR-92b.sql" />
 
 
 </databaseChangeLog>
