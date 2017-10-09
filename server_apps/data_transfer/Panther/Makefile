@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Panther
 
-STATICS = LoadPanther.groovy 
+STATICS = LoadPanther.groovy LoadAGR.groovy 
 
 
 # ---------------  Production Rules  ------------------------------------
