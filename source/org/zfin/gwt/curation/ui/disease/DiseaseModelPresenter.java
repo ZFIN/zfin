@@ -92,11 +92,11 @@ public class DiseaseModelPresenter implements Presenter {
         dto.setDisease(diseaseList.get(selectedIndexDis));
         String itemText = view.getEvidenceCodeSelectionBox().getItemText(view.getEvidenceCodeSelectionBox().getSelectedIndex());
         if (itemText.equals("TAS")) {
-            dto.setEvidenceCode("ZDB-TERM-170419-33");
+            dto.setEvidenceCode("ZDB-TERM-170419-250");
         }
         if (itemText.equals("IC")) {
             setError(itemText);
-            dto.setEvidenceCode("ZDB-TERM-170419-151");
+            dto.setEvidenceCode("ZDB-TERM-170419-251");
         }
         PublicationDTO pubDto = new PublicationDTO();
         pubDto.setZdbID(publicationID);
