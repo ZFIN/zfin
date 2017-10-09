@@ -10,9 +10,9 @@ task deployPostgresFunctions {
     description = "deploy postgres function in PG"
 
     doLast {
-        println "deploying postgres regen_genox ..."
-        int numberOfTrigger = runSqlFiles(".")
-        println "deployed Regen_genox() and related functions"
+        println "deploying postgres functions ..."
+        int numberOfFunctions = runSqlFiles(".")
+        println "Deployed postgres functions: "+numberOfFunctions
     }
 }
 
@@ -38,8 +38,8 @@ int runSqlFiles(String directory) {
                 // will execute command, return the text output from the executed command, and print to screen.
                 //println command.execute().text
                 command.execute().text
+                numberOfProc ++;
             }
-	    numberOfProc ++;
     }
     return numberOfProc;
 }

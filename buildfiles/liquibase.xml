@@ -1,71 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="Database builder" basedir="../" xmlns:liquibase="antlib:liquibase.integration.ant">
-  
-  <path id="extended.classpath">
-    <path refid="classpath"/>
-    <fileset dir="${env.CATALINA_HOME}/endorsed">
-      <include name="*.jar"/>
-        <include name="*.zip"/>
-    </fileset>
-  </path>
-  
-  <path id="lib.build.classpath">
-    <path refid="classpath"/>
-    <fileset dir="lib/Java">
-      <include name="*.jar"/>
-        <include name="*.zip"/>
-    </fileset>
-  </path>
 
-  <path id="liquibase.lib.path">
-    <fileset dir="lib/Java">
-      <include name="**/*.jar" />
-      </fileset>
-    <fileset dir="lib/Java">
-      <include name="liquibase.jar" />
-    </fileset>
-  </path>
-  
-  <!-- Classpath definitions -->
-  <path id="classpath">
-      <pathelement location="${classbin.dir}"/>
-      <pathelement path="${logsDir}"/>
-      <fileset dir="${web.lib}">
-        <include name="*.jar"/>
-      </fileset>
-  </path>
-  
-  <taskdef 
-     resource="liquibase/integration/ant/antlib.xml" 
-     uri="antlib:liquibase.integration.ant">
-      
-    <classpath refid="liquibase.lib.path" />  
-  </taskdef>
+    <path id="extended.classpath">
+        <path refid="classpath"/>
+        <fileset dir="${env.CATALINA_HOME}/endorsed">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+    </path>
 
-  <liquibase:database 
-     id="liquidatabase" 
-     driver="com.informix.jdbc.IfxDriver" 
-     url="jdbc:informix-sqli://${HOSTNAME}:${INFORMIX_PORT}/${DBNAME}:INFORMIXSERVER=${INFORMIXSERVER};DB_LOCALE=en_US.utf8"
-     defaultSchemaName="informix"
-     />
+    <path id="lib.build.classpath">
+        <path refid="classpath"/>
+        <fileset dir="lib/Java">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+    </path>
+
+    <path id="liquibase.lib.path">
+        <fileset dir="lib/Java">
+            <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="lib/Java">
+            <include name="liquibase.jar"/>
+        </fileset>
+    </path>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <pathelement path="${logsDir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <taskdef
+            resource="liquibase/integration/ant/antlib.xml"
+            uri="antlib:liquibase.integration.ant">
+
+        <classpath refid="liquibase.lib.path"/>
+    </taskdef>
+
+    <liquibase:database
+            id="liquidatabase"
+            driver="com.informix.jdbc.IfxDriver"
+            url="jdbc:informix-sqli://${HOSTNAME}:${INFORMIX_PORT}/${DBNAME}:INFORMIXSERVER=${INFORMIXSERVER};DB_LOCALE=en_US.utf8"
+            defaultSchemaName="informix"
+    />
 
 
- <target name="postloaddb" depends="buildDatabase,gmakePostLoadDB,buildPostGmakeDatabase"/>
+    <target name="postloaddb" depends="buildDatabase,gmakePostLoadDB,buildPostGmakeDatabase"/>
 
- <target
-     name="buildDatabase"
-    description="Builds the database">
-    
-    <echo message="Building DB componentes necessary after loaddb.pl" />
-    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/load/db.changelog.master.xml" 
-			      dropFirst="false" 
-			      classpathref="classpath"
-			      logLevel="debug"
-			      databaseref="liquidatabase"
-			      defaultSchemaName="informix">
-    </liquibase:updateDatabase>
-  </target>
+    <target name="buildDatabase" description="Builds the database">
+        <echo message="Building DB componentes necessary after loaddb.pl"/>
+        <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/load/db.changelog.master.xml"
+                                  dropFirst="false"
+                                  classpathref="classpath"
+                                  logLevel="debug"
+                                  databaseref="liquidatabase"
+                                  defaultSchemaName="informix">
+        </liquibase:updateDatabase>
+    </target>
+
+    <target name="buildPgDatabase" description="Builds the database">
+        <echo message="Building DB componentes necessary after loaddb.pl"/>
+        <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/load/db.changelog.master.xml"
+                                  dropFirst="false"
+                                  classpathref="classpath"
+                                  logLevel="debug"
+                                  databaseref="liquidatabasePG"
+                                  defaultSchemaName="informix">
+        </liquibase:updateDatabase>
+    </target>
 
     <target name="gmakePostLoadDB">
         <exec executable="gmake">
@@ -73,66 +81,78 @@
         </exec>
     </target>
 
-   <target
-     name="buildPostGmakeDatabase"
-    description="Builds the database components necessary post gmake postloaddb">
-    
-    <echo message="Building DB..." />
-    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml" 
-			      dropFirst="false" 
-			      classpathref="classpath"
-			      logLevel="debug"
-			      databaseref="liquidatabase"
-			      defaultSchemaName="informix">
-    </liquibase:updateDatabase>
-  </target> 
- 
-   <target
-     name="rollback"
-    description="Calls any rollback tasks available">
-    
-    <echo message="Building DB..." />
-    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml" 
-			      dropFirst="false" 
-			      classpathref="classpath"
-			      logLevel="debug"
-			      databaseref="liquidatabase"
-			      defaultSchemaName="informix">
-    </liquibase:updateDatabase>
-  </target> 
+    <target name="buildPostGmakeDatabase" description="Builds the database components necessary post gmake postloaddb">
+        <echo message="Building DB..."/>
+        <liquibase:updateDatabase
+                changeLogFile="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml"
+                dropFirst="false"
+                classpathref="classpath"
+                logLevel="debug"
+                databaseref="liquidatabase"
+                defaultSchemaName="informix">
+        </liquibase:updateDatabase>
+    </target>
+
+    <target name="buildPostGmakePgDatabase" description="Builds the database components necessary post gmake postloaddb">
+        <echo message="Building DB..."/>
+        <liquibase:updateDatabase
+                changeLogFile="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml"
+                dropFirst="false"
+                classpathref="classpath"
+                logLevel="debug"
+                databaseref="liquidatabasePG"
+                defaultSchemaName="informix">
+        </liquibase:updateDatabase>
+    </target>
+
+    <target
+            name="rollback"
+            description="Calls any rollback tasks available">
+
+        <echo message="Building DB..."/>
+        <liquibase:updateDatabase
+                changeLogFile="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml"
+                dropFirst="false"
+                classpathref="classpath"
+                logLevel="debug"
+                databaseref="liquidatabase"
+                defaultSchemaName="informix">
+        </liquibase:updateDatabase>
+    </target>
 
 
- <liquibase:database 
-     id="liquidatabasePG" 
-     driver="org.postgresql.Driver" 
-     url="jdbc:postgresql://localhost:5432/${DBNAME}"
-     user="${USER}"
-     />
+    <liquibase:database
+            id="liquidatabasePG"
+            driver="org.postgresql.Driver"
+            url="jdbc:postgresql://localhost:5432/${DBNAME}"
+            user="${USER}"
+    />
 
-  <target
-     name="buildPostgresDatabase"
-    description="Builds the database">
-    
-    <echo message="Building DB componentes necessary after loaddb.pl" />
-    <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postgres/db.changelog.master.xml" 
-			      dropFirst="false" 
-			      classpathref="classpath"
-			      logLevel="debug"
-			      databaseref="liquidatabasePG">
-    </liquibase:updateDatabase>
+    <target
+            name="buildPostgresDatabase"
+            description="Builds the database">
 
-</target> 
-   <target
-   name="addPostgresConstraints"
-    description="adds constraints">
-    
-    <echo message="Building DB componentes necessary after loaddb.pl" />
-   <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postgres/constraints/db.changelog.master.xml" 
-			      dropFirst="false" 
-			      classpathref="classpath"
-			      logLevel="debug"
-			      databaseref="liquidatabasePG">
-    </liquibase:updateDatabase>
- </target> 
+        <echo message="Building DB componentes necessary after loaddb.pl"/>
+        <liquibase:updateDatabase changeLogFile="${SOURCEROOT}/source/org/zfin/db/postgres/db.changelog.master.xml"
+                                  dropFirst="false"
+                                  classpathref="classpath"
+                                  logLevel="debug"
+                                  databaseref="liquidatabasePG">
+        </liquibase:updateDatabase>
+
+    </target>
+    <target
+            name="addPostgresConstraints"
+            description="adds constraints">
+
+        <echo message="Building DB componentes necessary after loaddb.pl"/>
+        <liquibase:updateDatabase
+                changeLogFile="${SOURCEROOT}/source/org/zfin/db/postgres/constraints/db.changelog.master.xml"
+                dropFirst="false"
+                classpathref="classpath"
+                logLevel="debug"
+                databaseref="liquidatabasePG">
+        </liquibase:updateDatabase>
+    </target>
 
 </project>
