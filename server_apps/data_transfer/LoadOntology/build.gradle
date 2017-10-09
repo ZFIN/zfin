@@ -1,0 +1,24 @@
+
+task makePostgresVersion {
+    description = "copy all postgres files into main files: postgres files have an '_PG' before the extension"
+
+    doLast {
+        println "copying postgres files..."
+        fileList(".").each {
+            File file ->
+                if (file.getName().endsWith(".sql") && file.getName().contains("_PG")) {
+                    String newName = file.getName().replace("_PG", "");
+		    File dest = new File(newName);
+		    dest.delete()
+		    dest << file.text
+                    //file.renameTo(newName)
+                }
+        }
+        println "done."
+    }
+}
+
+File[] fileList(String dir) {
+    file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
+}
+
