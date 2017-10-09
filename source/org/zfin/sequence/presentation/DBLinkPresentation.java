@@ -34,8 +34,13 @@ public class DBLinkPresentation extends EntityPresentation {
 
             sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbName());
             if (false == dbLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.MICROARRAY_EXPRESSION)) {
-                sb.append(":");
-                sb.append((dbLink.getAccessionNumberDisplay() != null ? dbLink.getAccessionNumberDisplay() : dbLink.getAccessionNumber()));
+                if (dbLink.getReferenceDatabase().getForeignDB().getDisplayName().contains("Alliance")){
+
+                }
+                else {
+                    sb.append(":");
+                    sb.append((dbLink.getAccessionNumberDisplay() != null ? dbLink.getAccessionNumberDisplay() : dbLink.getAccessionNumber()));
+                }
             }
             sb.append("</a>");
         }
