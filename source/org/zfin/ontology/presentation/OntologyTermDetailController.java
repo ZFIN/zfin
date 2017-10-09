@@ -23,6 +23,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListAdapter;
 import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DisplayGroup;
 
 import java.net.URL;
 import java.util.*;
@@ -176,6 +177,7 @@ public class OntologyTermDetailController {
         if (isDiseaseTerm) {
             int numberOfGenes = OntologyService.getNumberOfDiseaseGenes(term);
             model.addAttribute("diseaseGenes", numberOfGenes);
+            form.setAgrDiseaseLinks(OntologyService.getAGRLinks(term));
             form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term));
             model.addAttribute("fishModels", OntologyService.getDiseaseModelsWithFishModel(term));
         }

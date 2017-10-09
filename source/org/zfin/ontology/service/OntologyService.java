@@ -3,6 +3,7 @@ package org.zfin.ontology.service;
 import org.apache.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.feature.Feature;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -17,6 +18,9 @@ import org.zfin.orthology.NcbiOrthoExternalReference;
 import org.zfin.orthology.NcbiOtherSpeciesGene;
 import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.service.SequenceService;
 
@@ -138,7 +142,16 @@ public class OntologyService {
 
     }
 
+    public static Set<TermDBLink> getAGRLinks(GenericTerm term) {
 
+        Set<TermDBLink> summaryLinks = new HashSet<>();
+        for (TermDBLink termDBLink : term.getDbLinks()) {
+            if (termDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE)) {
+                summaryLinks.add(termDBLink);
+            }
+        }
+        return summaryLinks;
+    }
     public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
         SequenceService sequenceService = new SequenceService();
 

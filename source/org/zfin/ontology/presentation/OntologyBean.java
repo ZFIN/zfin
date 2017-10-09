@@ -5,9 +5,11 @@ import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.SectionVisibility;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.*;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DBLink;
 
 import java.util.*;
 
@@ -30,11 +32,24 @@ public class OntologyBean extends PaginationBean {
     private List<RelationshipPresentation> termRelationships;
     private List<OntologyMetadata> metadataList;
     private Map<String, String> stageListDisplay;
+
+
+
     private Set<OmimPhenotype> omimPheno;
+    private Set<TermDBLink> agrDiseaseLinks;
     private SectionVisibility sectionVisibility = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
 
     public String getAction() {
         return action;
+    }
+
+
+    public Set<TermDBLink> getAgrDiseaseLinks() {
+        return agrDiseaseLinks;
+    }
+
+    public void setAgrDiseaseLinks(Set<TermDBLink> agrDiseaseLinks) {
+        this.agrDiseaseLinks = agrDiseaseLinks;
     }
 
     public void setAction(String action) {

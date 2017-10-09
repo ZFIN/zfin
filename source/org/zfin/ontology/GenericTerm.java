@@ -6,6 +6,8 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.FeatureDBLink;
 import org.zfin.util.NumberAwareStringComparator;
 
 import javax.persistence.*;
@@ -62,14 +64,29 @@ public class GenericTerm implements Term<GenericTermRelationship> {
             inverseJoinColumns = {@JoinColumn(name = "termsub_subset_id",
                     nullable = false, updatable = false)})
     private Set<Subset> subsets;
+
+    public Set<TermAlias> getSynonyms() {
+        return synonyms;
+    }
+
+    public void setSynonyms(Set<TermAlias> synonyms) {
+        this.synonyms = synonyms;
+    }
+
     @OneToMany(mappedBy = "term")
     private Set<TermDefinitionReference> definitionReferences;
+
+
+
     @OneToMany(mappedBy = "term")
     private Set<TermExternalReference> externalReferences;
     @OneToMany(mappedBy = "termOne")
     protected Set<GenericTermRelationship> childTermRelationships;
     @OneToMany(mappedBy = "termTwo")
     protected Set<GenericTermRelationship> parentTermRelationships;
+    @OneToMany(mappedBy = "term", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private Set<TermDBLink> dbLinks;
+
     //Note: For some reason Hibernate does not do well with term_stage used for start and end stages.
     // It only runs one query, typically retrieves only start and leaves end null.. Feels like bug..
     // it worked in xml mapping. Thus, mapping term_stage as a n ew entity and retrieve start and end
@@ -114,6 +131,14 @@ public class GenericTerm implements Term<GenericTermRelationship> {
 
     public String getZdbID() {
         return zdbID;
+    }
+
+    public Set<TermDBLink> getDbLinks() {
+        return dbLinks;
+    }
+
+    public void setDbLinks(Set<TermDBLink> dbLinks) {
+        this.dbLinks = dbLinks;
     }
 
     public void setZdbID(String zdbID) {
