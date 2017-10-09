@@ -1,4 +1,4 @@
-create or replace function getFishOrder (vFishId text,  out fishOrder varchar,  out numAffectedGene  int) as $func$
+create or replace function getFishOrder (vFishId text,  out fishOrder bigint,  out numAffectedGene  int) as $func$
 
 
 declare workingZyg  zygocity.zyg_name%TYPE;
@@ -11,6 +11,7 @@ declare workingZyg  zygocity.zyg_name%TYPE;
  genoIsWT boolean := 'f';
 
 begin
+
 --find the functional number of affected genes.
 numAffectedGene = 0;
 for workingMrkr in
@@ -63,17 +64,18 @@ for workingMrkr in
 		 and b.fishstr_fish_zdb_id = b2.fishstr_fish_zdb_id
 
     loop 
+	
 	   if (existingMrkr = 'none')
 	   then
-		 existingMrkr = workingMrkr;
-		 numAffectedGene = numAffectedGene + 1;
-		 fishOrder = 10000000100;
+		 existingMrkr := workingMrkr;
+		 numAffectedGene := numAffectedGene + 1;
+		 fishOrder := 10000000100;
 		 raise notice 'existingMarkerNone: %', fishOrder;
            else
 	     if (existingMrkr != workingMrkr)
 	     then
-		 numAffectedGene = numAffectedGene + 1;
-		 fishOrder = fishOrder + 100100;
+		 numAffectedGene := numAffectedGene + 1;
+		 fishOrder := fishOrder + 100100;
 		 raise notice 'existingMarkerNotEqualWorkingMarker: %', fishOrder;
 	     end if;
 	   
@@ -99,15 +101,15 @@ end if;
 
 if (genoIsWT = 't')
  then
-     fishOrder = fishOrder + 25;
+     fishOrder := fishOrder::bigint + 25;
 end if;
 
---raise notice 'genoWT: %', fishOrder;
+raise notice 'genoWT: %', fishOrder;
 
 --more than 1 affected gene means fish is complex.
 if (numAffectedGene > 1)
 then
-  fishOrder = fishOrder + 20000000000;
+  fishOrder := fishOrder::bigint + 20000000000;
 end if;
 
  numFeatures = (select count(*) from genotype_Feature, fish
@@ -117,7 +119,7 @@ end if;
 --and more than 1 feature, then fish is also complex.
 if (numFeatures > 1) 
 then
- fishOrder = fishOrder + 20000000000;
+ fishOrder := fishOrder::bigint + 20000000000;
 else
 	-- affective zygosity means: homozygous plus any number of STRs vs. heterozygous 
 	 affectiveZygosity := (Select zyg_name from zygocity, genotype_Feature, fish
@@ -127,18 +129,18 @@ else
 					);
 	if ((affectiveZygosity = 'heterozygous') and (strExists > 0) and (numAffectedGene = 1))
 	then
-		 fishOrder = fishOrder + 50;
+		 fishOrder := fishOrder::bigint + 50;
 	elsif (affectiveZygosity = 'heterozygous' and (strExists = 0) and (numAffectedGene = 1) )
 	then 
-		 fishOrder = fishOrder + 100;
+		 fishOrder := fishOrder::bigint + 100;
 	elsif (affectiveZygosity = 'complex')
 	then 
-	         fishOrder = fishOrder + 20000000000;
+	         fishOrder := fishOrder::bigint + 20000000000;
         elsif (affectiveZygosity = 'unknown')
 	then
-	         fishOrder = fishOrder + 10000500000;
+	         fishOrder := fishOrder::bigint + 10000500000;
         else		
-		 fishOrder = fishOrder;
+		 fishOrder := fishOrder::bigint;
         end if;
 	raise notice 'features=1: %', fishOrder;
 end if;
