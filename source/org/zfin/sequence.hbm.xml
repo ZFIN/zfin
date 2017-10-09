@@ -122,7 +122,7 @@
                        formula="(
                     CASE substring(dblink_linked_recid from 1 for 9)
                     WHEN 'ZDB-ORTHO' THEN 'ORTH'
-                    WHEN 'ZDB-ANAT-' THEN 'ANAT'
+                    WHEN 'ZDB-TERM-' THEN 'TERM'
                     WHEN 'ZDB-TSCRI' THEN 'TSCR'
                     WHEN 'ZDB-ALT' THEN 'ALT'
                     ELSE  'MARK'
@@ -152,8 +152,8 @@
         <subclass name="org.zfin.sequence.MarkerDBLink" discriminator-value="MARK" >
             <many-to-one name="marker" column="dblink_linked_recid" class="org.zfin.marker.Marker" not-null="true" fetch="select"/>
         </subclass>
-        <subclass name="org.zfin.anatomy.AnatomyDBLink" discriminator-value="ANAT">
-            <many-to-one name="anatomyItem" column="dblink_linked_recid" class="org.zfin.ontology.GenericTerm" not-null="true"/>
+        <subclass name="org.zfin.ontology.TermDBLink" discriminator-value="TERM">
+            <many-to-one name="term" column="dblink_linked_recid" class="org.zfin.ontology.GenericTerm" not-null="true"/>
         </subclass>
         <subclass name="org.zfin.sequence.FeatureDBLink" discriminator-value="ALT" >
             <many-to-one name="feature" column="dblink_linked_recid" class="org.zfin.feature.Feature" not-null="true" fetch="select"/>
