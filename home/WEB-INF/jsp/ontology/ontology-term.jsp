@@ -118,6 +118,33 @@
 
 
     <c:if test="${isDiseaseTerm}">
+        <div class="summary">
+<span class="summaryTitle">OTHER ${formBean.term.termName} PAGES</span>
+
+
+            <div id="other-pages">
+                <zfin2:subsection title="${title}" test="${!empty formBean.agrDiseaseLinks}" showNoData="true" noDataText="No links to external sites">
+                    <table class="summary horizontal-solidblock">
+                        <c:forEach var="link" items="${formBean.agrDiseaseLinks}" varStatus="loop">
+                            <tr>
+                                <td>
+                                    <zfin:link entity="${link}"/>
+                                    <c:if test="${link.publicationCount > 0}">
+                                        <c:choose>
+                                            <c:when test="${link.publicationCount == 1}">
+                                                (<a href="/${link.singlePublication.zdbID}">${link.publicationCount}</a>)
+                                            </c:when>
+                                            <c:otherwise>
+                                                (<a href="/action/infrastructure/data-citation-list/${link.zdbID}">${link.publicationCount}</a>)
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:if>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                </zfin2:subsection>
+            </div>
         <div id="genes-involved">
             <zfin2:genesAssociatedWithDisease formBean="${formBean}"/>
         </div>

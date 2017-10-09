@@ -3,11 +3,13 @@
     <i style="color: red; font-weight: bold;" title="Create new other marker link" ng-click="om.openAddOtherMarkerLink()">New</i>
 </span>
 <table class="summary" ng-show="om.links.length">
-    <tr><td ng-repeat="link in om.links"><a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
-        <span ng-bind-html="link.refLink"></span><span ng-show="om.edit" style="cursor: pointer;"
+    <tr><td ng-repeat="link in om.links"><a ng-if="link.referenceDatabaseName!='Alliance'" ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
+        <a ng-if="link.referenceDatabaseName=='Alliance'" ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}</a>
+
+        <span ng-if="link.referenceDatabaseName!='Alliance'" ng-bind-html="link.refLink"></span><span ng-if="link.referenceDatabaseName!='Alliance'" ng-show="om.edit" style="cursor: pointer;"
                                            ng-click="om.openEditAttribution(link, $index)"><i class="fa fa-pencil red" aria-hidden="true"
                                                                                               title="Edit attributions"></i></span>
-            <span ng-show="om.edit" style="cursor: pointer;"
+            <span ng-if="link.referenceDatabaseName!='Alliance'" ng-show="om.edit" style="cursor: pointer;"
                                            ng-click="om.openDeleteOtherMarkerLink(link,$index)">
                        <i class="fa fa-trash red" aria-hidden="true" title="Delete the link"></i></span>
     </td></tr>
