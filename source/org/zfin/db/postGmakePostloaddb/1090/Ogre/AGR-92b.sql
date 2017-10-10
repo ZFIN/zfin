@@ -1,7 +1,7 @@
 create table pre_foreign_db_contains (
         prefbct_fdbcont_organism_common_name varchar(30) not null,
         prefbct_fdbcont_fdbdt_id int8,
-        prefbct_fdbcont_fdb_db_id varchar(50) not null
+        prefbct_fdbcont_fdb_db_id int8 not null
 );
 
 insert into pre_foreign_db_contains (prefbct_fdbcont_organism_common_name, prefbct_fdbcont_fdbdt_id, prefbct_fdbcont_fdb_db_id)
@@ -29,7 +29,7 @@ drop table pre_foreign_db_contains;
 create table pre_foreign_db_contains (
         prefbct_fdbcont_organism_common_name varchar(30) not null,
         prefbct_fdbcont_fdbdt_id int8,
-        prefbct_fdbcont_fdb_db_id varchar(50) not null
+        prefbct_fdbcont_fdb_db_id int8 not null
 );
 
 insert into pre_foreign_db_contains (prefbct_fdbcont_organism_common_name, prefbct_fdbcont_fdbdt_id, prefbct_fdbcont_fdb_db_id)
