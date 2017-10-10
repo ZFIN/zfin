@@ -73,7 +73,11 @@ WHERE  zdb_id NOT IN ( 'ZDB-PUB-021016-117',
                        'ZDB-PUB-041213-5',
                        'ZDB-PUB-160219-10',
                        'ZDB-PUB-110921-14',
-                       'ZDB-PUB-160725-24' )
+                       'ZDB-PUB-160725-24',
+                       'ZDB-PUB-150404-8',
+                       'ZDB-PUB-170825-6',
+                       'ZDB-PUB-170722-2',
+                       'ZDB-PUB-081029-1')
        AND jrnl_abbrev <> 'ZFIN Direct Data Submission'
        AND jrnl_zdb_id = pub_jrnl_zdb_id
 GROUP  BY title
