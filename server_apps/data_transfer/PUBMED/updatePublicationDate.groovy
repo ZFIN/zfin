@@ -74,7 +74,7 @@ Sql.withInstance(db) { Sql sql ->
         sql.withBatch('update publication set pub_date = ? where zdb_id = ?') { ps ->
             pubsUpdated.each { update -> ps.addBatch(update[2], update[0]) }
         }
-        sql.withBatch('insert into updates (rec_id, field_name, new_value, comments, when) values (?, "pub_date", ?, "automated pub date loader", current)') { ps ->
+        sql.withBatch('insert into updates (rec_id, field_name, new_value, comments, upd_when) values (?, "pub_date", ?, "automated pub date loader", current)') { ps ->
             pubsUpdated.each { update -> ps.addBatch(update[0], update[2]) }
         }
     }
