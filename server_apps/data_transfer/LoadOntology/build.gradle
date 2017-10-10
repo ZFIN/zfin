@@ -1,3 +1,7 @@
+def env = System.getenv()
+def targetroot = env['TARGETROOT']
+def currentDir = "/server_apps/data_transfer/LoadOntology"
+
 task makePostgresVersion {
     description = "copy all postgres files into main files: postgres files have an '_PG' before the extension"
 
@@ -11,13 +15,29 @@ task makePostgresVersion {
                     File dest = new File(file.getParent(), newName);
                     dest.delete()
                     dest << file.text
-                    println("\t"+file.getName() +" -> "+newName)
+                    println("\t" + file.getName() + " -> " + newName)
                     numberOfFiles++;
                 }
         }
-        println "Copied "+numberOfFiles +" files."
+        println "Copied " + numberOfFiles + " files."
     }
 }
+
+task deployFiles {
+    doLast {
+        copy {
+            //println "From: " + project.projectDir
+            //println "Into: " + targetroot + "/" + currentDir
+
+            from project.projectDir
+            into targetroot + currentDir
+            exclude 'Makefile'
+            exclude 'build.gradle'
+        }
+        //println 'finished deploy files in ' + project.projectDir
+    }
+}
+
 
 File[] fileList(String dir) {
     file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()

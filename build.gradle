@@ -62,7 +62,7 @@ task loadDb() {
         exec { commandLine 'dropdb', dbname }
         exec { commandLine 'createdb', dbname }
         exec { commandLine "bash", "-c", "pg_restore -j 4 -d $dbname $unloadPath" }
-	exec { commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
+        exec { commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
     }
 }
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
@@ -99,6 +99,29 @@ update {
     println "change logs: " + changeLog
 */
 
+}
+
+task deployFiles1() {
+    println "Deploying non-Java files..."
+    subprojects.each { subproject ->
+/*
+        println subproject.path
+        println "Tasks: " + subproject.defaultTasks
+*/
+        def task = subproject.path + ":" + "defaultTasks"
+/*
+        if (subproject.path == ':server_apps:apache') {
+            println "DT: " + subproject.defaultTasks
+            println "HALLLO"
+            dependsOn subproject.defaultTasks
+            //dependsOn subproject.path+":"+"deployApacheFiles"
+        }
+*/
+        if (findProject(task) != null) {
+            println "Project: " + subproject.path
+            dependsOn task
+        }
+    }
 }
 
 task defaultTask {
