@@ -34,7 +34,7 @@ PRE_TERM_FILE = "agrdisease.unl"
 
 
 dbname = System.getenv("DBNAME")
-println("Loading terms into $dbname")
+println("Loading db link terms into $dbname")
 
 dbaccess dbname, """
   UNLOAD TO $PRE_MRKR_FILE
