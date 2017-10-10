@@ -15,7 +15,7 @@ task deployFiles {
 //            println projectDir
 
             from project.projectDir
-            into targetroot + "/server_apps/apache"
+            into targetroot + "/server_apps/DB_maintenance/warehouse"
             exclude 'Makefile'
             exclude 'build.gradle'
         }
