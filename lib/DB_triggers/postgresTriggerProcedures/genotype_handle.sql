@@ -19,7 +19,7 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger genotype_handle_trigger before update on genotype
+create trigger genotype_handle_trigger after update on genotype
  for each row
  when (OLD.geno_handle IS DISTINCT FROM NEW.geno_handle)
  execute procedure genotype_handle();

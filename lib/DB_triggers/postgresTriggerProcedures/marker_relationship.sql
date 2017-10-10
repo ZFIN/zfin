@@ -19,6 +19,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger marker_relationship_trigger before insert or update on marker_relationship
+create trigger marker_relationship_trigger after insert or update on marker_relationship
  for each row
  execute procedure marker_relationship();

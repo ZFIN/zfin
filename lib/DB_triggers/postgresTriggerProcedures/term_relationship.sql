@@ -11,6 +11,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger term_relationship_trigger before insert or update on term_relationship
+create trigger term_relationship_trigger after insert or update on term_relationship
  for each row
  execute procedure term_relationship();

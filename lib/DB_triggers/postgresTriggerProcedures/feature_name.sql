@@ -20,7 +20,7 @@ end;
 $BODY$ LANGUAGE plpgsql;
 
 
-create trigger feature_name_trigger before update on feature
+create trigger feature_name_trigger after update on feature
  for each row 
  when (OLD.feature_name IS DISTINCT FROM NEW.feature_name)
  execute procedure feature_name();

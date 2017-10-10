@@ -12,6 +12,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger updates_trigger before insert or update on updates
+create trigger updates_trigger after insert or update on updates
  for each row
  execute procedure updates();

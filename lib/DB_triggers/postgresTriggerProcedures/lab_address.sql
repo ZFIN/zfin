@@ -14,6 +14,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger lab_address_trigger before update on lab_address
+create trigger lab_address_trigger after update on lab_address
  for each row
  execute procedure lab_address();

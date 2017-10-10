@@ -9,6 +9,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger pub_correspondence_sent_tracker_trigger before insert or update on pub_correspondence_sent_tracker
+create trigger pub_correspondence_sent_tracker_trigger after insert or update on pub_correspondence_sent_tracker
  for each row
  execute procedure pub_correspondence_sent_tracker();

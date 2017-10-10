@@ -12,6 +12,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger construct_component_trigger before update on construct_component
+create trigger construct_component_trigger after update on construct_component
  for each row
  execute procedure construct_component();

@@ -15,6 +15,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger source_alias_trigger before insert or update on source_alias
+create trigger source_alias_trigger after insert or update on source_alias
  for each row
  execute procedure source_alias();

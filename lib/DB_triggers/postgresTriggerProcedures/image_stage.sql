@@ -14,6 +14,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger image_stage_trigger before insert or update on image_stage
+create trigger image_stage_trigger after insert or update on image_stage
  for each row
  execute procedure image_stage();

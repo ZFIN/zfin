@@ -12,6 +12,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger zdb_submitters_trigger before insert or update on zdb_submitters
+create trigger zdb_submitters_trigger after insert or update on zdb_submitters
  for each row
  execute procedure zdb_submitters();

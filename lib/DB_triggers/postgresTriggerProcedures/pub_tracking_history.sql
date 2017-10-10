@@ -16,6 +16,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger pub_tracking_history_trigger before insert or update on pub_tracking_history
+create trigger pub_tracking_history_trigger after insert or update on pub_tracking_history
  for each row
  execute procedure pub_tracking_history();

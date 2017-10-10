@@ -21,6 +21,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger int_person_pub_trigger before insert or update on int_person_pub
+create trigger int_person_pub_trigger after insert or update on int_person_pub
  for each row
  execute procedure int_person_pub();

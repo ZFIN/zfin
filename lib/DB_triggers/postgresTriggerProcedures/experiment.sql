@@ -18,6 +18,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger experiment_trigger before insert or update on experiment
+create trigger experiment_trigger after insert or update on experiment
  for each row
  execute procedure experiment();

@@ -11,6 +11,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger one_to_one_accession_trigger before insert or update on one_to_one_accession
+create trigger one_to_one_accession_trigger after insert or update on one_to_one_accession
  for each row
  execute procedure one_to_one_accession();

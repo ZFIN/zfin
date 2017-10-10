@@ -17,6 +17,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger figure_trigger before insert or update on figure
+create trigger figure_trigger after insert or update on figure
  for each row
  execute procedure figure();

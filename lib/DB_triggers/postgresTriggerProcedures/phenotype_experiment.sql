@@ -12,6 +12,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger phenotype_experiment_trigger before insert or update on phenotype_experiment
+create trigger phenotype_experiment_trigger after insert or update on phenotype_experiment
  for each row
  execute procedure phenotype_experiment();

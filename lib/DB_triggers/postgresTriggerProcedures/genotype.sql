@@ -24,6 +24,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger genotype_trigger before insert on genotype
+create trigger genotype_trigger after insert on genotype
  for each row
  execute procedure genotype();

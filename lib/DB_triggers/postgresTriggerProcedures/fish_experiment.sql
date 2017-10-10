@@ -18,6 +18,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger fish_experiment_trigger before insert or update on fish_experiment
+create trigger fish_experiment_trigger after insert or update on fish_experiment
  for each row
  execute procedure fish_experiment();

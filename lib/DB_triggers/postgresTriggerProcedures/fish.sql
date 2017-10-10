@@ -27,6 +27,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger fish_trigger before update or insert on fish
+create trigger fish_trigger after update or insert on fish
  for each row
  execute procedure fish();

@@ -22,6 +22,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger stage_trigger before insert or update on stage
+create trigger stage_trigger after insert or update on stage
  for each row
  execute procedure stage();

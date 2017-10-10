@@ -29,6 +29,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger db_link_trigger before insert or update on db_link
+create trigger db_link_trigger after insert or update on db_link
  for each row
  execute procedure db_link();

@@ -37,7 +37,7 @@ end;
 $BODY$ LANGUAGE plpgsql;
 
 
-create trigger feature_abbrev_trigger before update on feature
+create trigger feature_abbrev_trigger after update on feature
  for each row 
  when (OLD.feature_abbrev IS DISTINCT FROM NEW.feature_abbrev)
  execute procedure feature_abbrev();

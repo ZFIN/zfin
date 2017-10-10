@@ -18,6 +18,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger data_alias_trigger before insert or update on data_alias
+create trigger data_alias_trigger after insert or update on data_alias
  for each row
  execute procedure data_alias();

@@ -12,7 +12,7 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger marker_update_comments_trigger before update on marker
+create trigger marker_update_comments_trigger after update on marker
  for each row
  when (OLD.mrkr_comments IS DISTINCT FROM NEW.mrkr_comments)
  execute procedure marker_update_comments();

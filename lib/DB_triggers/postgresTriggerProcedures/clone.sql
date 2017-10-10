@@ -12,6 +12,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger clone_trigger before insert or update on clone
+create trigger clone_trigger after insert or update on clone
  for each row
  execute procedure clone();

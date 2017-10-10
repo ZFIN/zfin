@@ -31,7 +31,7 @@ end;
 $BODY$ LANGUAGE plpgsql;
 
 
-create trigger marker_name_trigger before update on marker
+create trigger marker_name_trigger after update on marker
  for each row 
  when (OLD.mrkr_name IS DISTINCT FROM NEW.mrkr_name)
  execute procedure marker_name();

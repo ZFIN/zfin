@@ -13,6 +13,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger construct_trigger before insert or update on construct
+create trigger construct_trigger after insert or update on construct
  for each row
  execute procedure construct();

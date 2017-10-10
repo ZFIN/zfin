@@ -19,7 +19,7 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger genotype_display_name_trigger before update on genotype
+create trigger genotype_display_name_trigger after update on genotype
  for each row
  when (OLD.geno_display_name IS DISTINCT FROM NEW.geno_display_name)
  execute procedure genotype_display_name();

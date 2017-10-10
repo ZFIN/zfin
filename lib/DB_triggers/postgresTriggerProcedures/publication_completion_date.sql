@@ -14,7 +14,7 @@ end;
 $BODY$ LANGUAGE plpgsql;
 
 
-create trigger publication_completion_date_trigger before update on publication
+create trigger publication_completion_date_trigger after update on publication
  for each row 
  when (OLD.pub_completion_date IS DISTINCT FROM NEW.pub_completion_date)
  execute procedure publication_completion_date();

@@ -19,6 +19,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger expression_experiment2_trigger before insert or update on expression_experiment2
+create trigger expression_experiment2_trigger after insert or update on expression_experiment2
  for each row
  execute procedure expression_experiment2();

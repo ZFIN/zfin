@@ -11,6 +11,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger anatomy_display_trigger before insert or update on anatomy_display
+create trigger anatomy_display_trigger after insert or update on anatomy_display
  for each row
  execute procedure anatomy_display();

@@ -27,6 +27,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger lab_trigger before insert or update on lab
+create trigger lab_trigger after insert or update on lab
  for each row
  execute procedure lab();

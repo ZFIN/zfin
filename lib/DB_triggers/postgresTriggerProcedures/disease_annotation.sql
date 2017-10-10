@@ -15,6 +15,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger disease_annotation_trigger before insert or update on disease_annotation
+create trigger disease_annotation_trigger after insert or update on disease_annotation
  for each row
  execute procedure disease_annotation();

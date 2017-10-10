@@ -17,6 +17,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger expression_pattern_infrastructure_trigger before insert or update on expression_pattern_infrastructure
+create trigger expression_pattern_infrastructure_trigger after insert or update on expression_pattern_infrastructure
  for each row
  execute procedure expression_pattern_infrastructure();

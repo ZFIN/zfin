@@ -16,6 +16,6 @@ end;
 
 $BODY$ LANGUAGE plpgsql;
 
-create trigger phenotype_statement_trigger before insert or update on phenotype_statement
+create trigger phenotype_statement_trigger after insert or update on phenotype_statement
  for each row
  execute procedure phenotype_statement();

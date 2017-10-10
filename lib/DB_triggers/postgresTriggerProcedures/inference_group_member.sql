@@ -18,6 +18,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger inference_group_member_trigger before insert or update on inference_group_member
+create trigger inference_group_member_trigger after insert or update on inference_group_member
  for each row
  execute procedure inference_group_member();

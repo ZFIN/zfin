@@ -23,6 +23,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger journal_trigger before insert or update on journal
+create trigger journal_trigger after insert or update on journal
  for each row
  execute procedure journal();

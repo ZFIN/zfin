@@ -22,6 +22,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger person_trigger before insert or update on person
+create trigger person_trigger after insert or update on person
  for each row
  execute procedure person();

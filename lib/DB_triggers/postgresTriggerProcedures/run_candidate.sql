@@ -13,6 +13,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger run_candidate_trigger before insert or update on run_candidate
+create trigger run_candidate_trigger after insert or update on run_candidate
  for each row
  execute procedure run_candidate();

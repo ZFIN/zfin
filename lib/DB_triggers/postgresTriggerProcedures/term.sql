@@ -16,6 +16,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger term_trigger before insert or update on term
+create trigger term_trigger after insert or update on term
  for each row
  execute procedure term();

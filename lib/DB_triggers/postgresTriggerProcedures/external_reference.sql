@@ -19,6 +19,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger external_reference_trigger before insert or update on external_reference
+create trigger external_reference_trigger after insert or update on external_reference
  for each row
  execute procedure external_reference();

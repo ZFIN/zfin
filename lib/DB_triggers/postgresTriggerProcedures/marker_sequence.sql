@@ -14,6 +14,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger marker_sequence_trigger before insert or update on marker_sequence
+create trigger marker_sequence_trigger after insert or update on marker_sequence
  for each row
  execute procedure marker_sequence();

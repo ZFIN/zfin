@@ -12,6 +12,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger record_attribution_trigger before insert or update on record_attribution
+create trigger record_attribution_trigger after insert or update on record_attribution
  for each row
  execute procedure record_attribution();

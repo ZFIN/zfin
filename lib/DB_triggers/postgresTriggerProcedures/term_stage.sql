@@ -11,6 +11,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger term_stage_trigger before insert or update on term_stage
+create trigger term_stage_trigger after insert or update on term_stage
  for each row
  execute procedure term_stage();

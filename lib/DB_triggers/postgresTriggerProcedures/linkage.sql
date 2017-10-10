@@ -11,6 +11,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger linkage_trigger before insert or update on linkage
+create trigger linkage_trigger after insert or update on linkage
  for each row
  execute procedure linkage();

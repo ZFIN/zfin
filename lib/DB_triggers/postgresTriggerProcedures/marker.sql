@@ -60,7 +60,7 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger marker_name_order_trigger before insert on marker
+create trigger marker_name_order_trigger after insert on marker
  for each row
  execute procedure marker_name_order();
 

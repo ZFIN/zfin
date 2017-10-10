@@ -29,6 +29,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger marker_go_term_evidence_trigger before insert or update on marker_go_term_evidence
+create trigger marker_go_term_evidence_trigger after insert or update on marker_go_term_evidence
  for each row
  execute procedure marker_go_term_evidence();
