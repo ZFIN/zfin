@@ -2262,10 +2262,10 @@ SELECT genox_fish_zdb_id,
        term_name,
        dat_source_zdb_id,
        accession_no,
-       CASE dat_evidence_code
-         WHEN 'IC' THEN 'IC, ECO:ECO:0000305'
-         WHEN 'TAS' THEN 'TAS, ECO:ECO:0000304'
-         ELSE dat_evidence_code
+       CASE dat_evidence_term_zdb_id
+         WHEN 'ZDB-TERM-170419-151' THEN 'IC, ECO:ECO:0000305'
+         WHEN 'ZDB-TERM-170419-33' THEN 'TAS, ECO:ECO:0000304'
+         ELSE dat_evidence_term_zdb_id
        END
 FROM disease_annotation_model
 JOIN disease_annotation
@@ -2274,7 +2274,7 @@ JOIN publication
   ON dat_source_zdb_id = zdb_id
 JOIN term
   ON dat_term_zdb_id = term_zdb_id
-FULL OUTER JOIN fish_experiment
+JOIN fish_experiment
   ON genox_zdb_id = damo_genox_zdb_id
 ;
 \copy (select * from fishModelDisease) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease.txt' with delimiter as '	' null as '';
@@ -2303,4 +2303,4 @@ select fmrel_mrkr_zdb_id, mrkr_name, fmrel_type, fmrel_ftr_zdb_id, feature_name
 \copy (select * from innophenoconstructs) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/innophenoconstructs.txt' with delimiter as '	' null as '';
 drop view innophenoconstructs;
 
-rollback work;
+commit work;
