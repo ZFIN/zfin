@@ -23,9 +23,12 @@ task makePostgresVersion {
                         && file.getName().contains("_PG")) {
                     String newName = file.getName().replace("_PG", "");
                     File dest = new File(file.getParent(), newName);
+                    String newFileName = dest.getAbsolutePath()
                     dest.delete()
                     dest << file.text
                     println("\t" + file.getName() + " -> " + newName)
+                    if (newFileName.endsWith("pl"))
+                        exec { commandLine 'chmod', '755', newFileName }
                     numberOfFiles++;
                 }
         }
