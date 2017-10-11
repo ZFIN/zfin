@@ -1,0 +1,38 @@
+task deployFilesIntoTargetroot(type: Copy) {
+    from(project.projectDir) {
+        include "*"
+        ttNameMap.each { name, value ->
+            //println name +" "+value
+            filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+        }
+        exclude 'Makefile', 'build.gradle', '*_PG.sql'
+    }
+    into ttNameMap.get('TARGETROOT') + "/" + project.path.replace(":", "/")
+    exclude 'Makefile', 'build.gradle'
+}
+
+task makePostgresVersion {
+    description = "copy all postgres files into main files: postgres files have an '_PG' before the extension"
+
+    doLast {
+        println "Copying postgres files in directory: " + fileList(".")[0].getParent()
+        int numberOfFiles = 0;
+        fileList(".").each {
+            File file ->
+                if (file.getName().endsWith(".sql") && file.getName().contains("_PG")) {
+                    String newName = file.getName().replace("_PG", "");
+                    File dest = new File(file.getParent(), newName);
+                    dest.delete()
+                    dest << file.text
+                    println("\t" + file.getName() + " -> " + newName)
+                    numberOfFiles++;
+                }
+        }
+        println "Copied " + numberOfFiles + " files."
+    }
+}
+
+File[] fileList(String dir) {
+    file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
+}
+

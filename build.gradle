@@ -131,4 +131,8 @@ project.ext.ttNameMap = ['TARGETROOT'               : env['TARGETROOT'],
                          'SHARED_DOMAIN_NAME'       : env['SHARED_DOMAIN_NAME'],
                          'PARTNER_DBNAME'           : env['PARTNER_DBNAME'],
                          'PARTNER_INTERNAL_INSTANCE': env['PARTNER_INTERNAL_INSTANCE'],
+                         'SQLHOSTS_FILE'            : env['SQLHOSTS_FILE'],
+                         'ONCONFIG_FILE'            : env['ONCONFIG_FILE'],
+                         'VALIDATION_EMAIL_DBA'     : env['VALIDATION_EMAIL_DBA'],
+                         'DEFAULT_EMAIL'            : env['DEFAULT_EMAIL'],
                          'GBROWSE_PATH_FROM_ROOT'   : env['GBROWSE_PATH_FROM_ROOT']]
