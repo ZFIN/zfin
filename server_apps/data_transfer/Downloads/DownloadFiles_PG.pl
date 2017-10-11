@@ -68,10 +68,10 @@ else {
 
 }
 
-system("psql -d <!--|DB_NAME|--> -a -f DownloadFiles_PG.sql") and die "there was an error in the DownloadFiles.sql";
-system("./patoNumbers_PG.pl") and die "there was an error in patoNumbers.pl";
+system("psql -d <!--|DB_NAME|--> -a -f DownloadFiles.sql") and die "there was an error in the DownloadFiles.sql";
+system("./patoNumbers.pl") and die "there was an error in patoNumbers.pl";
 
-system("./generateStagedAnatomy_PG.pl") and die "there was an error in generateStagedAnatomy.pl";
+system("./generateStagedAnatomy.pl") and die "there was an error in generateStagedAnatomy.pl";
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";

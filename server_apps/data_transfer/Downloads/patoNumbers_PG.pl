@@ -17,7 +17,7 @@ $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 # call patoNumbers.sql to prepare some download files and some pre-processed files
-system("psql -d <!--|DB_NAME|--> -a -f patoNumbers_PG.sql");
+system("psql -d <!--|DB_NAME|--> -a -f patoNumbers.sql");
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
