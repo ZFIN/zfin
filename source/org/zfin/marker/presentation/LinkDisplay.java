@@ -26,7 +26,12 @@ public class LinkDisplay implements ProvidesLink {
     private Integer typeOrder;
 
     public String getDisplayName() {
-        return referenceDatabaseName + ":" + accession;
+        if (accession.contains("ZDB")) {
+            return referenceDatabaseName;
+        }
+        else{
+            return referenceDatabaseName + ":" + accession;
+        }
     }
 
     @Override
