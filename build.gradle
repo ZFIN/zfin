@@ -11,6 +11,7 @@ plugins {
 }
 
 apply plugin: 'java'
+apply plugin: 'groovy'
 
 //apply from : '../zfinGradle/build.gradle'
 
@@ -19,10 +20,13 @@ def dbname = env['DBNAME']
 def sourceroot = env['SOURCEROOT']
 def pgbindir = env['PGBINDIR']
 def pgdata = env['PGDATA']
+def targetroot = env['TARGETROOT']
 
 dependencies {
     compile 'org.liquibase:liquibase-core:3.4.1'
     compile "org.liquibase:liquibase-gradle-plugin:1.1.1"
+    compile gradleApi()
+    compile localGroovy()
 }
 
 task deployPostgres(dependsOn: ['lib:DB_functions:postgresFunctions:deployPostgresFunctions',
@@ -101,29 +105,6 @@ update {
 
 }
 
-task deployFiles1() {
-    println "Deploying non-Java files..."
-    subprojects.each { subproject ->
-/*
-        println subproject.path
-        println "Tasks: " + subproject.defaultTasks
-*/
-        def task = subproject.path + ":" + "defaultTasks"
-/*
-        if (subproject.path == ':server_apps:apache') {
-            println "DT: " + subproject.defaultTasks
-            println "HALLLO"
-            dependsOn subproject.defaultTasks
-            //dependsOn subproject.path+":"+"deployApacheFiles"
-        }
-*/
-        if (findProject(task) != null) {
-            println "Project: " + subproject.path
-            dependsOn task
-        }
-    }
-}
-
 task defaultTask {
 /*
     println "Hello"
@@ -138,3 +119,16 @@ task defaultTask {
 */
 }
 
+project.ext.ttNameMap = ['TARGETROOT'               : env['TARGETROOT'],
+                         'WEBDRIVER_PATH_FROM_ROOT' : env['WEBDRIVER_PATH_FROM_ROOT'],
+                         'ROOT_PATH'                : env['ROOT_PATH'],
+                         'SOURCEROOT'               : env['SOURCEROOT'],
+                         'MUTANT_NAME'              : env['MUTANT_NAME'],
+                         'INSTANCE'                 : env['INSTANCE'],
+                         'DB_NAME'                  : env['DB_NAME'],
+                         'INFORMIX_DIR'             : env['INFORMIX_DIR'],
+                         'INFORMIX_SERVER'          : env['INFORMIX_SERVER'],
+                         'SHARED_DOMAIN_NAME'       : env['SHARED_DOMAIN_NAME'],
+                         'PARTNER_DBNAME'           : env['PARTNER_DBNAME'],
+                         'PARTNER_INTERNAL_INSTANCE': env['PARTNER_INTERNAL_INSTANCE'],
+                         'GBROWSE_PATH_FROM_ROOT'   : env['GBROWSE_PATH_FROM_ROOT']]
