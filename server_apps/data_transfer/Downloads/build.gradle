@@ -1,6 +1,6 @@
 task deployFilesIntoTargetroot(type: Copy) {
     from(project.projectDir) {
-        include "*"
+        include "**/*"
         ttNameMap.each { name, value ->
             //println name +" "+value
             filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
@@ -19,7 +19,8 @@ task makePostgresVersion {
         int numberOfFiles = 0;
         fileList(".").each {
             File file ->
-                if (file.getName().endsWith(".sql") && file.getName().contains("_PG")) {
+                if ((file.getName().endsWith(".sql") || file.getName().endsWith(".pl"))
+                        && file.getName().contains("_PG")) {
                     String newName = file.getName().replace("_PG", "");
                     File dest = new File(file.getParent(), newName);
                     dest.delete()
