@@ -519,6 +519,7 @@ select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
 		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id)
  order by xpatex_zdb_id;
 \copy (select * from xpatfig_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig_fish.txt' with delimiter as '	' null as '';
+drop view xpatfig_fish;
 
 -- generate a file with genotype id's and associated figure zdbid's
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig_fish.txt'"
