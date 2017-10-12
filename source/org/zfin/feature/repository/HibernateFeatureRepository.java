@@ -40,6 +40,7 @@ import org.zfin.sequence.DBLink;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.math.BigInteger;
 import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -1113,7 +1114,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         query.setString("zdbID", construct.getZdbID());
         query.setString("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
         query.setString("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
-        return ((BigDecimal)query.uniqueResult()).intValue();
+        return ((BigInteger)query.uniqueResult()).intValue();
     }
 }
 
