@@ -31,6 +31,8 @@ int runSqlFiles(String directory) {
 
 
     int numberOfProc = 0;
+
+   
     fileList(directory).each {
         File file ->
             if (file.getName().endsWith(".sql")) {
@@ -42,4 +44,11 @@ int runSqlFiles(String directory) {
             }
     }
     return numberOfProc;
+}
+
+task dropFunctions() {
+     doLast {
+     	    description = "drop all functions from the database"
+   	    exec { commandLine "bash", "-c", "psql $dbname < ./dropFunctions.sql" }
+     }
 }
