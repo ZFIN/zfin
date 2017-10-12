@@ -5,7 +5,7 @@ task deployFilesIntoTargetroot(type: Copy) {
             //println name +" "+value
             filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
         }
-        exclude 'Makefile', 'build.gradle', '*_PG.sql'
+        exclude '**/Makefile', 'build.gradle', '**/*_PG.*'
     }
     into ttNameMap.get('TARGETROOT') + "/" + project.path.replace(":", "/")
     exclude 'Makefile', 'build.gradle'
@@ -32,7 +32,7 @@ private int copyFiles(String directory) {
     int numberOfFiles = 0;
     fileList(directory).each {
         File file ->
-            if ((file.getName().endsWith(".sql") || file.getName().endsWith(".pl"))
+            if ((file.getName().endsWith(".sql") || file.getName().endsWith(".pl") || file.getName().endsWith(".sh"))
                     && file.getName().contains("_PG")) {
                 String newName = file.getName().replace("_PG", "");
                 File dest = new File(file.getParent(), newName);
