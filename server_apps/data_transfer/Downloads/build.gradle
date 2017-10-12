@@ -15,25 +15,37 @@ task makePostgresVersion {
     description = "copy all postgres files into main files: postgres files have an '_PG' before the extension"
 
     doLast {
-        println "Copying postgres files in directory: " + fileList(".")[0].getParent()
+        def directory = "."
+        println "Copying postgres files in directory: " + fileList(directory)[0].getParent()
         int numberOfFiles = 0;
-        fileList(".").each {
-            File file ->
-                if ((file.getName().endsWith(".sql") || file.getName().endsWith(".pl"))
-                        && file.getName().contains("_PG")) {
-                    String newName = file.getName().replace("_PG", "");
-                    File dest = new File(file.getParent(), newName);
-                    String newFileName = dest.getAbsolutePath()
-                    dest.delete()
-                    dest << file.text
-                    println("\t" + file.getName() + " -> " + newName)
-                    if (newFileName.endsWith("pl"))
-                        exec { commandLine 'chmod', '755', newFileName }
-                    numberOfFiles++;
-                }
-        }
+        numberOfFiles += copyFiles(directory)
+        println "Copied " + numberOfFiles + " files."
+        numberOfFiles = 0;
+        directory = "intermineData"
+        println "Copying postgres files in directory: " + fileList(directory)[0].getParent()
+        numberOfFiles += copyFiles(directory)
         println "Copied " + numberOfFiles + " files."
     }
+}
+
+private int copyFiles(String directory) {
+    int numberOfFiles = 0;
+    fileList(directory).each {
+        File file ->
+            if ((file.getName().endsWith(".sql") || file.getName().endsWith(".pl"))
+                    && file.getName().contains("_PG")) {
+                String newName = file.getName().replace("_PG", "");
+                File dest = new File(file.getParent(), newName);
+                String newFileName = dest.getAbsolutePath()
+                dest.delete()
+                dest << file.text
+                println("\t" + file.getName() + " -> " + newName)
+                if (newFileName.endsWith("pl"))
+                    exec { commandLine 'chmod', '755', newFileName }
+                numberOfFiles++;
+            }
+    }
+    return numberOfFiles;
 }
 
 File[] fileList(String dir) {
