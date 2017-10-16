@@ -6,10 +6,10 @@ returns trigger as
 $BODY$
 
 declare mrkr_name marker.mrkr_name%TYPE := scrub_char(NEW.mrkr_name);
-declare mrkr_abbrev marker.mrkr_abbrev%TYPE := scrub_char(NEW.mrkr_abbrev);
-declare mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE := zero_pad(NEW.mrkr_abbrev);
-declare mrkr_name_order marker.mrkr_name_order%TYPE := scrub_char(zero_pad(NEW.mrkr_name));
-declare mrkr_comments marker.mrkr_comments%TYPE := scrub_char(NEW.mrkr_comments);
+ mrkr_abbrev marker.mrkr_abbrev%TYPE := scrub_char(NEW.mrkr_abbrev);
+ mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE := zero_pad(mrkr_abbrev);
+ mrkr_name_order marker.mrkr_name_order%TYPE := scrub_char(zero_pad(NEW.mrkr_name));
+ mrkr_comments marker.mrkr_comments%TYPE := scrub_char(NEW.mrkr_comments);
 
 begin 
 
@@ -31,17 +31,15 @@ create or replace function marker()
 returns trigger as
 $BODY$
 declare mrkr_name marker.mrkr_name%TYPE;
-declare mrkr_abbrev marker.mrkr_abbrev%TYPE;
+declare mrkr_abbrev marker.mrkr_abbrev%TYPE := updateAbbrevEqualName(NEW.mrkr_zdb_id, 
+     	    			   NEW.mrkr_name, 
+				   NEW.mrkr_type, 
+				   NEW.mrkr_abbrev);
 declare mrkr_comments marker.mrkr_comments%TYPE;
 
 
 begin
      
-     mrkr_abbrev = (select updateAbbrevEqualName (NEW.mrkr_zdb_id, 
-     	    			   NEW.mrkr_name, 
-				   NEW.mrkr_type, 
-				   NEW.mrkr_abbrev));
-
      NEW.mrkr_abbrev = mrkr_abbrev;
  
      
@@ -49,6 +47,7 @@ begin
      perform p_check_mrkr_abbrev(NEW.mrkr_name,
 				NEW.mrkr_abbrev,
 				NEW.mrkr_type );
+
      perform mhist_event(NEW.mrkr_zdb_id, '',NEW.mrkr_abbrev, '',NEW.mrkr_name);
 
      perform p_populate_go_root_terms(NEW.mrkr_zdb_id,
@@ -60,7 +59,7 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger marker_name_order_trigger after insert on marker
+create trigger marker_name_order_trigger before insert on marker
  for each row
  execute procedure marker_name_order();
 

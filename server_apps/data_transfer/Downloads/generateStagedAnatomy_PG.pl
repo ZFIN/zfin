@@ -76,7 +76,7 @@ exit;
 sub emailError($)
   {
     open(MAIL, "| $mailprog") || die "Cannot open mailprog $mailprog";
-    print MAIL "To: <!--|DEFAULT_EMAIL|-->\n";
+    print MAIL 'To: <!--|DEFAULT_EMAIL|-->\n';
     print MAIL "Subject: generateStageAnatomy.pl error\n";
     print MAIL "$_[0]";
     close MAIL;

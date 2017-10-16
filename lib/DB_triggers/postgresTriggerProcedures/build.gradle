@@ -23,7 +23,6 @@ int runSqlFiles(String directory){
     def dbname = env['DBNAME']
     def pgbindir = env['PGBINDIR']
 
-
     int numberOfTrigger = 0;
     fileList(directory).each {
         File file ->
@@ -37,3 +36,9 @@ int runSqlFiles(String directory){
     return numberOfTrigger;
 }
 
+task dropTriggers() {
+     doLast {
+     	    description = "drop all triggers from the database"
+   	    exec { commandLine "bash", "-c", "echo 'select strip_all_triggers()' | psql $dbname" }
+     }
+}

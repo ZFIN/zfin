@@ -106,7 +106,7 @@
             />
 
             <entity name="gene_replaced_ids"
-                    query="select zrepld_old_zdb_id alias, zrepld_old_zdb_id gene_previous_name, zrepld_new_zdb_id
+                    query="select zrepld_old_zdb_id related_accession, zrepld_new_zdb_id
                            from zdb_replaced_data
                            join marker on zrepld_new_zdb_id = mrkr_zdb_id
                            join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type

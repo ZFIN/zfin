@@ -4,20 +4,26 @@ drop trigger if exists marker_abbrev_trigger on marker;
 create or replace function marker_abbrev()
 returns trigger as
 $BODY$
+
 declare mrkr_abbrev marker.mrkr_abbrev%TYPE := scrub_char(NEW.mrkr_abbrev);
-declare mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE := zero_pad(mrkr_abbrev_order);
+	mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE := zero_pad(mrkr_abbrev);
+    
 
 begin
 
      NEW.mrkr_abbrev = mrkr_abbrev;
      
+     NEW.mrkr_abbrev_order = mrkr_abbrev_order;
+
      perform p_check_mrkr_abbrev(NEW.mrkr_name,
 			        NEW.mrkr_abbrev,
 				NEW.mrkr_type );
 
 
-     NEW.mrkr_abbrev_order = mrkr_abbrev_order;
+     
 
+     raise notice 'mrkr_abbrev_order: %', mrkr_abbrev_order;
+     raise notice 'mrkr_abbrev_order: %', NEW.mrkr_abbrev_order;
 
      perform mhist_event(NEW.mrkr_zdb_id,OLD.mrkr_name,
 					NEW.mrkr_name, 
@@ -36,7 +42,7 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger marker_abbrev_trigger after update on marker
+create trigger marker_abbrev_trigger before update or insert on marker
  for each row 
  when (OLD.mrkr_abbrev IS DISTINCT FROM NEW.mrkr_abbrev)
  execute procedure marker_abbrev();

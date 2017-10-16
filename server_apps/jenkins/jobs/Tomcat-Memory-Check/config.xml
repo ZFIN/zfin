@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<hudson.model.ExternalJob plugin="external-monitor-job@1.1">
-  <actions/>
-  <description>Checks the Tomcat Memory allocation / usage of Production</description>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-</hudson.model.ExternalJob>
