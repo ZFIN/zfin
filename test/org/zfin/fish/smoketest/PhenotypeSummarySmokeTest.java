@@ -30,7 +30,7 @@ public class PhenotypeSummarySmokeTest extends AbstractSmokeTest {
 
         // check that publication Ashraf et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-140108-19"));
-        assertThat(page.getAnchorByText("AB + MO1-adck4 + MO4-tp53"), is(notNullValue()));
+        assertThat(page.getAnchorByText("AB + MO2-coq8b + MO4-tp53"), is(notNullValue()));
     }
 
     /**
