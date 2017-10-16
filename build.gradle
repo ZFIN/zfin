@@ -139,3 +139,74 @@ project.ext.ttNameMap = ['TARGETROOT'               : env['TARGETROOT'],
                          'VALIDATION_EMAIL_DBA'     : env['VALIDATION_EMAIL_DBA'],
                          'DEFAULT_EMAIL'            : env['DEFAULT_EMAIL'],
                          'GBROWSE_PATH_FROM_ROOT'   : env['GBROWSE_PATH_FROM_ROOT']]
+
+task makePostgresVersion(type: Copy) {
+    def serverApps = ''
+    serverApps += projectDir
+    serverApps += '/server_apps'
+    println "Copying files in directory:: " + serverApps
+    from(serverApps) {
+        include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh'
+        rename '(.*)_PG(.*)', '$1$2'
+    }
+    into serverApps
+    eachFile { FileCopyDetails fcd ->
+        println fcd.path
+    }
+}
+
+task deployFilesIntoTargetroot(type: Copy) {
+    def serverApps = ''
+    serverApps += projectDir
+    serverApps += '/server_apps'
+    println "Copying files from directory: " + serverApps
+    from(serverApps) {
+        include 'data_transfer/**/*', '/DB_maintenance/**/*', '/apache/**/*'
+        ttNameMap.each { name, value ->
+            //println name +" "+value
+            filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+        }
+        exclude '**/Makefile', '**/build.gradle', '**/*_PG.*'
+    }
+    into ttNameMap.get('TARGETROOT') + "/" + project.path.replace(":", "/")
+}
+
+
+def copyFiles(String directory) {
+    int numberOfFiles = 0;
+    println "Copying files in directory: " + fileList(directory)[0].getParent()
+    fileList(directory).each {
+        File file ->
+            if ((file.getName().endsWith(".sql") ||
+                    file.getName().endsWith(".sqlj") ||
+                    file.getName().endsWith(".pl") ||
+                    file.getName().endsWith(".sh"))
+                    && file.getName().contains("_PG.")) {
+                String newName = file.getName().replace("_PG", "");
+                File dest = new File(file.getParent(), newName);
+                String newFileName = dest.getAbsolutePath()
+                dest.delete()
+                dest << file.text
+                println("\t" + file.getName() + " -> " + newName)
+                if (newFileName.endsWith("pl"))
+                    exec { commandLine 'chmod', '755', newFileName }
+                numberOfFiles++;
+            }
+    }
+    println "Copied " + numberOfFiles + " files."
+}
+
+File[] fileList(String dir) {
+    file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
+}
+
+File[] directoryList(String dir) {
+    file(dir).listFiles({ file -> file.isDirectory() } as FileFilter).sort()
+}
+
+/*
+    allprojects.findAll { it.path.startsWith(":server_apps:data_transfer:") }.each { p ->
+        println p.path
+    }
+*/
+
