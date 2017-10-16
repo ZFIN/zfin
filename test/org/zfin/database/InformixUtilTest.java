@@ -7,6 +7,6 @@ public class InformixUtilTest extends AbstractDatabaseTest {
 
     @Test
     public void testFunctionCall() {
-        InformixUtil.runInformixProcedure("get_id", "GENE");
+        InformixUtil.runInformixProcedure("regen_construct_marker", "GENE");
     }
 }
