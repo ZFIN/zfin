@@ -23,7 +23,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED &amp;&amp; fetchPubsFromPubMed.pl</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED &amp;&amp; fetchPubsFromPubMed.groovy</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

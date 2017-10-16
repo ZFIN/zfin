@@ -1,10 +1,13 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "<!--|GROOVY_CLASSPATH|-->:." "$0" $@; exit $?
 
+import java.time.LocalDate
 import groovy.sql.Sql
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
 import org.zfin.util.ReportGenerator
+
+import java.time.format.DateTimeFormatter
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
@@ -36,34 +39,13 @@ Sql.withInstance(db) { Sql sql ->
         count += articleSet.PubmedArticle.size()
         println("Fetched ${count}")
         articleSet.PubmedArticle.each { article ->
-            def id = article.MedlineCitation.PMID as String
-            def createDate = article.MedlineCitation.DateCreated
-            def pubDate = article.MedlineCitation.Article.Journal.JournalIssue.PubDate
-
-            def year = pubDate.Year
-            if (year == '') {
+            String id = article.MedlineCitation.PMID
+            LocalDate pubDate = PubmedUtils.getPublicationDate(article)
+            if (pubDate == null) {
                 pubsNotUpdated.add([idMap[id], id])
-                return
+            } else {
+                pubsUpdated.add([idMap[id], id, pubDate.format(DateTimeFormatter.ofPattern('MM/dd/yyy'))])
             }
-
-            def month = pubDate.Month as String
-            if (month == '') {
-                month = createDate.Month
-            } else if (months.containsKey(month)) {
-                month = months[month]
-            }
-            if (month == '') {
-                pubsNotUpdated.add([idMap[id], id])
-                return
-            }
-
-            def day = pubDate.Day
-            if (day == '') {
-                day = '01'
-            }
-
-            newDate = "$month/$day/$year" as String
-            pubsUpdated.add([idMap[id], id, newDate])
         }
     }
 
@@ -87,6 +69,10 @@ if (args) {
 report.includeTimestamp()
 report.addDataTable("Added date to ${pubsUpdated.size()} pubs",
         ["ZDB ID", "PubMed ID", "Publication Date"], pubsUpdated)
-report.addDataTable("No date found for ${pubsNotUpdated.size()} pubs",
+report.addDataTable("Unable to parse date for ${pubsNotUpdated.size()} pubs",
         ["ZDB ID", "PubMed ID"], pubsNotUpdated)
 report.writeFiles(new File("."), "addPubDateReport")
+
+if (pubsNotUpdated.size() > 0) {
+    println("Validation Errors found")
+}

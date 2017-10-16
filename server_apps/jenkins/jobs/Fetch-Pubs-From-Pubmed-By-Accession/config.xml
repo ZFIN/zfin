@@ -29,7 +29,7 @@
   <builders>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED
-./fetchPubsFromPubMed.pl $PubMedIDs</command>
+./fetchPubsFromPubMed.groovy $PubMedIDs</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
