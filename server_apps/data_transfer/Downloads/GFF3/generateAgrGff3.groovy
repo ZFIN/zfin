@@ -26,29 +26,28 @@ printHeader("$gff3Dir/ensembl_contig.gff3", out)
 genes.each { GenomeFeature gene ->
 
     String ensdarg = geneToEnsdarg.get(gene.id)
-    gene.addAttribute(GenomeFeature.ID,ensdarg)
-    out.println gene
-    transcripts.get(ensdarg).each { GenomeFeature transcript ->
-        String ensdart = transcript.id
 
-        //we only want transcripts that have a zdb_id in this file
-        if (transcript.getAttributes().get(GenomeFeature.ZDB_ID) != null) {
+    if (ensdarg) {
+        gene.addAttribute(GenomeFeature.ID,ensdarg)
+        out.println gene
+        transcripts.get(ensdarg).each { GenomeFeature transcript ->
+            String ensdart = transcript.id
 
-            //replace the ENSDART id with a ZDB_ID
-            transcript.addAttribute(GenomeFeature.ID, transcript.getAttributes().get(GenomeFeature.ZDB_ID))
-            transcript.addAttribute(GenomeFeature.PARENT, gene.id)
-            out.println transcript
-            exons.get(ensdart).each { GenomeFeature exon ->
-                exon.addAttribute(GenomeFeature.ID, exon.id.replace(ensdart,transcript.id))
-                exon.addAttribute(GenomeFeature.PARENT, transcript.id)
-                out.println exon
+            //we only want transcripts that have a zdb_id in this file
+            if (transcript.getAttributes().get(GenomeFeature.ZDB_ID) != null) {
+
+                //replace the ENSDART id with a ZDB_ID
+                transcript.addAttribute(GenomeFeature.ID, transcript.getAttributes().get(GenomeFeature.ZDB_ID))
+                transcript.addAttribute(GenomeFeature.PARENT, gene.id)
+                out.println transcript
+                exons.get(ensdart).each { GenomeFeature exon ->
+                    exon.addAttribute(GenomeFeature.ID, exon.id.replace(ensdart,transcript.id))
+                    exon.addAttribute(GenomeFeature.PARENT, transcript.id)
+                    out.println exon
+                }
             }
-
         }
-
-
     }
-
 }
 
 
