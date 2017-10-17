@@ -19,7 +19,7 @@ import org.zfin.marker.MarkerTypeSignificanceComparator;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.FieldName;
-import org.zfin.search.MarkerTypeFacetComparator;
+import org.zfin.search.MarkerSearchTypeGroupComparator;
 import org.zfin.search.presentation.FacetValue;
 import org.zfin.search.presentation.MarkerSearchCriteria;
 import org.zfin.search.presentation.MarkerSearchResult;
@@ -146,7 +146,7 @@ public class MarkerSearchService {
 
         injectHighlighting(results, response);
 
-        criteria.setTypesFound(sortMarkerTypeFacet(getTypesFound(response)));
+        criteria.setTypesFound(getTypesFound(response));
 
         if (CollectionUtils.size(criteria.getTypesFound()) == 1) {
             criteria.setDisplayType(criteria.getTypesFound().iterator().next().getName());
@@ -239,6 +239,9 @@ public class MarkerSearchService {
             }
         }
 
+        Collections.sort(types, new MarkerSearchTypeGroupComparator<>());
+
+        logger.error("types: " + types);
 
         return types;
     }
@@ -285,7 +288,7 @@ public class MarkerSearchService {
     }
 */
     public List<FacetField.Count> sortMarkerTypeFacet(List<FacetField.Count> countList) {
-        Collections.sort(countList, new MarkerTypeFacetComparator<>());
+        Collections.sort(countList, new MarkerSearchTypeGroupComparator<>());
         return countList;
     }
 
