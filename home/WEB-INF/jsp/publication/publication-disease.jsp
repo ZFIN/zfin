@@ -50,8 +50,13 @@
             </td>
             <td>
                 <c:forEach var="diseaseAnnos" items="${disease.diseaseAnnotationModel}" varStatus="loop">
-
-                    ${diseaseAnnos.diseaseAnnotation.evidenceCode}<c:if test="${!loop.last}"><br></c:if>
+                    <c:if test="${diseaseAnnos.diseaseAnnotation.evidenceCode == 'ZDB-TERM-170419-250'}">
+                       TAS
+                    </c:if>
+                    <c:if test="${diseaseAnnos.diseaseAnnotation.evidenceCode == 'ZDB-TERM-170419-251'}">
+                        IC
+                    </c:if>
+                    <c:if test="${!loop.last}"><br></c:if>
                 </c:forEach>
             </td>
 
