@@ -95,7 +95,6 @@ public class DiseaseModelPresenter implements Presenter {
             dto.setEvidenceCode("ZDB-TERM-170419-250");
         }
         if (itemText.equals("IC")) {
-            setError(itemText);
             dto.setEvidenceCode("ZDB-TERM-170419-251");
         }
         PublicationDTO pubDto = new PublicationDTO();
