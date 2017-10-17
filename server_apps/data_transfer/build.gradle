@@ -9,5 +9,5 @@ task deployDirectoryToTargetroot(type: Copy) {
         }
     exclude '**/Makefile', '**/build.gradle', '**/*_PG.*'
     }
-    into ttNameMap.get('TARGETROOT') + '/server_apps/DB_maintenance'
+    into ttNameMap.get('TARGETROOT') + '/server_apps/data_transfer'
 }
