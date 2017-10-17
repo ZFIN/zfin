@@ -7,7 +7,7 @@ import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.curation.repository.CurationRepositoryTest;
 import org.zfin.curation.service.CurationDTOConversionServiceSpec;
-import org.zfin.database.InformixUtil;
+import org.zfin.database.InformixUtilTest;
 import org.zfin.database.presentation.DatabaseServiceDbTest;
 import org.zfin.datatransfer.go.GafParserUnitTest;
 import org.zfin.datatransfer.go.service.FpInferenceGafServiceTest;
@@ -113,7 +113,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         GoEvidenceTest.class,
         GwtConversionTest.class,
         ImageServiceSpec.class,
-        InformixUtil.class,
+        InformixUtilTest.class,
         InfrastructureRepositoryTest.class,
         LinkageRepositoryTest.class,
         MapAccessionDbLinkTest.class,
