@@ -1797,7 +1797,13 @@ public class DTOConversionService {
         dto.setPublication(convertToPublicationDTO(model.getPublication()));
 
         dto.setDisease(convertToTermDTO(model.getDisease()));
-        dto.setEvidenceCode(model.getEvidenceCode());
+        if (model.getEvidenceCode().equals("ZDB-TERM-170419-250")){
+            dto.setEvidenceCode("TAS");
+        }
+        if (model.getEvidenceCode().equals("ZDB-TERM-170419-251")){
+            dto.setEvidenceCode("IC");
+        }
+        //dto.setEvidenceCode(model.getEvidenceCode());
         dto.setZdbID(model.getZdbID());
         List<DiseaseAnnotationModel> dam = getMutantRepository().getDiseaseAnnotationModelByZdb(model.getZdbID());
         if (CollectionUtils.isNotEmpty(dam)) {
