@@ -94,8 +94,9 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         for (Integer accessionNumber : pubIds) {
             Publication publication = publicationMap.get(accessionNumber);
             String accession = null;
-            if(accessionNumber != null)
+            if (accessionNumber != null) {
                 accession = accessionNumber.toString();
+            }
             pubMedIdNotFoundList.add(getElementsList(publication.getShortAuthorList(), publication.getZdbID(), accession));
         }
         createReports();
@@ -129,11 +130,12 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     private static void checkValidPubMedRecord(Element article) {
         String pmid = article.getElementsByTagName("PMID").item(0).getTextContent();
-        Integer accession= null;
-        if(StringUtils.isNumeric(pmid))
+        Integer accession = null;
+        if (StringUtils.isNumeric(pmid)) {
             accession = Integer.parseInt(pmid);
+        }
         processedIds.add(accession);
-        Publication publication = publicationMap.get(pmid);
+        Publication publication = publicationMap.get(accession);
         PublicationMismatch mismatch = new PublicationMismatch();
 
         String volumeOne = null;
@@ -337,8 +339,9 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
         public List<String> createPublicationMismatchElements(String pubID, String authors, Integer pubMedID) {
             String accession = null;
-            if(pubMedID != null)
+            if (pubMedID != null) {
                 accession = pubMedID.toString();
+            }
             return getElementsList(authors, pubID, accession,
                     doi == null ? "" : doi, doiExternal,
                     pages == null ? "" : pages, pagesExternal,
