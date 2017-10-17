@@ -29,7 +29,7 @@ begin
 
 	    -- find out the root term's zdb id, which is in the same category
 	    
-	    goRootTermZdbId = "ok";
+	    goRootTermZdbId = 'ok';
  
 	    select u.term_zdb_id
 	      into goRootTermZdbId
@@ -49,7 +49,7 @@ begin
 			    	       and mrkrgoev_term_zdb_id = goRootTermZdbId
 			);
 
-	      select p_drop_go_root_term_attribution (mrkrZdbId);
+	      perform p_drop_go_root_term_attribution (mrkrZdbId);
 	    
 	    end if;
 

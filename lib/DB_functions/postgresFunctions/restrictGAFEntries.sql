@@ -2,7 +2,7 @@ create or replace function restrictGAFEntries (vTermZdbId text, vEvidenceCode va
 returns void as $$
 
 begin 
-if (vEvidenceCode != "IEA")
+if (vEvidenceCode != 'IEA')
 then
   if exists (Select 'x' from term_subset, ontology_subset
    	  	  where termsub_term_zdb_id = vTermZdbId
