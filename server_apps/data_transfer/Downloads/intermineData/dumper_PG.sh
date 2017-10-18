@@ -211,7 +211,7 @@ export INFORMIXSERVER=<!--|INFORMIX_SERVER|-->
 export LD_LIBRARY_PATH=/private/apps/Informix/informix/lib:/private/apps/Informix/informix/lib/esql
 export PATH=/private/apps/Informix/informix/bin:/private/ZfinLinks/Commons/bin:/private/apps/wublast:/local/apps/netpbm/bin:/local/bin:/home/zusers/staylor/bin:/local/apps/Lang/SUNWspro/bin:/local/apps/java/bin:/bin:/usr/bin:/cs/bin:/local/apps/X11/bin:/usr/bin/X11:/local/apps/mh/bin:/local/apps/tex/bin:/etc:/usr/etc:/usr/dt/bin:/usr/openwin/bin:/usr/ccs/bin:/sbin:/usr/sbin:/usr/sfw/bin:.
 
-/opt/postgres/postgresql/bin/psql -d <!--|DB_NAME|--> -a -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dump_PG.sql 
+/opt/postgres/postgresql/bin/psql -d <!--|DB_NAME|--> -a -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dump.sql 
 
 cp /research/zprod/www_homes/zfin.org/server_apps/data_transfer/GO/gene_association.zfin.gz <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation
 gunzip <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation/gene_association.zfin.gz
