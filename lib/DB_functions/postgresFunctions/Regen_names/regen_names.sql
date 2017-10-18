@@ -1,12 +1,11 @@
 create or replace function regen_names() 
-  returns $success$ as text
+  returns text as $success$
 
   -- ---------------------------------------------------------------------
   -- RETURNS:
   --   0 - Success
   --   1 - Failed because another copy of the routine is already running.
-  --  -1 - Failed for some other reason.  See 
-  --       /tmp/regen_names_exception_<!--|DB_NAME|--> for details.
+  --  -1 - Failed for some other reason.  
   --
   -- EFFECTS:
   --   Success:
@@ -15,7 +14,7 @@ create or replace function regen_names()
   --     If any staging tables existed from a previous run of this routine, 
   --       then they will have been dropped.
 
-    declare namePrecedence like name_precedence.nmprec_precedence;
+    declare namePrecedence name_precedence.nmprec_precedence%TYPE;
      	    nameSignificance integer;
      	    zdbFlagReturn integer;
 
@@ -196,7 +195,7 @@ create or replace function regen_names()
       on all_m_names_new (allmapnm_zdb_id);
 
     create index allmapnm_precedence_index_transient
-      on all_m_names_new (allmapnm_precedence;
+      on all_m_names_new (allmapnm_precedence);
 
     -- other indexes
     create index allmapnm_name_lower_index_transient
@@ -224,56 +223,51 @@ create or replace function regen_names()
       drop table all_name_ends;
       drop table all_map_names;
 
-      alter table all_m_names_new rename table to all_map_names;
-      alter table all_name_ends_new rename table to all_name_ends;
+      alter table all_m_names_new rename  to all_map_names;
+      alter table all_name_ends_new rename  to all_name_ends;
 
-      rename index all_map_names_primary_key_index_transient
-        to all_map_names_primary_key_index;
-      rename index allmapnm_alternate_key_index_transient
+      alter index all_map_names_primary_key_index_transient rename to 
+        all_map_names_primary_key_index;
+      alter index allmapnm_alternate_key_index_transient rename
         to allmapnm_alternate_key_index;
-      rename index allmapnm_zdb_id_index_transient 
+      alter index allmapnm_zdb_id_index_transient rename
         to allmapnm_zdb_id_index;
-      rename index allmapnm_precedence_index_transient
+      alter index allmapnm_precedence_index_transient rename
         to allmapnm_precedence_index;
-      rename index allmapnm_name_lower_index_transient
+      alter index allmapnm_name_lower_index_transient rename
         to allmapnm_name_lower_index;
-      rename index all_name_ends_primary_key_index_transient
+      alter index all_name_ends_primary_key_index_transient rename
         to all_name_ends_primary_key_index;
-      rename index allnmend_allmapnm_serial_id_index_transient
+      alter index allnmend_allmapnm_serial_id_index_transient rename
         to allnmend_allmapnm_serial_id_index;
 
       -- define constraints, indexes are defined earlier.
 
-      alter table all_map_names add constraint
-	primary key (allmapnm_serial_id)
-	constraint all_map_names_primary_key;
+      alter table all_map_names add 
+	primary key (allmapnm_serial_id);
 
-      alter table all_map_names add constraint
-	unique (allmapnm_name, allmapnm_zdb_id)
-	constraint all_map_names_alternate_key;
+      alter table all_map_names add constraint all_map_names_alternate_key
+	unique (allmapnm_name, allmapnm_zdb_id);
 
-      alter table all_map_names add constraint
+      alter table all_map_names add constraint allmapnm_zdb_id_foreign_key
 	foreign key (allmapnm_zdb_id)
         references zdb_active_data
-        on delete cascade
-	constraint allmapnm_zdb_id_foreign_key;
+        on delete cascade;
 
-      alter table all_map_names add constraint
+      alter table all_map_names add constraint allmapnm_precedence_foreign_key
 	foreign key (allmapnm_precedence)
-        references name_precedence
-	constraint allmapnm_precedence_foreign_key;
+        references name_precedence;
 
-      alter table all_name_ends add constraint
-	primary key (allnmend_name_end_lower, allnmend_allmapnm_serial_id)
-	constraint all_name_ends_primary_key;
+      alter table all_name_ends add constraint all_name_ends_primary_key
+	primary key (allnmend_name_end_lower, allnmend_allmapnm_serial_id);
 
-      alter table all_name_ends add constraint
+      alter table all_name_ends add constraint allnmend_allmapnm_serial_id_foreign_key
         foreign key (allnmend_allmapnm_serial_id)
         references all_map_names
-        on delete cascade
-        constraint allnmend_allmapnm_serial_id_foreign_key;
+        on delete cascade;
 
- end;
+return 'success';
 
+end;
 
-$$ LANGUAGE plpgsql;
+$success$ LANGUAGE plpgsql;

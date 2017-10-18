@@ -51,8 +51,7 @@ returns void as $$
 	rgnallnm_zdb_id		text not null,
 	rgnallnm_significance	integer not null,
 	rgnallnm_precedence	varchar(80) not null,
-	rgnallnm_name_lower	varchar(255) not null
-		check (rgnallnm_name_lower = lower(rgnallnm_name)),
+	rgnallnm_name_lower	varchar(255) not null,
         rgnallnm_serial_id	serial8
       );
 

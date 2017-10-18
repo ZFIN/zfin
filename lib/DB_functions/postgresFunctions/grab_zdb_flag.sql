@@ -1,4 +1,4 @@
-create and replace function grab_zdb_flag(zdbFlag text)
+create or replace function grab_zdb_flag(zdbFlag text)
 returns int as $grab_zdb_flag$
 
   -- ---------------------------------------------------------------------
@@ -29,21 +29,19 @@ returns int as $grab_zdb_flag$
   --     exception is thrown to caller.
 
   declare nRows integer;
+  begin
 
-  update zdb_flag 
-    set zflag_is_on = 't'
-    where zflag_name = zdbFlag 
-      and zflag_is_on = 'f';
-
-  nRows = DBINFO('sqlca.sqlerrd2');
-
-  if (nrows == 0) then
+  select count(*) into nRows from zdb_flag where zflag_name = zdbFlag;
+  if (nRows != 0) then
 	return 1;
-  end if
+  end if;
  			
-  update zdb_flag set zflag_last_modified = CURRENT
+  update zdb_flag set zflag_last_modified = NOW()
     where zflag_name = zdbFlag;
 
   return 0;
 
-end function;
+end;
+
+
+$grab_zdb_flag$ LANGUAGE plpgsql

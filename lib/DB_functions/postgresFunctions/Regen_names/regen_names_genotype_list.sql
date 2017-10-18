@@ -79,11 +79,6 @@ returns void as $$
      where genofeat_geno_zdb_id = rgnz_zdb_id
        and genofeat_feature_zdb_id = feature_zdb_id;
 
-  -- get aliases
-  -- note: we use "select distinct" to eliminates
-  -- the odds that different features of the same genotype
-  -- has the same previous names
-
   namePrecedence = 'Genomic feature alias';
   select nmprec_significance 
     into nameSignificance
@@ -112,7 +107,7 @@ returns void as $$
           and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
           and fmrel_type=fmreltype_name
           and fmreltype_produces_affected_marker='t'
-          and fmrel_type = "is allele of";
+          and fmrel_type = 'is allele of';
 
   insert into regen_geno_related_gene_zdb_id_temp
        select mrel_mrkr_2_zdb_id, rgnz_zdb_id
@@ -121,7 +116,7 @@ returns void as $$
         where genofeat_geno_zdb_id = rgnz_zdb_id
           and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
           and fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id
-          and mrel_type in ("promoter of", "coding sequence of");
+          and mrel_type in ('promoter of', 'coding sequence of');
 
   insert into regen_geno_related_gene_zdb_id_distinct_temp
        select distinct rgnrgz_gene_zdb_id, rgnrgz_geno_zdb_id
@@ -196,7 +191,7 @@ returns void as $$
 	select geno_display_name, geno_zdb_id, nameSignificance,
 	       namePrecedence, lower(geno_display_name)
           from genotype, regen_zdb_id_temp
-         where geno_is_wildtype = "t"
+         where geno_is_wildtype = 't'
            and geno_zdb_id = rgnz_zdb_id;
 
  insert into regen_all_names_temp
@@ -205,7 +200,7 @@ returns void as $$
 	select geno_handle, geno_zdb_id, nameSignificance,
 	       namePrecedence, lower(geno_handle)
           from genotype, regen_zdb_id_temp
-         where geno_is_wildtype = "t"
+         where geno_is_wildtype = 't'
            and geno_zdb_id = rgnz_zdb_id
            and geno_display_name <> geno_handle;
 

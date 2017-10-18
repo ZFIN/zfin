@@ -49,7 +49,7 @@ returns void as $$
 
     create index rgndup_zdb_id_index on regen_names_dups_temp (rgndup_zdb_id);
 
-  insert into regen_names_dups_temp (rgndump_name_lower, rgndup_zdb_id, rgndup_min_siginificance)
+  insert into regen_names_dups_temp (rgndup_name_lower, rgndup_zdb_id,rgndup_min_significance)
     select rgnallnm_name_lower, rgnallnm_zdb_id, 
            min(rgnallnm_significance) rgnallnm_significance 
       from regen_all_names_temp, regen_zdb_id_temp

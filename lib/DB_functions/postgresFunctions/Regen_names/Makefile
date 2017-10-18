@@ -25,8 +25,8 @@ STATIC_PROCS = regen_names_finish.sql regen_names_create_temp_tables.sql \
                regen_names_feature_list.sql regen_names_feature.sql \
                regen_names_marker_list.sql regen_names_marker.sql \
                regen_names_genotype.sql regen_names_genotype_list.sql  \
-	       regen_names_fish.sql regen_names_fish_list.sql  
-GENERIC_PROCS = regen_names.sql
+	       regen_names_fish.sql regen_names_fish_list.sql regen_names.sql
+GENERIC_PROCS = 
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))
