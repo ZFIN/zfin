@@ -7,7 +7,6 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/PUB-439.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/ONT-626.sql" />
-
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/ZFIN-5752.sql" />
 
 </databaseChangeLog>
