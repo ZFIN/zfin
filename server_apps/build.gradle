@@ -9,5 +9,5 @@ task deployDirectoryToTargetroot(type: Copy) {
             filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
         }
     }
-    into ttNameMap.get('TARGETROOT') + '/server_apps/ZFINPerlModules.pm'
+    into ttNameMap.get('TARGETROOT') + '/server_apps'
 }
