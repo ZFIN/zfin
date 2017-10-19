@@ -22,12 +22,12 @@
       <buildFile>$SOURCEROOT/build.xml</buildFile>
     </hudson.tasks.Ant>
     <hudson.tasks.Shell>
-      <command>cp $TARGETROOT/server_apps/data_transfer/GO/zfin.gpi $DOWNLOAD_DIRECTORY/current/</command>
+      <command>cp $TARGETROOT/server_apps/data_transfer/GO/zfin.gpi.gz $DOWNLOAD_DIRECTORY/current/</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/GO/*.gpi</artifacts>
+            <artifacts>server_apps/data_transfer/GO/*.gz</artifacts>
             <allowEmptyArchive>false</allowEmptyArchive>
             <onlyIfSuccessful>false</onlyIfSuccessful>
             <fingerprint>false</fingerprint>
@@ -65,7 +65,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/data_transfer/GO/zfin.gpi&quot;}
+                            ${FILE,path=&quot;server_apps/data_transfer/GO/zfin.gpi.gz&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>

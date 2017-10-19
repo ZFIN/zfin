@@ -3181,7 +3181,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         // max number of records.
         if (number < 1)
             hql += "left join fetch marker.dbLinks ";
-        hql += "where marker.markerType.name in (:names) and marker.abbreviation = 'cdk1' ";
+        hql += "where marker.markerType.name in (:names) ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("names", type.getTypeStrings());
         if (number > 0) {
