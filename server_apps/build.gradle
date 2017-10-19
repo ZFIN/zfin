@@ -1,0 +1,13 @@
+task deployDirectoryToTargetroot(type: Copy) {
+    def dataDirectory = ''
+    dataDirectory += projectDir
+    dataDirectory += '/ZFINPerlModules.pm'
+    println "Copying files from directory: " + dataDirectory
+    from(dataDirectory) {
+        ttNameMap.each { name, value ->
+            //println name +" "+value
+            filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+        }
+    }
+    into ttNameMap.get('TARGETROOT') + '/server_apps/ZFINPerlModules.pm'
+}
