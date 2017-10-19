@@ -1,6 +1,5 @@
 include 'lib:DB_functions:postgresFunctions'
 include 'lib:DB_triggers:postgresTriggerProcedures'
 include 'server_apps:apache'
-include 'server_apps:DB_maintenance:warehouse'
-include 'server_apps:data_transfer:LoadOntology'
-include 'server_apps:data_transfer:Downloads'
+include 'server_apps:DB_maintenance'
+include 'server_apps:data_transfer'

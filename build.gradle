@@ -155,23 +155,6 @@ task makePostgresVersion(type: Copy) {
     }
 }
 
-task deployFilesIntoTargetroot(type: Copy) {
-    def serverApps = ''
-    serverApps += projectDir
-    serverApps += '/server_apps'
-    println "Copying files from directory: " + serverApps
-    from(serverApps) {
-        include 'data_transfer/**/*', '/DB_maintenance/**/*', '/apache/**/*'
-        ttNameMap.each { name, value ->
-            //println name +" "+value
-            filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-        }
-        exclude '**/Makefile', '**/build.gradle', '**/*_PG.*'
-    }
-    into ttNameMap.get('TARGETROOT') + "/" + project.path.replace(":", "/")
-}
-
-
 def copyFiles(String directory) {
     int numberOfFiles = 0;
     println "Copying files in directory: " + fileList(directory)[0].getParent()

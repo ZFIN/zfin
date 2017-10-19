@@ -88,7 +88,7 @@
         <hudson.views.LastDurationColumn/>
         <hudson.views.BuildButtonColumn/>
       </columns>
-      <includeRegex>(.*)(_l)</includeRegex>
+      <includeRegex>(Load)(.*)</includeRegex>
       <recurse>false</recurse>
     </listView>
     <listView>

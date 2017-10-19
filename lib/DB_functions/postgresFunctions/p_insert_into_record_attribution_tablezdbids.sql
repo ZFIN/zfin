@@ -17,8 +17,9 @@ returns void as $$
 --for every new table_zdb_id entered 
 
 
-	declare vOk_tableId integer :=0;
-	 vCuratorPub integer :=0;
+	declare vOk_tableId integer :=0 ;
+	 	vCuratorPub integer :=0 ;
+
 begin
 	vOk_tableId = (select count(*)
 			     		from record_attribution

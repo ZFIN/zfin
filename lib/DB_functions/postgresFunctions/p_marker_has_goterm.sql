@@ -1,10 +1,10 @@
 create or replace function  p_marker_has_goterm (vMrkrZdbId text,
-					vMrkrGotermId text))
+					vMrkrGotermId text)
 returns void as $$
 
         declare vCount     integer ;
-         vGoID  	  varchar(50) ;
-	 vOntology  varchar(50) ;
+         	vGoID  	   text ;
+	 	vOntology  text ;
 
 begin
 	select term_ont_id, term_ontology

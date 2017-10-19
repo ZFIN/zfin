@@ -466,12 +466,7 @@
                  resource="${jenkins}/jenkins-656.war"/>
     </target>
 
-    <target name="copy-certificate">
-        <copy tofile="${JENKINS_HOME}/bouncer.zfin.org-cert"
-              file="${basedir}/server_apps/jenkins/bouncer.zfin.org-cert"/>
-    </target>
-
-    <target name="start-jenkins" depends="copy-certificate,create-jenkins-symlink" description="Start up Jenkins ">
+    <target name="start-jenkins" depends="create-jenkins-symlink" description="Start up Jenkins ">
         <echo message="Source: ${jenkins}"/>
         <exec executable="${jenkins}/jenkins.sh">
             <arg value="start"/>
@@ -490,7 +485,7 @@
         </exec>
     </target>
 
-    <target name="restart-jenkins" depends="copy-certificate,create-jenkins-symlink" description="Restart up Jenkins">
+    <target name="restart-jenkins" depends="create-jenkins-symlink" description="Restart up Jenkins">
         <exec executable="${jenkins}/jenkins.sh">
             <arg value="restart"/>
         </exec>
