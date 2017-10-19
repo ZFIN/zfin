@@ -81,6 +81,8 @@ returns void as $$
 
   begin
   
+    vacuum (analyze);
+
     create temporary table current_all_name_ends_temp 
       (
         current_name_end_lower      varchar(255),
