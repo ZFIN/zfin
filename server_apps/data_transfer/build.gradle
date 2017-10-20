@@ -7,7 +7,7 @@ task deployDirectoryToTargetroot(type: Copy) {
             //println name +" "+value
             filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
         }
-    exclude '**/Makefile', '**/build.gradle', '**/*_PG.*'
+    exclude '**/Makefile', '**/build.gradle'
     }
     into ttNameMap.get('TARGETROOT') + '/server_apps/data_transfer'
 }

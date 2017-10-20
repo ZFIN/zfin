@@ -1,13 +1,19 @@
-task deployDirectoryToTargetroot(type: Copy) {
+// Had trouble to write this as a closure method as in data_transfer directory
+// It would fail while trying to copy files from $JENKINS_HOME directory.
+task deployDirectoryToTargetroot() {
     def dataDirectory = ''
     dataDirectory += projectDir
     dataDirectory += '/ZFINPerlModules.pm'
     println "Copying files from directory: " + dataDirectory
+copy {
     from(dataDirectory) {
         ttNameMap.each { name, value ->
-            //println name +" "+value
-            filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            if(value == null)
+	        println name +" "+value
+ 	    else
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
         }
     }
     into ttNameMap.get('TARGETROOT') + '/server_apps'
+}
 }
