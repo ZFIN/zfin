@@ -161,7 +161,8 @@ public class ForeignDB implements Comparable<ForeignDB> {
         CRISPRZ("CRISPRz"),
         UNIRULE("UniRule"),
         AGR_GENE("Alliance"),
-        AGR_DISEASE("Alliance");
+        AGR_DISEASE("Alliance"),
+        CZRC("CZRC");
 
 
         private final String value;
