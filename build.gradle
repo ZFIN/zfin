@@ -138,11 +138,13 @@ project.ext.ttNameMap = ['TARGETROOT'               : env['TARGETROOT'],
                          'ONCONFIG_FILE'            : env['ONCONFIG_FILE'],
                          'VALIDATION_EMAIL_DBA'     : env['VALIDATION_EMAIL_DBA'],
                          'DEFAULT_EMAIL'            : env['DEFAULT_EMAIL'],
+                         'SWISSPROT_EMAIL_ERR'      : env['SWISSPROT_EMAIL_ERR'],
+                         'DEFAULT_EMAIL'            : env['DEFAULT_EMAIL'],
                          'GBROWSE_PATH_FROM_ROOT'   : env['GBROWSE_PATH_FROM_ROOT']]
 
-task makePostgresVersion(type: Copy) {
-    def serverApps = ''
-    serverApps += projectDir
+task makePostgresVersion() {
+copy{
+    def serverApps = ttNameMap.get('TARGETROOT')
     serverApps += '/server_apps'
     println "Copying files in directory:: " + serverApps
     from(serverApps) {
@@ -153,6 +155,7 @@ task makePostgresVersion(type: Copy) {
     eachFile { FileCopyDetails fcd ->
         println fcd.path
     }
+}
 }
 
 def copyFiles(String directory) {

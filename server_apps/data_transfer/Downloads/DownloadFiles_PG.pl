@@ -99,7 +99,8 @@ $sql = "select feature_zdb_id as id1, feature_zdb_id as id2
         union
         select zrepld_new_zdb_id as id1, zrepld_old_zdb_id as id2         
           from zdb_replaced_data
-         where exists (Select 'x' from marker where mrkr_zdb_id = zrepld_new_zdb_id);";       
+         where exists (Select 'x' from marker where mrkr_zdb_id = zrepld_new_zdb_id)
+        order by 2;";       
 
 $cur = $dbh->prepare($sql);
 $cur->execute();
@@ -116,6 +117,12 @@ while ($cur->fetch()) {
 
 $cur->finish();
 
+open (IDS, ">downloadsStaging/identifiersForIntermine.txt") || die "Cannot open identifiersForIntermine.txt : $!\n";
+foreach $id (keys %identifiers) {
+  $v = $identifiers{$id};
+  print IDS "$id\t$v\n";
+}
+close IDS;
 
 ### FB case 8651, Include Publication in Morpholino Data Download
 
