@@ -138,7 +138,7 @@ begin
       from data_alias, alias_group, regen_zdb_id_temp
       where rgnz_zdb_id = dalias_data_zdb_id
   	and dalias_group_id = aliasgrp_pk_id
-  	and aliasgrp_name = "alias";
+  	and aliasgrp_name = 'alias';
 
 
   namePrecedence = 'Sequence similarity';
@@ -155,7 +155,7 @@ begin
       from data_alias, alias_group, regen_zdb_id_temp
       where rgnz_zdb_id = dalias_data_zdb_id
  	and dalias_group_id = aliasgrp_pk_id
-  	and aliasgrp_name = "sequence similarity";
+  	and aliasgrp_name = 'sequence similarity';
 
 	
   -- -------------------------------------------------------------------
@@ -194,7 +194,7 @@ begin
         and not exists
             ( select 'x'
 		     from marker_type_group_member
-		     where mtgrpmem_mrkr_type_group = "SEARCH_SEG"
+		     where mtgrpmem_mrkr_type_group = 'SEARCH_SEG'
                      and mrkr_type = mtgrpmem_mrkr_type );
 
 
@@ -215,7 +215,7 @@ begin
         and exists
             ( select 'x'
 		     from marker_type_group_member
-		     where mtgrpmem_mrkr_type_group = "SEARCH_SEG"
+		     where mtgrpmem_mrkr_type_group = 'SEARCH_SEG'
                      and mrkr_type = mtgrpmem_mrkr_type );
 
 

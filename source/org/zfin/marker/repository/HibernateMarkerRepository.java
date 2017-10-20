@@ -22,6 +22,7 @@ import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.database.DbSystemUtil;
+import org.zfin.database.InformixUtil;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
@@ -935,7 +936,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         // run procedure for fast search table
-        runMarkerNameFastSearchUpdate(marker);
+        InformixUtil.runInformixProcedure("regen_names_marker", marker.getZdbID());
     }
 
     public void createMarker(Marker marker, Publication pub) {
