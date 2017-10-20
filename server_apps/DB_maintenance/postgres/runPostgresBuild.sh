@@ -120,7 +120,10 @@ ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/t
 echo 'create unique index zactvd_zdb_id_pk_index on zdb_active_data(zactvd_zdb_id)' | ${PGBINDIR}/psql ${DBNAME}
 
 # analyze db (aka:update statistics high)
-echo 'vacuum (analyze)' | ${PGBINDIR}/psql ${DBNAME}
+echo 'vacuum (analyze);' | ${PGBINDIR}/psql ${DBNAME}
+
+# set up slow query capture
+echo 'CREATE EXTENSION pg_stat_statements;' | ${PGBINDIR}/psql ${DBNAME}
 
 # create the update statements that we need to load up the clobs.
 ${SOURCEROOT}/server_apps/DB_maintenance/postgres/createBinaryDump.sh

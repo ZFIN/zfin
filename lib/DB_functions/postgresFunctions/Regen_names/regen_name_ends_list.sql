@@ -103,6 +103,7 @@ returns void as $$
 
   prevNameZdbId = '';
 
+  raise notice 'ready to start the loop';
   for nameLower, nameZdbId, nameLength, nameSerialId, namePrecedence,
 	   nameSignificance in
     select rgnallnm_name_lower, rgnallnm_zdb_id, length(rgnallnm_name_lower),
@@ -114,6 +115,7 @@ returns void as $$
 
     if prevNameZdbId <> nameZdbId then
 
+      raise notice 'prevNameZdbId <> nameZdbId';
       insert into most_significant_temp(ms_name_lower, ms_significance)
         select current_name_end_lower, min(current_significance)
           from current_all_name_ends_temp
@@ -142,22 +144,26 @@ returns void as $$
       -- 'ab c'
       --  'b c'
       --    'c'
-      startColumn = 1;
+      raise notice 'ready for startColumn = 1';
+      startColumn := 1;
       while startColumn < nameLength loop
-        nameEnd = substr(nameLower, startColumn);
+        nameEnd := substr(nameLower, startColumn);
         -- Don't store substrings that start with a space
         if substring(nameEnd,1,1) <> '' then
+	  raise notice 'substring(nameEnd,1,1) <> then';
           insert into current_all_name_ends_temp
               ( current_name_end_lower, current_rgnallnm_serial_id, 
 		current_significance )
 	    values 
 	      ( nameEnd, nameSerialId, nameSignificance );
 	end if; -- ignore strings that start with blanks
+	startColumn := startColumn + 1;
       end loop;
     end if; -- name is not an accession number.
     prevNameZdbId = nameZdbId;
 
   end loop;  -- foreach record in all_map_name
+     raise notice 'loop ended';
 
   -- Dump substrings for last ZDB ID into temp table.
   -- THIS CODE IS DUPLICATED ABOVE.  MAKE CHANGES IN BOTH PLACES.
@@ -176,6 +182,7 @@ returns void as $$
       where current_significance = ms_significance
         and ms_name_lower = current_name_end_lower;
 
+   raise notice 'ready to delete';
    delete from most_significant_temp;
    delete from current_all_name_ends_temp;
 

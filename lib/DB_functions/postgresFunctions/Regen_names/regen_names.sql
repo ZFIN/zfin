@@ -71,8 +71,7 @@ create or replace function regen_names()
 	allmapnm_zdb_id		text not null,
 	allmapnm_significance	integer not null,
 	allmapnm_precedence	varchar(80) not null,
-	allmapnm_name_lower	varchar(255) not null
-		check (allmapnm_name_lower = lower(allmapnm_name)),
+	allmapnm_name_lower	varchar(255) not null,
         allmapnm_serial_id	serial8 not null 
       );
     
@@ -213,6 +212,7 @@ create or replace function regen_names()
       on all_name_ends_new (allnmend_allmapnm_serial_id);
 
 
+    vacuum (analyze);
     -- --------------------------------------------------------------------
     -- -------------------------------------------------------------------
     --   Make changes visible to the world
