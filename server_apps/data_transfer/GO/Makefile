@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/GO
 
-GENERICS = go.pl gp2protein.pl validateUniprotIDsZFIN.pl go_PG.pl gofile_PG.sql gp2protein_PG.pl
+GENERICS = go.pl gp2protein.pl validateUniprotIDsZFIN.pl go_PG.pl gofile_PG.sql gp2protein_PG.pl validateUniprotIDsZFIN_PG.pl
 STATICS  = gofile.sql check-gene-association.pl goparser.pl
 
 # Define targets that require special handling.  
@@ -48,6 +48,9 @@ $(HTTP_DATA_TRANSFER_DIR) :
 
 run : all
 	cd $(TARGETDIR); ./go.pl 
+	
+runPG:
+	cd $(TARGETDIR); ./go_PG.pl
 
 validate:  $(TARGETDIR)/validateUniprotIDsZFIN.pl
 	 cd $(TARGETDIR); ./validateUniprotIDsZFIN.pl

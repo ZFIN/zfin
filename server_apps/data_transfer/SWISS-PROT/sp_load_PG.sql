@@ -445,21 +445,20 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 
 --!echo 'unload accession# with no attribution'
 -- accession from EC, Pfam, POSITE, InterPro, SwissProt
-	create view accessionWithNoAttribution as
-		select dblink_linked_recid, dblink_acc_num
- 		  from db_link
- 		 where dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-49',
-						 'ZDB-FDBCONT-040412-50',
-					 	 'ZDB-FDBCONT-040412-51',
-						 'ZDB-FDBCONT-040412-48',
-						 'ZDB-FDBCONT-040412-47')
-   		   and dblink_zdb_id not in (
-			select  recattrib_data_zdb_id
-          		  from  record_attribution )
-	      order by dblink_linked_recid ;
-        \copy (select * from accessionWithNoAttribution) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/accession_with_no_attribution' with delimiter as '|' null as '';	
-	drop view accessionWithNoAttribution;
+        create view accessionWithNoAttribution as
+                select dblink_linked_recid, dblink_acc_num
+                  from db_link
+                 where dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-49',
+                                                 'ZDB-FDBCONT-040412-50',
+                                                 'ZDB-FDBCONT-040412-51',
+                                                 'ZDB-FDBCONT-040412-48',
+                                                 'ZDB-FDBCONT-040412-47')
+                   and not exists (
+                        select 'x' from record_attribution
+                         where recattrib_data_zdb_id = dblink_zdb_id )
+              order by dblink_linked_recid ;
 
+        \copy (select * from accessionWithNoAttribution) to '/net/filer.zfin.org/vol/users/xshao/scripts_test/convertDownloads/accession_with_no_attribution' with delimiter as '|' null as '';
 
 --rollback work;
 commit work;

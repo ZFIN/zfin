@@ -437,9 +437,9 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 					 	 "ZDB-FDBCONT-040412-51",
 						 "ZDB-FDBCONT-040412-48",
 						 "ZDB-FDBCONT-040412-47")
-   		   and dblink_zdb_id not in (
-			select  recattrib_data_zdb_id
-          		  from  record_attribution )
+                   and not exists (
+                        select 'x' from record_attribution
+                         where recattrib_data_zdb_id = dblink_zdb_id )
 	      order by dblink_linked_recid ;
 
 
