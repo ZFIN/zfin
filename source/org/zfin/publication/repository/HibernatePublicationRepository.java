@@ -977,13 +977,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                     " where  gf.genofeat_geno_zdb_id  = ra.recattrib_data_zdb_id " +
                     " and  :markerZdbID = fmr.fmrel_mrkr_zdb_id " +
                     " and fmr.fmrel_ftr_zdb_id  = gf.genofeat_feature_zdb_id ";
-        if (dataType.equals(ActiveData.Type.ALT))
-            commonPubSQL += " union " +
-                    // genotype_feature
-                    " select ra.recattrib_source_zdb_id  " +
-                    " from record_attribution ra ,  genotype_feature gf " +
-                    " where  gf.genofeat_geno_zdb_id  = ra.recattrib_data_zdb_id " +
-                    " and  :markerZdbID = gf.genofeat_feature_zdb_id ";
         // expression_experiment
         if (ActiveData.isMarker(dataType))
             commonPubSQL += " union " +
