@@ -17,9 +17,6 @@
     <concurrentBuild>false</concurrentBuild>
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
- <hudson.tasks.Shell>
-	  <command>cd $TARGETROOT/server_apps/Reports/PubTracking &amp;&amp; runLongestBinResidents.sh</command>
-	</hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
             <targets>validate-data-report-simple -DJobName=Longest-Bin-Residents_m</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>

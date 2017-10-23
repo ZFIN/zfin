@@ -22,10 +22,14 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SWISS-PROT
 
 GENERICS = pre_loadsp.pl loadsp.pl sp_check.pl sp_parser.pl referenceProteome.pl referenceProteome.sql \
 	create_file_for_swiss_prot.pl create_file_for_swiss_prot.sql \
-	sp_badgo_report.pl loadsp_ec2go_part.pl sp_badgo_report_ec2gopart.pl runUniprotProd.sh
+	sp_badgo_report.pl loadsp_ec2go_part.pl sp_badgo_report_ec2gopart.pl runUniprotProd.sh \
+        pre_loadsp_PG.pl sp_check_PG.pl create_file_for_swiss_prot_PG.pl create_file_for_swiss_prot_PG.sql \
+        referenceProteome_PG.pl referenceProteome_PG.sql sp_delete_ec2gopart_PG.sql sp_parser_PG.pl loadsp_PG.pl \
+        loadsp_ec2go_part_PG.pl sp_load_ec2gopart_PG.sql sp_load_PG.sql runUniprotProd_PG.sh
 
 STATICS = sp_match.pl sptogo.pl iptogo.pl ectogo.pl sp_delete.sql sp_delete_ec2gopart.sql\
-	sp_load.sql sp_load_ec2gopart.sql README   index.html sp_addbackattr.sql
+	sp_load.sql sp_load_ec2gopart.sql README   index.html sp_addbackattr.sql sp_addbackattr_PG.sql \
+        sp_delete_PG.sql ectogo_PG.pl iptogo_PG.pl sptogo_PG.pl 
 
 # Define targets that require special handling.
 
@@ -58,4 +62,7 @@ run:
 
 runec2go:
 	$(TARGETDIR)/loadsp_ec2go_part.pl
+runPG:
+	$(TARGETDIR)/loadsp_PG.pl
+
 

@@ -31,57 +31,54 @@ public class InformixUtil {
         Session session = currentSession();
         // ensure that all records are being processed before this call.
         session.flush();
-        session.doWork(new Work(){
-            @Override
-            public void execute(Connection connection) throws SQLException {
-                CallableStatement statement = null;
-                StringBuffer sql = new StringBuffer();
-                if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("true"))
-                    sql = sql.append("SELECT ");
-                else
-                    sql = sql.append("EXECUTE PROCEDURE ");
-                sql.append(procedureName);
-                StringBuilder argumentString = new StringBuilder();
-                if (arguments != null) {
-                    sql.append("(");
-                    for (String argument : arguments) {
-                        sql.append("?,");
-                        argumentString.append(argument);
-                        argumentString.append(", ");
-                    }
-                    argumentString.delete(argumentString.length() - 2, argumentString.length() - 1);
-                    sql.deleteCharAt(sql.length() - 1);
-                    sql.append(")");
+        session.doWork(connection -> {
+            CallableStatement statement = null;
+            StringBuffer sql = new StringBuffer();
+            if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("true"))
+                sql = sql.append("SELECT ");
+            else
+                sql = sql.append("EXECUTE PROCEDURE ");
+            sql.append(procedureName);
+            StringBuilder argumentString = new StringBuilder();
+            if (arguments != null) {
+                sql.append("(");
+                for (String argument : arguments) {
+                    sql.append("?,");
+                    argumentString.append(argument);
+                    argumentString.append(", ");
                 }
+                argumentString.delete(argumentString.length() - 2, argumentString.length() - 1);
+                sql.deleteCharAt(sql.length() - 1);
+                sql.append(")");
+            }
+            try {
+                statement = connection.prepareCall(sql.toString());
+                if (arguments != null) {
+                    int index = 1;
+                    for (String argument : arguments) {
+                        statement.setString(index, argument);
+                        index++;
+                    }
+                }
+                statement.execute();
+                String fullFunctionCall = sql.toString();
+                if (arguments != null) {
+                    for (String argument : arguments) {
+                        fullFunctionCall = fullFunctionCall.replaceFirst("\\?", argument);
+                    }
+                }
+                String newline = System.getProperty("line.separator");
+                loggingUtil.logDuration("Duration of procedure execution: " + newline + fullFunctionCall);
+            } catch (SQLException exception) {
+                LOG.error("could not run " + procedureName + "()", exception);
+                LOG.error(DbSystemUtil.getLockInfo());
+                throw new RuntimeException(exception);
+            } finally {
                 try {
-                    statement = connection.prepareCall(sql.toString());
-                    if (arguments != null) {
-                        int index = 1;
-                        for (String argument : arguments) {
-                            statement.setString(index, argument);
-                            index++;
-                        }
-                    }
-                    statement.execute();
-                    String fullFunctionCall = sql.toString();
-                    if (arguments != null) {
-                        for (String argument : arguments) {
-                            fullFunctionCall = fullFunctionCall.replaceFirst("\\?", argument);
-                        }
-                    }
-                    String newline = System.getProperty("line.separator");
-                    loggingUtil.logDuration("Duration of procedure execution: " + newline + fullFunctionCall);
-                } catch (SQLException exception) {
-                    LOG.error("could not run " + procedureName + "()", exception);
-                    LOG.error(DbSystemUtil.getLockInfo());
-                    throw new RuntimeException(exception);
-                } finally {
-                    try {
-                        if (statement != null)
-                            statement.close();
-                    } catch (SQLException e) {
-                        LOG.error("could not run " + procedureName + "()", e);
-                    }
+                    if (statement != null)
+                        statement.close();
+                } catch (SQLException e) {
+                    LOG.error("could not run " + procedureName + "()", e);
                 }
             }
         });

@@ -12,7 +12,9 @@ task deployPostgresFunctions {
     doLast {
         println "deploying postgres functions ..."
         int numberOfFunctions = runSqlFiles(".")
-        println "Deployed postgres functions: "+numberOfFunctions
+        println "Deployed functions: "+numberOfFunctions
+	numberOfFunctions = runSqlFiles("./Regen_names/")
+        println "Deployed regen functions: "+numberOfFunctions
     }
 }
 

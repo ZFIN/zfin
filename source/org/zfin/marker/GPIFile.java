@@ -4,39 +4,41 @@ import org.apache.commons.collections.CollectionUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;
+
 import java.io.*;
-import java.util.List;
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.zip.GZIPOutputStream;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
-public class GPIFile extends AbstractScriptWrapper{
-        private int numfOfRecords = 0;
+public class GPIFile extends AbstractScriptWrapper {
+    private int numfOfRecords = 0;
 
-        public GPIFile(int number) {
-            numfOfRecords = number;
+    public GPIFile(int number) {
+        numfOfRecords = number;
+    }
+
+    public static void main(String[] args) throws IOException {
+        int number = 0;
+        if (args.length > 0) {
+            number = Integer.valueOf(args[0]);
         }
+        GPIFile gpiFile = new GPIFile(number);
+        gpiFile.init();
+        System.exit(0);
+    }
 
+    private void init() throws IOException {
+        initAll();
 
-        public static void main(String[] args) throws IOException {
-            int number = 0;
-            if (args.length > 0) {
-                number = Integer.valueOf(args[0]);
-            }
-            org.zfin.marker.GPIFile GPIFile = new org.zfin.marker.GPIFile(number);
-            GPIFile.init();
-            System.exit(0);
-        }
+        File gpiFile = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/data_transfer/GO/zfin.gpi.gz");
 
-        private void init() throws IOException {
-            initAll();
-
-            File gpiFile = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/data_transfer/GO/zfin.gpi");
-
-            OutputStream os = new FileOutputStream(gpiFile);
-            String encoding = "UTF8";
-            OutputStreamWriter osw = new OutputStreamWriter(os, encoding);
+        OutputStream os = new GZIPOutputStream(new FileOutputStream(gpiFile));
+        String encoding = "UTF-8";
+        try (OutputStreamWriter osw = new OutputStreamWriter(os, encoding)) {
             BufferedWriter bw = new BufferedWriter(osw);
 
             List<Marker> genes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM, numfOfRecords);
@@ -68,9 +70,10 @@ public class GPIFile extends AbstractScriptWrapper{
                         geneRow.append("|");
                     }
                     Integer lastPipe = geneRow.length();
-                    geneRow.deleteCharAt(lastPipe-1);
+                    geneRow.deleteCharAt(lastPipe - 1);
+                } else {
+                    geneRow.append(" ");
                 }
-                else {geneRow.append (" ");}
                 geneRow.append('\t');
                 geneRow.append(gene.getSoTerm().getTermName().toLowerCase());
                 geneRow.append('\t');
@@ -82,30 +85,32 @@ public class GPIFile extends AbstractScriptWrapper{
                 if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
                     for (DBLink dblink : gene.getDbLinks()) {
                         String dbName = dblink.getReferenceDatabase().getForeignDB().getDbName().toString();
-                        if (dbName == null)
+                        if (dbName == null) {
                             continue;
-                        if (dbName == "Ensembl(GRCz10)"){
+                        }
+                        if (Objects.equals(dbName, "Ensembl(GRCz10)")) {
                             dbName = "ENSEMBL";
                         }
-                        if (dbName == "UniProtKB-KW") {
+                        if (Objects.equals(dbName, "UniProtKB-KW")) {
                             dbName = "UniProtKB";
                         }
-                        if (dbName == "Gene"){
+                        if (Objects.equals(dbName, "Gene")) {
                             dbName = "NCBIGene";
                         }
-                        geneRow.append(dbName + ":" + dblink.getAccessionNumber());
+                        geneRow.append(dbName).append(":").append(dblink.getAccessionNumber());
                         geneRow.append("|");
                     }
                     Integer lastPipe = geneRow.length();
-                    geneRow.deleteCharAt(lastPipe-1);
+                    geneRow.deleteCharAt(lastPipe - 1);
+                } else {
+                    geneRow.append("");
                 }
-                else {geneRow.append ("");}
                 //purposeful tab here, to represent the field 'Properties' that we don't have
                 geneRow.append('\t');
                 geneRow.append("");
                 geneRow.append('\n');
                 bw.write(geneRow.toString());
             }
-
         }
+    }
 }

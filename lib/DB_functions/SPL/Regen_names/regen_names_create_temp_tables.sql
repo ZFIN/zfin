@@ -67,8 +67,7 @@ create procedure regen_names_create_temp_tables()
 	rgnallnm_zdb_id		varchar(50) not null,
 	rgnallnm_significance	integer not null,
 	rgnallnm_precedence	varchar(80) not null,
-	rgnallnm_name_lower	varchar(255) not null
-		check (rgnallnm_name_lower = lower(rgnallnm_name)),
+	rgnallnm_name_lower	varchar(255) not null,
         rgnallnm_serial_id	serial 
       ) with no log;
 

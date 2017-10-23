@@ -1,7 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Daily end of day reports that show number of papers in each of the bins and number of papers closed with no data or archived.</description>
+    <description>Daily end of day reports that show number of papers in each of the bins and number of papers closed
+        with no data or archived.
+    </description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
@@ -17,9 +19,6 @@
     <concurrentBuild>false</concurrentBuild>
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
-    <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/Reports/PubTracking &amp;&amp; runPaperlessPubTrackingDailyIndexedMetrics.sh </command>
-    </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
             <targets>validate-data-report-simple -DJobName=CheckPaperBinStatus_d</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>

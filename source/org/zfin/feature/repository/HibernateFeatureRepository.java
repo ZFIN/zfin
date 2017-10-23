@@ -11,6 +11,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
+import org.hibernate.type.IntegerType;
 import org.springframework.stereotype.Repository;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
@@ -38,9 +39,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 
-import java.math.BigDecimal;
 import java.util.*;
-import java.math.BigInteger;
 import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -1106,15 +1105,15 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
     public int getNumberOfFeaturesForConstruct(Marker construct) {
-        String sql = "select count(distinct fmrel_ftr_zdb_id) " +
-                     "  from feature_marker_relationship " +
-                     " where fmrel_mrkr_zdb_id = :zdbID" +
-                     "   and fmrel_type in (:relation1, :relation2) ";
-        Query query = currentSession().createSQLQuery(sql);
+        String sql = "select count(distinct fmrel_ftr_zdb_id) as num " +
+                "  from feature_marker_relationship " +
+                " where fmrel_mrkr_zdb_id = :zdbID" +
+                "   and fmrel_type in (:relation1, :relation2) ";
+        Query query = currentSession().createSQLQuery(sql).addScalar("num", IntegerType.INSTANCE);
         query.setString("zdbID", construct.getZdbID());
         query.setString("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
         query.setString("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
-        return ((BigInteger)query.uniqueResult()).intValue();
+        return (Integer) query.uniqueResult();
     }
 }
 

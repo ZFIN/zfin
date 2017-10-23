@@ -40,7 +40,7 @@
     <permission>hudson.scm.SCM.Tag:fishadmin</permission>
   </authorizationStrategy>
   <securityRealm class="hudson.security.LDAPSecurityRealm" plugin="ldap@1.2">
-    <server>ldaps://bouncer.zfin.org</server>
+    <server>ldaps://bouncer1.zfin.org</server>
     <rootDN>dc=zfin,dc=org</rootDN>
     <inhibitInferRootDN>false</inhibitInferRootDN>
     <userSearchBase>cn=users,cn=accounts</userSearchBase>

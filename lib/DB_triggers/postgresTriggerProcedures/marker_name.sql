@@ -19,7 +19,7 @@ begin
 				 NEW.mrkr_type);
      
 
-     NEW.mrkr_name_order = mrkr_name_lower;
+     NEW.mrkr_name_order = mrkr_name_order;
 
      perform p_update_related_fish_names(NEW.mrkr_zdb_id);
      perform mhist_event(NEW.mrkr_zdb_id,OLD.mrkr_name,
