@@ -28,3 +28,23 @@ BEGIN
 END
 $objType$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION day(date TIMESTAMP)
+  RETURNS VARCHAR AS $objType$
+
+BEGIN
+
+  RETURN to_char(date, 'dd');
+
+END
+$objType$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION day(date TIMESTAMP)
+  RETURNS VARCHAR AS $objType$
+
+BEGIN
+
+  RETURN to_char(date, 'dd');
+
+END
+$objType$ LANGUAGE plpgsql;
+
