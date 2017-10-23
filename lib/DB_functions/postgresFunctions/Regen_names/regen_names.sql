@@ -119,10 +119,6 @@ create or replace function regen_names()
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
 
-    -- gather names
-    insert into regen_zdb_id_temp
-        ( rgnz_zdb_id )
-      select geno_zdb_id from genotype;
 
     insert into regen_zdb_id_temp
         ( rgnz_zdb_id )

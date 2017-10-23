@@ -81,8 +81,6 @@ returns void as $$
 
   begin
   
-    vacuum (analyze);
-
     create temporary table current_all_name_ends_temp 
       (
         current_name_end_lower      varchar(255),
@@ -103,7 +101,8 @@ returns void as $$
 
   prevNameZdbId = '';
 
-  raise notice 'ready to start the loop';
+  
+ 
   for nameLower, nameZdbId, nameLength, nameSerialId, namePrecedence,
 	   nameSignificance in
     select rgnallnm_name_lower, rgnallnm_zdb_id, length(rgnallnm_name_lower),
@@ -147,10 +146,10 @@ returns void as $$
       raise notice 'ready for startColumn = 1';
       startColumn := 1;
       while startColumn < nameLength loop
-        nameEnd := substr(nameLower, startColumn);
-        -- Don't store substrings that start with a space
+        nameEnd := substring(nameLower, startColumn);
+	raise notice 'nameEnd';
+        --Don't store substrings that start with a space
         if substring(nameEnd,1,1) <> '' then
-	  raise notice 'substring(nameEnd,1,1) <> then';
           insert into current_all_name_ends_temp
               ( current_name_end_lower, current_rgnallnm_serial_id, 
 		current_significance )
