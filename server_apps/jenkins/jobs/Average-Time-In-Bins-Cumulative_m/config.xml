@@ -1,7 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Over time, we want to know how long papers reside in bins/other statuses.  This report calculates average time in bins over time. </description>
+    <description>Over time, we want to know how long papers reside in bins/other statuses. This report calculates
+        average time in bins over time.
+    </description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
@@ -17,9 +19,6 @@
     <concurrentBuild>false</concurrentBuild>
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
-        <hudson.tasks.Shell>
-	  <command>cd $TARGETROOT/server_apps/Reports/PubTracking &amp;&amp; runAverageTimeInBinsCumulative.sh</command>
-	</hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
             <targets>validate-data-report-simple -DJobName=Average-Time-In-Bins-Cumulative_m</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
