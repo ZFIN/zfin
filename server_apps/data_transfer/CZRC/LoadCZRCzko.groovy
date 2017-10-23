@@ -71,9 +71,10 @@ pageURL:         $csv.pageURL
     println csv.sequence[0..-4]
     if (csv.tgtgeneid == '') {
         List<Marker> tgtGenes = RepositoryFactory.featureRepository.getMarkerIsAlleleOf(RepositoryFactory.featureRepository.getFeatureByAbbreviation(csv.feature));
+        tgtGene=RepositoryFactory.markerRepository.getMarkerByAbbreviation(tgtGenes[0].getAbbreviation())
         geneSym = tgtGenes[0].getAbbreviation();
     } else {
-        println csv.tgtgeneid
+
         tgtGene = RepositoryFactory.markerRepository.getMarkerOrReplacedByID(csv.tgtgeneid);
         geneSym = tgtGene.getAbbreviation();
     }
@@ -87,39 +88,29 @@ pageURL:         $csv.pageURL
 
 //if a crispr for the gene already exists in ZFIN(but with a different sequence increment the crispr number)
     if (RepositoryFactory.markerRepository.getMarkerByName(crisprName)) {
-    if (RepositoryFactory.markerRepository.getSequenceTargetingReagentBySequence(Marker.Type.CRISPR, csv.sequence[0..-4])) {
-
-
+        if (RepositoryFactory.markerRepository.getSequenceTargetingReagentBySequence(Marker.Type.CRISPR, csv.sequence[0..-4])) {
+            println crisprName
             RepositoryFactory.markerRepository.addMarkerPub(RepositoryFactory.markerRepository.getMarkerByName(crisprName), pub)
             extCRISPR = RepositoryFactory.markerRepository.getMarkerByName(crisprName)
             Feature ftr = RepositoryFactory.featureRepository.getFeatureByAbbreviation(csv.feature)
             FeatureMarkerRelationship newFMRel = createNewFMReln(extCRISPR, ftr, pub)
             RepositoryFactory.infrastructureRepository.insertRecordAttribution(newFMRel.zdbID, pub.zdbID)
-        } else {
+        }
+    }
+    if (!RepositoryFactory.markerRepository.getMarkerByName(crisprName)){
+            print tgtGene
             crisprCount = RepositoryFactory.markerRepository.getCrisprCount(tgtGene.zdbID)
             crisprIndex = crisprCount + 1
-            crisprName = markerPrefix + crisprIndex + markerDelim + csv.tgtgenesymbol
+            crisprName = markerPrefix + crisprIndex + markerDelim + geneSym
             def crisprseq = csv.sequence[0..-4]
             STRMarkerSequence newSequenceTargetingReagentSequence = new STRMarkerSequence()
-
             newSequenceTargetingReagentSequence.setSequence(crisprseq)
             newSequenceTargetingReagentSequence.setType("Nucleotide")
-/*
-    Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
-            .add(Restrictions.eq("zdbID", "ZDB-PERS-030612-2"))  //Doug
-            .uniqueResult();
-*/
-            // Person owner = getPerson("ZDB-PERS-030612-2")
             Marker newCRISPR = createNewCrispr(newSequenceTargetingReagentSequence, crisprName, pub)
+            println newCRISPR.abbreviation
             MarkerRelationship newReln = createNewReln(newCRISPR, tgtGene, pub)
             Feature ftr = RepositoryFactory.featureRepository.getFeatureByAbbreviation(csv.feature)
-
-
-
-
-
             RepositoryFactory.markerRepository.addMarkerPub(newCRISPR, pub)
-
             RepositoryFactory.infrastructureRepository.insertRecordAttribution(newReln.zdbID, pub.zdbID)
             FeatureMarkerRelationship newFMRel = createNewFMReln(newCRISPR, ftr, pub)
             RepositoryFactory.infrastructureRepository.insertRecordAttribution(newFMRel.zdbID, pub.zdbID)
@@ -127,16 +118,17 @@ pageURL:         $csv.pageURL
         }
 
     }
-}
+
 
     if ("--rollback" in args)
         session.getTransaction().rollback()
     else
         session.getTransaction().commit()
+
 session.close()
 println "done"
-
-    public Person getPerson(String zdbID) {
+System.exit(0)
+   public Person getPerson(String zdbID) {
         return (Person) HibernateUtil.currentSession().createCriteria(Person.class)
                 .add(Restrictions.eq("zdbID", zdbID))
                 .uniqueResult()
