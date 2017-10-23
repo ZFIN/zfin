@@ -1,0 +1,15 @@
+task deployDirectoryToTargetroot(type: Copy) {
+    def dataDirectory = ''
+    dataDirectory += projectDir
+    println "Copying files from directory: " + dataDirectory
+    println "Copying files into directory: " + ttNameMap.get('TARGETROOT') + '/server_apps/Reports'
+    from(dataDirectory) {
+        ttNameMap.each { name, value ->
+            //println name +" "+value
+            filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+        }
+    exclude '**/Makefile', '**/build.gradle'
+    }
+    into ttNameMap.get('TARGETROOT') + '/server_apps/Reports'
+}
+

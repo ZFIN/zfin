@@ -22,6 +22,7 @@ import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.database.DbSystemUtil;
+import org.zfin.database.InformixUtil;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
@@ -876,32 +877,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param marker Marker
      */
     public void runMarkerNameFastSearchUpdate(final Marker marker) {
-        Session session = currentSession();
-        session.doWork(new Work() {
-            @Override
-            public void execute(Connection connection) throws SQLException {
-                CallableStatement statement = null;
-                String sql = "execute procedure regen_names_marker(?)";
-                try {
-                    statement = connection.prepareCall(sql);
-                    String zdbID = marker.getZdbID();
-                    statement.setString(1, zdbID);
-                    statement.execute();
-                    logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
-                } catch (SQLException e) {
-                    logger.error("Could not run: " + sql, e);
-                    logger.error(DbSystemUtil.getLockInfo());
-                } finally {
-                    if (statement != null) {
-                        try {
-                            statement.close();
-                        } catch (SQLException e) {
-                            logger.error(e);
-                        }
-                    }
-                }
-            }
-        });
+        InformixUtil.runInformixProcedure("regen_names_marker", marker.getZdbID());
     }
 
     public void createMarker(Marker marker, Publication pub, boolean insertUpdate) {
@@ -935,7 +911,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         // run procedure for fast search table
-        runMarkerNameFastSearchUpdate(marker);
+        InformixUtil.runInformixProcedure("regen_names_marker", marker.getZdbID());
     }
 
     public void createMarker(Marker marker, Publication pub) {

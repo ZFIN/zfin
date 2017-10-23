@@ -31,7 +31,7 @@ if (get_obj_type(vZdbId) in ('TALEN','CRISPR','MRPHLNO'))
 
            end loop;
       end if;
-else if (get_obj_type(vZdbId) = 'GENO')
+elseif (get_obj_type(vZdbId) = 'GENO')
   then
 	for vFish in
 	     select distinct fish_zdb_id
