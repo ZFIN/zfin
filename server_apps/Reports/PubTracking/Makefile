@@ -20,8 +20,8 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/Reports/PubTracking
 
 
-GENERICS = runPaperlessPubTrackingDailyIndexedMetrics.sh runMonthlyBinLengthReport.sh runLongestBinResidents.sh
-STATICS  =  paperlessPubTrackingDailyIndexedStats.sql longestBinResidents.sql monthlyBinLengthReport.sql
+GENERICS = runPaperlessPubTrackingDailyIndexedMetrics.sh runMonthlyBinLengthReport.sh
+STATICS  =  paperlessPubTrackingDailyIndexedStats.sql monthlyBinLengthReport.sql
 
 
 # ---------------  Production Rules  ------------------------------------
