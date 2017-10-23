@@ -10,6 +10,7 @@ insert into monthly_curated_metric (mcm_pub_arrival_date_month,
 
 
 
+CREATE TEMP TABLE bin1 AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
 from pub_tracking_history,
   pub_tracking_location,
@@ -18,9 +19,9 @@ where pth_location_id = ptl_pk_id
       and pth_pub_Zdb_id = zdb_id
       and ptl_location = 'BIN_1'
       and pth_status_is_current = 't'
-group by month, year
-into temp bin1;
+group by month, year;
 
+CREATE TEMP TABLE bin2 AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
 from pub_tracking_history,
   pub_tracking_location,
@@ -29,10 +30,10 @@ where pth_location_id = ptl_pk_id
       and pth_pub_Zdb_id = zdb_id
       and ptl_location = 'BIN_2'
       and pth_status_is_current = 't'
-group by month, year
-into temp bin2;
+group by month, year;
 
 
+CREATE TEMP TABLE bin3 AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
 from pub_tracking_history,
   pub_tracking_location,
@@ -41,10 +42,9 @@ where pth_location_id = ptl_pk_id
       and pth_pub_Zdb_id = zdb_id
       and ptl_location = 'BIN_3'
       and pth_status_is_current = 't'
-group by month, year
-into temp bin3;
+group by month, year;
 
-
+CREATE TEMP TABLE newpheno AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
 from pub_tracking_history,
   pub_tracking_location,
@@ -53,9 +53,9 @@ where pth_location_id = ptl_pk_id
       and pth_pub_Zdb_id = zdb_id
       and ptl_location = 'NEW_PHENO'
       and pth_status_is_current = 't'
-group by month, year
-into temp newpheno;
+group by month, year;
 
+CREATE TEMP TABLE newortho AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
 from pub_tracking_history,
   pub_tracking_location,
@@ -64,10 +64,10 @@ where pth_location_id = ptl_pk_id
       and pth_pub_Zdb_id = zdb_id
       and ptl_location = 'ORTHO'
       and pth_status_is_current = 't'
-group by month, year
-into temp newortho;
+group by month, year;
 
 
+CREATE TEMP TABLE newxpat AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
 from pub_tracking_history,
   pub_tracking_location,
@@ -76,9 +76,9 @@ where pth_location_id = ptl_pk_id
       and pth_pub_Zdb_id = zdb_id
       and ptl_location = 'NEW_EXPR'
       and pth_status_is_current = 't'
-group by month, year
-into temp newxpat;
+group by month, year;
 
+CREATE TEMP TABLE closedArchived AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
 from pub_tracking_history, pub_tracking_status,	 publication
 where pth_pub_Zdb_id = zdb_id
@@ -86,9 +86,9 @@ where pth_pub_Zdb_id = zdb_id
       and pts_status = 'CLOSED'
       and pts_status_qualifier in( 'archived')
       and pth_status_is_current = 't'
-group by month, year
-into temp closedArchived;
+group by month, year;
 
+CREATE TEMP TABLE closednotazebrafishpaper AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
 from pub_tracking_history, pub_tracking_status,	 publication
 where pth_pub_Zdb_id = zdb_id
@@ -96,12 +96,12 @@ where pth_pub_Zdb_id = zdb_id
       and pts_status = 'CLOSED'
       and pts_status_qualifier in( 'not a zebrafish paper')
       and pth_status_is_current = 't'
-group by month, year
-into temp closednotazebrafishpaper;
+group by month, year;
 
 
 
 
+CREATE TEMP TABLE closedCurated AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
 from pub_tracking_history, pub_tracking_status,	 publication
 where pth_pub_Zdb_id = zdb_id
@@ -109,8 +109,7 @@ where pth_pub_Zdb_id = zdb_id
       and pts_status = 'CLOSED'
       and pts_status_qualifier = 'curated'
       and pth_status_is_current = 't'
-group by month, year
-into temp closedCurated;
+group by month, year;
 
 update monthly_curated_metric
 set mcm_number_in_bin_1 = nvl((select counter from bin1
@@ -159,7 +158,7 @@ where mcm_pub_arrival_date_month = month
 
 
 
-select first 10 * from monthly_Curated_metric;
+select * from monthly_Curated_metric limit 10;
 
 select mcm_date_Captured,
        LPAD(mcm_pub_arrival_date_month, 2, '0') as month,
