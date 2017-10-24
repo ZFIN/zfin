@@ -13,6 +13,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/zkoCRISPRS.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/ONT-626.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/ZFIN-5752.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/INF-3170.sql" />
 
 
 </databaseChangeLog>
