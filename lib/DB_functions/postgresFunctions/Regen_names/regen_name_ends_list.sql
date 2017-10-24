@@ -81,6 +81,7 @@ returns void as $$
 
   begin
   
+    drop table if exists current_all_name_ends_temp;
     create temporary table current_all_name_ends_temp 
       (
         current_name_end_lower      varchar(255),
@@ -93,6 +94,7 @@ returns void as $$
     -- to associate the substring with the most signigicant name only.
     -- This temp table does that for us.
 
+    drop table if exists most_significant_temp;
     create temporary table most_significant_temp
       (
         ms_name_lower           varchar(255),

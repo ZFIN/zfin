@@ -208,7 +208,6 @@ create or replace function regen_names()
       on all_name_ends_new (allnmend_allmapnm_serial_id);
 
 
-    vacuum (analyze);
     -- --------------------------------------------------------------------
     -- -------------------------------------------------------------------
     --   Make changes visible to the world

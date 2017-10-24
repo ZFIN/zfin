@@ -39,6 +39,7 @@ returns void as $$
 
   begin
    
+   drop table if exists regen_names_dups_temp;
 
     create temporary table regen_names_dups_temp
       ( 

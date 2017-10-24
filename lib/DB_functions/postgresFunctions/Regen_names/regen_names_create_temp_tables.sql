@@ -35,6 +35,7 @@ returns void as $$
     --   create regen_zdb_id_temp
     -- -------------------------------------------------------------------
 
+    drop table if exists regen_zdb_id_temp;
     create temporary table regen_zdb_id_temp  
       (
 	rgnz_zdb_id		text,
@@ -45,7 +46,8 @@ returns void as $$
     -- -------------------------------------------------------------------
     --   create regen_all_names_temp
     -- -------------------------------------------------------------------    
-    create temporary table regen_all_names_temp
+   drop table if exists regen_all_names_temp; 
+   create temporary table regen_all_names_temp
       (
 	rgnallnm_name		varchar (255) not null,
 	rgnallnm_zdb_id		text not null,
@@ -59,7 +61,8 @@ returns void as $$
     -- -------------------------------------------------------------------
     --   create regen_all_name_ends_temp
     -- -------------------------------------------------------------------
-    create temporary table regen_all_name_ends_temp
+   drop table if exists regen_all_name_ends_temp; 
+   create temporary table regen_all_name_ends_temp
       (
         rgnnmend_name_end_lower    	varchar(255),
         rgnnmend_rgnallnm_serial_id	int8
@@ -69,13 +72,14 @@ returns void as $$
 
   -- this temp table only applies here, thus not defined
   -- in regen_names_create_temp_tables.sql
-
+  drop table if exists regen_geno_related_gene_zdb_id_temp;
   create temporary table regen_geno_related_gene_zdb_id_temp
     (
         rgnrgz_gene_zdb_id      text,
 	rgnrgz_geno_zdb_id	text
     );
 
+  drop table if exists regen_geno_related_gene_zdb_id_distinct_temp;
   create temporary table regen_geno_related_gene_zdb_id_distinct_temp
     (
         rgnrgzd_gene_zdb_id      text,
