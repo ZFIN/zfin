@@ -3,7 +3,7 @@ drop trigger if exists external_reference_trigger on external_reference;
 create or replace function external_reference()
 returns trigger as
 $BODY$
-declare exref_reference external_reference.exref_reference%TYPE := scrub_char(exref_reference);
+declare exref_reference external_reference.exref_reference%TYPE := scrub_char(NEW.exref_reference);
 
 begin
      
