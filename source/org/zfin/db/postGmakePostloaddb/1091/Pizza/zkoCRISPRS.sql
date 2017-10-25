@@ -182,6 +182,15 @@ select  preftr_feature_zdb_id,
         'ZDB-PUB-171002-4'
  from pre_feature;
 
+ insert into record_attribution (
+    recattrib_data_zdb_id,
+    recattrib_source_zdb_id,
+    recattrib_source_type
+)
+select  preftr_feature_zdb_id,
+        'ZDB-PUB-171002-4','feature type'
+ from pre_feature;
+
 
 
 
