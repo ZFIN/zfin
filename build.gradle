@@ -184,6 +184,7 @@ task printProp() {
 
 
 task make {
+    dependsOn makePostgresVersion
     dependsOn ':server_apps:apache:deployDirectoryToTargetroot'
     dependsOn ':server_apps:Reports:deployDirectoryToTargetroot'
     dependsOn ':server_apps:DB_maintenance:deployDirectoryToTargetroot'
