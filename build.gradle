@@ -34,7 +34,7 @@ task deployPostgres(dependsOn: ['lib:DB_functions:postgresFunctions:deployPostgr
     description "Deploy all postgres code"
 }
 
-defaultTasks 'defaultTask'
+defaultTasks 'make'
 
 project.ext.set("dbname", dbname)
 project.ext.set("sourceroot", sourceroot)
@@ -67,7 +67,7 @@ task loadDb() {
         exec { commandLine 'createdb', dbname }
         exec { commandLine "bash", "-c", "pg_restore -j 4 -d $dbname $unloadPath" }
         exec { commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
-	exec { commandLine "bash", "-c", "echo 'CREATE EXTENSION pg_stat_statements;' | psql $dbname" }
+        exec { commandLine "bash", "-c", "echo 'CREATE EXTENSION pg_stat_statements;' | psql $dbname" }
     }
 }
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
@@ -106,89 +106,65 @@ update {
 
 }
 
-task defaultTask {
-/*
-    println "Hello"
-    subprojects.each { subproject ->
-        println subproject.path
-        println subproject.defaultTasks
-        subproject.defaultTasks.each {
-            println subproject.path+":"+it
-            dependsOn subproject.path+":"+it
+// variables used for translation of keys in files in SOURCEROOT copied into TARGETROOT
+def translateVariableSet = ['TARGETROOT',
+                            'WEBDRIVER_PATH_FROM_ROOT',
+                            'ROOT_PATH',
+                            'CATALINA_HOME',
+                            'SOURCEROOT',
+                            'MUTANT_NAME',
+                            'INSTANCE',
+                            'DB_NAME',
+                            'INFORMIX_DIR',
+                            'INFORMIX_SERVER',
+                            'INFORMIXSQLHOSTS',
+                            'SHARED_DOMAIN_NAME',
+                            'PARTNER_DBNAME',
+                            'LOADUP_FULL_PATH',
+                            'PARTNER_INTERNAL_INSTANCE',
+                            'SQLHOSTS_FILE',
+                            'ONCONFIG_FILE',
+                            'VALIDATION_EMAIL_DBA',
+                            'DEFAULT_EMAIL',
+                            'SWISSPROT_EMAIL_ERR',
+                            'GBROWSE_PATH_FROM_ROOT']
+
+// load properties into gradle
+task setup {
+    project.ext.ttNameMap = new Properties()
+    file("home/WEB-INF/zfin.properties").withInputStream {
+        ttNameMap.load(it)
+    }
+    Map filteredMap = new HashMap()
+    project.ext.ttNameMap.each { name, value ->
+        if (translateVariableSet.contains(name))
+            filteredMap.put(name, value)
+    }
+    project.ext.ttNameMap = filteredMap
+    //println filteredMap.size()
+}
+
+
+task makePostgresVersion {
+    doLast {
+        copy {
+            def serverApps = ttNameMap.get('TARGETROOT')
+            serverApps += '/server_apps'
+            println "Copying files in directory:: " + serverApps
+            from(serverApps) {
+                include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh'
+                rename '(.*)_PG(.*)', '$1$2'
+            }
+            into serverApps
+            eachFile { FileCopyDetails fcd ->
+                println fcd.path
+            }
         }
     }
-*/
-}
-
-project.ext.ttNameMap = ['TARGETROOT'               : env['TARGETROOT'],
-                         'WEBDRIVER_PATH_FROM_ROOT' : env['WEBDRIVER_PATH_FROM_ROOT'],
-                         'ROOT_PATH'                : env['ROOT_PATH'],
-                         'CATALINA_HOME'            : env['CATALINA_HOME'],
-                         'SOURCEROOT'               : env['SOURCEROOT'],
-                         'MUTANT_NAME'              : env['MUTANT_NAME'],
-                         'INSTANCE'                 : env['INSTANCE'],
-                         'DB_NAME'                  : env['DB_NAME'],
-                         'INFORMIX_DIR'             : env['INFORMIX_DIR'],
-                         'INFORMIX_SERVER'          : env['INFORMIX_SERVER'],
-                         'INFORMIXSQLHOSTS'         : env['INFORMIXSQLHOSTS'],
-                         'SHARED_DOMAIN_NAME'       : env['SHARED_DOMAIN_NAME'],
-                         'PARTNER_DBNAME'           : env['PARTNER_DBNAME'],
-                         'LOADUP_FULL_PATH'         : env['LOADUP_FULL_PATH'],
-                         'PARTNER_INTERNAL_INSTANCE': env['PARTNER_INTERNAL_INSTANCE'],
-                         'SQLHOSTS_FILE'            : env['SQLHOSTS_FILE'],
-                         'ONCONFIG_FILE'            : env['ONCONFIG_FILE'],
-                         'VALIDATION_EMAIL_DBA'     : env['VALIDATION_EMAIL_DBA'],
-                         'DEFAULT_EMAIL'            : env['DEFAULT_EMAIL'],
-                         'SWISSPROT_EMAIL_ERR'      : env['SWISSPROT_EMAIL_ERR'],
-                         'DEFAULT_EMAIL'            : env['DEFAULT_EMAIL'],
-                         'GBROWSE_PATH_FROM_ROOT'   : env['GBROWSE_PATH_FROM_ROOT']]
-
-task makePostgresVersion() {
-copy{
-    def serverApps = ttNameMap.get('TARGETROOT')
-    serverApps += '/server_apps'
-    println "Copying files in directory:: " + serverApps
-    from(serverApps) {
-        include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh'
-        rename '(.*)_PG(.*)', '$1$2'
-    }
-    into serverApps
-    eachFile { FileCopyDetails fcd ->
-        println fcd.path
-    }
-}
-}
-
-def copyFiles(String directory) {
-    int numberOfFiles = 0;
-    println "Copying files in directory: " + fileList(directory)[0].getParent()
-    fileList(directory).each {
-        File file ->
-            if ((file.getName().endsWith(".sql") ||
-                    file.getName().endsWith(".sqlj") ||
-                    file.getName().endsWith(".pl") ||
-                    file.getName().endsWith(".sh"))
-                    && file.getName().contains("_PG.")) {
-                String newName = file.getName().replace("_PG", "");
-                File dest = new File(file.getParent(), newName);
-                String newFileName = dest.getAbsolutePath()
-                dest.delete()
-                dest << file.text
-                println("\t" + file.getName() + " -> " + newName)
-                if (newFileName.endsWith("pl"))
-                    exec { commandLine 'chmod', '755', newFileName }
-                numberOfFiles++;
-            }
-    }
-    println "Copied " + numberOfFiles + " files."
 }
 
 File[] fileList(String dir) {
     file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
-}
-
-File[] directoryList(String dir) {
-    file(dir).listFiles({ file -> file.isDirectory() } as FileFilter).sort()
 }
 
 /*
@@ -197,3 +173,19 @@ File[] directoryList(String dir) {
     }
 */
 
+task printProp() {
+    doLast {
+        println 'All Properties'
+        ttNameMap.each { name, value ->
+            println name + ' = ' + value
+        }
+    }
+}
+
+
+task make {
+    dependsOn ':server_apps:apache:deployDirectoryToTargetroot'
+    dependsOn ':server_apps:Reports:deployDirectoryToTargetroot'
+    dependsOn ':server_apps:DB_maintenance:deployDirectoryToTargetroot'
+    dependsOn deployPostgres
+}
