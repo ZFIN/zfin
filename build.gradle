@@ -126,6 +126,7 @@ def translateVariableSet = ['TARGETROOT',
                             'ONCONFIG_FILE',
                             'VALIDATION_EMAIL_DBA',
                             'DEFAULT_EMAIL',
+                            'GO_EMAIL_ERR',
                             'SWISSPROT_EMAIL_ERR',
                             'GBROWSE_PATH_FROM_ROOT']
 
