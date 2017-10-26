@@ -14,7 +14,7 @@ insert into blast_database (blastdb_zdb_id,
        blastdb_type,
        blastdb_tool_display_name,
        blastdb_origination_id)
-select id, 'Reference Proteome', 'REFPROT','Sequences in the reference proteome','protein','Zebrafish Reference Proteome', 3
+select id, 'Reference Proteome', 'all_refprot_aa','Sequences in the reference proteome','protein','Zebrafish Reference Proteome', 3
  from tmp_id;
 
 insert into blastdb_order (bdborder_parent_blastdb_zdb_id,

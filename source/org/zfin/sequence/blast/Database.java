@@ -257,7 +257,8 @@ public class Database {
         ZFIN_MIRNA_MATURE("zfin_miRNA_mature"),
         ZFIN_MRPH("zfin_mrph"),
         ZFIN_TALEN("zfin_talen"),
-        ZFIN_CRISPR("zfin_crispr");
+        ZFIN_CRISPR("zfin_crispr"),
+	ALL_REFPROT_AA("all_refprot_aa");
 
 
         private final String value;
