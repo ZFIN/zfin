@@ -458,7 +458,8 @@ and exists (Select 'x' from pre_marker_go_term_evidence
                          where recattrib_data_zdb_id = dblink_zdb_id )
               order by dblink_linked_recid ;
 
-        \copy (select * from accessionWithNoAttribution) to '/net/filer.zfin.org/vol/users/xshao/scripts_test/convertDownloads/accession_with_no_attribution' with delimiter as '|' null as '';
+        \copy (select * from accessionWithNoAttribution) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/accession_with_no_attribution' with delimiter as '|' null as '';
+        drop view accessionWithNoAttribution;
 
 --rollback work;
 commit work;
