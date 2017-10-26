@@ -68,13 +68,13 @@ system("/local/bin/wget -q $url -O $d");
 system("/local/bin/gunzip $d");
 print "\n$d downloaded and decompressed\n";
 
+$dbname = "<!--|DB_NAME|-->";
+$username = "";
+$password = "";
+
 ### open a handle on the db
-$dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-                       '', 
-                       '',                     
-		       {AutoCommit => 1,RaiseError => 1}
-		      )
-  || emailError("Failed while connecting to <!--|DB_NAME|-->"); 
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
   
 $cur = $dbh->prepare('select distinct dblink_acc_num, dblink_linked_recid
                         from db_link;');
@@ -306,7 +306,7 @@ print "\n ctElse: $ctElse\n\n";
 print "\n ctOutSmith: $ctOutSmith \t ctOutJohson: $ctOutJohson\t ctOutTalbot: $ctOutTalbot\n\n";
 
 if ($ctNew > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadNewSNPs.sql" ) and &emailError("failed to load snp_download table");
+  system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPs_PG.sql > newReport" ) and &emailError("failed to load snp_download table");
   &createReport("has added $ctNew new records into snp_download table");
 }
 
@@ -430,12 +430,12 @@ print "\n ctNew2: $ctNew2 \t   ctRedn2: $ctRedn2 \t ctNew3: $ctNew3 \t   ctRedn3
 print "\n ctJohson = $ctJohson \t ctSmith = $ctSmith \t ctTalbot: $ctTalbot \n\n";
 
 if ($ctNew2 > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadNewSNPAttrs.sql" ) and &emailError("failed to load snp_download_attribution table");
+  system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPAttrs_PG.sql > newAttr1" ) and &emailError("failed to load snp_download_attribution table");
   &createReport("has added $ctNew2 new records into snp_download_attribution table");
 }
 
 if ($ctNew3 > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} addTalbotSNPAttr.sql" ) and &emailError("failed to insert record_attribution table");
+  system( "psql -d <!--|DB_NAME|--> -a -f addTalbotSNPAttr_PG.sql > newAttri2" ) and &emailError("failed to insert record_attribution table");
   &createReport("has added $ctNew3 new records into record_attribution table for Talbot SNPs");
 } 
 
@@ -465,15 +465,15 @@ exit;
 
 sub emailError($)
   {
+    
     open(MAIL, "| /usr/lib/sendmail -t -oi" || die "Cannot open mailprog");
     print MAIL "To: xshao\@zfin.org\n";
     print MAIL "Subject: dbSNP.pl $_[0]\n";
-    print MAIL "Error:\n";
+    print MAIL "Error:\n";                  
     print MAIL "$_[0]";
-    close MAIL;
-    exit;
-  }
-
+    close MAIL;       
+    exit;            
+  }   
 
 sub createReport($)
   {

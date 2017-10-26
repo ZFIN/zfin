@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SNP
 
-GENERICS = dbSNP.pl addNewClonesJSmith.pl                                      
+GENERICS = dbSNP.pl addNewClonesJSmith.pl addTalbotSNPAttr_PG.sql loadNewSNPs_PG.sql loadNewSNPAttrs_PG.sql  dbSNP_PG.pl                                
            
 STATICS = addTalbotSNPAttr.sql downloadListSNPncbi.txt loadClonesJSmith.sql  \
           loadNewSNPAttrs.sql  loadNewSNPs.sql  newClonesJSmith.txt  README
