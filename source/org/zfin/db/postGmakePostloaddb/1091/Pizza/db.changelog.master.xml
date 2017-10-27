@@ -15,6 +15,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/ZFIN-5752.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/INF-3170.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/INF-3169.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/INF-3157.sql" />
 
 
 </databaseChangeLog>
