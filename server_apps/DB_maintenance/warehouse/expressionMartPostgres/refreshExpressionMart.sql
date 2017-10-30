@@ -91,9 +91,9 @@ insert into expression_pattern_figure (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_i
 
 
 update zdb_flag
-  set (zflag_is_on,zflag_last_modified) = ('f',current year to second)
+  set (zflag_is_on,zflag_last_modified) = ('f',now())
  where zflag_name = 'regen_expressionmart' ;
 
 update warehouse_run_tracking
- set wrt_last_loaded_date = current year to second
+ set wrt_last_loaded_date = now()
  where wrt_mart_name = 'expression mart';

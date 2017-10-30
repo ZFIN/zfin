@@ -48,8 +48,8 @@ insert into phenotype_generated_curated_mapping_bkup (pgcm_pg_id, pgcm_source_id
 
 
 update zdb_flag
-  set (zflag_is_on,zflag_last_modified) = ("t",current year to second)
- where zflag_name = "regen_phenotypemart" ;
+  set (zflag_is_on,zflag_last_modified) = ('t',now())
+ where zflag_name = 'regen_phenotypemart';
 
 
 commit work;
