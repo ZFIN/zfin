@@ -1,0 +1,1 @@
+truncate phenotype_observation_generated_temp;
