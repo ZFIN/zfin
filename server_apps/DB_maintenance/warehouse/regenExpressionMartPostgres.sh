@@ -25,7 +25,7 @@ endif
 
 echo "done with file delete" ;
 # build up the warehouse
-<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/runExpressionMartPostgres.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/runExpressionMartReportPostgres.txt
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/runExpressionMart.sh <!--|DB_NAME|--> 
 
 if ($? != 0) then
  echo "regen expression mart (the building tables, not the public tables) failed on";
@@ -50,7 +50,7 @@ endif
 
 # move the current table data to backup, move the new data to current.
 
-${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/expressionMartRegenPostgres.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/regenExpressionMartReportPostgres.txt
+${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/expressionMartRegen.sql
 
 if ($? != 0) then
    echo "refresh expression mart (the public tables) failed and was rolled back";
