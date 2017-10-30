@@ -2,7 +2,7 @@
 --changeset prita:INF-3157
 
 create temp table tmp_ftratt (ftrzdb varchar(50) , pub varchar(50));
-insert into ftratt  select distinct feature_zdb_id,recattrib_source_zdb_id
+insert into tmp_ftratt  select distinct feature_zdb_id,recattrib_source_zdb_id
 from feature, feature_marker_relationship,record_attribution
 where fmrel_ftr_zdb_id=feature_zdb_id  and fmrel_ftr_zdb_id=recattrib_data_zdb_id
 and fmrel_zdb_id not in (select recattrib_data_zdb_id from record_attribution where recattrib_data_zdb_id like '%FMREL%')
