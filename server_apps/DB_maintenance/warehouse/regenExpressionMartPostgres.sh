@@ -57,9 +57,9 @@ if ($? != 0) then
 exit 1;
 endif
 
-echo "select regen_expression_term_fast_search()" | ${PGBINDIR} $DBNAME;
+echo "select regen_expression_term_fast_search()" | ${PGBINDIR}/psql $DBNAME;
 
-echo "select regen_feature_term_fast_search()" | ${PGBINDIR} $DBNAME;
+echo "select regen_feature_term_fast_search()" | ${PGBINDIR}/psql $DBNAME;
 
 echo "success" ;
 
