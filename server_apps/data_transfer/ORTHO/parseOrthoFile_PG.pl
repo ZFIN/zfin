@@ -47,7 +47,7 @@ while (<NCBI>) {
       @xrefParts = split (/\:/, $xref);
       $xrefDbname = $xrefParts[0];
       $xrefAccNum = $xrefParts[1];
-      print PARSED join ("\t",$taxonId,$ncbiGeneId,$chromosome,$position,$symbolNonOfficial,$name,$xrefDbname,$xrefAccNum,$xref,$lastUpdated)."\n";
+      print PARSED "$taxonId\t$ncbiGeneId\t$chromosome\t$position\t$symbolNonOfficial\t$name\t$xrefDbname\t$xrefAccNum\t$xref\t$lastUpdated\n";
   }
  
 }
