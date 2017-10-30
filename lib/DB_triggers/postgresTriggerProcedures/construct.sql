@@ -3,7 +3,7 @@ drop trigger if exists construct_trigger on construct;
 create or replace function construct()
 returns trigger as
 $BODY$
-declare construct_name construct.construct_name%TYPE := scrub_char(NEW.construct_name;
+declare construct_name construct.construct_name%TYPE := scrub_char(NEW.construct_name);
 
 begin
 
