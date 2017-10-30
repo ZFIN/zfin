@@ -17,7 +17,7 @@ public class ZfinJSPFunctionsTest extends AbstractDatabaseTest {
         // intestinal epithelium cell | detached from | intestinal epithelium
         PhenotypeStatement statement = getMutantRepository().getPhenotypeStatementById(3540L);
         // gut
-        Term parentTerm = getOntologyRepository().getTermByOboID("ZFA:0000112 ");
+        Term parentTerm = getOntologyRepository().getTermByOboID("ZFA:0000112");
         String substructureName = ZfinJSPFunctions.getSubstructure(statement, parentTerm);
         assertNotNull(substructureName);
         assertEquals("intestinal epithelium", substructureName);
