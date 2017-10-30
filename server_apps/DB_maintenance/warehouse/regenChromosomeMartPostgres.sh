@@ -50,7 +50,7 @@ endif
 
 # move the current table data to backup, move the new data to current.
 
-${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartRegenPostgres.sql 
+${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartRegen.sql 
 
 if ($? != 0) then
    echo "refresh chromosome mart (the public tables) failed and was rolled back";
