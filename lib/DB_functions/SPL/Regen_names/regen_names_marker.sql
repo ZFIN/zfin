@@ -47,4 +47,14 @@ create procedure regen_names_marker(zdbId like zdb_active_data.zactvd_zdb_id)
   -- Move from temp tables to permanent tables
   execute procedure regen_names_finish();
 
+  drop table regen_zdb_id_temp;	
+  drop table regen_zdb_id_temp;	
+  drop table regen_all_names_temp;
+  drop table regen_all_name_ends_temp;
+  drop table regen_geno_related_gene_zdb_id_temp;
+  drop table regen_geno_related_gene_zdb_id_distinct_temp;
+  drop table current_all_name_ends_temp;
+  drop table most_significant_temp;
+  drop table regen_names_dups_temp;
+
 end procedure;
