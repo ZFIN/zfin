@@ -50,16 +50,16 @@ endif
 
 # move the current table data to backup, move the new data to current.
 
-<!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/expressionMartRegenPostgres.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/regenExpressionMartReportPostgres.txt
+${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/expressionMartRegenPostgres.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/regenExpressionMartReportPostgres.txt
 
 if ($? != 0) then
    echo "refresh expression mart (the public tables) failed and was rolled back";
 exit 1;
 endif
 
-echo "execute procedure regen_expression_term_fast_search()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+echo "select regen_expression_term_fast_search()" | ${PGBINDIR} $DBNAME;
 
-echo "execute procedure regen_feature_term_fast_search()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+echo "select regen_feature_term_fast_search()" | ${PGBINDIR} $DBNAME;
 
 echo "success" ;
 

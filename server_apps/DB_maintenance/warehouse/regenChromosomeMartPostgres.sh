@@ -25,7 +25,7 @@ endif
 
 echo "done with file delete" ;
 # build up the warehouse
-<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartPostgres.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartReportPostgres.txt
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMart.sh 
 
 if ($? != 0) then
  echo "regen chromosome mart (the building tables, not the public tables) failed";
@@ -50,7 +50,7 @@ endif
 
 # move the current table data to backup, move the new data to current.
 
-<!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartRegenPostgres.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenChromosomeMartReportPostgres.txt
+${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartRegenPostgres.sql 
 
 if ($? != 0) then
    echo "refresh chromosome mart (the public tables) failed and was rolled back";
