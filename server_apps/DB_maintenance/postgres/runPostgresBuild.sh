@@ -99,33 +99,6 @@ sed 's/(142 rows)//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sq
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql
 
-rm -rf /tmp/abstracts/*
 
-# unload the clobs and store in /tmp/abstracts and /tmp/nonzf_pubs
-${INFORMIXDIR}/bin/dbaccess ${DBNAME} ${SOURCEROOT}/server_apps/DB_maintenance/postgres/unloadAbstract.sql
-
-# update the schema definition in postgres to use 'bytea' as per the postgres doc suggestions
-${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/changeSmartLargeObjects.sql
-
-# create the update statements that we need to load up the clobs.
-${SOURCEROOT}/server_apps/DB_maintenance/postgres/createClobLoadStatements.sh
-
-${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/lib/DB_functions/postgresFunctions/bytea_import.sql
-
-# load up the clobs into postgres
-${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/clobLoad.sql
-
-# add view for helping with missing indexes
-${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/tablesWithoutIndexes.sql
-
-# add zactvd_zdb_id_unique_constraint -- to solve ODC problem.
-echo 'create unique index zactvd_zdb_id_pk_index on zdb_active_data(zactvd_zdb_id)' | ${PGBINDIR}/psql ${DBNAME}
-
-# analyze db (aka:update statistics high)
-echo 'vacuum (analyze);' | ${PGBINDIR}/psql ${DBNAME}
-
-# set up slow query capture
-echo 'CREATE EXTENSION pg_stat_statements;' | ${PGBINDIR}/psql ${DBNAME}
-
-# create the update statements that we need to load up the clobs.
-${SOURCEROOT}/server_apps/DB_maintenance/postgres/createBinaryDump.sh
+endTime=$(date)
+echo $endTime
