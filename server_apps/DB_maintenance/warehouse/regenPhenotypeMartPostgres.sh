@@ -70,7 +70,7 @@ date;
 echo "done with regen_genox()";
 
 echo "start regen_anatomy_counts()";
-echo "execute procedure regen_anatomy_counts()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+#echo "execute procedure regen_anatomy_counts()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
 date;
 echo "done with regen_anatomy_counts()";
 

@@ -2,8 +2,7 @@ create or replace function regen_clean_expression()
 returns int as $log$
 
 
-  begin    
-  perform set_session_params();
+  begin 
 
 
     -- -------------------------------------------------------------------

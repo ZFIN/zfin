@@ -6,8 +6,6 @@ Create or replace function regen_expression_term_fast_search()
   begin   
 -- set standard set of session params
 
-  perform set_session_params();
-
     -- drop the table if it already exists
    drop table if exists xpatfs_temp;
 
