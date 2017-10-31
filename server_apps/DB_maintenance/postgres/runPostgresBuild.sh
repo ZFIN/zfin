@@ -99,6 +99,8 @@ sed 's/(142 rows)//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sq
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql
 
+rm -rf /tmp/abstracts/*
+
 # unload the clobs and store in /tmp/abstracts and /tmp/nonzf_pubs
 ${INFORMIXDIR}/bin/dbaccess ${DBNAME} ${SOURCEROOT}/server_apps/DB_maintenance/postgres/unloadAbstract.sql
 
