@@ -16,5 +16,5 @@ ${PGBINDIR}/pg_dump -Fc ${DBNAME} -f /research/zunloads/databases/postgres_self_
 
 #latestBinaryDump=$latestDump.bak
 
-pg_dump -Fc ${DBNAME} >  /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump/$latestDump.bak
+#pg_dump -Fc ${DBNAME} >  /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump/$latestDump.bak
 
