@@ -48,7 +48,7 @@ WHERE  dalias_group_id = 1
        AND redundant.recattrib_source_zdb_id = existant.recattrib_source_zdb_id
        AND aliasscope_pk_id = dalias_scope_id
        AND dalias_group_id = aliasgrp_pk_id
-       AND dalias_data_zdb_id = mrkr_zdb_id
+       AND dalias_data_zdb_id = mrkr_zdb_id;
 
 --! echo "dump the records of redundant alias into report file"
 unload to 'Delete-Duplicate-Aliases'
@@ -57,14 +57,14 @@ FROM   tmp_dup_alias
 ORDER  BY 3;
 
 --! echo "disconnect alias history from alias"
-CREATE temp tmp_dup_mhist as
+CREATE temp table tmp_dup_mhist as
 SELECT mhist_zdb_id aliasID
 FROM   marker_history
 WHERE  EXISTS
        (
               SELECT 't'
               FROM   tmp_dup_alias
-              WHERE  aliasID = mhist_dalias_zdb_id )
+              WHERE  aliasID = mhist_dalias_zdb_id );
 
 UPDATE marker_history
 SET    mhist_dalias_zdb_id = NULL
@@ -79,8 +79,5 @@ WHERE  EXISTS
               SELECT 't'
               FROM   tmp_dup_alias
               WHERE  aliasID = zactvd_zdb_id);
-
-drop table tmp_dup_alias;
-drop table tmp_dup_mhist;
 
 commit work;
