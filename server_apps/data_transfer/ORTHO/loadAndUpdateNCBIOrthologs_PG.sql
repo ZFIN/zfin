@@ -14,7 +14,7 @@ create temporary table tmp_orthos (taxonId integer,
 --have to tab delimit the file because pipes are used throughout 
 --the chromosome and position fields
 
-copy tmp_orthos from '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt' (delimiter '	');
+\copy tmp_orthos from '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt' (delimiter '	');
 
 delete from tmp_orthos
  where taxonId not in ('10090','7227','9606');

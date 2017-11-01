@@ -13,7 +13,7 @@ create index geneNameUpdate_updated_name_idx on geneNameUpdate(updated_name) ;
 create index geneNameUpdate_gene_symbol_idx on geneNameUpdate(gene_symbol) ;
 
 --!echo 'Load from namesToUpdate.unl'
-copy geneNameUpdate from '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/namesToUpdate.unl' (delimiter '|');
+\copy geneNameUpdate from '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/namesToUpdate.unl' (delimiter '|');
 
 alter table geneNameUpdate add nomen_zdb_id text;
 
