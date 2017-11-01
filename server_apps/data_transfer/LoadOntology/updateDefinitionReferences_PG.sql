@@ -1,7 +1,7 @@
 begin work;
 
 create temp table external_reference_temp_pre
-(term_ont_id_temp varchar(50), database_id_temp varchar(40), reference_temp varchar(500));
+(term_ont_id_temp varchar(50), database_id_temp text, reference_temp varchar(500));
 
 -- load all references into temp table
 load from term_references.unl
@@ -11,7 +11,7 @@ select * from external_reference_temp_pre;
 
 -- copy into new table
 create temp table external_reference_temp
-(tdr_foreign_db_id_temp int8, tdr_term_zdb_id_temp varchar(50), tdr_term_ont_id_temp varchar(50), tdr_database_id_temp varchar(40), tdr_reference_temp varchar(500));
+(tdr_foreign_db_id_temp int8, tdr_term_zdb_id_temp varchar(50), tdr_term_ont_id_temp varchar(50), tdr_database_id_temp text, tdr_reference_temp varchar(500));
 
 insert into external_reference_temp
 select 0, (SELECT NULL::INTEGER FROM single), term_ont_id_temp, database_id_temp, reference_temp from external_reference_temp_pre;
