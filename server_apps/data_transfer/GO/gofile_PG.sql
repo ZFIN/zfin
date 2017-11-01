@@ -1,7 +1,7 @@
 begin work ;
 		 
 create temporary table tmp_identifiers (id text, id2 text);
-copy tmp_identifiers from '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/ids.unl' (delimiter '|');
+\copy tmp_identifiers from '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/ids.unl' (delimiter '|');
 
 create index tmpidentifiers_index on tmp_identifiers (id);
 
