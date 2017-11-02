@@ -2,6 +2,6 @@
 --changeset pm:ZFIN577_pre
 
 CREATE TABLE tmp_feature (
-feature VARCHAR(50),
+feature VARCHAR(50)
   );
 
