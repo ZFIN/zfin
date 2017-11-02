@@ -2961,7 +2961,7 @@
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                  join marker on xpatex_gene_zdb_id = mrkr_zdb_id
-                            where substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
+                            where substring(xpatex_gene_zdb_id from 1 for 7) != 'ZDB-EFG'
                               and not exists (
                                            select 'x'
                                            from clone
@@ -2978,7 +2978,7 @@
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                  join data_alias on xpatex_gene_zdb_id = dalias_data_zdb_id
-                            where substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
+                            where substring(xpatex_gene_zdb_id from 1 for 7) != 'ZDB-EFG'
                               and not exists (
                                            select 'x'
                                            from clone

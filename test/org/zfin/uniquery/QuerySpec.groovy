@@ -165,6 +165,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         null                      | "sheturnedmeintoanewt"               | "12988"
         null                      | "informix"                           | "14540"
         Category.MUTANT.name      | "contacting authors"                 | "15114"
+        Category.EXPRESSIONS.name | "zebrafish_gene:EGFP"                | "SRCH-1066"
 
 
     }
