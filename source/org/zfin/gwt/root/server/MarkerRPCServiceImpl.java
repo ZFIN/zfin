@@ -1,8 +1,10 @@
 package org.zfin.gwt.root.server;
 
+import org.apache.bcel.Repository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.regexp.RE;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -1199,6 +1201,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         if (f == null) {
             throw new TermNotFoundException(featureAbbrev, "Feature");
         }
+
         String featureZdbID = f.getZdbID();
         if (infrastructureRepository.getRecordAttribution(featureZdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) != null) {
             throw new DuplicateEntryException(f.getAbbreviation() + " is already attributed as " + f.getName());
@@ -1206,10 +1209,27 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         HibernateUtil.createTransaction();
         infrastructureRepository.insertRecordAttribution(featureZdbID, pubZdbID);
         infrastructureRepository.insertUpdatesTable(featureZdbID, "record attribution", pubZdbID, "Added direct attribution");
-        HibernateUtil.flushAndCommitCurrentSession();
-        HibernateUtil.closeSession();
-    }
+        if (f.getType().equals(FeatureTypeEnum.TRANSGENIC_INSERTION)) {
+            List<Marker> m = RepositoryFactory.getFeatureRepository().getMarkersByFeature(f);
+            for (Marker mrkr : m) {
+                if (infrastructureRepository.getRecordAttribution(mrkr.zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) == null) {
+                    infrastructureRepository.insertRecordAttribution(mrkr.zdbID, pubZdbID);
+                    infrastructureRepository.insertUpdatesTable(mrkr.zdbID, "record attribution", pubZdbID, "Added direct attribution to related construct");
+                }
+                List<Marker> codingSeq = RepositoryFactory.getMarkerRepository().getCodingSequence(mrkr);
+                for (Marker codingGene : codingSeq) {
+                    if (infrastructureRepository.getRecordAttribution(codingGene.zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) == null) {
+                        infrastructureRepository.insertRecordAttribution(codingGene.zdbID, pubZdbID);
+                        infrastructureRepository.insertUpdatesTable(codingGene.zdbID, "record attribution", pubZdbID, "Added direct attribution to related construct");
+                    }
+                }
+            }
 
+
+            HibernateUtil.flushAndCommitCurrentSession();
+            HibernateUtil.closeSession();
+        }
+    }
 
     public void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO) {
         ConstructRelationship constructRelationship = new ConstructRelationship();
