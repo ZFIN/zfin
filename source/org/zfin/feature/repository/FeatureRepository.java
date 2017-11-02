@@ -160,6 +160,7 @@ public interface FeatureRepository {
     List<Feature> getFeaturesByMarker(Marker marker);
 
     List<Feature> getFeaturesByConstruct(Marker marker);
+    List<Marker> getConstructsByFeature(Feature feature);
 
     int deleteFeatureFromTracking(String featureZdbId);
 

@@ -966,6 +966,22 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return (List<Feature>) query.list();
     }
 
+    public List<Marker> getConstructsByFeature(Feature feature) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct marker from  FeatureMarkerRelationship fmrel" +
+                "     where fmrel.feature = :feature " +
+                " and fmrel.type in (:relation1, :relation2)  " ;
+
+        Query query = session.createQuery(hql);
+
+        query.setParameter("feature", feature);
+        query.setString("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
+        query.setString("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
+
+        return (List<Marker>) query.list();
+    }
+
     public int deleteFeatureFromTracking(String featureZdbId) {
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("delete from FeatureTracking ft where ft.feature.zdbID=:featureZdbId");
