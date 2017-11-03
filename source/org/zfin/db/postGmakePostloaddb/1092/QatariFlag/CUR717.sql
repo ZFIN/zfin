@@ -19,4 +19,6 @@ insert into record_attribution (recattrib_Data_zdb_id, recattrib_source_zdb_id) 
 insert into record_attribution (recattrib_Data_zdb_id, recattrib_source_zdb_id) select * from codingattrib;
 
 
-
+drop table ftrattrib;
+drop table constrattrib;
+drop table codingattrib;
