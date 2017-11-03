@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -11,6 +12,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -23,6 +25,8 @@ import org.zfin.infrastructure.service.ZdbIDService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.FacetCategoryComparator;
@@ -32,10 +36,9 @@ import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 
 @Controller
@@ -561,14 +564,12 @@ public class SearchPrototypeController {
         response.setContentType("data:text/csv;charset=utf-8");
         response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.csv\"");
 
-        SolrClient server = SolrService.getSolrClient("prototype");
         SolrQuery query = new SolrQuery();
-        //set handler to a csv specific handler?
-
+        query.setParam("wt","csv");
 
         category = getCategory(filterQuery, category);
 
-        if (StringUtils.isNotEmpty(category)) {
+        if (StringUtils.isNotEmpty(category) && !category.equals("Any")) {
             query.addFilterQuery("category:\"" + category + "\"");
         }
 
@@ -595,36 +596,23 @@ public class SearchPrototypeController {
 
         handleRootOnlyResults(query);
 
-        //  then connect to solr by http?  or solrj and convert to csv? hmmm..
-
-        QueryResponse queryResponse = new QueryResponse();
         try {
-            queryResponse = server.query(query);
-        } catch (Exception e) {
-            logger.error(e);
-        }
 
-//        SolrDocumentList solrDocumentList = queryResponse.getResults();
+            URLConnection connection = SolrService.getUrlForQuery(query).openConnection();
 
-        List<SearchResult> results = queryResponse.getBeans(SearchResult.class);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            connection.getInputStream()));
 
+            OutputStreamWriter out = new OutputStreamWriter(
+                    new BufferedOutputStream(
+                            response.getOutputStream()));
 
-        try {
-            OutputStream resOs = response.getOutputStream();
-            OutputStream buffOs = new BufferedOutputStream(resOs);
-            OutputStreamWriter outputwriter = new OutputStreamWriter(buffOs);
-            CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator("\n");
-            CSVPrinter csvPrinter = new CSVPrinter(outputwriter, csvFormat);
+            IOUtils.copy(in, out);
 
-
-            csvPrinter.printRecord("id", "name");
-
-            for (SearchResult result : results) {
-                csvPrinter.printRecord(result.getId(), result.getName());
-            }
-
-            outputwriter.flush();
-            outputwriter.close();
+            in.close();
+            out.flush();
+            out.close();
 
         } catch (IOException e) {
             logger.error(e);
