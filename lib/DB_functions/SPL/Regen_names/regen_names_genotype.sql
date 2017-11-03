@@ -49,7 +49,6 @@ create procedure regen_names_genotype(zdbId like zdb_active_data.zactvd_zdb_id)
 
 
   drop table regen_zdb_id_temp;	
-  drop table regen_zdb_id_temp;	
   drop table regen_all_names_temp;
   drop table regen_all_name_ends_temp;
   drop table regen_geno_related_gene_zdb_id_temp;
