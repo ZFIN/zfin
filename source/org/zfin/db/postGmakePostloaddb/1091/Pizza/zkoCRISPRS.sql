@@ -317,6 +317,7 @@ drop table pre_feature_marker_relationship;
 
 
 drop table pre_db_link;
+drop table tmp_feature;
 
 
 --rollback work;
