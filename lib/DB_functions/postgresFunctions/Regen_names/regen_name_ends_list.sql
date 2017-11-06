@@ -149,7 +149,7 @@ returns void as $$
       startColumn := 1;
       while startColumn < nameLength loop
         nameEnd := substring(nameLower, startColumn);
-	raise notice 'nameEnd';
+	--raise notice 'nameEnd';
         --Don't store substrings that start with a space
         if substring(nameEnd,1,1) <> '' then
           insert into current_all_name_ends_temp
@@ -164,7 +164,7 @@ returns void as $$
     prevNameZdbId = nameZdbId;
 
   end loop;  -- foreach record in all_map_name
-     raise notice 'loop ended';
+     --raise notice 'loop ended';
 
   -- Dump substrings for last ZDB ID into temp table.
   -- THIS CODE IS DUPLICATED ABOVE.  MAKE CHANGES IN BOTH PLACES.
@@ -183,7 +183,7 @@ returns void as $$
       where current_significance = ms_significance
         and ms_name_lower = current_name_end_lower;
 
-   raise notice 'ready to delete';
+   --raise notice 'ready to delete';
    delete from most_significant_temp;
    delete from current_all_name_ends_temp;
 
