@@ -1006,36 +1006,62 @@ foreach $dataAliasMergeId (keys %daliasesMerge) {
 $curUpdateMrkrHistory->finish();
 $curDelete->finish();
 
-# run the merge action SQLs that do not contain record_attribution
-$nonRecAttrSQL = "select mms_sql, mms_pk_id 
-                    from merge_markers_sql 
-                   where mms_mrkr_1_zdb_id = ?
-                     and mms_mrkr_2_zdb_id = ?
-                     and mms_sql not like '%record_attribution%'
-                order by 2;";
-$curGetNonRecAttrSQLs = $dbh->prepare($nonRecAttrSQL);
-$curGetNonRecAttrSQLs->execute($mergeId, $intoId);
-$curGetNonRecAttrSQLs->bind_columns(\$nonRecAttrSQL,\$nonRecAttrSQLid);
-%nonRecAttrMergeSQLs = ();
-while ($curGetNonRecAttrSQLs->fetch()) {
-   $nonRecAttrSQLs{$nonRecAttrSQLid} = $nonRecAttrSQL;
+# run the delete SQLs of merge action that do not contain record_attribution
+$nonRecAttrDeleteSQL = "select mms_sql, mms_pk_id 
+                          from merge_markers_sql 
+                         where mms_mrkr_1_zdb_id = ?
+                           and mms_mrkr_2_zdb_id = ?
+                           and mms_sql like '%delete%'
+                           and mms_sql not like '%record_attribution%'
+                      order by 2;";
+$curGetNonRecAttrDeleteSQLs = $dbh->prepare($nonRecAttrDeleteSQL);
+$curGetNonRecAttrDeleteSQLs->execute($mergeId, $intoId);
+$curGetNonRecAttrDeleteSQLs->bind_columns(\$nonRecAttrDeleteSQL,\$nonRecAttrDeleteSQLid);
+%nonRecAttrDeleteSQLs = ();
+while ($curGetNonRecAttrDeleteSQLs->fetch()) {
+   $nonRecAttrDeleteSQLs{$nonRecAttrDeleteSQLid} = $nonRecAttrDeleteSQL;
 }
-$curGetNonRecAttrSQLs->finish();
+$curGetNonRecAttrDeleteSQLs->finish();
 
-foreach $sqlID (keys %nonRecAttrSQLs) {
-   $nonRecAttrMergeSQL = $nonRecAttrSQLs{$sqlID};
-   $curNonRecAttrSQL = $dbh->prepare($nonRecAttrMergeSQL);
-   $curNonRecAttrSQL->execute();
-   $curNonRecAttrSQL->finish();
+foreach $sqlID (keys %nonRecAttrDeleteSQLs) {
+   $nonRecAttrDeleteSQL = $nonRecAttrDeleteSQLs{$sqlID};
+   $curNonRecAttrDeleteSQL = $dbh->prepare($nonRecAttrDeleteSQL);
+   $curNonRecAttrDeleteSQL->execute();
+   $curNonRecAttrDeleteSQL->finish();
     
-   if ($nonRecAttrMergeSQL =~ m/delete/i) {
+##   if ($nonRecAttrMergeSQL =~ m/delete/i) {
      $insertUpdatesSQL = "insert into updates(submitter_id,rec_id,new_value,comments,upd_when,submitter_name)
                           values(?,?,'DELETE',?,CURRENT,?);";
      $curInsertUpdates = $dbh->prepare($insertUpdatesSQL);
      $curInsertUpdates->execute($person_id,$intoId,$nonRecAttrMergeSQL,$personFullName);
      $curInsertUpdates->finish();
-   }
+##   }
 }
+
+# run the update SQLs of merge action that do not contain record_attribution     
+$nonRecAttrUpdateSQL = "select mms_sql, mms_pk_id
+                          from merge_markers_sql
+                         where mms_mrkr_1_zdb_id = ?
+                           and mms_mrkr_2_zdb_id = ?
+                           and mms_sql like '%delete%'                
+                           and mms_sql not like '%record_attribution%'
+                      order by 2;";
+$curGetNonRecAttrUpdateSQLs = $dbh->prepare($nonRecAttrUpdateSQL);
+$curGetNonRecAttrUpdateSQLs->execute($mergeId, $intoId);
+$curGetNonRecAttrUpdateSQLs->bind_columns(\$nonRecAttrUpdateSQL,\$nonRecAttrUpdateSQLid);
+%nonRecAttrUpdateSQLs = ();
+while ($curGetNonRecAttrUpdateSQLs->fetch()) {
+   $nonRecAttrUpdateSQLs{$nonRecAttrUpdateSQLid} = $nonRecAttrUpdateSQL;
+}
+$curGetNonRecAttrUpdateSQLs->finish();
+
+foreach $sqlID (keys %nonRecAttrUpdateSQLs) {
+   $nonRecAttrUpdateSQL = $nonRecAttrUpdateSQLs{$sqlID};     
+   $curNonRecAttrUpdateSQL = $dbh->prepare($nonRecAttrUpdateSQL);
+   $curNonRecAttrUpdateSQL->execute();
+   $curNonRecAttrUpdateSQL->finish();
+}
+
 
 $getMarkerAbbrev2 = "select mrkr_abbrev, get_id('NOMEN') as daliasid from marker where mrkr_zdb_id = ?;";
 $curGetMarkerAbbrev2 = $dbh->prepare($getMarkerAbbrev2);
