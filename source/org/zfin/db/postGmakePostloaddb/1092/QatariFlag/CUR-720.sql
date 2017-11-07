@@ -16,7 +16,7 @@ update marker set mrkr_name='Tg(kop:mCherry-FTASE-UTR-nanos3)' where mrkr_zdb_id
 update marker set mrkr_abbrev='Tg(kop:mCherry-FTASE-UTR-nanos3)' where mrkr_zdb_id='ZDB-TGCONSTRCT-150810-1';
 
 
-create temp table tmp_cmrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50)) with no log;
+create temp table tmp_cmrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50));
 
 
 insert into tmp_cmrel(relid,consid,mrkrid,reltype) values (get_id('CMREL'),'ZDB-TGCONSTRCT-150810-1','ZDB-EREGION-110822-3','coding sequence of');
@@ -27,7 +27,7 @@ insert into construct_marker_relationship(conmrkrrel_zdb_id,conmrkrrel_construct
 
 drop table tmp_cmrel;
 
-create temp table tmp_mrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50)) with no log;
+create temp table tmp_mrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50));
 
 
 insert into tmp_mrel(relid,consid,mrkrid,reltype) values (get_id('MREL'),'ZDB-TGCONSTRCT-150810-1','ZDB-EREGION-110822-3','coding sequence of');
@@ -57,7 +57,7 @@ update marker set mrkr_name='Tg(kop:EGFP-FTASE-UTR-nanos3)' where mrkr_zdb_id='Z
 update marker set mrkr_abbrev='Tg(kop:EGFP-FTASE-UTR-nanos3)' where mrkr_zdb_id='ZDB-TGCONSTRCT-070406-1';
 
 
-create temp table tmp_cmrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50)) with no log;
+create temp table tmp_cmrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50));
 
 
 insert into tmp_cmrel(relid,consid,mrkrid,reltype) values (get_id('CMREL'),'ZDB-TGCONSTRCT-070406-1','ZDB-EREGION-110822-3','coding sequence of');
@@ -68,7 +68,7 @@ insert into construct_marker_relationship(conmrkrrel_zdb_id,conmrkrrel_construct
 
 drop table tmp_cmrel;
 
-create temp table tmp_mrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50)) with no log;
+create temp table tmp_mrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50));
 
 
 insert into tmp_mrel(relid,consid,mrkrid,reltype) values (get_id('MREL'),'ZDB-TGCONSTRCT-070406-1','ZDB-EREGION-110822-3','coding sequence of');
@@ -89,7 +89,7 @@ update marker set mrkr_name='Tg(kop:EGFP-LIFEACT-UTR-nanos3)' where mrkr_zdb_id=
 update marker set mrkr_abbrev='Tg(kop:EGFP-LIFEACT-UTR-nanos3)' where mrkr_zdb_id='ZDB-TGCONSTRCT-141104-1';
 
 
-create temp table tmp_cmrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50)) with no log;
+create temp table tmp_cmrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50));
 
 
 insert into tmp_cmrel(relid,consid,mrkrid,reltype) values (get_id('CMREL'),'ZDB-TGCONSTRCT-141104-1','ZDB-EREGION-110816-13','coding sequence of');
@@ -100,7 +100,7 @@ insert into construct_marker_relationship(conmrkrrel_zdb_id,conmrkrrel_construct
 
 drop table tmp_cmrel;
 
-create temp table tmp_mrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50)) with no log;
+create temp table tmp_mrel (relid varchar(50), consid varchar(50),mrkrid varchar(50),reltype varchar(50));
 
 
 insert into tmp_mrel(relid,consid,mrkrid,reltype) values (get_id('MREL'),'ZDB-TGCONSTRCT-141104-1','ZDB-EREGION-110816-13','coding sequence of');
