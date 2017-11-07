@@ -1043,7 +1043,7 @@ $nonRecAttrUpdateSQL = "select mms_sql, mms_pk_id
                           from merge_markers_sql
                          where mms_mrkr_1_zdb_id = ?
                            and mms_mrkr_2_zdb_id = ?
-                           and mms_sql like '%delete%'                
+                           and mms_sql like '%update%'                
                            and mms_sql not like '%record_attribution%'
                       order by 2;";
 $curGetNonRecAttrUpdateSQLs = $dbh->prepare($nonRecAttrUpdateSQL);
