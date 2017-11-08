@@ -131,7 +131,7 @@ insert into pre_feature (
       )
   select distinct feature_abbrev,
                   gene_zdb_id,
-                  'ZDB-LAB-070815-1',
+                  'ZDB-LAB-130226-1',
                   'embryos',
                   'CRISPR',
                   SUBSTRING(feature_abbrev from 4),
