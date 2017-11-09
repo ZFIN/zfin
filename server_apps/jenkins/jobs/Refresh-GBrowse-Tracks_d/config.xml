@@ -23,12 +23,8 @@
   <builders>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3
-./load_burgess_lin.sh
-./load_zmp.sh
 ./load_knockdown_reagents.sh
-
-cd $TARGETROOT/server_apps/data_transfer/Ensembl
-dbaccess $DBNAME &lt; updateSequenceFeatureChromosomeLocation.sql</command>
+      </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

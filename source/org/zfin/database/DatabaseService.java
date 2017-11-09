@@ -7,9 +7,7 @@ import org.zfin.database.presentation.*;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DbScriptFileParser;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
@@ -22,6 +20,7 @@ public class DatabaseService {
 
 
     public static final String DELIMITER = " || ";
+    public static final String PIPE = "|";
 
     /**
      * If the entity name is provided by one or more FK keys concatenate the entity names of those tables.
@@ -371,72 +370,136 @@ public class DatabaseService {
                     List<List<String>> data = dataMap.get(statement.getDataKey());
                     if (data == null) {
                         LOG.info("No data found for key: " + statement.getDataKey());
-                        continue;
-                    }
-                    statement = statement.completeInsertStatement(data.get(0).size());
-                    getInfrastructureRepository().executeJdbcStatement(statement, data);
-                    LOG.info(data.size() + " records inserted");
-                }
-            } else if (statement.isDebug()) {
-                List<List<String>> dataReturn;
-                if (LOG.isDebugEnabled()) {
-                    dataReturn = getInfrastructureRepository().executeNativeQuery(statement);
-                    listOfResultRecords.add(dataReturn);
-                    if (dataReturn == null) {
-                        LOG.debug("  Debug data: No records found.");
-                    } else {
-                        LOG.debug("  Debug data:\n " + dataReturn.size() + " records.");
-                        for (List<String> row : dataReturn) {
-                            LOG.debug("\n  " + row);
+                        if (statement.getLoadFileName() == null)
+                            continue;
+                        File loadFile = new File(statement.getLoadFileName());
+                        if (!loadFile.exists())
+                            continue;
+                        FileReader fr = null;
+                        BufferedReader br = null;
+                        try {
+                            fr = new FileReader(loadFile);
+                            br = new BufferedReader(fr);
+                            String line;
+                            data = new ArrayList<>();
+                            while ((line = br.readLine()) != null) {
+                                String delimit = statement.getDelimiter();
+                                if(delimit == null) {
+                                    // default delimiter
+                                    delimit = " ";
+                                }
+                                if(delimit.equals(PIPE))
+                                    delimit = "\\|";
+                                String[] columns = line.split(delimit);
+                                List<String> cols = Arrays.asList(columns);
+                                data.add(cols);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                fr.close();
+                                br.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                }
-            } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
-                List<List<String>> dataReturn;
-                dataReturn = getInfrastructureRepository().executeNativeDynamicQuery(statement);
+                statement = statement.completeInsertStatement(data.get(0).size());
+                getInfrastructureRepository().executeJdbcStatement(statement, data);
+                runDebugStatement(statement);
+                LOG.info(data.size() + " records inserted");
+            }
+        } else if (statement.isDebug()) {
+            List<List<String>> dataReturn;
+            if (LOG.isDebugEnabled()) {
+                dataReturn = getInfrastructureRepository().executeNativeQuery(statement);
                 listOfResultRecords.add(dataReturn);
-                if (statement.getDataKey() != null) {
-                    resultMap.put(statement.getDataKey(), dataReturn);
-                } else {
-                    resultMap.put("_NO-KEY", dataReturn);
-                }
                 if (dataReturn == null) {
-                    LOG.info("  Debug data: No records found.");
-                } else if (statement.getDataKey() == null) {
-                    LOG.info("\n" + dataReturn.size() + " records retrieved");
-                } else if (statement.getDataKey().toUpperCase().equals(DatabaseJdbcStatement.DEBUG)) {
-                    LOG.info("  Debug data:\n " + dataReturn.size() + " records.");
-                    for (List<String> row : dataReturn) {
-                        LOG.info("\n  " + row);
-                    }
+                    LOG.debug("  Debug data: No records found.");
                 } else {
-                    dataMap.put(statement.getDataKey(), dataReturn);
-                }
-            } else if (statement.isEcho()) {
-                LOG.info("\n  " + statement.getQuery());
-            } else if (statement.isTest()) {
-                LOG.info("\n  " + statement.getQuery());
-                String key = statement.getDataKey();
-                int value = Integer.valueOf(dataMap.get(key).get(0).get(0));
-                if (statement.isTestTrue(value)) {
-                    errorMessage.add(statement.getErrorMessage(value));
-                }
-            } else {
-                if (statement.isInsertStatement() || statement.isDeleteStatement()) {
-                    runDebugStatement(statement);
-                }
-                int affectedRows = getInfrastructureRepository().executeJdbcStatement(statement);
-                if (statement.isDeleteStatement()) {
-                    trace.writeToTraceFile("Deleted Rows: " + affectedRows);
-                    trace.writeToTraceFile("After Delete Statement: ");
-                    runDebugStatementAfterDelete(statement);
-                    LOG.info("  Deleted data:\n " + affectedRows);
+                    LOG.debug("  Debug data:\n " + dataReturn.size() + " records.");
+                    for (List<String> row : dataReturn) {
+                        LOG.debug("\n  " + row);
+                    }
                 }
             }
-            DbSystemUtil.logLockInfo();
+        } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
+            List<List<String>> dataReturn;
+            dataReturn = getInfrastructureRepository().executeNativeDynamicQuery(statement);
+            listOfResultRecords.add(dataReturn);
+            if (statement.getDataKey() != null) {
+                resultMap.put(statement.getDataKey(), dataReturn);
+            } else {
+                resultMap.put("_NO-KEY", dataReturn);
+            }
+            if (dataReturn == null) {
+                LOG.info("  Debug data: No records found.");
+            } else if (statement.getDataKey() == null) {
+                LOG.info("\n" + dataReturn.size() + " records retrieved");
+            } else if (statement.getDataKey().toUpperCase().equals(DatabaseJdbcStatement.DEBUG)) {
+                LOG.info("  Debug data:\n " + dataReturn.size() + " records.");
+                for (List<String> row : dataReturn) {
+                    LOG.info("\n  " + row);
+                }
+            } else {
+                dataMap.put(statement.getDataKey(), dataReturn);
+            }
+            if (statement.isCopy()) {
+                File unloadFile = new File(statement.getUnloadFileName());
+                if (!unloadFile.exists())
+                    LOG.info("No unload unloadFile found. Creating new one: " + unloadFile.getAbsolutePath());
+                writeToFile(dataReturn, unloadFile, statement.getDelimiter());
+            }
+        } else if (statement.isEcho()) {
+            LOG.info("\n  " + statement.getQuery());
+        } else if (statement.isTest()) {
+            LOG.info("\n  " + statement.getQuery());
+            String key = statement.getDataKey();
+            int value = Integer.valueOf(dataMap.get(key).get(0).get(0));
+            if (statement.isTestTrue(value)) {
+                errorMessage.add(statement.getErrorMessage(value));
+            }
+        } else {
+            if (statement.isInsertStatement() || statement.isDeleteStatement()) {
+                runDebugStatement(statement);
+            }
+            int affectedRows = getInfrastructureRepository().executeJdbcStatement(statement);
+            if (statement.isDeleteStatement()) {
+                trace.writeToTraceFile("Deleted Rows: " + affectedRows);
+                trace.writeToTraceFile("After Delete Statement: ");
+                runDebugStatementAfterDelete(statement);
+                LOG.info("  Deleted data:\n " + affectedRows);
+            }
         }
+        DbSystemUtil.logLockInfo();
+    }
         trace.closeTraceFile();
         return errorMessage;
+}
+
+    private void writeToFile(List<List<String>> dataReturn, File unloadFile, String delimiter) {
+        FileWriter fileWriter = null;
+        try {
+            fileWriter = new FileWriter(unloadFile);
+            if (unloadFile.getName().toLowerCase().endsWith("gff3")) {
+                fileWriter.write("##gff-version 3");
+                fileWriter.write(System.lineSeparator());
+            }
+            for (List<String> lineElements : dataReturn) {
+                String line = String.join(delimiter, lineElements);
+                fileWriter.write(line);
+                fileWriter.write(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            LOG.error("Could not write data to file", e);
+        } finally {
+            try {
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static String bindVariables(String query, List<String> resultRecord) {
