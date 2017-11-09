@@ -86,7 +86,7 @@ public class DbScriptFileParserTest {
         List<DatabaseJdbcStatement> queries = parser.parseFile();
         assertNotNull(queries);
         assertEquals(1, queries.size());
-        assertEquals("insert into gff3", queries.get(0).getQuery());
+        assertEquals("insert into gff3 ;", queries.get(0).getQuery());
     }
 
 
