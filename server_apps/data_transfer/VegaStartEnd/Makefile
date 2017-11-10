@@ -19,7 +19,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/VegaStartEnd
 
 GENERICS =  
 
-STATICS = loadVegaStartEnd.sql vegastartend.sh 
+STATICS = loadVegaStartEnd.sql vegastartend.sh loadVegaStartEnd_PG.sql vegastartend_PG.sh 
 
 # ---------------  Production Rules  ------------------------------------
 
