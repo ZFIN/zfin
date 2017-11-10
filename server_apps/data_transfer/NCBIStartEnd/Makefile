@@ -19,7 +19,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/NCBIStartEnd
 
 GENERICS =  
 
-STATICS = loadNCBIStartEnd.sql ncbistartend.sh 
+STATICS = loadNCBIStartEnd.sql ncbistartend.sh loadNCBIStartEnd_PG.sql ncbistartend_PG.sh 
 
 # ---------------  Production Rules  ------------------------------------
 
