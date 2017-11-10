@@ -16,6 +16,20 @@ import static org.junit.Assert.fail;
 public class DbScriptFileParserTest {
 
     @Test
+    public void parsePostgresCopyFile() {
+        String fileName = "test//postgresCopyCommand.sql";
+        File file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+        DbScriptFileParser parser = new DbScriptFileParser(file);
+        List<DatabaseJdbcStatement> queries = parser.parseFile();
+        assertNotNull(queries);
+        assertEquals(1, queries.size());
+        assertEquals("\t", queries.get(0).getDelimiter());
+        assertEquals("select gff_seqname,         'ZFIN' gff_source,         gff_feature,         gff_start,         gff_end,         gff_score,         gff_strand,         gff_frame,         'ID=' || feature_zdb_id         ||';Name=' || feature_abbrev         ||';Alias='|| feature_zdb_id || ','         || feature_abbrev || ','         || feature_name   || ';' as attribute       from  gff3 join feature on substring(feature_abbrev from 1 for 8) = gff_id       where gff_source = 'BurgessLin'             and gff_feature = 'Transgenic_insertion' order by 1,4,5,9", queries.get(0).getQuery());
+    }
+
+    @Test
     public void parseDatabaseQueryFile() {
         String fileName = "test//dbTestScript.sql";
         File file = new File(fileName);
@@ -61,5 +75,19 @@ public class DbScriptFileParserTest {
         assertTrue(statement.isUpdateStatement());
         assertEquals("SELECT *      tmp_syndef      set scoper = trim(scoper);", statement.getDebugStatement().getQuery());
     }
+
+    @Test
+    public void parseLoadFileData() {
+        String fileName = "test//postgresLoadCommand.sql";
+        File file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+        DbScriptFileParser parser = new DbScriptFileParser(file);
+        List<DatabaseJdbcStatement> queries = parser.parseFile();
+        assertNotNull(queries);
+        assertEquals(1, queries.size());
+        assertEquals("insert into gff3 ;", queries.get(0).getQuery());
+    }
+
 
 }

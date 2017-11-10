@@ -15,11 +15,12 @@ delete from sequence_feature_chromosome_location_generated
 delete from sequence_feature_chromosome_location_generated
  where sfclg_location_source = 'UCSCStartEndLoader';
 
-create temp table tmp_gff_start_end (accnum varchar(50),chrom varchar(20), gene varchar(50),
+
+create temp table 
+  tmp_gff_start_end (accnum varchar(50),chrom varchar(20), gene varchar(50),
        start int,
-       end int
-) 
-with no log;
+       endVal int
+); 
 
 
 insert into tmp_gff_start_end (accnum,chrom, gene)
@@ -35,30 +36,29 @@ update tmp_gff_start_end
 		      and gff_seqname = chrom);
 
 update tmp_gff_start_end
-  set end = (select max(gff_end)
+
+  set endVal = (select max(gff_end)
       	      	      from gff3
 		      where gff_name = accnum
 		      and gff_seqname = chrom);
 
 select count(*) from tmp_gff_start_end
- where end is null;
+ where endVal is null;
 
-create index gene_index on tmp_gff_start_end (gene)
- using btree in idxdbs2;
+create index gene_index on tmp_gff_start_end (gene);
 
-create index accnum_index on tmp_gff_start_end (accnum)
- using btree in idxdbs1;
+create index accnum_index on tmp_gff_start_end (accnum);
 
-create temp table tmp_gene (accnum1 varchar(50) , chrom1 varchar(20), start int, end int)
-with no log;
+
+create temp table tmp_gene (accnum1 varchar(50) , chrom1 varchar(20), start int, endVal int);
 
 insert into tmp_gene (accnum1, chrom1)
  select distinct gene, chrom
   from tmp_gff_start_end;
 
 
-create index gene2_index on tmp_gene (accnum1)
- using btree in idxdbs1;
+create index gene2_index on tmp_gene (accnum1);
+
 
 update tmp_gene
  set start = (select min(start)
@@ -68,18 +68,13 @@ update tmp_gene
 
 
 update tmp_gene
- set end = (select max(end)
+ set endVal = (select max(endVal)
       	      	      from tmp_gff_start_end
 		      where  gene = accnum1 
 		      and chrom = chrom1);
 
-select count(*) from tmp_gene
- where start is null;
 
-select count(*) from tmp_gene
- where end is null;
-
-select dblink_linked_recid as geneId, 
+create temp table tmp_ucsc as select dblink_linked_recid as geneId, 
        chrom1,
 		accnum1,
 		'UCSCStartEndLoader' as source,
@@ -89,10 +84,26 @@ select dblink_linked_recid as geneId,
   and dblink_acc_num = accnum1
   and fdb_db_pk_id = fdbcont_fdb_db_id
  and start is not null
- and end is not null
- into temp tmp_ucsc;
+ and end is not null;
 
 
+CREATE temp TABLE tmp_ucsc AS
+  SELECT dblink_linked_recid          AS geneId,
+    chrom1,
+    accnum1,
+    'UCSCStartEndLoader' :: text AS source,
+    fdb_db_pk_id
+  FROM   db_link,
+    tmp_gene,
+    foreign_db,
+    foreign_db_contains
+  WHERE  dblink_fdbcont_zdb_id = fdbcont_zdb_id
+         AND dblink_acc_num = accnum1
+         AND fdb_db_pk_id = fdbcont_fdb_db_id
+         AND start IS NOT NULL
+         AND endval IS NOT NULL;
+
+create temp table tmp_ucsc_all as
 select count(*) as counter, geneId, chrom1, source, source as subsource, dblink_acc_num
   from db_link, tmp_ucsc
  where geneId = dblink_linked_Recid
@@ -100,8 +111,8 @@ select count(*) as counter, geneId, chrom1, source, source as subsource, dblink_
  and exists (select 'x' from foreign_db_contains, foreign_db
      	    	    	where fdbcont_fdb_db_id = fdb_db_pk_id
 			and fdb_db_name = 'RefSeq')
-group by geneId, chrom1, source, dblink_acc_num
- into temp tmp_ucsc_all;
+group by geneId, chrom1, source, dblink_acc_num;
+
 
 insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 
        	    			       sfclg_chromosome,
@@ -113,47 +124,56 @@ select distinct geneId, chrom1, dblink_acc_num, source, subsource
   from tmp_ucsc_all;
 
 
-insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 
-       	    			       sfclg_chromosome,
-				       sfclg_start,
-				       sfclg_end,
-				       sfclg_acc_num,
-				       sfclg_location_source,
-				       sfclg_fdb_db_id)
-select distinct dblink_linked_recid,
-       		chrom1,
-		start,
-		end,
-		accnum1,
-		'EnsemblStartEndLoader',
-		fdb_db_pk_id
-  from db_link, tmp_gene, foreign_db, foreign_db_contains
-  where dblink_Fdbcont_zdb_id = fdbcont_Zdb_id
-  and dblink_acc_num = accnum1
-  and fdb_db_pk_id = fdbcont_fdb_db_id
- and start is not null
- and end is not null;
 
-insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id, 
-       	    			       sfclg_chromosome,
-				       sfclg_start,
-				       sfclg_end,
-				       sfclg_acc_num,
-				       sfclg_location_source,
-				       sfclg_fdb_db_id)
-select distinct dblink_linked_recid,
-       		chrom1,
-		start,
-		end,
-		accnum1,
-		'ZfinGbrowseStartEndLoader',
-		fdb_db_pk_id
-  from db_link, tmp_gene, foreign_db, foreign_db_contains
-  where dblink_Fdbcont_zdb_id = fdbcont_Zdb_id
-  and dblink_acc_num = accnum1
-  and fdb_db_pk_id = fdbcont_fdb_db_id
- and start is not null
- and end is not null;
+INSERT INTO sequence_feature_chromosome_location_generated
+(sfclg_data_zdb_id,
+ sfclg_chromosome,
+ sfclg_start,
+ sfclg_end,
+ sfclg_acc_num,
+ sfclg_location_source,
+ sfclg_fdb_db_id)
+  SELECT DISTINCT dblink_linked_recid,
+    chrom1,
+    start,
+    endval,
+    accnum1,
+    'EnsemblStartEndLoader',
+    fdb_db_pk_id
+  FROM   db_link,
+    tmp_gene,
+    foreign_db,
+    foreign_db_contains
+  WHERE  dblink_fdbcont_zdb_id = fdbcont_zdb_id
+         AND dblink_acc_num = accnum1
+         AND fdb_db_pk_id = fdbcont_fdb_db_id
+         AND start IS NOT NULL
+         AND endval IS NOT NULL;
+
+INSERT INTO sequence_feature_chromosome_location_generated
+(sfclg_data_zdb_id,
+ sfclg_chromosome,
+ sfclg_start,
+ sfclg_end,
+ sfclg_acc_num,
+ sfclg_location_source,
+ sfclg_fdb_db_id)
+  SELECT DISTINCT dblink_linked_recid,
+    chrom1,
+    start,
+    endval,
+    accnum1,
+    'ZfinGbrowseStartEndLoader',
+    fdb_db_pk_id
+  FROM   db_link,
+    tmp_gene,
+    foreign_db,
+    foreign_db_contains
+  WHERE  dblink_fdbcont_zdb_id = fdbcont_zdb_id
+         AND dblink_acc_num = accnum1
+         AND fdb_db_pk_id = fdbcont_fdb_db_id
+         AND start IS NOT NULL
+         AND endval IS NOT NULL;
 
 insert into sequence_feature_chromosome_location_generated (
   sfclg_chromosome, sfclg_data_zdb_id, sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource, sfclg_assembly, sfclg_pub_zdb_id)

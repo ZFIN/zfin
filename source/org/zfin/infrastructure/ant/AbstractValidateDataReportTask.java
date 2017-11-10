@@ -32,6 +32,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     protected String propertyFilePath = "home/WEB-INF/zfin.properties";
     protected File dataDirectory;
     protected File queryFile;
+    protected List<File> queryFiles;
     protected String propertiesFile = "report.properties";
     protected Properties reportProperties;
     protected DatabaseService service = new DatabaseService();
@@ -246,4 +247,14 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         return returnList;
     }
 
+    public List<File> getQueryFiles() {
+        return queryFiles;
+    }
+
+    public void setQueryFiles(String... queryFileNames) {
+        queryFiles = new ArrayList<>(queryFileNames.length);
+        for(String fileName: queryFileNames){
+            queryFiles.add(new File(dataDirectory, fileName));
+        }
+    }
 }

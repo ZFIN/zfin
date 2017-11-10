@@ -5,6 +5,7 @@ import org.hibernate.engine.jdbc.internal.BasicFormatterImpl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Single DB query instruction that will be issued through JDBC connection.
@@ -55,6 +56,11 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     Map<String, String> dataMap;
     private boolean selectInto;
+
+    // for unloading
+    private String unloadFileName;
+    private String loadFileName;
+    private String delimiter;
 
     public DatabaseJdbcStatement() {
     }
@@ -159,6 +165,8 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
             throw new RuntimeException("Incorrect syntax!");
 
         dataKey = token[2];
+        if (dataKey.startsWith("'"))
+            loadFileName = dataKey.replaceAll("'", "");
         if (token.length < 4) {
             query = new StringBuilder();
         } else {
@@ -284,7 +292,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     }
 
     public boolean isUnloadStatement() {
-        return unload;
+        return unload || isCopy();
     }
 
     public boolean isSelectStatement() {
@@ -354,6 +362,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
                 statement.comment = "Load records from file / memory into " + getInsertTable().toUpperCase();
                 statement.query = new StringBuilder(
                         getQuery().replaceFirst("(?i)" + INSERT + "( *)" + INTO, SELECT + " " + STAR + " " + FROM)
+                                .replaceFirst("values" +"(.*)", "")
                 );
             } else {
                 int startOfSelect = getQuery().toLowerCase().indexOf(SELECT.toLowerCase());
@@ -437,6 +446,13 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     private String subQuery;
 
+    public String getLoadFileName() {
+        return loadFileName;
+    }
+
+    public void setLoadFileName(String loadFileName) {
+        this.loadFileName = loadFileName;
+    }
 
     public String getSubQuery() {
         return subQuery;
@@ -475,4 +491,30 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         if (query.toString().toUpperCase().contains(SELECT) && query.toString().toUpperCase().contains(INTO))
             selectInto = true;
     }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+    }
+
+    public String getUnloadFileName() {
+        return unloadFileName;
+    }
+
+    public void setUnloadFileName(String unloadFileName) {
+        this.unloadFileName = unloadFileName;
+    }
+
+    public boolean isCopy() {
+        return unloadFileName != null;
+    }
+
+    public void setLoad(boolean load) {
+        this.load = load;
+    }
+
+
 }

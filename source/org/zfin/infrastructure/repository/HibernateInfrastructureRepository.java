@@ -1121,74 +1121,74 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public void executeJdbcStatement(final DatabaseJdbcStatement jdbcStatement, final List<List<String>> data, final int batchSize) {
         long start = System.currentTimeMillis();
         final Session session = currentSession();
-        session.doWork(new Work(){
-            @Override
-            public void execute(Connection connection) throws SQLException {
-                PreparedStatement statement = null;
-                ResultSet rs = null;
-                int accumulatedBatchCounter = 0;
-                int currentBatchSize = 0;
-                try {
-                    Statement st = connection.createStatement();
-                    rs = st.executeQuery("select * from " + jdbcStatement.getTableName());
-                    ResultSetMetaData rsMetaData = rs.getMetaData();
-                    statement = connection.prepareStatement(jdbcStatement.getQuery());
-                    for (List<String> individualRow : data) {
-                        int index = 1;
-                        for (String column : individualRow) {
-                            String columnType = rsMetaData.getColumnClassName(index);
-                            if (columnType.equals("java.lang.Boolean")) {
-                                boolean columnTypeBol = column.equals("t");
-                                statement.setBoolean(index++, columnTypeBol);
-                            } else if (columnType.equals("java.lang.Long")) {
-                                long number = Long.valueOf(column);
-                                statement.setLong(index++, number);
-                            } else {
-                                statement.setString(index++, column);
-                            }
+        session.doWork(connection -> {
+            PreparedStatement statement = null;
+            ResultSet rs = null;
+            int accumulatedBatchCounter = 0;
+            int currentBatchSize = 0;
+            try {
+                Statement st = connection.createStatement();
+                rs = st.executeQuery("select * from " + jdbcStatement.getTableName());
+                ResultSetMetaData rsMetaData = rs.getMetaData();
+                statement = connection.prepareStatement(jdbcStatement.getQuery());
+                for (List<String> individualRow : data) {
+                    int index = 1;
+                    for (String column : individualRow) {
+                        String columnType = rsMetaData.getColumnClassName(index);
+                        if (columnType.equals("java.lang.Boolean")) {
+                            boolean columnTypeBol = column.equals("t");
+                            statement.setBoolean(index++, columnTypeBol);
+                        } else if (columnType.equals("java.lang.Long")) {
+                            long number = Long.valueOf(column);
+                            statement.setLong(index++, number);
+                        } else if (columnType.equals("java.lang.Integer")) {
+                            int number = Integer.valueOf(column);
+                            statement.setInt(index++, number);
+                        } else {
+                            statement.setString(index++, column);
                         }
-                        statement.addBatch();
-                        currentBatchSize++;
-                        accumulatedBatchCounter++;
-                        // execute batch if batch size is reached or if no more records are found.
-                        if (currentBatchSize == batchSize || accumulatedBatchCounter == data.size()) {
-                            statement.executeBatch();
-                            logger.info("Batch inserted records up to #: " + accumulatedBatchCounter);
-                            // reset the index that keeps track of the current batch size
-                            currentBatchSize = 0;
-                        }
-                        session.flush();
-                        session.clear();
                     }
-                } catch (SQLException exception) {
-                    logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
-                            "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                            jdbcStatement.getHumanReadableQueryString(), exception);
-                    for (int index = 0; index < batchSize; index++) {
-                        int index1 = accumulatedBatchCounter - batchSize + index;
-                        logger.error("Record number " + index1 + ", record: " + data.get(index1));
+                    statement.addBatch();
+                    currentBatchSize++;
+                    accumulatedBatchCounter++;
+                    // execute batch if batch size is reached or if no more records are found.
+                    if (currentBatchSize == batchSize || accumulatedBatchCounter == data.size()) {
+                        statement.executeBatch();
+                        logger.info("Batch inserted records up to #: " + accumulatedBatchCounter);
+                        // reset the index that keeps track of the current batch size
+                        currentBatchSize = 0;
                     }
-                    logger.error(DbSystemUtil.getLockInfo());
-                    throw new RuntimeException(exception);
-                } finally {
-                    try {
-                        if (rs != null) {
-                            rs.close();
-                        }
-                        if (statement != null) {
-                            statement.close();
-                        }
-                    } catch (SQLException e) {
-                        logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
-                                "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                                jdbcStatement.getQuery(), e);
-                    }
-                    // find out the individual line that caused the problem.
-/*
-            if (error)
-                runBatchJDBCStatementIndividually(jdbcStatement, data, accumulatedBatchCounter - batchSize, accumulatedBatchCounter);
-*/
+                    session.flush();
+                    session.clear();
                 }
+            } catch (SQLException exception) {
+                logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
+                        "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                        jdbcStatement.getHumanReadableQueryString(), exception);
+                for (int index = 0; index < batchSize; index++) {
+                    int index1 = accumulatedBatchCounter - batchSize + index;
+                    logger.error("Record number " + index1 + ", record: " + data.get(index1));
+                }
+                logger.error(DbSystemUtil.getLockInfo());
+                throw new RuntimeException(exception);
+            } finally {
+                try {
+                    if (rs != null) {
+                        rs.close();
+                    }
+                    if (statement != null) {
+                        statement.close();
+                    }
+                } catch (SQLException e) {
+                    logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
+                            "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                            jdbcStatement.getQuery(), e);
+                }
+                // find out the individual line that caused the problem.
+/*
+        if (error)
+            runBatchJDBCStatementIndividually(jdbcStatement, data, accumulatedBatchCounter - batchSize, accumulatedBatchCounter);
+*/
             }
         });
         long end = System.currentTimeMillis();
@@ -1293,38 +1293,35 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public List<List<String>> executeNativeQuery(final String queryString) {
         final Session session = HibernateUtil.currentSession();
-        return session.doReturningWork(new ReturningWork<List<List<String>>>(){
-            @Override
-            public List<List<String>> execute(Connection connection) throws SQLException {
-                Statement stmt = null;
-                List<List<String>> data = new ArrayList<>();
-                try {
-                    stmt = connection.createStatement();
-                    ResultSet rs = stmt.executeQuery(queryString);
-                    while (rs.next()) {
-                        List<String> row = new ArrayList<>();
-                        for (int index = 1; index <= rs.getMetaData().getColumnCount(); index++) {
-                            String value = rs.getString(index);
-                            if (value == null) {
-                                value = "";
-                            }
-                            row.add(value);
+        return session.doReturningWork(connection -> {
+            Statement stmt = null;
+            List<List<String>> data = new ArrayList<>();
+            try {
+                stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(queryString);
+                while (rs.next()) {
+                    List<String> row = new ArrayList<>();
+                    for (int index = 1; index <= rs.getMetaData().getColumnCount(); index++) {
+                        String value = rs.getString(index);
+                        if (value == null) {
+                            value = "";
                         }
-                        data.add(row);
+                        row.add(value);
                     }
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                } finally {
-                    if (stmt != null) {
-                        try {
-                            stmt.close();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
+                    data.add(row);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } finally {
+                if (stmt != null) {
+                    try {
+                        stmt.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
                 }
-                return data;
             }
+            return data;
         });
 
     }
