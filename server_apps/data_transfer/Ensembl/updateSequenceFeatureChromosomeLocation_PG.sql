@@ -74,18 +74,6 @@ update tmp_gene
 		      and chrom = chrom1);
 
 
-create temp table tmp_ucsc as select dblink_linked_recid as geneId, 
-       chrom1,
-		accnum1,
-		'UCSCStartEndLoader' as source,
-		fdb_db_pk_id
-  from db_link, tmp_gene, foreign_db, foreign_db_contains
-  where dblink_Fdbcont_zdb_id = fdbcont_Zdb_id
-  and dblink_acc_num = accnum1
-  and fdb_db_pk_id = fdbcont_fdb_db_id
- and start is not null
- and end is not null;
-
 
 CREATE temp TABLE tmp_ucsc AS
   SELECT dblink_linked_recid          AS geneId,
