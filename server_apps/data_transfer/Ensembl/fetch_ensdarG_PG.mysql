@@ -1,0 +1,6 @@
+select x.dbprimary_acc, g.stable_id 
+ from  gene g join xref x on g.display_xref_id = x.xref_id  
+ where x.external_db_id in (2510,2530) 
+ group by x.dbprimary_acc having count(x.dbprimary_acc) = 1 
+ order by g.stable_id
+;

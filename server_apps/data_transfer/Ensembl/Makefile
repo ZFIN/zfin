@@ -16,14 +16,19 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Ensembl
 
-GENERICS = fetch_ensembl_agp.sh pullFromBioMart.pl notifyStaleIds.sh reportEnsembleStatistics.sh fetch_ensdargOttdargTable.sh fetch_sangerMutantInfo.sh
+GENERICS = fetch_ensembl_agp.sh pullFromBioMart.pl notifyStaleIds.sh reportEnsembleStatistics.sh fetch_ensdargOttdargTable.sh fetch_sangerMutantInfo.sh fetch_ensembl_agp_PG.sh pullFromBioMart_PG.pl notifyStaleIds_PG.sh reportEnsembleStatistics_PG.sh fetch_ensdargOttdargTable_PG.sh fetch_sangerMutantInfo_PG.sh
 
 STATICS  = fetch_ensdarTG.sh fetch_ensdarG.mysql fetch_ensdarT_dbacc.mysql \
 	load_ensdarG.sql load_ensdarT_dbacc.sql fetch_ensdarpInfo.mysql \
 	fetch_ensembl_gff.sh gtf2gff3.pl gtf2gff3.cfg unload_zfin_DNA_clone.sql \
 	 agp_to_gff3.awk agp_to_gff3_trim.awk clone_gff3_w_alias.awk  \
 	  rollback.sql commit.sql readme readme.ensembl_mysql fetch_sangerMutantInfo.mysql fetch_ensdargOttdargTable.mysql loadEnsdarPMapping.sql loadSangerMutantData.sql loadEnsdargOttdarg.sql updateSequenceFeatureChromosomeLocation.sql \
-	load-missing-uniprot-records.sql log4j.xml report.properties build.xml
+	load-missing-uniprot-records.sql log4j.xml report.properties build.xml fetch_ensdarTG_PG.sh fetch_ensdarG_PG.mysql fetch_ensdarT_dbacc_PG.mysql \
+	load_ensdarG_PG.sql load_ensdarT_dbacc_PG.sql fetch_ensdarpInfo_PG.mysql \
+	fetch_ensembl_gff_PG.sh gtf2gff3_PG.pl gtf2gff3_PG.cfg unload_zfin_DNA_clone_PG.sql \
+	 agp_to_gff3_PG.awk agp_to_gff3_trim_PG.awk clone_gff3_w_alias_PG.awk  \
+	  rollback_PG.sql commit_PG.sql fetch_sangerMutantInfo_PG.mysql fetch_ensdargOttdargTable_PG.mysql loadEnsdarPMapping_PG.sql loadSangerMutantData_PG.sql loadEnsdargOttdarg_PG.sql updateSequenceFeatureChromosomeLocation_PG.sql \
+	load-missing-uniprot-records_PG.sql 
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -54,11 +59,11 @@ $(TARGETDIR)/ensdarT_dbacc.unl:  $(TARGETDIR)/fetch_ensdarT_dbacc.mysql \
 
 $(TARGETDIR)/ensdarG.unl: $(TARGETDIR)/fetch_ensdarG.mysql 
 	cd $(TARGETDIR) && fetch_ensdarTG.sh
-	 
+
 load_ensdarG: $(TARGETDIR)/load_ensdarG.sql \
  $(TARGETDIR)/rollback.sql $(TARGETDIR)/ensdarG.unl 
 	cd $(TARGETDIR) && cat $< rollback.sql | dbaccess -a $$DBNAME
-	
+
 load_ensdarG_commit: $(TARGETDIR)/load_ensdarG.sql \
  $(TARGETDIR)/commit.sql $(TARGETDIR)/ensdarG.unl
 	cd $(TARGETDIR)/ && cat $< commit.sql | dbaccess -a $$DBNAME
@@ -66,7 +71,7 @@ load_ensdarG_commit: $(TARGETDIR)/load_ensdarG.sql \
 load_ensdarT: $(TARGETDIR)/load_ensdarT_dbacc.sql \
  $(TARGETDIR)/rollback.sql $(TARGETDIR)/ensdarT_dbacc.unl
 	cd $(TARGETDIR)/ && cat $< rollback.sql | dbaccess -a $$DBNAME
-	
+
 load_ensdarT_commit: $(TARGETDIR)/load_ensdarT_dbacc.sql \
  $(TARGETDIR)/commit.sql $(TARGETDIR)/ensdarT_dbacc.unl
 	cd $(TARGETDIR)/ && cat $< commit.sql | dbaccess -a $$DBNAME
@@ -88,7 +93,52 @@ run_agp: $(TARGETDIR)/fetch_ensembl_agp.sh $(TARGETDIR)/agp_to_gff3.awk \
  $(TARGETDIR)/agp_to_gff3_trim.awk $(TARGETDIR)/clone_gff3_w_alias.awk
 	cd $(TARGETDIR) && fetch_ensembl_agp.sh
 
-########################################################################
+# ---------------  PG Targets  ----------------------------------------
+
+
+$(TARGETDIR)/ensdarT_dbacc_PG.unl:  $(TARGETDIR)/fetch_ensdarT_dbacc_PG.mysql \
+                                 $(TARGETDIR)/ensdarG_PG.unl
+
+$(TARGETDIR)/ensdarG_PG.unl: $(TARGETDIR)/fetch_ensdarG_PG.mysql 
+	cd $(TARGETDIR) && fetch_ensdarTG_PG.sh
+
+load_ensdarG_PG: $(TARGETDIR)/load_ensdarG_PG.sql \
+ $(TARGETDIR)/rollback_PG.sql $(TARGETDIR)/ensdarG_PG.unl 
+	cd $(TARGETDIR) && cat $< rollback_PG.sql | ${PGBINDIR}/psql ${DBNAME}
+
+load_ensdarG_commit_PG: $(TARGETDIR)/load_ensdarG_PG.sql \
+ $(TARGETDIR)/commit_PG.sql $(TARGETDIR)/ensdarG_PG.unl
+	cd $(TARGETDIR)/ && cat $< commit_PG.sql | ${PGBINDIR}/psql ${DBNAME}
+
+load_ensdarT_PG: $(TARGETDIR)/load_ensdarT_dbacc_PG.sql \
+ $(TARGETDIR)/rollback_PG.sql $(TARGETDIR)/ensdarT_dbacc_PG.unl
+	cd $(TARGETDIR)/ && cat $< rollback_PG.sql | ${PGBINDIR}/psql ${DBNAME}
+
+
+load_ensdarT_commit_PG: $(TARGETDIR)/load_ensdarT_dbacc_PG.sql \
+ $(TARGETDIR)/commit_PG.sql $(TARGETDIR)/ensdarT_dbacc_PG.unl
+	cd $(TARGETDIR)/ && cat $< commit_PG.sql | ${PGBINDIR}/psql ${DBNAME}
+
+# 		fetch  Ensembl GTF and convert to gff3
+run_gff_PG: $(TARGETDIR)/fetch_ensembl_gff_PG.sh
+	cd $(TARGETDIR) && fetch_ensembl_gff_PG.sh
+
+notify_stale_PG: $(TARGETDIR)/notifyStaleIds_PG.sh
+
+run_sanger_mutant_data_PG: $(TARGETDIR)/fetch_sangerMutantInfo_PG.sh
+
+# pre delete any versions of the file to be downloaded
+run_gff_force_PG: $(TARGETDIR)/fetch_ensembl_gff_PG.sh
+	cd $(TARGETDIR) && fetch_ensembl_gff_PG.sh -f
+
+# 		fetch and convert Ensembl AGP to gff3
+run_agp_PG: $(TARGETDIR)/fetch_ensembl_agp_PG.sh $(TARGETDIR)/agp_to_gff3_PG.awk \
+ $(TARGETDIR)/agp_to_gff3_trim_PG.awk $(TARGETDIR)/clone_gff3_w_alias_PG.awk
+	cd $(TARGETDIR) && fetch_ensembl_agp_PG.sh
+
+
+####### INFORMIX ###############################################################
+
 run:        load_ensdarG        load_ensdarT        run_gff run_agp
 
 run_commit: load_ensdarG_commit load_ensdarT_commit run_gff run_agp notify_stale
@@ -100,8 +150,27 @@ run_ensembl_load: load_ensdarG_commit load_ensdarT_commit notify_stale
 run_ensembl_load_rollback:  load_ensdarG load_ensdarT
 
 clean_ensembl:
-	rm -f $(TARGETDIR)/load_ensdarG.sql $(TARGETDIR)/ensdarT_dbacc.unl
+	rm -f $(TARGETDIR)/load_ensdarG_PG.sql $(TARGETDIR)/ensdarT_dbacc.unl
 	touch $(TARGETDIR)/*.mysql $(TARGETDIR)/*.sql 
-	
+
 .PHONY += load_ensdarG load_ensdarG_commit load_ensdarT load_ensdarT_commit \
 	run_gff run_gff_force run_agp
+
+#### PG #####
+
+run_PG:        load_ensdarG_PG        load_ensdarT_PG        run_gff_PG run_agp_PG
+
+run_commit_PG: load_ensdarG_commit_PG load_ensdarT_commit_PG run_gff_PG run_agp_PG notify_stale_PG
+
+run_gff3_PG:  run_gff_PG run_agp_PG
+
+run_ensembl_load_PG: load_ensdarG_commit_PG load_ensdarT_commit_PG notify_stale_PG
+
+run_ensembl_load_rollback_PG:  load_ensdarG_PG load_ensdarT_PG
+
+clean_ensembl_PG:
+	rm -f $(TARGETDIR)/load_ensdarG_PG.sql $(TARGETDIR)/ensdarT_dbacc_PG.unl
+	touch $(TARGETDIR)/*_PG.mysql $(TARGETDIR)/*_PG.sql 
+
+.PHONY_PG += load_ensdarG_PG load_ensdarG_commit_PG load_ensdarT_PG load_ensdarT_commit_PG \
+	run_gff_PG run_gff_force_PG run_agp_PG

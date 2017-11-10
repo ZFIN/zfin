@@ -1,0 +1,262 @@
+ZDB-PUB-000309-45|A conserved role for H15-related T-Box transcription factors in zebrafish and Drosophila heart formation|
+ZDB-PUB-000523-1|Genes with homology to mammalian apoptosis regulators identified in zebrafish|
+ZDB-PUB-000824-21|Patterning the early zebrafish by the opposing actions of bozozok and vox/vent|
+ZDB-PUB-000824-8|Evidence for gelsolin as a corneal crystallin in zebrafish|
+ZDB-PUB-001130-4|Molecular and functional diversity of neural connexins in the retina|
+ZDB-PUB-010102-4|Cluster of genes encoding the major egg envelope protein of zebrafish|
+ZDB-PUB-010112-1|The zebrafish fth1, slc3a2, men1, pc, fgf3 and cycd1 genes define two regions of conserved synteny between linkage group 7 and human chromosome 11q13|
+ZDB-PUB-010213-2|The IA-2 gene family: homologs in Caenorhabditis elegans, Drosophila and zebrafish|
+ZDB-PUB-010410-6|Dystrophin and Dp71, two products of the DMD gene, show a different pattern of expression during embryonic development in zebrafish|
+ZDB-PUB-010511-6|Developmental analysis of ceruloplasmin gene and liver formation in zebrafish|
+ZDB-PUB-010705-13|Expression of two novel zebrafish iroquois homologues (ziro1 and ziro5) during early development of axial structures and central nervous system|
+ZDB-PUB-010706-5|Cloning and characterization of zfBLP1, a Bcl-XL homologue from the zebrafish, Danio rerio|
+ZDB-PUB-010912-21|Expression and phylogeny of claudins in vertebrate primordia|
+ZDB-PUB-011116-5|Homologues of c-hairy1 (her9) and lunatic fringe in zebrafish are expressed in the developing central nervous system, but not in the presomitic mesoderm|
+ZDB-PUB-011214-12|Expression of brain subtype creatine kinase in the zebrafish embryo|
+ZDB-PUB-011217-11|Posttranscriptional silencing of cytochrome P4501A1 (CYP1A1) during zebrafish (Danio rerio) development|
+ZDB-PUB-020102-2|Molecular cloning, genetic mapping, and expression analysis of four zebrafish c/ebp genes|
+ZDB-PUB-020110-1|Regulatory interactions among three members of the vertebrate aryl hydrocarbon receptor family: AHR repressor, AHR1, and AHR2|
+ZDB-PUB-020115-1|Isolation and characterization of the muscle-specific isoform of creatine kinase from the zebrafish, Danio rerio|
+ZDB-PUB-020312-1|Characterization of retinal guanylate cyclase-activating protein 3 (GCAP3) from zebrafish to man|
+ZDB-PUB-020312-3|Zebrafish as a model for vertebrate reproduction: characterization of the first functional zebrafish (Danio rerio) gonadotropin receptor|
+ZDB-PUB-020513-5|A dominant-negative form of p63 is required for epidermal proliferation in zebrafish|
+ZDB-PUB-020521-9|Insertional mutagenesis in zebrafish rapidly identifies genes essential for early vertebrate development|
+ZDB-PUB-020604-10|Molecular characterization of three estrogen receptor forms in zebrafish: binding characteristics, transactivation properties, and tissue distributions|
+ZDB-PUB-020723-3|Curation of NCBI Gene Database Links|
+ZDB-PUB-020723-5|Scientific Curation|
+ZDB-PUB-020913-2|Cloning of zebrafish ovarian carbonyl reductase-like 20beta-hydroxysteroid dehydrogenase and characterization of its spatial and temporal expression|
+ZDB-PUB-021002-2|Structure and spatio temporal expression of the full length DNA complementary to RNA coding for alpha2 type I collagen of zebrafish|
+ZDB-PUB-021105-6|Visualization of rod photoreceptor development using GFP-transgenic zebrafish|
+ZDB-PUB-030115-19|Molecular cloning, expression, and functional characterization of a novel zebrafish cytosolic sulfotransferase|
+ZDB-PUB-030115-23|Effects of 17a-ethinylestradiol on the expression of three estrogen-responsive genes and cellular ultrastructure of liver and testes in male zebrafish|
+ZDB-PUB-030210-3|Light stimulates a transducin-independent increase of cytoplasmic Ca2+ and suppression of current in cones from the zebrafish mutant nof|
+ZDB-PUB-030305-2|15,000 unique zebrafish EST clusters and their future use in microarray for profiling gene expression patterns during embryogenesis|
+ZDB-PUB-030307-4|The structure and evolution of the melanocortin and MCH receptors in fish and mammals|
+ZDB-PUB-030307-9|Gene duplication and spectral diversification of cone visual pigments of zebrafish|
+ZDB-PUB-030312-1|Expression of the zebrafish recognition molecule F3/F11/contactin in a subset of differentiating neurons is regulated by cofactors associated with LIM domains|
+ZDB-PUB-030312-5|Expression of zebrafish cyp11a1 as a maternal transcript and in yolk syncytial layer|
+ZDB-PUB-030627-1|The zebrafish annexin gene family|
+ZDB-PUB-030715-10|Identification, classification, and partial characterization of genes in humans and other vertebrates homologous to a fish membrane progestin receptor|
+ZDB-PUB-030716-2|In silico and in situ characterization of the zebrafish (Danio rerio) gnrh3 (sGnRH) gene|
+ZDB-PUB-030806-10|Molecular characterization of the GnRH system in zebrafish (Danio rerio): cloning of chicken GnRH-II, adult brain expression patterns and pituitary content of salmon GnRH and chicken GnRH-II|
+ZDB-PUB-030905-2|Curation of unpublished nucleotide sequence accession numbers|
+ZDB-PUB-031031-3|Molecular cloning and functional expression of zfCx52.6, a novel connexin with hemichannel forming properties expressed in the zebrafish retina|
+ZDB-PUB-031031-9|cDNA nucleotide sequence coding for stearoyl-CoA desaturase and its expression in the zebrafish (Danio rerio) embryo|
+ZDB-PUB-031103-20|Mutation of weak atrium/atrial myosin heavy chain disrupts atrial function and influences ventricular morphogenesis in zebrafish|
+ZDB-PUB-031119-5|Radiographic analysis of zebrafish skeletal defects|
+ZDB-PUB-040109-27|Cloning of zebrafish ovarian P450c17 (CYP17, 17alpha-hydroxylase/17, 20-lyase) and characterization of its expression in gonadal and extra-gonadal tissues|
+ZDB-PUB-040211-4|Self-association of Gata1 enhances transcriptional activity in vivo in zebra fish embryos|
+ZDB-PUB-040216-22|In vivo imaging of synapse formation on a growing dendritic arbor|
+ZDB-PUB-040217-2|Generation and initial analysis of more than 15,000 full-length human and mouse cDNA sequences|
+ZDB-PUB-040514-5|Many ribosomal protein genes are cancer genes in zebrafish|
+ZDB-PUB-040514-6|Early myocardial function affects endocardial cushion development in zebrafish|
+ZDB-PUB-040611-6|Evolution and expression of D2 and D3 dopamine receptor genes in zebrafish|
+ZDB-PUB-040706-8|Two zebrafish alcohol dehydrogenases share common ancestry with mammalian class I, II, IV, and V ADH genes but have distinct functional characteristics|
+ZDB-PUB-040708-1|Identification of 315 genes essential for early zebrafish development|
+ZDB-PUB-040719-5|Cellular expression of eve1 suggests its requirement for the differentiation of the ameloblasts and for the initiation and morphogenesis of the first tooth in the zebrafish (Danio rerio)|
+ZDB-PUB-040726-12|Skin development in bony fish with particular emphasis on collagen deposition in the dermis of the zebrafish (Danio rerio)|
+ZDB-PUB-040803-4|Expression of metallothionein gene during embryonic and early larval development in zebrafish|
+ZDB-PUB-040908-18|Cloning of somatolactin alpha and beta cDNAs in zebrafish and phylogenetic analysis of two distinct somatolactin subtypes in fish|
+ZDB-PUB-040908-9|Met and Hgf signaling controls hypaxial muscle and lateral line development in the zebrafish|
+ZDB-PUB-040913-1|Fgf signaling is required for zebrafish tooth development|
+ZDB-PUB-041008-1|Expression of the winged helix/forkhead gene, foxn4, during zebrafish development|
+ZDB-PUB-041008-10|accordion, a zebrafish behavioral mutant, has a muscle relaxation defect due to a mutation in the ATPase Ca2+ pump SERCA1|
+ZDB-PUB-041029-6|The Cellular Retinol-Binding Protein Genes are Duplicated and Differentially Transcribed in the Developing and Adult Zebrafish (Danio rerio)|
+ZDB-PUB-041101-2|Distribution of prospective glutamatergic, glycinergic, and GABAergic neurons in embryonic and larval zebrafish|
+ZDB-PUB-041101-6|Distinct tissue-specificity of three zebrafish ext1 genes encoding proteoglycan modifying enzymes and their relationship to somitic Sonic Hedgehog signaling|
+ZDB-PUB-041104-5|Hematopoietic gene expression profile in zebrafish kidney marrow|
+ZDB-PUB-041104-8|cDNA-directed expression of a functional zebrafish CYP1A in yeast|
+ZDB-PUB-041116-1|Identification of a novel splicing form of zebrafish p73 having a strong transcriptional activity|
+ZDB-PUB-041116-3|Zebrafish unplugged reveals a role for muscle-specific kinase homologs in axonal pathway choice|
+ZDB-PUB-041208-12|Hedgehog and retinoid signalling confines nkx2.2b expression to the lateral floor plate of the zebrafish trunk|
+ZDB-PUB-041208-4|Critical roles of CD146 in zebrafish vascular development|
+ZDB-PUB-050104-2|Molecular characterization of monoamine oxidase in zebrafish (Danio rerio)|
+ZDB-PUB-050105-1|Specific and conserved roles of TAp73 during zebrafish development|
+ZDB-PUB-050119-9|Mutations in connexin43 (GJA1) perturb bone growth in zebrafish fins|
+ZDB-PUB-050120-11|Molecular characterization, phylogenetic relationships, and developmental expression patterns of prion genes in zebrafish (Danio rerio)|
+ZDB-PUB-050120-5|Fish possess multiple copies of fgfrl1, the gene for a novel FGF receptor|
+ZDB-PUB-050120-6|Intestinal growth and differentiation in zebrafish|
+ZDB-PUB-050125-9|Characterization of zebrafish PSD-95 gene family members|
+ZDB-PUB-050203-1|Molecular cloning and functional characterisation of high affinity zinc importer (DrZIP1) from zebrafish, Danio rerio|
+ZDB-PUB-050203-3|The immunoglobulin heavy-chain locus in zebrafish: identification and expression of a previously unknown isotype, immunoglobulin Z|
+ZDB-PUB-050209-5|The neuronal growth and regeneration associated Cntn1 (F3/F11/Contactin) gene is duplicated in fish: expression during development and retinal axon regeneration|
+ZDB-PUB-050221-5|Chemokine signaling guides axons within the retina in zebrafish|
+ZDB-PUB-050225-11|Zebrafish Gonadotropins and Their Receptors: II. Cloning and Characterization of Zebrafish Follicle-Stimulating Hormone and Luteinizing Hormone Subunits - Their Spatial-Temporal Expression Patterns and Receptor Specificity|
+ZDB-PUB-050225-12|Zebrafish Gonadotropins and Their Receptors: I. Cloning and Characterization of Zebrafish Follicle-Stimulating Hormone and Luteinizing Hormone Receptors - Evidence for Their Distinct Functions in Follicle Development|
+ZDB-PUB-050301-3|The basic helix-loop-helix olig3 establishes the neural plate boundary of the trunk and is necessary for development of the dorsal spinal cord|
+ZDB-PUB-050303-1|Cloning and characterization of full length of a novel zebrafish gene Zsrg abundantly expressed in the germline stem cells|
+ZDB-PUB-050303-4|her9 promotes floor plate development in zebrafish|
+ZDB-PUB-050308-3|Molecular cloning and functional characterization of zebrafish ATM|
+ZDB-PUB-050308-7|Regulated expression pattern of gremlin during zebrafish development|
+ZDB-PUB-050308-8|Spatial and temporal distribution of the traf4 genes during zebrafish development|
+ZDB-PUB-050318-10|Regulation of the early expression patterns of the zebrafish Dishevelled-interacting proteins Dapper1 and Dapper2|
+ZDB-PUB-050318-3|A novel tumor necrosis factor (TNF) gene present in tandem with theTNF-alpha gene on the same chromosome in teleosts|
+ZDB-PUB-050322-3|BOC, brother of CDO, is a dorsoventral axon-guidance molecule in the embryonic vertebrate brain|
+ZDB-PUB-050324-1|Identification of a novel estrogen-sulfating cytosolic SULT from zebrafish: Molecular cloning, expression, characterization, and ontogeny study|
+ZDB-PUB-050324-2|Temporal and spatial changes in the expression pattern of multiple red and green subtype opsin genes during zebrafish development|
+ZDB-PUB-050404-3|erbb3 and erbb2 Are Essential for Schwann Cell Migration and Myelination in Zebrafish|
+ZDB-PUB-050404-8|Identification of novel vascular endothelial-specific genes by the microarray analysis of the zebrafish cloche mutants|
+ZDB-PUB-050413-5|Gene structure, multiple alternative splicing, and expression in gonads of zebrafish Dmrt1|
+ZDB-PUB-050506-1|gammaN-crystallin and the evolution of the betagamma-crystallin superfamily in vertebrates|
+ZDB-PUB-050510-11|Cloning, characterization, and heat stress-induced redistribution of a protein homologous to human hsp27 in the zebrafish Danio rerio|
+ZDB-PUB-050510-3|Mutation of smooth muscle Myosin causes epithelial invasion and cystic expansion of the zebrafish intestine|
+ZDB-PUB-050513-14|Retinoic acid signalling links left-right asymmetric patterning and bilaterally symmetric somitogenesis in the zebrafish embryo|
+ZDB-PUB-050513-3|Semaphorin signaling guides cranial neural crest cell migration in zebrafish|
+ZDB-PUB-050518-1|15-Zinc finger protein Bloody Fingers is required for zebrafish morphogenetic movements during neurulation|
+ZDB-PUB-050518-3|bloodthirsty, an RBCC/TRIM gene required for erythropoiesis in zebrafish|
+ZDB-PUB-050523-11|Characterization and expression pattern of two zebrafish atf7 genes|
+ZDB-PUB-050523-2|Mutually exclusive glomerular innervation by two distinct types of olfactory sensory neurons revealed in transgenic zebrafish|
+ZDB-PUB-050523-6|Ferroportin1 is required for normal iron cycling in zebrafish|
+ZDB-PUB-050523-8|Otolith matrix proteins OMP-1 and Otolin-1 are necessary for normal otolith growth and their correct anchoring onto the sensory maculae|
+ZDB-PUB-050602-6|DNA damage response and Ku80 function in the vertebrate embryo|
+ZDB-PUB-050603-11|Expression of collapsin response mediator proteins in the nervous system of embryonic zebrafish|
+ZDB-PUB-050603-8|Constitutive and xenobiotics-induced expression of a novel CYP3A gene from zebrafish larva|
+ZDB-PUB-050607-10|LZIC regulates neuronal survival during zebrafish development|
+ZDB-PUB-050610-1|Genomic, cDNA and embryonic expression analysis of zebrafish IRF6, the gene mutated in the human oral clefting disorders Van der Woude and popliteal pterygium syndromes|
+ZDB-PUB-050610-3|Characterization and expression pattern of zebrafish anti-Mullerian hormone (amh) relative to sox9a, sox9b, and cyp19a1a, during gonad development|
+ZDB-PUB-050610-4|Isolation and expression patterns of genes for three angiopoietin-like proteins, Angptl1, 2 and 6 in zebrafish|
+ZDB-PUB-050623-1|nanor, a novel zygotic gene, is expressed initially at the midblastula transition in zebrafish|
+ZDB-PUB-050628-3|Ventralized Zebrafish Embryo Rescue by Overexpression of Zic2a|
+ZDB-PUB-050714-10|A unique role for 6-O sulfation modification in zebrafish vascular development|
+ZDB-PUB-050727-1|Organization and expression analysis of the zebrafish hepcidin gene, an antimicrobial peptide gene conserved among vertebrates|
+ZDB-PUB-050727-4|A mutation in the silver gene leads to defects in melanosome biogenesis and alterations in the visual system in the zebrafish mutant fading vision|
+ZDB-PUB-050810-2|Requirements for endoderm and BMP signaling in sensory neurogenesis in zebrafish|
+ZDB-PUB-050907-7|Chromosomal Organization, Evolutionary Relationship, and Expression of Zebrafish GnRH Family Members|
+ZDB-PUB-051005-3|Potential targets of transforming growth factor-beta1 during inhibition of oocyte maturation in zebrafish|
+ZDB-PUB-051012-8|Directional asymmetry of the zebrafish epithalamus guides dorsoventral innervation of the midbrain target|
+ZDB-PUB-051019-10|Lhx2 mediates the activity of Six3 in zebrafish forebrain growth|
+ZDB-PUB-051031-8|Acetylcholine and calcium signalling regulates muscle fibre formation in the zebrafish embryo|
+ZDB-PUB-051107-23|Zebrafish protocadherin 10 is involved in paraxial mesoderm development and somitogenesis|
+ZDB-PUB-051107-34|Structure and expression of the zebrafish mest gene, an ortholog of mammalian imprinted gene PEG1/MEST|
+ZDB-PUB-051107-9|Production and purification of recombinant somatolactin beta and its effects on melanosome aggregation in zebrafish|
+ZDB-PUB-051114-8|The Zebrafish Progranulin Gene Family and Antisense Transcripts|
+ZDB-PUB-051128-1|Independent expansion of the keratin gene family in teleostean fish and mammals: An insight from phylogenetic analysis and radiation hybrid mapping of keratin genes in zebrafish|
+ZDB-PUB-051207-11|Fog1 is required for cardiac looping in zebrafish|
+ZDB-PUB-051207-13|Identification and characterization of a novel member of the ATP-sensitive K+ channel subunit, Kir6.3, in zebrafish|
+ZDB-PUB-051207-8|Calcium extrusion is critical for cardiac morphogenesis and rhythm in embryonic zebrafish hearts|
+ZDB-PUB-051221-3|The early vertebrate Danio rerio Mr 46000 mannose-6-phosphate receptor: biochemical and functional characterisation|
+ZDB-PUB-060105-15|Cloning and embryonic expression of zebrafish PLAG genes|
+ZDB-PUB-060105-16|Expressed sequence tag analysis of zebrafish eye tissues for NEIBank|
+ZDB-PUB-060113-2|Cyclooxygenase-1-derived PGE2 promotes cell motility via the G-protein-coupled EP4 receptor during vertebrate gastrulation|
+ZDB-PUB-060124-15|Mannose 6-phosphate receptors in an ancient vertebrate, zebrafish|
+ZDB-PUB-060210-4|Rab11-FIP4 is predominantly expressed in neural tissues and involved in proliferation as well as in differentiation during zebrafish retinal development|
+ZDB-PUB-060227-6|Notch1b and neuregulin are required for specification of central cardiac conduction tissue|
+ZDB-PUB-060306-13|The animal sialyltransferases and sialyltransferase-related genes: a phylogenetic approach|
+ZDB-PUB-060315-10|laminin alpha 1 gene is essential for normal lens development in zebrafish|
+ZDB-PUB-060315-15|Molecular phenotype of zebrafish ovarian follicle by serial analysis of gene expression and proteomic profiling, and comparison with the transcriptomes of other animals|
+ZDB-PUB-060323-16|Zebrafish G protein {gamma}2 is required for VEGF signaling during angiogenesis|
+ZDB-PUB-060323-32|MyD88 Innate Immune Function in a Zebrafish Embryo Infection Model|
+ZDB-PUB-060403-10|Evidence from in vivo imaging that synaptogenesis guides the growth and branching of axonal arbors by two distinct mechanisms|
+ZDB-PUB-060403-11|Evi1 is specifically expressed in the distal tubule and duct of the Xenopus pronephros and plays a role in its formation|
+ZDB-PUB-060412-16|Reverse genetic analysis of neurogenesis in the zebrafish retina|
+ZDB-PUB-060419-8|Zebrafish and chicken lipocalin-type prostaglandin D synthase homologues: Conservation of mammalian gene structure and binding ability for lipophilic molecules, and difference in expression profile and enzyme activity|
+ZDB-PUB-060501-4|HNF factors form a network to regulate liver-enriched genes in zebrafish|
+ZDB-PUB-060508-5|delta-sarcoglycan is necessary for early heart and muscle development in zebrafish|
+ZDB-PUB-060526-4|Characterization of the mRNA expression of StAR and steroidogenic enzymes in zebrafish ovarian follicles|
+ZDB-PUB-060531-13|Hypoxia affects sex differentiation and development, leading to a male-dominated population in zebrafish (Danio rerio)|
+ZDB-PUB-060616-44|D4 Dopamine receptor genes of zebrafish and effects of the antipsychotic clozapine on larval swimming behaviour|
+ZDB-PUB-060616-48|Altered gene expression: A mechanism for reproductive toxicity in zebrafish exposed to benzo[a]pyrene|
+ZDB-PUB-060623-23|Identification of multiple integrin beta1 homologs in zebrafish (Danio rerio)|
+ZDB-PUB-060816-3|Genome-wide Expression Profiling in the Zebrafish Embryo Identifies Target Genes Regulated by Hedgehog Signaling During Vertebrate Development|
+ZDB-PUB-060816-5|Functional characterization of the Bcl-2 gene family in the zebrafish|
+ZDB-PUB-060825-10|Distinct structure and activity of monoamine oxidase in the brain of zebrafish (Danio rerio)|
+ZDB-PUB-060921-23|Zebrafish cypher is important for somite formation and heart development|
+ZDB-PUB-061020-40|Ontogeny of the GnRH systems in zebrafish brain: in situ hybridization and promoter-reporter expression analyses in intact animals|
+ZDB-PUB-061020-49|Gene expression patterns of the ALP family during zebrafish development|
+ZDB-PUB-061116-5|Growth Differentiation Factor 9 and Its Spatiotemporal Expression and Regulation in the Zebrafish Ovary|
+ZDB-PUB-061227-25|Caveolin-1alpha and -1beta perform nonredundant roles in early vertebrate development|
+ZDB-PUB-061229-3|Characterization of a new duplicate {delta}-opioid receptor from zebrafish|
+ZDB-PUB-061229-9|Characterization of the agr2 gene, a homologue of X. laevis anterior gradient 2, from the zebrafish, Danio rerio|
+ZDB-PUB-070122-9|fibin, a novel secreted lateral plate mesoderm signal, is essential for pectoral fin bud initiation in zebrafish|
+ZDB-PUB-070125-1|The dystrotelin, dystrophin and dystrobrevin superfamily: new paralogues and old isoforms|
+ZDB-PUB-070210-22|phospholipase C, beta 3 is required for Endothelin1 regulation of pharyngeal arch patterning in zebrafish|
+ZDB-PUB-070212-15|New functions for a vertebrate Rho guanine nucleotide exchange factor in ciliated epithelia|
+ZDB-PUB-070330-23|Identification of the Zebrafish IFN Receptor: Implications for the Origin of the Vertebrate IFN System|
+ZDB-PUB-070504-20|Divergent evolution of the vertebrate polysialyltransferase Stx and Pst genes revealed by fish-to-mammal comparison|
+ZDB-PUB-070504-27|Distinct Functions for Different scl Isoforms in Zebrafish Primitive and Definitive Hematopoiesis|
+ZDB-PUB-070513-24|Identification of zygotic genes expressed at the midblastula transition in zebrafish|
+ZDB-PUB-070614-10|Characterization of ligands for fish taste receptors|
+ZDB-PUB-070629-16|Transgenic analysis of the anterior eye-specific enhancers of the zebrafish gelsolin-like 1 (gsnl1) gene|
+ZDB-PUB-070629-21|Abrogation of Prostaglandin E2/EP4 Signaling Impairs the Development of rag1+ Lymphoid Precursors in the Thymus of Zebrafish Embryos|
+ZDB-PUB-070629-9|A {beta}Pix-Pak2a signaling pathway regulates cerebral vascular stability in zebrafish|
+ZDB-PUB-070726-12|Expression of the Ku70 subunit (XRCC6) and protection from low dose ionizing radiation during zebrafish embryogenesis|
+ZDB-PUB-070726-2|Two families of candidate taste receptors in fishes|
+ZDB-PUB-070726-26|Evolution of Class I cytokine receptors|
+ZDB-PUB-070726-4|Cloning and expression of a zebrafish SCN1B ortholog and identification of a species-specific splice variant|
+ZDB-PUB-070726-5|Molecular cloning and analysis of zebrafish voltage-gated sodium channel beta subunit genes: Implications for the evolution of electrical signaling in vertebrates|
+ZDB-PUB-070920-16|Comparative expression of p2x receptors and ecto-nucleoside triphosphate diphosphohydrolase 3 in hypocretin and sensory neurons in zebrafish|
+ZDB-PUB-070920-27|Expression of multiple class three semaphorins in the retina and along the path of zebrafish retinal axons|
+ZDB-PUB-070920-29|Molecular cloning, characterization, and developmental expression of foxp1 in zebrafish|
+ZDB-PUB-071001-9|Zebrafish Peptidoglycan Recognition Proteins Are Bactericidal Amidases Essential for Defense against Bacterial Infections|
+ZDB-PUB-071009-9|Distribution of corticotropin-releasing hormone in the developing zebrafish brain|
+ZDB-PUB-071023-10|Zebrafish Androgen Receptor: Isolation, Molecular, and Biochemical Characterization|
+ZDB-PUB-071023-5|Characterization of the enigma family in zebrafish|
+ZDB-PUB-071129-1|Differential expression of duplicated VAL-opsin genes in the developing zebrafish|
+ZDB-PUB-071129-13|Dystrobrevin and dystrophin family gene expression in zebrafish|
+ZDB-PUB-080102-9|Molecular cloning and developmental expression of plakophilin 2 in zebrafish|
+ZDB-PUB-080226-14|Genome-Wide Survey and Developmental Expression Mapping of Zebrafish SET Domain-Containing Genes|
+ZDB-PUB-080226-9|Expression of the eight AMPA receptor subunit genes in the developing central nervous system and sensory organs of zebrafish|
+ZDB-PUB-080326-20|misty somites, a maternal effect gene identified by transposon-mediated insertional mutagenesis in zebrafish that is essential for the somite boundary maintenance|
+ZDB-PUB-080326-4|Transcriptomic analyses reveal novel genes with sexually dimorphic expression in the zebrafish gonad and brain|
+ZDB-PUB-080331-3|Identification and characterization of a novel gene differentially expressed in zebrafish cross-subfamily cloned embryos|
+ZDB-PUB-080422-17|Goodpasture antigen-binding protein and its spliced variant, ceramide transfer protein, have different functions in the modulation of apoptosis during zebrafish development|
+ZDB-PUB-080422-9|The calcium channel beta2 (CACNB2) subunit repertoire in teleosts|
+ZDB-PUB-080602-13|Molecular Identification and Functional Characterization of the Kisspeptin/Kisspeptin Receptor System in Lower Vertebrates|
+ZDB-PUB-080707-10|Neuregulin-mediated ErbB3 signaling is required for formation of zebrafish dorsal root ganglion neurons|
+ZDB-PUB-080707-4|Ancient and modern duplication events and the evolution of stearoyl-CoA desaturases in teleost fishes|
+ZDB-PUB-080714-17|Zebrafish whole-adult-organism chemogenomics for large-scale predictive and discovery chemical biology|
+ZDB-PUB-080722-33|Molecular cloning and characterization of the expression pattern of the zebrafish alpha2, 8-sialyltransferases (ST8Sia) in the developing nervous system|
+ZDB-PUB-080728-11|Molecular diversity of connexin and pannexin genes in the retina of the zebrafish Danio rerio|
+ZDB-PUB-080801-12|The Met receptor tyrosine kinase prevents zebrafish primary motoneurons from expressing an incorrect neurotransmitter|
+ZDB-PUB-080825-5|Cloning and analysis of transcripts and genes encoding fish-specific proteins related to PrP|
+ZDB-PUB-081029-10|Identification of proSAAS homologs in lower vertebrates: conservation of hydrophobic helices and convertase-inhibiting sequences|
+ZDB-PUB-081031-4|Isolation and expression analysis of foxj1 and foxj1.2 in zebrafish embryos|
+ZDB-PUB-081203-16|Identification and expression of voltage-gated calcium channel beta subunits in Zebrafish|
+ZDB-PUB-081203-20|Isolation and expression analysis of Alzheimer's disease-related gene xb51 in zebrafish|
+ZDB-PUB-081218-13|Identification of zebrafish A2 adenosine receptors and expression in developing embryos|
+ZDB-PUB-090106-11|Characterization and comparative analyses of zebrafish intelectins: Highly conserved sequences, diversified structures and functions|
+ZDB-PUB-090112-6|Zwilling-A and -B, two related myelin proteins of teleosts, which originate from a single, bicistronic transcript|
+ZDB-PUB-090310-3|The SCPP gene repertoire in bony vertebrates and graded differences in mineralized tissues|
+ZDB-PUB-090318-15|Role of SLC12A10.2, a Na-Cl cotransporter-like protein, in a Cl uptake mechanism in zebrafish (Danio rerio)|
+ZDB-PUB-090330-6|Discovery and characterization of novel vascular and hematopoietic genes downstream of etsrp in zebrafish|
+ZDB-PUB-090406-5|Molecular cloning, ontogeny and tissue distribution of zebrafish (Danio rerio) prohormone convertases: pcsk1 and pcsk2|
+ZDB-PUB-090407-2|Molecular cloning and expression of phospholipase C epsilon 1 in zebrafish|
+ZDB-PUB-090417-15|Genetic basis for the evolution of vertebrate mineralized tissue|
+ZDB-PUB-090526-10|Cloning and characterization of zebrafish protocadherin-17|
+ZDB-PUB-090714-3|Expression analysis of steroid hormone receptor mRNAs during zebrafish embryogenesis|
+ZDB-PUB-090727-7|Zebrafish RNase T2 genes and the evolution of secretory ribonucleases in animals|
+ZDB-PUB-090731-6|Nkcc1 (Slc12a2) is required for the regulation of endolymph volume in the otic vesicle and swim bladder volume in the zebrafish larva|
+ZDB-PUB-091101-10|A novel neural-specific BMP antagonist, Brorin-like, of the Chordin family|
+ZDB-PUB-091120-8|A non-coding antisense RNA in tie-1 locus regulates tie-1 function in vivo|
+ZDB-PUB-091130-2|Evolutionary history of the alpha2,8-sialyltransferase (ST8Sia) gene family: tandem duplications in early deuterostomes explain most of the diversity found in the vertebrate ST8Sia genes|
+ZDB-PUB-091215-1|Evolution of the vertebrate glucose-dependent insulinotropic polypeptide (GIP) gene|
+ZDB-PUB-100408-6|Mercury-induced hepatotoxicity in zebrafish: in vivo mechanistic insights from transcriptome analysis, phenotype anchoring and targeted gene expression validation|
+ZDB-PUB-100427-12|Knockdown of bicaudal C in zebrafish (Danio rerio) causes cystic kidneys: a nonmammalian model of polycystic kidney disease|
+ZDB-PUB-100621-18|Characterization of drCol 15a1b: A Novel Component of the Stem Cell Niche in the Zebrafish Retina|
+ZDB-PUB-100621-37|Zebrafish Ubc13 is required for Lys63-linked polyubiquitination and DNA damage tolerance|
+ZDB-PUB-100625-17|Identification of RL-TGR, a coreceptor involved in aversive chemical signaling|
+ZDB-PUB-100830-2|Cloning and characterization of a zebrafish homologue of human AQP1: A bifunctional water and gas channel|
+ZDB-PUB-101201-14|Isotocin controls ion regulation through regulating ionocyte progenitor differentiation and proliferation|
+ZDB-PUB-101201-6|Identification and characterization of a novel zebrafish semaphorin|
+ZDB-PUB-110602-6|Molecular conservation of estrogen-response associated with cell cycle regulation, hormonal carcinogenesis and cancer in zebrafish and human cancer cell lines|
+ZDB-PUB-110803-9|A screen for hoxb1-regulated genes identifies ppp1r14al as a regulator of the rhombomere 4 Fgf-signaling center|
+ZDB-PUB-120207-4|Characterization of a novel KRAS mutation identified in Noonan syndrome|
+ZDB-PUB-120529-5|Kidins220/ARMS interacts with Pdzrn3, a protein containing multiple binding domains|
+ZDB-PUB-961014-1008|The protein product of the zebrafish homologue of the mouse T gene is expressed in nuclei of the germ ring and the notochord of the early embryo|
+ZDB-PUB-961014-1143|Wnt4 affects morphogenesis when misexpressed in the zebrafish embryo|
+ZDB-PUB-961014-75|Asynchronous onset of odorant receptor expression in the developing zebrafish olfactory system|
+ZDB-PUB-961014-850|Cloning of the zebrafish krox-20 gene (krx-20) and its expression during hindbrain development|
+ZDB-PUB-970116-1|Zebrafish interphotoreceptor retinoid-binding protein: differential circadian expression among cone subtypes|
+ZDB-PUB-970121-7|A new tinman-related gene, nkx2.7, anticipates the expression of nkx2.5 and nkx2.3 in zebrafish heart and pharyngeal endoderm|
+ZDB-PUB-970324-9|Zebrafish translation elongation factor EF1 alpha mRNA: sequence and secondary structures|
+ZDB-PUB-980105-3|The activity of Neurogenin1 is controlled by local cues in the zebrafish embryo|
+ZDB-PUB-980408-10|Characterization of a cDNA encoding a novel band 4.1-like protein in zebrafish|
+ZDB-PUB-980415-8|Expression of LIM-domain binding protein (ldb) genes during zebrafish embryogenesis|
+ZDB-PUB-980603-4|Expression of two zebrafish homologues of the murine Six3 gene demarcates the initial eye primordia|
+ZDB-PUB-990201-11|Differential brain expression of a new ß-actin gene from zebrafish (Danio rerio)|
+ZDB-PUB-990302-49|Cloning and characterization of the zebrafish (Danio rerio) aryl hydrocarbon receptor|
+ZDB-PUB-990427-17|Expression of zkrml2, a homologue of the Krml1/val segmentation gene, during embryonic patterning of the zebrafish|
+ZDB-PUB-990507-7|A genetic linkage map for zebrafish: comparative analysis and localization of genes and expressed sequences|
+ZDB-PUB-990520-1|Cloning and characterization of six zebrafish photoreceptor opsin cDNAs and immunolocalization of their corresponding proteins|
+ZDB-PUB-990824-46|Faithful expression of green fluorescent protein (GFP) in transgenic zebrafish embryos under control of zebrafish gene promoters|
+ZDB-PUB-990824-49|Ontogeny and behaviour of early macrophages in the zebrafish embryo|

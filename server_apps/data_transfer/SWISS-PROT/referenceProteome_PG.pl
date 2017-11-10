@@ -17,16 +17,8 @@ use ZFINPerlModules;
 
 # set environment variables
 
-$ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
-$ENV{"INFORMIXSERVER"}="waffle";
-$ENV{"ONCONFIG"}="onconfig";
-$ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
 
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"DBDATE"}="Y4MD-";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"CLIENT_LOCALE"}="en_US.utf8";
 $ENV{"DB_LOCALE"}="en_US.utf8";
 

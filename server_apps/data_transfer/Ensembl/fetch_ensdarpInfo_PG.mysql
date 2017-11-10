@@ -1,0 +1,1 @@
+SELECT DISTINCT g.stable_id as geneid, t.stable_id as transcriptid, tl.stable_id as translationid, (tl.seq_end - tl.seq_start) as proteinLength FROM gene g,  transcript t, translation tl WHERE g.gene_id = t.gene_id AND t.transcript_id = tl.transcript_id
