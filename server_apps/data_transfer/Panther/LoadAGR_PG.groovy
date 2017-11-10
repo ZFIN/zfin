@@ -19,7 +19,7 @@ def psql (String dbname, String sql) {
     proc.waitFor()
     proc.getErrorStream().eachLine { println(it) }
     if (proc.exitValue()) {
-        throw new RuntimeException("dbaccess call failed")
+        throw new RuntimeException("psql call failed")
     }
     proc
 }
@@ -36,7 +36,7 @@ PRE_TERM_FILE = "agrdisease.unl"
 dbname = System.getenv("DBNAME")
 println("Loading db link terms into $dbname")
 
-dbaccess dbname, """
+psql dbname, """
   \COPY (SELECT mrkr_zdb_id,mrkr_zdb_id,mrkr_zdb_id,fdbcont_zdb_id
     FROM marker, marker_type_group_member,foreign_db_contains where mrkr_type=mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM' and fdbcont_fdb_db_id=(select fdb_db_pk_id from foreign_db where fdb_db_name ='AGR Gene')) TO $PRE_MRKR_FILE
     ;

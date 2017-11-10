@@ -14,8 +14,8 @@ def out = new BufferedOutputStream(file)
 out << new URL(DOWNLOAD_URL).openStream()
 out.close()
 
-def dbaccess (String dbname, String sql) {
-    proc = "dbaccess -a $dbname".execute()
+def psql (String dbname, String sql) {
+    proc = "psql $dbname < ".execute()
     proc.getOutputStream().with {
         write(sql.bytes)
         close()
@@ -23,7 +23,7 @@ def dbaccess (String dbname, String sql) {
     proc.waitFor()
     proc.getErrorStream().eachLine { println(it) }
     if (proc.exitValue()) {
-        throw new RuntimeException("dbaccess call failed")
+        throw new RuntimeException("psql call failed")
     }
     proc
 }
@@ -56,17 +56,16 @@ pantherIDs.each { csv ->
 dbname = System.getenv("DBNAME")
 println("Loading terms into $dbname")
 
-dbaccess dbname, """
+psql dbname, """
 
   CREATE TEMP TABLE tmp_terms(
     dblinkid varchar(50),
     id varchar(50),
     name varchar(50),
     fdbcontid varchar(50)
-      ) with no log;
+      );
 
-  LOAD FROM $OUTFILE
-    INSERT INTO tmp_terms;
+  \copy tmp_terms FROM $OUTFILE;
 
 
 
@@ -94,9 +93,9 @@ insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 
 
 
-  UNLOAD TO $POST_FILE
-    SELECT dblink_linked_recid,dblink_acc_num
-    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
+  \copy (SELECT dblink_linked_recid,dblink_acc_num
+    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65)) TO $POST_FILE
+    ;
 """
 
 if (args) {
