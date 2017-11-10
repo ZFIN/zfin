@@ -20,7 +20,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/ConstructImages
 #GENERICS = zfishbook.pl preprocess_zfishbook.pl                                   
            
-STATICS = loadFigures.sql images.unl constructFigure.unl
+STATICS = loadFigures.sql loadFigures_PG.sql images.unl constructFigure.unl
 
 # Define targets that require special handling.
 
