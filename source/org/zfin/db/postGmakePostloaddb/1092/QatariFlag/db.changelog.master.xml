@@ -10,6 +10,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1092/QatariFlag/ZFIN5756.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1092/QatariFlag/CUR717.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1092/QatariFlag/CUR-720.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/QatariFlag/ZFIN3981.sql" />
 
 
 </databaseChangeLog>
