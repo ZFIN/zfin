@@ -67,7 +67,6 @@ task loadDb() {
         exec { commandLine 'createdb', dbname }
         exec { commandLine "bash", "-c", "pg_restore -j 4 -d $dbname $unloadPath" }
         exec { commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
-        exec { commandLine "bash", "-c", "echo 'CREATE EXTENSION pg_stat_statements;' | psql $dbname" }
     }
 }
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
