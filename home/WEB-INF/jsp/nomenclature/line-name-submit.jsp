@@ -6,20 +6,20 @@
 <c:forEach var="info" items="${submission.lineDetails}">
     <dl>
         <dt>Genetic Background</dt>
-        <dd>${info.background}</dd>
+        <dd><c:out value="${info.background}" /></dd>
         <dt>Gene or Construct Name</dt>
-        <dd>${info.geneName}</dd>
+        <dd><c:out value="${info.geneName}" /></dd>
         <dt>Gene Symbol</dt>
-        <dd>${info.geneSymbol}</dd>
+        <dd><c:out value="${info.geneSymbol}" /></dd>
         <dt>Allele/Line Designation</dt>
-        <dd>${info.designation}</dd>
+        <dd><c:out value="${info.designation}" /></dd>
         <dt>Protocol</dt>
-        <dd>${info.protocol}</dd>
+        <dd><c:out value="${info.protocol}" /></dd>
         <dt>Mutation Type</dt>
-        <dd>${info.mutationType}</dd>
+        <dd><c:out value="${info.mutationType}" /></dd>
         <dt>Mutation Details</dt>
-        <dd>${info.mutationDetails}</dd>
+        <dd><c:out value="${info.mutationDetails}" /></dd>
         <dt>CRISPR or TALEN Sequence</dt>
-        <dd>${info.sequence}</dd>
+        <dd><c:out value="${info.sequence}" /></dd>
     </dl>
 </c:forEach>

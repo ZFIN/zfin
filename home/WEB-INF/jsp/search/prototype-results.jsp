@@ -359,7 +359,7 @@
     </div>
     <div class="debug-output"
          style="display:none; clear: both; background-color: pink ; border:5px solid magenta;">
-        ${debug}
+        <c:out value="${debug}" />
     </div>
 
 

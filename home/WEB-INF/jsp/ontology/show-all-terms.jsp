@@ -44,7 +44,7 @@
                     </c:if>
                 </td>
                 <td>
-                    &nbsp;for: <span style="font-weight: bold;"> ${query} </span>
+                    &nbsp;for: <span style="font-weight: bold;"> <c:out value="${query}" /> </span>
                 </td>
             </tr>
         </table>

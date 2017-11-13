@@ -1,6 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
@@ -61,7 +62,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         StringBuilder out = new StringBuilder();
         out.append("<div class=\"col-md-12 horizontal-breadbox\">");
         out.append("<a class=\"btn btn-default horizontal-breadbox-label\" href=\"");
-        out.append(url);
+        out.append(StringEscapeUtils.escapeHtml4(url));
         out.append("\">Remove All</a>");
         for (String fq : query.getFilterQueries()) {
             out.append(getBreadBoxLinkHtml(fq));
