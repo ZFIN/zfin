@@ -27,5 +27,5 @@
     <include file="source/org/zfin/db/load/1090/Ogor/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1090/Pizza/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1091/pizza/db.changelog.master.xml"/>
-
+    <include file="source/org/zfin/db/load/1092/QatariFlag/db.changelog.master.xml"/>
 </databaseChangeLog>
