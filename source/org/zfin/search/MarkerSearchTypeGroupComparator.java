@@ -19,6 +19,7 @@ public class MarkerSearchTypeGroupComparator<T extends FacetField.Count> impleme
 
         map.put(Marker.TypeGroup.SEARCHABLE_GENE.getDisplayName(), pad(i++));
         map.put(Marker.TypeGroup.SEARCHABLE_TRANSCRIPT.getDisplayName(), pad(i++));
+        map.put(Marker.TypeGroup.SEARCHABLE_EFG.getDisplayName(), pad(i++));
         map.put(Marker.TypeGroup.SEARCHABLE_REGION.getDisplayName(), pad(i++));
         map.put(Marker.TypeGroup.SEARCHABLE_STR.getDisplayName(), pad(i++));
         map.put(Marker.TypeGroup.SEARCHABLE_CLONE.getDisplayName(), pad(i++));
