@@ -258,8 +258,19 @@ public class MarkerSearchService {
                         for (String snippet : response.getHighlighting().get(id).get(highlightField)) {
                             logger.debug("snippet: " + snippet);
 
+                            String prettyFieldName = SolrService.getPrettyFieldName(highlightField);
+
+                            FieldName fieldName = FieldName.getFieldName(highlightField);
+
+                            //for genes only, the field name for 'name' fields should be 'Current Symbol'
+                            if (result.getMarker().isInTypeGroup(Marker.TypeGroup.GENEDOM)
+                                && (fieldName == FieldName.NAME
+                                    || fieldName == FieldName.NAME_AC)) {
+                                prettyFieldName = "Current Symbol";
+                            }
+
                             highlightSnippets.add("<div class=\"snippet\">"
-                                    + SolrService.getPrettyFieldName(highlightField)
+                                    + prettyFieldName
                                     + ": " + snippet + "</div>");
 
                         }
