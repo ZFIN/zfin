@@ -1070,8 +1070,8 @@
     <copyField source="gene_full_name" dest="gene_full_name_ac"/>
 
     <copyField source="target" dest="related_gene_symbol"/>
-    <copyField source="target_full_name" dest="gene_full_name_ac"/>
-    <copyfield source="target_previous_name" dest="gene_previous_name_ac"/>
+    <copyField source="target_full_name" dest="target_full_name_ac"/>
+    <copyfield source="target_previous_name" dest="target_previous_name_ac"/>
 
     <copyField source="inserted_in_gene" dest="related_gene_symbol"/>
     <copyField source="inserted_in_gene_full_name" dest="gene_full_name_ac"/>

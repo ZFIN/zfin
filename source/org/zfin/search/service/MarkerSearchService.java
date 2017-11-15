@@ -167,6 +167,8 @@ public class MarkerSearchService {
         startsWithFields.put(FieldName.GENE_PREVIOUS_NAME_AUTOCOMPLETE,"");
         startsWithFields.put(FieldName.GENE_FULL_NAME_AUTOCOMPLETE,"");
         startsWithFields.put(FieldName.CLONE_AUTOCOMPLETE,"");
+        startsWithFields.put(FieldName.TARGET_FULL_NAME_AUTOCOMPLETE,"");
+        startsWithFields.put(FieldName.TARGET_PREVIOUS_NAME_AUTOCOMPLETE,"");
         Map<FieldName, String> matchesFields = new HashMap<>();
         matchesFields.putAll(startsWithFields);
         matchesFields.put(FieldName.FULL_NAME,"^3");
@@ -175,6 +177,7 @@ public class MarkerSearchService {
 
             if (StringUtils.equals(criteria.getMatchType(),BEGINS_WITH)) {
                 query.setQuery(SolrService.dismax(criteria.getName(),startsWithFields));
+
             } else if (StringUtils.equals(criteria.getMatchType(),CONTAINS)) {
                 //String wildcardQuery = "*" + SolrService.luceneEscape(criteria.getName() + "*");
                 String wildcardQuery = "*" + criteria.getName();
