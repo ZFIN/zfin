@@ -62,6 +62,7 @@ public enum FieldName {
     FISH_ZDB_ID("fish_zdb_id"),
     FULL_NAME("full_name", "Name"),
     FULL_NAME_AC("full_name_ac", "Name"),
+    FULL_NAME_KEYWORD_AUTOCOMPLETE("full_name_kac", "Name"),
     GENE("gene"),
     GENE_FULL_NAME("gene_full_name"),
     GENE_FULL_NAME_AUTOCOMPLETE("gene_full_name_ac", "Gene Full Name"),

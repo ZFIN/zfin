@@ -1,6 +1,7 @@
 package org.zfin.search.service;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -11,7 +12,6 @@ import org.apache.solr.common.SolrDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.service.ExpressionService;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
@@ -159,31 +159,34 @@ public class MarkerSearchService {
 
         Map<FieldName, String> startsWithFields = new HashMap<>();
         startsWithFields.put(FieldName.NAME_AC,"^10");
-        startsWithFields.put(FieldName.FULL_NAME_AC,"^3");
+        startsWithFields.put(FieldName.FULL_NAME_KEYWORD_AUTOCOMPLETE,"^3");
         startsWithFields.put(FieldName.ALIAS_AC,"^5");
-        startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_SYMBOL_AUTOCOMPLETE,"^2");
-        startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_NAME_AUTOCOMPLETE,"");
-        startsWithFields.put(FieldName.RELATED_GENE_SYMBOL,"");
-        startsWithFields.put(FieldName.GENE_PREVIOUS_NAME_AUTOCOMPLETE,"");
-        startsWithFields.put(FieldName.GENE_FULL_NAME_AUTOCOMPLETE,"");
+        //startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_SYMBOL_AUTOCOMPLETE,"^2");
+        //startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_NAME_AUTOCOMPLETE,"");
+        //startsWithFields.put(FieldName.RELATED_GENE_SYMBOL,"");
+        //startsWithFields.put(FieldName.GENE_PREVIOUS_NAME_AUTOCOMPLETE,"");
         startsWithFields.put(FieldName.CLONE_AUTOCOMPLETE,"");
-        startsWithFields.put(FieldName.TARGET_FULL_NAME_AUTOCOMPLETE,"");
-        startsWithFields.put(FieldName.TARGET_PREVIOUS_NAME_AUTOCOMPLETE,"");
+        //startsWithFields.put(FieldName.TARGET_FULL_NAME_AUTOCOMPLETE,"");
+        //startsWithFields.put(FieldName.TARGET_PREVIOUS_NAME_AUTOCOMPLETE,"");
         Map<FieldName, String> matchesFields = new HashMap<>();
         matchesFields.putAll(startsWithFields);
         matchesFields.put(FieldName.FULL_NAME,"^3");
+        matchesFields.put(FieldName.FULL_NAME_AC,"^3");
+        matchesFields.put(FieldName.GENE_FULL_NAME_AUTOCOMPLETE,"");
 
         if (StringUtils.isNotEmpty(criteria.getName())) {
 
             if (StringUtils.equals(criteria.getMatchType(),BEGINS_WITH)) {
                 query.setQuery(SolrService.dismax(criteria.getName(),startsWithFields));
-
+                logger.error("criteria.matchtype: " + criteria.getMatchType() + " is Begins With?");
             } else if (StringUtils.equals(criteria.getMatchType(),CONTAINS)) {
                 //String wildcardQuery = "*" + SolrService.luceneEscape(criteria.getName() + "*");
                 String wildcardQuery = "*" + criteria.getName();
                 query.setQuery(SolrService.dismax(wildcardQuery, matchesFields, false));
+                logger.error("criteria.matchtype: " + criteria.getMatchType() + " is Contains?");
             } else {  //default to MATCHES
                 query.setQuery(SolrService.dismax(criteria.getName(), matchesFields));
+                logger.error("criteria.matchtype: " + criteria.getMatchType() + " is Matches?");
             }
 
 
