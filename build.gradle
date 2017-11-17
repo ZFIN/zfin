@@ -195,7 +195,7 @@ task make {
 
 task createSchemaSpy() {
     doLast {
-        println 'Create ER diagram for ' +ttNameMap.get('DB_NAME')
+        println 'Creating ER diagram for ' +ttNameMap.get('DB_NAME') + ' ...'
         javaexec {
             main="-jar";
             args = [
