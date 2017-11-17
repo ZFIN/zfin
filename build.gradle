@@ -128,6 +128,7 @@ def translateVariableSet = ['TARGETROOT',
                             'DEFAULT_EMAIL',
                             'GO_EMAIL_ERR',
                             'SWISSPROT_EMAIL_ERR',
+                            'USER',
                             'GBROWSE_PATH_FROM_ROOT']
 
 // load properties into gradle
@@ -190,4 +191,30 @@ task make {
     dependsOn ':server_apps:Reports:deployDirectoryToTargetroot'
     dependsOn ':server_apps:DB_maintenance:deployDirectoryToTargetroot'
     dependsOn deployPostgres
+}
+
+task createSchemaSpy() {
+    doLast {
+        println 'Create ER diagram for ' +ttNameMap.get('DB_NAME')
+        javaexec {
+            main="-jar";
+            args = [
+                    "lib/Java/schemaSpy_5.0.0.jar",
+                    "-t",
+                    "pgsql",
+                    "-db",
+                    ttNameMap.get('DB_NAME') ,
+                    "-u",
+                    ttNameMap.get('USER'),
+                    "-host",
+                    "localhost",
+                    "-dp",
+                    "lib/Java/postgresql-9.4.1210.jar",
+                    "-s",
+                    "public",
+                    "-o",
+                    ttNameMap.get('TARGETROOT')+"/home/schemaSpy",
+            ]
+        }
+    }
 }
