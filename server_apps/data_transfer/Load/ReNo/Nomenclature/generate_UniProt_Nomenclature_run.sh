@@ -8,7 +8,7 @@
 
 set bin_pth="/private/apps/wublast";
 # path from $WEBHOST_BLAST_DATABASE_PATH/Current
-set current="<!--|WEBHOST_BLAST_DATABASE_PATH|-->/Current/";
+set current="/research/zblastfiles/zmore/blastRegeneration/Current/";
 set timestamp="`date +%Y%m%d`"
 set here="`pwd`"
 
@@ -16,7 +16,7 @@ set here="`pwd`"
 #dbaccess -a $DBNAME select_nomemclature_candidates.sql
 
 
-cat nomenclature_candidate_pp.unl | cut -f 4,5 -d \| | sort -u > ! keys.txt
+cat ref_proteome_candidates.unl | cut -f 4,5 -d \| | sort -u > ! keys.txt
 
 # zero out the fasta file
 cat /dev/null >! accession.pp
@@ -25,27 +25,30 @@ foreach key (`cat keys.txt`)
 	echo $key
 	switch ($key)
 		case "Polypeptide|Ensembl":
-			${bin_pth}/xdget -p  ${current}/ensemblProt_zf `grep $key nomenclature_candidate_pp.unl | \
+			${bin_pth}/xdget -p  ${current}/ensemblProt_zf `grep $key ref_proteome_candidates.unl | \
 			cut -f3 -d \|` >> accession.pp
 		breaksw
 		case "Polypeptide|GenPept":
-			${bin_pth}/xdget -p  ${current}/refseq_zf_aa `grep $key nomenclature_candidate_pp.unl | \
+			${bin_pth}/xdget -p  ${current}/refseq_zf_aa `grep $key ref_proteome_candidates.unl | \
 			cut -f3 -d \|` >> accession.pp
 		breaksw
 		case "Polypeptide|RefSeq":
-			${bin_pth}/xdget -p  ${current}/refseq_zf_aa `grep $key nomenclature_candidate_pp.unl | cut -f3 -d \|` >> accession.pp
+			${bin_pth}/xdget -p  ${current}/refseq_zf_aa `grep $key ref_proteome_candidates.unl | cut -f3 -d \|` >> accession.pp
+		breaksw
+		case "Polypeptide|PUBPROT":
+			${bin_pth}/xdget -p  ${current}/publishedProtein `grep $key ref_proteome_candidates.unl | cut -f3 -d \|` >> accession.pp
 		breaksw
 		case "Polypeptide|UniProtKB":
-			${bin_pth}/xdget -p  ${current}/sptr_zf `grep $key nomenclature_candidate_pp.unl | cut -f3 -d \|` >> accession.pp
+			${bin_pth}/xdget -p  ${current}/sptr_zf `grep $key ref_proteome_candidates.unl | cut -f3 -d \|` >> accession.pp
 		breaksw
 		case "cDNA|Genbank":
-			${bin_pth}/xdget -n  ${current}/gbk_zf_rna `grep $key nomenclature_candidate_nt.unl | cut -f3 -d \|` >> accession.nt
+			${bin_pth}/xdget -n  ${current}/gbk_zf_rna `grep $key ref_proteome_candidates.unl | cut -f3 -d \|` >> accession.nt
 		breaksw
 		case "cDNA|RefSeq":
-			${bin_pth}/xdget -n  ${current}/refseq_zf_rna `grep $key nomenclature_candidate_nt.unl | cut -f3 -d \|` >> accession.nt
+			${bin_pth}/xdget -n  ${current}/refseq_zf_rna `grep $key ref_proteome_candidates.unl | cut -f3 -d \|` >> accession.nt
 		breaksw
 		case "other|VEGA":
-			${bin_pth}/xdget -nd  ${current}/vega_zfin `grep $key nomenclature_candidate_nt.unl | cut -f3 -d \|` >> accession.nt
+			${bin_pth}/xdget -nd  ${current}/vega_zfin `grep $key ref_proteome_candidates.unl | cut -f3 -d \|` >> accession.nt
 		breaksw
 		default:
 			echo "$key not selected"
@@ -55,7 +58,7 @@ end # foreach
 
 echo "On $HOST blast the nomenclature set against Human & mouse & zebrafish proteins"
 echo ""
-nice ${bin_pth}/blastp "${current}/sptr_hs ${current}/sptr_ms ${current}/sptr_zf ${current}/refseq_zf_aa ${current}/publishedProtein ${current}/unreleasedProtein" accession.pp -E e-50 >! Protein_${timestamp}.out
+nice ${bin_pth}/blastp "${current}/all_refprot_aa" accession.pp -E e-50 >! Protein_${timestamp}.out
 
 sleep 3
 echo ""

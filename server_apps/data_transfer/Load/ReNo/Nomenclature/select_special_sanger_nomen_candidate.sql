@@ -33,8 +33,8 @@ select distinct mrkr_zdb_id, mrkr_abbrev,0 priority
 --		    and feature_abbrev like 'sa%')
 and exists (Select 'x' from marker_relationship
  where mrel_mrkr_1_zdb_id = mrkr_zdb_id
- and mrel_mrkr_2_zdb_id like 'ZDB-TSCRIPT-160623%'
- into temp tmp_xpat_genes with no log;
+ and mrel_mrkr_2_zdb_id like 'ZDB-TSCRIPT-160623%')
+ into temp tmp_xpat_genes;
 
 ! echo "bump expression pattern priority"
 update tmp_xpat_genes set priority = priority + 128
