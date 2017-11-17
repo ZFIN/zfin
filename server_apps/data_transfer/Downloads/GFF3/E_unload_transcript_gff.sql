@@ -25,7 +25,7 @@ select
   left outer join marker on mrkr_zdb_id = dblink_linked_recid
  where gff_source[1,8] == 'Ensembl_'
    and gff_feature in ('mRNA','transcript')
-order by 1,4,3
+order by 1,4,5,3,9
 ;
 
 ! cat /research/zprodmore/gff3/E_drerio_constant.gff3  <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_drerio_transcript.gff3 >! <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_drerio_backbone.gff3 
