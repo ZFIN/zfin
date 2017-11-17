@@ -23,7 +23,7 @@ load from <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log
 insert into tmp_pubs;
 
 delete from tmp_pubs
-where authors = 'none'
+where (authors = 'none' or authors is null)
       and numAuthors = '0';
 
 create temp table tmp_new_pubs (
