@@ -23,15 +23,11 @@ tr \~ '\n' < mo_seq.fa_line > mo_seq.fa
 
 dbaccess -a $DBNAME get_crispr_seq.sql
 tr \~ '\n' < crispr_seq.fa_line > crispr_seq.fa
-/opt/misc/bowtie/bowtie --all --best --strata --sam -f $BOWTIE_IDX crispr_seq.fa > E_crispr_seq.sam1
-
-./sam2gff3.groovy < E_crispr_seq.sam1 > E_zfin_crispr.gff3 2> crispr_seq_E_miss1.fa
-
-/opt/misc/bowtie2/bowtie2 -x $BOWTIE_IDX  --local -f -1 -U  crispr_seq_E_miss1.fa -S E_crispr_seq.sam
+/opt/misc/bowtie/bowtie --all --best --strata --sam -f $BOWTIE_IDX crispr_seq.fa > E_crispr_seq.sam
 
 ./sam2gff3.groovy < E_crispr_seq.sam > E_zfin_crispr.gff3 2> crispr_seq_E_miss.fa
 
-tr \~ '\n' < onlycrispr_seq.fa_line > onlycrispr_seq.fa
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # BOWTIE2 TALEN ALIGNMENT
 
