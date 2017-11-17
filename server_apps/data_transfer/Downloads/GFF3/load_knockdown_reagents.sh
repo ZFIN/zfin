@@ -8,7 +8,7 @@ BOWTIE_IDX="$GLOBALSTORE/Ensembl_GRCz10.81"
 cd $TARGETDIR
 rm -f mo_seq.fa_line mo_seq.fa E_mo_seq.sam E_zfin_morpholino.gff3 mo_seq_E_miss.fa talen_seq_1.fa_line \
     talen_seq_2.fa_line talen_seq_1.fa talen_seq_2.fa E_talen_seq.sam E_zfin_talen.gff3 talen_seq_E_miss.fa \
-    E_zfin_knockdown_reagents.gff3 E_zfin_knockdown_reagents.unl
+    E_zfin_knockdown_reagents.gff3 E_zfin_knockdown_reagents.unl crispr_seq.fa_line crispr_seq.fa E_crispr_seq.sam crispr_seq_E_miss.fa
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # BOWTIE v1 ALIGNMENT FOR MOs AND CRISPRs
@@ -17,6 +17,15 @@ dbaccess -a $DBNAME get_mo_and_crispr_seq.sql
 tr \~ '\n' < mo_seq.fa_line > mo_seq.fa
 /opt/misc/bowtie/bowtie --all --best --strata --sam -f $BOWTIE_IDX mo_seq.fa > E_mo_seq.sam
 ./sam2gff3.groovy < E_mo_seq.sam > E_zfin_morpholino.gff3 2> mo_seq_E_miss.fa
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# BOWTIE v1 ALIGNMENT FOR  CRISPRs
+
+dbaccess -a $DBNAME get_crispr_seq.sql
+tr \~ '\n' < crispr_seq.fa_line > crispr_seq.fa
+/opt/misc/bowtie/bowtie --all --best --strata --sam -f $BOWTIE_IDX crispr_seq.fa > E_crispr_seq.sam
+
+./sam2gff3.groovy < E_crispr_seq.sam > E_zfin_crispr.gff3 2> crispr_seq_E_miss.fa
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,7 +41,7 @@ tr \~ '\n' < talen_seq_2.fa_line > talen_seq_2.fa
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # COMBINE MO/CRISPR AND TALEN GFF3 FILES
 
-./merge_gff3.groovy E_zfin_knockdown_reagents.gff3 E_zfin_morpholino.gff3 E_zfin_talen.gff3
+./merge_gff3.groovy E_zfin_knockdown_reagents.gff3 E_zfin_morpholino.gff3 E_zfin_talen.gff3 E_zfin_crispr.gff3
 ./gff32unl.groovy E_zfin_knockdown_reagents.gff3 > E_zfin_knockdown_reagents.unl
 cat load_knockdown_reagents.sql commit.sql | dbaccess -a $DBNAME
 

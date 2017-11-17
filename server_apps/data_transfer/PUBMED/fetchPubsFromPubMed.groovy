@@ -80,7 +80,7 @@ def processArticle = { pubmedArticle, idx ->
 
     row.push(pubmedArticle.PubmedData.PublicationStatus.text())
 
-    PARSE_PUBS.append(row.collect { it.toString().replaceAll(/\|/, '\\|') }.join('|') + "\n", "UTF-8")
+    PARSE_PUBS.append(row.collect { it.toString().replaceAll(/\|/, '\\\\|') }.join('|') + "\n", "UTF-8")
 }
 
 WORKING_DIR.eachFileMatch(~/abstract.*\.clob/) { it.delete() }
@@ -100,6 +100,7 @@ if (args.size() > 0) {
     PubmedUtils.searchPubmed(query).eachWithIndex(processArticle)
 }
 
-['/bin/bash', '-c', "${ZfinPropertiesEnum.INFORMIXDIR}/bin/dbaccess " +
+dbaccessProc = ['/bin/bash', '-c', "${ZfinPropertiesEnum.INFORMIXDIR}/bin/dbaccess " +
         "-a ${ZfinPropertiesEnum.DB_NAME} ${WORKING_DIR.absolutePath}/loadNewPubs.sql " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
+dbaccessProc.waitFor()
