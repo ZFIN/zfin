@@ -674,6 +674,17 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.currentSession().save(featureMarkerRelationship);
         infrastructureRepository.insertPublicAttribution(featureMarkerRelationship.getZdbID(), featureMarkerRelationshipDTO.getPublicationZdbID());
         infrastructureRepository.insertUpdatesTable(featureMarkerRelationship.getZdbID(), "FeatureMarkerRelationship", featureMarkerRelationship.toString(), "Created feature marker relationship");
+        //add attribution to coding sequence of related construct
+        if (feature.getType().equals(FeatureTypeEnum.TRANSGENIC_INSERTION)) {
+
+                List<Marker> codingSeq = RepositoryFactory.getMarkerRepository().getCodingSequence(marker);
+                for (Marker codingGene : codingSeq) {
+                    if (infrastructureRepository.getRecordAttribution(codingGene.zdbID, featureMarkerRelationshipDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD) == null) {
+                        infrastructureRepository.insertRecordAttribution(codingGene.zdbID,featureMarkerRelationshipDTO.getPublicationZdbID());
+                        infrastructureRepository.insertUpdatesTable(codingGene.zdbID, "record attribution", featureMarkerRelationshipDTO.getPublicationZdbID(), "Added direct attribution to related construct");
+                    }
+                }
+            }
         HibernateUtil.flushAndCommitCurrentSession();
         HibernateUtil.closeSession();
         List<FeatureMarkerRelationshipDTO> dtos = getFeatureMarkerRelationshipsForPub(publicationID);
