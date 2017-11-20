@@ -11,6 +11,8 @@ public class MarkerSearchResult {
     String matchingText;
     MarkerExpression markerExpression;
     PhenotypeOnMarkerBean markerPhenotype;
+    String explain;
+    Float score;
 
 
     public Marker getMarker() {
@@ -51,5 +53,21 @@ public class MarkerSearchResult {
 
     public void setMarkerPhenotype(PhenotypeOnMarkerBean markerPhenotype) {
         this.markerPhenotype = markerPhenotype;
+    }
+
+    public String getExplain() {
+        return explain;
+    }
+
+    public void setExplain(String explain) {
+        this.explain = explain;
+    }
+
+    public Float getScore() {
+        return score;
+    }
+
+    public void setScore(Float score) {
+        this.score = score;
     }
 }

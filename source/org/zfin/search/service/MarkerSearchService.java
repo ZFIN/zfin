@@ -1,6 +1,7 @@
 package org.zfin.search.service;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -11,7 +12,6 @@ import org.apache.solr.common.SolrDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.service.ExpressionService;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
@@ -104,9 +104,10 @@ public class MarkerSearchService {
         //sorting, handled here so that the name query can be dropped in
         //starts with matches against the abbrev will get alphabetized first, everything else alphabetized after
         if (StringUtils.isNotEmpty(criteria.getName())) {
-            String symbolMatch = "mul(termfreq(name_ac, '" + SolrService.luceneEscape(criteria.getName()) + "'),1000)";
+            String symbolMatch = "mul(termfreq(name_ac, '" + SolrService.luceneEscape(criteria.getName()) + "'),10000)";
+            String nameMatch = "mul(termfreq(full_name_kac, '" + SolrService.luceneEscape(criteria.getName()) + "'),1000)";
             String alphaRank = "scale(rord(name_sort),1,100)";
-            String computedScore = "sum(" + symbolMatch + "," + alphaRank + ")";
+            String computedScore = "sum(" + symbolMatch + "," + nameMatch +"," + alphaRank + ")";
 
             query.setSort(computedScore, SolrQuery.ORDER.desc);
         }
@@ -157,33 +158,50 @@ public class MarkerSearchService {
 
     public void applyQuery(MarkerSearchCriteria criteria, SolrQuery query) {
 
+        if (criteria != null && criteria.getExplain() != null && criteria.getExplain() == true)  {
+            query.setShowDebugInfo(true);
+            query.setFields("id","score","[explain]");
+        } else {
+            query.setFields("id");
+        }
+
         Map<FieldName, String> startsWithFields = new HashMap<>();
-        startsWithFields.put(FieldName.NAME_AC,"^10");
-        startsWithFields.put(FieldName.FULL_NAME_AC,"^3");
-        startsWithFields.put(FieldName.ALIAS_AC,"^5");
-        startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_SYMBOL_AUTOCOMPLETE,"^2");
-        startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_NAME_AUTOCOMPLETE,"");
+        startsWithFields.put(FieldName.NAME_AC,"^20");
+        startsWithFields.put(FieldName.FULL_NAME_KEYWORD_AUTOCOMPLETE,"^5");
+        startsWithFields.put(FieldName.ALIAS_KEYWORD_AUTOCOMPLETE,"^5");
+        startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_SYMBOL_KEYWORD_AUTOCOMPLETE,"^2");
+        startsWithFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_NAME_KEYWORD_AUTOCOMPLETE,"");
         startsWithFields.put(FieldName.RELATED_GENE_SYMBOL,"");
-        startsWithFields.put(FieldName.GENE_PREVIOUS_NAME_AUTOCOMPLETE,"");
-        startsWithFields.put(FieldName.GENE_FULL_NAME_AUTOCOMPLETE,"");
+        startsWithFields.put(FieldName.GENE_PREVIOUS_NAME_KEYWORD_AUTOCOMPLETE,"");
         startsWithFields.put(FieldName.CLONE_AUTOCOMPLETE,"");
-        startsWithFields.put(FieldName.TARGET_FULL_NAME_AUTOCOMPLETE,"");
-        startsWithFields.put(FieldName.TARGET_PREVIOUS_NAME_AUTOCOMPLETE,"");
+        startsWithFields.put(FieldName.TARGET_FULL_NAME_KEYWORD_AUTOCOMPLETE,"");
+        startsWithFields.put(FieldName.TARGET_PREVIOUS_NAME_KEYWORD_AUTOCOMPLETE,"");
         Map<FieldName, String> matchesFields = new HashMap<>();
         matchesFields.putAll(startsWithFields);
-        matchesFields.put(FieldName.FULL_NAME,"^3");
+        matchesFields.put(FieldName.FULL_NAME,"^10");
+        matchesFields.put(FieldName.FULL_NAME_AC,"^10");
+        matchesFields.put(FieldName.ALIAS_KEYWORD_AUTOCOMPLETE,"");
+        matchesFields.put(FieldName.GENE_FULL_NAME_AUTOCOMPLETE,"");
+        matchesFields.put(FieldName.ALIAS_AC,"^5");
+        matchesFields.put(FieldName.TARGET_FULL_NAME_AUTOCOMPLETE,"");
+        matchesFields.put(FieldName.TARGET_PREVIOUS_NAME_AUTOCOMPLETE,"");
+        matchesFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_SYMBOL_AUTOCOMPLETE,"^2");
+        matchesFields.put(FieldName.ORTHOLOG_OTHER_SPECIES_NAME_AUTOCOMPLETE,"");
+        matchesFields.put(FieldName.GENE_PREVIOUS_NAME_AUTOCOMPLETE,"");
 
         if (StringUtils.isNotEmpty(criteria.getName())) {
 
             if (StringUtils.equals(criteria.getMatchType(),BEGINS_WITH)) {
                 query.setQuery(SolrService.dismax(criteria.getName(),startsWithFields));
-
+                logger.error("criteria.matchtype: " + criteria.getMatchType() + " is Begins With?");
             } else if (StringUtils.equals(criteria.getMatchType(),CONTAINS)) {
                 //String wildcardQuery = "*" + SolrService.luceneEscape(criteria.getName() + "*");
                 String wildcardQuery = "*" + criteria.getName();
                 query.setQuery(SolrService.dismax(wildcardQuery, matchesFields, false));
+                logger.error("criteria.matchtype: " + criteria.getMatchType() + " is Contains?");
             } else {  //default to MATCHES
                 query.setQuery(SolrService.dismax(criteria.getName(), matchesFields));
+                logger.error("criteria.matchtype: " + criteria.getMatchType() + " is Matches?");
             }
 
 
@@ -200,9 +218,13 @@ public class MarkerSearchService {
 
 
     public MarkerSearchResult buildResult(SolrDocument doc) {
-        String id = (String) doc.get(FieldName.ID.getName());
 
         MarkerSearchResult result = new MarkerSearchResult();
+
+        String id = (String) doc.get(FieldName.ID.getName());
+
+        result.setExplain((String) doc.get("[explain]"));
+        result.setScore((Float) doc.get("score"));
 
         Marker marker;
         MarkerRelationship mrel;
@@ -291,19 +313,6 @@ public class MarkerSearchService {
             }
         }
 
-    }
-
-
-    /*public List<String> sortMarkerTypes(List<MarkerType> markerTypes) {
-        List<String> returnStrings = new ArrayList<>();
-        Collections.sort(markerTypes, new MarkerTypeSignificanceComparator<MarkerType>());
-        returnStrings.addAll(CollectionUtils.collect(markerTypes, new BeanToPropertyValueTransformer("displayName")));
-        return returnStrings;
-    }
-*/
-    public List<FacetField.Count> sortMarkerTypeFacet(List<FacetField.Count> countList) {
-        Collections.sort(countList, new MarkerSearchTypeGroupComparator<>());
-        return countList;
     }
 
     //This is the slower, but "safer" (less redundant?) option, alternatively,

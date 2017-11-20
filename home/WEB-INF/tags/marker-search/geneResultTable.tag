@@ -37,6 +37,14 @@
             </td>
             <td>
                     ${result.matchingText}
+                    <c:if test="${!empty result.score}">
+                        <c:out value="${result.score}"/>
+                    </c:if>
+                    <c:if test="${!empty result.explain}">
+                        <div style="display:none">
+                            <c:out value="${result.explain}"/>
+                        </div>
+                    </c:if>
             </td>
         </zfin:alternating-tr>
     </c:forEach>

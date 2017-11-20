@@ -22,6 +22,7 @@ public class MarkerSearchCriteria {
     private List<FacetField.Count> typesFound;
     private String displayType;
     private String baseUrl;
+    private Boolean explain;
 
     private List<String> typeOptions;
     private List<String> chromosomeOptions;
@@ -130,6 +131,14 @@ public class MarkerSearchCriteria {
 
     public void setSearchHappened(Boolean searchHappened) {
         this.searchHappened = searchHappened;
+    }
+
+    public Boolean getExplain() {
+        return explain;
+    }
+
+    public void setExplain(Boolean explain) {
+        this.explain = explain;
     }
 
     public Boolean isGenedomResult() {

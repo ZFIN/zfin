@@ -430,6 +430,21 @@
                    valType="pfloat"
         />
 
+        <fieldType name="keyword_autocomplete" class="solr.TextField" positionIncrementGap="100">
+            <analyzer type="index">
+                <tokenizer class="solr.KeywordTokenizerFactory"/>
+                <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="25" />
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+
         <fieldType name="edgytext" class="solr.TextField" positionIncrementGap="100">
             <analyzer type="index">
                 <tokenizer class="solr.StandardTokenizerFactory"/>
@@ -846,6 +861,7 @@
         <dynamicField name="*_d"  type="sdouble" indexed="true"  stored="true"/>
         <dynamicField name="*_dt" type="date"    indexed="true"  stored="true"/>
         <dynamicField name="*_ac"  type="edgytext"    indexed="true"  stored="true" multiValued="true" />
+        <dynamicField name="*_kac"  type="keyword_autocomplete"    indexed="true"  stored="true" multiValued="true" />
         <dynamicField name="*_tf"  type="term_facet"    indexed="true" stored="true" multiValued="true" />
         <dynamicField name="type_*" type="string" indexed="true" stored="true" />
         <!--
@@ -1029,7 +1045,9 @@
 
     <copyField source="name" dest="name_ac"/>
     <copyField source="full_name" dest="full_name_ac"/>
+    <copyField source="full_name" dest="full_name_kac"/>
     <copyField source="alias" dest="alias_ac"/>
+    <copyField source="alias" dest="alias_kac"/>
     <copyField source="alias" dest="alias_k"/>
     <copyField source="alias" dest="alias_t"/>
 
@@ -1045,7 +1063,9 @@
         <copyField source="disease_model" dest="nomenclature_suggest"/>
     -->
     <copyField source="ortholog_other_species_symbol" dest="ortholog_other_species_symbol_ac"/>
+    <copyField source="ortholog_other_species_symbol" dest="ortholog_other_species_symbol_kac"/>
     <copyField source="ortholog_other_species_name" dest="ortholog_other_species_name_ac"/>
+    <copyField source="ortholog_other_species_name" dest="ortholog_other_species_name_kac"/>
 
     <copyField source="fish" dest="fish_t" />
 
@@ -1056,7 +1076,6 @@
     <copyField source="inserted_in_gene" dest="related_gene_symbol"/>
     <copyField source="affected_gene" dest="related_gene_symbol"/>
     <copyField source="affected_gene_previous_name" dest="related_gene_symbol"/>
-    <copyField source="gene_previous_name" dest="related_gene_symbol"/>
     <copyField source="antigen_gene" dest="related_gene_symbol"/>
     <!--<copyField source="genes_with_altered_expression" dest="related_gene_symbol"/>-->
     <copyField source="gene" dest="related_gene_symbol"/>
@@ -1067,19 +1086,25 @@
     <!--    <copyField source="expressed_gene" dest="related_gene_symbol"/>-->
 
     <copyField source="gene_previous_name" dest="gene_previous_name_ac"/>
+    <copyField source="gene_previous_name" dest="gene_previous_name_kac"/>
     <copyField source="gene_full_name" dest="gene_full_name_ac"/>
+    <copyField source="gene_full_name" dest="gene_full_name_kac"/>
 
     <copyField source="target" dest="related_gene_symbol"/>
     <copyField source="target_full_name" dest="target_full_name_ac"/>
+    <copyField source="target_full_name" dest="target_full_name_kac"/>
     <copyfield source="target_previous_name" dest="target_previous_name_ac"/>
+    <copyfield source="target_previous_name" dest="target_previous_name_kac"/>
 
     <copyField source="inserted_in_gene" dest="related_gene_symbol"/>
     <copyField source="inserted_in_gene_full_name" dest="gene_full_name_ac"/>
     <copyfield source="inserted_in_gene_previous_name" dest="gene_previous_name_ac"/>
+    <copyfield source="inserted_in_gene_previous_name" dest="gene_previous_name_kac"/>
 
     <copyField source="inserted_in_gene" dest="related_gene_symbol"/>
     <copyField source="inserted_in_gene_full_name" dest="gene_full_name_ac"/>
     <copyfield source="inserted_in_gene_previous_name" dest="gene_previous_name_ac"/>
+    <copyfield source="inserted_in_gene_previous_name" dest="gene_previous_name_kac"/>
 
     <copyField source="clone" dest="clone_ac"/>
 
