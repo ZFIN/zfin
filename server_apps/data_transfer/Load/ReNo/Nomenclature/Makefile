@@ -19,9 +19,9 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Load/ReNo
 
 SUBDIRS =
 
-GENERICS = generate_UniProt_Nomenclature_run.sh 
+GENERICS =
 
-STATICS =  select_nomemclature_candidates.sql select_sanger_nomemclature_candidates.sql generate_SangerMutant_Nomenclature_run.sh moveEnsdarTToZMP.sql select_special_sanger_nomen_candidate.sql generate_special_Sanger_uniprot_nomenclature_run.sh
+STATICS =  select_nomemclature_candidates.sql select_sanger_nomemclature_candidates.sql generate_SangerMutant_Nomenclature_run.sh moveEnsdarTToZMP.sql select_special_sanger_nomen_candidate.sql generate_special_Sanger_uniprot_nomenclature_run.sh generate_UniProt_Nomenclature_run.sh
 
 # ---------------  Production Rules  ------------------------------------
 
