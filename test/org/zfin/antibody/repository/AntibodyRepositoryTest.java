@@ -766,7 +766,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void antibodyExternalNote() {
 
-        String antibodyName = "anti-Tbx16";
+        String antibodyName = "zn-5";
         Antibody ab = getAntibodyRepository().getAntibodyByName(antibodyName);
 
         Set<AntibodyExternalNote> notes = ab.getExternalNotes();
