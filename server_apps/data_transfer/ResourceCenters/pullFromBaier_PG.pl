@@ -98,7 +98,7 @@ sub downloadFiles($$) {
     my $resourceCenter = $_[1];
 
     if ($resourceCenter eq "Baier"){
-	if (system("/local/bin/wget --user=Extranet --password=neuro89mpi https://sp.neuro.mpg.de/extranet/Shared%20Documents/Baier/$filename")) {
+	if (system("/local/bin/wget --user=SPneuroShare --password=neuro89mpi https://sharepoint.neuro.mpg.de/sites/SPNeuroShare/Shared%20Documents/Baier/$filename"))  {
 	    &errorExit("Failed to download $filename file from Baier.","  See $wgetStatusFile for details.");
 	}
 	$labZdbId = "ZDB-LAB-990120-1";
