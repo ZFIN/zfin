@@ -743,7 +743,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getSuppliers() {
-        String abName = "anti-Tbx16";
+        String abName = "Ab1-Tbx16";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(abName);
 
         Set<MarkerSupplier> suppliers = antibody.getSuppliers();
@@ -776,7 +776,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void labSupplier() {
-        String antibodyName = "anti-Tbx16";
+        String antibodyName = "Ab1-Tbx16";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
 
         String name = "Zebrafish International Resource Center (ZIRC)";
