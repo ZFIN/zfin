@@ -767,13 +767,6 @@ foreach $sqlID (keys %recAttrSQLs) {
      $curRecAttrSQL = $dbh->prepare($recAttrMergeSQL);
      $curRecAttrSQL->execute();
      $curRecAttrSQL->finish();
-
-     $insertUpdatesSQL = "insert into updates(submitter_id,rec_id,new_value,comments,upd_when,submitter_name)
-			  values(?,?,'DELETE',?,CURRENT,?);";
-     $curInsertUpdates = $dbh->prepare($insertUpdatesSQL);
-     $curInsertUpdates->execute($person_id,$intoId,$recAttrMergeSQL,$personFullName); 
-     $curInsertUpdates->finish();  
-
    }
 }
 
@@ -1028,14 +1021,6 @@ foreach $sqlID (keys %nonRecAttrDeleteSQLs) {
    $curNonRecAttrDeleteSQL = $dbh->prepare($nonRecAttrDeleteSQL);
    $curNonRecAttrDeleteSQL->execute();
    $curNonRecAttrDeleteSQL->finish();
-    
-##   if ($nonRecAttrMergeSQL =~ m/delete/i) {
-     $insertUpdatesSQL = "insert into updates(submitter_id,rec_id,new_value,comments,upd_when,submitter_name)
-                          values(?,?,'DELETE',?,CURRENT,?);";
-     $curInsertUpdates = $dbh->prepare($insertUpdatesSQL);
-     $curInsertUpdates->execute($person_id,$intoId,$nonRecAttrMergeSQL,$personFullName);
-     $curInsertUpdates->finish();
-##   }
 }
 
 # run the update SQLs of merge action that do not contain record_attribution     
