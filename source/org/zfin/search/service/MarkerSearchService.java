@@ -223,6 +223,7 @@ public class MarkerSearchService {
 
         String id = (String) doc.get(FieldName.ID.getName());
 
+        result.setId(id);
         result.setExplain((String) doc.get("[explain]"));
         result.setScore((Float) doc.get("score"));
 
@@ -273,7 +274,7 @@ public class MarkerSearchService {
 
     private void injectHighlighting(List<MarkerSearchResult> results, QueryResponse response) {
         for (MarkerSearchResult result : results) {
-            String id = result.getMarker().getZdbID();
+            String id = result.getId();
             List<String> highlightSnippets = new ArrayList<String>();
             if (response.getHighlighting() != null && response.getHighlighting().get(id) != null) {
 

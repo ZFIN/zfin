@@ -208,7 +208,7 @@ task createSchemaSpy() {
                     "-host",
                     "localhost",
                     "-dp",
-                    "lib/Java/postgresql-9.4.1210.jar",
+                    "lib/Java/postgresql-42.1.4.jar",
                     "-s",
                     "public",
                     "-o",

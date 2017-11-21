@@ -6,6 +6,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 
 public class MarkerSearchResult {
+    String id;
     Marker marker;
     Marker targetGene;
     String matchingText;
@@ -14,6 +15,14 @@ public class MarkerSearchResult {
     String explain;
     Float score;
 
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Marker getMarker() {
         return marker;
