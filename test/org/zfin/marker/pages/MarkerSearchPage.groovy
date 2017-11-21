@@ -8,7 +8,7 @@ import org.zfin.properties.ZfinPropertiesEnum
  */
 class MarkerSearchPage extends Page {
 
-    static url = "http://${ZfinPropertiesEnum.DOMAIN_NAME}/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg"
+    static url = "http://${ZfinPropertiesEnum.DOMAIN_NAME}/action/marker/search"
     static at = { title == "ZFIN Search Markers" }
 
     static content = {

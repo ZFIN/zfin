@@ -19,7 +19,6 @@ Disallow: /action/infrastructure/data-citation-list
 # this is okay if there is a pub, but without the pubid, it is open search
 # Need to set explicitly on the page
 Disallow: /cgi-bin/webdriver?MIval=aa-quickfindpers.apg
-Disallow: /cgi-bin/webdriver?MIval=aa-newmrkrselect.apg
 # disallow search form, simply gives results
 Disallow: /action/marker/search
 # need to set explicitly on the page

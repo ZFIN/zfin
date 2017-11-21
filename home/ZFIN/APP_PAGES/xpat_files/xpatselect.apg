@@ -16,14 +16,14 @@ This is called from at least these places:
    can be set.  See below.
 4. From anatomy-detail page.  An anatomy item ID is passed in. 
 5. From action/anatomy/term-detail.  An anatomy item ID is passed in. 
-6. From markerselect.apg.  A gene name is passed in.
+6. From marker search.  A gene name is passed in.
 
 INPUT VARS:
   From pubview:
     pubId    the ZDB ID of a publication.  All expression patterns attributed
 	     to this publication will be displayed, and the query form will 
 	     not be displayed.
-  From markerselect.apg
+  From marker search
     xpatsel_calledBySelf	Exists if xpatselect.apg called itself.  This
 				is specifically necessary to allow the checkboxes
 				to have a default value.  If the page didnt call

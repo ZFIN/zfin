@@ -159,7 +159,7 @@ RewriteRule ^.*$ /action/profile/person/search? [NC,R=301]
 #We have these strange ZFIN_jump search page links to support...
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOGENE$    [NC]
-RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg [NC,R=301]
+RewriteRule ^/cgi-bin/ZFIN_jump /action/marker/search [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOLAB$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg [NC,R=301]
@@ -174,7 +174,7 @@ RewriteCond %{QUERY_STRING}     ^record=JUMPTOREFCROSS$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /action/mapping/all-panels [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOEST$    [NC]
-RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg [NC,R=301]
+RewriteRule ^/cgi-bin/ZFIN_jump /action/marker/search [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOXPAT$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg [NC,R=301]

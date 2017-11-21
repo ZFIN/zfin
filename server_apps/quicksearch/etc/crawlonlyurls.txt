@@ -14,11 +14,4 @@
 # a database query.
 
 #fish/search
-#aa-newmrkrselect.apg
-#aa-markerselect.apg
-#aa-msegselect.apg
 #aa-xpatselect.apg
-#aa-pubselect2.apg
-#aa-persselect.apg
-#aa-labselect.apg
-#aa-companyselect.apg

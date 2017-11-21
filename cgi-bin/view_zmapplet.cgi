@@ -216,7 +216,7 @@
                 #$note = $note . $unique . " ->Too Many Choices  <p>\n";
 
                 print "Content-Type: text/html; charset=UTF-8\r\n\r\n";
-                print "<meta http-equiv=\"refresh\" content=\"0; url=\/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg&compare=contains&input_name=$marker&input_acc=&marker_type=all&lg=0&WINSIZE=25&query_results=exist&START=1&action=SEARCH\"> \n";
+                print "<meta http-equiv=\"refresh\" content=\"0; url=\/action/marker/search-results?name=fgf8a\"> \n";
                 exit 0;
            }
             ###

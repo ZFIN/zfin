@@ -324,7 +324,7 @@ public class SiteSearchHelper {
         if (categoryDisplayName.toLowerCase().equals("mutants/transgenics")) {
             specificSearchURL = "/action/fish/do-search?geneOrFeatureName=" + queryTerm;
         } else if (categoryDisplayName.toLowerCase().equals("genes/markers/clones")) {
-            specificSearchURL = "aa-newmrkrselect.apg&input_name=" + queryTerm;
+            specificSearchURL = "/action/marker/search?name=" + queryTerm;
         } else if (categoryDisplayName.toLowerCase().equals("expression/phenotype")) {
             /* expression/phenotype info are currently all on figure view page, and we
                only have expression search page, no phenotype search page now. */
