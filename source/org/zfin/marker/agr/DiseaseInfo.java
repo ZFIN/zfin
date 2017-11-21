@@ -173,10 +173,11 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                         .stream()
                         .collect(
                                 Collectors.groupingBy(DiseaseAnnotation::getPublication,
-                                        Collectors.mapping(diseaseAnnotations ->{
-                                            if(diseaseAnnotations.getEvidenceCode().equals("TAS"))
+                                        Collectors.mapping(diseaseAnnotations -> {
+                                            if (getEvidenceCodeString(diseaseAnnotations).equals("TAS"))
                                                 return "IC";
-                                            return diseaseAnnotations.getEvidenceCode();}, Collectors.toList())
+                                            return getEvidenceCodeString(diseaseAnnotations);
+                                        }, Collectors.toList())
                                 )
                         );
                 evidenceMap.forEach((publication, evidences) -> {
@@ -190,8 +191,8 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
                     dto.setDoid(disease.getOboID());
 
-                   // evidence
-                    PublicationAgrDTO fixedPub = new PublicationAgrDTO("ZDB-PUB-170406-10", null);
+                    // evidence
+                    PublicationAgrDTO fixedPub = new PublicationAgrDTO(publication.getZdbID(), publication.getAccessionNumber());
                     EvidenceDTO evDto = new EvidenceDTO(fixedPub);
                     evDto.setEvidenceCodes(evidences);
                     dto.setEvidence(evDto);
@@ -209,7 +210,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
                     diseaseDTOList.add(dto);
                 });
-
 
 
             });
@@ -245,6 +245,14 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         allDiseaseDTO.setMetaData(meta);
         allDiseaseDTO.setDiseaseList(diseaseDTOList);
         return allDiseaseDTO;
+    }
+
+    private String getEvidenceCodeString(DiseaseAnnotation diseaseAnnotations) {
+        if (diseaseAnnotations.getEvidenceCode().equals("ZDB-TERM-170419-250"))
+            return "TAS";
+        if (diseaseAnnotations.getEvidenceCode().equals("ZDB-TERM-170419-251"))
+            return "IC";
+        return "";
     }
 
     class Item {
