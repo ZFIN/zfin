@@ -15,7 +15,12 @@ rm -f mo_seq.fa_line mo_seq.fa E_mo_seq.sam E_zfin_morpholino.gff3 mo_seq_E_miss
 
 dbaccess -a $DBNAME get_mo_and_crispr_seq.sql
 tr \~ '\n' < mo_seq.fa_line > mo_seq.fa
-/opt/misc/bowtie/bowtie --all --best --strata --sam -f $BOWTIE_IDX mo_seq.fa > E_mo_seq.sam
+/opt/misc/bowtie/bowtie --all --best --strata --sam -f $BOWTIE_IDX mo_seq.fa > E_mo_seq.sam1
+
+./sam2gff3.groovy < E_mo_seq.sam1 > E_zfin_mo.gff3 2> mo_seq_E_miss1.fa
+
+/opt/misc/bowtie2/bowtie2 -x $BOWTIE_IDX  --local -f -1 -U  mo_seq_E_miss1.fa -S E_mo_seq.sam
+
 ./sam2gff3.groovy < E_mo_seq.sam > E_zfin_morpholino.gff3 2> mo_seq_E_miss.fa
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
