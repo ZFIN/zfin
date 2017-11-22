@@ -110,7 +110,7 @@ sub downloadFiles($$) {
 	$labZdbId = "ZDB-LAB-130607-1";
     }
     elsif ($resourceCenter eq "Baier"){
-	if (system("/local/bin/wget --user=Extranet --password=neuro89mpi https://sp.neuro.mpg.de/extranet/Shared%20Documents/Baier/$filename")) {
+	if (system("/local/bin/wget --user=SPneuroShare --password=neuro89mpi https://sharepoint.neuro.mpg.de/sites/SPNeuroShare/Shared%20Documents/Baier/$filename")) {
 	    &errorExit("Failed to download $filename file from Baier.","  See $wgetStatusFile for details.");
 	}
 	$labZdbId = "ZDB-LAB-990120-1";
@@ -136,8 +136,8 @@ sub downloadFiles($$) {
 #
 # Now, get the subroutines for handling each type of data.
 
-require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullEstsFromZirc.pl");
-require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullGenoFromResourceCenter.pl");
+require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullEstsFromZirc_PG.pl");
+require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullGenoFromResourceCenter_PG.pl");
 #require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullAtbFromZirc.pl");
 
 #----------------------------------------------------------------------

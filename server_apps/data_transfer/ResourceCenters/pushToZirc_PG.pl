@@ -4,4 +4,4 @@
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters";
 umask(022);
-system("$ENV{'INFORMIXDIR'}/bin/psql <!--|DB_NAME|--> pushToZirc_PG.sql");
+system("${PGBINDIR}/psql <!--|DB_NAME|--> pushToZirc_PG.sql");
