@@ -106,29 +106,32 @@ update {
 }
 
 // variables used for translation of keys in files in SOURCEROOT copied into TARGETROOT
-def translateVariableSet = ['TARGETROOT',
-                            'WEBDRIVER_PATH_FROM_ROOT',
-                            'ROOT_PATH',
+def translateVariableSet = [
                             'CATALINA_HOME',
-                            'SOURCEROOT',
-                            'MUTANT_NAME',
-                            'INSTANCE',
                             'DB_NAME',
+                            'DEFAULT_EMAIL',
+                            'GBROWSE_PATH_FROM_ROOT',
+                            'GO_EMAIL_ERR',
+                            'GROOVY_CLASSPATH',
                             'INFORMIX_DIR',
                             'INFORMIX_SERVER',
                             'INFORMIXSQLHOSTS',
-                            'SHARED_DOMAIN_NAME',
-                            'PARTNER_DBNAME',
+                            'INSTANCE',
                             'LOADUP_FULL_PATH',
-                            'PARTNER_INTERNAL_INSTANCE',
-                            'SQLHOSTS_FILE',
+                            'MUTANT_NAME',
                             'ONCONFIG_FILE',
-                            'VALIDATION_EMAIL_DBA',
-                            'DEFAULT_EMAIL',
-                            'GO_EMAIL_ERR',
+                            'PARTNER_DBNAME',
+                            'PARTNER_INTERNAL_INSTANCE',
+                            'ROOT_PATH',
+                            'SHARED_DOMAIN_NAME',
+                            'SOURCEROOT',
+                            'SQLHOSTS_FILE',
                             'SWISSPROT_EMAIL_ERR',
-                            'USER',
-                            'GBROWSE_PATH_FROM_ROOT']
+                            'TARGETROOT',
+                             'USER',
+                            'VALIDATION_EMAIL_DBA',
+                            'WEBDRIVER_PATH_FROM_ROOT',
+]
 
 // load properties into gradle
 task setup {
