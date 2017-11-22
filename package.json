@@ -1,0 +1,7 @@
+{
+  "name": "zfin-www",
+  "version": "1.0.0",
+  "description": "ZFIN The Zebrafish Information Network",
+  "repository": "file:///net/filer.zfin.org/vol/central/Vault/git/ZFIN_WWW",
+  "license": "UNLICENSED"
+}
