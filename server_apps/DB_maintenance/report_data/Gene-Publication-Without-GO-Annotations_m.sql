@@ -32,8 +32,8 @@ WHERE  NOT EXISTS (SELECT 'x'
                    WHERE  fmrel_type = 'is allele of'
                           AND fmrel_mrkr_zdb_id = mrkr_zdb_id
                           AND fmrel_ftr_zdb_id = feature_zdb_id
-                          AND feature_abbrev[1,2] != 'sa'
-AND feature_abbrev[1,2] != 'la'
+                          AND substring(feature_abbrev from 1 for 2) != 'sa'
+AND substring(feature_abbrev from 1 for 2) != 'la'
 AND EXISTS(SELECT 'z'
 FROM   record_attribution AS rec
 WHERE  rec.recattrib_source_zdb_id =
