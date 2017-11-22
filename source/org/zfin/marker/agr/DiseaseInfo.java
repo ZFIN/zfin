@@ -247,6 +247,10 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         return allDiseaseDTO;
     }
 
+    // hard-coded for now as the ECO ontology does not provide the codes in
+    // abbreviated form easily. The term names are very long and only in the synonym list
+    // you can find TAS an IC.
+    // Needs to be changed in the future.
     private String getEvidenceCodeString(DiseaseAnnotation diseaseAnnotations) {
         if (diseaseAnnotations.getEvidenceCode().equals("ZDB-TERM-170419-250"))
             return "TAS";
