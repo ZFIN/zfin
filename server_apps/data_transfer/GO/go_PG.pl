@@ -15,7 +15,7 @@ use DBI;
 #   $    Error message
 sub sendErrorReport ($) {
     open (SENDMAIL, "| /usr/lib/sendmail -t -oi") || die "Cannot open mailprog!";
-    print SENDMAIL "To: <!--|GO_EMAIL_ERR|-->\n";
+    print SENDMAIL 'To: <!--|GO_EMAIL_ERR|-->\n';
     print SENDMAIL "Subject: Auto from $dbname GO file generation error\n";
 
     print SENDMAIL "$_[0]\n";
@@ -29,10 +29,6 @@ sub sendErrorReport ($) {
 
 system("/bin/rm -f ids.unl");
 
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
 $password = "";
