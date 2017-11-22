@@ -12,7 +12,7 @@ select count(*), 'Genes', 'Genes', now() from marker
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(distinct mrel_mrkr_1_zdb_id), 'Genes', 'Genes on Assembly', now()
  from marker_relationship
- where mrel_type == 'gene produces transcript'
+ where mrel_type = 'gene produces transcript'
 ;
 
 -- Transcripts
@@ -65,7 +65,7 @@ select  count(distinct genofeat_geno_zdb_id), 'Genetics', 'Transgenic Genotypes'
 -- Genotypes (non-Wildtype)
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Genetics', 'Genotypes', now()
- from genotype where  geno_is_wildtype == 'f'
+ from genotype where  geno_is_wildtype = 'f'
 ;
 
 
@@ -185,7 +185,7 @@ select count(*), 'Genomics', 'Mapped markers', now() from paneled_markers;
 
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Genomics', 'Links to other databases', now() from db_link, foreign_db_contains,foreign_db
- where fdbcont_fdb_db_id == fdb_db_pk_id
+ where fdbcont_fdb_db_id = fdb_db_pk_id
    and  dblink_fdbcont_zdb_id = fdbcont_zdb_id
    and  fdb_db_name in (
                        --2011-12-16
