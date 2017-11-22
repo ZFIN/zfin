@@ -149,7 +149,7 @@ where xpatex_zdb_id not like 'ZDB-%-10____-%'
 
 -- clean Gene expression patterns
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(distinct xpatex_gene_zdb_id), 'Expression & Phenotype', 'Genes wiht expression data', now() from expression_experiment2, clean_expression_fast_search
+select count(distinct xpatex_gene_zdb_id), 'Expression & Phenotype', 'Genes with expression data', now() from expression_experiment2, clean_expression_fast_search
   where xpatex_genox_zdb_id = cefs_genox_zdb_id;
 
 
