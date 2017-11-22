@@ -143,7 +143,7 @@ system("/bin/chmod ug+w <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCen
 #  CD into working directory
 #  remove old downloaded files.
 #  Open Database.
-
+my $dbname = "<!--|DB_NAME|-->";
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/";
 my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
               or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
