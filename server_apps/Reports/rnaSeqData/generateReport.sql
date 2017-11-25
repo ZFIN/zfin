@@ -145,7 +145,7 @@ select stg_zdb_id, stg_obo_id, stg_name_long, gene_zdb_id, gene_symbol, structur
   order by stg_zdb_id, gene_zdb_id, structure_name;
 
 unload to report_by_gene.txt
-select stg_zdb_id, stg_obo_id, stg_name_long, gene_zdb_id, gene_symbol, structure_name, structure_zdb_id,
+select gene_symbol, structure_name, stg_zdb_id, gene_zdb_id, stg_obo_id, stg_name_long,  structure_zdb_id,
         structure_ont_id, assay
   from tmp_report_limited
  order by gene_zdb_id, structure_name, stg_zdb_id;
