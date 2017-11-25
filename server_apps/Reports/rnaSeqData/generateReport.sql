@@ -74,7 +74,6 @@ create index structure_index on tmp_report_distinct (structure_zdb_id)
 using btree in idxdbs1;
 
 update statistics high; 
-
 --set explain on avoid_execute;
 
 insert into tmp_report (is_direct,start_stage_zdb_id, end_stage_zdb_id, gene_zdb_id, structure_zdb_id, assay)
@@ -90,7 +89,25 @@ and ts_start_stg_zdb_id = c.stg_zdb_id
 and ts_end_stg_zdb_id = d.stg_zdb_id
 and a.stg_hours_start >= c.stg_hours_start
 and b.stg_hours_end <= d.stg_hours_end
-;
+and exists (Select 'x' from term_stage where ts_term_zdb_id = term_zdb_id);
+
+select distinct is_direct, start_stage_zdb_id, a.stg_hours_start, end_stage_zdb_id,b.stg_hours_end,
+ gene_zdb_id, alltermcon_container_zdb_id, assay, c.stg_hours_start as term_start, d.stg_hours_end as term_end
+ from tmp_report_distinct, all_term_contains,term, stage d, stage a, stage b, stage c, term_stage
+where structure_zdb_id = alltermcon_contained_zdb_id
+and alltermcon_contained_zdb_id = term_zdb_id
+and term_ont_id like 'ZFA:%'
+and start_stage_zdb_id = a.stg_zdb_id
+and end_Stage_zdb_id = b.stg_zdb_id
+and ts_term_zdb_id = term_zdb_id
+and ts_start_stg_zdb_id = c.stg_zdb_id
+and ts_end_stg_zdb_id = d.stg_zdb_id
+and gene_zdb_id = 'ZDB-GENE-000112-47'
+and end_stage_zdb_id = 'ZDB-STAGE-010723-12';
+
+select * from tmp_report
+ where gene_zdb_id = 'ZDB-GENE-000112-47'
+and end_stage_zdb_id ='ZDB-STAGE-010723-12';
 
 select count(*) from tmp_report 
 where is_direct = 't';
@@ -127,9 +144,10 @@ update tmp_report
 
 select stg_zdb_id, stg_obo_id, stg_name_long, stg_hours_start as start_stage_hours, stg_hours_end as end_stage_hours, gene_zdb_id, gene_symbol,
 	structure_name, structure_zdb_id, structure_ont_id, assay
-   from tmp_report, stage 
-   where start_stage_hours >= stg_hours_start
-   and end_stage_hours <= stg_hours_end
+   from tmp_report
+--, stage 
+--   where start_stage_hours >= stg_hours_start
+--   and end_stage_hours <= stg_hours_end
 into temp tmp_all_stages_terms;
 
 select stg_Zdb_id as stg_zdb_id, stg_obo_id as stg_obo_id, stg_name_long as stg_name_long,
@@ -151,19 +169,19 @@ into temp tmp_report_limited;
 --into temp tmp_report_limited;
 
 unload to report.txt
-select stg_zdb_id, stg_obo_id, stg_name_long, gene_zdb_id, gene_symbol, structure_name, structure_zdb_id,
+select distinct stg_zdb_id, stg_obo_id, stg_name_long, gene_zdb_id, gene_symbol, structure_name, structure_zdb_id,
 	structure_ont_id, assay
   from tmp_report_limited
   order by stg_zdb_id, gene_zdb_id, structure_name;
 
 unload to report_by_gene.txt
-select gene_symbol, structure_name, stg_name_long, gene_zdb_id, stg_obo_id, stg_zdb_id,  structure_zdb_id,
+select distinct gene_symbol, structure_name, stg_name_long, gene_zdb_id, stg_obo_id, stg_zdb_id,  structure_zdb_id,
         structure_ont_id, assay, start_stage_hours
   from tmp_report_limited
  order by gene_zdb_id, structure_name, start_stage_hours, stg_zdb_id;
 
 unload to report_for_ppardb.txt
-select gene_symbol, structure_name, stg_name_long, gene_zdb_id, stg_obo_id, stg_zdb_id,  structure_zdb_id,
+select distinct gene_symbol, structure_name, stg_name_long, gene_zdb_id, stg_obo_id, stg_zdb_id,  structure_zdb_id,
         structure_ont_id, assay, start_stage_hours
   from tmp_report_limited
   where gene_symbol = 'ppardb'
