@@ -79,10 +79,17 @@ update statistics high;
 
 insert into tmp_report (is_direct,start_stage_zdb_id, end_stage_zdb_id, gene_zdb_id, structure_zdb_id, assay)
 select distinct is_direct, start_stage_zdb_id, end_stage_zdb_id, gene_zdb_id, alltermcon_container_zdb_id, assay
- from tmp_report_distinct, all_term_contains,term
+ from tmp_report_distinct, all_term_contains,term, stage d, stage a, stage b, stage c, term_stage
 where structure_zdb_id = alltermcon_contained_zdb_id
 and alltermcon_contained_zdb_id = term_zdb_id
 and term_ont_id like 'ZFA:%'
+and start_stage_zdb_id = a.stg_zdb_id
+and end_Stage_zdb_id = b.stg_zdb_id
+and ts_term_zdb_id = term_zdb_id
+and ts_start_stg_zdb_id = c.stg_zdb_id
+and ts_end_stg_zdb_id = d.stg_zdb_id
+and a.stg_hours_start >= c.stg_hours_start
+and b.stg_hours_end <= d.stg_hours_end
 ;
 
 select count(*) from tmp_report 
@@ -125,18 +132,23 @@ select stg_zdb_id, stg_obo_id, stg_name_long, stg_hours_start as start_stage_hou
    and end_stage_hours <= stg_hours_end
 into temp tmp_all_stages_terms;
 
-select a.stg_Zdb_id as stg_zdb_id, a.stg_obo_id as stg_obo_id, a.stg_name_long as stg_name_long,
-          gene_zdb_id, gene_symbol,
-	structure_name, structure_Zdb_id, structure_ont_id, assay, b.stg_hours_start as stage_start_hours, 
-	b.stg_hours_end
-  from tmp_all_stages_terms, stage a, term_stage, stage b, stage c
-  where start_stage_hours >= a.stg_hours_start
-    and end_stage_hours <=c.stg_hours_end
-   and ts_term_zdb_id = structure_zdb_id
-  and ts_start_stg_zdb_id = a.stg_zdb_id
-  and ts_end_Stg_zdb_id = c.stg_zdb_id
-  and b.stg_zdb_id = tmp_all_stages_terms.stg_zdb_id
+select stg_Zdb_id as stg_zdb_id, stg_obo_id as stg_obo_id, stg_name_long as stg_name_long,
+          gene_zdb_id, gene_symbol, start_stage_hours, structure_name, structure_zdb_id, structure_ont_id, assay
+   from tmp_all_stages_terms
 into temp tmp_report_limited;
+
+--select a.stg_Zdb_id as stg_zdb_id, a.stg_obo_id as stg_obo_id, a.stg_name_long as stg_name_long,
+--          gene_zdb_id, gene_symbol,
+--	structure_name, structure_Zdb_id, structure_ont_id, assay, b.stg_hours_start as stage_start_hours, 
+--	b.stg_hours_end
+--  from tmp_all_stages_terms, stage a, term_stage, stage b, stage c
+--  where start_stage_hours >= a.stg_hours_start
+--    and end_stage_hours <=c.stg_hours_end
+--   and ts_term_zdb_id = structure_zdb_id
+--  and ts_start_stg_zdb_id = a.stg_zdb_id
+--  and ts_end_Stg_zdb_id = c.stg_zdb_id
+--  and b.stg_zdb_id = tmp_all_stages_terms.stg_zdb_id
+--into temp tmp_report_limited;
 
 unload to report.txt
 select stg_zdb_id, stg_obo_id, stg_name_long, gene_zdb_id, gene_symbol, structure_name, structure_zdb_id,
@@ -146,15 +158,16 @@ select stg_zdb_id, stg_obo_id, stg_name_long, gene_zdb_id, gene_symbol, structur
 
 unload to report_by_gene.txt
 select gene_symbol, structure_name, stg_name_long, gene_zdb_id, stg_obo_id, stg_zdb_id,  structure_zdb_id,
-        structure_ont_id, assay, stage_start_hours
+        structure_ont_id, assay, start_stage_hours
   from tmp_report_limited
- order by gene_zdb_id, structure_name, stage_start_hours, stg_zdb_id;
+ order by gene_zdb_id, structure_name, start_stage_hours, stg_zdb_id;
 
 unload to report_for_ppardb.txt
 select gene_symbol, structure_name, stg_name_long, gene_zdb_id, stg_obo_id, stg_zdb_id,  structure_zdb_id,
-        structure_ont_id, assay, stage_start_hours
+        structure_ont_id, assay, start_stage_hours
   from tmp_report_limited
- order by gene_zdb_id, structure_name, stage_start_hours, stg_zdb_id;
+  where gene_symbol = 'ppardb'
+ order by gene_zdb_id, start_stage_hours, structure_name, stg_zdb_id;
 
 
 --commit work;
