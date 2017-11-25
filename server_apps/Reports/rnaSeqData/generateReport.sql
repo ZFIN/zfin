@@ -118,7 +118,7 @@ update tmp_report
  set structure_ont_id = (select term_ont_id
      		   	   from term where term_zdb_id = structure_zdb_id);
 
-select stg_zdb_id, stg_obo_id, stg_name_long, stg_start_hours as start_stage_hours, stg_end_hours as end_stage_hours, gene_zdb_id, gene_symbol,
+select stg_zdb_id, stg_obo_id, stg_name_long, stg_hours_start as start_stage_hours, stg_hours_end as end_stage_hours, gene_zdb_id, gene_symbol,
 	structure_name, structure_zdb_id, structure_ont_id, assay
    from tmp_report, stage 
    where start_stage_hours >= stg_hours_start
