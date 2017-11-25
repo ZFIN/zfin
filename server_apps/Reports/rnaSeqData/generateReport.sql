@@ -125,7 +125,8 @@ select stg_zdb_id, stg_obo_id, stg_name_long, stg_hours_start as start_stage_hou
    and end_stage_hours <= stg_hours_end
 into temp tmp_all_stages_terms;
 
-select a.stg_Zdb_id, a.stg_obo_id, a.stg_name_long, gene_zdb_id, gene_symbol,
+select a.stg_Zdb_id as stg_zdb_id, a.stg_obo_id as stg_obo_id, a.stg_name_long as stg_name_long,
+          gene_zdb_id, gene_symbol,
 	structure_name, structure_Zdb_id, structure_ont_id, assay, b.stg_hours_start, 
 	b.stg_hours_end
   from tmp_all_stages_terms, stage a, term_stage, stage b, stage c
@@ -134,11 +135,20 @@ select a.stg_Zdb_id, a.stg_obo_id, a.stg_name_long, gene_zdb_id, gene_symbol,
    and ts_term_zdb_id = structure_zdb_id
   and ts_start_stg_zdb_id = a.stg_zdb_id
   and ts_end_Stg_zdb_id = c.stg_zdb_id
-  and b.stg_zdb_id = tmp_all_stage_terms.stg_zdb_id
+  and b.stg_zdb_id = tmp_all_stages_terms.stg_zdb_id
 into temp tmp_report_limited;
 
+unload to report.txt
+select stg_zdb_id, stg_obo_id, stg_name_long, gene_zdb_id, gene_symbol, structure_name, structure_zdb_id,
+	structure_ont_id, assay
+  from tmp_report_limited
+  order by stg_zdb_id, gene_zdb_id, structure_name;
 
-
+unload to report_by_gene.txt
+select stg_zdb_id, stg_obo_id, stg_name_long, gene_zdb_id, gene_symbol, structure_name, structure_zdb_id,
+        structure_ont_id, assay
+  from tmp_report_limited
+ order by gene_zdb_id, structure_name, stg_zdb_id;
 
 --commit work;
 
