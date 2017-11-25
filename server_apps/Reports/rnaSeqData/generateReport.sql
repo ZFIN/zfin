@@ -150,6 +150,13 @@ select gene_symbol, structure_name, stg_name_long, gene_zdb_id, stg_obo_id, stg_
   from tmp_report_limited
  order by gene_zdb_id, structure_name, stage_start_hours, stg_zdb_id;
 
+unload to report_for_ppardb.txt
+select gene_symbol, structure_name, stg_name_long, gene_zdb_id, stg_obo_id, stg_zdb_id,  structure_zdb_id,
+        structure_ont_id, assay, stage_start_hours
+  from tmp_report_limited
+ order by gene_zdb_id, structure_name, stage_start_hours, stg_zdb_id;
+
+
 --commit work;
 
 rollback work;
