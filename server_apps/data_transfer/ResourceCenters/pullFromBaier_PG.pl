@@ -174,7 +174,7 @@ $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 $dbh->commit();
 $dbh->disconnect();
 
-system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinksPG.sh");
+system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks_PG.sh");
 #&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
 
 exit 0;
