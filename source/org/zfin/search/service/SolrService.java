@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -907,4 +909,14 @@ public class SolrService {
                 "'}" + value;
     }
 
+    public static URL getUrlForQuery(SolrQuery query) throws MalformedURLException {
+        String host = ZfinPropertiesEnum.SOLR_HOST.value();
+        String port = ZfinPropertiesEnum.SOLR_PORT.value();
+        String path = "/solr/" + SolrService.PRIMARY_CORE + "/select";
+        String url = "http://" + host + ":" + port + path + query.toQueryString();
+
+        return new URL(url);
+    }
+
 }
+

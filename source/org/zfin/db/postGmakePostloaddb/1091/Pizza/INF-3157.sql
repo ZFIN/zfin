@@ -12,8 +12,12 @@ create temp table tmp_featureatt (ftzdb varchar(50));
 insert into tmp_featureatt  select ftrzdb from tmp_ftratt  group by ftrzdb having count(pub) = 1;
 
 insert into record_attribution (recattrib_Source_zdb_id, recattrib_Data_zdb_id)
-select distinct recattrib_source_zdb_id,fmrel_zdb_id
-from tmp_featureatt, record_attribution, feature_marker_relationship
-where ftzdb=fmrel_ftr_zdb_id and ftzdb=recattrib_data_zdb_id
+select distinct pub,fmrel_zdb_id
+from tmp_featureatt, feature_marker_relationship,tmp_ftratt
+where ftzdb=fmrel_ftr_zdb_id
+and ftzdb=ftrzdb
 and fmrel_zdb_id not in (Select recattrib_data_zdb_id from record_attribution);
+
+drop table tmp_ftratt;
+drop table tmp_featureatt;
 
