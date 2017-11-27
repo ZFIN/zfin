@@ -243,7 +243,7 @@ sub geno_load($) {
                                        select epfz_geno_zdb_id,
  	                                      epfz_geno_zdb_id,
 	                                      epfz_geno_zdb_id,
-	                                      now()),
+	                                      now(),
 	                                      epfz_geno_zdb_id
                                          from geno_pulled_from_zirc
                                          where not exists (select 'x'
