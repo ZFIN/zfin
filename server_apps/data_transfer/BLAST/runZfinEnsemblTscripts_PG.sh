@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-psql -d <!--|DB_NAME|--> getEnsemblTscripts_PG.sql
+../runSqlFiles.groovy getEnsemblTscripts_PG.sql
