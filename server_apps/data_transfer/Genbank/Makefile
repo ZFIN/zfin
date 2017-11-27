@@ -21,9 +21,9 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Genbank
 
 
-GENERICS = gbaccession.pl
+GENERICS = gbaccession.pl gbaccession_PG.pl
 
-STATICS = parseDaily.pl GenBank-Accession-Update_d.sql README
+STATICS = parseDaily.pl GenBank-Accession-Update_d.sql parseDaily_PG.pl GenBank-Accession-Update_d_PG.sql README
 
 
 # ---------------  Production Rules  ------------------------------------
