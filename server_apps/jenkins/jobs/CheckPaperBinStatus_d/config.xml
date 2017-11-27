@@ -20,10 +20,14 @@
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/Reports/PubTracking &amp;&amp; runPaperlessPubTrackingDailyIndexedMetrics.sh </command>
     </hudson.tasks.Shell>
+        <hudson.tasks.Ant plugin="ant@1.2">
+            <targets>validate-data-report-simple -DJobName=CheckPaperBinStatus_d</targets>
+            <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+        </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/Reports/PubTracking/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/CheckPaperBinStatus_d/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
