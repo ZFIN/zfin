@@ -27,6 +27,8 @@ public class DbScriptFileParser {
     public static final String LIST_QUERY = "list query";
 
     // regExp
+    // ToDo: basing the parser on regExp beomces more and more tedious.
+    // need to use a more professional generic parser library, such as the library from Steven John Metsker: Building Parsers with Java
     public static final String LOAD = "(^copy)(\\p{Space}*)(?<insertTable>\\w*)(\\p{Space}*)(from)(\\p{Space}*)(')(?<fileName>.*)(')(\\p{Space}*)(delimiter)(\\s*)(')(?<delimiter>.*)(')(.*)";
     public static final String COPY = "(^copy)(\\p{Space}*)(\\()(?<remainingLine>.*)";
     public static final String COPY_TO = "(?<endOfQuery>.*)(\\))(\\p{Space}*)(to)(\\p{Space}*)(')(?<fileName>.*)(')(\\p{Space}*)(delimiter)(\\p{Space}*)(')(?<delimiter>.*)(')(.*)";
@@ -78,6 +80,10 @@ public class DbScriptFileParser {
                     line = matcher.group("endOfQuery");
                     query.setUnloadFileName(matcher.group("fileName"));
                     query.setDelimiter(matcher.group("delimiter"));
+/*
+                    if(!matcher.group("semicolon").isEmpty())
+                        line += ";";
+*/
                 }
                 if (line.trim().startsWith(SUB_QUERY)) {
                     inSubQuery = true;
