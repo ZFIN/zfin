@@ -157,7 +157,7 @@ task makePostgresVersion {
             serverApps += '/server_apps'
             println "Copying files in directory:: " + serverApps
             from(serverApps) {
-                include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh'
+                include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh', '**/*_PG.groovy'
                 rename '(.*)_PG(.*)', '$1$2'
             }
             into serverApps
