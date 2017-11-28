@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="pm" id="DLOAD-466b_load">
+        <loadData file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1092/Rocket/DLOAD-466b.csv"
+                  catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_existfeatures" encoding="UTF-8">
+            <column name="featureid" type="String"/>
+            <column name="genoid" type="String"/>
+            <column name="constructid" type="String"/>
+            <column name="fishid" type="String"/>
+            <column name="fmrel" type="String"/>
+            <column name="genofeat" type="String"/>
+
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>
