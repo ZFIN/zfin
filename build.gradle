@@ -110,6 +110,7 @@ def translateVariableSet = [
                             'CATALINA_HOME',
                             'DB_NAME',
                             'DEFAULT_EMAIL',
+                            'ENVIRONMENT',
                             'GBROWSE_PATH_FROM_ROOT',
                             'GO_EMAIL_ERR',
                             'GROOVY_CLASSPATH',

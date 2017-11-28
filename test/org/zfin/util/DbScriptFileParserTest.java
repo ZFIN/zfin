@@ -85,8 +85,69 @@ public class DbScriptFileParserTest {
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
         assertNotNull(queries);
-        assertEquals(1, queries.size());
-        assertEquals("insert into gff3 ;", queries.get(0).getQuery());
+        assertEquals(3, queries.size());
+        assertEquals("insert into gff3 ;", queries.get(1).getQuery());
+        assertEquals("select * from tmp_vega_thisse_report order by 1,2  ;", queries.get(2).getQuery());
+    }
+
+    @Test
+    // This checks if the parser gets the right number of queries from select files.
+    // This is a bit volatile as any change in the number of queries in those files
+    // will break this unit test. But it's worth it for now as we adjust the parser...
+    public void checkSqlFiles() {
+        String fileName = "server_apps/data_transfer/Downloads/GFF3/download-files/E_zfin_ensembl_gene_PG.sql";
+        File file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+        DbScriptFileParser parser = new DbScriptFileParser(file);
+        List<DatabaseJdbcStatement> queries = parser.parseFile();
+        assertNotNull(queries);
+        assertEquals(57, queries.size());
+
+        fileName = "server_apps/data_transfer/LoadOntology/handleRelationships_PG.sql";
+        file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+        parser = new DbScriptFileParser(file);
+        queries = parser.parseFile();
+        assertNotNull(queries);
+        assertEquals(33, queries.size());
+
+        fileName = "server_apps/data_transfer/LoadOntology/handleSynonyms_PG.sql";
+        file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+        parser = new DbScriptFileParser(file);
+        queries = parser.parseFile();
+        assertNotNull(queries);
+        assertEquals(41, queries.size());
+
+        fileName = "server_apps/data_transfer/LoadOntology/loadTerms_PG.sql";
+        file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+        parser = new DbScriptFileParser(file);
+        queries = parser.parseFile();
+        assertNotNull(queries);
+        assertEquals(87, queries.size());
+
+        fileName = "server_apps/data_transfer/LoadOntology/loadDBxrefs_PG.sql";
+        file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+        parser = new DbScriptFileParser(file);
+        queries = parser.parseFile();
+        assertNotNull(queries);
+        assertEquals(12, queries.size());
+
+        fileName = "server_apps/data_transfer/LoadOntology/loadSubsets_PG.sql";
+        file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+        parser = new DbScriptFileParser(file);
+        queries = parser.parseFile();
+        assertNotNull(queries);
+        assertEquals(28, queries.size());
     }
 
 
