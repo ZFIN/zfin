@@ -115,5 +115,5 @@ select '3', mrkr_abbrev, dblink_acc_num, dblink_length
 copy (
 select *
   from tmp_vega_thisse_report
- order by 1,2 ) to 'vega_thisse_report.unl' DELIMITER ' '
+ order by 1,2 ) to 'vega_thisse_report.unl' DELIMITER '|'
 ;
