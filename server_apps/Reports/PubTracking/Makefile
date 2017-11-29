@@ -20,8 +20,8 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/Reports/PubTracking
 
 
-GENERICS = runPaperlessPubTrackingDailyIndexedMetrics.sh runMonthlyBinLengthReport.sh runLongestBinResidents.sh runAverageTimeInBinsCumulative.sh
-STATICS  =  paperlessPubTrackingDailyIndexedStats.sql longestBinResidents.sql monthlyBinLengthReport.sql averageTimeInBinsCumulative.sql
+GENERICS = runPaperlessPubTrackingDailyIndexedMetrics.sh runMonthlyBinLengthReport.sh runLongestBinResidents.sh runAverageTimeInBinsCumulative.sh runPaperlessPubTrackingDailyIndexedMetrics_PG.sh runMonthlyBinLengthReport_PG.sh runLongestBinResidents_PG.sh runAverageTimeInBinsCumulative_PG.sh
+STATICS  =  paperlessPubTrackingDailyIndexedStats.sql longestBinResidents.sql monthlyBinLengthReport.sql averageTimeInBinsCumulative.sql paperlessPubTrackingDailyIndexedStats_PG.sql longestBinResidents_PG.sql monthlyBinLengthReport_PG.sql averageTimeInBinsCumulative_PG.sql
 
 
 # ---------------  Production Rules  ------------------------------------
