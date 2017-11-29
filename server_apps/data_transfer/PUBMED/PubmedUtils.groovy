@@ -67,7 +67,17 @@ class PubmedUtils {
     }
 
     static Process dbaccess (String dbname, String sql) {
-        def proc = "dbaccess -a $dbname".execute()
+        def usePostgres = System.getenv()['USE_POSTGRES']
+        println usePostgres 
+        sql = sql .replace("\n","")
+        sql = sql .replace("\\copy","\n  \\copy")
+        println sql
+
+        def proc
+        if (usePostgres == 'true')
+            proc = "psql -d $dbname -a".execute()
+        else
+            proc = "dbaccess -a $dbname".execute()
         proc.getOutputStream().with {
             write(sql.bytes)
             close()
