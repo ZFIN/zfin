@@ -21,8 +21,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/MEOW
 
-GENERICS = meow.pl MEOW_dump.sql
-
+GENERICS = meow.pl meow_PG.pl
+STATICS = MEOW_dump.sql MEOW_dump_PG.sql
 
 # ---------------  Production Rules  ------------------------------------
 
