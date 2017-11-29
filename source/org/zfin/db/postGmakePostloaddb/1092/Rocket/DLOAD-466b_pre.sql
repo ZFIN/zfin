@@ -7,6 +7,6 @@ genoid varchar(50),
 constructid varchar(50),
 fishid varchar(50),
 fmrel varchar(50),
-genofeat(varchar(50)
+genofeat varchar(50)
   );
 
