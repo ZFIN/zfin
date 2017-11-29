@@ -1210,7 +1210,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         infrastructureRepository.insertRecordAttribution(featureZdbID, pubZdbID);
         infrastructureRepository.insertUpdatesTable(featureZdbID, "record attribution", pubZdbID, "Added direct attribution");
         if (f.getType().equals(FeatureTypeEnum.TRANSGENIC_INSERTION)) {
-            List<Marker> m = RepositoryFactory.getFeatureRepository().getMarkersByFeature(f);
+            List<Marker> m = RepositoryFactory.getFeatureRepository().getConstructsByFeature(f);
             for (Marker mrkr : m) {
                 if (infrastructureRepository.getRecordAttribution(mrkr.zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) == null) {
                     infrastructureRepository.insertRecordAttribution(mrkr.zdbID, pubZdbID);
