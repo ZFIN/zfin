@@ -1,7 +1,7 @@
 --liquibase formatted sql
 --changeset pm:DLOAD-466b_pre
 
-CREATE TABLE tmp_existfeatures (
+CREATE TABLE tmp_existfeature (
 featureid VARCHAR(50),
 genoid varchar(50),
 constructid varchar(50),

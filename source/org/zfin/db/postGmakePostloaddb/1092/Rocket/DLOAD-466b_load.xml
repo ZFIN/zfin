@@ -7,7 +7,7 @@
 
     <changeSet author="pm" id="DLOAD-466b_load">
         <loadData file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1092/Rocket/DLOAD-466b.csv"
-                  catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_existfeatures" encoding="UTF-8">
+                  catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_existfeature" encoding="UTF-8">
             <column name="featureid" type="String"/>
             <column name="genoid" type="String"/>
             <column name="constructid" type="String"/>
