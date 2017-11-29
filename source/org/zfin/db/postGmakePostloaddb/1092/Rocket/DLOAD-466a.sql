@@ -126,7 +126,7 @@ create table pre_feature_marker_relationship (
 insert into pre_feature_marker_relationship (prefmrel_feature_zdb_id,prefmrel_marker_zdb_id,prefmrel_type)
   select preftr_feature_zdb_id, preftr_construct, 'contains innocuous sequence feature'
     from pre_feature;
-
+alter table pre_feature_marker_relationship add prefmrel_zdb_id varchar(50);
 update pre_feature_marker_relationship set prefmrel_zdb_id = get_id('FMREL');
 
 
