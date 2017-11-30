@@ -350,7 +350,7 @@ select ----------------- Extra ensdarG 1:1 ----------------------------
 		'gene_id=' || gene.mrkr_zdb_id
 	   ||';Name=' || gene.mrkr_abbrev
 	   || ';so_term_name=' || szm_term_name
-	   || ';curie=' || 'ZFIN:' || mrkr_zdb_id as id_name,
+	   || ';curie=' || 'ZFIN:' || gene.mrkr_zdb_id as id_name,
 	gene.mrkr_zdb_id alias
  from  marker gene, db_link eGdbl, gff3, so_zfin_mapping
  where gene.mrkr_type[1,4] == 'GENE'
