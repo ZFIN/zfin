@@ -1,11 +1,11 @@
 
-create or replace function p_marker_sequence_unique (vseq_mrkr_zdb_id text, vseq_sequence varchar(255), vseq_sequence_2 varchar(255))
+create or replace function p_marker_sequence_unique (vseq_mrkr_zdb_id text, vseq_sequence text, vseq_sequence_2 text)
 returns void as $$
 
 declare ok boolean;
  objtype varchar(30) := get_obj_type(vseq_mrkr_zdb_id);
  foundId text := (select seq_mrkr_zdb_id from only(marker_sequence) 
-				where seq_sequence = 
+				where seq_sequence = vseq_sequence 
                       and seq_sequence_2 = vseq_sequence_2
                       and seq_sequence_2 is not null
                       and get_obj_type(seq_mrkr_Zdb_id) = 'TALEN');
