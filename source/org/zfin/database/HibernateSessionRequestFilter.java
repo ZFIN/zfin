@@ -5,11 +5,9 @@ import org.apache.log4j.Logger;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.Table;
 import org.zfin.database.repository.SysmasterRepository;
-import org.zfin.framework.GBrowseHibernateUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.util.ZfinSMTPAppender;
 import org.zfin.util.log4j.Log4jService;
@@ -68,7 +66,6 @@ public class HibernateSessionRequestFilter implements Filter {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
             // the current threadLocal
             HibernateUtil.closeSession();
-            GBrowseHibernateUtil.closeSession();
             SysmasterHibernateUtil.closeSession();
             callSmtpAppender((HttpServletRequest) request, locks);
         }
