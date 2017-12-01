@@ -2,12 +2,11 @@ package org.zfin.database;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.jdbc.Work;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.LoggingUtil;
 
 import java.sql.CallableStatement;
-import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -39,15 +38,11 @@ public class InformixUtil {
             else
                 sql = sql.append("EXECUTE PROCEDURE ");
             sql.append(procedureName);
-            StringBuilder argumentString = new StringBuilder();
             if (arguments != null) {
                 sql.append("(");
-                for (String argument : arguments) {
+                for (String ignored : arguments) {
                     sql.append("?,");
-                    argumentString.append(argument);
-                    argumentString.append(", ");
                 }
-                argumentString.delete(argumentString.length() - 2, argumentString.length() - 1);
                 sql.deleteCharAt(sql.length() - 1);
                 sql.append(")");
             }
@@ -82,6 +77,66 @@ public class InformixUtil {
                 }
             }
         });
+    }
+
+    public static String runDBFunction(final String functionName, final String... arguments) {
+        final LoggingUtil loggingUtil = new LoggingUtil(LOG);
+        Session session = currentSession();
+        // ensure that all records are being processed before this call.
+        session.flush();
+        String value = session.doReturningWork(connection -> {
+            CallableStatement statement = null;
+            StringBuffer sql = new StringBuffer();
+            if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("true"))
+                sql = sql.append("SELECT ");
+            else
+                sql = sql.append("EXECUTE PROCEDURE ");
+            sql.append(functionName);
+            if (arguments != null) {
+                sql.append("(");
+                for (String ignored : arguments) {
+                    sql.append("?,");
+                }
+                sql.deleteCharAt(sql.length() - 1);
+                sql.append(")");
+            }
+            try {
+                statement = connection.prepareCall(sql.toString());
+                if (arguments != null) {
+                    int index = 1;
+                    for (String argument : arguments) {
+                        statement.setString(index, argument);
+                        index++;
+                    }
+                }
+                String fullFunctionCall = sql.toString();
+                if (arguments != null) {
+                    for (String argument : arguments) {
+                        fullFunctionCall = fullFunctionCall.replaceFirst("\\?", argument);
+                    }
+                }
+                String newline = System.getProperty("line.separator");
+                loggingUtil.logDuration("Duration of procedure execution: " + newline + fullFunctionCall);
+                ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    return resultSet.getString(1);
+                } else {
+                    return null;
+                }
+            } catch (SQLException exception) {
+                LOG.error("could not run " + functionName + "()", exception);
+                LOG.error(DbSystemUtil.getLockInfo());
+                throw new RuntimeException(exception);
+            } finally {
+                try {
+                    if (statement != null)
+                        statement.close();
+                } catch (SQLException e) {
+                    LOG.error("could not run " + functionName + "()", e);
+                }
+            }
+        });
+        return value;
     }
 
     public static String getUnloadRecord(String... columns) {
