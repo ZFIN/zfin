@@ -11,7 +11,7 @@ GEO_TO_LOAD = "geoIds.txt"
 GEO_PRE = "geoListPre.txt"
 GEO_POST = "geoListPost.txt"
 
-PubmedUtils.dbaccess DBNAME, """
+PubmedUtils.psql DBNAME, """
  \\copy (
   SELECT pdx_pub_zdb_id, pdx_accession_number
   FROM pub_db_xref
@@ -40,7 +40,7 @@ new File(GEO_TO_LOAD).withWriter { output ->
     }
 }
 
-PubmedUtils.dbaccess DBNAME, """
+PubmedUtils.psql DBNAME, """
 BEGIN WORK;
 
 CREATE TEMP TABLE tmp_geo (
