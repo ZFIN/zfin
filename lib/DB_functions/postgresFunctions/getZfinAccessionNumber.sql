@@ -13,8 +13,7 @@ if (vType = proteinPrefix or vType = RNAPrefix)
  
   then
 
-   sequenceValue = (select accnum_sequence.nextval
-       		          from single);
+   sequenceValue = (select nextval('accnum_sequence'));
 
    zfinAccession = upper(zero_pad(vtype||sequenceValue)) ;
 
