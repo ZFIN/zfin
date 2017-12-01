@@ -48,7 +48,7 @@ CREATE TEMP TABLE tmp_geo (
   pubmed_id integer
 );
 
-\\copy tmp_geo from '$GEO_TO_LOAD';
+\\copy tmp_geo from '$GEO_TO_LOAD' ( FORMAT CSV, DELIMITER('|') );
 
 DELETE FROM tmp_geo
   WHERE EXISTS (

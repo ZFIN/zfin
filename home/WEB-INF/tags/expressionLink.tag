@@ -13,12 +13,12 @@
     <c:otherwise>
         <c:choose>
             <c:when test="${marker.markerType.type != 'EFG'  }">
-                <a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&query_results=true&gene_name=${marker.abbreviation}&searchtype=equals"
+                <a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&query_results=true&xpatsel_geneZdbId=${marker.zdbID}&gene_name=${marker.abbreviation}&searchtype=equals"
                 >${markerExpression.allExpressionData.figureCount}
                 figures</a>
             </c:when>
             <c:otherwise>
-                <a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&query_results=true&gene_name=${marker.name}&searchtype=equals"
+                <a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg&query_results=true&xpatsel_geneZdbId=${marker.zdbID}&gene_name=${marker.name}&searchtype=equals"
                 >${markerExpression.allExpressionData.figureCount} figures</a>
             </c:otherwise>
         </c:choose>

@@ -3,7 +3,6 @@ package org.zfin.security;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.zfin.framework.GBrowseHibernateUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.AccountInfo;
 import org.zfin.profile.Person;
@@ -91,7 +90,6 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
         }
         HibernateUtil.currentSession().update(accountInfo);
         HibernateUtil.flushAndCommitCurrentSession();
-        GBrowseHibernateUtil.closeSession();
 
         sessionRegistry.registerNewSession(sessionID, person);
 

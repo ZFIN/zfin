@@ -9,7 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.zfin.database.TableLock;
-import org.zfin.framework.GBrowseHibernateUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
@@ -83,7 +82,6 @@ public class UpdatesCheckFilter implements Filter {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
             // the current threadLocal
             HibernateUtil.closeSession();
-            GBrowseHibernateUtil.closeSession();
             SysmasterHibernateUtil.closeSession();
 //            callSmtpAppender((HttpServletRequest) request, locks);
         }

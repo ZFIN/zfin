@@ -62,7 +62,6 @@ public class ZfinActionServlet extends DispatcherServlet {
             public void run() {
                 WebHostDatabaseStatisticsCache.getInstance().cacheAll();
                 HibernateUtil.closeSession();
-                GBrowseHibernateUtil.closeSession();
                 if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false"))
                     SysmasterHibernateUtil.closeSession();
             }
