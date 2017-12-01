@@ -13,6 +13,6 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger transcript_trigger after insert or update on transcript
+create trigger transcript_trigger before insert or update on transcript
  for each row
  execute procedure transcript();
