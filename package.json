@@ -3,5 +3,13 @@
   "version": "1.0.0",
   "description": "ZFIN The Zebrafish Information Network",
   "repository": "file:///net/filer.zfin.org/vol/central/Vault/git/ZFIN_WWW",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "hashmark": "^5.0.0",
+    "@songkick/replaceinfiles": "^1.1.4"
+  },
+  "scripts": {
+    "env": "printenv",
+    "build:js": "hashmark -l 8 'home/' 'javascript/**/*.js' 'dist/{dir}/{name}.{hash}{ext}' | replaceinfiles -s 'home/**/*.jsp'"
+  }
 }
