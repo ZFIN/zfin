@@ -25,7 +25,7 @@ create temp table tmp_vega_zeg(
 	score varchar(5),
 	strand char(1),
 	frame char(1),
-	id_name varchar(90),
+	id_name varchar(255),
 	alias varchar(55)
 ) with no log
 ;
@@ -484,3 +484,5 @@ update statistics high for table zfin_ensembl_gene;
 ! echo "Begin ensembl gff3 gene related unloads"
 ! echo ""
 -- unload genes,alias,antibody,pheno,xpat,...
+
+
