@@ -1,7 +1,6 @@
 package org.zfin.sequence.blast;
 
 import org.junit.Test;
-import org.zfin.datatransfer.webservice.EBIFetch;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.sequence.Defline;
 import org.zfin.sequence.Sequence;
@@ -24,12 +23,6 @@ public class WebServiceSoapClientTest {
     @Test
     public void useEfetchForProtein2() {
         doAccessionTest("NP_571379", NCBIEfetch.Type.POLYPEPTIDE);
-    }
-
-    @Test
-    public void useEBIForUniprot() {
-        assertThat("NP_571379 should not validate", EBIFetch.validateAccession("NP_571379"), is(false));
-        assertThat("B3DJJ0 should validate", EBIFetch.validateAccession("B3DJJ0"), is(true));
     }
 
     @Test
