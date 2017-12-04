@@ -19,6 +19,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.FieldName;
+import org.zfin.search.presentation.MarkerSearchResult;
 import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
@@ -71,9 +72,9 @@ public class ExpressionSearchService {
         String targetGene = criteria.getTargetGeneField();
         if (StringUtils.isNotEmpty(targetGene)) {
             solrQuery.addFilterQuery(any(
-                    fq(FieldName.TARGETED_GENE, targetGene),
-                    fq(FieldName.TARGETED_GENE_FULL_NAME, targetGene),
-                    fq(FieldName.TARGETED_GENE_PREVIOUS_NAME, targetGene)
+                    fq(FieldName.TARGET, targetGene),
+                    fq(FieldName.TARGET_FULL_NAME, targetGene),
+                    fq(FieldName.TARGET_PREVIOUS_NAME, targetGene)
             ));
         }
 
@@ -130,6 +131,8 @@ public class ExpressionSearchService {
         solrQuery.setRows(criteria.getRows());
         solrQuery.setStart((criteria.getPage() - 1) * criteria.getRows());
 
+        solrQuery.set("hl.q", String.join(" ", Arrays.asList(solrQuery.getFilterQueries())));
+
         return solrQuery;
     }
 
@@ -143,7 +146,7 @@ public class ExpressionSearchService {
         solrQuery.add("group.ngroups", TRUE);
         solrQuery.add("group.field", FieldName.GENE_ZDB_ID.getName());
 
-        solrQuery.setFields(FieldName.GENE_ZDB_ID.getName());
+        solrQuery.setFields(FieldName.GENE_ZDB_ID.getName(), FieldName.ID.getName());
         solrQuery.addSort(FieldName.GENE_SORT.getName(), SolrQuery.ORDER.asc);
 
         QueryResponse queryResponse = null;
@@ -153,12 +156,14 @@ public class ExpressionSearchService {
             e.printStackTrace();
         }
 
+        final QueryResponse finalQueryResponse = queryResponse;
+
         criteria.setNumFound(queryResponse.getGroupResponse().getValues().get(0).getNGroups());
 
         return queryResponse.getGroupResponse().getValues().get(0).getValues()
                 .stream()
                 .map(ExpressionSearchService::getFirstDocumentFromGroup)
-                .map(doc -> buildGeneResult(doc, criteria))
+                .map(doc -> buildGeneResult(doc, criteria, finalQueryResponse))
                 .collect(Collectors.toList());
     }
 
@@ -262,6 +267,7 @@ public class ExpressionSearchService {
                 .collect(Collectors.toCollection(TreeSet::new));
 
         figureResult.setFigure(figure);
+        figureResult.setId(figure.getZdbID());
         figureResult.setPublication(publication);
         figureResult.setFish(fish);
         figureResult.setAnatomy(anatomy);
@@ -274,10 +280,12 @@ public class ExpressionSearchService {
         return group.getResult().get(0);
     }
 
-    private static GeneResult buildGeneResult(SolrDocument document, ExpressionSearchCriteria criteria) {
+    private static GeneResult buildGeneResult(SolrDocument document, ExpressionSearchCriteria criteria, QueryResponse response) {
         GeneResult geneResult = new GeneResult();
 
         geneResult.setId(document.get(FieldName.GENE_ZDB_ID.getName()).toString());
+
+        geneResult.setExpressionId(document.get(FieldName.ID.getName()).toString());
 
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneResult.getId());
         geneResult.setGene(gene);
@@ -290,7 +298,7 @@ public class ExpressionSearchService {
 
         populateFigureInfo(geneResult, criteria);
         populateStageRange(geneResult, criteria, AND, fq(FieldName.GENE_ZDB_ID, gene.getZdbID()));
-
+        injectHighlighting(geneResult, response);
         return geneResult;
     }
 
@@ -376,6 +384,47 @@ public class ExpressionSearchService {
         Double endHours = (double) stats.get(FieldName.STAGE_HOURS_END.getName()).getMax();
         result.setStartStage(ar.getStageByStartHours(startHours.floatValue()));
         result.setEndStage(ar.getStageByEndHours(endHours.floatValue()));
+    }
+
+    public static void injectHighlighting(GeneResult result, QueryResponse response) {
+
+        List<String> highlightBlacklist = new ArrayList<>();
+        highlightBlacklist.add("name");
+
+        String id = result.getExpressionId();
+        List<String> highlightSnippets = new ArrayList<>();
+        if (response.getHighlighting() != null && response.getHighlighting().get(id) != null) {
+            for (String highlightField : response.getHighlighting().get(id).keySet()) {
+
+                if (!highlightBlacklist.contains(highlightField) &&
+                        response.getHighlighting().get(id).get(highlightField) != null) {
+                    for (String snippet : response.getHighlighting().get(id).get(highlightField)) {
+
+                        String prettyFieldName = SolrService.getPrettyFieldName(highlightField);
+
+                        if (StringUtils.equals(highlightField,FieldName.RELATED_GENE_SYMBOL.toString())) {
+                            prettyFieldName = "Expressed Gene Symbol";
+                        }
+
+                        highlightSnippets.add("<div class=\"snippet\">"
+                                + prettyFieldName
+                                + ": " + snippet + "</div>");
+
+                        break;  // just do one, for now
+                    }
+                }
+            }
+        }
+        if (!highlightSnippets.isEmpty()) {
+            StringBuilder out = new StringBuilder();
+            for (String snippet : highlightSnippets) {
+                out.append(snippet);
+            }
+            result.setMatchingText(out.toString());
+
+        }
+
+
     }
 
     public static SortedMap<String, String> getStageOptions() {

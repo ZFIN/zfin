@@ -45,7 +45,9 @@
             <td>
                 <zfin2:stageRange earliestStartStage="${result.startStage}" latestEndStage="${result.endStage}" />
             </td>
-            <td></td>
+            <td>
+                <c:out value="${result.matchingText}" escapeXml="false"/>
+            </td>
         </zfin:alternating-tr>
     </c:forEach>
 

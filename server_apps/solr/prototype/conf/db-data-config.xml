@@ -3141,12 +3141,12 @@
                     where="efs_pk_id=expression.id"
             />
 
-            <entity name="expression_target_gene"
+            <entity name="expression_target"
                     query="
                        SELECT
                          'xpatex-' || efs_pk_id as efs_pk_id,
-                         mrkr_abbrev as targeted_gene,
-                         mrkr_abbrev as targeted_gene_full_name
+                         mrkr_abbrev as target,
+                         mrkr_abbrev as target_full_name
                        FROM expression_experiment2
                        join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                        join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
@@ -3158,11 +3158,11 @@
                     where="efs_pk_id=expression.id"
             />
 
-            <entity name="expression_target_gene_previous_name"
+            <entity name="expression_target_previous_name"
                     query="
                        SELECT
                          'xpatex-' || efs_pk_id as efs_pk_id,
-                         dalias_alias as targeted_gene_previous_name
+                         dalias_alias as target_previous_name
                        FROM expression_experiment2
                        join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                        join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id

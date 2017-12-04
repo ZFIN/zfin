@@ -4,10 +4,11 @@ import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
+import java.util.List;
+
 public class GeneResult extends ExpressionSearchResult {
 
     private String symbol;
-    private String id;
     private Integer publicationCount;
     private Publication singlePublication;
     private Integer figureCount;
@@ -16,8 +17,9 @@ public class GeneResult extends ExpressionSearchResult {
     private Marker gene;
     private String matchingText;
     private String figureResultUrl;
+    private String expressionId;
 
-    public String getUrl() { return "http://zfin.org/" + id; }
+    public String getUrl() { return "http://zfin.org/" + getId(); }
 
     public String getSymbol() {
         return symbol;
@@ -25,14 +27,6 @@ public class GeneResult extends ExpressionSearchResult {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Integer getPublicationCount() {
@@ -98,4 +92,14 @@ public class GeneResult extends ExpressionSearchResult {
     public void setFigureResultUrl(String figureResultUrl) {
         this.figureResultUrl = figureResultUrl;
     }
+
+    public String getExpressionId() {
+        return expressionId;
+    }
+
+    public void setExpressionId(String expressionId) {
+        this.expressionId = expressionId;
+    }
+
+
 }
