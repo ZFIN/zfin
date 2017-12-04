@@ -8,4 +8,4 @@ and not exists (
   where pf_pub_zdb_id = zdb_id
   and pft_type = 'Original Article'
 )
-and get_date_from_id(zdb_id,"YYYYDDMM") > '20110101';
+and get_date_from_id(zdb_id,'YYYYDDMM') > '20110101';
