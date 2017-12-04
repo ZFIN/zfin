@@ -18,7 +18,11 @@
         <fileset dir="${web.lib}">
             <include name="*.jar"/>
         </fileset>
+        <fileset dir="lib/Java">
+            <include name="*.jar"/>
+        </fileset>
     </path>
+
 
     <macrodef name="copySolr">
         <attribute name="from"/>
@@ -62,8 +66,7 @@
 
 
     <target name="build-solr-index">
-        <echo message="unloading synonym, stopwords and keepwords files"/>
-        <exec dir="${env.SOLR_HOME}/prototype/conf" executable="dbaccess" failifexecutionfails="true">
+        <exec dir="${env.SOLR_HOME}/prototype/conf" executable="server_apps/solr/prototype/conf/index-solr.groovy" failifexecutionfails="true">
             <arg value="-a"/>
             <arg value="${DBNAME}"/>
             <arg value="generate-all-term-contains-synonyms-file.sql"/>
@@ -284,4 +287,7 @@
     </target>
 
 
+    <taskdef name="groovy"
+             classname="org.codehaus.groovy.ant.Groovy"
+             classpathref="classpath"/>
 </project>
