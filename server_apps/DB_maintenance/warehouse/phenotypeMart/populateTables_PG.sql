@@ -52,7 +52,7 @@ insert into phenotype_observation_generated_temp (psg_pg_id,  psg_e1a_zdb_id, ps
                                                   psg_e2b_zdb_id, psg_tag, psg_quality_zdb_id, psg_pre_eap_phenotype)
   select pg_id, phenos_entity_1_superterm_zdb_id, 'part of', phenos_entity_1_subterm_Zdb_id,
          phenos_entity_2_superterm_zdb_id, 'part of', phenos_entity_2_subterm_Zdb_id,
-         phenos_tag, phenos_quality_zdb_id, case when phenox_created_date < '2016-02-15 00:00:00'::date then 'true' else 'false' end
+         phenos_tag, phenos_quality_zdb_id, case when phenox_created_date < '2016-02-15 00:00:00'::date then true else false end
     from phenotype_experiment, phenotype_statement, phenotype_source_generated_temp
     where phenox_genox_Zdb_id = pg_genox_Zdb_id
     and phenox_fig_Zdb_id =pg_fig_zdb_id
