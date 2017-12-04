@@ -55,7 +55,7 @@ Create or replace function regen_expression_term_fast_search()
 
 
       alter table expression_term_fast_Search rename to xpatfs_working;
-      alter table xpatfs_tmp rename to expression_term_fast_search ;
+      alter table xpatfs_temp rename to expression_term_fast_search ;
       delete from xpatfs_working;
 
       insert into xpatfs_working (etfs_xpatres_pk_id, etfs_term_zdb_id)
