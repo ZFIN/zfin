@@ -19,7 +19,7 @@ select
    psg_e1a_zdb_id,
    psg_tag,
    't',
-   current year to second
+   now()
 from
    phenotype_observation_generated
 ;
@@ -38,7 +38,7 @@ select
    psg_e1b_zdb_id,
    psg_tag,
    't',
-   current year to second
+   now()
 from
    phenotype_observation_generated
 where
@@ -60,7 +60,7 @@ select
    psg_e2a_zdb_id,
    psg_tag,
    't',
-   current year to second
+   now()
 from
    phenotype_observation_generated
 where
@@ -81,7 +81,7 @@ select
    psg_e2b_zdb_id,
    psg_tag,
    't',
-   current year to second
+   now()
 from
    phenotype_observation_generated
 where
@@ -101,7 +101,7 @@ select
   psg_id,
   alltermcon_container_zdb_id,
   psg_tag,
-  current year to second
+  now()
 from
   phenotype_observation_generated, all_term_contains
 where
@@ -121,7 +121,7 @@ select
   psg_id,
   alltermcon_container_zdb_id,
   psg_tag,
-  current year to second
+  now()
 from
   phenotype_observation_generated, all_term_contains
 where
@@ -141,7 +141,7 @@ select
   psg_id,
   alltermcon_container_zdb_id,
   psg_tag,
-  current year to second
+  now()
 from
   phenotype_observation_generated, all_term_contains
 where
@@ -160,7 +160,7 @@ select
   psg_id,
   alltermcon_container_zdb_id,
   psg_tag,
-  current year to second
+  now()
 from
   phenotype_observation_generated, all_term_contains
 where
