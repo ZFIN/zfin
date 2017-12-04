@@ -20,7 +20,7 @@ Create or replace function regen_expression_term_fast_search()
     	   	 	      etfs_xpatres_pk_id int8,
 			      etfs_term_zdb_id text ,
 			      etfs_created_date date not null default current_date,
-			      etfs_is_xpatres_term boolean default 'f' 
+			      etfs_is_xpatres_term boolean default false  
 	);
    
 
