@@ -71,6 +71,7 @@ delete from regen_genox_temp
 exception when raise_exception then
   	    return errorHint;    
 
+return 'success';
 end;
 
 $regen_genox_process_marker$ LANGUAGE plpgsql;

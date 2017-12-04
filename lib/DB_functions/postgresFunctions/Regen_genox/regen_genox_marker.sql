@@ -33,9 +33,9 @@ create procedure regen_genox_marker(mrkrZdbId like marker.mrkr_zdb_id)
       ( mrkrZdbId );
 
   -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
-  execute procedure regen_genox_process_marker();
+  perform regen_genox_process_marker();
 
   -- Move from temp tables to permanent tables
-  execute procedure regen_genox_finish_marker();
+  perform regen_genox_finish_marker();
 
 end procedure;

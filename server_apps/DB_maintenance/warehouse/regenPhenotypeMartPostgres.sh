@@ -64,7 +64,7 @@ date;
 
 echo "start regen_genox()";
 
-echo "execute procedure regen_genox()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+echo "select regen_genox();" | ${PGBINDIR}/psql $DBNAME;
 
 date;
 echo "done with regen_genox()";
@@ -76,7 +76,7 @@ echo "done with regen_anatomy_counts()";
 
 
 echo "start regen_pheno_term_regen()";
-$INFORMIXDIR/bin/dbaccess $DBNAME $TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql
+${PGBINDIR}/psql $DBNAME < $TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen_PG.sql
 date;
 echo "done with pheno_term_regen()";
 

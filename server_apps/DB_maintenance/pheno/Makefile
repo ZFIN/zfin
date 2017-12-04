@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/pheno
 
 SUBDIRS = 
 
-STATICS = pheno_term_regen.sql
+STATICS = pheno_term_regen.sql pheno_term_regen_PG.sql
 
 
 # ---------------  Production Rules  ------------------------------------
