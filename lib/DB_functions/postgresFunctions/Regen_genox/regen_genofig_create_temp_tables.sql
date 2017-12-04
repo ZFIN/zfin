@@ -21,7 +21,7 @@ returns text as $regen_genofig_create_temp_tables$
         gffs_morph_zdb_id text,
         gffs_pg_id int8 not null,
 	gffs_date_created timestamp 
-			  DEFAULT now NOT NULL,         
+			  DEFAULT now() NOT NULL,         
         gffs_psg_id int8,
 	gffs_fish_zdb_id text not null,
 	gffs_genox_zdb_id text,

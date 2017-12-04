@@ -50,9 +50,6 @@ begin
      -- let errorHint = "rename table ";
       alter table  mutant_fast_search_new rename to mutant_fast_search;
 
-    --  let errorHint = "rename indexes";
-      alter index  mutant_fast_search_primary_key_index_transient
-        rename to mutant_fast_search_primary_key_index;
       alter index  mutant_fast_search_mrkr_zdb_id_foreign_key_index_transient
         rename to mutant_fast_search_mrkr_zdb_id_foreign_key_index;
       alter index  mutant_fast_search_genox_zdb_id_foreign_key_index_transient 
@@ -61,14 +58,14 @@ begin
       -- define constraints, indexes are defined earlier.
 
        --  let errorHint = "mutant_fast_search_new create PK index";
-    create unique index concurrently mutant_fast_search_primary_key_index_transient
-      on mutant_fast_search_new (mfs_mrkr_zdb_id, mfs_genox_zdb_id);
+    create unique index mutant_fast_search_primary_key_index
+      on mutant_fast_search(mfs_mrkr_zdb_id, mfs_genox_zdb_id);
 
 
     --  let errorHint = "mutant_fast_search PK constraint";
-      alter table  mutant_fast_search drop constraint mutant_fast_search_primary_key_index, 
+      alter table  mutant_fast_search 
          add constraint mutant_fast_search_primary_key_index
-	primary key using index mutant_fast_search_primary_key_index_transient;
+	primary key using index mutant_fast_search_primary_key_index;
 
    --   let errorHint = "mfs_mrkr_zdb_id FK constraint";
       alter table mutant_fast_search add constraint mutant_fast_search_mrkr_Zdb_id_foreign_key_odc

@@ -72,7 +72,7 @@ create or replace function regen_genox()
        perform regen_genofig_process();
 
       -- errorHint = 'regen_genofig_finish procedure';
-       perform regen_genofig_finish('f','');
+       perform regen_genofig_finish('f',0);
 
     -- --------------------------------------------------------------------
     -- -------------------------------------------------------------------

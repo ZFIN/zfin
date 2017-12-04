@@ -1,4 +1,4 @@
-create or replace function regen_genofig_finish(vUpdate boolean,pgId int8)
+create or replace function regen_genofig_finish(vUpdate boolean, pgId int8)
 returns text as $regen_genofig_finish$
 
  begin 

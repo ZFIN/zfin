@@ -1,5 +1,5 @@
 create or replace function regen_genox_process_marker()
-returns text as $regen_genox_process_marker$
+returns void as $regen_genox_process_marker$
 
   -- --------------------------------------------------------------------------------------------
   -- Generates marker_zdb_id genox_zdb_id pairs for records in mutant_fast_search table 
@@ -68,10 +68,7 @@ delete from regen_genox_temp
 
 --  end foreach  -- foreach record in regen_genox_input_zdb_id_temp
 
-exception when raise_exception then
-  	    return errorHint;    
 
-return 'success';
 end;
 
 $regen_genox_process_marker$ LANGUAGE plpgsql;
