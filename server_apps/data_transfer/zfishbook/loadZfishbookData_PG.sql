@@ -15,21 +15,19 @@ create temp table ekkerLabData (
         ekker_alias varchar(255) not null,
         ekker_lineNum varchar(70) not null,
         ekker_alias2 varchar(255) not null,
-        ekker_geneId varchar(50),
+        ekker_geneId text,
         ekker_feature varchar(255) not null,
-        ekker_featureId varchar(50),
-        ekker_constructId varchar(50) not null,
-        ekker_labId varchar(50) not null,
+        ekker_featureId text,
+        ekker_constructId text not null,
+        ekker_labId text not null,
         ekker_prefix varchar(3)
-) with no log;
+) ;
 
 
-load from pre_load_input.txt
- insert into ekkerLabData;
-! echo "         into ekkerLabData temp table."
+\copy ekkerLabData from 'pre_load_input.txt';
 
-unload to 'ekkerLabData.unl' select * from ekkerLabData;
-! echo "         to ekkerLabData.unl"
+\copy (select * from ekkerLabData) to 'ekkerLabData.unl';
+
 
 
 create table pre_feature (
@@ -37,14 +35,14 @@ create table pre_feature (
         preftr_feature_name varchar(255),
         preftr_alias varchar(255),
         preftr_alias2 varchar(255) default null,
-        preftr_data_source varchar(50),
+        preftr_data_source text,
         preftr_mutagee varchar(20),
         preftr_mutagen varchar(20),
-        preftr_construct varchar(50),
+        preftr_construct text,
         preftr_feature_abbrev varchar(70),
         preftr_line_number varchar(70),
         preftr_lab_prefix_id int8,
-        preftr_known_insertion_site boolean default 't',
+        preftr_known_insertion_site boolean default true,
         preftr_tg_suffix varchar(5) default null
 );
 
@@ -81,8 +79,6 @@ insert into pre_feature (
      and ekker_featureId is null
      and ekker_geneId is null;
 
-! echo "         into pre_feature table."
-
 
 -- if the feature is not in ZFIN and there is affected gene
 insert into pre_feature (
@@ -114,20 +110,16 @@ insert into pre_feature (
      and fp_prefix = ekker_prefix
      and ekker_featureId is null
      and ekker_geneId is not null;
-! echo "         into pre_feature table."
 
 
 alter table pre_feature add preftr_feature_zdb_id varchar(50);
 
 update pre_feature set preftr_feature_zdb_id = get_id('ALT');
 
-
-unload to 'pre_feature.unl' select * from pre_feature order by preftr_indx;
-! echo "         to pre_feature.unl"
+\copy (select * from pre_feature order by preftr_indx) to 'pre_feature.unl'
 
 
 insert into zdb_active_data select preftr_feature_zdb_id from pre_feature;
-! echo "         into zdb_active_data table."
 
 
 -- load feature table
@@ -151,8 +143,6 @@ select  preftr_feature_zdb_id,
         preftr_known_insertion_site
  from pre_feature;
 
-! echo "         into feature table."
-
 -- load record_attribution table
 insert into record_attribution (
     recattrib_data_zdb_id,
@@ -161,8 +151,6 @@ insert into record_attribution (
 select  preftr_feature_zdb_id,
         'ZDB-PUB-120111-1'
  from pre_feature;
-
-! echo "         into record_attribution table."
 
 
 -- load feature_assay table
@@ -176,7 +164,6 @@ select  preftr_feature_zdb_id,
         preftr_mutagee
  from pre_feature;
 
-! echo "         into feature_assay table."
 
 -- load int_data_source table
 insert into int_data_source (
@@ -187,12 +174,11 @@ select  preftr_feature_zdb_id,
         preftr_data_source
  from pre_feature;
 
-! echo "         into int_data_source table."
 
 
 create table pre_feature_marker_relationship (
-        prefmrel_feature_zdb_id varchar(50),
-        prefmrel_marker_zdb_id varchar(50),
+        prefmrel_feature_zdb_id text,
+        prefmrel_marker_zdb_id text,
         prefmrel_type varchar(60)
 );
 
@@ -201,7 +187,6 @@ insert into pre_feature_marker_relationship (prefmrel_feature_zdb_id,prefmrel_ma
   select preftr_feature_zdb_id, preftr_construct, 'contains phenotypic sequence feature'
     from pre_feature;
 
-! echo "         into pre_feature_marker_relationship table."
 
 -- relationship between the new features and their affected genes
 insert into pre_feature_marker_relationship (prefmrel_feature_zdb_id,prefmrel_marker_zdb_id,prefmrel_type)
@@ -211,16 +196,14 @@ insert into pre_feature_marker_relationship (prefmrel_feature_zdb_id,prefmrel_ma
      and ekker_geneId is not null
      and ekker_featureId is null;
 
-! echo "         into pre_feature_marker_relationship table."
 
-alter table pre_feature_marker_relationship add prefmrel_zdb_id varchar(50);
+alter table pre_feature_marker_relationship add prefmrel_zdb_id text;
 
 update pre_feature_marker_relationship set prefmrel_zdb_id = get_id('FMREL');
 
 
 insert into zdb_active_data select prefmrel_zdb_id from pre_feature_marker_relationship;
 
-! echo "         into zdb_active_data table."
 
 -- load feature_marker_relationship table
 insert into feature_marker_relationship (
@@ -235,7 +218,6 @@ select  prefmrel_zdb_id,
         prefmrel_marker_zdb_id
  from pre_feature_marker_relationship;
 
-! echo "         into feature_marker_relationship table."
 
 
 -- load record_attribution table
@@ -247,11 +229,10 @@ select  prefmrel_zdb_id,
         'ZDB-PUB-120111-1'
  from pre_feature_marker_relationship;
 
-! echo "         into record_attribution table."
 
 
 create table pre_data_alias (
-    predalias_data_zdb_id varchar(50) not null,
+    predalias_data_zdb_id text not null,
     predalias_alias varchar(255) not null,
     predalias_group_id int8 not null
 );
@@ -267,9 +248,8 @@ insert into pre_data_alias (
                   aliasgrp_significance
     from pre_feature, alias_group
    where preftr_alias is not null
-     and aliasgrp_name = "alias";
+     and aliasgrp_name = 'alias';
 
-! echo "         into pre_data_alias table."
 
 
 -- if the feature is already in ZFIN before the loading
@@ -284,24 +264,19 @@ insert into pre_data_alias (
     from ekkerLabData, alias_group
    where ekker_alias is not null
      and ekker_featureId is not null
-     and aliasgrp_name = "alias"
-     and not exists (select "x" from data_alias
+     and aliasgrp_name = 'alias'
+     and not exists (select 'x' from data_alias
                                where dalias_data_zdb_id = ekker_featureId
                                  and dalias_alias = ekker_alias);
 
-! echo "         into pre_data_alias table."
 
-alter table pre_data_alias add predalias_dalias_zdb_id varchar(50);
+alter table pre_data_alias add predalias_dalias_zdb_id text;
 
 update pre_data_alias set predalias_dalias_zdb_id = get_id('DALIAS');
 
-unload to 'pre_data_alias.unl' select * from pre_data_alias order by predalias_alias;
-
-! echo "         to pre_data_alias.unl"
+\copy (select * from pre_data_alias order by predalias_alias) to 'pre_data_alias.unl';
 
 insert into zdb_active_data select predalias_dalias_zdb_id from pre_data_alias;
-
-! echo "         into zdb_active_data table."
 
 -- load data_alias table
 insert into data_alias (
@@ -316,8 +291,6 @@ select  predalias_dalias_zdb_id,
       predalias_group_id
  from pre_data_alias;
 
-! echo "         into data_alias table."
-
 -- load record_attribution table
 insert into record_attribution (
     recattrib_data_zdb_id,
@@ -327,10 +300,8 @@ select  predalias_dalias_zdb_id,
         'ZDB-PUB-120111-1'
  from pre_data_alias;
 
-! echo "         into record_attribution table."
-
 create table pre_geno (
-        pregeno_feature_id varchar(50) not null,
+        pregeno_feature_id text not null,
         pregeno_display_name varchar(255) not null,
         pregeno_handle varchar(255) not null,
         pregeno_nick_name varchar(255) not null
@@ -351,7 +322,6 @@ select preftr_feature_zdb_id,
  where preftr_indx = ekker_indx
    and ekker_geneId is null;
 
-! echo "         into pre_geno table."
 
 -- load pre_geno table for those features newly added by this script and having affected gene
 insert into pre_geno (
@@ -368,8 +338,6 @@ select preftr_feature_zdb_id,
  where preftr_indx = ekker_indx
    and ekker_geneId = mrkr_zdb_id;
 
-! echo "         into pre_geno table."
-
 
 -- load pre_geno table for those with features already in ZFIN and having affected gene
 insert into pre_geno (
@@ -384,9 +352,8 @@ select ekker_featureId,
        ekker_alias2 || '[1,U,U]' || 'AB'
   from ekkerLabData, marker
  where ekker_geneId = mrkr_zdb_id
-   and ekker_featureId like "ZDB-ALT-%";
+   and ekker_featureId like 'ZDB-ALT-%';
 
-! echo "         into pre_geno table."
 
 -- load pre_geno table for those with features already in ZFIN and having no affected gene
 insert into pre_geno (
@@ -403,12 +370,10 @@ select ekker_featureId,
  where ekker_geneId is null
    and ekker_featureId = feature_zdb_id;
 
-! echo "         into pre_geno table."
 
 delete from pre_geno
- where exists (select "x" from genotype
+ where exists (select 'x' from genotype
                          where geno_handle = pregeno_handle);
-! echo "         from pre_geno table."
 
 alter table pre_geno add pregeno_geno_id varchar(50);
 
@@ -418,12 +383,9 @@ alter table pre_geno add pregeno_fish_id varchar(50);
 
 update pre_geno set pregeno_fish_id = get_id('FISH');
 
-unload to 'pre_geno.unl' select * from pre_geno order by pregeno_feature_id;
-! echo "         to pre_geno.unl"
+\copy (select * from pre_geno order by pregeno_feature_id) to 'pre_geno.unl';
 
 insert into zdb_active_data select pregeno_geno_id from pre_geno;
-
-! echo "         into zdb_active_data table."
 
 -- load genotype table
 insert into genotype (
@@ -438,9 +400,6 @@ select  pregeno_geno_id,
         pregeno_nick_name
  from pre_geno;
 
-! echo "         into genotype table."
-
-
 -- load record_attribution table
 insert into record_attribution (
     recattrib_data_zdb_id,
@@ -450,11 +409,9 @@ select  pregeno_geno_id,
         'ZDB-PUB-120111-1'
  from pre_geno;
 
-! echo "         into record_attribution table."
 
 insert into zdb_active_data select pregeno_fish_id from pre_geno;
 
-! echo "         into zdb_active_data table."
 
 -- load fish table
 insert into fish (
@@ -469,8 +426,6 @@ select  pregeno_fish_id,
         pregeno_handle
  from pre_geno;
 
-! echo "         into fish table."
-
 
 -- load record_attribution table
 insert into record_attribution (
@@ -481,7 +436,6 @@ select  pregeno_fish_id,
         'ZDB-PUB-120111-1'
  from pre_geno;
 
-! echo "         into record_attribution table."
 
 -- load genotype_background table
 insert into genotype_background (
@@ -492,28 +446,13 @@ select  pregeno_geno_id,
         'ZDB-GENO-960809-7'
  from pre_geno;
 
-! echo "         into genotype_background table."
-
--- load int_data_supplier table with the new genotypes
---insert into int_data_supplier (
---       idsup_data_zdb_id,
---       idsup_acc_num,
---       idsup_supplier_zdb_id
---)
---select pregeno_geno_id,
---       pregeno_geno_id,
---       'ZDB-LAB-991005-53'
---  from pre_geno;
-
---! echo "         into int_data_supplier table."
-
 
 create table pre_geno_ftr_relationship (
-        pregfrel_geno_zdb_id varchar(50),
-        pregfrel_feature_zdb_id varchar(50),
-        pregfrel_zygocity varchar(50),
-        pregfrel_dad_zygocity varchar(50),
-        pregfrel_mom_zygocity varchar(50)
+        pregfrel_geno_zdb_id text,
+        pregfrel_feature_zdb_id text,
+        pregfrel_zygocity text,
+        pregfrel_dad_zygocity text,
+        pregfrel_mom_zygocity text
 );
 
 -- load pre_geno_ftr_relationship table
@@ -531,16 +470,12 @@ select  pregeno_geno_id,
         'ZDB-ZYG-070117-7'
  from pre_geno;
 
-! echo "         into pre_geno_ftr_relationship table."
 
-
-alter table pre_geno_ftr_relationship add pregfrel_genofeat_id varchar(50);
+alter table pre_geno_ftr_relationship add pregfrel_genofeat_id text;
 
 update pre_geno_ftr_relationship set pregfrel_genofeat_id = get_id('GENOFEAT');
 
 insert into zdb_active_data select pregfrel_genofeat_id from pre_geno_ftr_relationship;
-
-! echo "         into zdb_active_data table."
 
 -- load genotype_feature table
 insert into genotype_feature (
@@ -559,8 +494,6 @@ select  pregfrel_genofeat_id,
         pregfrel_mom_zygocity
  from pre_geno_ftr_relationship;
 
-! echo "         into genotype_feature table."
-
 -- load record_attribution table
 insert into record_attribution (
     recattrib_data_zdb_id,
@@ -570,27 +503,12 @@ select  pregfrel_genofeat_id,
         'ZDB-PUB-120111-1'
  from pre_geno_ftr_relationship;
 
-! echo "         into record_attribution table."
-
-
--- load int_data_supplier table with the new features
---insert into int_data_supplier (
---       idsup_data_zdb_id,
---       idsup_acc_num,
---       idsup_supplier_zdb_id
---)
---select pregfrel_feature_zdb_id,
---       pregfrel_feature_zdb_id,
---       'ZDB-LAB-991005-53'
---  from pre_geno_ftr_relationship;
-
---! echo "         into int_data_supplier table."
 
 create table pre_db_link (
-        predblink_data_zdb_id varchar(50) not null,
+        predblink_data_zdb_id text not null,
         predblink_acc_num varchar(50) not null,
         predblink_acc_num_display varchar(50) not null,
-        predblink_fdbcont_zdb_id varchar(50) not null
+        predblink_fdbcont_zdb_id text not null
 );
 
 insert into pre_db_link (
@@ -604,10 +522,7 @@ insert into pre_db_link (
      and fdb_db_name = 'zfishbook'
      and not exists (select * from db_link
                              where dblink_acc_num = preftr_alias
-                               and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-120213-1");
-
-! echo "         into pre_db_link table."
-
+                               and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-120213-1');
 
 insert into pre_db_link (
         predblink_data_zdb_id,
@@ -621,33 +536,25 @@ insert into pre_db_link (
      and fdb_db_name = 'zfishbook'
      and not exists (select * from db_link
                              where dblink_acc_num = ekker_alias
-                               and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-120213-1");
-! echo "         into pre_db_link table."
+                               and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-120213-1');
 
-
-alter table pre_db_link add predblink_dblink_zdb_id varchar(50);
+alter table pre_db_link add predblink_dblink_zdb_id text;
 
 update pre_db_link set predblink_dblink_zdb_id = get_id('DBLINK');
 
-unload to 'pre_db_link.unl' select * from pre_db_link order by predblink_acc_num;
-
-! echo "         to pre_db_link.unl"
+\copy (select * from pre_db_link order by predblink_acc_num) to 'pre_db_link.unl' ;
 
 insert into zdb_active_data select predblink_dblink_zdb_id from pre_db_link;
 
-! echo "         into zdb_active_data table."
 
 insert into db_link (dblink_linked_recid,dblink_acc_num, dblink_zdb_id ,dblink_acc_num_display,dblink_fdbcont_zdb_id)
   select predblink_data_zdb_id, predblink_acc_num, predblink_dblink_zdb_id, predblink_acc_num_display, predblink_fdbcont_zdb_id
     from pre_db_link;
 
-! echo "         into db_link table."
-
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
   select predblink_dblink_zdb_id,'ZDB-PUB-120111-1' from pre_db_link;
 
-! echo "         into record_attribution table."
 
 drop table pre_feature;
 drop table pre_feature_marker_relationship;

@@ -25,7 +25,7 @@ endif
 
 echo "done with file delete" ;
 # build up the warehouse
-<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMartPostgres/runPhenotypeMartPostgres.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMartPostgres/runPhenotypeMartReportPostgres.txt
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMartPostgres/runPhenotypeMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMartPostgres/runPhenotypeMartReportPostgres.txt
 
 if ($? != 0) then
  echo "regen phenotype mart (the building tables, not the public tables) failed on";
@@ -52,7 +52,7 @@ echo "done with phenotype mart building public" ;
 
 # move the current table data to backup, move the new data to current.
 
-<!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMartPostgres/phenotypeMartRegenPostgres.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMartPostgres/regenPhenotypeMartReportPostgres.txt
+${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMartPostgres/phenotypeMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMartPostgres/regenPhenotypeMartReportPostgres.txt
 
 if ($? != 0) then
    echo "refresh phenotype mart (the public tables) failed and was rolled back";

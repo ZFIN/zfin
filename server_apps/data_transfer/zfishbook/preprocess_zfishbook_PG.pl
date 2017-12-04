@@ -63,13 +63,6 @@ sub sendReport($) {
 #   Main
 #
 
-
-#set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/zfishbook/";
 
 $dbname = "<!--|DB_NAME|-->";
@@ -77,8 +70,8 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to postgres database: $DBI::errstr\n";
 
 
 ## for gene trap construct Ids
@@ -96,7 +89,7 @@ $gtCnstructIds{"RP4"} = "ZDB-GTCONSTRCT-130315-2";
 $gtCnstructIds{"RP7"} = "ZDB-GTCONSTRCT-130315-1";
 
 
-open (ZFISHBOOKDATA, "/research/zarchive/load_files/Zfishbook/zfishbookData.txt") || die "Cannot open zfishbookData.txt : $!\n";
+open (ZFISHBOOKDATA, "/research/zarchive/load_files/Zfishbook/Nov_2016/zfishbookData.txt") || die "Cannot open zfishbookData.txt : $!\n";
 @lines=<ZFISHBOOKDATA>;
 close(ZFISHBOOKDATA);
 %prviousNames = ();
@@ -356,7 +349,7 @@ foreach $line (@lines) {
 
     } 
     
-    print ZFISHBOOK "$ct|$prev|$lineNum|$allele|$geneId|$featNamePart|$featureId|$cnstrtId|$lab|$prefix|\n";
+    print ZFISHBOOK "$ct|$prev|$lineNum|$allele|$geneId|$featNamePart|$featureId|$cnstrtId|$lab|$prefix\n";
 
 
   }

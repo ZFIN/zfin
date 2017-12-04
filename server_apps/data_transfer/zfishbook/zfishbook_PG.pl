@@ -112,13 +112,6 @@ sub sendLoadLogs($) {
 #   Main
 #
 
-
-#set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/zfishbook/";
 
 #remove old files
@@ -133,7 +126,7 @@ $dbname = "<!--|DB_NAME|-->";
 
 print "\nRunning zfishbook pre-process script ...\n\n";
 
-system("preprocess_zfishbook.pl");
+system("preprocess_zfishbook_PG.pl");
 
 open (ERRREPORT, "report") || die "Cannot open report : $!\n";
 
@@ -159,9 +152,7 @@ print "\nPre-processing done. doTheLoad =  $doTheLoad   \n\n";
 
 print "\n\nStarting to load ...\n\n\n" if $doTheLoad > 0;
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadZfishbookData.sql >log1 2> log2") if $doTheLoad > 0;
-
-##system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> cleanupGBTfeatureNotes.sql");
+system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> log2") if $doTheLoad > 0;
 
 sendLoadLogs("$dbname") if $doTheLoad > 0;
 
