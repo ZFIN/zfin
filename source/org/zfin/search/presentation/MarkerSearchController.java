@@ -1,18 +1,17 @@
 package org.zfin.search.presentation;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.search.service.SolrService;
-import org.zfin.search.service.MarkerSearchService;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.search.service.MarkerSearchService;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +44,7 @@ public class MarkerSearchController {
         markerSearchService.injectFacets(criteria);
 
         model.addAttribute("criteria", criteria);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Marker Search");
 
         return "search/marker-search-results.page";
     }
@@ -66,6 +66,7 @@ public class MarkerSearchController {
         }
 
         criteria.setSearchHappened(true);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Marker Search Results");
 
         return "search/marker-search-results.page";
     }

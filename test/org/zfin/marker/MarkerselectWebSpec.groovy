@@ -1,10 +1,9 @@
 package org.zfin.marker
 
-import geb.spock.GebSpec
 import org.zfin.AbstractZfinSmokeSpec
-import org.zfin.marker.Pages.MarkerSearchPage
-import org.zfin.marker.Pages.MarkerSearchResultsPage
-import org.zfin.marker.Pages.MarkerSearchTypeChoicePage
+import org.zfin.marker.pages.MarkerSearchPage
+import org.zfin.marker.pages.MarkerSearchResultsPage
+import org.zfin.marker.pages.MarkerSearchTypeChoicePage
 
 /**
  * Trying out a Geb/Spock functional (smoke) test.
@@ -13,24 +12,23 @@ class MarkerselectWebSpec extends AbstractZfinSmokeSpec {
 
     def "marker search for fgf8a"() {
         when: "go to the marker search page"
-            to MarkerSearchPage
+        to MarkerSearchPage
 
         then: "should find the input box"
-            at MarkerSearchPage
-
-
-        when:
-           nameField = 'fgf8a'
-           searchButton.click()
-
-        then:
-           at MarkerSearchTypeChoicePage
+        at MarkerSearchPage
 
         when:
-            transcriptResultsLink.click()
+        searchForm.nameField = 'fgf8a'
+        searchForm.searchButton.click()
 
         then:
-           at MarkerSearchResultsPage
+        at MarkerSearchTypeChoicePage
+
+        when:
+        transcriptResultsLink.click()
+
+        then:
+        at MarkerSearchResultsPage
 
     }
 }

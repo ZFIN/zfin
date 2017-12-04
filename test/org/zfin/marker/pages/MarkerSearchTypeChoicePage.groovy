@@ -1,15 +1,13 @@
-package org.zfin.marker.Pages
+package org.zfin.marker.pages
 
+import geb.Page
 
-
-class MarkerSearchTypeChoicePage extends MarkerSearchPage {
-
-    //you know you're at this page if there's at least one type-choice-link
-    static at = { $('.type-choice-link') }
+class MarkerSearchTypeChoicePage extends Page {
+    static at = { title == "ZFIN Marker Search Results" && $('.marker-search-type-choice') }
 
     static content = {
-        geneResultsLink { $('.GENE-type-choice-link') }
-        transcriptResultsLink { $('.TSCRIPT-type-choice-link') }
-        morpholinoResultsLink { $('.MRPHLNO-type-choice-link') }
+        geneResultsLink { $('a', text: startsWith('Gene')) }
+        transcriptResultsLink { $('a', text: startsWith('Transcript')) }
+        searchForm { module(SearchFormModule) }
     }
 }
