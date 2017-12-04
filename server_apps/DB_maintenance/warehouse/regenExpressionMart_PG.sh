@@ -4,28 +4,28 @@
 
 setenv INSTANCE <!--|INSTANCE|-->;
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/runExpressionMartReportPostgres.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/runExpressionMartReportPostgres.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart/runExpressionMartReport_PG.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart/runExpressionMartReport_PG.txt
 
 endif
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/regenExpressionMartReportPostgres.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/regenExpressionMartReportPostgres.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart/regenExpressionMartReport_PG.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart/regenExpressionMartReport_PG.txt
 
 endif
 
-if ( -e <!--|SOURCEROOT|-->/reports/tests/expressionMartUnitTestsPostgres.txt) then
- /bin/rm <!--|SOURCEROOT|-->/reports/tests/expressionMartUnitTestsPostgres.txt
+if ( -e <!--|SOURCEROOT|-->/reports/tests/expressionMartUnitTests_PG.txt) then
+ /bin/rm <!--|SOURCEROOT|-->/reports/tests/expressionMartUnitTests_PG.txt
 endif
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/expressionMartUnitTestsPostgres.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/expressionMartUnitTestsPostgres.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart/expressionMartUnitTests_PG.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart/expressionMartUnitTests_PG.txt
 endif
 
 
 echo "done with file delete" ;
 # build up the warehouse
-<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/runExpressionMart.sh <!--|DB_NAME|--> 
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart/runExpressionMart_PG.sh <!--|DB_NAME|--> 
 
 if ($? != 0) then
  echo "regen expression mart (the building tables, not the public tables) failed on";
@@ -38,8 +38,8 @@ echo "done with runexpressionmart on <!--|DB_NAME|-->";
 cd <!--|SOURCEROOT|-->
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
-/private/bin/ant run-expressionmart-unittests >&! reports/tests/expressionMartUnitTestsPostgres.txt
-cp reports/tests/expressionMartUnitTestsPostgres.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/.
+/private/bin/ant run-expressionmart-unittests >&! reports/tests/expressionMartUnitTests_PG.txt
+cp reports/tests/expressionMartUnitTests_PG.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/expressionMart/.
 
 if ($? != 0) then
    echo "regen expression mart (the building tables, not the public tables) failed on unit tests";  
@@ -50,7 +50,7 @@ endif
 
 # move the current table data to backup, move the new data to current.
 
-${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMartPostgres/expressionMartRegen.sql
+${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart/expressionMartRegen_PG.sql
 
 if ($? != 0) then
    echo "refresh expression mart (the public tables) failed and was rolled back";
