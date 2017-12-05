@@ -1,10 +1,5 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 def env = System.getenv()
 def dbname = env['DBNAME']
-def sourceroot = env['SOURCEROOT']
-def pgbindir = env['PGBINDIR']
-def pgdata = env['PGDATA']
 
 task deployPostgresFunctions {
     description = "deploy postgres function in PG"
@@ -12,17 +7,12 @@ task deployPostgresFunctions {
     doLast {
         println "deploying postgres functions ..."
         int numberOfFunctions = runSqlFiles(".")
-        println "Deployed functions: "+numberOfFunctions
-	numberOfFunctions = runSqlFiles("./Regen_names/")
-        println "Deployed regen functions: "+numberOfFunctions
+        println "Deployed functions: " + numberOfFunctions
     }
 }
 
-def projectDir = project.projectDir;
-
-
 File[] fileList(String dir) {
-    file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
+    file(dir).listFiles().sort()
 }
 
 int runSqlFiles(String directory) {
@@ -34,7 +24,6 @@ int runSqlFiles(String directory) {
 
     int numberOfProc = 0;
 
-   
     fileList(directory).each {
         File file ->
             if (file.getName().endsWith(".sql")) {
@@ -42,15 +31,19 @@ int runSqlFiles(String directory) {
                 // will execute command, return the text output from the executed command, and print to screen.
                 //println command.execute().text
                 command.execute().text
-                numberOfProc ++;
+                numberOfProc++;
+            }
+            if (file.isDirectory()) {
+                int number = runSqlFiles(file.getAbsolutePath())
+                println "deployed " + number + " files in subdirectory: " + file.getName()
             }
     }
     return numberOfProc;
 }
 
 task dropFunctions() {
-     doLast {
-     	    description = "drop all functions from the database"
-   	    exec { commandLine "bash", "-c", "psql $dbname < ./dropFunctions" }
-     }
+    doLast {
+        description = "drop all functions from the database"
+        exec { commandLine "bash", "-c", "psql $dbname < ./dropFunctions" }
+    }
 }
