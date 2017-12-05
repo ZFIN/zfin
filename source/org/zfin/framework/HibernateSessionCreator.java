@@ -9,6 +9,7 @@ import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.filter.RegexPatternTypeFilter;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
@@ -98,6 +99,7 @@ public class HibernateSessionCreator {
 
             ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
             provider.addIncludeFilter(new RegexPatternTypeFilter(Pattern.compile(".*")));
+            provider.setResourceLoader(new PathMatchingResourcePatternResolver(this.getClass().getClassLoader()));
             final Set<BeanDefinition> classes = provider.findCandidateComponents("org.zfin");
             for (BeanDefinition bbean : classes) {
                 try {

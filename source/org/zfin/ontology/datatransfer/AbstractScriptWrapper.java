@@ -7,11 +7,12 @@ import org.apache.log4j.spi.RootLogger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
-import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.properties.ZfinProperties;
+
+import java.io.File;
 
 /**
  * Abstract class that provides basic support for running db scripts.
@@ -92,6 +93,9 @@ public class AbstractScriptWrapper {
     }
 
     public static void initializeLogger(String log4jFilename) {
+        File logFile = new File(log4jFilename);
+        if (!logFile.exists())
+            return;
         DOMConfigurator.configure(log4jFilename);
     }
 

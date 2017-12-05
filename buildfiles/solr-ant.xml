@@ -66,14 +66,7 @@
 
 
     <target name="build-solr-index">
-        <exec dir="${env.SOLR_HOME}/prototype/conf" executable="server_apps/solr/prototype/conf/index-solr.groovy" failifexecutionfails="true">
-            <arg value="-a"/>
-            <arg value="${DBNAME}"/>
-            <arg value="generate-all-term-contains-synonyms-file.sql"/>
-            <arg value="generate-reporter-name-file.sql"/>
-            <arg value="generate-organism-name-file.sql"/>
-        </exec>
-
+        <groovy src="server_apps/solr/prototype/conf/index-solr.groovy" />
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
