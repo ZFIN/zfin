@@ -5,15 +5,15 @@ task deployDirectoryToTargetroot1() {
     dataDirectory += projectDir
     dataDirectory += '/ZFINPerlModules.pm'
     println "Copying file: " + dataDirectory
-copy {
-    from(dataDirectory) {
-        ttNameMap.each { name, value ->
-            if(value == null)
-	        println name +" "+value
- 	    else
-                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+    copy {
+        from(dataDirectory) {
+            ttNameMap.each { name, value ->
+                if (value == null)
+                    println name + " " + value
+                else
+                    filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
         }
+        into ttNameMap.get('TARGETROOT') + '/server_apps'
     }
-    into ttNameMap.get('TARGETROOT') + '/server_apps'
-}
 }
