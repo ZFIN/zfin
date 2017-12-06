@@ -111,6 +111,7 @@ def translateVariableSet = [
                             'DB_NAME',
                             'DEFAULT_EMAIL',
                             'ENVIRONMENT',
+			    'FTP_ROOT',
                             'GBROWSE_PATH_FROM_ROOT',
                             'GO_EMAIL_ERR',
                             'GROOVY_CLASSPATH',
