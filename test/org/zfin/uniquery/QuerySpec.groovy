@@ -122,7 +122,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PUBLICATION.name      | "Nusslein id:ZDB-PUB-970602-19"                  | "11216"
         Category.SEQUENCE_TARGETING_REAGENT.name | "wnt2b mo ng id:ZDB-MRPHLNO-100212-1"       | "12314"
         Category.CONSTRUCT.name        | "Tg(-4.9sox10:LY-GFP) id:ZDB-TGCONSTRCT-120418-22" | "12299"
-        Category.CONSTRUCT.name        | "Tg(-0.5vmhc:GFP) id:ZDB-TGCONSTRCT-110204-10"   | "12299"
+        Category.CONSTRUCT.name        | "Tg(-0.5myh7:GFP) id:ZDB-TGCONSTRCT-110204-10"   | "12299"
         Category.CONSTRUCT.name        | "Tg(-1.0ins:EGFP) id:ZDB-TGCONSTRCT-080229-1"    | "12299"
         Category.CONSTRUCT.name        | "TgBAC(pax7a:GFP) id:ZDB-TGCONSTRCT-150108-2"    | "12299"
         Category.CONSTRUCT.name        | "Tg2(krt5;EGFP) id:ZDB-TGCONSTRCT-141020-3"      | "12299"
