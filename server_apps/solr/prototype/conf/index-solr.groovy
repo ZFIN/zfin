@@ -11,9 +11,9 @@ def propertiesFile = "${env['TARGETROOT']}/home/WEB-INF/zfin.properties"
 RunSQLFiles runScriptFiles = new RunSQLFiles("Build solr index", propertiesFile, ".")
 runScriptFiles.initializeLogger("./log4j.xml")
 runScriptFiles.initDatabaseWithoutSysmaster()
-runScriptFiles.setQueryFiles(solrDir + "generate-all-term-contains-synonyms-file_PG.sql",
-        solrDir + "generate-organism-name-file_PG.sql",
-        solrDir + "generate-reporter-name-file_PG.sql")
+runScriptFiles.setQueryFiles(solrDir + "generate-all-term-contains-synonyms-file.sql",
+        solrDir + "generate-organism-name-file.sql",
+        solrDir + "generate-reporter-name-file.sql")
 runScriptFiles.execute()
 
 if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
