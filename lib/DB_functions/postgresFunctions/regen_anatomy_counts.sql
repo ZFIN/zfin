@@ -87,22 +87,21 @@ create or replace function regen_anatomy_counts()
 	  select distinct xpatex_gene_zdb_id,term_zdb_id,'p'
 	    from expression_experiment2
 	    left outer join marker probe on xpatex_probe_feature_zdb_id = mrkr_zdb_id
-	    left outer join marker gene on mrkr_zdb_id = xpatex_gene_zdb_id
+	    left outer join marker gene on gene.mrkr_zdb_id = xpatex_gene_zdb_id
 	    left outer join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-	    left outer join expression_result2 on xpatres_xpatex_zdb_id = xpatex_zdb_id	
+	    left outer join expression_result2 on xpatres_efs_id = efs_pk_id
 	    left outer join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
-	    left outer join genotype on geno_zdb_id = fish_geno_zdb_id
+	    left outer join fish on genox_fish_zdb_id = fish_zdb_id
+	    left outer join genotype on geno_zdb_id = fish_genotype_zdb_id
 	    left outer join term on (term_zdb_id = xpatres_superterm_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
-	    left outer join fish on genox_fish_zdb_id = fish_zdb_id 
-	    where geno_is_wildtype = 't'
-	      and genox_is_std_or_generic_control = 't'
+	    left outer join clone on clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+	    where geno_is_wildtype = true
+	      and genox_is_std_or_generic_control = true
               and substring(gene.mrkr_abbrev,1,10) <> 'WITHDRAWN:'
               and substring(probe.mrkr_abbrev,1,10) <> 'WITHDRAWN:'
-          and not exists(
-              select 'x' from clone
-              where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
               and clone_problem_type = 'Chimeric'
-          ) ;
+	      and clone_mrkr_zdb_id is null
+          ;
 
  
       update anatomy_stats_new
@@ -119,23 +118,23 @@ create or replace function regen_anatomy_counts()
 	insert into genes_with_xpats
 	  select distinct xpatex_gene_zdb_id,term_zdb_id,'c'
 	    from all_term_contains
-		 join expression_experiment2 on (alltermcon_contained_zdb_id = xpatres_superterm_zdb_id OR 
-	              alltermcon_contained_zdb_id = xpatres_subterm_zdb_id) 
-		 left outer join marker probe on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id 
-		 left outer join marker gene on gene.mrkr_zdb_id = xpatex_gene_zdb_id  
-		 left outer join expression_result2 on xpatres_efs_id = efs_pk_id
-		 left outer join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-		 left outer join  fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
-		 left outer join  genotype on geno_zdb_id = fish_geno_zdb_id
-  		 left outer join  term on alltermcon_container_zdb_id = term_Zdb_id
-		 left outer join fish on fish_zdb_id = genox_fish_zdb_id		
-	    where geno_is_wildtype = 't'
-	      and genox_is_std_or_generic_control = 't'
+	    	 left outer join expression_result2 on (alltermcon_contained_zdb_id = xpatres_superterm_zdb_id or
+		      	    	 		        alltermcon_contained_zdb_id = xpatres_subterm_zdb_id)
+		 left outer join expression_figure_stage on efs_pk_id = xpatres_efs_id
+		 left outer join expression_experiment2 on xpatex_zdb_id = efs_xpatex_zdb_id
+		 left outer join marker as probe on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
+                 left outer join marker as gene on gene.mrkr_zdb_id = xpatex_gene_zdb_id
+		 left outer join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
+  		 left outer join fish on fish_zdb_id = genox_fish_zdb_id
+		 left outer join term on alltermcon_container_zdb_id = term_zdb_id
+		 left outer join genotype on fish_genotype_zdb_id = geno_zdb_id
+		 left outer join clone on clone_mrkr_zdb_id = probe.mrkr_zdb_id	
+	    where geno_is_wildtype = true
+	      and genox_is_std_or_generic_control = true
               and substring(gene.mrkr_abbrev,1,10) <> 'WITHDRAWN:'
-              and substring(probe.mrkr_abbrev,1,10 <> 'WITHDRAWN:'
-              and not exists(select 'x' from clone
-             	    	       where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-             	    	       and clone_problem_type = 'Chimeric');
+              and substring(probe.mrkr_abbrev,1,10) <> 'WITHDRAWN:'
+	      and clone_problem_type = 'Chimeric'
+	      and clone_mrkr_zdb_id is null;
 
     	 update anatomy_stats_new
                 set anatstat_contains_object_count = (select count(distinct gene_zdb_id)
@@ -369,6 +368,7 @@ WHERE  genox_fish_zdb_id = fish_zdb_id
       	
       -- ---- ANATOMY_STATS ----
 
+      drop table anatomy_stats;
       alter table anatomy_stats_new rename to anatomy_stats;
 
       -- primary key
