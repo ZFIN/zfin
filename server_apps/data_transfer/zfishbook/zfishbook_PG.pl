@@ -16,7 +16,7 @@ sub sendLoadOutput($) {
 
   my $SUBJECT="Auto from ".$_[0]." : zfishbook data - new genotypes";
   my $MAILTO="xshao\@zfin.org,yvonne\@uoneuro.uoregon.edu";
-  my $TXTFILE="./pre_geno.unl";
+  #my $TXTFILE="./pre_geno.unl";
  
   # Create a new multipart message:
   my $msg3 = new MIME::Lite 
@@ -154,9 +154,9 @@ print "\n\nStarting to load ...\n\n\n" if $doTheLoad > 0;
 
 system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> log2") if $doTheLoad > 0;
 
-sendLoadLogs("$dbname") if $doTheLoad > 0;
+#sendLoadLogs("$dbname") if $doTheLoad > 0;
 
-sendLoadOutput("$dbname") if $doTheLoad > 0;
+#sendLoadOutput("$dbname") if $doTheLoad > 0;
 
 print "\n\nLoading data done.\n\n\n" if $doTheLoad > 0;
 

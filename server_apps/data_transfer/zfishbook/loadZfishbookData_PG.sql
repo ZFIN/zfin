@@ -24,9 +24,9 @@ create temp table ekkerLabData (
 ) ;
 
 
-\copy ekkerLabData from 'pre_load_input.txt';
+\copy ekkerLabData from 'pre_load_input.txt' delimiter '|';
 
-\copy (select * from ekkerLabData) to 'ekkerLabData.unl';
+\copy (select * from ekkerLabData) to 'ekkerLabData.unl' delimiter '|';
 
 
 
@@ -72,7 +72,7 @@ insert into pre_feature (
                   ekker_alias2,
                   ekker_lineNum,
                   fp_pk_id,
-                  'f'
+                  false
     from ekkerLabData, marker, feature_prefix
    where ekker_constructId = mrkr_zdb_id
      and fp_prefix = ekker_prefix
@@ -116,7 +116,7 @@ alter table pre_feature add preftr_feature_zdb_id varchar(50);
 
 update pre_feature set preftr_feature_zdb_id = get_id('ALT');
 
-\copy (select * from pre_feature order by preftr_indx) to 'pre_feature.unl'
+\copy (select * from pre_feature order by preftr_indx) to 'pre_feature.unl' delimiter '|'; 
 
 
 insert into zdb_active_data select preftr_feature_zdb_id from pre_feature;
@@ -274,7 +274,7 @@ alter table pre_data_alias add predalias_dalias_zdb_id text;
 
 update pre_data_alias set predalias_dalias_zdb_id = get_id('DALIAS');
 
-\copy (select * from pre_data_alias order by predalias_alias) to 'pre_data_alias.unl';
+\copy (select * from pre_data_alias order by predalias_alias) to 'pre_data_alias.unl' delimiter '|';
 
 insert into zdb_active_data select predalias_dalias_zdb_id from pre_data_alias;
 
@@ -383,7 +383,7 @@ alter table pre_geno add pregeno_fish_id varchar(50);
 
 update pre_geno set pregeno_fish_id = get_id('FISH');
 
-\copy (select * from pre_geno order by pregeno_feature_id) to 'pre_geno.unl';
+\copy (select * from pre_geno order by pregeno_feature_id) to 'pre_geno.unl' delimiter '|';
 
 insert into zdb_active_data select pregeno_geno_id from pre_geno;
 
@@ -542,7 +542,7 @@ alter table pre_db_link add predblink_dblink_zdb_id text;
 
 update pre_db_link set predblink_dblink_zdb_id = get_id('DBLINK');
 
-\copy (select * from pre_db_link order by predblink_acc_num) to 'pre_db_link.unl' ;
+\copy (select * from pre_db_link order by predblink_acc_num) to 'pre_db_link.unl' delimiter '|' ;
 
 insert into zdb_active_data select predblink_dblink_zdb_id from pre_db_link;
 
