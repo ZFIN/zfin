@@ -1,5 +1,4 @@
-unload to 'organism-name.txt'
+copy (
 select organism_common_name
-from organism;
-
-!/private/bin/perl -p -i -e 's/\|//' organism-name.txt
+from organism ) to '<!--|TARGETROOT|-->/server_apps/solr/prototype/conf/organism-name.txt' delimiter '|'
+;
