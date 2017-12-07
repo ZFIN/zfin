@@ -44,7 +44,7 @@ returns int as $log$
 
      insert into regen_ce_input_zdb_id_temp ( rggz_mrkr_zdb_id, rggz_genox_zdb_id )
       select mrkr_zdb_id, genox_Zdb_id from marker, expression_Experiment, fish_experiment 
-       where mrkr_type in ("GENE","GENEP")
+       where mrkr_type in ('GENE','GENEP')
         and  xpatex_gene_Zdb_id = mrkr_Zdb_id
 			   and xpatex_genox_zdb_id = genox_zdb_id
 			   and (genox_is_std_or_generic_control = 't' or not exists (Select 'x' from experiment_condition
@@ -56,7 +56,7 @@ returns int as $log$
 
     insert into regen_ce_input_zdb_id_temp ( rggz_mrkr_zdb_id, rggz_genox_zdb_id )
       select mrkr_zdb_id, genox_Zdb_id from marker,fish_str, fish_experiment, expression_experiment 
-        where mrkr_type in ("MRPHLNO","CRISPR","TALEN")
+        where mrkr_type in ('MRPHLNO','CRISPR','TALEN')
           and fishstr_fish_Zdb_id = genox_fish_zdb_id
 	  and genox_zdb_id = xpatex_genox_zdb_id
           and mrkr_Zdb_id = fishstr_Str_zdb_id
@@ -93,14 +93,14 @@ returns int as $log$
     -- -------------------------------------------------------------------
 
 
-    create unique index clean_expression_fast_search_primary_key_index_transient
+    create unique index clean_expression_fast_search_pk_index_transient
       on clean_expression_fast_search_new (cefs_mrkr_zdb_id, cefs_genox_zdb_id);
 
   
-    create index clean_expression_fast_search_mrkr_zdb_id_foreign_key_index_transient
+    create index clean_expression_fast_search_mrkr_zdb_id_fk_index_transient
       on clean_expression_fast_search_new (cefs_mrkr_zdb_id);
 
-    create index clean_expression_fast_search_genox_zdb_id_foreign_key_index_transient
+    create index clean_expression_fast_search_genox_zdb_id_fk_index_transient
       on clean_expression_fast_search_new (cefs_genox_zdb_id);
 
  
@@ -109,12 +109,12 @@ returns int as $log$
       
       alter table clean_expression_fast_search_new rename to clean_expression_fast_search;
 
-      alter index index clean_expression_fast_search_primary_key_index_transient
-        rename to clean_expression_fast_search_primary_key_index;
-      alter index clean_expression_fast_search_mrkr_zdb_id_foreign_key_index_transient
-        rename to clean_expression_fast_search_mrkr_zdb_id_foreign_key_index;
-      alter index clean_expression_fast_search_genox_zdb_id_foreign_key_index_transient 
-     rename to clean_expression_fast_search_genox_zdb_id_foreign_key_index;
+      alter index clean_expression_fast_search_pk_index_transient
+        rename to clean_expression_fast_search_pk_index;
+      alter index clean_expression_fast_search_mrkr_zdb_id_fk_index_transient
+        rename to clean_expression_fast_search_mrkr_zdb_id_fk_index;
+      alter index clean_expression_fast_search_genox_zdb_id_fk_index_transient 
+      	rename to clean_expression_fast_search_genox_zdb_id_fk_index;
 
       -- define constraints, indexes are defined earlier.
 
