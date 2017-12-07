@@ -5,7 +5,7 @@ task deployDirectoryToTargetroot(type: Copy) {
     println "Copying files into directory: " + ttNameMap.get('TARGETROOT') + '/server_apps/solr'
     from(dataDirectory) {
         ttNameMap.each { name, value ->
-            //println name +" "+value
+            println name +" "+value
             filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
         }
         exclude '**/Makefile', '**/build.gradle'
