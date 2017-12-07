@@ -64,6 +64,7 @@ create or replace function regen_term()
     -- RENAME the new tables to REPLACE the old
     -- -------------------------------------------------------------------------
 
+      drop table all_term_contains;
       alter table all_term_contains_new rename to all_term_contains;
 
       -- primary key
