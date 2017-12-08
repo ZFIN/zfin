@@ -216,7 +216,7 @@
                 #$note = $note . $unique . " ->Too Many Choices  <p>\n";
 
                 print "Content-Type: text/html; charset=UTF-8\r\n\r\n";
-                print "<meta http-equiv=\"refresh\" content=\"0; url=\/action/marker/search-results?name=fgf8a\"> \n";
+                print "<meta http-equiv=\"refresh\" content=\"0; url=\/action/marker/search-results?name=$marker\"> \n";
                 exit 0;
            }
             ###
