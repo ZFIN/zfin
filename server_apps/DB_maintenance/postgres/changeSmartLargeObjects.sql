@@ -1,8 +1,8 @@
 begin work;
 
-alter table publication alter column pub_abstract type bytea using pub_abstract::bytea;
+alter table publication alter column pub_abstract type text using pub_abstract::text;
 
-alter table person alter column nonzf_pubs type bytea using nonzf_pubs::bytea;
+alter table person alter column nonzf_pubs type text using nonzf_pubs::text;
 
 commit work;
 
