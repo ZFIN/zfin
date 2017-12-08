@@ -34,6 +34,7 @@
                 <fileset dir="@{from}">
                     <include name="**/*.xml"/>
                     <include name="**/*.conf"/>
+                    <include name="**/*.sql"/>
                     <exclude name="start-solr.sh"/>
                     <exclude name="**/*.svn"/>
                 </fileset>
@@ -44,6 +45,7 @@
                     <include name="**"/>
                     <exclude name="**/*.xml"/>
                     <exclude name="**/*.conf"/>
+                    <exclude name="**/*.sql"/>
                     <exclude name="start-solr.sh"/>
                     <exclude name="**/*.svn"/>
                 </fileset>
