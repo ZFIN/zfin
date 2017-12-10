@@ -19,5 +19,23 @@ ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/lib/DB_functions/postgresFunctions/by
 # load up the clobs into postgres
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/clobLoad.sql
 
+echo "alter table publication add abstract_text text" | ${PGBINDIR}/psql ${DBNAME}
+echo "alter table person add nonzf_pubs_text text" | ${PGBINDIR}/psql ${DBNAME}
+
+echo "update publication set abstract_text = convert_from(pub_abstract, 'UTF-8')" | ${PGBINDIR}/psql ${DBNAME}
+echo "update person set nonzf_pubs_text = convert_from(nonzf_pubs, 'UTF-8')" | ${PGBINDIR}/psql ${DBNAME}
+
+echo "update publication set pub_abstract = null" | ${PGBINDIR}/psql ${DBNAME}
+echo "update person set nonzf_pubs = null" | ${PGBINDIR}/psql ${DBNAME}
+
+echo "alter table publication alter column pub_abstract type text using pub_abstract::text" | ${PGBINDIR}/psql ${DBNAME};
+echo "alter table person alter column nonzf_pubs type text using nonzf_pubs::text" | ${PGBINDIR}/psql ${DBNAME};
+
+echo "update publication set pub_abstract = abstract_text" | ${PGBINDIR}/psql ${DBNAME}
+echo "update person set nonzf_pubs = nonzf_pubs_text" | ${PGBINDIR}/psql ${DBNAME}
+
+echo "alter table publication drop abstract_text" | ${PGBINDIR}/psql ${DBNAME}
+echo "alter table person drop nonzf_pubs_text" | ${PGBINDIR}/psql ${DBNAME}
+
 endTime=$(date)
 echo $startTime

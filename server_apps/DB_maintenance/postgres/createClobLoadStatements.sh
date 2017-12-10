@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /tmp/abstracts/
-for abstractFile in * ; do 
+for abstractFile in /tmp/abstracts/* ; do 
   fulltxt=${abstractFile%%.*}
   prefix="update publication set pub_abstract= (select bytea_import('"
   fullpath="/tmp/abstracts/";
@@ -11,7 +11,7 @@ for abstractFile in * ; do
 done
 
 cd /tmp/nonzf_pubs/
-for nonzfPubFile in * ; do 
+for nonzfPubFile in /tmp/nonzf_pubs/* ; do 
   fulltxt=${nonzfPubFile%%.*}
   prefix="update person set nonzf_pubs= (select bytea_import('"
   fullpath="/tmp/nonzf_pubs/";
