@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -80,6 +81,7 @@ public class PublicationSearchController {
         model.addAttribute("curators", profileRepository.getCurators());
         model.addAttribute("oldestPubEntryDate", oldestPubEntryDate.getTime());
         model.addAttribute("newestPubEntryDate", newestPubEntryDate.getTime());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Search");
         return "publication/publication-search.page";
     }
 

@@ -68,7 +68,12 @@
                 <table class="primary-entity-attributes">
                     <tr>
                         <th><form:label path="author" cssClass="namesearchLabel">Author</form:label></th>
-                        <td><form:input type="text" path="author"/></td>
+                        <td>
+                            <form:input type="text" path="author"/>
+                            <small>
+                                <form:checkbox path="onlyFirstAuthor" label="First Author Only" />
+                            </small>
+                        </td>
                     </tr>
                     <tr>
                         <th><form:label path="title">Title</form:label></th>

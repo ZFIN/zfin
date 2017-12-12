@@ -23,6 +23,7 @@ public enum FieldName {
     ALIAS_KEYWORD("alias_k"),
     ALIAS("alias", "synonym"),
     ALIAS_AC("alias_ac", "synonym"),
+    ALIAS_T("alias_t"),
     ALIAS_KEYWORD_AUTOCOMPLETE("alias_kac", "synonym"),
     ANATOMY("anatomy"),
     ANATOMY_TF("anatomy_tf"),

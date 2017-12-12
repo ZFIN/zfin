@@ -58,9 +58,10 @@ public class PublicationSearchService {
     private QueryResponse makeSolrQuery(PublicationSearchBean formBean, FieldName... fields) {
         SolrQuery query = new SolrQuery();
         query.setFields(Arrays.stream(fields).map(FieldName::getName).toArray(String[]::new));
+        FieldName authorField = formBean.isOnlyFirstAuthor() ? FieldName.ALIAS_T : FieldName.AUTHOR_STRING;
         addTo(query)
                 .category(Category.PUBLICATION)
-                .fqParsed(formBean.getAuthor(), FieldName.AUTHOR_STRING)
+                .fqParsed(formBean.getAuthor(), authorField)
                 .fqParsed(formBean.getKeywords(), FieldName.KEYWORD_AC)
                 .fqParsed(formBean.getTitle(), FieldName.FULL_NAME_AC)
                 .fq(formBean.getJournal(), FieldName.JOURNAL_T, FieldName.JOURNAL_NAME_T)

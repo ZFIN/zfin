@@ -39,6 +39,7 @@ public class PublicationSearchBean extends PaginationBean {
     }
 
     private String author;
+    private boolean onlyFirstAuthor;
     private String title;
     private String journal;
     private String keywords;
@@ -67,6 +68,14 @@ public class PublicationSearchBean extends PaginationBean {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public boolean isOnlyFirstAuthor() {
+        return onlyFirstAuthor;
+    }
+
+    public void setOnlyFirstAuthor(boolean onlyFirstAuthor) {
+        this.onlyFirstAuthor = onlyFirstAuthor;
     }
 
     public String getTitle() {
