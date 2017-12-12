@@ -26,10 +26,9 @@
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>Update copyright date in footer</subject>
-            <body>Winter approaches; the close of another year is upon us.
-It is a time to reflect on the progress made and the potential on the horizon.
-
-Okay, now quit that reflecting and go update the copyright year down there in the footer!</body>
+            <body>Time to open a Jira issue to update the copyright year in the footer!
+https://tracker.zfin.org/secure/CreateIssue!default.jspa
+            </body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
