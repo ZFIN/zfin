@@ -2462,11 +2462,10 @@
                                 nvl(': ' || chebi.term_name,'') ||
                                 nvl(': ' || taxon.term_name,'') as conditions,
                                 'pg-' || pg_id as pg_id
-                                from condition_data_type
-                             join experiment_condition on expcond_cdt_zdb_id = cdt_zdb_id
+                                from experiment_condition
                              join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
                              join phenotype_source_generated on genox_zdb_id = pg_genox_zdb_id
-                             join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
+                             left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
                              left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
                              left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
                              left outer join term chebi on chebi.term_zdb_id = expcond_chebi_term_zdb_id
@@ -3216,12 +3215,11 @@
                                 nvl(': ' || chebi.term_name,'') ||
                                 nvl(': ' || taxon.term_name,'') as conditions,
                                 'xpatex-' || efs_pk_id as efs_pk_id
-                                from condition_data_type
-                             join experiment_condition on expcond_cdt_zdb_id = cdt_zdb_id
+                                from experiment_condition
                              join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
                              join expression_experiment2 on xpatex_genox_zdb_id = genox_zdb_id
                              join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                             join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
+                             left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
                              left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
                              left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
                              left outer join term chebi on chebi.term_zdb_id = expcond_chebi_term_zdb_id
