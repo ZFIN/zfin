@@ -173,14 +173,33 @@ class PubmedUtils {
         @Override
         GPathResult next() {
             if (queue.isEmpty()) {
-                def fetchUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/" +
-                        "efetch.fcgi?db=pubmed&query_key=${queryKey}&WebEnv=${webEnv}" +
-                        "&retmode=xml&retstart=${start}&retmax=${max}"
-                println(fetchUrl)
-                new XmlSlurper().parse(fetchUrl).PubmedArticle.each { queue.push(it) }
-                start += max
+                fetch()
             }
             return queue.pop()
+        }
+
+        private void fetch() {
+            def attempt = 0
+            def fetchUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/" +
+                    "efetch.fcgi?db=pubmed&query_key=${queryKey}&WebEnv=${webEnv}" +
+                    "&retmode=xml&retstart=${start}&retmax=${max}"
+            while (attempt < 3) {
+                attempt += 1
+                println("$attempt: $fetchUrl")
+                try {
+                    def articles = new XmlSlurper().parse(fetchUrl).PubmedArticle
+                    if (articles.size() > 0) {
+                        articles.each { queue.push(it) }
+                        start += max
+                        return
+                    }
+                    println("No articles!")
+                } catch (IOException ignore) {
+                    println("Caught IOException!")
+                }
+                sleep(5000)
+            }
+            throw new RuntimeException("Giving up after 3 attempt to fetch from NCBI")
         }
     }
 }
