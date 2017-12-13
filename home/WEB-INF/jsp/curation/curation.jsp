@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/paging.min.js"></script>
@@ -81,6 +82,7 @@
                                         idName="${zfn:generateRandomDomID()}"
                                         shortLength="80"
                                         url="${publication.zdbID}"/>
+                <c:if test="${!empty publication.fileName}"> <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="fa fa-file-pdf-o"></i></a></c:if>
             </td>
         </tr>
         <tr>
