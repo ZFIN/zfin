@@ -64,6 +64,9 @@ while(<JOURNALS>) {
        print "$toDelete\t$toRetain\t$synonyms[0]\t$synonyms[3]\n\n";
      }
 
+     $cur = $dbh->prepare('insert into zdb_replaced_data (zrepld_old_zdb_id,zrepld_new_zdb_id) values(?, ?);');
+     $cur->execute($toDelete, $toRetain);
+
      $cur = $dbh->prepare('update publication set pub_jrnl_zdb_id = ? where pub_jrnl_zdb_id = ?;');
      $cur->execute($toRetain, $toDelete);
 
