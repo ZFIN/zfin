@@ -66,8 +66,6 @@ while(<JOURNALS>) {
 
      $cur = $dbh->prepare('update publication set pub_jrnl_zdb_id = ? where pub_jrnl_zdb_id = ?;');
      $cur->execute($toRetain, $toDelete);
-     $cur = $dbh->prepare('insert into zdb_replaced_data( set pub_jrnl_zdb_id = ? where pub_jrnl_zdb_id = ?;');
-     $cur->execute($toRetain, $toDelete);
 
      $cur = $dbh->prepare('delete from zdb_active_source where zactvs_zdb_id = ?;');                                                                                                                                                            
      $cur->execute($toDelete);
