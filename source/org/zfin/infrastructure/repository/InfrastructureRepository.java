@@ -473,6 +473,7 @@ public interface InfrastructureRepository {
 
     void setDisableUpdatesFlag(boolean readonlyMode);
 
+    String getWithdrawnZdbID(String oldZdbID);
 }
 
 

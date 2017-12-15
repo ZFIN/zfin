@@ -71,6 +71,13 @@ public class PublicationViewController {
         Publication publication = getPublication(zdbID);
 
         if (publication == null) {
+            String replacedZdbID = infrastructureRepository.getWithdrawnZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+
+        if (publication == null) {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
@@ -414,7 +421,7 @@ public class PublicationViewController {
         Journal journal = publicationRepository.getJournalByID(zdbID);
         //try zdb_replaced data if necessary
         if (journal == null) {
-            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+            String replacedZdbID = infrastructureRepository.getWithdrawnZdbID(zdbID);
             if (replacedZdbID != null) {
                 journal = publicationRepository.getJournalByID(replacedZdbID);
             }

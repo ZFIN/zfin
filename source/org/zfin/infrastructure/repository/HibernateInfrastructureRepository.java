@@ -1877,6 +1877,23 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "    from  zdb_flag " +
                 "    where zflag_name='disable updates'").uniqueResult().toString());
     }
+
+    @Override
+    public String getWithdrawnZdbID(String oldZdbID) {
+        List<WithdrawnZdbID> withdraws =
+                (List<WithdrawnZdbID>) HibernateUtil.currentSession()
+                        .createCriteria(WithdrawnZdbID.class)
+                        .add(Restrictions.eq("wdoldZdbID", oldZdbID))
+                        .list();
+        if (withdraws != null && withdraws.size() == 1) {
+            return withdraws.get(0).getWdnewZdbID();
+        } else if (withdraws == null) {
+            logger.warn("Withdrawn list is null for zdbID: " + oldZdbID);
+        } else if (withdraws.size() > 1) {
+            logger.error("Replacement list has non-unique replacements: " + withdraws.size() + " for zdbID: " + oldZdbID);
+        }
+        return null;
+    }
 }
 
 
