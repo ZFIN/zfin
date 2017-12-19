@@ -26,5 +26,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1092/QatariFlag/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1092/Rocket/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/db.changelog.master.xml"/>
 
 </databaseChangeLog>
