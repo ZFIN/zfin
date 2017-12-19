@@ -6,7 +6,6 @@ begin work ;
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Genes', 'Genes', now() from marker
  where substring(mrkr_type from 1 for 4) = 'GENE' or mrkr_type like '%RNAG%'
---and mrkr_zdb_id not like 'ZDB-%-12____-%'
 ;
 -- Genes on Vega Assembly
 insert into annual_stats(as_count, as_section, as_type, as_date)
@@ -27,14 +26,12 @@ select count(*), 'Genes', 'Transcripts', now() from db_link
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Genes', 'EST/cDNAs', now() from marker
  where mrkr_type in ('EST','CDNA')
---and mrkr_zdb_id not like 'ZDB-%-12____-%'
 ;
 
 --------------------------------------------------------------------- Genetics----------------------
 -- Features          (Alleles)
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Genetics', 'Features', now() from feature --alteration -- fish
---where feature_zdb_id not like 'ZDB-%-12____-%'
 ;
 
 --  Transgenic Features
@@ -72,25 +69,19 @@ select count(*), 'Genetics', 'Genotypes', now()
 -- Genes with GO annotation
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(distinct mrkrgoev_mrkr_zdb_id), 'Genetics', 'Genes with GO annotations', now() from marker_go_term_evidence
--- cut -f 2 -d\| < marker_go_term_evidence | sort -u | wc -l
 ;
 
 -- IEA GO annotations
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(distinct mrkrgoev_mrkr_zdb_id), 'Genetics', 'Genes with IEA GO annotations', now() from marker_go_term_evidence
 where mrkrgoev_evidence_code = 'IEA'
--- cut -f 2,5 -d\| < marker_go_term_evidence | grep '|IEA' |sort -u | wc -l
-
 ;
 
 -- Non-IEA GO annotations
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(distinct mrkrgoev_mrkr_zdb_id), 'Genetics', 'Genes with Non-IEA GO anotations', now() 
 from marker_go_term_evidence
-where mrkrgoev_evidence_code != 'IEA'
--- cut -f 2,5 -d\| < marker_go_term_evidence | grep -v 'IEA' | cut -f1 -d \|| sort -u | wc -l
-
-;
+where mrkrgoev_evidence_code != 'IEA';
 
 -- Total GO annotations
 insert into annual_stats(as_count, as_section, as_type, as_date)
@@ -142,9 +133,7 @@ select count(*), 'Reagents', 'Antibodies', now() from marker
 ------------------------------------------Expression & Phenotypes---------------------------------
 -- Gene expression patterns
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(*), 'Expression & Phenotype', 'Gene expression patterns', now() from expression_experiment2
---
-where xpatex_zdb_id not like 'ZDB-%-10____-%'
+select count(*), 'Expression & Phenotype', 'Gene expression patterns', now() from expression_result
 ;
 
 -- clean Gene expression patterns
@@ -155,7 +144,7 @@ select count(distinct xpatex_gene_zdb_id), 'Expression & Phenotype', 'Genes with
 
 --Phenotype Statements
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(*), 'Expression & Phenotype', 'Phenotype statements', now() from phenotype_statement;
+select count(*), 'Expression & Phenotype', 'Phenotype statements', now() from phenotype_observation_generated;
 
 
 --Clean phenotype
@@ -168,8 +157,6 @@ and (mfs_mrkr_zdb_id like 'ZDB-GENE%' or mfs_mrkr_zdb_id like '%RNAG%');
 -- Images annotated for expression
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Expression & Phenotype', 'Images', now() from image
- --fish_image
---where img_zdb_id not like 'ZDB-%-12____-%'
 ;
 
 
@@ -235,32 +222,30 @@ select count(*), 'Genomics', 'Links to other databases', now() from db_link, for
 -----------------------Community information-------------------------------------
 -- Publications
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(*), "Community information", "All Publications", current year to second
+select count(*), 'Community information', 'All Publications', current year to second
 from publication;
 
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(*), "Community information", "Journal Publications", current year to second
+select count(*), 'Community information', 'Journal Publications', current year to second
 from publication
-where jtype = 'Journal'
+where jtype = 'Journal';
 --where zdb_id not like 'ZDB-%-12____-%'
-;
+
+select count(*), 'Community information', 'Publications', now() from publication;
 
 -- Researchers
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Community information', 'Researchers', now() from person
---where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 -- Laboratories
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Community information', 'Laboratories', now() from lab
---where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 -- Companies
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Community information', 'Companies', now() from company
---where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 ---------------------------------------------------------------- Orthology ---------------------
