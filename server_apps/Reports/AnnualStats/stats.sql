@@ -284,7 +284,13 @@ select count(*), "Genomics", "Links to other databases", current year to second 
 -----------------------Community information-------------------------------------
 -- Publications
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(*), "Community information", "Publications", current year to second from publication
+select count(*), "Community information", "All Publications", current year to second
+from publication;
+
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), "Community information", "Journal Publications", current year to second
+from publication
+where jtype = 'Journal'
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
