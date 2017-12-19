@@ -284,6 +284,6 @@ select count( distinct ortho_zebrafish_gene_zdb_id), 'Orthology', 'Genes w/Mouse
  and ortho_Zdb_id = oev_ortho_Zdb_id
 ;
 
-\copy (select year(as_date), as_pk_id, as_section, as_type, as_count from annual_stats order by year(as_date) desc, as_pk_id asc) to 'stats.txt' delimiter '|';
+\copy (select as_date, as_pk_id, as_section, as_type, as_count from annual_stats order by as_date desc, as_pk_id asc) to 'stats.txt' delimiter '|';
 
 commit work ;
