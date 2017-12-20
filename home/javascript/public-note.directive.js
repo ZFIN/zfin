@@ -24,11 +24,6 @@
 
         var pn = this;
 
-        pn.publicNote;
-        pn.noteText;
-        pn.existingNoteText;
-        pn.errorMessage;
-
         pn.openAddNewPublicNote = openAddNewPublicNote;
         pn.openEditNote = openEditNote;
         pn.openDeleteNote = openDeleteNote;
@@ -40,7 +35,6 @@
         init();
 
         function init() {
-            pn.greeting = 'Hello, U';
             pn.noteText = '';
 
             MarkerService.getNotes(pn.markerId)
@@ -48,7 +42,7 @@
                     notes.forEach(function (note) {
                         if (note.noteEditMode === 'PUBLIC') {
                             pn.publicNote = note;
-                            pn.noteText = note.noteData;;
+                            pn.noteText = note.noteData;
                             pn.existingNoteText = note.noteData;
                         }
                     });

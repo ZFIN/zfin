@@ -70,7 +70,6 @@ TRIGGERS = \
 	lab_update_trigger.sql \
 	lab_address_update_trigger.sql \
 	marker_insert_trigger.sql \
-	marker_comments_update_trigger.sql \
 	mrkr_abbrev_update_trigger.sql \
         mrkr_name_update_trigger.sql \
 	marker_go_term_evidence_update_trigger.sql \

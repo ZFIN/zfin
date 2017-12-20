@@ -9,7 +9,6 @@ declare mrkr_name marker.mrkr_name%TYPE := scrub_char(NEW.mrkr_name);
  mrkr_abbrev marker.mrkr_abbrev%TYPE := scrub_char(NEW.mrkr_abbrev);
  mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE := zero_pad(mrkr_abbrev);
  mrkr_name_order marker.mrkr_name_order%TYPE := scrub_char(zero_pad(NEW.mrkr_name));
- mrkr_comments marker.mrkr_comments%TYPE := scrub_char(NEW.mrkr_comments);
 
 begin 
 

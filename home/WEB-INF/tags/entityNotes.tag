@@ -21,7 +21,7 @@
 <c:if test="${!(empty entity.publicComments)}">
     <tr>
         <th>Note:</th>
-        <td>${entity.publicComments}</td>
+        <td class="keep-breaks">${entity.publicComments}</td>
     </tr>
 </c:if>
 

@@ -4,7 +4,7 @@
 </th>
 
 <td>
-    <span>{{pn.publicNote.noteData}}</span>
+    <span ng-bind-html="pn.publicNote.noteData | unsafe" class="keep-breaks"></span>
     <span ng-show="pn.edit && pn.publicNote.noteData" style="cursor: pointer;"
           ng-click="pn.openEditNote()">
                        <i class="fa fa-pencil-square-o red" aria-hidden="true" title="Edit the note"></i></span>

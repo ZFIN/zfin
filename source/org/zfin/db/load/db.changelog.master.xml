@@ -29,4 +29,6 @@
     <include file="source/org/zfin/db/load/1091/pizza/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1092/QatariFlag/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1092/Rocket/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1092/Snowman/db.changelog.master.xml"/>
+
 </databaseChangeLog>
