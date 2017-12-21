@@ -31,6 +31,7 @@
             <p>{{vm.intro}}</p>
             <p><a ng-href="{{vm.pubLink}}">{{vm.pubReference}}</a></p>
             <p>{{vm.dataNote}}</p>
+            <div ng-bind-html="vm.generateDataLinks()"></div>
             <p><textarea class="form-control" ng-model="vm.customNote" cols="80" rows="4"></textarea></p>
             <p>{{vm.zfinDescription}}</p>
             <p>{{vm.signOff}},</p>
@@ -41,42 +42,6 @@
                 {{vm.address[1]}}<br>
                 {{vm.address[2]}}</p>
         </div>
-
-        <div select-all-list
-             items="vm.curatedData.genes"
-             all-label="All Genes"
-             item-label="item.name + ' (' + item.abbreviation + ')'"
-             class="notif-letter-list">
-        </div>
-
-        <div select-all-list
-             items="vm.curatedData.strs"
-             all-label="All STRs"
-             item-label="item.name"
-             class="notif-letter-list">
-        </div>
-
-        <div select-all-list
-             items="vm.curatedData.antibodies"
-             all-label="All Antibodies"
-             item-label="item.name"
-             class="notif-letter-list">
-        </div>
-
-        <div select-all-list
-             items="vm.curatedData.expressionGenes"
-             all-label="All Gene Expression"
-             item-label="item.name + ' (' + item.abbreviation + ')'"
-             class="notif-letter-list">
-        </div>
-
-        <div select-all-list
-             items="vm.curatedData.genotypes"
-             all-label="All Genotypes"
-             item-label="item.name"
-             class="notif-letter-list">
-        </div>
-
         <button class="btn btn-primary" type="button" ng-click="vm.previewNotification()">Preview Notification</button>
         <button class="btn btn-default" type="button" ng-click="vm.cancelNotificationEditing()">Cancel</button>
     </div>

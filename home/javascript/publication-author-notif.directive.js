@@ -40,8 +40,7 @@
             'into ZFIN, the Zebrafish Information Network.';
         vm.pubReference = '';
         vm.pubLink = '';
-        vm.dataNote = 'Genes and mutants associated with your paper are listed on the publication ' +
-            'page and are also appended at the end of this message.';
+        vm.dataNote = 'Please notify me if you have corrections, comments about the data associated with your paper:';
         vm.customNote = '';
         vm.zfinDescription = 'ZFIN is The Zebrafish Information Network, a centralized community ' +
             'resource for zebrafish genetic, genomic, and developmental data. We ' +
@@ -61,12 +60,13 @@
             '5291 University of Oregon',
             'Eugene, Oregon, USA 97403-5291'
         ];
-        vm.curatedData = {};
+        vm.curatedData = [];
 
         vm.hasNoRecipients = hasNoRecipients;
         vm.editNotification = editNotification;
         vm.previewNotification = previewNotification;
         vm.cancelNotificationEditing = cancelNotificationEditing;
+        vm.generateDataLinks = generateDataLinks;
         vm.generateNotification = generateNotification;
         vm.sendNotification = sendNotification;
         vm.cancelNotificationPreview = cancelNotificationPreview;
@@ -115,24 +115,7 @@
 
             PublicationService.getCuratedEntities(vm.pubId)
                 .then(function (resp) {
-                    function byType(types) {
-                        var typeArray = [].concat(types);
-                        return function(val) {
-                            return typeArray.indexOf(val.type) >= 0;
-                        }
-                    }
-
-                    angular.forEach(resp.data, function(data) {
-                        angular.forEach(data, function(datum) {
-                            datum.selected = true;
-                        })
-                    });
-
                     vm.curatedData = resp.data;
-                    vm.curatedData.genes = resp.data.markers.filter(byType('GENE'));
-                    vm.curatedData.strs = resp.data.markers.filter(byType(['MRPHLNO', 'CRISPR', 'TALEN']));
-                    vm.curatedData.antibodies = resp.data.markers.filter(byType('ATB'));
-
                     vm.editing = true;
                 })
                 .finally(function () {
@@ -147,51 +130,36 @@
         function previewNotification() {
             vm.editing = false;
             vm.previewing = true;
-        };
+        }
 
         function cancelNotificationPreview () {
             vm.editing = true;
             vm.previewing = false;
-        };
+        }
+
+        function generateDataLinks() {
+            if (!vm.curatedData) {
+                return;
+            }
+            return $sce.trustAsHtml('<ul>' +
+              vm.curatedData
+                .map(function (link) {
+                    var item = '<a href="http://' + window.location.hostname + link.path + '">' + link.label + '</a>';
+                    if (link.count) {
+                        item += ' (' + link.count + ')';
+                    }
+                    return '<li>' + item + '</li>';
+                }).join('') +
+              '</ul>');
+        }
 
         function generateNotification() {
-            function isSelected(e) {
-                return e.selected;
-            }
-
-            function appendSection(entities, label, formatter) {
-                if (entities && entities.some(isSelected)) {
-                    notif += '<p><b>' + label + '</b><br>';
-                    entities.forEach(function (e) {
-                        appendEntityLink(e, formatter);
-                    });
-                    notif += '</p>'
-                }
-            }
-
-            function nameOnly(e) {
-                return e.name;
-            }
-
-            function genoName(e) {
-                return '<i>' + e.name + '</i>';
-            }
-
-            function nameAndAbbrev(e) {
-                return e.name + '(<i>' + e.abbreviation + '</i>)';
-            }
-
-            function appendEntityLink(e, formatter) {
-                if (e.selected) {
-                    notif += '<a href="http://' + window.location.hostname + '/' + e.zdbID + '">' + formatter(e) + '</a><br>';
-                }
-            }
-
             var notif =
                 '<p>' + vm.salutation + ' ' + vm.names + ',</p>' +
                 '<p>' + vm.intro + '</p>' +
                 '<p><a href="http://' + window.location.hostname + vm.pubLink + '">' + vm.pubReference + '</a></p>' +
-                '<p>' + vm.dataNote + '</p>';
+                '<p>' + vm.dataNote + '</p>' +
+                $sce.valueOf(vm.generateDataLinks());
             if (vm.customNote) {
                 notif += '<p>' + vm.customNote + '</p>';
             }
@@ -204,23 +172,6 @@
                 '<p>' + vm.address[0] + '<br>' +
                 vm.address[1] + '<br>' +
                 vm.address[2] + '</p>';
-
-            appendSection(vm.curatedData.genes, 'Genes', nameAndAbbrev);
-            appendSection(vm.curatedData.strs, 'Sequence Targeting Reagents', nameOnly);
-            appendSection(vm.curatedData.antibodies, 'Antibodies', nameOnly);
-
-            if (vm.curatedData.expressionGenes && vm.curatedData.expressionGenes.some(isSelected)) {
-                notif += '<p><a href="http://' + window.location.hostname + '/action/figure/all-figure-view/' + vm.pubId + '"><b>Curated Gene Expression</b></a><br>';
-                vm.curatedData.expressionGenes.forEach(function (g) {
-                    if (g.selected) {
-                        notif += nameAndAbbrev(g) + '<br>';
-                    }
-                });
-                notif += '</p>';
-            }
-
-            appendSection(vm.curatedData.genotypes, 'Genotypes', genoName);
-
             return $sce.trustAsHtml(notif);
         }
 

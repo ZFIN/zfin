@@ -276,8 +276,9 @@ public interface PublicationRepository extends PaginationParameter {
     /**
      * Retrieve publications that have phenotype data for a given term and genotype including
      * substructures
-     * @param fish Fish
-     *@param aoTerm   ao term  @return Number of publications with figures per genotype and anatomy
+     *
+     * @param fish   Fish
+     * @param aoTerm ao term  @return Number of publications with figures per genotype and anatomy
      */
     PaginationResult<Publication> getPublicationsWithFigures(Fish fish, GenericTerm aoTerm, boolean includeSubstructures);
 
@@ -311,7 +312,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     SourceAlias addJournalAlias(Journal journal, String alias);
 
-    int getNumberAssociatedPublicationsForZdbID(String zdbID) ;
+    int getNumberAssociatedPublicationsForZdbID(String zdbID);
 
     PaginationResult<Publication> getAllAssociatedPublicationsForFeature(Feature feature, int maxPubs);
 
@@ -351,12 +352,19 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of markers
      */
     List<Marker> getGenesByPublication(String pubID);
+
     List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
+
     List<Marker> getGenesAndMarkersByPublication(String pubID);
+
     List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType);
+
     List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType);
+
     PaginationResult<Clone> getClonesByPublication(String pubID, PaginationBean paginationBean);
+
     List<Feature> getFeaturesByPublication(String pubID);
+
     List<Fish> getFishByPublication(String pubID);
 
     /**
@@ -507,22 +515,37 @@ public interface PublicationRepository extends PaginationParameter {
     List<String> getTalenOrCrisprFeaturesWithNoRelationship(String pubZdbID);
 
 
-    public Long getMarkerCount(Publication publication);
-    public List<Marker> getMarkers(Publication publication);
-    public Long getMorpholinoCount(Publication publication);
-    public Long getTalenCount(Publication publication);
-    public Long getCrisprCount(Publication publication);
-    public Long getAntibodyCount(Publication publication);
-    public Long getEfgCount(Publication publication);
-    public Long getCloneProbeCount(Publication publication);
-    public Long getExpressionCount(Publication publication);
-    public Long getPhenotypeCount(Publication publication);
-    public Long getPhenotypeAlleleCount(Publication publication);
-    public Long getFeatureCount(Publication publication);
-    public Long getFishCount(Publication publication);
-    public Long getOrthologyCount(Publication publication);
-    public Long getMappingDetailsCount(Publication publication);
-    public Boolean canDeletePublication(Publication publication);
+    long getMarkerCount(Publication publication);
+
+    List<Marker> getMarkers(Publication publication);
+
+    long getMorpholinoCount(Publication publication);
+
+    long getTalenCount(Publication publication);
+
+    long getCrisprCount(Publication publication);
+
+    long getAntibodyCount(Publication publication);
+
+    long getEfgCount(Publication publication);
+
+    long getCloneProbeCount(Publication publication);
+
+    long getExpressionCount(Publication publication);
+
+    long getPhenotypeCount(Publication publication);
+
+    long getPhenotypeAlleleCount(Publication publication);
+
+    long getFeatureCount(Publication publication);
+
+    long getFishCount(Publication publication);
+
+    long getOrthologyCount(Publication publication);
+
+    long getMappingDetailsCount(Publication publication);
+
+    Boolean canDeletePublication(Publication publication);
 
     Fish getFishByHandle(String handle);
 
@@ -572,6 +595,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<String> getDirectlyAttributedZdbids(String publicationId);
 
-    public Long getDirectlyAttributed(Publication publication);
+    Long getDirectlyAttributed(Publication publication);
 
 }

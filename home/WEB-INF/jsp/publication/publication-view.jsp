@@ -187,57 +187,14 @@
     ${abstractText}
 </zfin2:subsection>
 
-<zfin2:subsection title="ADDITIONAL INFORMATION" showNoData="true" test="${showAdditionalData}">
-
+<zfin2:subsection title="ADDITIONAL INFORMATION" showNoData="true" test="${allowCuration && !empty dataLinks}">
     <ul>
-        <c:if test="${markerCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/genes">Genes / Markers</a> (${markerCount})</li>
-        </c:if>
-        <c:if test="${morpholinoCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/strs?type=MRPHLNO">Morpholino</a> (${morpholinoCount})</li>
-        </c:if>
-        <c:if test="${talenCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/strs?type=TALEN">TALEN</a> (${talenCount})</li>
-        </c:if>
-        <c:if test="${crisprCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/strs?type=CRISPR">CRISPR</a> (${crisprCount})</li>
-        </c:if>
-        <c:if test="${antibodyCount > 0}">
-            <li><a href="/action/antibody/antibodies-per-publication/${publication.zdbID}" id="list-of-antibodies">Antibodies</a>
-                (${antibodyCount})
+        <c:forEach items="${dataLinks}" var="link">
+            <li>
+                <a href="${link.path}">${link.label}</a>
+                <c:if test="${!empty link.count}">(${link.count})</c:if>
             </li>
-        </c:if>
-        <c:if test="${efgCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/efgs">Engineered Foreign Genes</a> (${efgCount})</li>
-        </c:if>
-        <c:if test="${cloneProbeCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/clones">Clones and Probes</a> (${cloneProbeCount})</li>
-        </c:if>
-        <c:if test="${expressionCount > 0 || phenotypeCount > 0}">
-            <li><a href="/action/figure/all-figure-view/${publication.zdbID}">${expressionAndPhenotypeLabel}</a></li>
-        </c:if>
-        <c:if test="${mappingDetailsCount > 0}">
-            <li><a href="/action/mapping/publication/${publication.zdbID}">Mapping Details</a> (${mappingDetailsCount})
-            </li>
-        </c:if>
-        <c:if test="${featureCount > 0}">
-
-            <li><a href="/action/publication/${publication.zdbID}/feature-list">Mutations and Transgenics</a> (${featureCount})</li>
-
-            </li>
-        </c:if>
-        <c:if test="${fishCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/fish-list">Fish</a>
-                (${fishCount})
-            </li>
-        </c:if>
-        <c:if test="${orthologyCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/orthology-list">Orthology</a> (${orthologyCount})</li>
-        </c:if>
-        <c:if test="${diseaseCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/disease">Human Disease / Zebrafish Model Data</a>
-            </li>
-        </c:if>
+        </c:forEach>
         <authz:authorize access="hasRole('root')">
             <li><a href="/action/publication/${publication.zdbID}/directly-attributed">Directly Attributed Data (${numDirectlyAttributed})</a>
             </li>

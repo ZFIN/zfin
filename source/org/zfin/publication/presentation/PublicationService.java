@@ -6,6 +6,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
+import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.gwt.root.ui.PrivateNoteEntry;
+import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanCompareService;
@@ -33,6 +36,12 @@ public class PublicationService {
 
     @Autowired
     private BeanCompareService beanCompareService;
+
+    @Autowired
+    private PublicationRepository publicationRepository;
+
+    @Autowired
+    private PhenotypeRepository phenotypeRepository;
 
     public static final String SESSION_PUBLICATIONS = "SessionPublications";
 
@@ -73,7 +82,7 @@ public class PublicationService {
         return (List<Publication>) servletContext.getAttribute(generatedKey);
     }
 
-    public static Boolean showFiguresLink(Publication publication) {
+    public Boolean showFiguresLink(Publication publication) {
 
         if (publication == null) {
             return false;
@@ -91,7 +100,7 @@ public class PublicationService {
         return false;
     }
 
-    public static String getCurationStatusDisplay(Publication publication) {
+    public String getCurationStatusDisplay(Publication publication) {
         StringBuilder sb = new StringBuilder();
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
         PublicationTrackingHistory status = publicationRepository.currentTrackingStatus(publication);
@@ -103,7 +112,7 @@ public class PublicationService {
         return sb.toString();
     }
 
-    public static String getLastAuthorCorrespondenceDisplay(Publication publication) {
+    public String getLastAuthorCorrespondenceDisplay(Publication publication) {
         Set<CorrespondenceSentMessage> sentMessages = publication.getSentMessages();
         String messageType = "";
         Date latestMessageDate = null;
@@ -125,12 +134,12 @@ public class PublicationService {
         return messageType + ", " + DateFormat.getDateInstance(DateFormat.SHORT).format(latestMessageDate);
     }
 
-    public static boolean hasCorrespondence(Publication publication) {
+    public boolean hasCorrespondence(Publication publication) {
         return CollectionUtils.isNotEmpty(publication.getSentMessages()) ||
                 CollectionUtils.isNotEmpty(publication.getReceivedMessages());
     }
 
-    public static List<String> getMeshTermDisplayList(Publication publication) {
+    public List<String> getMeshTermDisplayList(Publication publication) {
         List<String> meshTermDisplays = new ArrayList<>();
         for (MeshHeading heading : publication.getMeshHeadings()) {
             meshTermDisplays.addAll(heading.getDisplayList());
@@ -138,7 +147,7 @@ public class PublicationService {
         return meshTermDisplays;
     }
 
-    public static Boolean allowCuration(Publication publication) {
+    public Boolean allowCuration(Publication publication) {
         return publication.getType().isCurationAllowed();
     }
 
@@ -321,6 +330,128 @@ public class PublicationService {
 
     public boolean publicationHasFigureWithLabel(Publication publication, String label) {
         return publication.getFigures().stream().anyMatch(fig -> fig.getLabel().equals(label));
+    }
+
+    public List<DataLinkBean> getPublicationDataLinks(Publication publication) {
+        List<DataLinkBean> links = new ArrayList<>();
+
+        long markerCount = publicationRepository.getMarkerCount(publication);
+        if (markerCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/publication/" + publication.getZdbID() + "/genes",
+                    "Genes / Markers",
+                    markerCount
+            ));
+        }
+
+        long morpholinoCount = publicationRepository.getMorpholinoCount(publication);
+        if (morpholinoCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/publication/" + publication.getZdbID() + "/strs?type=MRPHLNO",
+                    "Morpholino",
+                    morpholinoCount
+            ));
+        }
+
+        long talenCount = publicationRepository.getTalenCount(publication);
+        if (talenCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/publication/" + publication.getZdbID() + "/strs?type=TALEN",
+                    "TALEN",
+                    talenCount
+            ));
+        }
+
+        long crisprCount = publicationRepository.getCrisprCount(publication);
+        if (crisprCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/publication/" + publication.getZdbID() + "/strs?type=CRISPR",
+                    "CRISPR",
+                    crisprCount
+            ));
+        }
+
+        long antibodyCount = publicationRepository.getAntibodyCount(publication);
+        if (antibodyCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/antibody/antibodies-per-publication/" + publication.getZdbID(),
+                    "Antibodies",
+                    antibodyCount
+            ));
+        }
+
+        long efgCount = publicationRepository.getEfgCount(publication);
+        if (efgCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/publication/" + publication.getZdbID() + "/efgs",
+                    "Engineered Foreign Genes",
+                    efgCount
+            ));
+        }
+
+        long cloneCount = publicationRepository.getCloneProbeCount(publication);
+        if (cloneCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/publication/" + publication.getZdbID() + "/clones",
+                    "Clones and Probes",
+                    cloneCount
+            ));
+        }
+
+        long expressionCount = publicationRepository.getExpressionCount(publication);
+        long phenotypeCount = publicationRepository.getPhenotypeCount(publication);
+        if (expressionCount > 0 || phenotypeCount > 0) {
+            String label = getExpressionAndPhenotypeLabel(expressionCount, phenotypeCount);
+            links.add(new DataLinkBean(
+                    "/action/figure/all-figure-view/" + publication.getZdbID(),
+                    label
+            ));
+        }
+
+        long mappingCount = publicationRepository.getMappingDetailsCount(publication);
+        if (mappingCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/mapping/publication/" + publication.getZdbID(),
+                    "Mapping Details",
+                    mappingCount
+            ));
+        }
+
+        long featureCount = publicationRepository.getFeatureCount(publication);
+        if (featureCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/publication/" + publication.getZdbID() + "/feature-list",
+                    "Mutations and Transgenics",
+                    featureCount
+            ));
+        }
+
+        long fishCount = publicationRepository.getFishCount(publication);
+        if (fishCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/publication/" + publication.getZdbID() + "/fish-list",
+                    "Fish",
+                    fishCount
+            ));
+        }
+
+        long orthologyCount = publicationRepository.getOrthologyCount(publication);
+        if (orthologyCount > 0) {
+            links.add(new DataLinkBean(
+                    "/action/publication/" + publication.getZdbID() + "/orthology-list",
+                    "Orthology",
+                    orthologyCount
+            ));
+        }
+
+        if (CollectionUtils.isNotEmpty(phenotypeRepository.getHumanDiseaseModels(publication.getZdbID()))) {
+            links.add(new DataLinkBean(
+                    "/action/publication/" + publication.getZdbID() + "/disease",
+                    "Human Disease / Zebrafish Model Data"
+            ));
+        }
+
+        return links;
     }
 
 }

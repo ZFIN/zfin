@@ -39,6 +39,8 @@ public class CurationController implements CurationService {
     private ExpressionRepository expRepository;
     @Autowired
     private PublicationRepository pubRepository;
+    @Autowired
+    private PublicationService publicationService;
 
     private final static Logger LOG = RootLogger.getLogger(CurationController.class);
 
@@ -67,13 +69,15 @@ public class CurationController implements CurationService {
     @RequestMapping(value = "/assays", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<String> getAssays() {
-        if (assayDtos != null)
+        if (assayDtos != null) {
             return assayDtos;
+        }
         InfrastructureRepository infra = RepositoryFactory.getInfrastructureRepository();
         List<ExpressionAssay> assays = infra.getAllAssays();
         assayDtos = new ArrayList<>();
-        for (ExpressionAssay assay : assays)
+        for (ExpressionAssay assay : assays) {
             assayDtos.add(assay.getName());
+        }
         return assayDtos;
     }
 
@@ -105,7 +109,7 @@ public class CurationController implements CurationService {
         model.addAttribute("publication", publication);
         model.addAttribute("curationTabs", CurationModuleType.values());
         model.addAttribute("currentTab", currentTab);
-        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
+        model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Curate: " + publication.getTitle());
         return "curation/curation.page";
     }
@@ -114,10 +118,12 @@ public class CurationController implements CurationService {
     @RequestMapping("/currentTab/{currentTab}")
     protected String setCurrentTab(@PathVariable String currentTab,
                                    Model model) throws Exception {
-        if (currentTab == null)
+        if (currentTab == null) {
             return "error: no tab name provided";
-        if (CurationModuleType.getType(currentTab) == null)
+        }
+        if (CurationModuleType.getType(currentTab) == null) {
             return "error: no tab name found by name: " + currentTab;
+        }
         String tabName = CurationModuleType.getType(currentTab).getValue();
         model.addAttribute("currentTab", tabName);
         return "success";

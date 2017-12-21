@@ -1,8 +1,6 @@
 package org.zfin.publication.presentation;
 
 import org.zfin.framework.presentation.EntityPresentation;
-import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 
 /**
@@ -25,16 +23,16 @@ public class PublicationPresentation extends EntityPresentation {
     public static String getLink(Publication publication, String linkContent) {
         return getViewLinkWithID(publication.getZdbID(), linkContent, publication.getZdbID());
     }
+
     /**
      * Per case 8749, an EST could be attributed to a person. So adding this clause to redirect to person page and not pubview
      * in case that happens. Apparently there are more than 6k such cases.
      */
     public static String getLink(String attributionZdbID, String linkContent) {
-        if (attributionZdbID.contains("PERS")){
-          return getTomcatLink(person_uri,attributionZdbID,"1");
-        }
-        else{
-            return getViewLinkWithID(attributionZdbID, linkContent,attributionZdbID);
+        if (attributionZdbID.contains("PERS")) {
+            return getTomcatLink(person_uri, attributionZdbID, "1");
+        } else {
+            return getViewLinkWithID(attributionZdbID, linkContent, attributionZdbID);
         }
     }
 
@@ -56,7 +54,7 @@ public class PublicationPresentation extends EntityPresentation {
         return sb.toString();
     }
 
-    public static String getMultipleAttributionLink(String zdbID, String additionalZdbID, int publicationCount ) {
+    public static String getMultipleAttributionLink(String zdbID, String additionalZdbID, int publicationCount) {
         StringBuilder sb = new StringBuilder("");
 
         String count = String.valueOf(publicationCount);

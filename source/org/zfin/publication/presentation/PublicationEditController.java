@@ -123,12 +123,13 @@ public class PublicationEditController {
         }
         PublicationBean publicationBean = new PublicationBean();
         publicationBean.setPublication(publication);
-        if (publication.getAccessionNumber() != null)
+        if (publication.getAccessionNumber() != null) {
             publicationBean.setAccessionNumber(publication.getAccessionNumber().toString());
+        }
 
         model.addAttribute("publicationBean", publicationBean);
-        model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
-        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
+        model.addAttribute("allowCuration", publicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Pub: " + publication.getTitle());
         return "publication/edit-publication.page";
     }
@@ -198,12 +199,13 @@ public class PublicationEditController {
 
         PublicationBean bean = new PublicationBean();
         bean.setPublication(publication);
-        if (publication.getAccessionNumber() != null)
+        if (publication.getAccessionNumber() != null) {
             bean.setAccessionNumber(publication.getAccessionNumber().toString());
+        }
         model.addAttribute("publicationBean", bean);
         model.addAttribute("authorStrings", publicationService.splitAuthorListString(publication.getAuthors()));
-        model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
-        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
+        model.addAttribute("allowCuration", publicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Link Authors: " + publication.getTitle());
 
         return "publication/link-authors.page";
@@ -311,8 +313,9 @@ public class PublicationEditController {
             tx.commit();
         } catch (Exception exception) {
             try {
-                if (tx != null)
+                if (tx != null) {
                     tx.rollback();
+                }
             } catch (HibernateException hibernateException) {
                 logger.error("Error during roll back of transaction", hibernateException);
             }
@@ -359,8 +362,9 @@ public class PublicationEditController {
             tx.commit();
         } catch (Exception exception) {
             try {
-                if (tx != null)
+                if (tx != null) {
                     tx.rollback();
+                }
             } catch (HibernateException hibernateException) {
                 logger.error("Error during roll back of transaction", hibernateException);
             }

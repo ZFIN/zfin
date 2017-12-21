@@ -16,20 +16,16 @@ import org.zfin.curation.presentation.*;
 import org.zfin.curation.repository.CurationRepository;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.database.InformixUtil;
-import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.root.dto.EntityZdbIdDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.presentation.JSONMessageList;
-import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
@@ -75,6 +71,9 @@ public class PublicationTrackingController {
     @Autowired
     private CurationDTOConversionService converter;
 
+    @Autowired
+    private PublicationService publicationService;
+
     @RequestMapping(value = "/{zdbID}/track")
     public String showPubTracker(Model model, @PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
@@ -84,8 +83,8 @@ public class PublicationTrackingController {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Track Pub: " + publication.getTitle());
         model.addAttribute("publication", publication);
-        model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
-        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
+        model.addAttribute("allowCuration", publicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute("loggedInUser", ProfileService.getCurrentSecurityUser());
         return "publication/track-publication.page";
     }
@@ -102,7 +101,7 @@ public class PublicationTrackingController {
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/notes", method = RequestMethod.POST)
     public PublicationNoteDTO addPublicationNote(@PathVariable String zdbID,
-                                                             @RequestBody PublicationNoteDTO noteDTO) {
+                                                 @RequestBody PublicationNoteDTO noteDTO) {
         Publication publication = publicationRepository.getPublication(zdbID);
 
         PublicationNote note = new PublicationNote();
@@ -118,7 +117,7 @@ public class PublicationTrackingController {
         PublicationNoteDTO dto = converter.toPublicationNoteDTO(note);
 
         tx.commit();
-        
+
         return dto;
     }
 
@@ -192,13 +191,12 @@ public class PublicationTrackingController {
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.POST)
-    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID,@RequestParam(required = false, defaultValue = "false") Boolean claimedFlag,@RequestBody CurationStatusDTO dto) throws InvalidWebRequestException{
+    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID, @RequestParam(required = false, defaultValue = "false") Boolean claimedFlag, @RequestBody CurationStatusDTO dto) throws InvalidWebRequestException {
         Publication publication = publicationRepository.getPublication(zdbID);
-        PublicationTrackingHistory pth=publicationRepository.currentTrackingStatus(publication);
-        if (claimedFlag &&pth.getOwner() != null && dto.getOwner() != null && pth.getOwner().getZdbID() != dto.getOwner().getZdbID()) {
+        PublicationTrackingHistory pth = publicationRepository.currentTrackingStatus(publication);
+        if (claimedFlag && pth.getOwner() != null && dto.getOwner() != null && pth.getOwner().getZdbID() != dto.getOwner().getZdbID()) {
             throw new InvalidWebRequestException("Pub already claimed");
-        }
-        else{
+        } else {
             PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
             newStatus.setPublication(publication);
             newStatus.setStatus(dto.getStatus());
@@ -419,33 +417,9 @@ public class PublicationTrackingController {
 
     @ResponseBody
     @RequestMapping(value = "{id}/curatedEntities", method = RequestMethod.GET)
-    public Map<String, Set<EntityZdbIdDTO>> getCuratedData(@PathVariable String id) {
-        Map<String, Set<EntityZdbIdDTO>> data = new HashMap<>();
-
-        Set<EntityZdbIdDTO> markers = new TreeSet<>();
-        for (Marker marker : markerRepository.getMarkersForAttribution(id)) {
-            markers.add(DTOConversionService.convertToEntityZdbIdDTO(marker));
-        }
-        data.put("markers", markers);
-
-        Set<EntityZdbIdDTO> expressionGenes = new TreeSet<>();
-        for (ExpressionExperiment2 experiment : expressionRepository.getExperiments2(id)) {
-            Marker gene = experiment.getGene();
-            if (gene != null) {
-                expressionGenes.add(DTOConversionService.convertToEntityZdbIdDTO(experiment.getGene()));
-            }
-        }
-        data.put("expressionGenes", expressionGenes);
-
-        Set<EntityZdbIdDTO> genotypes = new TreeSet<>();
-        for (Genotype genotype : mutantRepository.getGenotypesForAttribution(id)) {
-            if (!genotype.isWildtype()) {
-                genotypes.add(DTOConversionService.convertToEntityZdbIdDTO(genotype));
-            }
-        }
-        data.put("genotypes", genotypes);
-
-        return data;
+    public List<DataLinkBean> getCuratedData(@PathVariable String id) {
+        Publication publication = publicationRepository.getPublication(id);
+        return publicationService.getPublicationDataLinks(publication);
     }
 
     @ResponseBody
@@ -482,7 +456,7 @@ public class PublicationTrackingController {
                 letter.getMessage(),
                 false,
                 sender.getFirstName() + " " + sender.getLastName() + " <" + sender.getEmail() + ">",
-                letter.getRecipients().toArray(new String[] {}));
+                letter.getRecipients().toArray(new String[]{}));
 
         if (!sent) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

@@ -26,7 +26,6 @@ import org.zfin.marker.presentation.MarkerReferenceBean;
 import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.PhenotypeRepository;
@@ -65,6 +64,8 @@ public class PublicationViewController {
     @Autowired
     private FigureViewService figureViewService;
 
+    @Autowired
+    private PublicationService publicationService;
 
     @RequestMapping("/publication/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
@@ -84,66 +85,15 @@ public class PublicationViewController {
 
         model.addAttribute("publication", publication);
         model.addAttribute("abstractText", publication.getAbstractText());
-        model.addAttribute("showFiguresLink", PublicationService.showFiguresLink(publication));
-        model.addAttribute("curationStatusDisplay", PublicationService.getCurationStatusDisplay(publication));
-        model.addAttribute("correspondenceDisplay", PublicationService.getLastAuthorCorrespondenceDisplay(publication));
-        model.addAttribute("meshTermDisplayList", PublicationService.getMeshTermDisplayList(publication));
-        model.addAttribute("hasCorrespondence", PublicationService.hasCorrespondence(publication));
-        model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
-
-        /* counts */
-        Long markerCount = publicationRepository.getMarkerCount(publication);
-        Long morpholinoCount = publicationRepository.getMorpholinoCount(publication);
-        Long talenCount = publicationRepository.getTalenCount(publication);
-        Long crisprCount = publicationRepository.getCrisprCount(publication);
-        Long antibodyCount = publicationRepository.getAntibodyCount(publication);
-        Long efgCount = publicationRepository.getEfgCount(publication);
-        Long cloneProbeCount = publicationRepository.getCloneProbeCount(publication);
-        Long expressionCount = publicationRepository.getExpressionCount(publication);
-        Long phenotypeCount = publicationRepository.getPhenotypeCount(publication);
-        Long phenotypeAlleleCount = publicationRepository.getPhenotypeAlleleCount(publication);
-        Long featureCount = publicationRepository.getFeatureCount(publication);
-        Long fishCount = publicationRepository.getFishCount(publication);
-        Long orthologyCount = publicationRepository.getOrthologyCount(publication);
-        Long mappingDetailsCount = publicationRepository.getMappingDetailsCount(publication);
-        Long numDirectlyAttributed = publicationRepository.getDirectlyAttributed(publication);
-
-        model.addAttribute("markerCount", markerCount);
-        model.addAttribute("morpholinoCount", morpholinoCount);
-        model.addAttribute("talenCount", talenCount);
-        model.addAttribute("crisprCount", crisprCount);
-        model.addAttribute("antibodyCount", antibodyCount);
-        model.addAttribute("efgCount", efgCount);
-        model.addAttribute("cloneProbeCount", cloneProbeCount);
-        model.addAttribute("expressionCount", expressionCount);
-        model.addAttribute("phenotypeCount", phenotypeCount);
-        model.addAttribute("featureCount", featureCount);
-        //model.addAttribute("phenotypeAlleleCount", phenotypeAlleleCount);
-        model.addAttribute("fishCount", fishCount);
-        model.addAttribute("orthologyCount", orthologyCount);
-        model.addAttribute("mappingDetailsCount", mappingDetailsCount);
-        model.addAttribute("numDirectlyAttributed", numDirectlyAttributed);
-
-        List<DiseaseAnnotation> diseaseAnnotationList = phenotypeRepository.getHumanDiseaseModels(zdbID);
-        model.addAttribute("diseaseCount", diseaseAnnotationList.size());
-
-        model.addAttribute("expressionAndPhenotypeLabel", PublicationService.getExpressionAndPhenotypeLabel(expressionCount, phenotypeCount));
-
+        model.addAttribute("showFiguresLink", publicationService.showFiguresLink(publication));
+        model.addAttribute("curationStatusDisplay", publicationService.getCurationStatusDisplay(publication));
+        model.addAttribute("correspondenceDisplay", publicationService.getLastAuthorCorrespondenceDisplay(publication));
+        model.addAttribute("meshTermDisplayList", publicationService.getMeshTermDisplayList(publication));
+        model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
+        model.addAttribute("allowCuration", publicationService.allowCuration(publication));
+        model.addAttribute("dataLinks", publicationService.getPublicationDataLinks(publication));
+        model.addAttribute("numDirectlyAttributed", publicationRepository.getDirectlyAttributed(publication));
         model.addAttribute("allowDelete", publicationRepository.canDeletePublication(publication));
-
-        if (PublicationService.allowCuration(publication)) {
-            model.addAttribute("showAdditionalData", PublicationService.hasAdditionalData(
-                    markerCount, morpholinoCount,
-                    talenCount, crisprCount,
-                    antibodyCount, efgCount,
-                    cloneProbeCount, expressionCount,
-                    phenotypeCount, phenotypeAlleleCount, featureCount,
-                    fishCount, orthologyCount, (long) diseaseAnnotationList.size()
-            ));
-        } else {
-            model.addAttribute("showAdditionalData", false);
-        }
-
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         return "publication/publication-view.page";
     }
@@ -372,9 +322,9 @@ public class PublicationViewController {
 
     @RequestMapping("/publication/{zdbID}/strs")
     public String showSTRList(@PathVariable String zdbID,
-                                       @RequestParam("type") String type,
-                                       Model model,
-                                       HttpServletResponse response) {
+                              @RequestParam("type") String type,
+                              Model model,
+                              HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
 
         if (publication == null) {
@@ -445,7 +395,7 @@ public class PublicationViewController {
 
 
     @RequestMapping("/publication/image-edit")
-    public String getImageEdit(Model model,@RequestParam("zdbID") String zdbID) {
+    public String getImageEdit(Model model, @RequestParam("zdbID") String zdbID) {
 
         Image image = publicationRepository.getImageById(zdbID);
         if (image == null) {
@@ -455,7 +405,7 @@ public class PublicationViewController {
         model.addAttribute("image", image);
 
         Figure figure = image.getFigure();
-        if (figure!=null) {
+        if (figure != null) {
             Clone probe = figureViewService.getProbeForFigure(figure);
             model.addAttribute("probe", probe);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
@@ -466,7 +416,7 @@ public class PublicationViewController {
 
 
     @RequestMapping("/publication/printable/{zdbID}")
-    public String printable (@PathVariable String zdbID, Model model, HttpServletResponse response) {
+    public String printable(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
         if (publication == null) {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
@@ -512,9 +462,9 @@ public class PublicationViewController {
 
     @RequestMapping("/publication/{pubID}/directly-attributed")
     public String showDirectlyAttributed(@PathVariable String pubID,
-                                    @ModelAttribute("formBean") GeneBean geneBean,
-                                    Model model,
-                                    HttpServletResponse response) {
+                                         @ModelAttribute("formBean") GeneBean geneBean,
+                                         Model model,
+                                         HttpServletResponse response) {
         logger.info("zdbID: " + pubID);
 
         if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
