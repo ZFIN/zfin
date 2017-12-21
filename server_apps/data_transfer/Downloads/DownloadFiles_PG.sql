@@ -1572,13 +1572,13 @@ and xpatres_subterm_zdb_id is null
         xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
 union
 select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-       '' as subontid,
-       '' as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name,
+       sub.term_ont_id as subontid,
+       sub.term_name as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name,
         xpatex_source_zdb_id,
         case when xpatex_probe_feature_zdb_id = '' then ' ' else xpatex_probe_feature_zdb_id end as probe_id,
         case when xpatex_atb_zdb_id = '' then ' ' else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
  from marker, expression_experiment, fish_experiment, fish, experiment, expression_result, stage startStage, stage endStage,
- term super, genotype
+ term super, genotype, term sub
  where geno_is_wildtype = 't'
    and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
    and xpatres_expression_found = 't'
@@ -1595,7 +1595,8 @@ select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_n
    and xpatres_start_stg_zdb_id = startStage.stg_zdb_id
    and xpatres_end_stg_zdb_id = endStage.stg_zdb_id
    and fish_genotype_zdb_id = geno_zdb_id
-and xpatres_subterm_zdb_id is null
+   and sub.term_zdb_id = xpatres_subterm_zdb_id
+and xpatres_subterm_zdb_id is not null
  group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
         subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
         xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
