@@ -409,7 +409,7 @@ $(function () {
 
     $('.list-collapse').listCollapse({label: 'results', itemsToShow: 3});
 
-    $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
+    $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {directLink: true});
 
     $('#primary-query-input').bind("typeahead:select", function() {
         $('#query-form').submit();

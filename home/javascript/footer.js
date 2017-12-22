@@ -23,7 +23,7 @@ document.write(
 
 $(function() {
     $(".default-input").focus();
-    $('#header-search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
+    $('#header-search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {directLink: true});
     $('#header-search-query-input').bind("typeahead:select", function() {
         $('#header-query-form').submit();
     });

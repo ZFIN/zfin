@@ -32,7 +32,7 @@
                     </form>
                     <script>
                         jQuery(document).ready(function() {
-                            jQuery('#search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
+                            jQuery('#search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {directLink: true});
                         });
                         $('#search-query-input').bind("typeahead:select", function() {
                             $('#query-form').submit();
