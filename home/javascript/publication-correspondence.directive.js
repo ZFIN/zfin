@@ -77,6 +77,12 @@
             PublicationService.deleteCorrespondence(corr)
                 .then(function () {
                     vm.correspondences.splice(idx, 1);
+                    vm.successMessage = 'Message deleted.';
+                    vm.errorMessage = '';
+                })
+                .catch(function () {
+                    vm.successMessage = '';
+                    vm.errorMessage = 'Error deleting message.';
                 });
         }
 

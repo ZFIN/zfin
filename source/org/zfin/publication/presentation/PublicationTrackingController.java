@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.curation.Correspondence;
 import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
 import org.zfin.curation.presentation.*;
@@ -396,12 +395,13 @@ public class PublicationTrackingController {
 
     @ResponseBody
     @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.DELETE, produces = "text/plain")
-    public String deleteCorrespondence(@PathVariable long id) {
+    public String deleteCorrespondence(@PathVariable long id, @RequestParam boolean outgoing) {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
 
-        Correspondence correspondence = (Correspondence) session.get(Correspondence.class, id);
-        session.delete(correspondence);
+        Class messageClass = outgoing ? CorrespondenceSentMessage.class : CorrespondenceReceivedMessage.class;
+        Object message = session.get(messageClass, id);
+        session.delete(message);
 
         tx.commit();
 

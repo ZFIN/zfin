@@ -94,7 +94,7 @@
         }
 
         function deleteCorrespondence(corr) {
-            return $http.delete('/action/publication/correspondences/' + corr.id);
+            return $http.delete('/action/publication/correspondences/' + corr.id + '?outgoing=' + corr.outgoing);
         }
 
         function getPublicationDetails(id) {

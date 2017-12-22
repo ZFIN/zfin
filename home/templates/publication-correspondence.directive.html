@@ -84,9 +84,11 @@
             <ul class="dropdown-menu" ng-show="correspondence.outgoing">
                 <li ng-class="{disabled: correspondence.to.length == 0}"><a href ng-click="vm.resendMessage(correspondence)">Resend</a></li>
                 <li><a href ng-click="vm.openReplyForMessage(correspondence)">Record Reply</a></li>
+                <li><a href ng-click="vm.deleteCorrespondence(correspondence, $index)">Delete</a></li>
             </ul>
             <ul class="dropdown-menu" ng-show="!correspondence.outgoing">
                 <li><a href ng-click="vm.sendReply(correspondence)">Reply</a></li>
+                <li><a href ng-click="vm.deleteCorrespondence(correspondence, $index)">Delete</a></li>
             </ul>
         </div>
         <div><strong>{{correspondence.date | date: 'yyyy-MM-dd'}}</strong></div>

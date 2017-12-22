@@ -84,11 +84,6 @@
             <one-to-many class="org.zfin.curation.PublicationNote"/>
         </set>
 
-        <set name="correspondences" lazy="true" table="publication_correspondence" order-by="pubcorr_contacted_date desc">
-            <key column="pubcorr_pub_zdb_id"/>
-            <one-to-many class="org.zfin.curation.Correspondence"/>
-        </set>
-
         <set name="dbXrefs" lazy="true" table="pub_db_xref" order-by="pdx_accession_number">
             <key column="pdx_pub_zdb_id"/>
             <one-to-many class="org.zfin.publication.PublicationDbXref"/>
