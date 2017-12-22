@@ -31,10 +31,7 @@ import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ReferenceDatabase;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.zfin.marker.MarkerRelationship.Type.*;
@@ -107,26 +104,36 @@ public class MarkerRelationshipController {
                         , MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
                         , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT));
 
-        Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);
+        Set<MarkerRelationshipPresentation> nonDuplicateCloneRelashionshipsSet = new HashSet<>();
+        for (MarkerRelationshipPresentation cloneRelationship : cloneRelationships) {
+            nonDuplicateCloneRelashionshipsSet.add(cloneRelationship);
+        }
+
+        List<MarkerRelationshipPresentation> nonDuplicateCloneRelashionships = new ArrayList<>();
+        for (MarkerRelationshipPresentation nonDuplicateCloneRelationship : nonDuplicateCloneRelashionshipsSet) {
+            nonDuplicateCloneRelashionships.add(nonDuplicateCloneRelationship);
+        }
+
+        Collections.sort(nonDuplicateCloneRelashionships, markerRelationshipSupplierComparator);
         if (!interacts) {
-            for (int i = 0; i < cloneRelationships.size(); i++) {
-                MarkerRelationshipPresentation mrp = cloneRelationships.get(i);
+            for (int i = 0; i < nonDuplicateCloneRelashionships.size(); i++) {
+                MarkerRelationshipPresentation mrp = nonDuplicateCloneRelashionships.get(i);
                 System.out.println(interacts);
 
 
                 if (mrp.getRelationshipType().contains("interacts with")) {
-                    cloneRelationships.remove(i);
+                    nonDuplicateCloneRelashionships.remove(i);
                 }
             }
         }
 
             if (interacts) {
-                for (int i = 0; i < cloneRelationships.size(); i++) {
-                    MarkerRelationshipPresentation mrp = cloneRelationships.get(i);
+                for (int i = 0; i < nonDuplicateCloneRelashionships.size(); i++) {
+                    MarkerRelationshipPresentation mrp = nonDuplicateCloneRelashionships.get(i);
                 System.out.println(mrp.getRelationshipType());
                 if (!mrp.getRelationshipType().equals("interacts with")) {
                     System.out.println("huh");
-                    cloneRelationships.remove(i);
+                    nonDuplicateCloneRelashionships.remove(i);
                     i--;
                 }
             }
@@ -141,7 +148,7 @@ public class MarkerRelationshipController {
         }*/
 
 
-        return cloneRelationships;
+        return nonDuplicateCloneRelashionships;
     }
 
     @ResponseBody
