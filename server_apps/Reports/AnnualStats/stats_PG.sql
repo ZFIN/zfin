@@ -92,9 +92,8 @@ select count(*), 'Genetics', 'Total GO Annotations', now() from marker_go_term_e
 
 --Genes with OMIM disease phenotypes
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(distinct omimp_ortho_zdb_id), 'Genetics', 'Genes with OMIM phenotypes', now()
- from omim_phenotype ;
-
+select count(distinct ortho_zebrafish_gene_zdb_id), 'Genetics', 'Genes with OMIM phenotypes', now()
+ from ortholog where exists(select 'x' from omim_phenotype where omimp_ortho_zdb_id = ortho_zdb_id);
 
 ---------------------------------------------------------------Reagents ----------------------------
 --Morpholinos
