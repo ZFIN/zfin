@@ -65,6 +65,7 @@
             <label id="sequence-label" class="col-sm-2 control-label">Sequence</label>
             <div class="col-sm-6">
                 <div str-sequence
+                     type="${formBean.strType}"
                      sequence-text="${formBean.sequence}"
                      reported-sequence-name="reportedSequence"
                      displayed-sequence-name="sequence"
@@ -78,6 +79,7 @@
             <label class="col-sm-2 control-label">Target Sequence 2</label>
             <div class="col-sm-6">
                 <div str-sequence
+                     type="${formBean.strType}"
                      sequence-text="${formBean.sequence2}"
                      reported-sequence-name="reportedSequence2"
                      displayed-sequence-name="sequence2"

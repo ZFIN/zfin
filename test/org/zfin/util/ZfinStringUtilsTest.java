@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.zfin.marker.Marker;
 
 import java.util.List;
 
@@ -90,6 +91,22 @@ public class ZfinStringUtilsTest {
         Boolean output = ZfinStringUtils.isValidNucleotideSequence(input);
         assertThat("isValidNucleotideSequence should return true for " + input,
                 output, is(false));
+    }
+
+    @Test
+    public void isValidNucleotideSequenceShouldReturnFalseForSequenceWithR() {
+        String input = "GCGCCATTGCTTGCARAGAATTG";
+        Boolean output = ZfinStringUtils.isValidNucleotideSequence(input);
+        assertThat("isValidNucleotideSequence should return false for " + input,
+                output, is(false));
+    }
+
+    @Test
+    public void isValidNucleotideSequenceShouldReturnTrueForTALENSequenceWithR() {
+        String input = "GCGCCATTGCTTGCARAGAATTG";
+        Boolean output = ZfinStringUtils.isValidNucleotideSequence(input, Marker.Type.TALEN);
+        assertThat("isValidNucleotideSequence should return true for " + input,
+                output, is(true));
     }
 
     @Test

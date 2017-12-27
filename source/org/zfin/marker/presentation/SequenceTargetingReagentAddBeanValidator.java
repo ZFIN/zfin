@@ -34,9 +34,9 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
         }
 
         String strSequence = formBean.getSequence();
-        validateSequence(errors, "sequence", strSequence);
         String strType = formBean.getStrType();
         Marker.Type type = Marker.Type.getType(strType);
+        validateSequence(errors, "sequence", strSequence, type);
         String targetGeneSymbol = formBean.getTargetGeneSymbol();
         if (StringUtils.isEmpty(targetGeneSymbol)) {
             errors.rejectValue("targetGeneSymbol", "str.target.empty");
@@ -63,7 +63,7 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
             //Marker.Type type = Marker.Type.getType(strType);
             String strSecondSequence = formBean.getSequence2();
             if (type == Marker.Type.TALEN) {
-                validateSequence(errors, "sequence2", strSecondSequence);
+                validateSequence(errors, "sequence2", strSecondSequence, type);
             }
 
             SequenceTargetingReagent existingWithSequences;
@@ -81,10 +81,10 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
         }
     }
 
-    private void validateSequence(Errors errors, String field, String sequence) {
+    private void validateSequence(Errors errors, String field, String sequence, Marker.Type type) {
         if (StringUtils.isBlank(sequence)) {
             errors.rejectValue(field, "str.sequence.empty");
-        } else if (!ZfinStringUtils.isValidNucleotideSequence(sequence)) {
+        } else if (!ZfinStringUtils.isValidNucleotideSequence(sequence, type)) {
             errors.rejectValue(field, "str.sequence.characters");
         }
     }

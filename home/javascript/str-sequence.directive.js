@@ -12,6 +12,7 @@
                 displayedSequenceName: '@',
                 reversedName: '@',
                 complementedName: '@',
+                type: '@',
                 reportedSequence: '=?',
                 sequence: '=?',
                 isReversed: '=?',
@@ -58,7 +59,11 @@
         }
 
         function stripBadCharacters(str) {
-            return str.replace(/[^ATGC]/ig, '');
+            var bases = 'ATGC';
+            if (vm.type === 'TALEN') {
+                bases += 'R';
+            }
+            return str.replace(new RegExp('[^' + bases + ']', 'ig'), '');
         }
 
         function reverseString(str) {

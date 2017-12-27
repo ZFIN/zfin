@@ -45,13 +45,13 @@ public class StrDetailsValidator implements Validator {
         }
 
         if (!errors.hasFieldErrors("sequence1") &&
-                !ZfinStringUtils.isValidNucleotideSequence(bean.getSequence1())) {
+                !ZfinStringUtils.isValidNucleotideSequence(bean.getSequence1(), type)) {
             errors.rejectValue("sequence1", "str.sequence.characters");
         }
 
         if (type == Marker.Type.TALEN &&
                 !errors.hasFieldErrors("sequence2") &&
-                !ZfinStringUtils.isValidNucleotideSequence(bean.getSequence2())) {
+                !ZfinStringUtils.isValidNucleotideSequence(bean.getSequence2(), type)) {
             errors.rejectValue("sequence2", "str.sequence.characters");
         }
 

@@ -10,6 +10,7 @@
         <label class="col-sm-2 control-label">{{vm.sequenceLabel}}</label>
         <div class="col-sm-6">
             <div str-sequence
+                 type="{{vm.type}}"
                  reported-sequence="vm.str.reportedSequence1"
                  sequence="vm.str.sequence1"
                  is-reversed="vm.str.reversed1"
@@ -26,6 +27,7 @@
         <label class="col-sm-2 control-label">Target Sequence 2</label>
         <div class="col-sm-6">
             <div str-sequence
+                 type="{{vm.type}}"
                  reported-sequence="vm.str.reportedSequence2"
                  sequence="vm.str.sequence2"
                  is-reversed="vm.str.reversed2"

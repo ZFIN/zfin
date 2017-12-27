@@ -1,5 +1,7 @@
 package org.zfin.util;
 
+import org.zfin.marker.Marker;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -128,13 +130,20 @@ public class ZfinStringUtils {
     }
 
     public static boolean isValidNucleotideSequence(final String sequenceString) {
+        return isValidNucleotideSequence(sequenceString, null);
+    }
+
+    public static boolean isValidNucleotideSequence(final String sequenceString, Marker.Type type) {
         if (sequenceString == null) {
             return false;
         }
 
-        Pattern pattern = Pattern.compile("\\s|[^ATGC]");
-        Matcher matcher = pattern.matcher(sequenceString);
-        return !matcher.find();
+        String bases = "ATGC";
+        if (type != null && type == Marker.Type.TALEN) {
+            bases += "R";
+        }
+        String pattern = String.format("^[%s]+$", bases);
+        return sequenceString.matches(pattern);
     }
 
     public static boolean isZdbId(final String txt) {
