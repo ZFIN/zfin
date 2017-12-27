@@ -31,6 +31,6 @@ and gene.mrkr_zdb_id not in (
   and phenox_genox_zdb_id = genox_zdb_id
 )
 -- and the pub is open and 'recent'
-and pub_arrival_date >= '2009-01-01 00:00:00.000'
+and pub_arrival_date >= '2009-01-01'
 and pub_completion_date is null
 order by 1, 2, 4
