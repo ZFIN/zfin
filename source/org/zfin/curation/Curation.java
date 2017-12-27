@@ -123,6 +123,7 @@ public class Curation {
         PHENOTYPE("Phenotype"),
         REGIONS("Regions"),
         SEQUENCE("Sequence"),
+        SEQUENCE_VARIANT("Sequence Variant"),
         TOXICOLOGY("Toxicology"),
         TRANSCRIPTS("Transcripts"),
         TRANSGENIC_CONSTRUCT("Transgenic Construct");
