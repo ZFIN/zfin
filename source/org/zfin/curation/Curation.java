@@ -105,24 +105,25 @@ public class Curation {
     }
 
     public enum Topic {
+        ANATOMY("Anatomy"),
         ANTIBODIES("Antibodies"),
+        BEHAVIOR("Behavior"),
         DISEASE("Disease"),
+        ELECTROPHYSIOLOGY("Electrophysiology"),
         EXPRESSION("Expression"),
         FEATURES("Features (Mutant)"),
         FISH_ORTHOLOGY("Fish Orthology"),
-        GO("GO"),
         GENES("Genes"),
         GENOTYPE("Genotype"),
+        GO("GO"),
         LINKED_AUTHORS("Linked Authors"),
         MAPPING("Mapping"),
         NOMENCLATURE("Nomenclature"),
         ORTHOLOGY("Orthology"),
         PHENOTYPE("Phenotype"),
+        REGIONS("Regions"),
         SEQUENCE("Sequence"),
         TOXICOLOGY("Toxicology"),
-	ANATOMY("Anatomy"),
-	BEHAVIOR("Behavior"),
-	ELECTROPHYSIOLOGY("Electrophysiology"),
         TRANSCRIPTS("Transcripts"),
         TRANSGENIC_CONSTRUCT("Transgenic Construct");
 
