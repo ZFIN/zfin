@@ -527,11 +527,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             HibernateUtil.flushAndCommitCurrentSession();
             newFeatureDTO = getFeature(feature.getZdbID());
 
-            Map<String, String> screens = new HashMap<>(3);
-            screens.put("la", "Burgess / Lin");
-            screens.put("sa", "Sanger");
-            screens.put("mn", "Zfishbook");
-
             Map<FieldName, Object> solrDoc = new HashMap<>(12);
             solrDoc.put(FieldName.ID, feature.getZdbID());
             solrDoc.put(FieldName.CATEGORY, Category.MUTANT.getName());
@@ -542,19 +537,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             solrDoc.put(FieldName.NAME_SORT, feature.getNameOrder());
             solrDoc.put(FieldName.ALIAS, feature.getAbbreviation());
             solrDoc.put(FieldName.URL, "/" + feature.getZdbID());
-
-            String prefix = feature.getFeaturePrefix().getPrefixString();
-            if (screens.containsKey(prefix)) {
-                solrDoc.put(FieldName.SCREEN, screens.get(prefix));
-            }
-
             if (feature.getAliases() != null) {
                 List<String> aliases = feature.getAliases().stream()
                         .map(DataAlias::getAlias)
                         .collect(Collectors.toList());
                 solrDoc.put(FieldName.ALIAS, aliases);
             }
-
             solrDoc.put(FieldName.DATE, new Date());
             solrDoc.put(FieldName.MUTAGEN, feature.getFeatureAssay().getMutagen().toString());
             SolrService.addDocument(solrDoc);
