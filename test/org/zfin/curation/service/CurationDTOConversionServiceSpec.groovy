@@ -3,7 +3,6 @@ package org.zfin.curation.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.TestConfiguration
 import org.zfin.ZfinIntegrationSpec
-import org.zfin.curation.Correspondence
 import org.zfin.curation.Curation
 import org.zfin.curation.PublicationNote
 import org.zfin.profile.Person
@@ -65,12 +64,6 @@ class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
         zdbID: "ZDB-PNOTE-030801-6",
         text: "Hahaha! Great paper!",
         date: new Date(2003, 8, 1, 9, 16, 30)
-    )
-
-    def correspondence = new Correspondence(
-        publication: new Publication(zdbID: "ZDB-PUB-030527-22"),
-        id: 5,
-        contactedDate: new Date(2003, 6, 12, 14, 11, 2)
     )
 
     def "convert PublicationNote to DTO for current logged-in user"() {
