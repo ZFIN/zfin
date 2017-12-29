@@ -27,7 +27,7 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-dynamic -DJobName=Check-Duplicate-Publication-Titles_d</targets>
+            <targets>validate-data-report-simple -DJobName=Check-Duplicate-Publication-Titles_d</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
