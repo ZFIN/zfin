@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 import org.zfin.Species;
 import org.zfin.feature.*;
 import org.zfin.feature.repository.FeatureRepository;
@@ -182,8 +183,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 if (isValidAccession(accessionNumber, "DNA") == null) {
                     throw new ValidationException("DNA accession Number not found: " + accessionNumber);
                 }
-            }
-            else{
+            } else {
                 detail.setDnaSequenceReferenceAccessionNumber(null);
                 detail.setReferenceDatabase(null);
 
@@ -192,11 +192,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (!detail.equals(oldDetail)) {
                 infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
             }
-        }
-        else{
-            if (detail !=null){
+        } else {
+            if (detail != null) {
                 //This also will delete any FDMD record (in rec attribution as well)
-               infrastructureRepository.deleteActiveDataByZdbID(detail.getZdbID());
+                infrastructureRepository.deleteActiveDataByZdbID(detail.getZdbID());
             }
 
         }
@@ -230,7 +229,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             // remove existing record
             if (proteinDetail != null) {
                 featureRepository.deleteFeatureProteinMutationDetail(proteinDetail);
-      //          infrastructureRepository.deleteMutationDetailAttribution(proteinDetail.getZdbID(), featureDTO.getPublicationZdbID());
+                //          infrastructureRepository.deleteMutationDetailAttribution(proteinDetail.getZdbID(), featureDTO.getPublicationZdbID());
             }
 
         }
@@ -267,7 +266,14 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
         }
-        featureRepository.update(feature, addTranscriptAttribution, featureDTO.getPublicationZdbID());
+        try {
+            featureRepository.update(feature, addTranscriptAttribution, featureDTO.getPublicationZdbID());
+        } catch (ConstraintViolationException e) {
+            String message = "FEATURE_TRACKING table violation: feature with name " + feature.getName() + " already exists in tracking table";
+            DuplicateEntryException duplicateEntryException = new DuplicateEntryException(message);
+            e.printStackTrace();
+            throw duplicateEntryException;
+        }
         if (!StringUtils.equals(oldFtrName, newFtrName)) {
 
             FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, oldFtrName);
@@ -665,14 +671,14 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         //add attribution to coding sequence of related construct
         if (feature.getType().equals(FeatureTypeEnum.TRANSGENIC_INSERTION)) {
 
-                List<Marker> codingSeq = RepositoryFactory.getMarkerRepository().getCodingSequence(marker);
-                for (Marker codingGene : codingSeq) {
-                    if (infrastructureRepository.getRecordAttribution(codingGene.zdbID, featureMarkerRelationshipDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD) == null) {
-                        infrastructureRepository.insertRecordAttribution(codingGene.zdbID,featureMarkerRelationshipDTO.getPublicationZdbID());
-                        infrastructureRepository.insertUpdatesTable(codingGene.zdbID, "record attribution", featureMarkerRelationshipDTO.getPublicationZdbID(), "Added direct attribution to related construct");
-                    }
+            List<Marker> codingSeq = RepositoryFactory.getMarkerRepository().getCodingSequence(marker);
+            for (Marker codingGene : codingSeq) {
+                if (infrastructureRepository.getRecordAttribution(codingGene.zdbID, featureMarkerRelationshipDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD) == null) {
+                    infrastructureRepository.insertRecordAttribution(codingGene.zdbID, featureMarkerRelationshipDTO.getPublicationZdbID());
+                    infrastructureRepository.insertUpdatesTable(codingGene.zdbID, "record attribution", featureMarkerRelationshipDTO.getPublicationZdbID(), "Added direct attribution to related construct");
                 }
             }
+        }
         HibernateUtil.flushAndCommitCurrentSession();
         HibernateUtil.closeSession();
         List<FeatureMarkerRelationshipDTO> dtos = getFeatureMarkerRelationshipsForPub(publicationID);
