@@ -2221,5 +2221,36 @@ select fmrel_mrkr_zdb_id, mrkr_name, fmrel_type, fmrel_ftr_zdb_id, feature_name
  where feature_zdb_id = fmrel_ftr_zdb_id
  and fmrel_mrkr_Zdb_id = mrkr_zdb_id 
  and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature');
+ 
+-- generate a file to map Disease to Genes via Orthology
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/disease_gene_ortholog.txt'"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/disease_gene_ortholog.txt'
+ delimiter "	"
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, term_name, term_zdb_id, omimp_name, omimp_omim_id 
+  from ortholog, marker, omim_phenotype, omimp_termxref_mapping, term_xref, term 
+ where ortho_other_species_taxid = 9606 
+   and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id 
+   and omimp_ortho_zdb_id = ortho_zdb_id 
+   and otm_omimp_id = omimp_pk_id 
+   and tx_pk_id = otm_tx_id 
+   and term_zdb_id = tx_term_zdb_id 
+union 
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, " ", " ", omimp_name, omimp_omim_id 
+  from ortholog, marker, omim_phenotype 
+ where ortho_other_species_taxid = 9606 
+   and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id 
+   and omimp_ortho_zdb_id = ortho_zdb_id 
+   and not exists(select "x" from omimp_termxref_mapping, term_xref, term 
+                   where otm_omimp_id = omimp_pk_id 
+                     and tx_pk_id = otm_tx_id 
+                     and term_zdb_id = tx_term_zdb_id) 
+union 
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, " ", " ", omimp_name, " " 
+  from ortholog, marker, omim_phenotype 
+ where ortho_other_species_taxid = 9606 
+   and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id 
+   and omimp_ortho_zdb_id = ortho_zdb_id 
+   and omimp_omim_id is null
+order by 2, 4, 5, 7;
 
 commit work;
