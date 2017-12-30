@@ -10,5 +10,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/PUB-438.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/ZFIN-2944.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/PUB-444.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/PUB-411.sql" />
 
 </databaseChangeLog>

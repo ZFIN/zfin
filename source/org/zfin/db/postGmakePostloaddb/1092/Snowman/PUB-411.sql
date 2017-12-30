@@ -1,0 +1,13 @@
+--liquibase formatted sql
+--changeset xshao:PUB-411
+
+UPDATE curation
+   SET cur_pub_zdb_id = 'ZDB-PUB-170218-14'
+ WHERE cur_pub_zdb_id = 'ZDB-PUB-010220-6';
+
+DELETE from mesh_heading
+ WHERE mh_pub_zdb_id = 'ZDB-PUB-010220-6';
+
+UPDATE pub_tracking_history
+   SET pth_pub_zdb_id = 'ZDB-PUB-170218-14'
+ WHERE pth_pub_zdb_id = 'ZDB-PUB-010220-6';
