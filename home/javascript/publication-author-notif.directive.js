@@ -99,9 +99,15 @@
             vm.sendSuccess = false;
             vm.sendError = false;
 
-            var sendAuthors = vm.recipients = vm.authors.filter(function (a) { return a.send; });
+            var sendAuthors = vm.authors.filter(function (a) { return a.send; });
 
-            vm.recipients = sendAuthors.map(function(a) { return a.email; });
+            vm.recipients = [];
+            sendAuthors.forEach(function(a) {
+                a.email.split(/[\s;,]+/).forEach(function (e) {
+                    if (!e) { return; }
+                    vm.recipients.push(e);
+                });
+            });
             vm.noteText = 'Notified authors: ' + sendAuthors.map(function (a) { return a.display; }).join(', ');
 
             var additional = vm.additionalRecipients.split(/[,\s]+/);
