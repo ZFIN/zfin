@@ -57,7 +57,6 @@
         <mapping class="org.zfin.antibody.AntibodyExternalNote"/>
         <mapping class="org.zfin.antibody.presentation.AntibodyAOStatistics"/>
         <mapping class="org.zfin.audit.AuditLogItem"/>
-        <mapping class="org.zfin.curation.Correspondence"/>
         <mapping class="org.zfin.curation.Curation"/>
         <mapping class="org.zfin.curation.PublicationNote"/>
         <mapping class="org.zfin.database.UnloadInfo"/>
