@@ -11,3 +11,6 @@ DELETE from mesh_heading
 UPDATE pub_tracking_history
    SET pth_pub_zdb_id = 'ZDB-PUB-170218-14'
  WHERE pth_pub_zdb_id = 'ZDB-PUB-010220-6';
+
+INSERT INTO withdrawn_data (wd_old_zdb_id, wd_new_zdb_id, wd_display_note) 
+VALUES ('ZDB-PUB-010220-6', 'ZDB-PUB-170218-14',  "publication merged");
