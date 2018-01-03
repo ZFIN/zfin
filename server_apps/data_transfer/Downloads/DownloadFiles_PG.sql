@@ -2308,7 +2308,7 @@ drop view innophenoconstructs;
 -- generate a file to map Disease to Genes via Orthology
 \echo 'disease_gene_ortholog.txt'
 create view diseaseGeneOrtholog as
-select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, term_name, term_zdb_id, omimp_name, omimp_omim_id
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, term_name, term_ont_id, omimp_name, omimp_omim_id
   from ortholog, marker, omim_phenotype, omimp_termxref_mapping, term_xref, term
  where ortho_other_species_taxid = 9606
    and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
@@ -2334,7 +2334,7 @@ select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_i
    and omimp_ortho_zdb_id = ortho_zdb_id
    and omimp_omim_id is null
 order by 2, 4, 5, 7;
-\copy (select * from diseaseGeneOrtholog) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/disease_gene_ortholog.txt' with delimiter as '	' null as '';
+\copy (select * from diseaseGeneOrtholog) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene2DiseaseViaOrthology.txt' with delimiter as '	' null as '';
 drop view diseaseGeneOrtholog;
 
 commit work;

@@ -2224,9 +2224,9 @@ select fmrel_mrkr_zdb_id, mrkr_name, fmrel_type, fmrel_ftr_zdb_id, feature_name
  
 -- generate a file to map Disease to Genes via Orthology
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/disease_gene_ortholog.txt'"
-unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/disease_gene_ortholog.txt'
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene2DiseaseViaOrthology.txt'
  delimiter "	"
-select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, term_name, term_zdb_id, omimp_name, omimp_omim_id 
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, term_name, term_ont_id, omimp_name, omimp_omim_id 
   from ortholog, marker, omim_phenotype, omimp_termxref_mapping, term_xref, term 
  where ortho_other_species_taxid = 9606 
    and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id 

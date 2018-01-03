@@ -2558,17 +2558,17 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
         </Download>
         <Download orderIndex="1">
             <Name>
-                Gene, Disease, Ortholog and OMIM
+                Gene to Disease via Orthology
             </Name>
             <Category>
                 Human Disease
             </Category>
-            <FileName>disease_gene_ortholog</FileName>
+            <FileName>gene2DiseaseViaOrthology</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, term_name, term_zdb_id, omimp_name, omimp_omim_id
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, term_name, term_ont_id, omimp_name, omimp_omim_id
   from ortholog, marker, omim_phenotype, omimp_termxref_mapping, term_xref, term
  where ortho_other_species_taxid = 9606
    and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
