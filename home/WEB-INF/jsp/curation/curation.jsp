@@ -113,8 +113,7 @@
                 <span quick-figure pub-id="${publication.zdbID}"></span> |
                 <a class="small-new-link" href="javascript:"
                    onClick=open("/action/publication/${publication.zdbID}/feature-list","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")>FEATURE
-                    TABLE</a>
-                <span quick-figure pub-id="${publication.zdbID}"></span> |
+                    TABLE</a> |
                 <a class="small-new-link" href="javascript:"
                    onClick=open("/action/publication/${publication.zdbID}/directly-attributed","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")>DIRECTLY ATTRIBUTED</a>
             </td>
