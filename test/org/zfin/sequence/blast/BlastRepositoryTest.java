@@ -214,7 +214,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         for (DBLink dbLink : dbLinkList) {
             if (dbLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.UNIPROTKB)) {
                 List<Database> blastDatabases = dbLink.getBlastableDatabases();
-                assertEquals(4, blastDatabases.size());
+                assertEquals(3, blastDatabases.size());
                 for (Database database : blastDatabases) {
                     assertTrue(
                             database.getAbbrev() == Database.AvailableAbbrev.SPTR_ZF
