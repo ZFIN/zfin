@@ -24,27 +24,13 @@ import java.util.Map;
 public abstract class AbstractExternalBlastController {
 
 
-    public static Map<String, String> getHiddenVariables(Sequence sequence,Database database,boolean isShortSequence) {
+    public static Map<String, String> getHiddenVariables(Sequence sequence, Database database, boolean isShortSequence) {
 
         Map<String, String> hiddenVariables = new HashMap<>();
 
         if (database.getType() == Database.Type.NUCLEOTIDE) {
-//            for vega
-            if (database.getAbbrev() == Database.AvailableAbbrev.VEGA_BLAST) {
-                hiddenVariables.put("_query_sequence", sequence.getData());
-                hiddenVariables.put("species", "Danio_rerio");
-                hiddenVariables.put("database_dna", "LATESTGP"); // genomic sequence
-                hiddenVariables.put("database", "dna");
-                hiddenVariables.put("query", "dna");
-                hiddenVariables.put("method", "BLASTN");
-                if (isShortSequence) {
-                    hiddenVariables.put("sensitivity", "OLIGO");
-                } else {
-                    hiddenVariables.put("sensitivity", "LOW");
-                }
-            }
 //            <%--for ncbi--%>
-            else if (database.getAbbrev() == Database.AvailableAbbrev.BLAST) {
+            if (database.getAbbrev() == Database.AvailableAbbrev.BLAST) {
                 hiddenVariables.put("QUERY", sequence.getData());
                 hiddenVariables.put("PAGE", "Nucleotides");
                 hiddenVariables.put("PROGRAM", "blastn");

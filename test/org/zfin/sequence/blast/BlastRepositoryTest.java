@@ -34,7 +34,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
     public void getSingleBlastRepository() {
         Database database = blastRepository.getDatabase(Database.AvailableAbbrev.RNASEQUENCES);
         assertNotNull(database);
-        database = blastRepository.getDatabase(Database.AvailableAbbrev.VEGA_BLAST);
+        database = blastRepository.getDatabase(Database.AvailableAbbrev.MEGA_BLAST);
         assertNotNull(database);
     }
 
@@ -222,8 +222,6 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
                                     database.getAbbrev() == Database.AvailableAbbrev.PBLAST
                                     ||
                                     database.getAbbrev() == Database.AvailableAbbrev.ENSEMBL_P
-                                    ||
-                                    database.getAbbrev() == Database.AvailableAbbrev.VEGAP
                     );
                 }
 

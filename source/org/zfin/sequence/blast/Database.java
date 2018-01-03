@@ -191,8 +191,9 @@ public class Database {
         sb.append(", publicDatabase=").append(publicDatabase);
         sb.append(", isLocked=").append(isLocked);
         sb.append(", displayName=").append(displayName);
-        if (origination != null)
+        if (origination != null) {
             sb.append(", origination=").append(origination.getType().toString());
+        }
         sb.append(", childrenRelationships=").append(childrenRelationships.size());
         sb.append(", parentRelationships=").append(parentRelationships.size());
         sb.append('}');
@@ -244,10 +245,7 @@ public class Database {
         VEGA_TRANSCRIPT("vega_transcript"),
         VEGA("Vega"),
         VEGA_ZFIN("vega_zfin"),
-        VEGA_BLAST("VEGA BLAST"),
-        VEGA_BLAST_POST("VEGA BLAST post"),
-        VEGAP("VEGAP"),
-	VEGAPROTEIN_ZF("vegaprotein_zf"),
+        VEGAPROTEIN_ZF("vegaprotein_zf"),
         VEGA_WITHDRAWN("vega_withdrawn"),
         ZFIN_ALL_AA("zfin_all_aa"),
         ZFIN_CDNA_SEQ("zfin_cdna_seq"),
@@ -258,7 +256,7 @@ public class Database {
         ZFIN_MRPH("zfin_mrph"),
         ZFIN_TALEN("zfin_talen"),
         ZFIN_CRISPR("zfin_crispr"),
-	ALL_REFPROT_AA("all_refprot_aa");
+        ALL_REFPROT_AA("all_refprot_aa");
 
 
         private final String value;
@@ -277,8 +275,9 @@ public class Database {
 
         public static AvailableAbbrev getType(String type) {
             for (AvailableAbbrev t : values()) {
-                if (t.toString().equals(type.trim()))
+                if (t.toString().equals(type.trim())) {
                     return t;
+                }
             }
             throw new RuntimeException("No BlastDB named " + type + " found.");
         }
@@ -301,8 +300,9 @@ public class Database {
 
         public static Type getType(String type) {
             for (Type t : values()) {
-                if (t.toString().equals(type))
+                if (t.toString().equals(type)) {
                     return t;
+                }
             }
             throw new RuntimeException("No blast database of type " + type + " found.");
         }
