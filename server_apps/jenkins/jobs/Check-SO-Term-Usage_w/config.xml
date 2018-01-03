@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Please add a description</description>
+    <description>List all terms in SO_ZFIN_MAPPING table that have a different term name than the name in the SO ontology</description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
