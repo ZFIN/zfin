@@ -31,6 +31,9 @@ UPDATE pub_tracking_history
    SET pth_pub_zdb_id = 'ZDB-PUB-980313-2'
  WHERE pth_pub_zdb_id = 'ZDB-PUB-170217-1';
 
+DELETE FROM zdb_active_source 
+WHERE zactvs_zdb_id = 'ZDB-PUB-170217-1';
+
 INSERT INTO withdrawn_data (wd_old_zdb_id, wd_new_zdb_id, wd_display_note) 
 VALUES ('ZDB-PUB-170217-1', 'ZDB-PUB-980313-2',  "publication merged");
 
