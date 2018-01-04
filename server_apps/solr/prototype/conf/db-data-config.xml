@@ -3530,9 +3530,17 @@
         >
 
             <entity name="feature_aliases"
-                    query="select dalias_alias alias, dalias_data_zdb_id from data_alias
-                            where substring(dalias_data_zdb_id from 1 for 7) = 'ZDB-ALT'"
-                    where="dalias_data_zdb_id=feature.id"
+                    query="select dalias_alias alias, dalias_data_zdb_id data_id from data_alias
+                            where substring(dalias_data_zdb_id from 1 for 7) = 'ZDB-ALT'
+			    union
+                           select mrkr_name alias, fmrel_ftr_zdb_id data_id from marker, feature_marker_relationship
+			     where fmrel_mrkr_zdb_id = mrkr_zdb_id
+			     and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature')
+		           union
+			   select dalias_alias alias, fmrel_ftr_zdb_id as data_id from feature_marker_relationship, data_alias
+			     where dalias_data_zdb_id = fmrel_mrkr_zdb_id
+			     and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature')"
+                    where="data_id=feature.id"
                     cacheImpl="SortedMapBackedCache"
             >
                 <field name="alias" column="dalias_alias" />
