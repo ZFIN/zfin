@@ -193,7 +193,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-PUB-080326-24");
         assertTrue(page.getTitleText().contains("Chen et al"));
 
-        HtmlAnchor antibodiesLink = (HtmlAnchor) page.getElementById("list-of-antibodies");
+        HtmlAnchor antibodiesLink = page.getAnchorByText("Antibodies");
         HtmlPage antibodyListPage = webClient.getPage(nonSecureUrlDomain + antibodiesLink.getHrefAttribute());
 
         assertNotNull(antibodyListPage);
