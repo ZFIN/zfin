@@ -7,7 +7,6 @@
 <ac:structured-macro ac:name="link-to"><ac:parameter ac:name="">add comment</ac:parameter><ac:parameter ac:name="linkText">Add Comment</ac:parameter></ac:structured-macro>
 <p />
 
-<ac:structured-macro ac:name="table-plus"><ac:parameter ac:name="sortIcon">true</ac:parameter><ac:parameter ac:name="columnAttributes">style=width:20%</ac:parameter><ac:rich-text-body>
 <table><tbody>
 <tr>
 <th><p> Antibody&nbsp;Name: </p></th>
@@ -57,7 +56,6 @@
  </p></td>
 </tr>
 </tbody></table>
-</ac:rich-text-body></ac:structured-macro>
 <p />
 
 <h3>Assays Tested</h3>
