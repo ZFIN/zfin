@@ -61,13 +61,22 @@ public class ExpressionSearchController {
     @RequestMapping("/results")
     public String results(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
 
-        model.addAttribute("stages", ExpressionSearchService.getStageOptions());
+        SortedMap<String, String> stages = ExpressionSearchService.getStageOptions();
+        model.addAttribute("stages", stages);
 
         if (criteria.getRows() == null) {
             criteria.setRows(DEFAULT_PAGE_SIZE);
         }
         if (criteria.getPage() == null) {
             criteria.setPage(1);
+        }
+
+        if (criteria.getStartStageId() == null) {
+            criteria.setStartStageId(stages.firstKey());
+        }
+
+        if (criteria.getEndStageId() == null) {
+            criteria.setEndStageId(stages.lastKey());
         }
 
         List<ImageResult> images = ExpressionSearchService.getImageResults(criteria);

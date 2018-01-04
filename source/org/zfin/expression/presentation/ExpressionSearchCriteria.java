@@ -50,7 +50,7 @@ public class ExpressionSearchCriteria {
         urlCreator.addNameValuePair("assayName", getAssayName());
         urlCreator.addNameValuePair("fish", getFish());
         urlCreator.addNameValuePair("authorField", getAuthorField());
-        urlCreator.addNameValuePair("journalType", getJournalType().toString());
+        urlCreator.addNameValuePair("journalType", getJournalType() == null ? "" : getJournalType().toString());
         if (onlyFiguresWithImages) { urlCreator.addNameValuePair("onlyFiguresWithImages", "true"); }
         if (onlyWildtype) { urlCreator.addNameValuePair("onlyWildtype", "true"); }
         if (onlyReporter) { urlCreator.addNameValuePair("onlyReporter", "true"); }
