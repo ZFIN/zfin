@@ -18,6 +18,7 @@ def download (ftp, filename, closure) {
   }
 }
 
+
 def withMeshFtpSite (closure) {
   ftp = new FTPClient();
   ftp.connect("nlmpubs.nlm.nih.gov")
@@ -93,6 +94,7 @@ println("Loading terms into $dbname")
 psql dbname, """
   COPY (SELECT mesht_mesh_id, mesht_term_name, mesht_type FROM mesh_term) to '$PRE_FILE';
 
+  test
   CREATE TEMP TABLE tmp_terms(
     id varchar(10),
     name varchar(255),

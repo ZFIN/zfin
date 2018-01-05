@@ -48,7 +48,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
 
 //Object to JSON in String
     String jsonInString = writer.writeValueAsString(allAlleleDTO);
-    try (PrintStream out = new PrintStream(new FileOutputStream("basic-allele-info-zfin.json"))) {
+    try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.4_allele.json"))) {
       out.print(jsonInString);
     }
   }
