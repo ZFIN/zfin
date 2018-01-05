@@ -5,11 +5,10 @@ UPDATE curation
    SET cur_pub_zdb_id = 'ZDB-PUB-170218-14'
  WHERE cur_pub_zdb_id = 'ZDB-PUB-010220-6';
 
-DELETE from mesh_heading
+DELETE FROM mesh_heading
  WHERE mh_pub_zdb_id = 'ZDB-PUB-010220-6';
 
-UPDATE pub_tracking_history
-   SET pth_pub_zdb_id = 'ZDB-PUB-170218-14'
+DELETE FROM pub_tracking_history
  WHERE pth_pub_zdb_id = 'ZDB-PUB-010220-6';
 
 DELETE FROM publication_file 
