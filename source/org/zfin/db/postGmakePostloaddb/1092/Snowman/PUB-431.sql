@@ -27,8 +27,7 @@ UPDATE pub_db_xref
    SET pdx_pub_zdb_id = 'ZDB-PUB-980313-2'
  WHERE pdx_pub_zdb_id = 'ZDB-PUB-170217-1';
 
-UPDATE pub_tracking_history
-   SET pth_pub_zdb_id = 'ZDB-PUB-980313-2'
+DELETE FROM pub_tracking_history
  WHERE pth_pub_zdb_id = 'ZDB-PUB-170217-1';
 
 DELETE FROM zdb_active_source 
