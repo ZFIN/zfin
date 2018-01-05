@@ -12,6 +12,9 @@ UPDATE pub_tracking_history
    SET pth_pub_zdb_id = 'ZDB-PUB-170218-14'
  WHERE pth_pub_zdb_id = 'ZDB-PUB-010220-6';
 
+DELETE FROM publication_file 
+WHERE pf_pub_zdb_id = 'ZDB-PUB-010220-6';
+
 DELETE FROM zdb_active_source 
 WHERE zactvs_zdb_id = 'ZDB-PUB-010220-6';
 
