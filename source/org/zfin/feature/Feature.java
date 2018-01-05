@@ -117,6 +117,9 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private FeatureDnaMutationDetail featureDnaMutationDetail;
 
+    @OneToMany(mappedBy = "feature", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = false)
+    private Set<SecondaryFeature> secondaryFeatureSet;
+
 
     public String getTransgenicSuffix() {
         return transgenicSuffix;
@@ -588,5 +591,12 @@ public class Feature implements EntityNotes, EntityZdbID {
         if (featureTranscriptMutationDetailSet == null)
             featureTranscriptMutationDetailSet = new TreeSet<>();
         featureTranscriptMutationDetailSet.add(detail);
+    }
+    public Set<SecondaryFeature> getSecondaryFeatureSet() {
+        return secondaryFeatureSet;
+    }
+
+    public void setSecondaryFeatureSet(Set<SecondaryFeature> secondaryFeatureSet) {
+        this.secondaryFeatureSet = secondaryFeatureSet;
     }
 }

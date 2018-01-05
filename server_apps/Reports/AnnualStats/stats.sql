@@ -263,6 +263,7 @@ select count(*), "Community information", "Journal Publications", current year t
 from publication
 where jtype = 'Journal';
 
+
 -- Researchers
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), "Community information", "Researchers", current year to second from person

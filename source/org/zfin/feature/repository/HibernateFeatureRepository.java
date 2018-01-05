@@ -91,6 +91,31 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return list;
     }
 
+    ///change to SQL
+    @SuppressWarnings("unchecked")
+    @Override
+    public Marker getSingleAllelicGene(String featureZdbId) {
+
+        String hql = "select distinct fmrel.marker from FeatureMarkerRelationship fmrel, Feature feature" +
+                " where fmrel.type in (:relation) and fmrel.feature = feature and feature.zdbID = :featureZdbId";
+
+        Query query = currentSession().createQuery(hql);
+        query.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        query.setString("featureZdbId", featureZdbId);
+        return (Marker) query.uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Feature> getSingleAffectedGeneAlleles() {
+        String hql = "select distinct fmrel.feature from  FeatureMarkerRelationship fmrel" +
+        " where fmrel.type in (:relation) and not exists (select 'x' from FeatureMarkerRelationship fmrels where fmrels.zdbID != fmrel.zdbID and fmrel.feature = fmrels.feature)" ;
+
+        Query query = currentSession().createQuery(hql);
+        query.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+
+      return (List<Feature>) query.list();
+    }
 
     @SuppressWarnings("unchecked")
     public List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID) {

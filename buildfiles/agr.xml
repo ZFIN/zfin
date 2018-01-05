@@ -19,6 +19,10 @@
         <antcall target="create-basic-gene-info-file"  />
     </target>
 
+    <target name="create-allele" >
+        <antcall target="create-basic-allele-info-file"  />
+    </target>
+
     <target name="create-disease" >
         <antcall target="create-disease-info-file"  />
     </target>
@@ -27,6 +31,14 @@
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.agr.BasicGeneInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="6G">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+    <target name="create-basic-allele-info-file" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.BasicAlleleInfo" fork="yes" classpathref="extended.classpath"
               failonerror="true" maxmemory="6G">
             <classpath refid="classpath"/>
         </java>

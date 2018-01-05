@@ -1,11 +1,9 @@
 package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.zfin.infrastructure.ActiveData;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GeneDTO extends ZfinDTO {
@@ -38,15 +36,6 @@ public class GeneDTO extends ZfinDTO {
         this.name = name;
     }
 
-    public String getPrimaryId() {
-        return primaryId;
-    }
-
-    public void setPrimaryId(String primaryId) {
-        if (ActiveData.validateActiveData(primaryId))
-            this.primaryId = ZFIN;
-        this.primaryId += primaryId;
-    }
 
     public String getSoTermId() {
         return soTermId;
@@ -66,40 +55,10 @@ public class GeneDTO extends ZfinDTO {
     }
 */
 
-
-    public List<String> getSynonyms() {
-        return synonyms;
-    }
-
-    public void setSynonyms(List<String> synonyms) {
-        this.synonyms = synonyms;
-    }
-
-    public List<String> getCrossReferenceIds() {
-        return crossReferenceIds;
-    }
-
     public void setCrossReferenceIds(List<String> crossReferenceIds) {
         this.crossReferenceIds = crossReferenceIds;
     }
 
-    public Set<String> getSecondaryIds() {
-        return secondaryIds;
-    }
-
-    public void setSecondaryIds(Set<String> secondaryIds) {
-        if (secondaryIds == null)
-            return;
-        this.secondaryIds = secondaryIds.stream()
-                .map((id) -> {
-                    String modifiedId = "";
-                    if (ActiveData.validateActiveData(id))
-                        modifiedId = ZFIN;
-                    modifiedId += id;
-                    return modifiedId;
-                })
-                .collect(Collectors.toSet());
-    }
 
     public Set<GenomeLocationDTO> getGenomeLocations() {
         return genomeLocations;

@@ -3,7 +3,6 @@ package org.zfin.feature.repository;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
@@ -115,6 +114,9 @@ public interface FeatureRepository {
     DataNote addFeatureDataNote(Feature feature, String noteData);
 
     List<String> getAllFeaturePrefixes();
+    List<Feature> getSingleAffectedGeneAlleles();
+
+    Marker getSingleAllelicGene(String featureZdbId);
 
     String getCurrentPrefixForLab(String labZdbId);
 

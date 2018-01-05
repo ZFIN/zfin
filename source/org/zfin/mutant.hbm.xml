@@ -265,6 +265,7 @@
 
     </class>
 
+
     <class name="org.zfin.expression.ConditionDataType" table="condition_data_type">
 
         <id name="zdbID" type="string">

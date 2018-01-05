@@ -1,6 +1,6 @@
 package org.zfin.feature;
 
-import org.zfin.infrastructure.DataAlias;
+import org.zfin.marker.ReplacedData;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -8,11 +8,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-@DiscriminatorValue("Featur")
-public class FeatureAlias extends DataAlias {
+@DiscriminatorValue("Feature")
+public class SecondaryFeature extends ReplacedData {
 
     @ManyToOne
-    @JoinColumn(name = "dalias_data_zdb_id")
+    @JoinColumn(name = "zrepld_new_zdb_id")
     private Feature feature;
 
     public Feature getFeature() {
@@ -21,6 +21,5 @@ public class FeatureAlias extends DataAlias {
 
     public void setFeature(Feature feature) {
         this.feature = feature;
-        dataZdbID = feature.getZdbID();
     }
 }
