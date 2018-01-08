@@ -16,4 +16,17 @@ task deployDirectoryToTargetroot1() {
         }
         into ttNameMap.get('TARGETROOT') + '/server_apps'
     }
+    dataDirectory = ''+projectDir+'/ZFINPerlModules_PG.pm'
+    println "Copying file: " + dataDirectory
+    copy {
+        from(dataDirectory) {
+            ttNameMap.each { name, value ->
+                if (value == null)
+                    println name + " " + value
+                else
+                    filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+        }
+        into ttNameMap.get('TARGETROOT') + '/server_apps'
+    }
 }

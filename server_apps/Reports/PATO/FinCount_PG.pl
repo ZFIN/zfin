@@ -23,7 +23,7 @@ my $password = "";
 my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
     or die "Cannot connect to Informix database: $DBI::errstr\n";
     
-my $cur = $dbh->prepare('select TODAY from organism where organism_common_name = ?;');
+my $cur = $dbh->prepare("select to_char(now(), 'MM/DD/YYYY') from organism where organism_common_name = ?;");
 $cur->execute("Zebrafish");
 my $today;
 $cur->bind_columns(\$today);                       
