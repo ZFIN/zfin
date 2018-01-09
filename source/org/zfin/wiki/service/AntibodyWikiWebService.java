@@ -87,8 +87,13 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
     public void setZfinAntibodyPageMetaData(RemotePage page) throws Exception {
+        setZfinAntibodyPageMetaData(page, true);
+    }
+
+    public void setZfinAntibodyPageMetaData(RemotePage page, boolean zfinAntibody) throws Exception {
         // we label these pages zfin_antibody so that we know they came from ZFIN
-        service.addLabelByName(token, Label.ZFIN_ANTIBODY_LABEL.getValue(), page.getId());
+        if (zfinAntibody)
+            service.addLabelByName(token, Label.ZFIN_ANTIBODY_LABEL.getValue(), page.getId());
 
         // only zfin-users may edit these
         RemoteContentPermission[] remoteContentPermissions = new RemoteContentPermission[1];
@@ -531,13 +536,16 @@ public class AntibodyWikiWebService extends WikiWebService {
         return updatePageForAntibody(createWikiPageContentForAntibodyFromTemplate(antibody), page);
     }
 
-    private RemotePage updatePageForAntibody(String newContent, RemotePage page) throws Exception {
+    public RemotePage updatePageForAntibody(String newContent, RemotePage page) throws Exception {
+        return updatePageForAntibody(newContent, page, true);
+    }
+    public RemotePage updatePageForAntibody(String newContent, RemotePage page, boolean zfinAntibody) throws Exception {
         page.setContent(newContent);
         page.setModified(Calendar.getInstance());
         page.setModifier(wikiUserName);
 
         page = service.storePage(token, page);
-        setZfinAntibodyPageMetaData(page);
+        setZfinAntibodyPageMetaData(page, zfinAntibody);
         return page;
     }
 
