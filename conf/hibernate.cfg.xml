@@ -71,7 +71,6 @@
         <mapping class="org.zfin.feature.DnaMutationTerm"/>
         <mapping class="org.zfin.feature.Feature"/>
         <mapping class="org.zfin.feature.FeatureAlias"/>
-        <mapping class="org.zfin.feature.FeatureAlias"/>
         <mapping class="org.zfin.feature.FeatureAssay"/>
         <mapping class="org.zfin.feature.FeatureDnaMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureHistory"/>
@@ -82,11 +81,11 @@
         <mapping class="org.zfin.feature.FeatureProteinMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureTracking"/>
         <mapping class="org.zfin.feature.FeatureTranscriptMutationDetail"/>
-        <mapping class="org.zfin.feature.FeatureTranscriptMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureTypeGroup"/>
         <mapping class="org.zfin.feature.GeneLocalizationTerm"/>
         <mapping class="org.zfin.feature.MutationDetailControlledVocabularyTerm"/>
         <mapping class="org.zfin.feature.ProteinConsequence"/>
+        <mapping class="org.zfin.feature.SecondaryFeature"/>
         <mapping class="org.zfin.feature.TranscriptConsequence"/>
         <mapping class="org.zfin.fish.WarehouseSummary"/>
         <mapping class="org.zfin.framework.presentation.AnatomyFact"/>
@@ -111,6 +110,8 @@
         <mapping class="org.zfin.marker.MarkerHistory"/>
         <mapping class="org.zfin.marker.OrthologyNote"/>
         <mapping class="org.zfin.marker.presentation.HighQualityProbeAOStatistics"/>
+        <mapping class="org.zfin.marker.ReplacedData"/>
+        <mapping class="org.zfin.marker.SecondaryMarker"/>
         <mapping class="org.zfin.mutant.FishStr"/>
         <mapping class="org.zfin.mutant.Genotype"/>
         <mapping class="org.zfin.mutant.GenotypeAlias"/>
@@ -153,8 +154,6 @@
         <mapping class="org.zfin.sequence.reno.Run"/>
         <mapping class="org.zfin.sequence.reno.RunCandidate"/>
         <mapping class="org.zfin.Species"/>
-        <mapping class="org.zfin.marker.SecondaryMarker"/>
-        <mapping class="org.zfin.marker.ReplacedData"/>
 
     </session-factory>
 </hibernate-configuration>
