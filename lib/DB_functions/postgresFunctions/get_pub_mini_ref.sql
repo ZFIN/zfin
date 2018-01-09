@@ -3,10 +3,10 @@ create or replace function get_pub_mini_ref(pubZdbId text)
 
   declare authorList text := '';
    pubYear varchar(15) := '' ;
-   miniRef varchar(60) := '';
-   lname    varchar(60) :='' ;
+   miniRef text := '';
+   lname    text :='' ;
    srcType    varchar(30) :='';
-   delim    char(1);
+   delim    char(1) := ',';
    ch       char(1) := '';
    len      int;
    index    int := 1;
@@ -31,7 +31,9 @@ create or replace function get_pub_mini_ref(pubZdbId text)
     elsif (ch = delim) and (not first) then    
       lname = lname || ' <i>et al.</i>'; 
       exit;
-    end if;   
+    end if;
+    index = index +1 ;  
+    raise notice 'Value: %', index ;
   end loop;
 
   if lname != '' then   
@@ -44,6 +46,7 @@ create or replace function get_pub_mini_ref(pubZdbId text)
     miniRef = authorList;	
   end if;
 
+  raise notice 'Value: %', miniRef;
   return miniRef;          
 
 end
