@@ -1,9 +1,18 @@
 package org.zfin.wiki.service;
 
 import org.zfin.TestConfiguration;
-import org.zfin.wiki.Label;
 import org.zfin.wiki.RemotePage;
-import org.zfin.wiki.RemotePageSummary;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -14,11 +23,24 @@ public class AntibodyWikiService {
     public static final String END_OF_BEGINNING_String = "<ac:rich-text-body>";
 
     private static AntibodyWikiWebService service;
+    private static List<String> antibodies = new ArrayList<>(220);
+    private static Map<String, String> entryMap = new LinkedHashMap<>();
 
     public static void main(String[] args) throws Exception {
+        readAntibodyFile();
         TestConfiguration.configure();
+        readEntryFile();
+        antibodies.forEach(antibody -> {
+                    try {
+                        createNewPage(antibody);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+        );
         service = AntibodyWikiWebService.getInstance();
 
+/*
         updatePage("Ab3-mki67");
         RemotePageSummary[] pages = service.getAllPagesForSpace("AB");
         int numberOfCAntibodies = 0;
@@ -31,8 +53,150 @@ public class AntibodyWikiService {
             }
 
         }
-        System.out.println("Number of Community Antibodies: " + numberOfCAntibodies);
+*/
+        //System.out.println("Number of Community Antibodies: " + numberOfCAntibodies);
 
+    }
+
+    private static void readAntibodyFile() {
+        try (BufferedReader br = new BufferedReader(new FileReader(new File("community-antibodies-live-template.txt")))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                antibodies.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static void readEntryFile() {
+        try (BufferedReader br = new BufferedReader(new FileReader(new File("ab-dump.txt")))) {
+            String line;
+            Map<String, Integer> versionMap = new LinkedHashMap<>();
+            while ((line = br.readLine()) != null) {
+                String antibodyName = getAntibodyName(line);
+                if (antibodyName == null)
+                    System.out.println("Could not find ab name in line " + line);
+                line = line.substring(antibodyName.length());
+                int version = getVersion(line);
+                Integer currentVersion = versionMap.get(antibodyName);
+                if (currentVersion == null) {
+                    versionMap.put(antibodyName, version);
+                    entryMap.put(antibodyName, line);
+                    currentVersion = version;
+                }
+                if (version > currentVersion) {
+                    versionMap.put(antibodyName, version);
+                    entryMap.put(antibodyName, line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static int getVersion(String line) {
+        String[] token = line.split("\t");
+        String version = token[1];
+        return Integer.parseInt(version.substring(version.lastIndexOf(".") + 1));
+    }
+
+    private static String getAntibodyName(String line) {
+        for (String name : antibodies) {
+            if (line.startsWith(name))
+                return name;
+        }
+        return null;
+    }
+
+    private static void createNewPage(String antibodyName) throws Exception {
+/*
+        RemotePage page = service.getPageForTitleAndSpace(antibodyName, "AB");
+        if (page == null)
+            System.out.println("Could not find antibody: " + antibodyName);
+*/
+
+        String newContents = getNewContents(antibodyName);
+
+
+    }
+
+    private static String getNewContents(String antibodyName) {
+        String isotope = getEntry("AntibodyIsotype", antibodyName);
+        String comments = getEntry("Comments", antibodyName);
+        String otherInfo = getEntry("OtherInfo", antibodyName);
+        String recognizedMol = getEntry("RecognizedTargetMolecules", antibodyName);
+        String host = getEntry("HostOrganism", antibodyName);
+        String immuno = getEntry("ImmunogenOrganism", antibodyName);
+        String zfinGenes = getEntry("ZFINGenes", antibodyName);
+        String type = getEntries("AntibodyType", antibodyName);
+        String works = getEntries("WorksOnZebrafish", antibodyName);
+        String suppliers = getEntry("Suppliers", antibodyName);
+        int numberOfAssays = getNumOfAssays("Assays Tested", antibodyName);
+        if(numberOfAssays > 0){
+              for(int index = 0; index< numberOfAssays; index++){
+                  String preparation = getEntryFromAssay("Assays Tested","Prep", index, antibodyName);
+              }
+        }
+
+        return null;
+//        String
+    }
+
+    private static String getEntryFromAssay(String entryName, String subEntryName, int index, String antibodyName) {
+        String dbContents = entryMap.get(antibodyName);
+        if (dbContents == null)
+            return null;
+        String regExpression = "<entry>\\s*<string>" + entryName + "</string>\\s*<metadata|map>.*<entry>\\s*<string>"+index+"</string>\\s*" +
+                "<metadata>\\s*<entry>\\s*<string>"+subEntryName+"</string>\\s*<list>\\s*" +
+                "<string>([^<]*)</string>\\s*</list>";
+        Pattern p = Pattern.compile("(.*)" + regExpression + "(.*)");
+        Matcher m = p.matcher(dbContents);
+        if (m.find()) {
+            return m.group(2);
+        }
+        return null;
+    }
+
+    private static int getNumOfAssays(String entryName, String antibodyName) {
+        String dbContents = entryMap.get(antibodyName);
+        if (dbContents == null)
+            return 0;
+        String regExpression = "<entry>\\s*<string>" + entryName + "</string>.*<entry>\\s*<string>rowCount</string>\\s*<int>([^<]*)</int>\\s*</entry>";
+        Pattern p = Pattern.compile("(.*)" + regExpression + "(.*)");
+        Matcher m = p.matcher(dbContents);
+        if (m.find()) {
+            return Integer.parseInt(m.group(2));
+        }
+        return 0;
+    }
+
+    private static String getEntry(String entryName, String antibodyName) {
+        String dbContents = entryMap.get(antibodyName);
+        if (dbContents == null)
+            return null;
+        String regExpression = "<entry>\\s*<string>" + entryName + "</string>\\s*<string>([^<]*)</string>\\s*</entry>";
+        Pattern p = Pattern.compile("(.*)" + regExpression + "(.*)");
+        Matcher m = p.matcher(dbContents);
+        if (m.find()) {
+            return m.group(2);
+        }
+        return null;
+    }
+
+    private static String getEntries(String entryName, String antibodyName) {
+        String dbContents = entryMap.get(antibodyName);
+        if (dbContents == null)
+            return null;
+        String regExpression = "<entry>\\s*<string>" + entryName + "</string>\\s*<list>\\s*<string>([^<]*)</string>\\s*</list>\\s*</entry>";
+        Pattern p = Pattern.compile("(.*)" + regExpression + "(.*)");
+        Matcher m = p.matcher(dbContents);
+        if (m.find()) {
+            return m.group(2);
+        }
+        return null;
     }
 
     private static void updatePage(String antibodyName) throws Exception {
