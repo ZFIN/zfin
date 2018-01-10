@@ -1,10 +1,8 @@
 package org.zfin.gwt.root.server;
 
-import org.apache.bcel.Repository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.regexp.RE;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -19,7 +17,6 @@ import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.AttributionType;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
@@ -31,7 +28,6 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseAnnotation;
@@ -155,7 +151,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     }
 
     /**
-     *
      * @param zdbID    ZdbID to check against.
      * @param pubZdbID Pub to check against.
      * @return A message if there is a problem.  Otherwise null.
@@ -902,40 +897,39 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Marker secondMarker = markerRepository.getMarkerByAbbreviation(markerDTO.getName());
 
 
-
         if (secondMarker == null || firstMarker == null) {
             throw new TermNotFoundException(markerDTO.getName(), markerDTO.getMarkerRelationshipType());
         }
         if (true == markerDTO.isZdbIDThenAbbrev()) {
-            if (firstMarker.isInTypeGroup(Marker.TypeGroup.CLONEDOM)){
+            if (firstMarker.isInTypeGroup(Marker.TypeGroup.CLONEDOM)) {
                 if (secondMarker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                    if (firstMarker.getType()== Marker.Type.BAC) {
-                       MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.BAC_CONTAINS_GENEDOM);
+                    if (firstMarker.getType() == Marker.Type.BAC) {
+                        MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.BAC_CONTAINS_GENEDOM);
                     }
-                    if (firstMarker.getType()== Marker.Type.PAC) {
-                       MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.PAC_CONTAINS_GENEDOM);
+                    if (firstMarker.getType() == Marker.Type.PAC) {
+                        MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.PAC_CONTAINS_GENEDOM);
                     }
-                    if (firstMarker.getType()== Marker.Type.FOSMID) {
-                       MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.FOSMID_CONTAINS_GENEDOM);
+                    if (firstMarker.getType() == Marker.Type.FOSMID) {
+                        MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.FOSMID_CONTAINS_GENEDOM);
                     }
                 }
                 if (secondMarker.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
-                    if (firstMarker.getType()== Marker.Type.BAC) {
+                    if (firstMarker.getType() == Marker.Type.BAC) {
                         MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.BAC_CONTAINS_NTR);
                     }
-                        if (firstMarker.getType()== Marker.Type.PAC) {
-                            MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.PAC_CONTAINS_NTR);
-                        }
-                            if (firstMarker.getType()== Marker.Type.FOSMID) {
-                                MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.FOSMID_CONTAINS_NTR);
-                            }
+                    if (firstMarker.getType() == Marker.Type.PAC) {
+                        MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.PAC_CONTAINS_NTR);
+                    }
+                    if (firstMarker.getType() == Marker.Type.FOSMID) {
+                        MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.FOSMID_CONTAINS_NTR);
+                    }
 
                 }
                 if (secondMarker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
                     MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
                 }
             }
-            if (firstMarker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)){
+            if (firstMarker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
                 if (secondMarker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                     MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE);
                 }
@@ -943,10 +937,10 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
             }
 
-          //  MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
+            //  MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
             //    ExpressionExperiment2 expExpt=RepositoryFactory.getExpressionRepository().get
         } else {
-             MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
+            MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
         }
 
         logger.debug("addMarkerRelationship, first marker: " + firstMarker.getAbbreviation()
@@ -1224,11 +1218,9 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                     }
                 }
             }
-
-
-            HibernateUtil.flushAndCommitCurrentSession();
-            HibernateUtil.closeSession();
         }
+        HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.closeSession();
     }
 
     public void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO) {
