@@ -1,45 +1,26 @@
-drop trigger if exists publication_trigger on publication;
+DROP TRIGGER IF EXISTS publication_trigger
+ON publication;
 
-create or replace function publication()
-returns trigger as
-$BODY$
-declare title publication.title%TYPE := scrub_char(NEW.title);
-	accession_no publication.accession_no%TYPE := scrub_char(NEW.accession_no);
-	pubmed_authors publication.pubmed_authors%TYPE := scrub_char(NEW.authors);
-	pub_doi publication.pub_doi%TYPE := scrub_char(NEW.pub_doi);
-	pub_authors_lower publication.pub_authors_lower%TYPE := lower(NEW.authors);
-	jtype publication.jtype%TYPE := scrub_char(NEW.jtype);
-	pub_mini_ref publication.pub_mini_ref%TYPE := scrub_char(get_pub_mini_ref(NEW.pub_mini_ref));
-	pub_pages publication.pub_pages%TYPE := scrub_char(NEW.pub_pages);
-	pub_can_show_images publication.pub_can_show_images%TYPE := get_pub_default_permissions(NEW.pub_jrnl_zdb_id);
-
-begin
-
-     NEW.title = title;
-    
-     NEW.pubmed_authors = pubmed_authors;
-
-     NEW.jtype = jtype;
-
-     NEW.authors = pub_authors_lower;
-
-     NEW.pub_pages = pub_pages;
-
-     NEW.pub_doi = pub_doi;
-	
-     NEW.pub_mini_ref = pub_mini_ref;
-
-     NEW.pub_can_show_images = pub_can_show_images;
-
-     RETURN NEW;
-end;
-$BODY$ LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION publication()
+  RETURNS trigger AS $$
+  BEGIN
+    NEW.title = scrub_char(NEW.title);
+    NEW.accession_no = scrub_char(NEW.accession_no);
+    NEW.pubmed_authors = scrub_char(NEW.pubmed_authors);
+    NEW.pub_doi = scrub_char(NEW.pub_doi);
+    NEW.jtype = scrub_char(NEW.jtype);
+    NEW.pub_authors_lower = lower(NEW.authors);
+    NEW.pub_pages = scrub_char(NEW.pub_pages);
+    NEW.pub_mini_ref = scrub_char(get_pub_mini_ref(NEW.zdb_id));
+    NEW.pub_can_show_images = get_pub_default_permissions(NEW.pub_jrnl_zdb_id);
+    RETURN NEW;
+  END;
+$$ LANGUAGE plpgsql;
 
 
-
-
-create trigger publication_trigger after insert or update on publication
- for each row 
- execute procedure publication();
+CREATE TRIGGER publication_trigger
+BEFORE INSERT OR UPDATE ON publication
+FOR EACH ROW
+EXECUTE PROCEDURE publication();
 
 
