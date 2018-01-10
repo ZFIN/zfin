@@ -118,6 +118,16 @@ public class AntibodyWikiService {
             System.out.println("Could not find antibody: " + antibodyName);
 */
 
+/*
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(true);
+        factory.setIgnoringElementContentWhitespace(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        String uri = entryMap.get(antibodyName);
+        uri = uri.substring(uri.indexOf("<metadata>"));
+        InputSource is = new InputSource(new StringReader(uri));
+        Document doc = builder.parse(is);
+*/
         String newContents = getNewContents(antibodyName);
 
 
@@ -133,25 +143,74 @@ public class AntibodyWikiService {
         String zfinGenes = getEntry("ZFINGenes", antibodyName);
         String type = getEntries("AntibodyType", antibodyName);
         String works = getEntries("WorksOnZebrafish", antibodyName);
+        String anatomicalStructures = getEntry("AnatomicalStructuresRecognized", antibodyName);
         String suppliers = getEntry("Suppliers", antibodyName);
         int numberOfAssays = getNumOfAssays("Assays Tested", antibodyName);
-        if(numberOfAssays > 0){
-              for(int index = 0; index< numberOfAssays; index++){
-                  String preparation = getEntryFromAssay("Assays Tested","Prep", index, antibodyName);
-              }
+        if (numberOfAssays > 2)
+            System.out.println(antibodyName + " has " + numberOfAssays + " tested assays");
+        if (numberOfAssays > 0) {
+            for (int index = 0; index < numberOfAssays; index++) {
+                String preparation = getEntryFromAssay("Assays Tested", "Prep", index, antibodyName, numberOfAssays);
+                String assays = getEntryFromAssay("Assays Tested", "Assays", index, antibodyName, numberOfAssays);
+                String worked = getEntryFromAssay("Assays Tested", "Worked", index, antibodyName, numberOfAssays);
+                String assayNotes = getSingleEntryFromAssay("Assays Tested", "AssayNotes", index, antibodyName, numberOfAssays);
+                String halt = null;
+                halt = null;
+            }
         }
 
         return null;
 //        String
     }
 
-    private static String getEntryFromAssay(String entryName, String subEntryName, int index, String antibodyName) {
+    private static String getSingleEntryFromAssay(String entryName, String subEntryName, int index, String antibodyName, int total) {
         String dbContents = entryMap.get(antibodyName);
         if (dbContents == null)
             return null;
-        String regExpression = "<entry>\\s*<string>" + entryName + "</string>\\s*<metadata|map>.*<entry>\\s*<string>"+index+"</string>\\s*" +
-                "<metadata>\\s*<entry>\\s*<string>"+subEntryName+"</string>\\s*<list>\\s*" +
-                "<string>([^<]*)</string>\\s*</list>";
+        String regExpression = "<entry>\\s*<string>" + entryName + "</string>\\s*<metadata|map>";
+
+        if (index == total - 1)
+            regExpression += "\\s*<entry>\\s*<string>" + index + "</string>\\s*";
+        else
+            regExpression += ".*<entry>\\s*<string>" + index + "</string>\\s*";
+
+        regExpression += "<entry>\\s*<string>" + entryName + "</string>\\s*<metadata|map>.*<entry>\\s*<string>" + index + "</string>\\s*" +
+                "<map>.*\\s*<entry>\\s*<string>" + subEntryName + "</string>\\s*" +
+                "<string>([^<]*)</string>\\s*</entry>";
+        if ((index == total - 1 && total > 1) || (index > 0 && total > 2 && index != total - 1))
+            regExpression += ".*<entry>\\s*<string>" + (index - 1) + "</string>\\s*";
+
+        Pattern p = Pattern.compile("(.*)" + regExpression + "(.*)");
+        Matcher m = p.matcher(dbContents);
+        if (m.find()) {
+            return m.group(2);
+        }
+        return null;
+    }
+
+    private static String getEntryFromAssay(String entryName, String subEntryName, int index, String antibodyName, int total) {
+        String dbContents = entryMap.get(antibodyName);
+        if (dbContents == null)
+            return null;
+        String metaDataOrMap = "metadata";
+        if(dbContents.contains("<map>"))
+            metaDataOrMap = "map";
+        String regExpression = "<entry>\\s*<string>" + entryName + "</string>\\s*<"+metaDataOrMap+">";
+        if (index == total - 1)
+            regExpression += "\\s*<entry>\\s*<string>" + index + "</string>\\s*";
+        else
+            regExpression += ".*<entry>\\s*<string>" + index + "</string>\\s*";
+
+        if (dbContents.contains("<WikiReference>"))
+            regExpression = "<entry>\\s*<string>" + entryName + "</string>\\s*<"+metaDataOrMap+">.*<entry>\\s*<string>" + index + "</string>\\s*" +
+                    "<"+metaDataOrMap+">.*\\s*<entry>\\s*<string>" + subEntryName + "</string>\\s*<WikiReference>\\s*<nonWiki>[^<]*</nonWiki>\\s*" +
+                    "<wiki>([^<]*)</wiki>\\s*</WikiReference>\\s*</entry>";
+        else
+            regExpression += "<"+metaDataOrMap+">.*\\s*<entry>\\s*<string>" + subEntryName + "</string>\\s*<list>\\s*" +
+                    "<string>([^<]*)</string>\\s*</list>\\s*</entry>";
+        if ((index == total - 1 && total > 1) || (index > 0 && total > 2 && index != total - 1))
+            regExpression += ".*<entry>\\s*<string>" + (index - 1) + "</string>\\s*";
+
         Pattern p = Pattern.compile("(.*)" + regExpression + "(.*)");
         Matcher m = p.matcher(dbContents);
         if (m.find()) {
@@ -191,6 +250,8 @@ public class AntibodyWikiService {
         if (dbContents == null)
             return null;
         String regExpression = "<entry>\\s*<string>" + entryName + "</string>\\s*<list>\\s*<string>([^<]*)</string>\\s*</list>\\s*</entry>";
+        if (dbContents.contains("WikiReference"))
+            regExpression = "<entry>\\s*<string>" + entryName + "</string>\\s*<WikiReference>\\s*<nonWiki>[^<]*</nonWiki>\\s*<wiki>([^<]*)</wiki>\\s*</WikiReference>\\s*</entry>";
         Pattern p = Pattern.compile("(.*)" + regExpression + "(.*)");
         Matcher m = p.matcher(dbContents);
         if (m.find()) {
