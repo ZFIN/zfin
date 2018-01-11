@@ -9,7 +9,6 @@ declare workingZyg  zygocity.zyg_name%TYPE;
  affectiveZygosity  zygocity.zyg_name%TYPE;
  strExists int8;
  genoIsWT boolean := 'f';
-
 begin
 
 --find the functional number of affected genes.
@@ -139,8 +138,15 @@ else
         elsif (affectiveZygosity = 'unknown')
 	then
 	         fishOrder := fishOrder::bigint + 10000500000;
-        else		
-		 fishOrder := fishOrder::bigint;
+        else
+		if (fishOrder is null)
+		then
+		  fishOrder := 9999999;	
+		else 
+		 fishOrder = fishOrder::bigint;
+		 raise notice 'fishOrder: %', fishOrder;
+		end if;
+		 
         end if;
 	raise notice 'features=1: %', fishOrder;
 end if;

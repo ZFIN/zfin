@@ -12,7 +12,6 @@ begin
 
      NEW.feature_name = feature_name;
 
-     
      NEW.feature_abbrev = feature_abbrev;
  
      NEW.feature_name_order = feature_name_order;
