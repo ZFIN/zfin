@@ -63,7 +63,6 @@ task loadDb() {
         }
 
         println "Loading $unloadPath into $dbname"
-        exec { commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pg_stat_activity.datname =  and pid <> pg_backend_pid();' | psql $dbname" }
         exec { commandLine 'dropdb', dbname }
         exec { commandLine 'createdb', dbname }
         exec { commandLine "bash", "-c", "pg_restore -j 4 -d $dbname $unloadPath" }
