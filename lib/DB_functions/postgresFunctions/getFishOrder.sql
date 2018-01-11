@@ -120,35 +120,34 @@ if (numFeatures > 1)
 then
  fishOrder := fishOrder::bigint + 20000000000;
 else
+	if (fishOrder is null) then
+	      fishOrder := 9999999;	
+	else 
 	-- affective zygosity means: homozygous plus any number of STRs vs. heterozygous 
-	 affectiveZygosity := (Select zyg_name from zygocity, genotype_Feature, fish
+	      affectiveZygosity := (Select zyg_name from zygocity, genotype_Feature, fish
 	    		      		where fish_genotype_zdb_id = genofeat_geno_zdb_id
 					and genofeat_zygocity = zyg_zdb_id
 					and fish_zdb_id = vFishId
 					);
-	if ((affectiveZygosity = 'heterozygous') and (strExists > 0) and (numAffectedGene = 1))
-	then
+	      if ((affectiveZygosity = 'heterozygous') and (strExists > 0) and (numAffectedGene = 1))
+	      then
 		 fishOrder := fishOrder::bigint + 50;
-	elsif (affectiveZygosity = 'heterozygous' and (strExists = 0) and (numAffectedGene = 1) )
-	then 
+	      elsif (affectiveZygosity = 'heterozygous' and (strExists = 0) and (numAffectedGene = 1) )
+	      then 
 		 fishOrder := fishOrder::bigint + 100;
-	elsif (affectiveZygosity = 'complex')
-	then 
+	      elsif (affectiveZygosity = 'complex')
+	      then 
 	         fishOrder := fishOrder::bigint + 20000000000;
-        elsif (affectiveZygosity = 'unknown')
-	then
+              elsif (affectiveZygosity = 'unknown')
+	      then
 	         fishOrder := fishOrder::bigint + 10000500000;
-        else
-		if (fishOrder is null)
-		then
-		  fishOrder := 9999999;	
-		else 
+              else
 		 fishOrder = fishOrder::bigint;
 		 raise notice 'fishOrder: %', fishOrder;
-		end if;
-		 
+	      end if;
+	 
         end if;
-	raise notice 'features=1: %', fishOrder;
+	 raise notice 'features=1: %', fishOrder;
 end if;
 
 raise notice 'end: %', fishOrder;
