@@ -8,7 +8,6 @@ begin
 
      perform  p_check_tginsertion_has_construct_relationship(
 			NEW.genofeat_feature_zdb_id);
-     perform p_update_related_genotype_names(NEW.genofeat_feature_zdb_id);
      
      RETURN NULL;
 
