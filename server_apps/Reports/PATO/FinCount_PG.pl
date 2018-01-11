@@ -88,7 +88,6 @@ print "\n  oneMonthAgoStr is $oneMonthAgoStr\n\n" ;
 system("rm -f FinPhenoCount.sql");
 open SQLFILE, ">FinPhenoCount.sql" || die ("FinPhenoCount.sql !");
 
-print SQLFILE "\nbegin work;\n\n";
 print SQLFILE "create temp table  tmp_contains \n";
 print SQLFILE "(  \n";
 print SQLFILE "   id bigint \n";
@@ -146,14 +145,12 @@ print SQLFILE "and jtype != 'Curation' \n" ;
 print SQLFILE "and jtype != 'Unpublished' \n" ;
 print SQLFILE "and phenos_created_date between '$oneMonthAgoStr' and '$todayStr'; \n\n\n" ;
 
-print SQLFILE "! echo \"Number of phenotype data with fin (including substructures) added between $oneMonthAgoStr and $todayStr: \" ;\n\n";
+print SQLFILE "\\echo \"Number of phenotype data with fin (including substructures) added between $oneMonthAgoStr and $todayStr: \" ;\n\n";
 
 print SQLFILE "\nselect count (distinct id) from tmp_contains;\n\n\n";
 
-print SQLFILE "rollback work;\n\n";
-
 close(SQLFILE);
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> FinPhenoCount.sql > FinPhenotypeStatistics.txt 2> errFin.txt");
+system("psql -d <!--|DB_NAME|--> -f FinPhenoCount.sql > FinPhenotypeStatistics.txt 2> errFin.txt");
 
 exit;

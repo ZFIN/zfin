@@ -19,7 +19,7 @@ chdir "<!--|ROOT_PATH|-->/server_apps/Reports/PATO";
 
 system("/bin/rm -f PhenotypeStatistics.txt");
 
-system("psql -d <!--|DB_NAME|--> -a -f count_phenotype.sql > PhenotypeStatistics.txt 2> err.txt");
+system("psql -d <!--|DB_NAME|--> -f count_phenotype.sql > PhenotypeStatistics.txt 2> err.txt");
 
 ###-------- New section for case 10249, STR additions to Monthly phenotype statistics --------------------------------
 
