@@ -10,7 +10,7 @@ create temp table tmp_vega (chrom varchar(20),
 				  ottdarg varchar(50))
 with no log;
 
-load from process_zebrafish_VEGA59_59.gff3
+load from process_zebrafish_VEGA67_67.gff3
  insert into tmp_vega;
 
 create index tmp_vega_ottdarg_index
