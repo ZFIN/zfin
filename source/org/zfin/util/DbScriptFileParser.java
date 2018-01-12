@@ -58,7 +58,7 @@ public class DbScriptFileParser {
                 // ignore empty lines or lines with comments or output ! echo
                 if (line.trim().length() == 0 || line.trim().startsWith(COMMENTS) || line.trim().startsWith(ECHO))
                     continue;
-                if (line.contains(COMMENTS)) {
+                if (line.contains(COMMENTS) && !line.contains("'" + COMMENTS + "'")) {
                     line = line.substring(0, line.indexOf(COMMENTS));
                 }
                 Matcher matcher = loadPattern.matcher(line.trim());
