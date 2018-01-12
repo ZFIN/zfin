@@ -1,29 +1,18 @@
-drop trigger if exists genotype_trigger on genotype;
+DROP TRIGGER IF EXISTS genotype_trigger
+ON genotype;
 
-create or replace function genotype()
-returns trigger as
-$BODY$
+CREATE OR REPLACE FUNCTION genotype()
+  RETURNS trigger AS $$
+  BEGIN
+    NEW.geno_display_name = scrub_char(NEW.geno_display_name);
+    NEW.geno_handle = scrub_char(NEW.geno_handle);
+    NEW.geno_name_order = zero_pad(NEW.geno_name_order);
+    NEW.geno_complexity_order = update_geno_sort_order(NEW.geno_zdb_id);
+    RETURN NEW;
+  END;
+$$ LANGUAGE plpgsql;
 
-declare geno_display_name genotype.geno_display_name%TYPE := scrub_char(NEW.geno_display_name);
-declare geno_handle genotype.geno_handle%TYPE := scrub_char(NEW.geno_handle);
-declare geno_name_order genotype.geno_name_order%TYPE := zero_pad(NEW.geno_name_order);
-declare geno_complexity_order genotype.geno_complexity_order%TYPE := update_geno_sort_order(NEW.geno_zdb_id);
-
-begin
-   
-     NEW.geno_display_name = geno_display_name;
-
-     NEW.geno_handle = geno_handle;
-
-     NEW.geno_name_order = geno_name_order;
-
-     NEW.geno_complexity_order = geno_complexity_order;
-      
-     RETURN NEW;
-
-end;
-$BODY$ LANGUAGE plpgsql;
-
-create trigger genotype_trigger after insert on genotype
- for each row
- execute procedure genotype();
+CREATE TRIGGER genotype_trigger
+BEFORE INSERT ON genotype
+FOR EACH ROW
+EXECUTE PROCEDURE genotype();
