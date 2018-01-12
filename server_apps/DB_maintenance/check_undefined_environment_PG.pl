@@ -77,7 +77,7 @@ $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $passwor
 
 $sql = "select exp_zdb_id, exp_name, exp_source_zdb_id
           from experiment, curation
-         where not exists (select 'x' from experiment_condition where exp_zdb_id = expcond_exp_zdb_id) and exp_name <> '_Generic-control' and exp_source_zdb_id = cur_pub_zdb_id and cur_closed_date is not null and cur_closed_date != '';";
+         where not exists (select 'x' from experiment_condition where exp_zdb_id = expcond_exp_zdb_id) and exp_name <> '_Generic-control' and exp_source_zdb_id = cur_pub_zdb_id and cur_closed_date is not null and cur_closed_date is not null ;";
 
 $cur = $dbh->prepare($sql);
 $cur ->execute();
