@@ -30,5 +30,6 @@
     <include file="source/org/zfin/db/load/1092/QatariFlag/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1092/Rocket/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/load/1093/Snowman/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1093/TigerFace/db.changelog.master.xml"/>
 
 </databaseChangeLog>
