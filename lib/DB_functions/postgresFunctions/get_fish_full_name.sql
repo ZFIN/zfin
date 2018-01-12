@@ -1,19 +1,20 @@
-create or replace function get_fish_full_name (vFishZdbId text,
-       		 		    vFishGenoZdbId text,
-				    vFishName varchar) returns varchar as $fullName$
+CREATE OR REPLACE FUNCTION get_fish_full_name(vFishZdbId     text,
+                                              vFishGenoZdbId text,
+                                              vFishName      varchar)
+  RETURNS varchar AS $fullName$
 
-declare backgroundList varchar := get_genotype_backgrounds(vFishGenoZdbId);
-        fullName varchar;
+DECLARE backgroundList varchar := get_genotype_backgrounds(vFishGenoZdbId);
+        fullName       varchar;
 
-begin
-if (backgroundList is not null and backgroundList != '')
-   then 
-   	fullName := vFishName||"("||backgroundList||")"; 
-    else
-	fullName := vFishName;
-end if;
+BEGIN
+  IF (backgroundList IS NOT NULL AND backgroundList != '')
+  THEN
+    fullName := vFishName || '(' || backgroundList || ')';
+  ELSE
+    fullName := vFishName;
+  END IF;
 
-return fullName;
-end
+  RETURN fullName;
+END
 $fullName$ LANGUAGE plpgsql;
 
