@@ -18,8 +18,6 @@ begin
 
      NEW.mrkr_name_order = mrkr_name_order;           
      
-     NEW.mrkr_comments = mrkr_comments;
-
      RETURN NEW;
 
 end;
