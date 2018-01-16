@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="warehouse" basedir="." default="main">
 
-
-    <target name="recreate-bts-indexes" description="drop and re-create the BTS indexes on the warehouse tables.">
-        <echo message="Re-create BTS indexes on '${env.DBNAME}'"/>
-        <echo message="Drop existing indexes ..."/>
-        <echo message="DropBtsIndexes.sql ..."/>
-        <exec executable="dbaccess" failifexecutionfails="true">
-            <arg value="${DBNAME}"/>
-            <arg value="/research/zunloads/projects/search/testLoad/dropBtsIndexes.sql"/>
-        </exec>
-        <echo message="Dropload.sql ..."/>
-        <exec executable="dbaccess" failifexecutionfails="true">
-            <arg value="${DBNAME}"/>
-            <arg value="/research/zunloads/projects/unregisterBts/dropload.sql"/>
-        </exec>
-        <echo message="Create BTS indexes ..."/>
-        <echo message="createBtsIndexes.sql ..."/>
-        <echo message="fix_bts.sql ..."/>
-        <exec executable="dbaccess" failifexecutionfails="true">
-            <arg value="${DBNAME}"/>
-            <arg value="/research/zunloads/projects/search/testLoad/fix_bts.sql"/>
-        </exec>
-    </target>
     <target name="run-warehouse" depends="check-instance-names" description="Run the whole warehouse script">
         <echo message="Run warehouse script ..."/>
 

@@ -39,7 +39,6 @@
             generateWSClient:  Generates soap client off of our published wsdl (/webservice/definitions/zfin.wsdl).
 
 	    WAREHOUSE
-	    recreate-bts-indexes: recreate the BTS index on the warehouse tables (drop and create them).
 	    build-fishmart: builds the fish search-related warehouse tables.
 	    run-fishmart-unittests: run the unit tests for the fish mart
 

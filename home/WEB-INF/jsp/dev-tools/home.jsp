@@ -198,7 +198,7 @@
                         <a href="/action/devtool/database-info">Database Info</a><br/>
                     </td>
                     <td class="col-md-2">
-                        <a href="/action/devtool/bts-index-info">BTS Index Info</a><br/>
+                        <a href="/action/database/overview">Informix Database </a>
                     </td>
                 </tr>
                 <tr>
@@ -206,7 +206,6 @@
                         <a href="/action/devtool/jdbc-driver-info">JDBC Driver Info</a>
                     </td>
                     <td class="col-md-2">
-                        <a href="/action/database/overview">Informix Database </a>
                     </td>
                 </tr>
                 </tbody>

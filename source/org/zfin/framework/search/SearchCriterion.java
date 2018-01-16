@@ -2,10 +2,8 @@ package org.zfin.framework.search;
 
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -69,70 +67,6 @@ public class SearchCriterion {
         return queryTerms;
     }
 
-    /*
-        public List<String> getExactMatchValues() {
-
-            List<String> queryTerms = new ArrayList<String>();
-
-            if (separator.equals(WHITESPACE_SEPARATOR)) {
-                for (String term : value.split(WHITESPACE_SEPARATOR)) {
-                    queryTerms.add(term);
-                }
-            } else {
-                //copied and slightly modified from antibodybean - maybe should use the same syntax as above?
-                String[] array;
-                array = value.split(separator);
-
-                for (int i = 0; i < array.length; i++) {
-                    array[i] = array[i].trim();
-                    queryTerms.add(array[i]);
-                }
-            }
-            return queryTerms;
-        }
-
-
-
-        public String getBtsValues() {
-            StringBuilder sb = new StringBuilder();
-            for (String value : getExactMatchValues()) {
-                value = btsClean(value);
-                if (!StringUtils.isEmpty(sb.toString()))
-                    sb.append(" and ");
-                sb.append(value);
-            }
-            return sb.toString();
-        }
-
-
-
-        public String getBtsExpandedQuery() {
-            StringBuilder sb = new StringBuilder();
-
-            for (String value : getValues()) {
-
-                if (!StringUtils.isEmpty(sb.toString()))
-                    sb.append(" and ");
-                sb.append(" (");
-                sb.append(value);
-                sb.append("^1000 or ");
-                sb.append(value);
-                sb.append("*) ");
-            }
-            return sb.toString();
-        }
-
-        private String btsClean(String value) {
-            if (value == null)
-                return null;
-
-            List<String> charactersToRemove = Arrays.asList("-",":","\\(","\\)","\\[","\\]","\\.",",");
-            for (String removeMe : charactersToRemove)
-              value = value.replaceAll(removeMe,"");
-
-            return value;
-        }
-    */
     public boolean isTrue() {
         return StringUtils.equals(value, "true");
     }

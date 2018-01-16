@@ -8,7 +8,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.Fish;
 
@@ -108,9 +107,6 @@ public class HibernateFishRepository implements FishRepository {
         return figures;
     }
 
-
-
-
     /**
      * Retrieve the Warehouse summary info for a given mart.
      *
@@ -123,21 +119,6 @@ public class HibernateFishRepository implements FishRepository {
         Criteria criteria = session.createCriteria(WarehouseSummary.class);
         criteria.add(Restrictions.eq("martName", mart.getName()));
         return (WarehouseSummary) criteria.uniqueResult();
-    }
-
-    /**
-     * Retrieve the status of the fish mart:
-     * true: fish mart ready for usage
-     * false: fish mart is being rebuilt.
-     *
-     * @return status
-     */
-    @Override
-    public ZdbFlag getFishMartStatus() {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(ZdbFlag.class);
-        criteria.add(Restrictions.eq("type", ZdbFlag.Type.REGEN_FISHMART_BTS_INDEXES));
-        return (ZdbFlag) criteria.uniqueResult();
     }
 
 }

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
-import org.zfin.database.BtsContainsService;
 import org.zfin.expression.Figure;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.HibernateUtil;

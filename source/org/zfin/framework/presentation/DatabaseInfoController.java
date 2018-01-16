@@ -8,12 +8,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.zfin.database.presentation.Table;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.InformixLuceneIndexInspection;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -42,11 +40,6 @@ public class DatabaseInfoController {
         model.addAttribute("metadata", getMetaData());
         model.addAttribute("unloadDate", getInfrastructureRepository().getUnloadInfo());
         return "dev-tools/view-database-info.page";
-    }
-
-    @RequestMapping("/bts-index-info")
-    protected String showBtsIndex(Model model) throws Exception {
-        return "bts-index-statistics.page";
     }
 
     @RequestMapping("/jdbc-driver-info")
