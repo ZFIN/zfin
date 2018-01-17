@@ -5,6 +5,8 @@ echo $startTime
 
 rm -rf /tmp/abstracts/*
 
+rm -rf ${SOURCEROOT}/server_apps/DB_maintenance/postgres/clobLoad.sql
+
 # unload the clobs and store in /tmp/abstracts and /tmp/nonzf_pubs
 ${INFORMIXDIR}/bin/dbaccess ${DBNAME} ${SOURCEROOT}/server_apps/DB_maintenance/postgres/unloadAbstract.sql
 
