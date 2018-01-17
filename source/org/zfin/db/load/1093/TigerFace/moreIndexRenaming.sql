@@ -71,3 +71,15 @@ alter table feature_transcript_mutation_detail add
     constraint (foreign key (ftmd_feature_zdb_id) references 
     feature  on delete cascade constraint 
     ftmd_feature_zdb_id_fk_odc);
+
+drop index dalias_alias_lower_index;
+
+create index dalias_alias_lower_index on 
+    data_alias (dalias_alias_lower) using 
+    btree in idxdbs3 ;
+
+drop index experiment_condition_restricted_condition_data_type_foreign_key_index;
+
+create index ecr__condition_data_type_fk_index 
+    on experiment_condition_restricted (ecr_cdt_zdb_id) 
+    using btree in idxdbs2;
