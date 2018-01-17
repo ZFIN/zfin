@@ -108,3 +108,21 @@ alter table linkage_pair_member
 alter table linkage_pair_member add constraint (foreign 
     key (lpmem_linkage_zdb_id,lpmem_member_zdb_id) references 
     linkage_member  constraint lpmem_linkage_member_foreign_key);
+
+drop index paneled_markers_target_abbrev_etc_index_a2 ;
+
+create index paneled_markers_target_abbrev_etc_index_a2 
+    on paneled_markers (target_abbrev) 
+    using btree in idxdbs2;
+
+create index paneled_markers_or_lg_index
+    on paneled_markers (or_lg) 
+    using btree in idxdbs1;
+
+create index paneled_markers_mtype_index
+    on paneled_markers (mtype) 
+    using btree in idxdbs3;
+
+create index paneled_markers_zdb_id_index 
+    on paneled_markers (zdb_id) 
+    using btree in idxdbs1;
