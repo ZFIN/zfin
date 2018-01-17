@@ -132,12 +132,13 @@ create index paneled_markers_target_abbrev_etc_index_a2
     on paneled_markers (target_abbrev) 
     using btree in idxdbs2;
 
+alter table paneled_markers
+ drop constraint paneled_markers_zdb_id_fk_odc;
+
 create index paneled_markers_or_lg_index
     on paneled_markers (or_lg) 
     using btree in idxdbs1;
 
-alter table paneled_markers
- drop constraint r443_1733;
 
 alter table paneled_markers add constraint (foreign 
     key (zdb_id) references zdb_active_data  on delete 
