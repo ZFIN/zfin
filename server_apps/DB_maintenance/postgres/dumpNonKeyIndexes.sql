@@ -4,6 +4,7 @@ unload to nonKeyIndexes.sql
   	 FROM systables a, sysindexes c, syscolumns d
 	 WHERE  a.tabid = c.tabid
 	 and d.tabid = a.tabid
+	 and a.tabname not like 'sys%'
 	 and c.idxtype != 'U'
 	 AND (d.colno = c.part1 or
 		d.colno = c.part2 or
