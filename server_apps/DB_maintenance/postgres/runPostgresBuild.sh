@@ -93,7 +93,7 @@ sed 's/?column?//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql 
 
 sed 's/-//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp && mv ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
 
-sed 's/(142 rows)//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp && mv ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
+head -n -2 ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/temp.txt ; mv ${SOURCEROOT}/server_apps/DB_maintenance/postgres/temp.txt ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
 
 # reset the sequence start values for all serial ids
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
