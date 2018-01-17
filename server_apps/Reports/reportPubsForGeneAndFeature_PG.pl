@@ -1,4 +1,4 @@
-#! /private/bin/perl -w
+#!/private/bin/perl -w
 #
 # reportPubsForGeneAndFeature_PG.pl
 #
