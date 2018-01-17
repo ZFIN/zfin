@@ -90,7 +90,12 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     }
 
     public String getUrl() {
-        return source.getUrl() + accessionNumber;
+        if (source.getDisplayName().contains("NCBI")){
+            return source.getUrl() +accessionNumber +"&assm=GCF_000002035.6&context=gene";
+        }
+        else {
+            return source.getUrl() + accessionNumber;
+        }
     }
 
     public String getDetailedSource() {
@@ -172,7 +177,8 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
         ZFIN_Zv9("ZfinGbrowseZv9StartEndLoader", true, "ZFIN Zv9 Gbrowse", "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name="),
         ENSEMBL("EnsemblStartEndLoader", true, "Ensembl", "http://www.ensembl.org/Danio_rerio/Location/View?db=core;g="),
         VEGA("VegaStartEndLoader", true, "Vega", "http://vega.sanger.ac.uk/Danio_rerio/Location/View?db=core;g="),
-        NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/mapview/map_search.cgi?direct=on&idtype=gene&id="),
+        //NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/mapview/map_search.cgi?direct=on&idtype=gene&id="),
+        NCBI("NCBIStartEndLoader", true, "NCBI Map Viewer", "http://www.ncbi.nlm.nih.gov/genome/gdv/browser/?id="),
         UCSC("UCSCStartEndLoader", true, "UCSC", "http://genome.ucsc.edu/cgi-bin/hgTracks?org=Zebrafish&db=danRer7&position="),
         GENERAL_LOAD("General Load", false, "General Load", null),
         OTHER_MAPPING("other map location", false, "Other Mapping", null);
