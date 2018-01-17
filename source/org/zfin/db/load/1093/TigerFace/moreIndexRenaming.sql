@@ -83,3 +83,28 @@ drop index experiment_condition_restricted_condition_data_type_foreign_key_index
 create index ecr__condition_data_type_fk_index 
     on experiment_condition_restricted (ecr_cdt_zdb_id) 
     using btree in idxdbs2;
+
+
+drop index feature_mutation_detail_protein_consequenc_term_zdb_id_foreign_key_index;
+
+create index fpmd_protein_consequence_term_zdb_id_fk_index 
+    on feature_protein_mutation_detail (fpmd_protein_consequence_term_zdb_id) 
+    using btree  in idxdbs3;
+
+
+drop index lpmem_linkage_member_index
+
+create index lpmem_linkage_member_index on 
+    linkage_pair_member (lpmem_linkage_zdb_id) 
+    using btree in idxdbs2;
+
+create index lpmem_linkage_member_index on 
+    linkage_pair_member (lpmem_member_zdb_id) 
+    using btree in idxdbs1;
+
+alter table linkage_pair_member
+ drop constraint lpmem_linkage_member_foreign_key;
+
+alter table linkage_pair_member add constraint (foreign 
+    key (lpmem_linkage_zdb_id,lpmem_member_zdb_id) references 
+    linkage_member  constraint lpmem_linkage_member_foreign_key);
