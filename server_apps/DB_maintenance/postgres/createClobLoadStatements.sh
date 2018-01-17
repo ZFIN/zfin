@@ -7,7 +7,7 @@ for abstractFile in /tmp/abstracts/* ; do
   fullpath="/tmp/abstracts/";
   suffix="')) where zdb_id = "
   id="'$fulltxt';";
-  echo $prefix$fullpath$abstractFile$suffix$id >> $SOURCEROOT/server_apps/DB_maintenance/postgres/clobLoad.sql;
+  echo $prefixabstractFile$suffix$id >> $SOURCEROOT/server_apps/DB_maintenance/postgres/clobLoad.sql;
 done
 
 cd /tmp/nonzf_pubs/
@@ -17,5 +17,5 @@ for nonzfPubFile in /tmp/nonzf_pubs/* ; do
   fullpath="/tmp/nonzf_pubs/";
   suffix="')) where zdb_id = "
   id="'$fulltxt';";
-  echo $prefix$fullpath$nonzfPubFile$suffix$id >> $SOURCEROOT/server_apps/DB_maintenance/postgres/clobLoad.sql;
+  echo $prefix$nonzfPubFile$suffix$id >> $SOURCEROOT/server_apps/DB_maintenance/postgres/clobLoad.sql;
 done
