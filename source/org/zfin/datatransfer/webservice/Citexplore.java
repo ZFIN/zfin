@@ -20,7 +20,7 @@ import java.util.List;
 public class Citexplore {
 
     public final static String DOI_URL = "http://dx.doi.org";
-    public final static String EPMC_SEARCH = "http://www.ebi.ac.uk/europepmc/webservices/rest/search";
+    public final static String EPMC_SEARCH = "https://www.ebi.ac.uk/europepmc/webservices/rest/search";
 
     private Logger logger = Logger.getLogger(Citexplore.class);
 
