@@ -288,13 +288,13 @@ sub recordResult(@) {
   my $exist = $dbh->selectrow_array($sql);
   if ($exist){
     my $sth = $dbh->do("update validate_check_history 
-                        set (vldcheck_count, vldcheck_date) = ('$rcdNum', now()))
+                        set (vldcheck_count, vldcheck_date) = ('$rcdNum', current_timestamp )
                        where vldcheck_name = '$rtnName' " );
   }
   else {
     my $sth = $dbh->do(" insert into validate_check_history
                           (vldcheck_name, vldcheck_count, vldcheck_date) values
-                           ('$rtnName', '$rcdNum', now())) ");
+                           ('$rtnName', '$rcdNum', current_timestamp ) ");
     }
   return ();
 }
