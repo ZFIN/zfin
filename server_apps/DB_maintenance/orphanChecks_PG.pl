@@ -596,7 +596,7 @@ $globalResultFile = "/tmp/<!--|DB_NAME|-->"."orphancheckresult.txt";
 
 $dbh = DBI->connect ("DBI:Pg:dbname=$globalDbName;host=localhost", $globalUsername, $globalPassword) or die "Cannot connect to database: $DBI::errstr\n";
 
-my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
+my $dbaEmail     = '<!--|VALIDATION_EMAIL_DBA|-->';
   
   zdbActiveDataStillActive($dbaEmail);
   zdbActiveSourceStillActive($dbaEmail);
