@@ -8,7 +8,7 @@
     <include file="source/org/zfin/db/load/1093/TigerFace/renameIndexes.sql"/>
     <include file="source/org/zfin/db/load/1093/TigerFace/moreIndexRenaming.sql"/>
     <include file="source/org/zfin/db/load/1093/TigerFace/SRCH-1051.sql"/>
-
+    <include file="source/org/zfin/db/load/1093/TigerFace/SRCH-1051a.sql"/>
 </databaseChangeLog>
 
    
