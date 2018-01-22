@@ -3,10 +3,9 @@ drop trigger if exists run_candidate_trigger on run_candidate;
 create or replace function run_candidate()
 returns trigger as
 $BODY$
-declare runcan_occurrence_order int;
+declare runcan_occurrence_order int := (select increment_candidate_occurrences(NEW.runcan_cnd_zdb_id));
 begin
 
-     runcan_occurrence_order = (select increment_candidate_occurrences(NEW.runcan_cnd_zdb_id));
      NEW.runcan_occurrence_order = runcan_occurrence_order;
      RETURN NEW;
 
