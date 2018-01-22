@@ -23,7 +23,6 @@ SUBDIRS = \
 	fish_files \
 	misc_files \
 	security_files \
-	selection \
 	xpat_files
 
 
