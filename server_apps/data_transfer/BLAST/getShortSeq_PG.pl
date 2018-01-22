@@ -30,7 +30,7 @@ else {
 my $mrphFile = $outputdir."zfin_mrph.fa";
 
 
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $user, $passwd) or die "Cannot connect to database: $DBI::errstr\n";
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $user, $passwd) or die "Cannot connect to database: $DBI::errstr\n";
 
 my $sql;
 #======  regenerate morpholino sequence set =======
