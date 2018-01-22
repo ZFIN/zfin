@@ -17,15 +17,16 @@ public class MarkerSearchTypeGroupComparator<T extends FacetField.Count> impleme
         Map<String, String> map = new HashMap<>();
         Integer i = 1;
 
-        map.put(Marker.TypeGroup.SEARCHABLE_GENE.getDisplayName(), pad(i++));
-        map.put(Marker.TypeGroup.SEARCHABLE_TRANSCRIPT.getDisplayName(), pad(i++));
+        map.put(Marker.TypeGroup.SEARCHABLE_PROTEIN_CODING_GENE.getDisplayName(), pad(i++));
+        map.put(Marker.TypeGroup.SEARCHABLE_NON_PROTEIN_CODING_GENE.getDisplayName(), pad(i++));
         map.put(Marker.TypeGroup.SEARCHABLE_EFG.getDisplayName(), pad(i++));
-        map.put(Marker.TypeGroup.SEARCHABLE_REGION.getDisplayName(), pad(i++));
         map.put(Marker.TypeGroup.SEARCHABLE_STR.getDisplayName(), pad(i++));
-        map.put(Marker.TypeGroup.SEARCHABLE_CLONE.getDisplayName(), pad(i++));
-        map.put(Marker.TypeGroup.SEARCHABLE_SMALL_SEGMENT.getDisplayName(), pad(i++));
         map.put(Marker.TypeGroup.SEARCHABLE_CONSTRUCT.getDisplayName(), pad(i++));
-        map.put(Marker.TypeGroup.SEARCHABLE_ANTIBODY.getDisplayName(), pad(i++));
+        map.put(Marker.TypeGroup.SEARCHABLE_NON_TRANSCRIBED_REGION.getDisplayName(), pad(i++));
+        map.put(Marker.TypeGroup.SEARCHABLE_TRANSCRIPT.getDisplayName(), pad(i++));
+        map.put(Marker.TypeGroup.SEARCHABLE_CDNA_EST.getDisplayName(), pad(i++));
+        map.put(Marker.TypeGroup.SEARCHABLE_GENOMIC_CLONE.getDisplayName(), pad(i++));
+        map.put(Marker.TypeGroup.SEARCHABLE_MAPPING_MARKER.getDisplayName(), pad(i++));
 
         sortMap = Collections.unmodifiableMap(map);
     }

@@ -142,11 +142,13 @@ public class MarkerSearchCriteria {
     }
 
     public Boolean isGenedomResult() {
-        return StringUtils.equals(displayType, Marker.TypeGroup.SEARCHABLE_GENE.getDisplayName());
+        return StringUtils.equals(displayType, Marker.TypeGroup.SEARCHABLE_PROTEIN_CODING_GENE.getDisplayName())
+                || StringUtils.equals(displayType, Marker.TypeGroup.SEARCHABLE_NON_PROTEIN_CODING_GENE.getDisplayName());
     }
 
     public Boolean isCloneResult() {
-        return StringUtils.equals(displayType, Marker.TypeGroup.SEARCHABLE_CLONE.getDisplayName());
+        return StringUtils.equals(displayType, Marker.TypeGroup.SEARCHABLE_GENOMIC_CLONE.getDisplayName())
+                || StringUtils.equals(displayType, Marker.TypeGroup.SEARCHABLE_CDNA_EST.getDisplayName());
     }
 
     public Boolean isTranscriptResult() {

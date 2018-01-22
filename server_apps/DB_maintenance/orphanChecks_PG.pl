@@ -288,13 +288,13 @@ sub recordResult(@) {
   my $exist = $dbh->selectrow_array($sql);
   if ($exist){
     my $sth = $dbh->do("update validate_check_history 
-                        set (vldcheck_count, vldcheck_date) = ('$rcdNum', CURRENT)
+                        set (vldcheck_count, vldcheck_date) = ('$rcdNum', current_timestamp )
                        where vldcheck_name = '$rtnName' " );
   }
   else {
     my $sth = $dbh->do(" insert into validate_check_history
                           (vldcheck_name, vldcheck_count, vldcheck_date) values
-                           ('$rtnName', '$rcdNum', CURRENT) ");
+                           ('$rtnName', '$rcdNum', current_timestamp ) ");
     }
   return ();
 }
@@ -596,7 +596,7 @@ $globalResultFile = "/tmp/<!--|DB_NAME|-->"."orphancheckresult.txt";
 
 $dbh = DBI->connect ("DBI:Pg:dbname=$globalDbName;host=localhost", $globalUsername, $globalPassword) or die "Cannot connect to database: $DBI::errstr\n";
 
-my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
+my $dbaEmail     = '<!--|VALIDATION_EMAIL_DBA|-->';
   
   zdbActiveDataStillActive($dbaEmail);
   zdbActiveSourceStillActive($dbaEmail);

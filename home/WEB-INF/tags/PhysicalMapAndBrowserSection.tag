@@ -30,9 +30,10 @@
                         </tr>
                         <c:forEach var="genomeLocation" items="${locations}" varStatus="loop">
                             <zfin:alternating-tr loopName="loop">
-                                <td nowrap><a
-                                        href="${genomeLocation.url}">${genomeLocation.source.displayName}</a>
+
+                                <td nowrap><a href="${genomeLocation.url}">${genomeLocation.source.displayName}</a>
                                 </td>
+
                                 <td>${genomeLocation.chromosome}</td>
                                 <td nowrap>
                                     <fmt:formatNumber value="${genomeLocation.start}" pattern="##,###"/> -
