@@ -15,7 +15,9 @@ kill $processID;
 cd <!--|SOURCEROOT|-->/server_apps/DB_maintenance/
 
 echo "dump logs continuous"
-<!--|TARGETROOT|-->/server_apps/DB_maintenance/dumpLogsContinuous.pl
+#<!--|TARGETROOT|-->/server_apps/DB_maintenance/dumpLogsContinuous.pl
+#The systemd script calls dumpLogsContinuous.pl
+sudo /bin/systemctl restart ontape
 
 /bin/rm -rf $logToBeDeleted
 
