@@ -134,6 +134,11 @@
             <one-to-many class="org.zfin.marker.MarkerRelationship"/>
         </set>
 
+        <set name="featureMarkerRelationships" lazy="true">
+            <key column="fmrel_mrkr_zdb_id"/>
+            <one-to-many class="org.zfin.feature.FeatureMarkerRelationship"/>
+        </set>
+
 
         <set name="dataNotes" lazy="true" order-by="date desc">
             <key column="dnote_data_zdb_id"/>
