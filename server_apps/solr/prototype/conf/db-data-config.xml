@@ -3000,6 +3000,13 @@
                     cacheImpl="SortedMapBackedCache"
             />
 
+            <entity name="expression_result"
+                    query="select xpatres_pk_id as xpatres_id, 'xpatex-' || xpatres_efs_id as efs_pk_id
+                            from expression_result2"
+                    where="efs_pk_id=expression.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
+
             <entity name="expression_expression_anatomy_direct"
                     query="select
                             term_name as expression_anatomy_direct,

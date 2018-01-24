@@ -153,6 +153,7 @@ public enum FieldName {
     TYPEGROUP("typegroup"),
     URL("url"),
     VOLUME("volume"),
+    XPATRES_ID("xpatres_id"),
     XREF("xref"),
     YEAR("year"),
     ZEBRAFISH_GENE("zebrafish_gene"),

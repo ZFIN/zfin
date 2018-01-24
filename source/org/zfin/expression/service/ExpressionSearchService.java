@@ -4,22 +4,28 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.*;
+import org.apache.solr.client.solrj.response.FieldStatsInfo;
+import org.apache.solr.client.solrj.response.Group;
+import org.apache.solr.client.solrj.response.GroupCommand;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionFigureStage;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.*;
+import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.FieldName;
-import org.zfin.search.presentation.MarkerSearchResult;
 import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
@@ -29,7 +35,6 @@ import java.util.stream.Collectors;
 
 import static org.zfin.search.service.SolrQueryFacade.addTo;
 
-
 @Service
 public class ExpressionSearchService {
 
@@ -37,16 +42,22 @@ public class ExpressionSearchService {
     private static final String AND = "AND";
     private static final String OR = "OR";
 
-    private static SolrQuery applyCriteria(SolrQuery solrQuery,
-                                          ExpressionSearchCriteria criteria,
-                                          String anatomyBoolean) {
+    @Autowired
+    private PublicationRepository publicationRepository;
+
+    @Autowired
+    private ExpressionRepository expressionRepository;
+
+    private SolrQuery applyCriteria(SolrQuery solrQuery,
+                                    ExpressionSearchCriteria criteria,
+                                    String anatomyBoolean) {
 
         solrQuery.addFilterQuery(fq(FieldName.CATEGORY, Category.EXPRESSIONS.getName()));
 
         //only interested in expression where there is a zebrafish gene or no reporter, no ATB expression
         solrQuery.addFilterQuery("(" + FieldName.ZEBRAFISH_GENE.getName()
-                                     + ":[* TO *] OR "
-                                     + FieldName.REPORTER_GENE + ":[* TO *])");
+                + ":[* TO *] OR "
+                + FieldName.REPORTER_GENE + ":[* TO *])");
 
         if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
             String termQuery = criteria.getAnatomy().stream()
@@ -85,7 +96,7 @@ public class ExpressionSearchService {
             if (start != null && end != null) {
                 solrQuery.addFilterQuery(SolrService.buildStageRangeQuery(
                         FieldName.STAGE_HOURS_START,
-                        "[", DevelopmentStage.MIN, end.getHoursEnd(),  "}"
+                        "[", DevelopmentStage.MIN, end.getHoursEnd(), "}"
                 ));
                 solrQuery.addFilterQuery(SolrService.buildStageRangeQuery(
                         FieldName.STAGE_HOURS_END,
@@ -136,7 +147,7 @@ public class ExpressionSearchService {
         return solrQuery;
     }
 
-    public static List<GeneResult> getGeneResults(ExpressionSearchCriteria criteria) {
+    public List<GeneResult> getGeneResults(ExpressionSearchCriteria criteria) {
 
         SolrQuery solrQuery = new SolrQuery();
 
@@ -162,12 +173,12 @@ public class ExpressionSearchService {
 
         return queryResponse.getGroupResponse().getValues().get(0).getValues()
                 .stream()
-                .map(ExpressionSearchService::getFirstDocumentFromGroup)
+                .map(this::getFirstDocumentFromGroup)
                 .map(doc -> buildGeneResult(doc, criteria, finalQueryResponse))
                 .collect(Collectors.toList());
     }
 
-    public static List<FigureResult> getFigureResults(ExpressionSearchCriteria criteria) {
+    public List<FigureResult> getFigureResults(ExpressionSearchCriteria criteria) {
         SolrQuery solrQuery = new SolrQuery();
 
         solrQuery = applyCriteria(solrQuery, criteria, OR);
@@ -178,12 +189,13 @@ public class ExpressionSearchService {
         solrQuery.add("group.ngroups", TRUE);
         solrQuery.add("group.field", FieldName.FIG_ZDB_ID.getName());
         solrQuery.add("group.field", FieldName.PUB_ZDB_ID.getName());
+        solrQuery.add("group.limit", "100");
 
         solrQuery.setFields(
                 FieldName.ID.getName(),
                 FieldName.FIG_ZDB_ID.getName(),
                 FieldName.PUB_ZDB_ID.getName(),
-                FieldName.FISH_ZDB_ID.getName()
+                FieldName.XPATRES_ID.getName()
         );
 
         solrQuery.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
@@ -202,16 +214,12 @@ public class ExpressionSearchService {
         criteria.setNumFound(queryResponse.getGroupResponse().getValues().get(0).getNGroups());
         criteria.setPubCount(queryResponse.getGroupResponse().getValues().get(1).getNGroups());
 
-        List<SolrDocument> solrDocumentList = queryResponse.getGroupResponse().getValues().get(0).getValues()
-                .stream()
-                .map(ExpressionSearchService::getFirstDocumentFromGroup)
+        return queryResponse.getGroupResponse().getValues().get(0).getValues().stream()
+                .map(this::buildFigureResult)
                 .collect(Collectors.toList());
-
-        return buildFigureResults(solrDocumentList, criteria);
-
     }
 
-    public static List<ImageResult> getImageResults(ExpressionSearchCriteria criteria) {
+    public List<ImageResult> getImageResults(ExpressionSearchCriteria criteria) {
         SolrQuery solrQuery = new SolrQuery();
 
         solrQuery = applyCriteria(solrQuery, criteria, OR);
@@ -235,52 +243,64 @@ public class ExpressionSearchService {
             e.printStackTrace();
         }
         return queryResponse.getGroupResponse().getValues().get(0).getValues().stream()
-                .map(ExpressionSearchService::getFirstDocumentFromGroup)
-                .map(ExpressionSearchService::buildImageResults)
+                .map(this::getFirstDocumentFromGroup)
+                .map(this::buildImageResults)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 
-    private static List<FigureResult> buildFigureResults(List<SolrDocument> solrDocumentList, ExpressionSearchCriteria criteria) {
-        return solrDocumentList.stream()
-                .map(it -> buildFigureResult(it, criteria))
-                .collect(Collectors.toList());
-    }
-
-    private static FigureResult buildFigureResult(SolrDocument document, ExpressionSearchCriteria criteria) {
+    private FigureResult buildFigureResult(Group group) {
         FigureResult figureResult = new FigureResult();
 
-        Figure figure = RepositoryFactory.getPublicationRepository().getFigure((String) document.get(FieldName.FIG_ZDB_ID.getName()));
-        Publication publication = RepositoryFactory.getPublicationRepository().getPublication((String) document.get(FieldName.PUB_ZDB_ID.getName()));
+        Figure figure = publicationRepository.getFigure(group.getGroupValue());
+        String pubZdbId = (String) group.getResult().get(0).get(FieldName.PUB_ZDB_ID.getName());
+        Publication publication = publicationRepository.getPublication(pubZdbId);
 
-        List<ExpressionResult> results = figure.getExpressionResults().stream()
-                .filter(er -> er.getExpressionExperiment().getGene() != null && er.getExpressionExperiment().getGene().getZdbID().equals(criteria.getGeneZdbID()))
+        List<ExpressionResult2> results = group.getResult().stream()
+                .flatMap(doc -> ((ArrayList<String>) doc.get(FieldName.XPATRES_ID.getName())).stream())
+                .distinct()
+                .map(id -> expressionRepository.getExpressionResult2(Integer.parseInt(id)))
+                .filter(ExpressionResult2::isExpressionFound)
                 .collect(Collectors.toList());
 
-        Set<Fish> fish = results.stream()
-                .map(er -> er.getExpressionExperiment().getFishExperiment().getFish())
+        List<ExpressionFigureStage> expressionFigureStages = results.stream()
+                .map(ExpressionResult2::getExpressionFigureStage)
+                .collect(Collectors.toList());
+
+        Set<Fish> fish = expressionFigureStages.stream()
+                .map(efs -> efs.getExpressionExperiment().getFishExperiment().getFish())
                 .collect(Collectors.toCollection(TreeSet::new));
 
         Set<PostComposedEntity> anatomy = results.stream()
-                .filter(ExpressionResult::isExpressionFound)
-                .map(ExpressionResult::getEntity)
+                .map(ExpressionResult2::getEntity)
                 .collect(Collectors.toCollection(TreeSet::new));
+
+        DevelopmentStage startStage = expressionFigureStages.stream()
+                .map(ExpressionFigureStage::getStartStage)
+                .min(DevelopmentStage::compareTo)
+                .orElse(null);
+
+        DevelopmentStage endStage = expressionFigureStages.stream()
+                .map(ExpressionFigureStage::getEndStage)
+                .max(DevelopmentStage::compareTo)
+                .orElse(null);
 
         figureResult.setFigure(figure);
         figureResult.setId(figure.getZdbID());
         figureResult.setPublication(publication);
         figureResult.setFish(fish);
         figureResult.setAnatomy(anatomy);
-        populateStageRange(figureResult, criteria, OR, fq(FieldName.FIG_ZDB_ID, figure.getZdbID()));
+        figureResult.setStartStage(startStage);
+        figureResult.setEndStage(endStage);
 
         return figureResult;
     }
 
-    private static SolrDocument getFirstDocumentFromGroup(Group group) {
+    private SolrDocument getFirstDocumentFromGroup(Group group) {
         return group.getResult().get(0);
     }
 
-    private static GeneResult buildGeneResult(SolrDocument document, ExpressionSearchCriteria criteria, QueryResponse response) {
+    private GeneResult buildGeneResult(SolrDocument document, ExpressionSearchCriteria criteria, QueryResponse response) {
         GeneResult geneResult = new GeneResult();
 
         geneResult.setId(document.get(FieldName.GENE_ZDB_ID.getName()).toString());
@@ -302,7 +322,7 @@ public class ExpressionSearchService {
         return geneResult;
     }
 
-    private static List<ImageResult> buildImageResults(SolrDocument document) {
+    private List<ImageResult> buildImageResults(SolrDocument document) {
         ArrayList idList = (ArrayList) document.get(FieldName.IMG_ZDB_ID.getName());
         ArrayList thumbList = (ArrayList) document.get(FieldName.THUMBNAIL.getName());
         ArrayList<ImageResult> imageResults = new ArrayList<>();
@@ -317,7 +337,7 @@ public class ExpressionSearchService {
         return imageResults;
     }
 
-    private static void populateFigureInfo(GeneResult result, ExpressionSearchCriteria criteria) {
+    private void populateFigureInfo(GeneResult result, ExpressionSearchCriteria criteria) {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery = applyCriteria(solrQuery, criteria, AND);
         solrQuery.addFilterQuery(fq(FieldName.GENE_ZDB_ID, result.getGene().getZdbID()));
@@ -335,7 +355,7 @@ public class ExpressionSearchService {
         } catch (SolrServerException | IOException e) {
             e.printStackTrace();
         }
-        Map<String, GroupCommand> groups =  queryResponse.getGroupResponse().getValues().stream()
+        Map<String, GroupCommand> groups = queryResponse.getGroupResponse().getValues().stream()
                 .collect(Collectors.toMap(GroupCommand::getName, Function.identity()));
         GroupCommand pubGroup = groups.get(FieldName.PUB_ZDB_ID.getName());
         result.setPublicationCount(pubGroup.getNGroups());
@@ -359,8 +379,8 @@ public class ExpressionSearchService {
         }
     }
 
-    private static void populateStageRange(ExpressionSearchResult result, ExpressionSearchCriteria criteria,
-                                          String anatomyBoolean, String... filters) {
+    private void populateStageRange(ExpressionSearchResult result, ExpressionSearchCriteria criteria,
+                                    String anatomyBoolean, String... filters) {
         SolrQuery solrQuery = new SolrQuery();
         applyCriteria(solrQuery, criteria, anatomyBoolean);
         for (String filter : filters) {
@@ -386,7 +406,7 @@ public class ExpressionSearchService {
         result.setEndStage(ar.getStageByEndHours(endHours.floatValue()));
     }
 
-    public static void injectHighlighting(GeneResult result, QueryResponse response) {
+    private void injectHighlighting(GeneResult result, QueryResponse response) {
 
         List<String> highlightBlacklist = new ArrayList<>();
         highlightBlacklist.add("name");
@@ -402,7 +422,7 @@ public class ExpressionSearchService {
 
                         String prettyFieldName = SolrService.getPrettyFieldName(highlightField);
 
-                        if (StringUtils.equals(highlightField,FieldName.RELATED_GENE_SYMBOL.toString())) {
+                        if (StringUtils.equals(highlightField, FieldName.RELATED_GENE_SYMBOL.toString())) {
                             prettyFieldName = "Expressed Gene Symbol";
                         }
 
@@ -421,27 +441,24 @@ public class ExpressionSearchService {
                 out.append(snippet);
             }
             result.setMatchingText(out.toString());
-
         }
-
-
     }
 
-    public static SortedMap<String, String> getStageOptions() {
+    public SortedMap<String, String> getStageOptions() {
         List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
 
-        SortedMap<String,String> options = new TreeMap<>();
+        SortedMap<String, String> options = new TreeMap<>();
 
         stages.stream().sorted().forEach(s -> options.put(s.getOboID(), s.getName()));
 
         return options;
     }
 
-    private static String fq(FieldName fieldName, String value) {
+    private String fq(FieldName fieldName, String value) {
         return fieldName.getName() + ":(\"" + SolrService.luceneEscape(value) + "\")";
     }
 
-    private static String any(String... fqs) {
+    private String any(String... fqs) {
         return String.join(" " + OR + " ", fqs);
     }
 

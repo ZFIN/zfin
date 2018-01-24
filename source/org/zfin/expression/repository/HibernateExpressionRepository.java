@@ -2188,4 +2188,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setParameter("database", database);
         return (List<MarkerDBLink>) query.list();
     }
+
+    @Override
+    public ExpressionResult2 getExpressionResult2(long id) {
+        return (ExpressionResult2) HibernateUtil.currentSession().get(ExpressionResult2.class, id);
+    }
 }
