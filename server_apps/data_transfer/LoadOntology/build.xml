@@ -9,7 +9,8 @@
               value="https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/master/src/ontology/doid.obo"/>
     <property name="mpathOboURL" value="https://raw.githubusercontent.com/PaulNSchofield/mpath/master/mpath.obo"/>
     <property name="sequenceOboURL" value="http://purl.obolibrary.org/obo/so.obo"/>
-    <property name="ecoOboURL" value="https://raw.githubusercontent.com/evidenceontology/evidenceontology/master/eco.obo"/>
+    <property name="ecoOboURL"
+              value="https://raw.githubusercontent.com/evidenceontology/evidenceontology/master/eco.obo"/>
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
     <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
@@ -17,6 +18,11 @@
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so.obo"/>
     <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
     <property name="zecoTaxonomySourceURL" value="/home/informix/Curation/zeco-taxonomy-source.txt"/>
+    <property name="goQualifierSourceURL" value="go-qualifier-source.txt"/>
+<!--
+    <property name="goQualifierOboURL" value="file:///home/informix/Curation/go-qualifier.obo"/>
+-->
+    <property name="goQualifierOboURL" value="go-qualifier.obo"/>
     <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
     <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
 
@@ -86,21 +92,15 @@
         <antcall target="load-ontology-with-stages"/>
     </target>
 
+    <target name="load-go-qualifier-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="go-qualifier.obo"/>
+    </target>
+
     <target name="load-zeco-ontology">
         <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" scripts="${scriptFilesNoAnnotation}"/>
     </target>
 
-    <target name="setHeaderForZeco">
-        <replaceregexp replace="ontology: zeco taxonomy ${line.separator}default-namespace: zeco_taxonomy
-         ${line.separator}date: ${time.now}" byline="true" file="obo-files/zeco-taxonomy.obo">
-            <regexp pattern="ontology: (.*)"/>
-        </replaceregexp>
-        <replaceregexp replace="namespace: zeco_taxonomy" byline="true" file="obo-files/zeco-taxonomy.obo">
-            <regexp pattern="namespace: (.*)"/>
-        </replaceregexp>
-    </target>
-
-    <target name="load-zeco-taxonomy-ontology" depends="init,setHeaderForZeco">
+    <target name="load-zeco-taxonomy-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="zeco-taxonomy.obo"
                        scripts="${scriptFilesNoAnnotation}"/>
     </target>
@@ -172,13 +172,6 @@
         <property name="localOboFile" value="eco-ontology.obo"/>
         <property name="oboFileURL" value="${ecoOboURL}"/>
         <antcall target="download-ontology"/>
-    </target>
-
-    <target name="download-zeco-taxonomy-ontology">
-        <property name="localOboFile" value="zeco-taxonomy.obo"/>
-        <property name="oboFileURL" value="${zecoTaxonomyOboURL}"/>
-        <antcall target="download-ontology"/>
-        <antcall target="setHeaderForZeco"/>
     </target>
 
     <target name="download-zeco-ontology">
@@ -402,25 +395,54 @@
     </tstamp>
 
     <target name="create-zeco-taxonomy-owl-file">
-        <echo message="Create a new ZECO-taxonomy.owl file from ${zecoTaxonomySourceURL}"/>
-        <echo message="Connecting to ontofox.hegroup.org..."/>
-
-        <!-- Generate owl file at ontofox.hegroup.org from source file-->
-        <exec executable="curl">
-            <arg line="-F file=@'${zecoTaxonomySourceURL}' -o obo-files/zeco-taxonomy.owl http://ontofox.hegroup.org/service.php"/>
-        </exec>
-
-        <!-- convert owl file into an obo file -->
-        <java fork="true" jar="${env.SOURCEROOT}/lib/Java/ontologies/robot.jar">
-            <arg value="convert"/>
-            <arg value="--input"/>
-            <arg value="obo-files/zeco-taxonomy.owl"/>
-            <arg value="--output"/>
-            <arg value="obo-files/zeco-taxonomy.obo"/>
-        </java>
-
-        <antcall target="setHeaderForZeco"/>
+        <create-obo-file file-name="zeco-taxonomy" source-file-name="${zecoTaxonomySourceURL}"/>
+        <setHeaderForObo obo-file-name="zeco-taxonomy" namespace="zeco_taxonomy"/>
     </target>
+
+    <target name="create-go-qualifier-file">
+        <create-obo-file file-name="go-qualifier" source-file-name="${goQualifierSourceURL}"/>
+        <setHeaderForObo obo-file-name="go-qualifier" namespace="go-qualifier"/>
+    </target>
+
+
+    <macrodef name="create-obo-file">
+        <attribute name="file-name"/>
+        <attribute name="source-file-name"/>
+        <sequential>
+            <echo message="Create a new @{file-name} file from @{source-file-name}"/>
+            <echo message="Connecting to ontofox.hegroup.org..."/>
+
+            <!-- Generate owl file at ontofox.hegroup.org from source file-->
+            <exec executable="curl">
+                <arg line="-F file=@'@{source-file-name}' -o obo-files/@{file-name}.owl http://ontofox.hegroup.org/service.php"/>
+            </exec>
+
+            <!-- convert owl file into an obo file -->
+            <java fork="true" jar="${env.SOURCEROOT}/lib/Java/ontologies/robot.jar">
+                <arg value="convert"/>
+                <arg value="--input"/>
+                <arg value="obo-files/@{file-name}.owl"/>
+                <arg value="--output"/>
+                <arg value="obo-files/@{file-name}.obo"/>
+            </java>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef name="setHeaderForObo">
+        <attribute name="namespace"/>
+        <attribute name="obo-file-name"/>
+        <sequential>
+            <replaceregexp replace="ontology: @{namespace} ${line.separator}default-namespace: @{namespace}
+         ${line.separator}date: ${time.now}" byline="true" file="obo-files/@{obo-file-name}.obo">
+                <regexp pattern="ontology: (.*)"/>
+            </replaceregexp>
+            <replaceregexp replace="namespace: @{namespace}" byline="true" file="obo-files/@{obo-file-name}.obo">
+                <regexp pattern="namespace: (.*)"/>
+            </replaceregexp>
+        </sequential>
+    </macrodef>
+
 
     <target name="test">
         <filedate file="zeco-taxonomy.owl" property="file.modified.date"/>

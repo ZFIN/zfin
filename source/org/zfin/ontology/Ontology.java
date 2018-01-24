@@ -50,7 +50,8 @@ public enum Ontology implements Serializable {
     AOGO(ANATOMY.getOntologyName() + "," + GO.getOntologyName(), "AO and GO", true),
     AOGODO(ANATOMY.getOntologyName() + "," + GO.getOntologyName()+ "," + DISEASE_ONTOLOGY.getOntologyName(), "AO, GO and DO", true),
     ZECO("zebrafish_experimental_conditions_ontology", "Zebrafish Environment Condition Ontology", false, "ZECO:"),
-    ZECO_TAXONONY("zeco_taxonomy", "Taxonomy for ZECO", false, "NCBITaxon:");
+    ZECO_TAXONONY("zeco_taxonomy", "Taxonomy for ZECO", false, "NCBITaxon:"),
+    GO_QUALIFIER("go_qualifier", "GO Qualifier for GO Annotations", false, "RO:");
 
     private String ontologyName;
     private String commonName;

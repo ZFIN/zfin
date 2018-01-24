@@ -1,5 +1,0 @@
-
-File[] fileList(String dir) {
-    file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
-}
-
