@@ -35,35 +35,6 @@ alter table int_vegatype_tscripttype add constraint
     (foreign key (ivtst_tscriptt_type_id) references 
 transcript_type  constraint ivtst_tscriptt_type_id_foreign_key);
 
-alter table feature_type_mutagen_group_member
- drop constraint feature_type_mutagen_group_member_alternate_key;
-
-create index ftmgm_feature_type_fk_odc_index
- on feature_type_mutagen_group_member (ftmgm_feature_type)
-using btree in idxdbs1;
-
-alter table feature_type_mutagen_group_member add 
-    constraint (foreign key (ftmgm_feature_type) references 
-    feature_type  on delete cascade constraint ftmgm_feature_type_foreign_key_odc);
-    
-alter table feature_type_mutagen_group_member
- drop constraint ftmgm_mutagen_foreign_key_odc;
-
-
-create index ftmgm_mutagen_fk_odc_index
- on feature_type_mutagen_group_member (ftmgm_mutagen)
-using btree in idxdbs1;
-
-alter table feature_type_mutagen_group_member add 
-    constraint (foreign key (ftmgm_mutagen) references 
-    mutagen  on delete cascade constraint ftmgm_mutagen_foreign_key_odc);
-    
-
-alter table feature_type_mutagen_group_member add 
-    constraint unique(ftmgm_feature_type,ftmgm_mutagen) constraint 
-    feature_type_mutagen_group_member_alternate_key 
-     ;
-
 alter table feature_transcript_mutation_detail
   drop constraint ftmd_feature_zdb_id_fk_odc;
 
