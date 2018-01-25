@@ -200,6 +200,7 @@ public class ExpressionSearchService {
 
         solrQuery.addSort(FieldName.YEAR.getName(), SolrQuery.ORDER.desc);
         solrQuery.addSort(FieldName.AUTHOR_SORT.getName(), SolrQuery.ORDER.asc);
+        solrQuery.addSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
 
         QueryResponse queryResponse = null;
         try {

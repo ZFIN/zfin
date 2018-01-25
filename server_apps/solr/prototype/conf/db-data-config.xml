@@ -2894,12 +2894,12 @@
                          end as full_name,
                          case
                              when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id)
-                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_probe_feature_zdb_id)
+                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_full_label,'') as full_name from marker where mrkr_zdb_id = xpatex_probe_feature_zdb_id)
                              when xpatex_gene_zdb_id is not null and substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
-                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
+                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_full_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
                              when xpatex_gene_zdb_id is not null and substring(xpatex_gene_zdb_id from 1 for 8) != 'ZDB-EFG'
-                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
-                             else (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xpatex_atb_zdb_id)
+                             then (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_full_label,'') as full_name from marker where mrkr_zdb_id = xpatex_gene_zdb_id)
+                             else (select mrkr_abbrev_order || ' expression in ' || fish_name_order || ' from ' || pub_mini_ref|| ' ' || nvl(fig_full_label,'') as full_name from marker where mrkr_zdb_id = xpatex_atb_zdb_id)
                          end as name_sort,
                          to_date(get_date_from_id(efs_xpatex_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
                         from expression_experiment2
