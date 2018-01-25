@@ -6,7 +6,7 @@
 #
 
 
-set bin_pth="/private/apps/wublast";
+set bin_pth="/opt/ab-blast";
 # path from $WEBHOST_BLAST_DATABASE_PATH/Current
 set current="/research/zblastfiles/zmore/blastRegeneration/Current/";
 set timestamp="`date +%Y%m%d`"

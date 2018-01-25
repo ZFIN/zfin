@@ -40,12 +40,12 @@ sequence
 elements of the defline are to be used as linkouts in the blast-report
 
 the resulting fasta file is blastn  like so:
-/private/apps/wublast/blastn /research/zblastdb/db/Current/zfin_cdna \
+/opt/ab-blast/blastn /research/zblastdb/db/Current/zfin_cdna \
 /research/zusers/tomc/VEGA/2004-Dec/transcripts_for_tom.nt \
 E=1.0e-50 E2=0.1 W=11 V=5 B=5 -prune -noseqs -kap -cpus=2 m=1 n=-3 x=6 gapx=25 q=7 r=2 gapL=1.37 gapK=.711 gapH=1.31 \
 >! /research/zusers/tomc/VEGA/2004-Dec/vega_vs_cdna.out
 
-nice +10 /private/apps/wublast/blastn /research/zblastdb/db/Current/zfin_cdna transcripts_for_tom.nt E=1.0e-50 >! vega_vs_cdna.out
+nice +10 /opt/ab-blast/blastn /research/zblastdb/db/Current/zfin_cdna transcripts_for_tom.nt E=1.0e-50 >! vega_vs_cdna.out
 }
 ]
 

@@ -96,11 +96,13 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
         List<String> commandLine = new ArrayList<String>();
 
         try {
-            commandLine.add(ZfinPropertiesEnum.SSH.value());
-            commandLine.add("-x");
-            commandLine.add(ZfinProperties.getBlastServerUserAtHost());
-            commandLine.add("-i");
-            commandLine.add(ZfinPropertiesEnum.WEBHOST_KEY_PATH + "/" + xmlBlastBean.getProgram());
+            //commandLine.add(ZfinPropertiesEnum.SSH.value());
+            //commandLine.add("-x");
+            //commandLine.add(ZfinProperties.getBlastServerUserAtHost());
+            //commandLine.add("-i");
+            //commandLine.add(ZfinPropertiesEnum.WEBHOST_KEY_PATH + "/" + xmlBlastBean.getProgram());
+            commandLine.add("nice");
+            commandLine.add(ZfinPropertiesEnum.BLASTSERVER_BINARY_PATH + "/" + xmlBlastBean.getProgram());
 
 
             // handle database
@@ -134,8 +136,9 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
             );
             fixFilePermissions(fastaSequenceFile);
 
-            File remoteFASTAFile = sendFASTAToServer(fastaSequenceFile, xmlBlastBean.getSliceNumber());
-            commandLine.add(remoteFASTAFile.getAbsolutePath());
+            //File remoteFASTAFile = sendFASTAToServer(fastaSequenceFile, xmlBlastBean.getSliceNumber());
+            //commandLine.add(remoteFASTAFile.getAbsolutePath());
+            commandLine.add(fastaSequenceFile.getAbsolutePath());
 
 
             // add expect value
@@ -188,6 +191,9 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
                 commandLine.add("-dbslice");
                 commandLine.add((xmlBlastBean.getSliceNumber() + 1) + "/" + (xmlBlastBean.getNumChunks()));
             }
+
+            // Compatibility mode for AB-BLAST 3.0
+            commandLine.add("-compat2.0");
 
             logger.info("remote blast command list: " + commandLine);
             ExecProcess execProcess = new ExecProcess(commandLine);

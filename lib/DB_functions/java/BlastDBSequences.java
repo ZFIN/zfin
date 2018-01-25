@@ -35,9 +35,9 @@ public class BlastDBSequences {
                 type = resultSet.getString("type") ;
                 path = resultSet.getString("path") ;
                 accession = resultSet.getString("accession") ;
-//                String executeString = "/private/apps/wublast/xdget -d -" + type + " " + path + " "+ accession ;
+//                String executeString = "/opt/ab-blast/xdget -d -" + type + " " + path + " "+ accession ;
                 List commandList = new ArrayList();
-                commandList.add("/private/apps/wublast/xdget");
+                commandList.add("/opt/ab-blast/xdget");
                 commandList.add("-d");
                 commandList.add("-"+type);
                 commandList.add(path);
@@ -79,7 +79,7 @@ public class BlastDBSequences {
     public static void addSequence( String blastDBZdbID,String sequence){
 
 
-//    "/private/apps/wublast/xdformat -%s -a %s/%s /tmp/%s 2>/dev/null",
+//    "/opt/ab-blast/xdformat -%s -a %s/%s /tmp/%s 2>/dev/null",
 
 
 
