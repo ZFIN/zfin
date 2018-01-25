@@ -405,7 +405,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return null;
     }
 
-    public static enum Type {
+    public enum Type {
         ATB("ATB"),
         BAC("BAC"),
         BAC_END("BAC_END"),
@@ -503,7 +503,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     }
 
-    public static enum TypeGroup {
+    public enum TypeGroup {
         ABBREV_EQ_NAME("ABBREV_EQ_NAME"),
         ATB("ATB"),
         BAC("BAC"),
