@@ -21,6 +21,12 @@
     <h1>${title}</h1>
     <a href="/ZFIN/misc_html/xpatselect_search_tips.html" class="popup-link help-popup-link"
        id="xpatsel_expression_tips" rel="#searchtips"></a>
+
+    <span class="yourinputwelcome" nowrap="nowrap">
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="Gene expression search"/>
+        </tiles:insertTemplate>
+    </span>
 </div>
 
 <form:form action="/action/expression/results" id="expression-search-form" method="get" modelAttribute="criteria">
