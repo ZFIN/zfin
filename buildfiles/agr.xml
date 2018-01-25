@@ -80,21 +80,24 @@
         </java>
     </target>
 
-    <property name="version" value="1.0.3"/>
-    <property name="index" value="1"/>
+    <property name="version" value="1.0.4"/>
+    <property name="index" value="3"/>
     <property name="daf-file" value="ZFIN_${version}_disease.json"/>
     <property name="bgi-file" value="ZFIN_${version}_BGI.json"/>
+    <property name="feature-file" value="ZFIN_${version}_feature.json"/>
     <property name="gff-file" value="ZFIN_${version}_gff3.gff3"/>
     <property name="agr-file" value="ZFIN_${version}_${index}"/>
 
     <target name="archive-agr" depends="">
         <copy file="basic-gene-info-zfin.json" tofile="${bgi-file}"/>
         <copy file="disease-info-zfin.json" tofile="${daf-file}"/>
+        <copy file="feature-info-zfin.json" tofile="${feature-file}"/>
         <echo message="Create tar/gzip file of BGI"/>
         <tar compression="gzip" destfile="${agr-file}.tar.gz" >
             <tarfileset dir="${basedir}" >
                 <include name="${bgi-file}" />
                 <include name="${daf-file}" />
+                <include name="${feature-file}" />
             </tarfileset>
         </tar>
     </target>
