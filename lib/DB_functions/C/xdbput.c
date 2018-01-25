@@ -42,7 +42,7 @@ mi_lvarchar *xdbput(
   	hardcode path for now ...
   */
   sprintf(cmd,
-    "/private/apps/wublast/xdformat -%s -a %s/%s /tmp/%s 2>/dev/null",
+    "/opt/ab-blast/xdformat -%s -a %s/%s /tmp/%s 2>/dev/null",
         mi_lvarchar_to_string(blastdb_type),
         mi_lvarchar_to_string(blastdb_path),
         mi_lvarchar_to_string(blastdb_abbrev),

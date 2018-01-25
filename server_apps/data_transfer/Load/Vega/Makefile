@@ -304,10 +304,10 @@ clean_push_local_blast:
 	rm -f $(DEST)/vega_transcript.nt
 
 vega_transcript.xn%: $(DEST)/vega_transcript.nt
-	/private/apps/wublast/xdformat -n -q3 -I -o vega_transcript $<
+	/opt/ab-blast/xdformat -n -q3 -I -o vega_transcript $<
 
 $(DEST)/vega_reno_gene.nt: vega_transcript.xn%  $(DEST)/ottdarG_toBLAST.txt
-	/private/apps/wublast/xdget -n -fd vega_transcript $(DEST)/ottdarG_toBLAST.txt > $@
+	/opt/ab-blast/xdget -n -fd vega_transcript $(DEST)/ottdarG_toBLAST.txt > $@
 	@echo "\nHow many transcripts total, including updated genes"
 	@grep -c "^>" $@
 

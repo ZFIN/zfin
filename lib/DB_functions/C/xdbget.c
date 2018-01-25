@@ -41,7 +41,7 @@ mi_lvarchar *xdbget(
   	allow duplicates -d
   */
   sprintf(cmd,
-    "/private/apps/wublast/xdget -d -%s %s/%s %s 2>/dev/null",
+    "/opt/ab-blast/xdget -d -%s %s/%s %s 2>/dev/null",
         mi_lvarchar_to_string(blastdb_type),
         mi_lvarchar_to_string(blastdb_path),
         mi_lvarchar_to_string(blastdb_abbrev),

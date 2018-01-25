@@ -68,7 +68,7 @@ $cur->execute;
 while ($cur->fetch) {
     $accNum =~ cleanTail($accNum);
   
-    open (BLAST, "/private/apps/wublast/xdget -n /research/zblastfiles/zmore/dev_blastdb/Current/vega_withdrawn $accNum |");
+    open (BLAST, "/opt/ab-blast/xdget -n /research/zblastfiles/zmore/dev_blastdb/Current/vega_withdrawn $accNum |");
 
         $line = <BLAST>;
     
