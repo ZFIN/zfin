@@ -4,6 +4,12 @@
 <link rel="stylesheet" type="text/css" href="/css/figure_gallery.css">
 <script type="text/javascript" src="/javascript/imagebox.js"></script>
 
+<style>
+  #xpresimg_control_box {
+    margin-top: 20px;
+  }
+</style>
+
 <c:if test="${!empty criteria.imageResults}">
   <div id="xpresimg_all">
     <input type="hidden" name="xpatsel_thumbnail_page" id="xpatsel_thumbnail_page_hidden_field" value="1"/>
