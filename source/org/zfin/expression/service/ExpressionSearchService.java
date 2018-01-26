@@ -21,12 +21,14 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.ontology.PostComposedEntity;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
+import org.zfin.util.URLCreator;
 
 import java.io.IOException;
 import java.util.*;
@@ -462,6 +464,61 @@ public class ExpressionSearchService {
 
     private String any(String... fqs) {
         return String.join(" " + OR + " ", fqs);
+    }
+
+    public static class LinkBuilder {
+        private Marker gene;
+        private Term anatomyTerm;
+        private boolean includeSubstructures = true;
+        private boolean wildtypeOnly = false;
+        private String author;
+
+        public LinkBuilder gene(Marker gene) {
+            this.gene = gene;
+            return this;
+        }
+
+        public LinkBuilder anatomyTerm(Term anatomyTerm) {
+            this.anatomyTerm = anatomyTerm;
+            return this;
+        }
+
+        public LinkBuilder includeSubstructures(boolean includeSubstructures) {
+            this.includeSubstructures = includeSubstructures;
+            return this;
+        }
+
+        public LinkBuilder wildtypeOnly(boolean wildtypeOnly) {
+            this.wildtypeOnly = wildtypeOnly;
+            return this;
+        }
+
+        public LinkBuilder author(String author) {
+            this.author = author;
+            return this;
+        }
+
+        public String build() {
+            URLCreator url = new URLCreator("/action/expression/results");
+            if (gene != null) {
+                url.addNameValuePair("geneField", gene.getAbbreviation());
+            }
+            if (anatomyTerm != null) {
+                url.addNameValuePair("anatomyTermIDs", anatomyTerm.getZdbID());
+                url.addNameValuePair("anatomyTermNames", anatomyTerm.getTermName());
+            }
+            if (includeSubstructures) {
+                //TODO: ummmmmm....????
+            }
+            if (wildtypeOnly) {
+                url.addNameValuePair("onlyWildtype", "true");
+            }
+            if (author != null) {
+                url.addNameValuePair("authorField", author);
+            }
+            url.addNameValuePair("journalType", "ALL");
+            return url.getURL();
+        }
     }
 
 }

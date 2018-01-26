@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.service.AnatomyService;
+import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.SectionVisibility;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -13,6 +14,7 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.*;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.util.URLCreator;
@@ -67,8 +69,9 @@ public class AnatomySearchBean extends PaginationBean {
     private List<TermDTO> terms;
 
     public Map<String, String> getDisplayStages() {
-        if (stageListDisplay != null)
+        if (stageListDisplay != null) {
             return stageListDisplay;
+        }
 
         stageListDisplay = AnatomyService.getDisplayStages();
         return stageListDisplay;
@@ -99,8 +102,9 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public Term getAoTerm() {
-        if (aoTerm == null)
+        if (aoTerm == null) {
             aoTerm = new GenericTerm();
+        }
         return aoTerm;
     }
 
@@ -190,8 +194,9 @@ public class AnatomySearchBean extends PaginationBean {
      * @return list of anatomy statistics
      */
     public List<AnatomyStatistics> getSortedStatisticsItems() {
-        if (searchTerm != null && !isStageSearch())
+        if (searchTerm != null && !isStageSearch()) {
             Collections.sort(statisticItems, new SortAnatomyResults(searchTerm));
+        }
         return statisticItems;
     }
 
@@ -263,8 +268,9 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public boolean isWildCard() {
-        if (searchTerm == null)
+        if (searchTerm == null) {
             return false;
+        }
         return (searchTerm.endsWith("*"));
     }
 
@@ -432,22 +438,31 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public String getExpressionSearchLink(boolean includeSubstructures) {
-        URLCreator url = new URLCreator(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
-        url.addNameValuePair("MIval", "aa-xpatselect.apg");
-        url.addNameValuePair("query_results", "exist");
-        url.addNameValuePair("START", "0");
-        url.addNameValuePair("TA_selected_structures", getAoTerm().getTermName());
-        url.addNameValuePair("xpatsel_processed_selected_structures", getAoTerm().getZdbID());
-        url.addNameValuePair("xpatsel_processed_selected_structures_names", getAoTerm().getTermName());
-        if (includeSubstructures)
-            url.addNameValuePair("include_substructures", "checked");
-        url.addNameValuePair("structure_bool", "and");
-        url.addNameValuePair("xpatsel_jtypeDirect", "checked");
-        url.addNameValuePair("xpatsel_jtypePublished", "checked");
-        url.addNameValuePair("WINSIZE", "25");
-        url.addNameValuePair("xpatsel_calledBySelf", "true");
-        url.addNameValuePair("xpatsel_wtOnly", "checked");
-        return url.getURL();
+        if (ProfileService.isRootUser()) {
+            return new ExpressionSearchService.LinkBuilder()
+                    .includeSubstructures(includeSubstructures)
+                    .anatomyTerm(aoTerm)
+                    .wildtypeOnly(true)
+                    .build();
+        } else {
+            URLCreator url = new URLCreator("/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
+            url.addNameValuePair("MIval", "aa-xpatselect.apg");
+            url.addNameValuePair("query_results", "exist");
+            url.addNameValuePair("START", "0");
+            url.addNameValuePair("TA_selected_structures", getAoTerm().getTermName());
+            url.addNameValuePair("xpatsel_processed_selected_structures", getAoTerm().getZdbID());
+            url.addNameValuePair("xpatsel_processed_selected_structures_names", getAoTerm().getTermName());
+            if (includeSubstructures) {
+                url.addNameValuePair("include_substructures", "checked");
+            }
+            url.addNameValuePair("structure_bool", "and");
+            url.addNameValuePair("xpatsel_jtypeDirect", "checked");
+            url.addNameValuePair("xpatsel_jtypePublished", "checked");
+            url.addNameValuePair("WINSIZE", "25");
+            url.addNameValuePair("xpatsel_calledBySelf", "true");
+            url.addNameValuePair("xpatsel_wtOnly", "checked");
+            return url.getURL();
+        }
     }
 
     public String getExpressionSearchLink() {

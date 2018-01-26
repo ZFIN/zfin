@@ -1,7 +1,9 @@
 package org.zfin.framework.presentation.tags;
 
+import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.Term;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.jsp.JspException;
@@ -11,7 +13,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ChoiceFormat;
-import java.util.Collection;
 
 /**
  * Creates a hyperlink for the
@@ -23,63 +24,18 @@ public class CreateFiguresLinkTag extends TagSupport {
     private Marker marker;
     private Term term;
     private long numberOfFigures = -1;
-    private Collection numberOfFiguresCollection;
     private String author;
     private boolean useGeneZdbID;
     private boolean wildtypeOnly = true;
 
     public int doStartTag() throws JspException {
-
-        StringBuilder hyperLink = getWebdriverHyperLinkStart();
-        getDefaultQueryString(hyperLink);
-        if (useGeneZdbID) {
-            hyperLink.append("&xpatsel_geneZdbId=");
-            hyperLink.append(marker.getZdbID());
-        }
-
-        if (marker != null) {
-            hyperLink.append("&gene_name=");
-            hyperLink.append(marker.getAbbreviation());
-        }
-
-        hyperLink.append("&TA_selected_structures=");
-        String aoName = term.getTermName();
-        String aoTermUrlEncoded;
-        try {
-            aoTermUrlEncoded = URLEncoder.encode(aoName, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            aoTermUrlEncoded = URLEncoder.encode(aoName);
-        }
-        hyperLink.append(aoTermUrlEncoded);
-
-        hyperLink.append("&xpatsel_processed_selected_structures_names=");
-        hyperLink.append(aoTermUrlEncoded);
-        hyperLink.append("&xpatsel_processed_selected_structures=");
-        hyperLink.append(term.getZdbID());
-
-        if (author != null) {
-            hyperLink.append("&authsearchtype=contains&author=");
-            hyperLink.append(author);
-        }
-
-        if (wildtypeOnly) {
-            hyperLink.append("&xpatsel_wtOnly=checked");
-        }
-
-        hyperLink.append("'>");
-        long numOfFigs;
-        if (numberOfFiguresCollection != null)
-            numOfFigs = numberOfFiguresCollection.size();
-        else
-            numOfFigs = numberOfFigures;
-        hyperLink.append(numOfFigs);
+        boolean isRoot = ProfileService.isRootUser();
+        String linkUrl = isRoot ? getJavaUrl() : getWebdriverUrl();
         ChoiceFormat cf = new ChoiceFormat("0#figures| 1#figure| 2#figures");
-        hyperLink.append(" ");
-        hyperLink.append(cf.format(numOfFigs));
-        hyperLink.append("</a>");
-
+        String linkText = numberOfFigures + " " + cf.format(numberOfFigures);
+        String link = "<a href='" + linkUrl + "'>" + linkText + "</a>";
         try {
-            pageContext.getOut().print(hyperLink);
+            pageContext.getOut().print(link);
         } catch (IOException ioe) {
             throw new JspException("Error: IOException while writing to client" + ioe.getMessage());
         }
@@ -114,14 +70,54 @@ public class CreateFiguresLinkTag extends TagSupport {
         wildtypeOnly = true;
     }
 
-
-    protected StringBuilder getWebdriverHyperLinkStart() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<a href='/");
-        sb.append(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
-        return sb;
+    private String getJavaUrl() {
+        return new ExpressionSearchService.LinkBuilder()
+                .gene(marker)
+                .anatomyTerm(term)
+                .author(author)
+                .wildtypeOnly(wildtypeOnly)
+                .build();
     }
 
+    private String getWebdriverUrl() {
+        StringBuilder url = new StringBuilder("/");
+        url.append(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
+        getDefaultQueryString(url);
+        if (useGeneZdbID) {
+            url.append("&xpatsel_geneZdbId=");
+            url.append(marker.getZdbID());
+        }
+
+        if (marker != null) {
+            url.append("&gene_name=");
+            url.append(marker.getAbbreviation());
+        }
+
+        url.append("&TA_selected_structures=");
+        String aoName = term.getTermName();
+        String aoTermUrlEncoded;
+        try {
+            aoTermUrlEncoded = URLEncoder.encode(aoName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            aoTermUrlEncoded = URLEncoder.encode(aoName);
+        }
+        url.append(aoTermUrlEncoded);
+
+        url.append("&xpatsel_processed_selected_structures_names=");
+        url.append(aoTermUrlEncoded);
+        url.append("&xpatsel_processed_selected_structures=");
+        url.append(term.getZdbID());
+
+        if (author != null) {
+            url.append("&authsearchtype=contains&author=");
+            url.append(author);
+        }
+
+        if (wildtypeOnly) {
+            url.append("&xpatsel_wtOnly=checked");
+        }
+        return url.toString();
+    }
 
     public Marker getMarker() {
         return marker;
@@ -147,16 +143,6 @@ public class CreateFiguresLinkTag extends TagSupport {
         this.numberOfFigures = numberOfFigures;
     }
 
-
-    public Collection getNumberOfFiguresCollection() {
-        return numberOfFiguresCollection;
-    }
-
-    public void setNumberOfFiguresCollection(Collection numberOfFiguresCollection) {
-        this.numberOfFiguresCollection = numberOfFiguresCollection;
-    }
-
-
     public String getAuthor() {
         return author;
     }
@@ -164,7 +150,6 @@ public class CreateFiguresLinkTag extends TagSupport {
     public void setAuthor(String author) {
         this.author = author;
     }
-
 
     public boolean isUseGeneZdbID() {
         return useGeneZdbID;
