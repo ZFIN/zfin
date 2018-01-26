@@ -76,6 +76,7 @@ public class CreateFiguresLinkTag extends TagSupport {
                 .anatomyTerm(term)
                 .author(author)
                 .wildtypeOnly(wildtypeOnly)
+                .includeSubstructures(false)
                 .build();
     }
 

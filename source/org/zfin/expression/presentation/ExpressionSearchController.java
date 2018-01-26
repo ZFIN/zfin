@@ -47,15 +47,22 @@ public class ExpressionSearchController {
         return ExpressionSearchCriteria.JournalTypeOption.values();
     }
 
-    @RequestMapping("/search")
-    public String search(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria) {
-
+    @ModelAttribute("criteria")
+    public ExpressionSearchCriteria getDefaultForm() {
+        ExpressionSearchCriteria criteria = new ExpressionSearchCriteria();
         SortedMap<String, String> stages = expressionSearchService.getStageOptions();
-        model.addAttribute("stages", stages);
+        criteria.setStages(stages);
         criteria.setStartStageId(stages.firstKey());
         criteria.setEndStageId(stages.lastKey());
         criteria.setJournalType(ExpressionSearchCriteria.JournalTypeOption.ALL);
+        criteria.setIncludeSubstructures(true);
+        criteria.setRows(DEFAULT_PAGE_SIZE);
+        criteria.setPage(1);
+        return criteria;
+    }
 
+    @RequestMapping("/search")
+    public String search(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria) {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search");
         return "expression/search.page";
     }
@@ -63,25 +70,6 @@ public class ExpressionSearchController {
 
     @RequestMapping("/results")
     public String results(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
-
-        SortedMap<String, String> stages = expressionSearchService.getStageOptions();
-        model.addAttribute("stages", stages);
-
-        if (criteria.getRows() == null) {
-            criteria.setRows(DEFAULT_PAGE_SIZE);
-        }
-        if (criteria.getPage() == null) {
-            criteria.setPage(1);
-        }
-
-        if (criteria.getStartStageId() == null) {
-            criteria.setStartStageId(stages.firstKey());
-        }
-
-        if (criteria.getEndStageId() == null) {
-            criteria.setEndStageId(stages.lastKey());
-        }
-
         List<ImageResult> images = expressionSearchService.getImageResults(criteria);
         criteria.setImageResults(images);
 

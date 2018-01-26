@@ -6,6 +6,7 @@ import org.zfin.util.URLCreator;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ExpressionSearchCriteria {
 
@@ -17,6 +18,7 @@ public class ExpressionSearchCriteria {
     private boolean onlyFiguresWithImages;
     private boolean onlyWildtype;
     private boolean onlyReporter;
+    private Map<String, String> stages;
     private String startStageId;
     private String endStageId;
     private String assayName;
@@ -25,6 +27,7 @@ public class ExpressionSearchCriteria {
 
     private String anatomyTermNames;
     private String anatomyTermIDs;
+    private boolean includeSubstructures;
 
     private List<GeneResult> geneResults;
     private List<FigureResult> figureResults;
@@ -54,7 +57,7 @@ public class ExpressionSearchCriteria {
         if (onlyFiguresWithImages) { urlCreator.addNameValuePair("onlyFiguresWithImages", "true"); }
         if (onlyWildtype) { urlCreator.addNameValuePair("onlyWildtype", "true"); }
         if (onlyReporter) { urlCreator.addNameValuePair("onlyReporter", "true"); }
-
+        urlCreator.addNameValuePair("includeSubstructures", Boolean.toString(includeSubstructures));
 
         return urlCreator.getURL();
     }
@@ -140,6 +143,14 @@ public class ExpressionSearchCriteria {
         this.onlyWildtype = onlyWildtype;
     }
 
+    public Map<String, String> getStages() {
+        return stages;
+    }
+
+    public void setStages(Map<String, String> stages) {
+        this.stages = stages;
+    }
+
     public String getStartStageId() {
         return startStageId;
     }
@@ -186,6 +197,14 @@ public class ExpressionSearchCriteria {
 
     public void setAnatomyTermIDs(String anatomyTermIDs) {
         this.anatomyTermIDs = anatomyTermIDs;
+    }
+
+    public boolean isIncludeSubstructures() {
+        return includeSubstructures;
+    }
+
+    public void setIncludeSubstructures(boolean includeSubstructures) {
+        this.includeSubstructures = includeSubstructures;
     }
 
     public List<GeneResult> getGeneResults() {

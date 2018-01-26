@@ -62,10 +62,11 @@ public class ExpressionSearchService {
                 + FieldName.REPORTER_GENE + ":[* TO *])");
 
         if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
+            FieldName anatomyField = criteria.isIncludeSubstructures() ? FieldName.EXPRESSION_ANATOMY_TF : FieldName.EXPRESSION_ANATOMY_DIRECT;
             String termQuery = criteria.getAnatomy().stream()
                     .map(t -> "\"" + SolrService.luceneEscape(t) + "\"")
                     .collect(Collectors.joining(" " + anatomyBoolean + " "));
-            solrQuery.addFilterQuery(FieldName.EXPRESSION_ANATOMY_TF.getName() + ":(" + termQuery + ")");
+            solrQuery.addFilterQuery(anatomyField.getName() + ":(" + termQuery + ")");
         }
 
         String geneField = criteria.getGeneField();
@@ -450,12 +451,13 @@ public class ExpressionSearchService {
 
     public SortedMap<String, String> getStageOptions() {
         List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
-
-        SortedMap<String, String> options = new TreeMap<>();
-
-        stages.stream().sorted().forEach(s -> options.put(s.getOboID(), s.getName()));
-
-        return options;
+        return stages.stream()
+                .sorted()
+                .collect(Collectors.toMap(
+                        DevelopmentStage::getOboID,
+                        DevelopmentStage::getName,
+                        (s1, s2) -> s1,
+                        TreeMap::new));
     }
 
     private String fq(FieldName fieldName, String value) {
@@ -507,9 +509,7 @@ public class ExpressionSearchService {
                 url.addNameValuePair("anatomyTermIDs", anatomyTerm.getZdbID());
                 url.addNameValuePair("anatomyTermNames", anatomyTerm.getTermName());
             }
-            if (includeSubstructures) {
-                //TODO: ummmmmm....????
-            }
+            url.addNameValuePair("includeSubstructures", Boolean.toString(includeSubstructures));
             if (wildtypeOnly) {
                 url.addNameValuePair("onlyWildtype", "true");
             }

@@ -65,6 +65,12 @@
                             <div id="anatomyTermInput"></div>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <form:checkbox path="includeSubstructures" id="includeSubstructures" />
+                            <label for="includeSubstructures">Include substructures</label>
+                        </td>
+                    </tr>
                 </table>
                 <script type="text/javascript">
                   var LookupProperties = {
@@ -99,11 +105,11 @@
                 <div class="form-group">
                     <span class="namesearchLabel">Between stages</span>
                     <div>
-                        <form:select path="startStageId" items="${stages}" />
+                        <form:select path="startStageId" items="${criteria.stages}" />
                         &nbsp;<span class="namesearchLabel">&</span>
                     </div>
                     <div>
-                        <form:select path="endStageId" items="${stages}" />
+                        <form:select path="endStageId" items="${criteria.stages}" />
                     </div>
                     <div>
                         <a href="/zf_info/zfbook/stages/index.html">Developmental Staging Series</a>

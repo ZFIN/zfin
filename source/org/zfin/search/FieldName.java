@@ -55,6 +55,7 @@ public enum FieldName {
     EXPRESSED_GENE_FULL_NAME("expressed_gene_full_name"),
     EXPRESSED_GENE_PREVIOUS_NAME("expressed_gene_previous_name"),
     EXPRESSED_IN_TF("expressed_in_tf"),
+    EXPRESSION_ANATOMY_DIRECT("expression_anatomy_direct"),
     EXPRESSION_ANATOMY_TF("expression_anatomy_tf"),
     EXPRESSION_ANATOMY("expression_anatomy"),
     FIGURE_ID("figure_id"),
