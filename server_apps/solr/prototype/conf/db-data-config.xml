@@ -3017,21 +3017,23 @@
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                  join expression_result2 on xpatres_efs_id = efs_pk_id
-                                 join term on (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)"
+                                 join term on (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
+                            where xpatres_expression_found = 't'"
                     where="efs_pk_id=expression.id"
                     cacheImpl="SortedMapBackedCache"
             />
 
             @PG_XML_COMMENT_OPEN@
             <entity name="expression_expression_anatomy_parent"
-                    query="select term_name as expression_anatomy_direct,
+                    query="select term_name as expression_anatomy_parent,
                             term_ont_id as xref,
                             'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                  join expression_result2 on xpatres_efs_id = efs_pk_id
                                  join all_term_contains on (xpatres_superterm_zdb_id = alltermcon_contained_zdb_id OR xpatres_subterm_zdb_id = alltermcon_contained_zdb_id)
-                                 join term on alltermcon_container_zdb_id = term_zdb_id"
+                                 join term on alltermcon_container_zdb_id = term_zdb_id
+                            where xpatres_expression_found = 't'"
                     where="efs_pk_id=expression.id"
                     cacheImpl="SortedMapBackedCache"
             />
