@@ -131,7 +131,7 @@ public class BlastNonDBTest {
 
     @Test
     public void testString(){
-        String testString = "/private/apps/wublast/blastn /research/zblastfiles/zmore/ogodb/Current/vega_zfin /research/zblastfiles/zmore/ogodb/dump541174143337370754.fa -novalidctxok -nonnegok -gapall -restest  E=1.0E-25 Q=7 R=2 kap cpus=1        M=1 N=-3 W=12    S2=14 gapS2=19 X=6 gapX=15 gapW=12    -gi  gapL=1.3741 gapK=0.711 gapH=1.3073   mformat=7<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        String testString = "/opt/ab-blast/blastn /research/zblastfiles/zmore/ogodb/Current/vega_zfin /research/zblastfiles/zmore/ogodb/dump541174143337370754.fa -novalidctxok -nonnegok -gapall -restest  E=1.0E-25 Q=7 R=2 kap cpus=1        M=1 N=-3 W=12    S2=14 gapS2=19 X=6 gapX=15 gapW=12    -gi  gapL=1.3741 gapK=0.711 gapH=1.3073   mformat=7<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<!DOCTYPE BlastOutput PUBLIC \"-//NCBI//NCBI BlastOutput/EN\" \"NCBI_BlastOutput.dtd\">\n" +
                 "<!-- For more compact output, use the xmlcompact option -->\n" +
                 "<BlastOutput>\n" +

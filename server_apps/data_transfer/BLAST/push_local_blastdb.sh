@@ -48,7 +48,7 @@ if [ 'informix' != `whoami` ] ; then
 	echo "        Would have:"
 	echo "cp ${fname} ${LOCAL}/${basename}.fa"
 	echo "cd ${LOCAL}"
-	echo "/private/apps/wublast/xdformat -n -e /tmp/vega.log -t "zfin vega" -I -o ${CURRENT}/$basename ${basename}.fa"
+	echo "/opt/ab-blast/xdformat -n -e /tmp/vega.log -t "zfin vega" -I -o ${CURRENT}/$basename ${basename}.fa"
 	echo "rm ${BACKUP}/${basename}.xn*"
 	echo "cp ${CURRENT}/${basename}.xn* ${BACKUP}/"		
 	
@@ -65,8 +65,8 @@ cd ${LOCAL}
 echo ""
 echo "== Format $fname into blast db ${basename} == "
 echo ""
-echo "/private/apps/wublast/xdformat -n -q3 -o ${CURRENT}/$basename -I ${basename}.fa"
-/private/apps/wublast/xdformat -n -e /tmp/vega.log -t "zfin vega" -I -o ${CURRENT}/$basename ${basename}.fa
+echo "/opt/ab-blast/xdformat -n -q3 -o ${CURRENT}/$basename -I ${basename}.fa"
+/opt/ab-blast/xdformat -n -e /tmp/vega.log -t "zfin vega" -I -o ${CURRENT}/$basename ${basename}.fa
 chmod 664 ${CURRENT}/${basename}.xn*
 echo ""
 echo "== Move ${basename} to db dir $WEBHOST_BLAST_DATABASE_PATH/ =="

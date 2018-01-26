@@ -1,5 +1,6 @@
 package org.zfin.feature;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Sort;
@@ -117,7 +118,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private FeatureDnaMutationDetail featureDnaMutationDetail;
 
-    @OneToMany(mappedBy = "feature", fetch= FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = false)
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = false)
     private Set<SecondaryFeature> secondaryFeatureSet;
 
 
@@ -592,11 +593,20 @@ public class Feature implements EntityNotes, EntityZdbID {
             featureTranscriptMutationDetailSet = new TreeSet<>();
         featureTranscriptMutationDetailSet.add(detail);
     }
+
     public Set<SecondaryFeature> getSecondaryFeatureSet() {
         return secondaryFeatureSet;
     }
 
     public void setSecondaryFeatureSet(Set<SecondaryFeature> secondaryFeatureSet) {
         this.secondaryFeatureSet = secondaryFeatureSet;
+    }
+
+    public boolean isSingleAlleleOfMarker() {
+        if (CollectionUtils.isEmpty(featureMarkerRelations))
+            return false;
+        if (featureMarkerRelations.size() > 1)
+            return false;
+        return featureMarkerRelations.iterator().next().getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
     }
 }

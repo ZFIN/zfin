@@ -5,6 +5,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
 import org.zfin.marker.service.MarkerService;
@@ -43,6 +44,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private Set<Ortholog> orthologs;
     protected Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
     private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel
+    private Set<FeatureMarkerRelationship> featureMarkerRelationships;
     private MarkerType markerType;
     private Set<MarkerHistory> markerHistory;
     private Set<MappedMarkerImpl> directPanelMappings;
@@ -261,6 +263,14 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         this.secondMarkerRelationships = secondMarkerRelationships;
     }
 
+    public Set<FeatureMarkerRelationship> getFeatureMarkerRelationships() {
+        return featureMarkerRelationships;
+    }
+
+    public void setFeatureMarkerRelationships(Set<FeatureMarkerRelationship> featureMarkerRelationships) {
+        this.featureMarkerRelationships = featureMarkerRelationships;
+    }
+
     public Type getType() {
         if (markerType == null)
             return null;
@@ -395,7 +405,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return null;
     }
 
-    public static enum Type {
+    public enum Type {
         ATB("ATB"),
         BAC("BAC"),
         BAC_END("BAC_END"),
@@ -493,7 +503,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     }
 
-    public static enum TypeGroup {
+    public enum TypeGroup {
         ABBREV_EQ_NAME("ABBREV_EQ_NAME"),
         ATB("ATB"),
         BAC("BAC"),

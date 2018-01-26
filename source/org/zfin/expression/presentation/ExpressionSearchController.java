@@ -34,6 +34,9 @@ public class ExpressionSearchController {
     @Autowired
     private InfrastructureRepository infrastructureRepository;
 
+    @Autowired
+    private ExpressionSearchService expressionSearchService;
+
     @ModelAttribute("assays")
     public List<ExpressionAssay> populateAssayOptions() {
         return infrastructureRepository.getAllAssays();
@@ -47,7 +50,7 @@ public class ExpressionSearchController {
     @RequestMapping("/search")
     public String search(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria) {
 
-        SortedMap<String, String> stages = ExpressionSearchService.getStageOptions();
+        SortedMap<String, String> stages = expressionSearchService.getStageOptions();
         model.addAttribute("stages", stages);
         criteria.setStartStageId(stages.firstKey());
         criteria.setEndStageId(stages.lastKey());
@@ -61,7 +64,7 @@ public class ExpressionSearchController {
     @RequestMapping("/results")
     public String results(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
 
-        SortedMap<String, String> stages = ExpressionSearchService.getStageOptions();
+        SortedMap<String, String> stages = expressionSearchService.getStageOptions();
         model.addAttribute("stages", stages);
 
         if (criteria.getRows() == null) {
@@ -79,7 +82,7 @@ public class ExpressionSearchController {
             criteria.setEndStageId(stages.lastKey());
         }
 
-        List<ImageResult> images = ExpressionSearchService.getImageResults(criteria);
+        List<ImageResult> images = expressionSearchService.getImageResults(criteria);
         criteria.setImageResults(images);
 
         if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
@@ -87,7 +90,7 @@ public class ExpressionSearchController {
             populateFigureResults(criteria);
         } else {
             //assuming we weren't doing a specific gene, build a gene results
-            List<GeneResult> geneResults = ExpressionSearchService.getGeneResults(criteria);
+            List<GeneResult> geneResults = expressionSearchService.getGeneResults(criteria);
             criteria.setGeneResults(geneResults);
 
             //if it happens that it's only one gene, do figure results after all...
@@ -144,7 +147,7 @@ public class ExpressionSearchController {
     }
 
     private void populateFigureResults(ExpressionSearchCriteria criteria) {
-        List<FigureResult> figureResults = ExpressionSearchService.getFigureResults(criteria);
+        List<FigureResult> figureResults = expressionSearchService.getFigureResults(criteria);
         criteria.setFigureResults(figureResults);
     }
 }

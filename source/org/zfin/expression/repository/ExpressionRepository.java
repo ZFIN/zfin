@@ -9,11 +9,10 @@ import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.PostComposedEntity;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.sequence.ForeignDB;
@@ -440,4 +439,6 @@ public interface ExpressionRepository {
     ExpressionFigureStage getExperimentFigureStage(long id);
 
     List<MarkerDBLink> getAllDbLinks(ForeignDB.AvailableName database);
+
+    ExpressionResult2 getExpressionResult2(long id);
 }

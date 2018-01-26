@@ -27,7 +27,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
 SUBDIRS = MEOW SWISS-PROT GO DAF ResourceCenters Downloads Ensembl LoadOntology \
-	  Genbank ORTHO Load BurgessLin SNP zfishbook SangerMutants \
+	  Genbank ORTHO Load SNP zfishbook SangerMutants \
 	  OMIM PUBMED Dorsky NCBIGENE VegaStartEnd NCBIStartEnd VegaStartEnd Addgene Signafish Panther CZRC BLAST RRID maintainTermDisplay
 
 # Define targets that require special handling.  This relies on the

@@ -6,7 +6,7 @@ set nt_fasta=$1;
 set db_path="/research/zblastfiles/zmore/blastRegeneration/Current/"
 set wz_est="/research/zblastfiles/files/LOCAL/wz_est"
 
-set blastn = "/private/apps/wublast/blastn"
+set blastn = "/opt/ab-blast/blastn"
 
 echo "check target DB modified date"
 ls -lh $db_path/zfin_cdna_seq* 
