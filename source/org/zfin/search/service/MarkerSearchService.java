@@ -193,15 +193,12 @@ public class MarkerSearchService {
 
             if (StringUtils.equals(criteria.getMatchType(),BEGINS_WITH)) {
                 query.setQuery(SolrService.dismax(criteria.getName(),startsWithFields));
-                logger.error("criteria.matchtype: " + criteria.getMatchType() + " is Begins With?");
             } else if (StringUtils.equals(criteria.getMatchType(),CONTAINS)) {
                 //String wildcardQuery = "*" + SolrService.luceneEscape(criteria.getName() + "*");
                 String wildcardQuery = "*" + criteria.getName();
                 query.setQuery(SolrService.dismax(wildcardQuery, matchesFields, false));
-                logger.error("criteria.matchtype: " + criteria.getMatchType() + " is Contains?");
             } else {  //default to MATCHES
                 query.setQuery(SolrService.dismax(criteria.getName(), matchesFields));
-                logger.error("criteria.matchtype: " + criteria.getMatchType() + " is Matches?");
             }
 
 
@@ -266,8 +263,6 @@ public class MarkerSearchService {
         }
 
         Collections.sort(types, new MarkerSearchTypeGroupComparator<>());
-
-        logger.error("types: " + types);
 
         return types;
     }

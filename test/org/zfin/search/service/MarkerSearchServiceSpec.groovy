@@ -47,34 +47,34 @@ class MarkerSearchServiceSpec extends ZfinIntegrationSpec  {
 
         where:
         query       | type
-        "fgf8a"     | Marker.TypeGroup.SEARCHABLE_GENE
-        "fgf8a"     | Marker.TypeGroup.SEARCHABLE_SMALL_SEGMENT
-        "fgf8a"     | Marker.TypeGroup.SEARCHABLE_CLONE
+        "fgf8a"     | Marker.TypeGroup.SEARCHABLE_PROTEIN_CODING_GENE
+        "fgf8a"     | Marker.TypeGroup.SEARCHABLE_CDNA_EST
+        "fgf8a"     | Marker.TypeGroup.SEARCHABLE_GENOMIC_CLONE
         "fgf8a"     | Marker.TypeGroup.SEARCHABLE_TRANSCRIPT
         "fgf8a"     | Marker.TypeGroup.SEARCHABLE_STR
 
-        "fgf"       | Marker.TypeGroup.SEARCHABLE_GENE
-        "fgf"       | Marker.TypeGroup.SEARCHABLE_SMALL_SEGMENT
-        "fgf"       | Marker.TypeGroup.SEARCHABLE_CLONE
+        "fgf"       | Marker.TypeGroup.SEARCHABLE_PROTEIN_CODING_GENE
+        "fgf"       | Marker.TypeGroup.SEARCHABLE_CDNA_EST
+        "fgf"       | Marker.TypeGroup.SEARCHABLE_GENOMIC_CLONE
         "fgf"       | Marker.TypeGroup.SEARCHABLE_TRANSCRIPT
         "fgf"       | Marker.TypeGroup.SEARCHABLE_STR
 
-        "fibroblast growth"       | Marker.TypeGroup.SEARCHABLE_GENE
-        "fibroblast growth"       | Marker.TypeGroup.SEARCHABLE_SMALL_SEGMENT
-        "fibroblast growth"       | Marker.TypeGroup.SEARCHABLE_CLONE
+        "fibroblast growth"       | Marker.TypeGroup.SEARCHABLE_PROTEIN_CODING_GENE
+        "fibroblast growth"       | Marker.TypeGroup.SEARCHABLE_CDNA_EST
+        "fibroblast growth"       | Marker.TypeGroup.SEARCHABLE_GENOMIC_CLONE
         "fibroblast growth"       | Marker.TypeGroup.SEARCHABLE_TRANSCRIPT
         "fibroblast growth"       | Marker.TypeGroup.SEARCHABLE_STR
 
-        "acerebellar"       | Marker.TypeGroup.SEARCHABLE_GENE
-        "acerebellar"       | Marker.TypeGroup.SEARCHABLE_SMALL_SEGMENT
-        "acerebellar"       | Marker.TypeGroup.SEARCHABLE_CLONE
+        "acerebellar"       | Marker.TypeGroup.SEARCHABLE_PROTEIN_CODING_GENE
+        "acerebellar"       | Marker.TypeGroup.SEARCHABLE_CDNA_EST
+        "acerebellar"       | Marker.TypeGroup.SEARCHABLE_GENOMIC_CLONE
         "acerebellar"       | Marker.TypeGroup.SEARCHABLE_TRANSCRIPT
         "acerebellar"       | Marker.TypeGroup.SEARCHABLE_STR
 
         "mo1-fgf8a"   | Marker.TypeGroup.SEARCHABLE_STR
 
-        "CH211-260P3" | Marker.TypeGroup.SEARCHABLE_GENE
-        "CH211-260P3" | Marker.TypeGroup.SEARCHABLE_CLONE
+        "CH211-260P3" | Marker.TypeGroup.SEARCHABLE_PROTEIN_CODING_GENE
+        "CH211-260P3" | Marker.TypeGroup.SEARCHABLE_GENOMIC_CLONE
         "CH211-260P3" | Marker.TypeGroup.SEARCHABLE_TRANSCRIPT
     }
 
