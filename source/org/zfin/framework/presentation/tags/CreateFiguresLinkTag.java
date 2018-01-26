@@ -27,6 +27,7 @@ public class CreateFiguresLinkTag extends TagSupport {
     private String author;
     private boolean useGeneZdbID;
     private boolean wildtypeOnly = true;
+    private boolean includeSubstructures = false;
 
     public int doStartTag() throws JspException {
         boolean isRoot = ProfileService.isRootUser();
@@ -51,7 +52,6 @@ public class CreateFiguresLinkTag extends TagSupport {
         hyperLink.append("&xpatsel_calledBySelf=true");
         hyperLink.append("&mutsearchtype=contains");
         hyperLink.append("&MOsearchtype=contains");
-        hyperLink.append("&include_substructures=unchecked");
         hyperLink.append("&xpatsel_jtype=ANY");
         hyperLink.append("&xpatsel_jtypeDirect=checked");
         hyperLink.append("&xpatsel_jtypePublished=checked");
@@ -76,7 +76,7 @@ public class CreateFiguresLinkTag extends TagSupport {
                 .anatomyTerm(term)
                 .author(author)
                 .wildtypeOnly(wildtypeOnly)
-                .includeSubstructures(false)
+                .includeSubstructures(includeSubstructures)
                 .build();
     }
 
@@ -117,6 +117,10 @@ public class CreateFiguresLinkTag extends TagSupport {
         if (wildtypeOnly) {
             url.append("&xpatsel_wtOnly=checked");
         }
+
+        url.append("&include_substructures=");
+        url.append(includeSubstructures ? "checked" : "unchecked");
+
         return url.toString();
     }
 
@@ -166,5 +170,13 @@ public class CreateFiguresLinkTag extends TagSupport {
 
     public void setWildtypeOnly(boolean wildtypeOnly) {
         this.wildtypeOnly = wildtypeOnly;
+    }
+
+    public boolean isIncludeSubstructures() {
+        return includeSubstructures;
+    }
+
+    public void setIncludeSubstructures(boolean includeSubstructures) {
+        this.includeSubstructures = includeSubstructures;
     }
 }

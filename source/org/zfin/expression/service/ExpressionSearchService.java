@@ -76,7 +76,8 @@ public class ExpressionSearchService {
                     fq(FieldName.ZEBRAFISH_GENE, geneField),
                     fq(FieldName.ZEBRAFISH_GENE_T, geneField),
                     fq(FieldName.EXPRESSED_GENE_FULL_NAME, geneField),
-                    fq(FieldName.EXPRESSED_GENE_PREVIOUS_NAME, geneField)
+                    fq(FieldName.EXPRESSED_GENE_PREVIOUS_NAME, geneField),
+                    fq(FieldName.PROBE, geneField)
             ));
         }
 

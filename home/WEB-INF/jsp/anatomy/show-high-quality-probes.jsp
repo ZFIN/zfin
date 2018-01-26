@@ -51,7 +51,7 @@
                 <c:if test="${probeStats.numberOfFigures > 1}">
                     <zfin:createFiguresLink marker="${probeStats.probe}" term="${formBean.aoTerm}"
                                             numberOfFigures="${probeStats.numberOfFigures}" author="Thisse"
-                                            useGeneZdbID="false"/>
+                                            useGeneZdbID="false" includeSubstructures="${includingSubstructures}"/>
                     (<zfin:choice choicePattern="0#images| 1#image| 2#images"
                                   integerEntity="${probeStats.numberOfImages}"
                                   includeNumber="true"/>)

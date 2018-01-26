@@ -119,6 +119,7 @@ public enum FieldName {
     PET_DATE("pet_date"),
     PHENOTYPE_QUALITY_TF("phenotype_quality_tf"),
     PHENOTYPE_STATEMENT("phenotype_statement"),
+    PROBE("probe"),
     PROPER_NAME("proper_name"),
     PUB_SIMPLE_STATUS("pub_simple_status"),
     PUBLICATION("publication"),
