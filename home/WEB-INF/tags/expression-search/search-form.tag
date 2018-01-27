@@ -169,7 +169,8 @@
       evt.preventDefault();
       $form.resetForm({
         endStageId: function () { $(this).find('option:last').prop('selected', true); },
-        journalType3: function () { $(this).prop('checked', true); }
+        journalType3: function () { $(this).prop('checked', true); },
+        includeSubstructures: function () { $(this).prop('checked', true); }
       });
       clearTable();
     });
