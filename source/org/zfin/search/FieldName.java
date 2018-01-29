@@ -135,6 +135,7 @@ public enum FieldName {
     REPORTER_COLOR("reporter_color"),
     REPORTER_EXPRESSION_ANATOMY_TF("reporter_expression_anatomy_tf", "Expressed In"),
     REPORTER_GENE("reporter_gene"),
+    REPORTER_GENE_T("reporter_gene_t"),
     SEQUENCE_ALTERATION("sequence_alteration", "Mutation / Tg"),
     SEQUENCE_TARGETING_REAGENT("sequence_targeting_reagent"),
     SOURCE("source"),

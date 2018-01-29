@@ -74,7 +74,7 @@ public class ExpressionSearchController {
         criteria.setImageResults(images);
 
         if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
-            criteria.setGene(markerRepository.getGeneByID(criteria.getGeneZdbID()));
+            criteria.setGene(markerRepository.getMarkerByID(criteria.getGeneZdbID()));
             populateFigureResults(criteria);
         } else {
             //assuming we weren't doing a specific gene, build a gene results

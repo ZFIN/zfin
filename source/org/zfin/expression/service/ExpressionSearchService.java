@@ -56,10 +56,13 @@ public class ExpressionSearchService {
 
         solrQuery.addFilterQuery(fq(FieldName.CATEGORY, Category.EXPRESSIONS.getName()));
 
-        //only interested in expression where there is a zebrafish gene or no reporter, no ATB expression
+        // only interested in expression where there is a zebrafish gene or no reporter, no ATB expression
         solrQuery.addFilterQuery("(" + FieldName.ZEBRAFISH_GENE.getName()
                 + ":[* TO *] OR "
                 + FieldName.REPORTER_GENE + ":[* TO *])");
+
+        // only interested in expression with some kind of result
+        solrQuery.addFilterQuery(FieldName.XPATRES_ID  + ":[* TO *]");
 
         if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
             FieldName anatomyField = criteria.isIncludeSubstructures() ? FieldName.EXPRESSION_ANATOMY_TF : FieldName.EXPRESSION_ANATOMY_DIRECT;
@@ -75,6 +78,8 @@ public class ExpressionSearchService {
                     fq(FieldName.GENE_AUTOCOMPLETE, geneField),
                     fq(FieldName.ZEBRAFISH_GENE, geneField),
                     fq(FieldName.ZEBRAFISH_GENE_T, geneField),
+                    fq(FieldName.REPORTER_GENE, geneField),
+                    fq(FieldName.REPORTER_GENE_T, geneField),
                     fq(FieldName.EXPRESSED_GENE_FULL_NAME, geneField),
                     fq(FieldName.EXPRESSED_GENE_PREVIOUS_NAME, geneField),
                     fq(FieldName.PROBE, geneField)
@@ -187,8 +192,6 @@ public class ExpressionSearchService {
         SolrQuery solrQuery = new SolrQuery();
 
         solrQuery = applyCriteria(solrQuery, criteria, OR);
-
-        solrQuery.addFilterQuery(fq(FieldName.GENE_ZDB_ID, criteria.getGeneZdbID()));
 
         solrQuery.add("group", TRUE);
         solrQuery.add("group.ngroups", TRUE);
