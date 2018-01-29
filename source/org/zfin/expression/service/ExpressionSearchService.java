@@ -65,7 +65,7 @@ public class ExpressionSearchService {
         solrQuery.addFilterQuery(FieldName.XPATRES_ID  + ":[* TO *]");
 
         if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
-            FieldName anatomyField = criteria.isIncludeSubstructures() ? FieldName.EXPRESSION_ANATOMY_TF : FieldName.EXPRESSION_ANATOMY_DIRECT;
+            FieldName anatomyField = criteria.isIncludeSubstructures() ? FieldName.EXPRESSION_ANATOMY : FieldName.EXPRESSION_ANATOMY_DIRECT;
             String termQuery = criteria.getAnatomy().stream()
                     .map(t -> "\"" + SolrService.luceneEscape(t) + "\"")
                     .collect(Collectors.joining(" " + anatomyBoolean + " "));
