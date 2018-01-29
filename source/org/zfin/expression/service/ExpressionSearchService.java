@@ -69,6 +69,7 @@ public class ExpressionSearchService {
         String geneField = criteria.getGeneField();
         if (StringUtils.isNotEmpty(geneField)) {
             solrQuery.addFilterQuery(any(
+                    fq(FieldName.GENE_AUTOCOMPLETE, geneField),
                     fq(FieldName.ZEBRAFISH_GENE, geneField),
                     fq(FieldName.ZEBRAFISH_GENE_T, geneField),
                     fq(FieldName.EXPRESSED_GENE_FULL_NAME, geneField),

@@ -2953,6 +2953,7 @@
             <entity name="expression_zebrafish_gene"
                     query="select
                             mrkr_abbrev as zebrafish_gene,
+                            mrkr_abbrev as gene,
                             mrkr_name as zebrafish_gene_full_name,
                             mrkr_name as expressed_gene_full_name,
                             mrkr_zdb_id as xref,
@@ -2990,6 +2991,7 @@
             <entity name="expression_reporter_gene"
                     query="select
                             mrkr_abbrev as reporter_gene,
+                            mrkr_abbrev as gene,
                             mrkr_zdb_id as xref,
                             'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2

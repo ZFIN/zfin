@@ -66,6 +66,7 @@ public enum FieldName {
     FULL_NAME_AC("full_name_ac", "Name"),
     FULL_NAME_KEYWORD_AUTOCOMPLETE("full_name_kac", "Name"),
     GENE("gene"),
+    GENE_AUTOCOMPLETE("gene_ac"),
     GENE_FULL_NAME("gene_full_name"),
     GENE_FULL_NAME_AUTOCOMPLETE("gene_full_name_ac", "Gene Full Name"),
     GENE_PREVIOUS_NAME("gene_previous_name"),

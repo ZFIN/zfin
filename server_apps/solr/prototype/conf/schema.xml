@@ -1011,6 +1011,7 @@
     <copyField source="source" dest="source_t"/>
     <copyField source="sequence_targeting_reagent" dest="sequence_targeting_reagent_t"/>
     <copyField source="gene" dest="gene_t"/>
+    <copyField source="gene" dest="gene_ac"/>
     <copyField source="zebrafish_gene" dest="zebrafish_gene_t"/>
     <copyField source="reporter_gene" dest="reporter_gene_t"/>
     <copyField source="affected_gene" dest="gene_t"/>
