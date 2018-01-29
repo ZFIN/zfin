@@ -7,8 +7,8 @@
         </a>
     </li>
     <ul>
-        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines"
-               title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li>
+        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Zebrafish+Nomenclature+Conventions"
+               title="Zebrafish nomenclature conventions">Nomenclature Conventions</a></li>
         <li><a href="/action/nomenclature/gene-name"
                title="Contact the Nomenclature Committee">Obtain approval for gene names</a>
     </ul>

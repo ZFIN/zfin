@@ -28,7 +28,7 @@
                     <form:input path="lineDetails[${status.index}].geneName" class="form-control"/>
                 </div>
                 <div class="input-addon col-sm-1">
-                    <a href="https://<%= ZfinPropertiesEnum.WIKI_HOST.value() %>/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines#ZFINZebrafishNomenclatureGuidelines-4.3.1" target="_blank"><i class="fa fa-question-circle"></i></a>
+                    <a href="https://<%= ZfinPropertiesEnum.WIKI_HOST.value() %>/display/general/ZFIN+Zebrafish+Nomenclature+Conventions#ZFINZebrafishNomenclatureGuidelines-4.3.1" target="_blank"><i class="fa fa-question-circle"></i></a>
                 </div>
             </div>
             <div class="form-group">

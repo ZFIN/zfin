@@ -1,5 +1,5 @@
 <li>
-    <a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines#ZFINZebrafishNomenclatureGuidelines-1">
+    <a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Conventions#ZFINZebrafishNomenclatureGuidelines-1">
         Guide to Nomenclature for Genes
     </a>
 </li>
