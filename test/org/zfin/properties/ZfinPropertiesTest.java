@@ -46,7 +46,7 @@ public class ZfinPropertiesTest extends AbstractZfinPropertiesTest{
         assertTrue("BlastServer Put binary", ZfinPropertiesEnum.BLASTSERVER_XDFORMAT.value().contains("xdformat"));
 
         assertFalse("BlastServer Target",  ZfinPropertiesEnum.BLASTSCRIPT_TARGET_PATH.value().contains("@"));
-        assertEquals("BlastServer Blast-all binary", "wu-blastall", ZfinPropertiesEnum.WEBHOST_BLASTALL.value()); // currently not used
+        assertEquals("BlastServer Blast-all binary", "ab-blastall", ZfinPropertiesEnum.WEBHOST_BLASTALL.value()); // currently not used
         assertFalse("BlastServer Distributed Query Path", ZfinPropertiesEnum.BLASTSERVER_DISTRIBUTED_QUERY_PATH.value().contains("@"));
         assertEquals("BlastServer Blast Access", "ssh", ZfinPropertiesEnum.SSH.value());
     }
