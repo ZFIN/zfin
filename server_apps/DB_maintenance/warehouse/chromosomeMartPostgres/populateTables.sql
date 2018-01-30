@@ -65,6 +65,12 @@ select lnkg_chromosome as chromosome , fmrel_ftr_zdb_id as zdb_id, 'other map lo
     and lms_lnkgmem_id = lnkgm_pk_id
     and fmrel_type in ('is allele of', 'markers present','markers absent')
     and lnkgm_linkage_zdb_id = lnkg_zdb_id
+     union
+select gff_seqname as chromosome , fmrel_ftr_zdb_id as zdb_id, 'other map location' as source, 'featureLocationPullThruFromGeneGBrowse' as subsource
+     FROM gff3,  feature_marker_relationship, marker
+    WHERE gff_name=mrkr_abbrev
+    and mrkr_zdb_id=fmrel_mrkr_zdb_id
+    and fmrel_type in ('is allele of', 'markers present','markers absent')
 union
 SELECT  mm_chromosome                                 AS chromosome,
                 fmrel_ftr_zdb_id                              AS zdb_id,
