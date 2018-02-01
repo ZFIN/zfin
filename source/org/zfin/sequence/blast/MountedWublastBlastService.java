@@ -30,50 +30,6 @@ public final class MountedWublastBlastService extends WebHostWublastBlastService
     }
 
 
-    /**
-     * Sends a fasta file over to the remote server for processing in the case where streams can
-     * not be used.  On genomix, can not scp to /tmp, because qrsh processes can not read the files
-     * there.
-     *
-     * @param fastaFile   File to send.
-     * @param sliceNumber Slice number.
-     * @return The remote file name and location.
-     * @throws java.io.IOException Fails to send fasta file.
-     *                             // todo: this needs to be reimplemented to copy to the correct directory and then execute the
-     *                             // ssh file
-     */
-    @Override
-    protected File sendFASTAToServer(File fastaFile, int sliceNumber) throws IOException {
-
-        // file is already written
-        // just replace the name here
-        File remoteFile = new File(ZfinPropertiesEnum.BLASTSERVER_BLAST_DATABASE_PATH + "/" + fastaFile.getName());
-
-        // execute forced ssh copy from mounted to qrsh_available shared (BLASTSERVER . . . )
-        List<String> commandList = new ArrayList<String>();
-        commandList.add(ZfinPropertiesEnum.SSH.value());
-        commandList.add("-x");
-        commandList.add(ZfinProperties.getBlastServerUserAtHost());
-        commandList.add("-i");
-        commandList.add(ZfinPropertiesEnum.WEBHOST_KEY_PATH + "/" + "cp");
-        commandList.add(fastaFile.getAbsolutePath());
-        commandList.add(remoteFile.getAbsolutePath());
-
-        ExecProcess execProcess = new ExecProcess(commandList);
-        logger.info(execProcess);
-        try {
-            int returnValue = execProcess.exec();
-            logger.debug("return value: " + returnValue);
-        } catch (Exception e) {
-            logger.error("Failed to copy file to the server: " + e);
-            throw new RuntimeException("failed to send file", e);
-        }
-        logger.debug("output stream: " + execProcess.getStandardOutput().trim());
-        logger.debug("error stream: " + execProcess.getStandardError().trim());
-
-        return remoteFile;
-    }
-
     @Override
     public String blastOneDBToString(XMLBlastBean xmlBlastBean) throws BlastDatabaseException, BusException {
         if(CollectionUtils.isNotEmpty(xmlBlastBean.getActualDatabaseTargets())){

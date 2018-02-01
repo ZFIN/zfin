@@ -63,9 +63,6 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
     protected abstract File generateFileName(File fastaFile, int sliceNumber) throws IOException;
 
-    protected abstract File sendFASTAToServer(File fastaFile, int sliceNumber) throws IOException;
-
-
     protected abstract String getCurrentDatabasePath(Database database);
 
     protected abstract String getBlastGetBinary();

@@ -259,21 +259,6 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
     }
 
 
-    /**
-     * Sends a fasta file over to the remote server for processing in the case where streams can
-     * not be used.  On genomix, can not scp to /tmp, because qrsh processes can not read the files
-     * there.
-     *
-     * @param fastaFile   File to send.
-     * @param sliceNumber Slice number.
-     * @return The remote file name and location.
-     * @throws java.io.IOException Fails to send fasta file.
-     */
-    protected File sendFASTAToServer(File fastaFile, int sliceNumber) throws IOException {
-        return generateFileName(fastaFile, sliceNumber);
-    }
-
-
     @Override
     protected void createEmptyDatabase(Database blastDatabase) throws BlastDatabaseException {
         if (blastDatabase == null) {

@@ -57,29 +57,6 @@ public class ExecuteBlastTest {
 
 
     @Test
-    public void testSendFASTA() {
-        try {
-            logger.error("enter: " + ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH);
-            File localFile = File.createTempFile("test", ".fa", new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value()));
-            logger.debug("local: " + localFile);
-//            localFile.deleteOnExit();
-            BufferedWriter writer = new BufferedWriter(new FileWriter(localFile));
-            writer.write("some garbage");
-            writer.close();
-            File remoteFASTAFile = MountedWublastBlastService.getInstance().sendFASTAToServer(localFile, 0);
-            logger.debug("remote: " + remoteFASTAFile);
-            assertNotNull(remoteFASTAFile);
-            assertEquals(localFile.getName(), remoteFASTAFile.getName());
-            assertNotSame(remoteFASTAFile.getAbsolutePath(), localFile.getAbsolutePath());
-            // qrsh ls of file
-
-        } catch (IOException e) {
-            fail(e.fillInStackTrace().toString());
-        }
-    }
-
-
-    @Test
     public void badBlastA() {
 
         try {
