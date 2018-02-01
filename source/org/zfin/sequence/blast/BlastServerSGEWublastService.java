@@ -74,34 +74,6 @@ public abstract class BlastServerSGEWublastService extends AbstractWublastBlastS
     }
 
 
-    /**
-     * Sends a fasta file over to the remote server for processing in the case where streams can
-     * not be used.  On genomix, can not scp to /tmp, because qrsh processes can not read the files
-     * there.
-     *
-     * @param fastaFile File to send.
-     * @return The remote file name and location.
-     * @throws java.io.IOException Thrown in fasta file not found or secure copy fails.
-     */
-    protected File sendFASTAToServer(File fastaFile, int sliceNumber) throws IOException {
-        CommandLine commandLine = new CommandLine("scp");
-        commandLine.addArgument(fastaFile.getAbsolutePath());
-
-        File remoteFile = generateFileName(fastaFile, sliceNumber);
-        commandLine.addArgument(ZfinProperties.getBlastServerUserAtHost() + ":" + remoteFile.getAbsolutePath());
-
-        DefaultExecutor defaultExecutor = new DefaultExecutor();
-        int returnValue = defaultExecutor.execute(commandLine);
-
-        logger.debug("return value: " + returnValue);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ByteArrayOutputStream byteArrayErrorStream = new ByteArrayOutputStream();
-        logger.debug("output stream: " + byteArrayOutputStream.toString().trim());
-        logger.debug("error stream: " + byteArrayErrorStream.toString().trim());
-
-        return remoteFile;
-    }
-
     @Override
     // todo: think of a better way to handle this
     protected void createEmptyDatabase(Database blastDatabase) throws BlastDatabaseException {
