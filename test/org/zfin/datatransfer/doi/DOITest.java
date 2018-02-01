@@ -41,8 +41,10 @@ public class DOITest extends AbstractDatabaseTest {
         pubs.add(pub2);
         citexplore.getDoisForPubmedID(pubs);
 
-        assertThat(pub1.getDoi(), notNullValue());
-        assertThat(pub2.getDoi(), notNullValue());
+        // there are accession numbers that do not return a DOI from EBI!
+        // e.g. accession no: 10840726 (ZDB-PUB-000824-10) has a DOI but citexplore would not return it.
+        for (Publication pub : pubs)
+            assertThat(pub.getDoi(), notNullValue());
     }
 
     @Test
