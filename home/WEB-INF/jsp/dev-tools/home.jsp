@@ -1,3 +1,4 @@
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <style>
@@ -198,7 +199,7 @@
                         <a href="/action/devtool/database-info">Database Info</a><br/>
                     </td>
                     <td class="col-md-2">
-                        <a href="/action/database/overview">Informix Database </a>
+                        <a href="/action/database/all-sessions">Postgres Database </a>
                     </td>
                 </tr>
                 <tr>

@@ -1,16 +1,10 @@
 package org.zfin.database.presentation;
 
-/**
- * Created by IntelliJ IDEA.
- * User: cmpich
- * Date: 3/6/12
- * Time: 6:04 PM
- * To change this template use File | Settings | File Templates.
- */
 public class DatabaseFormBean {
-    
+
     private String orderBy;
     private String dbname;
+    private boolean active;
 
     public String getDbname() {
         return dbname;
@@ -26,5 +20,13 @@ public class DatabaseFormBean {
 
     public void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

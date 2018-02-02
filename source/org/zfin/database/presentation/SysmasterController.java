@@ -5,8 +5,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.zfin.database.SysDatabase;
+import org.zfin.database.PostgresSession;
 import org.zfin.database.SysSession;
+import org.zfin.database.repository.PostgresRepository;
 import org.zfin.database.repository.SysmasterRepository;
 
 import java.util.Collections;
@@ -32,8 +33,8 @@ public class SysmasterController {
     @RequestMapping(value = "/database-summary")
     protected String summary(Model model,
                              @ModelAttribute("formBean")
-                             DatabaseFormBean formBean) {
-        List<SysDatabase> databases = SysmasterRepository.getSystemDatabases(formBean);
+                                     DatabaseFormBean formBean) {
+        List<PostgresSession> databases = PostgresRepository.getSystemDatabases(formBean);
         model.addAttribute("databases", databases);
         return "dev-tools/database/summary.page";
     }
@@ -41,17 +42,18 @@ public class SysmasterController {
     @RequestMapping(value = "/all-sessions")
     protected String allSessions(Model model,
                                  @ModelAttribute("formBean")
-                                 DatabaseFormBean formBean) {
-        List<SysSession> sessions = SysmasterRepository.getAllSessions(formBean);
+                                         DatabaseFormBean formBean) {
+        List<PostgresSession> sessions = PostgresRepository.getAllSessions(formBean);
         model.addAttribute("sessions", sessions);
         model.addAttribute("dbnameList", getDbNameList());
+        model.addAttribute("formBean", formBean);
         return "dev-tools/database/all-sessions.page";
     }
 
     @RequestMapping(value = "/view-session/{ID}")
     protected String viewSession(Model model,
                                  @ModelAttribute("formBean")
-                                 DatabaseFormBean formBean,
+                                         DatabaseFormBean formBean,
                                  @PathVariable("ID") String idString) {
         int id = Integer.valueOf(idString);
         SysSession session = SysmasterRepository.getSessionDetail(id);
@@ -61,10 +63,10 @@ public class SysmasterController {
 
     public Map<String, String> getDbNameList() {
         LinkedHashMap<String, String> dateList = new LinkedHashMap<>();
-        List<SysDatabase> dbNames = SysmasterRepository.getAllDbNames();
+        List<String> dbNames = PostgresRepository.getAllDbNames();
         Collections.sort(dbNames);
-        for (SysDatabase dbName : dbNames) {
-            String name = dbName.getName().trim();
+        for (String dbName : dbNames) {
+            String name = dbName.trim();
             dateList.put(name, name);
         }
         return dateList;
