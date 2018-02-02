@@ -12,7 +12,7 @@
     </c:when>
     <c:otherwise>
         <authz:authorize access="hasRole('root')">
-            <a href="/action/marker/${marker.zdbID}/expression">
+            <a href="/${marker.zdbID}/expression">
                 ${markerExpression.allExpressionData.figureCount} figures
             </a>
         </authz:authorize>

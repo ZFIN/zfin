@@ -26,7 +26,7 @@ public class ExpressionSearchController {
     private static Logger logger = Logger.getLogger(ExpressionSearchController.class);
 
     private static final String BASE_URL = "/action/expression/results?";
-    private static final int DEFAULT_PAGE_SIZE = 25;
+    public static final int DEFAULT_PAGE_SIZE = 25;
 
     @Autowired
     private MarkerRepository markerRepository;

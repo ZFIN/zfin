@@ -172,7 +172,7 @@ public class GeneViewController {
         return "marker/phenotype-summary.page";
     }
 
-    @RequestMapping("/{geneID}/expression")
+    @RequestMapping(value = { "/{geneID}/expression", "/gene/view/{geneID}/expression" })
     public String getExpression(Model model, @PathVariable String geneID, HttpServletRequest request) {
         Marker marker = getMarkerRepository().getMarkerByID(geneID);
         if (marker == null) {
@@ -183,7 +183,8 @@ public class GeneViewController {
         ExpressionSearchCriteria criteria = new ExpressionSearchCriteria();
         criteria.setGeneField(marker.getAbbreviation());
         criteria.setGeneZdbID(marker.getZdbID());
-
+        criteria.setPage(1);
+        criteria.setRows(ExpressionSearchController.DEFAULT_PAGE_SIZE);
         return expressionSearchController.results(model, criteria, request);
     }
 
