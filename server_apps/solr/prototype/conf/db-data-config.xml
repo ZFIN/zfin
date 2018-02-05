@@ -2047,7 +2047,7 @@
                     where="construct_id=construct.id"
             />
 
-            @PG_XML_COMMENT_OPEN@
+
             <entity name="construct_expressed_in_parent"
                     query="select DISTINCT term_ont_id as xref, term_name as expressed_in_parent, cc_construct_zdb_id as construct_id
                             from expression_experiment
@@ -2062,7 +2062,7 @@
                     where="construct_id=construct.id"
                     cacheImpl="SortedMapBackedCache"
             />
-            @PG_XML_COMMENT_CLOSE@
+            
 
             <!--           <entity name="construct_authors"
                               datasource="db" query="
