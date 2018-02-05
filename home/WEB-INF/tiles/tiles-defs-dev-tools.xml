@@ -106,11 +106,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/hibernate-statistics-view.jsp"/>
     </definition>
 
-    <definition name="zfin-statistics-view" extends="dev_layout">
-        <put-attribute name="staticTitle" value="ZFIN Statistics"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/zfin-statistics-view.jsp"/>
-    </definition>
-
     <definition name="gwt-modules" extends="dev_layout">
         <put-attribute name="staticTitle" value="GWT Modules"/>
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/modules.jsp"/>

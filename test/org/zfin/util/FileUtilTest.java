@@ -38,14 +38,6 @@ public class FileUtilTest {
     }
 
     @Test
-    public void apgFiles() {
-        ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue("home");
-        List<File> apgFiles = FileUtil.countApgFiles();
-
-        assertThat("Number of apg files", apgFiles, hasSize(greaterThan(0)));
-    }
-
-    @Test
     public void fileBuilderFromString() {
 
         assertNull(FileUtil.createFileFromStrings());

@@ -155,13 +155,6 @@
                         <a href="/action/devtool/zfin-properties">Zfin Properties</a>
                     </td>
                     <td class="col-md-2">
-                        <a href="/action/devtool/zfin-statistics">ZFIN Statistics</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-1">
-                    </td>
-                    <td class="col-md-2">
                         <a href="/action/database/browse-database">Browse Database tables</a>
                     </td>
                 </tr>

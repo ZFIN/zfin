@@ -2,16 +2,13 @@ package org.zfin.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zfin.framework.presentation.ZfinFilenameFilter;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 /**
  * Utility class for creating file path names and other things.
@@ -97,7 +94,7 @@ public final class FileUtil {
     /**
      * Read content of a file.
      *
-     * @param file
+     * @param file File
      */
     public static String readFile(File file) {
         String newline = System.getProperty("line.separator");
@@ -159,7 +156,7 @@ public final class FileUtil {
      * The archive directory is created if it does not exist.
      *
      * @param file             file that should be archived
-     * @param archiveDirectory
+     * @param archiveDirectory directory
      * @return File archive file
      */
     public static File archiveFile(File file, File archiveDirectory) {
@@ -264,51 +261,6 @@ public final class FileUtil {
                     LOG.error("Error while purging archive file '" + file.getAbsolutePath());
             }
         }
-    }
-
-    public static List<File> countApgFiles() {
-        File dir = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), "ZFIN");
-        File appDir = new File(dir, "APP_PAGES");
-        FilenameFilter filter = new ZfinFilenameFilter(".apg");
-        return getAllFiles(appDir, filter);
-    }
-
-    public static List<File> countJspFiles() {
-        File dir = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value());
-        FilenameFilter filter = new ZfinFilenameFilter(".jsp");
-        return getAllFiles(dir, filter);
-    }
-
-    public static List<File> countClassFiles() {
-        File web = new File(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value());
-        File webInf = new File(web, WEB_INF);
-        File classesDir = new File(webInf, "classes");
-        File org = new File(classesDir, "org");
-        File zfin = new File(org, "zfin");
-        FilenameFilter filter = new ZfinFilenameFilter(".class");
-        return getAllFiles(zfin, filter);
-    }
-
-    public static List<File> getAllFiles(File dir, FilenameFilter filter) {
-        if (dir == null)
-            return null;
-
-        List<File> list = new ArrayList<File>();
-        File[] files = dir.listFiles(filter);
-        if (files == null)
-            return null;
-
-        for (File file : files) {
-            if (file.isDirectory()) {
-                List<File> filesFromSubDir = getAllFiles(file, filter);
-                if (filesFromSubDir != null)
-                    list.addAll(filesFromSubDir);
-            } else {
-                list.add(file);
-            }
-
-        }
-        return list;
     }
 
     public static File createFileFromStrings(String... paths) {
@@ -423,8 +375,8 @@ public final class FileUtil {
     /**
      * Strip off slashes from a file path.
      *
-     * @param file
-     * @return
+     * @param file file name
+     * @return remove all prefixes and return pure file name
      */
     public static String getFileNameFromPath(String file) {
         if (StringUtils.isEmpty(file))
