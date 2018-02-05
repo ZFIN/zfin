@@ -2308,7 +2308,7 @@ drop view innophenoconstructs;
 -- generate a file to map Disease to Genes via Orthology
 \echo 'disease_gene_ortholog.txt'
 create view diseaseGeneOrtholog as
-select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, term_name, term_ont_id, omimp_name, omimp_omim_id
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, term_name, term_ont_id, omimp_name, omimp_omim_id,'ECO:0000266','ZDB-PUB-170210-12'
   from ortholog, marker, omim_phenotype, omimp_termxref_mapping, term_xref, term
  where ortho_other_species_taxid = 9606
    and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
@@ -2317,7 +2317,7 @@ select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_i
    and tx_pk_id = otm_tx_id
    and term_zdb_id = tx_term_zdb_id
 union
-select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, '', '', omimp_name, omimp_omim_id
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, '', '', omimp_name, omimp_omim_id,'ECO:0000266','ZDB-PUB-170210-12'
   from ortholog, marker, omim_phenotype
  where ortho_other_species_taxid = 9606
    and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
@@ -2327,7 +2327,7 @@ select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_i
                      and tx_pk_id = otm_tx_id
                      and term_zdb_id = tx_term_zdb_id)
 union
-select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, '', '', omimp_name, ''
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, '', '', omimp_name, '','ECO:0000266','ZDB-PUB-170210-12'
   from ortholog, marker, omim_phenotype
  where ortho_other_species_taxid = 9606
    and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
