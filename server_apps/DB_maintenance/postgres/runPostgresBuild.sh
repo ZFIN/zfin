@@ -87,6 +87,8 @@ ant addPostgresConstraints
 # generate serial id replacement sql file : reset.sql
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/resetSerialIds.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
 
+echo " SELECT SETVAL('accnum_sequence', COALESCE(MAX(za_sequence_number), 1) ) FROM zfin_accession_number;" | psql ${DBNAME}
+
 #remove header and summary from reset.sql so that we can run it directly and reset the sequences.
 
 sed 's/?column?//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp && mv ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql.tmp ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
