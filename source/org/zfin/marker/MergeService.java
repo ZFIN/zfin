@@ -17,6 +17,7 @@ import org.zfin.mapping.MappedMarkerImpl;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 
@@ -90,7 +91,9 @@ public class MergeService {
 
 
         // regen
-        markerRepository.runMarkerNameFastSearchUpdate(markerToMergeInto);
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+            markerRepository.runMarkerNameFastSearchUpdate(markerToMergeInto);
+        }
 
         // this may be unnecessary
         HibernateUtil.currentSession().update(markerToMergeInto);

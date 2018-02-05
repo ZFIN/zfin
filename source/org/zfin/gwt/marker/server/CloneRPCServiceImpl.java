@@ -22,6 +22,7 @@ import org.zfin.marker.ProbeLibrary;
 import org.zfin.marker.Vector;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -237,7 +238,9 @@ public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements Clo
 
             InfrastructureService.insertUpdate(clone, "Name", oldName, clone.getName());
             //run regen script
-            markerRepository.runMarkerNameFastSearchUpdate(clone);
+            if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+                markerRepository.runMarkerNameFastSearchUpdate(clone);
+            }
         }
 
 

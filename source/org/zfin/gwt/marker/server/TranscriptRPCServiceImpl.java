@@ -20,6 +20,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.BlastDatabaseException;
@@ -60,7 +61,9 @@ public class TranscriptRPCServiceImpl extends ZfinRemoteServiceServlet implement
                 transcript.setAbbreviation(transcriptDTO.getName().toLowerCase());
                 InfrastructureService.insertUpdate(transcript, "Name", oldName, transcript.getName());
                 //run regen script
-                markerRepository.runMarkerNameFastSearchUpdate(transcript);
+                if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+                    markerRepository.runMarkerNameFastSearchUpdate(transcript);
+                }
             }
 
 

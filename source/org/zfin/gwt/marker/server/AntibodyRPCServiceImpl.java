@@ -19,6 +19,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 
@@ -175,7 +176,9 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
 
             InfrastructureService.insertUpdate(antibody, "Antibody Name", oldName, antibody.getName());
             //run regen script
-            markerRepository.runMarkerNameFastSearchUpdate(antibody);
+            if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+                markerRepository.runMarkerNameFastSearchUpdate(antibody);
+            }
         }
 
         HibernateUtil.currentSession().update(antibody);

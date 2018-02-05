@@ -21,6 +21,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -161,8 +162,10 @@ public class ConstructAddController {
                 mr.addConstructComponent(numCassettes, lastComp, constructZdbID, ")", ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT, "construct wrapper component", ir.getCVZdbIDByTerm(")").getZdbID());
 
                 //moving construct record to marker table
-                InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
-		InformixUtil.runInformixProcedure("regen_names_marker", constructZdbID + "");
+                if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+                    InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
+                    InformixUtil.runInformixProcedure("regen_names_marker", constructZdbID + "");
+                }
                 Marker latestConstruct = mr.getMarkerByID(newConstruct.getZdbID());
 
 

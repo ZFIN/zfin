@@ -48,6 +48,7 @@ import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.PaginationResultFactory;
@@ -632,7 +633,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         InfrastructureService.insertUpdate(marker, updateComment);
-        runMarkerNameFastSearchUpdate(marker);
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+            runMarkerNameFastSearchUpdate(marker);
+        }
         return markerAlias;
     }
 
@@ -673,7 +676,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         currentSession().refresh(marker);
 
         // run the fast search table script so the alias is not showing up any more.
-        runMarkerNameFastSearchUpdate(marker);
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+            runMarkerNameFastSearchUpdate(marker);
+        }
     }
 
     public void deleteMarkerRelationship(MarkerRelationship mrel) {
@@ -817,7 +822,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         InfrastructureService.insertUpdate(marker, updateComment);
 
         //accessions will end up in the fast search table associated with the marker
-        runMarkerNameFastSearchUpdate(marker);
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+            runMarkerNameFastSearchUpdate(marker);
+        }
 
         return mdb;
     }
@@ -877,7 +884,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param marker Marker
      */
     public void runMarkerNameFastSearchUpdate(final Marker marker) {
-        InformixUtil.runInformixProcedure("regen_names_marker", marker.getZdbID());
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+            InformixUtil.runInformixProcedure("regen_names_marker", marker.getZdbID());
+        }
+
     }
 
     public void createMarker(Marker marker, Publication pub, boolean insertUpdate) {
@@ -911,7 +921,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         // run procedure for fast search table
-        InformixUtil.runInformixProcedure("regen_names_marker", marker.getZdbID());
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+            InformixUtil.runInformixProcedure("regen_names_marker", marker.getZdbID());
+        }
     }
 
     public void createMarker(Marker marker, Publication pub) {
@@ -1588,8 +1600,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         history.setEvent(MarkerHistory.Event.REASSIGNED);
         MarkerAlias alias = getMarkerRepository().addMarkerAlias(marker, marker.getAbbreviation(), publication);
         history.setMarkerAlias(alias);
-
-        getMarkerRepository().runMarkerNameFastSearchUpdate(marker);
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+            getMarkerRepository().runMarkerNameFastSearchUpdate(marker);
+        }
         getInfrastructureRepository().insertMarkerHistory(history);
         infrastructureRepository.insertRecordAttribution(alias.getZdbID(), publication.getZdbID());
     }
@@ -3143,7 +3156,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         InfrastructureService.insertUpdate(marker, updateComment);
 
         //accessions will end up in the fast search table associated with the marker
-        runMarkerNameFastSearchUpdate(marker);
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+            runMarkerNameFastSearchUpdate(marker);
+        }
 
         return mdb;
     }
