@@ -181,7 +181,7 @@
     </target>
 
     <target name="download-go-qualifier-ontology">
-        <property name="localOboFile" value="go_qualifier.obo"/>
+        <property name="localOboFile" value="go-qualifier.obo"/>
         <property name="oboFileURL" value="${goQualifierSourceURL}"/>
         <antcall target="download-ontology"/>
     </target>
