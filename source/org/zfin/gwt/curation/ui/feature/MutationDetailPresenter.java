@@ -1,3 +1,4 @@
+
 package org.zfin.gwt.curation.ui.feature;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -97,10 +98,9 @@ public class MutationDetailPresenter {
                     String displayName = dto.getDisplayName();
                     if (!dto.getTerm().getOboID().equals("SO:0000319"))
                         displayName += " [" + dto.getAbbreviation() + "]";
-                    //commenting oyut for issue CUR-730
-//                    if (index != 0) {
+
                         featureView.mutationDetailProteinView.proteinWTTermList.addItem(displayName, dto.getTerm().getOboID());
-//                    }
+
                     featureView.mutationDetailProteinView.proteinMutatedTerm.addItem(displayName, dto.getTerm().getOboID());
                     index++;
                 }
