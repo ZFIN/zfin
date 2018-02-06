@@ -180,6 +180,12 @@
         <copy file="${zecoOboURL}" tofile="${run-directory}/${localOboFile}"/>
     </target>
 
+    <target name="download-go-qualifier-ontology">
+        <property name="localOboFile" value="go_qualifier.obo"/>
+        <property name="oboFileURL" value="${goQualifierSourceURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
     <target name="download-anatomy-ontology">
         <property name="localOboFile" value="zebrafish_anatomy.obo"/>
         <property name="oboFileURL" value="${anatomyOboURL}"/>
@@ -207,6 +213,8 @@
     <target name="load-zeco-taxonomy" depends="load-zeco-taxonomy-ontology"/>
 
     <target name="load-anatomy" depends="download-anatomy-ontology,load-anatomy-ontology"/>
+
+    <target name="load-go-qualifier" depends="download-go-qualifier-ontology,load-go-qualifier-ontology"/>
 
     <target name="load-disease" depends="download-disease-ontology,load-disease-ontology,run-omim-mapping-updates">
     </target>
