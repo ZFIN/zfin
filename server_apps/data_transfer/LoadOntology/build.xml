@@ -18,10 +18,10 @@
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so.obo"/>
     <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
     <property name="zecoTaxonomySourceURL" value="/home/informix/Curation/zeco-taxonomy-source.txt"/>
+<!-- For local development
     <property name="goQualifierSourceURL" value="go-qualifier-source.txt"/>
-<!--
-    <property name="goQualifierOboURL" value="file:///home/informix/Curation/go-qualifier.obo"/>
 -->
+    <property name="goQualifierSourceURL" value="file:///home/informix/Curation/go-qualifier.obo"/>
     <property name="goQualifierOboURL" value="go-qualifier.obo"/>
     <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
     <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
