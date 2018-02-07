@@ -7,6 +7,6 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1094/unamusedFace/CUR-732.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1094/unamusedFace/ONT-639.sql" />
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1094/unamusedFace/PUB-419.sql" />
 
 </databaseChangeLog>
