@@ -1,38 +1,28 @@
 --liquibase formatted sql
 --changeset xshao:PUB-431
 
-DELETE FROM mesh_heading WHERE mh_pk_id = 319184;
- 
-UPDATE mesh_heading_qualifier
-   SET mhq_mesh_heading_id = 260599
- WHERE mhq_mesh_heading_id = 319186;
- 
-DELETE FROM mesh_heading WHERE mh_pk_id = 319186;
-   
-DELETE FROM mesh_heading_qualifier
- WHERE mhq_mesh_heading_id = 319192
-   AND mhq_mesht_mesh_qualifier_id = 'Q000378';
-      
-UPDATE mesh_heading_qualifier
-   SET mhq_mesh_heading_id = 260607
- WHERE mhq_mesh_heading_id = 319192;
- 
-DELETE FROM mesh_heading WHERE mh_pk_id = 319192;   
+delete from int_person_pub where target_id = 'ZDB-PUB-170217-11' and source_id = 'ZDB-PERS-030306-1';
 
-UPDATE mesh_heading 
-   SET mh_pub_zdb_id = 'ZDB-PUB-980313-2'
- WHERE mh_pub_zdb_id = 'ZDB-PUB-170217-1';
+delete from int_person_pub where target_id = 'ZDB-PUB-170217-11' and source_id = 'ZDB-PERS-960805-87';
 
-UPDATE pub_db_xref
-   SET pdx_pub_zdb_id = 'ZDB-PUB-980313-2'
- WHERE pdx_pub_zdb_id = 'ZDB-PUB-170217-1';
+update curation
+                                set cur_pub_zdb_id = 'ZDB-PUB-980313-2'
+                              where cur_pub_zdb_id = 'ZDB-PUB-170217-11';
 
-DELETE FROM pub_tracking_history
- WHERE pth_pub_zdb_id = 'ZDB-PUB-170217-1';
+update int_person_pub
+                                set target_id = 'ZDB-PUB-980313-2'
+                              where target_id = 'ZDB-PUB-170217-11';
 
-DELETE FROM zdb_active_source 
-WHERE zactvs_zdb_id = 'ZDB-PUB-170217-1';
+update pub_tracking_history
+                                set pth_pub_zdb_id = 'ZDB-PUB-980313-2'
+                              where pth_pub_zdb_id = 'ZDB-PUB-170217-11';
 
-INSERT INTO withdrawn_data (wd_old_zdb_id, wd_new_zdb_id, wd_display_note) 
-VALUES ('ZDB-PUB-170217-1', 'ZDB-PUB-980313-2',  "publication merged");
+update publication_note
+                                set pnote_pub_zdb_id = 'ZDB-PUB-980313-2'
+                              where pnote_pub_zdb_id = 'ZDB-PUB-170217-11';
 
+delete from publication_file where pf_pub_zdb_id = 'ZDB-PUB-170217-11';
+
+delete from zdb_active_source where zactvs_zdb_id = 'ZDB-PUB-170217-11';
+
+insert into withdrawn_data (wd_old_zdb_id, wd_new_zdb_id, wd_display_note) values ('ZDB-PUB-170217-11', 'ZDB-PUB-980313-2', 'merged');
