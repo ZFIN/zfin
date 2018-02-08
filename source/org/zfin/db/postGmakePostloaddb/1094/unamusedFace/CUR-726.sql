@@ -5,6 +5,8 @@ delete from record_attribution where recattrib_pk_id = '317469';
 
 delete from record_attribution where recattrib_pk_id = '53974685';
 
+update feature_assay set featassay_feature_zdb_id = 'ZDB-GENE-070117-2142' where featassay_feature_zdb_id = 'ZDB-GENE-070117-437';
+
 update marker_go_term_evidence 
                                 set mrkrgoev_mrkr_zdb_id = 'ZDB-GENE-070117-2142'
                               where mrkrgoev_mrkr_zdb_id = 'ZDB-GENE-070117-437';
