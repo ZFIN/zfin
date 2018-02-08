@@ -1,0 +1,23 @@
+README
+
+On PostGreSQL (not Informix), run the following
+
+generateSQLsForMergingRecords.pl ZDB_ID1 ZDB_ID2
+
+to generate the SQLs (written to merge.sql) needed for the merge action.
+
+If the records are zdb_active_data records, need to first change the "rollback work" into "commit work;"
+in the merge.sql and execute the file on PostGreSQL. Then, run another Perl script on PostGreSQL.
+
+generatePostMergeSQLs.pl ZDB_ID1 ZDB_ID2
+
+to generate the rest of SQLs (written to post-merge.sql).
+
+Copy the SQLs from post-merge.sql and add them into merge.sql. 
+
+Then, merge.sql could be executed on bith Innformix and PostGreSQL to get the two ZFIN records merged.
+
+Notice that if the records are two markers, the merge.sql could be only executed on bith Innformix, 
+since there is some SQL syntax with select ... into temp table, which could not be executed on PostGreSQL.
+
+The key code to generate the SQLs is inside the recursive function, which takes advantage of PostGreSQL Information Schema views.
