@@ -17,8 +17,7 @@ update data_alias
                                 set dalias_data_zdb_id = 'ZDB-ALT-170424-1'
                               where dalias_data_zdb_id = 'ZDB-ALT-140123-14';
 
-update int_data_source
-                                set ids_data_zdb_id = 'ZDB-ALT-170424-1'
+delete from int_data_source
                               where ids_data_zdb_id = 'ZDB-ALT-140123-14';
 
 delete from record_attribution where recattrib_pk_id = '706401';
