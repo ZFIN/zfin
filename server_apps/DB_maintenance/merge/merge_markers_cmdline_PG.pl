@@ -55,10 +55,12 @@ validateZDBID($recordToBeDeleted, $tableName, $primaryKeyColumn);
 validateZDBID($recordToBeMergedInto, $tableName, $primaryKeyColumn);
 
 my %processed = ();
-$processed{'$tableName'} = 0;
-$processed{'updates'} = 0;
-$processed{'zdb_replaced_data'} = 0;
-$processed{'record_attribution'} = 0;
+$processed{$tableName.$primaryKeyColumn} = 0;
+$processed{'updatesrec_id'} = 0;
+$processed{'zdb_replaced_datazrepld_old_zdb_id'} = 0;
+$processed{'zdb_replaced_datazrepld_new_zdb_id'} = 0;
+$processed{'record_attributionrecattrib_data_zdb_id'} = 0;
+$processed{'record_attributionrecattrib_source_zdb_id'} = 0;
 
 ## deal with possible violation of unique constraint in record_attribution table 
 ## when updating some tables, inserting into record_attribution table will be triggered
@@ -248,8 +250,7 @@ sub recursivelyGetSQLs {
   
   while ($cur->fetch()) {  # the while loop to go thru all the child table one level deeper
     ## only process those that have not been processed before
-    if (!exists($processed{$childTableName})) {
-             
+    if (!exists($processed{$childTableName})) {             
       my $sqlMakeSense = "select * from $childTableName where $foreignKeyColumn = '$toBeDeleted';";
       my $curMakeSense = $dbh->prepare_cached($sqlMakeSense);
       $curMakeSense->execute();
@@ -560,7 +561,7 @@ sub recursivelyGetSQLs {
       } ## end of if ($numberOfResults > 0 && $childTableName ne 'record_attribution') 
 
       ## mark the child table as processed
-      $processed{$childTableName} = $depth;
+      $processed{$childTableName.$foreignKeyColumn} = $depth;
           
     } ## end of if (!exists($processed{$childTableName}))
 
