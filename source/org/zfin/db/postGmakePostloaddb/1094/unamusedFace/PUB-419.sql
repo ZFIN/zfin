@@ -5,13 +5,13 @@ update curation
                                 set cur_pub_zdb_id = 'ZDB-PUB-050216-43'
                               where cur_pub_zdb_id = 'ZDB-PUB-150909-9';
 
-update pub_tracking_history
-                                set pth_pub_zdb_id = 'ZDB-PUB-050216-43'
-                              where pth_pub_zdb_id = 'ZDB-PUB-150909-9';
-
 delete from publication_file where pf_pub_zdb_id = 'ZDB-PUB-150909-9'; 
 
 delete from pub_tracking_history where pth_pub_zdb_id = 'ZDB-PUB-150909-9';
+
+delete from pub_tracking_history where pth_pk_id = 59517;
+
+delete from pub_tracking_history where pth_pk_id = 71887;
 
 delete from zdb_active_source where zactvs_zdb_id = 'ZDB-PUB-150909-9';
 
