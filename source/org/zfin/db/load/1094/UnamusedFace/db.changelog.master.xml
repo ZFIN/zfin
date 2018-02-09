@@ -8,6 +8,7 @@
     <include file="source/org/zfin/db/load/1094/UnamusedFace/INF-3315.sql"/>
     <include file="source/org/zfin/db/load/1094/UnamusedFace/ONT-638.sql"/>
     <include file="source/org/zfin/db/load/1094/UnamusedFace/condense-alltermcontains.sql"/>
+    <include file="source/org/zfin/db/load/1094/UnamusedFace/INF-3370.sql"/>
 </databaseChangeLog>
 
    
