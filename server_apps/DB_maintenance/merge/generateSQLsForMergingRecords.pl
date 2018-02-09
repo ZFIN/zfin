@@ -80,7 +80,7 @@ $processed{'withdrawn_datawd_old_zdb_id'} = 0;
 $processed{'withdrawn_datawd_new_zdb_id'} = 0;
 $processed{'record_attributionrecattrib_data_zdb_id'} = 0;
 $processed{'record_attributionrecattrib_source_zdb_id'} = 0;
-$processed{'pub_tracking_historypth_pub_zdb_id'} = 0;
+$processed{'pub_tracking_historypth_pub_zdb_id'} = 1;
 
 ## deal with possible violation of unique constraint in record_attribution table if it is involved
 ## when updating some tables, inserting into record_attribution table will be triggered
@@ -167,7 +167,7 @@ sub recursivelyGetSQLs {
   
   while ($cur->fetch()) {  # the while loop to go thru all the child table one level deeper
     ## only process those that have not been processed before
-    if (!exists($processed{$childTableName})) {             
+    if (!exists($processed{$childTableName.$foreignKeyColumn})) {       
       my $sqlMakeSense = "select * from $childTableName where $foreignKeyColumn = '$toBeDeleted';";
       my $curMakeSense = $dbh->prepare_cached($sqlMakeSense);
       $curMakeSense->execute();
@@ -482,7 +482,7 @@ sub recursivelyGetSQLs {
       ## mark the child table as processed
       $processed{$childTableName.$foreignKeyColumn} = $depth;
           
-    } ## end of if (!exists($processed{$childTableName}))
+    } ## end of if (!exists($processed{$childTableName.$foreignKeyColumn}))
 
 
         
