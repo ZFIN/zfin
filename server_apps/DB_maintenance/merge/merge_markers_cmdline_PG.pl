@@ -250,7 +250,7 @@ sub recursivelyGetSQLs {
   
   while ($cur->fetch()) {  # the while loop to go thru all the child table one level deeper
     ## only process those that have not been processed before
-    if (!exists($processed{$childTableName})) {             
+    if (!exists($processed{$childTableName.$foreignKeyColumn})) {               
       my $sqlMakeSense = "select * from $childTableName where $foreignKeyColumn = '$toBeDeleted';";
       my $curMakeSense = $dbh->prepare_cached($sqlMakeSense);
       $curMakeSense->execute();
@@ -563,7 +563,7 @@ sub recursivelyGetSQLs {
       ## mark the child table as processed
       $processed{$childTableName.$foreignKeyColumn} = $depth;
           
-    } ## end of if (!exists($processed{$childTableName}))
+    } ## end of if (!exists($processed{$childTableName.$foreignKeyColumn}))
 
 
         
