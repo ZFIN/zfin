@@ -5,8 +5,6 @@ delete from record_attribution where recattrib_pk_id = '317469';
 
 delete from record_attribution where recattrib_pk_id = '53974685';
 
-update feature_assay set featassay_feature_zdb_id = 'ZDB-GENE-070117-2142' where featassay_feature_zdb_id = 'ZDB-GENE-070117-437';
-
 update marker_go_term_evidence 
                                 set mrkrgoev_mrkr_zdb_id = 'ZDB-GENE-070117-2142'
                               where mrkrgoev_mrkr_zdb_id = 'ZDB-GENE-070117-437';
@@ -40,6 +38,7 @@ update feature_marker_relationship
                               where fmrel_mrkr_zdb_id = 'ZDB-GENE-070117-437';
 
 
+
 update record_attribution set recattrib_data_zdb_id = 'ZDB-GENE-070117-2142' where recattrib_data_zdb_id = 'ZDB-GENE-070117-437';
 
 select get_id('DALIAS') as dalias_id, get_id('NOMEN') as nomen_id from single into temp tmp_ids;
@@ -68,6 +67,8 @@ insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values ('ZD
 
 delete from record_attribution where recattrib_pk_id = '1374011';
 
+delete from record_attribution where recattrib_pk_id = '69814109';
+
 delete from record_attribution where recattrib_pk_id = '70053154';
 
 delete from record_attribution where recattrib_pk_id = '708127';
@@ -91,8 +92,19 @@ delete from int_data_source where ids_pk_id = '63911';
 update int_data_source 
                                 set ids_data_zdb_id = 'ZDB-ALT-980413-591'
                               where ids_data_zdb_id = 'ZDB-ALT-980203-1826';
-
+                              
+                              
 update record_attribution set recattrib_data_zdb_id = 'ZDB-ALT-980413-591' where recattrib_data_zdb_id = 'ZDB-ALT-980203-1826';
+
+select get_id('DALIAS') as dalias_id
+  from single
+ into temp tmp_id;
+
+insert into zdb_active_data select dalias_id from tmp_id;
+
+insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
+                            select dalias_id, 'ZDB-ALT-980413-591', 'ztf229', '1'
+                              from tmp_id;
 
 delete from zdb_replaced_data where zrepld_old_zdb_id = 'ZDB-ALT-980203-1826';
 
