@@ -3,6 +3,10 @@
 
 delete from record_attribution where recattrib_pk_id = '706401';
 
+delete from feature_assay where featassay_feature_zdb_id = 'ZDB-ALT-170424-1';
+
+update feature_assay set featassay_feature_zdb_id = 'ZDB-ALT-170424-1' where featassay_feature_zdb_id = 'ZDB-ALT-140123-14';
+
 update feature_history
                                 set fhist_ftr_zdb_id = 'ZDB-ALT-170424-1'
                               where fhist_ftr_zdb_id = 'ZDB-ALT-140123-14';
