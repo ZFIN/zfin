@@ -1100,7 +1100,6 @@
                            || fish_zdb_id  AS url,
                            fish_name       AS name,
                            fish_name       AS full_name,
-                           fish_name       AS proper_name,
                            fish_name_order AS name_sort,
                            'Fish'          AS category,
                            geno_zdb_id     AS related_accession,
@@ -1126,7 +1125,6 @@
                            || bg.geno_handle
                            || ')'          AS name,
                            fish_name       AS full_name,
-                           fish_name       AS proper_name,
                            fish_name_order AS name_sort,
                            'Fish'          AS category,
                            g.geno_zdb_id     AS related_accession,
