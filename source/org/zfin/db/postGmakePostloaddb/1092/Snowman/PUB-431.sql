@@ -13,9 +13,8 @@ update int_person_pub
                                 set target_id = 'ZDB-PUB-980313-2'
                               where target_id = 'ZDB-PUB-170217-11';
 
-update pub_tracking_history
-                                set pth_pub_zdb_id = 'ZDB-PUB-980313-2'
-                              where pth_pub_zdb_id = 'ZDB-PUB-170217-11';
+delete from pub_tracking_history
+ where pth_pub_zdb_id = 'ZDB-PUB-170217-11';
 
 update publication_note
                                 set pnote_pub_zdb_id = 'ZDB-PUB-980313-2'
