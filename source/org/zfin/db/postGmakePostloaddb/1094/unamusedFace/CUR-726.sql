@@ -77,6 +77,10 @@ delete from record_attribution where recattrib_pk_id = '72846042';
 
 delete from record_attribution where recattrib_pk_id = '72846043';
 
+delete from feature_assay where featassay_feature_zdb_id = 'ZDB-ALT-980413-591';
+
+update feature_assay set featassay_feature_zdb_id = 'ZDB-ALT-980413-591' where featassay_feature_zdb_id = 'ZDB-ALT-980203-1826'; 
+
 delete from feature_marker_relationship where fmrel_zdb_id = 'ZDB-FMREL-070117-597';
 
 update feature_marker_relationship 
@@ -113,3 +117,4 @@ update zdb_replaced_data set zrepld_new_zdb_id = 'ZDB-ALT-980413-591' where zrep
 delete from zdb_active_data where zactvd_zdb_id = 'ZDB-ALT-980203-1826';
 
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values ('ZDB-ALT-980203-1826', 'ZDB-ALT-980413-591');
+
