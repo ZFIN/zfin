@@ -548,7 +548,7 @@ drop view companyFeaturePrefixSrc;
 \copy (select fp_pk_id, fp_prefix,fp_Institute_display from feature_prefix) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/featurePrefix/feature-prefix.txt' with delimiter as '|' null as '';
 
 create view diseaseAnnotation as
- select dat_zdb_id,term_ont_id, dat_source_zdb_id, dat_evidence_code,  genox_fish_zdb_id, genox_exp_zdb_id
+ select dat_zdb_id,term_ont_id, dat_source_zdb_id, dat_evidence_term_zdb_id,  genox_fish_zdb_id, genox_exp_zdb_id
    from disease_annotation, disease_annotation_model, fish_experiment, term
    where dat_zdb_id = damo_dat_Zdb_id
  and damo_genox_zdb_id = genox_zdb_id
