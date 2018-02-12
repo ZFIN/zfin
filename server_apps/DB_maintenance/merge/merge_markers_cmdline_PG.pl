@@ -104,7 +104,7 @@ close DEPTHANDSQL;
 my $sqlDeleteFromRecordAttribution;
 my $curDeleteFromRecordAttribution;
 
-## update record_attribution table
+## execute the possible delete from record_attribution table SQL(s)
 my $k;
 my $v;
 foreach $k (keys %mergeSQLs) {
@@ -117,6 +117,7 @@ foreach $k (keys %mergeSQLs) {
   }
 }
 
+## update record_attribution table
 my $sqlUpdateRecordAttribution = "update record_attribution set recattrib_data_zdb_id = '$recordToBeMergedInto' where recattrib_data_zdb_id = '$recordToBeDeleted';";
 print SQLFILE "$sqlUpdateRecordAttribution\n\n";
 my $curUpdateRecordAttribution = $dbh->prepare($sqlUpdateRecordAttribution);
@@ -143,7 +144,11 @@ my $sqlGetMarkerInfoForMergedInto = "select mrkr_abbrev, mrkr_name, get_id('NOME
 my $curGetMarkerInfoForMergedInto = $dbh->prepare_cached($sqlGetMarkerInfoForMergedInto);
 $curGetMarkerInfoForMergedInto->execute();            
 $curGetMarkerInfoForMergedInto->bind_columns(\$markerAbbrevMergedInto, \$markerNameMergedInto, \$nomenID);
-while ($curGetMarkerInfoForMergedInto->fetch()) {}
+my $unspecifiedAllele1Gene2;
+while ($curGetMarkerInfoForMergedInto->fetch()) {
+  ## this will be used in later code block for FB case 10333
+  $unspecifiedAllele1Gene2 = $markerAbbrevMergedInto . '_unspecified';
+}
 $curGetMarkerInfoForMergedInto->finish();
 
 ## add new data_alias record
@@ -176,6 +181,342 @@ my $curAddNewMrkrHistory = $dbh->prepare($sqlInsertMrkrHistory);
 $curAddNewMrkrHistory->execute();
 $curAddNewMrkrHistory->finish();
 
+### FB case 11133
+
+my $goawayFieldValue = "ZFIN:".$recordToBeDeleted;
+my $intoFieldValue = "ZFIN:".$recordToBeMergedInto;
+my $infgrmemMrkrgoevZdbId;
+my $infgrmemInferredFrom;
+
+my $sqlGetPrimaryKeysInferenceGroupMember = "select distinct infgrmem_mrkrgoev_zdb_id, infgrmem_inferred_from from inference_group_member where infgrmem_inferred_from = ? ;";
+my $curGetPrimaryKeysInferenceGroupMembe = $dbh->prepare_cached($sqlGetPrimaryKeysInferenceGroupMember);
+$curGetPrimaryKeysInferenceGroupMembe->execute($intoFieldValue);
+$curGetPrimaryKeysInferenceGroupMembe->bind_columns(\$infgrmemMrkrgoevZdbId,\$infgrmemInferredFrom);
+
+my %primaryKeysInferenceGroupMember = ();
+my $primaryKey;
+while ($curGetPrimaryKeysInferenceGroupMembe->fetch()) {
+  $primaryKey = $infgrmemMrkrgoevZdbId . $infgrmemInferredFrom;
+  $primaryKeysInferenceGroupMember{$primaryKey} = $infgrmemInferredFrom;
+}
+
+$curGetPrimaryKeysInferenceGroupMembe->finish();
+
+my $sqlGetMrkrgoevZdbIds = "select distinct infgrmem_mrkrgoev_zdb_id from inference_group_member where infgrmem_inferred_from = ? ;";
+my $curGetMrkrgoevZdbIds = $dbh->prepare_cached($sqlGetMrkrgoevZdbIds);
+my $infgrmemMrkrgoevZdbIdWithGene1;
+$curGetMrkrgoevZdbIds->execute($goawayFieldValue);
+$curGetMrkrgoevZdbIds->bind_columns(\$infgrmemMrkrgoevZdbIdWithGene1);
+
+my $sqlUpdateInferenceGroupMembe = "update inference_group_member set infgrmem_inferred_from = ? where infgrmem_mrkrgoev_zdb_id = ? and infgrmem_inferred_from = ?;";
+my $curUpdateInferenceGroupMembe = $dbh->prepare_cached($sqlUpdateInferenceGroupMembe);
+
+## update inference_group_member table
+while ($curGetMrkrgoevZdbIds->fetch()) {
+  $primaryKey = $infgrmemMrkrgoevZdbIdWithGene1 . $intoFieldValue;
+  $curUpdateInferenceGroupMembe->execute($intoFieldValue, $infgrmemMrkrgoevZdbIdWithGene1, $goawayFieldValue) if !exists($primaryKeysInferenceGroupMember{$primaryKey});
+  $primaryKeysInferenceGroupMember{$primaryKey} = $intoFieldValue;
+}
+
+$curGetMrkrgoevZdbIds->finish();
+$curUpdateInferenceGroupMembe->finish();
+
+### FB case 10333
+
+my $sqlGetUnspecifiedAllele = "select fmrel_ftr_zdb_id from feature_marker_relationship,feature where fmrel_ftr_zdb_id = feature_zdb_id and fmrel_mrkr_zdb_id = ? and feature_unspecified = 't' ;";
+my $curGetUnspecifiedAllele = $dbh->prepare_cached($sqlGetUnspecifiedAllele);
+my $unspecifiedAlleleWithGeneToBeDeleted;
+$curGetUnspecifiedAllele->execute($recordToBeDeleted);
+$curGetUnspecifiedAllele->bind_columns(\$unspecifiedAlleleWithGeneToBeDeleted);
+
+my $thereIsUnspecifiedAlleleWithGeneToBeDeleted = 0;
+while ($curGetUnspecifiedAllele->fetch()) {
+  $thereIsUnspecifiedAlleleWithGeneToBeDeleted++;
+}
+
+$curGetUnspecifiedAllele->execute($recordToBeMergedInto);
+my $unspecifiedAlleleWithGeneRetained;
+$curGetUnspecifiedAllele->bind_columns(\$unspecifiedAlleleWithGeneRetained);
+
+my $thereIsUnspecifiedAlleleWithGeneRetained = 0;
+while ($curGetUnspecifiedAllele->fetch()) {
+  $thereIsUnspecifiedAlleleWithGeneRetained++;
+}
+
+$curGetUnspecifiedAllele->finish();
+
+if ($thereIsUnspecifiedAlleleWithGeneRetained == 0 && $thereIsUnspecifiedAlleleWithGeneToBeDeleted > 0) {
+
+  my $sqlRenameAlleleName = "update feature set (feature_name, feature_abbrev) = (?,?) where feature_zdb_id = ? ;";
+  my $curRenameAlleleName = $dbh->prepare_cached($sqlRenameAlleleName);
+   
+  $curRenameAlleleName->execute($unspecifiedAllele1Gene2, $unspecifiedAllele1Gene2, $unspecifiedAlleleWithGeneToBeDeleted);
+  $curRenameAlleleName->finish();
+
+  my $sqlGetGenotypesWithUnspecifiedAllele = "select geno_zdb_id, geno_display_name, geno_handle from genotype, genotype_feature where genofeat_feature_zdb_id = ? and genofeat_geno_zdb_id = geno_zdb_id;";   
+  my $curGetGenotypes = $dbh->prepare_cached($sqlGetGenotypesWithUnspecifiedAllele);
+
+  my $sqlRenameRelatedGenotypes = "update genotype set (geno_display_name, geno_handle) = (?,?) where geno_zdb_id = ?;";   
+  my $curRenameGenotypes = $dbh->prepare_cached($sqlRenameRelatedGenotypes);
+      
+  $curGetGenotypes->execute($unspecifiedAlleleWithGeneToBeDeleted);
+  my $genoId;
+  my $genoDisplayName;
+  my $genoHandle;
+  $curGetGenotypes->bind_columns(\$genoId,\$genoDisplayName,\$genoHandle);
+   
+  while ($curGetGenotypes->fetch()) {
+    $genoDisplayName =~ s/$markerAbbrevToBeDeleted/$markerAbbrevMergedInto/;
+    $genoHandle =~ s/$markerAbbrevToBeDeleted/$markerAbbrevMergedInto/;
+    $curRenameGenotypes->execute($genoDisplayName,$genoHandle,$genoId);
+  }
+   
+  $curGetGenotypes->finish();
+  $curRenameGenotypes->finish();
+
+}
+
+### FB case 13983, update genotype display names and fish names when merging genes
+
+my $sqlGetGenotypeDisplayName = "select geno_zdb_id, geno_display_name from feature_marker_relationship, genotype_feature, genotype where fmrel_mrkr_zdb_id  = ? and fmrel_ftr_zdb_id= genofeat_feature_zdb_id and genofeat_geno_zdb_id = geno_zdb_id;";
+my $curGetGenotypeDisplayName = $dbh->prepare_cached($sqlGetGenotypeDisplayName);
+
+my $sqlUpdtateGenotypeDislayName = "update genotype set geno_display_name = ? where geno_zdb_id = ?;";
+my $curUpdtateGenotypeDislayName = $dbh->prepare_cached($sqlUpdtateGenotypeDislayName);
+
+$curGetGenotypeDisplayName->execute($recordToBeDeleted);
+
+my $genotypeId;
+my $genotypeDisplayName;
+$curGetGenotypeDisplayName->bind_columns(\$genotypeId,\$genotypeDisplayName);
+
+while ($curGetGenotypeDisplayName->fetch()) {
+   $genotypeDisplayName =~ s/$markerAbbrevToBeDeleted/$markerAbbrevMergedInto/;
+   $curUpdtateGenotypeDislayName->execute($genotypeDisplayName,$genotypeId);
+}
+
+$curGetGenotypeDisplayName->finish();
+$curUpdtateGenotypeDislayName->finish();
+
+my $sqlGetFishName = "select fish_zdb_id, fish_name from feature_marker_relationship, genotype_feature, fish where fmrel_mrkr_zdb_id  = ? and fmrel_ftr_zdb_id= genofeat_feature_zdb_id and genofeat_geno_zdb_id = fish_genotype_zdb_id;";
+my $curGetFishName = $dbh->prepare_cached($sqlGetFishName);
+
+my $sqlUpdtateFishName = "update fish set fish_name = ? where fish_zdb_id = ?;";
+my $curUpdateFishName = $dbh->prepare_cached($sqlUpdtateFishName);
+
+$curGetFishName->execute($recordToBeDeleted);
+
+my $fishId;
+my $fishName;
+$curGetFishName->bind_columns(\$fishId,\$fishName);
+
+while ($curGetFishName->fetch()) {
+   $fishName =~ s/$markerAbbrevToBeDeleted/$markerAbbrevMergedInto/;
+   $curUpdateFishName->execute($fishName,$fishId);
+}
+
+$curGetFishName->finish();
+$curUpdateFishName->finish();
+
+### MRDL-121
+### get the public notes and concatenate them 
+
+my $sqlGetPublicNote = "select mrkr_comments from marker where mrkr_zdb_id = ?;";
+my $curGetPublicNote = $dbh->prepare_cached($sqlGetPublicNote);
+$curGetPublicNote->execute($recordToBeDeleted);
+my $firstNote = "none";
+$curGetPublicNote->bind_columns(\$firstNote);
+my $firstNoteFound = 0;
+while ($curGetPublicNote->fetch()) {
+   $firstNoteFound = 1;
+}
+
+my $combinedPublicNote = "none";
+if($firstNoteFound == 1 && $firstNote ne 'none') {
+   $curGetPublicNote->execute($recordToBeMergedInto);
+   my $secondNote = "none";
+   $curGetPublicNote->bind_columns(\$secondNote); 
+   my $secondNoteFound = 0;
+   while ($curGetPublicNote->fetch()) {
+      $secondNoteFound = 1;    
+   }   
+   if($secondNoteFound == 1 && $secondNote ne 'none') {
+      $combinedPublicNote = $secondNote . "\n\n" . "$firstNote";
+   } else {
+      $combinedPublicNote = $firstNote;
+   }
+}
+
+$curGetPublicNote->finish();
+
+if($combinedPublicNote ne 'none') {
+   my $sqlUpdatePublicNote = "update marker set mrkr_comments = ? where mrkr_zdb_id = ?;";
+   my $curUpdatePublicNote = $dbh->prepare_cached($sqlUpdatePublicNote);                
+   $curUpdatePublicNote->execute($combinedPublicNote, $recordToBeMergedInto);
+   $curUpdatePublicNote->finish();
+}
+
+my $delete = "delete from zdb_active_data where zactvd_zdb_id = ?;";
+my $curDelete = $dbh->prepare_cached($delete);
+
+## for STRs to be merged, if used in fish, delete the fish records with str1 so as to
+## avoid unique constraint (informix.fish_name_alternate_key) violation
+## same for marker_relationship_alternate_key 
+if ($recordToBeDeleted =~ m/MRPHLNO/ || $recordToBeDeleted =~ m/CRISP/ || $recordToBeDeleted =~ m/TALEN/) {
+  my $getFishIdsToDelete = "select distinct fstr1.fishstr_fish_zdb_id
+                              from fish_str fstr1
+                             where fstr1.fishstr_str_zdb_id = ?
+                               and exists(select 'x' from fish_str fstr2
+                                           where fstr2.fishstr_str_zdb_id = ?
+                                             and fstr2.fishstr_fish_zdb_id = fstr1.fishstr_fish_zdb_id);";
+
+  my $curFishIdsToDelete = $dbh->prepare($getFishIdsToDelete);
+  
+  $curFishIdsToDelete->execute($recordToBeDeleted, $recordToBeMergedInto);
+  
+  my $fishIDtoDelete;
+  $curFishIdsToDelete->bind_columns(\$fishIDtoDelete);
+  my %fishIDs = ();
+  while ($curFishIdsToDelete->fetch()) {
+    $fishIDs{$fishIDtoDelete} = 1;
+  }
+  $curFishIdsToDelete->finish();
+  
+  my $getMrkrRelIds = "select distinct mrkrrel1.mrel_zdb_id
+                         from marker_relationship mrkrrel1
+                        where mrkrrel1.mrel_mrkr_1_zdb_id = ?
+                          and exists(select 'x' from marker_relationship mrkrrel2
+                                      where mrkrrel2.mrel_mrkr_1_zdb_id = ?
+                                        and mrkrrel2.mrel_mrkr_2_zdb_id = mrkrrel1.mrel_mrkr_2_zdb_id
+                                        and mrkrrel2.mrel_type = mrkrrel1.mrel_type);";
+
+  my $curGetMrkrRelIds = $dbh->prepare($getMrkrRelIds);
+  
+  $curGetMrkrRelIds->execute($recordToBeDeleted, $recordToBeMergedInto);
+  
+  my $mrkrRelID;
+  $curGetMrkrRelIds->bind_columns(\$mrkrRelID);
+  my %mrkrRelIDs = ();
+  while ($curGetMrkrRelIds->fetch()) {
+     $mrkrRelIDs{$mrkrRelID} = 1;  
+  }
+  $curGetMrkrRelIds->finish();
+    
+  foreach $fishId (keys %fishIDs) {
+     $curDelete->execute($fishId);              
+  }
+
+  my $mrkrRelationId;
+  foreach $mrkrRelationId (keys %mrkrRelIDs) {
+     $curDelete->execute($mrkrRelationId);
+  }
+}
+
+$curDelete->finish();
+
+
+## deal with root GO term from either of the party whenever there is non-root GO term for the other party, see FB case 11048
+my $deleteMrkrGoEvd = "delete from zdb_active_data where zactvd_zdb_id = ?;"; 
+my $curDeleteMrkrGoEvd = $dbh->prepare_cached($deleteMrkrGoEvd);
+
+my $getNonRootBioProcess = "select * from marker_go_term_evidence, term 
+                             where mrkrgoev_mrkr_zdb_id = ? 
+                               and mrkrgoev_term_zdb_id != 'ZDB-TERM-091209-6070'
+                               and mrkrgoev_term_zdb_id = term_zdb_id 
+                               and term_ontology = 'biological_process';";
+my $curNonRootBioProcess = $dbh->prepare_cached($getNonRootBioProcess);
+
+my $getRootBioProcess = "select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id = ? and mrkrgoev_term_zdb_id = 'ZDB-TERM-091209-6070';";
+my $curRootBioProcess = $dbh->prepare_cached($getRootBioProcess);
+
+$curNonRootBioProcess->execute($recordToBeDeleted);
+
+my $mrkrGoEvdId;
+
+while ($curNonRootBioProcess->fetch()) {
+   $curRootBioProcess->execute($recordToBeMergedInto);
+   $curRootBioProcess->bind_columns(\$mrkrGoEvdId);
+   while ($curRootBioProcess->fetch()) {
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curNonRootBioProcess->execute($recordToBeMergedInto);
+while ($curNonRootBioProcess->fetch()) {        
+   $curRootBioProcess->execute($recordToBeDeleted); 
+   while ($curRootBioProcess->fetch()) {    
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curRootBioProcess->finish();
+$curNonRootBioProcess->finish();
+
+my $getNonRootMolFunc = "select * from marker_go_term_evidence, term
+                          where mrkrgoev_mrkr_zdb_id = ?
+                            and mrkrgoev_term_zdb_id != 'ZDB-TERM-091209-2432'
+                            and mrkrgoev_term_zdb_id = term_zdb_id
+                            and term_ontology = 'molecular_function';";
+my $curNonRootMolFunc = $dbh->prepare_cached($getNonRootMolFunc);
+
+my $getRootMolFunc = "select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id = ? and mrkrgoev_term_zdb_id = 'ZDB-TERM-091209-2432';";
+my $curRootMolFunc = $dbh->prepare_cached($getRootMolFunc);
+
+$curNonRootMolFunc->execute($recordToBeDeleted);
+
+while ($curNonRootMolFunc->fetch()) {
+   $curRootMolFunc->execute($recordToBeMergedInto);
+   $curRootMolFunc->bind_columns(\$mrkrGoEvdId);
+   while ($curRootMolFunc->fetch()) {
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curNonRootMolFunc->execute($recordToBeMergedInto);
+while ($curNonRootMolFunc->fetch()) {
+   $curRootMolFunc->execute($recordToBeDeleted);
+   while ($curRootMolFunc->fetch()) {
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curRootMolFunc->finish();
+$curNonRootMolFunc->finish();
+
+my $getNonRootCelComp = "select * from marker_go_term_evidence, term
+                          where mrkrgoev_mrkr_zdb_id = ?
+                            and mrkrgoev_term_zdb_id != 'ZDB-TERM-091209-4029'
+                            and mrkrgoev_term_zdb_id = term_zdb_id
+                            and term_ontology = 'cellular_component';";
+my $curNonRootCelComp = $dbh->prepare_cached($getNonRootCelComp);
+
+my $getRootCelComp = "select mrkrgoev_zdb_id from marker_go_term_evidence where mrkrgoev_mrkr_zdb_id = ? and mrkrgoev_term_zdb_id = 'ZDB-TERM-091209-4029';";
+my $curRootCelComp = $dbh->prepare_cached($getRootCelComp);
+
+$curNonRootCelComp->execute($recordToBeDeleted);
+
+while ($curNonRootCelComp->fetch()) {
+   $curRootCelComp->execute($recordToBeMergedInto);
+   $curRootCelComp->bind_columns(\$mrkrGoEvdId);
+   while ($curRootCelComp->fetch()) {
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curNonRootCelComp->execute($recordToBeMergedInto);
+while ($curNonRootCelComp->fetch()) {
+   $curRootCelComp->execute($recordToBeDeleted);
+   while ($curRootCelComp->fetch()) {
+      $curDeleteMrkrGoEvd->execute($mrkrGoEvdId);
+   }
+}
+
+$curRootCelComp->finish();
+$curNonRootCelComp->finish();
+
+$curDeleteMrkrGoEvd->finish();
+
+
 ## delete from zdb_replaced_data table
 my $sqlDeleteReplacedData = "delete from zdb_replaced_data where zrepld_old_zdb_id = '$recordToBeDeleted';";
 print SQLFILE "$sqlDeleteReplacedData\n\n";
@@ -191,11 +532,11 @@ $curUpdateReplacedData->execute();
 $curUpdateReplacedData->finish();
 
 ## delete from zdb_active_data table
-my $sqlDelete = "delete from zdb_active_data where zactvd_zdb_id = '$recordToBeDeleted';";
-print SQLFILE "$sqlDelete\n\n";
-my $curDelete = $dbh->prepare($sqlDelete);
-$curDelete->execute();
-$curDelete->finish();
+my $sqlDeleteMarker = "delete from zdb_active_data where zactvd_zdb_id = '$recordToBeDeleted';";
+print SQLFILE "$sqlDeleteMarker\n\n";
+my $curDeleteMarker = $dbh->prepare($sqlDeleteMarker);
+$curDeleteMarker->execute();
+$curDeleteMarker->finish();
 
 ## add new zdb_replaced_data record
 my $sqlInsertReplacedData = "insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values ('$recordToBeDeleted', '$recordToBeMergedInto');";
