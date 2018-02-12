@@ -174,6 +174,12 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
+    GO_QUALIFIER(19, "GO Qualifier", "go_qualifier", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
     BEHAVIOR(18, "BEHAVIOR", "behavior_ontology", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
