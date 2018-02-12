@@ -3,6 +3,8 @@
 
 delete from record_attribution where recattrib_pk_id = '65690741';
 
+delete from feature_assay where featassay_feature_zdb_id = 'ZDB-ALT-170815-7';
+
 delete from feature_marker_relationship where fmrel_zdb_id = 'ZDB-FMREL-171212-10';
 
 update feature_history 
