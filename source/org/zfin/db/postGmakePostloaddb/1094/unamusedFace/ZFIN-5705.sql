@@ -21,6 +21,17 @@ update data_alias
                                 set dalias_data_zdb_id = 'ZDB-ALT-170424-1'
                               where dalias_data_zdb_id = 'ZDB-ALT-140123-14';
 
+select get_id('DALIAS') as dalias_id
+  from single
+ into temp tmp_aliasid;
+
+insert into zdb_active_data select dalias_id from tmp_aliasid;
+
+insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
+                            select dalias_id, 'ZDB-ALT-170424-1', 'sm1120', '1'
+                              from tmp_aliasid;
+
+
 delete from int_data_source
                               where ids_data_zdb_id = 'ZDB-ALT-140123-14';
 
