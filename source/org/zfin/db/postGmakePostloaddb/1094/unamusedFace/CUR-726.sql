@@ -102,13 +102,13 @@ update record_attribution set recattrib_data_zdb_id = 'ZDB-ALT-980413-591' where
 
 select get_id('DALIAS') as dalias_id
   from single
- into temp tmp_id;
+ into temp tmp_alias_id;
 
-insert into zdb_active_data select dalias_id from tmp_id;
+insert into zdb_active_data select dalias_id from tmp_alias_id;
 
 insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
                             select dalias_id, 'ZDB-ALT-980413-591', 'ztf229', '1'
-                              from tmp_id;
+                              from tmp_alias_id;
 
 delete from zdb_replaced_data where zrepld_old_zdb_id = 'ZDB-ALT-980203-1826';
 
