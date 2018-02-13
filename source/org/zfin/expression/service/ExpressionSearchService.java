@@ -65,11 +65,20 @@ public class ExpressionSearchService {
         solrQuery.addFilterQuery(FieldName.XPATRES_ID  + ":[* TO *]");
 
         if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
-            FieldName anatomyField = criteria.isIncludeSubstructures() ? FieldName.EXPRESSION_ANATOMY : FieldName.EXPRESSION_ANATOMY_DIRECT;
+            FieldName anatomyWithoutCousins = criteria.isIncludeSubstructures() ?
+                    FieldName.EXPRESSION_ANATOMY :
+                    FieldName.EXPRESSION_ANATOMY_DIRECT;
+            FieldName anatomyWithCousins = criteria.isIncludeSubstructures() ?
+                    FieldName.EXPRESSION_ANATOMY_RELATED_BY_GENE_AND_EXPERIMENT_PARENT :
+                    FieldName.EXPRESSION_ANATOMY_RELATED_BY_GENE_AND_EXPERIMENT_DIRECT;
             String termQuery = criteria.getAnatomy().stream()
                     .map(t -> "\"" + SolrService.luceneEscape(t) + "\"")
-                    .collect(Collectors.joining(" " + anatomyBoolean + " "));
-            solrQuery.addFilterQuery(anatomyField.getName() + ":(" + termQuery + ")");
+                    .collect(Collectors.joining(" " + OR + " "));
+            solrQuery.addFilterQuery(anatomyWithoutCousins.getName() + ":(" + termQuery + ")");
+            termQuery = criteria.getAnatomy().stream()
+                    .map(t -> "\"" + SolrService.luceneEscape(t) + "\"")
+                    .collect(Collectors.joining(" " + AND + " "));
+            solrQuery.addFilterQuery(anatomyWithCousins.getName() + ":(" + termQuery + ")");
         }
 
         String geneField = criteria.getGeneField();

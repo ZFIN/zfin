@@ -3021,7 +3021,6 @@
                     cacheImpl="SortedMapBackedCache"
             />
 
-            @PG_XML_COMMENT_OPEN@
             <entity name="expression_expression_anatomy_parent"
                     query="select term_name as expression_anatomy_parent,
                             term_ont_id as xref,
@@ -3035,7 +3034,21 @@
                     where="efs_pk_id=expression.id"
                     cacheImpl="SortedMapBackedCache"
             />
-            @PG_XML_COMMENT_CLOSE@
+
+            <!-- These two expression anatomy queries return so many rows without the where clause that it
+            actually makes using SortedMapBackedCache slower than just running the them with a where clause
+            for each parent entity. So we're intentionally not using the cache for these. -->
+            <entity name="expression_expression_anatomy_related_by_gene_and_experiment_direct"
+                    query="select esag_term_name as expression_anatomy_related_by_gene_and_experiment_direct
+                            from expression_search_anatomy_generated
+                            where esag_efs_id='${expression.id}'
+                            and esag_is_direct='t'"
+            />
+            <entity name="expression_expression_anatomy_related_by_gene_and_experiment_parent"
+                    query="select esag_term_name as expression_anatomy_related_by_gene_and_experiment_parent
+                            from expression_search_anatomy_generated
+                            where esag_efs_id='${expression.id}'"
+            />
 
             <entity name="expression_image"
                     query="select

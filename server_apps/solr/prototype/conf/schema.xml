@@ -672,6 +672,8 @@
         <field name="expression_anatomy" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
         <field name="expression_anatomy_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
         <field name="expression_anatomy_parent" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="expression_anatomy_related_by_gene_and_experiment_direct" type="string" indexed="true" stored="true" multiValued="true" />
+        <field name="expression_anatomy_related_by_gene_and_experiment_parent" type="string" indexed="true" stored="true" multiValued="true" />
 
         <field name="expressed_in" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
         <field name="expressed_in_direct" type="string" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
