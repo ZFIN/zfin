@@ -20,10 +20,10 @@ TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance
 
 SUBDIRS = loadUp/ warehouse/ pheno/ extentMonitoring/ queryMonitoring/ gafLoad/ lib/ merge/
 
-GENERICS = regen.sh regen_PG.sh scrubscan.pl unload_production.sh checkUnloadProduction.sh dumpServer.pl dumpLogsContinuous.pl fx_permission_check.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh checkVarcharOctetLength.pl orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh check_undefined_environment.pl reportLabAddressChanges.sh rotateInformixLog.sh set_unload_timestamp.sql movefiles.py
+GENERICS = scrubscan.pl unload_production.sh checkUnloadProduction.sh dumpServer.pl dumpLogsContinuous.pl fx_permission_check.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh checkVarcharOctetLength.pl orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh check_undefined_environment.pl reportLabAddressChanges.sh rotateInformixLog.sh set_unload_timestamp.sql movefiles.py
 
+STATICS = build.xml loadDb.sh makeDeveloperBlastDbs.sh regen.sh
 
-STATICS = loadDb.sh makeDeveloperBlastDbs.sh build.xml 
 # ---------------  Production Rules  ------------------------------------
 
 # use default rules for directories without app pages in them
