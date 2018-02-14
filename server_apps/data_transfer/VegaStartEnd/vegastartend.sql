@@ -1,5 +1,0 @@
-begin work ;
-
-
-
-rollback work;
