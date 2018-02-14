@@ -602,11 +602,13 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.secondaryFeatureSet = secondaryFeatureSet;
     }
 
-    public boolean isSingleAlleleOfMarker() {
+    public boolean isSingleAlleleOfMarker(Marker gene) {
         if (CollectionUtils.isEmpty(featureMarkerRelations))
             return false;
-        if (featureMarkerRelations.size() > 1)
-            return false;
-        return featureMarkerRelations.iterator().next().getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
+        for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelations)
+            if (featureMarkerRelationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF) &&
+                    featureMarkerRelationship.getMarker().equals(gene))
+                return true;
+        return false;
     }
 }
