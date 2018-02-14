@@ -1,5 +1,5 @@
 -- report obsoleted disease term usage
-unload to 'obsoleted_disease_terms'
+unload to 'obsoleted_terms'
 SELECT dat_source_zdb_id,
        term_zdb_id,
        term_ont_id,
@@ -20,7 +20,7 @@ WHERE
        term_is_obsolete = 't';
 
 -- report secondary disease term usage
-unload to 'merged_disease_terms'
+unload to 'merged_terms'
 SELECT dat_source_zdb_id,
        term_zdb_id,
        term_ont_id,
