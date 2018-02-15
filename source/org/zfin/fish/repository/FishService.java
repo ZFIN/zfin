@@ -209,10 +209,10 @@ public class FishService {
 
     private static List<FeatureGene> getFeatureGeneList(Feature feature) {
         List<FeatureGene> featureGeneList = new ArrayList<>(feature.getFeatureMarkerRelations().size());
+        FeatureGene fg = new FeatureGene();
+        fg.setFeature(feature);
+        boolean hasMarkerOrConstruct = false;
         for (FeatureMarkerRelationship rel : feature.getFeatureMarkerRelations()) {
-            FeatureGene fg = new FeatureGene();
-            fg.setFeature(feature);
-            boolean hasMarkerOrConstruct = false;
             Marker marker = rel.getMarker();
             if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                 fg.setGene(marker);
@@ -221,9 +221,9 @@ public class FishService {
                 fg.setConstruct(marker);
                 hasMarkerOrConstruct = true;
             }
-            if (hasMarkerOrConstruct) {
-                featureGeneList.add(fg);
-            }
+        }
+        if (hasMarkerOrConstruct) {
+            featureGeneList.add(fg);
         }
         // at least have a feature in this list
         if (CollectionUtils.isEmpty(featureGeneList)) {
