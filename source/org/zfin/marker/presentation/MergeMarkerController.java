@@ -24,6 +24,7 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.presentation.OrthologySlimPresentation;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationLink;
 import org.zfin.publication.presentation.PublicationPresentation;
@@ -85,7 +86,11 @@ public class MergeMarkerController {
             //        model.addAttribute("markerToDeleteId", markerToDelete.getZdbID());
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
   //      }
-        return "marker/merge-marker.page";
+        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+            return "marker/merge-marker.page";
+        } else {
+            return "marker/merge-marker-PG.page";
+        }
     }
 
     @RequestMapping( value = "/merge",method = RequestMethod.POST)
