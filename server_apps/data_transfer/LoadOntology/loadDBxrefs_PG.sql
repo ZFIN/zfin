@@ -20,6 +20,10 @@ tmp_xref_db varchar(50),
 tmp_xref_db_id bigint,
 tmp_xref_accession varchar(200));
 
+create index tmp_dbxrefs_with_ids_index
+  on tmp_dbxrefs_with_ids (tmp_term_zdb_id);
+
+
 insert into tmp_dbxrefs_with_ids
 select term_zdb_id, xref_db,0, xref_accession
 from tmp_dbxrefs,term
