@@ -593,7 +593,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void geneStartsWithTest() { genericGeneAlleleBoxTest("adssl sa11426"); }
+    public void geneStartsWithTest() { genericGeneAlleleBoxTest("adssl hi3081Tg"); }
 
     public void genericGeneAlleleBoxTest(String value) {
         FishSearchFormBean formBean = new FishSearchFormBean();
