@@ -97,31 +97,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertTrue(list.size() < paginationResult.getTotalCount());
     }
 
-    /**
-     * Get all expressed genes for a given anatomy structure
-     */
-    @Test
-    public void getAllExpressedMarkersCount() {
-        String termName = "somite";
-        GenericTerm term = ontologyRepository.getTermByName(termName, Ontology.ANATOMY);
-        int number1 = publicationRepository.getAllExpressedMarkers(term, 0, 5).getTotalCount();
-        int number2 = publicationRepository.getAllExpressedMarkers(term, 12, 20).getTotalCount();
-        assertTrue(number1 > 0);
-        assertEquals(number1, number2);
-    }
-
-    @Test
-    public void getAllExpressedGenesWithMutant() {
-        // lateral floor plate
-        // no olig2 gene as it is expressed only in a mutant fish
-        String zdbID = "ZDB-TERM-100331-1214";
-        GenericTerm term = new GenericTerm();
-        term.setZdbID(zdbID);
-        List<MarkerStatistic> list = publicationRepository.getAllExpressedMarkers(term, 0, 10).getPopulatedResults();
-//        assertEquals("10 genes", 10, list.size());
-        assertNotNull(list);
-    }
-
     @Test
     public void getNumberOfPubWithFigures() {
         //  neural rod
