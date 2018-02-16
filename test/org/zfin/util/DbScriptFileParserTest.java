@@ -120,7 +120,7 @@ public class DbScriptFileParserTest {
         parser = new DbScriptFileParser(file);
         queries = parser.parseFile();
         assertNotNull(queries);
-        assertEquals(41, queries.size());
+        assertEquals(42, queries.size());
 
         fileName = "server_apps/data_transfer/LoadOntology/loadTerms_PG.sql";
         file = new File(fileName);
@@ -129,7 +129,7 @@ public class DbScriptFileParserTest {
         parser = new DbScriptFileParser(file);
         queries = parser.parseFile();
         assertNotNull(queries);
-        assertEquals(87, queries.size());
+        assertEquals(89, queries.size());
 
         fileName = "server_apps/data_transfer/LoadOntology/loadDBxrefs_PG.sql";
         file = new File(fileName);
@@ -138,7 +138,7 @@ public class DbScriptFileParserTest {
         parser = new DbScriptFileParser(file);
         queries = parser.parseFile();
         assertNotNull(queries);
-        assertEquals(12, queries.size());
+        assertEquals(13, queries.size());
 
         fileName = "server_apps/data_transfer/LoadOntology/loadSubsets_PG.sql";
         file = new File(fileName);
