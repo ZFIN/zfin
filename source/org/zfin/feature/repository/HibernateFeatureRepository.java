@@ -114,7 +114,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Query query = currentSession().createQuery(hql);
         query.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
         List<String> types = Arrays.asList(FeatureTypeEnum.DEFICIENCY.toString(),
-                FeatureTypeEnum.INVERSION.toString(), FeatureTypeEnum.TRANSLOC.toString());
+                FeatureTypeEnum.INVERSION.toString(), FeatureTypeEnum.TRANSLOC.toString(), FeatureTypeEnum.TRANSGENIC_INSERTION.toString());
         query.setParameterList("featureTypes", types);
 
         return (List<Feature>) query.list();

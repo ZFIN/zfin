@@ -64,7 +64,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                             dto.setSymbol(feature.getName());
                             dto.setPrimaryId(feature.getZdbID());
                             Marker gene = feature.getAllelicGene();
-                            dto.setGene(gene.getZdbID());
+                            dto.setGene("ZFIN:"+gene.getZdbID());
                             if (CollectionUtils.isNotEmpty(feature.getAliases())) {
                                 List<String> aliasList = new ArrayList<>(feature.getAliases().size());
                                 for (FeatureAlias alias : feature.getAliases()) {
