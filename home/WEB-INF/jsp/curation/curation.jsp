@@ -73,7 +73,7 @@
         </div>
     </div>
 
-    <nav class="pub-navigator navbar navbar-default navbar-static-top">
+    <nav class="pub-navigator navbar navbar-default navbar-static-top" id="curation-nav">
         <div class="container-fluid">
             <ul class="nav navbar-nav" id="curation-tabs">
                 <c:forEach var="curationTab" items="${curationTabs}">
@@ -95,6 +95,12 @@
                         <i class="fa fa-history" aria-hidden="true"></i>
                     </a>
                 </li>
+            </ul>
+            <form class="navbar-form navbar-right hidden" id="claim-button">
+                <button type="submit" class="btn btn-default">Claim</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="navbar-text" id="status-message"></li>
             </ul>
         </div>
     </nav>
@@ -217,6 +223,26 @@
 
       $("body").on("mouseover", ".item-selected", showTermInfo)
         .on("keydown", "input", showTermInfo);
+
+      $.get("/action/publication/${publication.zdbID}/status")
+        .done(function (response) {
+          if (response.status.type !== 'CURATING') {
+            if (response.status.type === 'READY_FOR_CURATION') {
+              $('#claim-button').removeClass('hidden');
+            }
+            $('#status-message').html('Status: <b>' + response.status.name + '</b>');
+            $('#curation-nav').addClass('warning');
+          } else if (response.owner && response.owner.zdbID !== '${currentUser.zdbID}') {
+            $('#status-message').html('Owned by: <b>' + response.owner.name + '</b>');
+            $('#curation-nav').addClass('danger');
+          }
+        })
+        .fail(function (error) {
+          console.log(error);
+        });
+//        .always(function () {
+//          console.log('always', arguments);
+//        });
     </script>
 
     <script type="text/javascript" language="javascript"

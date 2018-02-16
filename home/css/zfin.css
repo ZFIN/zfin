@@ -902,6 +902,18 @@ nav.pub-navigator {
     border: none;
 }
 
+nav.pub-navigator.warning {
+    background: #dddd33;
+}
+
+nav.pub-navigator.danger {
+    background: #ff3333;
+}
+
+nav.pub-navigator .navbar-text {
+    color: #222222;
+}
+
 nav.pub-navigator .navbar-nav > li > a {
     color: #222222;
 }
@@ -915,7 +927,7 @@ nav.pub-navigator .navbar-nav > li > a:focus {
 nav.pub-navigator .navbar-nav > .active > a,
 nav.pub-navigator .navbar-nav > .active > a:hover,
 nav.pub-navigator .navbar-nav > .active > a:focus {
-    background: #85aeae;
+    background: rgba(255,255,255,0.3);
     color: #222222;
     font-weight: bold;
 }
