@@ -239,6 +239,15 @@ table.data_manager a.root {
     font-size: 75%;
 }
 
+.curation-head-row {
+    padding: 5px 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.curation-head-row:last-of-type {
+    border: 0;
+}
+
 a.small-new-link:link {
     text-decoration: none;
     font-size: 75%;
@@ -889,17 +898,17 @@ nav.pub-navigator {
     background: #669999;
     margin-top: -4px; /* snugs it up to the main nav */
     margin-bottom: 0;
-    color: white;
+    color: #222222;
     border: none;
 }
 
 nav.pub-navigator .navbar-nav > li > a {
-    color: white;
+    color: #222222;
 }
 
 nav.pub-navigator .navbar-nav > li > a:hover,
 nav.pub-navigator .navbar-nav > li > a:focus {
-    color: white;
+    color: #222222;
     text-decoration: underline;
 }
 
@@ -907,7 +916,7 @@ nav.pub-navigator .navbar-nav > .active > a,
 nav.pub-navigator .navbar-nav > .active > a:hover,
 nav.pub-navigator .navbar-nav > .active > a:focus {
     background: #85aeae;
-    color: white;
+    color: #222222;
     font-weight: bold;
 }
 
@@ -1029,19 +1038,13 @@ input + label {
     margin-left: 5px;
 }
 
-.tooltip-arrow,
-.zfin-tooltip + .tooltip > .tooltip-inner {background-color: #000000;}
-
-.tooltip-arrow,
-.zfin-tooltip + .tooltip {background-color: transparent; width: 100px; box-decoration-break: clone}
-
 .term-construction-zone-width td:first-child {
     width: 250px !important;
 }
 
 .nav-tabs-loading {
-    color: red !important;
-    font-weight: normal !important;
+    color: rgba(0,0,0,0.25) !important;
+    /*font-weight: normal !important;*/
 }
 
 .autocomplete-suggestion-text {
