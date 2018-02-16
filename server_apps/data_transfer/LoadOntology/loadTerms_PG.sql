@@ -229,7 +229,10 @@ create temp table tmp_term_definition_changed 	(
 			 term_id		varchar(50)
 	);
 
-insert into tmp_term_definition_changed 
+create index tmp_term_definition_changed_index
+  on tmp_term_definition_changed (term_id);
+
+insert into tmp_term_definition_changed
   select
   	no_dups.term_definition,
   	term.term_definition,
@@ -271,6 +274,10 @@ create temp table tmp_term_comment_changed 	(
 			 term_comment_old		text,
 			 term_id		varchar(50)
 	);
+
+create index tmp_term_comment_changed_index
+  on tmp_term_comment_changed (term_id);
+
 
 insert into tmp_term_comment_changed 
   select
