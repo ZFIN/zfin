@@ -293,11 +293,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "      join Figure as fig on fig.fig_zdb_id=results.xpatfig_fig_zdb_id " +
                 "      join MARKER as gene on exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id " +
                 "      join FISH as fish on fish.fish_zdb_Id = genox.genox_fish_zdb_id " +
-                "      join GENOTYPE as geno on fish.fish_genotype_zdb_id=geno.geno_zdb_id  " +
                 "      join TERM as item_ on (result.xpatres_superterm_zdb_id = item_.term_zdb_id OR result.xpatres_subterm_zdb_id = item_.term_zdb_id) " +
                 "WHERE  item_.term_zdb_id = :termID AND " +
                 "       result.xpatres_expression_found = :expressionFound AND " +
-                "       geno.geno_is_wildtype = :isWildtype AND " +
                 "       fish.fish_is_wildtype = :isWildtype AND " +
                 "       genox.genox_is_std_or_generic_control = :condition AND " +
                 "       SUBSTRING (gene.mrkr_abbrev from  1 for 9) <> :withdrawn  AND   " +
