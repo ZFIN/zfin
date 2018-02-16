@@ -5,7 +5,6 @@ import org.jenkinsci.testinprogress.runner.ProgressSuite;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.zfin.anatomy.AnatomyItemTest;
 import org.zfin.anatomy.presentation.AnatomyPresentationTest;
 import org.zfin.anatomy.presentation.RelationshipTypeSortingTest;
 import org.zfin.anatomy.presentation.SortAnatomyResultsTest;
@@ -23,9 +22,9 @@ import org.zfin.framework.presentation.*;
 import org.zfin.framework.search.SearchCriterionTest;
 import org.zfin.gwt.GwtStringUtilsTest;
 import org.zfin.gwt.InferenceUnitTest;
-import org.zfin.gwt.curation.ui.feature.FeatureMarkerRelationshipTest;
 import org.zfin.gwt.curation.ui.FeatureValidationTest;
 import org.zfin.gwt.curation.ui.PatoPileStructureValidatorTest;
+import org.zfin.gwt.curation.ui.feature.FeatureMarkerRelationshipTest;
 import org.zfin.gwt.root.dto.EnvironmentDTOTest;
 import org.zfin.gwt.root.dto.ExperimentDTOTest;
 import org.zfin.gwt.root.server.HighlighterTest;
@@ -78,7 +77,6 @@ import org.zfin.util.*;
 @Suite.SuiteClasses({
         ActiveDataTest.class,
         ActiveSourceTest.class,
-        AnatomyItemTest.class,
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
         ApgPaginationBeanTest.class,
