@@ -101,144 +101,124 @@
 
     <div class="tab-content edit-form-content">
         <c:forEach var="tab" items="${curationTabs}">
-        <c:choose>
-        <c:when test="${tab.value eq currentTab}">
-        <div role="tabpanel" class="tab-pane active" id="${tab.value}">
-            </c:when>
-            <c:otherwise>
-            <div role="tabpanel" class="tab-pane" id="${tab.value}">
-                </c:otherwise>
-                </c:choose>
+            <div role="tabpanel" class="tab-pane ${tab.value eq currentTab ? 'active' : ''}" id="${tab.value}">
                 <jsp:include page="${tab.value.toLowerCase()}.jsp"/>
             </div>
-            </c:forEach>
-        </div>
+        </c:forEach>
     </div>
+
     <script>
 
-        function refresh() {
-            var tabName = $(".tab-pane.active").attr("id");
-//            alert("Tab name: "+ tabName)
-            if (tabName != 'orthology')
-                refreshTab(tabName);
-            else
-                refreshOrthologyGeneList();
+      function refresh () {
+        var tabName = $(".tab-pane.active").attr("id");
+        if (tabName !== 'orthology') {
+          refreshTab(tabName);
+        } else {
+          refreshOrthologyGeneList();
+        }
+      }
+
+      function refreshOrthologyGeneList () {
+        angular.element(document.getElementById("evidence-modal")).scope().vm.fetchGenes()
+      }
+
+      function displayLoadingStatus (tabName, isLoading) {
+        $('#' + tabName.toUpperCase() + '-tab').toggleClass("nav-tabs-loading", isLoading);
+      }
+
+      $(function () {
+        $('.zfin-tooltip').tipsy({gravity: 's'});
+
+        function goToTab (hash) {
+          $('#curation-tabs a[href=' + hash + ']').tab('show');
         }
 
-        function refreshOrthologyGeneList() {
-            angular.element(document.getElementById("evidence-modal")).scope().vm.fetchGenes()
+        var hash = window.location.hash;
+        if (hash) {
+          goToTab(hash);
         }
 
-        function displayLoadingStatus(tabName, isLoading) {
-            $('#' + tabName.toUpperCase() + '-tab').toggleClass("nav-tabs-loading", isLoading);
-        }
+        $('#curation-tabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+          var href = $(e.target).attr('href');
+          if (history.pushState) {
+            history.pushState(null, null, href);
+          } else {
+            location.hash = href;
+          }
+          var tabName = href.substring(1)
+          if (tabName == 'pheno') {
+            handleTabToggle('pheno');
+          }
+          jQuery.ajax({
+            url: '/action/curation/currentTab/' + tabName,
+            type: 'GET',
 
-        $(function () {
-
-            function goToTab(hash) {
-                $('#curation-tabs a[href=' + hash + ']').tab('show');
+            success: function (response) {
+            },
+            error: function (data) {
+              alert('There was a problem with your request: ' + data);
             }
 
-            var hash = window.location.hash;
-            if (hash) {
-                goToTab(hash);
-            }
-
-            $('#curation-tabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                var href = $(e.target).attr('href');
-                if (history.pushState) {
-                    history.pushState(null, null, href);
-                } else {
-                    location.hash = href;
-                }
-                var tabName = href.substring(1)
-                if (tabName == 'pheno') {
-                    handleTabToggle('pheno');
-                }
-                jQuery.ajax({
-                    url: '/action/curation/currentTab/' + tabName,
-                    type: 'GET',
-
-                    success: function (response) {
-                    },
-                    error: function (data) {
-                        alert('There was a problem with your request: ' + data);
-                    }
-
-                });
-            });
-
-            $('.edit-form-content').on('click', "a[href^='#']", function () {
-                var hash = $(this).attr('href');
-
-                goToTab(hash);
-            });
-
-            jQuery(".new-pub").on("click", function () {
-                var pubID = jQuery("#pubID").val();
-                jQuery('#newPublication').attr('action', "/action/curation/" + pubID);
-                jQuery("#newPublication").submit();
-                e.preventDefault();
-            });
-
-            window.addEventListener("popstate", function (e) {
-                var hash = window.location.hash;
-                if (hash) {
-                    goToTab(hash);
-                }
-            });
-
-            // initialize the tooltip
-            //$('[data-toggle="tooltip"]').tooltip();
+          });
         });
+
+        $('.edit-form-content').on('click', "a[href^='#']", function () {
+          var hash = $(this).attr('href');
+
+          goToTab(hash);
+        });
+
+        $(".new-pub").on("click", function () {
+          var pubID = jQuery("#pubID").val();
+          $('#newPublication').attr('action', "/action/curation/" + pubID);
+          $("#newPublication").submit();
+          e.preventDefault();
+        });
+
+        window.addEventListener("popstate", function (e) {
+          var hash = window.location.hash;
+          if (hash) {
+            goToTab(hash);
+          }
+        });
+      });
+
+      var curationProperties = {
+        zdbID: "${publication.zdbID}",
+        moduleType: "${currentTab}",
+        debug: "false"
+      };
+
+      // this attaches onMouseOver handlers to each of the items in the
+      // auto suggest box (popup panel). changes in the selected item should
+      // trigger an update of the term info box.
+      // ony body
+      var showTermInfo = function () {
+        var selectedTerm = $(".item-selected").text();
+        var tabName = window.location.hash.substr(1).toLowerCase();
+        if (selectedTerm.length > 0) {
+          var div = $(".termInfoUsed").attr("class");
+          if ($(".termInfoUsed").length > 0) {
+            var classArray = div.split(" ");
+            var entityName = classArray[2];
+            var selector = "select." + entityName + "_" + tabName;
+            var selectionBox = $(selector);
+            var selectedOption;
+            if (!selectionBox.length) {
+              var element = "." + entityName + "_single_" + tabName;
+              selectedOption = $(element).text();
+            } else {
+              selectedOption = selectionBox.val();
+            }
+            updateTermInfoBox(selectedTerm, selectedOption, tabName);
+          }
+        }
+      };
+
+      $("body").on("mouseover", ".item-selected", showTermInfo)
+        .on("keydown", "input", showTermInfo);
     </script>
 
     <script type="text/javascript" language="javascript"
             src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
-
-    <script type="text/javascript">
-        var curationProperties = {
-            zdbID: "${publication.zdbID}",
-            moduleType: "${currentTab}",
-            debug: "false"
-        }
-    </script>
-
-    <script type="text/javascript">
-        // this attaches onMouseOver handlers to each of the items in the
-        // auto suggest box (popup panel). changes in the selected item should
-        // trigger an update of the term info box.
-        // ony body
-        var showTermInfo = function () {
-            var selectedTerm = $(".item-selected").text();
-            var tabName = window.location.hash.substr(1).toLowerCase();
-            if (selectedTerm.length > 0) {
-                var div = $(".termInfoUsed").attr("class");
-                if ($(".termInfoUsed").length > 0) {
-                    var classArray = div.split(" ");
-                    var entityName = classArray[2];
-                    var selector = "select." + entityName + "_" + tabName;
-                    var selectionBox = $(selector);
-                    var selectedOption;
-                    if (!selectionBox.length) {
-                        var element = "." + entityName + "_single_" + tabName;
-                        selectedOption = $(element).text();
-                    } else {
-                        selectedOption = selectionBox.val();
-                    }
-                    updateTermInfoBox(selectedTerm, selectedOption, tabName);
-                }
-            }
-        };
-
-        jQuery("body").on("mouseover", ".item-selected", showTermInfo)
-            .on("keydown", "input", showTermInfo);
-
-    </script>
-
-    <script>
-        $(function () {
-          jQuery('.zfin-tooltip').tipsy({gravity: 's'});
-        });
-    </script>
 </div>
