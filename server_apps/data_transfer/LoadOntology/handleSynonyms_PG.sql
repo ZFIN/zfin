@@ -6,6 +6,9 @@ create temp table tmp_syns (term_id varchar(30),
 			    alias_group varchar(100))
 ;
 
+create index tmp_syns_index
+  on tmp_syns (synonym);
+
 !echo "start of the synonym loading";
 load from term_synonyms.unl
   insert into tmp_syns;
