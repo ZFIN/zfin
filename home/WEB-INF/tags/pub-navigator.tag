@@ -3,7 +3,7 @@
 <%@ attribute name="pages" type="org.zfin.publication.presentation.PublicationDashboardController.Page[]" rtexprvalue="true" required="true" %>
 <%@ attribute name="currentPage" type="org.zfin.publication.presentation.PublicationDashboardController.Page" rtexprvalue="true" required="true" %>
 
-<nav class="pub-navigator navbar navbar-default navbar-static-top">
+<nav class="pub-navigator navbar navbar-default navbar-static-top success">
     <div class="container-fluid">
         <ul class="nav navbar-nav">
             <c:forEach items="${pages}" var="page">

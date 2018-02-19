@@ -57,10 +57,10 @@
             return $http.get('/action/publication/' + id + '/status');
         }
 
-        function  updateStatus(status, claimedFlag) {
+        function  updateStatus(status, checkOwner) {
             var endpoint = '/status';
-            if (claimedFlag) {
-                endpoint += '?claimedFlag=true';
+            if (checkOwner) {
+                endpoint += '?checkOwner=true';
             }
             return $http.post('/action/publication/' + status.pubZdbID + endpoint, status);
         }

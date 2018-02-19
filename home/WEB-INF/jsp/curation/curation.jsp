@@ -96,7 +96,7 @@
                     </a>
                 </li>
             </ul>
-            <form class="navbar-form navbar-right hidden" id="claim-button">
+            <form class="navbar-form navbar-right hidden" id="claim-form">
                 <button type="submit" class="btn btn-default">Claim</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
@@ -224,25 +224,73 @@
       $("body").on("mouseover", ".item-selected", showTermInfo)
         .on("keydown", "input", showTermInfo);
 
-      $.get("/action/publication/${publication.zdbID}/status")
-        .done(function (response) {
-          if (response.status.type !== 'CURATING') {
-            if (response.status.type === 'READY_FOR_CURATION') {
-              $('#claim-button').removeClass('hidden');
-            }
-            $('#status-message').html('Status: <b>' + response.status.name + '</b>');
-            $('#curation-nav').addClass('warning');
-          } else if (response.owner && response.owner.zdbID !== '${currentUser.zdbID}') {
-            $('#status-message').html('Owned by: <b>' + response.owner.name + '</b>');
-            $('#curation-nav').addClass('danger');
-          }
-        })
-        .fail(function (error) {
-          console.log(error);
+      (function () {
+        var $navbar = $('#curation-nav');
+        var $claimForm = $('#claim-form')
+        var $claimButton = $claimForm.find('button');
+        var $statusMessage = $('#status-message');
+        var statusEndpoint = '/action/publication/${publication.zdbID}/status';
+
+        $claimButton.on('click', function () {
+          var status = {
+            pubZdbID: '${publication.zdbID}',
+            status: { id: ${curatingStatus.id} },
+            location: null,
+            owner: { zdbID: '${currentUser.zdbID}' }
+          };
+          $claimButton
+            .prop('disabled', true)
+            .html('<i class="fa fa-spinner fa-spin"></i>');
+          $.ajax({
+            type: 'POST',
+            url: statusEndpoint + '?checkOwner=true',
+            data: JSON.stringify(status),
+            contentType: 'application/json'
+          }).always(resetStatusIndicator)
+            .done(updateStatusIndicator)
+            .fail(showStatusError);
         });
-//        .always(function () {
-//          console.log('always', arguments);
-//        });
+
+        function resetStatusIndicator() {
+          $navbar.removeClass('success danger warning');
+          $claimForm.addClass('hidden');
+          $claimButton
+            .prop('disabled', false)
+            .html('Claim');
+          $statusMessage.html('');
+        }
+
+        function updateStatusIndicator(status) {
+          if (status.owner && status.owner.zdbID !== '${currentUser.zdbID}') {
+            $statusMessage.html('Owner: <b>' + status.owner.name + '</b>');
+            $navbar.addClass('danger');
+          } else if (status.status.type !== 'CURATING') {
+            if (status.status.type === 'READY_FOR_CURATION') {
+              $claimForm.removeClass('hidden');
+            }
+            $statusMessage.html('Status: <b>' + status.status.name + '</b>');
+            $navbar.addClass('warning');
+          } else {
+            $navbar.addClass('success');
+          }
+        }
+
+        function showStatusError(error) {
+          console.error(error);
+          var response = error.responseJSON;
+          var message = (response && response.message) || 'Failed to load pub status';
+          $statusMessage.html('<b class="error-inline">' + message + '</b>');
+        }
+
+        function fetchStatus() {
+          $.get(statusEndpoint)
+            .always(resetStatusIndicator)
+            .done(updateStatusIndicator)
+            .fail(showStatusError);
+        }
+
+        fetchStatus();
+      })();
     </script>
 
     <script type="text/javascript" language="javascript"

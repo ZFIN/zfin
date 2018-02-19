@@ -26,8 +26,6 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
-
 /**
  * This Controller is used to facilitate the curation tabs.
  */
@@ -42,6 +40,8 @@ public class CurationController implements CurationService {
     private PublicationRepository pubRepository;
     @Autowired
     private PublicationService publicationService;
+    @Autowired
+    private PublicationRepository publicationRepository;
 
     private final static Logger LOG = RootLogger.getLogger(CurationController.class);
 
@@ -103,7 +103,7 @@ public class CurationController implements CurationService {
     protected String curationPage(@PathVariable String pubID,
                                   @ModelAttribute("currentTab") String currentTab,
                                   Model model) throws Exception {
-        Publication publication = getPublicationRepository().getPublication(pubID);
+        Publication publication = publicationRepository.getPublication(pubID);
         if (publication == null) {
             return "record-not-found.page";
         }
@@ -111,6 +111,7 @@ public class CurationController implements CurationService {
         model.addAttribute("curationTabs", CurationModuleType.values());
         model.addAttribute("currentTab", currentTab);
         model.addAttribute("currentUser", ProfileService.getCurrentSecurityUser());
+        model.addAttribute("curatingStatus", publicationRepository.getPublicationStatusByName("Curating"));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Curate: " + publication.getTitle());
         return "curation/curation.page";

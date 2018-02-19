@@ -190,32 +190,37 @@ public class PublicationTrackingController {
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.POST)
-    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID, @RequestParam(required = false, defaultValue = "false") Boolean claimedFlag, @RequestBody CurationStatusDTO dto) throws InvalidWebRequestException {
+    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID,
+                                                  @RequestParam(required = false, defaultValue = "false") Boolean checkOwner,
+                                                  @RequestBody CurationStatusDTO dto) throws InvalidWebRequestException {
         Publication publication = publicationRepository.getPublication(zdbID);
         PublicationTrackingHistory pth = publicationRepository.currentTrackingStatus(publication);
-        if (claimedFlag && pth.getOwner() != null && dto.getOwner() != null && pth.getOwner().getZdbID() != dto.getOwner().getZdbID()) {
-            throw new InvalidWebRequestException("Pub already claimed");
-        } else {
-            PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
-            newStatus.setPublication(publication);
-            newStatus.setStatus(dto.getStatus());
-            newStatus.setLocation(dto.getLocation());
-            newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
-            newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
-            newStatus.setDate(new GregorianCalendar());
 
-            Session session = HibernateUtil.currentSession();
-            Transaction tx = session.beginTransaction();
-            if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
-                curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
-                expressionRepository.deleteExpressionStructuresForPub(publication);
-                publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
-                mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
-            }
-            session.save(newStatus);
-            tx.commit();
+        if (checkOwner && pth.getOwner() != null && dto.getOwner() != null && pth.getOwner().getZdbID() != dto.getOwner().getZdbID()) {
+            throw new InvalidWebRequestException("Pub already claimed");
         }
 
+        PublicationTrackingHistory newStatus = new PublicationTrackingHistory();
+        newStatus.setPublication(publication);
+        newStatus.setStatus(dto.getStatus());
+        newStatus.setLocation(dto.getLocation());
+        newStatus.setOwner(dto.getOwner() == null ? null : profileRepository.getPerson(dto.getOwner().getZdbID()));
+        newStatus.setUpdater(ProfileService.getCurrentSecurityUser());
+        newStatus.setDate(new GregorianCalendar());
+
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+        if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
+            curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+            expressionRepository.deleteExpressionStructuresForPub(publication);
+            publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
+            mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
+        }
+        session.save(newStatus);
+        tx.commit();
+
+        // refresh to get fully populated status and location objects
+        session.refresh(newStatus);
         return converter.toCurationStatusDTO(publicationRepository.currentTrackingStatus(publication));
     }
 

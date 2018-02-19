@@ -123,13 +123,11 @@
                 owner: { zdbID: vm.userId }
             };
 
-            PublicationService.updateStatus(status,true)
-                .then(function (response) {
+            PublicationService.updateStatus(status, true)
+                .then(function () {
                     pub.claimed = true;
-                   
                 })
                 .catch(function (response) {
-                   
                     if (response.data && response.data.message) {
                         pub.claimError = response.data.message;
                     }
