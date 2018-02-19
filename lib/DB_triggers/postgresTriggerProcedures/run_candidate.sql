@@ -12,6 +12,6 @@ begin
 end;
 $runcantrigger$ LANGUAGE plpgsql;
 
-create trigger run_candidate_trigger BEFORE INSERT OR UPDATE  on run_candidate
+create trigger run_candidate_trigger BEFORE INSERT on run_candidate
  for each row
  execute procedure run_candidate();
