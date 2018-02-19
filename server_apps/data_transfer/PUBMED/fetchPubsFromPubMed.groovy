@@ -23,7 +23,10 @@ def processArticle = { pubmedArticle, idx ->
     row.push(medlineCitation.KeywordList.Keyword.iterator().collect { it.text() }.join(", "))
 
     article = medlineCitation.Article
-    row.push(article.ArticleTitle.text().replaceAll(/\.+$/, ''))
+    articleText = article.ArticleTitle.text().replaceAll("\\n", "")
+    articleText = articleText.replaceAll("\\r", "")
+    articleText = articleText.replaceAll(/\.+$/, '')
+    row.push(articleText)
     row.push(article.Pagination.text())
 
     fullAbstract = ''
