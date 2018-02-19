@@ -31,7 +31,7 @@
 <!--|GENBANK_DAILY_EMAIL|-->	informix\@zfin.org
 <!--|GOOGLE_ANALYTICS_ID|-->	UA-2417927-5
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org xshao\@zfin.org
-<!--|GO_EMAIL_ERR|-->	xshao\@zfin.org dhowe\@zfin.org informix\@cs.uroegon.edu
+<!--|GO_EMAIL_ERR|-->	xshao\@zfin.org dhowe\@zfin.org informix\@zfin.org
 <!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/trunk/home/WEB-INF/lib*:/opt/zfin/source_roots/trunk/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/trunk/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
