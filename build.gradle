@@ -168,6 +168,19 @@ task makePostgresVersion {
                 println fcd.path
             }
         }
+        copy {
+            def targetRoot = ttNameMap.get('TARGETROOT')
+            targetRoot += '/cgi-bin'
+            println "Copying files in directory:: " + targetRoot
+            from(targetRoot) {
+                include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh', '**/*_PG.groovy', '**/*_PG.pm'
+                rename '(.*)_PG(.*)', '$1$2'
+            }
+            into targetRoot
+            eachFile { FileCopyDetails fcd ->
+                println fcd.path
+            }
+        }
     }
 }
 
