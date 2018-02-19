@@ -61,10 +61,6 @@ public final class ZfinProperties {
         return "/" ;
     }
 
-    public static String getBlastServerUserAtHost() {
-        return ZfinPropertiesEnum.BLASTSERVER_USER + "@" + ZfinPropertiesEnum.BLASTSERVER_HOSTNAME ;
-    }
-
     public static boolean isPushToWiki() {
         return Boolean.valueOf(ZfinPropertiesEnum.WIKI_PUSH_TO_WIKI.value());
     }
