@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse/expressionMart
 GENERICS = runExpressionMart.sh runExpressionMart_PG.sh
-STATICS = begin.sql dropTables.sql populateTables.sql  commit.sql expressionMartRegen.sql refreshExpressionMart.sql expressionmart-integrity-tests.sql begin_PG.sql dropTables_PG.sql populateTables_PG.sql  commit_PG.sql expressionMartRegen_PG.sql refreshExpressionMart_PG.sql expressionmart-integrity-tests_PG.sql
+STATICS = begin.sql dropTables.sql populateTables.sql  commit.sql expressionMartRegen.sql refreshExpressionMart.sql expressionmart-integrity-tests.sql begin_PG.sql dropTables_PG.sql populateTables_PG.sql  commit_PG.sql expressionMartRegen_PG.sql refreshExpressionMart_PG.sql expressionmart-integrity-tests_PG.sql createTables.sql insertESAGeneGenox1.sql insertESAGeneGenox2.sql insertDistinctGeneGenox.sql updateDistinctGeneGenox.sql truncateFinalTable.sql finalInsert.sql
 
 
 

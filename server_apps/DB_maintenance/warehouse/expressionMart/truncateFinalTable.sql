@@ -1,0 +1,1 @@
+TRUNCATE TABLE expression_search_anatomy_generated;

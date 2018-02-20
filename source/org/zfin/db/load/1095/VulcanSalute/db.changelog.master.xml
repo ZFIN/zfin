@@ -6,6 +6,9 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/load/1095/VulcanSalute/addLogicColumnGO.sql"/>
+    <include file="source/org/zfin/db/load/1095/VulcanSalute/createESATable.sql"/>
+    <include file="source/org/zfin/db/load/1095/VulcanSalute/addNoctuaID.sql"/>
+
 </databaseChangeLog>
 
    

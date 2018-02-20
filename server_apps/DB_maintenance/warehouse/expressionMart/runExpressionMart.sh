@@ -16,6 +16,24 @@ set expressionMartScripts=( begin.sql \
 	     dropTables.sql \
 	     commit.sql \
 	     begin.sql \
+	     createTables.sql \
+	     commit.sql \
+	     begin.sql \
+	     insertESAGeneGenox1.sql \
+	     commit.sql \
+	     begin.sql \
+	     insertESAGeneGenox2.sql \
+	     commit.sql \
+	     begin.sql \
+	     insertDistinctGeneGenox.sql \
+	     commit.sql \
+	     begin.sql \
+	     updateDistinctGeneGenox.sql \
+	     commit.sql \
+	     begin.sql \
+	     truncateFinalTable.sql \
+	     commit.sql \
+	     begin.sql \
 	     populateTables.sql \
 	     commit.sql \
 	    );
@@ -23,9 +41,9 @@ set expressionMartScripts=( begin.sql \
 set regenExpressionMartScripts=( begin.sql \
 	     refreshExpressionMart.sql \
 	     commit.sql \
-	    # begin.sql \
-	    # addIndexes.sql \
-	    # commit.sql \
+	     begin.sql \
+	     finalInsert.sql \
+	     commit.sql \
 	     );
 
 touch $FULL_SCRIPT_FILE
