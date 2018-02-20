@@ -50,7 +50,7 @@ public final class BlastServerSSHCommandWublastService extends BlastServerSGEWub
     protected List<String> getPrefixCommands() {
         if (prefixCommands.size() == 0) {
             prefixCommands.add(ZfinPropertiesEnum.SSH.value());
-            prefixCommands.add(ZfinProperties.getBlastServerUserAtHost());
+            prefixCommands.add("localhost");
             prefixCommands.add("-i");
         }
         return prefixCommands;

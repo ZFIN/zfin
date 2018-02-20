@@ -22,7 +22,7 @@ public abstract class BlastServerSGEWublastService extends AbstractWublastBlastS
         List<String> prefixCommands = getPrefixCommands();
         if (prefixCommands.size() == 0) {
             prefixCommands.add(ZfinPropertiesEnum.SSH.value());
-            prefixCommands.add(ZfinProperties.getBlastServerUserAtHost());
+            prefixCommands.add("localhost");
             // I don't think that this needs to be queued, but it couldn't hurt
             prefixCommands.add("qrsh");
             prefixCommands.add("-now");
