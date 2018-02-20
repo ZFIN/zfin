@@ -853,6 +853,19 @@
         <delete dir="org"/>
     </target>
 
+    <target name="npmInstall">
+        <exec dir="${TARGETROOT}" executable="npm">
+            <arg value="install" />
+        </exec>
+    </target>
+
+    <target name="versionAssets">
+        <exec dir="${TARGETROOT}" executable="npm">
+            <arg value="run" />
+            <arg value="build:js" />
+        </exec>
+    </target>
+
 </project>
 
 
