@@ -109,6 +109,7 @@ update {
 // variables used for translation of keys in files in SOURCEROOT copied into TARGETROOT
 def translateVariableSet = [
                             'CATALINA_HOME',
+                            'CGI_BIN_DIR_NAME',
                             'DB_NAME',
                             'DEFAULT_EMAIL',
                             'ENVIRONMENT',

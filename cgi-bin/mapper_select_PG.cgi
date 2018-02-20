@@ -21,12 +21,6 @@
  print "<script language='JavaScript' src='/javascript/header.js'>
  </script>";
 
- my $cur = $dbh->prepare("select object from webPages where id = 'aa-htmlpageheader.apg';");
- my $tmp_html;
- $cur->execute;
- $cur->bind_col(1, \$tmp_html);
-# while($cur->fetch) { print $tmp_html; }
-
  mapper_select(Q);
 
 
