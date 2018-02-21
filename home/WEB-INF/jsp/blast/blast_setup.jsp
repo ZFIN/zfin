@@ -6,7 +6,10 @@
 <c:if test="${!empty error}">
     Error happened
 </c:if>
+<p>
+<i>ZFIN BLAST uses AB-BLAST 3.0 (<a href="http://blast.advbiocomp.com">Gish, W. (1996-2009)</a>)</i>
 
+<p>
 <div style="max-width: 750px;">
 
     <form:form action="/action/blast/blast" commandName="formBean" enctype="multipart/form-data">
@@ -36,6 +39,7 @@
 
         </div>
 
+        <p>
         <table width="300px;" style="clear: left; padding-top: 2px" border="0">
             <tr>
                 <td colspan="2" valign="top">
