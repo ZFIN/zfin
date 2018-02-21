@@ -963,8 +963,8 @@
 	    'AND zmap_chromosome = ? '.
 	      "AND mtype IN (\'$types\');";
 
-    my $stmt2  = 'SELECT FIRST 1 * FROM PANLG WHERE zdb_id = ? order by lg_location asc;';
-    my $stmt22 = 'SELECT FIRST 1 * FROM PANLG WHERE zdb_id = ? order by lg_location desc;';
+    my $stmt2  = 'SELECT * FROM PANLG WHERE zdb_id = ? order by lg_location asc limit 1;';
+    my $stmt22 = 'SELECT * FROM PANLG WHERE zdb_id = ? order by lg_location desc limit 1;';
 
     # Note that this query in its original format was deadly to the informix
     # server.  The original format used an ABS() function call instead of a
@@ -1008,7 +1008,7 @@
 	       "    metric varchar(5)," .
 	       "    map_name varchar(25)" .
 	       "  ) " .
-	       "  WITH NO LOG ;");
+	       "   ;");
       $dbh->do("CREATE TEMP TABLE fool " .
 	       "  ( " .
 	       "    zdb_id varchar(50)," .
@@ -1021,7 +1021,7 @@
 	       "    metric varchar(5)," .
 	       "    map_name varchar(25)" .
 	       "  ) " .
-	       "  WITH NO LOG ;");
+	       "  ;");
       $dbh->do("CREATE TEMP TABLE PANLG " .
 	       "  ( " .
 	       "    zdb_id varchar(50)," .
@@ -1034,7 +1034,7 @@
 	       "    metric varchar(5)," .
 	       "    map_name varchar(25)" .
 	       "  ) " .
-	       "  WITH NO LOG ;");
+	       "  ;");
       # $dbh->do( "CREATE INDEX panlg_zdb_idx ON PANLG(zdb_id)");
       # $dbh->do( "CREATE INDEX panlg_loc_idx ON PANLG(lg_location)");
 
@@ -1329,8 +1329,8 @@
   sub get_OIDs_lg {
     my  ($zdbid) = @_;
     $sql =
-      "SELECT first 1 zmap_chromosome " .
-	"FROM zmap_pub_pan_mark WHERE zdb_id = \'$zdbid\';";
+      "SELECT zmap_chromosome " .
+	"FROM zmap_pub_pan_mark WHERE zdb_id = \'$zdbid\' limit 1;";
     # "group by zmap_chromosome ".
     #  "order by count(zmap_chromosome) DESC;" ;
 
