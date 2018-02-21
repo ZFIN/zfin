@@ -9,11 +9,17 @@
     "@songkick/replaceinfiles": "^1.1.4"
   },
   "scripts": {
-    "build:js:map": "hashmark -l 8 -c 'home/' 'javascript/**/*.js' 'dist/{dir}/{name}.{hash}{ext}' -m '../assets.json' -s",
-    "build:js:cgi": "replaceinfiles -r assets.json -s 'cgi-bin/**/*.cgi' -S",
-    "build:js:jsp": "replaceinfiles -r assets.json -s 'home/WEB-INF/{jsp,jsp-include,tags,tiles}/**/*.{jsp,tag}' -S",
-    "build:js:apg": "replaceinfiles -r assets.json -s 'home/ZFIN/**/*.apg' -S",
-    "build:js:html": "replaceinfiles -r assets.json -s 'home/{ZFIN/misc_html/*,warranty,zf_info/**/*}.html' -S",
-    "build:js": "npm run build:js:map && npm run build:js:cgi && npm run build:js:jsp && npm run build:js:apg && npm run build:js:html"
+    "build:js:map": "hashmark -l 8 -c 'home/' 'javascript/**/*.js' 'dist/{dir}/{name}.{hash}{ext}' -m '../assets-js.json' -s",
+    "build:js:cgi": "replaceinfiles -r assets-js.json -s 'cgi-bin/**/*.cgi' -S",
+    "build:js:jsp": "replaceinfiles -r assets-js.json -s 'home/WEB-INF/{jsp,jsp-include,tags,tiles}/**/*.{jsp,tag}' -S",
+    "build:js:apg": "replaceinfiles -r assets-js.json -s 'home/ZFIN/**/*.apg' -S",
+    "build:js:html": "replaceinfiles -r assets-js.json -s 'home/{ZFIN/misc_html/*,warranty,zf_info/**/*}.html' -S",
+    "build:js": "npm run build:js:map && npm run build:js:cgi && npm run build:js:jsp && npm run build:js:apg && npm run build:js:html",
+    "build:css:map": "hashmark -l 8 -c 'home/' 'css/**/*.css' 'dist/{dir}/{name}.{hash}{ext}' -m '../assets-css.json' -s",
+    "build:css:js": "replaceinfiles -r assets-css.json -s 'home/javascript/*.js' -S",
+    "build:css:jsp": "replaceinfiles -r assets-css.json -s 'home/WEB-INF/{jsp,jsp-include,tags,tiles}/**/*.{jsp,tag}' -S",
+    "build:css:apg": "replaceinfiles -r assets-css.json -s 'home/ZFIN/**/*.apg' -S",
+    "build:css": "npm run build:css:map && npm run build:css:js && npm run build:css:jsp && npm run build:css:apg",
+    "build": "npm run build:css && npm run build:js"
   }
 }

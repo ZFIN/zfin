@@ -602,7 +602,7 @@
     </macrodef>
 
 
-    <target name="deploy" depends="deploy-without-tests,instrument,test,productionSmokeTests"
+    <target name="deploy" depends="deploy-without-tests,instrument,npmInstall,versionAssets,test,productionSmokeTests"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
@@ -862,7 +862,7 @@
     <target name="versionAssets">
         <exec dir="${TARGETROOT}" executable="npm">
             <arg value="run" />
-            <arg value="build:js" />
+            <arg value="build" />
         </exec>
     </target>
 
