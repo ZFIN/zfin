@@ -18,9 +18,11 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -411,17 +413,17 @@ public class HibernateLinkageRepository implements LinkageRepository {
     @Override
     public List<PanelCount> getPanelCount(Panel panel) {
         if (panel.getAbbreviation().equals("ZMAP")) {
-            String sql = "select name," +
+            String sql = "SELECT name," +
                     "                panel_date," +
                     "                ptype," +
                     "                mtype," +
                     "                target_abbrev," +
                     "                zmap_chromosome," +
                     "                count(*)" +
-                    "        from  panels a,zmap_pub_pan_mark b" +
-                    "  where a.abbrev = b.target_abbrev" +
-                    "  and a.abbrev = 'ZMAP' and zmap_chromosome <> '0'" +
-                    "        group by name,panel_date,ptype,target_id,mtype,target_abbrev, zmap_chromosome";
+                    "        FROM  panels a,zmap_pub_pan_mark b" +
+                    "  WHERE a.abbrev = b.target_abbrev" +
+                    "  AND a.abbrev = 'ZMAP' AND zmap_chromosome <> '0'" +
+                    "        GROUP BY name,panel_date,ptype,target_id,mtype,target_abbrev, zmap_chromosome";
             List<Object[]> list = HibernateUtil.currentSession().createSQLQuery(sql).list();
             List<PanelCount> panelCountList = new ArrayList<>(list.size());
             for (Object[] row : list) {
@@ -429,7 +431,10 @@ public class HibernateLinkageRepository implements LinkageRepository {
                 panelCount.setPanel(panel);
                 panelCount.setLg((String) row[5]);
                 panelCount.setMarkerType((String) row[3]);
-                panelCount.setCount(((BigDecimal) row[6]).longValue());
+                if (ZfinPropertiesEnum.USE_POSTGRES.toString().equals("true"))
+                    panelCount.setCount(((BigInteger) row[6]).longValue());
+                else
+                    panelCount.setCount(((BigDecimal) row[6]).longValue());
                 panelCountList.add(panelCount);
             }
             return panelCountList;
