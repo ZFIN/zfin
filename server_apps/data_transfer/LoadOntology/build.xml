@@ -14,6 +14,7 @@
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
     <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
+    <property name="cellOboURL" value="http://purl.obolibrary.org/obo/cl.obo"/>
     <property name="soOboURL"
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so.obo"/>
     <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
@@ -98,6 +99,10 @@
 
     <target name="load-zeco-ontology">
         <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" scripts="${scriptFilesNoAnnotation}"/>
+    </target>
+
+    <target name="load-cell-ontology">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="cell.obo" scripts="${scriptFilesNoAnnotation}"/>
     </target>
 
     <target name="load-zeco-taxonomy-ontology" depends="init">
@@ -189,6 +194,12 @@
     <target name="download-anatomy-ontology">
         <property name="localOboFile" value="zebrafish_anatomy.obo"/>
         <property name="oboFileURL" value="${anatomyOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-cell-ontology">
+        <property name="localOboFile" value="cell.obo"/>
+        <property name="oboFileURL" value="${cellOboURL}"/>
         <antcall target="download-ontology"/>
     </target>
 

@@ -9,6 +9,7 @@
     <include file="source/org/zfin/db/load/1095/VulcanSalute/createESATable.sql"/>
     <include file="source/org/zfin/db/load/1095/VulcanSalute/addNoctuaID.sql"/>
     <include file="source/org/zfin/db/load/1095/VulcanSalute/fixLogicalColumnGo.sql"/>
+    <include file="source/org/zfin/db/load/1095/VulcanSalute/cell-ontology.sql"/>
 </databaseChangeLog>
 
    
