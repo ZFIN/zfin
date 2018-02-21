@@ -420,7 +420,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
                     "                count(*)" +
                     "        from  panels a,zmap_pub_pan_mark b" +
                     "  where a.abbrev = b.target_abbrev" +
-                    "  and a.abbrev = 'ZMAP' and zmap_chromosome <> 0" +
+                    "  and a.abbrev = 'ZMAP' and zmap_chromosome <> '0'" +
                     "        group by name,panel_date,ptype,target_id,mtype,target_abbrev, zmap_chromosome";
             List<Object[]> list = HibernateUtil.currentSession().createSQLQuery(sql).list();
             List<PanelCount> panelCountList = new ArrayList<>(list.size());
