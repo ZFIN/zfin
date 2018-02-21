@@ -602,11 +602,11 @@
     </macrodef>
 
 
-    <target name="deploy" depends="deploy-without-tests,instrument,npmInstall,versionAssets,test,productionSmokeTests"
+    <target name="deploy" depends="deploy-without-tests,instrument,test,productionSmokeTests"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,instrument,restart,deploy-solr"/>
+            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,instrument,restart,deploy-solr,npmInstall,versionAssets"/>
 
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
