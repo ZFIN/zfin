@@ -109,6 +109,7 @@ update {
 // variables used for translation of keys in files in SOURCEROOT copied into TARGETROOT
 def translateVariableSet = [
                             'CATALINA_HOME',
+                            'CGI_BIN_DIR_NAME',
                             'DB_NAME',
                             'DEFAULT_EMAIL',
                             'ENVIRONMENT',
@@ -127,6 +128,7 @@ def translateVariableSet = [
                             'PARTNER_INTERNAL_INSTANCE',
                             'ROOT_PATH',
                             'SHARED_DOMAIN_NAME',
+                            'SIDEBAR_COLOR',
                             'SOURCEROOT',
                             'SQLHOSTS_FILE',
                             'SWISSPROT_EMAIL_ERR',
@@ -160,7 +162,7 @@ task makePostgresVersion {
             serverApps += '/server_apps'
             println "Copying files in directory:: " + serverApps
             from(serverApps) {
-                include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh', '**/*_PG.groovy', '**/*_PG.pm'
+                include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh', '**/*_PG.groovy', '**/*_PG.pm', '**/*_PG.cgi'
                 rename '(.*)_PG(.*)', '$1$2'
             }
             into serverApps
@@ -173,7 +175,7 @@ task makePostgresVersion {
             targetRoot += '/cgi-bin'
             println "Copying files in directory:: " + targetRoot
             from(targetRoot) {
-                include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh', '**/*_PG.groovy', '**/*_PG.pm'
+                include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh', '**/*_PG.groovy', '**/*_PG.pm', '**/*_PG.cgi'
                 rename '(.*)_PG(.*)', '$1$2'
             }
             into targetRoot
