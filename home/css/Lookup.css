@@ -9,6 +9,7 @@
     height: auto;
     max-height: 50em;
     min-width: 100px;
+    z-index: 1001;
 }
 
 .gwt-SuggestBoxPopup .item {
