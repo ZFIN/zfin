@@ -47,4 +47,62 @@ delete from zdb_active_data where zactvd_zdb_id = 'ZDB-ALT-140123-14';
 
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values ('ZDB-ALT-140123-14', 'ZDB-ALT-170424-1');
 
+delete from record_attribution where recattrib_pk_id = '1009973';
 
+delete from all_name_ends where allnmend_allmapnm_serial_id = '89601' and allnmend_name_end_lower = 'mu1120';
+
+delete from all_name_ends where allnmend_allmapnm_serial_id = '89601' and allnmend_name_end_lower = 'smu1120';
+
+delete from all_name_ends where allnmend_allmapnm_serial_id = '89601' and allnmend_name_end_lower = 'u1120';
+
+update all_name_ends 
+                                set allnmend_allmapnm_serial_id = '89602'
+                              where allnmend_allmapnm_serial_id = '89601';
+
+update fish 
+                                set fish_genotype_zdb_id = 'ZDB-GENO-170425-1'
+                              where fish_genotype_zdb_id = 'ZDB-GENO-140124-21';
+
+delete from all_map_names where allmapnm_serial_id = '89601';
+
+delete from all_map_names where allmapnm_serial_id = '91981';
+
+update all_map_names 
+                                set allmapnm_zdb_id = 'ZDB-GENO-170425-1'
+                              where allmapnm_zdb_id = 'ZDB-GENO-140124-21';
+
+select get_id('DALIAS') as dalias_id
+  from single
+ into temp tmp_geno_alias_id;
+
+insert into zdb_active_data select dalias_id from tmp_geno_alias_id;
+
+insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
+                            select dalias_id, 'ZDB-GENO-170425-1', 'cebpa<sup>sm1120/sm1120</sup>', '1'
+                              from tmp_geno_alias_id;
+
+update record_attribution set recattrib_data_zdb_id = 'ZDB-GENO-170425-1' where recattrib_data_zdb_id = 'ZDB-GENO-140124-21';
+
+delete from zdb_replaced_data where zrepld_old_zdb_id = 'ZDB-GENO-140124-21';
+
+update zdb_replaced_data set zrepld_new_zdb_id = 'ZDB-GENO-170425-1' where zrepld_new_zdb_id = 'ZDB-GENO-140124-21';
+
+delete from zdb_active_data where zactvd_zdb_id = 'ZDB-GENO-140124-21';
+
+insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values ('ZDB-GENO-140124-21', 'ZDB-GENO-170425-1');
+
+delete from fish_experiment where genox_zdb_id = 'ZDB-GENOX-140124-29';
+
+update fish_experiment 
+                                set genox_fish_zdb_id = 'ZDB-FISH-170425-1'
+                              where genox_fish_zdb_id = 'ZDB-FISH-150901-18685';
+
+update record_attribution set recattrib_data_zdb_id = 'ZDB-FISH-170425-1' where recattrib_data_zdb_id = 'ZDB-FISH-150901-18685';
+
+delete from zdb_replaced_data where zrepld_old_zdb_id = 'ZDB-FISH-150901-18685';
+
+update zdb_replaced_data set zrepld_new_zdb_id = 'ZDB-FISH-170425-1' where zrepld_new_zdb_id = 'ZDB-FISH-150901-18685';
+
+delete from zdb_active_data where zactvd_zdb_id = 'ZDB-FISH-150901-18685';
+
+insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values ('ZDB-FISH-150901-18685', 'ZDB-FISH-170425-1');
