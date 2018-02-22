@@ -35,6 +35,8 @@ insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_
                             select dalias_id, 'ZDB-ALT-161018-11', 'zf740Tg', '1'
                               from tmp_id;
 
+update genotype set geno_display_name = 'zdf22Tg', geno_handle = 'zdf22Tg[U,1,1]AB' where geno_zdb_id = 'ZDB-GENO-171009-6';
+
 delete from zdb_replaced_data where zrepld_old_zdb_id = 'ZDB-ALT-170815-7';
 
 update zdb_replaced_data set zrepld_new_zdb_id = 'ZDB-ALT-161018-11' where zrepld_new_zdb_id = 'ZDB-ALT-170815-7';
