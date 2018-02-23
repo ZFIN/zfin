@@ -78,7 +78,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                 dto.setSynonyms(aliasList);
                             }
                             if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
-                                List<String> dbLinkList = new ArrayList<>(gene.getDbLinks().size());
+                                List<CrossReferenceDTO> dbLinkList = new ArrayList<>(gene.getDbLinks().size());
                                 for (MarkerDBLink link : gene.getDbLinks()) {
                                     String dbName = DataProvider.getExternalDatabaseName(link.getReferenceDatabase().getForeignDB().getDbName());
                                     if (dbName == null)
@@ -86,10 +86,13 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     // do not include ENSDARP records
                                     if (dbName.equals(ForeignDB.AvailableName.ENSEMBL.toString()) && link.getAccessionNumber().startsWith("ENSDARP"))
                                         continue;
-                                    CrossReferenceDTO xRefDto = new CrossReferenceDTO(dbName, link.getAccessionNumber());
-                                    dbLinkList.add(xRefDto.getGlobalID());
+                                    CrossReferenceDTO xRefDto = new CrossReferenceDTO(dbName, link.getAccessionNumber(), "");
+                                    dbLinkList.add(xRefDto);
                                 }
-                                dto.setCrossReferenceIds(dbLinkList);
+                                CrossReferenceDTO modRefDto = new CrossReferenceDTO("ZFIN", gene.getZdbID(), "gene");
+                                dbLinkList.add(modRefDto);
+
+                                dto.setCrossReferences(dbLinkList);
                             }
                             // get genomic data
                             List<MarkerGenomeLocation> locations = getLinkageRepository().getGenomeLocation(gene);
