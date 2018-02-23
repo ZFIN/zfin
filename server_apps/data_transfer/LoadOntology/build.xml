@@ -15,6 +15,7 @@
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
     <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
     <property name="cellOboURL" value="http://purl.obolibrary.org/obo/cl.obo"/>
+    <property name="cellOboFile" value="file:///home/informix/Curation/cell.obo"/>
     <property name="soOboURL"
               value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so.obo"/>
     <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
@@ -199,7 +200,7 @@
 
     <target name="download-cell-ontology">
         <property name="localOboFile" value="cell.obo"/>
-        <property name="oboFileURL" value="${cellOboURL}"/>
+        <property name="oboFileURL" value="${cellOboFile}"/>
         <antcall target="download-ontology"/>
     </target>
 
@@ -218,6 +219,8 @@
     <target name="load-gene" depends="download-gene-ontology,load-gene-ontology"/>
 
     <target name="load-chebi" depends="download-chebi-ontology,load-chebi-ontology"/>
+
+    <target name="load-cell" depends="download-cell-ontology,load-cell-ontology"/>
 
     <target name="load-eco" depends="download-eco-ontology,load-eco-ontology"/>
 
