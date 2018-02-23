@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -77,8 +78,11 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                 }
                                 dto.setSynonyms(aliasList);
                             }
+                            List<String> pages = new ArrayList<>();
+                            pages.add("gene");
+                            List<CrossReferenceDTO> dbLinkList = new ArrayList<>(gene.getDbLinks().size()+1);
                             if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
-                                List<String> dbLinkList = new ArrayList<>(gene.getDbLinks().size());
+
                                 for (MarkerDBLink link : gene.getDbLinks()) {
                                     String dbName = DataProvider.getExternalDatabaseName(link.getReferenceDatabase().getForeignDB().getDbName());
                                     if (dbName == null)
@@ -86,11 +90,34 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     // do not include ENSDARP records
                                     if (dbName.equals(ForeignDB.AvailableName.ENSEMBL.toString()) && link.getAccessionNumber().startsWith("ENSDARP"))
                                         continue;
-                                    CrossReferenceDTO xRefDto = new CrossReferenceDTO(dbName, link.getAccessionNumber());
-                                    dbLinkList.add(xRefDto.getGlobalID());
+
+                                    CrossReferenceDTO xRefDto = new CrossReferenceDTO(dbName, link.getAccessionNumber(), pages);
+                                    dbLinkList.add(xRefDto);
                                 }
-                                dto.setCrossReferenceIds(dbLinkList);
                             }
+                            //TODO: make enum out of the pages attribute, and generate it in a service/method.
+
+                            CrossReferenceDTO modRefDto ;
+                            int hasExpression = getExpressionRepository().getExpressionFigureCountForGene(gene);
+                            if (hasExpression>0) {
+                                int hasWTExpression = getExpressionRepository().getWtExpressionFigureCountForGene(gene);
+                                if (hasWTExpression> 0) {
+                                    pages.add("gene/expression");
+                                    pages.add("gene/wild_type_expression");
+                                    CrossReferenceDTO wildTypeExpressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
+                                    dbLinkList.add(wildTypeExpressionCrossReference);
+                                }
+                                else {
+                                    pages.add("gene/expression");
+                                    CrossReferenceDTO expressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
+                                    dbLinkList.add(expressionCrossReference);
+                                }
+                            }
+                            else {
+                                modRefDto = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
+                                dbLinkList.add(modRefDto);
+                            }
+                            dto.setCrossReferences(dbLinkList);
                             // get genomic data
                             List<MarkerGenomeLocation> locations = getLinkageRepository().getGenomeLocation(gene);
                             Set<GenomeLocationDTO> locationDTOList = new HashSet<>();

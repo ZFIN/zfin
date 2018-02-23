@@ -1,16 +1,27 @@
 package org.zfin.marker.agr;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 public class CrossReferenceDTO {
-
+    @JsonIgnore
     private String dataProvider;
-    private String id;
+    @JsonIgnore
 
-    public CrossReferenceDTO(String dataProvider, String id) {
+    @JsonProperty("data")
+    private String id;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<String> pages;
+
+    public CrossReferenceDTO(String dataProvider, String localID, List<String> pages) {
         this.dataProvider = dataProvider;
-        this.id = id;
+        this.id = dbNameMap.get(dataProvider) + ":" + localID;
+        this.pages = pages;
         if (!dbNameMap.keySet().contains(dataProvider))
             throw new RuntimeException("Could not find external DB " + dataProvider);
     }
@@ -23,7 +34,10 @@ public class CrossReferenceDTO {
         return dataProvider;
     }
 
+    public List<String> getPages() { return pages; }
+
     static Map<String, String> dbNameMap = new HashMap<>();
+    static Map<String, String> pageMap = new HashMap<>();
 
     static {
         dbNameMap.put("ZFIN", "ZFIN");
@@ -35,7 +49,9 @@ public class CrossReferenceDTO {
     }
 
 
-    public String getGlobalID() {
-        return dbNameMap.get(dataProvider) + ":" + id;
-    }
+    // public String getGlobalID() {
+    //    return dbNameMap.get(dataProvider) + ":" + id;
+    //}
+
+
 }

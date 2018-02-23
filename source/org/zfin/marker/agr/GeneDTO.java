@@ -16,7 +16,10 @@ public class GeneDTO extends ZfinDTO {
     private static final String geneLiteratureUrlPrefix = "http://zfin.org/action/marker/citation-list/";
     //private List<SynonymDTO> synonyms;
     private List<String> synonyms;
-    private List<String> crossReferenceIds;
+
+
+
+    private List<CrossReferenceDTO> crossReferences;
     private Set<String> secondaryIds;
     private Set<GenomeLocationDTO> genomeLocations;
 
@@ -45,20 +48,13 @@ public class GeneDTO extends ZfinDTO {
         this.soTermId = soTermId;
     }
 
-/*
-    public List<SynonymDTO> getSynonyms() {
-        return synonyms;
+    public List<CrossReferenceDTO> getCrossReferences() {
+        return crossReferences;
     }
 
-    public void setSynonyms(List<SynonymDTO> synonyms) {
-        this.synonyms = synonyms;
+    public void setCrossReferences(List<CrossReferenceDTO> crossReferences) {
+        this.crossReferences = crossReferences;
     }
-*/
-
-    public void setCrossReferenceIds(List<String> crossReferenceIds) {
-        this.crossReferenceIds = crossReferenceIds;
-    }
-
 
     public Set<GenomeLocationDTO> getGenomeLocations() {
         return genomeLocations;

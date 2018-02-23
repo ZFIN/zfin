@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.feature.Feature;
-import org.zfin.marker.Marker;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.SecondaryFeature;
+import org.zfin.marker.Marker;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.FileOutputStream;
@@ -79,6 +79,11 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                         }
                         dto.setSecondaryIds(secondaryDTOs);
                       }
+                      List<String> pages = null;
+                      pages.add("allele");
+                      CrossReferenceDTO xRef = new CrossReferenceDTO("ZFIN", feature.getZdbID(), pages);
+                      dto.setCrossReference(xRef);
+
                       return dto;
                     })
             .collect(Collectors.toList());
