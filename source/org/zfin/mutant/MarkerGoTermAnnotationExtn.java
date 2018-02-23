@@ -8,9 +8,27 @@ public class MarkerGoTermAnnotationExtn implements Serializable {
 private  Long id;
     private String markerGoTermEvidenceZdbID;
     private String relationshipTerm;
+private Long annotExtnGroupID;
+
+    public String getMarkerGoTermEvidenceZdbID() {
+        return markerGoTermEvidenceZdbID;
+    }
+
+    public void setMarkerGoTermEvidenceZdbID(String markerGoTermEvidenceZdbID) {
+        this.markerGoTermEvidenceZdbID = markerGoTermEvidenceZdbID;
+    }
+
+    public Long getAnnotExtnGroupID() {
+        return annotExtnGroupID;
+    }
+
+    public void setAnnotExtnGroupID(Long annotExtnGroupID) {
+        this.annotExtnGroupID = annotExtnGroupID;
+    }
 
     public Long getId() {
         return id;
+
     }
 
     public void setId(Long id) {
@@ -34,17 +52,5 @@ private  Long id;
     public void setIdentifierTerm(String identifierTerm) {
         this.identifierTerm = identifierTerm;
     }
-
-
-
-
-    public String getMarkerGoTermEvidenceZdbID() {
-        return markerGoTermEvidenceZdbID;
-    }
-
-    public void setMarkerGoTermEvidenceZdbID(String markerGoTermEvidenceZdbID) {
-        this.markerGoTermEvidenceZdbID = markerGoTermEvidenceZdbID;
-    }
-
 
 }
