@@ -54,7 +54,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
 
 //Object to JSON in String
         String jsonInString = writer.writeValueAsString(allGeneDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.4_BGI.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.0_1_BGI.json"))) {
             out.print(jsonInString);
         }
     }

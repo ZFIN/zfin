@@ -66,7 +66,7 @@ public class GeneDTO extends ZfinDTO {
 
     public String getGeneLiteratureUrl() {
         String returnString = geneLiteratureUrlPrefix;
-        if (primaryId.startsWith(ZFIN))
+        if (primaryId.startsWith("ZFIN:"))
             returnString += primaryId.replace(ZFIN, "");
         return returnString;
     }
