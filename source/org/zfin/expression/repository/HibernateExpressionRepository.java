@@ -2142,6 +2142,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
+    public List<ExpressionResult2> getNonEapExpressionResultList(Marker gene) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select result from ExpressionResult2 as result " +
+                "      where expressionFigureStage.expressionExperiment.gene = :gene " +
+                "AND result.phenotypeTermSet is empty ";
+        Query query = session.createQuery(hql);
+        query.setParameter("gene", gene);
+
+        return (List<ExpressionResult2>) query.list();
+    }
+
+    @Override
     public List<Experiment> geExperimentByPublication(String publicationID) {
         Session session = HibernateUtil.currentSession();
 

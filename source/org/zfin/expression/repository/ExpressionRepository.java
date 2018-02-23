@@ -426,6 +426,8 @@ public interface ExpressionRepository {
 
     List<ExpressionResult2> getExpressionResultList(Marker gene);
 
+    List<ExpressionResult2> getNonEapExpressionResultList(Marker gene);
+
     List<Experiment> geExperimentByPublication(String publicationID);
 
     void deleteExperimentCondition(ExperimentCondition condition);

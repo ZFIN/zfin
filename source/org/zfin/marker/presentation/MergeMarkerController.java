@@ -253,6 +253,27 @@ public class MergeMarkerController {
         return eapPublications;
     }
 
+    @RequestMapping(value = "/get-non-eap-publication-for-geneId", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<PublicationLink> getNonEapPublicationForGene(@RequestParam("geneZdbId") String geneZdbId) {
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbId);
+        if (gene == null)
+            return null;
+        List<ExpressionResult2> nonEapExpressionResults = RepositoryFactory.getExpressionRepository().getNonEapExpressionResultList(gene);
+        List<PublicationLink> nonEapPublications = new ArrayList<>();
+        if (nonEapExpressionResults != null && nonEapExpressionResults.size() > 0) {
+            for (ExpressionResult2 nonEapExpressionResult : nonEapExpressionResults) {
+                Publication nonEapPublication = nonEapExpressionResult.getExpressionFigureStage().getFigure().getPublication();
+                PublicationLink publicationLink = new PublicationLink();
+                publicationLink.setPublicationZdbId(nonEapPublication.getZdbID());
+                publicationLink.setLinkContent(nonEapPublication.getShortAuthorList());
+                nonEapPublications.add(publicationLink);
+            }
+        }
+        return nonEapPublications;
+    }
+
     @RequestMapping(value = "/get-orthology-for-geneId", method = RequestMethod.GET)
     public
     @ResponseBody
