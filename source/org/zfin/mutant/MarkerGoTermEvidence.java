@@ -26,7 +26,17 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     private Publication source;
     private GenericTerm goTerm;
     private String note;
+
+    public Set<MarkerGoTermAnnotationExtn> getGoTermAnnotationExtn() {
+        return goTermAnnotationExtn;
+    }
+
+    public void setGoTermAnnotationExtn(Set<MarkerGoTermAnnotationExtn> goTermAnnotationExtn) {
+        this.goTermAnnotationExtn = goTermAnnotationExtn;
+    }
+
     private Set<InferenceGroupMember> inferredFrom;
+    private Set<MarkerGoTermAnnotationExtn> goTermAnnotationExtn;
 
     // editing data
 
@@ -34,6 +44,8 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
      * Curator created by.  May be null if comes from a null.
      */
     private Person createdBy;
+
+
     /**
      * Date record originally curated. For imported annotations this can be a date earlier than the external load date.
      */
