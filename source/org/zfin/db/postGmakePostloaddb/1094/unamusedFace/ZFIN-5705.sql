@@ -55,13 +55,7 @@ update fish
                                 set fish_genotype_zdb_id = 'ZDB-GENO-170425-1'
                               where fish_genotype_zdb_id = 'ZDB-GENO-140124-21';
 
-delete from all_map_names where allmapnm_serial_id = '89601';
-
-delete from all_map_names where allmapnm_serial_id = '91981';
-
-update all_map_names 
-                                set allmapnm_zdb_id = 'ZDB-GENO-170425-1'
-                              where allmapnm_zdb_id = 'ZDB-GENO-140124-21';
+delete from all_map_names where allmapnm_zdb_id = 'ZDB-GENO-140124-21';
 
 select get_id('DALIAS') as dalias_id
   from single
