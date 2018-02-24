@@ -23,6 +23,7 @@
 <!-- For local development
     <property name="goQualifierSourceURL" value="go-qualifier-source.txt"/>
 -->
+    <property name="zroSourceURL" value="file:///home/informix/Curation/zfin-ro.obo"/>
     <property name="goQualifierSourceURL" value="file:///home/informix/Curation/go-qualifier.obo"/>
     <property name="goQualifierOboURL" value="go-qualifier.obo"/>
     <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
@@ -96,6 +97,10 @@
 
     <target name="load-go-qualifier-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="go-qualifier.obo"/>
+    </target>
+
+    <target name="load-zro-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="zfin-ro.obo"/>
     </target>
 
     <target name="load-zeco-ontology">
@@ -180,6 +185,12 @@
         <antcall target="download-ontology"/>
     </target>
 
+    <target name="download-zro-ontology">
+        <property name="localOboFile" value="zfin-ro.obo"/>
+        <property name="oboFileURL" value="${zroSourceURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
     <target name="download-zeco-ontology">
         <property name="localOboFile" value="zeco.obo"/>
         <property name="oboFileURL" value="${zecoOboURL}"/>
@@ -223,6 +234,8 @@
     <target name="load-cell" depends="download-cell-ontology,load-cell-ontology"/>
 
     <target name="load-eco" depends="download-eco-ontology,load-eco-ontology"/>
+
+    <target name="load-zro" depends="download-zro-ontology,load-zro-ontology"/>
 
     <target name="load-zeco-taxonomy" depends="load-zeco-taxonomy-ontology"/>
 
