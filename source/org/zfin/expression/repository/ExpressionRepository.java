@@ -40,6 +40,8 @@ public interface ExpressionRepository {
     int getExpressionFigureCountForEfg(Marker marker);
 
     int getExpressionFigureCountForGene(Marker marker);
+    
+    int getWtExpressionFigureCountForGene(Marker marker);
     int getExpressionFigureCountForGenotype(Genotype genotype);
 
     int getExpressionFigureCountForFish(Fish fish);

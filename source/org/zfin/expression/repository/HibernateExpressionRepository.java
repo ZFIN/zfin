@@ -63,6 +63,42 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
+
+    public int getWtExpressionFigureCountForGene(Marker marker) {
+        String sql = "   select count(distinct xpatfig_fig_zdb_id) " +
+                "           from expression_pattern_figure " +
+                "                join expression_result " +
+                "                       on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "                join expression_experiment " +
+                "                       on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "                join fish_experiment" +
+                "           on genox_zdb_id = xpatex_genox_zdb_id" +
+                "                join fish" +
+                "           on fish_zdb_id = genox_fish_zdb_id" +
+                "          where xpatex_gene_zdb_id = :markerZdbID " +
+                "           and genox_is_std_or_generic_control = 't'" +
+                "           and fish_is_wildtype = 't'" +
+
+                "         and not exists " +
+                "         ( " +
+                "           select 'x' from marker " +
+                "             where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "             and substring(mrkr_abbrev from 1 for 10) = 'WITHDRAWN:' " +
+                "         ) " +
+                "         and not exists " +
+                "         ( " +
+                "          select 'x' from clone " +
+                "             where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "             and clone_problem_type = 'Chimeric' " +
+                "         ) ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", marker.getZdbID());
+        Object result = query.uniqueResult();
+
+        return Integer.parseInt(result.toString());
+    }
+
+
     public ExpressionStageAnatomyContainer getExpressionStages(Gene gene) {
         Session session = HibernateUtil.currentSession();
 
