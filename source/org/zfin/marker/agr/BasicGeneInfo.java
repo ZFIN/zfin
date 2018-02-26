@@ -67,6 +67,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             dto.setName(gene.name);
                             dto.setSymbol(gene.getAbbreviation());
                             dto.setPrimaryId(gene.getZdbID());
+                            dto.setGeneLiteratureUrl("http://zfin.org/action/marker/citation-list/"+gene.getZdbID());
                             dto.setSoTermId(gene.getSoTerm().getOboID());
                             if (CollectionUtils.isNotEmpty(gene.getAliases())) {
                                 List<String> aliasList = new ArrayList<>(gene.getAliases().size());

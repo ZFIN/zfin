@@ -18,6 +18,11 @@ public class GeneDTO extends ZfinDTO {
     private List<CrossReferenceDTO> crossReferences;
     private Set<String> secondaryIds;
     private Set<GenomeLocationDTO> genomeLocations;
+
+    public void setGeneLiteratureUrl(String geneLiteratureUrl) {
+        this.geneLiteratureUrl = geneLiteratureUrl;
+    }
+
     private String geneLiteratureUrl;
 
     public String getSymbol() {
