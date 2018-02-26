@@ -14,12 +14,17 @@ public class GeneDTO extends ZfinDTO {
     private static final String geneLiteratureUrlPrefix = "http://zfin.org/action/marker/citation-list/";
     private List<CrossReferenceDTO> crossReferences;
     private Set<GenomeLocationDTO> genomeLocations;
+    private String geneLiteratureUrl;
 
+    public String getGeneLiteratureUrl() {
+        return geneLiteratureUrl;
+    }
+    
     public void setGeneLiteratureUrl(String geneLiteratureUrl) {
         this.geneLiteratureUrl = geneLiteratureUrl;
     }
 
-    private String geneLiteratureUrl;
+
 
     public String getSymbol() {
         return symbol;
