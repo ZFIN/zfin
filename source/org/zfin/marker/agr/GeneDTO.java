@@ -19,7 +19,7 @@ public class GeneDTO extends ZfinDTO {
     public String getGeneLiteratureUrl() {
         return geneLiteratureUrl;
     }
-    
+
     public void setGeneLiteratureUrl(String geneLiteratureUrl) {
         this.geneLiteratureUrl = geneLiteratureUrl;
     }

@@ -76,7 +76,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                 }
                                 dto.setSynonyms(aliasList);
                             }
-                            List<String> pages = new ArrayList<>();
+                            List<String> dblinkPages = new ArrayList<>();
                             List<CrossReferenceDTO> dbLinkList = new ArrayList<>(gene.getDbLinks().size()+1);
                             if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
 
@@ -88,7 +88,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     if (dbName.equals(ForeignDB.AvailableName.ENSEMBL.toString()) && link.getAccessionNumber().startsWith("ENSDARP"))
                                         continue;
 
-                                    CrossReferenceDTO xRefDto = new CrossReferenceDTO(dbName, link.getAccessionNumber(), pages);
+                                    CrossReferenceDTO xRefDto = new CrossReferenceDTO(dbName, link.getAccessionNumber(), dblinkPages);
                                     dbLinkList.add(xRefDto);
                                 }
                             }
@@ -98,22 +98,25 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             if (hasExpression>0) {
                                 int hasWTExpression = getExpressionRepository().getWtExpressionFigureCountForGene(gene);
                                 if (hasWTExpression> 0) {
-                                    pages.add("gene");
-                                    pages.add("gene/expression");
-                                    pages.add("gene/wild_type_expression");
-                                    CrossReferenceDTO wildTypeExpressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
+                                    List<String> wtXpatPages = new ArrayList<>();
+                                    wtXpatPages.add("gene");
+                                    wtXpatPages.add("gene/expression");
+                                    wtXpatPages.add("gene/wild_type_expression");
+                                    CrossReferenceDTO wildTypeExpressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(),wtXpatPages );
                                     dbLinkList.add(wildTypeExpressionCrossReference);
                                 }
                                 else {
-                                    pages.add("gene");
-                                    pages.add("gene/expression");
-                                    CrossReferenceDTO expressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
+                                    List<String> xpatPages = new ArrayList<>();
+                                    xpatPages.add("gene");
+                                    xpatPages.add("gene/expression");
+                                    CrossReferenceDTO expressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), xpatPages);
                                     dbLinkList.add(expressionCrossReference);
                                 }
                             }
                             else {
-                                pages.add("gene");
-                                CrossReferenceDTO modRefDto = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
+                                List<String> modPages = new ArrayList<>();
+                                modPages.add("gene");
+                                CrossReferenceDTO modRefDto = new CrossReferenceDTO("ZFIN", gene.getZdbID(), modPages);
                                 dbLinkList.add(modRefDto);
                             }
                             dto.setCrossReferences(dbLinkList);
