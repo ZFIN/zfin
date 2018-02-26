@@ -9,9 +9,6 @@ import java.util.Set;
 public class AlleleDTO extends ZfinDTO {
 
   private String symbol;
-  private String geneId;
-  private List<String> synonyms;
-  private Set<String> secondaryIds;
   private String gene;
   private CrossReferenceDTO crossReference;
 

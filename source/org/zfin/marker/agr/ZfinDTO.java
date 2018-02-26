@@ -10,9 +10,9 @@ public class ZfinDTO {
 
     public static String taxonId = "NCBITaxon:7955";
     public static final String ZFIN = "ZFIN:";
-    private List<String> synonyms;
-    private Set<String> secondaryIds;
-    private String primaryId;
+    protected List<String> synonyms;
+    protected Set<String> secondaryIds;
+    protected String primaryId;
 
     public String getTaxonId() {
         return taxonId;

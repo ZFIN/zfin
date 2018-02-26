@@ -10,13 +10,9 @@ public class GeneDTO extends ZfinDTO {
 
     private String symbol;
     private String name;
-    private String primaryId;
     private String soTermId;
     private static final String geneLiteratureUrlPrefix = "http://zfin.org/action/marker/citation-list/";
-    //private List<SynonymDTO> synonyms;
-    private List<String> synonyms;
     private List<CrossReferenceDTO> crossReferences;
-    private Set<String> secondaryIds;
     private Set<GenomeLocationDTO> genomeLocations;
 
     public void setGeneLiteratureUrl(String geneLiteratureUrl) {

@@ -60,7 +60,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
         List<Marker> allGenes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM, numfOfRecords);
         System.out.println(allGenes.size());
 
-        List<GeneDTO> allGeneDTOList = allGenes.parallelStream()
+        List<GeneDTO> allGeneDTOList = allGenes.stream()
                 .map(
                         gene -> {
                             GeneDTO dto = new GeneDTO();
