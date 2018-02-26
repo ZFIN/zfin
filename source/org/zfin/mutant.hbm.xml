@@ -151,16 +151,16 @@
         </composite-id>
     </class>
 
-    <class name="MarkerGoTermAnnotationExtn" table="marker_go_term_annotation_extension">
+    <class name="org.zfin.mutant.MarkerGoTermAnnotationExtn" table="marker_go_term_annotation_extension">
         <id name="id" type="long">
-            <column name="mgtae_extension_group_id" not-null="true"/>
+            <column name="mgtae_pk_id" not-null="true"/>
             <generator class="identity"/>
         </id>
-        <many-to-one name="markerGoTermEvidenceZdbID" class="MarkerGoTermEvidence"
-            column="mgtae_mrkrgoev_zdb_id">
-        </many-to-one>
-        <many-to-one name="relationshipTerm" column="mgtae_relationship_term_zdb_id"></many-to-one>
-        <many-to-one name="identifierTerm" column="mgtae_identifier_term_zdb_id"></many-to-one>
+        <property name="markerGoTermEvidenceZdbID" column="markerGoTermEvidenceZdbID"></property>
+        <property name="relationshipTerm" column="mgtae_relationship_term_zdb_id"></property>
+        <property name="identifierTerm" column="mgtae_identifier_term_zdb_id"></property>
+        <property name="annotExtnGroupID" column="mgtae_extension_group_id"></property>
+
     </class>
 
     <!--<class name="MarkerGoTermAnnotationExtnGroup" table="marker_go_term_annotation_extension_group">

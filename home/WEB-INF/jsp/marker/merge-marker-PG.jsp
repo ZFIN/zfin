@@ -42,6 +42,7 @@
 
         jQuery(document).ready(function () {
             unspecifiedAllelesIgnored = true;
+            nonEapIgnored = true;
             eapIgnored = true;
             sequenceTargetingReagentsIgnored = true;
             antibodiesIgnored = true;
@@ -111,7 +112,7 @@
                     jQuery('#intoMarkerAbbrev').val(markerAbbrevToMergeInto);
                     jQuery('#into').html('<a target="_blank" class="external" href="/' + markerZdbIdToBeMergedInto + '">' + markerAbbrevToMergeInto + '</a>');
                     <c:if test="${formBean.markerToDelete.genedom && !formBean.markerToDelete.nontranscribed}">
-                          validateEap(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
+                          validateNonEapXp(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
                     </c:if>
                     <c:if test="${formBean.markerToDelete.markerType.name eq 'MRPHLNO' || formBean.markerToDelete.markerType.name eq 'TALEN' || formBean.markerToDelete.markerType.name eq 'CRISPR'}">
                           validateTargetGenesForMergingSRTs(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
@@ -157,6 +158,7 @@
             // select all desired input fields and attach tooltips to them
             jQuery(':input').tipsy({gravity: 'w'});
 
+            jQuery('#ignoreNonEap').hide();
             jQuery('#ignoreEap').hide();
             jQuery('#sameUnspecifiedAllele').hide();
             jQuery('#renameUnspecifiedAllele').hide();
@@ -773,6 +775,35 @@
 
         };
 
+        var validateNonEapXp = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
+
+            var numberOfNonEapPubs = 0;
+            nonEapIgnored = false;
+
+            var nonEapXps = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-non-eap-publication-for-geneId?geneZdbId=" + geneIDdelete,
+                dataType: "json",
+                async: false
+            }).responseText);
+
+            if (nonEapXps.length > 0) {
+                for (nonEap in nonEapXps) {
+                    numberOfNonEapPubs++;
+                    if (numberOfNonEapPubs == 1)
+                        jQuery('#validationNonEapText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has been in the following publication(s) with expression data (non Eap):</h3>');
+
+
+                    jQuery('#validationNonEapText').append('<div>'
+                            + '<a target="_blank" href="/' + nonEapXps[nonEap].publicationZdbId +'">'
+                            + nonEapXps[nonEap].linkContent + '</a>'
+                            + '</div>');
+                }
+                jQuery('#ignoreNonEap').show();
+            } else {
+                nonEapIgnored = true;
+            }
+            validateEap(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+        }
+
         var validateEap = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
 
             var numberOfEapPubs = 0;
@@ -1129,6 +1160,14 @@
             enableMerge();
         }
 
+        function ignoreNonEap(formObj) {
+            nonEapIgnored = true;
+            jQuery('#validationNonEapText').hide();
+            jQuery('#ignoreNonEap').hide();
+
+            enableMerge();
+        }
+
         function ignoreMappingInfo(formObj) {
             mapInfoIgnored = true;
             jQuery('#validationMapInfoText').hide();
@@ -1166,7 +1205,7 @@
         }
 
         function enableMerge() {
-            if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && EnsemblGRCz10IdsIgnored && transcriptsIgnored && orthologyIgnored && eapIgnored && mapInfoIgnored && !differentSequence && !differentFish && !differentTargets) {
+            if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && EnsemblGRCz10IdsIgnored && transcriptsIgnored && orthologyIgnored && nonEapIgnored && eapIgnored && mapInfoIgnored && !differentSequence && !differentFish && !differentTargets) {
                 jQuery('#submitMerge').removeAttr('disabled');
             }
         }
@@ -1192,6 +1231,10 @@
             <br/><br/>
             <input type="button" value="Merge these two markers" id="submitMerge" title="Perform the merge action">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <input type="button" value="Cancel" id="cancelMerge" onclick="window.history.back();" title="Cancel the merge and go back to gene page">
+        </form>
+        <div id="validationNonEapText"></div>
+        <form id="ignoreNonEap">
+            <input type="button" value="Ignore Non Eap Expression" onclick="ignoreNonEap(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the non eap expression data of ${formBean.markerToDeleteViewString} will be associated into the gene retained.">
         </form>
         <div id="validationEapText"></div>
         <form id="ignoreEap">
