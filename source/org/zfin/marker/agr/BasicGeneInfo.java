@@ -77,7 +77,6 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                 dto.setSynonyms(aliasList);
                             }
                             List<String> pages = new ArrayList<>();
-                            pages.add("gene");
                             List<CrossReferenceDTO> dbLinkList = new ArrayList<>(gene.getDbLinks().size()+1);
                             if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
 
@@ -95,24 +94,26 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             }
                             //TODO: make enum out of the pages attribute, and generate it in a service/method.
 
-                            CrossReferenceDTO modRefDto ;
                             int hasExpression = getExpressionRepository().getExpressionFigureCountForGene(gene);
                             if (hasExpression>0) {
                                 int hasWTExpression = getExpressionRepository().getWtExpressionFigureCountForGene(gene);
                                 if (hasWTExpression> 0) {
+                                    pages.add("gene");
                                     pages.add("gene/expression");
                                     pages.add("gene/wild_type_expression");
                                     CrossReferenceDTO wildTypeExpressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
                                     dbLinkList.add(wildTypeExpressionCrossReference);
                                 }
                                 else {
+                                    pages.add("gene");
                                     pages.add("gene/expression");
                                     CrossReferenceDTO expressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
                                     dbLinkList.add(expressionCrossReference);
                                 }
                             }
                             else {
-                                modRefDto = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
+                                pages.add("gene");
+                                CrossReferenceDTO modRefDto = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
                                 dbLinkList.add(modRefDto);
                             }
                             dto.setCrossReferences(dbLinkList);
