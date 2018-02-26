@@ -6,23 +6,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CrossReferenceDTO {
+    private String id;
+    private List<String> pages;
+
     @JsonIgnore
     private String dataProvider;
-    @JsonIgnore
 
-    @JsonProperty("data")
-    private String id;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String page;
-
-    public CrossReferenceDTO(String dataProvider, String localID, String page) {
+    public CrossReferenceDTO(String dataProvider, String localID, List<String> pages) {
         this.dataProvider = dataProvider;
         this.id = dbNameMap.get(dataProvider) + ":" + localID;
-        this.page = page;
+        this.pages = pages;
         if (!dbNameMap.keySet().contains(dataProvider))
             throw new RuntimeException("Could not find external DB " + dataProvider);
+
     }
 
     public String getId() {
@@ -33,7 +33,7 @@ public class CrossReferenceDTO {
         return dataProvider;
     }
 
-    public String getPages() { return page; }
+    public List<String> getPages() { return pages; }
 
     static Map<String, String> dbNameMap = new HashMap<>();
     static Map<String, String> pageMap = new HashMap<>();
@@ -46,11 +46,5 @@ public class CrossReferenceDTO {
         dbNameMap.put("PMID", "PMID");
         dbNameMap.put("PANTHER", "PANTHER");
     }
-
-
-   // public String getGlobalID() {
-    //    return dbNameMap.get(dataProvider) + ":" + id;
-    //}
-
 
 }

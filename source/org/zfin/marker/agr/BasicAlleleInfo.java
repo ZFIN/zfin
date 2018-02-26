@@ -47,16 +47,23 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
 //Object to JSON in String
+<<<<<<< HEAD
         String jsonInString = writer.writeValueAsString(allAlleleDTO);
         try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.4_allele.json"))) {
             out.print(jsonInString);
         }
+=======
+    String jsonInString = writer.writeValueAsString(allAlleleDTO);
+    try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.0_1_allele.json"))) {
+      out.print(jsonInString);
+>>>>>>> release-1093
     }
 
     public AllAlleleDTO getAllAlleleInfo() {
         List<Feature> allAlleles = getFeatureRepository().getSingleAffectedGeneAlleles();
         System.out.println(allAlleles.size());
 
+<<<<<<< HEAD
         List<AlleleDTO> allAlleleDTOList = allAlleles.stream()
                 .map(
                         feature -> {
@@ -88,4 +95,43 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
         allAlleleDTO.setMetaData(meta);
         return allAlleleDTO;
     }
+=======
+    List<AlleleDTO> allAlleleDTOList = allAlleles.parallelStream()
+            .map(
+                    feature -> {
+                      AlleleDTO dto = new AlleleDTO();
+                      dto.setSymbol(feature.getName());
+                      dto.setPrimaryId(feature.getZdbID());
+                      Marker gene = getFeatureRepository().getSingleAllelicGene(feature.getZdbID());
+                      dto.setGene("ZFIN:" + gene.getZdbID());
+                      if (CollectionUtils.isNotEmpty(feature.getAliases())) {
+                        List<String> aliasList = new ArrayList<>(feature.getAliases().size());
+                        for (FeatureAlias alias : feature.getAliases()) {
+                          aliasList.add(alias.getAlias());
+                        }
+                        dto.setSynonyms(aliasList);
+                      }
+                      if (CollectionUtils.isNotEmpty(feature.getSecondaryFeatureSet())) {
+                        Set<String> secondaryDTOs = new HashSet<>();
+                        for (SecondaryFeature secAllele : feature.getSecondaryFeatureSet()) {
+                          secondaryDTOs.add(secAllele.getOldID());
+                        }
+                        dto.setSecondaryIds(secondaryDTOs);
+                      }
+                      List<String> pages = new ArrayList<>();
+                      pages.add("allele");
+                      CrossReferenceDTO xRef = new CrossReferenceDTO("ZFIN", feature.getZdbID(), pages);
+                      //System.out.println("here");
+                      dto.setCrossReference(xRef);
+
+                      return dto;
+                    })
+            .collect(Collectors.toList());
+    AllAlleleDTO allAlleleDTO = new AllAlleleDTO();
+    allAlleleDTO.setAlleles(allAlleleDTOList);
+    MetaDataDTO meta = new MetaDataDTO("ZFIN");
+    allAlleleDTO.setMetaData(meta);
+    return allAlleleDTO;
+  }
+>>>>>>> release-1093
 }

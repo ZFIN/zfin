@@ -13,6 +13,15 @@ public class AlleleDTO extends ZfinDTO {
   private List<String> synonyms;
   private Set<String> secondaryIds;
   private String gene;
+  private CrossReferenceDTO crossReference;
+
+  public CrossReferenceDTO getCrossReference() {
+    return crossReference;
+  }
+
+  public void setCrossReference(CrossReferenceDTO crossReference) {
+    this.crossReference = crossReference;
+  }
 
   public String getGene() {
     return gene;
