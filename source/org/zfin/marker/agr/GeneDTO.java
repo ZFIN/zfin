@@ -16,9 +16,6 @@ public class GeneDTO extends ZfinDTO {
     private static final String geneLiteratureUrlPrefix = "http://zfin.org/action/marker/citation-list/";
     //private List<SynonymDTO> synonyms;
     private List<String> synonyms;
-
-
-
     private List<CrossReferenceDTO> crossReferences;
     private Set<String> secondaryIds;
     private Set<GenomeLocationDTO> genomeLocations;
@@ -66,7 +63,7 @@ public class GeneDTO extends ZfinDTO {
 
     public String getGeneLiteratureUrl() {
         String returnString = geneLiteratureUrlPrefix;
-        if (primaryId.startsWith("ZFIN:"))
+        if (primaryId.startsWith(ZFIN))
             returnString += primaryId.replace(ZFIN, "");
         return returnString;
     }
