@@ -61,10 +61,10 @@ public class GeneDTO extends ZfinDTO {
         this.genomeLocations = genomeLocations;
     }
 
-    public String getGeneLiteratureUrl() {
-        String returnString = geneLiteratureUrlPrefix;
-        if (primaryId.startsWith(ZFIN))
-            returnString += primaryId.replace(ZFIN, "");
-        return returnString;
-    }
+    //public String getGeneLiteratureUrl() {
+    //    String returnString = geneLiteratureUrlPrefix;
+    //    if (primaryId.startsWith(ZFIN))
+    //        returnString += primaryId.replace(ZFIN, "");
+    //    return returnString;
+    //}
 }
