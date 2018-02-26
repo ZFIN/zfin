@@ -10,6 +10,7 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CrossReferenceDTO {
+
     private String id;
     private List<String> pages;
 
@@ -36,7 +37,6 @@ public class CrossReferenceDTO {
     public List<String> getPages() { return pages; }
 
     static Map<String, String> dbNameMap = new HashMap<>();
-    static Map<String, String> pageMap = new HashMap<>();
 
     static {
         dbNameMap.put("ZFIN", "ZFIN");

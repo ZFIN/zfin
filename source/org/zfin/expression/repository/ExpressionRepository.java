@@ -443,7 +443,6 @@ public interface ExpressionRepository {
 
     ExpressionResult2 getExpressionResult2(long id);
 }
-=======
 package org.zfin.expression.repository;
 
 import org.zfin.antibody.Antibody;
