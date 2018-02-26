@@ -79,7 +79,6 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             pages.add("gene");
                             List<CrossReferenceDTO> dbLinkList = new ArrayList<>(gene.getDbLinks().size()+1);
                             if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
-                                List<CrossReferenceDTO> dbLinkList = new ArrayList<>(gene.getDbLinks().size());
 
                                 for (MarkerDBLink link : gene.getDbLinks()) {
                                     String dbName = DataProvider.getExternalDatabaseName(link.getReferenceDatabase().getForeignDB().getDbName());
@@ -88,14 +87,10 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     // do not include ENSDARP records
                                     if (dbName.equals(ForeignDB.AvailableName.ENSEMBL.toString()) && link.getAccessionNumber().startsWith("ENSDARP"))
                                         continue;
-                                    CrossReferenceDTO xRefDto = new CrossReferenceDTO(dbName, link.getAccessionNumber(), "");
+
+                                    CrossReferenceDTO xRefDto = new CrossReferenceDTO(dbName, link.getAccessionNumber(), pages);
                                     dbLinkList.add(xRefDto);
                                 }
-                                CrossReferenceDTO modRefDto = new CrossReferenceDTO("ZFIN", gene.getZdbID(), "gene");
-                                dbLinkList.add(modRefDto);
-
-                                dto.setCrossReferences(dbLinkList);
-
                             }
                             //TODO: make enum out of the pages attribute, and generate it in a service/method.
 
@@ -118,7 +113,6 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             else {
                                 modRefDto = new CrossReferenceDTO("ZFIN", gene.getZdbID(), pages);
                                 dbLinkList.add(modRefDto);
->>>>>>> release-1093
                             }
                             dto.setCrossReferences(dbLinkList);
                             // get genomic data
