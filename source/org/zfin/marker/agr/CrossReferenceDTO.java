@@ -11,7 +11,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CrossReferenceDTO {
 
-    @JsonProperty("data")
     private String id;
     private List<String> pages;
 
