@@ -1,28 +1,31 @@
 package org.zfin.mutant;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  */
 public class MarkerGoTermAnnotationExtn implements Serializable {
-private  Long id;
-    private String markerGoTermEvidenceZdbID;
+    private Long id;
+    private Set<MarkerGoTermEvidence> markerGoTermEvidenceZdbID;
     private String relationshipTerm;
-private Long annotExtnGroupID;
+    private Set<MarkerGoTermAnnotationExtnGroup> annotExtnGroupID;
+    private String identifierTermText;
+    private String annotExtnDBLink;
 
-    public String getMarkerGoTermEvidenceZdbID() {
+    public Set<MarkerGoTermEvidence> getMarkerGoTermEvidenceZdbID() {
         return markerGoTermEvidenceZdbID;
     }
 
-    public void setMarkerGoTermEvidenceZdbID(String markerGoTermEvidenceZdbID) {
+    public void setMarkerGoTermEvidenceZdbID(Set<MarkerGoTermEvidence> markerGoTermEvidenceZdbID) {
         this.markerGoTermEvidenceZdbID = markerGoTermEvidenceZdbID;
     }
 
-    public Long getAnnotExtnGroupID() {
+    public Set<MarkerGoTermAnnotationExtnGroup> getAnnotExtnGroupID() {
         return annotExtnGroupID;
     }
 
-    public void setAnnotExtnGroupID(Long annotExtnGroupID) {
+    public void setAnnotExtnGroupID(Set<MarkerGoTermAnnotationExtnGroup> annotExtnGroupID) {
         this.annotExtnGroupID = annotExtnGroupID;
     }
 
@@ -53,4 +56,19 @@ private Long annotExtnGroupID;
         this.identifierTerm = identifierTerm;
     }
 
+    public String getIdentifierTermText() {
+        return identifierTermText;
+    }
+
+    public void setIdentifierTermText(String identifierTermText) {
+        this.identifierTermText = identifierTermText;
+    }
+
+    public String getAnnotExtnDBLink() {
+        return annotExtnDBLink;
+    }
+
+    public void setAnnotExtnDBLink(String annotExtnDBLink) {
+        this.annotExtnDBLink = annotExtnDBLink;
+    }
 }

@@ -1,13 +1,13 @@
 package org.zfin.mutant;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  */
 public class MarkerGoTermAnnotationExtnGroup implements Serializable {
 private  Long id;
-    private String markerGoTermEvidenceZdbID;
-    private String relationshipTerm;
+    private Set<MarkerGoTermEvidence> mgtaegMarkerGoEvidence;
 
     public Long getId() {
         return id;
@@ -17,34 +17,11 @@ private  Long id;
         this.id = id;
     }
 
-    private String identifierTerm;
-
-    public String getRelationshipTerm() {
-        return relationshipTerm;
+    public Set<MarkerGoTermEvidence> getMgtaegMarkerGoEvidence() {
+        return mgtaegMarkerGoEvidence;
     }
 
-    public void setRelationshipTerm(String relationshipTerm) {
-        this.relationshipTerm = relationshipTerm;
+    public void setMgtaegMarkerGoEvidence(Set<MarkerGoTermEvidence> mgtaegMarkerGoEvidence) {
+        this.mgtaegMarkerGoEvidence = mgtaegMarkerGoEvidence;
     }
-
-    public String getIdentifierTerm() {
-        return identifierTerm;
-    }
-
-    public void setIdentifierTerm(String identifierTerm) {
-        this.identifierTerm = identifierTerm;
-    }
-
-
-
-
-    public String getMarkerGoTermEvidenceZdbID() {
-        return markerGoTermEvidenceZdbID;
-    }
-
-    public void setMarkerGoTermEvidenceZdbID(String markerGoTermEvidenceZdbID) {
-        this.markerGoTermEvidenceZdbID = markerGoTermEvidenceZdbID;
-    }
-
-
 }
