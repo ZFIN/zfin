@@ -519,7 +519,7 @@ insert into obsolete_term_replacement (obstermrep_term_zdb_id, obstermrep_term_r
 CREATE temp TABLE tmp_consider
   (
      term_id     VARCHAR(50),
-     replaced_id VARCHAR(50),
+     replaced_id VARCHAR(300),
      termrep     VARCHAR(20)
   );
 
