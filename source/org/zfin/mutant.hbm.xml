@@ -156,20 +156,25 @@
             <column name="mgtae_pk_id" not-null="true"/>
             <generator class="identity"/>
         </id>
-        <property name="markerGoTermEvidenceZdbID" column="mgtae_mrkrgoev_zdb_id"></property>
+        <many-to-one name="markerGoTermEvidenceZdbID" class="org.zfin.mutant.MarkerGoTermEvidence"
+                     column="mgtae_mrkrgoev_zdb_id"/>
         <property name="relationshipTerm" column="mgtae_relationship_term_zdb_id"></property>
+        <property name="identifierTermText" column="mgtae_term_text"/>
         <property name="identifierTerm" column="mgtae_identifier_term_zdb_id"></property>
-        <property name="annotExtnGroupID" column="mgtae_extension_group_id"></property>
+        <property name="annotExtnDBLink" column="mgtae_dblink_zdb_id"/>
+        <many-to-one name="annotExtnGroupID" class="MarkerGoTermAnnotationExtnGroup"
+                     column="mgtae_extension_group_id"></many-to-one>
 
     </class>
 
-    <!--<class name="MarkerGoTermAnnotationExtnGroup" table="marker_go_term_annotation_extension_group">
-        <many-to-one name="mgAnnoExtnGroup" class="MarkerGoTermAnnotationExtn"
-                     column="mgtaeg_annotation_extension_group_id">
-        </many-to-one>
-        <property name="mgAnnoExtnGroupOperator" column="mgtaeg_logical_operator"/>
-
-    </class>-->
+    <class name="MarkerGoTermAnnotationExtnGroup" table="marker_go_term_annotation_extension_group">
+        <id name="id" type="long">
+            <column name="mgtaeg_annotation_extension_group_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <many-to-one name="mgtaegMarkerGoEvidence" class="org.zfin.mutant.MarkerGoTermEvidence"
+                     column="mgtaeg_mrkrgoev_zdb_id"/>
+    </class>
 
     <class name="org.zfin.mutant.GenotypeFeature" table="genotype_feature">
         <id name="zdbID" type="string">
