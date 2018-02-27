@@ -69,7 +69,7 @@ unload to new_aliases.unl
  CREATE temp TABLE tmp_suggestion
   (
      id           VARCHAR(30),
-     suggested_id VARCHAR(30),
+     suggested_id VARCHAR(300),
      consider     VARCHAR(10)
   );
 
