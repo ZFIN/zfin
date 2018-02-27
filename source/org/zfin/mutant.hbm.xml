@@ -134,6 +134,10 @@
             <key column="mgtae_mrkrgoev_zdb_id"/>
             <one-to-many class="MarkerGoTermAnnotationExtn"/>
         </set>
+        <set name="goTermAnnotationExtnGroup" lazy="false" inverse="true">
+            <key column="mgtaeg_mrkrgoev_zdb_id"/>
+            <one-to-many class="MarkerGoTermAnnotationExtnGroup"/>
+        </set>
 
     </class>
 
