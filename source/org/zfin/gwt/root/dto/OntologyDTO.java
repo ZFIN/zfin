@@ -180,6 +180,12 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
+    CELL(21, "Cell", "cl", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
     BEHAVIOR(18, "BEHAVIOR", "behavior_ontology", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
