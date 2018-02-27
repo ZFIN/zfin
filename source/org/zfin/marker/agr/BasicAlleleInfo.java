@@ -81,9 +81,10 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                       }
                       List<String> pages = new ArrayList<>();
                       pages.add("allele");
-                      CrossReferenceDTO xRef = new CrossReferenceDTO("ZFIN", feature.getZdbID(), pages);
-                      //System.out.println("here");
-                      dto.setCrossReference(xRef);
+                      List<CrossReferenceDTO> xRefs = new ArrayList<>() ;
+                      CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", feature.getZdbID(), pages);
+                      xRefs.add(xref);
+                      dto.setCrossReferences(xRefs);
 
                       return dto;
                     })

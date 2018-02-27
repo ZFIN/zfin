@@ -108,14 +108,11 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getSingleAffectedGeneAlleles() {
-        String hql = "select distinct fmrel.feature from  FeatureMarkerRelationship fmrel " +
-                " where fmrel.type in (:relation) and fmrel.feature.type not in (:featureTypes) ";
+        String hql = "select distinct fmrel.feature from  FeatureMarkerRelationship fmrel" +
+                " where fmrel.type in (:relation) and not exists (select 'x' from FeatureMarkerRelationship fmrels where fmrels.zdbID != fmrel.zdbID and fmrel.feature = fmrels.feature)" ;
 
         Query query = currentSession().createQuery(hql);
         query.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
-        List<String> types = Arrays.asList(FeatureTypeEnum.DEFICIENCY.toString(),
-                FeatureTypeEnum.INVERSION.toString(), FeatureTypeEnum.TRANSLOC.toString(), FeatureTypeEnum.TRANSGENIC_INSERTION.toString());
-        query.setParameterList("featureTypes", types);
 
         return (List<Feature>) query.list();
     }

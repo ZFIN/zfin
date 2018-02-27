@@ -3,22 +3,25 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
-import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AlleleDTO extends ZfinDTO {
 
   private String symbol;
   private String gene;
-  private CrossReferenceDTO crossReference;
+  private List<CrossReferenceDTO> crossReferences;
 
-  public CrossReferenceDTO getCrossReference() {
-    return crossReference;
+  public List<CrossReferenceDTO> getCrossReferences() {
+    return crossReferences;
   }
 
-  public void setCrossReference(CrossReferenceDTO crossReference) {
-    this.crossReference = crossReference;
+  public void setCrossReferences(List<CrossReferenceDTO> crossReferences) {
+    this.crossReferences = crossReferences;
   }
+
+
+
+
 
   public String getGene() {
     return gene;

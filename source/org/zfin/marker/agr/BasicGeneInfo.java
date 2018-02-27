@@ -67,7 +67,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             dto.setName(gene.name);
                             dto.setSymbol(gene.getAbbreviation());
                             dto.setPrimaryId(gene.getZdbID());
-                            dto.setGeneLiteratureUrl("http://zfin.org/action/marker/citation-list/"+gene.getZdbID());
+                            //dto.setGeneLiteratureUrl("http://zfin.org/action/marker/citation-list/"+gene.getZdbID());
                             dto.setSoTermId(gene.getSoTerm().getOboID());
                             if (CollectionUtils.isNotEmpty(gene.getAliases())) {
                                 List<String> aliasList = new ArrayList<>(gene.getAliases().size());
@@ -102,6 +102,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     wtXpatPages.add("gene");
                                     wtXpatPages.add("gene/expression");
                                     wtXpatPages.add("gene/wild_type_expression");
+                                    wtXpatPages.add("gene/reference");
                                     CrossReferenceDTO wildTypeExpressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(),wtXpatPages );
                                     dbLinkList.add(wildTypeExpressionCrossReference);
                                 }
@@ -109,6 +110,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     List<String> xpatPages = new ArrayList<>();
                                     xpatPages.add("gene");
                                     xpatPages.add("gene/expression");
+                                    xpatPages.add("gene/reference");
                                     CrossReferenceDTO expressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), xpatPages);
                                     dbLinkList.add(expressionCrossReference);
                                 }
@@ -116,9 +118,11 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             else {
                                 List<String> modPages = new ArrayList<>();
                                 modPages.add("gene");
+                                modPages.add("gene/reference");
                                 CrossReferenceDTO modRefDto = new CrossReferenceDTO("ZFIN", gene.getZdbID(), modPages);
                                 dbLinkList.add(modRefDto);
                             }
+
                             dto.setCrossReferences(dbLinkList);
                             // get genomic data
                             List<MarkerGenomeLocation> locations = getLinkageRepository().getGenomeLocation(gene);
