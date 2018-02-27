@@ -11,6 +11,7 @@
     <include file="source/org/zfin/db/load/1095/VulcanSalute/fixLogicalColumnGo.sql"/>
     <include file="source/org/zfin/db/load/1095/VulcanSalute/cell-ontology.sql"/>
     <include file="source/org/zfin/db/load/1095/VulcanSalute/zfin-ro-ontology.sql"/>
+    <include file="source/org/zfin/db/load/1095/VulcanSalute/uberon-ontology.sql"/>
 <include file="source/org/zfin/db/load/1095/VulcanSalute/columnToText.sql"/>
 </databaseChangeLog>
 

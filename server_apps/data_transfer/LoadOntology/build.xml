@@ -14,6 +14,7 @@
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
     <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
+    <property name="uberonSourceURL" value="http://ontologies.berkeleybop.org/uberon/basic.obo"/>
     <property name="cellOboURL" value="http://purl.obolibrary.org/obo/cl.obo"/>
     <property name="cellOboFile" value="file:///home/informix/Curation/cell.obo"/>
     <property name="soOboURL"
@@ -103,6 +104,10 @@
         <load-ontology oboDirectory="${run-directory}" oboFileName="zfin-ro.obo"/>
     </target>
 
+    <target name="load-uberon-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="uberon-ontology.obo"/>
+    </target>
+
     <target name="load-zeco-ontology">
         <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" scripts="${scriptFilesNoAnnotation}"/>
     </target>
@@ -188,6 +193,12 @@
     <target name="download-zro-ontology">
         <property name="localOboFile" value="zfin-ro.obo"/>
         <property name="oboFileURL" value="${zroSourceURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-uberon-ontology">
+        <property name="localOboFile" value="uberon-ontology.obo"/>
+        <property name="oboFileURL" value="${uberonSourceURL}"/>
         <antcall target="download-ontology"/>
     </target>
 
