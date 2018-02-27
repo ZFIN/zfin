@@ -156,7 +156,7 @@
             <column name="mgtae_pk_id" not-null="true"/>
             <generator class="identity"/>
         </id>
-        <property name="markerGoTermEvidenceZdbID" column="markerGoTermEvidenceZdbID"></property>
+        <property name="markerGoTermEvidenceZdbID" column="mgtae_mrkrgoev_zdb_id"></property>
         <property name="relationshipTerm" column="mgtae_relationship_term_zdb_id"></property>
         <property name="identifierTerm" column="mgtae_identifier_term_zdb_id"></property>
         <property name="annotExtnGroupID" column="mgtae_extension_group_id"></property>
