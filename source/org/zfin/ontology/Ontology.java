@@ -52,6 +52,7 @@ public enum Ontology implements Serializable {
     ZECO("zebrafish_experimental_conditions_ontology", "Zebrafish Environment Condition Ontology", false, "ZECO:"),
     ZECO_TAXONONY("zeco_taxonomy", "Taxonomy for ZECO", false, "NCBITaxon:"),
     CELL("cl", "Cell Ontology", false, "CL:"),
+    ZFIN_RO("zfin-ro", "ZFIN Relation Ontology", false, "RO:"),
     GO_QUALIFIER("go_qualifier", "GO Qualifier for GO Annotations", false, "RO:");
 
     private String ontologyName;
