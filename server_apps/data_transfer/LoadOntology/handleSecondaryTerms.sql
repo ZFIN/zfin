@@ -3,7 +3,7 @@
 create temp table sec_dups
   (
     prim_id varchar(50),
-    sec_id varchar(500)
+    sec_id varchar(250)
   );
 
 load from term_secondary.unl
@@ -12,7 +12,7 @@ load from term_secondary.unl
 create temp table sec_oks
   (
     prim_id varchar(50),
-    sec_id varchar(500),
+    sec_id varchar(250),
     prim_zdb_id varchar(50),
     sec_zdb_id varchar(50)
   );
@@ -39,7 +39,7 @@ unload to 'debug'
 create temp table sec_unload
   (
     prim_id varchar(50),
-    sec_id varchar(500)
+    sec_id varchar(250)
   );
 
 --update the secondary terms in ZFIN
