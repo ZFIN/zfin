@@ -12,7 +12,7 @@ load from term_secondary.unl
 create temp table sec_oks
   (
     prim_id varchar(50),
-    sec_id varchar(50),
+    sec_id varchar(500),
     prim_zdb_id varchar(50),
     sec_zdb_id varchar(50)
   );
