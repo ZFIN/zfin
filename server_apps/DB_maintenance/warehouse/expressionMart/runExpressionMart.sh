@@ -25,6 +25,9 @@ set expressionMartScripts=( begin.sql \
 	     insertESAGeneGenox2.sql \
 	     commit.sql \
 	     begin.sql \
+	     insertDistinctGeneGenox2.sql \
+	     commit.sql \
+	     begin.sql \
 	     insertDistinctGeneGenox.sql \
 	     commit.sql \
 	     begin.sql \
@@ -32,6 +35,9 @@ set expressionMartScripts=( begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     truncateFinalTable.sql \
+	     commit.sql \
+	     begin.sql \
+	     finalInsert.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateTables.sql \
