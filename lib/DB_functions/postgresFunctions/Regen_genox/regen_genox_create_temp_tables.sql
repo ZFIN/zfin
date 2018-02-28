@@ -49,7 +49,14 @@ create or replace function regen_genox_create_temp_tables()
 	rggt_genox_zdb_id        text not null
       ) ;
 
-  
+ 
+  drop table if exists regen_genox_construct_temp;
+
+   create temp table regen_genox_construct_temp
+      (
+	rgct_construct_zdb_id         text not null,
+	rgct_genox_zdb_id        text not null
+      );
 
   delete from regen_genox_input_zdb_id_temp;
   delete from regen_genox_temp;
