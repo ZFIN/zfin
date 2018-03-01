@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/merge
 
 SUBDIRS = 
 
-GENERICS = generateSQLsForMergingRecords.pl generatePostMergeSQLs.pl merge_markers_cmdline_PG.pl
+GENERICS = generateSQLsForMergingRecords.pl generatePostMergeSQLs.pl merge_markers_cmdline_PG.pl getAllRelatedData_PG.pl
 
 STATICS = README
 
