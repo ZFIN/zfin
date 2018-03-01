@@ -15,7 +15,7 @@ use DBI;
 #   $    Error message
 sub sendErrorReport ($) {
     open (SENDMAIL, "| /usr/lib/sendmail -t -oi") || die "Cannot open mailprog!";
-    print SENDMAIL 'To: <!--|GO_EMAIL_ERR|-->\n';
+    print SENDMAIL "To: <!--|GO_EMAIL_ERR|-->\n";
     print SENDMAIL "Subject: Auto from $dbname GO file generation error\n";
 
     print SENDMAIL "$_[0]\n";
