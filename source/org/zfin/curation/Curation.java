@@ -118,6 +118,7 @@ public class Curation {
         GO("GO"),
         LINKED_AUTHORS("Linked Authors"),
         MAPPING("Mapping"),
+        MUTANT_SEQUENCE_WITHOUT_ACCESSION("Mutant sequence without accession"),
         NOMENCLATURE("Nomenclature"),
         ORTHOLOGY("Orthology"),
         PHENOTYPE("Phenotype"),
