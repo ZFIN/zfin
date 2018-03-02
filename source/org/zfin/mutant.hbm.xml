@@ -130,10 +130,7 @@
             <key column="infgrmem_mrkrgoev_zdb_id"/>
             <one-to-many class="InferenceGroupMember"/>
         </set>
-        <set name="goTermAnnotationExtn" lazy="false" inverse="true">
-            <key column="mgtae_mrkrgoev_zdb_id"/>
-            <one-to-many class="MarkerGoTermAnnotationExtn"/>
-        </set>
+
         <set name="goTermAnnotationExtnGroup" lazy="false" inverse="true">
             <key column="mgtaeg_mrkrgoev_zdb_id"/>
             <one-to-many class="MarkerGoTermAnnotationExtnGroup"/>
@@ -160,8 +157,7 @@
             <column name="mgtae_pk_id" not-null="true"/>
             <generator class="identity"/>
         </id>
-        <many-to-one name="markerGoTermEvidenceZdbID" class="org.zfin.mutant.MarkerGoTermEvidence"
-                     column="mgtae_mrkrgoev_zdb_id"/>
+
         <property name="relationshipTerm" column="mgtae_relationship_term_zdb_id"></property>
         <property name="identifierTermText" column="mgtae_term_text"/>
         <property name="identifierTerm" column="mgtae_identifier_term_zdb_id"></property>
@@ -178,6 +174,11 @@
         </id>
         <many-to-one name="mgtaegMarkerGoEvidence" class="org.zfin.mutant.MarkerGoTermEvidence"
                      column="mgtaeg_mrkrgoev_zdb_id"/>
+        <set name="mgtAnnoExtns" lazy="true" inverse="true">
+            <key column="mgtae_pk_id"/>
+            <one-to-many class="org.zfin.mutant.MarkerGoTermAnnotationExtn"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.mutant.GenotypeFeature" table="genotype_feature">
