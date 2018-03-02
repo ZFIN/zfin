@@ -6,6 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/load/1095/VulcanSalute/addLogicColumnGO.sql"/>
+<include file="source/org/zfin/db/load/1095/VulcanSalute/dropESATable.sql"/>
     <include file="source/org/zfin/db/load/1095/VulcanSalute/createESATable.sql"/>
     <include file="source/org/zfin/db/load/1095/VulcanSalute/addNoctuaID.sql"/>
     <include file="source/org/zfin/db/load/1095/VulcanSalute/fixLogicalColumnGo.sql"/>
@@ -14,7 +15,7 @@
     <include file="source/org/zfin/db/load/1095/VulcanSalute/uberon-ontology.sql"/>
 <include file="source/org/zfin/db/load/1095/VulcanSalute/columnToText.sql"/>
 <include file="source/org/zfin/db/load/1095/VulcanSalute/removeMrkrGoevColumn.sql"/>
-<include file="source/org/zfin/db/load/1095/VulcanSalute/dropESATable.sql"/>
+
 </databaseChangeLog>
 
    
