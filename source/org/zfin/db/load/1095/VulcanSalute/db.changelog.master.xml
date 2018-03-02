@@ -14,6 +14,7 @@
     <include file="source/org/zfin/db/load/1095/VulcanSalute/uberon-ontology.sql"/>
 <include file="source/org/zfin/db/load/1095/VulcanSalute/columnToText.sql"/>
 <include file="source/org/zfin/db/load/1095/VulcanSalute/removeMrkrGoevColumn.sql"/>
+<include file="source/org/zfin/db/load/1095/VulcanSalute/dropESATable.sql"/>
 </databaseChangeLog>
 
    
