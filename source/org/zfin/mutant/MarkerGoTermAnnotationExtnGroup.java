@@ -7,7 +7,9 @@ import java.util.Set;
  */
 public class MarkerGoTermAnnotationExtnGroup implements Serializable {
 private  Long id;
-    private Set<MarkerGoTermEvidence> mgtaegMarkerGoEvidence;
+    private MarkerGoTermEvidence mgtaegMarkerGoEvidence;
+
+    private Set<MarkerGoTermAnnotationExtn> mgtAnnoExtns;
 
     public Long getId() {
         return id;
@@ -17,11 +19,19 @@ private  Long id;
         this.id = id;
     }
 
-    public Set<MarkerGoTermEvidence> getMgtaegMarkerGoEvidence() {
+    public MarkerGoTermEvidence getMgtaegMarkerGoEvidence() {
         return mgtaegMarkerGoEvidence;
     }
 
-    public void setMgtaegMarkerGoEvidence(Set<MarkerGoTermEvidence> mgtaegMarkerGoEvidence) {
+    public void setMgtaegMarkerGoEvidence(MarkerGoTermEvidence mgtaegMarkerGoEvidence) {
         this.mgtaegMarkerGoEvidence = mgtaegMarkerGoEvidence;
+    }
+
+    public Set<MarkerGoTermAnnotationExtn> getMgtAnnoExtns() {
+        return mgtAnnoExtns;
+    }
+
+    public void setMgtAnnoExtns(Set<MarkerGoTermAnnotationExtn> mgtAnnoExtns) {
+        this.mgtAnnoExtns = mgtAnnoExtns;
     }
 }

@@ -27,7 +27,6 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     private GenericTerm goTerm;
     private String note;
     private Set<InferenceGroupMember> inferredFrom;
-    private Set<MarkerGoTermAnnotationExtn> goTermAnnotationExtn;
     private Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotationExtnGroup;
 
     // editing data
@@ -185,13 +184,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     public void setInferredFrom(Set<InferenceGroupMember> inferredFrom) {
         this.inferredFrom = inferredFrom;
     }
-    public Set<MarkerGoTermAnnotationExtn> getGoTermAnnotationExtn() {
-        return goTermAnnotationExtn;
-    }
 
-    public void setGoTermAnnotationExtn(Set<MarkerGoTermAnnotationExtn> goTermAnnotationExtn) {
-        this.goTermAnnotationExtn = goTermAnnotationExtn;
-    }
 
     public Set<MarkerGoTermAnnotationExtnGroup> getGoTermAnnotationExtnGroup() {
         return goTermAnnotationExtnGroup;

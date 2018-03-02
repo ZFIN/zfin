@@ -7,27 +7,14 @@ import java.util.Set;
  */
 public class MarkerGoTermAnnotationExtn implements Serializable {
     private Long id;
-    private Set<MarkerGoTermEvidence> markerGoTermEvidenceZdbID;
     private String relationshipTerm;
-    private Set<MarkerGoTermAnnotationExtnGroup> annotExtnGroupID;
+    private MarkerGoTermAnnotationExtnGroup annotExtnGroupID;
     private String identifierTermText;
     private String annotExtnDBLink;
 
-    public Set<MarkerGoTermEvidence> getMarkerGoTermEvidenceZdbID() {
-        return markerGoTermEvidenceZdbID;
-    }
 
-    public void setMarkerGoTermEvidenceZdbID(Set<MarkerGoTermEvidence> markerGoTermEvidenceZdbID) {
-        this.markerGoTermEvidenceZdbID = markerGoTermEvidenceZdbID;
-    }
 
-    public Set<MarkerGoTermAnnotationExtnGroup> getAnnotExtnGroupID() {
-        return annotExtnGroupID;
-    }
 
-    public void setAnnotExtnGroupID(Set<MarkerGoTermAnnotationExtnGroup> annotExtnGroupID) {
-        this.annotExtnGroupID = annotExtnGroupID;
-    }
 
     public Long getId() {
         return id;
@@ -70,5 +57,13 @@ public class MarkerGoTermAnnotationExtn implements Serializable {
 
     public void setAnnotExtnDBLink(String annotExtnDBLink) {
         this.annotExtnDBLink = annotExtnDBLink;
+    }
+
+    public MarkerGoTermAnnotationExtnGroup getAnnotExtnGroupID() {
+        return annotExtnGroupID;
+    }
+
+    public void setAnnotExtnGroupID(MarkerGoTermAnnotationExtnGroup annotExtnGroupID) {
+        this.annotExtnGroupID = annotExtnGroupID;
     }
 }
