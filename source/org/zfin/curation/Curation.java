@@ -116,18 +116,18 @@ public class Curation {
         GENES("Genes"),
         GENOTYPE("Genotype"),
         GO("GO"),
+        HUMAN_SEQUENCE_VARIANT("Human Sequence Variant"),
         LINKED_AUTHORS("Linked Authors"),
         MAPPING("Mapping"),
-        MUTANT_SEQUENCE_WITHOUT_ACCESSION("Mutant sequence without accession"),
         NOMENCLATURE("Nomenclature"),
         ORTHOLOGY("Orthology"),
         PHENOTYPE("Phenotype"),
         REGIONS("Regions"),
         SEQUENCE("Sequence"),
-        SEQUENCE_VARIANT("Sequence Variant"),
         TOXICOLOGY("Toxicology"),
         TRANSCRIPTS("Transcripts"),
-        TRANSGENIC_CONSTRUCT("Transgenic Construct");
+        TRANSGENIC_CONSTRUCT("Transgenic Construct"),
+        ZEBRAFISH_SEQUENCE_VARIANT("Zebrafish Sequence Variant");
 
         private String display;
 
