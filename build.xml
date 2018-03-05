@@ -606,7 +606,7 @@
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,instrument,restart,deploy-solr"/>
+            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,instrument,restart,deploy-solr,npmInstall,versionAssets"/>
 
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
@@ -851,6 +851,19 @@
         </exec>
         <jar destfile="lib/Java/zfin-soap-client.jar" basedir="." includes="org/**"></jar>
         <delete dir="org"/>
+    </target>
+
+    <target name="npmInstall">
+        <exec dir="${TARGETROOT}" executable="npm">
+            <arg value="install" />
+        </exec>
+    </target>
+
+    <target name="versionAssets">
+        <exec dir="${TARGETROOT}" executable="npm">
+            <arg value="run" />
+            <arg value="build" />
+        </exec>
     </target>
 
 </project>
