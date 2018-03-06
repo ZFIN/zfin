@@ -154,10 +154,10 @@ sub goPub()
 sub goMod()
   {
     $mod_by =$_[0];
+    $mod_by =~ s/UniProtKB/UniProt/;
 #    $source = 'ZFIN' if ($mod_by ne 'S-P Curators');
-#    $source = 'UniProtKB' if ($mod_by eq 'S-P Curators');
+#    $source = 'UniProt' if ($mod_by eq 'S-P Curators');
     $source = $mod_by ;
-    $source =~ s/UniProtKB/UniProt/
     return $source;
   }
 sub goInf()
