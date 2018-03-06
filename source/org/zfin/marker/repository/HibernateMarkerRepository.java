@@ -886,6 +886,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public void runMarkerNameFastSearchUpdate(final Marker marker) {
         if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
             InformixUtil.runInformixProcedure("regen_names_marker", marker.getZdbID());
+        }
+
     }
 
     public void createMarker(Marker marker, Publication pub, boolean insertUpdate) {
