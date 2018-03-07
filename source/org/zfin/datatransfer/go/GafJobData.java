@@ -17,6 +17,10 @@ public class GafJobData {
     private List<GafEntry> cellEntries = new ArrayList<>();
     private List<GafEntry> subsetFailureEntries = new ArrayList<>();
     private List<GafValidationError> errors = new ArrayList<>();
+    private List<GafValidationError> col16Errors = new ArrayList<>();
+    private List<GafEntry> col8WithBoth = new ArrayList<>();
+    private List<GafEntry> col8WithCommas = new ArrayList<>();
+    private List<GafEntry> col8WithPipes = new ArrayList<>();
     private int gafEntryCount = 0;
     private long startTime;
     private long stopTime;
@@ -41,6 +45,16 @@ public class GafJobData {
     public void addCellEntry(GafEntry entry) {
         cellEntries.add(entry);
     }
+    public void addCol8Pipes(GafEntry entry) {
+        col8WithPipes.add(entry);
+    }
+    public void addCol8Commas(GafEntry entry) {
+        col8WithCommas.add(entry);
+    }
+    public void addCol8Both(GafEntry entry) {
+        col8WithBoth.add(entry);
+    }
+
 
     public void addSubsetFailureEntry(GafEntry entry) {
         subsetFailureEntries.add(entry);
@@ -77,6 +91,7 @@ public class GafJobData {
                 new String[] {
                         "Gaf Entries",
                         "processed: " + gafEntryCount + " gaf entries ",
+
                         "added: " + newEntries.size(),
                         "updated: " + updateEntries.size(),
                         "removed: " + removedEntries.size(),
@@ -84,6 +99,9 @@ public class GafJobData {
                         "existing: " + existingEntries.size(),
                         "cell Terms: " + cellEntries.size(),
                         "subset Failures: " + subsetFailureEntries.size(),
+                        "col 8 Pipes: " + col8WithPipes.size(),
+                        "col 8 Commas: " + col8WithCommas.size(),
+                        "col 8 Both: " + col8WithBoth.size(),
                         "time: " + (stopTime - startTime) / (1000f) + " seconds"},
                 FileUtil.LINE_SEPARATOR);
     }

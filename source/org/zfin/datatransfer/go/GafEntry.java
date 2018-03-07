@@ -16,6 +16,7 @@ public class GafEntry {
     private String taxonId; //13
     private String createdDate; //14
     private String createdBy; //15
+    private String annotExtn; //16
 
     public String getEntryId() {
         return entryId;
@@ -89,6 +90,14 @@ public class GafEntry {
         this.createdBy = createdBy;
     }
 
+    public String getAnnotExtn() {
+        return annotExtn;
+    }
+
+    public void setAnnotExtn(String annotExtn) {
+        this.annotExtn = annotExtn;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -102,6 +111,7 @@ public class GafEntry {
         sb.append(", taxonID='").append(taxonId).append('\'');
         sb.append(", createdDate='").append(createdDate).append('\'');
         sb.append(", createdBy='").append(createdBy).append('\'');
+        sb.append(", annotExtn='").append(annotExtn).append('\'');
         sb.append('}').append("\n");
         return sb.toString();
     }
@@ -110,4 +120,14 @@ public class GafEntry {
     public boolean isCell () {
         return goTermId.equalsIgnoreCase("GO:0005623");
     }
+    public boolean isCol8Pipes(){
+        return inferences.contains("|");
+    }
+    public boolean isCol8Commas(){
+        return inferences.contains(",");
+    }
+    public boolean isCol8Both(){
+        return (inferences.contains("|")&&(inferences.contains(",")));
+    }
+
 }

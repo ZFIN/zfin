@@ -77,7 +77,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     public int execute() {
         int exitCode = 0;
-
+setLoggerFile();
         clearReportDirectory();
 
         GafOrganization.OrganizationEnum organizationEnum = GafOrganization.OrganizationEnum.getType(organization);

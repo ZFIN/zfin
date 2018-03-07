@@ -95,7 +95,7 @@ public class FpInferenceGafParser {
 
     protected GafEntry parseGafEntry(String line) {
         GafEntry gafEntry = new GafEntry();
-        String[] entries = line.split("\t");
+        String[] entries = line.split("\\t",-1);
         gafEntry.setEntryId(entries[1]); // uniprot ID for GOA, ZDB-GENE for ZFIN
         gafEntry.setQualifier(entries[3]);
         gafEntry.setGoTermId(entries[4]);
@@ -115,8 +115,11 @@ public class FpInferenceGafParser {
         gafEntry.setCreatedBy(entries[14]
                         .replaceAll("Ensembl:", "ENSEMBL:")
                         .replaceAll("\\bUniProt:\\b", "UniProt:")
-        );
 
+        );
+        if (entries.length > 14) {
+            gafEntry.setAnnotExtn(entries[15]);
+        }
         return gafEntry;
     }
 
