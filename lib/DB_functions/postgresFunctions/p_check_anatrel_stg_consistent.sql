@@ -121,7 +121,7 @@ begin
 
   if (relDageditId = 'is_a' OR relDageditId = 'part_of') then	
     if (childStartHour < parentStartHour OR childEndHour > parentEndHour) then
-	  raise exception 'hours do not match stage errors';
+	  raise exception 'hours do not match stage errors: parent ID: % child ID: %  relation type: % parent start hour: % child start hour % parent end hour % child end hour %', parentOboID, childOboID, relDageditId, parentStartHour, childStartHour, parentEndHour, childEndHour ;
     end if ;
   end if ;
 
