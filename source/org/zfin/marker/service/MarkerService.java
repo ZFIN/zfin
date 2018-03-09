@@ -1003,7 +1003,7 @@ public class MarkerService {
 
             String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
             logger.debug("trying to find a replaced zdbID for: " + zdbID);
-            if (replacedZdbID != null && markerRepository.markerExistsForZdbID(replacedZdbID)) {
+            if (replacedZdbID != null) {
                 logger.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
                 return replacedZdbID;
             }

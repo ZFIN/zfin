@@ -75,6 +75,11 @@ public class GeneViewController {
 
         zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
+
+        if (!zdbID.startsWith("ZDB-GENE-")) { 
+          return "redirect:/" + zdbID;
+        }
+
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
         logger.info("gene: " + gene);
         geneBean.setMarker(gene);
