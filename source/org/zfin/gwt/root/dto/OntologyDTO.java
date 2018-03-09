@@ -197,6 +197,12 @@ public enum OntologyDTO implements IsSerializable {
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
+    },
+    UBERON(23, "UBERON", "uberon", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
     };
 
     private int index;
