@@ -121,7 +121,7 @@ begin
 
   if (relDageditId = 'is_a' OR relDageditId = 'part_of') then	
     if (childStartHour < parentStartHour OR childEndHour > parentEndHour) then
-	  raise exception 'hours do nott match stage errors';
+	  raise exception 'hours do not match stage errors';
     end if ;
   end if ;
 
