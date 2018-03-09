@@ -191,6 +191,12 @@ public enum OntologyDTO implements IsSerializable {
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
+    },
+    ZFIN_RO(22, "ZFIN RO", "zfin-ro", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
     };
 
     private int index;
