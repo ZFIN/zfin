@@ -39,21 +39,21 @@
 
 
 create or replace function  p_check_anatrel_stg_consistent (
-		parentAnatZdbId    text default NULL,
-	   	childAnatZdbId	   text default NULL,
-		relDageditId	   text default NULL,	
-		parentStartHour	   text default NULL,
-		parentEndHour	   text default NULL,
-		childStartHour	   text default NULL,
-		childEndHour	   text default NULL,
-		childOboID	   text default NULL,
-		parentOboID	   text default NULL
-	
+		parentAnatZdbId    text,
+	   	childAnatZdbId	   text,
+		relDageditId	   text,	
+		parentStartHour	   numeric(7,2) default NULL,
+		parentEndHour	   numeric(7,2) default NULL,
+		childStartHour	   numeric(7,2) default NULL,
+		childEndHour	   numeric(7,2) default NULL
 	)
 returns void as $$
 
       declare childStartStgName	stage.stg_name%TYPE :='';
        childEndStgName    stage.stg_name%TYPE := '';
+      declare childOboID text;
+      declare parentOboID    text;
+
 begin
   -- in case of default value for stage hour, query db for the 
   -- current value.
