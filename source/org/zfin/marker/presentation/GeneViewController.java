@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.expression.FigureService;
 import org.zfin.expression.presentation.ExpressionSearchController;
-import org.zfin.expression.presentation.ExpressionSearchCriteria;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
@@ -34,13 +34,11 @@ import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.sequence.service.TranscriptService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -178,19 +176,17 @@ public class GeneViewController {
     }
 
     @RequestMapping(value = { "/{geneID}/expression", "/gene/view/{geneID}/expression" })
-    public String getExpression(Model model, @PathVariable String geneID, HttpServletRequest request) {
+    public String getExpression(Model model, @PathVariable String geneID) {
         Marker marker = getMarkerRepository().getMarkerByID(geneID);
         if (marker == null) {
             model.addAttribute(LookupStrings.ZDB_ID, geneID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        ExpressionSearchCriteria criteria = new ExpressionSearchCriteria();
-        criteria.setGeneField(marker.getAbbreviation());
-        criteria.setGeneZdbID(marker.getZdbID());
-        criteria.setPage(1);
-        criteria.setRows(ExpressionSearchController.DEFAULT_PAGE_SIZE);
-        return expressionSearchController.results(model, criteria, request);
+        String searchLink = new ExpressionSearchService.LinkBuilder()
+                .gene(marker)
+                .build();
+        return "forward:" + searchLink;
     }
 
     @RequestMapping(value = "/{geneID}/download/orthology")

@@ -23,7 +23,7 @@
                         <zfin:link entity="${result.singleFigure}" />
                     </c:when>
                     <c:otherwise>
-                        <a href="${criteria.getUrl(result.gene)}">
+                        <a href="${result.figureResultUrl}">
                                 ${result.figureCount} Figures
                         </a>
                     </c:otherwise>

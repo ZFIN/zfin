@@ -2,7 +2,6 @@ package org.zfin.expression.presentation;
 
 
 import org.zfin.marker.Marker;
-import org.zfin.util.URLCreator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,28 +38,6 @@ public class ExpressionSearchCriteria {
     private Integer page;
 
     private String linkWithImagesOnly;
-
-    public String getUrl(Marker gene) {
-
-        URLCreator urlCreator = new URLCreator("/action/expression/results");
-        urlCreator.addNameValuePair("geneZdbID", gene.getZdbID());
-        urlCreator.addNameValuePair("geneField", gene.getAbbreviation());
-        urlCreator.addNameValuePair("anatomyTermNames", getAnatomyTermNames());
-        urlCreator.addNameValuePair("anatomyTermIDs", getAnatomyTermIDs());
-        urlCreator.addNameValuePair("startStageId", getStartStageId());
-        urlCreator.addNameValuePair("endStageId", getEndStageId());
-        urlCreator.addNameValuePair("targetGeneField", getTargetGeneField());
-        urlCreator.addNameValuePair("assayName", getAssayName());
-        urlCreator.addNameValuePair("fish", getFish());
-        urlCreator.addNameValuePair("authorField", getAuthorField());
-        urlCreator.addNameValuePair("journalType", getJournalType() == null ? "" : getJournalType().toString());
-        if (onlyFiguresWithImages) { urlCreator.addNameValuePair("onlyFiguresWithImages", "true"); }
-        if (onlyWildtype) { urlCreator.addNameValuePair("onlyWildtype", "true"); }
-        if (onlyReporter) { urlCreator.addNameValuePair("onlyReporter", "true"); }
-        urlCreator.addNameValuePair("includeSubstructures", Boolean.toString(includeSubstructures));
-
-        return urlCreator.getURL();
-    }
 
     public List<String> getAnatomy() {
         if (anatomyTermNames == null || anatomyTermNames.equals("")) { return null; }

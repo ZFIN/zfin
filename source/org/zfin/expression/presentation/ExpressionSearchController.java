@@ -70,9 +70,6 @@ public class ExpressionSearchController {
 
     @RequestMapping("/results")
     public String results(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria, HttpServletRequest request) {
-        List<ImageResult> images = expressionSearchService.getImageResults(criteria);
-        criteria.setImageResults(images);
-
         if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
             criteria.setGene(markerRepository.getMarkerByID(criteria.getGeneZdbID()));
             populateFigureResults(criteria);
@@ -88,6 +85,9 @@ public class ExpressionSearchController {
                 populateFigureResults(criteria);
             }
         }
+
+        List<ImageResult> images = expressionSearchService.getImageResults(criteria);
+        criteria.setImageResults(images);
 
         if (criteria.getNumFound() > 0) {
             model.addAttribute("paginationBean", generatePaginationBean(criteria, request.getQueryString()));

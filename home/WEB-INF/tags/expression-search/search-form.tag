@@ -31,6 +31,7 @@
 
 <form:form action="/action/expression/results" id="expression-search-form" method="get" modelAttribute="criteria">
     <form:hidden path="rows" />
+    <form:hidden path="geneZdbID" />
     <table width="100%">
         <tr valign="top">
             <td width="50%">

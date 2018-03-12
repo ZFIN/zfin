@@ -96,7 +96,10 @@ public class ExpressionSearchService {
         }
 
         if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
-            solrQuery.addFilterQuery(fq(FieldName.GENE_ZDB_ID, criteria.getGeneZdbID()));
+            solrQuery.addFilterQuery(any(
+                    fq(FieldName.GENE_ZDB_ID, criteria.getGeneZdbID()),
+                    fq(FieldName.PROBE, criteria.getGene().getAbbreviation())
+            ));
         }
 
         String targetGene = criteria.getTargetGeneField();
@@ -334,6 +337,7 @@ public class ExpressionSearchService {
             return geneResult;
         }
 
+        geneResult.setFigureResultUrl(getFigureUrlForMarker(criteria, gene));
         populateFigureInfo(geneResult, criteria);
         populateStageRange(geneResult, criteria, AND, fq(FieldName.GENE_ZDB_ID, gene.getZdbID()));
         injectHighlighting(geneResult, response);
@@ -481,12 +485,39 @@ public class ExpressionSearchService {
         return String.join(" " + OR + " ", fqs);
     }
 
+    private String getFigureUrlForMarker(ExpressionSearchCriteria criteria, Marker marker) {
+        return new LinkBuilder()
+                .gene(marker)
+                .anatomyTerms(criteria.getAnatomyTermNames(), criteria.getAnatomyTermIDs())
+                .startStage(criteria.getStartStageId())
+                .endStage(criteria.getEndStageId())
+                .targetGene(criteria.getTargetGeneField())
+                .assay(criteria.getAssayName())
+                .fish(criteria.getFish())
+                .author(criteria.getAuthorField())
+                .journalType(criteria.getJournalType())
+                .onlyFiguresWithImages(criteria.isOnlyFiguresWithImages())
+                .wildtypeOnly(criteria.isOnlyWildtype())
+                .onlyReporter(criteria.isOnlyReporter())
+                .includeSubstructures(criteria.isIncludeSubstructures())
+                .build();
+    }
+
     public static class LinkBuilder {
         private Marker gene;
-        private Term anatomyTerm;
+        private String anatomyTermNames;
+        private String anatomyTermIds;
+        private String startStageId;
+        private String endStageId;
+        private String targetGeneId;
+        private String assay;
+        private String fish;
         private boolean includeSubstructures = true;
         private boolean wildtypeOnly = false;
         private String author;
+        private ExpressionSearchCriteria.JournalTypeOption journalType = ExpressionSearchCriteria.JournalTypeOption.ALL;
+        private boolean onlyFiguresWithImages;
+        private boolean onlyReporter;
 
         public LinkBuilder gene(Marker gene) {
             this.gene = gene;
@@ -494,7 +525,54 @@ public class ExpressionSearchService {
         }
 
         public LinkBuilder anatomyTerm(Term anatomyTerm) {
-            this.anatomyTerm = anatomyTerm;
+            this.anatomyTermNames = anatomyTerm.getTermName();
+            this.anatomyTermIds = anatomyTerm.getZdbID();
+            return this;
+        }
+
+        public LinkBuilder anatomyTerms(String anatomyTermNames, String anatomyTermIds) {
+            this.anatomyTermNames = anatomyTermNames;
+            this.anatomyTermIds = anatomyTermIds;
+            return this;
+        }
+
+        public LinkBuilder startStage(String startStageId) {
+            this.startStageId = startStageId;
+            return this;
+        }
+
+        public LinkBuilder endStage(String endStageId) {
+            this.endStageId = endStageId;
+            return this;
+        }
+
+        public LinkBuilder targetGene(String targetGeneId) {
+            this.targetGeneId = targetGeneId;
+            return this;
+        }
+
+        public LinkBuilder assay(String assay) {
+            this.assay = assay;
+            return this;
+        }
+
+        public LinkBuilder fish(String fish) {
+            this.fish = fish;
+            return this;
+        }
+
+        public LinkBuilder journalType(ExpressionSearchCriteria.JournalTypeOption journalType) {
+            this.journalType = journalType;
+            return this;
+        }
+
+        public LinkBuilder onlyFiguresWithImages(boolean onlyFiguresWithImages) {
+            this.onlyFiguresWithImages = onlyFiguresWithImages;
+            return this;
+        }
+
+        public LinkBuilder onlyReporter(boolean onlyReporter) {
+            this.onlyReporter = onlyReporter;
             return this;
         }
 
@@ -517,20 +595,34 @@ public class ExpressionSearchService {
             URLCreator url = new URLCreator("/action/expression/results");
             if (gene != null) {
                 url.addNameValuePair("geneField", gene.getAbbreviation());
+                url.addNameValuePair("geneZdbID", gene.getZdbID());
             }
-            if (anatomyTerm != null) {
-                url.addNameValuePair("anatomyTermIDs", anatomyTerm.getZdbID());
-                url.addNameValuePair("anatomyTermNames", anatomyTerm.getTermName());
-            }
+            addIfNotNull(url, "anatomyTermNames", anatomyTermNames);
+            addIfNotNull(url, "anatomyTermIDs", anatomyTermIds);
+            addIfNotNull(url, "startStageId", startStageId);
+            addIfNotNull(url, "endStageId", endStageId);
+            addIfNotNull(url, "targetGeneField", targetGeneId);
+            addIfNotNull(url, "assayName", assay);
+            addIfNotNull(url, "fish", fish);
+            addIfNotNull(url, "authorField", author);
+            url.addNameValuePair("journalType", journalType.toString());
             url.addNameValuePair("includeSubstructures", Boolean.toString(includeSubstructures));
-            if (wildtypeOnly) {
-                url.addNameValuePair("onlyWildtype", "true");
-            }
-            if (author != null) {
-                url.addNameValuePair("authorField", author);
-            }
-            url.addNameValuePair("journalType", "ALL");
+            addIfTrue(url, "onlyWildtype", wildtypeOnly);
+            addIfTrue(url, "onlyReporter", onlyReporter);
+            addIfTrue(url, "onlyFiguresWithImages", onlyFiguresWithImages);
             return url.getURL();
+        }
+
+        private void addIfNotNull(URLCreator url, String name, String value) {
+            if (value != null) {
+                url.addNameValuePair(name, value);
+            }
+        }
+
+        private void addIfTrue(URLCreator url, String name, boolean value) {
+            if (value) {
+                url.addNameValuePair(name, "true");
+            }
         }
     }
 
