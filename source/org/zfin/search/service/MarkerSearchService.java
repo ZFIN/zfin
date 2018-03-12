@@ -158,7 +158,7 @@ public class MarkerSearchService {
 
     public void applyQuery(MarkerSearchCriteria criteria, SolrQuery query) {
 
-        if (criteria != null && criteria.getExplain() != null && criteria.getExplain() == true)  {
+        if (criteria != null && criteria.getExplain() != null && criteria.getExplain())  {
             query.setShowDebugInfo(true);
             query.setFields("id","score","[explain]");
         } else {
@@ -257,12 +257,10 @@ public class MarkerSearchService {
 
         FacetField type = response.getFacetField(FieldName.TYPEGROUP.getName());
         if (type != null) {
-            for (FacetField.Count count : type.getValues()) {
-                types.add(count);
-            }
+            types.addAll(type.getValues());
         }
 
-        Collections.sort(types, new MarkerSearchTypeGroupComparator<>());
+        types.sort(new MarkerSearchTypeGroupComparator<>());
 
         return types;
     }
@@ -270,7 +268,7 @@ public class MarkerSearchService {
     private void injectHighlighting(List<MarkerSearchResult> results, QueryResponse response) {
         for (MarkerSearchResult result : results) {
             String id = result.getId();
-            List<String> highlightSnippets = new ArrayList<String>();
+            List<String> highlightSnippets = new ArrayList<>();
             if (response.getHighlighting() != null && response.getHighlighting().get(id) != null) {
 
                 for (String highlightField : response.getHighlighting().get(id).keySet()) {
@@ -312,11 +310,11 @@ public class MarkerSearchService {
     }
 
     //This is the slower, but "safer" (less redundant?) option, alternatively,
-    // we could store the display name and signficiance in the Marker.Type enumeration
+    // we could store the display name and significance in the Marker.Type enumeration
     public List<String> sortMarkerTypes(List<String> typeStrings) {
         List<MarkerType> markerTypes = getSortedMarkerTypes(typeStrings);
         List<String> returnStrings = new ArrayList<>();
-        Collections.sort(markerTypes, new MarkerTypeSignificanceComparator<MarkerType>());
+        markerTypes.sort(new MarkerTypeSignificanceComparator<>());
         returnStrings.addAll(CollectionUtils.collect(markerTypes, new BeanToPropertyValueTransformer("displayName")));
         return returnStrings;
     }
