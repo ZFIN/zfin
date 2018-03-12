@@ -1,21 +1,22 @@
-create or replace function update_construct_name (constructId text, componentId text)
+create or replace function update_construct_name (constructId text)
 returns void as $$
 
-   declare name varchar(255);
-    	   addName  construct_component.cc_component%TYPE := '';
+   declare name text;
+   declare addName text;
 
  begin  
+   name = '';
    for addName in
 	select cc_component 
            from construct_component
 	   where cc_construct_zdb_id = constructId
 	   order by cc_order asc
 	loop
-	name = name||addName;
+	name = name || addName;
 	addName = '';
         
    end loop;
-   
+
    select trim(name) into name from single;
    update construct
      set construct_name = name
