@@ -2471,20 +2471,37 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public List<String> getPublicationIdsForMarkerGo(String markerZdbID, String markerGoEvdTermZdbID, String evidenceCode, String inference) {
         Session session = HibernateUtil.currentSession();
-        String sql = " select ra.recattrib_source_zdb_id  " +
-                " from record_attribution ra ,  marker_go_term_evidence ev, inference_group_member inf " +
-                " where  ev.mrkrgoev_zdb_id  = ra.recattrib_data_zdb_id " +
-                " and inf.infgrmem_mrkrgoev_zdb_id = ev.mrkrgoev_zdb_id " +
-                " and  :markerZdbID = ev.mrkrgoev_mrkr_zdb_id " +
-                " and :markerGoEvdTermZdbID = ev.mrkrgoev_term_zdb_id" +
-                " and :evidenceCode = ev.mrkrgoev_evidence_code" +
-                " and :inference = inf.infgrmem_inferred_from";
-        SQLQuery query = session.createSQLQuery(sql);
-        query.setString("markerZdbID", markerZdbID);
-        query.setString("markerGoEvdTermZdbID", markerGoEvdTermZdbID);
-        query.setString("evidenceCode", evidenceCode);
-        query.setString("inference", inference);
-        List<String> pubIDs = query.list();
+        String sql;
+        List<String> pubIDs = null;
+        if (StringUtils.isEmpty(inference) || inference.isEmpty() || inference.equals("null")) {
+            sql = " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra, marker_go_term_evidence ev " +
+                    " where  ev.mrkrgoev_zdb_id  = ra.recattrib_data_zdb_id " +
+                    " and  :markerZdbID = ev.mrkrgoev_mrkr_zdb_id " +
+                    " and :markerGoEvdTermZdbID = ev.mrkrgoev_term_zdb_id" +
+                    " and :evidenceCode = ev.mrkrgoev_evidence_code";
+
+            SQLQuery query = session.createSQLQuery(sql);
+            query.setString("markerZdbID", markerZdbID);
+            query.setString("markerGoEvdTermZdbID", markerGoEvdTermZdbID);
+            query.setString("evidenceCode", evidenceCode);
+            pubIDs = query.list();
+        } else {
+            sql = " select ra.recattrib_source_zdb_id  " +
+                    " from record_attribution ra ,  marker_go_term_evidence ev, inference_group_member inf " +
+                    " where  ev.mrkrgoev_zdb_id  = ra.recattrib_data_zdb_id " +
+                    " and inf.infgrmem_mrkrgoev_zdb_id = ev.mrkrgoev_zdb_id " +
+                    " and  :markerZdbID = ev.mrkrgoev_mrkr_zdb_id " +
+                    " and :markerGoEvdTermZdbID = ev.mrkrgoev_term_zdb_id" +
+                    " and :evidenceCode = ev.mrkrgoev_evidence_code" +
+                    " and :inference = inf.infgrmem_inferred_from";
+            SQLQuery query = session.createSQLQuery(sql);
+            query.setString("markerZdbID", markerZdbID);
+            query.setString("markerGoEvdTermZdbID", markerGoEvdTermZdbID);
+            query.setString("evidenceCode", evidenceCode);
+            query.setString("inference", inference);
+            pubIDs = query.list();
+        }
         return pubIDs;
     }
 
