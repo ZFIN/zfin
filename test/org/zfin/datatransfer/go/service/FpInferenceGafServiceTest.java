@@ -9,11 +9,16 @@ import org.zfin.datatransfer.go.GafEntry;
 import org.zfin.datatransfer.go.GafJobData;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.datatransfer.service.DownloadService;
+import org.zfin.mutant.MarkerGoTermAnnotationExtn;
+import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -89,6 +94,36 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
         assertEquals(0, gafJobData.getRemovedEntries().size());
 
     }
+
+    @Test
+    public void testAnnotationExtensions() throws Exception {
+        File file = new File(FP_INFERENCE_DIRECTORY +"testGAF.txt");
+        List<GafEntry> gafEntries = gafParser.parseGafFile(file);
+        assertEquals(35, gafEntries.size());
+//        makeTestPub(gafEntries);
+
+        GafJobData gafJobData = new GafJobData();
+
+        gafService.processEntries(gafEntries, gafJobData);
+        logger.debug("summary: " + gafJobData.toString());
+        logger.debug("entries: " + gafJobData.getNewEntries().size());
+
+
+        assertEquals(14, gafJobData.getErrors().size());
+        // this will end up being
+        assertEquals(20, gafJobData.getNewEntries().size());
+        for(MarkerGoTermEvidence markerGoTermEvidence : gafJobData.getNewEntries()){
+            if (markerGoTermEvidence.getGoTermAnnotationExtnGroup()!=null){
+                assertEquals(14,markerGoTermEvidence.getGoTermAnnotationExtnGroup().size());
+            }
+            for(MarkerGoTermAnnotationExtnGroup mgtAnnotGroup:markerGoTermEvidence.getGoTermAnnotationExtnGroup()){
+                assertEquals(22,mgtAnnotGroup.getMgtAnnoExtns().size());
+                }
+            }
+        }
+
+
+
 
 
     @Test
