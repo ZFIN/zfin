@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.Species;
+import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
@@ -15,6 +16,7 @@ import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerNotFoundException;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
@@ -34,6 +36,9 @@ public class CloneViewController {
 
     @Autowired
     private ExpressionService expressionService;
+
+    @Autowired
+    private ExpressionSearchService expressionSearchService;
 
     @Autowired
     private MarkerRepository markerRepository;
@@ -101,6 +106,11 @@ public class CloneViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());
 
         return "marker/clone-view.page";
+    }
+
+    @RequestMapping(value = "/clone/view/{zdbID}/expression")
+    public String getCloneExpressionView(@PathVariable("zdbID") String zdbID) throws MarkerNotFoundException {
+        return expressionSearchService.forwardToExpressionSearchForMarker(zdbID);
     }
 
     @RequestMapping( value = "/dbsnp",method = RequestMethod.GET)

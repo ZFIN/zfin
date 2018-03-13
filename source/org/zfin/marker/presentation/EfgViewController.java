@@ -6,11 +6,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerNotFoundException;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -28,6 +30,9 @@ public class EfgViewController {
 
     @Autowired
     private ExpressionService expressionService;
+
+    @Autowired
+    private ExpressionSearchService expressionSearchService;
 
     @Autowired
     private MarkerRepository markerRepository;
@@ -72,6 +77,11 @@ public class EfgViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.EFG.getTitleString() + efg.getAbbreviation());
 
         return "marker/efg-view.page";
+    }
+
+    @RequestMapping(value = "/efg/view/{zdbID}/expression")
+    public String getEfgExpressionView(@PathVariable("zdbID") String zdbID) throws MarkerNotFoundException {
+        return expressionSearchService.forwardToExpressionSearchForMarker(zdbID);
     }
 
     protected void populateConstructList(MarkerBean markerBean, Marker efg) {

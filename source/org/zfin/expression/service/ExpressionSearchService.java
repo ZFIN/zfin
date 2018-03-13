@@ -19,6 +19,9 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.*;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerNotFoundException;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Fish;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
@@ -49,6 +52,12 @@ public class ExpressionSearchService {
 
     @Autowired
     private ExpressionRepository expressionRepository;
+
+    @Autowired
+    private MarkerRepository markerRepository;
+
+    @Autowired
+    private MarkerService markerService;
 
     private SolrQuery applyCriteria(SolrQuery solrQuery,
                                     ExpressionSearchCriteria criteria,
@@ -475,6 +484,13 @@ public class ExpressionSearchService {
                         DevelopmentStage::getName,
                         (s1, s2) -> s1,
                         TreeMap::new));
+    }
+
+    public String forwardToExpressionSearchForMarker(String markerZdbId) throws MarkerNotFoundException {
+        markerZdbId = markerService.getActiveMarkerID(markerZdbId);
+        Marker marker = markerRepository.getMarkerByID(markerZdbId);
+        String searchLink = new LinkBuilder().gene(marker).build();
+        return "forward:" + searchLink;
     }
 
     private String fq(FieldName fieldName, String value) {
