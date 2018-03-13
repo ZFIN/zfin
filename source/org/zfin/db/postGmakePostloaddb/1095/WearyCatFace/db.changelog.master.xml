@@ -7,6 +7,8 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/ZFIN-5868.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/CUR-745.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/JENK-338_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/JENK-338_load.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/JENK-338.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/ZFIN-5869.sql" />
 </databaseChangeLog>

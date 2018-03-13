@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="xshao" id="JENK-338_load">
+        <loadData file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/JENK-338.csv"
+                  catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_annual_stats" encoding="UTF-8">
+            <column name="t_date" type="String"/>
+            <column name="t_section" type="String"/>
+            <column name="t_type" type="String"/>
+            <column name="t_count" type="String"/>
+        </loadData>
+
+    </changeSet>
+
+</databaseChangeLog>
