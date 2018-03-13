@@ -74,24 +74,27 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     protected String localDownloadFile2;
     protected String localDownloadFile3;
     protected String organization;
+    private final String GAF_TEST_DIRECTORY = "test/gaf/fp_inference/";
 
     public int execute() {
         int exitCode = 0;
 setLoggerFile();
-        clearReportDirectory();
+      //clearReportDirectory();
 
         GafOrganization.OrganizationEnum organizationEnum = GafOrganization.OrganizationEnum.getType(organization);
 
         try {
-            localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
-            gafService = new GafService(organizationEnum);
 
+            //localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
+
+            gafService = new GafService(organizationEnum);
+           // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
-            File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
+            /*//File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                     , new URL(downloadUrl)
                     , false);
-
-            if(organization.equals("GOA")) {
+*/
+            /*if(organization.equals("GOA")) {
                 localDownloadFile2 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association2";
                 File downloadedFile2 = downloadService.downloadFile(new File(localDownloadFile2)
                         , new URL(downloadUrl2)
@@ -104,9 +107,11 @@ setLoggerFile();
                         , false);
                 String downloadFile3Str = FileUtils.readFileToString(downloadedFile3);
                 FileUtils.write(downloadedFile, downloadFile3Str, true); // true for append
-            }
+            }*/
 
             // 2. parse file
+            File downloadedFile = new File(ZfinPropertiesEnum.SOURCEROOT+GAF_TEST_DIRECTORY +"testGAF.txt");
+
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
 
             if (CollectionUtils.isEmpty(gafEntries)) {

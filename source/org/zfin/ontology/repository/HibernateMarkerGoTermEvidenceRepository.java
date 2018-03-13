@@ -8,10 +8,7 @@ import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.GoEvidenceCode;
-import org.zfin.mutant.InferenceGroupMember;
-import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
-import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 
@@ -104,9 +101,8 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
 
     @Override
     public void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
-        HibernateUtil.currentSession().save(markerGoTermEvidenceToAdd);
-        System.out.println(markerGoTermEvidenceToAdd.getZdbID());
 
+        HibernateUtil.currentSession().save(markerGoTermEvidenceToAdd);
         // have to do this after we add inferences
         if (CollectionUtils.isNotEmpty(markerGoTermEvidenceToAdd.getInferredFrom())) {
             for (InferenceGroupMember inference : markerGoTermEvidenceToAdd.getInferredFrom()) {
@@ -114,20 +110,26 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                 HibernateUtil.currentSession().save(inference);
             }
         }
-        try {
-            if (CollectionUtils.isNotEmpty(markerGoTermEvidenceToAdd.getGoTermAnnotationExtnGroup())) {
-                for (MarkerGoTermAnnotationExtnGroup mgtaeGroup : markerGoTermEvidenceToAdd.getGoTermAnnotationExtnGroup()) {
-                    mgtaeGroup.setMgtaegMarkerGoEvidence(markerGoTermEvidenceToAdd);
-                    HibernateUtil.currentSession().save(mgtaeGroup);
+
+        if (CollectionUtils.isNotEmpty(markerGoTermEvidenceToAdd.getGoTermAnnotationExtnGroup())) {
+            for (MarkerGoTermAnnotationExtnGroup mgtaeGroup : markerGoTermEvidenceToAdd.getGoTermAnnotationExtnGroup()) {
+                mgtaeGroup.setMgtaegMarkerGoEvidence(markerGoTermEvidenceToAdd);
+                HibernateUtil.currentSession().save(mgtaeGroup);
+                for (MarkerGoTermAnnotationExtn mgtaedata : mgtaeGroup.getMgtAnnoExtns()) {
+
+                    if (mgtaedata.getAnnotExtnGroupID().getId()!=null) {
+                        HibernateUtil.currentSession().save(mgtaedata);
+                    }
                 }
             }
         }
-            catch (Exception e) {
 
-                // generic exception handling
-                e.printStackTrace();
-            }
     }
+
+
+
+
+
 
     @Override
     public void removeEvidence(MarkerGoTermEvidence markerGoTermEvidenceToRemove) {
