@@ -226,7 +226,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)
 
-SUBDIRS = lib client_apps server_apps home cgi-bin 
+SUBDIRS = lib server_apps home cgi-bin 
 POSTLOADDB_SUBDIRS = home server_apps lib
 STATICS = package.json README.md
 

@@ -3,10 +3,6 @@ Allow: /
 Disallow: /action/login
 Disallow: /zf_info/2006_tutorial/tutorial.html
 Disallow: /cgi-bin/awstats/awstats.pl
-Disallow: /cgi-bin/mapper_select.cgi
-Disallow: /cgi-bin/print_map.cgi
-Disallow: /cgi-bin/view_mapplet.cgi
-Disallow: /cgi-bin/view_zmapplet.cgi
 Disallow: /action/blast/blast?
 Disallow: /action/blast/blast-view
 Disallow: /action/blast/external-blast

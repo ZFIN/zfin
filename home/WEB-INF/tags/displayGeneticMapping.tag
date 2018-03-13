@@ -31,7 +31,7 @@
     </c:forEach>
     <tr>
         <td colspan="6">
-            <zfin2:displayViewMap entity="${targetEntity}"/>
+
         </td>
     </tr>
     <tr>

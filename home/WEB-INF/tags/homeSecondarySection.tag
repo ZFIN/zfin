@@ -147,11 +147,6 @@
         <a href="http://www.ncbi.nlm.nih.gov/projects/mapview/map_search.cgi?taxid=7955">NCBI</a>, <a
                 href="http://genome.igib.res.in/">FishMap</a>
     </li>
-    <li>
-        View <a href="/cgi-bin/mapper_select.cgi"
-                title="View genetic, radiation hybrid or consolidated maps">
-        Genetic Maps</a>
-    </li>
 
     <li>BLAST:
         <a href="/action/blast/blast">ZFIN</a>,

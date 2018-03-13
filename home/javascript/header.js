@@ -86,7 +86,6 @@ document.write(
     '      <a href="/search?q=&fq=category%3A%22Construct%22&category=Construct">Constructs</a>' +
     '      <a href="/action/ontology/search" title="Search anatomy and gene ontology">Anatomy / GO / Human Disease</a>' +
     '      <a href="/action/publication/search" title="Search for zebrafish research publications by author, title or citation">Publications</a>' +
-    '      <a href="/@CGI_BIN_DIR_NAME@/mapper_select.cgi" title="View genetic, radiation hybrid or consolidated maps">Maps</a>' +
     '    </div>' +
     '    <div id="hdr-generallinks" style="display: none;" class="hdr-linkbar">' +
     '      <a href="/">Home</a> ' +

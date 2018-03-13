@@ -77,26 +77,12 @@
                                                                         type="number"/></td>
                     </tr>
                 </table>
-                <table>
-                    <tr>
-                        <td>Click "Map" to see a graphical map of an individual chromosome</td>
-                    </tr>
-                    <c:if test="${panel.abbreviation eq 'ZMAP'}">
-                        <tr>
-                            <td><span class="bold">Note:</span>There is too much data to display an entire chromosome
-                                Please use <a href="/cgi-bin/view_zmapplet.cgi?marker=">Search ZMap</a> to restrict the
-                                query.
-                            </td>
-                        </tr>
-                    </c:if>
-                </table>
             </td>
             <td style="text-align: left; width: 50%">
                 <table class="summary" style="font-size: 11px; text-align: left; width: 55%">
                     <tr>
                         <th style="width: 30px">Chromsome</th>
                         <th style=" width: 60%">Marker Type (# on Chr.)</th>
-                        <th>View</th>
                         <th>Scoring</th>
                     </tr>
                     <c:forEach var="chromosomePanelCount" items="${panel.chromosomePanelCountMap}">
@@ -106,11 +92,6 @@
                                 <c:forEach var="markerCount" items="${chromosomePanelCount.value}">
                                     ${markerCount.key}(${markerCount.value})
                                 </c:forEach>
-                            </td>
-                            <td>
-                                <a href="/cgi-bin/view_mapplet.cgi?loc_lg=${chromosomePanelCount.key}&loc_panel=${panel.abbreviation}&view_map=viewmap&userid=GUEST">
-                                    Map
-                                </a>
                             </td>
                             <td>
                                 <a href="/action/mapping/show-scoring?panelID=${panel.zdbID}&lg=${chromosomePanelCount.key}"

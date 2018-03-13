@@ -21,7 +21,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps
 
-SUBDIRS = apache cron data_transfer mapimage sysexecs WebSiteTools \
+SUBDIRS = apache cron data_transfer sysexecs WebSiteTools \
 	DB_maintenance Reports quicksearch
 
 GENERICS = ZFINPerlModules.pm

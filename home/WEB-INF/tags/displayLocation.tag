@@ -23,9 +23,6 @@
             </c:choose>
         </a>
         </c:if>
-        <c:if test="${showViewMap}">
-            <zfin2:displayViewMap entity="${entity}"/>
-        </c:if>
     </c:when>
     <c:otherwise>
         Unmapped
