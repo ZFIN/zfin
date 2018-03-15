@@ -99,7 +99,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
     public void testAnnotationExtensions() throws Exception {
         File file = new File(FP_INFERENCE_DIRECTORY +"testGAF.txt");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(35, gafEntries.size());
+        assertEquals(46, gafEntries.size());
 //        makeTestPub(gafEntries);
 
         GafJobData gafJobData = new GafJobData();
@@ -114,7 +114,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
         assertEquals(20, gafJobData.getNewEntries().size());
         for(MarkerGoTermEvidence markerGoTermEvidence : gafJobData.getNewEntries()){
             if (markerGoTermEvidence.getGoTermAnnotationExtnGroup()!=null){
-                assertEquals(14,markerGoTermEvidence.getGoTermAnnotationExtnGroup().size());
+                assertEquals(19,markerGoTermEvidence.getGoTermAnnotationExtnGroup().size());
             }
             for(MarkerGoTermAnnotationExtnGroup mgtAnnotGroup:markerGoTermEvidence.getGoTermAnnotationExtnGroup()){
                 assertEquals(22,mgtAnnotGroup.getMgtAnnoExtns().size());
@@ -150,9 +150,10 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
      */
     @Test
     public void fpInferenceTest1() throws Exception {
+       // File file = new File(FP_INFERENCE_DIRECTORY + "gene_association.zfin_test1");
         File file = new File(FP_INFERENCE_DIRECTORY + "gene_association.zfin_test1");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(23, gafEntries.size());
+        assertEquals(24, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafJobData = new GafJobData();

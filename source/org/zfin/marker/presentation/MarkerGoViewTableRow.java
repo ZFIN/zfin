@@ -22,6 +22,7 @@ public class MarkerGoViewTableRow implements Comparable {
     Term term;
     GoEvidenceCode evidenceCode;
     String inferredFrom;
+    String annotExtns;
     Set<Publication> publications;
     String referencesLink;
     String inferredFromAsString;
@@ -42,6 +43,8 @@ public class MarkerGoViewTableRow implements Comparable {
         if (CollectionUtils.isNotEmpty(evidence.getInferencesAsString())) {
             firstInference = evidence.getInferencesAsString().iterator().next();
         }
+
+
 
     }
 
@@ -121,6 +124,14 @@ public class MarkerGoViewTableRow implements Comparable {
         this.firstInference = firstInference;
     }
 
+    public String getAnnotExtns() {
+        return annotExtns;
+    }
+
+    public void setAnnotExtns(String annotExtns) {
+        this.annotExtns = annotExtns;
+    }
+
     @Override
     public int compareTo(Object o) {
         MarkerGoViewTableRow other = (MarkerGoViewTableRow)o;
@@ -143,6 +154,8 @@ public class MarkerGoViewTableRow implements Comparable {
         i = ObjectUtils.compare(getInferredFrom(), other.getInferredFrom());
         if (i != 0) { return i; }
 
+        i = ObjectUtils.compare(getAnnotExtns(), other.getAnnotExtns());
+        if (i != 0) { return i; }
         return 0;
     }
     public boolean equals(Object o) {

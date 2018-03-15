@@ -7,8 +7,11 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.MarkerGoTermAnnotationExtn;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
+import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -208,6 +211,28 @@ public class MarkerGoEvidencePresentation {
         }
 
     }
+
+
+
+    public static String generateAnnotationExtensionLink(MarkerGoTermAnnotationExtn mgtae) {
+        String relationTerm = RepositoryFactory.getOntologyRepository().getTermByZdbID(mgtae.getRelationshipTerm()).getTermName();
+        if (mgtae.getIdentifierTerm()!=null) {
+            if (mgtae.getIdentifierTerm().startsWith("ZDB-TERM")) {
+                Term extnTerm = RepositoryFactory.getOntologyRepository().getTermByZdbID(mgtae.getIdentifierTerm());
+                return relationTerm + "(" + TermPresentation.getLink(extnTerm, false) + ")";
+            }
+            if (mgtae.getIdentifierTermText().startsWith("ZFIN")) {
+                InferenceCategory inferenceCategory = InferenceCategory.getInferenceCategoryByValue(mgtae.getIdentifierTermText());
+                String accession = mgtae.getIdentifierTermText().substring(inferenceCategory.prefix().length());
+                Marker gene = RepositoryFactory.getMarkerRepository().getMarkerOrReplacedByID(accession);
+                return relationTerm + "(" + MarkerPresentation.getLink(gene) + ")";
+            }
+        }
+        return relationTerm+ "(" +mgtae.getIdentifierTermText() +")";
+    }
+
+
+
 
     public static String createGOLink(String accession, ForeignDB foreignDB, InferenceCategory inferenceCategory) {
         StringBuilder sb = new StringBuilder("");

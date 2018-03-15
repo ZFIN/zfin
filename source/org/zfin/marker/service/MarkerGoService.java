@@ -7,6 +7,8 @@ import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerGoViewTableRow;
+import org.zfin.mutant.MarkerGoTermAnnotationExtn;
+import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.publication.Publication;
@@ -33,6 +35,7 @@ public class MarkerGoService {
         for (MarkerGoTermEvidence evidence  : marker.getGoTermEvidence()) {
             MarkerGoViewTableRow row = new MarkerGoViewTableRow(evidence);
             row.setInferredFrom(getInferrenceLinks(evidence));
+            row.setAnnotExtns(getAnnotationExtensionsAsString(evidence));
             if (!rows.contains(row)) {
                 rows.add(row);
             } else {
@@ -62,6 +65,29 @@ public class MarkerGoService {
             for (String s : evidence.getInferencesAsString()) {
                 if (org.apache.commons.lang.StringUtils.isNotEmpty(sb.toString())) { sb.append(", "); }
                 sb.append(MarkerGoEvidencePresentation.generateInferenceLink(s));
+            }
+
+        }
+
+        return sb.toString();
+    }
+    String getAnnotationExtensionsAsString(MarkerGoTermEvidence evidence) {
+        StringBuilder sb = new StringBuilder();
+
+        if (CollectionUtils.isNotEmpty(evidence.getGoTermAnnotationExtnGroup()) ) {
+            for (MarkerGoTermAnnotationExtnGroup mgtaeg : evidence.getGoTermAnnotationExtnGroup()) {
+
+                for (MarkerGoTermAnnotationExtn mgtae : mgtaeg.getMgtAnnoExtns()) {
+                    if (org.apache.commons.lang.StringUtils.isNotEmpty(sb.toString())) {
+                        sb.append(System.lineSeparator());
+                    }
+
+                  if (!sb.toString().contains(MarkerGoEvidencePresentation.generateAnnotationExtensionLink(mgtae))) {
+                        sb.append(MarkerGoEvidencePresentation.generateAnnotationExtensionLink(mgtae));
+                    }
+                //    sb.append("ExtID"+mgtae.getId().toString()+"GroupID="+ mgtae.getAnnotExtnGroupID().getId().toString());
+
+                }
             }
 
         }
