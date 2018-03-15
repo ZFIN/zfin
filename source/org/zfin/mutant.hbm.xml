@@ -175,7 +175,7 @@
         <many-to-one name="mgtaegMarkerGoEvidence" class="org.zfin.mutant.MarkerGoTermEvidence"
                      column="mgtaeg_mrkrgoev_zdb_id"/>
         <set name="mgtAnnoExtns" lazy="true" inverse="true">
-            <key column="mgtae_pk_id"/>
+            <key column="mgtae_extension_group_id"/>
             <one-to-many class="org.zfin.mutant.MarkerGoTermAnnotationExtn"/>
         </set>
 
@@ -185,7 +185,7 @@
         <id name="zdbID" type="string">
             <column name="genofeat_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">GENOFEAT</param>
+                                <param name="type">GENOFEAT</param>
                 <param name="insertActiveData">true</param>
             </generator>
         </id>
