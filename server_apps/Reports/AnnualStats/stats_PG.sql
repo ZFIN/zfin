@@ -137,7 +137,7 @@ select count(*), 'Expression & Phenotype', 'Gene expression patterns', now() fro
 
 -- clean Gene expression patterns
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(distinct xpatex_gene_zdb_id), 'Expression & Phenotype', 'Genes with expression data', now() from expression_experiment2
+select count(distinct xpatex_gene_zdb_id), 'Expression & Phenotype', 'Genes with expression data', now()
   from expression_experiment2 where exists (select 'x' from clean_expression_fast_search where cefs_genox_zdb_id = xpatex_genox_zdb_id);
 
 
@@ -221,11 +221,11 @@ select count(*), 'Genomics', 'Links to other databases', now() from db_link, for
 -----------------------Community information-------------------------------------
 -- Publications
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(*), 'Community information', 'All Publications', current year to second
+select count(*), 'Community information', 'All Publications', now()
 from publication;
 
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(*), 'Community information', 'Journal Publications', current year to second
+select count(*), 'Community information', 'Journal Publications', now()
 from publication
 where jtype = 'Journal';
 --where zdb_id not like 'ZDB-%-12____-%'
