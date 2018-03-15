@@ -288,6 +288,25 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
 
     }
 
+    public Set<MarkerGoTermAnnotationExtn> getAnnotationExtensions() {
+        Set<MarkerGoTermAnnotationExtn> theseAnnotExtns = new HashSet<MarkerGoTermAnnotationExtn>();
+
+        if (CollectionUtils.isNotEmpty(goTermAnnotationExtnGroup)) {
+            for (MarkerGoTermAnnotationExtnGroup mgtaeGroup : goTermAnnotationExtnGroup) {
+                if (CollectionUtils.isNotEmpty(mgtaeGroup.getMgtAnnoExtns())){
+                    for (MarkerGoTermAnnotationExtn mgtae:mgtaeGroup.getMgtAnnoExtns()){
+                        theseAnnotExtns.add(mgtae);
+                    }
+                }
+            }
+        }
+
+        return theseAnnotExtns;
+
+    }
+
+
+
     /**
      * Determine if ALL of these inferences are contained in the inferences on this object.
      *

@@ -34,4 +34,19 @@ private  Long id;
     public void setMgtAnnoExtns(Set<MarkerGoTermAnnotationExtn> mgtAnnoExtns) {
         this.mgtAnnoExtns = mgtAnnoExtns;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MarkerGoTermAnnotationExtnGroup that = (MarkerGoTermAnnotationExtnGroup) o;
+
+
+
+        return true;
+    }
+
+
 }
