@@ -192,6 +192,19 @@ public abstract class AbstractGoViewTable extends ZfinFlexTable implements Handl
         }
 
     }
+    protected class AnnotExtnComposite extends HTML {
+        public AnnotExtnComposite(Set<String> annotLinks) {
+            String html = "";
+            for (Iterator<String> iter = annotLinks.iterator(); iter.hasNext(); ) {
+                html += iter.next();
+                if (iter.hasNext()) {
+                    html += "<br>";
+                }
+            }
+            setHTML(html);
+        }
+
+    }
 
     protected class NoteHTML extends HTML implements ClickHandler {
         private final String RIGHT_ARROW = "<img align=\"top\" src=\"/images/right.gif\" class=\"clickable\">";

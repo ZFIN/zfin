@@ -1,5 +1,7 @@
 package org.zfin.gwt.root.dto;
 
+import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -24,6 +26,8 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
 
     private Set<String> inferredFrom;
     private Set<String> inferredFromLinks;
+
+    private Set<String> mgtaeLinks;
 
     public String getFirstInference() {
         if (inferredFrom != null && inferredFrom.size() > 0) {
@@ -129,6 +133,16 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
         this.organizationSource = organizationSource;
     }
 
+
+
+    public Set<String> getMgtaeLinks() {
+        return mgtaeLinks;
+    }
+
+    public void setMgtaeLinks(Set<String> mgtaeLinks) {
+        this.mgtaeLinks = mgtaeLinks;
+    }
+
     public GoEvidenceDTO deepCopy() {
         GoEvidenceDTO goEvidenceDTO = new GoEvidenceDTO();
         goEvidenceDTO.setDataZdbID(dataZdbID);
@@ -147,6 +161,8 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
         goEvidenceDTO.setNote(note);
         goEvidenceDTO.setInferredFrom(inferredFrom);
         goEvidenceDTO.setInferredFromLinks(inferredFromLinks);
+
+        goEvidenceDTO.setMgtaeLinks(mgtaeLinks);
         goEvidenceDTO.setOrganizationSource(organizationSource);
         return goEvidenceDTO;
     }

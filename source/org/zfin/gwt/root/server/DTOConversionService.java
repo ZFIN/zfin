@@ -566,8 +566,26 @@ public class DTOConversionService {
                 inferredFromLinks.add(MarkerGoEvidencePresentation.generateInferenceLink(inferenceGroupMember.getInferredFrom()));
             }
         }
+        Set<MarkerGoTermAnnotationExtn> mgtaeSet = new HashSet<>();
+        Set<String> annotLinks = new HashSet<>();
+        if (markerGoTermEvidence.getGoTermAnnotationExtnGroup()!=null){
+            for (MarkerGoTermAnnotationExtnGroup mgtaeg : markerGoTermEvidence.getGoTermAnnotationExtnGroup()) {
+
+                for (MarkerGoTermAnnotationExtn mgtae : mgtaeg.getMgtAnnoExtns()) {
+                    mgtaeSet.add(mgtae);
+                    annotLinks.add(MarkerGoEvidencePresentation.generateAnnotationExtensionLink(mgtae));
+                    }
+
+
+                }
+            }
+
+
         returnDTO.setInferredFrom(inferredFromSet);
         returnDTO.setInferredFromLinks(inferredFromLinks);
+
+        returnDTO.setMgtaeLinks(annotLinks);
+        //returnDTO.setInferredFromLinks(inferredFromLinks);
 
         return returnDTO;
     }

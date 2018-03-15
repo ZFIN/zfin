@@ -83,6 +83,7 @@ public class GoCurationViewTable extends AbstractGoViewTable {
                     setWidget(rowNumber, columnCount++, new GoLink(goEvidenceDTO.getGoTerm()));
                     setWidget(rowNumber, columnCount++, new EvidenceLink(goEvidenceDTO.getEvidenceCode()));
                     setWidget(rowNumber, columnCount++, new InferredFromComposite(goEvidenceDTO.getInferredFromLinks()));
+                    setWidget(rowNumber, columnCount++, new AnnotExtnComposite(goEvidenceDTO.getMgtaeLinks()));
                     setWidget(rowNumber, columnCount++, new NoteHTML(goEvidenceDTO.getNote()));
                     setWidget(rowNumber, columnCount++, new GoActionComposite(this, goEvidenceDTO, rowNumber));
                     setRowStyle(rowNumber, 0);
@@ -109,8 +110,9 @@ public class GoCurationViewTable extends AbstractGoViewTable {
         GO_TERM(2, "GO Term"),
         EVIDENCE(3, "Evidence"),
         INFERRED_FROM(4, "Inferred From"),
-        NOTES(5, "Notes"),
-        ANNOTATION_ACTIONS(6, "");
+        ANNOT_EXTNS(5,"Annotation Extensions"),
+        NOTES(6, "Notes"),
+        ANNOTATION_ACTIONS(7, "");
 
         private int index;
         private String value;

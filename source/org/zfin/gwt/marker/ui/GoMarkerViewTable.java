@@ -59,6 +59,7 @@ public class GoMarkerViewTable extends AbstractGoViewTable {
                 setWidget(rowNumber, columnCount++, new GoLink(goEvidenceDTO.getGoTerm()));
                 setWidget(rowNumber, columnCount++, new EvidenceLink(goEvidenceDTO.getEvidenceCode()));
                 setWidget(rowNumber, columnCount++, new InferredFromComposite(goEvidenceDTO.getInferredFromLinks()));
+                setWidget(rowNumber, columnCount++, new AnnotExtnComposite(goEvidenceDTO.getMgtaeLinks()));
                 setWidget(rowNumber, columnCount++, new ReferenceComposite(goEvidenceDTO.getPublicationZdbID()));
                 setWidget(rowNumber, columnCount++, new NoteHTML(goEvidenceDTO.getNote()));
                 setWidget(rowNumber, columnCount++, new GoActionComposite(this, goEvidenceDTO, rowNumber));
@@ -74,9 +75,10 @@ public class GoMarkerViewTable extends AbstractGoViewTable {
         GO_TERM(2, "GO Term"),
         EVIDENCE(3, "Evidence"),
         INFERRED_FROM(4, "Inferred From"),
-        REFERENCES(5, "Reference"),
-        NOTE(6, "Note"),
-        ACTIONS(7, "Action"),
+        ANNOT_EXTNS(5,"Annotation Extensions"),
+        REFERENCES(6, "Reference"),
+        NOTE(7, "Note"),
+        ACTIONS(8, "Action"),
         ;
 
         private int index;
