@@ -63,7 +63,8 @@ public class GafService {
     protected DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
     protected Map<String, Publication> goRefPubMap = new HashMap<>();
     protected Pattern patternPipe = Pattern.compile("ZFIN:(.*)\\|.*");
-protected int group=0;
+    protected int group = 0;
+
     public GafService(GafOrganization.OrganizationEnum organizationEnum) {
         this.organizationEnum = organizationEnum;
         for (GoDefaultPublication goDefaultPublication : GoDefaultPublication.getGoRefPubs()) {
@@ -301,10 +302,10 @@ protected int group=0;
         markerGoTermEvidenceToAdd.setOrganizationCreatedBy(gafEntry.getCreatedBy());
         markerGoTermEvidenceToAdd.setGafOrganization(gafOrganization);
 
-       handleAnnotationExtns(gafEntry, markerGoTermEvidenceToAdd);
 
         // validate inferences
         handleInferences(gafEntry, markerGoTermEvidenceToAdd);
+        handleAnnotationExtns(gafEntry, markerGoTermEvidenceToAdd);
 
 
         List<MarkerGoTermEvidence> existingEvidenceList = markerGoTermEvidenceRepository.getLikeMarkerGoTermEvidencesButGo(markerGoTermEvidenceToAdd);
@@ -397,19 +398,12 @@ protected int group=0;
 
             for (String annoExtn : annotationExtnSet) {
                 MarkerGoTermAnnotationExtnGroup mgtAnnoExtnGroup = new MarkerGoTermAnnotationExtnGroup();
-
-                mgtAnnoExtnGroup.setMgtaegMarkerGoEvidence(markerGoTermEvidence);
-
                 if (annoExtn.contains(",")) {
-
-
                     Set<String> eachAnnotExtn = new HashSet<>();
                     eachAnnotExtn.addAll(Arrays.asList(annoExtn.split("\\,")));
                     eachAnnotExtn.addAll(Arrays.asList(annoExtn.split("\\, ")));
                     for (String annotExtn : eachAnnotExtn) {
-
-
-                        int openParanIndex = annotExtn.indexOf("(");
+                       int openParanIndex = annotExtn.indexOf("(");
                         int closeParanIndex = annotExtn.indexOf(")");
                         String relationName = annotExtn.substring(0, openParanIndex);
                         String identifierText = annotExtn.substring(openParanIndex + 1, closeParanIndex);
@@ -429,25 +423,25 @@ protected int group=0;
                                 mgtAnnoExtn.setIdentifierTerm(goTerm.getZdbID());
                             }
                         }
-                        if ((identifierText.startsWith("CL")||(identifierText.startsWith("UBERON")))){
-                            int colonIndex=identifierText.indexOf(":");
-                            String annotExtnPrefix=identifierText.substring(0,colonIndex);
-                            GenericTerm annotExtnTerm=ontologyRepository.getTermByOboID(identifierText);
-                            if (annotExtnTerm!=null) {
-                            validateOBOTerm(annotExtnTerm.getOboID(), gafEntry, "Annotation Extension in Column 16", annotExtnPrefix);
+                        if (identifierText.startsWith("ZFIN")) {
+                            int colonIndex = identifierText.indexOf(":");
+                            mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex, identifierText.length()));
+                        }
+                        if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")))) {
+                            int colonIndex = identifierText.indexOf(":");
+                            String annotExtnPrefix = identifierText.substring(0, colonIndex);
+                            GenericTerm annotExtnTerm = ontologyRepository.getTermByOboID(identifierText);
+                            if (annotExtnTerm != null) {
+                                validateOBOTerm(annotExtnTerm.getOboID(), gafEntry, "Annotation Extension in Column 16", annotExtnPrefix);
                                 mgtAnnoExtn.setIdentifierTerm(annotExtnTerm.getZdbID());
                             }
                         }
-
                         goTermAnnotExtn.add(mgtAnnoExtn);
                         mgtAnnoExtnGroup.setMgtAnnoExtns(goTermAnnotExtn);
                         goTermAnnotExtnGroup.add(mgtAnnoExtnGroup);
                         markerGoTermEvidence.setGoTermAnnotationExtnGroup(goTermAnnotExtnGroup);
                     }
                 } else {
-
-
-
                     int openParanIndex = annoExtn.indexOf("(");
                     int closeParanIndex = annoExtn.indexOf(")");
                     String relationName = annoExtn.substring(0, openParanIndex);
@@ -456,8 +450,6 @@ protected int group=0;
                     if (relationTerm == null) {
                         throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
                     }
-
-
                     MarkerGoTermAnnotationExtn mgtAnnoExtn = new MarkerGoTermAnnotationExtn();
                     mgtAnnoExtn.setAnnotExtnGroupID(mgtAnnoExtnGroup);
                     mgtAnnoExtn.setRelationshipTerm(relationTerm.getZdbID());
@@ -470,14 +462,17 @@ protected int group=0;
                             mgtAnnoExtn.setIdentifierTerm(goTerm.getZdbID());
                         }
                     }
-                    if ((identifierText.startsWith("CL")||(identifierText.startsWith("UBERON")))){
-                        int colonIndex=identifierText.indexOf(":");
-                        String annotExtnPrefix=identifierText.substring(0,colonIndex);
+                    if (identifierText.startsWith("ZFIN")) {
+                        int colonIndex = identifierText.indexOf(":");
+                        mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex, identifierText.length()));
+                    }
+                    if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")))) {
+                        int colonIndex = identifierText.indexOf(":");
+                        String annotExtnPrefix = identifierText.substring(0, colonIndex);
 
-                        GenericTerm annotExtnTerm=ontologyRepository.getTermByOboID(identifierText);
-                        if (annotExtnTerm!=null) {
-                        validateOBOTerm(annotExtnTerm.getOboID(), gafEntry, "Annotation Extension in Column 16", annotExtnPrefix);
-
+                        GenericTerm annotExtnTerm = ontologyRepository.getTermByOboID(identifierText);
+                        if (annotExtnTerm != null) {
+                            validateOBOTerm(annotExtnTerm.getOboID(), gafEntry, "Annotation Extension in Column 16", annotExtnPrefix);
                             mgtAnnoExtn.setIdentifierTerm(annotExtnTerm.getZdbID());
                         }
                     }
@@ -589,16 +584,17 @@ protected int group=0;
         }
         return goTerm;
     }
+
     protected GenericTerm validateOBOTerm(String termID, GafEntry gafEntry, String columnName, String prefix) throws GafValidationError {
         GenericTerm oboTerm = ontologyRepository.getTermByOboID(termID);
         if (oboTerm == null) {
-            throw new GafValidationError("Unable to find" + prefix +"Term for:" + FileUtil.LINE_SEPARATOR + termID, gafEntry);
+            throw new GafValidationError("Unable to find" + prefix + "Term for:" + FileUtil.LINE_SEPARATOR + termID, gafEntry);
         }
         if (oboTerm.isObsolete()) {
-            throw new GafValidationError(prefix +" term in column [" + columnName + "] must not be obsolete:" + FileUtil.LINE_SEPARATOR + oboTerm, gafEntry);
+            throw new GafValidationError(prefix + " term in column [" + columnName + "] must not be obsolete:" + FileUtil.LINE_SEPARATOR + oboTerm, gafEntry);
         }
         if (oboTerm.isSecondary()) {
-            throw new GafValidationError(prefix +" term in column [" + columnName + "] must not be secondary:" + FileUtil.LINE_SEPARATOR + oboTerm, gafEntry);
+            throw new GafValidationError(prefix + " term in column [" + columnName + "] must not be secondary:" + FileUtil.LINE_SEPARATOR + oboTerm, gafEntry);
         }
         return oboTerm;
     }
