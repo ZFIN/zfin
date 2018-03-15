@@ -302,7 +302,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafReport2.getErrors());
 
 
-        assertThat("first new", gafReport1.getNewEntries(), hasSize(2));
+        assertThat("first new", gafReport1.getNewEntries(), hasSize(1));
         assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
         assertThat("first errors", gafReport1.getErrors(), hasSize(1));
         assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
