@@ -31,6 +31,7 @@
             <th>Term</th>
             <th>Evidence</th>
             <th>Inferred From</th>
+            <th>Annotation Extension</th>
             <th>Reference(s)</th>
         </tr>
         <c:forEach var="row" items="${markerGoViewTableRows}" varStatus="loop">
@@ -48,6 +49,7 @@
                     </a>
                 </td>
                 <td>${row.inferredFrom}</td>
+                <td>${row.annotExtns}</td>
                 <td>${row.referencesLink}</td>
             </zfin:alternating-tr>
         </c:forEach>
