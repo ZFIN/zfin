@@ -55,179 +55,71 @@ public class DiseaseInfo extends AbstractScriptWrapper {
     public AllDiseaseDTO getDiseaseInfo(int numberOrRecords) {
         List<DiseaseDTO> diseaseDTOList = new ArrayList<>();
 
-        /**
-         List<DiseaseAnnotationModel> diseaseModels = getMutantRepository().getDiseaseAnnotationModels(numberOrRecords);
-
-         Map<Fish, Set<DiseaseAnnotation>> modelList =
-         diseaseModels.stream().collect(
-         Collectors.groupingBy(w -> w.getFishExperiment().getFish(),
-         Collectors.mapping(DiseaseAnnotationModel::getDiseaseAnnotation, Collectors.toSet())
-         )
-         );
-
-         modelList.forEach((fish, diseaseAnnotationSet) -> {
-         Map<GenericTerm, Set<DiseaseAnnotation>> termMap = modelList.get(fish)
-         .stream()
-         .collect(
-         Collectors.groupingBy(DiseaseAnnotation::getDisease,
-         Collectors.mapping(d -> d, Collectors.toSet())
-         )
-         );
-
-
-         termMap.forEach((disease, diseaseAnnotationEvSet) -> {
-         Map<Publication, List<String>> evidenceMap = diseaseAnnotationEvSet
-         .stream()
-         .collect(
-         Collectors.groupingBy(DiseaseAnnotation::getPublication,
-         Collectors.mapping(DiseaseAnnotation::getEvidenceCode, Collectors.toList())
-         )
-         );
-         evidenceMap.forEach((publication, evidences) -> {
-         DiseaseDTO dto = new DiseaseDTO();
-         dto.setObjectId(fish.getZdbID());
-         dto.setObjectName(fish.getName());
-
-         RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
-         Set<String> inferredSet = new HashSet<>();
-         fish.getFishExperiments().forEach(fishExperiment -> {
-         fishExperiment.getGeneGenotypeExperiments()
-         .stream()
-         .filter(geneGenotypeExperiment -> geneGenotypeExperiment.getGene().isGenedom())
-         .forEach(geneGenotypeExperiment ->
-         inferredSet.add(ZfinDTO.ZFIN + geneGenotypeExperiment.getGene().getZdbID()));
-         });
-         relationship.setInferredGeneAssociation(inferredSet);
-         dto.setObjectRelation(relationship);
-
-         dto.setDataProvider(DataProvider.ZFIN);
-
-         dto.setDoid(disease.getOboID());
-
-         // Evidence
-         PublicationAgrDTO pubDto = new PublicationAgrDTO(publication.getZdbID(), publication.getAccessionNumber());
-         EvidenceDTO evDto = new EvidenceDTO(pubDto);
-         evDto.setEvidenceCodes(evidences);
-         dto.setEvidence(evDto);
-
-         // experimental conditions
-         Set<ExperimentCondition> expConditionSet = new HashSet<>();
-         diseaseAnnotationEvSet.forEach(diseaseAnnotation -> {
-         diseaseAnnotation.getDiseaseAnnotationModel().forEach(diseaseAnnotationModel -> {
-         if (diseaseAnnotation.getPublication().equals(publication))
-         expConditionSet.addAll(diseaseAnnotationModel.getFishExperiment().getExperiment().getExperimentConditions());
-         });
-         });
-         Set<ExperimentalConditionDTO> experimentalConditionDTOS = expConditionSet.stream()
-         .map(expCondition -> {
-         ExperimentalConditionDTO condition = new ExperimentalConditionDTO(expCondition.getDisplayName(), expCondition.getZecoTerm().getOboID());
-         if (expCondition.getAoTerm() != null)
-         condition.setAnatomicalId(expCondition.getAoTerm().getOboID());
-         if (expCondition.getGoCCTerm() != null)
-         condition.setGeneOntologyId(expCondition.getGoCCTerm().getOboID());
-         if (expCondition.getChebiTerm() != null)
-         condition.setChebiOntologyId(expCondition.getChebiTerm().getOboID());
-         if (expCondition.getTaxaonymTerm() != null)
-         condition.setNcbiTaxonIdId(expCondition.getTaxaonymTerm().getOboID());
-         return condition;
-         })
-         .collect(Collectors.toSet());
-         dto.setExperimentalConditions(experimentalConditionDTOS);
-
-         diseaseDTOList.add(dto);
-         });
-         });
-
-
-         });
-         **/
 
         // get all genes from mutant_fast_search table and list their disease info
         List<GeneGenotypeExperiment> geneGenotypeExperiments = getMutantRepository().getGeneDiseaseAnnotationModels(numberOrRecords);
 
         // group by gene records
-        Map<Marker, Set<DiseaseAnnotation>> geneMap =
-                geneGenotypeExperiments.stream().collect(
-                        Collectors.toMap(GeneGenotypeExperiment::getGene,
-                                (w) -> w.getFishExperiment().getDiseaseAnnotationModels().stream()
-                                        .map(DiseaseAnnotationModel::getDiseaseAnnotation)
-                                        .collect(Collectors.toSet()), (p1, p2) -> {
-                                    p1.addAll(p2);
-                                    return p1;
-                                }));
-
-        // keep track of the fish experiments for each gene
-        // need this to retrieve the experimental conditions later
         Map<Marker, Set<FishExperiment>> diseaseModelMap =
                 geneGenotypeExperiments.stream().collect(
                         Collectors.groupingBy(GeneGenotypeExperiment::getGene,
                                 Collectors.mapping(GeneGenotypeExperiment::getFishExperiment, Collectors.toSet())));
 
-        // loop over all genes
-        geneMap.forEach((gene, diseaseAnnotationSet) -> {
-            Map<GenericTerm, Set<DiseaseAnnotation>> termMap = geneMap.get(gene)
-                    .stream()
-                    .collect(
-                            Collectors.groupingBy(DiseaseAnnotation::getDisease,
-                                    Collectors.mapping(d -> d, Collectors.toSet())
-                            )
-                    );
-            termMap.forEach((disease, diseaseAnnotationEvSet) -> {
-                Map<Publication, List<String>> evidenceMap = diseaseAnnotationEvSet
+        // loop over each gene
+        diseaseModelMap.forEach((gene, fishExperimentSet) -> {
+            // loop over each FishExperiment
+            fishExperimentSet.forEach((FishExperiment fishExperiment) -> {
+                Genotype genotype = fishExperiment.getFish().getGenotype();
+                // group the diseaseAnnotation by disease
+                // so publications and evidence codes are grouped together
+                Map<GenericTerm, Set<DiseaseAnnotation>> termMap = fishExperiment.getDiseaseAnnotationModels()
                         .stream()
                         .collect(
-                                Collectors.groupingBy(DiseaseAnnotation::getPublication,
-                                        Collectors.mapping(diseaseAnnotations -> {
-                                            if (getEvidenceCodeString(diseaseAnnotations).equals("TAS"))
-                                                return "IC";
-                                            return getEvidenceCodeString(diseaseAnnotations);
-                                        }, Collectors.toList())
+                                Collectors.groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getDisease(),
+                                        Collectors.mapping(DiseaseAnnotationModel::getDiseaseAnnotation, Collectors.toSet())
                                 )
                         );
-                evidenceMap.forEach((publication, evidences) -> {
-                    // loop over all fixExperiments and check if feature or morphant.
-                    diseaseModelMap.get(gene).stream()
-                            // filter out the fishExperiments that pertain to the disease
-                            .filter(fishExperiment -> {
-                                // all diseases per fishExperiment
-                                Set<GenericTerm> diseaseSet = fishExperiment.getDiseaseAnnotationModels().stream()
-                                        .map(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getDisease())
-                                        .collect(Collectors.toSet());
-                                return diseaseSet.contains(disease);
-                            })
-                            .forEach(fishExperiment -> {
-                                Genotype genotype = fishExperiment.getFish().getGenotype();
-                                // Use wildtype fish with STR
-                                // treat as purely implicated by a gene
-                                if (genotype.isWildtype()) {
-                                    DiseaseDTO strDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
-                                    RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
-                                    strDiseaseDto.setObjectRelation(relationship);
-                                    // evidence
-                                    strDiseaseDto.setEvidence(getEvidenceDTO(publication, evidences));
-                                    populateExperimentConditions(fishExperiment, strDiseaseDto);
-                                    diseaseDTOList.add(strDiseaseDto);
+                // loop over each disease
+                termMap.forEach((disease, diseaseAnnotations) -> {
+                    // group disease annotations into pubs and their corresponding list of evidence codes
+                    Map<Publication, List<String>> evidenceMap = diseaseAnnotations
+                            .stream()
+                            .collect(
+                                    Collectors.groupingBy(DiseaseAnnotation::getPublication,
+                                            Collectors.mapping(this::getEvidenceCodeString, Collectors.toList())
+                                    )
+                            );
+                    // loop over each publication: final loop as each publication should generate a individual record in the file.
+                    evidenceMap.forEach((publication, evidenceSet) -> {
+                        // Use wildtype fish with STR
+                        // treat as purely implicated by a gene
+                        if (genotype.isWildtype()) {
+                            DiseaseDTO strDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
+                            RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
+                            strDiseaseDto.setObjectRelation(relationship);
+                            // evidence
+                            strDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
+                            populateExperimentConditions(fishExperiment, strDiseaseDto);
+                            diseaseDTOList.add(strDiseaseDto);
 
-                                } // otherwise it is a single-allelic feature
-                                else {
-                                    genotype.getGenotypeFeatures().forEach(genotypeFeature -> {
-                                        Feature feature = genotypeFeature.getFeature();
-                                        if (feature.isSingleAlleleOfMarker(gene)) {
-                                            DiseaseDTO FeatureDiseaseDto = getBaseDiseaseDTO(feature.getZdbID(), feature.getAbbreviation(), disease);
-                                            RelationshipDTO alleleRelationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.ALELLE);
-                                            FeatureDiseaseDto.setObjectRelation(alleleRelationship);
-                                            FeatureDiseaseDto.setEvidence(getEvidenceDTO(publication, evidences));
-                                            populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
-                                            diseaseDTOList.add(FeatureDiseaseDto);
-                                        }
-                                    });
+                        } else {
+                            genotype.getGenotypeFeatures().forEach(genotypeFeature -> {
+                                Feature feature = genotypeFeature.getFeature();
+                                // is it a single-allelic feature use it
+                                // otherwise discard record
+                                if (feature.isSingleAlleleOfMarker(gene)) {
+                                    DiseaseDTO FeatureDiseaseDto = getBaseDiseaseDTO(feature.getZdbID(), feature.getAbbreviation(), disease);
+                                    RelationshipDTO alleleRelationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.ALELLE);
+                                    FeatureDiseaseDto.setObjectRelation(alleleRelationship);
+                                    FeatureDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
+                                    populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
+                                    diseaseDTOList.add(FeatureDiseaseDto);
                                 }
                             });
+                        }
+                    });
                 });
-
-
             });
-
         });
 
 
@@ -254,7 +146,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
 
         AllDiseaseDTO allDiseaseDTO = new AllDiseaseDTO();
-        //allDiseaseDTO.setGenes(allGeneDTOList);
         MetaDataDTO meta = new MetaDataDTO("ZFIN");
         allDiseaseDTO.setMetaData(meta);
         allDiseaseDTO.setDiseaseList(diseaseDTOList);
