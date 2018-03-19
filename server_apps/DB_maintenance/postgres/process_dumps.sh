@@ -99,6 +99,13 @@ do
     sed 's/\r//g' $loadFile.txt > temp
 
     mv temp $loadFile.txt
+
+    #replace empty strings with nulls
+    if [ $loadFile != 'all_map_names' ] && [ $loadFile != 'blast_hit' ] && [ $loadFile != 'fish' ] &&
+       [ $loadFile != 'fish_components' ] && [ $loadFile != 'foreign_db' ] && [ $loadFile != 'genotype' ] &&
+       [ $loadFile != 'marker_history' ] && [ $loadFile != 'marker_history_audit' ]; then
+        perl -pi -e 's/\|\\\s+(?=\|)/\|/g' $loadFile.txt
+    fi
     
     #clean up processing steps
     
