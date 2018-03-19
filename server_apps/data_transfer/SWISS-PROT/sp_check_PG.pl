@@ -18,10 +18,6 @@ use DBI;
 
 # Take a SP file as input (content format restricted). 
 
-if (@ARGV == 0) {
-  print "Please enter the SP file name.\n" and exit 1;
-}
-
 # Create the output files and give them titles. 
 init_files();
 
@@ -44,7 +40,10 @@ my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $pass
 open PUB, ">pubmed_not_in_zfin" or die "Cannot open the pubmed_not_in_zfin:$!";
 
 $/ = "//\n";
-while (<>) {
+open (UNPT, "zfin.dat") ||  die "Cannot open zfin.dat : $!\n";
+@records = <UNPT>;
+close UNPT;
+foreach (@records) {
    
     init_var ();     # Initialize the variables and arrays 
 

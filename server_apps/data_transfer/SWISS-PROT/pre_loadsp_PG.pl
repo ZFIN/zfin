@@ -489,34 +489,14 @@ while($sleepnum--){
 
 system("touch zfin.dat");
 
-# good records for loading are placed in "okfile"
-print "\n sp_check.pl zfin.dat >checkreport.txt \n";
-system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_check_PG.pl zfin.dat >checkreport.txt" );
-
-my $count = 0;
-my $retry = 1;
-# wait till checking is finished
-while( !( -e "okfile" && 
-          -e "problemfile")) {
-
-  $count++;
-  if ($count > 10)
-  {
-    if ($retry) 
-    {
-      $count = 0;
-      $retry = 0;
-      print "retry sp_check.pl\n";
-      system("sp_check_PG.pl zfin.dat >checkreport.txt ");
-    }
-    else
-    {
-#      &sendErrorReport("Failed to run sp_check.pl");
-print "\nfailed to run sp_check.pl.............\n\n"; 
-     exit;
-    }
-  }  
+my $sleepnum = 1000;
+while($sleepnum--){
+    sleep(1);
 }
+
+# good records for loading are placed in "okfile"
+print "\n sp_check.pl \n";
+system ("sp_check.pl" );
 
 # concatenate all the sub problem files
 system("cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 > allproblems.txt");

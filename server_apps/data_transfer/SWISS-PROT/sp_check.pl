@@ -18,10 +18,6 @@ use DBI;
 
 # Take a SP file as input (content format restricted). 
 
-if (@ARGV == 0) {
-  print "Please enter the SP file name.\n" and exit 1;
-}
-
 # Create the output files and give them titles. 
 init_files();
 
@@ -44,8 +40,10 @@ my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
 open PUB, ">pubmed_not_in_zfin" or die "Cannot open the pubmed_not_in_zfin:$!";
 
 $/ = "//\n";
-while (<>) {
-   
+open (UNPT, "zfin.dat") ||  die "Cannot open zfin.dat : $!\n";
+@records = <UNPT>;
+close UNPT;
+foreach (@records) {
     init_var ();     # Initialize the variables and arrays 
 
     # records in probfile contains AC, RX, DR EMBL lines
@@ -229,11 +227,12 @@ while (<>) {
 }   # while loop for the whole SP file
 close PUB;
 
-print "\nFinal report: \n";
-print "\t problem records(#) : $num_prob \n";
-print "\t ok records(#)  : $num_ok \n";
-printf ("\t ok percentage   : %.1f\%\n", 100 - $num_prob/($num_prob+$num_ok) * 100.0);
-
+open CHECKREP, ">checkreport.txt" or die "Cannot open checkreport.txt:$!";
+print CHECKREP  "\nFinal report: \n";
+print CHECKREP "\t problem records(#) : $num_prob \n";
+print CHECKREP "\t ok records(#)  : $num_ok \n";
+printf CHECKREP ("\t ok percentage   : %.1f\%\n", 100 - $num_prob/($num_prob+$num_ok) * 100.0);
+close CHECKREP;
 
 #---------------------------------------------------------------------------------------
 #
