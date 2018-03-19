@@ -109,7 +109,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
         logger.debug("entries: " + gafJobData.getNewEntries().size());
 
 
-        assertEquals(14, gafJobData.getErrors().size());
+        assertEquals(32, gafJobData.getErrors().size());
         // this will end up being
         assertEquals(20, gafJobData.getNewEntries().size());
         for(MarkerGoTermEvidence markerGoTermEvidence : gafJobData.getNewEntries()){
@@ -167,7 +167,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
 
         assertEquals(1, gafJobData.getErrors().size());
         assertEquals(0, gafJobData.getExistingEntries().size());
-        assertEquals(22, gafJobData.getNewEntries().size());
+        assertEquals(23, gafJobData.getNewEntries().size());
         assertEquals(0, gafJobData.getRemovedEntries().size());
 
         int count = 0 ;
