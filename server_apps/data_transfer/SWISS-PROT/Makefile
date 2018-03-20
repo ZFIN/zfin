@@ -29,7 +29,7 @@ GENERICS = pre_loadsp.pl loadsp.pl sp_check.pl sp_parser.pl referenceProteome.pl
 
 STATICS = sp_match.pl sptogo.pl iptogo.pl ectogo.pl sp_delete.sql sp_delete_ec2gopart.sql\
 	sp_load.sql sp_load_ec2gopart.sql README   index.html sp_addbackattr.sql sp_addbackattr_PG.sql \
-        sp_delete_PG.sql ectogo_PG.pl iptogo_PG.pl sptogo_PG.pl 
+        sp_delete_PG.sql ectogo_PG.pl iptogo_PG.pl sptogo_PG.pl runUniprotPreProd.sh
 
 # Define targets that require special handling.
 
@@ -55,7 +55,7 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # ---------------  Misc Targets  ----------------------------------------
 
 runpre:
-	$(TARGETDIR)/pre_loadsp.pl
+	$(TARGETDIR)/runUniprotPreProd.sh
 
 run:
 	$(TARGETDIR)/loadsp.pl

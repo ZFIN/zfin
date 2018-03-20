@@ -467,43 +467,7 @@ print REDGENERPT "prezfinLines = $prezfinLines\n";
 print REDGENERPT "zfinGene = $zfinGene\t";
 print REDGENERPT "zfinLines = $zfinLines\n";
 
-
-#--------------- Delete records from last SWISS-PROT loading-----
-#print "\n delete records source from last SWISS-PROT loading.\n";
-#system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete.sql >out 2>report.txt");
-#open F, "out" or die "Cannot open out file";
-#if (<F>) {
- 
-#  &sendErrorReport("Failed to delete old records");
-#  exit;
-#}
-#close F;
- 
-# --------------- Check SWISS-PROT file --------------
-
-
-my $sleepnum = 1000;
-while($sleepnum--){
-    sleep(1);
-}
-
-system("touch zfin.dat");
-
-my $sleepnum = 1000;
-while($sleepnum--){
-    sleep(1);
-}
-
-# good records for loading are placed in "okfile"
-print "\n sp_check.pl \n";
-system ("sp_check.pl" );
-
-# concatenate all the sub problem files
-system("cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 > allproblems.txt");
-
-system("sp_match.pl manuallyCuratedUniProtIDs.txt");
-
-&sendRunningResult($dbname);
+close REDGENERPT;
 
 exit;
 
