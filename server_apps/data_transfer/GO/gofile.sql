@@ -23,6 +23,22 @@ update tmp_identifiers
 
 							 )::lvarchar(4000),11),""),"'}",""),"'","");
 
+create temp table tmp_go_annot (mev_zdb_id varchar(50),anno_group_id int8,annoextn lvarchar(255)) with no log;
+insert into tmp_go_annot (mev_zdb_id,anno_group_id,annoextn) select distinct mrkrgoev_zdb_id, mgtaeg_annotation_extension_group_id, term_name||'('||mgtae_term_text||')'
+from marker_go_term_evidence, marker_go_term_annotation_extension_group, marker_go_term_annotation_extension,term
+where mrkrgoev_zdb_id= mgtaeg_mrkrgoev_zdb_id and mgtae_relationship_term_zdb_id=term_zdb_id and mgtae_extension_group_id=mgtaeg_annotation_extension_group_id ;
+create temp table tmp_go_identifiers (goid varchar(50), goid2 int8,goid3 lvarchar(1500))
+with no log;
+
+insert into tmp_go_identifiers (goid,goid2)
+ select distinct mev_zdb_id,anno_group_id from tmp_go_annot;
+
+update tmp_go_identifiers  set goid3 = replace(replace(replace(substr(multiset (select distinct item replace(annoextn,",","Prita") from tmp_go_annot
+                                                          where tmp_go_annot.mev_zdb_id = tmp_go_identifiers.goid and tmp_go_annot.anno_group_id=tmp_go_identifiers.goid2
+
+                                                         )::lvarchar(4000),11),""),"'}",""),"'","");
+
+
 create temp table tmp_go (mv_zdb_id varchar(50),
        	    	  	 m_zdb_id varchar(50),
 			 m_abbrev lvarchar,
@@ -37,6 +53,7 @@ create temp table tmp_go (mv_zdb_id varchar(50),
 			 mv_date_modified datetime year to second,
 			 mv_created_by varchar(100),
 			 id2 lvarchar(4000),
+			 mv_annoextn lvarchar(1000),
 			 gene_type varchar(100))
 with no log;
 
@@ -53,19 +70,23 @@ insert into tmp_go (mv_zdb_id,
        t_ont,
        mv_date_modified,
        mv_created_by,
+       mv_annoextn,
        gene_type
 )
 select mrkrgoev_zdb_id,
-				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
+				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term1.term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by, lower(szm_term_name)
-			   from marker_go_term_evidence, marker, term, publication, so_zfin_mapping,
-					   outer inference_group_member
+				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by,goid3,lower(szm_term_name)
+			   from marker_go_term_evidence, marker, term term1, publication, so_zfin_mapping,
+					   outer inference_group_member,
+					   outer  tmp_go_identifiers
 			  where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
-			    and mrkrgoev_term_zdb_id = term_zdb_id
+			    and mrkrgoev_term_zdb_id = term1.term_zdb_id
 			    and mrkrgoev_source_zdb_id  = zdb_id
 			    and mrkr_type = szm_object_type
-			    and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id ;
+			    and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
+			    and mrkrgoev_zdb_id=goid;
+
 
 select distinct gene_type from tmp_go where gene_type is not null;
 

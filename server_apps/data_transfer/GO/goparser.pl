@@ -34,7 +34,9 @@ print UNL "! \n";
 
 # set count to 0 before processing, increment it with each row processed.
 $lastmrkrgoev = '';
+$lastgrp=0;
 @inf_array = ();
+@rel_array= ();
 $db='ZFIN';
 
 open (INDEXFILE, "go.zfin") or die "open failed";
@@ -42,10 +44,13 @@ while ($line = <INDEXFILE>) {
       chomp $line;
       @fields = split /\t/, $line;
       $mrkrgoev=$fields[0];
+
       if ($lastmrkrgoev ne '' && $mrkrgoev ne $lastmrkrgoev) {
 
+
           $lineToProduce = "$db\t$mrkrid\t$mrkrabb\t$qualifier\t$goid\tZFIN:$pubid\t$evidence\t".
-             join(',',@inf_array)."\t$go_o\t$mrkrname\t$aliases\t$gene_product\ttaxon:7955\t$ev_date\t$mod_by\t\t\n";
+             join(',',@inf_array)."\t$go_o\t$mrkrname\t$aliases\t$gene_product\ttaxon:7955\t$ev_date\t$mod_by\t".
+             join('|',@relation_array)."\t\t\n";
 
           ## DLOAD-480
           $find = 'GO Central';
@@ -55,6 +60,7 @@ while ($line = <INDEXFILE>) {
           print UNL "$lineToProduce";
 
 	  @inf_array = ();
+	  @rel_array = ();
       }
       $lastmrkrgoev = $mrkrgoev;
       $mrkrid=$fields[1];
@@ -70,7 +76,9 @@ while ($line = <INDEXFILE>) {
       $ev_date=goDate($fields[11]);
       $mod_by=goMod($fields[12]);
       $aliases=$fields[13];
-      if ($fields[14] eq "gene") {
+      $relation=$fields[15];
+      push(@rel_array, $relation);
+      if ($fields[16] eq "gene") {
 	  $gene_product = 'protein';
       }
       elsif  ($fields[14] eq "lncrna_gene") {
@@ -111,6 +119,7 @@ while ($line = <INDEXFILE>) {
       }
       $aliases=~s/,/|/g;
       $aliases=~s/Sierra/,/g;
+      $relation=~s/Prita/,/g;
 
 }
 
