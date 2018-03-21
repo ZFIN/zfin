@@ -102,7 +102,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     wtXpatPages.add("gene");
                                     wtXpatPages.add("gene/expression");
                                     wtXpatPages.add("gene/wild_type_expression");
-                                    wtXpatPages.add("gene/reference");
+                                    wtXpatPages.add("gene/references");
                                     CrossReferenceDTO wildTypeExpressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(),wtXpatPages );
                                     dbLinkList.add(wildTypeExpressionCrossReference);
                                 }
@@ -110,7 +110,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     List<String> xpatPages = new ArrayList<>();
                                     xpatPages.add("gene");
                                     xpatPages.add("gene/expression");
-                                    xpatPages.add("gene/reference");
+                                    xpatPages.add("gene/references");
                                     CrossReferenceDTO expressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), xpatPages);
                                     dbLinkList.add(expressionCrossReference);
                                 }
@@ -118,7 +118,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             else {
                                 List<String> modPages = new ArrayList<>();
                                 modPages.add("gene");
-                                modPages.add("gene/reference");
+                                modPages.add("gene/references");
                                 CrossReferenceDTO modRefDto = new CrossReferenceDTO("ZFIN", gene.getZdbID(), modPages);
                                 dbLinkList.add(modRefDto);
                             }
