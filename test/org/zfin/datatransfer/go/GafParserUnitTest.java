@@ -44,9 +44,9 @@ public class GafParserUnitTest {
     public void fpInferenceLine() throws Exception {
         File testFile1 = new File(FP_INFERENCE_DIRECTORY + "gene_association.zfin_test1");
         List<GafEntry> gafEntries = gafParser.parseGafFile(testFile1);
-        assertEquals(24, gafEntries.size()); // a lot of ZFIN entries
+        assertEquals(23, gafEntries.size()); // a lot of ZFIN entries
         GafEntry gafEntry = gafEntries.get(0);
-        assertEquals("ZDB-GENE-980526-501", gafEntry.getEntryId());
+        assertEquals("ZDB-GENE-000125-12", gafEntry.getEntryId());
         assertEquals("", gafEntry.getQualifier());
         //assertEquals("GO:0008285", gafEntry.getGoTermId());
         assertEquals("ZFIN:ZDB-PUB-000111-5|PMID:10611375", gafEntry.getPubmedId());
