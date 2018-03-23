@@ -147,7 +147,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
      */
     @Test
     public void fpInferenceTest1() throws Exception {
-       // File file = new File(FP_INFERENCE_DIRECTORY + "gene_association.zfin_test1");
+
         File file = new File(FP_INFERENCE_DIRECTORY + "gene_association.zfin_test1");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(23, gafEntries.size());
