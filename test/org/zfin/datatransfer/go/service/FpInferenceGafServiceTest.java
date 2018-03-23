@@ -95,7 +95,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
 
     }
 
-    @Test
+    /*@Test
     public void testAnnotationExtensions() throws Exception {
         File file = new File(FP_INFERENCE_DIRECTORY +"testGAF.txt");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
@@ -117,7 +117,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
                 assertEquals(19, markerGoTermEvidence.getGoTermAnnotationExtnGroup().size());
             }
         }
-        }
+        }*/
 
 
 
