@@ -384,12 +384,13 @@ public class GafService {
         ontologies.add(Ontology.GO_QUALIFIER);
         String annotationExtns = gafEntry.getAnnotExtn();
         if (StringUtils.isNotEmpty(annotationExtns)) {
-            if (!annotationExtns.contains("(")) {
-                throw new GafValidationError("Annotation Extension(Col 16)" + annotationExtns + " must contain extension", gafEntry);
-            }
             if (!annotationExtns.contains("_")) {
                 throw new GafValidationError("Annotation Extension(Col 16)" + annotationExtns + " must contain relation", gafEntry);
             }
+            if (!annotationExtns.contains("(")) {
+                throw new GafValidationError("Annotation Extension(Col 16)" + annotationExtns + " must contain extension", gafEntry);
+            }
+
 
             Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotExtnGroup = new HashSet<>();
             Set<MarkerGoTermAnnotationExtn> goTermAnnotExtn = new HashSet<>();
@@ -425,7 +426,7 @@ public class GafService {
                         }
                         if (identifierText.startsWith("ZFIN")) {
                             int colonIndex = identifierText.indexOf(":");
-                            mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex, identifierText.length()));
+                            mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex+1, identifierText.length()));
                         }
                         if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")))) {
                             int colonIndex = identifierText.indexOf(":");
@@ -464,7 +465,7 @@ public class GafService {
                     }
                     if (identifierText.startsWith("ZFIN")) {
                         int colonIndex = identifierText.indexOf(":");
-                        mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex, identifierText.length()));
+                        mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex+1, identifierText.length()));
                     }
                     if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")))) {
                         int colonIndex = identifierText.indexOf(":");

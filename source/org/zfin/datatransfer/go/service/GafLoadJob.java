@@ -110,7 +110,7 @@ setLoggerFile();
             }*/
 
             // 2. parse file
-            File downloadedFile = new File(ZfinPropertiesEnum.SOURCEROOT+GAF_TEST_DIRECTORY +"testGAF.txt");
+            File downloadedFile = new File(ZfinPropertiesEnum.SOURCEROOT+"/"+GAF_TEST_DIRECTORY +"testGAF.txt");
 
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
 
