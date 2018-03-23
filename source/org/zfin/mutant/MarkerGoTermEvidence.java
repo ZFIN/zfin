@@ -349,6 +349,18 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         } else {
             sb.append("none");
         }
+        sb.append(",annotationExtns=");
+        if (goTermAnnotationExtnGroup!=null) {
+            for (MarkerGoTermAnnotationExtnGroup mgtaeg : getGoTermAnnotationExtnGroup()) {
+                for (MarkerGoTermAnnotationExtn mgtae : mgtaeg.getMgtAnnoExtns()) {
+                    sb.append(mgtae.getRelationshipTerm() + '(' + mgtae.getIdentifierTermText() + ')').append(",");
+                }
+            }
+        }
+            else{
+                sb.append("none");
+            }
+
         sb.append('}');
         return sb.toString();
     }
