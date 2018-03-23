@@ -384,7 +384,7 @@ public class GafService {
         ontologies.add(Ontology.GO_QUALIFIER);
         String annotationExtns = gafEntry.getAnnotExtn();
         if (StringUtils.isNotEmpty(annotationExtns)) {
-            if (!annotationExtns.contains("_")) {
+            if (annotationExtns.startsWith("(")) {
                 throw new GafValidationError("Annotation Extension(Col 16)" + annotationExtns + " must contain relation", gafEntry);
             }
             if (!annotationExtns.contains("(")) {
@@ -418,11 +418,10 @@ public class GafService {
                         mgtAnnoExtn.setRelationshipTerm(relationTerm.getZdbID());
                         mgtAnnoExtn.setIdentifierTermText(identifierText);
                         if (identifierText.startsWith("GO")) {
-                            GenericTerm goTerm = ontologyRepository.getTermByOboID(identifierText);
-                            if (goTerm != null) {
-                                validateGoTerm(goTerm.getOboID(), gafEntry, " GO Term in Column 16");
-                                mgtAnnoExtn.setIdentifierTerm(goTerm.getZdbID());
-                            }
+
+                                validateGoTerm(ontologyRepository.getTermByOboID(identifierText).getOboID(), gafEntry, " GO Term in Column 16");
+                                mgtAnnoExtn.setIdentifierTerm(ontologyRepository.getTermByOboID(identifierText).getZdbID());
+
                         }
                         if (identifierText.startsWith("ZFIN")) {
                             int colonIndex = identifierText.indexOf(":");
@@ -456,12 +455,8 @@ public class GafService {
                     mgtAnnoExtn.setRelationshipTerm(relationTerm.getZdbID());
                     mgtAnnoExtn.setIdentifierTermText(identifierText);
                     if (identifierText.startsWith("GO")) {
-                        GenericTerm goTerm = ontologyRepository.getTermByOboID(identifierText);
-                        if (goTerm != null) {
-                            validateGoTerm(goTerm.getOboID(), gafEntry, " GO Term in Column 16");
-
-                            mgtAnnoExtn.setIdentifierTerm(goTerm.getZdbID());
-                        }
+                        validateGoTerm(ontologyRepository.getTermByOboID(identifierText).getOboID(), gafEntry, " GO Term in Column 16");
+                        mgtAnnoExtn.setIdentifierTerm(ontologyRepository.getTermByOboID(identifierText).getZdbID());
                     }
                     if (identifierText.startsWith("ZFIN")) {
                         int colonIndex = identifierText.indexOf(":");
