@@ -112,14 +112,11 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
         assertEquals(32, gafJobData.getErrors().size());
         // this will end up being
 //        assertEquals(20, gafJobData.getNewEntries().size());
-        for(MarkerGoTermEvidence markerGoTermEvidence : gafJobData.getNewEntries()){
-            if (markerGoTermEvidence.getGoTermAnnotationExtnGroup()!=null){
-                assertEquals(19,markerGoTermEvidence.getGoTermAnnotationExtnGroup().size());
+        for(MarkerGoTermEvidence markerGoTermEvidence : gafJobData.getNewEntries()) {
+            if (markerGoTermEvidence.getGoTermAnnotationExtnGroup() != null) {
+                assertEquals(19, markerGoTermEvidence.getGoTermAnnotationExtnGroup().size());
             }
-            for(MarkerGoTermAnnotationExtnGroup mgtAnnotGroup:markerGoTermEvidence.getGoTermAnnotationExtnGroup()){
-                assertEquals(22,mgtAnnotGroup.getMgtAnnoExtns().size());
-                }
-            }
+        }
         }
 
 
@@ -153,7 +150,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
        // File file = new File(FP_INFERENCE_DIRECTORY + "gene_association.zfin_test1");
         File file = new File(FP_INFERENCE_DIRECTORY + "gene_association.zfin_test1");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(24, gafEntries.size());
+        assertEquals(23, gafEntries.size());
         makeTestPub(gafEntries);
 
         GafJobData gafJobData = new GafJobData();
@@ -170,7 +167,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
         assertEquals(23, gafJobData.getNewEntries().size());
         assertEquals(0, gafJobData.getRemovedEntries().size());
 
-/*
+
         int count = 0 ;
         for(MarkerGoTermEvidence markerGoTermEvidence : gafJobData.getNewEntries()){
             if(count==5){
@@ -181,7 +178,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
             }
             ++count ;
         }
-*/
+
     }
 
     @Test
