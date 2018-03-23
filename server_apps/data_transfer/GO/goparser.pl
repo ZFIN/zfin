@@ -76,46 +76,46 @@ while ($line = <INDEXFILE>) {
       $ev_date=goDate($fields[11]);
       $mod_by=goMod($fields[12]);
       $aliases=$fields[13];
-      $relation=$fields[15];
+      $relation=$fields[14];
       push(@rel_array, $relation);
-      if ($fields[16] eq "gene") {
+      if ($fields[15] eq "gene") {
 	  $gene_product = 'protein';
       }
-      elsif  ($fields[14] eq "lncrna_gene") {
+      elsif  ($fields[15] eq "lncrna_gene") {
 	  $gene_product = 'lnc_RNA';
       }
-      elsif  ($fields[14] eq "pseudogene") {
+      elsif  ($fields[15] eq "pseudogene") {
 	  $gene_product = 'pseudogene';
       }
-      elsif  ($fields[14] eq "lincrna_gene") {
+      elsif  ($fields[15] eq "lincrna_gene") {
 	  $gene_product = 'lincRNA';
       }
-      elsif  ($fields[14] eq "mirna_gene") {
+      elsif  ($fields[15] eq "mirna_gene") {
 	  $gene_product = 'miRNA';
       }
-      elsif  ($fields[14] eq "pirna_gene") {
+      elsif  ($fields[15] eq "pirna_gene") {
 	  $gene_product = 'piRNA';
       }
-      elsif  ($fields[14] eq "scrna_gene") {
+      elsif  ($fields[15] eq "scrna_gene") {
 	  $gene_product = 'scRNA';
       }
-      elsif  ($fields[14] eq "snorna_gene") {
+      elsif  ($fields[15] eq "snorna_gene") {
 	  $gene_product = 'snoRNA';
       }
-      elsif  ($fields[14] eq "trna_gene") {
+      elsif  ($fields[15] eq "trna_gene") {
 	  $gene_product = 'tRNA';
       }
-      elsif  ($fields[14] eq "rrna_gene") {
+      elsif  ($fields[15] eq "rrna_gene") {
 	  $gene_product = 'rRNA';
       }
-      elsif  ($fields[14] eq "ncrna_gene") {
+      elsif  ($fields[15] eq "ncrna_gene") {
 	  $gene_product = 'ncRNA';
       }
-      elsif  ($fields[14] eq "srp_rna_gene") {
+      elsif  ($fields[15] eq "srp_rna_gene") {
 	  $gene_product = 'SRP_RNA';
       }
       else {
-	  $gene_product=$fields[14];
+	  $gene_product=$fields[15];
       }
       $aliases=~s/,/|/g;
       $aliases=~s/Sierra/,/g;
