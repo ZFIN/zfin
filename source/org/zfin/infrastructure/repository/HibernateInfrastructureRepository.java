@@ -1894,6 +1894,22 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         }
         return null;
     }
+
+    @Override
+    public List<AnnualStats> getAnnualStats() {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(AnnualStats.class);
+        return criteria.list();
+    }
+
+    @Override
+    public List<Date> getDistinctDatesFromAnnualStats() {
+        String sql = "select distinct as_date from annual_stats order by as_date;";
+        Session session = HibernateUtil.currentSession();
+        SQLQuery sqlQuery = session.createSQLQuery(sql);
+
+        return (List<Date>) sqlQuery.list();
+    }
 }
 
 

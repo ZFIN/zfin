@@ -23,6 +23,7 @@ import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 public interface InfrastructureRepository {
@@ -474,6 +475,10 @@ public interface InfrastructureRepository {
     void setDisableUpdatesFlag(boolean readonlyMode);
 
     String getWithdrawnZdbID(String oldZdbID);
+
+    List<AnnualStats> getAnnualStats();
+
+    List<Date> getDistinctDatesFromAnnualStats();
 }
 
 

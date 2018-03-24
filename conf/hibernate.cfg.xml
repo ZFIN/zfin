@@ -106,6 +106,7 @@
         <mapping class="org.zfin.infrastructure.Updates"/>
         <mapping class="org.zfin.infrastructure.WithdrawnZdbID"/>
         <mapping class="org.zfin.infrastructure.ZdbFlag"/>
+        <mapping class="org.zfin.infrastructure.AnnualStats"/>
         <mapping class="org.zfin.marker.MarkerAlias"/>
         <mapping class="org.zfin.marker.MarkerAlias"/>
         <mapping class="org.zfin.marker.MarkerHistory"/>
