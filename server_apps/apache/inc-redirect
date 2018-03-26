@@ -6,7 +6,7 @@ RewriteMap viewmap txt:<!--|TARGETROOT|-->/server_apps/apache/view-page-url-map.
 RewriteRule ^/(?:ZFIN\:)?ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3
 
 #ZDB-[TYPE]-000000-0 ids, with optional ZFIN: prefix with additional /url fragment appended
-RewriteRule ^/(?:ZFIN\:)?ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)/([A-Za-z]+)$ ${viewmap:$1}-$2-$3/$4
+RewriteRule ^/(?:ZFIN\:)?ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)/([-A-Za-z]+)$ ${viewmap:$1}-$2-$3/$4
 
 #[TYPE]:000000 ids
 RewriteRule ^/([A-Za-z]+):([0-9]+)$ ${viewmap:$1}:$2

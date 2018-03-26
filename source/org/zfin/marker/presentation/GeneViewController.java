@@ -189,6 +189,21 @@ public class GeneViewController {
         return "forward:" + searchLink;
     }
 
+    @RequestMapping(value = { "/{geneID}/wt-expression", "/gene/view/{geneID}/wt-expression" })
+    public String getWildtypeExpression(Model model, @PathVariable String geneID) {
+        Marker marker = getMarkerRepository().getMarkerByID(geneID);
+        if (marker == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, geneID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        String searchLink = new ExpressionSearchService.LinkBuilder()
+                .wildtypeOnly(true)
+                .gene(marker)
+                .build();
+        return "forward:" + searchLink;
+    }
+
     @RequestMapping(value = "/{geneID}/download/orthology")
     public void getOrthologyCSV(@PathVariable String geneID, HttpServletResponse response) {
         Marker marker = getMarkerRepository().getMarkerByID(geneID);
