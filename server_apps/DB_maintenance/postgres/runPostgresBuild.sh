@@ -13,7 +13,7 @@ ${INFORMIXDIR}/bin/dbaccess ${DBNAME} ${SOURCEROOT}/server_apps/DB_maintenance/p
 
 sed 's/|/;/g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql > /tmp/fix.sql && mv /tmp/fix.sql ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql
 
-echo "drop and recreate database in $DBNAME value"
+echo "drop and recreate database in $DBNAME value" 
 
 if ${PGBINDIR}/psql -lqt | cut -d \| -f 1 | grep -qw ${DBNAME}; then
     ${PGBINDIR}/dropdb ${DBNAME}
