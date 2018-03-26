@@ -93,6 +93,8 @@ select distinct gene_type from tmp_go where gene_type is not null;
 update tmp_go
   set id2 = (select id2 from tmp_identifiers
       	    	    where m_zdb_id = id); 
+update tmp_go
+set mv_created_by='UniProt' where mv_created_by='UniProtKB';
 
 select first 1 * from tmp_go
  where m_abbrev = 'pax8';
