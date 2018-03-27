@@ -12,4 +12,5 @@ echo $latestDump
 
 mkdir $dumpLocation/$latestDump
 
-pg_basebackup -h localhost -D /research/zunloads/databases/postgres_base_backup/${DBNAME}/$latestDump
+pg_basebackup -h localhost -D /research/zunloads/databases/postgres_base_backup/${DBNAME}/$latestDump --wal-method=stream --progress --verbose
+
