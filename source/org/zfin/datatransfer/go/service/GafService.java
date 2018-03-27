@@ -1,12 +1,10 @@
 package org.zfin.datatransfer.go.service;
 
-import com.zerog.ia.platform.Sys;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.datatransfer.go.*;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoDefaultPublication;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceQualifier;
@@ -176,7 +174,7 @@ public class GafService {
             ++count;
             if (count % 200 == 0) {
                 logger.info("at " + count + " of " + gafEntries.size() + " done "
-                        + ((float) count / (float) gafEntries.size()) * 100f + "%");
+                        + (Math.round((float) count / (float) gafEntries.size()) * 100f) + "%");
             }
 
         } // end of gaf entry for loop
@@ -404,7 +402,7 @@ public class GafService {
                     eachAnnotExtn.addAll(Arrays.asList(annoExtn.split("\\,")));
                     eachAnnotExtn.addAll(Arrays.asList(annoExtn.split("\\, ")));
                     for (String annotExtn : eachAnnotExtn) {
-                       int openParanIndex = annotExtn.indexOf("(");
+                        int openParanIndex = annotExtn.indexOf("(");
                         int closeParanIndex = annotExtn.indexOf(")");
                         String relationName = annotExtn.substring(0, openParanIndex);
                         String identifierText = annotExtn.substring(openParanIndex + 1, closeParanIndex);
@@ -419,13 +417,13 @@ public class GafService {
                         mgtAnnoExtn.setIdentifierTermText(identifierText);
                         if (identifierText.startsWith("GO")) {
 
-                                validateGoTerm(ontologyRepository.getTermByOboID(identifierText).getOboID(), gafEntry, " GO Term in Column 16");
-                                mgtAnnoExtn.setIdentifierTerm(ontologyRepository.getTermByOboID(identifierText).getZdbID());
+                            validateGoTerm(ontologyRepository.getTermByOboID(identifierText).getOboID(), gafEntry, " GO Term in Column 16");
+                            mgtAnnoExtn.setIdentifierTerm(ontologyRepository.getTermByOboID(identifierText).getZdbID());
 
                         }
                         if (identifierText.startsWith("ZFIN")) {
                             int colonIndex = identifierText.indexOf(":");
-                            mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex+1, identifierText.length()));
+                            mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex + 1, identifierText.length()));
                         }
                         if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")))) {
                             int colonIndex = identifierText.indexOf(":");
@@ -460,7 +458,7 @@ public class GafService {
                     }
                     if (identifierText.startsWith("ZFIN")) {
                         int colonIndex = identifierText.indexOf(":");
-                        mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex+1, identifierText.length()));
+                        mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex + 1, identifierText.length()));
                     }
                     if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")))) {
                         int colonIndex = identifierText.indexOf(":");
