@@ -174,7 +174,7 @@ public class GafService {
             ++count;
             if (count % 200 == 0) {
                 logger.info("at " + count + " of " + gafEntries.size() + " done "
-                        + (Math.round((float) count / (float) gafEntries.size()) * 100f) + "%");
+                        + (Math.round((float) count / (float) gafEntries.size() * 100f) + "%"));
             }
 
         } // end of gaf entry for loop
