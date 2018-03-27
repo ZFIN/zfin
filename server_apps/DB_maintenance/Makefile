@@ -22,7 +22,7 @@ SUBDIRS = loadUp/ warehouse/ pheno/ extentMonitoring/ queryMonitoring/ gafLoad/ 
 
 GENERICS = scrubscan.pl unload_production.sh checkUnloadProduction.sh dumpServer.pl dumpLogsContinuous.pl fx_permission_check.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh checkVarcharOctetLength.pl orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh check_undefined_environment.pl reportLabAddressChanges.sh rotateInformixLog.sh set_unload_timestamp.sql movefiles.py
 
-STATICS = build.xml loadDb.sh makeDeveloperBlastDbs.sh regen.sh unload_production_PG.sh
+STATICS = build.xml loadDb.sh makeDeveloperBlastDbs.sh regen.sh unload_production_PG.sh check_unload_production_PG.sh
 
 # ---------------  Production Rules  ------------------------------------
 
