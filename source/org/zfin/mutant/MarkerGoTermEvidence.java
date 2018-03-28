@@ -205,6 +205,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         if (!source.equals(that.source)) return false;
         if (flag != that.flag) return false;
         if (inferredFrom != null ? !this.containsAllInferences(that) : that.inferredFrom != null) return false;
+        if (goTermAnnotationExtnGroup != null ? !this.containsAllAnnotationExtensions(that) : that.getAnnotationExtensions() != null) return false;
 
         return true;
     }
@@ -229,6 +230,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         if (marker != null ? !marker.equals(that.marker) : that.marker != null) return false;
         if (source != null ? !source.equals(that.source) : that.source != null) return false;
         if (inferredFrom != null ? !sameInferences(that.inferredFrom) : that.inferredFrom != null) return false;
+        if (goTermAnnotationExtnGroup != null ? !sameAnnotationExtension(that.getAnnotationExtensions()) : that.getAnnotationExtensions() != null) return false;
 
         return true;
     }
@@ -245,6 +247,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         // have to compare the strings, since the inferences are generated for this and the key generates
         // a separate hash code
         result = 31 * result + (inferredFrom != null ? getInferencesAsString().hashCode() : 0);
+        result = 31 * result + (getAnnotationExtensions() != null ? getAnnotationExtensions().hashCode() : 0);
         return result;
     }
 
@@ -274,6 +277,36 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         }
         return false;
     }
+
+    public boolean sameAnnotationExtension(Set<MarkerGoTermAnnotationExtn> annotExtn1) {
+        if (CollectionUtils.isEmpty(getAnnotationExtensions()) &&
+                CollectionUtils.isEmpty(annotExtn1)) {
+            return true;
+        }
+        if ((getAnnotationExtensions() != null && annotExtn1 == null)
+                || (getAnnotationExtensions() == null && annotExtn1 != null)) {
+            return false;
+        }
+
+        if (getAnnotationExtensions().size() == annotExtn1.size()) {
+            for (MarkerGoTermAnnotationExtn mgtae : getAnnotationExtensions()) {
+                boolean hasMatchingAnnotExtn = false;
+                for (MarkerGoTermAnnotationExtn mgannotExtn1 : annotExtn1) {
+                    if (mgtae.getRelationshipTerm().equals(mgannotExtn1.getRelationshipTerm())) {
+                        if (mgtae.getIdentifierTermText().equals(mgannotExtn1.getIdentifierTermText()))
+                        hasMatchingAnnotExtn = true;
+                    }
+                }
+                if (false == hasMatchingAnnotExtn) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+
 
     public Set<String> getInferencesAsString() {
         Set<String> theseInferences = new HashSet<String>();
@@ -321,6 +354,20 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         // if the interstion contains all of the original elements, then it should be the same size as the original
         return CollectionUtils.intersection(thatInferences, theseInferences).size() == thatInferences.size();
     }
+    /**
+     * Determine if ALL of these annotation extensions are contained in the annotations extensions on this object.
+     *
+     * @param markerGoTermEvidence
+     * @return All annotextns must be in this.annotationExtns
+     */
+    public boolean containsAllAnnotationExtensions(MarkerGoTermEvidence markerGoTermEvidence) {
+        Collection<MarkerGoTermAnnotationExtn> thatAnnotExtns = markerGoTermEvidence.getAnnotationExtensions();
+        Collection<MarkerGoTermAnnotationExtn> theseAnnotExtns = getAnnotationExtensions();
+
+
+        // if the interstion contains all of the original elements, then it should be the same size as the original
+        return CollectionUtils.intersection(thatAnnotExtns, theseAnnotExtns).size() == thatAnnotExtns.size();
+    }
 
 
     @Override
@@ -351,7 +398,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         }
         sb.append(",annotationExtns=");
         if (goTermAnnotationExtnGroup!=null) {
-            for (MarkerGoTermAnnotationExtnGroup mgtaeg : getGoTermAnnotationExtnGroup()) {
+            for (MarkerGoTermAnnotationExtnGroup mgtaeg : goTermAnnotationExtnGroup) {
                 for (MarkerGoTermAnnotationExtn mgtae : mgtaeg.getMgtAnnoExtns()) {
                     sb.append(mgtae.getRelationshipTerm() + '(' + mgtae.getIdentifierTermText() + ')').append(",");
                 }

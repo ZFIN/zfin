@@ -158,6 +158,9 @@ public class GafService {
                 } catch (ParseException e) {
                     entryDate = new Date(0);
                 }
+                if (existing.getAnnotationExtensions()==null){
+                    gafJobData.addUpdateEntry(existing);
+                }
                 if (entryDate.after(existing.getModifiedWhen()) &&
                         !isTermInRestrictedSubset(existing.getEvidenceCode().getCode(), existing.getGoTerm())) {
                     existing.setModifiedWhen(entryDate);
@@ -302,8 +305,11 @@ public class GafService {
 
 
         // validate inferences
-        handleInferences(gafEntry, markerGoTermEvidenceToAdd);
-        handleAnnotationExtns(gafEntry, markerGoTermEvidenceToAdd);
+
+            handleInferences(gafEntry, markerGoTermEvidenceToAdd);
+
+            handleAnnotationExtns(gafEntry, markerGoTermEvidenceToAdd);
+
 
 
         List<MarkerGoTermEvidence> existingEvidenceList = markerGoTermEvidenceRepository.getLikeMarkerGoTermEvidencesButGo(markerGoTermEvidenceToAdd);
@@ -381,6 +387,7 @@ public class GafService {
         ontologies.add(Ontology.ZFIN_RO);
         ontologies.add(Ontology.GO_QUALIFIER);
         String annotationExtns = gafEntry.getAnnotExtn();
+        System.out.println(annotationExtns);
         if (StringUtils.isNotEmpty(annotationExtns)) {
             if (annotationExtns.startsWith("(")) {
                 throw new GafValidationError("Annotation Extension(Col 16)" + annotationExtns + " must contain relation", gafEntry);
@@ -453,7 +460,7 @@ public class GafService {
                     mgtAnnoExtn.setRelationshipTerm(relationTerm.getZdbID());
                     mgtAnnoExtn.setIdentifierTermText(identifierText);
                     if (identifierText.startsWith("GO")) {
-                        validateGoTerm(ontologyRepository.getTermByOboID(identifierText).getOboID(), gafEntry, " GO Term in Column 16");
+                        validateGoTerm(identifierText, gafEntry, " GO Term in Column 16");
                         mgtAnnoExtn.setIdentifierTerm(ontologyRepository.getTermByOboID(identifierText).getZdbID());
                     }
                     if (identifierText.startsWith("ZFIN")) {

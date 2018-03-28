@@ -139,7 +139,19 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     @Override
     public void updateEvidence(MarkerGoTermEvidence markerGoTermEvidence) {
         HibernateUtil.currentSession().update(markerGoTermEvidence);
-    }
+
+        if (CollectionUtils.isNotEmpty(markerGoTermEvidence.getGoTermAnnotationExtnGroup())) {
+            for (MarkerGoTermAnnotationExtnGroup mgtaeGroup : markerGoTermEvidence.getGoTermAnnotationExtnGroup()) {
+                mgtaeGroup.setMgtaegMarkerGoEvidence(markerGoTermEvidence);
+                HibernateUtil.currentSession().save(mgtaeGroup);
+                for (MarkerGoTermAnnotationExtn mgtaedata : mgtaeGroup.getMgtAnnoExtns()) {
+
+                    if (mgtaedata.getAnnotExtnGroupID().getId() != null) {
+                        HibernateUtil.currentSession().save(mgtaedata);
+                    }
+                }
+            }}}
+
 
     @Override
     @SuppressWarnings("unchecked")

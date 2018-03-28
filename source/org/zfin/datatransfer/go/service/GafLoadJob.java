@@ -78,15 +78,18 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     public int execute() {
         int exitCode = 0;
+        setLoggerFile();
 
         clearReportDirectory();
 
         GafOrganization.OrganizationEnum organizationEnum = GafOrganization.OrganizationEnum.getType(organization);
 
         try {
-            localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
-            gafService = new GafService(organizationEnum);
 
+            localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
+
+            gafService = new GafService(organizationEnum);
+           // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
             File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                     , new URL(downloadUrl)
@@ -108,7 +111,10 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             }
 
             // 2. parse file
+//            File downloadedFile = new File(ZfinPropertiesEnum.SOURCEROOT+"/"+GAF_TEST_DIRECTORY +"testGAF.txt");
+
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
+            System.out.println(gafEntries.size());
 
             if (CollectionUtils.isEmpty(gafEntries)) {
                 throw new GafValidationError("No gaf entries found in file: " + downloadedFile);
