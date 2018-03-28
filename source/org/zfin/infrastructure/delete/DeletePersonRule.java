@@ -26,6 +26,9 @@ public class DeletePersonRule extends AbstractDeleteEntityRule implements Delete
         if (CollectionUtils.isNotEmpty(person.getLabs())) {
             addToValidationReport(person.getFullName() + " is associated to the following labs: ", person.getLabs());
         }
+        if (CollectionUtils.isNotEmpty(person.getCompanies())) {
+            addToValidationReport(person.getFullName() + " is associated to the following companies: ", person.getCompanies());
+        }
         Set<Publication> publications = person.getPublications();
         // Can't delete the person if associated with a publication
         if (CollectionUtils.isNotEmpty(publications)) {
