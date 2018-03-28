@@ -56,7 +56,7 @@ while ($line = <INDEXFILE>) {
           $find = 'GO Central';
           $replace = 'GO_Central';
           $lineToProduce =~ s/\Q$find\E/$replace/g;
-
+          
           print UNL "$lineToProduce";
 
 	  @inf_array = ();
@@ -77,6 +77,7 @@ while ($line = <INDEXFILE>) {
       $mod_by=goMod($fields[12]);
       $aliases=$fields[13];
       $relation=$fields[14];
+
       push(@rel_array, $relation);
       if ($fields[15] eq "gene") {
 	  $gene_product = 'protein';
