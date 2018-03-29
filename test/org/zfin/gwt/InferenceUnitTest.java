@@ -24,7 +24,7 @@ public class InferenceUnitTest {
         assertTrue(testString2.matches("ZFIN:ZDB-MRPHLNO-.*|asdf"));
         assertEquals("GenBank:.*", InferenceCategory.GENBANK.match());
         assertEquals("ZFIN:ZDB-MRPHLNO-.*|ZFIN:ZDB-TALEN-.*|ZFIN:ZDB-CRISPR-.*|ZFIN:ZDB-GENO-.*", InferenceCategory.ZFIN_MRPH_GENO.match());
-        assertEquals("ZFIN:ZDB-GENE-.*|ZFIN:ZDB-LINCRNAG-.*|ZFIN:ZDB-LNCRNAG-.*|ZFIN:ZDB-MIRNAG-.*|ZFIN:ZDB-PIRNAG-.*|ZFIN:ZDB-NCRNAG-.*|ZFIN:ZDB-SNORNAG-.*|ZFIN:ZDB-SCRNAG-.*|ZFIN:ZDB-RRNAG-.*|ZFIN:ZDB-SRPRNAG-.*|ZFIN:ZDB-TRNAG-.*",InferenceCategory.ZFIN_GENE.match());
+        assertEquals("ZFIN:ZDB-GENE-.*|ZFIN:ZDB-LINCRNAG-.*|ZFIN:ZDB-LNCRNAG-.*|ZFIN:ZDB-MIRNAG-.*|ZFIN:ZDB-PIRNAG-.*|ZFIN:ZDB-NCRNAG-.*|ZFIN:ZDB-SNORNAG-.*|ZFIN:ZDB-SCRNAG-.*|ZFIN:ZDB-RRNAG-.*|ZFIN:ZDB-SRPRNAG-.*|ZFIN:ZDB-TRNAG-.*", InferenceCategory.ZFIN_GENE.match());
 //        assertEquals("GenBank:.*",InferenceCategory.GENBANK.match());
 //        "GenBank.*".
         assertEquals(InferenceCategory.GENBANK, InferenceCategory.getInferenceCategoryByValue(testString1));
@@ -35,17 +35,15 @@ public class InferenceUnitTest {
 
     @Test
     public void testInferenceComparator() {
-        Set<InferenceGroupMember> inferenceGroupMembers1 = null;
+        Set<InferenceGroupMember> inferenceGroupMembers1;
         MarkerGoTermEvidence markerGoTermEvidence = new MarkerGoTermEvidence();
-        markerGoTermEvidence.setInferredFrom(inferenceGroupMembers1);
 
-        Set<InferenceGroupMember> inferenceGroupMembers2 = null;
+        Set<InferenceGroupMember> inferenceGroupMembers2;
+
+        inferenceGroupMembers2 = new HashSet<>();
         assertTrue(markerGoTermEvidence.sameInferences(inferenceGroupMembers2));
 
-        inferenceGroupMembers2 = new HashSet<InferenceGroupMember>();
-        assertTrue(markerGoTermEvidence.sameInferences(inferenceGroupMembers2));
-
-        inferenceGroupMembers1 = new HashSet<InferenceGroupMember>();
+        inferenceGroupMembers1 = new HashSet<>();
         assertTrue(markerGoTermEvidence.sameInferences(inferenceGroupMembers2));
 
         InferenceGroupMember inferenceGroupMemberA = new InferenceGroupMember();
@@ -67,22 +65,19 @@ public class InferenceUnitTest {
 
     @Test
     public void testMarkerGoEvidenceEquals() {
-        Set<InferenceGroupMember> inferenceGroupMembers1 = null;
+        Set<InferenceGroupMember> inferenceGroupMembers1;
         MarkerGoTermEvidence markerGoTermEvidence1 = new MarkerGoTermEvidence();
-        markerGoTermEvidence1.setInferredFrom(inferenceGroupMembers1);
 
 
         MarkerGoTermEvidence markerGoTermEvidence2 = new MarkerGoTermEvidence();
-        Set<InferenceGroupMember> inferenceGroupMembers2 = null;
-        assertTrue(markerGoTermEvidence1.sameInferences(inferenceGroupMembers2));
-        markerGoTermEvidence2.setInferredFrom(inferenceGroupMembers2);
+        Set<InferenceGroupMember> inferenceGroupMembers2;
         assertTrue(markerGoTermEvidence1.equals(markerGoTermEvidence2));
 
 
-        inferenceGroupMembers2 = new HashSet<InferenceGroupMember>();
+        inferenceGroupMembers2 = new HashSet<>();
         assertTrue(markerGoTermEvidence1.sameInferences(inferenceGroupMembers2));
 
-        inferenceGroupMembers1 = new HashSet<InferenceGroupMember>();
+        inferenceGroupMembers1 = new HashSet<>();
         assertTrue(markerGoTermEvidence1.sameInferences(inferenceGroupMembers2));
 
         InferenceGroupMember inferenceGroupMemberA = new InferenceGroupMember();

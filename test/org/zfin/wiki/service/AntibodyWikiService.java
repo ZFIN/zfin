@@ -2,7 +2,9 @@ package org.zfin.wiki.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.zfin.TestConfiguration;
+import org.zfin.wiki.Label;
 import org.zfin.wiki.RemotePage;
+import org.zfin.wiki.RemotePageSummary;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,10 +34,11 @@ public class AntibodyWikiService {
     private static String template;
 
     public static void main(String[] args) throws Exception {
-        readAntibodyFile();
+        //readAntibodyFile();
         TestConfiguration.configure();
-        readEntryFile();
+        //readEntryFile();
         service = AntibodyWikiWebService.getInstance();
+/*
         antibodies.forEach(antibody -> {
                     try {
                         createNewPage(antibody);
@@ -44,21 +47,20 @@ public class AntibodyWikiService {
                     }
                 }
         );
+*/
 
-/*
-        updatePage("Ab3-mki67");
+        //updatePage("Ab3-mki67");
         RemotePageSummary[] pages = service.getAllPagesForSpace("AB");
         int numberOfCAntibodies = 0;
         for (RemotePageSummary pageSummary : pages) {
             RemotePage page = service.getPage(pageSummary.getId());
-            if (!service.pageHasLabel(page, Label.ZFIN_ANTIBODY_LABEL.getValue())) {
+            if (!service.pageHasLabel(page, Label.COMMUNITY_ANTIBODY.getValue())) {
                 System.out.println(numberOfCAntibodies);
                 numberOfCAntibodies++;
                 updatePage(page.getTitle());
             }
 
         }
-*/
         //System.out.println("Number of Community Antibodies: " + numberOfCAntibodies);
 
     }
@@ -393,6 +395,7 @@ public class AntibodyWikiService {
     private static void updatePage(String antibodyName) throws Exception {
         RemotePage page = service.getPageForTitleAndSpace(antibodyName, "AB");
         String contents = page.getContent();
+/*
         int startBeginningMacro = contents.indexOf("<ac:structured-macro ac:name=\"table-plus\"");
         // find the following string after the first string
         int startEndMacro = contents.indexOf(END_OF_BEGINNING_String, startBeginningMacro);
@@ -404,7 +407,13 @@ public class AntibodyWikiService {
         tableContents = tableContents.replaceFirst(secondRemovalString, "");
         newContents += tableContents;
         service.updatePageForAntibody(newContents, page, false);
-        System.out.println(page.getTitle());
+*/
+        if (contents.contains("zfin.org/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg")) {
+            String newContents = contents.replace("zfin.org/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg",
+                    "zfin.org/search?category=Gene+%2F+Transcript");
+            service.updatePageForAntibody(newContents, page, false);
+            System.out.println(page.getTitle());
+        }
     }
 }
 

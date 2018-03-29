@@ -84,9 +84,14 @@ public class StringCleanInterceptor extends EmptyInterceptor {
         if (o.getClass().isEnum())
             return;
         try {
+            // do not update existing nulls
+            if (BeanUtils.getProperty(o, field.getName()) == null && value == null)
+                return;
             BeanUtils.setProperty(o, field.getName(), value);
         } catch (IllegalAccessException | InvocationTargetException e) {
             logger.info(e);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 }
