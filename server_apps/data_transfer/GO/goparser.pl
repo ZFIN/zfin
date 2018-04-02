@@ -50,7 +50,7 @@ while ($line = <INDEXFILE>) {
 
           $lineToProduce = "$db\t$mrkrid\t$mrkrabb\t$qualifier\t$goid\tZFIN:$pubid\t$evidence\t".
              join(',',@inf_array)."\t$go_o\t$mrkrname\t$aliases\t$gene_product\ttaxon:7955\t$ev_date\t$mod_by\t".
-             join('|',@rel_array)."\t\t\n";
+             "$relation\t\t\n";
 
           ## DLOAD-480
           $find = 'GO Central';
@@ -60,8 +60,9 @@ while ($line = <INDEXFILE>) {
           print UNL "$lineToProduce";
 
 	  @inf_array = ();
-	  @rel_array = ();
+
       }
+      @rel_array = ();
       $lastmrkrgoev = $mrkrgoev;
       $mrkrid=$fields[1];
       $mrkrabb=$fields[2];
@@ -78,7 +79,8 @@ while ($line = <INDEXFILE>) {
       $aliases=$fields[13];
       $relation=$fields[14];
 
-      push(@rel_array, $relation);
+
+
       if ($fields[15] eq "gene") {
 	  $gene_product = 'protein';
       }
@@ -120,6 +122,7 @@ while ($line = <INDEXFILE>) {
       }
       $aliases=~s/,/|/g;
       $aliases=~s/Sierra/,/g;
+      $relation=~s/,/|/g;
       $relation=~s/Prita/,/g;
 
 }
@@ -183,3 +186,12 @@ sub goInf()
      }
     return $inf;
   }
+ sub goRel()
+    {
+      $rel =$_[0];
+      if (index($rel,'\ ')==0) {
+         $rel=~s/\\ //;
+       }
+      return $rel;
+    }
+
