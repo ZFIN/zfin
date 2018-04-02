@@ -51,7 +51,7 @@ update tmp_go_identifiers_pipes  set goid3tmp = replace(replace(replace(substr(m
 
 
 
-unload to 'tmp_go_idspipes' select * from tmp_go_identifiers_pipes order by goidtmp;
+
 
 create temp table tmp_go (mv_zdb_id varchar(50),
        	    	  	 m_zdb_id varchar(50),
