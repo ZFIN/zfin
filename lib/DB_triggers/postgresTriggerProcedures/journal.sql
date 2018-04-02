@@ -1,28 +1,18 @@
-drop trigger if exists journal_trigger on journal;
+DROP TRIGGER IF EXISTS journal_trigger
+ON journal;
 
-create or replace function journal()
-returns trigger as
+CREATE OR REPLACE FUNCTION journal()
+  RETURNS trigger AS
 $BODY$
-declare jrnl_name journal.jrnl_name%TYPE := scrub_char(NEW.jrnl_name);
-declare jrnl_abbrev journal.jrnl_abbrev%TYPE := scrub_char(NEW.jrnl_abbrev);
-declare jrnl_name_lower journal.jrnl_name_lower%TYPE := lower(NEW.jrnl_name_lower);
-declare jrnl_abbrev_lower journal.jrnl_abbrev_lower%TYPE := lower(NEW.jrnl_abbrev_lower);
-
-begin
-     
-     NEW.jrnl_name = jrnl_name;
-
-     NEW.jrnl_abbrev = jrnl_abbrev;
-     
-     NEW.jrnl_name_lower = jrnl_name_lower;
-
-     NEW.jrnl_abbrev_lower = jrnl_abbrev_lower;
-
-     RETURN NEW;
-
-end;
+BEGIN
+  NEW.jrnl_name = scrub_char(NEW.jrnl_name);
+  NEW.jrnl_abbrev = scrub_char(NEW.jrnl_abbrev);
+  NEW.jrnl_name_lower = lower(NEW.jrnl_name_lower);
+  NEW.jrnl_abbrev_lower = lower(NEW.jrnl_abbrev_lower);
+  RETURN NEW;
+END;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger journal_trigger after insert or update on journal
- for each row
- execute procedure journal();
+CREATE TRIGGER journal_trigger
+BEFORE INSERT OR UPDATE ON journal
+FOR EACH ROW EXECUTE PROCEDURE journal();

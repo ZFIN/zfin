@@ -1,18 +1,16 @@
-drop trigger if exists construct_trigger on construct;
+DROP TRIGGER IF EXISTS construct_trigger
+ON construct;
 
-create or replace function construct()
-returns trigger as
+CREATE OR REPLACE FUNCTION construct()
+  RETURNS trigger AS
 $BODY$
-declare construct_name construct.construct_name%TYPE := scrub_char(NEW.construct_name);
-
-begin
-
-     NEW.construct_name = construct_name;
-     RETURN NEW;
-
-end;
+BEGIN
+  NEW.construct_name = scrub_char(NEW.construct_name);
+  NEW.construct_comments = scrub_char(NEW.construct_comments);
+  RETURN NEW;
+END;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger construct_trigger after insert or update on construct
- for each row
- execute procedure construct();
+CREATE TRIGGER construct_trigger
+BEFORE INSERT OR UPDATE ON construct
+FOR EACH ROW EXECUTE PROCEDURE construct();

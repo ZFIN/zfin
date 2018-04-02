@@ -1,17 +1,29 @@
-drop trigger if exists clone_trigger on clone;
+DROP TRIGGER IF EXISTS clone_before_trigger
+ON clone;
 
-create or replace function clone()
-returns trigger as
-$BODY$
+DROP TRIGGER IF EXISTS clone_after_trigger
+ON clone;
 
-begin
-     perform p_update_clone_relationship(NEW.clone_mrkr_zdb_id, NEW.clone_problem_type);
-     
-     RETURN NEW;
-
-end;
+CREATE OR REPLACE FUNCTION clone_before()
+  RETURNS trigger AS $BODY$
+BEGIN
+  NEW.clone_pcr_amplification = scrub_char(NEW.clone_pcr_amplification);
+  RETURN NEW;
+END;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger clone_trigger after insert or update on clone
- for each row
- execute procedure clone();
+CREATE OR REPLACE FUNCTION clone_after()
+  RETURNS trigger AS $BODY$
+BEGIN
+  PERFORM p_update_clone_relationship(NEW.clone_mrkr_zdb_id, NEW.clone_problem_type);
+  RETURN NEW;
+END;
+$BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER clone_before_trigger
+BEFORE INSERT OR UPDATE ON clone
+FOR EACH ROW EXECUTE PROCEDURE clone_before();
+
+CREATE TRIGGER clone_after_trigger
+AFTER INSERT OR UPDATE ON clone
+FOR EACH ROW EXECUTE PROCEDURE clone_after();

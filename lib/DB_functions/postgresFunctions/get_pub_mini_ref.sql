@@ -32,8 +32,7 @@ create or replace function get_pub_mini_ref(pubZdbId text)
       lname = lname || ' <i>et al.</i>'; 
       exit;
     end if;
-    index = index +1 ;  
-    raise notice 'Value: %', index ;
+    index = index +1 ;
   end loop;
 
   if lname != '' then   
@@ -45,8 +44,6 @@ create or replace function get_pub_mini_ref(pubZdbId text)
   else	
     miniRef = authorList;	
   end if;
-
-  raise notice 'Value: %', miniRef;
   return miniRef;          
 
 end

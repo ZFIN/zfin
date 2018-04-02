@@ -32,4 +32,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1095/VulcanSalute/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1096/XBones/db.changelog.master.xml"/>
+
 </databaseChangeLog>

@@ -1,27 +1,20 @@
-drop trigger if exists person_trigger on person;
+DROP TRIGGER IF EXISTS person_trigger
+ON person;
 
-create or replace function person()
-returns trigger as
-$BODY$
-declare url text := scrub_char(NEW.url);
-        email text := scrub_char(NEW.email);
-	fax   text := scrub_char(NEW.fax);
-	phone text := scrub_char(NEW.phone);
-begin
-
-	NEW.url = url;
-
-	NEW.email = email;
-
-	NEW.fax = fax;
-
-	NEW.phone = phone;	
-
-	RETURN NEW;
-
-end;
+CREATE OR REPLACE FUNCTION person()
+  RETURNS trigger AS $BODY$
+BEGIN
+  NEW.name = scrub_char(NEW.name);
+  NEW.last_name = scrub_char(NEW.last_name);
+  NEW.first_name = scrub_char(NEW.first_name);
+  NEW.url = scrub_char(NEW.url);
+  NEW.email = scrub_char(NEW.email);
+  NEW.fax = scrub_char(NEW.fax);
+  NEW.phone = scrub_char(NEW.phone);
+  RETURN NEW;
+END;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger person_trigger after insert or update on person
- for each row
- execute procedure person();
+CREATE TRIGGER person_trigger
+BEFORE INSERT OR UPDATE ON person
+FOR EACH ROW EXECUTE PROCEDURE person();
