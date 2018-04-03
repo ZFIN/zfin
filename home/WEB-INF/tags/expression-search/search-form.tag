@@ -19,7 +19,7 @@
 
 <div class="titlebar">
     <h1>${title}</h1>
-    <a href="/ZFIN/misc_html/xpatselect_search_tips.html" class="popup-link help-popup-link"
+    <a href="/ZFIN/help_files/expression_help.html" class="popup-link help-popup-link"
        id="xpatsel_expression_tips" rel="#searchtips"></a>
 
     <span class="yourinputwelcome" nowrap="nowrap">
