@@ -113,7 +113,7 @@
 <%--// EXPRESSION --%>
 <div class="summary" id="expression">
     <b>GENE EXPRESSION</b>
-    <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
+    <small><a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a></small>
     <br/>
     <b>Gene expression in Wild Types + ${formBean.marker.name}</b>
     <c:choose>

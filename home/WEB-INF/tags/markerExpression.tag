@@ -31,7 +31,7 @@
 
             <table id="geneExpressionData" class="summary horizontal-solidblock geneexpressionblock">
                 <caption>GENE EXPRESSION
-                    <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
+                    <small><a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a></small>
                 </caption>
                 <c:if test="${
                 (!empty markerExpression.allExpressionData and empty markerExpression.directlySubmittedExpression)
@@ -117,7 +117,7 @@
         <c:otherwise>
             <div class="noGeneExpressionData">
                 <b>GENE EXPRESSION
-                    <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
+                    <small><a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a></small>
                 </b>
                 <zfin2:noDataAvailable/>
             </div>

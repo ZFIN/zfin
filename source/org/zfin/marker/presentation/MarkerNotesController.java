@@ -35,11 +35,6 @@ public class MarkerNotesController {
     @Autowired
     private MarkerRepository markerRepository;
 
-    @RequestMapping("/note/expression")
-    public String getXpatSelectNote() {
-        return "marker/expression-note.insert";
-    }
-
     @RequestMapping("/note/phenotype")
     public String getPhenotypeSelectNote() {
         return "marker/phenotype-note.insert";
