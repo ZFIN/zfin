@@ -10,7 +10,10 @@
     </caption>
     <tr>
         <th>Gene</th>
-        <th>Expression Data</th>
+        <th>
+            Expression Data
+            <a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a>
+        </th>
         <th>Stage Range</th>
         <th>Matching Text</th>
     </tr>

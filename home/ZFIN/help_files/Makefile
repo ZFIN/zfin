@@ -23,7 +23,8 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/help_files
 GENERICS = label.html
 STATICS  = fishselecthelp.html mut_intro.html help-fish.html \
 	   generichelp.html \
-	   sequence_tools_help.html
+	   sequence_tools_help.html \
+	   expression_help.html
 
 # --------------------------  Rules  ------------------------------------
 

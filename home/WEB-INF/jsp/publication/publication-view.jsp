@@ -178,8 +178,7 @@
 <c:if test="${showFiguresLink}">
     <div style="margin-top: 1em;">
         <a href="/action/figure/all-figure-view/${publication.zdbID}" style="font-weight: bold">FIGURES</a>
-        &nbsp;
-        <span style="font-size: small">(<a href="javascript:start_note();">current status</a>)</span>
+        <a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a>
     </div>
 </c:if>
 
@@ -208,13 +207,3 @@
         ${publication.errataAndNotes}
     </zfin2:subsection>
 </c:if>
-
-
-<script>
-    function start_note() {
-        top.zfinhelp = open("/<%=ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect_note.apg", "notewindow", "scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
-    }
-</script>
-
-
-

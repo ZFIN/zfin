@@ -20,7 +20,10 @@
         </small>
     </caption>
     <tr>
-        <th>Publication</th>
+        <th>
+            Publication
+            <a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a>
+        </th>
         <th>Data</th>
         <th></th>
         <th>Fish</th>
