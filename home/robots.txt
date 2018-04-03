@@ -22,6 +22,7 @@ Disallow: /cgi-bin/webdriver?MIval=aa-labselect.apg
 Disallow: /cgi-bin/webdriver?MIval=aa-pubselect2.apg
 # has results as well as search form, so must disallow
 Disallow: /cgi-bin/webdriver?MIval=aa-xpatselect.apg
+Disallow: /action/expression/results
 # has results as well as search form, so must disallow
 Disallow: /cgi-bin/webdriver?MIval=aa-xpatview.apg
 # only allow stage search

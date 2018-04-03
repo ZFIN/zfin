@@ -80,7 +80,7 @@ document.write(
     '      <a href="/action/marker/search" title="Search by name, accession number, chromosome, vector or sequence type" id="hdr-gmc-search">Genes / Markers / Clones</a>' +
     '      <a href="/action/blast/blast" title="Search for sequence alignment against ZFIN datasets and zebrafish datasets">BLAST</a> ' +
     '      <a href="/@GBROWSE_PATH_FROM_ROOT@">GBrowse</a> ' +
-    '      <a href="/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-xpatselect.apg" title="Search by gene, developmental stage, anatomy and other attributes">Expression</a>' +
+    '      <a href="/action/expression/search" title="Search by gene, developmental stage, anatomy and other attributes">Expression</a>' +
     '      <a href="/action/antibody/search" title="Search for antibodies by gene, labeled anatomy and other attributes">Antibodies</a>' +
     '      <a href="/action/fish/search">Mutants / Knockdowns / Tg</a>' +
     '      <a href="/search?q=&fq=category%3A%22Construct%22&category=Construct">Constructs</a>' +

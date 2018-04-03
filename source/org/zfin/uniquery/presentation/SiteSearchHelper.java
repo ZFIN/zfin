@@ -1,16 +1,11 @@
 package org.zfin.uniquery.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.uniquery.*;
 import org.zfin.uniquery.categories.SiteSearchCategories;
@@ -296,76 +291,6 @@ public class SiteSearchHelper {
         queryTerm = queryTerm.trim();
 
         return queryTerm;
-    }
-
-
-    /**
-     * This function formats the suggestion to use specific search forms.
-     * It encapsulates this feature in HTML formatting for use by the JSP.
-     * <p/>
-     * This code adds an unfortunate duplication of effort for category
-     * modifications.  By allowing the suggestion to "morph" depending
-     * on the category browsed, we have to hard-code information here that
-     * will be difficult to maintain in three places:  SearchCategory.java, Indexer.java, and SearchBean.java.
-     * <p/>
-     * Relies on the "specific_search" CSS styles for formatting.
-     *
-     * @return string
-     * @throws java.io.UnsupportedEncodingException
-     *          exception from encoding
-     */
-    public String getRelatedSearchPageHTML() throws UnsupportedEncodingException {
-        String specificSearchURL;
-        String categoryDisplayName = SiteSearchCategories.getDisplayName(categoryID);
-        RelatedTermsService terms = new RelatedTermsService();
-        String queryTerm = getQueryTerm();
-        List<String> anatomyHits = terms.getAllAnatomyHits(queryTerm);
-
-        if (categoryDisplayName.toLowerCase().equals("mutants/transgenics")) {
-            specificSearchURL = "/action/fish/do-search?geneOrFeatureName=" + queryTerm;
-        } else if (categoryDisplayName.toLowerCase().equals("genes/markers/clones")) {
-            specificSearchURL = "/action/marker/search?name=" + queryTerm;
-        } else if (categoryDisplayName.toLowerCase().equals("expression/phenotype")) {
-            /* expression/phenotype info are currently all on figure view page, and we
-               only have expression search page, no phenotype search page now. */
-            specificSearchURL = "aa-xpatselect.apg";
-            categoryDisplayName = "Expression";
-            if (CollectionUtils.isNotEmpty(anatomyHits)) {
-                specificSearchURL += "&TA_selected_structures=";
-                for (String anatkey : anatomyHits) {
-                    specificSearchURL += URLEncoder.encode(anatkey, "UTF-8") + "%0D%0A"; // %0D%0A = CR-LF
-                }
-            } else {
-                specificSearchURL += "&gene_name=" + queryTerm;
-            }
-        } else if (categoryDisplayName.toLowerCase().startsWith("anatomy")) {
-            specificSearchURL = "/action/ontology/term-detail/";
-            if (CollectionUtils.isNotEmpty(anatomyHits)) {
-                for (String anatkey : anatomyHits) {
-                    specificSearchURL += URLEncoder.encode(anatkey, "UTF-8") + " ";
-                }
-                specificSearchURL += "?ontologyName=zebrafish_anatomy,cellular_component,molecular_function,biological_process";
-            }
-        } else if (categoryDisplayName.toLowerCase().equals("people")) {
-            specificSearchURL = "/action/profile/person/search?name=" + queryTerm;
-        } else {
-            specificSearchURL = "";
-        }
-
-        String returnResults = "";
-        if (specificSearchURL.length() > 0) {
-            returnResults += "<span class='specific_search'>";
-            returnResults += "Advanced search: ";
-            //treat it as an app page if it has aa-
-            if (StringUtils.contains(specificSearchURL, "aa-")) {
-                returnResults += "<a href='/cgi-bin/webdriver?MIval=" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
-            } else {
-                returnResults += "<a href='" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
-            }
-
-            returnResults += "</span>";
-        }
-        return returnResults;
     }
 
     /**

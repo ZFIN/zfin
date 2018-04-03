@@ -3,15 +3,11 @@ package org.zfin.framework.presentation.tags;
 import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.Term;
-import org.zfin.profile.service.ProfileService;
-import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.ChoiceFormat;
 
 /**
@@ -30,8 +26,7 @@ public class CreateFiguresLinkTag extends TagSupport {
     private boolean includeSubstructures = false;
 
     public int doStartTag() throws JspException {
-        boolean isRoot = ProfileService.isRootUser();
-        String linkUrl = isRoot ? getJavaUrl() : getWebdriverUrl();
+        String linkUrl = getJavaUrl();
         ChoiceFormat cf = new ChoiceFormat("0#figures| 1#figure| 2#figures");
         String linkText = numberOfFigures + " " + cf.format(numberOfFigures);
         String link = "<a href='" + linkUrl + "'>" + linkText + "</a>";
@@ -42,21 +37,6 @@ public class CreateFiguresLinkTag extends TagSupport {
         }
         release();
         return Tag.SKIP_BODY;
-    }
-
-    private void getDefaultQueryString(StringBuilder hyperLink) {
-        hyperLink.append("?MIval=aa-xpatselect.apg");
-        hyperLink.append("&query_results=true");
-        hyperLink.append("&START=0");
-        hyperLink.append("&searchtype=equals");
-        hyperLink.append("&xpatsel_calledBySelf=true");
-        hyperLink.append("&mutsearchtype=contains");
-        hyperLink.append("&MOsearchtype=contains");
-        hyperLink.append("&xpatsel_jtype=ANY");
-        hyperLink.append("&xpatsel_jtypeDirect=checked");
-        hyperLink.append("&xpatsel_jtypePublished=checked");
-        hyperLink.append("&structure_bool=and");
-        hyperLink.append("&WINSIZE=25");
     }
 
     /**
@@ -78,50 +58,6 @@ public class CreateFiguresLinkTag extends TagSupport {
                 .wildtypeOnly(wildtypeOnly)
                 .includeSubstructures(includeSubstructures)
                 .build();
-    }
-
-    private String getWebdriverUrl() {
-        StringBuilder url = new StringBuilder("/");
-        url.append(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
-        getDefaultQueryString(url);
-        if (useGeneZdbID) {
-            url.append("&xpatsel_geneZdbId=");
-            url.append(marker.getZdbID());
-        }
-
-        if (marker != null) {
-            url.append("&gene_name=");
-            url.append(marker.getAbbreviation());
-        }
-
-        url.append("&TA_selected_structures=");
-        String aoName = term.getTermName();
-        String aoTermUrlEncoded;
-        try {
-            aoTermUrlEncoded = URLEncoder.encode(aoName, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            aoTermUrlEncoded = URLEncoder.encode(aoName);
-        }
-        url.append(aoTermUrlEncoded);
-
-        url.append("&xpatsel_processed_selected_structures_names=");
-        url.append(aoTermUrlEncoded);
-        url.append("&xpatsel_processed_selected_structures=");
-        url.append(term.getZdbID());
-
-        if (author != null) {
-            url.append("&authsearchtype=contains&author=");
-            url.append(author);
-        }
-
-        if (wildtypeOnly) {
-            url.append("&xpatsel_wtOnly=checked");
-        }
-
-        url.append("&include_substructures=");
-        url.append(includeSubstructures ? "checked" : "unchecked");
-
-        return url.toString();
     }
 
     public Marker getMarker() {

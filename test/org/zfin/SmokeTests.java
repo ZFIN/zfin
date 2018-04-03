@@ -33,8 +33,6 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         AntibodySmokeTest.class,
         BlastSmokeTest.class,
         DownloadSmokeTest.class,
-// commenting out as those are flaky in running on linux.
-//        ExpressionSmokeTest.class,
         FeatureDetailSmokeTest.class,
         FigureSummarySmokeTest.class,
         FishSmokeTest.class,

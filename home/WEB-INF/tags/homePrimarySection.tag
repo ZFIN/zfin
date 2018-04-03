@@ -27,16 +27,10 @@
 
 <ul>
     <li>
-        <authz:authorize access="hasRole('root')">
-            <a class="small" href="/action/expression/search"
-               title="Search by gene, developmental stage, anatomy and other attributes">
-                <strong>Gene Expression</strong></a>
-        </authz:authorize>
-        <authz:authorize access="!hasRole('root')">
-            <a href="/cgi-bin/webdriver?MIval=aa-xpatselect.apg"
-               title="Search by gene, developmental stage, anatomy and other attributes">
-                <strong>Gene Expression</strong></a>
-        </authz:authorize>
+        <a class="small" href="/action/expression/search"
+           title="Search by gene, developmental stage, anatomy and other attributes">
+            <strong>Gene Expression</strong>
+        </a>
     </li>
 
     <li><a href="/action/antibody/search"

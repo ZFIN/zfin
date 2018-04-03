@@ -4,7 +4,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
-import org.zfin.gwt.ExpressionSmokeTest;
 import org.zfin.webservice.MarkerRestSmokeTest;
 import org.zfin.webservice.MarkerSoapClientSmokeTest;
 import org.zfin.webservice.MarkerSoapSmokeTest;
@@ -15,7 +14,6 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         AnatomySmokeTest.class,
-        //ExpressionSmokeTest.class,
         AntibodySmokeTest.class,
         MarkerSoapSmokeTest.class,
         MarkerSoapClientSmokeTest.class,

@@ -3,26 +3,14 @@
 
 <%@ attribute name="hit" type="org.zfin.sequence.blast.results.view.HitViewBean" rtexprvalue="true" required="true" %>
 
-<authz:authorize access="hasRole('root')">
-    <c:choose>
-        <c:when test="${hit.hasExpressionImages}">
-            <a href="/${hit.gene.zdbID}/expression" ><img src="/images/E_camera.png" title="view gene expression" alt="has expression figures" border="0" align="top" class="blast"></a>
-        </c:when>
-        <c:when test="${hit.hasExpression}">
-            <a href="/${hit.gene.zdbID}/expression"><img src="/images/E_letter.png" title="view gene expression" alt="has expression" border="0" align="top" class="blast"></a>
-        </c:when>
-    </c:choose>
-</authz:authorize>
-<authz:authorize access="!hasRole('root')">
-    <c:choose>
-        <c:when test="${hit.hasExpressionImages}">
-            <a href="/<%=org.zfin.properties.ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect.apg&query_results=true&xpatsel_geneZdbId=${hit.gene.zdbID}&gene_name=${hit.gene.abbreviation}" ><img src="/images/E_camera.png" title="view gene expression" alt="has expression figures" border="0" align="top" class="blast"></a>
-        </c:when>
-        <c:when test="${hit.hasExpression}">
-            <a href="/<%=org.zfin.properties.ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect.apg&query_results=true&xpatsel_geneZdbId=${hit.gene.zdbID}&gene_name=${hit.gene.abbreviation}"><img src="/images/E_letter.png" title="view gene expression" alt="has expression" border="0" align="top" class="blast"></a>
-        </c:when>
-    </c:choose>
-</authz:authorize>
+<c:choose>
+    <c:when test="${hit.hasExpressionImages}">
+        <a href="/${hit.gene.zdbID}/expression" ><img src="/images/E_camera.png" title="view gene expression" alt="has expression figures" border="0" align="top" class="blast"></a>
+    </c:when>
+    <c:when test="${hit.hasExpression}">
+        <a href="/${hit.gene.zdbID}/expression"><img src="/images/E_letter.png" title="view gene expression" alt="has expression" border="0" align="top" class="blast"></a>
+    </c:when>
+</c:choose>
 
 
 

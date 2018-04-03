@@ -438,31 +438,11 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public String getExpressionSearchLink(boolean includeSubstructures) {
-        if (ProfileService.isRootUser()) {
-            return new ExpressionSearchService.LinkBuilder()
-                    .includeSubstructures(includeSubstructures)
-                    .anatomyTerm(aoTerm)
-                    .wildtypeOnly(true)
-                    .build();
-        } else {
-            URLCreator url = new URLCreator("/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
-            url.addNameValuePair("MIval", "aa-xpatselect.apg");
-            url.addNameValuePair("query_results", "exist");
-            url.addNameValuePair("START", "0");
-            url.addNameValuePair("TA_selected_structures", getAoTerm().getTermName());
-            url.addNameValuePair("xpatsel_processed_selected_structures", getAoTerm().getZdbID());
-            url.addNameValuePair("xpatsel_processed_selected_structures_names", getAoTerm().getTermName());
-            if (includeSubstructures) {
-                url.addNameValuePair("include_substructures", "checked");
-            }
-            url.addNameValuePair("structure_bool", "and");
-            url.addNameValuePair("xpatsel_jtypeDirect", "checked");
-            url.addNameValuePair("xpatsel_jtypePublished", "checked");
-            url.addNameValuePair("WINSIZE", "25");
-            url.addNameValuePair("xpatsel_calledBySelf", "true");
-            url.addNameValuePair("xpatsel_wtOnly", "checked");
-            return url.getURL();
-        }
+        return new ExpressionSearchService.LinkBuilder()
+                .includeSubstructures(includeSubstructures)
+                .anatomyTerm(aoTerm)
+                .wildtypeOnly(true)
+                .build();
     }
 
     public String getExpressionSearchLink() {
