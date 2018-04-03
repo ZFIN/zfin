@@ -23,7 +23,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN
 
-SUBDIRS = APP_PAGES help_files misc_html Workgroup_dirs Methods
+SUBDIRS = help_files misc_html Workgroup_dirs Methods
 
 STATICS = index.html
 
@@ -32,9 +32,3 @@ STATICS = index.html
 # Use default rules
 
 include $(TOP)/make.default.rules
-
-
-# ---------------  Special Targets  ------------------------------------
-
-postloaddb :
-	$(MAKE) -C APP_PAGES $@
