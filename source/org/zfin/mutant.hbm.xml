@@ -125,6 +125,7 @@
         <many-to-one name="gafOrganization" column="mrkrgoev_annotation_organization" not-null="true"/>
 
         <property name="flag" column="mrkrgoev_gflag_name" not-null="false" type="goFlag"/>
+        <property name="geneProductFormID"  column="mrkrgoev_protein_dblink_zdb_id"/>
 
         <set name="inferredFrom" lazy="false" inverse="true">
             <key column="infgrmem_mrkrgoev_zdb_id"/>
