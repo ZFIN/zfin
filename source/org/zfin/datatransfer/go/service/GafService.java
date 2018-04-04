@@ -1,9 +1,11 @@
 package org.zfin.datatransfer.go.service;
 
+import com.zerog.ia.platform.Sys;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zfin.Species;
 import org.zfin.datatransfer.go.*;
 import org.zfin.gwt.root.dto.GoDefaultPublication;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
@@ -14,6 +16,7 @@ import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.marker.Marker;
+import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -97,7 +100,8 @@ public class GafService {
             logger.error("no entries to process!");
             return;
         }
-        System.out.println(gafEntries.size());
+
+        int countPipes=0;
         gafJobData.markStartTime();
 
         int count = 0;
@@ -117,15 +121,7 @@ public class GafService {
                     gafJobData.addCellEntry(gafEntry);
                     throw new GafValidationError("Can not use cell term[" + gafEntry.getEntryId() + "]", gafEntry);
                 }
-                if (gafEntry.isCol8Commas()) {
-                    gafJobData.addCol8Commas(gafEntry);
-                }
-                if (gafEntry.isCol8Pipes()) {
-                    gafJobData.addCol8Pipes(gafEntry);
-                }
-                if (gafEntry.isCol8Both()) {
-                    gafJobData.addCol8Both(gafEntry);
-                }
+
 
                 Collection<Marker> genes = getGenes(gafEntry.getEntryId());
                 // if no gene is then report error
@@ -136,6 +132,7 @@ public class GafService {
                 // for each gene, create an entry
                 for (Marker gene : genes) {
                     MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
+
                     if (annotationToAdd == null) {
                         throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
                     }
@@ -145,6 +142,7 @@ public class GafService {
                                 FileUtil.LINE_SEPARATOR + gafEntry);
                     }
                     gafJobData.addNewEntry(annotationToAdd);
+
                 }
             } catch (GafAnnotationExistsError gafAnnotationExistsError) {
                 /* if the annotation already exists, check to see if the incoming date is newer than
@@ -158,9 +156,10 @@ public class GafService {
                 } catch (ParseException e) {
                     entryDate = new Date(0);
                 }
-                if (existing.getAnnotationExtensions()==null){
+                /*if (existing.getAnnotationExtensions()==null){
                     gafJobData.addUpdateEntry(existing);
-                }
+                }*/
+
                 if (entryDate.after(existing.getModifiedWhen()) &&
                         !isTermInRestrictedSubset(existing.getEvidenceCode().getCode(), existing.getGoTerm())) {
                     existing.setModifiedWhen(entryDate);
@@ -244,7 +243,9 @@ public class GafService {
         for (GafJobEntry gafJobEntry : gafJobData.getExistingEntries()) {
             newGafEntryZdbIds.add(gafJobEntry.getZdbID());
         }
+
         for (MarkerGoTermEvidence gafReportAnnotation : gafJobData.getNewEntries()) {
+
             newGafEntryZdbIds.add(gafReportAnnotation.getZdbID());
         }
         for (MarkerGoTermEvidence updated : gafJobData.getUpdateEntries()) {
@@ -273,12 +274,23 @@ public class GafService {
         // find pubmed ID
         Publication publication = getPublication(gafEntry);
 
+
+
         // set new object to create
         MarkerGoTermEvidence markerGoTermEvidenceToAdd = new MarkerGoTermEvidence();
         markerGoTermEvidenceToAdd.setMarker(gene);
         markerGoTermEvidenceToAdd.setGoTerm(goTerm);
         markerGoTermEvidenceToAdd.setSource(publication);
         markerGoTermEvidenceToAdd.setExternalLoadDate(new Date());
+        /*if (gafEntry.getGeneProductFormID() != "") {
+
+            MarkerDBLink proteinID = getDBLink(gafEntry);
+
+            if (proteinID!=null) {
+
+                markerGoTermEvidenceToAdd.setGeneProductFormID(proteinID);
+            }
+        }*/
 
         // validate qualifier
         GoEvidenceQualifier goEvidenceQualifier = getQualifier(gafEntry, goTerm);
@@ -322,6 +334,7 @@ public class GafService {
                 throw new GafAnnotationExistsError(gafEntry, existingMarkerGoTermEvidence);
             }
         }
+
         return markerGoTermEvidenceToAdd;
     }
 
@@ -387,7 +400,7 @@ public class GafService {
         ontologies.add(Ontology.ZFIN_RO);
         ontologies.add(Ontology.GO_QUALIFIER);
         String annotationExtns = gafEntry.getAnnotExtn();
-        System.out.println(annotationExtns);
+
         if (StringUtils.isNotEmpty(annotationExtns)) {
             if (annotationExtns.startsWith("(")) {
                 throw new GafValidationError("Annotation Extension(Col 16)" + annotationExtns + " must contain relation", gafEntry);
@@ -571,6 +584,30 @@ public class GafService {
         validateGoTerm(goTerm.getOboID(), gafEntry, "GO Term");
         return goTerm;
     }
+   /* protected MarkerDBLink getDBLink(GafEntry gafEntry) throws GafValidationError {
+       // String proteinID = gafEntry.getGeneProductFormID();
+
+        ReferenceDatabase refDB = sequenceRepository.getReferenceDatabase(
+                ForeignDB.AvailableName.UNIPROTKB,
+                ForeignDBDataType.DataType.POLYPEPTIDE,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
+        int colonIndex = proteinID.indexOf(":");
+
+            List<MarkerDBLink> proteinDBLinkList = sequenceRepository.getMarkerDBLinksForAccession(proteinID.substring(colonIndex + 1, proteinID.length()), refDB);
+
+            if (proteinDBLinkList.size()==0) {
+
+                throw new GafValidationError("Unable to find Gene Product ID:" + FileUtil.LINE_SEPARATOR + proteinID, gafEntry);
+            }
+            else{
+
+                return proteinDBLinkList.get(0);
+            }
+
+
+
+    }*/
 
     protected GenericTerm validateGoTerm(String goTermID, GafEntry gafEntry, String columnName) throws GafValidationError {
         GenericTerm goTerm = ontologyRepository.getTermByOboID(goTermID);
@@ -609,6 +646,7 @@ public class GafService {
 
     protected boolean isMoreSpecificAnnotation(MarkerGoTermEvidence existingMarkerGoTermEvidence, MarkerGoTermEvidence markerGoTermEvidenceToAdd)
             throws GafValidationError {
+
         return existingMarkerGoTermEvidence.isSameButGo(markerGoTermEvidenceToAdd) &&
                 ontologyRepository.isParentChildRelationshipExist(markerGoTermEvidenceToAdd.getGoTerm(), existingMarkerGoTermEvidence.getGoTerm());
     }

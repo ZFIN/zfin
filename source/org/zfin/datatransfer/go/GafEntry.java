@@ -18,6 +18,36 @@ public class GafEntry {
     private String createdBy; //15
     private String annotExtn; //16
 
+    public int getCol8pipes() {
+        return col8pipes;
+    }
+
+    public void setCol8pipes(int col8pipes) {
+        this.col8pipes = col8pipes;
+    }
+
+  //  private String geneProductFormID;
+
+    public int getCol8both() {
+        return col8both;
+    }
+
+    public void setCol8both(int col8both) {
+        this.col8both = col8both;
+    }
+
+    private int col8pipes;
+    private int col8commas;
+    private int col8both;
+
+    public int getCol8commas() {
+        return col8commas;
+    }
+
+    public void setCol8commas(int col8commas) {
+        this.col8commas = col8commas;
+    }
+
     public String getEntryId() {
         return entryId;
     }
@@ -98,6 +128,14 @@ public class GafEntry {
         this.annotExtn = annotExtn;
     }
 
+    /*public String getGeneProductFormID() {
+        return geneProductFormID;
+    }
+
+    public void setGeneProductFormID(String geneProductFormID) {
+        this.geneProductFormID = geneProductFormID;
+    }
+*/
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -112,6 +150,7 @@ public class GafEntry {
         sb.append(", createdDate='").append(createdDate).append('\'');
         sb.append(", createdBy='").append(createdBy).append('\'');
         sb.append(", annotExtn='").append(annotExtn).append('\'');
+        //sb.append(", geneProducFormID='").append(geneProductFormID).append('\'');
         sb.append('}').append("\n");
         return sb.toString();
     }
@@ -120,14 +159,6 @@ public class GafEntry {
     public boolean isCell () {
         return goTermId.equalsIgnoreCase("GO:0005623");
     }
-    public boolean isCol8Pipes(){
-        return inferences.contains("|");
-    }
-    public boolean isCol8Commas(){
-        return inferences.contains(",");
-    }
-    public boolean isCol8Both(){
-        return (inferences.contains("|")&&(inferences.contains(",")));
-    }
+
 
 }

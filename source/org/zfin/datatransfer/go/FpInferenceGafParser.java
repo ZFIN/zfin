@@ -27,6 +27,9 @@ public class FpInferenceGafParser {
     protected static final String GOC_CREATED_BY = "GOC";
     protected static final String ZEBRAFISH_TAXID = "taxon:7955";
     protected static Set<String> goRefExcludePubMap = new HashSet<>();
+    public int countPipes=0;
+    public int countCommas=0;
+    public int countBoth=0;
 
     static {
         goRefExcludePubMap.add(GOREF_PREFIX + "0000002");
@@ -50,7 +53,8 @@ public class FpInferenceGafParser {
                 GafEntry gafEntry = parseGafEntry(line);
                 if (isValidGafEntry(gafEntry)) {
                     gafEntries.add(gafEntry);
-                    System.out.println("testing" +gafEntry);
+
+
 
                 } else {
                     logger.debug("not a valid gaf entry, ignoring: " + gafEntry);
@@ -108,10 +112,20 @@ public class FpInferenceGafParser {
             logger.error("bad gaf file: " + line);
         }
         gafEntry.setEvidenceCode(entries[6]);
+        if(entries[7].contains("|")){
+            countPipes++;
+        }
+        if(entries[7].contains(",")){
+            countCommas++;
+        }
+        if((entries[7].contains(","))&&(entries[7].contains("|"))){
+            countBoth++;
+        }
         gafEntry.setInferences(entries[7]
                         .replaceAll("EMBL:", "GenBank:")
                         .replaceAll("protein_id:", "GenPept:")
         );
+
         gafEntry.setTaxonId(entries[12]);
         gafEntry.setCreatedDate(entries[13]);
 
@@ -123,9 +137,11 @@ public class FpInferenceGafParser {
         );
         if (entries.length > 14) {
             gafEntry.setAnnotExtn(entries[15]);
-
         }
-
+        //gafEntry.setGeneProductFormID(entries[16]);
+        gafEntry.setCol8pipes(countPipes);
+        gafEntry.setCol8commas(countCommas);
+        gafEntry.setCol8both(countBoth);
         return gafEntry;
     }
 

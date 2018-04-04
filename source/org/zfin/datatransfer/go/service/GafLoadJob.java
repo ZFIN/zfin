@@ -115,6 +115,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
             System.out.println(gafEntries.size());
+            int sizeentry=gafEntries.size();
+            System.out.println(gafEntries.get(sizeentry-1).getCol8pipes());
 
             if (CollectionUtils.isEmpty(gafEntries)) {
                 throw new GafValidationError("No gaf entries found in file: " + downloadedFile);
@@ -122,12 +124,17 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
             // 2.5 replace merged ZDB Id
             // added this step for FB case 7957 "GAF load should handle merged markers"
+            GafJobData gafJobData = new GafJobData();
+            gafJobData.setInfPipeCount(gafEntries.get(sizeentry-1).getCol8pipes());
+            gafJobData.setInfCommaCount(gafEntries.get(sizeentry-1).getCol8commas());
+            gafJobData.setInfBothCount(gafEntries.get(sizeentry-1).getCol8both());
+
             gafService.replaceMergedZDBIds(gafEntries);
 
             GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository()
                     .getGafOrganization(organizationEnum);
             // 3. create new GAF entries based on rules
-            GafJobData gafJobData = new GafJobData();
+
             gafJobData.setGafEntryCount(gafEntries.size());
 
             gafService.processEntries(gafEntries, gafJobData);
@@ -135,7 +142,10 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             addAnnotations(gafJobData);
             updateAnnotations(gafJobData);
 
-            gafService.generateRemovedEntries(gafJobData, gafOrganization);
+  gafService.generateRemovedEntries(gafJobData, gafOrganization);
+
+
+
 
             removeAnnotations(gafJobData);
             FileWriter summary = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_summary.txt"));
@@ -145,6 +155,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             summary.flush();
             summary.close();
 
+            details.append("\n\n");
             details.write("== REMOVED ==\n");
             for (GafJobEntry removed : gafJobData.getRemovedEntries()) {
                 details.append(removed.getEntryString()).append("\n");
@@ -234,6 +245,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     private void updateAnnotations(GafJobData gafJobData) {
         Set<MarkerGoTermEvidence> evidencesToUpdate = gafJobData.getUpdateEntries();
+        System.out.println(gafJobData.getUpdateEntries().size());
         Iterator<MarkerGoTermEvidence> iteratorToUpdate = evidencesToUpdate.iterator();
 
         while (iteratorToUpdate.hasNext()) {

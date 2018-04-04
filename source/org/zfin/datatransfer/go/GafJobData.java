@@ -17,11 +17,10 @@ public class GafJobData {
     private List<GafEntry> cellEntries = new ArrayList<>();
     private List<GafEntry> subsetFailureEntries = new ArrayList<>();
     private List<GafValidationError> errors = new ArrayList<>();
-    private List<GafValidationError> col16Errors = new ArrayList<>();
-    private List<GafEntry> col8WithBoth = new ArrayList<>();
-    private List<GafEntry> col8WithCommas = new ArrayList<>();
-    private List<GafEntry> col8WithPipes = new ArrayList<>();
-    private int gafEntryCount = 0;
+     private int gafEntryCount = 0;
+    private int infPipeCount=0;
+    private int infCommaCount=0;
+    private int infBothCount=0;
     private long startTime;
     private long stopTime;
 
@@ -44,15 +43,6 @@ public class GafJobData {
 
     public void addCellEntry(GafEntry entry) {
         cellEntries.add(entry);
-    }
-    public void addCol8Pipes(GafEntry entry) {
-        col8WithPipes.add(entry);
-    }
-    public void addCol8Commas(GafEntry entry) {
-        col8WithCommas.add(entry);
-    }
-    public void addCol8Both(GafEntry entry) {
-        col8WithBoth.add(entry);
     }
 
 
@@ -84,6 +74,30 @@ public class GafJobData {
     public List<GafJobEntry> getRemovedEntries() {
         return removedEntries;
     }
+    public int getInfPipeCount() {
+        return infPipeCount;
+    }
+
+    public void setInfPipeCount(int infPipeCount) {
+        this.infPipeCount = infPipeCount;
+    }
+
+    public int getInfCommaCount() {
+        return infCommaCount;
+    }
+
+    public int getInfBothCount() {
+        return infBothCount;
+    }
+
+    public void setInfBothCount(int infBothCount) {
+        this.infBothCount = infBothCount;
+    }
+
+    public void setInfCommaCount(int infCommaCount) {
+        this.infCommaCount = infCommaCount;
+    }
+
 
     @Override
     public String toString() {
@@ -95,13 +109,14 @@ public class GafJobData {
                         "added: " + newEntries.size(),
                         "updated: " + updateEntries.size(),
                         "removed: " + removedEntries.size(),
+
                         "errors: " + errors.size(),
                         "existing: " + existingEntries.size(),
                         "cell Terms: " + cellEntries.size(),
                         "subset Failures: " + subsetFailureEntries.size(),
-                        "col 8 Pipes: " + col8WithPipes.size(),
-                        "col 8 Commas: " + col8WithCommas.size(),
-                        "col 8 Both: " + col8WithBoth.size(),
+                        "col 8 Inferences with Pipes: " + infPipeCount,
+                        "col 8 Inferences with Commas: " + infCommaCount,
+                        "col 8 Inferences with Both: " + infBothCount,
                         "time: " + (stopTime - startTime) / (1000f) + " seconds"},
                 FileUtil.LINE_SEPARATOR);
     }
