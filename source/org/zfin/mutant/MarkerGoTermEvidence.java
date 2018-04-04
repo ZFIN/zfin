@@ -219,11 +219,13 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         if (!marker.equals(that.marker)) return false;
         if (!source.equals(that.source)) return false;
         if (flag != that.flag) return false;
-        if (geneProductFormID != that.geneProductFormID) return false;
-        if (inferredFrom != null ? !this.containsAllInferences(that) : that.inferredFrom != null) return false;
-        if (goTermAnnotationExtnGroup != null ? !this.containsAllAnnotationExtensions(that) : that.getAnnotationExtensions() != null)
-            return false;
 
+ //       if (geneProductFormID!=null && geneProductFormID!=that.geneProductFormID) return false;
+
+        if (inferredFrom != null ? !this.containsAllInferences(that) : that.inferredFrom != null) return false;
+        /*if (goTermAnnotationExtnGroup != null ? !this.containsAllAnnotationExtensions(that) : that.getAnnotationExtensions() != null)
+            return false;*/
+        if (CollectionUtils.isEmpty(getAnnotationExtensions()) ? !this.containsAllAnnotationExtensions(that) : CollectionUtils.isEmpty(that.getAnnotationExtensions())) return false;                ;
         return true;
     }
 
@@ -246,8 +248,9 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         if (goTerm != null ? !goTerm.equals(that.goTerm) : that.goTerm != null) return false;
         if (marker != null ? !marker.equals(that.marker) : that.marker != null) return false;
         if (source != null ? !source.equals(that.source) : that.source != null) return false;
-        if (geneProductFormID != null ? !geneProductFormID.equals(that.geneProductFormID) : that.geneProductFormID != null) return false;
+//        if (geneProductFormID != null ? !geneProductFormID.equals(that.geneProductFormID) : that.geneProductFormID != null) return false;
         if (inferredFrom != null ? !sameInferences(that.inferredFrom) : that.inferredFrom != null) return false;
+//return true;
         return CollectionUtils.isEmpty(getAnnotationExtensions()) ? CollectionUtils.isEmpty(that.getAnnotationExtensions()) :
                 sameAnnotationExtension(that.getAnnotationExtensions());
     }
@@ -259,7 +262,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         result = 31 * result + (evidenceCode != null ? evidenceCode.hashCode() : 0);
         result = 31 * result + (flag != null ? flag.hashCode() : 0);
         result = 31 * result + (source != null ? source.hashCode() : 0);
-        result = 31 * result + (geneProductFormID != null ? geneProductFormID.hashCode() : 0);
+//        result = 31 * result + (geneProductFormID != null ? geneProductFormID.hashCode() : 0);
         result = 31 * result + (goTerm != null ? goTerm.hashCode() : 0);
 
         // have to compare the strings, since the inferences are generated for this and the key generates
@@ -423,7 +426,13 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         } else {
             sb.append("none");
         }
-        sb.append(", geneProductFormID='").append(geneProductFormID.getAccessionNumberDisplay());
+        sb.append(", geneProductFormID=");
+        if(geneProductFormID != null) {
+            sb.append(geneProductFormID.getAccessionNumberDisplay());
+        }
+        else{
+            sb.append("none");
+        }
         sb.append('}');
         return sb.toString();
     }
