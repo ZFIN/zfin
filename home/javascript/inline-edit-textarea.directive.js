@@ -18,12 +18,12 @@
             '    <input type="text" ng-if="vm.useInput" ng-model="vm.text" ng-class="{{vm.textAreaClass}}">' +
             '    <button type="button" ng-click="vm.cancelEdit()" ng-class="{{vm.cancelButtonClass}}">' +
             '      <span ng-if="!vm.useIcons">Cancel</span>' +
-            '      <span ng-if="vm.useIcons"><i class="fa fa-fw fa-close"></i></span>' +
+            '      <span ng-if="vm.useIcons"><i class="fas fa-fw fa-times"></i></span>' +
             '    </button>' +
             '    <button type="button" ng-click="vm.saveEdit()" ng-class="{{vm.saveButtonClass}}" ng-disabled="vm.saving">' +
             '      <span ng-show="!vm.saving && !vm.useIcons">Save</span>' +
-            '      <span ng-show="!vm.saving && vm.useIcons"><i class="fa fa-fw fa-check"></i></span>' +
-            '      <span ng-show="vm.saving"><i class="fa fa-spinner fa-spin"></i></span>' +
+            '      <span ng-show="!vm.saving && vm.useIcons"><i class="fas fa-fw fa-check"></i></span>' +
+            '      <span ng-show="vm.saving"><i class="fas fa-spinner fa-spin"></i></span>' +
             '    </button>' +
             '  </div>' +
             '</div>';

@@ -430,7 +430,7 @@ a.facet-link:hover {
 
 /* a mute the icons and counts */
 .include-exclude-icon,
-i.facet-selected,
+.facet-selected,
 .facet-field-count,
 .facet-value-modal-link {
     color: #707770;
@@ -445,11 +445,11 @@ i.facet-selected,
     color: #888;
 }
 
-.facet-value i.include-exclude-icon {
+.facet-value .include-exclude-icon {
     visibility: hidden;
 }
 
-.facet-value:hover i.include-exclude-icon {
+.facet-value:hover .include-exclude-icon {
     visibility: visible;
 }
 

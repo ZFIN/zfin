@@ -32,7 +32,7 @@
             parent.append(
                 $("<a href class=\"add-row\">")
                     .click(addRow)
-                    .append("<i class=\"fa fa-plus-circle fa-lg\"></i> " + buttonLabel)
+                    .append("<i class=\"fas fa-plus-circle fa-lg\"></i> " + buttonLabel)
             );
         });
 

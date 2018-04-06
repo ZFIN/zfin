@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<i class="fa fa-spinner fa-spin" id="loading"></i>
+<i class="fas fa-spinner fa-spin" id="loading"></i>
 
 <%-- this should be the only place that the raw gbrowse url is used --%>
 <iframe src="${urlPrefix}?${requestParams}" width="100%"

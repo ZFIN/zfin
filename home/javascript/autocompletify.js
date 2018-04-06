@@ -17,7 +17,7 @@
         if (withDirectLink && (item.id && item.id.startsWith('ZDB') || item.id.match('[A-Z]+:[0-9]+'))) {
           directLink = ' <a class="autocomplete-direct-link" ' +
             'title="Go directly to record" ' +
-            'href="/' + item.id + '"><i class="fa fa-arrow-circle-right"></i></a>';
+            'href="/' + item.id + '"><i class="fas fa-arrow-circle-right"></i></a>';
         }
 
         return '<p><span class="autocomplete-suggestion-text">' + item.label + '</span>' + directLink + '</p>';

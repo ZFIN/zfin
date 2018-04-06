@@ -72,7 +72,7 @@
 </c:if>
 <c:if test="${!empty correspondenceURL}">
     <td>
-        <a href="${correspondenceURL}" class="root"><i class="fa fa-envelope-o"></i></a>
+        <a href="${correspondenceURL}" class="root"><i class="far fa-envelope"></i></a>
     </td>
 </c:if>
 <c:if test="${showLastUpdate}">

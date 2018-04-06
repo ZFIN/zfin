@@ -16,8 +16,8 @@
             '      </select>' +
             '      <input type="text" class="form-control form-control-fixed-width-sm" ng-model="vm.label" ng-disabled="vm.type == \'text only\'">' +
             '      <button class="btn btn-primary" ng-click="vm.submit()" ng-disabled="vm.submitting || !vm.readyToSubmit()">' +
-            '        <i ng-show="!vm.submitting" class="fa fa-check"></i>' +
-            '        <i ng-show="vm.submitting" class="fa fa-spinner fa-spin"></i>' +
+            '        <i ng-show="!vm.submitting" class="fas fa-check"></i>' +
+            '        <i ng-show="vm.submitting" class="fas fa-spinner fa-spin"></i>' +
             '      </button>' +
             '    </form>' +
             '    <p class="text-success">{{vm.successMessage}}</p>' +

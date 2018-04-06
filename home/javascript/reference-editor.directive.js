@@ -20,7 +20,7 @@
             '        <div class="col-sm-2">' +
             '          <button type="button" class="btn btn-primary" ng-click="vm.add()" ng-disabled="!vm.newReference">' +
             '            <span ng-hide="vm.processing">Add</span>' +
-            '            <i ng-show="vm.processing" class="fa fa-spinner fa-spin"></i>' +
+            '            <i ng-show="vm.processing" class="fas fa-spinner fa-spin"></i>' +
             '          </button>' +
             '        </div>' +
             '      </div>' +

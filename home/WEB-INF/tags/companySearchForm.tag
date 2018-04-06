@@ -12,10 +12,11 @@
         &nbsp;
         &nbsp;
         &nbsp;
-        <a href="/action/profile/company/search/disclaimer"
-           class="popup-link info-popup-link"
-           style="font-size: smaller; "
-                >Disclaimer</a>
+        <small>
+            <a href="/action/profile/company/search/disclaimer" class="popup-link info-popup-link">
+                Disclaimer
+            </a>
+        </small>
     </div>
 
 

@@ -122,7 +122,8 @@
             <div id="anatomyTermInput"></div>
         </td>
         <td rowspan=2>
-            <span class="bold">Filters:</span><a href="/ZFIN/misc_html/fish_search_filters.html" class="popup-link help-popup-link"></a>
+            <span class="bold">Filters:</span>
+            <a href="/ZFIN/misc_html/fish_search_filters.html" class="popup-link help-popup-link"></a>
             <table>
                 <tr>
                     <td>

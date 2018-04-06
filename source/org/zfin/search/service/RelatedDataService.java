@@ -14,10 +14,8 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureService;
-import org.zfin.feature.repository.HibernateFeatureRepository;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.ActiveData;
-import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
@@ -36,10 +34,8 @@ import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.presentation.SearchResult;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -441,7 +437,7 @@ public class RelatedDataService {
         link.append(domID);
         link.append("\">Phenotype (");
         link.append(categoryCount.toString());
-        link.append(") <img class=\"modal-icon\" src=\"/images/popup-link-icon.png\"/></a>");
+        link.append(") <i class=\"far fa-window-maximize fa-sm\"></i></a>");
 
         return link;
     }
@@ -458,7 +454,7 @@ public class RelatedDataService {
         link.append(domID);
         link.append("\">Expression (");
         link.append(count.toString());
-        link.append(") <img class=\"modal-icon\" src=\"/images/popup-link-icon.png\"/></a>");
+        link.append(") <i class=\"far fa-window-maximize fa-sm\"></i></a>");
 
         return link;
     }

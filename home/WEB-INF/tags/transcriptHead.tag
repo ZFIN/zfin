@@ -14,12 +14,12 @@
     </tr>
     <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}"/>
     <tr>
-        <th>Transcript&nbsp;Type:<a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
+        <th>Transcript&nbsp;Type: <a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
         <td><span title="${transcript.transcriptType.definition}">${transcript.transcriptType.display}</span></td>
     </tr>
     <%--<c:if test="${!empty transcript.status}">--%>
         <tr>
-            <th>Annotation&nbsp;Status:<a class="popup-link info-popup-link" href="/action/marker/transcript-statuses"></a></th>
+            <th>Annotation&nbsp;Status: <a class="popup-link info-popup-link" href="/action/marker/transcript-statuses"></a></th>
             <td>
                     ${transcript.status.display}
                 <c:if test="${transcript.withdrawn}">

@@ -15,7 +15,7 @@
                         ng-change="vm.fetchPubs()">
                 </select>
                 <button title="Refresh query" class="btn btn-link pub-dashboard-reload" ng-disabled="vm.loading" ng-click="vm.fetchPubs()">
-                    <i class="fa fa-refresh" ng-class="{'fa-spin': vm.loading}"></i>
+                    <i class="fas fa-sync" ng-class="{'fa-spin': vm.loading}"></i>
                 </button>
             </form>
         </div>
@@ -39,7 +39,7 @@
         </thead>
         <tbody>
         <tr ng-show="vm.loading">
-            <td class="text-muted text-center" colspan="5"><i class="fa fa-spinner fa-spin"></i> Loading...</td>
+            <td class="text-muted text-center" colspan="5"><i class="fas fa-spinner fa-spin"></i> Loading...</td>
         </tr>
         <tr ng-show="!vm.loading && vm.pubs.length == 0">
             <td class="text-muted text-center" colspan="5">Woo hoo! Bin is empty!</td>
@@ -48,10 +48,10 @@
             <td>
                 <button ng-show="!pub.claimed" ng-click="vm.claimPub(pub, $index)" class="btn btn-default" ng-disabled="pub.saving">
                     <span ng-show="!pub.saving">Claim</span>
-                    <span ng-show="pub.saving"><i class="fa fa-spinner fa-spin"></i></span>
+                    <span ng-show="pub.saving"><i class="fas fa-spinner fa-spin"></i></span>
                 </button>
                 <button ng-show="pub.claimed" class="btn btn-success">
-                    <i class="fa fa-check"></i> Claimed
+                    <i class="fas fa-check"></i> Claimed
                 </button>
 
                 <p class="text-danger" ng-show="pub.claimError">{{pub.claimError}}</p>
@@ -72,7 +72,7 @@
             </td>
             <td>{{pub.status.updateDate | timeago:true}}</td>
             <td>
-                <a ng-show="pub.pdfPath" ng-href="/PDFLoadUp/{{pub.pdfPath}}" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                <a ng-show="pub.pdfPath" ng-href="/PDFLoadUp/{{pub.pdfPath}}" target="_blank"><i class="far fa-file-pdf"></i></a>
             </td>
         </tr>
         </tbody>
@@ -87,7 +87,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="fa fa-fw fa-close"></i></span>
+                    <span aria-hidden="true"><i class="fas fa-fw fa-times"></i></span>
                 </button>
                 <h4 class="modal-title">
                     {{vm.modal.image.label}}
@@ -96,15 +96,15 @@
             <div class="modal-body figure-gallery-modal-body">
                 <a href class="figure-gallery-modal-nav prev" role="button"
                    ng-show="vm.modal.prev !== null" ng-click="vm.openModal(vm.modal.pub, vm.modal.prev)">
-                    <i class="fa fa-chevron-left"></i>
+                    <i class="fas fa-chevron-left"></i>
                 </a>
                 <img class="figure-gallery-modal-image" ng-show="vm.modal" ng-src="{{vm.modal.image.fullPath}}">
                 <a href class="figure-gallery-modal-nav next" role="button"
                    ng-show="vm.modal.next !== null" ng-click="vm.openModal(vm.modal.pub, vm.modal.next)">
-                    <i class="fa fa-chevron-right"></i>
+                    <i class="fas fa-chevron-right"></i>
                 </a>
                 <div class="figure-gallery-modal-loader hidden">
-                    <i class="fa fa-spinner fa-spin"></i>
+                    <i class="fas fa-spinner fa-spin"></i>
                 </div>
             </div>
         </div>

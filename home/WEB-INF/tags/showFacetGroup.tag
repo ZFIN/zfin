@@ -28,7 +28,7 @@
 <c:if test="${!hidden}">
     <div class="facet-group ${rootOnlyCssClass}" data-name="${category}:${name}">
         <div id="${name}-facet-group-label-container" class="facet-group-label-container">
-            <i class="icon-toggle fa fa-fw fa-chevron-right <c:if test="${open}">open</c:if>"></i>
+            <span class="icon-toggle ${open ? 'open' : ''}"><i class="fas fa-fw fa-chevron-right"></i></span>
             ${facetGroup.label}
         </div>
         <div id="${name}-facet-group-values" class="facet-group-values <c:if test="${facetGroup.label == 'Category'}">category-facet-group-values</c:if>"

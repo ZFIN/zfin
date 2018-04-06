@@ -22,8 +22,7 @@
     </span>
     <table class="summary">
         <tr>
-            <th width="25%">Ontology<A class="popup-link info-popup-link" HREF="/zf_info/GO.html"></A></th>
-                <%--<th>Ontology</th>--%>
+            <th width="25%">Ontology <a class="popup-link info-popup-link" HREF="/zf_info/GO.html"></a></th>
             <th>GO Term</th>
         </tr>
 

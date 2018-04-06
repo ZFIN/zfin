@@ -47,10 +47,10 @@
             <button type="submit" class="btn btn-primary"
                     ng-click="vm.save()" ng-disabled="vm.processing">
                 <span ng-hide="vm.processing">Save</span>
-                <i ng-show="vm.processing" class="fa fa-spinner fa-spin"></i>
+                <i ng-show="vm.processing" class="fas fa-spinner fa-spin"></i>
             </button>
-            <span class="text-success" ng-show="vm.saved"><i class="fa fa-check"></i> Saved</span>
-            <span class="text-danger" ng-show="vm.errors.$isGeneric"><i class="fa fa-warning"></i> Something went wrong</span>
+            <span class="text-success" ng-show="vm.saved"><i class="fas fa-check"></i> Saved</span>
+            <span class="text-danger" ng-show="vm.errors.$isGeneric"><i class="fas fa-exclamation-triangle"></i> Something went wrong</span>
         </div>
     </div>
 </form>

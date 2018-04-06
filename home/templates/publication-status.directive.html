@@ -2,7 +2,7 @@
     <span class="pull-right">
         <small>
             <a ng-href="/action/publication/{{vm.pubId}}/status-history" target="_blank">
-                <i class="fa fa-external-link"></i> History
+                History <i class="fas fa-external-link-alt"></i>
             </a>
         </small>
     </span>
@@ -50,9 +50,9 @@
                 <button type="button" class="btn btn-default" ng-disabled="!vm.readyToSave() || vm.processing" ng-click="vm.reset()">Reset</button>
                 <button type="submit" class="btn btn-primary" ng-disabled="!vm.readyToSave() || vm.processing" ng-click="vm.updateStatus(true)">
                     <span ng-show="!vm.processing">Save</span>
-                    <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
+                    <span ng-show="vm.processing"><i class="fas fa-spinner fa-spin"></i></span>
                 </button>
-                <span ng-show="vm.saved" class="text-success"><i class="fa fa-check"></i> Saved</span>
+                <span ng-show="vm.saved" class="text-success"><i class="fas fa-check"></i> Saved</span>
             </div>
         </div>
         <div class="col-sm-offset-2 col-sm-8 alert alert-warning" role="alert" ng-show="vm.warnings.length > 0">
@@ -67,7 +67,7 @@
                 <button class="btn btn-default" ng-disabled="vm.processing" ng-click="vm.reset()">Cancel</button>
                 <button class="btn btn-warning" ng-disabled="vm.processing" ng-click="vm.updateStatus(false)">
                     <span ng-show="!vm.processing">Yes, close it</span>
-                    <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
+                    <span ng-show="vm.processing"><i class="fas fa-spinner fa-spin"></i></span>
                 </button>
             </p>
         </div>

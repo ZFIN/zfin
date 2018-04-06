@@ -28,7 +28,7 @@
                 </c:if>
                 <div class="clearfix">
                     <a href class="small caption-expand-button nowrap" data-index="${loop.index}">
-                        <i class="fa fa-fw fa-caret-right icon-toggle"></i> Caption
+                        <i class="fas fa-fw fa-caret-right icon-toggle"></i> Caption
                     </a>
                 </div>
             </td>

@@ -5,7 +5,7 @@
 <li class="facet-value selected-facet-value row">
     <div class="col-md-2 col-xs-3 tight-on-the-right">
         <div class="pull-right">
-            <i class="fa fa-check-square facet-selected"></i>
+            <i class="fas fa-check-square facet-selected"></i>
         </div>
     </div>
     <div class="col-md-10 col-xs-9 tight-on-the-left">

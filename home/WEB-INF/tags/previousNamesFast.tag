@@ -41,12 +41,12 @@
                     style="cursor: pointer;"
                     ng-click="control.editAttribution('${markerAlias.aliasZdbID}','${markerAlias.pureAliasName}')"
                     ng-if="editMode">
-                    <i class="fa fa-pencil" aria-hidden="true" style="color: red"
+                    <i class="far fa-edit" aria-hidden="true" style="color: red"
                        title="Edit attributions on alias"></i>
                 </span><span style="cursor: pointer;"
                              ng-click="control.confirmDeleteAlias('${markerAlias.aliasZdbID}','${markerAlias.alias}')"
                              ng-if="editMode">
-                    <i class="fa fa-trash" aria-hidden="true"
+                    <i class="fas fa-trash" aria-hidden="true"
                        style="color: red"
                        title="Delete alias and its attributions"></i></span></authz:authorize></c:if>${(!loop.last ?", " : "")}
             </c:forEach>
@@ -57,11 +57,11 @@
                  <span ng-bind-html="previousNameItem.attributionLink | unsafe"></span><span style="cursor: pointer;"
                                                                                              ng-click="control.editAttribution(previousNameItem.aliasZdbID, previousNameItem.alias)"
                                                                                              ng-if="editMode">
-                    <i class="fa fa-pencil" aria-hidden="true" style="color: red"></i> </span><span
+                    <i class="far fa-edit" aria-hidden="true" style="color: red"></i> </span><span
             style="cursor: pointer;"
             ng-click="control.confirmDeleteAlias(previousNameItem.aliasZdbID, previousNameItem.alias)"
             ng-if="editMode">
-                    <i class="fa fa-trash" aria-hidden="true" style="color: red"
+                    <i class="fas fa-trash" aria-hidden="true" style="color: red"
                        title="Delete alias and its attributions"></i></span>{{$last ? '' : ', '}}
             </span>
             </authz:authorize>

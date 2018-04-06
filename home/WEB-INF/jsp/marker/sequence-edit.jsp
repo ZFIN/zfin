@@ -61,10 +61,10 @@
                 <td><a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
                     <span ng-bind-html="link.refLink"></span>
                       <span style="cursor: pointer;" ng-click="si.openUpdateSequenceInfo(link)">
-                        <i class="fa fa-pencil-square-o red" aria-hidden="true" title="Update the sequence information"></i>
+                        <i class="far fa-edit red" aria-hidden="true" title="Update the sequence information"></i>
                       </span>
                       <span style="cursor: pointer;" ng-click="si.openDeleteSequenceInfo(link)">
-                        <i class="fa fa-trash red" aria-hidden="true" title="Delete the sequence information"></i>
+                        <i class="fas fa-trash red" aria-hidden="true" title="Delete the sequence information"></i>
                       </span>
                 </td>
                 <td>{{link.length}}</td>

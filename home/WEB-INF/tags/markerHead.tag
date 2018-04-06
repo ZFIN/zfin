@@ -38,7 +38,7 @@
                 <span style="cursor: pointer;"
                       ng-click="control.openGeneEditor('${marker.zdbID}', control.geneName, 'Gene Name', false)"
                       ng-if="editMode">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red"></i>
+                    <i class="far fa-edit" aria-hidden="true" style="color: red"></i>
                 </span>
                 </authz:authorize>
             </c:if>

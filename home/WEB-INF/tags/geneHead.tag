@@ -28,7 +28,7 @@
                 <span style="cursor: pointer;"
                       ng-click="control.openGeneEditor(markerID, control.geneName, 'Gene Name')"
                       ng-if="editMode">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene name"></i>
+                    <i class="far fa-edit" aria-hidden="true" style="color: red" title="Edit gene name"></i>
                 </span>
             </authz:authorize>
         </td>
@@ -41,7 +41,7 @@
                     <span style="cursor: pointer;"
                           ng-click="control.openGeneEditor(markerID, control.geneAbbreviation,'Gene Symbol')"
                           ng-if="editMode">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: red" title="Edit gene symbol"></i></span>
+                    <i class="far fa-edit" aria-hidden="true" style="color: red" title="Edit gene symbol"></i></span>
             </authz:authorize>
         </td>
     </tr>

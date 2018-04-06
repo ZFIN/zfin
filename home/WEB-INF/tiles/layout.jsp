@@ -30,8 +30,6 @@
         <tiles:getAsString ignore="true" name="staticTitle"/> ${dynamicTitle}
     </title>
 
-    <link href="/css/font-awesome.min.css" rel="stylesheet">
-
     <link rel=stylesheet type="text/css" href="/css/searchresults.css">
     <link rel=stylesheet type="text/css" href="/css/summary.css">
     <link rel=stylesheet type="text/css" href="/css/Lookup.css">
@@ -42,6 +40,7 @@
     <link rel=stylesheet type="text/css" href="/css/typeahead.css">
     <link rel="stylesheet" href="/css/datepicker3.css">
 
+    <script src="/javascript/fontawesome-all.min.js"></script>
     <script src="/javascript/header.js" type="text/javascript"></script>
     <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>

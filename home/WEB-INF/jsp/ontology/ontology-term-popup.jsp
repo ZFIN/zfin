@@ -71,8 +71,10 @@
     <p>
 
     <div class="summary">
-        <span class="summaryTitle">Relationships<a class='popup-link info-popup-link'
-                                                   href='/action/ontology/note/ontology-relationship'></a></span>
+        <span class="summaryTitle">
+            Relationships
+            <a class='popup-link info-popup-link' href='/action/ontology/note/ontology-relationship'></a>
+        </span>
         <table class="summary horizontal-solidblock">
             <c:forEach var="relationshipPresentation" items="${termRelationships}">
                 <tr id="${zfn:makeDomIdentifier(relationshipPresentation.type)}">

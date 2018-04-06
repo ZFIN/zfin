@@ -25,7 +25,7 @@
 </table>
 
 <div class="error" ng-show="vm.generalError">{{vm.generalError}}</div>
-<div ng-show="vm.orthologsLoading" class="loading-overlay"><i class="fa fa-spinner fa-spin"></i></div>
+<div ng-show="vm.orthologsLoading" class="loading-overlay"><i class="fas fa-spinner fa-spin"></i></div>
 <table class="ortholog-table summary basicstripes" ng-show="!vm.orthologsLoading && (vm.edit || vm.orthologs.length > 0)">
     <thead>
     <tr>
@@ -62,9 +62,9 @@
                     {{ev.publication.zdbID | pub}}
                 </a>: {{ev.asList()}}
                 <a href class="clickable" ng-click="vm.editEvidence(ortholog, ev, $index)"><i
-                        class="fa fa-fw fa-pencil red"></i></a>
+                        class="far fa-fw fa-edit red"></i></a>
                 <a href class="clickable" ng-click="vm.deleteEvidence(ortholog, ev, $index)"><i
-                        class="fa fa-fw fa-trash red"></i></a>
+                        class="fas fa-fw fa-trash red"></i></a>
             </div>
             <a href ng-click="vm.addEvidence(ortholog)">Add</a>
         </td>
@@ -80,7 +80,7 @@
 </table>
 
 <a href="/action/marker/{{vm.gene}}/download/orthology" ng-show="vm.showDownloadLink && !vm.edit && vm.orthologs.length > 0">
-    <i class="fa fa-download"></i> Download Curated Orthology
+    <i class="fas fa-download"></i> Download Curated Orthology
 </a>
 
 <div class="summary" ng-show="vm.edit || vm.note.note">

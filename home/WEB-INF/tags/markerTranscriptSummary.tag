@@ -68,7 +68,7 @@
                             </caption>
                             <tr>
 
-                                <th width="18%">Type<a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
+                                <th width="18%">Type <a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
                                 <th width="22%">Name</th>
                                 <th width="15%" class="length">Length (bp)</th>
                                 <th width="25%" class="analysis">

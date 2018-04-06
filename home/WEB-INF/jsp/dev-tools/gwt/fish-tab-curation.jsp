@@ -8,8 +8,6 @@
     <title>
         GWT Modules</title>
 
-    <link href="/css/font-awesome.min.css" rel="stylesheet">
-
     <link rel="stylesheet" type="text/css" href="/css/zfin.css">
     <link rel="stylesheet" type="text/css" href="/css/header.css">
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
@@ -22,7 +20,7 @@
     <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
     <link rel=stylesheet type="text/css" href="/css/typeahead.css">
 
-
+    <script src="/javascript/fontawesome-all.min.js"></script>
     <script src="/javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
     <script src="/javascript/header.js" type="text/javascript"></script>
     <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>

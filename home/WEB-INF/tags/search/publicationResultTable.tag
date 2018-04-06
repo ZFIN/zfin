@@ -23,7 +23,7 @@
                 ${result.link}
                 <div>
                     <a href class="small abstract-expand-button" data-index="${loop.index}">
-                        <i class="fa fa-fw fa-caret-right icon-toggle"></i> Abstract
+                        <i class="fas fa-fw fa-caret-right icon-toggle"></i> Abstract
                     </a>
                 </div>
             </td>

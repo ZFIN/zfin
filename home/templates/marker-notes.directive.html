@@ -19,7 +19,7 @@
             </button>
             <button class="btn btn-primary" ng-click="vm.savePublicNote()" ng-disabled="vm.publicNote.processing">
                 <span ng-hide="vm.publicNote.processing">Save</span>
-                <i ng-show="vm.publicNote.processing" class="fa fa-spinner fa-spin"></i>
+                <i ng-show="vm.publicNote.processing" class="fas fa-spinner fa-spin"></i>
             </button>
         </div>
         <p class="text-danger" ng-show="vm.publicNote.error">{{vm.publicNote.error}}</p>
@@ -39,7 +39,7 @@
                     ng-disabled="vm.processing || !vm.newCuratorNote"
                     ng-click="vm.addCuratorNote()">
                 <span ng-hide="vm.processing">Add</span>
-                <i ng-show="vm.processing" class="fa fa-spinner fa-spin"></i>
+                <i ng-show="vm.processing" class="fas fa-spinner fa-spin"></i>
             </button>
         </div>
     </form>
@@ -74,7 +74,7 @@
                     </button>
                     <button class="btn btn-primary" ng-click="vm.saveCuratorNote(note, $index)" ng-disabled="note.processing">
                         <span ng-hide="note.processing">Save</span>
-                        <i ng-show="note.processing" class="fa fa-spinner fa-spin"></i>
+                        <i ng-show="note.processing" class="fas fa-spinner fa-spin"></i>
                     </button>
                 </div>
                 <p class="text-danger" ng-show="note.error">{{note.error}}</p>

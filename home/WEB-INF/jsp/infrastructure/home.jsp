@@ -26,7 +26,7 @@
                             <button type="submit" class="btn btn-primary btn-zfin btn-search">Go</button>
                         </div>
                         <a href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
-                            <i class="fa fa-question-circle fa-lg"></i>
+                            <i class="fas fa-question-circle fa-lg"></i>
                         </a>
 
                     </form>

@@ -33,7 +33,7 @@
                                     idName="${zfn:generateRandomDomID()}"
                                     shortLength="80"
                                     url="${publication.zdbID}"/>
-            <c:if test="${!empty publication.fileName}"> <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="fa fa-file-pdf-o"></i></a></c:if>
+            <c:if test="${!empty publication.fileName}"> <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="far fa-file-pdf"></i></a></c:if>
         </div>
 
         <div class="curation-head-row">
@@ -87,12 +87,12 @@
                 </c:forEach>
                 <li>
                     <a aria-controls="refresh" onclick="refresh()" role="tab" title="Refresh current tab" class="zfin-tooltip">
-                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                        <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
                 </li>
                 <li>
                     <a aria-controls="history" onclick="showHistory()" role="tab" title="Show history" class="zfin-tooltip">
-                        <i class="fa fa-history" aria-hidden="true"></i>
+                        <i class="fas fa-history" aria-hidden="true"></i>
                     </a>
                 </li>
             </ul>
@@ -240,7 +240,7 @@
           };
           $claimButton
             .prop('disabled', true)
-            .html('<i class="fa fa-spinner fa-spin"></i>');
+            .html('<i class="fas fa-spinner fa-spin"></i>');
           $.ajax({
             type: 'POST',
             url: statusEndpoint + '?checkOwner=true',

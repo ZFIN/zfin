@@ -46,11 +46,11 @@
             <button class="btn btn-default" ng-click="vm.closeForm()">Cancel</button>
             <button class="btn btn-primary" ng-click="vm.sendMessage()" ng-show="vm.newEmail.outgoing" ng-disabled="!vm.isValid() || vm.processing">
                 <span ng-show="!vm.processing">Send</span>
-                <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
+                <span ng-show="vm.processing"><i class="fas fa-spinner fa-spin"></i></span>
             </button>
             <button class="btn btn-primary" ng-click="vm.saveReply()" ng-show="!vm.newEmail.outgoing" ng-disabled="!vm.isValid() || vm.processing">
                 <span ng-show="!vm.processing">Save</span>
-                <span ng-show="vm.processing"><i class="fa fa-spinner fa-spin"></i></span>
+                <span ng-show="vm.processing"><i class="fas fa-spinner fa-spin"></i></span>
             </button>
         </div>
     </div>
@@ -79,7 +79,7 @@
     <div ng-if="!correspondence.resend">
         <div class="dropdown pull-right">
             <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                <i class="fa fa-ellipsis-v"></i>
+                <i class="fas fa-ellipsis-v"></i>
             </button>
             <ul class="dropdown-menu" ng-show="correspondence.outgoing">
                 <li ng-class="{disabled: correspondence.to.length == 0}"><a href ng-click="vm.resendMessage(correspondence)">Resend</a></li>
@@ -95,6 +95,6 @@
         <div><strong>From:</strong> {{correspondence.from.email}}</div>
         <div><strong>To:</strong> {{vm.emailList(correspondence.to)}}</div>
         <div><strong>Subject:</strong> {{correspondence.subject}}</div>
-        <div ng-class="correspondence.expanded ? 'keep-breaks' : 'one-line-preview'"><i ng-class="['icon-toggle', 'fa', 'fa-fw', 'fa-chevron-right', {open: correspondence.expanded}]" ng-click="correspondence.expanded = !correspondence.expanded"></i> {{correspondence.message}}</div>
+        <div ng-class="correspondence.expanded ? 'keep-breaks' : 'one-line-preview'"><span ng-class="['icon-toggle', {open: correspondence.expanded}]" ng-click="correspondence.expanded = !correspondence.expanded"><i class="fas fa-fw fa-chevron-right"></i></span> {{correspondence.message}}</div>
     </div>
 </div>

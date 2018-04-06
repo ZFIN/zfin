@@ -1020,6 +1020,8 @@ nav.pub-navigator .navbar-nav > .active > a:focus {
 }
 
 .icon-toggle {
+    display: inline-block;
+    cursor: pointer;
     transition: transform 200ms;
 }
 .icon-toggle.open {

@@ -42,42 +42,11 @@ hr.popup-divider {
    see a popup icon */
 .data-popup-link {
     display: none;
-}
-
-.data-popup-link:after {
-    content: url(/images/popup-link-icon.png);
-    padding-top: 2px;
     margin-left: 4px;
-    margin-right: 0;
-    text-decoration: none;
-    opacity: 0.5;
-    white-space: nowrap;
+    color: rgba(25, 102, 102, 0.3);
 }
-
-.data-popup-link:hover:after {
-    content: url(/images/popup-link-icon-hover.png);
-    padding-top: 2px;
-    margin-left: 4px;
-    margin-right: 0;
-    text-decoration: none;
-    opacity: 0.8;
-    white-space: nowrap;
-}
-
-.info-popup-link:after {
-    padding-top: 2px;
-    margin-left: 3px;
-    margin-right: 5px;
-    font-family: FontAwesome;
-    content: "\f05a";
-}
-
-.help-popup-link:after {
-    padding-top: 2px;
-    margin-left: 2px;
-    margin-right: 5px;
-    font-family: FontAwesome;
-    content: "\f059";
+.data-popup-link:hover {
+    color: rgba(25, 102, 102, 0.7);
 }
 
 a.gbrowse_hover{

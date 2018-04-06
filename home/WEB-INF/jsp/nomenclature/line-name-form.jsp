@@ -28,7 +28,7 @@
                     <form:input path="lineDetails[${status.index}].geneName" class="form-control"/>
                 </div>
                 <div class="input-addon col-sm-1">
-                    <a href="https://<%= ZfinPropertiesEnum.WIKI_HOST.value() %>/display/general/ZFIN+Zebrafish+Nomenclature+Conventions#ZFINZebrafishNomenclatureGuidelines-4.3.1" target="_blank"><i class="fa fa-question-circle"></i></a>
+                    <a href="https://<%= ZfinPropertiesEnum.WIKI_HOST.value() %>/display/general/ZFIN+Zebrafish+Nomenclature+Conventions#ZFINZebrafishNomenclatureGuidelines-4.3.1" target="_blank"><i class="fas fa-question-circle"></i></a>
                 </div>
             </div>
             <div class="form-group">
@@ -37,7 +37,7 @@
                     <form:input path="lineDetails[${status.index}].geneSymbol" class="form-control"/>
                 </div>
                 <div class="input-addon gene-search col-sm-1">
-                    <a href="#" target="_blank"><i class="fa fa-search"></i></a>
+                    <a href="#" target="_blank"><i class="fas fa-search"></i></a>
                 </div>
             </div>
             <div class="form-group">
@@ -46,7 +46,7 @@
                     <form:input path="lineDetails[${status.index}].designation" class="form-control"/>
                 </div>
                 <div class="input-addon col-sm-1">
-                    <a href="/action/feature/line-designations" target="_blank"><i class="fa fa-question-circle"></i></a>
+                    <a href="/action/feature/line-designations" target="_blank"><i class="fas fa-question-circle"></i></a>
                 </div>
             </div>
             <div class="form-group">
@@ -72,7 +72,7 @@
                             the WT gene that was used to compare the mutation or an accession number of the mutant sequence, genomic
                             location (Chromosome, genome coordinates, cM) and molecular details about this allele (exon 1 deletion,
                             insertion of GATG at 1402bp, A->G substitution a 372bp, premature stop codon at amino acid 79, etc.).">
-                        <i class="fa fa-question-circle"></i>
+                        <i class="fas fa-question-circle"></i>
                     </a>
                 </div>
             </div>

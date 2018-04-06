@@ -24,10 +24,10 @@
         <authz:authorize access="hasRole('root')">
           <a title="see everything solr knows about this record"
              class="solr-document-link"
-             href="/solr/prototype/select?q=id:${result.id}&fl=*&wt=json&indent=true&hl=false&rows=1"><i class="fa fa-file-text-o"></i></a>
+             href="/solr/prototype/select?q=id:${result.id}&fl=*&wt=json&indent=true&hl=false&rows=1"><i class="far fa-file-alt"></i></a>
           <c:if test="${not empty result.explain}">
             <span title="see solr query explain info"
-               class="result-explain-link"><i class="fa fa-list-ol"></i></span>
+               class="result-explain-link"><i class="fas fa-list-ol"></i></span>
           </c:if>
         </authz:authorize>
 

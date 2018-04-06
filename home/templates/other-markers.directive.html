@@ -7,11 +7,11 @@
         <a ng-if="link.referenceDatabaseName=='Alliance'" ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}</a>
 
         <span ng-if="link.referenceDatabaseName!='Alliance'" ng-bind-html="link.refLink"></span><span ng-if="link.referenceDatabaseName!='Alliance'" ng-show="om.edit" style="cursor: pointer;"
-                                           ng-click="om.openEditAttribution(link, $index)"><i class="fa fa-pencil red" aria-hidden="true"
+                                           ng-click="om.openEditAttribution(link, $index)"><i class="far fa-edit red" aria-hidden="true"
                                                                                               title="Edit attributions"></i></span>
             <span ng-if="link.referenceDatabaseName!='Alliance'" ng-show="om.edit" style="cursor: pointer;"
                                            ng-click="om.openDeleteOtherMarkerLink(link,$index)">
-                       <i class="fa fa-trash red" aria-hidden="true" title="Delete the link"></i></span>
+                       <i class="fas fa-trash red" aria-hidden="true" title="Delete the link"></i></span>
     </td></tr>
 </table>
 <div id="new-other-marker-link-modal" class="jq-modal curation">

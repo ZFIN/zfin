@@ -25,6 +25,14 @@ function processPopupLinks(parent) {
         if ($(this).modal !== undefined) {
             this.style.display = 'inline';
         }
+        if ($(this).hasClass('info-popup-link')) {
+          $(this).append('<i class="fas fa-info-circle"></i>');
+        } else if ($(this).hasClass('help-popup-link')) {
+          $(this).append('<i class="fas fa-question-circle"></i>');
+        } else if ($(this).hasClass('data-popup-link')) {
+          $(this).append('<i class="far fa-window-maximize fa-sm"></i>');
+        }
+
     });
 
     $(selector).click(function (event) {

@@ -15,7 +15,7 @@
                             <td width="65%">
                                 ${sequence.dbLink.accessionNumber} <zfin:attribution entity="${sequence.dbLink}" />
                                 <a class="show-sequence-button" href="#">
-                                    [ <i class="fa fa-caret-right"></i> <span class="show-sequence-button-text">Show</span> ]
+                                    [ <i class="fas fa-caret-right"></i> <span class="show-sequence-button-text">Show</span> ]
                                 </a>
 
                                 <span class="sequence-help">

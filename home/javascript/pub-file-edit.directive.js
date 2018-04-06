@@ -15,7 +15,7 @@
             '  </thead>' +
             '  <tbody>' +
             '  <tr ng-show="vm.loading">' +
-            '      <td class="text-muted text-center" colspan="3"><i class="fa fa-spinner fa-spin"></i> Loading...</td>' +
+            '      <td class="text-muted text-center" colspan="3"><i class="fas fa-spinner fa-spin"></i> Loading...</td>' +
             '  </tr>' +
             '  <tr ng-show="!vm.loading && vm.files.length == 0">' +
             '    <td class="text-muted text-center" colspan="3">No files yet.</td>' +
@@ -27,7 +27,7 @@
             '      <div class="figure-delete-button pull-right">' +
             '        <button class="btn btn-dense btn-link" title="Remove file" ' +
             '                ng-click="vm.deleteFile(file, $index)" ng-disabled="file.deleting">' +
-            '          <i class="fa fa-trash"></i>' +
+            '          <i class="fas fa-trash"></i>' +
             '        </button>' +
             '      </div>' +
             '    </td>' +

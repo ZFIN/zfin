@@ -14,7 +14,7 @@
                         ng-change="vm.fetchPubs()">
                 </select>
                 <button title="Refresh query" class="btn btn-link pub-dashboard-reload" ng-disabled="vm.loading" ng-click="vm.fetchPubs()">
-                    <i class="fa fa-refresh" ng-class="{'fa-spin': vm.loading}"></i>
+                    <i class="fas fa-sync" ng-class="{'fa-spin': vm.loading}"></i>
                 </button>
             </form>
         </div>
@@ -32,7 +32,7 @@
         </thead>
         <tbody>
         <tr ng-show="vm.loading">
-            <td class="text-muted text-center" colspan="5"><i class="fa fa-spinner fa-spin"></i> Loading...</td>
+            <td class="text-muted text-center" colspan="5"><i class="fas fa-spinner fa-spin"></i> Loading...</td>
         </tr>
         <tr ng-show="!vm.loading && vm.pubs.length == 0">
             <td class="text-muted text-center" colspan="5">Nothing to see here! No pubs match criteria.</td>
@@ -47,10 +47,10 @@
             <td>
                 <button ng-show="!pub.claimed" ng-click="vm.claimPub(pub, $index)" class="btn btn-default" ng-disabled="pub.saving">
                     <span ng-show="!pub.saving">Claim</span>
-                    <span ng-show="pub.saving"><i class="fa fa-spinner fa-spin"></i></span>
+                    <span ng-show="pub.saving"><i class="fas fa-spinner fa-spin"></i></span>
                 </button>
                 <button ng-show="pub.claimed" class="btn btn-success">
-                    <i class="fa fa-check"></i> Claimed
+                    <i class="fas fa-check"></i> Claimed
                 </button>
             </td>
             <td><a ng-href="/{{pub.zdbId}}" target="_blank">{{pub.zdbId}}</a></td>
@@ -60,7 +60,7 @@
             </td>
             <td>{{pub.status.updateDate | timeago:true}}</td>
             <td>
-                <a ng-show="pub.pdfPath" ng-href="/PDFLoadUp/{{pub.pdfPath}}" target="_blank"><i class="fa fa-file-pdf-o"></i></a>
+                <a ng-show="pub.pdfPath" ng-href="/PDFLoadUp/{{pub.pdfPath}}" target="_blank"><i class="far fa-file-pdf"></i></a>
             </td>
         </tr>
         </tbody>

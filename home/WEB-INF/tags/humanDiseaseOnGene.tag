@@ -7,7 +7,7 @@
     .marker-go-table td, .marker-go-table th { line-height: 1.5em; }
 </style>
 
-<zfin2:subsection title="DISEASE ASSOCIATED WITH <i>${gene.abbreviation}</i> HUMAN ORTHOLOG<a class='popup-link info-popup-link' href='/action/marker/note/omim-phenotype'></a>"
+<zfin2:subsection title="DISEASE ASSOCIATED WITH <i>${gene.abbreviation}</i> HUMAN ORTHOLOG <a class='popup-link info-popup-link' href='/action/marker/note/omim-phenotype'></a>"
                   test="${!empty diseases}" showNoData="true">
 
     <table class="summary rowstripes marker-go-table">

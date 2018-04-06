@@ -16,7 +16,7 @@
             '  </thead>' +
             '  <tbody>' +
             '  <tr ng-show="vm.loading">' +
-            '      <td class="text-muted text-center" colspan="3"><i class="fa fa-spinner fa-spin"></i> Loading...</td>' +
+            '      <td class="text-muted text-center" colspan="3"><i class="fas fa-spinner fa-spin"></i> Loading...</td>' +
             '  </tr>' +
             '  <tr ng-show="!vm.loading && vm.figures.length == 0">' +
             '    <td class="text-muted text-center" colspan="3">No figures yet.</td>' +
@@ -35,7 +35,7 @@
             '           ng-attr-data-pheno-count={{figure.numPhenotypeStatements}}>' +
             '        <button class="btn btn-dense btn-link" ng-click="vm.deleteFigure(figure, $index)" title="Remove figure"' +
             '                ng-disabled="figure.deleting || figure.numExpressionStatements || figure.numPhenotypeStatements">' +
-            '          <i class="fa fa-trash"></i>' +
+            '          <i class="fas fa-trash"></i>' +
             '        </button>' +
             '      </div>' +
             '    </td>' +

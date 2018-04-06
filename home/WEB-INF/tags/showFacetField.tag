@@ -16,7 +16,7 @@
             <%-- Only show the widgets if there are values --%>
             <c:choose>
                 <c:when test="${(fn:length(facet.selectedFacetValues) + fn:length(facet.facetValues)) > 0}">
-                    <i class="fa fa-fw fa-caret-right icon-toggle <c:if test="${open}">open</c:if>"></i>
+                    <span class="icon-toggle ${open ? 'open' : ''}"><i class="fas fa-fw fa-caret-right"></i></span>
                 </c:when>
                 <c:otherwise>
                     <c:set var="addLeftLabelSpacing" value="true"/>

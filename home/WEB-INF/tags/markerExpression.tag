@@ -30,8 +30,9 @@
         <c:when test="${markerExpression.totalCountForStuff gt 0}">
 
             <table id="geneExpressionData" class="summary horizontal-solidblock geneexpressionblock">
-                <caption>GENE EXPRESSION
-                    <small><a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a></small>
+                <caption>
+                    GENE EXPRESSION
+                    <a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a>
                 </caption>
                 <c:if test="${
                 (!empty markerExpression.allExpressionData and empty markerExpression.directlySubmittedExpression)
@@ -116,8 +117,9 @@
         </c:when>
         <c:otherwise>
             <div class="noGeneExpressionData">
-                <b>GENE EXPRESSION
-                    <small><a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a></small>
+                <b>
+                    GENE EXPRESSION
+                    <a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a>
                 </b>
                 <zfin2:noDataAvailable/>
             </div>

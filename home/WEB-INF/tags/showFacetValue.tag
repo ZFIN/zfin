@@ -33,11 +33,11 @@
     <span>
         <c:if test="${showIncludeExclude}">
             <span style="white-space: nowrap">
-                <a href="${value.url}" onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${value.label}')">
-                    <i title="include term" class="include-exclude-icon facet-include fa fa-plus-circle"></i>
+                <a class="facet-include" href="${value.url}" title="include term" onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${value.label}')">
+                    <i class="include-exclude-icon fa fa-plus-circle"></i>
                 </a>
-                <a href="${value.excludeUrl}" onclick="ga('send', 'event', '${gaCategory} Facet', 'exclude', '${value.label}')">
-                    <i title="exclude term" class="include-exclude-icon facet-exclude fa fa-minus-circle"></i>
+                <a class="facet-exclude" href="${value.excludeUrl}" title="exclude term" onclick="ga('send', 'event', '${gaCategory} Facet', 'exclude', '${value.label}')">
+                    <i class="include-exclude-icon fa fa-minus-circle"></i>
                 </a>
             </span>
         </c:if>

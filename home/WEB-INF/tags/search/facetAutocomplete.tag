@@ -14,8 +14,8 @@
             </div>
             <ul class="list-unstyled modal-body-scrolling" style="padding: 10px;">
                 <li style="clear:both" class="selectable-facet-value facet-value" ng-repeat="value in ( filteredValues = (facetValues | match:query) ) | paging:perPage:page">
-                    <a href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)"><i class="include-exclude-icon facet-include fa fa-plus-circle"></i></a>
-                    <a href="${baseUrlWithoutPage}fq=-{{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('exclude', value.name)"><i class="include-exclude-icon facet-exclude fa fa-minus-circle"></i></a>
+                    <a class="facet-include" href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)"><i class="include-exclude-icon fa fa-plus-circle"></i></a>
+                    <a class="facet-exclude" href="${baseUrlWithoutPage}fq=-{{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('exclude', value.name)"><i class="include-exclude-icon fa fa-minus-circle"></i></a>
                     <%-- the bind html is so that genotype names will have their superscript, requires ngSanitize --%>
                     <a href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)" ng-bind-html="value.value"></a>
                       <span style="padding-left: 1em;" class="pull-right">({{value.count}})</span>
@@ -24,9 +24,9 @@
             <div style="margin-top: .5em;">
 
                 <%--Page:--%>
-                <button style="margin-left: 3em;" class="btn btn-default" ng-click="prevPage()"><i class="fa fa-angle-left"></i></button>
+                <button style="margin-left: 3em;" class="btn btn-default" ng-click="prevPage()"><i class="fas fa-chevron-left"></i></button>
                 {{page}}/{{   Math.ceil(filteredValues.length/perPage)  }}
-                <button class="btn btn-default" ng-click="nextPage()"><i class="fa fa-angle-right"></i></button>
+                <button class="btn btn-default" ng-click="nextPage()"><i class="fas fa-chevron-right"></i></button>
 
                 <div class="pull-right">
                     Show:

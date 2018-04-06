@@ -69,7 +69,7 @@
                 showLink = $('<a class="table-collapse-link"></a>')
                     .attr('href', '#')
                     .insertAfter(table);
-                linkIcon = $('<i class="fa fa-caret-down"></i>')
+                linkIcon = $('<span style="display: inline-block"><i class="fas fa-caret-down"></i></span>')
                     .appendTo(showLink);
                 linkText = $('<span></span>')
                     .text(showText)

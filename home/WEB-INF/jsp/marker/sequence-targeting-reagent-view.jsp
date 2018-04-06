@@ -40,8 +40,7 @@
 <div id="gbrowse-images" class="summary">
     <div class="summaryTitle">
         TARGET LOCATION${fn:length(formBean.gbrowseImages) == 1 ? "" : "S"}
-        <small><a class="popup-link info-popup-link" href="/action/marker/note/sequence-targeting-reagent-gbrowse"></a>
-        </small>
+        <a class="popup-link info-popup-link" href="/action/marker/note/sequence-targeting-reagent-gbrowse"></a>
     </div>
 
     <c:forEach items="${formBean.gbrowseImages}" var="image" end="1">
@@ -113,7 +112,7 @@
 <%--// EXPRESSION --%>
 <div class="summary" id="expression">
     <b>GENE EXPRESSION</b>
-    <small><a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a></small>
+    <a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a>
     <br/>
     <b>Gene expression in Wild Types + ${formBean.marker.name}</b>
     <c:choose>
@@ -129,8 +128,8 @@
 
 <%--// PHENOTYPE --%>
 <div class="summary">
-    <b>PHENOTYPE</b>&nbsp;
-    <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
+    <b>PHENOTYPE</b>
+    <a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a>
     <br/>
     <c:choose>
         <c:when test="${formBean.phenoMartBeingRegened}">

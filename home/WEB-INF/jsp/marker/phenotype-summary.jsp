@@ -15,7 +15,7 @@
         </tr>
         <tr>
             <th class="genotype-name-label">Conditions:</th>
-            <td class="genotype-name-value">Standard or Control <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype-summary-note'></a></small> </td>
+            <td class="genotype-name-value">Standard or Control <a class='popup-link info-popup-link' href='/action/marker/note/phenotype-summary-note'></a></td>
         </tr>
     </c:if>
 </table>

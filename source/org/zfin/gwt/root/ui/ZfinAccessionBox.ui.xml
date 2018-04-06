@@ -16,10 +16,10 @@
     <g:HorizontalPanel>
         <zfin:StringTextBox ui:field="accessionNumber"/>
         <g:HTML ui:field="validSequenceCharacter" visible="false">
-            <i class="fa fa-check {style.green}" aria-hidden="true"></i>
+            <i class="fas fa-check {style.green}" aria-hidden="true"></i>
         </g:HTML>
         <g:HTML ui:field="faultySequenceCharacter" visible="false">
-            <i class="fa fa-exclamation error" aria-hidden="true"></i>
+            <i class="fas fa-exclamation error" aria-hidden="true"></i>
         </g:HTML>
     </g:HorizontalPanel>
 </ui:UiBinder>

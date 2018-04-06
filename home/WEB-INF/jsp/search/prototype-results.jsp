@@ -77,12 +77,12 @@
                             <authz:authorize access="hasRole('root')">
                                 <c:if test="${category eq publicationCategoryName}">
                                     <a id="advanced-search-button" class="btn btn-default" href="#" title="Advanced Search Options"
-                                       onClick="jQuery('#advanced-container').slideToggle(200);"><i class="fa fa-list"></i></a>
+                                       onClick="jQuery('#advanced-container').slideToggle(200);"><i class="fas fa-list"></i></a>
                                 </c:if>
                             </authz:authorize>
                             <a class="btn btn-default" href="/search?q=" onclick="localStorage.clear();">New</a>
                             <a  class="btn btn-default" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
-                                <i class="fa fa-question-circle"></i>
+                                <i class="fas fa-question-circle"></i>
                             </a>
                             <a class="btn btn-default feedback-link" href="#">Feedback</a>
                         </div>
@@ -211,12 +211,12 @@
                         <div class="pull-left">
                             <c:if test="${!galleryMode}">
                                 <a href="${downloadUrl}" class="btn btn-default">
-                                    <i class="fa fa-download"></i> Download
+                                    <i class="fas fa-download"></i> Download
                                 </a>
                             </c:if>
                             <c:if test="${galleryMode}">
                                 <a class="btn btn-default" href="${baseUrlWithoutGalleryMode}galleryMode=false">
-                                    <i class="fa fa-chevron-left"></i>
+                                    <i class="fas fa-chevron-left"></i>
                                     See all <fmt:formatNumber value="${numFound}" pattern="##,###"/><zfin:choice choicePattern="0# results| 1# result| 2# results" integerEntity="${numFound}"/>
                                 </a>
                             </c:if>
@@ -234,10 +234,10 @@
                                 <authz:authorize access="hasRole('root')">
                                     <div class="btn-group">
                                         <button id="boxy-result-button" class="btn btn-default result-action-tooltip" title="Detailed Results">
-                                            <i class="fa fa-newspaper-o fa-flip-horizontal"></i>
+                                            <i class="far fa-newspaper fa-flip-horizontal"></i>
                                         </button>
                                         <button id="table-result-button" class="btn btn-default result-action-tooltip" title="Tabular Results">
-                                            <i class="fa fa-table"></i>
+                                            <i class="fas fa-table"></i>
                                         </button>
                                     </div>
 
@@ -250,7 +250,7 @@
 
                                 <c:if test="${!empty images && !empty category && category != 'Any'}">
                                     <a href="${baseUrlWithoutGalleryMode}galleryMode=true" class="btn btn-default">
-                                        <i class="fa fa-camera"></i> Browse Images
+                                        <i class="fas fa-camera"></i> Browse Images
                                     </a>
                                 </c:if>
 
@@ -334,7 +334,7 @@
                                     <div class="figure-gallery-image-container gallery">
                                         <img src="${image.mediumUrl}">
                                         <div class="hidden figure-gallery-loading-overlay">
-                                            <i class="fa fa-spinner fa-spin"></i>
+                                            <i class="fas fa-spinner fa-spin"></i>
                                         </div>
                                     </div>
                                 </div>

@@ -29,7 +29,7 @@
                 <g:cell/>
                 <g:customCell>
                     <g:HTML ui:field="cloneLink" visible="false">
-                        <i class="fa fa-copy" aria-hidden="true"></i>
+                        <i class="far fa-copy" aria-hidden="true"></i>
                     </g:HTML>
                 </g:customCell>
                 <g:cell/>

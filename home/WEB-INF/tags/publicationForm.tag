@@ -47,7 +47,7 @@
             <form:textarea path="publication.authors" cssClass="form-control"/>
             <form:errors path="publication.authors" cssClass="text-danger" />
             <span class="help-block">Standard format: Dole, J.P., Nixon, R.M., and Gingrinch, N.
-                <a data-toggle="collapse" href="#authors-more-help"><i class="fa fa-question-circle"></i></a>
+                <a data-toggle="collapse" href="#authors-more-help"><i class="fas fa-question-circle"></i></a>
             </span>
             <div class="collapse" id="authors-more-help">
                 <div class="well">

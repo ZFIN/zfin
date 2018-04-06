@@ -84,9 +84,9 @@
                 </div>
                 <ul class="list-unstyled">
                     <li class="author-item" ng-repeat="person in alCtrl.selectedAuthor.suggestions">
-                        <a href="#" title="Link this author" ng-click="alCtrl.addAuthor(person)" ng-show="!alCtrl.isLinked(person)"><i class="fa fa-fw fa-plus"></i></a>
+                        <a href="#" title="Link this author" ng-click="alCtrl.addAuthor(person)" ng-show="!alCtrl.isLinked(person)"><i class="fas fa-fw fa-plus-circle"></i></a>
                         <span ng-show="alCtrl.isLinked(person)" title="Author already linked">
-                            <i class="fa fa-fw fa-check"></i>
+                            <i class="fas fa-fw fa-check"></i>
                         </span>
                         <a ng-href="/{{person.zdbID}}" target="_blank">{{person.display}}</a>
                     </li>
@@ -100,7 +100,7 @@
                 </div>
                 <ul class="list-unstyled">
                     <li class="author-item" ng-repeat="author in alCtrl.registeredAuthors">
-                        <a href="#" title="Unlink this author" ng-click="alCtrl.removeAuthor(author)"><i class="fa fa-fw fa-trash-o"></i></a>
+                        <a href="#" title="Unlink this author" ng-click="alCtrl.removeAuthor(author)"><i class="fas fa-trash fa-fw"></i></a>
                         <a ng-href="/{{author.zdbID}}" target="_blank">{{author.display}}</a>
                     </li>
                 </ul>

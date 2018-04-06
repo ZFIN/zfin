@@ -17,7 +17,7 @@
                 ng-disabled="vm.hasNoRecipients() || vm.loading"
                 ng-click="vm.editNotification()">
             <span ng-show="!vm.loading">Edit Notification</span>
-            <i ng-show="vm.loading" class="fa fa-spinner fa-spin"></i>
+            <i ng-show="vm.loading" class="fas fa-spinner fa-spin"></i>
         </button>
     </div>
 
@@ -51,7 +51,7 @@
         </div>
         <button class="btn btn-primary" type="button" ng-click="vm.sendNotification()" ng-disabled="vm.loading">
             <span ng-show="!vm.loading">Send Notification</span>
-            <i ng-show="vm.loading" class="fa fa-spinner fa-spin"></i>
+            <i ng-show="vm.loading" class="fas fa-spinner fa-spin"></i>
         </button>
         <button class="btn btn-default" type="button" ng-click="vm.cancelNotificationPreview()">Cancel</button>
     </div>

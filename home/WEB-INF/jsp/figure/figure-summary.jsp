@@ -5,11 +5,11 @@
 <div class="modal-content">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true"><i class="fa fa-fw fa-close"></i></span>
+            <span aria-hidden="true"><i class="fas fa-fw fa-times"></i></span>
         </button>
         <h4 class="modal-title">
             <c:if test="${!empty bean.figureExpressionSummary || !empty bean.figurePhenotypeSummary || !empty bean.details}">
-                <a role="button" class="figure-gallery-modal-collapse icon-toggle open"><span aria-hidden="true"><i class="fa fa-fw fa-chevron-right"></i></span></a>
+                <a role="button" class="figure-gallery-modal-collapse icon-toggle open"><span aria-hidden="true"><i class="fas fa-fw fa-chevron-right"></i></span></a>
             </c:if>
             <zfin:link entity="${bean.titleLinkEntity}"/>
         </h4>
@@ -27,16 +27,16 @@
     </div>
     <div class="modal-body figure-gallery-modal-body">
         <a href="#" class="figure-gallery-modal-nav prev" role="button">
-            <i class="fa fa-chevron-left"></i>
+            <i class="fas fa-chevron-left"></i>
         </a>
         <zfin:link entity="${bean.imageLinkEntity}">
             <img class="figure-gallery-modal-image" src="${bean.image.url}">
         </zfin:link>
         <a href="#" class="figure-gallery-modal-nav next" role="button">
-            <i class="fa fa-chevron-right"></i>
+            <i class="fas fa-chevron-right"></i>
         </a>
         <div class="figure-gallery-modal-loader hidden">
-            <i class="fa fa-spinner fa-spin"></i>
+            <i class="fas fa-spinner fa-spin"></i>
         </div>
     </div>
 </div>
