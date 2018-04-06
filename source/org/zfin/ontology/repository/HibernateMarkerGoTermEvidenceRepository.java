@@ -103,6 +103,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     public void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
 
         HibernateUtil.currentSession().save(markerGoTermEvidenceToAdd);
+        System.out.println(markerGoTermEvidenceToAdd.getZdbID());
         // have to do this after we add inferences
         if (CollectionUtils.isNotEmpty(markerGoTermEvidenceToAdd.getInferredFrom())) {
             for (InferenceGroupMember inference : markerGoTermEvidenceToAdd.getInferredFrom()) {

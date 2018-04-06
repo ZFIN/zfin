@@ -5,7 +5,7 @@ import java.util.Set;
 
 /**
  */
-public class MarkerGoTermAnnotationExtn implements Serializable {
+public class MarkerGoTermAnnotationExtn  {
     private Long id;
     private String relationshipTerm;
     private MarkerGoTermAnnotationExtnGroup annotExtnGroupID;

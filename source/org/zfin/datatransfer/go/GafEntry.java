@@ -26,7 +26,7 @@ public class GafEntry {
         this.col8pipes = col8pipes;
     }
 
-  //  private String geneProductFormID;
+    private String geneProductFormID;
 
     public int getCol8both() {
         return col8both;
@@ -39,6 +39,14 @@ public class GafEntry {
     private int col8pipes;
     private int col8commas;
     private int col8both;
+
+    public String getGeneProductFormID() {
+        return geneProductFormID;
+    }
+
+    public void setGeneProductFormID(String geneProductFormID) {
+        this.geneProductFormID = geneProductFormID;
+    }
 
     public int getCol8commas() {
         return col8commas;
@@ -150,7 +158,7 @@ public class GafEntry {
         sb.append(", createdDate='").append(createdDate).append('\'');
         sb.append(", createdBy='").append(createdBy).append('\'');
         sb.append(", annotExtn='").append(annotExtn).append('\'');
-        //sb.append(", geneProducFormID='").append(geneProductFormID).append('\'');
+        sb.append(", geneProducFormID='").append(geneProductFormID).append('\'');
         sb.append('}').append("\n");
         return sb.toString();
     }

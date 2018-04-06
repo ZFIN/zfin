@@ -138,7 +138,7 @@ public class FpInferenceGafParser {
         if (entries.length > 14) {
             gafEntry.setAnnotExtn(entries[15]);
         }
-        //gafEntry.setGeneProductFormID(entries[16]);
+        gafEntry.setGeneProductFormID(entries[16]);
         gafEntry.setCol8pipes(countPipes);
         gafEntry.setCol8commas(countCommas);
         gafEntry.setCol8both(countBoth);
