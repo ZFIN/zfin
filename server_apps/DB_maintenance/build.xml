@@ -97,6 +97,21 @@
         </java>
     </target>
 
+    <target name="load-noctua-gpad" description="">
+        <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
+              fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/gafLoad"/>
+            <arg value="${jobName}"/>
+            <arg value="GPAD-Noctua"/>
+            <arg value="https://build.berkeleybop.org/job/export-lego-to-gpad-sparql/lastSuccessfulBuild/artifact/legacy/zfin.gpad"/>
+            <arg value="org.zfin.datatransfer.go.GpadParser"/>
+            <jvmarg value="${jvm.args}"/>
+        </java>
+    </target>
+
     <target name="load-gaf-fpinference" description="">
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="no"

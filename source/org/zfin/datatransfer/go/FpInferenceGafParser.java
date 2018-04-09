@@ -9,10 +9,9 @@ import org.springframework.stereotype.Component;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  */
@@ -20,7 +19,7 @@ import java.util.Set;
 @Primary
 public class FpInferenceGafParser {
 
-    private Logger logger = Logger.getLogger(FpInferenceGafParser.class);
+    protected Logger logger = Logger.getLogger(FpInferenceGafParser.class);
 
     public static final String GOREF_PREFIX = "GO_REF:";
     protected static final String ZFIN_CREATED_BY = "ZFIN";
@@ -67,6 +66,10 @@ public class FpInferenceGafParser {
         return gafEntries;
     }
 
+    public void postProcessing(List<GafEntry> gafEntries) {
+
+    }
+
     protected boolean isValidGafEntry(GafEntry gafEntry) {
         if (!isValidEvidenceCode(gafEntry.getEvidenceCode())) {
             logger.debug("invalid evidence code[" + gafEntry.getEvidenceCode() + " throwing out: " + gafEntry);
@@ -102,7 +105,7 @@ public class FpInferenceGafParser {
 
     protected GafEntry parseGafEntry(String line) {
         GafEntry gafEntry = new GafEntry();
-        String[] entries = line.split("\\t",-1);
+        String[] entries = line.split("\\t", -1);
 
         gafEntry.setEntryId(entries[1]); // uniprot ID for GOA, ZDB-GENE for ZFIN
         gafEntry.setQualifier(entries[3]);
@@ -122,8 +125,8 @@ public class FpInferenceGafParser {
             countBoth++;
         }
         gafEntry.setInferences(entries[7]
-                        .replaceAll("EMBL:", "GenBank:")
-                        .replaceAll("protein_id:", "GenPept:")
+                .replaceAll("EMBL:", "GenBank:")
+                .replaceAll("protein_id:", "GenPept:")
         );
 
         gafEntry.setTaxonId(entries[12]);
@@ -131,8 +134,8 @@ public class FpInferenceGafParser {
 
         // for case 10868
         gafEntry.setCreatedBy(entries[14]
-                        .replaceAll("Ensembl:", "ENSEMBL:")
-                        .replaceAll("\\bUniProt:\\b", "UniProt:")
+                .replaceAll("Ensembl:", "ENSEMBL:")
+                .replaceAll("\\bUniProt:\\b", "UniProt:")
 
         );
         if (entries.length > 14) {
@@ -143,6 +146,31 @@ public class FpInferenceGafParser {
         gafEntry.setCol8commas(countCommas);
         gafEntry.setCol8both(countBoth);
         return gafEntry;
+    }
+
+    public List<GafAnnotationGroup> parseAnnotationExtension(String line) {
+        if (StringUtils.isEmpty(line))
+            return null;
+
+        List<String> groups = new ArrayList<>(Arrays.asList(line.split("\\|")));
+        List<GafAnnotationGroup> annotationGroups = new ArrayList<>(groups.size());
+        groups.forEach(group -> {
+            GafAnnotationGroup annotationGroup = new GafAnnotationGroup();
+            List<String> components = new ArrayList<>(Arrays.asList(group.split("\\,")));
+            components.forEach(component -> {
+                String pattern = "(?<" + GafAnnotationExtension.RELATIONSHIP_TERM +
+                        ">.*)\\((?<" + GafAnnotationExtension.ENTITY_TERM + ">.*)\\)";
+                Pattern componentPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = componentPattern.matcher(component.trim());
+                if (matcher.matches()) {
+                    GafAnnotationExtension extension = new GafAnnotationExtension(matcher.group(GafAnnotationExtension.RELATIONSHIP_TERM),
+                            matcher.group(GafAnnotationExtension.ENTITY_TERM));
+                    annotationGroup.addAnnotationExtendsion(extension);
+                }
+            });
+            annotationGroups.add(annotationGroup);
+        });
+        return annotationGroups;
     }
 
 }

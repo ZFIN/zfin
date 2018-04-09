@@ -1,5 +1,7 @@
 package org.zfin.datatransfer.go;
 
+import java.util.List;
+
 /**
  * for Gaf Processing . . . may loosely translate into a MarkerGoTermEvidence record (or may be replaced by)
  * <p/>
@@ -17,6 +19,9 @@ public class GafEntry {
     private String createdDate; //14
     private String createdBy; //15
     private String annotExtn; //16
+    private String annotationProperties;
+    private String modelID;
+    private List<GafAnnotationGroup> annotationGroups;
 
     public int getCol8pipes() {
         return col8pipes;
@@ -144,6 +149,31 @@ public class GafEntry {
         this.geneProductFormID = geneProductFormID;
     }
 */
+
+    public String getModelID() {
+        return modelID;
+    }
+
+    public void setModelID(String modelID) {
+        this.modelID = modelID;
+    }
+
+    public List<GafAnnotationGroup> getAnnotationGroups() {
+        return annotationGroups;
+    }
+
+    public void setAnnotationGroups(List<GafAnnotationGroup> annotationGroups) {
+        this.annotationGroups = annotationGroups;
+    }
+
+    public String getAnnotationProperties() {
+        return annotationProperties;
+    }
+
+    public void setAnnotationProperties(String annotationProperties) {
+        this.annotationProperties = annotationProperties;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

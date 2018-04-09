@@ -20,10 +20,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This is autowired for spring 3, but is not in the correct context yet.
@@ -74,7 +74,6 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     protected String localDownloadFile2;
     protected String localDownloadFile3;
     protected String organization;
-    private final String GAF_TEST_DIRECTORY = "test/gaf/fp_inference/";
 
     public int execute() {
         int exitCode = 0;
@@ -114,6 +113,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 //            File downloadedFile = new File(ZfinPropertiesEnum.SOURCEROOT+"/"+GAF_TEST_DIRECTORY +"testGAF.txt");
 
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
+            gafParser.postProcessing(gafEntries);
             System.out.println(gafEntries.size());
             int sizeentry=gafEntries.size();
             System.out.println(gafEntries.get(sizeentry-1).getCol8pipes());
@@ -302,6 +302,29 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         }
     }
 
+    public static void main11(String[] args) throws InterruptedException {
+        // create automatic thread pool (by default: size of number of cores)
+        ExecutorService executor = Executors.newWorkStealingPool();
+
+// define a list of 3 callables each of which return a String
+        List<Callable<String>> callables = Arrays.asList(
+                () -> "task1",
+                () -> "task2",
+                () -> "task3");
+
+// submit them all and handle each callable's Future object
+        executor.invokeAll(callables)
+                .stream()
+                .map(future -> {
+                    try {
+                        return future.get();
+                    }
+                    catch (Exception e) {
+                        throw new IllegalStateException(e);
+                    }
+                })
+                .forEach(System.out::println);
+    }
     public static void main(String[] args) {
         initLog4J();
         setLoggerToInfoLevel(logger);

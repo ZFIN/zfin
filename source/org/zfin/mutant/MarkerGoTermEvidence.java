@@ -7,7 +7,6 @@ import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
-import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.Collection;
@@ -30,7 +29,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     private String note;
     private Set<InferenceGroupMember> inferredFrom;
     private Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotationExtnGroup;
-  private MarkerDBLink geneProductFormID;
+    private MarkerDBLink geneProductFormID;
 
     // editing data
 
@@ -207,8 +206,6 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     }
 
 
-
-
     /**
      * @param that
      * @return If this is more specific / equal go term and has all of that incoming inferences than true.
@@ -219,12 +216,17 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         if (!marker.equals(that.marker)) return false;
         if (!source.equals(that.source)) return false;
         if (flag != that.flag) return false;
+        if (geneProductFormID != that.geneProductFormID) return false;
+        if (inferredFrom != null ? !this.containsAllInferences(that) : that.inferredFrom != null) return false;
+        if ((CollectionUtils.isNotEmpty(goTermAnnotationExtnGroup) && CollectionUtils.isEmpty(that.getAnnotationExtensions())) ||
+                (CollectionUtils.isEmpty(goTermAnnotationExtnGroup) && CollectionUtils.isNotEmpty(that.getAnnotationExtensions())))
+            return false;
+        if (CollectionUtils.isNotEmpty(goTermAnnotationExtnGroup) && !this.containsAllAnnotationExtensions(that))
+            return false;
 
-   if (geneProductFormID!=null && geneProductFormID!=that.geneProductFormID) return false;
+        if (geneProductFormID != null && geneProductFormID != that.geneProductFormID) return false;
 
         if (inferredFrom != null ? !this.containsAllInferences(that) : that.inferredFrom != null) return false;
-        if (goTermAnnotationExtnGroup != null ? !this.containsAllAnnotationExtensions(that) : that.getAnnotationExtensions() != null)return false;
-       // return CollectionUtils.isEmpty(getAnnotationExtensions()) ? !this.containsAllAnnotationExtensions(that) : CollectionUtils.isEmpty(that.getAnnotationExtensions());
         return true;
     }
 
@@ -247,7 +249,8 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         if (goTerm != null ? !goTerm.equals(that.goTerm) : that.goTerm != null) return false;
         if (marker != null ? !marker.equals(that.marker) : that.marker != null) return false;
         if (source != null ? !source.equals(that.source) : that.source != null) return false;
-       if (geneProductFormID != null ? !geneProductFormID.equals(that.geneProductFormID) : that.geneProductFormID != null) return false;
+        if (geneProductFormID != null ? !geneProductFormID.equals(that.geneProductFormID) : that.geneProductFormID != null)
+            return false;
         if (inferredFrom != null ? !sameInferences(that.inferredFrom) : that.inferredFrom != null) return false;
 //return true;
         return CollectionUtils.isEmpty(getAnnotationExtensions()) ? CollectionUtils.isEmpty(that.getAnnotationExtensions()) :
@@ -261,7 +264,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         result = 31 * result + (evidenceCode != null ? evidenceCode.hashCode() : 0);
         result = 31 * result + (flag != null ? flag.hashCode() : 0);
         result = 31 * result + (source != null ? source.hashCode() : 0);
-      result = 31 * result + (geneProductFormID != null ? geneProductFormID.hashCode() : 0);
+        result = 31 * result + (geneProductFormID != null ? geneProductFormID.hashCode() : 0);
         result = 31 * result + (goTerm != null ? goTerm.hashCode() : 0);
 
         // have to compare the strings, since the inferences are generated for this and the key generates
@@ -377,14 +380,14 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
      * Determine if ALL of these annotation extensions are contained in the annotations extensions on this object.
      *
      * @param markerGoTermEvidence
-     * @return All annotextns must be in this.annotationExtns
+     * @return All annotations must be in this.annotationExtns
      */
     public boolean containsAllAnnotationExtensions(MarkerGoTermEvidence markerGoTermEvidence) {
         Collection<MarkerGoTermAnnotationExtn> thatAnnotExtns = markerGoTermEvidence.getAnnotationExtensions();
         Collection<MarkerGoTermAnnotationExtn> theseAnnotExtns = getAnnotationExtensions();
 
 
-        // if the interstion contains all of the original elements, then it should be the same size as the original
+        // if the intersection contains all of the original elements, then it should be the same size as the original
         return CollectionUtils.intersection(thatAnnotExtns, theseAnnotExtns).size() == thatAnnotExtns.size();
     }
 
@@ -426,10 +429,9 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
             sb.append("none");
         }
         sb.append(", geneProductFormID=");
-        if(geneProductFormID != null) {
+        if (geneProductFormID != null) {
             sb.append(geneProductFormID.getAccessionNumberDisplay());
-        }
-        else{
+        } else {
             sb.append("none");
         }
         sb.append('}');
