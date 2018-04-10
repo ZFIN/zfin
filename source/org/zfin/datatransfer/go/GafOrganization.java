@@ -9,7 +9,7 @@ public class GafOrganization {
         ZFIN("ZFIN"),
         FP_INFERENCES("FP Inferences"),
         GOA("GOA"),
-        GPAD("GPAD-Noctua"),
+        NOCTUA("Noctua"),
         PAINT("PAINT"),;
 
         private String value;

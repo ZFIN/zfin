@@ -93,7 +93,7 @@ public enum GoDefaultPublication implements PubEnum {
 
     public static Set<GoDefaultPublication> getGoRefPubs() {
         if (goRefPubs == null) {
-            goRefPubs = new HashSet<GoDefaultPublication>();
+            goRefPubs = new HashSet<>();
             goRefPubs.add(GOREF_SP_SL);
             goRefPubs.add(GOREF_UNIPROTKB_SUBCELL1);
             goRefPubs.add(GOREF_UNIPROTKB_SUBCELL2);
@@ -109,7 +109,7 @@ public enum GoDefaultPublication implements PubEnum {
 
     public static Set<GoDefaultPublication> getIeaPubs() {
         if (ieaPubs == null) {
-            ieaPubs = new HashSet<GoDefaultPublication>();
+            ieaPubs = new HashSet<>();
             ieaPubs.add(INTERPRO);
             ieaPubs.add(UNIPROTKBKW);
             ieaPubs.add(EC);

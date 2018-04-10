@@ -282,7 +282,7 @@ public class GafService {
         markerGoTermEvidenceToAdd.setGoTerm(goTerm);
         markerGoTermEvidenceToAdd.setSource(publication);
         markerGoTermEvidenceToAdd.setExternalLoadDate(new Date());
-       if (!gafEntry.getGeneProductFormID().isEmpty()) {
+       if (gafEntry.getGeneProductFormID() != null && !gafEntry.getGeneProductFormID().isEmpty()) {
 
             MarkerDBLink proteinID = getDBLink(gafEntry);
 
@@ -517,7 +517,7 @@ public class GafService {
                 throw new GafValidationError("No pub found for pmid: " + pubMedID);
             } else if (publications.size() == 1) {
                 publication = publications.get(0);
-            } else if (publications.size() > 1) {
+            } else {
                 throw new GafValidationError("Multiple pubs found for pmid: " + pubMedID);
             }
         }
@@ -705,6 +705,9 @@ public class GafService {
             // examples:
             // ZFIN:ZDB-GENE-030721-3|ZFIN:ZDB-MRPHLNO-070906-3
             // InterPro:IPR000536|InterPro:IPR001628|InterPro:IPR008946
+            if(gafEntry.getInferences() == null)
+                continue;
+
             String[] withFieldPieces = gafEntry.getInferences().split("\\|");
 
             StringBuilder sb = new StringBuilder();

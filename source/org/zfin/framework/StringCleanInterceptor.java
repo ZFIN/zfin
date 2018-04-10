@@ -8,6 +8,7 @@ import org.hibernate.type.Type;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 
 /**
  * Hibernate Interceptor to trim strings and escape characters that informix can't handle
@@ -82,6 +83,9 @@ public class StringCleanInterceptor extends EmptyInterceptor {
 
     public static void runSetter(Field field, Object o, Object value) {
         if (o.getClass().isEnum())
+            return;
+        // exclude 'public static final' fields....
+        if(field.getModifiers() == 25)
             return;
         try {
             // do not update existing nulls
