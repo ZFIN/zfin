@@ -1,24 +1,16 @@
 package org.zfin.mutant;
 
-import java.io.Serializable;
-import java.util.Set;
-
 /**
  */
-public class MarkerGoTermAnnotationExtn  {
+public class MarkerGoTermAnnotationExtn {
     private Long id;
     private String relationshipTerm;
     private MarkerGoTermAnnotationExtnGroup annotExtnGroupID;
     private String identifierTermText;
     private String annotExtnDBLink;
 
-
-
-
-
     public Long getId() {
         return id;
-
     }
 
     public void setId(Long id) {
@@ -65,5 +57,28 @@ public class MarkerGoTermAnnotationExtn  {
 
     public void setAnnotExtnGroupID(MarkerGoTermAnnotationExtnGroup annotExtnGroupID) {
         this.annotExtnGroupID = annotExtnGroupID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MarkerGoTermAnnotationExtn that = (MarkerGoTermAnnotationExtn) o;
+
+        if (!relationshipTerm.equals(that.relationshipTerm)) return false;
+        if (!identifierTermText.equals(that.identifierTermText)) return false;
+        if (annotExtnDBLink != null ? !annotExtnDBLink.equals(that.annotExtnDBLink) : that.annotExtnDBLink != null)
+            return false;
+        return identifierTerm != null ? identifierTerm.equals(that.identifierTerm) : that.identifierTerm == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = relationshipTerm.hashCode();
+        result = 31 * result + identifierTermText.hashCode();
+        result = 31 * result + (annotExtnDBLink != null ? annotExtnDBLink.hashCode() : 0);
+        result = 31 * result + (identifierTerm != null ? identifierTerm.hashCode() : 0);
+        return result;
     }
 }

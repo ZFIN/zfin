@@ -88,13 +88,13 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             localDownloadFile = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association";
 
             gafService = new GafService(organizationEnum);
-           // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
+            // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
             File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                     , new URL(downloadUrl)
                     , false);
 
-            if(organization.equals("GOA")) {
+            if (organization.equals("GOA")) {
                 localDownloadFile2 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association2";
                 File downloadedFile2 = downloadService.downloadFile(new File(localDownloadFile2)
                         , new URL(downloadUrl2)
@@ -115,8 +115,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
             gafParser.postProcessing(gafEntries);
             System.out.println(gafEntries.size());
-            int sizeentry=gafEntries.size();
-            System.out.println(gafEntries.get(sizeentry-1).getCol8pipes());
+            int sizeentry = gafEntries.size();
+            System.out.println(gafEntries.get(sizeentry - 1).getCol8pipes());
 
             if (CollectionUtils.isEmpty(gafEntries)) {
                 throw new GafValidationError("No gaf entries found in file: " + downloadedFile);
@@ -125,9 +125,9 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             // 2.5 replace merged ZDB Id
             // added this step for FB case 7957 "GAF load should handle merged markers"
             GafJobData gafJobData = new GafJobData();
-            gafJobData.setInfPipeCount(gafEntries.get(sizeentry-1).getCol8pipes());
-            gafJobData.setInfCommaCount(gafEntries.get(sizeentry-1).getCol8commas());
-            gafJobData.setInfBothCount(gafEntries.get(sizeentry-1).getCol8both());
+            gafJobData.setInfPipeCount(gafEntries.get(sizeentry - 1).getCol8pipes());
+            gafJobData.setInfCommaCount(gafEntries.get(sizeentry - 1).getCol8commas());
+            gafJobData.setInfBothCount(gafEntries.get(sizeentry - 1).getCol8both());
 
             gafService.replaceMergedZDBIds(gafEntries);
 
@@ -142,9 +142,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             addAnnotations(gafJobData);
             updateAnnotations(gafJobData);
 
-  gafService.generateRemovedEntries(gafJobData, gafOrganization);
-
-
+            gafService.generateRemovedEntries(gafJobData, gafOrganization);
 
 
             removeAnnotations(gafJobData);
@@ -318,13 +316,13 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 .map(future -> {
                     try {
                         return future.get();
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         throw new IllegalStateException(e);
                     }
                 })
                 .forEach(System.out::println);
     }
+
     public static void main(String[] args) {
         initLog4J();
         setLoggerToInfoLevel(logger);
