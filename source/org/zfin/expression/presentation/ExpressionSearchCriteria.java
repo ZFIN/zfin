@@ -38,6 +38,7 @@ public class ExpressionSearchCriteria {
     private Integer page;
 
     private String linkWithImagesOnly;
+    private boolean hasMatchingText;
 
     public List<String> getAnatomy() {
         if (anatomyTermNames == null || anatomyTermNames.equals("")) { return null; }
@@ -246,6 +247,14 @@ public class ExpressionSearchCriteria {
 
     public void setLinkWithImagesOnly(String linkWithImagesOnly) {
         this.linkWithImagesOnly = linkWithImagesOnly;
+    }
+
+    public boolean isHasMatchingText() {
+        return hasMatchingText;
+    }
+
+    public void setHasMatchingText(boolean hasMatchingText) {
+        this.hasMatchingText = hasMatchingText;
     }
 
     public enum JournalTypeOption {

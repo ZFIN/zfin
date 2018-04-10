@@ -63,6 +63,8 @@ public class ExpressionSearchService {
                                     ExpressionSearchCriteria criteria,
                                     String anatomyBoolean) {
 
+        List<FieldName> highlightFields = new ArrayList<>();
+
         solrQuery.addFilterQuery(fq(FieldName.CATEGORY, Category.EXPRESSIONS.getName()));
 
         // only interested in expression where there is a zebrafish gene or no reporter, no ATB expression
@@ -92,16 +94,11 @@ public class ExpressionSearchService {
 
         String geneField = criteria.getGeneField();
         if (StringUtils.isNotEmpty(geneField)) {
-            solrQuery.addFilterQuery(any(
-                    fq(FieldName.GENE_AUTOCOMPLETE, geneField),
-                    fq(FieldName.ZEBRAFISH_GENE, geneField),
-                    fq(FieldName.ZEBRAFISH_GENE_T, geneField),
-                    fq(FieldName.REPORTER_GENE, geneField),
-                    fq(FieldName.REPORTER_GENE_T, geneField),
-                    fq(FieldName.EXPRESSED_GENE_FULL_NAME, geneField),
-                    fq(FieldName.EXPRESSED_GENE_PREVIOUS_NAME, geneField),
-                    fq(FieldName.PROBE, geneField)
-            ));
+            List<FieldName> fields = Arrays.asList(FieldName.GENE_AUTOCOMPLETE, FieldName.ZEBRAFISH_GENE,
+                    FieldName.ZEBRAFISH_GENE_T, FieldName.REPORTER_GENE, FieldName.REPORTER_GENE_T,
+                    FieldName.EXPRESSED_GENE_FULL_NAME, FieldName.EXPRESSED_GENE_PREVIOUS_NAME, FieldName.PROBE);
+            solrQuery.addFilterQuery(any(fields, geneField));
+            highlightFields.addAll(fields);
         }
 
         if (StringUtils.isNotEmpty(criteria.getGeneZdbID())) {
@@ -113,11 +110,10 @@ public class ExpressionSearchService {
 
         String targetGene = criteria.getTargetGeneField();
         if (StringUtils.isNotEmpty(targetGene)) {
-            solrQuery.addFilterQuery(any(
-                    fq(FieldName.TARGET, targetGene),
-                    fq(FieldName.TARGET_FULL_NAME, targetGene),
-                    fq(FieldName.TARGET_PREVIOUS_NAME, targetGene)
-            ));
+            List<FieldName> fields = Arrays.asList(FieldName.TARGET, FieldName.TARGET_FULL_NAME,
+                    FieldName.TARGET_PREVIOUS_NAME);
+            solrQuery.addFilterQuery(any(fields, targetGene));
+            highlightFields.addAll(fields);
         }
 
         if (StringUtils.isNotEmpty(criteria.getStartStageId()) && StringUtils.isNotEmpty(criteria.getEndStageId())) {
@@ -145,11 +141,13 @@ public class ExpressionSearchService {
         String fish = criteria.getFish();
         if (StringUtils.isNotEmpty(fish)) {
             solrQuery.addFilterQuery(fq(FieldName.FISH_T, fish));
+            highlightFields.add(FieldName.FISH_T);
         }
 
         String author = criteria.getAuthorField();
         if (StringUtils.isNotEmpty(author)) {
             addTo(solrQuery).fq(author, FieldName.REGISTERED_AUTHOR_AUTOCOMPLETE);
+            highlightFields.add(FieldName.REGISTERED_AUTHOR_AUTOCOMPLETE);
         }
 
         if (criteria.isOnlyFiguresWithImages()) {
@@ -173,7 +171,10 @@ public class ExpressionSearchService {
         solrQuery.setRows(criteria.getRows());
         solrQuery.setStart((criteria.getPage() - 1) * criteria.getRows());
 
+        criteria.setHasMatchingText(!highlightFields.isEmpty());
         solrQuery.set("hl.q", String.join(" ", Arrays.asList(solrQuery.getFilterQueries())));
+        solrQuery.set("hl.fl", highlightFields.stream().map(FieldName::getName).collect(Collectors.joining(" ")));
+        solrQuery.set("hl.requireFieldMatch", TRUE);
 
         return solrQuery;
     }
@@ -495,6 +496,10 @@ public class ExpressionSearchService {
 
     private String fq(FieldName fieldName, String value) {
         return fieldName.getName() + ":(\"" + SolrService.luceneEscape(value) + "\")";
+    }
+
+    private String any(Collection<FieldName> fieldNames, String value) {
+        return fieldNames.stream().map(f -> fq(f, value)).collect(Collectors.joining(" " + OR + " "));
     }
 
     private String any(String... fqs) {

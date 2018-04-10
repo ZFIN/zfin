@@ -15,7 +15,9 @@
             <a class="popup-link info-popup-link" href="/ZFIN/help_files/expression_help.html"></a>
         </th>
         <th>Stage Range</th>
-        <th>Matching Text</th>
+        <c:if test="${criteria.hasMatchingText}">
+            <th>Matching Text</th>
+        </c:if>
     </tr>
     <c:forEach items="${criteria.geneResults}" var="result" varStatus="loop">
         <zfin:alternating-tr loopName="loop" groupBeanCollection="${criteria.geneResults}" groupByBean="gene.zdbID">
@@ -48,9 +50,11 @@
             <td>
                 <zfin2:stageRange earliestStartStage="${result.startStage}" latestEndStage="${result.endStage}" />
             </td>
-            <td>
-                <c:out value="${result.matchingText}" escapeXml="false"/>
-            </td>
+            <c:if test="${criteria.hasMatchingText}">
+                <td>
+                    <c:out value="${result.matchingText}" escapeXml="false"/>
+                </td>
+            </c:if>
         </zfin:alternating-tr>
     </c:forEach>
 
