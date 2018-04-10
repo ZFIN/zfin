@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>load-gaf-goa -DjobName=Load-GPAD-Noctua_w</targets>
+      <targets>load-noctua-gpad -DjobName=Load-GPAD-Noctua_w</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>

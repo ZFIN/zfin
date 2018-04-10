@@ -105,7 +105,7 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="${validateData}/gafLoad"/>
             <arg value="${jobName}"/>
-            <arg value="GPAD-Noctua"/>
+            <arg value="Noctua"/>
             <arg value="https://build.berkeleybop.org/job/export-lego-to-gpad-sparql/lastSuccessfulBuild/artifact/legacy/zfin.gpad"/>
             <arg value="org.zfin.datatransfer.go.GpadParser"/>
             <jvmarg value="${jvm.args}"/>
