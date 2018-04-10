@@ -9,6 +9,15 @@ public class MarkerGoTermAnnotationExtn {
     private String identifierTermText;
     private String annotExtnDBLink;
 
+    public MarkerGoTermAnnotationExtn(String relationshipTerm, String identifierTermText) {
+        this.relationshipTerm = relationshipTerm;
+        this.identifierTermText = identifierTermText;
+    }
+
+    // Do not use this (only used by hibernate)
+    public MarkerGoTermAnnotationExtn() {
+    }
+
     public Long getId() {
         return id;
     }

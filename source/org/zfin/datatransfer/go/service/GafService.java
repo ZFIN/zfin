@@ -1,6 +1,5 @@
 package org.zfin.datatransfer.go.service;
 
-import com.zerog.ia.platform.Sys;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -16,7 +15,6 @@ import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.marker.Marker;
-import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -101,7 +99,7 @@ public class GafService {
             return;
         }
 
-        int countPipes=0;
+        int countPipes = 0;
         gafJobData.markStartTime();
 
         int count = 0;
@@ -275,18 +273,17 @@ public class GafService {
         Publication publication = getPublication(gafEntry);
 
 
-
         // set new object to create
         MarkerGoTermEvidence markerGoTermEvidenceToAdd = new MarkerGoTermEvidence();
         markerGoTermEvidenceToAdd.setMarker(gene);
         markerGoTermEvidenceToAdd.setGoTerm(goTerm);
         markerGoTermEvidenceToAdd.setSource(publication);
         markerGoTermEvidenceToAdd.setExternalLoadDate(new Date());
-       if (gafEntry.getGeneProductFormID() != null && !gafEntry.getGeneProductFormID().isEmpty()) {
+        if (gafEntry.getGeneProductFormID() != null && !gafEntry.getGeneProductFormID().isEmpty()) {
 
             MarkerDBLink proteinID = getDBLink(gafEntry);
 
-            if (proteinID!=null) {
+            if (proteinID != null) {
 
                 markerGoTermEvidenceToAdd.setGeneProductFormID(proteinID);
             }
@@ -318,10 +315,9 @@ public class GafService {
 
         // validate inferences
 
-            handleInferences(gafEntry, markerGoTermEvidenceToAdd);
+        handleInferences(gafEntry, markerGoTermEvidenceToAdd);
 
-            handleAnnotationExtns(gafEntry, markerGoTermEvidenceToAdd);
-
+        handleAnnotationExtns(gafEntry, markerGoTermEvidenceToAdd);
 
 
         List<MarkerGoTermEvidence> existingEvidenceList = markerGoTermEvidenceRepository.getLikeMarkerGoTermEvidencesButGo(markerGoTermEvidenceToAdd);
@@ -428,55 +424,48 @@ public class GafService {
         }
     }
 
-            protected void saveAnnoExtns (String annotationExtensionString, MarkerGoTermAnnotationExtnGroup  mgtAnnoExtnGroup, GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
+    protected void saveAnnoExtns(String annotationExtensionString, MarkerGoTermAnnotationExtnGroup mgtAnnoExtnGroup, GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
             throws GafValidationError {
 
-                Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotExtnGroup = new HashSet<>();
-                Set<MarkerGoTermAnnotationExtn> goTermAnnotExtn = new HashSet<>();
-                List<Ontology> ontologies = new ArrayList<>(2);
-                ontologies.add(Ontology.ZFIN_RO);
-                ontologies.add(Ontology.GO_QUALIFIER);
+        Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotExtnGroup = new HashSet<>();
+        Set<MarkerGoTermAnnotationExtn> goTermAnnotExtn = new HashSet<>();
+        List<Ontology> ontologies = new ArrayList<>(2);
+        ontologies.add(Ontology.ZFIN_RO);
+        ontologies.add(Ontology.GO_QUALIFIER);
 
 
-                int openParanIndex = annotationExtensionString.indexOf("(");
-                int closeParanIndex = annotationExtensionString.indexOf(")");
-                String relationName = annotationExtensionString.substring(0, openParanIndex);
-                String identifierText = annotationExtensionString.substring(openParanIndex + 1, closeParanIndex);
-                Term relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
-                if (relationTerm == null) {
-
-                    throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
-                }
-                MarkerGoTermAnnotationExtn mgtAnnoExtn = new MarkerGoTermAnnotationExtn();
-                mgtAnnoExtn.setAnnotExtnGroupID(mgtAnnoExtnGroup);
-                mgtAnnoExtn.setRelationshipTerm(relationTerm.getZdbID());
-                mgtAnnoExtn.setIdentifierTermText(identifierText);
-                if (identifierText.startsWith("GO")) {
-
-                    validateGoTerm(ontologyRepository.getTermByOboID(identifierText).getOboID(), gafEntry, " GO Term in Column 16");
-                    mgtAnnoExtn.setIdentifierTerm(ontologyRepository.getTermByOboID(identifierText).getZdbID());
-
-                }
-                if (identifierText.startsWith("ZFIN")) {
-                    int colonIndex = identifierText.indexOf(":");
-                    mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex + 1, identifierText.length()));
-                }
-                if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")))) {
-                    int colonIndex = identifierText.indexOf(":");
-                    String annotExtnPrefix = identifierText.substring(0, colonIndex);
-                    GenericTerm annotExtnTerm = ontologyRepository.getTermByOboID(identifierText);
-                    if (annotExtnTerm != null) {
-                        validateOBOTerm(annotExtnTerm.getOboID(), gafEntry, "Annotation Extension in Column 16", annotExtnPrefix);
-                        mgtAnnoExtn.setIdentifierTerm(annotExtnTerm.getZdbID());
-                    }
-                }
-                goTermAnnotExtn.add(mgtAnnoExtn);
-                mgtAnnoExtnGroup.setMgtAnnoExtns(goTermAnnotExtn);
-                goTermAnnotExtnGroup.add(mgtAnnoExtnGroup);
-                markerGoTermEvidence.setGoTermAnnotationExtnGroup(goTermAnnotExtnGroup);
+        int openParanIndex = annotationExtensionString.indexOf("(");
+        int closeParanIndex = annotationExtensionString.indexOf(")");
+        String relationName = annotationExtensionString.substring(0, openParanIndex);
+        String identifierText = annotationExtensionString.substring(openParanIndex + 1, closeParanIndex);
+        Term relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
+        if (relationTerm == null) {
+            throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
+        }
+        MarkerGoTermAnnotationExtn mgtAnnoExtn = new MarkerGoTermAnnotationExtn(relationTerm.getZdbID(), identifierText);
+        mgtAnnoExtn.setAnnotExtnGroupID(mgtAnnoExtnGroup);
+        if (identifierText.startsWith("GO")) {
+            validateGoTerm(ontologyRepository.getTermByOboID(identifierText).getOboID(), gafEntry, " GO Term in Column 16");
+            mgtAnnoExtn.setIdentifierTerm(ontologyRepository.getTermByOboID(identifierText).getZdbID());
+        }
+        if (identifierText.startsWith("ZFIN")) {
+            int colonIndex = identifierText.indexOf(":");
+            mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex + 1, identifierText.length()));
+        }
+        if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")))) {
+            int colonIndex = identifierText.indexOf(":");
+            String annotExtnPrefix = identifierText.substring(0, colonIndex);
+            GenericTerm annotExtnTerm = ontologyRepository.getTermByOboID(identifierText);
+            if (annotExtnTerm != null) {
+                validateOBOTerm(annotExtnTerm.getOboID(), gafEntry, "Annotation Extension in Column 16", annotExtnPrefix);
+                mgtAnnoExtn.setIdentifierTerm(annotExtnTerm.getZdbID());
             }
-
-
+        }
+        goTermAnnotExtn.add(mgtAnnoExtn);
+        mgtAnnoExtnGroup.setMgtAnnoExtns(goTermAnnotExtn);
+        goTermAnnotExtnGroup.add(mgtAnnoExtnGroup);
+        markerGoTermEvidence.setGoTermAnnotationExtnGroup(goTermAnnotExtnGroup);
+    }
 
 
     protected GoEvidenceQualifier getQualifier(GafEntry gafEntry, GenericTerm goTerm) throws GafValidationError {
@@ -562,8 +551,9 @@ public class GafService {
         validateGoTerm(goTerm.getOboID(), gafEntry, "GO Term");
         return goTerm;
     }
+
     protected MarkerDBLink getDBLink(GafEntry gafEntry) throws GafValidationError {
-       String proteinID = gafEntry.getGeneProductFormID();
+        String proteinID = gafEntry.getGeneProductFormID();
         System.out.println(proteinID);
 
         ReferenceDatabase refDB = sequenceRepository.getReferenceDatabase(
@@ -573,17 +563,15 @@ public class GafService {
                 Species.Type.ZEBRAFISH);
         int colonIndex = proteinID.indexOf(":");
         System.out.println(proteinID.substring(colonIndex + 1, proteinID.length()));
-            List<MarkerDBLink> proteinDBLinkList = sequenceRepository.getMarkerDBLinksForAccession(proteinID.substring(colonIndex + 1, proteinID.length()), refDB);
+        List<MarkerDBLink> proteinDBLinkList = sequenceRepository.getMarkerDBLinksForAccession(proteinID.substring(colonIndex + 1, proteinID.length()), refDB);
 
-            if (proteinDBLinkList.size()==0) {
+        if (proteinDBLinkList.size() == 0) {
 
-                throw new GafValidationError("Unable to find Gene Product ID:" + FileUtil.LINE_SEPARATOR + proteinID, gafEntry);
-            }
-            else{
+            throw new GafValidationError("Unable to find Gene Product ID:" + FileUtil.LINE_SEPARATOR + proteinID, gafEntry);
+        } else {
 
-                return proteinDBLinkList.get(0);
-            }
-
+            return proteinDBLinkList.get(0);
+        }
 
 
     }
@@ -705,7 +693,7 @@ public class GafService {
             // examples:
             // ZFIN:ZDB-GENE-030721-3|ZFIN:ZDB-MRPHLNO-070906-3
             // InterPro:IPR000536|InterPro:IPR001628|InterPro:IPR008946
-            if(gafEntry.getInferences() == null)
+            if (gafEntry.getInferences() == null)
                 continue;
 
             String[] withFieldPieces = gafEntry.getInferences().split("\\|");
