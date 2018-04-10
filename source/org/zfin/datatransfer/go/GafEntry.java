@@ -19,9 +19,23 @@ public class GafEntry {
     private String createdDate; //14
     private String createdBy; //15
     private String annotExtn; //16
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     private String annotationProperties;
     private String modelID;
     private List<GafAnnotationGroup> annotationGroups;
+=======
+=======
+>>>>>>> Stashed changes
+    private String geneProductFormID; //17
+
+    private int col8pipes;
+    private int col8commas;
+    private int col8both;
+<<<<<<< Updated upstream
+
+=======
+>>>>>>> Stashed changes
 
     public int getCol8pipes() {
         return col8pipes;
@@ -31,7 +45,6 @@ public class GafEntry {
         this.col8pipes = col8pipes;
     }
 
-    private String geneProductFormID;
 
     public int getCol8both() {
         return col8both;
@@ -41,17 +54,7 @@ public class GafEntry {
         this.col8both = col8both;
     }
 
-    private int col8pipes;
-    private int col8commas;
-    private int col8both;
 
-    public String getGeneProductFormID() {
-        return geneProductFormID;
-    }
-
-    public void setGeneProductFormID(String geneProductFormID) {
-        this.geneProductFormID = geneProductFormID;
-    }
 
     public int getCol8commas() {
         return col8commas;
@@ -141,14 +144,15 @@ public class GafEntry {
         this.annotExtn = annotExtn;
     }
 
-    /*public String getGeneProductFormID() {
+   public String getGeneProductFormID() {
         return geneProductFormID;
     }
 
     public void setGeneProductFormID(String geneProductFormID) {
         this.geneProductFormID = geneProductFormID;
     }
-*/
+
+<<<<<<< Updated upstream
 
     public String getModelID() {
         return modelID;
@@ -174,6 +178,9 @@ public class GafEntry {
         this.annotationProperties = annotationProperties;
     }
 
+
+=======
+>>>>>>> Stashed changes
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
