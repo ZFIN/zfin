@@ -144,7 +144,7 @@ public class GafEntry {
         this.geneProductFormID = geneProductFormID;
     }
 
-<<<<<<< Updated upstream
+
 
     public String getModelID() {
         return modelID;
