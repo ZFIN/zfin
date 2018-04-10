@@ -50,7 +50,10 @@ update tmp_go_identifiers_pipes  set goid3tmp = replace(replace(replace(substr(m
                                                           )::lvarchar(4000),11),""),"'}",""),"'","");
 
 
-
+create temp table tmp_go_proteinid (mgev_zdb_id varchar(50),proteinid varchar(255)) with no log;
+insert into tmp_go_proteinid (mgev_zdb_id,proteinid) select distinct mrkrgoev_zdb_id, nvl(fdb_db_name||':'||dblink_acc_num,'')
+from marker_go_term_evidence, foreign_db, db_link,foreign_db_contains
+where mrkrgoev_protein_dblink_zdb_id= dblink_Zdb_id and dblink_fdbcont_zdb_id=fdbcont_zdb_id and fdbcont_fdb_db_id=fdb_db_pk_id ;
 
 
 create temp table tmp_go (mv_zdb_id varchar(50),
@@ -68,7 +71,7 @@ create temp table tmp_go (mv_zdb_id varchar(50),
 			 mv_created_by varchar(100),
 			 id2 lvarchar(4000),
 			 mv_annoextn lvarchar(1000),
-			 gene_type varchar(100))
+			 gene_type varchar(100),geneproduct_id varchar(255))
 with no log;
 
 insert into tmp_go (mv_zdb_id,
@@ -85,21 +88,24 @@ insert into tmp_go (mv_zdb_id,
        mv_date_modified,
        mv_created_by,
        mv_annoextn,
-       gene_type
+       gene_type,
+       geneproduct_id
 )
 select mrkrgoev_zdb_id,
 				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term1.term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name)
+				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid
 			   from marker_go_term_evidence, marker, term term1, publication, so_zfin_mapping,
 					   outer inference_group_member,
-					   outer  tmp_go_identifiers_pipes
+					   outer  tmp_go_identifiers_pipes,
+					   outer tmp_go_proteinid
 			  where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
 			    and mrkrgoev_term_zdb_id = term1.term_zdb_id
 			    and mrkrgoev_source_zdb_id  = zdb_id
 			    and mrkr_type = szm_object_type
 			    and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
-			    and mrkrgoev_zdb_id=goidtmp;
+			    and mrkrgoev_zdb_id=goidtmp
+			    and mrkrgoev_zdb_id=mgev_zdb_id;
 
 
 select distinct gene_type from tmp_go where gene_type is not null;
@@ -109,6 +115,7 @@ update tmp_go
       	    	    where m_zdb_id = id); 
 update tmp_go
 set mv_created_by='UniProt' where mv_created_by='UniProtKB';
+
 select * from tmp_go where mv_zdb_id='ZDB-MRKRGOEV-180328-54';
 select first 1 * from tmp_go
  where m_abbrev = 'pax8';
