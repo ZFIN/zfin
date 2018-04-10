@@ -19,23 +19,15 @@ public class GafEntry {
     private String createdDate; //14
     private String createdBy; //15
     private String annotExtn; //16
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     private String annotationProperties;
     private String modelID;
     private List<GafAnnotationGroup> annotationGroups;
-=======
-=======
->>>>>>> Stashed changes
     private String geneProductFormID; //17
 
     private int col8pipes;
     private int col8commas;
     private int col8both;
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
 
     public int getCol8pipes() {
         return col8pipes;
@@ -179,8 +171,6 @@ public class GafEntry {
     }
 
 
-=======
->>>>>>> Stashed changes
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
