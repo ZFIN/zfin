@@ -4,6 +4,7 @@ import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.mutant.NoctuaModel;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -53,4 +54,8 @@ public interface MarkerGoTermEvidenceRepository {
     MarkerGoTermEvidence getFirstEvidenceForMarkerOntology(Marker m,Ontology ontology);
 
     SortedSet<GenericTerm> getGOtermsInferedFromZDBid(String zdbID);
+
+    NoctuaModel getNoctuaModel(String modelID);
+
+    void saveNoctualModel(NoctuaModel noctuaModel);
 }

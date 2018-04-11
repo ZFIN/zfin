@@ -232,7 +232,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                     error += markerGoTermEvidence.toString() + "\n";
                 }
                 GafValidationError gafValidationError = new GafValidationError(error, e);
-                logger.error(gafValidationError);
+                logger.error(error, e);
                 gafJobData.addError(gafValidationError);
             } finally {
                 // the theory is that these were being left open . . . this should fix that

@@ -118,7 +118,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                 HibernateUtil.currentSession().save(mgtaeGroup);
                 for (MarkerGoTermAnnotationExtn mgtaedata : mgtaeGroup.getMgtAnnoExtns()) {
 
-                    if (mgtaedata.getAnnotExtnGroupID().getId()!=null) {
+                    if (mgtaedata.getAnnotExtnGroupID().getId() != null) {
                         HibernateUtil.currentSession().save(mgtaedata);
                     }
                 }
@@ -126,10 +126,6 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
         }
 
     }
-
-
-
-
 
 
     @Override
@@ -151,15 +147,15 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                         HibernateUtil.currentSession().save(mgtaedata);
                     }
                 }
-            }}}
+            }
+        }
+    }
 
 
     @Override
     @SuppressWarnings("unchecked")
     public List<String> getEvidencesForGafOrganization(GafOrganization gafOrganization) {
-        String hql = " " +
-                " select ev.zdbID from MarkerGoTermEvidence ev where ev.gafOrganization = :gaf " +
-                "";
+        String hql = " select ev.zdbID from MarkerGoTermEvidence ev where ev.gafOrganization = :gaf ";
         return HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("gaf", gafOrganization)
                 .list();
@@ -273,5 +269,15 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
         }
 
         return genericTerms;
+    }
+
+    @Override
+    public NoctuaModel getNoctuaModel(String modelID) {
+        return (NoctuaModel) HibernateUtil.currentSession().get(NoctuaModel.class, modelID);
+    }
+
+    @Override
+    public void saveNoctualModel(NoctuaModel noctuaModel) {
+        HibernateUtil.currentSession().save(noctuaModel);
     }
 }

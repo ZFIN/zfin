@@ -13,6 +13,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.MarkerGoTermEvidenceCreatedBySource;
+import org.zfin.mutant.NoctuaModel;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
@@ -216,5 +217,12 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         MarkerGoEvidenceRPCServiceImpl service = new MarkerGoEvidenceRPCServiceImpl();
         List<GoEvidenceDTO> list = service.getMarkerGoTermEvidencesForPub("ZDB-PUB-160828-8");
         assertNotNull(list);
+    }
+
+    @Test
+    public void getNoctuaModel() {
+        NoctuaModel model  = markerGoTermEvidenceRepository.getNoctuaModel("gomodel:59dc728000000555");
+        // TODO have to wait until we load noctua models int ZFIN...
+        //assertNotNull(model);
     }
 }

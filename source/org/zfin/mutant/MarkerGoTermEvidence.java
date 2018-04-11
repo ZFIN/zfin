@@ -30,6 +30,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     private Set<InferenceGroupMember> inferredFrom;
     private Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotationExtnGroup;
     private MarkerDBLink geneProductFormID;
+    private Set<NoctuaModel> noctuaModels;
 
     // editing data
 
@@ -205,6 +206,19 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         this.goTermAnnotationExtnGroup = goTermAnnotationExtnGroup;
     }
 
+    public Set<NoctuaModel> getNoctuaModels() {
+        return noctuaModels;
+    }
+
+    public void setNoctuaModels(Set<NoctuaModel> noctuaModels) {
+        this.noctuaModels = noctuaModels;
+    }
+
+    public String getNoctuaModelId() {
+        if (noctuaModels == null)
+            return null;
+        return noctuaModels.iterator().next().getId();
+    }
 
     /**
      * @param that

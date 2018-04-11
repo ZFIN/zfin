@@ -123,6 +123,10 @@
         <property name="externalLoadDate" column="mrkrgoev_external_load_date" not-null="false"/>
         <property name="organizationCreatedBy" column="mrkrgoev_annotation_organization_created_by" not-null="true"/>
         <many-to-one name="gafOrganization" column="mrkrgoev_annotation_organization" not-null="true"/>
+        <set name="noctuaModels" lazy="true" inverse="false" table="noctua_model_annotation" cascade="all">
+            <key column="nma_mrkrgoev_zdb_id"/>
+            <many-to-many class="NoctuaModel" column="nma_nm_id"/>
+        </set>
 
         <property name="flag" column="mrkrgoev_gflag_name" not-null="false" type="goFlag"/>
         <many-to-one name="geneProductFormID"  column="mrkrgoev_protein_dblink_zdb_id"/>

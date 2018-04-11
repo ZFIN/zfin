@@ -236,6 +236,9 @@ public class GafService {
      */
     public Collection<String> findOutdatedEntries(GafJobData gafJobData, GafOrganization gafOrganization) {
         Set<String> existingZfinZdbIDs = new TreeSet<>(markerGoTermEvidenceRepository.getEvidencesForGafOrganization(gafOrganization));
+        if (CollectionUtils.isEmpty(existingZfinZdbIDs))
+            return null;
+
         Set<String> newGafEntryZdbIds = new TreeSet<>();
 
         for (GafJobEntry gafJobEntry : gafJobData.getExistingEntries()) {
@@ -243,7 +246,6 @@ public class GafService {
         }
 
         for (MarkerGoTermEvidence gafReportAnnotation : gafJobData.getNewEntries()) {
-
             newGafEntryZdbIds.add(gafReportAnnotation.getZdbID());
         }
         for (MarkerGoTermEvidence updated : gafJobData.getUpdateEntries()) {
@@ -255,7 +257,8 @@ public class GafService {
 
     public void generateRemovedEntries(GafJobData gafJobData, GafOrganization gafOrganization) {
         Collection<String> zdbIdsOutdated = findOutdatedEntries(gafJobData, gafOrganization);
-        generateRemovedEntriesReport(gafJobData, zdbIdsOutdated);
+        if (zdbIdsOutdated != null)
+            generateRemovedEntriesReport(gafJobData, zdbIdsOutdated);
     }
 
     public void removeEntries(GafJobData gafJobData) {
@@ -279,12 +282,21 @@ public class GafService {
         markerGoTermEvidenceToAdd.setGoTerm(goTerm);
         markerGoTermEvidenceToAdd.setSource(publication);
         markerGoTermEvidenceToAdd.setExternalLoadDate(new Date());
+
+        if (gafEntry.getModelID() != null) {
+            NoctuaModel noctuaModel = markerGoTermEvidenceRepository.getNoctuaModel(gafEntry.getModelID());
+            if (noctuaModel == null) {
+                noctuaModel = new NoctuaModel(gafEntry.getModelID());
+                markerGoTermEvidenceRepository.saveNoctualModel(noctuaModel);
+            }
+            Set<NoctuaModel> set = new HashSet<>();
+            set.add(noctuaModel);
+            markerGoTermEvidenceToAdd.setNoctuaModels(set);
+        }
+
         if (gafEntry.getGeneProductFormID() != null && !gafEntry.getGeneProductFormID().isEmpty()) {
-
             MarkerDBLink proteinID = getDBLink(gafEntry);
-
             if (proteinID != null) {
-
                 markerGoTermEvidenceToAdd.setGeneProductFormID(proteinID);
             }
         }
@@ -635,7 +647,6 @@ public class GafService {
             logger.debug("adding " + markerGoTermEvidenceToAdd);
 
             markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidenceToAdd);
-
             logger.debug("added " + markerGoTermEvidenceToAdd);
         } catch (Exception e) {
             throw new GafValidationError("Failed to commit gaf entry: " + e.toString(), e);
