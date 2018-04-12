@@ -7,15 +7,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
 
@@ -98,6 +102,40 @@ public class ExpressionSearchController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search Results");
         return "expression/results.page";
     }
+
+    @RequestMapping("/xpatselect")
+    public String resultsFromOldParams(
+            @RequestParam(value = "gene_name", required = false) String geneField,
+            @RequestParam(value = "xpatsel_geneZdbId", required = false) String geneZdbId,
+            @RequestParam(value = "stage_start", required = false) Float startHours,
+            @RequestParam(value = "stage_end", required = false) Float endHours,
+            @RequestParam(value = "xpatsel_processed_selected_structures", required = false) List<String> termZdbIDs
+    ) {
+
+        ExpressionSearchService.LinkBuilder builder = new ExpressionSearchService.LinkBuilder();
+
+        if (startHours != null) {
+            DevelopmentStage start = RepositoryFactory.getAnatomyRepository().getStageByStartHours(startHours);
+            if (start != null) { builder.startStage(start.getOboID()); }
+        }
+
+        if (endHours != null) {
+            DevelopmentStage end = RepositoryFactory.getAnatomyRepository().getStageByEndHours(endHours);
+            if (end != null) { builder.endStage(end.getOboID()); }
+        }
+
+        termZdbIDs.stream()
+                .map(RepositoryFactory.getOntologyRepository()::getTermByZdbID)
+                .forEach(builder::anatomyTerm);
+
+
+        String link = builder
+                .geneField(geneField)
+                .geneZdbID(geneZdbId)
+                .build();
+        return "redirect:" + link;
+    }
+
 
 
     private PaginationBean generatePaginationBean(ExpressionSearchCriteria criteria, String queryString) {

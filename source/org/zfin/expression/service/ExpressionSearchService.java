@@ -526,6 +526,9 @@ public class ExpressionSearchService {
 
     public static class LinkBuilder {
         private Marker gene;
+        private String geneField;
+        private String geneZdbID;
+        private List<Term> anatomyTerms;
         private String anatomyTermNames;
         private String anatomyTermIds;
         private String startStageId;
@@ -545,9 +548,22 @@ public class ExpressionSearchService {
             return this;
         }
 
+        public LinkBuilder geneField(String geneField) {
+            this.geneField = geneField;
+            return this;
+        }
+
+        public LinkBuilder geneZdbID(String geneZdbID) {
+            this.geneZdbID = geneZdbID;
+            return this;
+        }
+
         public LinkBuilder anatomyTerm(Term anatomyTerm) {
-            this.anatomyTermNames = anatomyTerm.getTermName();
-            this.anatomyTermIds = anatomyTerm.getZdbID();
+            if (anatomyTerms == null) { return this; }
+            if (anatomyTerms == null) { anatomyTerms = new ArrayList<>();  }
+
+            anatomyTerms.add(anatomyTerm);
+
             return this;
         }
 
@@ -614,12 +630,22 @@ public class ExpressionSearchService {
 
         public String build() {
             URLCreator url = new URLCreator("/action/expression/results");
-            if (gene != null) {
+            addIfNotNull(url, "geneField", geneField);
+            addIfNotNull(url, "geneZdbID", geneZdbID);
+
+            if (gene != null) { //override gene name and id if marker is set explicitly
                 url.addNameValuePair("geneField", gene.getAbbreviation());
                 url.addNameValuePair("geneZdbID", gene.getZdbID());
             }
-            addIfNotNull(url, "anatomyTermNames", anatomyTermNames);
-            addIfNotNull(url, "anatomyTermIDs", anatomyTermIds);
+
+            if (CollectionUtils.isNotEmpty(anatomyTerms)) {
+                addIfNotNull(url, "anatomyTermNames", anatomyTerms.stream().map(Term::getTermName).collect(Collectors.joining(",")));
+                addIfNotNull(url, "anatomyTermIDs", anatomyTerms.stream().map(Term::getZdbID).collect(Collectors.joining("|")));
+            } else {
+                addIfNotNull(url, "anatomyTermNames", anatomyTermNames);
+                addIfNotNull(url, "anatomyTermIDs", anatomyTermIds);
+            }
+
             addIfNotNull(url, "startStageId", startStageId);
             addIfNotNull(url, "endStageId", endStageId);
             addIfNotNull(url, "targetGeneField", targetGeneId);
