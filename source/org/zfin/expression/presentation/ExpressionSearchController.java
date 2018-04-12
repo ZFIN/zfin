@@ -15,6 +15,8 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/expression")
@@ -124,9 +127,8 @@ public class ExpressionSearchController {
             if (end != null) { builder.endStage(end.getOboID()); }
         }
 
-        termZdbIDs.stream()
-                .map(RepositoryFactory.getOntologyRepository()::getTermByZdbID)
-                .forEach(builder::anatomyTerm);
+        List<GenericTerm> terms = termZdbIDs.stream().map(RepositoryFactory.getOntologyRepository()::getTermByZdbID).collect(Collectors.toList());
+        terms.forEach(term -> builder.anatomyTerm(term));
 
 
         String link = builder

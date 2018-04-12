@@ -559,7 +559,7 @@ public class ExpressionSearchService {
         }
 
         public LinkBuilder anatomyTerm(Term anatomyTerm) {
-            if (anatomyTerms == null) { return this; }
+            if (anatomyTerm == null) { return this; }
             if (anatomyTerms == null) { anatomyTerms = new ArrayList<>();  }
 
             anatomyTerms.add(anatomyTerm);
@@ -639,8 +639,8 @@ public class ExpressionSearchService {
             }
 
             if (CollectionUtils.isNotEmpty(anatomyTerms)) {
-                addIfNotNull(url, "anatomyTermNames", anatomyTerms.stream().map(Term::getTermName).collect(Collectors.joining(",")));
-                addIfNotNull(url, "anatomyTermIDs", anatomyTerms.stream().map(Term::getZdbID).collect(Collectors.joining("|")));
+                addIfNotNull(url, "anatomyTermNames", anatomyTerms.stream().map(Term::getTermName).collect(Collectors.joining("|")));
+                addIfNotNull(url, "anatomyTermIDs", anatomyTerms.stream().map(Term::getZdbID).collect(Collectors.joining(",")));
             } else {
                 addIfNotNull(url, "anatomyTermNames", anatomyTermNames);
                 addIfNotNull(url, "anatomyTermIDs", anatomyTermIds);
