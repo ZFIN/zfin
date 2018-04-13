@@ -23,7 +23,7 @@
                 <tr style="border: 1px solid black;">
                 <td style="border: 1px solid black;">${stat.category}</td>
             </c:if>
-            <td style="border: 1px solid black; text-align: right;">${stat.annualStats.count}</td>
+            <td style="border: 1px solid black; text-align: right;">${stat.count}</td>
             <c:if test="${loop.count % numberOfYears == 0}">
                 </tr>
             </c:if>
@@ -43,7 +43,7 @@
                 <tr style="border: 1px solid black;">
                 <td style="border: 1px solid black;">${stat.category}</td>
             </c:if>
-            <td style="border: 1px solid black; text-align: right;">${stat.annualStats.count}</td>
+            <td style="border: 1px solid black; text-align: right;">${stat.count}</td>
             <c:if test="${loop.count % numberOfYears == 0}">
                 </tr>
             </c:if>
@@ -63,7 +63,7 @@
                 <tr style="border: 1px solid black;">
                 <td style="border: 1px solid black;">${stat.category}</td>
             </c:if>
-            <td style="border: 1px solid black; text-align: right;">${stat.annualStats.count}</td>
+            <td style="border: 1px solid black; text-align: right;">${stat.count}</td>
             <c:if test="${loop.count % numberOfYears == 0}">
                 </tr>
             </c:if>
@@ -83,7 +83,7 @@
                 <tr style="border: 1px solid black;">
                 <td style="border: 1px solid black;">${stat.category}</td>
             </c:if>
-            <td style="border: 1px solid black; text-align: right;">${stat.annualStats.count}</td>
+            <td style="border: 1px solid black; text-align: right;">${stat.count}</td>
             <c:if test="${loop.count % numberOfYears == 0}">
                 </tr>
             </c:if>
@@ -103,7 +103,7 @@
                 <tr style="border: 1px solid black;">
                 <td style="border: 1px solid black;">${stat.category}</td>
             </c:if>
-            <td style="border: 1px solid black; text-align: right;">${stat.annualStats.count}</td>
+            <td style="border: 1px solid black; text-align: right;">${stat.count}</td>
             <c:if test="${loop.count % numberOfYears == 0}">
                 </tr>
             </c:if>
@@ -123,7 +123,7 @@
                 <tr style="border: 1px solid black;">
                 <td style="border: 1px solid black;">${stat.category}</td>
             </c:if>
-            <td style="border: 1px solid black; text-align: right;">${stat.annualStats.count}</td>
+            <td style="border: 1px solid black; text-align: right;">${stat.count}</td>
             <c:if test="${loop.count % numberOfYears == 0}">
                 </tr>
             </c:if>
@@ -143,7 +143,7 @@
                 <tr style="border: 1px solid black;">
                 <td style="border: 1px solid black;">${stat.category}</td>
             </c:if>
-            <td style="border: 1px solid black; text-align: right;">${stat.annualStats.count}</td>
+            <td style="border: 1px solid black; text-align: right;">${stat.count}</td>
             <c:if test="${loop.count % numberOfYears == 0}">
                 </tr>
             </c:if>
@@ -163,7 +163,7 @@
                 <tr style="border: 1px solid black;">
                 <td style="border: 1px solid black;">${stat.category}</td>
             </c:if>
-            <td style="border: 1px solid black; text-align: right;">${stat.annualStats.count}</td>
+            <td style="border: 1px solid black; text-align: right;">${stat.count}</td>
             <c:if test="${loop.count % numberOfYears == 0}">
                 </tr>
             </c:if>

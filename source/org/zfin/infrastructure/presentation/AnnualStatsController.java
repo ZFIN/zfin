@@ -27,7 +27,7 @@ public class AnnualStatsController {
         for (Date date : dates) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
-            String year = cal.get(Calendar.YEAR) + "";
+            String year = cal.get(Calendar.YEAR) - 1 + "";
             if (!yearStrings.contains(year)) {
                 yearStrings.add(year);
             }
@@ -52,6 +52,12 @@ public class AnnualStatsController {
             int day = cal.get(Calendar.DAY_OF_MONTH);
             if (month == 0 && day == 1 && !stat.getType().equals("Full length cDNA clones (ZGC)")) {
                 AnnualStatsDisplay annualStatsDisplay = new AnnualStatsDisplay();
+                int ct = stat.getCount();
+                if (ct == 0) {
+                    annualStatsDisplay.setCount("");
+                } else {
+                    annualStatsDisplay.setCount(ct + "");
+                }
                 if (stat.getType().equals("Genes")) {
                     annualStatsDisplay.setCategory("Gene Records");
                     annualStatsDisplay.setOrder(0);

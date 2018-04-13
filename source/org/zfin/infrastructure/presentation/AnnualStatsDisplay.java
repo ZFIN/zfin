@@ -9,6 +9,7 @@ public class AnnualStatsDisplay implements Serializable, Comparable<AnnualStatsD
     AnnualStats annualStats;
     private String category;
     private int order;
+    private String count;
 
     public AnnualStats getAnnualStats() {
         return annualStats;
@@ -42,4 +43,11 @@ public class AnnualStatsDisplay implements Serializable, Comparable<AnnualStatsD
         return order - anotherOrder;
     }
 
+    public String getCount() {
+        return count;
+    }
+
+    public void setCount(String count) {
+        this.count = count;
+    }
 }
