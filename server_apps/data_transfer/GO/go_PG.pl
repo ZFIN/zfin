@@ -7,23 +7,9 @@
 #  One tech people would get error report if any. One curator would get
 #  gene_association.zfin file and gp2protein.zfin file in email attachment.
 
-use MIME::Lite;
 use DBI;
-
-# ----------------- Send Error Report -------------
-# Parameter
-#   $    Error message
-sub sendErrorReport ($) {
-    open (SENDMAIL, "| /usr/lib/sendmail -t -oi") || die "Cannot open mailprog!";
-    print SENDMAIL "To: <!--|GO_EMAIL_ERR|-->\n";
-    print SENDMAIL "Subject: Auto from $dbname GO file generation error\n";
-
-    print SENDMAIL "$_[0]\n";
-    close(SENDMAIL);
-    exit;
-}
-
-#--------------- Main --------------------------------
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 #set environment variables
 
@@ -62,24 +48,12 @@ foreach $id (keys %identifiers) {
 }
 close IDS;
 
-sendErrorReport ("gofile.sql failed") if
-    system ("psql -d <!--|DB_NAME|--> -a -f gofile_PG.sql");
+ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile_PG.sql");
 
-sendErrorReport ("goparser.pl failed") if system ("./goparser.pl");
+ZFINPerlModules->doSystemCommand("./goparser.pl");
 
-sendErrorReport ("/bin/rm -f gene_association.zfin.gz") if
-    system ("/bin/rm -f gene_association.zfin.gz");
+ZFINPerlModules->doSystemCommand("/bin/rm -f gene_association.zfin.gz");
 
-sendErrorReport ("/local/bin/gzip gene_association.zfin failed") if
-    system ("/local/bin/gzip gene_association.zfin");
-
-##sendErrorReport ("gp2protein.pl failed") if
-  ##  system ("./gp2protein.pl");
-
-##sendErrorReport ("/bin/rm -f gp2protein.zfin.gz") if
-  ##  system ("/bin/rm -f gp2protein.zfin.gz");
-
-##sendErrorReport ("/local/bin/gzip gp2protein.zfin failed") if
-  ##  system ("/local/bin/gzip gp2protein.zfin");
+ZFINPerlModules->doSystemCommand("/local/bin/gzip gene_association.zfin");
 
 exit;
