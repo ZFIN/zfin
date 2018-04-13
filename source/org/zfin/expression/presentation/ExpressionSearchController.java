@@ -1,5 +1,6 @@
 package org.zfin.expression.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,9 +128,10 @@ public class ExpressionSearchController {
             if (end != null) { builder.endStage(end.getOboID()); }
         }
 
-        List<GenericTerm> terms = termZdbIDs.stream().map(RepositoryFactory.getOntologyRepository()::getTermByZdbID).collect(Collectors.toList());
-        terms.forEach(term -> builder.anatomyTerm(term));
-
+        if (CollectionUtils.isNotEmpty(termZdbIDs)) {
+            List<GenericTerm> terms = termZdbIDs.stream().map(RepositoryFactory.getOntologyRepository()::getTermByZdbID).collect(Collectors.toList());
+            terms.forEach(term -> builder.anatomyTerm(term));
+        }
 
         String link = builder
                 .geneField(geneField)
