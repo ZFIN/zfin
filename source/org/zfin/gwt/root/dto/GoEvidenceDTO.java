@@ -28,6 +28,7 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
     private Set<String> inferredFromLinks;
 
     private Set<String> mgtaeLinks;
+    private String noctuaModel;
 
     public String getFirstInference() {
         if (inferredFrom != null && inferredFrom.size() > 0) {
@@ -143,11 +144,20 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
         this.mgtaeLinks = mgtaeLinks;
     }
 
+    public String getNoctuaModel() {
+        return noctuaModel;
+    }
+
+    public void setNoctuaModel(String noctuaModel) {
+        this.noctuaModel = noctuaModel;
+    }
+
     public GoEvidenceDTO deepCopy() {
         GoEvidenceDTO goEvidenceDTO = new GoEvidenceDTO();
         goEvidenceDTO.setDataZdbID(dataZdbID);
         goEvidenceDTO.setPublicationZdbID(publicationZdbID);
         goEvidenceDTO.setName(name);
+
         goEvidenceDTO.setLink(link);
         goEvidenceDTO.setZdbID(zdbID);
         goEvidenceDTO.setCreatedDate(createdDate);
@@ -164,12 +174,20 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
 
         goEvidenceDTO.setMgtaeLinks(mgtaeLinks);
         goEvidenceDTO.setOrganizationSource(organizationSource);
+        goEvidenceDTO.setNoctuaModel(noctuaModel);
         return goEvidenceDTO;
     }
 
     public boolean isZfinOrganizationSource() {
         if (organizationSource != null) {
             return organizationSource.equals(ZFIN_ORGANIZATION_SOURCE);
+        }
+        return false;
+    }
+
+    public boolean isNoctua() {
+        if (noctuaModel != null) {
+            return true;
         }
         return false;
     }

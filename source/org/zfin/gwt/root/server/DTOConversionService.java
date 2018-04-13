@@ -551,7 +551,7 @@ public class DTOConversionService {
         returnDTO.setMarkerDTO(DTOConversionService.convertToMarkerDTO(markerGoTermEvidence.getMarker()));
         returnDTO.setOrganizationSource(markerGoTermEvidence.getGafOrganization().getOrganization());
         returnDTO.setNote(markerGoTermEvidence.getNote());
-
+        returnDTO.setNoctuaModel(markerGoTermEvidence.getNoctuaModelId());
         returnDTO.setPublicationZdbID(markerGoTermEvidence.getSource().getZdbID());
         // date modified and created not used here, as not needed
         // set name to the go term name

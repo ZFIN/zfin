@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.util.NoctuaLink;
 
 
 /**
@@ -20,7 +21,9 @@ public class GoActionComposite extends Composite implements Revertible {
     private final Image cloneButton = new Image(imageURL + "clone1.png");
     private final Image editButton = new Image(imageURL + "edit.png");
     private final Image deleteButton = new Image(imageURL + "delete-button.png");
+    private final Image noctuaImg = new Image(imageURL + "go-noctua.png");
     private final HTML organizationLink = new HTML();
+    private final HTML noctuaLink = new HTML();
 
     // data
     protected GoEvidenceDTO dto;
@@ -50,6 +53,13 @@ public class GoActionComposite extends Composite implements Revertible {
         } else {
             organizationLink.setHTML("<span style='font-size:small;' title='This annotation came in through a GO annotation load so it is not editable.'>" + dto.getOrganizationSource() + "</span>");
             panel.add(organizationLink);
+        }
+        if (this.dto.isNoctua()){
+
+            NoctuaLink noctuaLink = new NoctuaLink("http://noctua.berkeleybop.org/editor/graph/gomodel:" + dto.getNoctuaModel(), "NoctuaID");
+            panel.add(noctuaLink);
+
+
         }
         deleteButton.setStyleName("relatedEntityPubLink");
         deleteButton.setTitle("Remove annotation.");
