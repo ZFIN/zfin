@@ -50,7 +50,7 @@ public class AnnualStatsController {
             cal.setTime(stat.getDate());
             int month = cal.get(Calendar.MONTH);
             int day = cal.get(Calendar.DAY_OF_MONTH);
-            if (month == 0 && day == 1 && !stat.getType().equals("Full length cDNA clones (ZGC)") && !stat.getType().equals("Journal Publications")) {
+            if (month == 0 && day == 1 && !stat.getType().equals("Full length cDNA clones (ZGC)")) {
                 AnnualStatsDisplay annualStatsDisplay = new AnnualStatsDisplay();
                 if (stat.getType().equals("Genes")) {
                     annualStatsDisplay.setCategory("Gene Records");
@@ -183,7 +183,7 @@ public class AnnualStatsController {
                     annualStatsDisplay.setAnnualStats(stat);
                     genomicsStats.add(annualStatsDisplay);
                 } else if (stat.getType().equals("All Publications")) {
-                    annualStatsDisplay.setCategory("Publications");
+                    annualStatsDisplay.setCategory("All Publications");
                     annualStatsDisplay.setOrder(0);
                     annualStatsDisplay.setAnnualStats(stat);
                     communityStats.add(annualStatsDisplay);

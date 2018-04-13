@@ -10,5 +10,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1096/XBones/INF-3325.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1096/XBones/GPAD-Load.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1096/XBones/ZFIN-5919.sql" />
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1096/XBones/ZFIN-5912.sql" />
 </databaseChangeLog>
