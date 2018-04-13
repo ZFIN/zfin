@@ -1,5 +1,5 @@
 create or replace function p_delete_curator_session (
-      vPubZdbId text, vClosed date )
+      vPubZdbId text, vClosed timestamp )
 returns void as $$
 begin
  if vClosed is not null
