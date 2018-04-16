@@ -246,13 +246,6 @@ create dba function "informix".regen_term()
 	extent size 12800 next size 51200 
 	lock mode page;
 
-      -- create temp index.  dropped when table renamed
-      create index  all_term_contains_new_primary_key_index
-        on all_term_contains_new (alltermcon_container_zdb_id,     
-				     alltermcon_contained_zdb_id)
-	in idxdbs2 online;
-
-
       -- =================   POPULATE TABLES   ===============================
 
       -- -----------------------------------------------------------------------

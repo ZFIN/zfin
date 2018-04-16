@@ -42,11 +42,6 @@ create or replace function regen_term()
 	  alltermcon_min_contain_distance	int not null
         );
 
-      -- create temp index.  dropped when table renamed
-      create index  all_term_contains_new_primary_key_index
-        on all_term_contains_new (alltermcon_container_zdb_id,     
-				     alltermcon_contained_zdb_id);
-
 
       -- =================   POPULATE TABLES   ===============================
 
@@ -71,9 +66,11 @@ create or replace function regen_term()
 
 
       drop index all_term_contains_new_primary_key_index;
+
       create unique index all_term_contains_primary_key_index
         on all_term_contains (alltermcon_container_zdb_id,     
 				 alltermcon_contained_zdb_id);
+
       alter table all_term_contains add constraint all_term_contains_primary_key
         primary key (alltermcon_container_zdb_id,     
 		     alltermcon_contained_zdb_id);
