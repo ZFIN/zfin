@@ -54,7 +54,6 @@ create or replace function regen_term()
       perform populate_all_term_contains();
 
       
- 
     -- -------------------------------------------------------------------------
     -- RENAME the new tables to REPLACE the old
     -- -------------------------------------------------------------------------
@@ -64,9 +63,6 @@ create or replace function regen_term()
 
       -- primary key
 
-      alter table all_term_contains
-       drop constraint all_term_contains_primary_key;
-
       drop index if exists all_term_contains_primary_key_index;
 
       create unique index all_term_contains_primary_key_index
@@ -74,9 +70,9 @@ create or replace function regen_term()
 				 alltermcon_contained_zdb_id);
 
       alter table all_term_contains 
-      add constraint
-        primary key (alltermcon_container_zdb_id,     
-		     alltermcon_contained_zdb_id) constraint all_term_contains_primary_key;
+      add constraint all_term_contains_primary_key primary key
+        (alltermcon_container_zdb_id,     
+		     alltermcon_contained_zdb_id);
 
       -- foreign keys
 

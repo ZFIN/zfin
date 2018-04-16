@@ -313,11 +313,8 @@ create dba function "informix".regen_term()
 
       let errorHint = "all_term_contains_primary_key_index";
 
-      alter table all_term_contains
-       drop constraint all_term_contains_primary_key;
-
       drop index if exists all_term_contains_primary_key_index;
-     
+
       create unique index all_term_contains_primary_key_index
         on all_term_contains (alltermcon_container_zdb_id,     
 				 alltermcon_contained_zdb_id)
