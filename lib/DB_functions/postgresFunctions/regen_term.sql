@@ -73,9 +73,10 @@ create or replace function regen_term()
         on all_term_contains (alltermcon_container_zdb_id,     
 				 alltermcon_contained_zdb_id);
 
-      alter table all_term_contains add constraint all_term_contains_primary_key
+      alter table all_term_contains 
+      add constraint
         primary key (alltermcon_container_zdb_id,     
-		     alltermcon_contained_zdb_id);
+		     alltermcon_contained_zdb_id) constraint all_term_contains_primary_key;
 
       -- foreign keys
 
