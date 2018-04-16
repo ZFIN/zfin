@@ -64,6 +64,9 @@ create or replace function regen_term()
 
       -- primary key
 
+      alter table all_term_contains
+       drop constraint all_term_contains_primary_key;
+
       drop index if exists all_term_contains_primary_key_index;
 
       create unique index all_term_contains_primary_key_index
