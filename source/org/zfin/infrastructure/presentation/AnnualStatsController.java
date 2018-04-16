@@ -79,7 +79,7 @@ public class AnnualStatsController {
                     annualStatsDisplay.setAnnualStats(stat);
                     genesStats.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Features")) {
-                    annualStatsDisplay.setCategory("Genetic Features");
+                    annualStatsDisplay.setCategory("Genomic Features");
                     annualStatsDisplay.setOrder(0);
                     annualStatsDisplay.setAnnualStats(stat);
                     geneticsStats.add(annualStatsDisplay);
