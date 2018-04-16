@@ -34,6 +34,8 @@ import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.presentation.SearchResult;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
@@ -234,7 +236,7 @@ public class RelatedDataService {
         return links;
     }
 
-    private String getCategoryLink(Category category, String label, FieldName fieldName, String... filterQueries) {
+    private String getCategoryLink(Category category, String label, FieldName fieldName, String... filterQueries)  {
 
         QueryResponse response = getQueryResponse(fieldName, category, filterQueries);
         FacetField facetField = response.getFacetField(FieldName.CATEGORY.getName());
@@ -244,10 +246,15 @@ public class RelatedDataService {
         if (facetField != null && facetField.getValues() != null) {
             for (FacetField.Count count : facetField.getValues()) {
                 Properties properties = new Properties();
-                properties.put(fieldName.getName(), entityName);
+                try {
+                    properties.put(fieldName.getName(), URLEncoder.encode(entityName, "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    throw new AssertionError("What even is a UTF-8?");
+                }
                 link = createHyperLink("", FieldName.CATEGORY.getName(), count.getName(), count.getCount(), label, false, properties, filterQueries).toString();
             }
         }
+
 
         return link;
 
