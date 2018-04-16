@@ -16,12 +16,15 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
@@ -110,13 +113,21 @@ public class ExpressionSearchController {
     @RequestMapping("/xpatselect")
     public String resultsFromOldParams(
             @RequestParam(value = "gene_name", required = false) String geneField,
+            @RequestParam(value = "searchtype", required = false) String searchType,
             @RequestParam(value = "xpatsel_geneZdbId", required = false) String geneZdbId,
             @RequestParam(value = "stage_start", required = false) Float startHours,
             @RequestParam(value = "stage_end", required = false) Float endHours,
-            @RequestParam(value = "xpatsel_processed_selected_structures", required = false) List<String> termZdbIDs
-    ) {
+            @RequestParam(value = "xpatsel_processed_selected_structures", required = false) String termZdbIDs
+    ) throws UnsupportedEncodingException {
 
         ExpressionSearchService.LinkBuilder builder = new ExpressionSearchService.LinkBuilder();
+
+        if (StringUtils.isNotEmpty(geneField) && StringUtils.equals(searchType, "equals")) {
+            Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(geneField);
+            if (gene != null) {
+                builder.gene(gene);
+            }
+        }
 
         if (startHours != null) {
             DevelopmentStage start = RepositoryFactory.getAnatomyRepository().getStageByStartHours(startHours);
@@ -128,8 +139,9 @@ public class ExpressionSearchController {
             if (end != null) { builder.endStage(end.getOboID()); }
         }
 
-        if (CollectionUtils.isNotEmpty(termZdbIDs)) {
-            List<GenericTerm> terms = termZdbIDs.stream().map(RepositoryFactory.getOntologyRepository()::getTermByZdbID).collect(Collectors.toList());
+        if (StringUtils.isNotEmpty(termZdbIDs)) {
+            termZdbIDs = URLDecoder.decode(termZdbIDs, "UTF-8");
+            List<GenericTerm> terms = Arrays.stream(termZdbIDs.split(",")).map(RepositoryFactory.getOntologyRepository()::getTermByZdbID).collect(Collectors.toList());
             terms.forEach(term -> builder.anatomyTerm(term));
         }
 
