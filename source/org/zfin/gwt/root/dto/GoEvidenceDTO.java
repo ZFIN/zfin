@@ -1,6 +1,7 @@
 package org.zfin.gwt.root.dto;
 
 import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
+import org.zfin.mutant.NoctuaModel;
 
 import java.util.Date;
 import java.util.Set;
@@ -28,11 +29,26 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
     private Set<String> inferredFromLinks;
 
     private Set<String> mgtaeLinks;
-    private String noctuaModel;
+    private Set<String> noctuaModels;
+
+
+    public Set<String> getNoctuaModels() {
+        return noctuaModels;
+    }
+
+    public void setNoctuaModels(Set<String> noctuaModels) {
+        this.noctuaModels = noctuaModels;
+    }
+    public String getNoctuaModelId() {
+        if (noctuaModels.isEmpty())
+            return null;
+        return noctuaModels.iterator().next();
+    }
 
     public String getFirstInference() {
         if (inferredFrom != null && inferredFrom.size() > 0) {
             return inferredFrom.iterator().next();
+
         }
         return null;
     }
@@ -144,13 +160,7 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
         this.mgtaeLinks = mgtaeLinks;
     }
 
-    public String getNoctuaModel() {
-        return noctuaModel;
-    }
 
-    public void setNoctuaModel(String noctuaModel) {
-        this.noctuaModel = noctuaModel;
-    }
 
     public GoEvidenceDTO deepCopy() {
         GoEvidenceDTO goEvidenceDTO = new GoEvidenceDTO();
@@ -174,7 +184,7 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
 
         goEvidenceDTO.setMgtaeLinks(mgtaeLinks);
         goEvidenceDTO.setOrganizationSource(organizationSource);
-        goEvidenceDTO.setNoctuaModel(noctuaModel);
+        goEvidenceDTO.setNoctuaModels(noctuaModels);
         return goEvidenceDTO;
     }
 
@@ -186,7 +196,7 @@ public class GoEvidenceDTO extends RelatedEntityDTO {
     }
 
     public boolean isNoctua() {
-        if (noctuaModel != null) {
+        if (noctuaModels != null) {
             return true;
         }
         return false;

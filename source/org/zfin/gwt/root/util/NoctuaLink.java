@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Image;
  */
 public class NoctuaLink extends Anchor {
 
-    public static final String NOCTUA_IMAGE = "/images/noctua-icon.png";
+    public static final String NOCTUA_IMAGE = "/images/noctua_icon.png";
 
     private HandlerRegistration registration;
 

@@ -18,6 +18,7 @@ import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.util.NoctuaLink;
 import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
@@ -551,7 +552,14 @@ public class DTOConversionService {
         returnDTO.setMarkerDTO(DTOConversionService.convertToMarkerDTO(markerGoTermEvidence.getMarker()));
         returnDTO.setOrganizationSource(markerGoTermEvidence.getGafOrganization().getOrganization());
         returnDTO.setNote(markerGoTermEvidence.getNote());
-        returnDTO.setNoctuaModel(markerGoTermEvidence.getNoctuaModelId());
+        Set<String> noctuaLinks=new HashSet<>();
+
+        if (markerGoTermEvidence.getNoctuaModelId()!=null) {
+          for (NoctuaModel noctua:markerGoTermEvidence.getNoctuaModels()){
+              noctuaLinks.add(noctua.getId());
+          }
+          returnDTO.setNoctuaModels(noctuaLinks);
+        }
         returnDTO.setPublicationZdbID(markerGoTermEvidence.getSource().getZdbID());
         // date modified and created not used here, as not needed
         // set name to the go term name
