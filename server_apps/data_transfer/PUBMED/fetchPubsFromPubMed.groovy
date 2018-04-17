@@ -20,7 +20,7 @@ def processArticle = { pubmedArticle, idx ->
     }
 
     row.push(pmid)
-    row.push(medlineCitation.KeywordList.Keyword.iterator().collect { it.text() }.join(", "))
+    row.push(medlineCitation.KeywordList.Keyword.iterator().collect { it.text().trim() }.join(", "))
 
     article = medlineCitation.Article
     articleText = article.ArticleTitle.text().replaceAll("\\n", "")
