@@ -114,6 +114,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         MICROCOSM("MicroCosm"),
         MODB("MODB"),
         NCBO_CARO("NCBO-CARO"),
+        NOCTUA("Noctua"),
         NOVELGENE("NovelGene"),
         OMIM("OMIM"),
         PANTHER("PANTHER"),
