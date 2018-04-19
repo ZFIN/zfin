@@ -2269,6 +2269,28 @@
                              join stage end_stage on pg_end_stg_zdb_id = end_stage.stg_zdb_id;"
         >
 
+            <entity name="phenotype_genotype"
+                    query="
+                        SELECT trim(CASE Length(Get_genotype_backgrounds(geno_zdb_id))
+                        WHEN '0' THEN geno_display_name
+                        ELSE Get_genotype_display(geno_zdb_id)
+                        || ' ('
+                        || Get_genotype_backgrounds(geno_zdb_id)
+                        || ')'
+                        END) AS genotype_full_name,
+                        'pg-' || pg_id as pg_id
+                        FROM   phenotype_source_generated
+                        JOIN fish_experiment
+                        ON pg_genox_zdb_id = genox_zdb_id
+                        JOIN fish
+                        ON fish_zdb_id = genox_fish_zdb_id
+                        JOIN genotype
+                        ON geno_zdb_id = fish_genotype_zdb_id;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="pg_id=phenotype.id"
+            />
+
+
             <entity name="phenotype_stage"
                     query="select this_stage.stg_name as stage, 'pg-' || pg_id as pg_id
                           from phenotype_source_generated

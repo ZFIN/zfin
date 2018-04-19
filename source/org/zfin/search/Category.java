@@ -145,6 +145,7 @@ public enum Category {
             CELLULAR_COMPONENT_TF,
             PHENOTYPE_STATEMENT,
             MISEXPRESSED_GENE,
+            GENOTYPE_FULL_NAME,
             HAS_IMAGE,
             CONDITIONS,
             FieldName.SEQUENCE_TARGETING_REAGENT
