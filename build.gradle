@@ -244,14 +244,3 @@ task createSchemaSpy() {
     }
 }
 
-task deployDirectoryToTargetroot(type: Copy) {
-    def dataDirectory = ''
-    def targetRoot = ttNameMap.get('TARGETROOT')
-    dataDirectory += projectDir
-    println "Copying files from directory: " + dataDirectory
-    println "Target directory: " + targetRoot
-    from '.'
-    into targetRoot
-    include 'package.json'
-}
-
