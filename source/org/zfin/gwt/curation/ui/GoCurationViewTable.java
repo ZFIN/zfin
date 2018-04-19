@@ -13,12 +13,9 @@ import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.AbstractGoViewTable;
 import org.zfin.gwt.root.ui.GoActionComposite;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.List;
-
-import static com.google.gwt.query.client.GQuery.$;
 
 /**
  */
