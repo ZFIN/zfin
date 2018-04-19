@@ -63,7 +63,9 @@ task loadDb() {
         }
 
         println "Loading $unloadPath into $dbname"
-	exec { commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql $dbname"; }
+        exec {
+            commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql $dbname";
+        }
         exec { commandLine 'dropdb', dbname }
         exec { commandLine 'createdb', dbname }
         exec { commandLine "bash", "-c", "pg_restore -j 4 -d $dbname $unloadPath" }
@@ -108,35 +110,37 @@ update {
 
 // variables used for translation of keys in files in SOURCEROOT copied into TARGETROOT
 def translateVariableSet = [
-                            'CATALINA_HOME',
-                            'CGI_BIN_DIR_NAME',
-                            'DB_NAME',
-                            'DEFAULT_EMAIL',
-                            'ENVIRONMENT',
-			    'FTP_ROOT',
-                            'GBROWSE_PATH_FROM_ROOT',
-                            'GO_EMAIL_ERR',
-                            'GROOVY_CLASSPATH',
-                            'INFORMIX_DIR',
-                            'INFORMIX_SERVER',
-                            'INFORMIXSQLHOSTS',
-                            'INSTANCE',
-                            'LOADUP_FULL_PATH',
-                            'MUTANT_NAME',
-                            'ONCONFIG_FILE',
-                            'PARTNER_DBNAME',
-                            'PARTNER_INTERNAL_INSTANCE',
-                            'ROOT_PATH',
-                            'SHARED_DOMAIN_NAME',
-                            'SIDEBAR_COLOR',
-                            'SOURCEROOT',
-                            'SQLHOSTS_FILE',
-                            'SWISSPROT_EMAIL_ERR',
-                            'TARGETROOT',
-                             'USER',
-                            'VALIDATION_EMAIL_DBA',
-                            'WEBDRIVER_PATH_FROM_ROOT',
-                            'WEBHOST_FASTA_FILE_PATH',
+        'CATALINA_HOME',
+        'CGI_BIN_DIR_NAME',
+        'DB_NAME',
+        'DEFAULT_EMAIL',
+        'ENVIRONMENT',
+        'FTP_ROOT',
+        'GBROWSE_PATH_FROM_ROOT',
+        'GENBANK_DAILY_EMAIL',
+        'GO_EMAIL_ERR',
+        'GROOVY_CLASSPATH',
+        'INFORMIX_DIR',
+        'INFORMIX_SERVER',
+        'INFORMIXSQLHOSTS',
+        'INSTANCE',
+        'LOADUP_FULL_PATH',
+        'MOVE_BLAST_FILES_TO_DEVELOPMENT',
+        'MUTANT_NAME',
+        'ONCONFIG_FILE',
+        'PARTNER_DBNAME',
+        'PARTNER_INTERNAL_INSTANCE',
+        'ROOT_PATH',
+        'SHARED_DOMAIN_NAME',
+        'SIDEBAR_COLOR',
+        'SOURCEROOT',
+        'SQLHOSTS_FILE',
+        'SWISSPROT_EMAIL_ERR',
+        'TARGETROOT',
+        'USER',
+        'VALIDATION_EMAIL_DBA',
+        'WEBDRIVER_PATH_FROM_ROOT',
+        'WEBHOST_FASTA_FILE_PATH',
 ]
 
 // load properties into gradle
@@ -216,15 +220,15 @@ task make {
 
 task createSchemaSpy() {
     doLast {
-        println 'Creating ER diagram for ' +ttNameMap.get('DB_NAME') + ' ...'
+        println 'Creating ER diagram for ' + ttNameMap.get('DB_NAME') + ' ...'
         javaexec {
-            main="-jar";
+            main = "-jar";
             args = [
                     "lib/Java/schemaSpy_5.0.0.jar",
                     "-t",
                     "pgsql",
                     "-db",
-                    ttNameMap.get('DB_NAME') ,
+                    ttNameMap.get('DB_NAME'),
                     "-u",
                     ttNameMap.get('USER'),
                     "-host",
@@ -234,8 +238,20 @@ task createSchemaSpy() {
                     "-s",
                     "public",
                     "-o",
-                    ttNameMap.get('TARGETROOT')+"/home/schemaSpy",
+                    ttNameMap.get('TARGETROOT') + "/home/schemaSpy",
             ]
         }
     }
 }
+
+task deployDirectoryToTargetroot(type: Copy) {
+    def dataDirectory = ''
+    def targetRoot = ttNameMap.get('TARGETROOT')
+    dataDirectory += projectDir
+    println "Copying files from directory: " + dataDirectory
+    println "Target directory: " + targetRoot
+    from '.'
+    into targetRoot
+    include 'package.json'
+}
+
