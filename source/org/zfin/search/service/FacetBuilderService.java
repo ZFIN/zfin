@@ -330,14 +330,13 @@ public class FacetBuilderService {
         phenotype.addFacet(buildFacet(MISEXPRESSED_GENE.getName(), false));
         facetGroups.add(phenotype);
         //facetGroups.add(buildSingleFacetGroup("Genes With Altered Expression","genes_with_altered_expression",false,  filterQuerySelectionMap));
-        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", SEQUENCE_TARGETING_REAGENT.getName(), false));
-
 
         FacetGroup genotype = buildSingleFacetGroup("Genotype", FieldName.GENOTYPE_FULL_NAME.getName(),
                 Category.PHENOTYPE.getFacetQueriesForField(FieldName.GENOTYPE),
                 false);
         facetGroups.add(genotype);
 
+        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", SEQUENCE_TARGETING_REAGENT.getName(), false));
         facetGroups.add(buildSingleFacetGroup("Is Monogenic", "is_monogenic", false));
         facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.CONDITIONS.getName(), false));
 
