@@ -556,7 +556,7 @@ public class MarkerService {
      */
     public static void deleteMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID,
                                                            MarkerRelationship.Type markerRelationshipType) {
-      //  MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
+        //  MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
         MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
 
         //now deal with attribution
@@ -565,8 +565,9 @@ public class MarkerService {
             logger.info("deleted record attrs: " + deletedRecord);
         }
     }
+
     public static void deleteMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID
-                                                          ) {
+    ) {
         //  MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2, markerRelationshipType);
         MarkerRelationship markerRelationship = markerRepository.getMarkerRelationship(marker1, marker2);
 
@@ -594,6 +595,7 @@ public class MarkerService {
         MarkerRelationship mrel = getMarkerRepository().getMarkerRelationship(marker1, marker2, type);
         deleteMarkerRelationship(mrel);
     }
+
     public static void deleteMarkerRelationship(Marker marker1, Marker marker2) {
         MarkerRelationship mrel = getMarkerRepository().getMarkerRelationship(marker1, marker2);
         deleteMarkerRelationship(mrel);
@@ -831,10 +833,9 @@ public class MarkerService {
 
     public static OrthologyPresentationBean getOrthologyEvidence(Marker gene, Publication publication) {
         Collection<Ortholog> orthologs = getOrthologyRepository().getOrthologs(gene);
-        if (orthologs!=null) {
+        if (orthologs != null) {
             return getOrthologyPresentationBean(orthologs, gene, publication);
-        }
-        else
+        } else
             return null;
     }
 
@@ -1028,5 +1029,20 @@ public class MarkerService {
 
         // if we got to this point we could not resolve the ID by any means, so bail out
         throw new MarkerNotFoundException(zdbID);
+    }
+
+
+    /**
+     * All types except GENEFAMILY and GENEP are treated like genes for the controller
+     */
+    public boolean isOfTypeGene(String zdbID) {
+        MarkerTypeGroup group = markerRepository.getMarkerTypeGroupByName(Marker.TypeGroup.GENEDOM.toString());
+
+        Marker marker = markerRepository.getMarkerByID(zdbID);
+        if (!group.hasType(marker.getType()))
+            return false;
+        if (marker.getType().equals(Marker.Type.GENEP) || marker.getType().equals(Marker.Type.GENEFAMILY))
+            return false;
+        return true;
     }
 }

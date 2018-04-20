@@ -7,11 +7,11 @@ import java.util.Set;
  */
 public class MarkerTypeGroup {
 
-    private String name ;
+    private String name;
     private String displayName;
     private String comment;
     private Boolean searchable;
-    private Set<String> typeStrings ;
+    private Set<String> typeStrings;
 
     public String getName() {
         return name;
@@ -51,5 +51,12 @@ public class MarkerTypeGroup {
 
     public void setTypeStrings(Set<String> typeStrings) {
         this.typeStrings = typeStrings;
+    }
+
+    public boolean hasType(Marker.Type type) {
+        if (type == null)
+            return false;
+        return typeStrings.stream()
+                .anyMatch(name -> name.equals(type.name()));
     }
 }

@@ -74,7 +74,7 @@ public class GeneViewController {
         zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
 
-        if (!zdbID.startsWith("ZDB-GENE-")) { 
+        if (!markerService.isOfTypeGene(zdbID)) {
           return "redirect:/" + zdbID;
         }
 
