@@ -157,7 +157,7 @@ public class SequenceTargetingReagentViewController {
         return "marker/sequence-targeting-reagent-view.page";
     }
 
-    @RequestMapping(value = "/view/{zdbID}/str-targeted-genes")
+    @RequestMapping(value = "/view/{zdbID}/str-targeted-genes", method = RequestMethod.GET)
     public String showTargetedGenes(Model model, @PathVariable("zdbID") String zdbID) {
         SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();
         SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagent(zdbID);
