@@ -12,7 +12,7 @@
                     <th>
                         Fish:
                     </th>
-                    <td> <zfin2:toggledPostcomposedList entities="${summary.fish}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledLinkList collection="${summary.fish}" maxNumber="5" commaDelimited="true"/>  </td>
                 </tr>
             </c:if>
             <c:if test="${!empty summary.experiments}">
@@ -28,13 +28,13 @@
                     <th>
                         <zfin:choice choicePattern="0#Knockdown Reagents:| 1#Knockdown Reagent:| 2#Knockdown Reagents:" integerEntity="${fn:length(summary.sequenceTargetingReagents)}"/>
                     </th>
-                    <td> <zfin2:toggledPostcomposedList entities="${summary.sequenceTargetingReagents}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledLinkList collection="${summary.sequenceTargetingReagents}" maxNumber="5" commaDelimited="true"/>  </td>
                 </tr>
             </c:if>
             <c:if test="${!empty summary.entities}">
                 <tr>
                     <th>Observed In:</th>
-                    <td> <zfin2:toggledPostcomposedList entities="${summary.entities}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledLinkList collection="${summary.entities}" maxNumber="5" commaDelimited="true"/>  </td>
                 </tr>
             </c:if>
             <tr>

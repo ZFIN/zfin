@@ -86,19 +86,19 @@
 
                 <td>
                     <c:if test="${expressionData}">
-                        <zfin2:toggledHyperlinkList
+                        <zfin2:toggledLinkList
                                 collection="${figureExpressionSummaryDisplay.expressedGene.expressionStatements}"
-                                maxNumber="6" id="${figureExpressionSummaryDisplay.figure.zdbID}-terms"/>
+                                maxNumber="6" />
                     </c:if>
                     <c:if test="${phenotypeData}">
-                        <zfin2:toggledHyperlinkList
+                        <zfin2:toggledLinkList
                                 collection="${figureExpressionSummaryDisplay.phenotypeStatementList}"
-                                maxNumber="6" id="${figureExpressionSummaryDisplay.figure.zdbID}-terms"/>
+                                maxNumber="6" />
                     </c:if>
                     <c:if test="${expressionGenotypeData}">
-                        <zfin2:toggledHyperlinkList
+                        <zfin2:toggledLinkList
                                 collection="${figureExpressionSummaryDisplay.expressionStatementList}"
-                                maxNumber="6" id="${figureExpressionSummaryDisplay.figure.zdbID}-terms"/>
+                                maxNumber="6" />
                     </c:if>
                 </td>
             </zfin:alternating-tr>

@@ -7,10 +7,9 @@
             <table class="summary">
                 <tr>
                     <td align="left">
-                        <zfin2:toggledPostcomposedList entities="${formBean.constructs}" maxNumber="5"
-                                                       numberOfEntities="${formBean.numberOfConstructs}"
-                                                       ajaxLink="/action/marker/efg/constructs/${formBean.marker.zdbID}"
-                                                       useAjaxForLongVersion="true"/>
+                        <zfin2:toggledLinkList collection="${formBean.constructs}" maxNumber="5" commaDelimited="true"
+                                               numberOfEntities="${formBean.numberOfConstructs}"
+                                               ajaxLink="/action/marker/efg/constructs/${formBean.marker.zdbID}" />
                     </td>
                 </tr>
             </table>

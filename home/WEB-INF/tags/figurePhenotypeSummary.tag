@@ -42,9 +42,9 @@
                     </c:if>
                 </td>
                 <td>
-                    <zfin2:toggledHyperlinkList collection="${figureData.phenotypeStatementList}"
-                                                maxNumber="6" id="${figureData.figure.zdbID}-terms"
-                                                commaDelimited="false"/>
+                    <zfin2:toggledLinkList collection="${figureData.phenotypeStatementList}"
+                                           maxNumber="6"
+                                           commaDelimited="false"/>
                 </td>
 
             </zfin:alternating-tr>

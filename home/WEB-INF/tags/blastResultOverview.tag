@@ -53,11 +53,9 @@
                 </c:if>
             </td>
             <td>
-                <zfin2:toggledHyperlinkList collection="${hit.genes}"
-                                            id="relatedGenesOverview${hit.hitNumber}"
-                                            maxNumber="1"
-                                            showAttributionLinks="false"/>
-                    <%--<zfin:link entity="${hit.genes}"/>--%>
+                <zfin2:toggledLinkList collection="${hit.genes}"
+                                       maxNumber="1"
+                                       showAttributionLinks="false"/>
             </td>
             <td valign="top">
                 <zfin2:blastResultGeneData hit="${hit}"/>

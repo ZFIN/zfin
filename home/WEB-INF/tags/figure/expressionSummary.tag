@@ -15,7 +15,7 @@
                     <th>
                         <zfin:choice choicePattern="0#Genes:| 1#Gene:| 2#Genes:" integerEntity="${fn:length(summary.genes)}"/>
                     </th>
-                    <td> <zfin2:toggledPostcomposedList entities="${summary.genes}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledLinkList collection="${summary.genes}" maxNumber="5" commaDelimited="true"/>  </td>
                 </tr>
             </c:if>
             <c:if test="${!empty summary.antibodies}">
@@ -23,7 +23,7 @@
                     <th>
                         <zfin:choice choicePattern="0#Antibodies:| 1#Antibody:| 2#Antibodies:" integerEntity="${fn:length(summary.antibodies)}"/>
                     </th>
-                    <td> <zfin2:toggledPostcomposedList entities="${summary.antibodies}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledLinkList collection="${summary.antibodies}" maxNumber="5" commaDelimited="true"/>  </td>
                 </tr>
             </c:if>
             <c:if test="${!empty summary.fish}">
@@ -31,7 +31,7 @@
                     <th>
                         Fish:
                     </th>
-                    <td> <zfin2:toggledPostcomposedList entities="${summary.fish}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledLinkList collection="${summary.fish}" maxNumber="5" commaDelimited="true"/>  </td>
                 </tr>
             </c:if>
             <c:if test="${!empty summary.experiments}">
@@ -47,7 +47,7 @@
                     <th>
                         <zfin:choice choicePattern="0#Knockdown Reagents:| 1#Knockdown Reagent:| 2#Knockdown Reagents:" integerEntity="${fn:length(summary.sequenceTargetingReagents)}"/>
                     </th>
-                    <td> <zfin2:toggledPostcomposedList entities="${summary.sequenceTargetingReagents}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledLinkList collection="${summary.sequenceTargetingReagents}" maxNumber="5" commaDelimited="true" />  </td>
                 </tr>
             </c:if>
             <c:if test="${!empty summary.entities}">
@@ -57,7 +57,7 @@
                         <zfin:choice choicePattern="0#Anatomical Terms:| 1#Anatomical Term:| 2#Anatomical Terms:" integerEntity="${fn:length(summary.entities)}"/>
                     </th>
 
-                    <td> <zfin2:toggledPostcomposedList entities="${summary.entities}" numberOfEntities="${fn:length(summary.entities)}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledLinkList collection="${summary.entities}" maxNumber="5" commaDelimited="true"/>  </td>
 
                 </tr>
             </c:if>

@@ -25,8 +25,7 @@
                     </c:forEach>
                 </td>
                 <td>
-                    <zfin2:toggledHyperlinkList collection="${antibodyStat.antibodyLabelingStatements}" maxNumber="3"
-                                                id="${antibodyStat.antibody.zdbID}"/>
+                    <zfin2:toggledLinkList collection="${antibodyStat.antibodyLabelingStatements}" maxNumber="3" />
                 </td>
                 <td>
                     <zfin:link entity="${antibodyStat.earliestStartStage}"/>

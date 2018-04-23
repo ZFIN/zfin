@@ -17,7 +17,6 @@
 <c:set var="communityCategoryName" value="<%=Category.COMMUNITY.getName()%>"/>
 <c:set var="figureCategoryName" value="<%=Category.FIGURE.getName()%>"/>
 
-<script src="/javascript/list-collapse.js"></script>
 <script src="/javascript/figure-gallery-resize.jquery.js"></script>
 
 <script src="/javascript/angular/angular.min.js"></script>
@@ -406,9 +405,6 @@ function submitAdvancedQuery(fields) {
 }
 
 $(function () {
-
-    $('.list-collapse').listCollapse({label: 'results', itemsToShow: 3});
-
     $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {directLink: true});
 
     $('#primary-query-input').bind("typeahead:select", function() {

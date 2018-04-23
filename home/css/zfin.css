@@ -844,16 +844,30 @@ ul.comma-separated {
     padding: 0;
 }
 
-ul.comma-separated > li {
-    display: inline;
+.comma-separated > li {
+    display: inline-block;
 }
 
-ul.comma-separated > li:after {
+.comma-separated > li::after {
     content: ", ";
 }
 
-ul.comma-separated > li:last-child:after {
+.comma-separated.semicolon > li::after {
+    content: "; ";
+}
+
+.comma-separated > li:last-child::after {
     content: "";
+}
+
+.comma-separated > li.no-comma::after {
+    content: "";
+}
+
+.list-unstyled {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .notransition {

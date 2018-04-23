@@ -10,10 +10,9 @@
 
     <span style="font-family:monospace;"><zfin:defline defLine="${hit.definition}"/></span>
 
-   <zfin2:toggledHyperlinkList collection="${hit.genes}"
-                                            id="relatedGenesData${hit.hitNumber}"
-                                            maxNumber="3"
-                                            showAttributionLinks="false"/>
+   <zfin2:toggledLinkList collection="${hit.genes}"
+                          maxNumber="3"
+                          showAttributionLinks="false"/>
     <zfin2:blastResultGeneData hit="${hit}"/>
 
     <c:if test="${!hit.markerIsHit}">

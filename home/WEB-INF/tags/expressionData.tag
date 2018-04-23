@@ -49,8 +49,7 @@
                 </zfin:groupByDisplay>
             </td>
             <td valign="top">
-                <zfin2:toggledPostcomposedList entities="${xp.expressionResults}" maxNumber="3"
-                                               id="${xp.expressedGene.zdbID}" numberOfEntities="${fn:length(xp.expressionResults)}"/>
+                <zfin2:toggledLinkList collection="${xp.expressionResults}" maxNumber="3" commaDelimited="true"/>
             </td>
             <c:if test="${showCondition}">
                 <td valign="top">

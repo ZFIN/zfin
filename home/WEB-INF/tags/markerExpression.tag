@@ -97,11 +97,9 @@
                     <tr>
                         <td>&nbsp;</td>
                         <td>
-                            <zfin2:toggledPostcomposedList
-                                    entities="${markerExpression.wildTypeStageExpression.expressedStructures}"
-                                    showAttributionLinks="false" maxNumber="4"
-                                    numberOfEntities="${fn:length(markerExpression.wildTypeStageExpression.expressedStructures)}"
-                                    />
+                            <zfin2:toggledLinkList commaDelimited="true"
+                                                   collection="${markerExpression.wildTypeStageExpression.expressedStructures}"
+                                                   maxNumber="4" />
                         </td>
                     </tr>
                 </c:if>

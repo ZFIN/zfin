@@ -33,8 +33,11 @@
 
             <th>Synonyms:</th>
             <td id="term-synonyms">
-                <zfin2:toggledHyperlinkStrings collection="${formBean.term.sortedAliases}" maxNumber="3"
-                                               id="${formBean.term.zdbID}_alias"/>
+                <ul class="comma-separated" data-toggle="collapse" data-show="3">
+                    <c:forEach items="${formBean.term.sortedAliases}" var="alias">
+                        <li>${alias.alias}</li>
+                    </c:forEach>
+                </ul>
             </td>
         </tr>
 
@@ -62,12 +65,8 @@
         <tr>
             <th>References:</th>
             <td id="term-xrefs">
-                <zfin2:toggledHyperlinkList collection="${formBean.term.sortedXrefs}" maxNumber="3"
-                                            id="${formBean.term.zdbID}" commaDelimited="true"/>
-
-
+                <zfin2:toggledLinkList collection="${formBean.term.sortedXrefs}" maxNumber="3" commaDelimited="true"/>
             </td>
-
         </tr>
         <tr>
             <th>Ontology:</th>

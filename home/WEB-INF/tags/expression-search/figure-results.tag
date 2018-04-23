@@ -59,7 +59,7 @@
                 <zfin2:stageRange earliestStartStage="${result.startStage}" latestEndStage="${result.endStage}" />
             </td>
             <td>
-                <zfin2:toggledPostcomposedList entities="${result.anatomy}" maxNumber="4" />
+                <zfin2:toggledLinkList collection="${result.anatomy}" maxNumber="4" commaDelimited="true" />
             </td>
         </zfin:alternating-tr>
     </c:forEach>

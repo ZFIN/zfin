@@ -104,8 +104,11 @@
         <td>
             <c:choose>
                 <c:when test="${!empty meshTermDisplayList}">
-                    <zfin2:toggledHyperlinkStrings collection="${meshTermDisplayList}" id="mesh-term-list"
-                                                   maxNumber="5" delimiter="; " />
+                    <ul class="comma-separated semicolon" data-toggle="collapse">
+                        <c:forEach items="${meshTermDisplayList}" var="term">
+                            <li>${term}</li>
+                        </c:forEach>
+                    </ul>
                 </c:when>
                 <c:otherwise><span class="no-data-tag">none</span></c:otherwise>
             </c:choose>

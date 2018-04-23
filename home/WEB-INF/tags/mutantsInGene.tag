@@ -90,7 +90,7 @@
             <tr>
                 <td class="data-label"><b>Targeting reagents:</b> </td>
                 <td>
-                    <zfin2:toggledProvidesLinkList collection="${mutantsOnMarkerBean.knockdownReagents}" maxNumber="5"/>
+                    <zfin2:toggledMarkerRelationshipList collection="${mutantsOnMarkerBean.knockdownReagents}" maxNumber="5"/>
                 </td>
             </tr>
         </c:if>

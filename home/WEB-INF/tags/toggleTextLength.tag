@@ -24,8 +24,9 @@
     <c:if test="${fn:length(text) > shortLength}">
         <span onclick="toggleVersion('${idName}', true)" title="Show full text">
             &nbsp;...
-            <img onclick="toggleVersion('${idName}', true)"
-                 src="/images/right_arrow.gif" alt="expand" title="Show full text" border="0">
+            <a href="#" onclick="toggleVersion('${idName}', true)" title="Show full text">
+                <i class="fas fa-caret-right"></i>
+            </a>
         </span>
     </c:if>
 </span>
@@ -34,8 +35,9 @@
     ${zfn:escapeHtml(text, false)}
     <c:if test="${  not empty url}"></a></c:if>
 &nbsp;
-    <img onclick="toggleVersion('${idName}', false)"
-         src="/images/left_arrow.gif" alt="collapse" title="Show beginning text" border="0">
+    <a href="#" onclick="toggleVersion('${idName}', false)" title="Show beginning text">
+        <i class="fas fa-caret-left"></i>
+    </a>
 </span>
 
 <script type="text/javascript">

@@ -33,19 +33,19 @@
         <tr>
             <c:if test="${empty interactsWith}">
                 <td>
-                    <zfin2:toggledProvidesLinkList collection="${relationships}" maxNumber="${maxNumber}"/>
+                    <zfin2:toggledMarkerRelationshipList collection="${relationships}" maxNumber="${maxNumber}"/>
                 </td>
             </c:if>
             <c:if test="${!empty interactsWith}">
                 <c:if test="${!marker.nontranscribed}">
                     <td>
-                        <zfin:link entity="${marker}"></zfin:link> interacts with <zfin2:toggledProvidesLinkList
+                        <zfin:link entity="${marker}"></zfin:link> interacts with <zfin2:toggledMarkerRelationshipList
                             collection="${relationships}" maxNumber="${maxNumber}"/>
                     </td>
                 </c:if>
                 <c:if test="${marker.nontranscribed}">
-                    ${marker.abbreviation} contained in <zfin2:toggledProvidesLinkList collection="${relationships}"
-                                                                                       maxNumber="${maxNumber}"/>
+                    ${marker.abbreviation} contained in <zfin2:toggledMarkerRelationshipList collection="${relationships}"
+                                                                                             maxNumber="${maxNumber}"/>
                 </c:if>
             </c:if>
 

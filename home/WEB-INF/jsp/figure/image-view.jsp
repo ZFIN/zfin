@@ -64,7 +64,7 @@
         <th>
             <zfin:choice choicePattern="0#Genes:| 1#Gene:| 2#Genes:" integerEntity="${fn:length(expressionGeneList)}"/>
         </th>
-        <td> <zfin2:toggledPostcomposedList entities="${expressionGeneList}" maxNumber="5"/>  </td>
+        <td> <zfin2:toggledLinkList collection="${expressionGeneList}" maxNumber="5" commaDelimited="true"/>  </td>
     </tr>
 </c:if>
 
@@ -73,7 +73,7 @@
         <th>
             <zfin:choice choicePattern="0#Antibodies:| 1#Antibody:| 2#Antibodies:" integerEntity="${fn:length(antibodyList)}"/>
         </th>
-        <td> <zfin2:toggledPostcomposedList entities="${antibodyList}" maxNumber="5"/>  </td>
+        <td> <zfin2:toggledLinkList collection="${antibodyList}" maxNumber="5" commaDelimited="true"/>  </td>
     </tr>
 </c:if>
 </c:if>

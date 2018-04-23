@@ -40,7 +40,6 @@
     <link rel=stylesheet type="text/css" href="/css/typeahead.css">
     <link rel="stylesheet" href="/css/datepicker3.css">
 
-    <script src="/javascript/fontawesome-all.min.js"></script>
     <script src="/javascript/header.js" type="text/javascript"></script>
     <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
@@ -62,6 +61,9 @@
 <tiles:insertAttribute name="body"/>
 
 <tiles:insertAttribute name="footer"/>
+
+<script src="/javascript/list-collapse.js"></script>
+<script src="/javascript/fontawesome-all.min.js"></script>
 
 </body>
 </html>

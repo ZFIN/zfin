@@ -60,7 +60,7 @@
         Antigen&nbsp;Genes:
     </th>
     <td>
-        <zfin2:toggledProvidesLinkList collection="${antibodyBean.antigenGenes}" maxNumber="4"/>
+        <zfin2:toggledMarkerRelationshipList collection="${antibodyBean.antigenGenes}" maxNumber="4"/>
     </td>
 </tr>
 <tr>

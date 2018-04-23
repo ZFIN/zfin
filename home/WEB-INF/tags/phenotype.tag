@@ -33,10 +33,7 @@
             <tr>
                 <td class="data-label"><b>Observed&nbsp;in:</b></td>
                 <td>
-                    <zfin2:toggledPostcomposedList entities="${phenotypeOnMarkerBean.anatomy}"
-                                                   maxNumber="4"
-                                                   numberOfEntities="${fn:length(phenotypeOnMarkerBean.anatomy)}"
-                            />
+                    <zfin2:toggledLinkList collection="${phenotypeOnMarkerBean.anatomy}" maxNumber="4" commaDelimited="true"/>
                 </td>
             </tr>
         </table>

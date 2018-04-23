@@ -33,7 +33,7 @@
                 <zfin:link entity="${expressionData.startStage}"/>
                 to <zfin:link entity="${expressionData.endStage}"/>
             </div>
-            <div><zfin2:toggledHyperlinkList collection="${expressionData.anatomy}"/><!--todo: finish params--></div>
+            <div><zfin2:toggledLinkList collection="${expressionData.anatomy}"/><!--todo: finish params--></div>
         </td>
     </tr>
     <tr>

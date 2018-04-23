@@ -24,7 +24,7 @@
             </td>
             <td>${result.attributes[conditionsAttribute]}</td>
             <td class="anatomy">
-                <div class="list-collapse">
+                <div data-toggle="collapse" data-show="3">
                         ${result.attributes[expressionAttribute]}
                 </div>
             </td>

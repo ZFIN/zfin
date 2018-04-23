@@ -36,8 +36,8 @@
                 <td>
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${omimTermDisplay}"
                                          groupByBean="orthology.symbol">
-                        <zfin2:toggledHyperlinkList collection="${omimGene.zfinGene}" maxNumber="3"
-                                                    id="zfinGene" commaDelimited="true"/>
+                        <zfin2:toggledLinkList collection="${omimGene.zfinGene}" maxNumber="3"
+                                               commaDelimited="true"/>
 
                     </zfin:groupByDisplay>
 

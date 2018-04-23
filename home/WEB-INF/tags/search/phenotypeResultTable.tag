@@ -25,7 +25,7 @@
             <td>${result.attributes['Conditions:']}</td>
             <td>${result.attributes['Stage:']}</td>
             <td class="anatomy">
-                <div class="list-collapse">
+                <div data-toggle="collapse" data-show="3">
                     ${result.attributes['Phenotype:']}
                 </div>
             </td>

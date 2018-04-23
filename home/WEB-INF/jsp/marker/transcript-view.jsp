@@ -51,9 +51,7 @@
 <c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
     <zfin2:subsection title="Related Transcripts" test="${!empty formBean.microRNARelatedTranscripts}"
                       inlineTitle="true" showNoData="true">
-        <zfin2:toggledHyperlinkList collection="${formBean.microRNARelatedTranscripts}"
-                                    id="microRNARelatedTranscripts"
-                                    maxNumber="6"/>
+        <zfin2:toggledLinkList collection="${formBean.microRNARelatedTranscripts}" maxNumber="6"/>
     </zfin2:subsection>
 </c:if>
 

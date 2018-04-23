@@ -21,11 +21,7 @@
  *  Options can be passed to listCollapse() as an object. The following properties are
  *  recognized:
  *
- *      itemsToShow: Number of items to show. Default 5
- *      label: Text to append to the 'show all' link. For example if this parameter is
- *             set to 'targeted genes', the link under the list would read 'Show all N
- *             targeted genes' when the list is collapsed, and 'Show first N targeted
- *             genes' when the list is expanded.
+ *      show: Number of items to show. Default 5
  *
  *  Options can also be provided by using a 'data-list-collapse' attribute on the
  *  selected element. The attribute should be set to a JSON-formatted string.
@@ -35,14 +31,13 @@
 
     var pluginName = 'listCollapse',
         defaults = {
-            itemsToShow: 5,
-            label: ''
+            show: 5
         };
 
     function ListCollapse(element, options) {
         this.element = element.is('ul') ? element : element.find('ul');
 
-        this.options = $.extend({}, defaults, options, element.data('list-collapse'));
+        this.options = $.extend({}, defaults, options, element.data());
 
         this.init();
     }
@@ -50,45 +45,55 @@
     ListCollapse.prototype = {
 
         init: function() {
-            var list = this.element,
-                visible = false,
-                startItem = 0,
-                endItem = startItem + this.options.itemsToShow,
-                items = list.find("li"),
-                showText = ' Show all ' + (items.length - startItem) + ' ' + this.options.label,
-                hideText = ' Show first ' + this.options.itemsToShow + ' ' + this.options.label,
-                showLink, linkIcon, linkText;
+            var opts = this.options;
+            var list = this.element;
+            var visible = false;
+            var ajaxLoaded = false;
+            var endItem = opts.show;
+            var items = list.find("li");
+            var showText = '(all ' + (opts.count || items.length) + ') ';
+            var hideText = '';
+            var iconClass = 'fa-caret-right';
+            var ajaxContainer, showLink, linkIcon, linkText;
 
             if (endItem && items.length > endItem) {
                 //hide the list items above endItem
-/*
-                items.slice(endItem).forEach(function(item) {
-                    item.hide();
-                });
-*/
-
+                $(items[endItem - 1]).addClass('no-comma');
                 $.each(items.slice(endItem), function() {
                     $(this).hide();}
                 );
+
+                if (opts.url) {
+                    ajaxContainer = $('<div style="display: none"></div>').insertAfter(list);
+                }
 
                 // add the show/hide controls and hook up events
                 showLink = $('<a class="table-collapse-link"></a>')
                     .attr('href', '#')
                     .insertAfter(list);
-                linkIcon = $('<i class="fas fa-caret-down"></i>')
-                    .appendTo(showLink);
-                linkText = $('<span></span>')
-                    .text(showText)
-                    .appendTo(showLink);
-                showLink.on('click', function (evt) {
-                    evt.preventDefault();
-                    linkText.text(visible ? showText : hideText);
-                    visible = !visible;
-                    linkIcon.toggleClass('fa-rotate-180');
-                    $.each(items.slice(endItem), function() {
-                        $(this).toggle();
+                linkText = $('<span>' + showText + '</span>');
+                linkIcon = $('<span style="display: inline-block"><i class="fas ' + iconClass + '"></i></span>');
+                showLink
+                    .append(linkText)
+                    .append(linkIcon)
+                    .on('click', function (evt) {
+                        evt.preventDefault();
+                        linkText.text(visible ? showText : hideText);
+                        visible = !visible;
+                        linkIcon.toggleClass('fa-rotate-180');
+                        if (opts.url && !ajaxLoaded) {
+                            ajaxContainer.load(opts.url);
+                        }
+                        if (opts.url) {
+                            list.toggle();
+                            ajaxContainer.toggle();
+                        } else {
+                            $(items[endItem - 1]).toggleClass('no-comma');
+                            $.each(items.slice(endItem), function () {
+                                $(this).toggle();
+                            });
+                        }
                     });
-                });
             }
         }
 
@@ -104,5 +109,9 @@
         });
 
     };
+
+    $(function () {
+      $("[data-toggle='collapse']").listCollapse();
+    });
 
 })(jQuery);

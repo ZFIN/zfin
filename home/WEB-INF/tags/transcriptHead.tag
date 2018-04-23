@@ -40,18 +40,16 @@
     <th>Non Reference Strains:</th>
     <td>
 
-        <zfin2:toggledHyperlinkList collection="${formBean.nonReferenceStrains}"
-                                    id="nonRefererenceStrains"
-                                    maxNumber="6"/>
+        <zfin2:toggledLinkList collection="${formBean.nonReferenceStrains}"
+                               maxNumber="6"/>
     </td>
     </tr>
 
     <tr><th>Associated with Genes:</th>
         <td>
-        <zfin2:toggledHyperlinkList collection="${relatedGenes}"
-                                    id="relatedGenes"
-                                    maxNumber="6"
-                                    showAttributionLinks="true"/>
+        <zfin2:toggledLinkList collection="${relatedGenes}"
+                               maxNumber="6"
+                               showAttributionLinks="true"/>
         </td></tr>
 
     <zfin2:entityNotes entity="${transcript}"/>
