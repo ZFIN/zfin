@@ -914,6 +914,7 @@ nav.pub-navigator {
     margin-bottom: 0;
     color: #222222;
     border: none;
+    z-index: 100;
 }
 
 nav.pub-navigator.success {
@@ -1107,4 +1108,8 @@ input + label {
 .pub-export-controls {
     text-align: center;
     margin-bottom: 1.5em;
+}
+
+.fa-animation-container {
+    display: inline-block;
 }

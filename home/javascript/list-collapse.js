@@ -72,7 +72,7 @@
                     .attr('href', '#')
                     .insertAfter(list);
                 linkText = $('<span>' + showText + '</span>');
-                linkIcon = $('<span style="display: inline-block"><i class="fas ' + iconClass + '"></i></span>');
+                linkIcon = $('<span class="fa-animation-container"><i class="fas ' + iconClass + '"></i></span>');
                 showLink
                     .append(linkText)
                     .append(linkIcon)
