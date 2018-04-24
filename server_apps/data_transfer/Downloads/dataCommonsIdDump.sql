@@ -4,24 +4,24 @@ create temp table tmp_id (id varchar(100), id2 varchar(100), uri varchar(200), d
 with no log;
 
 insert into tmp_id (id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||feature_zdb_id, 'ZFIN:'||feature_zdb_id, 'http://zfin.org/'||feature_zdb_id,'http://zfin.org/'||feature_zdb_id, 'http://zfin.org/'||feature_zdb_id, 'feature', szm_term_ont_id from feature, so_zfin_mapping
+ select 'ZFIN:'||feature_zdb_id, 'ZFIN:'||feature_zdb_id, 'http://zfin.org/'||'ZFIN:'||feature_zdb_id,'http://zfin.org/'||'ZFIN:'||feature_zdb_id, 'http://zfin.org/'||'ZFIN:'||feature_zdb_id, 'feature', szm_term_ont_id from feature, so_zfin_mapping
 where feature_type = szm_object_type;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||mrkr_zdb_id,'ZFIN:'||mrkr_zdb_id, 'http://zfin.org/'||mrkr_zdb_id,'http://zfin.org/'||mrkr_zdb_id,'http://zfin.org/'||mrkr_zdb_id, mrkr_type, szm_term_ont_id from marker, so_zfin_mapping
+ select 'ZFIN:'||mrkr_zdb_id,'ZFIN:'||mrkr_zdb_id, 'http://zfin.org/'||'ZFIN:'||mrkr_zdb_id,'http://zfin.org/'||'ZFIN:'||mrkr_zdb_id,'http://zfin.org/'||'ZFIN:'||mrkr_zdb_id, mrkr_type, szm_term_ont_id from marker, so_zfin_mapping
 where mrkr_type = szm_object_type;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||geno_zdb_id,'ZFIN:'||geno_zdb_id,'http://zfin.org/'||geno_zdb_id, 'http://zfin.org/'||geno_zdb_id,'http://zfin.org/'||geno_zdb_id, 'genotype','' from genotype;
+ select 'ZFIN:'||geno_zdb_id,'ZFIN:'||geno_zdb_id,'http://zfin.org/'||'ZFIN:'||geno_zdb_id, 'http://zfin.org/'||'ZFIN:'||geno_zdb_id,'http://zfin.org/'||'ZFIN:'||geno_zdb_id, 'genotype','' from genotype;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||fish_zdb_id, 'ZFIN:'||fish_zdb_id, 'http://zfin.org/'||fish_zdb_id,'http://zfin.org/'||fish_zdb_id,'http://zfin.org/'||fish_zdb_id,'fish','' from fish;
+ select 'ZFIN:'||fish_zdb_id, 'ZFIN:'||fish_zdb_id, 'http://zfin.org/'||'ZFIN:'||fish_zdb_id,'http://zfin.org/'||'ZFIN:'||fish_zdb_id,'http://zfin.org/'||'ZFIN:'||fish_zdb_id,'fish','' from fish;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
  select term_ont_id,term_ont_id, 'http://zfin.org/'||term_ont_id,'http://zfin.org/'||term_ont_id,'http://zfin.org/'||term_ont_id,'ontology term', '' from term;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select term_zdb_id, term_zdb_id, 'http://zfin.org/'||term_zdb_id, 'http://zfin.org/'||term_zdb_id, 'http://zfin.org/'||term_zdb_id, 'ontology term', '' from term;
+ select term_zdb_id, term_zdb_id, 'http://zfin.org/'||'ZFIN:'||term_zdb_id, 'http://zfin.org/'||'ZFIN:'||term_zdb_id, 'http://zfin.org/'||'ZFIN:'||term_zdb_id, 'ontology term', '' from term;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
  select tx_full_accession,tx_full_accession,'','','','cross reference','' from term_xref;
@@ -53,28 +53,28 @@ insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, bio
  select 'ZFIN:'||genox_zdb_id,'ZFIN:'||genox_zdb_id, '','','','genotype experiment',''from fish_experiment;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||zdb_id,'ZFIN:'||zdb_id, 'http://zfin.org/'||zdb_id, 'http://zfin.org/'||zdb_id, 'http://zfin.org/'||zdb_id, 'person','' from person;
+ select 'ZFIN:'||zdb_id,'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'person','' from person;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||zdb_id,'ZFIN:'||zdb_id, 'http://zfin.org/'||zdb_id, 'http://zfin.org/'||zdb_id, 'http://zfin.org/'||zdb_id, 'company','' from company;
+ select 'ZFIN:'||zdb_id,'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'company','' from company;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||zdb_id,'ZFIN:'||zdb_id, 'http://zfin.org/'||zdb_id, 'http://zfin.org/'||zdb_id, 'http://zfin.org/'||zdb_id, 'publication',''  from publication;
+ select 'ZFIN:'||zdb_id,'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'publication',''  from publication;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||zdb_id,'ZFIN:'||zdb_id, 'http://zfin.org/'||zdb_id, 'http://zfin.org/'||zdb_id, 'http://zfin.org/'||zdb_id, 'lab','' from lab;
+ select 'ZFIN:'||zdb_id,'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'http://zfin.org/'||'ZFIN:'||zdb_id, 'lab','' from lab;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||zrepld_old_zdb_id,'ZFIN:'||zrepld_old_zdb_id,'http://zfin.org/'||zrepld_old_zdb_id,'http://zfin.org/'||zrepld_old_zdb_id,'http://zfin.org/'||zrepld_old_zdb_id,'various','' from zdb_replaced_data;
+ select 'ZFIN:'||zrepld_old_zdb_id,'ZFIN:'||zrepld_old_zdb_id,'http://zfin.org/'||'ZFIN:'||zrepld_old_zdb_id,'http://zfin.org/'||'ZFIN:'||zrepld_old_zdb_id,'http://zfin.org/'||'ZFIN:'||zrepld_old_zdb_id,'various','' from zdb_replaced_data;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||fig_zdb_id, 'ZFIN:'||fig_zdb_id, 'http://zfin.org/'||fig_zdb_id,'http://zfin.org/'||fig_zdb_id, 'http://zfin.org/'||fig_zdb_id, 'figure',''from figure;
+ select 'ZFIN:'||fig_zdb_id, 'ZFIN:'||fig_zdb_id, 'http://zfin.org/'||'ZFIN:'||fig_zdb_id,'http://zfin.org/'||'ZFIN:'||fig_zdb_id, 'http://zfin.org/'||'ZFIN:'||fig_zdb_id, 'figure',''from figure;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||img_zdb_id,'ZFIN:'||img_zdb_id,'http://zfin.org/'||img_zdb_id,'http://zfin.org/'||img_zdb_id,'http://zfin.org/'||img_zdb_id, 'image','' from image;
+ select 'ZFIN:'||img_zdb_id,'ZFIN:'||img_zdb_id,'http://zfin.org/'||'ZFIN:'||img_zdb_id,'http://zfin.org/'||'ZFIN:'||img_zdb_id,'http://zfin.org/'||'ZFIN:'||img_zdb_id, 'image','' from image;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
- select 'ZFIN:'||jrnl_zdb_id, 'ZFIN:'||jrnl_zdb_id, 'http://zfin.org/'||jrnl_zdb_id,'http://zfin.org/'||jrnl_zdb_id, 'http://zfin.org/'||jrnl_zdb_id,'journal','' from journal;
+ select 'ZFIN:'||jrnl_zdb_id, 'ZFIN:'||jrnl_zdb_id, 'http://zfin.org/'||'ZFIN:'||jrnl_zdb_id,'http://zfin.org/'||'ZFIN:'||jrnl_zdb_id, 'http://zfin.org/'||'ZFIN:'||jrnl_zdb_id,'journal','' from journal;
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
  select 'ZFIN:'||xpatex_zdb_id, 'ZFIN:'||xpatex_zdb_id, '','','','expression experiment','' from expression_experiment2;
