@@ -1,13 +1,23 @@
 package org.zfin.orthology.presentation;
 
 import org.zfin.gwt.root.dto.PublicationDTO;
+import org.zfin.gwt.root.dto.TermDTO;
 
 public class OrthologEvidenceDTO {
 
     private String evidenceCode;
     private String evidenceName;
+    private TermDTO evidenceTerm;
     private OrthologDTO ortholog;
     private PublicationDTO publication;
+
+    public TermDTO getEvidenceTerm() {
+        return evidenceTerm;
+    }
+
+    public void setEvidenceTerm(TermDTO evidenceTerm) {
+        this.evidenceTerm = evidenceTerm;
+    }
 
     public OrthologDTO getOrtholog() {
         return ortholog;

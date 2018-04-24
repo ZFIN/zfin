@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.datatransfer.go.EcoGoEvidenceCodeMapping;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
@@ -14,10 +15,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.OrthologyPresentationBean;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.orthology.EvidenceCode;
-import org.zfin.orthology.NcbiOtherSpeciesGene;
-import org.zfin.orthology.Ortholog;
-import org.zfin.orthology.OrthologEvidence;
+import org.zfin.orthology.*;
 import org.zfin.orthology.service.OrthologService;
 import org.zfin.publication.Publication;
 
@@ -193,6 +191,7 @@ public class OrthologyController {
                 if (evCode == null)
                     throw new InvalidWebRequestException("Invalid evidence code: " + code, null);
                 evidence.setEvidenceCode(evCode);
+                evidence.setEvidenceTerm(getOntologyRepository().getTermByOboID(EcoOrthoEvidenceCodeMapping.getOrthoEvidenceCode(evCode.getCode())));
                 evidenceSet.add(evidence);
             }
             // this will re-create the set of evidence codes. No update is done but all of them are deleted first.

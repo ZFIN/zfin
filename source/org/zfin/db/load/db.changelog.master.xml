@@ -34,5 +34,6 @@
     <include file="source/org/zfin/db/load/1094/UnamusedFace/db.changelog.master.xml"/>
    <include file="source/org/zfin/db/load/1095/VulcanSalute/db.changelog.master.xml"/>
    <include file="source/org/zfin/db/load/1095/WearyCatFace/db.changelog.master.xml"/>
-<include file="source/org/zfin/db/load/1096/CrossBones/db.changelog.master.xml"/>
+   <include file="source/org/zfin/db/load/1096/CrossBones/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1097/YinYang/db.changelog.master.xml"/>
 </databaseChangeLog>

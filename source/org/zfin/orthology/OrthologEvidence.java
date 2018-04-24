@@ -1,5 +1,7 @@
 package org.zfin.orthology;
 
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.io.Serializable;
@@ -9,7 +11,7 @@ public class OrthologEvidence implements Serializable {
     private Ortholog ortholog;
     private EvidenceCode evidenceCode;
     private Publication publication;
-
+    private GenericTerm evidenceTerm;
     public OrthologEvidence() {
     }
 
@@ -41,6 +43,14 @@ public class OrthologEvidence implements Serializable {
 
     public void setPublication(Publication publication) {
         this.publication = publication;
+    }
+
+    public GenericTerm getEvidenceTerm() {
+        return evidenceTerm;
+    }
+
+    public void setEvidenceTerm(GenericTerm evidenceTerm) {
+        this.evidenceTerm = evidenceTerm;
     }
 
     @Override

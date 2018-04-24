@@ -42,6 +42,7 @@
                 <parent name="ortholog"/>
                 <many-to-one name="publication" column="oev_pub_zdb_id"/>
                 <many-to-one name="evidenceCode" column="oev_evidence_code"/>
+                <many-to-one name="evidenceTerm" column="oev_evidence_term_zdb_id"/>
             </composite-element>
         </set>
 

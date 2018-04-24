@@ -1886,6 +1886,8 @@ public class DTOConversionService {
         OrthologEvidenceDTO dto = new OrthologEvidenceDTO();
         dto.setEvidenceCode(evidence.getEvidenceCode().getCode());
         dto.setEvidenceName(evidence.getEvidenceCode().getName());
+        dto.setEvidenceTerm(DTOConversionService.convertToTermDTO(evidence.getEvidenceTerm()));
+
         dto.setPublication(DTOConversionService.convertToPublicationDTO(evidence.getPublication()));
         return dto;
     }
