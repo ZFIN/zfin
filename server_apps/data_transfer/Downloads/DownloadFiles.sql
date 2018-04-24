@@ -327,7 +327,7 @@ INSERT INTO tmp_flybase
 UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'
   DELIMITER "	"
   SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
-                  tmp_omim.accession, tmp_gene.accession, tmp_hgnc.accession, oev_evidence_code, oev_pub_zdb_id
+                  tmp_omim.accession, tmp_gene.accession, tmp_hgnc.accession, (select term_ont_id from term where term_zdb_id = oev_evidence_term_zdb_id), oev_pub_zdb_id
     FROM ortholog
     INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
     INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
@@ -342,7 +342,7 @@ UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'
   DELIMITER "	"
   SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
-                  tmp_flybase.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+                  tmp_flybase.accession, tmp_gene.accession, (select term_ont_id from term where term_zdb_id = oev_evidence_term_zdb_id), oev_pub_zdb_id
     FROM ortholog
     INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
     INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
@@ -356,7 +356,7 @@ UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 UNLOAD TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'
   DELIMITER "	"
   SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
-                  'MGI:' || tmp_mgi.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+                  'MGI:' || tmp_mgi.accession, tmp_gene.accession, (select term_ont_id from term where term_zdb_id = oev_evidence_term_zdb_id), oev_pub_zdb_id
     FROM ortholog
     INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
     INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
