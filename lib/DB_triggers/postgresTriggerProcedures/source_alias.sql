@@ -1,20 +1,17 @@
-drop trigger if exists source_alias_trigger on source_alias;
+DROP TRIGGER IF EXISTS source_alias_trigger
+ON source_alias;
 
-create or replace function source_alias()
-returns trigger as
+CREATE OR REPLACE FUNCTION source_alias()
+  RETURNS trigger AS
 $BODY$
-declare salias_alias text := scrub_char(NEW.salias_alias);
-declare salias_alias_lower text := lower(NEW.salias_alias_lower);
-begin
-
-     NEW.salias_alias = salias_alias;
-
-     NEW.salias_alias_lower = salias_alias_lower;
-     RETURN NEW;
-
-end;
+BEGIN
+  NEW.salias_alias = scrub_char(NEW.salias_alias);
+  NEW.salias_alias_lower = lower(NEW.salias_alias);
+  RETURN NEW;
+END;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger source_alias_trigger after insert or update on source_alias
- for each row
- execute procedure source_alias();
+CREATE TRIGGER source_alias_trigger
+BEFORE INSERT OR UPDATE ON source_alias
+FOR EACH ROW
+EXECUTE PROCEDURE source_alias();
