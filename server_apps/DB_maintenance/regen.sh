@@ -37,7 +37,7 @@ echo "Starting regen_pheno_fast_search at `date`"
 dbaccess -a ${DBNAME} ${TARGETROOT}/server_apps/DB_maintenance/pheno/pheno_term_regen.sql
 
 echo "starting regenExpressionSearchAnatomy at `date`"
-dbaccess -a ${DBNAME} ${TARGETROOT}/server_apps/DB_maintenance/warehouse/regenExpressionSearchAnatomy.sql
+dbaccess -a ${DBNAME} ${TARGETROOT}/server_apps/DB_maintenance/warehouse/expressionMart/regenExpressionSearchAnatomy.sql
 
 echo "do extra update statistics high to try and avoid 710 errors `date`"
 echo 'update statistics high' | dbaccess ${DBNAME}
