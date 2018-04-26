@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # make a base backup 
-/opt/postgres/postgresql/bin/pg_basebackup --wal_method='fetch' --format=t -D /research/zunloads/databases/${HOSTNAME}/base_backups/`date +%Y%m%d`
+/opt/postgres/postgresql/bin/pg_basebackup --wal-method='fetch' --format=t -D /research/zunloads/databases/${HOSTNAME}/base_backups/`date +%Y%m%d`
 
 # compress wal archives, add to data directory.
 cd /research/zunloads/databases/punkt/
