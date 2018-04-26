@@ -10,7 +10,7 @@ select
     ";Name="    || gff_Name    ||
     ";Parent="  || gff_Parent  ||
     ";biotype=" || gff_biotype ||
-    ";zdb_id="  || case tscript_load_id when NULL then "" else mrkr_zdb_id end ||
+    ";zdb_id="  || case when tscript_load_id is NULL then "" else mrkr_zdb_id end ||
     ";Alias="   || gff_ID
     when 'gene' then
     "ID="       || gff_ID      ||

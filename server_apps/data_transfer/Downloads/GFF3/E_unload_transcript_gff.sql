@@ -13,12 +13,12 @@
 unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_drerio_transcript.gff3'  DELIMITER "	"
 select
    gff_seqname,
-   case dblink_acc_num when NULL then gff_source else 'vega' end,
+   case when dblink_acc_num is NULL then gff_source else 'vega' end,
    gff_feature,gff_start,gff_end,gff_score,gff_strand,gff_frame,
     "ID="       || gff_ID      ||
     ";Name="    || nvl(mrkr_name,nvl(gff_name,'')) ||
-    ";Parent="  || case gff_Parent when NULL then "" else gff_Parent end || 
-    case dblink_linked_recid when NULL then "" else (";zdb_id=" || dblink_linked_recid) end ||
+    ";Parent="  || case when gff_Parent is NULL then "" else gff_Parent end ||
+    case when dblink_linked_recid is NULL then "" else (";zdb_id=" || dblink_linked_recid) end ||
     ";Alias="   || gff_ID
  from db_link
   right outer join gff3 on gff_ID = dblink_acc_num

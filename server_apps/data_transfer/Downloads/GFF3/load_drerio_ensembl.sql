@@ -28,7 +28,7 @@ select
    gff_source ,
    gff_feature,gff_start,gff_end,gff_score,gff_strand,gff_frame,
     "ID="       || gff_ID      ||
-    ";Name="    || case gff_Name when NULL then "" else gff_Name end ||
+    ";Name="    || case when gff_Name is NULL then "" else gff_Name end ||
     ";Parent="  || case
     				when gff_Parent IS NULL AND gff_feature != 'gene' AND gff_Name IS NOT NULL then gff_Name
     				when gff_Parent IS NULL AND gff_feature == 'gene' then ''

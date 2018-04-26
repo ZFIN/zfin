@@ -4847,7 +4847,7 @@ and child.term_ontology = 'disease_ontology';
 
             <entity name="pub_simple_status"
                     query="SELECT
-                           zdb_id as pub_zdb_id, CASE pub_completion_date WHEN NULL THEN 'Open' ELSE 'Closed' END as pub_simple_status
+                           zdb_id as pub_zdb_id, CASE WHEN pub_completion_date IS NULL THEN 'Open' ELSE 'Closed' END as pub_simple_status
                            FROM publication
                            UNION
                            SELECT zdb_id as pub_zdb_id, 'Indexed' as pub_simple_status
