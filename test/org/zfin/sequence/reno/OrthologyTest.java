@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.EvidenceCode;
 import org.zfin.orthology.NcbiOtherSpeciesGene;
 import org.zfin.orthology.Ortholog;
@@ -19,6 +20,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
 
 public class OrthologyTest extends AbstractDatabaseTest {
@@ -26,6 +28,7 @@ public class OrthologyTest extends AbstractDatabaseTest {
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
     private static OrthologyRepository orthoRepository = getOrthologyRepository();
+    private static OntologyRepository ontoRepository = getOntologyRepository();
 
     @Test
     // Test that there are Redundancy runs in the database
@@ -39,6 +42,7 @@ public class OrthologyTest extends AbstractDatabaseTest {
         Set<OrthologEvidence> evidences = new HashSet<>();
         OrthologEvidence evidence = new OrthologEvidence();
         evidence.setEvidenceCode(getEvidenceCode("AA"));
+        evidence.setEvidenceTerm(ontoRepository.getTermByOboID("ECO:0000031"));
         evidence.setPublication(publication);
         evidence.setOrtholog(ortho);
         evidences.add(evidence);
