@@ -3,6 +3,9 @@ package org.zfin.construct.presentation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.id.IdentifierGenerationException;
+import org.hibernate.jdbc.ReturningWork;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +35,10 @@ import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -87,7 +94,7 @@ public class ConstructAddController {
         String constructType = request.getParameter("chosenType");
         String constructPrefix = request.getParameter("prefix");
 
-
+        String query = null;
 
 
         List<Marker> markerList = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(constructName);
@@ -163,9 +170,12 @@ public class ConstructAddController {
 
                 //moving construct record to marker table
                 if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-                    InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
+
                     InformixUtil.runInformixProcedure("regen_names_marker", constructZdbID + "");
                 }
+                InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
+
+
                 Marker latestConstruct = mr.getMarkerByID(newConstruct.getZdbID());
 
 
