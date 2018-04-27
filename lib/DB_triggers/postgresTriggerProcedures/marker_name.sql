@@ -9,11 +9,11 @@ declare	mrkr_name_order marker.mrkr_name_order%TYPE := zero_pad(NEW.mrkr_name);
 begin
      
      NEW.mrkr_name = mrkr_name;
-     
-     perform updateAbbrevEqualName (NEW.mrkr_zdb_id, 
+     NEW.mrkr_abbrev = updateAbbrevEqualName (NEW.mrkr_zdb_id, 
      	    			   NEW.mrkr_name, 
 				   NEW.mrkr_type,
      	    			   NEW.mrkr_abbrev);
+     raise notice 'M name: % symbol % ', NEW.mrkr_name, NEW.mrkr_abbrev;
      perform p_check_mrkr_abbrev (NEW.mrkr_name,
      	    			 NEW.mrkr_abbrev,
 				 NEW.mrkr_type);
@@ -31,7 +31,7 @@ end;
 $BODY$ LANGUAGE plpgsql;
 
 
-create trigger marker_name_trigger after update on marker
+create trigger marker_name_trigger before update on marker
  for each row 
  when (OLD.mrkr_name IS DISTINCT FROM NEW.mrkr_name)
  execute procedure marker_name();
