@@ -103,14 +103,39 @@
         <a class='popup-link info-popup-link' href='/ZFIN/help_files/expression_help.html'></a>
         <br/>
         <b>Gene expression in <zfin:name entity="${fish}"/></b>
+        <div class="summary" id="nonEfgExpression">
+        <b>RNA expression</b>
         <c:choose>
-            <c:when test="${geneCentricExpressionDataList != null && fn:length(geneCentricExpressionDataList) > 0 }">
-                <zfin2:expressionData fishZdbID="${fish.zdbID}" expressionDisplays="${geneCentricExpressionDataList}" showCondition="true" />
+            <c:when test="${geneCentricNonEfgExpressionDataList != null && fn:length(geneCentricNonEfgExpressionDataList) > 0 }">
+                <zfin2:expressionData fishZdbID="${fish.zdbID}" expressionDisplays="${geneCentricNonEfgExpressionDataList}" showCondition="true" />
             </c:when>
             <c:otherwise>
                 <span class="no-data-tag">No data available</span>
             </c:otherwise>
         </c:choose>
+        </div>
+        <div class="summary" id="proteinExpression">
+        <b>Protein expression</b>
+        <c:choose>
+            <c:when test="${proteinExpressionDataList != null && fn:length(proteinExpressionDataList) > 0 }">
+                <zfin2:proteinExpressionData fishZdbID="${fish.zdbID}" proteinExpressionDisplays="${proteinExpressionDataList}" />
+            </c:when>
+            <c:otherwise>
+                <span class="no-data-tag">No data available</span>
+            </c:otherwise>
+        </c:choose>
+        </div>
+        <div class="summary" id="efgExpression">
+        <b>Reporter gene expression</b>
+        <c:choose>
+            <c:when test="${geneCentricEfgExpressionDataList != null && fn:length(geneCentricEfgExpressionDataList) > 0 }">
+                <zfin2:expressionData fishZdbID="${fish.zdbID}" expressionDisplays="${geneCentricEfgExpressionDataList}" showCondition="true" />
+            </c:when>
+            <c:otherwise>
+                <span class="no-data-tag">No data available</span>
+            </c:otherwise>
+        </c:choose>
+        </div>
     </div>
 
     <%--// PHENOTYPE --%>
@@ -143,7 +168,9 @@
 <script src="/javascript/table-collapse.js"></script>
 <script>
    jQuery(function () {
-       jQuery('#expression').tableCollapse({label: 'expressed genes'});
+       jQuery('#nonEfgExpression').tableCollapse({label: 'expressed genes'});
+       jQuery('#proteinExpression').tableCollapse({label: 'antibodies'});
+       jQuery('#efgExpression').tableCollapse({label: 'expressed genes'});
        jQuery('#phenotype').tableCollapse({label: 'phenotypes'});
    });
 </script>

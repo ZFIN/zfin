@@ -1466,6 +1466,52 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<String>) query.list();
     }
 
+    public List<ExpressionResult> getNonEfgExpressionResultsByFish (Fish fish) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
+                "      where fishox.fish = :fish " +
+                "        and fishox = xpExp.fishExperiment " +
+                "        and xpRslt.expressionExperiment = xpExp " +
+                "        and xpExp.gene != null" +
+                "        and xpExp.gene.zdbID not like :markerId)";
+        Query query = session.createQuery(hql);
+        query.setParameter("fish", fish);
+        query.setParameter("markerId", "%" + "ZDB-EFG" + "%");
+
+        return (List<ExpressionResult>) query.list();
+    }
+
+    public List<ExpressionResult> getEfgExpressionResultsByFish (Fish fish) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
+                "      where fishox.fish = :fish " +
+                "        and fishox = xpExp.fishExperiment " +
+                "        and xpRslt.expressionExperiment = xpExp " +
+                "        and xpExp.gene != null" +
+                "        and xpExp.gene.zdbID like :markerId)";
+        Query query = session.createQuery(hql);
+        query.setParameter("fish", fish);
+        query.setParameter("markerId", "%" + "ZDB-EFG" + "%");
+
+        return (List<ExpressionResult>) query.list();
+    }
+
+    public List<ExpressionResult> getProteinExpressionResultsByFish (Fish fish) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
+                "      where fishox.fish = :fish " +
+                "        and fishox = xpExp.fishExperiment " +
+                "        and xpRslt.expressionExperiment = xpExp " +
+                "        and xpExp.antibody != null";
+        Query query = session.createQuery(hql);
+        query.setParameter("fish", fish);
+
+        return (List<ExpressionResult>) query.list();
+    }
+
     public List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID) {
         String hql = "select " +
                 "distinct super_term.term_name as super_name " +

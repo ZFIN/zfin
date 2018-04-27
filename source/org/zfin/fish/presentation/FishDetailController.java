@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.expression.presentation.GeneCentricExpressionData;
+import org.zfin.expression.presentation.ProteinExpressionDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.presentation.GenotypeDetailController;
@@ -83,12 +84,17 @@ public class FishDetailController {
 
         // Expression data
         ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
-        List<ExpressionResult> fishExpressionResults = expressionRepository.getExpressionResultsByFish(fish);
+        List<ExpressionResult> fishNonEfgExpressionResults = expressionRepository.getNonEfgExpressionResultsByFish(fish);
+        List<ExpressionResult> fishEfgExpressionResults = expressionRepository.getEfgExpressionResultsByFish(fish);
+        List<ExpressionResult> fishProteinExpressionResults = expressionRepository.getProteinExpressionResultsByFish(fish);
         List<String> fishExpressionFigureIDs = expressionRepository.getExpressionFigureIDsByFish(fish);
         List<String> fishExpressionPublicationIDs = expressionRepository.getExpressionPublicationIDsByFish(fish);
-        List<ExpressionDisplay> fishExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
-        model.addAttribute("geneCentricExpressionDataList", fishExpressionDisplays);
-
+        List<ExpressionDisplay> fishNonEfgExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishNonEfgExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
+        model.addAttribute("geneCentricNonEfgExpressionDataList", fishNonEfgExpressionDisplays);
+        List<ExpressionDisplay> fishEfgExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishEfgExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
+        model.addAttribute("geneCentricEfgExpressionDataList", fishEfgExpressionDisplays);
+        List<ProteinExpressionDisplay> fishProteinExpressionDisplays = ExpressionService.createProteinExpressionDisplays(fish.getZdbID(), fishProteinExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
+        model.addAttribute("proteinExpressionDataList", fishProteinExpressionDisplays);
 
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
         model.addAttribute("fishIsWildtypeWithoutReagents", fish.isWildtypeWithoutReagents());

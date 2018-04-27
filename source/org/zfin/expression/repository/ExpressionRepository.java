@@ -321,6 +321,12 @@ public interface ExpressionRepository {
 
     List<String> getExpressionPublicationIDsByFish(Fish fish);
 
+    List<ExpressionResult> getNonEfgExpressionResultsByFish (Fish fish);
+
+    List<ExpressionResult> getEfgExpressionResultsByFish (Fish fish);
+
+    List<ExpressionResult> getProteinExpressionResultsByFish (Fish fish);
+
     /**
      * Retrieve all expression results for a given Sequenec Targeting Reagent
      *

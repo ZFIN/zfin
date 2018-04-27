@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.antibody.Antibody;
 import org.zfin.datatransfer.microarray.MicroarrayWebserviceJob;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.*;
@@ -712,5 +713,129 @@ public class ExpressionService {
             }
         }
         return list;
+    }
+
+    /**
+     * Create a list of expressionDisplay objects organized by expressed gene.
+     */
+    public static List<ProteinExpressionDisplay> createProteinExpressionDisplays(String initialKey, List<ExpressionResult> expressionResults, List<String> expressionFigureIDs, List<String> expressionPublicationIDs, boolean showCondition) {
+        if (CollectionUtils.isEmpty(expressionResults) ||
+                CollectionUtils.isEmpty(expressionFigureIDs) ||
+                CollectionUtils.isEmpty(expressionPublicationIDs)) {
+            return null;
+        }
+
+        // a map of zdbIDs of antibodies as keys and display objects as values
+        Map<String, ProteinExpressionDisplay> map = new HashMap<>();
+
+        for (ExpressionResult xpResult : expressionResults) {
+            Marker antiGene = xpResult.getExpressionExperiment().getGene();
+            Antibody antibody = xpResult.getExpressionExperiment().getAntibody();
+            if (antibody != null) {
+                FishExperiment fishox = xpResult.getExpressionExperiment().getFishExperiment();
+                Experiment exp = fishox.getExperiment();
+
+                String key = initialKey + antibody.getZdbID();
+
+                if (showCondition && fishox.isStandardOrGenericControl()) {
+                    key += "standard";
+                }
+
+                if (showCondition && exp.isChemical()) {
+                    key += "chemical";
+                }
+
+                Set<Figure> figs = xpResult.getFigures();
+                Set<Figure> qualifiedFigures = new HashSet<>();
+
+                for (Figure fig : figs) {
+                    if (expressionFigureIDs.contains(fig.getZdbID())) {
+                        qualifiedFigures.add(fig);
+                    }
+                }
+
+                GenericTerm term = xpResult.getSuperTerm();
+                Publication pub = xpResult.getExpressionExperiment().getPublication();
+
+                ProteinExpressionDisplay xpDisplay;
+                // if the key not in the map, instantiate a display object and add it to the map
+                // otherwise, get the display object from the map
+                if (!map.containsKey(key)) {
+                    xpDisplay = new ProteinExpressionDisplay(antibody);
+                    xpDisplay.setAntiGene(antiGene);
+                    xpDisplay.setExpressionResults(new ArrayList<>());
+                    xpDisplay.setExperiment(exp);
+                    xpDisplay.setExpressionTerms(new HashSet<>());
+
+                    xpDisplay.getExpressionResults().add(xpResult);
+                    xpDisplay.getExpressionTerms().add(term);
+
+                    xpDisplay.setFigures(new HashSet<>());
+                    xpDisplay.getFigures().addAll(qualifiedFigures);
+
+                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<>();
+                    for (Figure figure : qualifiedFigures) {
+                        Publication publication = figure.getPublication();
+                        if (!figuresPerPub.containsKey(publication)) {
+                            SortedSet<Figure> sortedFigs = new TreeSet<>();
+                            sortedFigs.add(figure);
+                            figuresPerPub.put(publication, sortedFigs);
+                        } else {
+                            figuresPerPub.get(publication).add(figure);
+                        }
+                    }
+
+                    xpDisplay.setFiguresPerPub(figuresPerPub);
+
+                    xpDisplay.setPublications(new HashSet<>());
+                    if (expressionPublicationIDs.contains(pub.getZdbID())) {
+                        xpDisplay.getPublications().add(pub);
+
+                        if (!xpDisplay.noFigureOrFigureWithNoLabel()) {
+                            map.put(key, xpDisplay);
+                        }
+                    }
+                } else {
+                    xpDisplay = map.get(key);
+
+                    if (!xpDisplay.getExpressionTerms().contains(term)) {
+                        xpDisplay.getExpressionResults().add(xpResult);
+                        xpDisplay.getExpressionTerms().add(term);
+                    }
+
+                    (xpDisplay.getExpressionResults()).sort(new ExpressionResultTermComparator());
+
+                    xpDisplay.getFigures().addAll(qualifiedFigures);
+                    if (expressionPublicationIDs.contains(pub.getZdbID())) {
+                        xpDisplay.getPublications().add(pub);
+                    }
+
+                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = xpDisplay.getFiguresPerPub();
+                    for (Figure figure : qualifiedFigures) {
+                        Publication publication = figure.getPublication();
+                        if (!figuresPerPub.containsKey(publication)) {
+                            SortedSet<Figure> sortedFigs = new TreeSet<>();
+                            sortedFigs.add(figure);
+                            xpDisplay.getFiguresPerPub().put(publication, sortedFigs);
+                        } else {
+                            xpDisplay.getFiguresPerPub().get(publication).add(figure);
+                        }
+                    }
+                }
+
+            }
+        }
+
+        List<ProteinExpressionDisplay> proteinExpressionDisplays = new ArrayList<>(map.size());
+
+        if (map.values().size() > 0) {
+            proteinExpressionDisplays.addAll(map.values());
+            Collections.sort(proteinExpressionDisplays);
+            return proteinExpressionDisplays;
+        } else {
+            return null;
+        }
+
+
     }
 }
