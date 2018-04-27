@@ -5,13 +5,16 @@ CREATE OR REPLACE FUNCTION marker_go_term_evidence_before()
   RETURNS trigger AS $BODY$
 BEGIN
   NEW.mrkrgoev_notes = scrub_char(NEW.mrkrgoev_notes);
-  RETURN NEW;
+   RETURN NEW;
+  raise notice 'ZDB %', NEW.mrkrgoev_term_zdb_id;
+
 END;
 $BODY$ LANGUAGE plpgsql;
 
 CREATE TRIGGER marker_go_term_evidence_before_trigger
 BEFORE INSERT OR UPDATE ON marker_go_term_evidence
 FOR EACH ROW EXECUTE PROCEDURE marker_go_term_evidence_before();
+
 
 
 
@@ -35,10 +38,13 @@ BEGIN
   PERFORM p_insert_into_record_attribution_datazdbids(
       NEW.mrkrgoev_mrkr_zdb_id,
       NEW.mrkrgoev_source_zdb_id);
-  RETURN NULL;
+
+  RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 
 CREATE TRIGGER marker_go_term_evidence_after_trigger
 BEFORE INSERT OR UPDATE ON marker_go_term_evidence
 FOR EACH ROW EXECUTE PROCEDURE marker_go_term_evidence_after();
+
+
