@@ -129,8 +129,8 @@ sub sendReport() {
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "$report") || die "cannot open report";
 
-    print MAIL "To: <!--|GENBANK_DAILY_EMAIL|-->\n";
-    print MAIL "Subject: GenBank accession update report\n";
+    print MAIL 'To: <!--|GENBANK_DAILY_EMAIL|-->';
+    print MAIL "\nSubject: GenBank accession update report\n";
     while(my $line = <REPORT>)
     {
       print MAIL $line;
