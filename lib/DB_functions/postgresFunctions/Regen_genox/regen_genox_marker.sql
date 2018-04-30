@@ -1,4 +1,5 @@
-create procedure regen_genox_marker(mrkrZdbId like marker.mrkr_zdb_id)
+create or replace function regen_genox_marker(mrkrZdbId text)
+returns void as $regen_genox_marker$
 
   -- ---------------------------------------------------------------------------------------------
   -- regenerates the marker_zdb_id genox_zdb_id pairs in fast search tables for a given marker.
@@ -20,11 +21,9 @@ create procedure regen_genox_marker(mrkrZdbId like marker.mrkr_zdb_id)
   -- ---------------------------------------------------------------------------------------------
 
 
-  -- crank up the parallelism.
-  set pdqpriority high;
-
+begin
   -- create regen_genox_input_zdb_id_temp, regen_genox_temp
-  execute procedure regen_genox_create_temp_tables();
+  perform regen_genox_create_temp_tables();
 
   -- gather the marker zdbIDs to be processed
   insert into regen_genox_input_zdb_id_temp
@@ -38,4 +37,5 @@ create procedure regen_genox_marker(mrkrZdbId like marker.mrkr_zdb_id)
   -- Move from temp tables to permanent tables
   perform regen_genox_finish_marker();
 
-end procedure;
+end
+$regen_genox_marker$ LANGUAGE plpgsql;
