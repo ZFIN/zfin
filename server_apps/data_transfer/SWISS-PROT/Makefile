@@ -54,9 +54,6 @@ $(HTTP_DATA_TRANSFER_DIR) :
 
 # ---------------  Misc Targets  ----------------------------------------
 
-runpre:
-	$(TARGETDIR)/runUniprotPreProd.sh
-
 run:
 	$(TARGETDIR)/loadsp.pl
 
