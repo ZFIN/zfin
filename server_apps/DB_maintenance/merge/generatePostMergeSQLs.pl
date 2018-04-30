@@ -54,10 +54,36 @@ validateZDBID($recordToBeMergedInto, 'zdb_active_data', 'zactvd_zdb_id');
 ## when updating some tables, inserting into record_attribution table will be triggered
 cleanupRecordAttributionTable($recordToBeMergedInto, $recordToBeDeleted);          
 
+## INF-3371
+if ($type1 eq 'ALT') {
+  my $mutagenRecordToBeMergedInto;
+  my $mutagenRecordToBeDeleted;
+  my $sqlGetUnspecifiedFeatureAssay = "select featassay_mutagen from feature_assay where featassay_feature_zdb_id = '$recordToBeMergedInto' and featassay_mutagen = 'not specified';";
+  my $curGetUnspecifiedFeatureAssay = $dbh->prepare_cached($sqlGetUnspecifiedFeatureAssay);
+  $curGetUnspecifiedFeatureAssay->execute();
+  $curGetUnspecifiedFeatureAssay->bind_columns(\$mutagenRecordToBeMergedInto);
+  my $ctUnspecifiedMutagen = 0;
+  while ($curGetUnspecifiedFeatureAssay->fetch()) { $ctUnspecifiedMutagen++; }
+  $curGetUnspecifiedFeatureAssay->finish();
+
+  my $sqlGetSpecifiedFeatureAssay = "select featassay_mutagen from feature_assay where featassay_feature_zdb_id = '$recordToBeDeleted' and featassay_mutagen != 'not specified';";
+  my $curGetSpecifiedFeatureAssay = $dbh->prepare_cached($sqlGetSpecifiedFeatureAssay);
+  $curGetSpecifiedFeatureAssay->execute();
+  $curGetSpecifiedFeatureAssay->bind_columns(\$mutagenRecordToBeDeleted);
+  my $ctSpecifiedMutagen = 0;
+  while ($curGetSpecifiedFeatureAssay->fetch()) { $ctSpecifiedMutagen++; }
+  $curGetSpecifiedFeatureAssay->finish();
+  if ($ctSpecifiedMutagen > 0 && $ctUnspecifiedMutagen > 0) {
+    my $sqlUpdateFeatureAssay = "update feature_assay set featassay_feature_zdb_id = '$recordToBeMergedInto' where featassay_feature_zdb_id = '$recordToBeDeleted';";
+    $mergeSQLs{$sqlUpdateFeatureAssay} = 9;
+  }
+}
+
 my $markerAbbrevToBeDeleted;
 my $markerNameToBeDeleted;
 my $markerAbbrevMergedInto;
 my $markerNameMergedInto;
+
 if ($type1 eq 'GENE' || $type1 eq 'MRPHLNO' || $type1 eq 'CRISPR' || $type1 eq 'TALEN') {
   my $sqlGetMarkerInfoForToBeDeleted = "select mrkr_abbrev, mrkr_name from marker where mrkr_zdb_id = '$recordToBeDeleted';";
   my $curGetMarkerInfoForToBeDeleted = $dbh->prepare_cached($sqlGetMarkerInfoForToBeDeleted);
@@ -184,6 +210,7 @@ sub validateZDBID {
   die "\n\n$zdbID is not found at ZFIN\n\n" if $ctRecords == 0;
   
 } # end of validateZDBID function
+
 
 
 
