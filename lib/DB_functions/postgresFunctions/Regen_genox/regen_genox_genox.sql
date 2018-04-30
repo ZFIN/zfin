@@ -1,5 +1,5 @@
-create procedure regen_genox_genox(genoxZdbId like fish_experiment.genox_zdb_id)
-
+create or replace function regen_genox_genox(genoxZdbId text)
+returns void as $regen_genox_genox$
   -- ---------------------------------------------------------------------------------------------
   -- regenerates the marker_zdb_id genox_zdb_id pairs in fast search tables for a given marker.
   -- here the marker types are restricted to gene and MO
@@ -19,12 +19,10 @@ create procedure regen_genox_genox(genoxZdbId like fish_experiment.genox_zdb_id)
   --     Transaction has not been committed or rolled back.
   -- ---------------------------------------------------------------------------------------------
 
-
-  -- crank up the parallelism.
-  set pdqpriority high;
+begin 
 
   -- create regen_genox_input_zdb_id_temp, regen_genox_temp
-  execute procedure regen_genox_create_temp_tables();
+  perform regen_genox_create_temp_tables();
 
   -- gather the genox zdbIDs to be processed
   insert into regen_genox_input_zdb_id_temp
@@ -33,9 +31,10 @@ create procedure regen_genox_genox(genoxZdbId like fish_experiment.genox_zdb_id)
       ( genoxZdbId );
 
   -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
-  execute procedure regen_genox_process_genox();
+  perform regen_genox_process_genox();
 
   -- Move from temp tables to permanent tables
-  execute procedure regen_genox_finish_marker();
+  perform regen_genox_finish_marker();
 
-end procedure;
+end
+$regen_genox_genox$ LANGUAGE plpgsql;

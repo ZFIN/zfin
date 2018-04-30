@@ -22,7 +22,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions/postgresFunctions/Regen_genox
 
-ZDB_STATS = regen_genox.sql regen_genox_create_temp_tables.sql regen_genox_process_marker.sql regen_genox_finish_marker.sql regen_genofig_create_temp_tables.sql regen_genofig_process.sql regen_genofig_finish.sql regen_genox_process_genox.sql regen_genox_fish_experiment.sql regen_genox_finish_genox.sql regen_genox_marker.sql regen_genofig_phenox.sql
+ZDB_STATS = regen_genox.sql regen_genox_create_temp_tables.sql regen_genox_process_marker.sql regen_genox_finish_marker.sql regen_genofig_create_temp_tables.sql regen_genofig_process.sql regen_genofig_finish.sql regen_genox_process_genox.sql regen_genox_fish_experiment.sql regen_genox_finish_genox.sql regen_genox_marker.sql regen_genofig_phenox.sql regen_genox_genox.sql
 
 STATIC_PROCS  = $(ZDB_STATS)
 
