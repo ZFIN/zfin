@@ -491,6 +491,17 @@ $curNonRootCelComp->finish();
 
 $curDeleteMrkrGoEvd->finish();
 
+# regen_names
+my $regenNames = "select regen_names_marker(?);";
+my $curRegenNames = $dbh->prepare($regenNames);
+$curRegenNames->execute($recordToBeMergedInto);
+$curRegenNames->finish();
+
+# regne_genox
+my $regenGenox = "select regen_genox_marker(?);";
+my $curRegenGenox = $dbh->prepare($regenGenox);
+$curRegenGenox->execute($recordToBeMergedInto);
+$curRegenGenox->finish();
 
 ## delete from zdb_replaced_data table
 my $sqlDeleteReplacedData = "delete from zdb_replaced_data where zrepld_old_zdb_id = '$recordToBeDeleted';";
