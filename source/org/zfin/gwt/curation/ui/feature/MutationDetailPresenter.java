@@ -99,9 +99,10 @@ public class MutationDetailPresenter {
                     if (!dto.getTerm().getOboID().equals("SO:0000319"))
                         displayName += " [" + dto.getAbbreviation() + "]";
 
-                        featureView.mutationDetailProteinView.proteinWTTermList.addItem(displayName, dto.getTerm().getOboID());
+
 
                     featureView.mutationDetailProteinView.proteinMutatedTerm.addItem(displayName, dto.getTerm().getOboID());
+                    featureView.mutationDetailProteinView.proteinWTTermList.addItem(displayName, dto.getTerm().getOboID());
                     index++;
                 }
             }
