@@ -8,5 +8,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1097/YinYang/CUR-757.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1097/YinYang/DLOAD-531.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1097/YinYang/INF-3462.sql" />
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1097/YinYang/ZFIN-5912.sql" />
 </databaseChangeLog>

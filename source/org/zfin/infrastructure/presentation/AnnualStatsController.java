@@ -27,7 +27,13 @@ public class AnnualStatsController {
         for (Date date : dates) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
-            String year = cal.get(Calendar.YEAR) - 1 + "";
+            int yearNum = cal.get(Calendar.YEAR);
+            String year = null;
+            if (yearNum > 2015) {
+                year = yearNum - 1 + "";
+            } else {
+                year = yearNum + "";
+            }
             if (!yearStrings.contains(year)) {
                 yearStrings.add(year);
             }
@@ -48,9 +54,10 @@ public class AnnualStatsController {
         for (AnnualStats stat : annualStatsList) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(stat.getDate());
+            int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH);
             int day = cal.get(Calendar.DAY_OF_MONTH);
-            if (month == 0 && day == 1 && !stat.getType().equals("Full length cDNA clones (ZGC)")) {
+            if (year != 2015 && month == 0 && day == 1 && !stat.getType().equals("Full length cDNA clones (ZGC)")) {
                 AnnualStatsDisplay annualStatsDisplay = new AnnualStatsDisplay();
                 int ct = stat.getCount();
                 if (ct == 0) {
@@ -153,29 +160,34 @@ public class AnnualStatsController {
                     annualStatsDisplay.setOrder(0);
                     annualStatsDisplay.setAnnualStats(stat);
                     xpPhenoStats.add(annualStatsDisplay);
+                } else if (stat.getType().equals("Gene expression experiments")) {
+                    annualStatsDisplay.setCategory("Gene Expression Experiments");
+                    annualStatsDisplay.setOrder(1);
+                    annualStatsDisplay.setAnnualStats(stat);
+                    xpPhenoStats.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Phenotype statements")) {
                     annualStatsDisplay.setCategory("Phenotype Annotations");
-                    annualStatsDisplay.setOrder(1);
+                    annualStatsDisplay.setOrder(2);
                     annualStatsDisplay.setAnnualStats(stat);
                     xpPhenoStats.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Images")) {
                     annualStatsDisplay.setCategory("Images");
-                    annualStatsDisplay.setOrder(2);
+                    annualStatsDisplay.setOrder(3);
                     annualStatsDisplay.setAnnualStats(stat);
                     xpPhenoStats.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Anatomical structures")) {
                     annualStatsDisplay.setCategory("Anatomical Structures");
-                    annualStatsDisplay.setOrder(3);
+                    annualStatsDisplay.setOrder(4);
                     annualStatsDisplay.setAnnualStats(stat);
                     xpPhenoStats.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Genes with expression data")) {
                     annualStatsDisplay.setCategory("Genes with Expression Data");
-                    annualStatsDisplay.setOrder(4);
+                    annualStatsDisplay.setOrder(5);
                     annualStatsDisplay.setAnnualStats(stat);
                     xpPhenoStats.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Genes with a phenotype")) {
                     annualStatsDisplay.setCategory("Genes with Curated Phenotype");
-                    annualStatsDisplay.setOrder(5);
+                    annualStatsDisplay.setOrder(6);
                     annualStatsDisplay.setAnnualStats(stat);
                     xpPhenoStats.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Mapped markers")) {
