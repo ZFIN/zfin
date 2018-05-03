@@ -595,13 +595,13 @@ public class HibernateMutantRepository implements MutantRepository {
 
     @Override
     public List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects () {
-        final String queryString = "select 'ZFIN:'||mfs_mrkr_zdb_id, psg_short_name, zdb_id, 'PMID:'||accession_no" +
+        final String queryString = "select mfs_mrkr_zdb_id, psg_short_name, zdb_id, nvl(accession_no,'')" +
                 "  from mutant_fast_search, phenotype_source_generated, phenotype_observation_generated," +
                 "        figure, publication" +
                 "  where mfs_genox_zdb_id = pg_genox_zdb_id" +
                 "  and pg_id = psg_pg_id" +
                 "  and pg_fig_zdb_id = fig_zdb_id" +
-                "  and fig_source_zdb_id = zdb_id) ";
+                "  and fig_source_zdb_id = zdb_id";
         final Query query = HibernateUtil.currentSession().createSQLQuery(queryString);
 
         List<Object[]> phenos = query.list();

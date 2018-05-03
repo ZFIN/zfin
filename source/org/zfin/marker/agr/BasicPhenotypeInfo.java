@@ -48,6 +48,7 @@ public class BasicPhenotypeInfo extends AbstractScriptWrapper {
     public AllPhenotypeDTO getBasicPhenotypeInfo(int numberOrRecords) {
         List<BasicPhenotypeDTO> basicPhenoDTOList = getMutantRepository().getBasicPhenotypeDTOObjects();
 
+
         AllPhenotypeDTO allPhenotypeDTO = new AllPhenotypeDTO();
         allPhenotypeDTO.setPhenotypeList(basicPhenoDTOList);
         String dataProvider = "ZFIN";
