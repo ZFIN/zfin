@@ -47,7 +47,17 @@ public class BasicPhenotypeInfo extends AbstractScriptWrapper {
 
     public AllPhenotypeDTO getBasicPhenotypeInfo(int numberOrRecords) {
         List<BasicPhenotypeDTO> basicPhenoDTOList = getMutantRepository().getBasicPhenotypeDTOObjects();
-
+        basicPhenoDTOList.forEach((BasicPhenotypeDTO basicPhenoItem) -> {
+                    if (basicPhenoItem.getPubMedId() != null && !basicPhenoItem.getPubMedId().isEmpty()) {
+                        basicPhenoItem.setPubMedId("PMID:" + basicPhenoItem.getPubMedId());
+                    }
+                    else {
+                        basicPhenoItem.setPubMedId(null);
+                    }
+                    basicPhenoItem.setObjectId(DataProvider.ZFIN + ":" + basicPhenoItem.getObjectId());
+                    basicPhenoItem.setPubModId(DataProvider.ZFIN + ":" + basicPhenoItem.getPubModId());
+                }
+        );
 
         AllPhenotypeDTO allPhenotypeDTO = new AllPhenotypeDTO();
         allPhenotypeDTO.setPhenotypeList(basicPhenoDTOList);
