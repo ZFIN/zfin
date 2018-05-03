@@ -158,8 +158,10 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
         String dataProvider = "ZFIN";
         List<String> pages = new ArrayList<>();
         pages.add("homepage");
+        List<DataProviderDTO> dpList = new ArrayList<>();
         DataProviderDTO dp = new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages));
-        MetaDataDTO meta = new MetaDataDTO(dp);
+        dpList.add(dp);
+        MetaDataDTO meta = new MetaDataDTO(dpList);
         allGeneDTO.setMetaData(meta);
         return allGeneDTO;
     }
