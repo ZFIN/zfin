@@ -164,7 +164,9 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         strDiseaseDto.setObjectName(abbreviation);
         List<String> pages = new ArrayList<>();
         pages.add("homepage");
-        strDiseaseDto.setDataProvider(new DataProviderDTO("curated", new CrossReferenceDTO("ZFIN", "ZFIN", pages)));
+        List<DataProviderDTO> dpList = new ArrayList<>();
+        dpList.add(new DataProviderDTO("curated", new CrossReferenceDTO("ZFIN", "ZFIN", pages)));
+        strDiseaseDto.setDataProvider(dpList);
         strDiseaseDto.setDoid(disease.getOboID());
         return strDiseaseDto;
     }

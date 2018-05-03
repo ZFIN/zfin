@@ -7,10 +7,11 @@ import org.zfin.infrastructure.ActiveData;
 import org.zfin.util.JsonDateSerializer;
 
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DiseaseDTO extends ZfinDTO {
+public class DiseaseDTO {
 
     @JsonProperty("DOid")
     private String doid;
@@ -18,7 +19,7 @@ public class DiseaseDTO extends ZfinDTO {
     private String objectName;
     @JsonSerialize(using = JsonDateSerializer.class)
     private GregorianCalendar dateAssigned = new GregorianCalendar();
-    private DataProviderDTO dataProvider;
+    private List<DataProviderDTO> dataProviderList;
     private EvidenceDTO evidence;
     private Set<ExperimentalConditionDTO> experimentalConditions;
     private RelationshipDTO objectRelation;
@@ -37,7 +38,7 @@ public class DiseaseDTO extends ZfinDTO {
 
     public void setObjectId(String objectId) {
         if (ActiveData.validateActiveData(objectId))
-            this.objectId = ZFIN;
+            this.objectId = "ZFIN:";
         this.objectId += objectId;
     }
 
@@ -57,12 +58,12 @@ public class DiseaseDTO extends ZfinDTO {
         this.objectRelation = objectRelation;
     }
 
-    public DataProviderDTO getDataProvider() {
-        return dataProvider;
+    public List<DataProviderDTO> getDataProvider() {
+        return dataProviderList;
     }
 
-    public void setDataProvider(DataProviderDTO dataProvider) {
-        this.dataProvider = dataProvider;
+    public void setDataProvider(List<DataProviderDTO> dataProviderList) {
+        this.dataProviderList = dataProviderList;
     }
 
     public EvidenceDTO getEvidence() {
