@@ -8,24 +8,24 @@ import java.util.GregorianCalendar;
 public class MetaDataDTO {
 
     private GregorianCalendar dateProduced = new GregorianCalendar();
-    private String dataProvider;
-
-    public MetaDataDTO(String dataProvider) {
-        this.dataProvider = dataProvider;
-    }
+    private DataProviderDTO dataProvider;
 
     @JsonSerialize(using = JsonDateSerializer.class)
     public GregorianCalendar getDateProduced() {
         return dateProduced;
     }
 
+    public MetaDataDTO(DataProviderDTO dataProvider) {
+        this.dataProvider = dataProvider;
+    }
 
-    public String getDataProvider() {
+    public DataProviderDTO getDataProvider() {
         return dataProvider;
     }
 
-    public void setDataProvider(String dataProvider) {
+    public void setDataProvider(DataProviderDTO dataProvider) {
         this.dataProvider = dataProvider;
     }
+
 }
 

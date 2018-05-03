@@ -4,18 +4,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class AllGeneDTO {
+public class AllPhenotypeDTO {
+
 
     @JsonProperty("data")
-    private List<GeneDTO> genes;
+    private List<BasicPhenotypeDTO> phenotypeList;
     private MetaDataDTO metaData;
 
-    public List<GeneDTO> getGenes() {
-        return genes;
+    public List<BasicPhenotypeDTO> getPhenotypeList() {
+        return phenotypeList;
     }
 
-    public void setGenes(List<GeneDTO> genes) {
-        this.genes = genes;
+    public void setPhenotypeList(List<BasicPhenotypeDTO> phenotypeList) {
+        this.phenotypeList = phenotypeList;
     }
 
     public MetaDataDTO getMetaData() {

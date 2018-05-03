@@ -48,7 +48,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
 
 //Object to JSON in String
     String jsonInString = writer.writeValueAsString(allAlleleDTO);
-    try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.0_1_allele.json"))) {
+    try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.3_1_allele.json"))) {
       out.print(jsonInString);
     }
   }
@@ -62,6 +62,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                     feature -> {
                       AlleleDTO dto = new AlleleDTO();
                       dto.setSymbol(feature.getName());
+                      dto.setSymbolText(feature.getName());
                       dto.setPrimaryId(feature.getZdbID());
                       Marker gene = getFeatureRepository().getSingleAllelicGene(feature.getZdbID());
                       dto.setGene("ZFIN:" + gene.getZdbID());
@@ -89,9 +90,14 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                       return dto;
                     })
             .collect(Collectors.toList());
+
     AllAlleleDTO allAlleleDTO = new AllAlleleDTO();
     allAlleleDTO.setAlleles(allAlleleDTOList);
-    MetaDataDTO meta = new MetaDataDTO("ZFIN");
+    String dataProvider = "ZFIN";
+    List<String> pages = new ArrayList<>();
+    pages.add("homepage");
+    DataProviderDTO dp = new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages));
+    MetaDataDTO meta = new MetaDataDTO(dp);
     allAlleleDTO.setMetaData(meta);
     return allAlleleDTO;
   }

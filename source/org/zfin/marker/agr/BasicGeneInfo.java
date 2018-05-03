@@ -51,7 +51,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(allGeneDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.0_1_BGI.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.3_1_BGI.json"))) {
             out.print(jsonInString);
         }
     }
@@ -155,7 +155,11 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                 .collect(Collectors.toList());
         AllGeneDTO allGeneDTO = new AllGeneDTO();
         allGeneDTO.setGenes(allGeneDTOList);
-        MetaDataDTO meta = new MetaDataDTO("ZFIN");
+        String dataProvider = "ZFIN";
+        List<String> pages = new ArrayList<>();
+        pages.add("homepage");
+        DataProviderDTO dp = new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages));
+        MetaDataDTO meta = new MetaDataDTO(dp);
         allGeneDTO.setMetaData(meta);
         return allGeneDTO;
     }

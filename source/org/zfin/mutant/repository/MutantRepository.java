@@ -8,6 +8,7 @@ import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
+import org.zfin.marker.agr.BasicPhenotypeDTO;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -157,6 +158,7 @@ public interface MutantRepository {
 
     int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence);
 
+    List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects ();
     List<STRMarkerSequence> getSequenceTargetingReagentsWithMarkerRelationships();
 
     /**
@@ -205,6 +207,7 @@ public interface MutantRepository {
      * @return list of phenotype statement objects
      */
     List<PhenotypeStatementWarehouse> getPhenotypeStatementsByGenotype(Genotype genotype);
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementsByFishExperiment(FishExperiment fishExperiment);
 
     void runFeatureNameFastSearchUpdate(Feature feature);
 
@@ -511,5 +514,6 @@ public interface MutantRepository {
     List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords);
 
     List<GeneGenotypeExperiment> getGeneDiseaseAnnotationModels(int numberOfRecords);
+    List<GeneGenotypeExperiment> getGeneFishWithPhenotypes(int numberOfRecords);
 }
 
