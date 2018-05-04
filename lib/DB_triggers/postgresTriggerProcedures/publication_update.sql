@@ -1,7 +1,7 @@
-DROP TRIGGER IF EXISTS publication_trigger
+DROP TRIGGER IF EXISTS publication_update_trigger
 ON publication;
 
-CREATE OR REPLACE FUNCTION publication()
+CREATE OR REPLACE FUNCTION publication_update()
   RETURNS trigger AS $$
   BEGIN
     NEW.title = scrub_char(NEW.title);
@@ -13,7 +13,6 @@ CREATE OR REPLACE FUNCTION publication()
     NEW.pub_authors_lower = lower(NEW.authors);
     NEW.pub_pages = scrub_char(NEW.pub_pages);
     NEW.pub_mini_ref = scrub_char(get_pub_mini_ref(NEW.zdb_id));
-    NEW.pub_can_show_images = get_pub_default_permissions(NEW.pub_jrnl_zdb_id);
     NEW.keywords = scrub_char(NEW.keywords);
     NEW.pub_acknowledgment = scrub_char(NEW.pub_acknowledgment);
     NEW.pub_volume = scrub_char(NEW.pub_volume);
@@ -23,9 +22,9 @@ CREATE OR REPLACE FUNCTION publication()
 $$ LANGUAGE plpgsql;
 
 
-CREATE TRIGGER publication_trigger
-BEFORE INSERT  ON publication
+CREATE TRIGGER publication_update_trigger
+BEFORE  UPDATE ON publication
 FOR EACH ROW
-EXECUTE PROCEDURE publication();
+EXECUTE PROCEDURE publication_update();
 
 
