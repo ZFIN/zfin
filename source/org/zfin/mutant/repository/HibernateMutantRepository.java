@@ -624,6 +624,9 @@ public class HibernateMutantRepository implements MutantRepository {
             basicPheno.setPubModId(basicPhenoObjects[2].toString());
             basicPheno.setPubMedId(basicPhenoObjects[3].toString());
             basicPhenos.add(basicPheno);
+        }
+
+        return basicPhenos;
     }
 
 
