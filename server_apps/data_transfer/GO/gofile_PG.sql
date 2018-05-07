@@ -73,7 +73,7 @@ insert into tmp_go (mv_zdb_id,
 select mrkrgoev_zdb_id,
 				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(substring(term_ontology from 1 for 1)), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by,,goid3tmp,lower(szm_term_name),proteinid
+				upper(substring(term_ontology from 1 for 1)), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid
 			   from marker_go_term_evidence
 			   join marker on mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
 			   join term on mrkrgoev_term_zdb_id = term_zdb_id
