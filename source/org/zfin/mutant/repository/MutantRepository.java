@@ -159,6 +159,8 @@ public interface MutantRepository {
     int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence);
 
     List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects();
+    List<BasicPhenotypeDTO> getBasicAllelePhenotypeDTOObjects();
+
     List<STRMarkerSequence> getSequenceTargetingReagentsWithMarkerRelationships();
 
     /**
