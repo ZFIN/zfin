@@ -59,7 +59,21 @@ public class BasicPhenotypeInfo extends AbstractScriptWrapper {
                 }
         );
 
+        List<BasicPhenotypeDTO> basicPhenoAleleDTOList = getMutantRepository().getBasicAllelePhenotypeDTOObjects();
+        basicPhenoAleleDTOList.forEach((BasicPhenotypeDTO basicAllelePhenoItem) -> {
+                    if (basicAllelePhenoItem.getPubMedId() != null && !basicAllelePhenoItem.getPubMedId().isEmpty()) {
+                        basicAllelePhenoItem.setPubMedId("PMID:" + basicAllelePhenoItem.getPubMedId());
+                    }
+                    else {
+                        basicAllelePhenoItem.setPubMedId(null);
+                    }
+                    basicAllelePhenoItem.setObjectId(DataProvider.ZFIN + ":" + basicAllelePhenoItem.getObjectId());
+                    basicAllelePhenoItem.setPubModId(DataProvider.ZFIN + ":" + basicAllelePhenoItem.getPubModId());
+                }
+        );
+
         AllPhenotypeDTO allPhenotypeDTO = new AllPhenotypeDTO();
+        basicPhenoDTOList.addAll(basicPhenoAleleDTOList);
         allPhenotypeDTO.setPhenotypeList(basicPhenoDTOList);
         String dataProvider = "ZFIN";
         List<String> pages = new ArrayList<>();

@@ -18,7 +18,12 @@ public class CrossReferenceDTO {
 
     public CrossReferenceDTO(String dataProvider, String localID, List<String> pages) {
         this.dataProvider = dataProvider;
-        this.id = dbNameMap.get(dataProvider) + ":" + localID;
+        if (dataProvider == localID) {
+            this.id = dbNameMap.get(dataProvider);
+        }
+        else {
+            this.id = dbNameMap.get(dataProvider) + ":" + localID;
+        }
         this.pages = pages;
         if (!dbNameMap.keySet().contains(dataProvider))
             throw new RuntimeException("Could not find external DB " + dataProvider);
