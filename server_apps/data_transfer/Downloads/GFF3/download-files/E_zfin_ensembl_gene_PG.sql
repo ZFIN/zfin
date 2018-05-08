@@ -35,6 +35,7 @@ select distinct
 	'.' frame,
 	'gene_id=' || gene.mrkr_zdb_id
 	   ||';Name=' || gene.mrkr_abbrev
+           ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
 	   || ';so_term_name=' || szm_term_name
 	   || ';curie=' || 'ZFIN:' || mrkr_zdb_id as id_name,
 	gene.mrkr_zdb_id alias
@@ -351,6 +352,7 @@ select
 	'.'::text frame,
 		'gene_id=' || gene.mrkr_zdb_id
 	   ||';Name=' || gene.mrkr_abbrev
+	   ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
 	   || ';so_term_name=' || szm_term_name
 	   || ';curie=' || 'ZFIN:' || mrkr_zdb_id as id_name,
 	gene.mrkr_zdb_id alias
