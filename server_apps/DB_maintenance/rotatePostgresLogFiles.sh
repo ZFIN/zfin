@@ -1,17 +1,27 @@
-#!/bin/bash
+#!/bin/tcsh                                                                                          
 
+set pth=/opt/zfin/postgres_wal/base_backups
+set dirname=`date +"%Y.%m.%d.1"`
 
-mkdir opt/zfin/postgres_wal/base_backups/`date +%Y%m%d`
+# increment until we get name which has not been taken                                               
+while ( -d $pth/$dirname )
+        set z=$dirname:e
+        set y=$dirname:r
+@ x = $z + 1
+        set dirname=$y.$x
+end
 
-# make a base backup 
-/opt/postgres/postgresql/bin/pg_basebackup --wal-method='fetch' --format=t -D /opt/zfin/postgres_wal/base_backups/`date +%Y%m%d`
+mkdir $pth/$dirname
 
-# compress wal archives, add to data directory.
+# make a base backup                                                                                 
+/opt/postgres/postgresql/bin/pg_basebackup --wal-method='fetch' --format=t -D $pth/$dirname
+
+# compress wal archives, add to data directory.                                                      
 cd /opt/zfin/postgres_wal/
 tar -cf archives.tar wal_archive
-mv archives.tar /opt/zfin/postgres_wal/base_backups/`date +%Y%m%d`
+mv archives.tar $pth/$dirname
 
-# delete WAL log archive files older than 3 days (assumes the base backup happens nightly)
+# delete WAL log archive files older than 3 days (assumes the base backup happens nightly)           
 
 cd /opt/zfin/postgres_wal/wal_archive
 find -mtime +2 -exec rm {} \;
