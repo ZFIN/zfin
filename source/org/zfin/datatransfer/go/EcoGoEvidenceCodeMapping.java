@@ -23,6 +23,7 @@ public class EcoGoEvidenceCodeMapping {
         mapping.put("ECO:0000316", "IGI");
         mapping.put("ECO:0000270", "IEP");
         mapping.put("ECO:0000021", "IPI");
+        mapping.put("ECO:0000353", "IPI");
         mapping.put("ECO:0000304", "TAS");
         mapping.put("ECO:0000303", "NAS");
         mapping.put("ECO:0000305", "IC");
