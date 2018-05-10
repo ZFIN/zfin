@@ -26,6 +26,5 @@ mv $dirname.archives.tar $pth/$dirname
 cd /opt/zfin/postgres_wal/wal_archive
 find -mtime +2 -exec rm {} \;
 
-cd /opt/postgres/data $pth/$dirname/
 tar -cf /opt/postgres/data $pth/$dirname/$dirname.filesytem.tar
-gzip $dirname.filesytem.tar
+gzip $pth/$dirname/$dirname.filesytem.tar
