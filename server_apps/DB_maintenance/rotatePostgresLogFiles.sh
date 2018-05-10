@@ -19,12 +19,13 @@ mkdir $pth/$dirname
 # compress wal archives, add to data directory.                                                      
 cd /opt/zfin/postgres_wal/
 tar -cf $dirname.archives.tar wal_archive
-mv $dirname.archives.tar $pth/$dirname
+gzip $dirname.archives.tar
+mv $dirname.archives.tar.gz $pth/$dirname
+
+
+tar -cf $pth/$dirname/$dirname.filesytem.tar /opt/postgres/data
+gzip $pth/$dirname/$dirname.filesytem.tar
 
 # delete WAL log archive files older than 3 days (assumes the base backup happens nightly)           
-
 cd /opt/zfin/postgres_wal/wal_archive
 find -mtime +2 -exec rm {} \;
-
-tar -cf /opt/postgres/data $pth/$dirname/$dirname.filesytem.tar
-gzip $pth/$dirname/$dirname.filesytem.tar
