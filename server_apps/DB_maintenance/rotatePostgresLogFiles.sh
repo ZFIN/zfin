@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+mkdir opt/zfin/postgres_wal/base_backups/`date +%Y%m%d`
+
 # make a base backup 
 /opt/postgres/postgresql/bin/pg_basebackup --wal-method='fetch' --format=t -D /opt/zfin/postgres_wal/base_backups/`date +%Y%m%d`
 
