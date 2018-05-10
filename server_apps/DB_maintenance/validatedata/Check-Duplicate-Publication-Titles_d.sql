@@ -82,7 +82,9 @@ WHERE LOWER(title) IN (
                          'ZDB-PUB-170722-2',
                          'ZDB-PUB-081029-1',
                          'ZDB-PUB-150404-8',
-                         'ZDB-PUB-170825-6')
+                         'ZDB-PUB-170825-6',
+                         'ZDB-PUB-080331-15',
+                          'ZDB-PUB-080401-1')
          AND jrnl_abbrev <> 'ZFIN Direct Data Submission'
          AND jrnl_zdb_id = pub_jrnl_zdb_id
   GROUP  BY 1
