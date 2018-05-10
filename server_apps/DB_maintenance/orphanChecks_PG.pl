@@ -74,12 +74,18 @@ while ($curOrphanData->fetch()) {
   $curCheck->finish();
   
   if ($ctStillThere > 0) {
-    $ctPrev++;
-    $sqlDeleteOrphData = "delete from zdb_orphan_data where zorphand_zdb_id = '$orphanId';";
-    print PREVORPH "$sqlDeleteOrphData\n";
-    $curDeleteOrphData = $dbh->prepare($sqlDeleteOrphData);
-    $curDeleteOrphData->execute();
-    $curDeleteOrphData->finish();
+     $ctPrev++;
+     $sqlDeleteOrphData = "delete from zdb_orphan_data where zorphand_zdb_id = '$orphanId';";
+     print PREVORPH "$sqlDeleteOrphData\n";
+     $curDeleteOrphData = $dbh->prepare($sqlDeleteOrphData);
+     $curDeleteOrphData->execute();
+     $curDeleteOrphData->finish();
+  } else {
+     $sqlDeleteActiveData = "delete from zdb_active_data where zactvd_zdb_id = '$orphanId';";
+     print PREVORPH "$sqlDeleteActiveData\n";
+     $curDeleteActiveData = $dbh->prepare($sqlDeleteActiveData);
+     $curDeleteActiveData->execute();
+     $curDeleteActiveData->finish();  
   }
 
 }
@@ -103,12 +109,18 @@ while ($sqlOrphanDataS->fetch()) {
   $curCheck->finish();
   
   if ($ctStillThere > 0) {
-    $ctPrev++;
-    $sqlDeleteOrphSrc = "delete from zdb_orphan_source where zorphans_zdb_id = '$orphanIdS';";
-    print PREVORPH "$sqlDeleteOrphSrc\n";
-    $curDeleteOrphSrc = $dbh->prepare($sqlDeleteOrphSrc);
-    $curDeleteOrphSrc->execute();
-    $curDeleteOrphSrc->finish();
+     $ctPrev++;
+     $sqlDeleteOrphSrc = "delete from zdb_orphan_source where zorphans_zdb_id = '$orphanIdS';";
+     print PREVORPH "$sqlDeleteOrphSrc\n";
+     $curDeleteOrphSrc = $dbh->prepare($sqlDeleteOrphSrc);
+     $curDeleteOrphSrc->execute();
+     $curDeleteOrphSrc->finish();
+  } else {
+     $sqlDeleteActiveSrc = "delete from zdb_active_source where zactvs_zdb_id = '$orphanId';";
+     print PREVORPH "$sqlDeleteActiveSrc\n";
+     $curDeleteActiveSrc = $dbh->prepare($sqlDeleteActiveSrc);
+     $curDeleteActiveSrc->execute();
+     $curDeleteActiveSrc->finish();  
   }
 
 }
@@ -233,5 +245,6 @@ $now_string = localtime;
 print "\nEnd at $now_string \n\n";
 
 exit;
+
 
 
