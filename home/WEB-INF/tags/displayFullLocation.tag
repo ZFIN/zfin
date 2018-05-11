@@ -4,7 +4,7 @@
 <%@ attribute name="hideLink" required="false" type="java.lang.Boolean" %>
 
 Chr ${location.chromosome}: ${location.start}
-<c:if test="${!empty location.end && location.end != location.end}">
+<c:if test="${!empty location.end && location.start != location.end}">
     - ${location.end}
 </c:if>
 <c:if test="${!empty location.assembly}">
