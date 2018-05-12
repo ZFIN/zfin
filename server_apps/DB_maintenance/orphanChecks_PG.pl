@@ -81,11 +81,29 @@ while ($curOrphanData->fetch()) {
      $curDeleteOrphData->execute();
      $curDeleteOrphData->finish();
   } else {
-     $sqlDeleteActiveData = "delete from zdb_active_data where zactvd_zdb_id = '$orphanId';";
-     print PREVORPH "$sqlDeleteActiveData\n";
-     $curDeleteActiveData = $dbh->prepare($sqlDeleteActiveData);
-     $curDeleteActiveData->execute();
-     $curDeleteActiveData->finish();  
+     $sqlCheckActiveData = "select zactvd_zdb_id from zdb_active_data where zactvd_zdb_id = '$orphanId';";
+     $curCheckActiveData = $dbh->prepare($sqlCheckActiveData);
+     $curCheckActiveData->execute();
+     $curCheckActiveData->bind_columns(\$orphanIdStillActiveData);
+     $ctStillActiveData = 0;
+     while ($curCheckActiveData->fetch()) {
+       $ctStillActiveData++;
+     }
+     $curCheckActiveData->finish();
+     if ($ctStillActiveData > 0) {
+         $ctPrev++;
+         $sqlDeleteOrphData2 = "delete from zdb_orphan_data where zorphand_zdb_id = '$orphanId';";
+         print PREVORPH "$sqlDeleteOrphData2\n";
+         $curDeleteOrphData2 = $dbh->prepare($sqlDeleteOrphData2);
+         $curDeleteOrphData2->execute();
+         $curDeleteOrphData2->finish();     
+     } else {     
+         $sqlDeleteActiveData = "delete from zdb_active_data where zactvd_zdb_id = '$orphanId';";
+         print PREVORPH "$sqlDeleteActiveData\n";
+         $curDeleteActiveData = $dbh->prepare($sqlDeleteActiveData);
+         $curDeleteActiveData->execute();
+         $curDeleteActiveData->finish();  
+     }
   }
 
 }
@@ -101,12 +119,12 @@ while ($sqlOrphanDataS->fetch()) {
   $sqlCheckS = "select $orphanColS from $orphanTableS where $orphanColS = '$orphanIdS';";
   $curCheckS = $dbh->prepare($sqlCheckS);
   $curCheckS->execute();
-  $curCheckS->bind_columns(\$orphanIdStillThere);
+  $curCheckS->bind_columns(\$orphanIdStillThereS);
   $ctStillThere = 0;
   while ($curCheckS->fetch()) {
     $ctStillThere++;
   }
-  $curCheck->finish();
+  $curCheckS->finish();
   
   if ($ctStillThere > 0) {
      $ctPrev++;
@@ -116,11 +134,29 @@ while ($sqlOrphanDataS->fetch()) {
      $curDeleteOrphSrc->execute();
      $curDeleteOrphSrc->finish();
   } else {
-     $sqlDeleteActiveSrc = "delete from zdb_active_source where zactvs_zdb_id = '$orphanId';";
-     print PREVORPH "$sqlDeleteActiveSrc\n";
-     $curDeleteActiveSrc = $dbh->prepare($sqlDeleteActiveSrc);
-     $curDeleteActiveSrc->execute();
-     $curDeleteActiveSrc->finish();  
+     $sqlCheckActiveSrc = "select zactvs_zdb_id from zdb_active_source where zactvs_zdb_id = '$orphanIdS';";
+     $curCheckActiveSrc = $dbh->prepare($sqlCheckActiveSrc);
+     $curCheckActiveSrc->execute();
+     $curCheckActiveSrc->bind_columns(\$orphanIdStillActiveSrc);
+     $ctStillActiveSrc = 0;
+     while ($curCheckActiveSrc->fetch()) {
+       $ctStillActiveSrc++;
+     }
+     $curCheckActiveSrc->finish();
+     if ($ctStillActiveSrc > 0) {
+         $ctPrev++;
+         $sqlDeleteOrphSrc2 = "delete from zdb_orphan_source where zorphans_zdb_id = '$orphanIdS';";
+         print PREVORPH "$sqlDeleteOrphSrc2\n";
+         $curDeleteOrphSrc2 = $dbh->prepare($sqlDeleteOrphSrc2);
+         $curDeleteOrphSrc2->execute();
+         $curDeleteOrphSrc2->finish();     
+     } else {     
+         $sqlDeleteActiveSrc = "delete from zdb_active_source where zactvs_zdb_id = '$orphanIdS';";
+         print PREVORPH "$sqlDeleteActiveSrc\n";
+         $curDeleteActiveSrc = $dbh->prepare($sqlDeleteActiveSrc);
+         $curDeleteActiveSrc->execute();
+         $curDeleteActiveSrc->finish();  
+     }
   }
 
 }
@@ -206,13 +242,13 @@ foreach $id (keys %allIds) {
           $deleteCol = 'zactvd_zdb_id';
       }
       $sqlInsertOrphTable = "insert into $orphTable values('$id', '$dataTable', '$dataCol');";
-      print ORPH "$sqlInsertOrphTable;\n";
+      print ORPH "$sqlInsertOrphTable\n";
       $curInsertOrphTable = $dbh->prepare($sqlInsertOrphTable);
       $curInsertOrphTable->execute();
       $curInsertOrphTable->finish(); 
       
       $sqlDelete = "delete from $deleteTable where $deleteCol = '$id';";
-      print ORPH "$sqlDelete;\n";
+      print ORPH "$sqlDelete\n";
       $curDelete = $dbh->prepare($sqlDelete);
       $curDelete->execute();
       $curDelete->finish();      
