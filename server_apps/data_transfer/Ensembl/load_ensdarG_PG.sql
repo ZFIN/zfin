@@ -77,6 +77,8 @@ create temp table tmp_ens_zdb (ez_ens varchar(20), ez_zdb text);
 insert into tmp_ens_zdb
 select distinct * from ens_zdb;
 
+delete from ens_zdb;
+
 insert into ens_zdb select * from tmp_ens_zdb;
 drop table tmp_ens_zdb;
 

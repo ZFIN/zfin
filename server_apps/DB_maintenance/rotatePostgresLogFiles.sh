@@ -27,7 +27,7 @@ mv $dirname.archives.tar $pth/$dirname
 
 tar -cf $pth/$dirname/$dirname.filesytem.tar /opt/postgres/data
 gzip $pth/$dirname/$dirname.filesytem.tar
-
+gzip $pth/$dirname/base.tar
 # delete WAL log archive files older than 3 days (assumes the base backup happens nightly)          \
                                                                                                      
 
