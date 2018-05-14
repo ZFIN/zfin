@@ -1,6 +1,6 @@
 --! echo 'E_unload_alias_scattered.sql -> E_zfin_gene_alias_scattered.tmp(deleted)"
 
-copy (
+\copy (
 ------------------------------ ZDBID----------------------------
 select
 	zeg_seqname,

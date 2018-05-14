@@ -24,12 +24,6 @@ ab.copy(file: "$dataCachePath/ensembl_contig.gff3", todir: destination)
 BufferedWriter out = new File("$dataCachePath/E_drerio_constant.gff3").newWriter()
 //"$destination/drerio_ensembl.unl"
 
-
-
-db.getConnection().autoCommit = false
-
-
-
 println "loading gff3 from file"
 db.execute("delete from gff3 where substring(gff_source from 1 for 8) = 'Ensembl_';")
 String copySql = """copy gff3 from '$destination/drerio_ensembl_pg.unl' with delimiter '|';"""
@@ -63,7 +57,6 @@ order by 1,4,3;
 out.flush()
 out.close()
 
-db.commit()
 
 "chmod g+w $dataCachePath/E_drerio_constant.gff3".execute()
 ab.copy(file:"$dataCachePath/E_drerio_constant.gff3", todir: downloadsDir)

@@ -6,7 +6,7 @@
 -- zero it out just in case
 truncate table zfin_ensembl_gene;
 
-begin work;
+-- begin work;
 
 --! echo 'Isolate ZFIN genes on Ensembl assembly'
 
@@ -35,7 +35,7 @@ select distinct
 	'.' frame,
 	'gene_id=' || gene.mrkr_zdb_id
 	   ||';Name=' || gene.mrkr_abbrev
-           ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
+     ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
 	   || ';so_term_name=' || szm_term_name
 	   || ';curie=' || 'ZFIN:' || mrkr_zdb_id as id_name,
 	gene.mrkr_zdb_id alias
