@@ -47,7 +47,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(allDiseaseDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.0_1_disease.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.3_1_disease.json"))) {
             out.print(jsonInString);
         }
     }
@@ -146,7 +146,13 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
 
         AllDiseaseDTO allDiseaseDTO = new AllDiseaseDTO();
-        MetaDataDTO meta = new MetaDataDTO("ZFIN");
+        String dataProvider = "ZFIN";
+        List<String> pages = new ArrayList<>();
+        pages.add("homepage");
+        List<DataProviderDTO> dpList = new ArrayList<>();
+        DataProviderDTO dp = new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages));
+        dpList.add(dp);
+        MetaDataDTO meta = new MetaDataDTO(dpList);
         allDiseaseDTO.setMetaData(meta);
         allDiseaseDTO.setDiseaseList(diseaseDTOList);
         return allDiseaseDTO;
@@ -156,7 +162,11 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         DiseaseDTO strDiseaseDto = new DiseaseDTO();
         strDiseaseDto.setObjectId(zdbID);
         strDiseaseDto.setObjectName(abbreviation);
-        strDiseaseDto.setDataProvider(DataProvider.ZFIN);
+        List<String> pages = new ArrayList<>();
+        pages.add("homepage");
+        List<DataProviderDTO> dpList = new ArrayList<>();
+        dpList.add(new DataProviderDTO("curated", new CrossReferenceDTO("ZFIN", "ZFIN", pages)));
+        strDiseaseDto.setDataProvider(dpList);
         strDiseaseDto.setDoid(disease.getOboID());
         return strDiseaseDto;
     }

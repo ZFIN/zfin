@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="Download" default="timestamp-download" basedir="../../">
+<project name="Download" basedir="../../">
 
     <property name="web.dir" value="${basedir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
@@ -46,12 +46,6 @@
     <target name="init">
         <tstamp/>
         <echo message="Set Timestamp on unload."/>
-    </target>
-
-    <target name="timestamp-download" description="Set the timestamp of the download files int database_info table">
-        <echo message="Update time stamp in DATABASE_INFO table:"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <run-db-query db-query-file="set_unload_timestamp.sql" instanceName="${DBNAME}"/>
     </target>
 
     <target name="checkUrls">

@@ -4,28 +4,29 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.zfin.util.JsonDateSerializer;
 
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class MetaDataDTO {
 
     private GregorianCalendar dateProduced = new GregorianCalendar();
-    private String dataProvider;
-
-    public MetaDataDTO(String dataProvider) {
-        this.dataProvider = dataProvider;
-    }
+    private List<DataProviderDTO> dataProviderList;
 
     @JsonSerialize(using = JsonDateSerializer.class)
     public GregorianCalendar getDateProduced() {
         return dateProduced;
     }
 
-
-    public String getDataProvider() {
-        return dataProvider;
+    public MetaDataDTO(List<DataProviderDTO> dataProviderList) {
+        this.dataProviderList = dataProviderList;
     }
 
-    public void setDataProvider(String dataProvider) {
-        this.dataProvider = dataProvider;
+    public List<DataProviderDTO> getDataProvider() {
+        return dataProviderList;
     }
+
+    public void setDataProvider(List<DataProviderDTO> dataProviderList) {
+        this.dataProviderList = dataProviderList;
+    }
+
 }
 

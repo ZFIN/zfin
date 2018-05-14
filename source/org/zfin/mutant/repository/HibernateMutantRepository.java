@@ -26,6 +26,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.agr.BasicPhenotypeDTO;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -35,6 +36,7 @@ import org.zfin.repository.PaginationResultFactory;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.STRMarkerSequence;
 
+import javax.persistence.Basic;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -591,6 +593,73 @@ public class HibernateMutantRepository implements MutantRepository {
         return returnCount;
     }
 
+    @Override
+    public List<BasicPhenotypeDTO> getBasicAllelePhenotypeDTOObjects(){
+        final String queryString = "select distinct fmrel1.fmrel_ftr_zdb_id, psg_short_name, zdb_id, nvl(accession_no,'')" +
+                "  from feature_marker_relationship fmrel1, mutant_fast_search, phenotype_source_generated, phenotype_observation_generated," +
+                "        figure, publication, fish_experiment, fish, genotype_feature" +
+                "  where mfs_genox_zdb_id = pg_genox_zdb_id" +
+                "  and pg_id = psg_pg_id" +
+                "  and pg_fig_zdb_id = fig_zdb_id" +
+                "  and fig_source_zdb_id = zdb_id" +
+                "  and fmrel1.fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id" +
+                "  and mfs_genox_zdb_id = pg_genox_zdb_id" +
+                "  and mfs_genox_zdb_id = genox_zdb_id" +
+                "  and genox_fish_zdb_id = fish_zdb_id" +
+                "  and fish_genotype_zdb_id = genofeat_geno_zdb_id" +
+                "  and genofeat_feature_zdb_id = fmrel1.fmrel_ftr_zdb_id" +
+                "  and mfs_genox_zdb_id = pg_genox_zdb_id" +
+                "  and pg_id = psg_pg_id" +
+                "  and pg_fig_zdb_id = fig_zdb_id" +
+                "  and fig_source_zdb_id = zdb_id" +
+                "  and fmrel1.fmrel_type = 'is allele of' and not exists" +
+                "               (select 'x' from feature_marker_relationship fmrel2" +
+                "                     where fmrel1.fmrel_zdb_id != fmrel2.fmrel_zdb_id and fmrel1.fmrel_ftr_zdb_id = fmrel2.fmrel_ftr_zdb_id" +
+                "                     and fmrel2.fmrel_type != 'created by')"
+                ;
+
+        final Query query = HibernateUtil.currentSession().createSQLQuery(queryString);
+
+        List<Object[]> phenos = query.list();
+
+        List<BasicPhenotypeDTO> basicPhenos = new ArrayList<BasicPhenotypeDTO>();
+        for (Object[] basicPhenoObjects : phenos) {
+            BasicPhenotypeDTO basicPheno = new BasicPhenotypeDTO();
+            basicPheno.setObjectId(basicPhenoObjects[0].toString());
+            basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
+            basicPheno.setPubModId(basicPhenoObjects[2].toString());
+            basicPheno.setPubMedId(basicPhenoObjects[3].toString());
+            basicPhenos.add(basicPheno);
+        }
+
+        return basicPhenos;
+    }
+
+
+    @Override
+    public List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects () {
+        final String queryString = "select mfs_mrkr_zdb_id, psg_short_name, zdb_id, nvl(accession_no,'')" +
+                "  from mutant_fast_search, phenotype_source_generated, phenotype_observation_generated," +
+                "        figure, publication" +
+                "  where mfs_genox_zdb_id = pg_genox_zdb_id" +
+                "  and pg_id = psg_pg_id" +
+                "  and pg_fig_zdb_id = fig_zdb_id" +
+                "  and fig_source_zdb_id = zdb_id";
+        final Query query = HibernateUtil.currentSession().createSQLQuery(queryString);
+
+        List<Object[]> phenos = query.list();
+
+        List<BasicPhenotypeDTO> basicPhenos = new ArrayList<BasicPhenotypeDTO>();
+        for (Object[] basicPhenoObjects : phenos) {
+            BasicPhenotypeDTO basicPheno = new BasicPhenotypeDTO();
+            basicPheno.setObjectId(basicPhenoObjects[0].toString());
+            basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
+            basicPheno.setPubModId(basicPhenoObjects[2].toString());
+            basicPheno.setPubMedId(basicPhenoObjects[3].toString());
+            basicPhenos.add(basicPheno);
+        }
+        return basicPhenos;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -766,6 +835,17 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
+    public List<PhenotypeStatementWarehouse> getPhenotypeStatementsByFishExperiment(FishExperiment fishExperiment) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct phenoStatement from PhenotypeStatementWarehouse phenoStatement " +
+                "WHERE phenoStatement.phenotypeWarehouse.fishExperiment = :fishExperiment";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("fishExperiment", fishExperiment);
+
+        return (List<PhenotypeStatementWarehouse>) query.list();
+    }
 
     public void runFeatureNameFastSearchUpdate(final Feature feature) {
         Session session = currentSession();
@@ -1244,7 +1324,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "join fetch geneGenotype.gene " +
                 "join fetch geneGenotype.fishExperiment " +
                 "where geneGenotype.fishExperiment = diseaseAnnotationModel.fishExperiment " +
-                "and geneGenotype.gene.markerType.name = :genedom "                ;
+                "and geneGenotype.gene.markerType.name = :genedom ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         if (numfOfRecords > 0)
@@ -1253,6 +1333,24 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("genedom", Marker.Type.GENE.toString());
         return (List<GeneGenotypeExperiment>) query.list();
     }
+
+
+    @Override
+    public List<GeneGenotypeExperiment> getGeneFishWithPhenotypes(int numfOfRecords) {
+        String hql = "select distinct geneGenotype from GeneGenotypeExperiment geneGenotype, PhenotypeStatement phenox " +
+                "join fetch geneGenotype.gene " +
+                "join fetch geneGenotype.fishExperiment " +
+                "where geneGenotype.fishExperiment = phenox.fishExperiment " +
+                "and geneGenotype.gene.markerType.name = :genedom " ;
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (numfOfRecords > 0)
+            query.setMaxResults(numfOfRecords);
+        //query.setString("genedom", "ZDB-GENE")
+        query.setParameter("genedom", Marker.Type.GENE.toString());
+        return (List<GeneGenotypeExperiment>) query.list();
+    }
+
 
     @Override
     public List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords) {

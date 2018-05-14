@@ -24,7 +24,7 @@ $$ LANGUAGE plpgsql;
 
 
 CREATE TRIGGER publication_trigger
-AFTER INSERT OR UPDATE ON publication
+BEFORE INSERT  ON publication
 FOR EACH ROW
 EXECUTE PROCEDURE publication();
 

@@ -8,558 +8,8 @@
 
 use Getopt::Long qw(:config bundling);
 use DBI;
-
-#------------------------------------------------------------------------
-# Log an error message.
-#
-# Params 
-#  @       List of lines to print out.  List is assumed to be all part of 
-#          the same error.
-#
-# Returns ()
-
-sub logError(@) {
-
-    my $line;
-    print "Error:   ";
-    foreach $line (@_) {
-	print "$line\n";
-    }
-    print ("\n");
-    return ();
-}
-
-
-#------------------------------------------------------------------------
-# Log a warning message.
-#
-# Params 
-#  @       List of lines to print out.  List is assumed to be all part of 
-#          the same error.
-#
-# Returns ()
-
-sub logWarning(@) {
-
-    my $line;
-    print "Warning: ";
-    foreach $line (@_) {
-	print "$line\n";
-    }
-    print ("\n");
-    return ();
-}
-
-#------------------------------------------------------------------------
-# Execute SQL statement(s) and save its results in files.
-#  
-# Params 
-#   $               SQL statement to be executed.
-#   $(optional)     Reference of subroutine that does future query if any,
-#                   or as 'undef'.
-#   @(optional)     Column description for query result.
-#  
-# Returns 
-#   number of rows returned from the query. If column descriptions are defined,
-#   the records will be kept in a file. 
-
-sub execSql {
-
-  my $sql = shift;
-  my $subSqlRef = shift;
-  my @colDesc = @_;
-  my $nRecords = 0;
- 
-  my $sth = $dbh->prepare($sql) or die "Prepare fails";
-  
-  $sth -> execute() or die "Could not execute $sql";
-  
-  open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result."
-    if @colDesc; 
-  
-  while (my @row = $sth ->fetchrow_array()) {
-
-    my $valid = 1;
-    $valid = $subSqlRef->(@row) if $subSqlRef;
-    
-    if ($valid) {
-      my $i = 0;
-      $nRecords ++;
-
-      if (@colDesc) {
-	foreach (@row) {
-	  $_ = '' unless defined;
-	  print RESULT "$colDesc[$i]\t $_\n";
-	  $i ++;
-	}
-      print RESULT "\n";    
-      }
-    }  
-  } 
-  close(RESULT) if @colDesc;
-  return ($nRecords);
-}
-
-sub executeSqlAndPrint {
-
-  my $sql = shift;
-  my $subSqlRef = shift;
-  my @colDesc = @_;
-  my $nRecords = 0;
- 
-  my $sth = $dbh->prepare($sql) or die "Prepare fails";
-  
-  $sth -> execute() or die "Could not execute $sql";
-  
-  open RESULT, ">$globalResultFile" or die "Cannot open the file to write check result."
-    if @colDesc; 
-  
-  while (my @row = $sth ->fetchrow_array()) {
-
-    my $valid = 1;
-    $valid = $subSqlRef->(@row) if $subSqlRef;
-    
-    if ($valid) {
-      my $i = 0;
-      $nRecords ++;
-
-      if (@colDesc) {
-	foreach (@row) {
-	  $_ = '' unless defined;
-	  print RESULT "$_";
-	  if($i + 1 < @colDesc ){
-	      print RESULT " : ";
-	  }
-	  $i ++;
-	}
-      print RESULT "\n";    
-      }
-    }  
-  } 
-  close(RESULT) if @colDesc;
-  return ($nRecords);
-}
-
-
-#------------------------------------------------------------------------
-#
-# Orders column value.  A helper function for orderResults.
-#
-# Params
-#   $		Name of column effect.
-#   $   Column data.
-# 
-# Returns 
-#   data string formatted or unformatted. 
-sub checkInput(@){
-
-	my $columnLabel = shift  ;
-	my $columnData = shift  ;
-
-	my @returnArray  ; 
-
-# if $input starts with $columnLabel
-	if( "$columnData" =~ /^$columnLabel/ ){
-#    parse tokens around ' ' ; 
-		@tokens = split(/ /,$columnData) ; 
-		foreach $token (@tokens){
-			 if( "$token" =~ /^[0-9]/){
-					push(@returnArray,scalar($token)) ; 
-			 }
-		}
-		@returnArray= sort(@returnArray) ;   
-		@returnArray = sort { $a <=> $b } @returnArray ; 
-		$columnData = $columnLabel . "@returnArray" . "\n" ; 
-	}
-	return $columnData ; 
-}
-
-
-#------------------------------------------------------------------------
-#
-# Orders array data. 
-#
-# Params
-#   $		Name of column effect.
-#   @   Sql result rows.
-# 
-# Returns 
-#   rows from the original query, ordered in the specified column. 
-# 
-sub orderResults(@) {
-
-	 my $columnLabel = shift ; 
-	 my $formattedData = "" ; 
-
-	 open RESULT, "$globalResultFile" or die "Cannot open the result file for read.\n";
-	 while ($input =  <RESULT>) {
-		 $input = checkInput( $columnLabel, $input) ; 
-		 $formattedData = $formattedData . $input ; 
-	 }
-	 close (RESULT);
-
-	 print "$formattedData" ; 
-
-
-	 open FORMATTED, ">$globalResultFile" or die "Cannot open the result file for read.\n";
-	 print FORMATTED $formattedData ; 
-	 close(FORMATTED) ; 
-
-}
-
-#------------------------------------------------------------------------    
-# Send the check result 
-#
-# Params
-#   $       Recipient addresses
-#   $       Email subject
-#   $       Subroutine title
-#   $       Error Message 
-#   @       Queries for the check
-#
-# Returns () 
-
-sub sendMail(@) {
-
-     my $sendToAddress = shift;
-     my $subject = shift;
-     my $rtnName = shift;
-     my $msg = shift;
-     my @sql = @_; 
-
-     open MAIL, "|/usr/lib/sendmail -t";
-
-     print MAIL "To: $sendToAddress\n";
-     print MAIL "Subject: validatedata: $subject\n";
-
-     print MAIL "$msg\n";
-
-     # add stats from last run, conditionally
-     if ($rtnName ne "void") {
-	 # get the checking result from last run
-	 my $query = "select vldcheck_count, vldcheck_date
-                        from validate_check_history
-                       where vldcheck_name = '$rtnName' ";
-
-	 my ($preNum,$preDate) = $dbh->selectrow_array($query);
-
-	 if ($preNum) {
-	     print MAIL "(Last run at $preDate got $preNum records.)";
-	 }
-     }
-     print MAIL "\n\n";
-
-     # paste all the result records
-     open RESULT, "$globalResultFile" or die "Cannot open the result file for read.\n";
-     while (<RESULT>) {
-       print MAIL;
-     }
-     close RESULT;
- 
-     print MAIL "============================================================\n";
-     print MAIL "SQL: \n";
-     my $sql;
-     foreach $sql (@sql) {
-       print MAIL "$sql\n";
-     }
-     close MAIL;
-     
-     return();
-   }
-
-#------------------------------------------------------------------------
-# Record the checking result into validate_check_history
-#
-# Params
-#    $          Checking routine name
-#    $          Number of checkouts
-#
-# Returns ()
-
-sub recordResult(@) {
-
-  my $rtnName = shift;
-  my $rcdNum = shift;
-
-  my $sql = "select vldcheck_name
-               from validate_check_history
-              where vldcheck_name = '$rtnName' ";
-
-  my $exist = $dbh->selectrow_array($sql);
-  if ($exist){
-    my $sth = $dbh->do("update validate_check_history 
-                        set (vldcheck_count, vldcheck_date) = ('$rcdNum', current_timestamp )
-                       where vldcheck_name = '$rtnName' " );
-  }
-  else {
-    my $sth = $dbh->do(" insert into validate_check_history
-                          (vldcheck_name, vldcheck_count, vldcheck_date) values
-                           ('$rtnName', '$rcdNum', current_timestamp ) ");
-    }
-  return ();
-}
-
-
-#######################  Checking  ##################################
-
-
-
-
-
-#=================== Anatomy Item  =================================
-
-#----------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-#
-# For fx interface, we store the source (pub) zdb_id in both the figure
-# table and in the expression_experiment table.
-# We then relate the two, figure and expression, in expression_figure_stage
-# We want the two sources to match--otherwise, we'd have figures from 
-# one paper associated with expression_patterns from other papers.  This 
-# would be incorrect. 
-# These attributions are also stored in record_attribution, but that
-# table is not verified here.
-
-sub checkFigXpatexSourceConsistant ($) {
-	
-  my $routineName = "checkFigXpatexSourceConsistant";
-	
-  my $sql = 'select xpatfig_fig_zdb_id, xpatfig_xpatres_zdb_id
-               from figure, expression_figure_stage,
-               expression_result2, expression_experiment2
-               where efs_fig_zdb_id = fig_zdb_id
-               and xpatres_efs_id = efs_pk_id
-               and efs_xpatex_zdb_id = xpatex_zdb_id
-               and xpatex_source_zdb_id != fig_source_zdb_id   
-              ';
-  	
-  my @colDesc = ("xpatfig_fig_zdb_id ",
-		 "xpatfig_xpatres_zdb_id "
-		);
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-
-    my $sendToAddress = $_[0];
-    my $subject = "FigXpatEx Source Inconsistant";
-    my $errMsg = "$nRecords records' use different sources for xpatex
-                   records and figure/xpatex records";
-      		       
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-
-#========================== Active data & Source ========================
-#-------------------
-#
-sub subZdbActiveDataSourceStillInUse {
- 
-  my @row = @_;
-  my $sql = "select $row[2]
-               from $row[1]                
-              where $row[2] = '$row[0]'";
-  
-  my @result = $dbh->selectrow_array($sql);
-  return @result? 0:1 ;
- 
-}
-
-#-------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub zdbActiveDataStillActive($) {
-  
-  my $routineName = "zdbActiveDataStillActive";
-  &oldOrphanDataCheck($_[0]);
-  my $sql = "
-             select zactvd_zdb_id, 
-                    zobjtype_home_table,
-                    zobjtype_home_zdb_id_column
-              from  zdb_active_data,
-                    zdb_object_type
-              where get_obj_type(zactvd_zdb_id) = zobjtype_name";
-
-  my @colDesc = ("Zactvd ZDB ID              ",
-		 "Zobjtype home table        ",
-		 "Zobjtype home zdb id column" );
-
-  my $subSqlRef = \&subZdbActiveDataSourceStillInUse;
-  my $nRecords = execSql ($sql, $subSqlRef, @colDesc);
-  if ( $nRecords > 0 ) {
-
-    &storeOrphan();
-    my $sendToAddress = $_[0];
-    my $subject = "orphan in zdb active data";
-    my $errMsg = "In zdb_active_data, $nRecords ids are out of use, and stored in zdb_orphan_data table.";
-
-    logWarning ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-}
-
-
-#---------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-#
-sub zdbActiveSourceStillActive($) {
-
-  my $routineName = "zdbActiveSourceStillActive";
-
-  &oldOrphanSourceCheck($_[0]);
-  my $sql = "
-             select zactvs_zdb_id,
-                    zobjtype_home_table,
-                    zobjtype_home_zdb_id_column
-              from  zdb_active_source,
-                    zdb_object_type
-              where get_obj_type(zactvs_zdb_id) = zobjtype_name";
-
-  my @colDesc = ("Zactvs ZDB ID              ",
-		 "Zobjtype home table        ",
-		 "Zobjtype home zdb id column" );
-
-  my $subSqlRef = \&subZdbActiveDataSourceStillInUse;
-
-  my $nRecords = execSql ($sql, $subSqlRef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-
-    &storeOrphan();
-    my $sendToAddress = $_[0];
-    my $subject = "orphan in zdb active source";
-    my $errMsg = "In zdb_active_source, $nRecords ids are out of use, and stored in zdb_orphan_source table.";
-
-    logWarning ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-}
-
-#-------------------
-#Parameter
-# $      Email Address for recipients
-#
-sub oldOrphanDataCheck($) {
-
-  open ORPH, ">$globalResultFile" or die "Cannot open the result file to write.";
-
-  my $sql = "select *
-               from zdb_orphan_data ";
-  my $sth = $dbh->prepare($sql) or die "Prepare fails";
-  $sth -> execute();
-
-  my $fileNotEmpt;
-  while (my @row = $sth ->fetchrow_array()) {
-
-    $fileNotEmpt = 1;
-    my $orphan = subZdbActiveDataSourceStillInUse(@row);
-
-    if($orphan) {
-      my $sql = "delete from zdb_active_data
-                      where zactvd_zdb_id = '$row[0]'";
-      $dbh -> do($sql);
-      print ORPH "Delete $row[0] from zdb_active_data.\n";
-    }else {
-      my $sql = "delete from zdb_orphan_data
-                      where zorphand_zdb_id = '$row[0]'";
-      $dbh -> do($sql);
-      print ORPH "$row[0] is restored.\n";
-    }
-  }
-
-  close (ORPH);
-
-  if($fileNotEmpt) {
-    my $sendToAddress = $_[0];
-    my $subject = "about previous orphans.";
-    my $routineName = "oldOrphanDataCheck";
-    my $msg = "Actions on the orphans detected last time.";
-    &sendMail($sendToAddress, $subject,$routineName, $msg, );
-
-  }
-}
-
-sub oldOrphanSourceCheck($) {
-
-  open ORPH, ">$globalResultFile" or die "Cannot open the result file to write.";
-
-  my $sql = "select *
-               from zdb_orphan_source ";
-  my $sth = $dbh->prepare($sql) or die "Prepare fails";
-  $sth -> execute();
-
-  my $fileNotEmpt;
-  while (my @row = $sth ->fetchrow_array()) {
-
-    $fileNotEmpt = 1;
-    my $orphan = subZdbActiveDataSourceStillInUse(@row);
-
-    if($orphan) {
-      my $sql = "delete from zdb_active_source
-                      where zactvs_zdb_id = '$row[0]'";
-      $dbh -> do($sql);
-      print ORPH "Delete $row[0] from zdb_active_source.\n";
-    }else {
-      my $sql = "delete from zdb_orphan_source
-                      where zorphans_zdb_id = '$row[0]'";
-      $dbh -> do($sql);
-      print ORPH "$row[0] is restored.\n";
-    }
-  }
-  close(ORPH);
-  if($fileNotEmpt) {
-    my $sendToAddress = $_[0];
-    my $subject = "about previous orphans.";
-    my $routineName = "oldOrphanSourceCheck";
-    my $msg = "Actions on the orphans detected last time.";
-    &sendMail($sendToAddress, $subject, $routineName, $msg, );
-  }
-}
-
-
-
-#-------------------
-#
-sub storeOrphan {
-
-
-  my ($table, $zdbid, $hometable, $homecolumn);
-  open F, "$globalResultFile" or die "Cannot open the $globalResultFile to read.\n";
-
-  while (<F>) {
-
-    if(/Zactvd ZDB ID\s+(\w.+)/) {
-      $zdbid = $1;
-      $table = "zdb_orphan_data";
-    }
-    if(/Zactvs ZDB ID\s+(\w.+)/) {
-      $zdbid = $1;
-      $table = "zdb_orphan_source";
-    }
-    if (/Zobjtype home table\s+(\w.+)/) {
-      $hometable = $1;
-    }
-    if (/Zobjtype home zdb id column\s+(\w.+)/) {
-      $homecolumn = $1;
-      my $sql = "insert into $table values('$zdbid', '$hometable', '$homecolumn')";
-
-      $dbh->do($sql);
-    }
-  }
-  close (F);
-}
-#=======================================================================
-
-
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 #######################  Main ###########################################
 #
@@ -590,15 +40,247 @@ $globalDbName = $ARGV[0]; #"<!--|DB_NAME|-->";
 $globalUsername = "";
 $globalPassword = "";
 
-$globalResultFile = "/tmp/<!--|DB_NAME|-->"."orphancheckresult.txt";
-
 #set environment variables
 
 $dbh = DBI->connect ("DBI:Pg:dbname=$globalDbName;host=localhost", $globalUsername, $globalPassword) or die "Cannot connect to database: $DBI::errstr\n";
 
-my $dbaEmail     = '<!--|VALIDATION_EMAIL_DBA|-->';
+$dbaEmail = '<!--|VALIDATION_EMAIL_DBA|-->';
   
-  zdbActiveDataStillActive($dbaEmail);
-  zdbActiveSourceStillActive($dbaEmail);
-	   
+$now_string = localtime;
+
+print "\nStart at $now_string \n\n";
+
+system("/bin/rm -f orphansPrevious");
+system("/bin/rm -f orphansFound");
+
+open (PREVORPH, ">orphansPrevious") || die "Cannot open orphansPrevious : $!\n";
+print PREVORPH "\nAction on the orphans identified previously:\n\n\n";
+
+$sqlOrphanData = "select zorphand_zdb_id, zorphand_home_table, zorphand_home_zdb_id_column from zdb_orphan_data;";
+$curOrphanData = $dbh->prepare($sqlOrphanData);
+$curOrphanData->execute();
+$curOrphanData->bind_columns(\$orphanId,\$orphanTable, \$orphanCol);
+
+$ctPrev = 0;
+while ($curOrphanData->fetch()) {
+  $sqlCheck = "select $orphanCol from $orphanTable where $orphanCol = '$orphanId';";
+  $curCheck = $dbh->prepare($sqlCheck);
+  $curCheck->execute();
+  $curCheck->bind_columns(\$orphanIdStillThere);
+  $ctStillThere = 0;
+  while ($curCheck->fetch()) {
+    $ctStillThere++;
+  }
+  $curCheck->finish();
+  
+  if ($ctStillThere > 0) {
+     $ctPrev++;
+     $sqlDeleteOrphData = "delete from zdb_orphan_data where zorphand_zdb_id = '$orphanId';";
+     print PREVORPH "$sqlDeleteOrphData\n";
+     $curDeleteOrphData = $dbh->prepare($sqlDeleteOrphData);
+     $curDeleteOrphData->execute();
+     $curDeleteOrphData->finish();
+  } else {
+     $sqlCheckActiveData = "select zactvd_zdb_id from zdb_active_data where zactvd_zdb_id = '$orphanId';";
+     $curCheckActiveData = $dbh->prepare($sqlCheckActiveData);
+     $curCheckActiveData->execute();
+     $curCheckActiveData->bind_columns(\$orphanIdStillActiveData);
+     $ctStillActiveData = 0;
+     while ($curCheckActiveData->fetch()) {
+       $ctStillActiveData++;
+     }
+     $curCheckActiveData->finish();
+     if ($ctStillActiveData > 0) {
+         $ctPrev++;
+         $sqlDeleteOrphData2 = "delete from zdb_orphan_data where zorphand_zdb_id = '$orphanId';";
+         print PREVORPH "$sqlDeleteOrphData2\n";
+         $curDeleteOrphData2 = $dbh->prepare($sqlDeleteOrphData2);
+         $curDeleteOrphData2->execute();
+         $curDeleteOrphData2->finish();     
+     } else {     
+         $sqlDeleteActiveData = "delete from zdb_active_data where zactvd_zdb_id = '$orphanId';";
+         print PREVORPH "$sqlDeleteActiveData\n";
+         $curDeleteActiveData = $dbh->prepare($sqlDeleteActiveData);
+         $curDeleteActiveData->execute();
+         $curDeleteActiveData->finish();  
+     }
+  }
+
+}
+
+$curOrphanData->finish();
+
+$sqlOrphanDataS = "select zorphans_zdb_id, zorphans_home_table, zorphans_home_zdb_id_column from zdb_orphan_source;";
+$sqlOrphanDataS = $dbh->prepare($sqlOrphanDataS);
+$sqlOrphanDataS->execute();
+$sqlOrphanDataS->bind_columns(\$orphanIdS,\$orphanTableS, \$orphanColS);
+
+while ($sqlOrphanDataS->fetch()) {
+  $sqlCheckS = "select $orphanColS from $orphanTableS where $orphanColS = '$orphanIdS';";
+  $curCheckS = $dbh->prepare($sqlCheckS);
+  $curCheckS->execute();
+  $curCheckS->bind_columns(\$orphanIdStillThereS);
+  $ctStillThere = 0;
+  while ($curCheckS->fetch()) {
+    $ctStillThere++;
+  }
+  $curCheckS->finish();
+  
+  if ($ctStillThere > 0) {
+     $ctPrev++;
+     $sqlDeleteOrphSrc = "delete from zdb_orphan_source where zorphans_zdb_id = '$orphanIdS';";
+     print PREVORPH "$sqlDeleteOrphSrc\n";
+     $curDeleteOrphSrc = $dbh->prepare($sqlDeleteOrphSrc);
+     $curDeleteOrphSrc->execute();
+     $curDeleteOrphSrc->finish();
+  } else {
+     $sqlCheckActiveSrc = "select zactvs_zdb_id from zdb_active_source where zactvs_zdb_id = '$orphanIdS';";
+     $curCheckActiveSrc = $dbh->prepare($sqlCheckActiveSrc);
+     $curCheckActiveSrc->execute();
+     $curCheckActiveSrc->bind_columns(\$orphanIdStillActiveSrc);
+     $ctStillActiveSrc = 0;
+     while ($curCheckActiveSrc->fetch()) {
+       $ctStillActiveSrc++;
+     }
+     $curCheckActiveSrc->finish();
+     if ($ctStillActiveSrc > 0) {
+         $ctPrev++;
+         $sqlDeleteOrphSrc2 = "delete from zdb_orphan_source where zorphans_zdb_id = '$orphanIdS';";
+         print PREVORPH "$sqlDeleteOrphSrc2\n";
+         $curDeleteOrphSrc2 = $dbh->prepare($sqlDeleteOrphSrc2);
+         $curDeleteOrphSrc2->execute();
+         $curDeleteOrphSrc2->finish();     
+     } else {     
+         $sqlDeleteActiveSrc = "delete from zdb_active_source where zactvs_zdb_id = '$orphanIdS';";
+         print PREVORPH "$sqlDeleteActiveSrc\n";
+         $curDeleteActiveSrc = $dbh->prepare($sqlDeleteActiveSrc);
+         $curDeleteActiveSrc->execute();
+         $curDeleteActiveSrc->finish();  
+     }
+  }
+
+}
+
+$sqlOrphanDataS->finish();
+
+close PREVORPH;
+
+ZFINPerlModules->sendMailWithAttachedReport($dbaEmail,"about previous orphans","orphansPrevious") if $ctPrev > 0;
+
+
+$sqlAllTypes = "select zobjtype_name, zobjtype_home_table, zobjtype_home_zdb_id_column from zdb_object_type;";
+$curAllTypes = $dbh->prepare($sqlAllTypes);
+$curAllTypes->execute();
+$curAllTypes->bind_columns(\$typeName, \$tableName, \$colName);
+
+%allTypesTables = ();
+%allTypesCols = ();
+while ($curAllTypes->fetch()) {
+  $allTypesTables{$typeName} = $tableName;
+  $allTypesCols{$typeName} = $colName;
+}
+$curAllTypes->finish();
+
+$sqlAllActiveData = "select zactvd_zdb_id from zdb_active_data;";
+$curAllActiveData = $dbh->prepare($sqlAllActiveData);
+$curAllActiveData->execute();
+$curAllActiveData->bind_columns(\$activeDataId);
+
+%allIds = ();
+while ($curAllActiveData->fetch()) {
+  if ($activeDataId =~ m/^ZDB\-([A-Z]+)\-\d{6}\-\d+$/) {
+      $allIds{$activeDataId} = $1;
+  }
+}
+$curAllActiveData->finish();
+
+$sqlAllActiveSrc = "select zactvs_zdb_id from zdb_active_source;";
+$curAllActiveSrc = $dbh->prepare($sqlAllActiveSrc);
+$curAllActiveSrc->execute();
+$curAllActiveSrc->bind_columns(\$activeSrcId);
+
+while ($curAllActiveSrc->fetch()) {
+  if ($activeSrcId =~ m/^ZDB\-([A-Z]+)\-\d{6}\-\d+$/) {
+      $allIds{$activeSrcId} = $1;
+  }
+}
+$curAllActiveSrc->finish();
+
+$ctDataOrph = 0;
+$ctSourceOrph = 0;
+open (ORPH, ">orphansFound") || die "Cannot open orphansFound : $!\n";
+print ORPH "\nAction on the orphans found this time:\n\n";
+
+foreach $id (keys %allIds) {  
+  $value = $allIds{$id};
+  
+  if (exists($allTypesTables{$value}) && exists($allTypesCols{$value})) {
+    $dataTable = $allTypesTables{$value};
+    $dataCol = $allTypesCols{$value};
+  
+    $sqlCheckOrph = "select $dataCol from $dataTable where $dataCol = '$id';";
+    
+    $curCheckOrph = $dbh->prepare($sqlCheckOrph);
+    $curCheckOrph->execute();
+    $curCheckOrph->bind_columns(\$idStillThere);
+    $ctStillThere = 0;
+    while ($curCheckOrph->fetch()) {
+      $ctStillThere++;
+    }
+    $curCheckOrph->finish();
+    
+    if ($ctStillThere == 0) {   
+      $orphTable = 'zdb_orphan_source';
+      $deleteTable = 'zdb_active_source';
+      $deleteCol = 'zactvs_zdb_id';
+      if ($value eq 'COMPANY' || $value eq 'JRNL' || $value eq 'LAB' || $value eq 'PERS' || $value eq 'PUB' || $value eq 'SALIAS') {
+          $ctSourceOrph++;
+      } else {
+          $ctDataOrph++;
+          $orphTable = 'zdb_orphan_data';
+          $deleteTable = 'zdb_active_data';
+          $deleteCol = 'zactvd_zdb_id';
+      }
+      $sqlInsertOrphTable = "insert into $orphTable values('$id', '$dataTable', '$dataCol');";
+      print ORPH "$sqlInsertOrphTable\n";
+      $curInsertOrphTable = $dbh->prepare($sqlInsertOrphTable);
+      $curInsertOrphTable->execute();
+      $curInsertOrphTable->finish(); 
+      
+      $sqlDelete = "delete from $deleteTable where $deleteCol = '$id';";
+      print ORPH "$sqlDelete\n";
+      $curDelete = $dbh->prepare($sqlDelete);
+      $curDelete->execute();
+      $curDelete->finish();      
+    }
+  }  
+}
+
+if ($ctDataOrph > 0) {
+  $sqlUpdateHistoryOrphData = "update validate_check_history set vldcheck_count = $ctDataOrph where vldcheck_name = 'zdbActiveDataStillActive';";    
+  $curUpdateHistoryOrphData = $dbh->prepare($sqlUpdateHistoryOrphData);
+  $curUpdateHistoryOrphData->execute();
+  $curUpdateHistoryOrphData->finish();
+}
+
+if ($ctSourceOrph > 0) {
+  $sqlUpdateHistoryOrphSrc = "update validate_check_history set vldcheck_count = $ctSourceOrph where vldcheck_name = 'zdbActiveSourceStillActive';";    
+  $curUpdateHistoryOrphSrc = $dbh->prepare($sqlUpdateHistoryOrphSrc);
+  $curUpdateHistoryOrphSrc->execute();
+  $curUpdateHistoryOrphSrc->finish();
+}
+
+close ORPH;
+
+ZFINPerlModules->sendMailWithAttachedReport($dbaEmail,"new orphans found","orphansFound") if $ctDataOrph > 0 || $ctSourceOrph > 0;
+
+$dbh->disconnect();
+
+$now_string = localtime;
+
+print "\nEnd at $now_string \n\n";
+
+exit;
+
+
 

@@ -215,7 +215,8 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     }
 
     public String getNoctuaModelId() {
-        if (noctuaModels.isEmpty())
+
+        if (CollectionUtils.isEmpty(noctuaModels))
             return null;
         return noctuaModels.iterator().next().getId();
     }

@@ -11,6 +11,10 @@
         <antcall target="create-disease-info-file-test"  />
     </target>
 
+    <target name="create-phenotype-test" >
+        <antcall target="create-phenotype-info-file-test"  />
+    </target>
+
     <target name="agr-test" >
         <antcall target="create-basic-gene-info-file-test"  />
     </target>
@@ -25,6 +29,10 @@
 
     <target name="create-disease" >
         <antcall target="create-disease-info-file"  />
+    </target>
+
+    <target name="create-basic-phenotype" >
+        <antcall target="create-basic-phenotype-info-file"  />
     </target>
 
     <target name="create-basic-gene-info-file" depends=""
@@ -55,6 +63,16 @@
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.agr.DiseaseInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="2048M">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
+
+    <target name="create-basic-phenotype-info-file" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.BasicPhenotypeInfo" fork="yes" classpathref="extended.classpath"
               failonerror="true" maxmemory="2048M">
             <classpath refid="classpath"/>
         </java>

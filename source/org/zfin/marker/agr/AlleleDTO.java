@@ -10,6 +10,7 @@ public class AlleleDTO extends ZfinDTO {
   private String symbol;
   private String gene;
   private List<CrossReferenceDTO> crossReferences;
+  private String symbolText;
 
   public List<CrossReferenceDTO> getCrossReferences() {
     return crossReferences;
@@ -18,8 +19,6 @@ public class AlleleDTO extends ZfinDTO {
   public void setCrossReferences(List<CrossReferenceDTO> crossReferences) {
     this.crossReferences = crossReferences;
   }
-
-
 
 
 
@@ -38,5 +37,13 @@ public class AlleleDTO extends ZfinDTO {
   public void setSymbol(String symbol) {
     this.symbol = symbol;
   }
+  public String getSymbolText() {
+    return symbolText;
+  }
+
+  public void setSymbolText(String symbolText) {
+    this.symbolText = symbolText;
+  }
+
 
 }
