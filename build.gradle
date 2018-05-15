@@ -72,7 +72,10 @@ task loadDb() {
         exec { commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
     }
 }
+
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
+
+task make(dependsOn: all)
 
 
 sourceSets {
@@ -210,7 +213,7 @@ task printProp() {
 }
 
 
-task make {
+task all {
     dependsOn makePostgresVersion
     dependsOn ':server_apps:apache:deployDirectoryToTargetroot'
     dependsOn ':server_apps:Reports:deployDirectoryToTargetroot'
