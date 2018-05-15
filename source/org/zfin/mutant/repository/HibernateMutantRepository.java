@@ -657,34 +657,38 @@ public class HibernateMutantRepository implements MutantRepository {
             PhenotypeTermIdentifierDTO termIdentifierE2aDTO = new PhenotypeTermIdentifierDTO();
             PhenotypeTermIdentifierDTO termIdentifierE2bDTO = new PhenotypeTermIdentifierDTO();
             PhenotypeTermIdentifierDTO termIdentifierQualityDTO = new PhenotypeTermIdentifierDTO();
-            termIdentifierE1aDTO.setTermId(basicPhenoObjects[4].toString());
+
 
             int termOrderCounter = 1;
-
             List<PhenotypeTermIdentifierDTO> termIdentifiers = new ArrayList<>();
-            termIdentifiers.add(termIdentifierE1aDTO);
 
+
+            termIdentifierE1aDTO.setTermId(basicPhenoObjects[4].toString());
             termIdentifierE1aDTO.setTermOrder(termOrderCounter++);
+            termIdentifiers.add(termIdentifierE1aDTO);
 
             if (basicPhenoObjects[5] != null && !basicPhenoObjects[5].toString().isEmpty()) {
                 termIdentifierE1bDTO.setTermId(basicPhenoObjects[5].toString());
                 termIdentifierE1bDTO.setTermOrder(termOrderCounter++);
                 termIdentifiers.add(termIdentifierE1bDTO);
             }
-            if (basicPhenoObjects[6] != null && !basicPhenoObjects[6].toString().isEmpty()) {
-                termIdentifierE1bDTO.setTermId(basicPhenoObjects[6].toString());
-                termIdentifierE1bDTO.setTermOrder(termOrderCounter++);
-                termIdentifiers.add(termIdentifierE2aDTO);
-            }
-            if (basicPhenoObjects[7] != null && !basicPhenoObjects[7].toString().isEmpty()) {
-                termIdentifierE1bDTO.setTermId(basicPhenoObjects[7].toString());
-                termIdentifierE1bDTO.setTermOrder(termOrderCounter++);
-                termIdentifiers.add(termIdentifierE2bDTO);
-            }
 
             termIdentifierQualityDTO.setTermId(basicPhenoObjects[8].toString());
             termIdentifierQualityDTO.setTermOrder(termOrderCounter++);
             termIdentifiers.add(termIdentifierQualityDTO);
+
+            if (basicPhenoObjects[6] != null && !basicPhenoObjects[6].toString().isEmpty()) {
+                termIdentifierE2aDTO.setTermId(basicPhenoObjects[6].toString());
+                termIdentifierE2aDTO.setTermOrder(termOrderCounter++);
+                termIdentifiers.add(termIdentifierE2aDTO);
+            }
+            if (basicPhenoObjects[7] != null && !basicPhenoObjects[7].toString().isEmpty()) {
+                termIdentifierE2bDTO.setTermId(basicPhenoObjects[7].toString());
+                termIdentifierE2bDTO.setTermOrder(termOrderCounter++);
+                termIdentifiers.add(termIdentifierE2bDTO);
+            }
+
+
 
             basicPheno.setPhenotypeTermIdentifiers(termIdentifiers);
 
