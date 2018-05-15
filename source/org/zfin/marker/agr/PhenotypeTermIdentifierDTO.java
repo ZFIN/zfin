@@ -1,6 +1,6 @@
 package org.zfin.marker.agr;
 
-public class PhenotypeTermIdentifierDTO extends ZfinDTO{
+public class PhenotypeTermIdentifierDTO {
 
     private String termId;
     private Integer termOrder;

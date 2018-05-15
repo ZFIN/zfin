@@ -27,6 +27,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.agr.BasicPhenotypeDTO;
+import org.zfin.marker.agr.PhenotypeTermIdentifierDTO;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -594,8 +595,9 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<BasicPhenotypeDTO> getBasicAllelePhenotypeDTOObjects(){
-        final String queryString = "select distinct fmrel1.fmrel_ftr_zdb_id, psg_short_name, zdb_id, nvl(accession_no,'')" +
+    public List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects(){
+        final String alleleQueryString = "select distinct fmrel1.fmrel_ftr_zdb_id, psg_short_name, zdb_id, nvl(accession_no,'') as accession_no,"+
+                " psg_e1a_zdb_id, nvl(psg_e1b_zdb_id,'') as psg_e1b_zdb_id, nvl(psg_e2a_zdb_id,'') as psg_e2a_zdb_id, nvl(psg_e2b_zdb_id,'') as psg_e2b_zdb_id, psg_quality_zdb_id" +
                 "  from feature_marker_relationship fmrel1, mutant_fast_search, phenotype_source_generated, phenotype_observation_generated," +
                 "        figure, publication, fish_experiment, fish, genotype_feature" +
                 "  where mfs_genox_zdb_id = pg_genox_zdb_id" +
@@ -608,6 +610,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "  and genox_fish_zdb_id = fish_zdb_id" +
                 "  and fish_genotype_zdb_id = genofeat_geno_zdb_id" +
                 "  and genofeat_feature_zdb_id = fmrel1.fmrel_ftr_zdb_id" +
+                "  and get_obj_type(fmrel1.fmrel_ftr_zdb_id) = 'ALT'" +
                 "  and mfs_genox_zdb_id = pg_genox_zdb_id" +
                 "  and pg_id = psg_pg_id" +
                 "  and pg_fig_zdb_id = fig_zdb_id" +
@@ -615,39 +618,26 @@ public class HibernateMutantRepository implements MutantRepository {
                 "  and fmrel1.fmrel_type = 'is allele of' and not exists" +
                 "               (select 'x' from feature_marker_relationship fmrel2" +
                 "                     where fmrel1.fmrel_zdb_id != fmrel2.fmrel_zdb_id and fmrel1.fmrel_ftr_zdb_id = fmrel2.fmrel_ftr_zdb_id" +
-                "                     and fmrel2.fmrel_type != 'created by')"
-                ;
+                "                     and fmrel2.fmrel_type != 'created by')";
 
-        final Query query = HibernateUtil.currentSession().createSQLQuery(queryString);
+        final String geneQueryString = "select distinct mfs_mrkr_zdb_id, psg_short_name, zdb_id, nvl(accession_no,'') as accession_no,"+
+                " psg_e1a_zdb_id, nvl(psg_e1b_zdb_id,'') as psg_e1b_zdb_id, nvl(psg_e2a_zdb_id,'') as psg_e2a_zdb_id, nvl(psg_e2b_zdb_id,'') as psg_e2b_zdb_id, psg_quality_zdb_id" +
+                "        from mutant_fast_search, phenotype_source_generated, phenotype_observation_generated," +
+                "                        figure, publication" +
+                "                where mfs_genox_zdb_id = pg_genox_zdb_id" +
+                "                and pg_id = psg_pg_id" +
+                "                and pg_fig_zdb_id = fig_zdb_id" +
+                "                and fig_source_zdb_id = zdb_id" +
+                "                and get_obj_type(mfs_mrkr_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
 
-        List<Object[]> phenos = query.list();
+        final Query alleleQuery = HibernateUtil.currentSession().createSQLQuery(alleleQueryString);
+        final Query geneQuery = HibernateUtil.currentSession().createSQLQuery(geneQueryString);
 
-        List<BasicPhenotypeDTO> basicPhenos = new ArrayList<BasicPhenotypeDTO>();
-        for (Object[] basicPhenoObjects : phenos) {
-            BasicPhenotypeDTO basicPheno = new BasicPhenotypeDTO();
-            basicPheno.setObjectId(basicPhenoObjects[0].toString());
-            basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
-            basicPheno.setPubModId(basicPhenoObjects[2].toString());
-            basicPheno.setPubMedId(basicPhenoObjects[3].toString());
-            basicPhenos.add(basicPheno);
-        }
+        List<Object[]> alleles = alleleQuery.list();
+        List<Object[]> genes = geneQuery.list();
+        List<Object[]> phenos = genes;
+        phenos.addAll(alleles);
 
-        return basicPhenos;
-    }
-
-
-    @Override
-    public List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects () {
-        final String queryString = "select mfs_mrkr_zdb_id, psg_short_name, zdb_id, nvl(accession_no,'')" +
-                "  from mutant_fast_search, phenotype_source_generated, phenotype_observation_generated," +
-                "        figure, publication" +
-                "  where mfs_genox_zdb_id = pg_genox_zdb_id" +
-                "  and pg_id = psg_pg_id" +
-                "  and pg_fig_zdb_id = fig_zdb_id" +
-                "  and fig_source_zdb_id = zdb_id";
-        final Query query = HibernateUtil.currentSession().createSQLQuery(queryString);
-
-        List<Object[]> phenos = query.list();
 
         List<BasicPhenotypeDTO> basicPhenos = new ArrayList<BasicPhenotypeDTO>();
         for (Object[] basicPhenoObjects : phenos) {
@@ -656,10 +646,49 @@ public class HibernateMutantRepository implements MutantRepository {
             basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
             basicPheno.setPubModId(basicPhenoObjects[2].toString());
             basicPheno.setPubMedId(basicPhenoObjects[3].toString());
+
+            PhenotypeTermIdentifierDTO termIdentifierE1aDTO = new PhenotypeTermIdentifierDTO();
+            PhenotypeTermIdentifierDTO termIdentifierE1bDTO = new PhenotypeTermIdentifierDTO();
+            PhenotypeTermIdentifierDTO termIdentifierE2aDTO = new PhenotypeTermIdentifierDTO();
+            PhenotypeTermIdentifierDTO termIdentifierE2bDTO = new PhenotypeTermIdentifierDTO();
+            PhenotypeTermIdentifierDTO termIdentifierQualityDTO = new PhenotypeTermIdentifierDTO();
+            termIdentifierE1aDTO.setTermId(basicPhenoObjects[4].toString());
+
+            int termOrderCounter = 1;
+
+            List<PhenotypeTermIdentifierDTO> termIdentifiers = new ArrayList<>();
+            termIdentifiers.add(termIdentifierE1aDTO);
+
+            termIdentifierE1aDTO.setTermOrder(termOrderCounter++);
+
+            if (basicPhenoObjects[5] != null && !basicPhenoObjects[5].toString().isEmpty()) {
+                termIdentifierE1bDTO.setTermId(basicPhenoObjects[5].toString());
+                termIdentifierE1bDTO.setTermOrder(termOrderCounter++);
+                termIdentifiers.add(termIdentifierE1bDTO);
+            }
+            if (basicPhenoObjects[6] != null && !basicPhenoObjects[5].toString().isEmpty()) {
+                termIdentifierE1bDTO.setTermId(basicPhenoObjects[5].toString());
+                termIdentifierE1bDTO.setTermOrder(termOrderCounter++);
+                termIdentifiers.add(termIdentifierE2aDTO);
+            }
+            if (basicPhenoObjects[7] != null && !basicPhenoObjects[5].toString().isEmpty()) {
+                termIdentifierE1bDTO.setTermId(basicPhenoObjects[5].toString());
+                termIdentifierE1bDTO.setTermOrder(termOrderCounter++);
+                termIdentifiers.add(termIdentifierE2bDTO);
+            }
+
+            termIdentifierQualityDTO.setTermId(basicPhenoObjects[8].toString());
+            termIdentifierQualityDTO.setTermOrder(termOrderCounter++);
+            termIdentifiers.add(termIdentifierQualityDTO);
+
+            basicPheno.setPhenotypeTermIdentifiers(termIdentifiers);
+
             basicPhenos.add(basicPheno);
         }
+
         return basicPhenos;
     }
+
 
     @SuppressWarnings("unchecked")
     @Override
