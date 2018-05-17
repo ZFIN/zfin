@@ -23,19 +23,14 @@ def informixSql = Sql.newInstance(informixDb.url, informixDb.driver)
 
 
 postgresSql.eachRow ("select * from information_schema.tables where table_name not like 'pg_%' and table_name not like 'sql_%' and is_insertable_into = 'YES' order by table_name") { row ->
-        //print ("tableName: " +"$row.table_name" )
         def tableName = "${row.table_name}"
-       //print ("table: " + tableName.toUpperCase().padRight(10) + " ")
 
         postgresSql.eachRow('select count(*) as counter from ' + tableName) { pgCounter ->
                 pgTableCount = "$pgCounter.counter"
-                //print("pg: " + "$pgCounter.counter" +" ")
         }
         informixSql.eachRow('select count(*) as ifxCounter from ' + tableName) { informixRow ->
                 ifxTableCount = "$informixRow.ifxCounter"
-                //print("$informixRow.ifxCounter" + " :informix")
         }
-        //print "\n"
         if (pgTableCount != ifxTableCount) {
                 println("ERROR: Table count mismatch " + "tableName: "+ tableName.toUpperCase()+ " " + "ifx: " + ifxTableCount + " " + pgTableCount + " :pg")
         }
