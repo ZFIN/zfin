@@ -33,6 +33,6 @@ postgresSql.eachRow ("select * from information_schema.tables where table_name n
         }
         if (pgTableCount != ifxTableCount) {
                 println("ERROR: Table count mismatch " + "tableName: "+ tableName.toUpperCase()+ " " + "ifx: " + ifxTableCount + " " + pgTableCount + " :pg")
-        }
 
+        }
 }
