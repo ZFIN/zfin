@@ -4,7 +4,6 @@ table.searchresults {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #ddd;
-    table-layout: fixed;
 }
 
 table.searchresults th {
