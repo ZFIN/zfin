@@ -1,24 +1,24 @@
 begin work;
 
 create temp table tmp_pubs (
-  pmid text,
+  pmid integer,
   keywords text,
   title text,
-  pages varchar(30),
+  pages text,
   abstract text,
   authors text,
   numAuthors int,
-  year varchar(4),
-  month varchar(4),
-  day varchar(4),
-  issn varchar(50),
-  volume varchar(50),
-  issue varchar(50),
-  journaltitle varchar(255),
-  iso varchar(255),
-  status varchar(20));
+  year text,
+  month text,
+  day text,
+  issn text,
+  volume text,
+  issue text,
+  journaltitle text,
+  iso text,
+  status text);
 
-copy tmp_pubs from '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log' delimiter '|';
+\copy tmp_pubs from '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log';
 
 
 delete from tmp_pubs
@@ -27,28 +27,28 @@ where (authors = 'none' or authors is null)
 
 create temp table tmp_new_pubs (
   zdb_id text,
-  pmid int8,
+  pmid integer,
   keywords text,
   title text,
-  pages varchar(30),
+  pages text,
   abstract text,
   authors text,
   numAuthors int,
-  year varchar(4),
-  month varchar(4),
-  day varchar(4),
-  issn varchar(50),
-  volume varchar(50),
-  issue varchar(50),
-  journaltitle varchar(255),
-  iso varchar(255),
-  status varchar(40),
-  journal_zdb_id varchar(50)
+  year text,
+  month text,
+  day text,
+  issn text,
+  volume text,
+  issue text,
+  journaltitle text,
+  iso text,
+  status text,
+  journal_zdb_id text
 );
 
 insert into tmp_new_pubs
   select get_id('PUB'),
-    nullif(pmid, '')::int,
+    pmid,
     keywords,
     title,
     pages,
@@ -109,7 +109,7 @@ from tmp_new_journals;
 insert into zdb_active_source
   select id from tmp_ids;
 
-copy (select * from tmp_ids) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newJournals.txt' delimiter '|';
+\copy (select * from tmp_ids) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newJournals.txt' delimiter '|';
 
 insert into journal (jrnl_zdb_id, jrnl_name, jrnl_abbrev, jrnl_is_nice, jrnl_print_issn)
   select id, journaltitle, iso, false, issn
@@ -170,7 +170,7 @@ insert into publication (
     zdb_id,
     authors,
     numAuthors,
-    to_date(month||'/'||day||'/'||year,'Mon DD YYYY'),
+    to_date(month||'/'||day||'/'||year,'MM/DD/YYYY'),
     title,
     keywords,
     pmid,
@@ -226,9 +226,9 @@ insert into pub_tracking_history (pth_pub_zdb_id,
 
 
 create temp table tmp_mesh (
-  pmid varchar(30),
-  descriptor_id varchar(10),
-  qualifier_id varchar(10),
+  pmid integer,
+  descriptor_id text,
+  qualifier_id text,
   is_major boolean
 ) ;
 
