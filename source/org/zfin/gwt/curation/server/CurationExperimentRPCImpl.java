@@ -136,7 +136,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         FishDTO fish = DTOConversionService.convertToFishDtoFromFish(wtFish, true);
         fishDTOList.add(fish);
         fish = new FishDTO();
-        fish.setZdbID(null);
+        fish.setZdbID("");
         fish.setName("---------");
         fish.setHandle("---------");
         fishDTOList.add(fish);
@@ -148,7 +148,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             fishDTOList.add(fishy);
         }
         FishDTO separator = new FishDTO();
-        separator.setZdbID(null);
+        separator.setZdbID("");
         separator.setName("---------");
         separator.setHandle("---------");
         fishDTOList.add(separator);
