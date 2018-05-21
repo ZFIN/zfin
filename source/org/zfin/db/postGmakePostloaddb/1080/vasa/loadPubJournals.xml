@@ -8,7 +8,7 @@
 
 <changeSet author="sierra" id="loadChebi">
     <loadData
-            file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1080/vasa/toSplit.csv"
+            file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/toSplit.csv"
             catalogName="${DBNAME}" schemaName="${USER}" tableName="publication_journals" encoding="UTF-8" >
         <column name="pub_id" type="String"/>
 	<column name="pub_vol" type="String"/>
