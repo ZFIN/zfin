@@ -1,18 +1,18 @@
-#!/bin/bash
+#!/bin/tsch -e
 
 set pth=/opt/postgres/postgres_wal/base_backups
 
 set pth=/opt/zfin/postgres_wal/base_backups
 set dirname=`date +"%Y.%m.%d.1"`
 
+
 # increment until we get name which has not been taken
-while [ -d $pth/$dirname ]
-do
-	z=$dirname:e
-	y=$dirname:r
-	x=$z+1
-	dirname=$y.$x
-done
+while ( -d $pth/$dirname )
+	set z=$dirname:e
+	set y=$dirname:r
+@ x = $z + 1
+	set dirname=$y.$x
+end
 
 # make a base backup 
 /opt/postgres/postgresql/bin/pg_basebackup --wal-method='fetch' --format=t -D /opt/postgres/postgres_wal/base_backups/$dirname/`date +%Y%m%d` -v -P
