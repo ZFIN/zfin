@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set pth=/research/zunloads/databases/${HOSTNAME}
+set pth=/opt/postgres/postgres_wal/base_backups
 
 set dirname=`date +"%Y.%m.%d.1"`
 
@@ -14,14 +14,14 @@ end
 
 
 # make a base backup 
-/opt/postgres/postgresql/bin/pg_basebackup --wal-method='fetch' --format=t -D /research/zunloads/databases/${HOSTNAME}/base_backups/`date +%Y%m%d`
+/opt/postgres/postgresql/bin/pg_basebackup --wal-method='fetch' --format=t -D /opt/postgres/postgres_wal/base_backups/`date +%Y%m%d` -v -P
 
 # compress wal archives, add to data directory.
 cd /research/zunloads/databases/${HOSTNAME}/
 tar -cf archives.tar wal_log_archive
-mv archives.tar /research/zunloads/databases/${HOSTNAME}/base_backups/`date +%Y%m%d`
+mv archives.tar /opt/postgres/postgres_wal/base_backups/`date +%Y%m%d`
 
 # delete WAL log archive files older than 3 days (assumes the base backup happens nightly)
 
-cd /research/zunloads/databases/${HOSTNAME}/wal_log_archive/
+cd /opt/postgres/postgres_wal/wal_log_archive/
 find -mtime +2 -exec rm {} \;
