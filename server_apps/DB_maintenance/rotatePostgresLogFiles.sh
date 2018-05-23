@@ -1,4 +1,4 @@
-#!/bin/tsch -e
+#!/bin/tcsh -e
 
 set pth=/opt/postgres/postgres_wal/base_backups
 
