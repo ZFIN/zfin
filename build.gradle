@@ -225,6 +225,10 @@ task make {
     dependsOn ':server_apps:apache:deployDirectoryToTargetroot'
     dependsOn ':server_apps:Reports:deployDirectoryToTargetroot'
     dependsOn ':server_apps:DB_maintenance:deployDirectoryToTargetroot'
+    dependsOn ':server_apps:data_transfer:deployDirectoryToTargetroot'
+    dependsOn ':server_apps:sysexecs:deployDirectoryToTargetroot'
+    dependsOn ':server_apps:sysexecs:deployDirectoryToTargetroot'
+    dependsOn ':server_apps:Reports:deployDirectoryToTargetroot'
     dependsOn deployPostgres
 }
 
