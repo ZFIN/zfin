@@ -388,7 +388,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         DevelopmentStage end = new DevelopmentStage();
         end.setZdbID(endStageFilter.getZdbID());
         DevelopmentStage endStage = anatomyRepository.getStage(end);
-        query.setParameter("hoursEnd", endStage.getHoursEnd());
+        query.setParameter("hoursEnd", endStage.getHoursStart());
     }
 
     /**
@@ -477,7 +477,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hasOneWhereClause = true;
             hql.append("  exists ( select result from ExpressionResult result " +
                     "                  where result.startStage.hoursStart >= :hoursStart " +
-                    "                    AND result.endStage.hoursEnd <= :hoursEnd " +
+                    "                    AND result.endStage.hoursStart <= :hoursEnd " +
                     "                    AND result.expressionExperiment.antibody = antibody ) ");
         }
         if (searchCriteria.isAnatomyDefined()) {
