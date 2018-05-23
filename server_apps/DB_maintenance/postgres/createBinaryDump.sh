@@ -1,19 +1,6 @@
 #!/bin/bash
 
 
-set pth=research/zunloads/databases/postgres_dumps/${DBNAME}
-set dirname=`date +"%Y.%m.%d.1"`
-
-# increment until we get name which has not been taken                                               
-while ( -d $pth/$dirname )
-        set z=$dirname:e
-        set y=$dirname:r
-@ x = $z + 1
-        set dirname=$y.$x
-end
-
-mkdir $pth/$dirname
-
 dumpLocation=/research/zunloads/databases/postgres_dumps/${DBNAME}
 echo "dumpLocation"
 echo $dumpLocation
@@ -30,4 +17,3 @@ ${PGBINDIR}/pg_dump -Fc ${DBNAME} -f /research/zunloads/databases/postgres_self_
 #latestBinaryDump=$latestDump.bak
 
 #pg_dump -Fc ${DBNAME} >  /research/zunloads/databases/postgres_self_dumps/${DBNAME}/$latestDump/$latestDump.bak
-

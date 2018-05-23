@@ -56,7 +56,7 @@ public class GoActionComposite extends Composite implements Revertible {
         }
         if (this.dto.isNoctua()){
 
-            NoctuaLink noctuaLink = new NoctuaLink("http://noctua.berkeleybop.org/editor/graph/gomodel:" + dto.getNoctuaModelId(), "NoctuaID");
+            NoctuaLink noctuaLink = new NoctuaLink("http://noctua.berkeleybop.org/editor/graph/" + dto.getNoctuaModelId(), "NoctuaID");
             panel.add(noctuaLink);
 
 

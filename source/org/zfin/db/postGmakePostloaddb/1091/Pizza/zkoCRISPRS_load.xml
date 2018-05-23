@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
         <changeSet author="pm" id="zkoCRISPRS_load">
-            <loadData file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1091/Pizza/zkoCRISPRs.csv"
+            <loadData file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/zkoCRISPRs.csv"
                       catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_feature" encoding="UTF-8">
                 <column name="feature_abbrev" type="String"/>
                 <column name="sequence" type="String"/>

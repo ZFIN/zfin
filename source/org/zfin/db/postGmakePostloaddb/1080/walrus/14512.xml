@@ -8,7 +8,7 @@
 
 <changeSet author="prita" id="14512">
     <loadData
-            file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1080/walrus/addReln.csv"
+            file="source/org/zfin/db/postGmakePostloaddb/1080/walrus/addReln.csv"
             catalogName="${DBNAME}" schemaName="${USER}" tableName="tmprel" encoding="UTF-8" >
         <column name="mrkrId" type="String"/>
 	<column name="tgtId" type="String"/>

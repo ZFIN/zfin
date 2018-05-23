@@ -5,6 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
+<!--
     <include file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1079/titanic/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1079/underwater/db.changelog.master.xml"/>
@@ -34,5 +35,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1096/XBones/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1097/YinYang/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1097/ZipperMouthFace/db.changelog.master.xml"/>
-
+-->
+<!-- starting fresh with migration to postgres -->
 </databaseChangeLog>

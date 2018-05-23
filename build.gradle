@@ -72,8 +72,8 @@ task loadDb() {
         exec { commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
     }
 }
-task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
 
+task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
 
 sourceSets {
     main {
@@ -86,26 +86,36 @@ sourceSets {
     }
 }
 
-def changeLog = "$projectDir/source/org/zfin/db/load/db.changelog.master.xml"
+String preChangeLog = "$projectDir/source/org/zfin/db/load/db.changelog.master.xml"
 
-task buildDatabase() {
-    liquibase {
-        activities {
-            main {
-                changeLogFile changeLog
-                url 'jdbc:postgresql://localhost:5432/' + dbname
+task liquibasePreBuild() {
+    doLast {
+        liquibase {
+            activities {
+                main {
+                    changeLogFile preChangeLog
+                    url 'jdbc:postgresql://localhost:5432/' + dbname
+                }
             }
         }
     }
 }
 
-update {
-/*
-    println dbname
-    println "Running liquibase updates..."
-    println "change logs: " + changeLog
-*/
+String postChangeLog = "$projectDir/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml"
+task liquibasePostBuild() {
+    doLast {
 
+        liquibase {
+            activities {
+                main {
+                    Properties properties = new Properties()
+                    properties.setProperty("SOURCEROOT", ".")
+                    changeLogFile postChangeLog
+                    url 'jdbc:postgresql://localhost:5432/' + dbname
+                }
+            }
+        }
+    }
 }
 
 // variables used for translation of keys in files in SOURCEROOT copied into TARGETROOT
@@ -215,6 +225,10 @@ task make {
     dependsOn ':server_apps:apache:deployDirectoryToTargetroot'
     dependsOn ':server_apps:Reports:deployDirectoryToTargetroot'
     dependsOn ':server_apps:DB_maintenance:deployDirectoryToTargetroot'
+    dependsOn ':server_apps:data_transfer:deployDirectoryToTargetroot'
+    dependsOn ':server_apps:sysexecs:deployDirectoryToTargetroot'
+    dependsOn ':server_apps:sysexecs:deployDirectoryToTargetroot'
+    dependsOn ':server_apps:Reports:deployDirectoryToTargetroot'
     dependsOn deployPostgres
 }
 

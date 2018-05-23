@@ -8,7 +8,7 @@
 
 <changeSet author="sierra" id="loadStats">
     <loadData
-            file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1081/xiphius/tableValues.csv"
+            file="source/org/zfin/db/postGmakePostloaddb/1081/xiphius/tableValues.csv"
             catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_stats" encoding="UTF-8" >
         <column name="date" type="Date"/>
 	<column name="section" type="String"/>

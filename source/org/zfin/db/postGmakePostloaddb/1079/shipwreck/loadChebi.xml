@@ -8,7 +8,7 @@
 
 <changeSet author="sierra" id="loadChebi">
     <loadData
-            file="${SOURCEROOT}/source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/term"
+            file="source/org/zfin/db/postGmakePostloaddb/1079/shipwreck/term"
             catalogName="${DBNAME}" schemaName="${USER}" tableName="tmp_term"  encoding="UTF-8" >
         <column name="term_zdb_id" type="String"/>
 	<column name="term_ont_id" type="String"/>

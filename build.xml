@@ -575,7 +575,7 @@
             </condition>
         </fail>
 
-	<delete>
+	<delete failonerror="false">
 	   <fileset dir="${classes.dir.target}" includes="**/*"/>
 	   <fileset dir="${lib.dir.target}" includes="**/*"/>
 	</delete>

@@ -1,39 +1,41 @@
 // Had trouble to write this as a closure method as in data_transfer directory
 // It would fail while trying to copy files from $JENKINS_HOME directory.
 task deployDirectoryToTargetroot() {
-    def dataDirectory = ''
-    dataDirectory += projectDir
-    dataDirectory += '/ZFINPerlModules.pm'
-    println "Copying file: " + dataDirectory
-    copy {
-        from(dataDirectory) {
-            ttNameMap.each { name, value ->
-                if (value == null)
-                    println name + " " + value
-                else
-                    filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+    doLast {
+        def dataDirectory = ''
+        dataDirectory += projectDir
+        dataDirectory += '/ZFINPerlModules.pm'
+        println "Copying file: " + dataDirectory
+        copy {
+            from(dataDirectory) {
+                ttNameMap.each { name, value ->
+                    if (value == null)
+                        println name + " " + value
+                    else
+                        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+                }
             }
+            into ttNameMap.get('TARGETROOT') + '/server_apps'
         }
-        into ttNameMap.get('TARGETROOT') + '/server_apps'
-    }
-    dataDirectory = ''+projectDir+'/ZFINPerlModules_PG.pm'
-    println "Copying file: " + dataDirectory
-    copy {
-        from(dataDirectory) {
-            ttNameMap.each { name, value ->
-                if (value == null)
-                    println name + " " + value
-                else
-                    filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+        dataDirectory = '' + projectDir + '/ZFINPerlModules_PG.pm'
+        println "Copying file: " + dataDirectory
+        copy {
+            from(dataDirectory) {
+                ttNameMap.each { name, value ->
+                    if (value == null)
+                        println name + " " + value
+                    else
+                        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+                }
             }
+            into ttNameMap.get('TARGETROOT') + '/server_apps'
         }
-        into ttNameMap.get('TARGETROOT') + '/server_apps'
-    }
 
-    dataDirectory = ''+projectDir+'/../package.json'
-    println "Copying file: " + dataDirectory
-    copy {
-        from(dataDirectory)
-        into ttNameMap.get('TARGETROOT')
+        dataDirectory = '' + projectDir + '/../package.json'
+        println "Copying file: " + dataDirectory
+        copy {
+            from(dataDirectory)
+            into ttNameMap.get('TARGETROOT')
+        }
     }
 }
