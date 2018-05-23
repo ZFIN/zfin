@@ -18,6 +18,8 @@ mkdir $pth/$dirname
 echo "pg_dump starting"
 
 ${PGBINDIR}/pg_dump -Fc ${DBNAME} -f $pth/$dirname.bak
+cp $pth/$dirname.bak $pth/$dirname
+
 
 echo "pg_dumpall starting"
 
