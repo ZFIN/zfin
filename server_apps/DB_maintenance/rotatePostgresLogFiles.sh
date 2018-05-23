@@ -9,7 +9,7 @@ while [ -d $pth/$dirname ]
 do
 	z=$dirname:e
 	y=$dirname:r
-@ x = $z + 1
+	x=$z+1
 	dirname=$y.$x
 done
 
@@ -18,10 +18,10 @@ done
 
 # compress wal archives, add to data directory.
 cd /opt/postgres/postgres_wal/
-tar -cf archives.tar wal_log_archive
+tar -cf archives.tar wal_archive
 mv archives.tar /opt/postgres/postgres_wal/base_backups/`date +%Y%m%d`
 
 # delete WAL log archive files older than 3 days (assumes the base backup happens nightly)
 
-cd /opt/postgres/postgres_wal/wal_log_archive/
+cd /opt/postgres/postgres_wal/wal_archive/
 find -mtime +2 -exec rm {} \;
