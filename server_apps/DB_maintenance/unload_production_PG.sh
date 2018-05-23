@@ -1,9 +1,9 @@
-#!/bin/tcsh
+#!/bin/tcsh -e
 
 set pth=/research/zunloads/databases/${DBNAME}
 set dirname=`date +"%Y.%m.%d.1"`
 
-${PGBINDIR}/psql $DBNAME ${SOURCEROOT}/server_apps/DB_maintenance/set_unload_timestamp.sql
+${SOURCEROOT}/server_apps/DB_maintenance/set_unload_timestamp_PG.sh
 
 # increment until we get name which has not been taken
 while ( -d $pth/$dirname )
@@ -13,9 +13,20 @@ while ( -d $pth/$dirname )
 	set dirname=$y.$x
 end
 
-${PGBINDIR}/pg_dumpall --clean --verbose --no-role-passwords >  $pth/$dirname
+mkdir $pth/$dirname
+
+echo "pg_dump starting"
+
+${PGBINDIR}/pg_dump -Fc ${DBNAME} -f $pth/$dirname.bak
+cp $pth/$dirname.bak $pth/$dirname
+
+echo "pg_dumpall starting"
+
+${PGBINDIR}/pg_dumpall --clean --verbose --no-role-passwords >  $pth/$dirname.dumpall
+
 if ($? != "0") then
   /bin/rm -rf $pth/$dirname
+  echo "unload_production failed"
 else 
   chgrp -R fishadmin $pth/$dirname
   chmod -R g+rw $pth/$dirname
