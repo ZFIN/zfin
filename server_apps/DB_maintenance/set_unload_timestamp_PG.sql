@@ -1,16 +1,11 @@
+#!/bin/tcsh
 
-delete from database_info where di_database_unloaded = '<!--|DB_NAME|-->';
-insert into database_info (di_date_unloaded, di_database_unloaded)
- select CURRENT_TIMESTAMP, '<!--|DB_NAME|-->'
-   from single;
+set delete_command="delete from database_info where di_database_unloaded='${DBNAME}';"
 
+echo $delete_command
 
---DELETE FROM database_info 
---WHERE  di_database_unloaded = '<!--|DB_NAME|-->'; 
+echo $delete_command | ${PGBINDIR}/psql ${DBNAME}
 
---INSERT INTO database_info 
---            (di_date_unloaded, 
---             di_database_unloaded) 
---SELECT Now(), 
---       '<!--|DB_NAME|-->' 
+set insert_command="insert into database_info (di_date_unloaded, di_database_unloaded) select CURRENT_TIMESTAMP, '${DBNAME}' from single;"
 
+echo $insert_command |  ${PGBINDIR}/psql ${DBNAME}
