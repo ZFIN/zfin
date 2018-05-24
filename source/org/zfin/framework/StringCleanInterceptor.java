@@ -50,7 +50,8 @@ public class StringCleanInterceptor extends EmptyInterceptor {
             Field[] fields = state.getClass().getDeclaredFields();
             if (fields != null) {
                 for (Field field : fields) {
-                    if (field.getType() == String.class) {
+                    // modifier = 9 means static field
+                    if (field.getType() == String.class && field.getModifiers() != 9) {
                         runSetter(field, state, processState(runGetter(field, state)));
                     }
                 }
