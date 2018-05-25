@@ -79,7 +79,7 @@ public class FishSmokeTest extends AbstractSmokeTest {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-detail/ZDB-FISH-150901-6514");
         // make sure alcama is listed
         List<?> pubs = page.getByXPath("//a[@id='ZDB-GENE-990415-30']");
-        assertEquals(1, pubs.size());
+        assertThat(pubs.size(), greaterThanOrEqualTo(1));
     }
 
 }
