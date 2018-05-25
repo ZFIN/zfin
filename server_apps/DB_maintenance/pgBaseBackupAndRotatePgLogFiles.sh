@@ -36,7 +36,8 @@ mkdir $pth/$dirname
 
 cd /opt/postgres/postgres_wal/
 tar -cf archives.tar wal_archive
-mv archives.tar $pth/$dirname
+gzip archives.tar
+mv archives.tar.gz $pth/$dirname
 
 # take a filesystem backup as well, which does backup /opt/postgres/data
 
