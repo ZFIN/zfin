@@ -227,7 +227,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         category                            | expectedLabels
         Category.GENE                       | ["Type", "Expression", "Phenotype", "Human Disease", "Gene Ontology", "Location"]
         Category.EXPRESSIONS                | ["Expressed Gene", "Expressed In Anatomy", "Stage", "Has Image", "Is Wildtype and Clean", "Assay", "Genotype", "Sequence Targeting Reagent (STR)", "Conditions"]
-        Category.PHENOTYPE                  | ["Phenotypic Gene", "Phenotype Statement", "Stage", "Manifests In", "Sequence Targeting Reagent (STR)", "Is Monogenic", "Conditions", "Has Image"]
+        Category.PHENOTYPE                  | ["Phenotypic Gene", "Phenotype Statement", "Stage", "Manifests In", "Genotype", "Sequence Targeting Reagent (STR)", "Is Monogenic", "Conditions", "Has Image"]
         Category.DISEASE                    | ["Gene", "Disease Model"]
         Category.FISH                       | ["Affected Genomic Region", "Is Model Of", "Expression Anatomy", "Phenotype", "Sequence Targeting Reagent (STR)", "Construct", "Mutation / Tg", "Background"]
         Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage"]
