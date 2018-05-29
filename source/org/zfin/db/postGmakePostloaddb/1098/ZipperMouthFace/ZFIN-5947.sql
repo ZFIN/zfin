@@ -38,9 +38,7 @@ insert into pre_extnote (
 )
 values('x',
        'y' ,
-       ' This stock has ZZ (male) and ZW (female) sex chromosomes. No ZZ individual ever makes a female, but some ZW fish do become fertile phenotypic males. The mating of a ZW female to a sex-reversed phenotypic ZW male can produce WW fish, most of which are female, but some of which are male. Thus, the stock needs to be maintained in large enough numbers to ensure that the Z chromosome is maintained because the mating of a WW phenotypic female to a WW pheotypic male would result in offspring with no Z chromosome.
-
- From a fish dealer from India, who obtained the fish near Cooch Behar, India'  ,
+       'From a fish dealer from India, who obtained the fish near Cooch Behar, India'  ,
        'genotype', 'ZDB-PUB-140923-28');
 
 update pre_extnote set extnote_id=get_id('EXTNOTE');
