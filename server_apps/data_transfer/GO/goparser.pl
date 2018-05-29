@@ -50,7 +50,7 @@ while ($line = <INDEXFILE>) {
 
           $lineToProduce = "$db\t$mrkrid\t$mrkrabb\t$qualifier\t$goid\tZFIN:$pubid\t$evidence\t".
              join(',',@inf_array)."\t$go_o\t$mrkrname\t$aliases\t$gene_product\ttaxon:7955\t$ev_date\t$mod_by\t".
-             "$relation\t$proteinid\t\n";
+             "$relation\t$proteinid\n";
 
           ## DLOAD-480
           $find = 'GO Central';
