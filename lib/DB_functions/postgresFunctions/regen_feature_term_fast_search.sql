@@ -173,7 +173,7 @@ returns text as $returnValue$
 		and genox_is_std_or_generic_control = 't'
 		and fish_zdb_id = genox_fish_zdb_id
 		and fish_genotype_zdb_id = geno_zdb_id
-		and fish_is_wildtype = 't'
+		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
 		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055' ;
 
@@ -202,7 +202,7 @@ returns text as $returnValue$
 		and genox_is_std_or_generic_control = 't'
 		and fish_zdb_id = genox_fish_zdb_id
 		and fish_genotype_zdb_id = geno_zdb_id
-		and fish_is_wildtype = 't'
+		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
                 and xpatres_subterm_zdb_id is not null ;
 
@@ -231,6 +231,7 @@ returns text as $returnValue$
 		   and efs_xpatex_zdb_id = xpatex_zdb_id
 		   and fish_genotype_zdb_id = geno_zdb_id
 		   and fish_is_wildtype = 't'
+                   and geno_is_wildtype = 't'
 		   and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
 		   and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
 		   and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
@@ -259,6 +260,7 @@ returns text as $returnValue$
 		   and genox_is_std_or_generic_control = 't'
 		and fish_zdb_id = genox_fish_zdb_id
 		and fish_genotype_zdb_id = geno_Zdb_id
+		and geno_is_wildtype = 't'
     		and fish_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
 		and xpatres_subterm_zdb_id !='ZDB-TERM-100331-1055'
