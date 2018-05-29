@@ -31,8 +31,6 @@ BEGIN
                               NEW.mrkr_abbrev,
                               NEW.mrkr_type);
 
-  PERFORM mhist_event(NEW.mrkr_zdb_id, '', NEW.mrkr_abbrev, '', NEW.mrkr_name);
-
   PERFORM p_populate_go_root_terms(NEW.mrkr_zdb_id,
                                    NEW.mrkr_name,
                                    NEW.mrkr_type);
@@ -42,5 +40,5 @@ END;
 $BODY$ LANGUAGE plpgsql;
 
 CREATE TRIGGER marker_trigger
-AFTER INSERT ON marker
+BEFORE INSERT ON marker
 FOR EACH ROW EXECUTE PROCEDURE marker();
