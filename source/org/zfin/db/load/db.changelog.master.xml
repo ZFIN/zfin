@@ -39,4 +39,6 @@
     <include file="source/org/zfin/db/load/1097/YinYang/db.changelog.master.xml"/>
 -->
     <!-- starting fresh with migration to postgres -->
+    <include file="source/org/zfin/db/load/1098/ZipperMouthFace/db.changelog.master.xml"/>
+
 </databaseChangeLog>

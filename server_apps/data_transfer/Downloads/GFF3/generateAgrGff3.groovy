@@ -108,7 +108,7 @@ def getEnsdargMaps() {
 
 
 def printHeader(String contigs, BufferedWriter out) {
-    out.println("# Genome build: GRCz10")
+    out.println("# Genome build: GRCz11")
     out.println "##gff-version\t3"
 
     def chromosomes = (1..25).collect { it.toString() }

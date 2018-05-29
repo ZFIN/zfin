@@ -55,6 +55,8 @@
 <filter token="FTP_ROOT" value="${FTP_ROOT}"/>
 <filter token="GBROWSE_DB" value="${GBROWSE_DB}"/>
 <filter token="GBROWSE_DB_HOST" value="${GBROWSE_DB_HOST}"/>
+<filter token="GBROWSE_GRCZ10_IMG_PATH_FROM_ROOT" value="${GBROWSE_GRCZ10_IMG_PATH_FROM_ROOT}"/>
+<filter token="GBROWSE_GRCZ10_PATH_FROM_ROOT" value="${GBROWSE_GRCZ10_PATH_FROM_ROOT}"/>
 <filter token="GBROWSE_IMG_PATH_FROM_ROOT" value="${GBROWSE_IMG_PATH_FROM_ROOT}"/>
 <filter token="GBROWSE_PATH_FROM_ROOT" value="${GBROWSE_PATH_FROM_ROOT}"/>
 <filter token="GBROWSE_ZV9_IMG_PATH_FROM_ROOT" value="${GBROWSE_ZV9_IMG_PATH_FROM_ROOT}"/>

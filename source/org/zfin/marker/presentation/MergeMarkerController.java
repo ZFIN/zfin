@@ -13,7 +13,6 @@ import org.zfin.feature.presentation.SimpleFeaturePresentation;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -27,7 +26,6 @@ import org.zfin.orthology.presentation.OrthologySlimPresentation;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationLink;
-import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.presentation.AccessionPresentation;
@@ -333,8 +331,8 @@ public class MergeMarkerController {
             return RepositoryFactory.getSequenceRepository().getAccessionPresentation(ForeignDB.AvailableName.GENE, marker);
         } else if (db.equals("UniGene")) {
             return RepositoryFactory.getSequenceRepository().getAccessionPresentation(ForeignDB.AvailableName.UNIGENE, marker);
-        } else if (db.equals("EnsemblGRCz10")) {
-            return RepositoryFactory.getSequenceRepository().getAccessionPresentation(ForeignDB.AvailableName.ENSEMBL_GRCZ10_, marker);
+        } else if (db.equals("EnsemblGRCz11")) {
+            return RepositoryFactory.getSequenceRepository().getAccessionPresentation(ForeignDB.AvailableName.ENSEMBL_GRCZ11_, marker);
         } else if (db.equals("Vega")) {
             List<Marker> transcripts = RepositoryFactory.getMarkerRepository().getSecondMarkersByFirstMarkerAndMarkerRelationshipType(marker, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
 
