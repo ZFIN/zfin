@@ -1,8 +1,6 @@
 create or replace function regen_fish_components()
- returns text as $regen_fish_components$
+ returns void as $$
 
-
-  declare errorHint varchar(255);
 
   begin
 	create temporary table tmp_fish_components (fish_id text,
@@ -20,7 +18,6 @@ create or replace function regen_fish_components()
 					       fish_name varchar(250),
 					       genotype_id text);
 
-   errorHint = 'insert into tmp_fish_components';
 
    --FEATURES
        insert into tmp_fish_components (fish_id, affector_id, gene_id, fish_name, genotype_id) 
@@ -61,10 +58,6 @@ create or replace function regen_fish_components()
          from tmp_fish_components_distinct; 
 
 
- return 'success';
-  return 'regen_genox() completed without error; success!';
-  exception when raise_exception then
-  	    return errorHint;
 
 end;
-$regen_fish_components$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
