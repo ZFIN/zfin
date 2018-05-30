@@ -24,7 +24,7 @@
 
 
 create or replace function regen_feature_term_fast_search()
-returns text as $returnValue$
+returns void as $$
 
    -- routine specific variables
   declare featureZdbId  feature.feature_zdb_id%TYPE;
@@ -37,9 +37,6 @@ returns text as $returnValue$
     xpatresZdbId    expression_result2.xpatres_pk_id%TYPE;
     errorHint text;
   begin 
-
-    errorHint = 'drop existing temp tables';
-    -- drop the table if it already exists
     
     drop table if exists feature_stats_temp;
 
@@ -47,7 +44,6 @@ returns text as $returnValue$
 
     drop table if exists feature_stats_old;
 
-    errorHint = 'create feature_stats_temp';
     create table feature_stats_temp (
 		fstat_pk_id serial8 not null,
 		fstat_feat_zdb_id text not null,
@@ -62,7 +58,6 @@ returns text as $returnValue$
 	) ;
    
 
-       errorHint = 'insert into feature_stats_temp';
       insert into feature_stats_temp (fstat_pk_id, 
        	      	   		       fstat_feat_zdb_id,
 				       fstat_superterm_zdb_id,
@@ -85,38 +80,23 @@ returns text as $returnValue$
 				       fstat_img_zdb_id
 	    from feature_stats;
 
-	     errorHint = 'fstat_feat_fk_index';
 	    
    	    drop index if exists fstat_feat_fk_index;
 
-	     errorHint = 'fstat_fig_fk_index';
-
    	    drop index if exists fstat_fig_fk_index;
-
-	     errorHint = 'fstat_gene_fk_index';
 
   	   
 	    drop index if exists fstat_gene_fk_index;
 
-	     errorHint = 'fstat_img_fk_index';
-
+	    
 	    drop index if exists fstat_img_fk_index;
 	  
-	     errorHint = 'fstat_pk_id_index';
-
-	    
 	    drop index if exists fstat_pk_id_index;
-
-	     errorHint = 'fstat_pub_fk_index';
 
 	    drop index if exists fstat_pub_fk_index;
 	  
-	     errorHint = 'fstat_subterm_fk_index';
-  	    
 	    drop index if exists fstat_subterm_fk_index;
 
-	     errorHint = 'fstat_superterm_fk_index';
-  	  
 	    drop index if exists fstat_superterm_fk_index;
 
 	    create index fstat_feat_fk_index on feature_stats_temp
@@ -143,14 +123,11 @@ returns text as $returnValue$
             create index fstat_superterm_fk_index on 
     	    	   feature_stats_temp (fstat_superterm_zdb_id);
 
-       errorHint = 'rename feature_stats_temp to feature_stats';
       alter table  feature_stats rename to feature_stats_working;
       alter table feature_stats_temp rename to feature_stats ;
 
       delete from feature_stats_working;
-
-  
-       errorHint = 'insert records for xpatres_superterm_zdb_id';		
+	
       insert into feature_stats_working( fstat_feat_zdb_id,
 		       fstat_superterm_zdb_id,
 		       fstat_subterm_zdb_id,
@@ -177,8 +154,6 @@ returns text as $returnValue$
 		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
 		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055' ;
 
-
-       errorHint = 'Antibodies: insert records for xpatres_subterm_zdb_id';
 	-- Antibodies: insert records for xpatres_subterm_zdb_id
 
 	insert into feature_stats_working( fstat_feat_zdb_id,
@@ -205,8 +180,6 @@ returns text as $returnValue$
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
                 and xpatres_subterm_zdb_id is not null ;
-
-	 errorHint = 'High-Quality-Probes: insert records for xpatres_superterm_zdb_id';
 
 	-- High-Quality-Probes: insert records for xpatres_superterm_zdb_id
 	insert into feature_stats_working (fstat_feat_zdb_id,
@@ -269,17 +242,9 @@ returns text as $returnValue$
                 and xpatres_subterm_zdb_id is not null
 		and xpatex_probe_feature_zdb_id is not null;
 
-          errorHint = 'rename table feature_stats_new';
-
-	 alter  table feature_stats rename to feature_stats_old;
+	 alter table feature_stats rename to feature_stats_old;
   	 alter table feature_stats_working rename to feature_stats;
-        
-	  errorHint = 'success';
 
-  return errorHint;
- 
-  exception when raise_exception then
-  	    return errorHint;    
-  end ;
-$returnValue$ LANGUAGE plpgsql;
+ end
+$$ LANGUAGE plpgsql;
 
