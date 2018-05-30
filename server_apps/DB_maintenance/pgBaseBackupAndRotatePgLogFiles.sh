@@ -47,3 +47,5 @@ gzip $pth/$dirname/$dirname.filesytem.tar
 # delete WAL log archive files older than 3 days (assumes the base backup and filesystem backups above, happen nightly)          
 cd /opt/postgres/postgres_wal/wal_archive/
 find -mtime +2 -exec rm {} \;
+
+find /opt/postgres/postgres_wal/base_backups/* -type d -ctime +5 -exec rm -rf {} \;
