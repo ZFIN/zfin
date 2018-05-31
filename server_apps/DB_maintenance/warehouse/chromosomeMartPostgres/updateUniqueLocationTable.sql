@@ -36,7 +36,7 @@ update unique_location as t set ul_chromosome =
 (
 select distinct ss.sfclg_chromosome from sequence_feature_chromosome_location_generated as ss
 where ss.sfclg_data_zdb_id = t.ul_data_zdb_id
-and ss.sfclg_location_source not in ('General Load','other map location')
+and trim(ss.sfclg_location_source) not in ('General Load','other map location')
 )
 where t.ul_chromosome = '-2';
 
