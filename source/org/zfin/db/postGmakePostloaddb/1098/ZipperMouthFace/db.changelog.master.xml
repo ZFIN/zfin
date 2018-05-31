@@ -10,4 +10,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/ZFIN-5951.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/CUR-759.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/ZFIN-5957.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/CUR-803.sql" />
 </databaseChangeLog>
