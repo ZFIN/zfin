@@ -37,7 +37,7 @@ dbname = System.getenv("DBNAME")
 println("Loading db link terms into $dbname")
 
 psql dbname, """
-  \COPY (SELECT mrkr_zdb_id,mrkr_zdb_id,mrkr_zdb_id,fdbcont_zdb_id
+ \\COPY (SELECT mrkr_zdb_id,mrkr_zdb_id,mrkr_zdb_id,fdbcont_zdb_id
     FROM marker, marker_type_group_member,foreign_db_contains where mrkr_type=mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM' and fdbcont_fdb_db_id=(select fdb_db_pk_id from foreign_db where fdb_db_name ='AGR Gene')) TO $PRE_MRKR_FILE
     ;
 
@@ -48,9 +48,9 @@ psql dbname, """
     fdbcontid text
       ) ;
 
-  \COPY tmp_terms  FROM $PRE_MRKR_FILE;
+  \\COPY tmp_terms  FROM $PRE_MRKR_FILE;
 
-  \COPY (SELECT term_Zdb_id,term_zdb_id,term_ont_id,fdbcont_zdb_id
+  \\COPY (SELECT term_Zdb_id,term_zdb_id,term_ont_id,fdbcont_zdb_id
     FROM term,foreign_db_contains where term_ontology_id=14 and fdbcont_fdb_db_id=(select fdb_db_pk_id from foreign_db where fdb_db_name ='AGR Disease') TO $PRE_TERM_FILE
     ;
 
@@ -61,7 +61,7 @@ psql dbname, """
     fdbcontid text
       ) ;
 
-  \COPY INSERT INTO tmp_disease FROM $PRE_TERM_FILE;
+  \\COPY INSERT INTO tmp_disease FROM $PRE_TERM_FILE;
 
 
 
