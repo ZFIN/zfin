@@ -101,6 +101,8 @@ task liquibasePreBuild() {
     }
 }
 
+liquibasePreBuild.finalizedBy(update)
+
 String postChangeLog = "$projectDir/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml"
 task liquibasePostBuild() {
     doLast {
@@ -117,6 +119,8 @@ task liquibasePostBuild() {
         }
     }
 }
+
+liquibasePostBuild.finalizedBy(update)
 
 // variables used for translation of keys in files in SOURCEROOT copied into TARGETROOT
 def translateVariableSet = [
