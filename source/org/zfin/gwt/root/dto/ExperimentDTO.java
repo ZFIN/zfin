@@ -11,38 +11,38 @@ public class ExperimentDTO extends RelatedEntityDTO {
     public static final String GENERIC_CONTROL = "Generic-control";
 
 
-    public Boolean getIsUsedInExpression() {
-        return isUsedInExpression;
+    public boolean isUsedInExpression() {
+        return usedInExpression;
     }
 
-    public Boolean isUsed() {
-        return isUsedInExpression || isUsedInPhenotype || isUsedInDisease;
+    public boolean isUsed() {
+        return usedInExpression || usedInPhenotype || usedInDisease;
     }
 
-    public void setIsUsedInExpression(Boolean isUsedInExpression) {
-        this.isUsedInExpression = isUsedInExpression;
+    public void setUsedInExpression(boolean isUsedInExpression) {
+        this.usedInExpression = isUsedInExpression;
     }
 
-    public Boolean getIsUsedInPhenotype() {
-        return isUsedInPhenotype;
+    public boolean isUsedInPhenotype() {
+        return usedInPhenotype;
     }
 
-    public void setIsUsedInPhenotype(Boolean isUsedInPhenotype) {
-        this.isUsedInPhenotype = isUsedInPhenotype;
+    public void setUsedInPhenotype(boolean isUsedInPhenotype) {
+        this.usedInPhenotype = isUsedInPhenotype;
     }
 
-    public Boolean getIsUsedInDisease() {
-        return isUsedInDisease;
+    public boolean isUsedInDisease() {
+        return usedInDisease;
     }
 
-    public void setIsUsedInDisease(Boolean isUsedInDisease) {
-        this.isUsedInDisease = isUsedInDisease;
+    public void setUsedInDisease(boolean isUsedInDisease) {
+        this.usedInDisease = isUsedInDisease;
     }
 
     public List<ConditionDTO> conditionDTOList;
-    public Boolean isUsedInExpression;
-    public Boolean isUsedInPhenotype;
-    public Boolean isUsedInDisease;
+    public boolean usedInExpression;
+    public boolean usedInPhenotype;
+    public boolean usedInDisease;
 
     public static String getSTANDARD() {
         return STANDARD;

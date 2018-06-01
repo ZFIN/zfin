@@ -18,7 +18,6 @@ import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.util.NoctuaLink;
 import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
@@ -1274,22 +1273,22 @@ public class DTOConversionService {
 
         }
 
-        environment.setIsUsedInDisease(false);
-        environment.setIsUsedInExpression(false);
-        environment.setIsUsedInPhenotype(false);
+        environment.setUsedInDisease(false);
+        environment.setUsedInExpression(false);
+        environment.setUsedInPhenotype(false);
         convertToExperimentDTO(experiment);
 
         if (CollectionUtils.isNotEmpty(RepositoryFactory.getExpressionRepository().getExpressionByExperiment(experiment.getZdbID()))) {
-            environment.setIsUsedInExpression(true);
+            environment.setUsedInExpression(true);
 
         }
 
         if (CollectionUtils.isNotEmpty(RepositoryFactory.getPhenotypeRepository().getPhenoByExperimentID(experiment.getZdbID()))) {
-            environment.setIsUsedInPhenotype(true);
+            environment.setUsedInPhenotype(true);
         }
 
         if (CollectionUtils.isNotEmpty(RepositoryFactory.getPhenotypeRepository().getHumanDiseaseModelsByExperiment(experiment.getZdbID()))) {
-            environment.setIsUsedInDisease(true);
+            environment.setUsedInDisease(true);
         }
 
 
