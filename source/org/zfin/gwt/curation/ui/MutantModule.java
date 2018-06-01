@@ -1179,6 +1179,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             addButton.setEnabled(true);
             clearErrorMessages();
             postUpdateStructuresOnExpression();
+            AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CD_PHENOTYPE, "Phenotype creation"));
         }
 
     }
