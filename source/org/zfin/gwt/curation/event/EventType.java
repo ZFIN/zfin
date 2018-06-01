@@ -24,7 +24,7 @@ public enum EventType {
             GO_TAB(ROOT),
                 CREATE_MARKER_GO_EVIDENCE(GO_TAB),
             DISEASE_TAB(ROOT),
-                CREATE_DISEASE_MODEL(DISEASE_TAB),
+                CD_DISEASE_MODEL(DISEASE_TAB),
             FX(ROOT),
             FEATURE(ROOT),
                 CUD_FEATURE(FEATURE),

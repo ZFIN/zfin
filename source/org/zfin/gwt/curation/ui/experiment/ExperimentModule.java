@@ -72,7 +72,8 @@ public class ExperimentModule implements ZfinCurationModule {
     public void handleCurationEvent(CurationEvent event) {
         if (event.getEventType().is(EventType.CUD_EXPERIMENT_CONDITION))
             addExperimentPresenter.go();
-        if (event.getEventType().is(EventType.CREATE_EXPRESSION_EXPERIMENT) || event.getEventType().is(EventType.DELETE_EXPRESSION_EXPERIMENT))
+        if (event.getEventType().is(EventType.CREATE_EXPRESSION_EXPERIMENT) || event.getEventType().is(EventType.DELETE_EXPRESSION_EXPERIMENT)
+                || event.getEventType().is(EventType.CD_DISEASE_MODEL))
             addExperimentPresenter.go();
         if (event.getEventType().is(EventType.CREATE_EXPERIMENT) ||
                 event.getEventType().is(EventType.UPDATE_EXPERIMENT))
