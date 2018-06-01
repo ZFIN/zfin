@@ -22,7 +22,7 @@ echo "Starting regen_term at `date`"
 echo 'execute function regen_term(); update statistics for procedure' | dbaccess ${DBNAME}
 
 echo "Starting regen_term_indexes at `date`"
-psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/make_alltermcontains_indexes.sql
+dbaccess ${DBNAME} ${SOURCEROOT}/server_apps/DB_maintenance/postgres/make_alltermcontains_indexes.sql
 
 echo "Starting regen_names at `date`"
 echo 'execute function regen_names(); update statistics for procedure' | dbaccess ${DBNAME}
