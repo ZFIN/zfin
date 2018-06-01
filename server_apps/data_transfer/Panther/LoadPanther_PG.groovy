@@ -56,20 +56,18 @@ pantherIDs.each { csv ->
 dbname = System.getenv("DBNAME")
 println("Loading terms into $dbname")
 
+
 psql dbname, """
+
 
   CREATE TEMP TABLE tmp_terms(
     dblinkid varchar(50),
     id varchar(50),
     name varchar(50),
     fdbcontid varchar(50)
-      );
+  ) ;
 
-  \copy tmp_terms FROM $OUTFILE;
-
-
-
-
+  \\COPY tmp_terms FROM '$OUTFILE' ;
 
 update tmp_terms set id = (select zrepld_new_zdb_id from zdb_replaced_data where id=zrepld_old_zdb_id) where id in (select zrepld_old_zdb_id
                                   from zdb_replaced_data);
@@ -93,7 +91,7 @@ insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 
 
 
-  \copy (SELECT dblink_linked_recid,dblink_acc_num
+  \\copy (SELECT dblink_linked_recid,dblink_acc_num
     FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65)) TO $POST_FILE
     ;
 """
