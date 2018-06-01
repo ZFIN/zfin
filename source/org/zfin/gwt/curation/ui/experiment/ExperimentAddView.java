@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.ui.AbstractViewComposite;
 import org.zfin.gwt.root.dto.ExperimentDTO;
@@ -81,7 +82,7 @@ public class ExperimentAddView extends AbstractViewComposite {
 
     public void addDeleteButton(ExperimentDTO dto, DeleteImage deleteImage, int elementIndex) {
         int row = elementIndex + 1;
-        if (!(dto.getIsUsedInExpression()) && !(dto.getIsUsedInPhenotype()) && !(dto.getIsUsedInDisease())) {
+        if (!dto.isUsed()) {
             dataTable.setWidget(row, 2, deleteImage);
         }
 
@@ -95,7 +96,7 @@ public class ExperimentAddView extends AbstractViewComposite {
     }
 
     public void emptyDataTable() {
-        dataTable.resizeRows(2);
+        dataTable.resizeRows(1);
     }
 
     private void setRowStyle(int row) {

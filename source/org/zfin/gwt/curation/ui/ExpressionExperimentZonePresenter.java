@@ -127,7 +127,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             return;
         }
 
-        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_EXPERIMENTS_BY_FILTER_START);
+        AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.CREATE_EXPRESSION_EXPERIMENT_START);
         REST.withCallback(new AddExperimentCallback())
                 .call(expressionService)
                 .createExpressionExperiment(publicationID, zoneExperiment);
@@ -718,7 +718,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     private class AddExperimentCallback extends ZfinAsynchronousCallback<ExpressionExperimentDTO> {
         public AddExperimentCallback() {
             super("Error while creating experiment", view.errorElement,
-                    ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_EXPERIMENTS_BY_FILTER_STOP);
+                    ExpressionModule.getModuleInfo(), AjaxCallEventType.CREATE_EXPRESSION_EXPERIMENT_STOP);
         }
 
         @Override
@@ -795,6 +795,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             // also remove the figure annotations that were used with this experiments
             RemoveExpressionExperimentEvent event = new RemoveExpressionExperimentEvent(experiment);
             AppUtils.EVENT_BUS.fireEvent(event);
+            AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.DELETE_EXPRESSION_EXPERIMENT, experiment.getExperimentZdbID()));
         }
 
     }

@@ -63,8 +63,8 @@ public class ExperimentAddPresenter implements HandlesError {
     public void populateExperiments() {
         int elementIndex = 0;
 
+        view.emptyDataTable();
         if (dtoList.isEmpty()) {
-            view.emptyDataTable();
             return;
         }
         for (ExperimentDTO dto : dtoList) {

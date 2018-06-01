@@ -15,6 +15,10 @@ public class ExperimentDTO extends RelatedEntityDTO {
         return isUsedInExpression;
     }
 
+    public Boolean isUsed() {
+        return isUsedInExpression || isUsedInPhenotype || isUsedInDisease;
+    }
+
     public void setIsUsedInExpression(Boolean isUsedInExpression) {
         this.isUsedInExpression = isUsedInExpression;
     }

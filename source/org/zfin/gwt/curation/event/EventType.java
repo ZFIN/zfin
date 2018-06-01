@@ -18,6 +18,7 @@ public enum EventType {
             FX_TAB(ROOT),
                 FILTER_FX(FILTER_ENTITY, FX_TAB),
                 CREATE_EXPRESSION_EXPERIMENT(FX_TAB),
+                DELETE_EXPRESSION_EXPERIMENT(FX_TAB),
             PHENO_TAB(ROOT),
                 FILTER_PHENO(FILTER_ENTITY, PHENO_TAB),
             GO_TAB(ROOT),
