@@ -78,6 +78,9 @@ begin
 		vFmrelId := (Select count(*) from feature_marker_relationship 
 		    	       	       where fmrel_ftr_zdb_id = vFmrelFtrId
 				       and fmrel_type = 'is allele of');
+
+		raise notice 'vFmrelId %',vFmrelId;
+
 		if (vFmrelId > '1')
 		then
 			raise exception 'FAIL!: feature type can not have more than one is allele of relationship';
@@ -101,5 +104,6 @@ begin
    
    end if;
 
+raise notice 'success';
 end
 $$ LANGUAGE plpgsql
