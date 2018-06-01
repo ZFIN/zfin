@@ -5,12 +5,15 @@ returns void as $$
      vUnspecified feature.feature_unspecified%TYPE;
      vUnExists int;					    
    begin 
+
    vUnAllele := (select feature_abbrev from feature
         	  	  where feature_zdb_id = vFeatureZdbId);
 
    vUnspecified := (select feature_unspecified from feature
         	  	  where feature_zdb_id = vFeatureZdbId);
 
+   raise notice 'vUnAllele %', vUnAllele;
+			  
   if (vUnspecified)
 
   then
@@ -21,6 +24,7 @@ returns void as $$
                      	     and feature_unspecified = 't'
 			     and fmrel_type = 'is allele of'
 		     	     and fmrel_mrkr_zdb_id = vMarkerZdbId);
+	raise notice 'vUnExists %', vUnExists;
 
         if (vUnExists > 1)
 

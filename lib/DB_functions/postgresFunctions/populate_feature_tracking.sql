@@ -8,6 +8,8 @@ returns void as $$
    begin
 
     vOk = (select count(*) from feature_tracking where ft_Feature_abbrev = featureAbbrev and featureZdbId != ft_feature_zdb_id);
+
+   raise notice 'feature tracking vOk %', vOk;
   
 
    if (vOk > 0)
@@ -15,7 +17,7 @@ returns void as $$
    then 
    	raise exception 'FAIL!: this line designation has already been used.';
    else
-	raise notice 'feature name: %', featureAbbrev;
+	raise notice 'feature abbrev: %', featureAbbrev;
 	insert into feature_Tracking (ft_feature_abbrev, ft_feature_name,ft_feature_zdb_id)
     	values (featureAbbrev,featureName,featureZdbId);
    end if;

@@ -26,7 +26,8 @@ begin
 	   vGenotypeFtrCount = (Select count(*) 
 			  	     from genotype_feature
 			  	     where genofeat_feature_zdb_id = vZDBid);
-
+	   
+	   raise notice 'vGenotypeFtrCount %', vGenotypeFtrCount;
 
 	  if vGenotypeFtrCount > 0
 	  then 
@@ -37,8 +38,11 @@ begin
 			 where genofeat_feature_zdb_id = vZDBid
 		loop
 			select get_genotype_display(vGenotypeZDB) into vGenoDisplay;
-			select get_genotype_handle(vGenotypeZDB) into vGenoHandle;		
-	
+			select get_genotype_handle(vGenotypeZDB) into vGenoHandle;
+
+			raise notice 'vGenoDisplay %', vGenoDisplay;		
+			raise notice 'vGenoHandle %', vGenoHandle;
+
 			update genotype
 			   set geno_display_name = vGenoDisplay,
 			       geno_handle = vGenoHandle

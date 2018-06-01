@@ -13,11 +13,11 @@ begin
      perform p_markers_present_absent_exclusive(NEW.fmrel_mrkr_zdb_id, 
 								NEW.fmrel_ftr_zdb_id, 
 								NEW.fmrel_type);
-	perform p_update_unspecified_alleles(NEW.fmrel_mrkr_zdb_id,
+     perform p_update_unspecified_alleles(NEW.fmrel_mrkr_zdb_id,
 							NEW.fmrel_ftr_zdb_id);
-	perform p_update_related_genotype_names(NEW.fmrel_ftr_zdb_id);
+     perform p_update_related_genotype_names(NEW.fmrel_ftr_zdb_id);
      
-     RETURN null;
+     RETURN NEW;
 
 end;
 $BODY$ LANGUAGE plpgsql;
