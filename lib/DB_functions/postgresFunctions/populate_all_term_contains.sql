@@ -62,7 +62,6 @@ create or replace function populate_all_term_contains()
 
   end loop;
 
-    
  drop table if exists all_term_contains_new_tmp;
 
   -- split out the keepers in one step usings the dbs strength with set 

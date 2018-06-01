@@ -5,7 +5,7 @@ returns trigger as
 $BODY$
 
 begin
-     perform p_mrel_grpmem_correct (
+     perform p_fmrel_grpmem_correct (
            NEW.fmrel_ftr_zdb_id, 
            NEW.fmrel_mrkr_zdb_id, 
            NEW.fmrel_type

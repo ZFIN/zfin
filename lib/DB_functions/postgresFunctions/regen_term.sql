@@ -63,36 +63,6 @@ create or replace function regen_term()
 
       -- primary key
 
-      drop index if exists all_term_contains_primary_key_index;
-
-      create unique index all_term_contains_primary_key_index
-        on all_term_contains (alltermcon_container_zdb_id,     
-				 alltermcon_contained_zdb_id);
-
-      alter table all_term_contains 
-      add constraint all_term_contains_primary_key primary key
-        (alltermcon_container_zdb_id,     
-		     alltermcon_contained_zdb_id);
-
-      -- foreign keys
-
- 
-      create index  alltermcon_container_zdb_id_index
-        on all_term_contains (alltermcon_container_zdb_id);
-
-      alter table all_term_contains add constraint alltermcon_container_zdb_id_foreign_key
-        foreign key (alltermcon_container_zdb_id)
-	references term
-	  on delete cascade;
-
-      create index alltermcon_contained_zdb_id_index
-        on all_term_contains (alltermcon_contained_zdb_id);
-
-      alter table all_term_contains add constraint alltermcon_contained_zdb_id_foreign_key
-        foreign key (alltermcon_contained_zdb_id)
-	references term
-	  on delete cascade;
-
     
   -- re-create self-records in all_term_contains
   insert into all_term_contains
@@ -104,3 +74,4 @@ create or replace function regen_term()
 end;
 
 $log$ LANGUAGE plpgsql;
+

@@ -44,7 +44,7 @@ begin
        	     	     where fmrel_mrkr_Zdb_id = vfmrelmrkrid
 		     and fmrel_ftr_zdb_id = vfmrelftrid
 		     and fmrel_type in ('is allele of','markers missing','markers moved')
-		     ));
+		     );
        if (vOk > 0)
        then 
    	    raise exception 'FAIL!: can not have m_present m_absent. p_markers_present_absent_exclusive';
