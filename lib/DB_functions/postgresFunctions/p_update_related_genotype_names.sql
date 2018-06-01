@@ -33,7 +33,6 @@ begin
 
 		for vGenotypeZDB in
 			select distinct genofeat_geno_zdb_id
-			  into vGenotypeZDB
 			  from genotype_feature
 			 where genofeat_feature_zdb_id = vZDBid
 		loop
