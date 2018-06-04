@@ -7,7 +7,6 @@ create or replace function regen_anatomy()
   -- populates anatomy fast search tables:
   --  anatomy_display: term's position in a dag display of a certain stage
   --  all_term_contains: each and every ancestor and descendant
-  -- see regen_names.sql for details on how to debug SPL routines.
 
     declare stageId  stage.stg_zdb_id%TYPE;
      seqNum int;

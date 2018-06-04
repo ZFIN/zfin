@@ -686,26 +686,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (ExternalNote) session.get(ExternalNote.class, zdbID);
     }
 
-    @SuppressWarnings("unchecked")
-    public List<AllNamesFastSearch> getAllNameMarkerMatches(String string) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(AllMarkerNamesFastSearch.class);
-        criteria.add(Restrictions.like("nameLowerCase", "%" + string + "%"));
-        return (List<AllNamesFastSearch>) criteria.list();
-
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<AllMarkerNamesFastSearch> getAllNameMarkerMatches(String string, MarkerType type) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(AllMarkerNamesFastSearch.class);
-        criteria.add(Restrictions.like("nameLowerCase", "%" + string + "%"));
-        Criteria marker = criteria.createCriteria("marker");
-        marker.add(Restrictions.eq("markerType", type));
-        return (List<AllMarkerNamesFastSearch>) marker.list();
-    }
-
-
     // Todo: ReplacementZdbID is a composite key (why?) and thus this
     // could retrieve more than one record. If so then it throws an exception,
     // meaning the id was replaced more than once and then we would not know which one to use.
@@ -741,21 +721,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         sqlQuery.addScalar("abbreviation");
         sqlQuery.setParameter("aliasLowerName", aliasLowerName);
         sqlQuery.setParameter("aliasGroup", DataAliasGroup.Group.SEQUENCE_SIMILARITY.toString());
-        return (List<String>) sqlQuery.list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<String> getBestNameMatch(String name) {
-        Session session = HibernateUtil.currentSession();
-        SQLQuery sqlQuery = session.createSQLQuery("select allmapnm_zdb_id as zdbID from all_map_names " +
-                "where allmapnm_name_lower = :name and " +
-                "allmapnm_precedence in ('Current symbol', 'Current name', 'Genotype name') " +
-                "UNION " +
-                "select term_zdb_id as zdb_id from term " +
-                "where lower(term_name) = :name and term_ontology = :ontology");
-        sqlQuery.addScalar("zdbID");
-        sqlQuery.setParameter("name", name.toLowerCase());
-        sqlQuery.setParameter("ontology", Ontology.ANATOMY.getOntologyName());
         return (List<String>) sqlQuery.list();
     }
 

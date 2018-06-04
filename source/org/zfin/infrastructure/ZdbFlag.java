@@ -56,7 +56,6 @@ public class ZdbFlag {
         FISHSEARCH("regen_fishsearch"),
         GENOTYPE_DISPLAY("regen_genotype_display"),
         MAPS("regen_maps"),
-        NAMES("regen_names"),
         REGEN_PHENOTYPEMART("regen_phenotypemart"),
         REGEN_CONSTRUCTMART("regen_constructmart");
 

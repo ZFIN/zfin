@@ -12,7 +12,6 @@ begin
 
     NEW.geno_name_order = geno_name_order;
 
-    perform regen_names_genotype(NEW.geno_zdb_id);
     perform p_update_related_fish_names(NEW.geno_zdb_id);
     
     RETURN NEW;

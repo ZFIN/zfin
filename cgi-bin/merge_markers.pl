@@ -872,44 +872,6 @@ $curRootCelComp->finish();
 $curNonRootCelComp->finish();
 
 $curDeleteMrkrGoEvd->finish();
- 
-# all_map_names
-# get the allmapnm_name for the marker to be deleted
-$getAllMapNamesSQL = "select allmapnm_name, allmapnm_serial_id
-                        from all_map_names
-                       where allmapnm_zdb_id = ? ;";
-$curGetAllMapNamesDeletedMrkr = $dbh->prepare($getAllMapNamesSQL);
-$curGetAllMapNamesDeletedMrkr->execute($mergeId);
-$curGetAllMapNamesDeletedMrkr->bind_columns(\$mapNameDeletedMrkr, \$mapIdDeletedMrkr);
-%allMapNamesDeletedMrkr = ();
-while ($curGetAllMapNamesDeletedMrkr->fetch()) {
-   $allMapNamesDeletedMrkr{$mapIdDeletedMrkr} = $mapNameDeletedMrkr;
-}
-$curGetAllMapNamesDeletedMrkr->finish();
-
-# get the allmapnm_name for the marker to be merged into              
-$curGetAllMapNamesIntoMrkr = $dbh->prepare($getAllMapNamesSQL);
-$curGetAllMapNamesIntoMrkr->execute($intoId);         
-$curGetAllMapNamesIntoMrkr->bind_columns(\$mapNameIntoMrkr, \$mapIdIntoMrkr);
-%allMapNamesIntoMrkr = (); 
-while ($curGetAllMapNamesIntoMrkr->fetch()) {
-   $allMapNamesIntoMrkr{$mapIdIntoMrkr} = $mapNameIntoMrkr;
-}
-$curGetAllMapNamesIntoMrkr->finish();
-
-# delete the allmapnm_name that are the same between that of the marker to be deleted and the marker to merge into
-$deleteMapSQL = "delete from all_map_names where allmapnm_zdb_id = ? and allmapnm_name = ? ;";
-foreach $mrkrId (keys %allMapNamesDeletedMrkr) {
-  $mapNameDeletedMrkr = $allMapNamesDeletedMrkr{$mrkrId};
-  foreach $intoMrkrId (keys %allMapNamesIntoMrkr) {
-    $mapNameIntoMrkr = $allMapNamesIntoMrkr{$intoMrkrId};
-    if ($mapNameIntoMrkr eq $mapNameDeletedMrkr) {
-       $curDeleteMap = $dbh->prepare($deleteMapSQL);
-       $curDeleteMap->execute($mergeId,$mapNameIntoMrkr);
-       $curDeleteMap->finish();
-    }
-  }
-}
 
 # db_link
 # get dblink_acc_num and dblink_fdbcont_zdb_id for the marker to be deleted

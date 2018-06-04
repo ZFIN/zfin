@@ -285,5 +285,4 @@ drop table pre_db_link;
 
 commit work;
 
---execute function regen_names();
 

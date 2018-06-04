@@ -60,9 +60,6 @@ my @tests =
 # 2 items: table name:column name
 my %avoids = (
     "accession_bank:accbk_defline" => 1,
-    "all_map_names:allmapnm_name" => 1,
-    "all_map_names:allmapnm_name_lower" => 1,
-    "all_name_ends:allnmend_name_end_lower" => 1,
     "blast_hit:bhit_alignment" => 1,
     "blast_hit:bhit_strand" => 1,
     "blast_report:brpt_detail_header" => 1,

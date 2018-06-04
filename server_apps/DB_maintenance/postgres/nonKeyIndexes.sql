@@ -4,10 +4,6 @@ create index affected_gene_group_member_id_index on affected_gene_group_member(a
 create index aliastok_dalias_zdb_id_index on all_alias_tokens(aliastok_dalias_zdb_id);
 create index allanatcon_contained_zdb_id_index on all_anatomy_contains(allanatcon_contained_zdb_id);
 create index allanatcon_container_zdb_id_index on all_anatomy_contains(allanatcon_container_zdb_id);
-create index allmapnm_name_lower_index on all_map_names(allmapnm_name_lower);
-create index allmapnm_precedence_index on all_map_names(allmapnm_precedence);
-create index allmapnm_zdb_id_index on all_map_names(allmapnm_zdb_id);
-create index allnmend_allmapnm_serial_id_index on all_name_ends(allnmend_allmapnm_serial_id);
 create index alltermcon_contained_zdb_id_indexn on all_term_contains(alltermcon_contained_zdb_id);
 create index alltermcon_container_zdb_id_indexn on all_term_contains(alltermcon_container_zdb_id);
 create index all_term_contains_new_primary_key_index on all_term_contains_new(alltermcon_contained_zdb_id);

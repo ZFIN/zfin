@@ -16,7 +16,6 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerType;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -74,21 +73,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         infrastructureRepository.insertRecordAttribution(dataZdbID, sourceZdbID);
         attribute = infrastructureRepository.getRecordAttribution(dataZdbID, sourceZdbID, null);
         assertNotNull("RecordAttribution found after insert", attribute);
-    }
-
-    @Test
-    public void allMapNames() {
-        String string = "pdx";
-        List<AllNamesFastSearch> all = infrastructureRepository.getAllNameMarkerMatches(string);
-        assertNotNull(all);
-    }
-
-    @Test
-    public void allMapNamesGenes() {
-        String string = "pdx";
-        MarkerType type = getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
-        List<AllMarkerNamesFastSearch> all = infrastructureRepository.getAllNameMarkerMatches(string, type);
-        assertNotNull(all);
     }
 
     @Test

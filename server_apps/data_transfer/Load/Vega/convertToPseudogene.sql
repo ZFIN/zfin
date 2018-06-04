@@ -153,11 +153,6 @@ update primer_set
  where exists (select 'x' from tmp_to_change
        	      	      where marker_id = gene);
 
-update all_map_names 
-  set allmapnm_zdb_id = replace(allmapnm_zdb_id, 'GENE','GENEP')
- where exists (select 'x' from tmp_to_change
-       	      	      where allmapnm_zdb_id = gene);
-
 update data_note
  set dnote_data_zdb_id = replace (dnote_data_zdb_id, 'GENE','GENEP')
  where exists (select 'x' from tmp_to_change

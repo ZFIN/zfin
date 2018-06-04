@@ -11,7 +11,6 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.ontology.MatchingTerm;
 import org.zfin.ontology.MatchingTermService;
 import org.zfin.ontology.Ontology;
-import org.zfin.ontology.OntologyManager;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.uniquery.SiteSearchService;
 import org.zfin.uniquery.ZfinAnalyzer;
@@ -61,26 +60,6 @@ public class RelatedTermsService {
                 return null;
         }
         return results;
-    }
-
-
-    /**
-     * Search all_map_names and term tables for exact name/symbol match
-     * on markers/clones/genes/mutants/anatomy terms. We could only use base
-     * tables, may update when Fish tables consolidated.
-     * Return zdb id if match, otherwise empty string.
-     *
-     * @param queryTerm string
-     * @return string
-     */
-    public static String getBestMatchId(String queryTerm) {
-
-        InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-        List<String> list = infrastructureRepository.getBestNameMatch(queryTerm);
-        if (list == null || list.size() == 0)
-            return "";
-
-        return list.get(0);
     }
 
     /**

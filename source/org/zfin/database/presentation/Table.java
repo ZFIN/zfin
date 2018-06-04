@@ -10,8 +10,6 @@ public enum Table {
     ACCESSION_BANK("ACCESSION", "accession_bank", "accbk_pk_id"),
     ALIAS_GROUP("ALIASGROUP", "alias_group", "aliasgrp_pk_id", "aliasgrp_name"),
     ALIAS_SCOPE("ALIASSCOPE", "alias_scope", "aliasscope_pk_id", "aliasscope_scope"),
-    ALL_MAP_NAMES("AMN", "all_map_names", "allmapnm_serial_id"),
-    ALL_NAME_ENDS("ANE", "all_name_ends", "allnmend_name_end_lower,allnmend_allmapnm_serial_id"),
     ALL_TERM_CONTAINS("ALLTERM", "all_term_contains", null, ""),
     ANATOMY_DISPLAY("MARKER", "anatomy_display", "anatdisp_stg_zdb_id,anatdisp_seq_num"),
     ANATOMY_STATS("ANATOMY_STATS", "anatomy_stats", "anatstat_term_zdb_id,anatstat_object_type"),
