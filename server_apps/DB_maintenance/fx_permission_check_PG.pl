@@ -71,7 +71,7 @@ while ($cur->fetch) {
                 and (fig_caption is null or fig_caption = '')
                 and (cur_topic = 'Expression' or cur_topic = 'Phenotype')
                 and cur_closed_date is not null 
-                and fig_comments != 'image quality poor, permission exception'
+                and fig_comments is distinct from 'image quality poor, permission exception'
                 and fig_source_zdb_id = publication.zdb_id 
                 and cur_pub_zdb_id = publication.zdb_id 
                 and pub_can_show_images = 't' 
