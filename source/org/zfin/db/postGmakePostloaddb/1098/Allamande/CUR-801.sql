@@ -2,7 +2,7 @@
 --changeset pm:CUR-801
 
 
-update construct set construct_name='Et(NRSE-SCP1-Ocu.HBB2:Cre-2A-Cerulean))' where construct_zdb_id='ZDB-ETCONSTRCT-151102-1';
+update construct set construct_name='Et(NRSE-SCP1-Ocu.HBB2:Cre-2A-Cerulean)' where construct_zdb_id='ZDB-ETCONSTRCT-151102-1';
 update marker set mrkr_name='Et(NRSE-SCP1-Ocu.HBB2:Cre-2A-Cerulean)' where mrkr_zdb_id='ZDB-ETCONSTRCT-151102-1';
 update marker set mrkr_abbrev='Et(NRSE-SCP1-Ocu.HBB2:Cre-2A-Cerulean)' where mrkr_zdb_id='ZDB-ETCONSTRCT-151102-1';
 
