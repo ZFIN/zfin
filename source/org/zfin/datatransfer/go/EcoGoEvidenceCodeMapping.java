@@ -26,6 +26,7 @@ public class EcoGoEvidenceCodeMapping {
         mapping.put("ECO:0000304", "TAS");
         mapping.put("ECO:0000303", "NAS");
         mapping.put("ECO:0000305", "IC");
+        mapping.put("ECO:0000306", "IC");
         mapping.put("ECO:0000031", "ISS");
         mapping.put("ECO:0000255", "ISS");
         mapping.put("ECO:0000250", "ISS");
