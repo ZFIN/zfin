@@ -5,7 +5,7 @@
 # Makefile has a run_agp target to fire this off
 # keep assembly version up to date
 
-AGP="GRCz10.agp"
+AGP="GRCz11.agp"
 
 # where we put these source data files these days
 gffdir="/research/zprodmore/gff3"

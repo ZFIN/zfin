@@ -3,7 +3,7 @@
 GLOBALSTORE="/research/zprodmore/gff3"
 TARGETDIR="$TARGETROOT/server_apps/data_transfer/Downloads/GFF3"
 
-BOWTIE_IDX="$GLOBALSTORE/Ensembl_GRCz10.81"
+BOWTIE_IDX="$GLOBALSTORE/Ensembl_GRCz11"
 
 cd $TARGETDIR
 rm -f mo_seq.fa_line mo_seq.fa E_mo_seq.sam E_zfin_morpholino.gff3 mo_seq_E_miss.fa talen_seq_1.fa_line \
@@ -39,4 +39,5 @@ tr \~ '\n' < talen_seq_2.fa_line > talen_seq_2.fa
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # update sequence_feature_chromosome_location_generated table
 psql -d $DB_NAME -a -f ../../Ensembl/updateSequenceFeatureChromosomeLocation_PG.sql
+
 

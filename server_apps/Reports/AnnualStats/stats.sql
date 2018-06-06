@@ -213,7 +213,7 @@ select count(*), "Genomics", "Links to other databases", current year to second 
 "Curated miRNA Stem Loop", --                3
 "EBI-Cell", --                             776
 "EC", --                                   858
-"Ensembl(GRCz10)", --                       16279
+"Ensembl(GRCz11)", --                       16279
 "Ensembl_SNP", --                         2024
 "Ensembl_Trans", --                      27310
 "FLYBASE", --                               55
