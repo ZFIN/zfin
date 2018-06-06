@@ -30,7 +30,7 @@ begin
   
   ELSE
       -- date format YYYYMMDD.
-      dateFromId := century || zdb_date || '  ';
+      dateFromId := century || zdb_date;
   
   END IF;
 
