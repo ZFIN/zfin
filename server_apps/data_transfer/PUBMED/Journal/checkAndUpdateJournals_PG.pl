@@ -52,7 +52,7 @@ while(<ALLJOURNALS>) {
   } elsif ($journalLine =~ m/^NlmId/) {
       $journalLine =~ s/NlmId://;
       $journalLine =~ s/^\s+//;
-      print NCBIJOURNALS "$journalLine|\n";
+      print NCBIJOURNALS "$journalLine\n";
   } else {
       next;
   }
@@ -71,7 +71,7 @@ print WRONGISSN "journal zdbID|journal abbrev|issn print currently stored|issn p
 
 close WRONGISSN;
 
-system("/bin/cat <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader.txt >> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
+system("/bin/cat <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader.txt >> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
 
 exit;
 
