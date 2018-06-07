@@ -17,7 +17,7 @@ create temp table tmp_ncbi_journals (
   isoAbbr varchar(255),
   nlmID varchar(100));
 
-\copy tmp_ncbi_journals from 'journalsFromNCBI.txt' delimiter ',';
+\copy tmp_ncbi_journals from 'journalsFromNCBI.txt' delimiter '|';
 
 
 create index tnj_title_index
