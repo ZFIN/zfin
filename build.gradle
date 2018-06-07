@@ -286,8 +286,10 @@ project('cgi-bin') {
 task deployPerlFiles(type: Copy) {
     description 'Deploy perl files into TARGETROOT'
     group 'ZFIN Deployment'
-    def perlFiles = ['server_apps/ZFINPerlModules.pm', 'server_apps/ZFINPerlModules_PG.pm']
-    perlFiles.each { file ->
+    doLast{
+    String file = projectDir;
+     file =+ '/server_apps/ZFINPerlModules_PG.pm'
+      println file
         from(file) {
             ttNameMap.each { name, value ->
                 if (value != null)
@@ -295,15 +297,18 @@ task deployPerlFiles(type: Copy) {
             }
         }
         into(targetroot + '/server_apps/')
-    }
+	}
+
 }
 
 task deployPackageFiles(type: Copy, dependsOn: deployPerlFiles) {
     description 'Deploy package.json into TARGETROOT'
     group 'ZFIN Deployment'
     String packageFile = 'package.json'
+    doLast{
     from(packageFile)
     into(targetroot)
+    }
 }
 
 project(':server_apps:data_transfer') {
