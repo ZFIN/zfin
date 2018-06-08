@@ -14,8 +14,18 @@ def out = new BufferedOutputStream(file)
 out << new URL(DOWNLOAD_URL).openStream()
 out.close()
 
-def psql (String dbname, String sql) {
-    proc = "psql $dbname < ".execute()
+static Process dbaccess (String dbname, String sql) {
+    def usePostgres = System.getenv()['USE_POSTGRES']
+    println usePostgres
+    sql = sql .replace("\n","")
+    sql = sql .replace("\\copy","\n  \\copy")
+    println sql
+
+    def proc
+    if (usePostgres == 'true')
+        proc = "psql -d $dbname -a".execute()
+    else
+        proc = "dbaccess -a $dbname".execute()
     proc.getOutputStream().with {
         write(sql.bytes)
         close()
@@ -23,9 +33,13 @@ def psql (String dbname, String sql) {
     proc.waitFor()
     proc.getErrorStream().eachLine { println(it) }
     if (proc.exitValue()) {
-        throw new RuntimeException("psql call failed")
+        throw new RuntimeException("dbaccess call failed")
     }
     proc
+}
+
+static Process psql (String dbname, String sql) {
+    return dbaccess(dbname, sql)
 }
 
 
@@ -61,17 +75,15 @@ psql dbname, """
 
 
   CREATE TEMP TABLE tmp_terms(
-    dblinkid varchar(50),
-    id varchar(50),
-    name varchar(50),
-    fdbcontid varchar(50)
+    dblinkid text,
+    id text,
+    name text,
+    fdbcontid text
   ) ;
 
-  \\COPY tmp_terms FROM '$OUTFILE' ;
+  \\COPY tmp_terms FROM '$OUTFILE' delimiter '|' ;
 
-update tmp_terms set id = (select zrepld_new_zdb_id from zdb_replaced_data where id=zrepld_old_zdb_id) where id in (select zrepld_old_zdb_id
-                                  from zdb_replaced_data);
-unload to 'test.unl' select id from tmp_terms where id not in (select mrkr_zdb_id from marker where mrkr_type='GENE');
+
 update tmp_terms set fdbcontid = (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
 
 delete from tmp_terms where id not in (select mrkr_zdb_id from marker where mrkr_type='GENE');
