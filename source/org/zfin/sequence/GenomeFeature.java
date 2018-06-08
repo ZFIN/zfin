@@ -1,8 +1,6 @@
 package org.zfin.sequence;
 
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -65,8 +63,6 @@ public class GenomeFeature {
     }
 
     public String toString() {
-
-
         StringBuilder sb = new StringBuilder();
         sb.append(seqid);
         sb.append("\t");
@@ -91,19 +87,9 @@ public class GenomeFeature {
 
 
     public String flattenAttributes() {
-
         return attributes.entrySet().stream()
-                .map(entry -> {
-                    String out = null;
-                    try {
-                        out = entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    return out;
-                })
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining(";"));
-
     }
 
     public void addAttribute(String label, String value) {

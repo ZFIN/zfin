@@ -104,20 +104,20 @@ $(TARGETDIR)/ensdarG_PG.unl: $(TARGETDIR)/fetch_ensdarG_PG.mysql
 
 load_ensdarG_PG: $(TARGETDIR)/load_ensdarG_PG.sql \
  $(TARGETDIR)/rollback_PG.sql $(TARGETDIR)/ensdarG_PG.unl 
-	cd $(TARGETDIR) && cat $< rollback_PG.sql | ${PGBINDIR}/psql -e ${DBNAME}
+	cd $(TARGETDIR) && cat $< rollback_PG.sql | ${PGBINDIR}/psql ${DBNAME}
 
 load_ensdarG_commit_PG: $(TARGETDIR)/load_ensdarG_PG.sql \
  $(TARGETDIR)/commit_PG.sql $(TARGETDIR)/ensdarG_PG.unl
-	cd $(TARGETDIR)/ && cat $< commit_PG.sql | ${PGBINDIR}/psql -e ${DBNAME}
+	cd $(TARGETDIR)/ && cat $< commit_PG.sql | ${PGBINDIR}/psql ${DBNAME}
 
 load_ensdarT_PG: $(TARGETDIR)/load_ensdarT_dbacc_PG.sql \
  $(TARGETDIR)/rollback_PG.sql $(TARGETDIR)/ensdarT_dbacc_PG.unl
-	cd $(TARGETDIR)/ && cat $< rollback_PG.sql | ${PGBINDIR}/psql -e ${DBNAME}
+	cd $(TARGETDIR)/ && cat $< rollback_PG.sql | ${PGBINDIR}/psql ${DBNAME}
 
 
 load_ensdarT_commit_PG: $(TARGETDIR)/load_ensdarT_dbacc_PG.sql \
  $(TARGETDIR)/commit_PG.sql $(TARGETDIR)/ensdarT_dbacc_PG.unl
-	cd $(TARGETDIR)/ && cat $< commit_PG.sql | ${PGBINDIR}/psql -e  ${DBNAME}
+	cd $(TARGETDIR)/ && cat $< commit_PG.sql | ${PGBINDIR}/psql ${DBNAME}
 
 # 		fetch  Ensembl GTF and convert to gff3
 run_gff_PG: $(TARGETDIR)/fetch_ensembl_gff_PG.sh

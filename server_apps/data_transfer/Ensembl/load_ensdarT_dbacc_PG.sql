@@ -10,7 +10,7 @@ create temp table ensdarT_dbacc (
 ); 
 
 --! echo "ensdarT_dbacc.unl -> load_ensdarT_dbacc.sql"
-\copy ensdarT_dbacc from 'ensdarT_dbacc.unl' ;
+\copy from 'ensdarT_dbacc.unl' insert into ensdarT_dbacc;
 
 -- note adding miRNA data makes both columns non-unique
 
@@ -19,17 +19,17 @@ create unique index ensdarT_dbacc_ensacc_ensdarT_idx
 
 
 --! echo "check if any moved?"
-create temp table tmp_movedENSDARTs as select ens.dblink_zdb_id as id
+create temp table as select ens.dblink_zdb_id as id
  from db_link ens, db_link ott, ensdarT_dbacc
- where ens.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-110301-1'
-   and ott.dblink_acc_num = ensacc_dbacc
-   and ott.dblink_linked_recid = ens.dblink_linked_recid
+ where ens.dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-110301-1'
+   and ott.dblink_acc_num == ensacc_dbacc
+   and ott.dblink_linked_recid == ens.dblink_linked_recid
    and ens.dblink_acc_num != ensacc_ensdart
 ;
 
 --! echo "how many deleted b/c of move?"
 
-\copy (select * from db_link, tmp_movedENSDARTs where dblink_zdb_id = id) to 'dblinks_deleted_because_ensdart_moved.txt';
+\copy (select * from db_link, tmp_movedENSDARTs where dblink_zdb_id = id) to dblinks_deleted_because_ensdart_moved.txt;
 
 delete from db_link
   where exists (Select 'x' from tmp_movedENSDARTs 
@@ -39,11 +39,11 @@ delete from db_link
 
 delete from zdb_active_data where exists (
 	select 't' from db_link
-	 where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-110301-1'
-	   and dblink_zdb_id = zactvd_zdb_id
+	 where dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-110301-1'
+	   and dblink_zdb_id == zactvd_zdb_id
 	   and not exists (
 	    	select 't' from ensdarT_dbacc
-	    	 where dblink_acc_num = ensacc_ensdarT
+	    	 where dblink_acc_num == ensacc_ensdarT
 	   )
 );
 
@@ -52,16 +52,16 @@ delete from zdb_active_data where exists (
 
 delete from ensdarT_dbacc where exists (
 	select 't' from db_link
-	 where  dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-110301-1'
-	   and dblink_acc_num = ensacc_ensdarT
+	 where  dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-110301-1'
+	   and dblink_acc_num == ensacc_ensdarT
 );
 
 
 --! echo "isolate transcript marker ZDB_ids  linked to ottdarTs"
 
-create temp table tmp_dblink as select dblink_linked_recid tscript, ensacc_ensdarT acc, get_id('DBLINK') zad, dblink_length len
+create temp table as select dblink_linked_recid tscript, ensacc_ensdarT acc, get_id('DBLINK') zad, dblink_length len
  from db_link , ensdarT_dbacc
- where dblink_acc_num = ensacc_dbacc;
+ where dblink_acc_num == ensacc_dbacc;
 
 
 insert into zdb_active_data select zad from tmp_dblink;
@@ -75,7 +75,7 @@ insert into db_link (
     dblink_info,
     dblink_length
 )
-select  tscript, acc, zad, 'ZDB-FDBCONT-110301-1','uncurated ' || current_date, len
+select  tscript, acc, zad, 'ZDB-FDBCONT-110301-1','uncurated ' || TODAY, len
  from tmp_dblink
 ;
 

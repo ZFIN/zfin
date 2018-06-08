@@ -13,7 +13,6 @@ select  -----------------------------ZDBID ---------------------------
            "." gff_frame,
        'gene_id=' || gene.mrkr_zdb_id
        ||';Name=' || gene.mrkr_abbrev
-       ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
        ||';Alias='|| gene.mrkr_zdb_id  attribute
  from  gff3 vt, gff3 vg, db_link tscript ,marker_relationship, marker gene, so_zfin_mapping, marker_type_group_member
  where mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
@@ -38,7 +37,6 @@ select    vg.gff_seqname,
            '.' gff_frame,
        'gene_id=' || gene.mrkr_zdb_id
        ||';Name=' || gene.mrkr_abbrev
-       ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
        ||';Alias='|| refseq.dblink_acc_num
        attribute
  from  gff3 vt, gff3 vg, db_link tscript ,marker_relationship, marker gene , db_link refseq, so_zfin_mapping, marker_type_group_member
@@ -65,7 +63,6 @@ select vg.gff_seqname,
            "." gff_frame,
        'gene_id='  || gene.mrkr_zdb_id
        ||';Name='  || gene.mrkr_abbrev
-       ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
        ||';Alias=' || vg.gff_ID
        attribute
  from  gff3 vt, gff3 vg, db_link, marker_relationship, marker gene, so_zfin_mapping, marker_type_group_member
@@ -92,7 +89,6 @@ select vg.gff_seqname,
            "." gff_frame,
        'gene_id='  || gene.mrkr_zdb_id
        ||';Name='  || gene.mrkr_abbrev
-       ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
        ||';Alias=' || dalias_alias_lower
        attribute
  from  gff3 vt, gff3 vg,  db_link, marker_relationship,marker gene, data_alias, so_zfin_mapping, marker_type_group_member

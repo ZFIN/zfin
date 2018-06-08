@@ -5,19 +5,19 @@ create temp table ens_zdb( ez_zdb text, ez_ens varchar(20)) ;
 
 --! echo "ensdarG.unl -> load_ensdarG.sql"
 
-\copy ens_zdb from 'ensdarG.unl' with delimiter '|';
+\copy from /opt/zfin/www_homes/swirl/server_apps/data_transfer/Ensembl/ensdarG.unl insert into ens_zdb;
 
 create index ez_zdb_idx on ens_zdb( ez_zdb );
 
 --delete the dups from the file itself.  The rest will be merges and will be ok to leave 2 ENSDARGs on.
 create temp table tmp_ens_zdb (ez_zdb text, ez_ens varchar(20));
 
-insert into tmp_ens_zdb (ez_zdb, ez_ens)
-select distinct ez_zdb, ez_ens from ens_zdb;
+insert into tmp_ens_zdb
+select distinct * from ens_zdb;
 
 delete from ens_zdb;
 
-insert into ens_zdb (ez_zdb, ez_ens) select ez_zdb, ez_ens from tmp_ens_zdb;
+insert into ens_zdb select * from tmp_ens_zdb;
 drop table tmp_ens_zdb;
 
 
@@ -31,7 +31,7 @@ update ens_zdb set ez_zdb = (
 );
 
 --! echo "unload rows to confirm all zdbids still exists:  >0 is bad."
-\copy (select * from ens_zdb where not exists (select 'x' from zdb_active_data where zactvd_zdb_id = ez_zdb)) to 'zdb_ids_not_in_zdb_active_data.txt';
+\copy (select * from ens_zdb where not exists (select 'x' from zdb_active_data where zactvd_zdb_id = ez_zdb)) to zdb_ids_not_in_zdb_active_data.txt
 
 
 delete from ens_zdb where not exists (select 'x' from zdb_active_data where zactvd_zdb_id = ez_zdb);
@@ -49,7 +49,7 @@ select dblink_linked_recid as ez_zdb, dblink_acc_num as ez_ens
 
 --! echo "unload rows to confirm zdb-ens pairs are unique within and between ENSDARG data sources."
 
-\copy (select count(*), ez_zdb, ez_ens from tmp_ens_zdbDups group by ez_zdb, ez_ens having count(*) > 1 ) to 'zdb_ens_ids_not_unique.txt';
+\copy (select count(*), ez_zdb, ez_ens from tmp_ens_zdbDups group by ez_zdb, ez_ens having count(*) > 1 ) to zdb_ens_ids_not_unique.txt
 
 create temp table tmp_dup_enz_ids (counter int, ens_id varchar(20));
 
@@ -70,9 +70,9 @@ select ez_ens, ez_zdb
 
 --! echo "unload rows to show ENSDARGs on more than one gene."
 
-\copy (select * from tmp_reportDupEnsdarg order by ez_ens) to 'ensdargs_on_more_than_one_gene.txt';
+\copy (select * from tmp_reportDupEnsdarg order by ez_ens) to ensdargs_on_more_than_one_gene.txt
 
-create temp table tmp_ens_zdb (ez_zdb text, ez_ens varchar(20));
+create temp table tmp_ens_zdb (ez_ens varchar(20), ez_zdb text);
 
 insert into tmp_ens_zdb
 select distinct * from ens_zdb;
@@ -89,7 +89,7 @@ insert into tmp_dup_zdb (id)
 select ez_zdb as id from ens_zdb
  group by 1 having count(*) > 1;
 
-\copy (select id, ez_ens from tmp_dup_zdb, ens_zdb where id = ez_zdb) to 'zdb_id_exists_more_than_once.txt';
+\copy (select id, ez_ens from tmp_dup_zdb, ens_zdb where id = ez_zdb) to zdb_id_exists_more_than_once.txt
 
 
 delete from ens_zdb
@@ -117,7 +117,7 @@ and dblink_acc_num like 'ENSDARG%'
 
 --!echo "unloading ENSDARGs that have changed but can not be updated because they are associated with Sanger Load Pub";
 
-\copy (select id, dblink_acc_num, dblink_linked_recid from tmp_drop, record_Attribution, db_link where recattrib_data_zdb_id = id and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1','ZDB-PUB-130211-1','ZDB-PUB-130725-1','ZDB-PUB-130425-4', 'ZDB-PUB-100504-26', 'ZDB-PUB-100504-23', 'ZDB-PUB-100504-24','ZDB-PUB-070315-1','ZDB-PUB-130211-1','ZDB-PUB-120207-1','ZDB-PUB-130213-1') and dblink_zdb_id = id and not exists (Select 'x' from ensdar_mapping where ensm_ensdarg_id = dblink_acc_num)) to 'changedSangerEnsdargs.txt';
+\copy (select id, dblink_acc_num, dblink_linked_recid from tmp_drop, record_Attribution, db_link where recattrib_data_zdb_id = id and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1','ZDB-PUB-130211-1','ZDB-PUB-130725-1','ZDB-PUB-130425-4', 'ZDB-PUB-100504-26', 'ZDB-PUB-100504-23', 'ZDB-PUB-100504-24','ZDB-PUB-070315-1','ZDB-PUB-130211-1','ZDB-PUB-120207-1','ZDB-PUB-130213-1') and dblink_zdb_id = id and not exists (Select 'x' from ensdar_mapping where ensm_ensdarg_id = dblink_acc_num) to changedSangerEnsdargs.txt;
 
 --!echo "delete from tmp_drop"
 

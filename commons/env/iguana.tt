@@ -26,7 +26,7 @@
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/iguana
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org
-<!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	gb2/gbrowse_img/zfin_ensembl_GRCz11/
+<!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	gb2/gbrowse_img/zfin_ensembl/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	action/gbrowse/
 <!--|GENBANK_DAILY_EMAIL|-->	kevin\@zfin.org
 <!--|GOOGLE_ANALYTICS_ID|-->	UA-2417927-5

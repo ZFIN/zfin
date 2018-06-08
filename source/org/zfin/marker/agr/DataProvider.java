@@ -11,7 +11,7 @@ public enum DataProvider {
     PANTHER("PANTHER", ForeignDB.AvailableName.PANTHER),
     NCBI_GENE("NCBIGene", ForeignDB.AvailableName.GENE),
     UNITPROT_KB("UniProtKB", ForeignDB.AvailableName.UNIPROTKB, ForeignDB.AvailableName.UNIPROTKB_KW),
-    ENSEMBL("Ensembl", ForeignDB.AvailableName.ENSEMBL, ForeignDB.AvailableName.ENSEMBL_CLONE, ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
+    ENSEMBL("Ensembl", ForeignDB.AvailableName.ENSEMBL, ForeignDB.AvailableName.ENSEMBL_CLONE, ForeignDB.AvailableName.ENSEMBL_GRCZ10_);
 
     private String displayName;
     private List<ForeignDB.AvailableName> nameList;

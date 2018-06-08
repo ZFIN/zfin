@@ -16,17 +16,9 @@ public class GBrowseController {
     @RequestMapping("/gbrowse")
     public String gbrowse(Model model) {
         model.addAttribute("requestParams", request.getQueryString());
-        model.addAttribute("urlPrefix","/gb2/gbrowse/zfin_ensembl_GRCz11");
-        return "gbrowse/gbrowse-view.page";
-    }
-
-    @RequestMapping("/gbrowse/GRCz10")
-    public String gbrowseGRCz10(Model model) {
-        model.addAttribute("requestParams", request.getQueryString());
         model.addAttribute("urlPrefix","/gb2/gbrowse/zfin_ensembl");
         return "gbrowse/gbrowse-view.page";
     }
-
 
     @RequestMapping("/gbrowse/Zv9")
     public String gbrowseZv9(Model model) {

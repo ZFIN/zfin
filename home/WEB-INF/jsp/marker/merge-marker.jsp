@@ -47,7 +47,7 @@
             ncbiGeneIdsIgnored = true;
             uniGeneIdsIgnored = true;
             vegaIdsIgnored = true;
-            EnsemblGRCz11IdsIgnored = true;
+            EnsemblGRCz10IdsIgnored = true;
             transcriptsIgnored = true;
             orthologyIgnored = true;
             mapInfoIgnored = true;
@@ -163,7 +163,7 @@
             jQuery('#ignoreNCBIGeneId').hide();
             jQuery('#ignoreUniGeneId').hide();
             jQuery('#ignoreVegaId').hide();
-            jQuery('#ignoreEnsemblGRCz11Id').hide();
+            jQuery('#ignoreEnsemblGRCz10Id').hide();
             jQuery('#ignoreTranscript').hide();
             jQuery('#ignoreOrth').hide();
             jQuery('#ignoreMapping').hide();
@@ -567,70 +567,70 @@
             checkVegaIdsDone = 1;
 
             if (checkVegaIdsDone == 1) {
-                validateEnsemblGRCz11Ids(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+                validateEnsemblGRCz10Ids(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
             }
         };
 
-        var validateEnsemblGRCz11Ids = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
-            var checkEnsemblGRCz11IdsDone = 0;
-            var EnsemblGRCz11OfGene1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-accession?db=EnsemblGRCz11&markerZdbId=" + geneIDdelete,
+        var validateEnsemblGRCz10Ids = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
+            var checkEnsemblGRCz10IdsDone = 0;
+            var EnsemblGRCz10OfGene1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-accession?db=EnsemblGRCz10&markerZdbId=" + geneIDdelete,
                 dataType: "json",
                 async: false
             }).responseText);
 
-            var EnsemblGRCz11IdsOfGene1 = new Array();
-            var EnsemblGRCz11LinksOfGene1 = new Array();
-            for (EnsemblGRCz11 in EnsemblGRCz11OfGene1) {
-                EnsemblGRCz11IdsOfGene1.push(EnsemblGRCz11OfGene1[EnsemblGRCz11].accessionNumber);
-                EnsemblGRCz11LinksOfGene1.push(EnsemblGRCz11OfGene1[EnsemblGRCz11].url);
+            var EnsemblGRCz10IdsOfGene1 = new Array();
+            var EnsemblGRCz10LinksOfGene1 = new Array();
+            for (EnsemblGRCz10 in EnsemblGRCz10OfGene1) {
+                EnsemblGRCz10IdsOfGene1.push(EnsemblGRCz10OfGene1[EnsemblGRCz10].accessionNumber);
+                EnsemblGRCz10LinksOfGene1.push(EnsemblGRCz10OfGene1[EnsemblGRCz10].url);
             }
-            var EnsemblGRCz11OfGene2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-accession?db=EnsemblGRCz11&markerZdbId=" + geneZdbIdMergedInto,
+            var EnsemblGRCz10OfGene2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-accession?db=EnsemblGRCz10&markerZdbId=" + geneZdbIdMergedInto,
                 dataType: "json",
                 async: false
             }).responseText);
 
-            var EnsemblGRCz11IdsOfGene2 = new Array();
-            var EnsemblGRCz11LinksOfGene2 = new Array();
-            for (EnsemblGRCz11 in EnsemblGRCz11OfGene2) {
-                EnsemblGRCz11IdsOfGene2.push(EnsemblGRCz11OfGene2[EnsemblGRCz11].accessionNumber);
-                EnsemblGRCz11LinksOfGene2.push(EnsemblGRCz11OfGene2[EnsemblGRCz11].url);
+            var EnsemblGRCz10IdsOfGene2 = new Array();
+            var EnsemblGRCz10LinksOfGene2 = new Array();
+            for (EnsemblGRCz10 in EnsemblGRCz10OfGene2) {
+                EnsemblGRCz10IdsOfGene2.push(EnsemblGRCz10OfGene2[EnsemblGRCz10].accessionNumber);
+                EnsemblGRCz10LinksOfGene2.push(EnsemblGRCz10OfGene2[EnsemblGRCz10].url);
             }
-            var differentEnsemblGRCz11Ids = false;
-            if(EnsemblGRCz11IdsOfGene1.length !== 0 && EnsemblGRCz11IdsOfGene2.length !== 0) {
-                if (EnsemblGRCz11IdsOfGene1.length !== EnsemblGRCz11IdsOfGene2.length) {
-                    differentEnsemblGRCz11Ids = true;
+            var differentEnsemblGRCz10Ids = false;
+            if(EnsemblGRCz10IdsOfGene1.length !== 0 && EnsemblGRCz10IdsOfGene2.length !== 0) {
+                if (EnsemblGRCz10IdsOfGene1.length !== EnsemblGRCz10IdsOfGene2.length) {
+                    differentEnsemblGRCz10Ids = true;
                 } else {
-                    for (var i = 0; i < EnsemblGRCz11IdsOfGene1.length; i++) {
-                        if (EnsemblGRCz11IdsOfGene1[i] !== EnsemblGRCz11IdsOfGene2[i])
-                            differentEnsemblGRCz11Ids = true;
+                    for (var i = 0; i < EnsemblGRCz10IdsOfGene1.length; i++) {
+                        if (EnsemblGRCz10IdsOfGene1[i] !== EnsemblGRCz10IdsOfGene2[i])
+                            differentEnsemblGRCz10Ids = true;
                     }
                 }
             }
 
-            if (differentEnsemblGRCz11Ids) {
-                EnsemblGRCz11IdsIgnored = false;
-                jQuery('#validationEnsemblGRCz11IdsText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following Ensembl(GRCz11) Id:</h3>');
-                for (var i = 0; i < EnsemblGRCz11IdsOfGene1.length; i++) {
-                    jQuery('#validationEnsemblGRCz11IdsText').append('<div>'
-                            + '<a target="_blank" href="' + EnsemblGRCz11LinksOfGene1[i] +'">'
-                            + EnsemblGRCz11IdsOfGene1[i] + '</a>'
+            if (differentEnsemblGRCz10Ids) {
+                EnsemblGRCz10IdsIgnored = false;
+                jQuery('#validationEnsemblGRCz10IdsText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following Ensembl(GRCz10) Id:</h3>');
+                for (var i = 0; i < EnsemblGRCz10IdsOfGene1.length; i++) {
+                    jQuery('#validationEnsemblGRCz10IdsText').append('<div>'
+                            + '<a target="_blank" href="' + EnsemblGRCz10LinksOfGene1[i] +'">'
+                            + EnsemblGRCz10IdsOfGene1[i] + '</a>'
                             + '</div>');
                 }
 
-                jQuery('#validationEnsemblGRCz11IdsText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following Ensembl(GRCz11) Id:</h3>');
-                for (var i = 0; i < EnsemblGRCz11IdsOfGene2.length; i++) {
-                    jQuery('#validationEnsemblGRCz11IdsText').append('<div>'
-                            + '<a target="_blank" href="' + EnsemblGRCz11LinksOfGene2[i] +'">'
-                            + EnsemblGRCz11IdsOfGene2[i] + '</a>'
+                jQuery('#validationEnsemblGRCz10IdsText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following Ensembl(GRCz10) Id:</h3>');
+                for (var i = 0; i < EnsemblGRCz10IdsOfGene2.length; i++) {
+                    jQuery('#validationEnsemblGRCz10IdsText').append('<div>'
+                            + '<a target="_blank" href="' + EnsemblGRCz10LinksOfGene2[i] +'">'
+                            + EnsemblGRCz10IdsOfGene2[i] + '</a>'
                             + '</div>');
                 }
 
-                jQuery('#ignoreEnsemblGRCz11Id').show();
+                jQuery('#ignoreEnsemblGRCz10Id').show();
             }
 
-            checkEnsemblGRCz11IdsDone = 1;
+            checkEnsemblGRCz10IdsDone = 1;
 
-            if (checkEnsemblGRCz11IdsDone == 1) {
+            if (checkEnsemblGRCz10IdsDone == 1) {
                 <c:if test="${formBean.markerToDelete.genedom  && !formBean.markerToDelete.nontranscribed}">
                      validateGeneWithTranscript(markerZdbIdToDelete, markerZdbIdToBeMergedInto, markerAbbrevToMergeInto);
                 </c:if>
@@ -1113,10 +1113,10 @@
             enableMerge();
         }
 
-        function ignoreEnsemblGRCz11Ids(formObj) {
-            EnsemblGRCz11IdsIgnored = true;
-            jQuery('#validationEnsemblGRCz11IdsText').hide();
-            jQuery('#ignoreEnsemblGRCz11Id').hide();
+        function ignoreEnsemblGRCz10Ids(formObj) {
+            EnsemblGRCz10IdsIgnored = true;
+            jQuery('#validationEnsemblGRCz10IdsText').hide();
+            jQuery('#ignoreEnsemblGRCz10Id').hide();
 
             enableMerge();
         }
@@ -1174,7 +1174,7 @@
         }
 
         function enableMerge() {
-            if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && EnsemblGRCz11IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored && !differentSequence && !differentFish && !differentTargets) {
+            if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && EnsemblGRCz10IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored && !differentSequence && !differentFish && !differentTargets) {
                 jQuery('#submitMerge').removeAttr('disabled');
             }
         }
@@ -1229,9 +1229,9 @@
         <form id="ignoreVegaId">
             <input type="button" value="Ignore Vega Ids" onclick="ignoreVegaIds(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, all the above Vega Ids will be associated with the gene retained.">
         </form>
-        <div id="validationEnsemblGRCz11IdsText"></div>
-        <form id="ignoreEnsemblGRCz11Id">
-            <input type="button" value="Ignore Ensembl(GRCz11) Ids" onclick="ignoreEnsemblGRCz11Ids(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, all the above Ensembl(GRCz11) Ids will be associated with the gene retained.">
+        <div id="validationEnsemblGRCz10IdsText"></div>
+        <form id="ignoreEnsemblGRCz10Id">
+            <input type="button" value="Ignore Ensembl(GRCz10) Ids" onclick="ignoreEnsemblGRCz10Ids(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, all the above Ensembl(GRCz10) Ids will be associated with the gene retained.">
         </form>
         <div id="validationTranscriptText"></div>
         <form id="ignoreTranscript">

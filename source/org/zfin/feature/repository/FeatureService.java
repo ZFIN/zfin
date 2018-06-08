@@ -240,9 +240,6 @@ public class FeatureService {
         if (featureLocation.getAssembly().equals("Zv9")) {
             imageBuilder.genomeBuild(GBrowseImage.GenomeBuild.ZV9);
             source = GenomeLocation.Source.ZFIN_Zv9;
-        } else if (featureLocation.getAssembly().equals("GRCz10")) {
-            imageBuilder.genomeBuild(GBrowseImage.GenomeBuild.GRCZ10);
-            source = GenomeLocation.Source.ZFIN_Zv9;
         } else {
             imageBuilder.genomeBuild(GBrowseImage.GenomeBuild.CURRENT);
             source = GenomeLocation.Source.ZFIN;

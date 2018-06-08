@@ -88,7 +88,7 @@ public class GPIFile extends AbstractScriptWrapper {
                         if (dbName == null) {
                             continue;
                         }
-                        if (Objects.equals(dbName, "Ensembl(GRCz11)")) {
+                        if (Objects.equals(dbName, "Ensembl(GRCz10)")) {
                             dbName = "ENSEMBL";
                         }
                         if (Objects.equals(dbName, "UniProtKB-KW")) {

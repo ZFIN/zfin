@@ -2,6 +2,7 @@ begin work ;
 
 delete from ensdar_mapping;
 
-\copy ensdar_mapping from 'sangerMutantData3.unl';
+\copy from sangerMutantData3.unl
+ insert into ensdar_mapping;
 
 commit work;

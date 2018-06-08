@@ -2,6 +2,7 @@ begin work ;
 
 delete from ensdarg_ottdarg_mapping;
 
-\copy ensdarg_ottdarg_mapping from './ensdargOttdarg3.unl';
+\copy from ./ensdargOttdarg3.unl
+ insert into ensdarg_ottdarg_mapping;
 
 commit work;

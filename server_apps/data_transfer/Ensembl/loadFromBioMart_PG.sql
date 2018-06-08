@@ -2,6 +2,7 @@ begin work;
 
 delete from ensdar_mapping;
 
-\copy ensdar_mapping from 'mart_exportName1.txt';
+\copy from mart_exportName1.txt
+ insert into ensdar_mapping;
 
 commit work;

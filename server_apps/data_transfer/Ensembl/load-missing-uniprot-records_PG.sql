@@ -5,7 +5,8 @@ CREATE temp TABLE ensembl_gene_raw
      uniprot_id VARCHAR(20) not null
   ) ;
 
-\copy ensembl_gene_raw from 'ensembl-uniprot.unl'
+\copy from ensembl-uniprot.unl
+  insert into ensembl_gene_raw;
 
 --select * from ensembl_gene_raw;
 --select * from uniprot;
@@ -73,7 +74,8 @@ CREATE temp TABLE uniprot
      gene_symbol VARCHAR(50)
   ) with no log;
 
-\copy uniprot from 'uniprot.unl';
+\copy from uniprot.unl
+  insert into uniprot;
 
 CREATE temp TABLE ensembl_gene
   (
@@ -151,7 +153,8 @@ SELECT zdb_id,
 FROM   ensembl_gene_with_zdb;
 
 -- report created new DB Links
-\copy (SELECT * FROM  ensembl_gene_with_zdb) to 'new_uniprot_ids';
+\copy to 'new_uniprot_ids'
+SELECT * FROM  ensembl_gene_with_zdb;
 
 -- attribute given pub to these new uniprot IDs
 INSERT INTO record_attribution
