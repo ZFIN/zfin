@@ -90,6 +90,10 @@ class PubmedUtils {
         proc
     }
 
+    static Process psql (String dbname, String sql) {
+        return dbaccess(dbname, sql)
+    }
+
     private static LocalDate extractPubDate(GPathResult pubmedArticle) {
         GPathResult pubDate = pubmedArticle.MedlineCitation.Article.Journal.JournalIssue.PubDate
 

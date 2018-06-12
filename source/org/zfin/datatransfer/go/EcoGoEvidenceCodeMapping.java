@@ -26,6 +26,7 @@ public class EcoGoEvidenceCodeMapping {
         mapping.put("ECO:0000304", "TAS");
         mapping.put("ECO:0000303", "NAS");
         mapping.put("ECO:0000305", "IC");
+        mapping.put("ECO:0000306", "IC");
         mapping.put("ECO:0000031", "ISS");
         mapping.put("ECO:0000255", "ISS");
         mapping.put("ECO:0000250", "ISS");
@@ -39,6 +40,7 @@ public class EcoGoEvidenceCodeMapping {
         mapping.put("ECO:0000320", "IKR");
         mapping.put("ECO:0000321", "IRD");
         mapping.put("ECO:0000245", "RCA");
+        mapping.put("ECO:0000353", "IPI");
         // duplicate EDO assignment...
 //        mapping.put("ECO:0000320", "IMR");
     }

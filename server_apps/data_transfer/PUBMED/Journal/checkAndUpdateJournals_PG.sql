@@ -17,7 +17,7 @@ create temp table tmp_ncbi_journals (
   isoAbbr varchar(255),
   nlmID varchar(100));
 
-\copy tmp_ncbi_journals from 'journalsFromNCBI.txt' delimiter ',';
+\copy tmp_ncbi_journals from 'journalsFromNCBI.txt' delimiter '|';
 
 
 create index tnj_title_index
@@ -33,7 +33,7 @@ create index tnj_nlmID_index
 
 -- temp table with pre-computed lower case values
 select lower(title) as title, lower(medAbbr) as medAbbr, issnPrint, issnOnline, lower(isoAbbr) as isoAbbr, nlmID
- from tmp_ncbi_journals into temp lower_ncbi_journals;
+ into temp lower_ncbi_journals from tmp_ncbi_journals ;
 
 create index lnj_title_index
  on lower_ncbi_journals(title) ;
@@ -214,7 +214,7 @@ create temp table wrongIssnPrintByMedAbbr as select j1.jrnl_zdb_id as journalZdb
 -- dump the issn print that disagree with NLM (same abbrev/MedAbbr, different issn print)
 
 
-\copy (select * from wrongIssnPrintByMedAbbr) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/wrongIssnPrintByMedAbbrWithNoHeader.txt' delimiter ',';
+\copy (select * from wrongIssnPrintByMedAbbr) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader.txt' delimiter ',';
 
 create temp table wrongIssnPrintByIsoAbbr as select j1.jrnl_zdb_id as journalZdbID, j1.jrnl_abbrev, j1.jrnl_print_issn, issnPrint, j1.jrnl_name, nlmID           
   from journal j1, tmp_ncbi_journals
@@ -388,11 +388,7 @@ order by j1.jrnl_print_issn, j1.jrnl_name, j1.jrnl_abbrev;
 
 -- report journals missing issn print
 
-\copy (select jrnl_zdb_id, jrnl_name, jrnl_abbrev
-  from journal
- where jrnl_print_issn is null                            
-group by jrnl_name, jrnl_zdb_id, jrnl_abbrev
-order by jrnl_name, jrnl_zdb_id, jrnl_abbrev) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/journalsMissingIssnPrint.txt ' ;
+\copy (select jrnl_zdb_id, jrnl_name, jrnl_abbrev  from journal where jrnl_print_issn is null group by jrnl_name, jrnl_zdb_id, jrnl_abbrev order by jrnl_name, jrnl_zdb_id, jrnl_abbrev) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/journalsMissingIssnPrint.txt' ;
 
 
 

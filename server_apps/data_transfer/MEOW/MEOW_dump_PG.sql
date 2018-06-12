@@ -143,7 +143,7 @@ create index meow_exp1_zdb_id_idx on meow_exp1(zdb_id);
 
 -- NOW let's create the table of pubs associated with these genes.
 
-\copy  (select recattrib_data_zdb_id, zdb_id, title, authors, pub_date, jrnl_abbrev||pub_volume||':'||pub_pages as source, accession_no from publication, record_attribution, journal where zdb_id = recattrib_source_zdb_id and jrnl_zdb_id= pub_jrnl_zdb_id and exists (select 't' from meow_exp1 where zdb_id =recattrib_data_zdb_id)) to 'zfin_pubs.txt' with DELIMITER '	';
+\copy  (select recattrib_data_zdb_id, zdb_id, title, authors, to_char(pub_date, 'MM/DD/YYYY'), jrnl_abbrev||pub_volume||':'||pub_pages as source, accession_no from publication, record_attribution, journal where zdb_id = recattrib_source_zdb_id and jrnl_zdb_id= pub_jrnl_zdb_id and exists (select 't' from meow_exp1 where zdb_id =recattrib_data_zdb_id)) to 'zfin_pubs.txt' with DELIMITER '	';
 
 -- Now the ortholog!
 create temp table meow_exp3 (
@@ -186,9 +186,13 @@ and dblink_fdbcont_zdb_id = fdbcont_zdb_id union
 
 create temp table tmp_sc_out as 
 select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num
-    from marker
-    left outer join (db_link left outer join foreign_db_contains on fdbcont_zdb_id = dblink_fdbcont_zdb_id left outer join foreign_db on fdb_db_pk_id = fdbcont_fdb_db_id and fdb_db_name = 'GenBank') on dblink_linked_recid = mrkr_zdb_id
-    where mrkr_type = 'EST';
+from marker
+  left outer join (
+      db_link
+      inner join foreign_db_contains on fdbcont_zdb_id = dblink_fdbcont_zdb_id
+      inner join foreign_db on fdb_db_pk_id = fdbcont_fdb_db_id and fdb_db_name = 'GenBank'
+    ) on dblink_linked_recid = mrkr_zdb_id
+where mrkr_type = 'EST';
 
 \copy (select * from tmp_sc_out order by mrkr_zdb_id) to 'SC.txt' with DELIMITER '	';
 
