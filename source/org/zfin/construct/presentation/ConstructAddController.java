@@ -160,12 +160,12 @@ public class ConstructAddController {
 
                 int lastComp = ConstructComponentService.getComponentCount(constructZdbID);
                 mr.addConstructComponent(numCassettes, lastComp, constructZdbID, ")", ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT, "construct wrapper component", ir.getCVZdbIDByTerm(")").getZdbID());
-
+System.out.println(constructZdbID);
                 //moving construct record to marker table
-                if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
+             //   if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
 
                     InformixUtil.runInformixProcedure("regen_names_marker", constructZdbID + "");
-                }
+          //      }
                 InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
 
 
