@@ -73,6 +73,8 @@ println("Loading terms into $dbname")
 
 psql dbname, """
 
+\\copy(SELECT dblink_linked_recid,dblink_acc_num
+    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65)) TO $PRE_FILE;
 
   CREATE TEMP TABLE tmp_terms(
     dblinkid text,
