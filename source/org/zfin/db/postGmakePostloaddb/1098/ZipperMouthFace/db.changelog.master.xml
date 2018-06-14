@@ -8,6 +8,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/CUR-794.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/ZFIN-5947.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/ZFIN-5951.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/CUR-759.sql" />
+<!--    <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/CUR-759.sql" />-->
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/ZFIN-5957.sql" />
 </databaseChangeLog>
