@@ -152,7 +152,7 @@ returns void as $$
 		and fish_genotype_zdb_id = geno_zdb_id
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
-		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055' ;
+		and trim(xpatres_superterm_zdb_id) !='ZDB-TERM-100331-1055' ;
 
 	-- Antibodies: insert records for xpatres_subterm_zdb_id
 
@@ -206,7 +206,7 @@ returns void as $$
 		   and fish_is_wildtype = 't'
                    and geno_is_wildtype = 't'
 		   and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
-		   and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
+		   and trim(xpatres_superterm_zdb_id) !='ZDB-TERM-100331-1055'
 		   and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
 		   and clone_rating = '4' ;
 
@@ -236,7 +236,7 @@ returns void as $$
 		and geno_is_wildtype = 't'
     		and fish_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
-		and xpatres_subterm_zdb_id !='ZDB-TERM-100331-1055'
+		and trim(xpatres_subterm_zdb_id) !='ZDB-TERM-100331-1055'
 		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
 		and clone_rating = '4'
                 and xpatres_subterm_zdb_id is not null
