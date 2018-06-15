@@ -41,8 +41,11 @@ mv archives.tar.gz $pth/$dirname
 
 # take a filesystem backup as well, which does backup /opt/postgres/data
 
-tar -cf $pth/$dirname/$dirname.filesytem.tar /opt/postgres/data
+cd /opt/postgres/
+tar -cf $pth/$dirname/$dirname.filesytem.tar -h /opt/postgres/data
+cd /opt/postgres/postgres_wal/
 gzip $pth/$dirname/$dirname.filesytem.tar
+gzip $pth/$dirname/base.tar
 
 # delete WAL log archive files older than 3 days (assumes the base backup and filesystem backups above, happen nightly)          
 cd /opt/postgres/postgres_wal/wal_archive/
