@@ -164,7 +164,7 @@ System.out.println(constructZdbID);
                 //moving construct record to marker table
              //   if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
 
-                    InformixUtil.runInformixProcedure("regen_names_marker", constructZdbID + "");
+              //      InformixUtil.runInformixProcedure("regen_names_marker", constructZdbID + "");
           //      }
                 InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
 
