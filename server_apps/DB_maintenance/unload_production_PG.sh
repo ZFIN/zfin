@@ -37,6 +37,3 @@ else
 
   echo "pg_dumpall completed successfully."
 endif
-
-
-
