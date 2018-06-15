@@ -29,11 +29,11 @@ create or replace function get_feature_abbrev_display( featZdbId varchar )
 begin
 
 for featAbbrev, featMrkrAbbrev, featName, featType in
-    select feature_abbrev, mrkr_abbrev, feature_name, feature_type
+    select trim(feature_abbrev), trim(mrkr_abbrev), trim(feature_name), trim(feature_type)
        from feature left outer join feature_marker_relationship on fmrel_mrkr_zdb_id = feature_zdb_id
-    	 	 and fmrel_type = 'is allele of'
+    	 	 and trim(fmrel_type) = 'is allele of'
     	 	 left outer join marker on fmrel_ftr_zdb_id = mrkr_zdb_id
-        where feature_zdb_id = featZdbId
+        where trim(feature_zdb_id) = featZdbId
  loop 
 
   if (featName is null) then
