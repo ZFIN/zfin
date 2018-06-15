@@ -11,16 +11,16 @@ returns void as $$
 	 vOldMrkrAbbrev  marker.mrkr_abbrev%TYPE ;
 
     begin
-	if get_obj_type(vOldZDBid) = 'ALT'
+	if get_obj_type(vOldZdbId) = 'ALT'
 	then 
-  	  vDataType := 'feature' ;
+  	  vDataType = 'feature' ;
 
 	else
-	  vDataType := 'marker' ;
+	  vDataType = 'marker' ;
 
 	end if ; -- end if get_obj_type = 'ALT'
 
-	if vDataType = "feature"
+	if vDataType = 'feature'
 	then
 	  vGenotypeFtrCount := (Select count(*) 
 			  	     from genotype_feature
