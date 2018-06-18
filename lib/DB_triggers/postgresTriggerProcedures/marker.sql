@@ -1,4 +1,4 @@
-DROP TRIGGER IF EXISTS marker_name_order
+DROP TRIGGER IF EXISTS marker_name_order_trigger
 ON marker;
 
 CREATE OR REPLACE FUNCTION marker_name_order()
