@@ -3,7 +3,7 @@ create or replace function populate_anat_display_stage_children(stageId text,
 			 			     parentName text,
 						     indent int,
 						     seqNum int)
-  returns int as $seqNum$;
+  returns int as $seqNum$
 
   -- It is initiated by regen_anatomy, and it calls itself recursively
   -- to populate anatomy_display_new table by using the intermediate table
@@ -54,13 +54,13 @@ create or replace function populate_anat_display_stage_children(stageId text,
       where stimchilis_item_zdb_id = parentId
       order by stimchilis_child_name_order
       loop
-      seqNum = select populate_anat_display_stage_children( 
-        		stageId, childId, childName, childIndent,seqNum) 
+      seqNum := populate_anat_display_stage_children( 
+        		stageId, childId, childName, childIndent,seqNum);
 
-    end loop
+    end loop;
 
   return seqNum;
 
 end;
 
-$seqNum$ LANGUAGE plpglsql;
+$seqNum$ LANGUAGE plpgsql;
