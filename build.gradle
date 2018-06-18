@@ -44,11 +44,12 @@ project.ext.set("pgbindir", pgbindir)
 //dependsOn: ['lib:DB_functions:postgresFunctions:killConnectionsToPostgres']
 task loadDb() {
     doLast {
-        File unloads = file('/research/zunloads/databases/postgres_self_dumps/darwindb/')
+        File unloads = file('/research/zunloads/databases/zfindb/')
         String unloadPath;
         if (unloads.exists()) {
             File latest = unloads.listFiles().last()
-            unloadPath = latest.getPath()
+	    File latestBakDump = latest.listFiles().last()
+            unloadPath = latestBakDump.getPath()
         }
 
         //use -DB=... path if specified, also, yes, I'm being cute so that it will be -DB=...
