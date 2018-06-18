@@ -38,18 +38,18 @@ returns void as $$
      drop table if exists anatomy_relationship_list_temp;
      create temp table anatomy_relationship_list_temp (
 	arlt_term_zdb_id	text,
-	arlt_contained_by	varchar(255),
+	arlt_contained_by	text,
 	arlt_contains 		text,
-	arlt_develops_from	varchar(255),
-	arlt_develops_into	varchar(255)
-     )with no log;
+	arlt_develops_from	text,
+	arlt_develops_into	text
+     );
  
 
     for anatomyItemId in 
 	select term_zdb_id
           from term
-          where term_ont_id[1,3] = 'ZFA'
-      order by term_zdb_id;
+          where substring(term_ont_id,1,3) = 'ZFA'
+      order by term_zdb_id
       loop
         containedbyList = '';
         containsList = '';
@@ -69,7 +69,7 @@ returns void as $$
 	order by term_name
 	loop
 	   if containedbyList <> '' then  
-		let containedbyList = containedbyList || ', ';
+		containedbyList = containedbyList || ', ';
            end if;
 
  	    containedbyList = containedbyList || relationItemName ;
@@ -86,11 +86,11 @@ returns void as $$
                  on termrel_term_2_zdb_id = term_zdb_id
            where termrel_term_1_zdb_id = anatomyItemId
              and termrel_type in ('is_a', 'part_of')
-	order by term_name;
+	order by term_name
 	loop
 
 	   if  containsList <> '' then
-		let containsList = containsList || ', ';
+		containsList = containsList || ', ';
            end if;
 
  	    containsList = containsList || relationItemName ;
@@ -101,18 +101,18 @@ returns void as $$
        -- get develops_from list
        -----------------------------------------------
 
-       for relationItemName in:
+       for relationItemName in
 	  select term_name
 	    into relationItemName
             from term_relationship join term
                  on termrel_term_1_zdb_id = term_zdb_id
            where termrel_term_2_zdb_id = anatomyItemId
              and termrel_type = 'develops_from'
-	order by term_name;
+	order by term_name
 	loop
 
 	   if developedfromList <> '' then 
-		let developedfromList = developedfromList || ', ';
+		developedfromList = developedfromList || ', ';
 	   end if ;
 
  	    developedfromList = developedfromList || relationItemName ;
@@ -129,7 +129,7 @@ returns void as $$
                  on termrel_term_2_zdb_id = term_zdb_id
            where termrel_term_1_zdb_id = anatomyItemId
              and termrel_type = 'develops_from'
-	order by term_name;
+	order by term_name
 	loop
 
 	   if developsintoList <> '' then
