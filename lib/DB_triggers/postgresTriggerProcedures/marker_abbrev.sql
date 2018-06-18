@@ -1,5 +1,6 @@
 drop trigger if exists marker_abbrev_trigger on marker;
-
+drop trigger if exists marker_abbrev_insert_trigger on marker;
+drop trigger if exists marker_abbrev_update_trigger on marker;
 
 create or replace function marker_abbrev()
 returns trigger as
@@ -42,7 +43,11 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger marker_abbrev_trigger before update or insert on marker
+create trigger marker_abbrev_insert_trigger before insert on marker
  for each row 
- when (OLD.mrkr_abbrev IS DISTINCT FROM NEW.mrkr_abbrev)
+ execute procedure marker_abbrev();
+
+
+create trigger marker_abbrev_update_trigger before update of mrkr_abbrev on marker
+ for each row 
  execute procedure marker_abbrev();
