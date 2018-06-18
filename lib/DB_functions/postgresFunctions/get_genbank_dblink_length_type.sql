@@ -10,7 +10,7 @@
   create or replace function get_genbank_dblink_length_type (vDblinkAccNum varchar(30),
 						  vDblinkLength integer,
 					 	  vDblinkFdbcontZdbId text)
-  returns $vDblinkFdbcontZdbId$ as varchar, $vDblinkLength$ as integer ;
+  returns $vDblinkFdbcontZdbId$ as text, $vDblinkLength$ as integer 
   
 
     declare vAccbkLength 	 accession_bank.accbk_length%TYPE;
