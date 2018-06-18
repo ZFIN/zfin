@@ -13,35 +13,36 @@ create or replace function anatitem_overlaps_stg_window (anatItemZdbId varchar, 
    	  overlaper        boolean;
    	  consistent   	   boolean := stg_window_consistent(startStageZdbId, endStageZdbId);
   begin
+
   if (not consistent) then
-    raise exception 'anatitem_overlaps: stage window is inconsistent.',startStageZdbId, endStageZdbId
-       using hint = 'make stage window consistent'		-- !!! ERROR EXIT 
+    raise exception 'anatitem_overlaps: stage window is inconsistent. %',startStageZdbId||" " ||endStageZdbId;
   end if;
-	select startStg.stg_hours_start, endStg.stg_hours_end
+
+  select startStg.stg_hours_start, endStg.stg_hours_end
     	   into anatStart, anatEnd
     	   from term_stage, stage startStg, stage endStg
    	        where ts_term_zdb_id = anatItemZdbId
       		and startStg.stg_zdb_id = anatitem_start_stg_zdb_id
       		and endStg.stg_zdb_id = anatitem_end_stg_zdb_id;
 
-  	select stg_hours_start
+  select stg_hours_start
     	       into windowStartStart
     	       from stage
    	       	     where stg_zdb_id = startStageZdbId;
 
-  	select stg_hours_end
+  select stg_hours_end
     	       into windowEndEnd
     	       from stage
     	       	    where stg_zdb_id = endStageZdbId;
 
-  	let overlaper = 't';
+  overlaper = 't';
 
-  	if (anatStart >= windowEndEnd or
+  if (anatStart >= windowEndEnd or
       	   anatEnd   <= windowStartStart) then
-    	   let overlaper = 'f';
-  	end if;
+    	   overlaper = 'f';
+  end if;
  
-	return overlaper;
+  return overlaper;
 
   end
 
