@@ -15,6 +15,7 @@ import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinSMTPAppender;
 import org.zfin.util.log4j.Log4jService;
@@ -81,8 +82,13 @@ public class UpdatesCheckFilter implements Filter {
         } finally {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
             // the current threadLocal
-            HibernateUtil.closeSession();
-            SysmasterHibernateUtil.closeSession();
+            try {
+                HibernateUtil.closeSession();
+                if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false"))
+                    SysmasterHibernateUtil.closeSession();
+            } catch (Exception ee){
+                logger.warn(ee);
+            }
 //            callSmtpAppender((HttpServletRequest) request, locks);
         }
     }
