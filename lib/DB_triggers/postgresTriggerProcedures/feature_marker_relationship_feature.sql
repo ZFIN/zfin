@@ -16,7 +16,7 @@ begin
 		NEW.fmrel_type);
 
      
-     RETURN null;
+     RETURN new;
 
 end;
 $BODY$ LANGUAGE plpgsql;

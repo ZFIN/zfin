@@ -13,7 +13,7 @@ begin
 		NEW.fmrel_mrkr_zdb_id,
 		NEW.fmrel_type)	;
      
-     RETURN null;
+     RETURN NEW;
 
 end;
 $BODY$ LANGUAGE plpgsql;
