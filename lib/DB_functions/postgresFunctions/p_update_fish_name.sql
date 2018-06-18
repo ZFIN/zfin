@@ -29,7 +29,7 @@ loop
 
 end loop;
 
-elif (vDataType = 'GENO') then
+elsif (vDataType = 'GENO') then
 
  for fishId in 
 
@@ -55,10 +55,3 @@ end
 
 $$ LANGUAGE plpgsql
 
-
-
-
-  
-
-
-end procedure;
