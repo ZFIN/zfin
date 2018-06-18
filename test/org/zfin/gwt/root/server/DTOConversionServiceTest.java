@@ -119,12 +119,11 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
         assertEquals(term.getAliases().size(), termDTO.getAliases().size());
         assertEquals(term.getTermName(), termDTO.getName());
         assertEquals(4, termDTO.getParentTerms().size());
-        assertEquals(1, termDTO.getChildrenTerms().size());
+        assertEquals(0, termDTO.getChildrenTerms().size());
         Map<String, Set<TermDTO>> allRelatedTerms = termDTO.getAllRelatedTerms();
-        assertEquals(5, allRelatedTerms.keySet().size()); // start stage, end stage, part of, is_a
+        assertEquals(4, allRelatedTerms.keySet().size()); // start stage, end stage, part of, is_a
         assertEquals(1, allRelatedTerms.get("start stage").size());
         assertEquals(1, allRelatedTerms.get("end stage").size());
-        assertEquals(1, allRelatedTerms.get("has parts").size());
         assertEquals(1, allRelatedTerms.get("is part of").size());
         assertEquals(1, allRelatedTerms.get("is a type of").size());
 //        assertEquals(5,allRelatedTerms.values().iterator().next().size());
