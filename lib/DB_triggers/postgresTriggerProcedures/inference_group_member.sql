@@ -4,7 +4,7 @@ create or replace function inference_group_member()
 returns trigger as
 $BODY$
 declare infgrmem_inferred_from inference_group_member.infgrmem_inferred_from%TYPE := scrub_char(NEW.infgrmem_inferred_from);
-declare infgrmem_notes inference_group_member.infgrmem_notes%TYPE :=  ;
+declare infgrmem_notes inference_group_member.infgrmem_notes%TYPE;
 
 begin
      

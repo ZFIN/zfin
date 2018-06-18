@@ -1,6 +1,6 @@
 create or replace function get_entity_name_html ( entityZdbId text )
 
-  returns text as $entityNameHtml$;
+  returns text as $entityNameHtml$
 
   -- --------------------------------------------------------------------- 
   -- Given the ZDB ID of term, 

@@ -14,7 +14,7 @@ returns text as $genoDisplayHtml$
   --     none
   -- 
   --  RETURNS:
-  --     genotype display with proper HTML formatting. 
+  --     genotyp display with proper HTML formatting. 
   --     NULL if genoZdbId does not exist in genotype table.
   --  
   --  EFFECTS:
@@ -75,10 +75,10 @@ returns text as $genoDisplayHtml$
 		then lower(get_feature_abbrev_display(feature_zdb_id))
 		else lower(mrkr_abbrev)||get_feature_abbrev_display(feature_zdb_id)
                 end as fad2,
-	      feature_Abbrev,
-	      feature_type,
-	     zyg_abbrev, 
-	     mrkr_abbrev, 
+	      feature_Abbrev as feature_abbrev,
+	      feature_type as feature_type,
+	     zyg_abbrev as zyg_abbrev, 
+	     mrkr_abbrev as mrkr_abbrev, 
 	     gcs_significance--,
 	    -- fmrel_type
 --into featAbbrevHtml, zygAllele, mrkrAbbrev, featAbbrev, featType, zygOrder, featMrkrAbbrev, gcs, fmrelType
@@ -90,7 +90,7 @@ returns text as $genoDisplayHtml$
 	  and fmrel_mrkr_zdb_id = mrkr_zdb_id
 	  and fmrel_ftr_zdb_id = feature_zdb_id
 	  and fmrel_type = gcs_fmrel_type
- and feature_type = ftrtype_name
+ 	  and feature_type = ftrtype_name
 	  and gcs_mrkr_type = mrkr_type
 	  and gcs_ftr_type = feature_type
 	  and fmrel_type = 'is allele of'
@@ -100,12 +100,12 @@ returns text as $genoDisplayHtml$
               case 
                 when fmrel_type in ('contains innocuous sequence feature','created by','contains phenotypic sequence feature')
                 then mrkr_abbrev
-                else lower(get_feature_abbrev_display(feature_zdb_id)) 
+                else lower(get_feature_abbrev_display(feature_zdb_id))
                 end as fad2,
-	      feature_Abbrev,
-	      feature_type,
-              zyg_abbrev, 
-              feature_abbrev, 
+	      feature_Abbrev as feature_abbrev,
+	      feature_type as feature_type,
+              zyg_abbrev as zyg_abbrev, 
+              feature_abbrev as feature_abbrev, 
               case
 	        when fmrel_type = 'contains innocuous sequence feature'
    		then 24
@@ -146,10 +146,10 @@ returns text as $genoDisplayHtml$
                 then mrkr_abbrev
                 else lower(get_feature_abbrev_display(feature_zdb_id)) 
                 end as fad2,
-	      feature_Abbrev,
-	      feature_type,
-              zyg_abbrev, 
-              feature_abbrev, 
+	      feature_Abbrev as feature_abbrev,
+	      feature_type as feature_type,
+              zyg_abbrev as zyg_abbrev, 
+              feature_abbrev as feature_abbrev, 
               case
 	        when fmrel_type = 'contains innocuous sequence feature'
    		then 24
