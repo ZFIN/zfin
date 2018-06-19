@@ -9,8 +9,8 @@
 
   create or replace function get_genbank_dblink_length_type (vDblinkAccNum varchar(30),
 						  vDblinkLength integer,
-					 	  vDblinkFdbcontZdbId text)
-  returns $vDblinkFdbcontZdbId$ as text, $vDblinkLength$ as integer 
+					 	  vDblinkFdbcontZdbId text, out vDblinkFdbcontZdbId text, out  vDblinkLength int) as $func$
+
   
 
     declare vAccbkLength 	 accession_bank.accbk_length%TYPE;
@@ -36,7 +36,8 @@
 
 			if vFdbcontType = 'other' then
 
- 	 			return vDblinkFdbcontZdbId, vDblinkLength ;
+ 	 			 vDblinkFdbcontZdbId=vDblinkFdbcontZdbId;
+ 	 			  vDblinkLength = vDblinkLength;
 
 			end if ;
 		end if ;
@@ -52,7 +53,7 @@
       	       	    and fdbcont_organism_common_name = 'Zebrafish'
 		    and fdb_db_name = 'GenBank' ;
 
-	        return vFdbcontZdbId, vAccbkLength ;
+
 
       else
       
@@ -69,14 +70,15 @@
           then 
 
                vDbLinkLength = vUpdateLength;
-	       return vDblinkFdbcontZdbId, vDblinkLength ;
+
 
 	  else 
 
-	      return vDblinkFdbcontZdbId, vDblinkLength ;
+	      vDblinkFdbcontZdbId=vDblinkFdbcontZdbId;
+	      vDblinkLength=vDblinkLength;
 
 	  end if ;
 
       end if ;
-end
-$$vDblinkFdbcontZdbId$, $vDblinkLength$ LANGUAGE plpgsql
+end;
+$func$ LANGUAGE plpgsql ;
