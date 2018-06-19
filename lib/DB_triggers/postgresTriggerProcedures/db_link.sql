@@ -23,6 +23,8 @@ begin
 					    NEW.dblink_linked_recid,
 					    NEW.dblink_fdbcont_zdb_id);
  --TODO: return into two variables
+ select * FROM
+ get_genbank_dblink_length_type(NEW.dblink_acc_num,NEW.dblink_length,NEW.dblink_fdbcont_zdb_id) INTO dblink_fdbcont_zdb_id,dblink_length;
 -- get_genbank_dblink_length_type 
      RETURN NEW;
 
