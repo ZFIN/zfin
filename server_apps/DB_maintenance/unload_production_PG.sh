@@ -17,7 +17,7 @@ mkdir $pth/$dirname
 
 echo "pg_dumpall starting"
 
-${PGBINDIR}/pg_dumpall --clean --verbose --no-role-passwords >  $pth/$dirname/`date +"%Y.%m.%d.1"`.dumpall
+${PGBINDIR}/pg_dumpall --clean --verbose --no-role-passwords >  $pth/`date +"%Y.%m.%d.1"`.dumpall
 
 echo "pg_dump starting"
 
