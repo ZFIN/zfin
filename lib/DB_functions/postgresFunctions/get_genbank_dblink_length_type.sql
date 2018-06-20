@@ -9,7 +9,8 @@
 
   create or replace function get_genbank_dblink_length_type (vDblinkAccNum varchar(30),
 						  vDblinkLength integer,
-					 	  vDblinkFdbcontZdbId text, out vDblinkFdbcontZdbId text, out  vDblinkLength int) as $func$
+
+					 	  vDblinkFdbcontZdbId text, out vDblinkFdbcontZdbIdOut text, out  vDblinkLengthOut int) as $func$
 
   
 
@@ -18,12 +19,14 @@
      vFdbcontZdbID	 db_link.dblink_fdbcont_zdb_id%TYPE;
      vUpdateLength	 db_link.dblink_length%TYPE ;
 
-      if exists (select *
+   begin
+
+      if (select count(*)
         	       	from accession_bank, foreign_db_contains, foreign_db
   		       	where accbk_acc_num = vDblinkAccNum
 			and fdb_db_pk_id = fdbcont_fdb_db_id
                        	and accbk_fdbcont_zdb_id = fdbcont_zdb_id
-			and fdb_db_name = 'GenBank')
+			and fdb_db_name = 'GenBank') > 0 
 
       then
 		if vDblinkFdbcontZdbId is not null then
@@ -36,8 +39,10 @@
 
 			if vFdbcontType = 'other' then
 
- 	 			 vDblinkFdbcontZdbId=vDblinkFdbcontZdbId;
- 	 			  vDblinkLength = vDblinkLength;
+
+
+ 	 			 vDblinkFdbcontZdbIdOut=vDblinkFdbcontZdbId;
+ 	 			  vDblinkLengthOut = vDblinkLength;
 
 			end if ;
 		end if ;
@@ -69,13 +74,15 @@
 
           then 
 
-               vDbLinkLength = vUpdateLength;
+
+               vDbLinkLengthOut = vUpdateLength;
 
 
 	  else 
 
-	      vDblinkFdbcontZdbId=vDblinkFdbcontZdbId;
-	      vDblinkLength=vDblinkLength;
+
+	      vDblinkFdbcontZdbIdOut=vDblinkFdbcontZdbId;
+	      vDblinkLengthOut=vDblinkLength;
 
 	  end if ;
 
