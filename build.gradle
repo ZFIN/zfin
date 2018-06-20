@@ -49,6 +49,8 @@ task loadDb() {
         if (unloads.exists()) {
             File latest = unloads.listFiles().last()
 	    File latestBakDump = latest.listFiles().last()
+	    print "$latest"
+	    print "$latestBakDump"
             unloadPath = latestBakDump.getPath()
         }
 
