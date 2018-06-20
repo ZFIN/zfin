@@ -13,11 +13,14 @@ while ( -d $pth/$dirname )
 	set dirname=$y.$x
 end
 
-mkdir $pth/$dirname
-
 echo "pg_dumpall starting"
 
 ${PGBINDIR}/pg_dumpall --clean --verbose --no-role-passwords >  $pth/`date +"%Y.%m.%d.1"`.dumpall
+
+# note the order here matters, make the dir after the dumpall because otherwise gradle will pick up the dumpall instead 
+# of the .bak file.
+
+mkdir $pth/$dirname
 
 echo "pg_dump starting"
 
