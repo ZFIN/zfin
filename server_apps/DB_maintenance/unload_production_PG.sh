@@ -15,13 +15,14 @@ end
 
 mkdir $pth/$dirname
 
+echo "pg_dumpall starting"
+
+${PGBINDIR}/pg_dumpall --clean --verbose --no-role-passwords >  $pth/$dirname/`date +"%Y.%m.%d.1"`.dumpall
+
 echo "pg_dump starting"
 
 ${PGBINDIR}/pg_dump -Fc ${DBNAME} -f $pth/$dirname/`date +"%Y.%m.%d.1"`.bak
 
-echo "pg_dumpall starting"
-
-${PGBINDIR}/pg_dumpall --clean --verbose --no-role-passwords >  $pth/$dirname/`date +"%Y.%m.%d.1"`.dumpall
 
 if ($? != "0") then
   /bin/rm -rf $pth/$dirname

@@ -1,3 +1,4 @@
+
 -------------------------------------------------------------------------
 --This function checks on insert or update of db_link, the length of the
 --sequence and the type (represented by the dblink_fdbcont_zdb_id) are
