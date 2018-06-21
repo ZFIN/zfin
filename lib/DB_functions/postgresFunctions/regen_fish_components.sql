@@ -7,7 +7,7 @@ create or replace function regen_fish_components()
 	       	    	  		       affector_id text, 
 			  		       gene_id text,
 					       construct_id text,
-					       fish_name varchar(250),
+					       fish_name text,
 					       genotype_id text
 					       );
 
@@ -15,7 +15,7 @@ create or replace function regen_fish_components()
 	       	    	  		       affector_id text, 
 			  		       gene_id text,
 					       construct_id text,
-					       fish_name varchar(250),
+					       fish_name text,
 					       genotype_id text);
 
 
