@@ -18,7 +18,7 @@ create temp table tmp_dbxrefs_with_ids (
 tmp_term_zdb_id varchar(30),
 tmp_xref_db varchar(50),
 tmp_xref_db_id bigint,
-tmp_xref_accession varchar(200));
+tmp_xref_accession varchar(400));
 
 create index tmp_dbxrefs_with_ids_index
   on tmp_dbxrefs_with_ids (tmp_term_zdb_id);
