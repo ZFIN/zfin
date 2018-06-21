@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+
+    <changeSet author="pm" id="HBurgess">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1098/Allamande/HBurgess.csv"
+                  catalogName="${DBNAME}" schemaName="${USER}" tableName="feature_data" encoding="UTF-8">
+            <column name="featureAbb" type="String"/>
+            <column name="lineNum" type="String"/>
+            <column name="otherFeatureId" type="String"/>
+            <column name="constructId" type="String"/>
+            <column name="pubID" type="String"/>
+
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>
