@@ -13,6 +13,7 @@ begin
 
 --find the functional number of affected genes.
 numAffectedGene = 0;
+fishOrder = 9999999999;
 for workingMrkr in
 	--get the allele-ish genes
 	select  fmrel_mrkr_zdb_id  
