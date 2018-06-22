@@ -1,3 +1,5 @@
+DROP TRIGGER IF EXISTS marker_audit_trigger ON marker;
+
 DROP TRIGGER IF EXISTS marker_audit_insert_trigger
 ON marker;
 
