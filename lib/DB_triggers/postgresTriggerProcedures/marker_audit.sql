@@ -26,9 +26,9 @@ $BODY$ LANGUAGE plpgsql;
 
 CREATE TRIGGER marker_audit_insert_trigger
 AFTER INSERT on marker
-FOR EACH ROW EXECUTE PROCEDURE marker_audit();
+FOR EACH ROW EXECUTE PROCEDURE marker_audit_insert();
 
 
 CREATE TRIGGER marker_audit_update_trigger
 AFTER UPDATE on marker
-FOR EACH ROW EXECUTE PROCEDURE marker_audit();
+FOR EACH ROW EXECUTE PROCEDURE marker_audit_update();
