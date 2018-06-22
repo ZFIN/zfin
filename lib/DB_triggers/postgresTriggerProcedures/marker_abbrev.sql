@@ -7,15 +7,15 @@ create or replace function marker_abbrev_insert()
 returns trigger as
 $BODY$
 
-declare mrkr_abbrev marker.mrkr_abbrev%TYPE := scrub_char(NEW.mrkr_abbrev);
-	mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE := zero_pad(mrkr_abbrev);
+declare mrkr_abbrev marker.mrkr_abbrev%TYPE;
+	mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE;
     
 
 begin
 
-     NEW.mrkr_abbrev = mrkr_abbrev;
+     NEW.mrkr_abbrev = scrub_char(NEW.mrkr_abbrev);
      
-     NEW.mrkr_abbrev_order = mrkr_abbrev_order;
+     NEW.mrkr_abbrev_order = zero_pad(NEW.mrkr_abbrev_order);
 
      perform p_check_mrkr_abbrev(NEW.mrkr_name,
 			        NEW.mrkr_abbrev,
@@ -45,20 +45,20 @@ begin
      
      NEW.mrkr_abbrev_order = zero_pad(NEW.mrkr_abbrev_order);
 
-     --perform p_check_mrkr_abbrev(NEW.mrkr_name,
---			        NEW.mrkr_abbrev,
---				NEW.mrkr_type );
+     perform p_check_mrkr_abbrev(NEW.mrkr_name,
+			        NEW.mrkr_abbrev,
+				NEW.mrkr_type );
 
   --   raise notice 'mrkr_abbrev_order: %', mrkr_abbrev_order;
   --   raise notice 'mrkr_abbrev_order: %', NEW.mrkr_abbrev_order;
 
-   --  perform p_update_related_names(NEW.mrkr_zdb_id,
---				   OLD.mrkr_abbrev,
---				   NEW.mrkr_abbrev );
+    perform p_update_related_names(NEW.mrkr_zdb_id,
+				   OLD.mrkr_abbrev,
+				   NEW.mrkr_abbrev );
 
---     perform update_construct_name_component(NEW.mrkr_zdb_id, 
---					    NEW.mrkr_abbrev);
---     perform p_update_related_fish_names(NEW.mrkr_zdb_id);
+    perform update_construct_name_component(NEW.mrkr_zdb_id, 
+					    NEW.mrkr_abbrev);
+     perform p_update_related_fish_names(NEW.mrkr_zdb_id);
 
      RETURN NEW;
 end;
