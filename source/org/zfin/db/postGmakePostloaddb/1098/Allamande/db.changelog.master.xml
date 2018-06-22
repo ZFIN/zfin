@@ -9,7 +9,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/Allamande/CUR-801.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/Allamande/CUR-802.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/Allamande/CUR-803.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Rocket/HBurgess_pre.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Rocket/HBurgess.xml" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Rocket/HBurgess.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1098/Allamande/HBurgess_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1098/Allamande/HBurgess.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1098/Allamande/HBurgess.sql" />
 </databaseChangeLog>
