@@ -15,7 +15,7 @@ echo "Starting regen_term at `date`"
 echo 'select regen_term();' | ${PGBINDIR}/psql ${DBNAME}
 
 echo "Starting regen_term_indexes at `date`"
-psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/make_alltermcontains_indexes.sql
+${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/make_alltermcontains_indexes.sql
 
 echo "Starting regen_expression_term_fast_search at `date`"
 echo 'select regen_expression_term_fast_search();' | ${PGBINDIR}/psql ${DBNAME}
