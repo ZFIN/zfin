@@ -41,8 +41,7 @@ project.ext.set("sourceroot", sourceroot)
 project.ext.set("pgdata", pgdata)
 project.ext.set("pgbindir", pgbindir)
 
-//dependsOn: ['lib:DB_functions:postgresFunctions:killConnectionsToPostgres']
-task loadDb() {
+task loadDatabase() {
     doLast {
         File unloads = file('/research/zunloads/databases/zfindb/')
         String unloadPath;
@@ -71,7 +70,12 @@ task loadDb() {
         exec { commandLine 'createdb', dbname }
         exec { commandLine "bash", "-c", "pg_restore -j 4 -d $dbname $unloadPath" }
         exec { commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
+
     }
+}
+
+task loadDb(type: GradleBuild) {
+    tasks = ['loadDatabase', 'postloaddb']
 }
 
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
