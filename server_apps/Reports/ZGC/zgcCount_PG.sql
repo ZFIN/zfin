@@ -1,4 +1,8 @@
---!echo 'total MGC clones in ZFIN'
+\set QUIET on
+\pset footer off
+\pset borders 0
+
+\echo 'total MGC clones in ZFIN'
 
 select count(*) mgc_clones
   from marker
@@ -17,15 +21,15 @@ insert into tmp_zgcCount_zgc_gene (tzg_gene_zdb_id)
         and gene.mrkr_type = 'GENE'
         and substring(clone.mrkr_abbrev from 1 for 4) = 'MGC:';
 
---!echo '----------------------------------------------------------------'
---!echo 'total ZGC genes (genes with MGC clone(s))'
+\echo '----------------------------------------------------------------'
+\echo 'total ZGC genes (genes with MGC clone(s))'
 
 select count(tzg_gene_zdb_id) zgc_genes
   from tmp_zgcCount_zgc_gene;
 
 
---!echo '-----------------------------------------------------------------'
---!echo 'ZGC genes with expression experiment data'
+\echo '-----------------------------------------------------------------'
+\echo 'ZGC genes with expression experiment data'
 
 select count(tzg_gene_zdb_id)  zgc_genes
   from tmp_zgcCount_zgc_gene
@@ -45,14 +49,14 @@ select tzg_gene_zdb_id zgc_genes, img_zdb_id images
        join image on efs_fig_zdb_id = img_fig_zdb_id;
 
 
---!echo 'ZGC genes with expression patterns images'
+\echo 'ZGC genes with expression patterns images'
 select count(distinct zgc_genes) from tmp_zgcCount_zgc_xpat;
 select count(distinct images) from tmp_zgcCount_zgc_xpat;
 
 
 
---!echo '----------------------------------------------------------------------'
---!echo 'ZGC genes with informative name'
+\echo '----------------------------------------------------------------------'
+\echo 'ZGC genes with informative name'
 
 select count(tzg_gene_zdb_id) zgc_genes
   from tmp_zgcCount_zgc_gene join marker
@@ -60,7 +64,7 @@ select count(tzg_gene_zdb_id) zgc_genes
  where mrkr_abbrev not like '%:%';
 
 
---!echo 'ZGC genes came to ZFIN with informative name'
+\echo 'ZGC genes came to ZFIN with informative name'
 
 select count(tzg_gene_zdb_id) genes
   from tmp_zgcCount_zgc_gene join marker
@@ -73,7 +77,7 @@ select count(tzg_gene_zdb_id) genes
    and mrkr_abbrev not like '%:%';
 
 
---!echo 'informative name genes that have "zgc:" genes merged/renamed into them'
+\echo 'informative name genes that have "zgc:" genes merged/renamed into them'
 
 select count(distinct gene.mrkr_zdb_id) genes
   from marker gene, data_alias
@@ -82,7 +86,7 @@ select count(distinct gene.mrkr_zdb_id) genes
    and dalias_data_zdb_id = gene.mrkr_zdb_id
    and substring(dalias_alias from 1 for 4) = 'zgc:';
 
---!echo ''zgc:' genes that are merged/renamed into informative name genes'
+\echo '''zgc:'' genes that are merged/renamed into informative name genes'
 
 select count(distinct dalias_alias) zgc_alias
   from marker gene, data_alias
@@ -92,15 +96,15 @@ select count(distinct dalias_alias) zgc_alias
    and substring(dalias_alias from 1 for 4) = 'zgc:';
 
 
---!echo 'ZGC genes having 'zgc:' name'
+\echo 'ZGC genes having ''zgc:'' name'
 select count(tzg_gene_zdb_id) genes
   from tmp_zgcCount_zgc_gene join marker
        on tzg_gene_zdb_id = mrkr_zdb_id
  where substring(mrkr_abbrev from 1 for 4) = 'zgc:';
 
 
---!echo '----------------------------------------------------------------------'
---!echo 'ESTs associated with ZGC genes'
+\echo '----------------------------------------------------------------------'
+\echo 'ESTs associated with ZGC genes'
 
 select count(distinct est.mrkr_zdb_id) ests_w_zgc
   from tmp_zgcCount_zgc_gene, marker_relationship, marker est
@@ -108,7 +112,7 @@ select count(distinct est.mrkr_zdb_id) ests_w_zgc
    and mrel_mrkr_2_zdb_id = est.mrkr_zdb_id
    and est.mrkr_type = 'EST';
 
---!echo 'ZGC genes associated with ESTs'
+\echo 'ZGC genes associated with ESTs'
 
 select count(distinct tzg_gene_zdb_id) genes
   from tmp_zgcCount_zgc_gene, marker_relationship, marker est
@@ -118,8 +122,8 @@ select count(distinct tzg_gene_zdb_id) genes
 
 
 
---!echo '---------------------------------------------------------------------------'
---!echo 'total genes with expression experiment record'
+\echo '---------------------------------------------------------------------------'
+\echo 'total genes with expression experiment record'
 
 select count(distinct xpatex_gene_zdb_id) genes
   from expression_experiment2;
@@ -134,7 +138,7 @@ select xpatex_gene_zdb_id as genes,
        join image on efs_fig_zdb_id = img_fig_zdb_id;
 
 
---!echo 'total genes with expression patterns images '
+\echo 'total genes with expression patterns images '
 select count(distinct genes) from tmp_zgcCount_gene_xpat;
 select count(distinct images) from tmp_zgcCount_gene_xpat;
 
@@ -153,16 +157,16 @@ insert into tmp_zgcCount_real_gene_img
 
       where mrkr_abbrev not like '%:%';
 
---!echo '----------------------------------------------------------------------------'
---!echo 'informative name genes have expression experiment data with images'
+\echo '----------------------------------------------------------------------------'
+\echo 'informative name genes have expression experiment data with images'
 --note: some informative name genes have ':' in name
 --pseudogenes have name and abbrev different, though they are both si:
 
 select count(tzgi_gene_zdb_id) genes
   from tmp_zgcCount_real_gene_img;
 
---!echo '-----------------------------------------------------------------------------'
---!echo 'informative name ZGC genes have expression experiment data  with images'
+\echo '-----------------------------------------------------------------------------'
+\echo 'informative name ZGC genes have expression experiment data  with images'
 
 select count(distinct tzgi_gene_zdb_id) genes
   from tmp_zgcCount_real_gene_img
@@ -172,14 +176,14 @@ select count(distinct tzgi_gene_zdb_id) genes
             where tzgi_gene_zdb_id = tzg_gene_zdb_id);
 
 
---!echo '----------------------------------------------------------------------------'
---!echo 'Thisse FR expression experiment count '
+\echo '----------------------------------------------------------------------------'
+\echo 'Thisse FR expression experiment count '
 
 select count(xpatex_zdb_id) xpats
   from expression_experiment2
  where xpatex_source_zdb_id in ('ZDB-PUB-040907-1','ZDB-PUB-051025-1');
 
---!echo 'Thisse FR expression experiemnt image numbers'
+\echo 'Thisse FR expression experiemnt image numbers'
 
 select count(img_zdb_id) images
   from figure join image
@@ -187,7 +191,7 @@ select count(img_zdb_id) images
  where fig_source_zdb_id in ('ZDB-PUB-040907-1','ZDB-PUB-051025-1');
 
 
---!echo '----------------------------------------------------------------------------'
+\echo '----------------------------------------------------------------------------'
 -- 'ZGC genes have added expression patterns from Thisse FR (and image numbers)'
 
 CREATE  temp table tmp_zgcCount_zgc_fr AS
@@ -202,13 +206,13 @@ select  tzg_gene_zdb_id as zgc_genes,
  where xpatex_source_zdb_id in ('ZDB-PUB-040907-1','ZDB-PUB-051025-1');
 
 
---!echo 'ZGC genes have added expression patterns from Thisse FR (and image numbers)'
+\echo 'ZGC genes have added expression patterns from Thisse FR (and image numbers)'
 select count(distinct zgc_genes) from tmp_zgcCount_zgc_fr;
 select count(distinct images) from tmp_zgcCount_zgc_fr;
 
 
 
---!echo '---------------------------------------------------------------------------'
+\echo '---------------------------------------------------------------------------'
 -- 'FR xpats explicitly from MGC clones'
 
 create temp table tmp_zgcCount_mgc_fr as
@@ -223,14 +227,14 @@ select xpatex_zdb_id as xpats,
   and   substring(mrkr_abbrev from 1 for 4) = 'MGC:';
 
 
---!echo 'FR xpats explicitly from MGC clones'
+\echo 'FR xpats explicitly from MGC clones'
 select count(distinct xpats) from tmp_zgcCount_mgc_fr;
 select count(distinct images) from tmp_zgcCount_mgc_fr;
 
 
 
---!echo '----------------------------------------------------------------------------'
---!echo 'non zgc:, non im: temporary name genes that have expression pattern with images'
+\echo '----------------------------------------------------------------------------'
+\echo 'non zgc:, non im: temporary name genes that have expression pattern with images'
 
 select count(distinct xpatex_gene_zdb_id) genes
   from expression_experiment2
@@ -242,8 +246,8 @@ select count(distinct xpatex_gene_zdb_id) genes
    and substring(mrkr_abbrev from 1 for 3) <> 'im:'
    and substring(mrkr_abbrev from 1 for 4) <> 'zgc:';
 
---!echo '----------------------------------------------------------------------------'
---!echo 'ensembl genes have expression pattern with images'
+\echo '----------------------------------------------------------------------------'
+\echo 'ensembl genes have expression pattern with images'
 select count(distinct xpatex_gene_zdb_id) genes
   from expression_experiment2
   join marker on xpatex_gene_zdb_id = mrkr_zdb_id
@@ -257,16 +261,16 @@ select count(distinct xpatex_gene_zdb_id) genes
                        and substring(dalias_alias from 1 for 3) = 'si:')
         );
 
---!echo '----------------------------------------------------------------------------'
---!echo 'total figures from literature'
+\echo '----------------------------------------------------------------------------'
+\echo 'total figures from literature'
 select count(distinct fig_zdb_id)
   from figure
        join publication on fig_source_zdb_id = zdb_id
  where jtype not in ('Unpublished', 'Curation');
 
 
---!echo '----------------------------------------------------------------------------'
---!echo 'figures from literature that have images'
+\echo '----------------------------------------------------------------------------'
+\echo 'figures from literature that have images'
 select count(distinct fig_zdb_id)
   from figure
        join publication on fig_source_zdb_id = zdb_id
@@ -275,16 +279,16 @@ select count(distinct fig_zdb_id)
                   from image
                  where fig_zdb_id = img_fig_zdb_id);
 
---!echo '----------------------------------------------------------------------------'
---!echo 'literature curated for expression '
+\echo '----------------------------------------------------------------------------'
+\echo 'literature curated for expression '
 select count(distinct xpatex_source_zdb_id)
   from expression_experiment2
        join publication on xpatex_source_zdb_id = zdb_id
  where jtype not in ('Unpublished', 'Curation');
 
 
---!echo '----------------------------------------------------------------------------'
---!echo 'Number of publications with at least one expression records for an EFG'
+\echo '----------------------------------------------------------------------------'
+\echo 'Number of publications with at least one expression records for an EFG'
 create temp table pub_count
 (
   pub_id text
@@ -308,8 +312,8 @@ from expression_experiment2
 
 select count(distinct pub_id) from pub_count;
 
---!echo '----------------------------------------------------------------------------'
---!echo 'Number of figures with at least one expression records for an EFG'
+\echo '----------------------------------------------------------------------------'
+\echo 'Number of figures with at least one expression records for an EFG'
 create temp table fig_count
 (
   figure_id text
@@ -337,8 +341,8 @@ from expression_experiment2, expression_figure_stage, expression_result2
 
 select count(distinct figure_id) from fig_count;
 
---!echo '----------------------------------------------------------------------------'
---!echo 'Number of figures with images with  one expression records for an EFG'
+\echo '----------------------------------------------------------------------------'
+\echo 'Number of figures with images with  one expression records for an EFG'
 create temp table figimg_count
 (
   figimg_id text
