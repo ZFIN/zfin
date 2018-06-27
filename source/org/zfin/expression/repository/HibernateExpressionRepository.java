@@ -30,6 +30,7 @@ import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 import org.zfin.marker.agr.BasicExpressionDTO;
 import org.zfin.marker.agr.CrossReferenceDTO;
+import org.zfin.marker.agr.ExpressionTermIdentifiersDTO;
 import org.zfin.marker.agr.PublicationAgrDTO;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
@@ -247,10 +248,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "       accession_no," +
                 "       xpatex_gene_zdb_id, " +
                 "       container.stg_obo_id, " +
-                "       xpatex_assay_name, " +
+                "       xpatassay_mmo_id, " +
                 "       superterm.term_ont_id as superterm_id," +
                 "       subterm.term_ont_id as subterm_id, " +
-                "       xpatres_fig_zdb_id" +
+                "       xpatres_fig_zdb_id, " +
+                "       superterm.term_name as superterm_name, " +
+                "       subterm.term_name as subterm_name" +
                 "  from expression_experiment" +
                 "  join expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id" +
                 "  join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id" +
@@ -261,6 +264,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "  join stage as ends on ends.stg_zdb_id = xpatres_end_stg_zdb_id" +
                 "  join stage as container on container.stg_hours_start >= starts.stg_hours_start " +
                 "       and container.stg_hours_end <= ends.stg_hours_end" +
+                "  join expression_pattern_assay on xpatassay_name = xpatex_assay_name" +
                 "  left outer join term as subterm on subterm.term_zdb_id = xpatres_subterm_zdb_id" +
                 "  where fish_is_wildtype = 't'" +
                 "  and genox_is_std_or_generic_control = 't'" +
@@ -275,7 +279,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         for (Object[] basicExpressionObjects : expressions) {
             BasicExpressionDTO basicXpat = new BasicExpressionDTO();
             basicXpat.setGeneId(basicExpressionObjects[3].toString());
-            basicXpat.setStageId(basicExpressionObjects[4].toString());
+            basicXpat.setWhenExpressedStage(basicExpressionObjects[4].toString());
             basicXpat.setAssay(basicExpressionObjects[5].toString());
 
             if (basicExpressionObjects[2] != null) {
@@ -290,25 +294,35 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             annotationPages.add("gene/expression/annotation/detail");
             basicXpat.setCrossReference(new CrossReferenceDTO("ZFIN", basicExpressionObjects[8].toString(), annotationPages));
 
-            basicXpat.setAnatomicalStructureTermId(basicExpressionObjects[6].toString());
+
+            String anatomicalStructureTermId = basicExpressionObjects[6].toString();
+            String whereExpressedStatement = null;
+            String cellularComponentTermId = null;
+            String anatomicalSubStructureTermId = null;
+            String anatomicalStructureQualifierTermId = null;
 
 
             if (basicExpressionObjects[7] != null) {
 
                 if (basicExpressionObjects[7].toString().startsWith("GO:")) {
-                    basicXpat.setCellularComponentTermId(basicExpressionObjects[7].toString());
+                    cellularComponentTermId = basicExpressionObjects[7].toString();
                 } else if (basicExpressionObjects[7].toString().startsWith("MPATH:")) {
-                    basicXpat.setAnatomicalSubStructureQualifierTermId(basicExpressionObjects[7].toString());
+                    anatomicalSubStructureTermId = basicExpressionObjects[7].toString();
                 } else if (basicExpressionObjects[7].toString().startsWith("BPSO:")) {
-                    basicXpat.setAnatomicalSubStructureQualifierTermId(basicExpressionObjects[7].toString());
+                    anatomicalStructureQualifierTermId = basicExpressionObjects[7].toString();
                 } else {
-                    basicXpat.setAnatomicalSubStructureQualifierTermId(basicExpressionObjects[7].toString());
+                    anatomicalSubStructureTermId = basicExpressionObjects[7].toString();
                 }
-                basicXpat.setWhereExpressedStatement(basicExpressionObjects[6].toString()+" "+basicExpressionObjects[7].toString());
+                whereExpressedStatement = basicExpressionObjects[9].toString()+" "+basicExpressionObjects[10].toString();
             }
             else {
-                basicXpat.setWhereExpressedStatement(basicExpressionObjects[6].toString());
+                whereExpressedStatement = basicExpressionObjects[9].toString();
             }
+            ExpressionTermIdentifiersDTO wildtypeExpressionTermIdentifiers = new ExpressionTermIdentifiersDTO(whereExpressedStatement, cellularComponentTermId,
+                    anatomicalStructureTermId, anatomicalSubStructureTermId,
+                    anatomicalStructureQualifierTermId);
+
+            basicXpat.setWildtypeExpressionTermIdentifiers(wildtypeExpressionTermIdentifiers);
 
             basicExpressions.add(basicXpat);
         }
