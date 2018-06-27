@@ -27,6 +27,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.agr.BasicPhenotypeDTO;
+import org.zfin.marker.agr.BasicExpressionDTO;
 import org.zfin.marker.agr.PhenotypeTermIdentifierDTO;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -594,6 +595,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         return returnCount;
     }
+
 
     @Override
     public List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects(){

@@ -8,6 +8,7 @@ import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.marker.agr.BasicExpressionDTO;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
@@ -49,6 +50,8 @@ public interface ExpressionRepository {
     FigureLink getExpressionSingleFigure(Marker marker);
 
     int getExpressionFigureCountForClone(Clone clone);
+
+    List<BasicExpressionDTO> getBasicExpressionDTOObjects();
 
     /**
      *

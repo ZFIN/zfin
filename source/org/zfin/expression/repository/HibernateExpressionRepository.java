@@ -28,6 +28,9 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
+import org.zfin.marker.agr.BasicExpressionDTO;
+import org.zfin.marker.agr.CrossReferenceDTO;
+import org.zfin.marker.agr.PublicationAgrDTO;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
@@ -235,6 +238,81 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setString("markerZdbID", marker.getZdbID());
         Object result = query.uniqueResult();
         return Integer.parseInt(result.toString());
+    }
+
+    public List<BasicExpressionDTO> getBasicExpressionDTOObjects() {
+
+        final String expressionQueryString = "select xpatres_zdb_id," +
+                "       xpatex_source_zdb_id, " +
+                "       accession_no," +
+                "       xpatex_gene_zdb_id, " +
+                "       container.stg_obo_id, " +
+                "       xpatex_assay_name, " +
+                "       superterm.term_ont_id as superterm_id," +
+                "       subterm.term_ont_id as subterm_id, " +
+                "       xpatres_fig_zdb_id" +
+                "  from expression_experiment" +
+                "  join expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id" +
+                "  join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id" +
+                "  join fish on genox_fish_zdb_id = fish_zdb_id" +
+                "  join publication on xpatex_source_zdb_id = zdb_id" +
+                "  join term as superterm on superterm.term_zdb_id = xpatres_superterm_zdb_id" +
+                "  join stage as starts on starts.stg_zdb_id = xpatres_start_stg_zdb_id" +
+                "  join stage as ends on ends.stg_zdb_id = xpatres_end_stg_zdb_id" +
+                "  join stage as container on container.stg_hours_start >= starts.stg_hours_start " +
+                "       and container.stg_hours_end <= ends.stg_hours_end" +
+                "  left outer join term as subterm on subterm.term_zdb_id = xpatres_subterm_zdb_id" +
+                "  where fish_is_wildtype = 't'" +
+                "  and genox_is_std_or_generic_control = 't'" +
+                "  and xpatex_gene_zdb_id is not null";
+
+        final Query expressionQuery = HibernateUtil.currentSession().createSQLQuery(expressionQueryString);
+
+        List<Object[]> expressions = expressionQuery.list();
+
+        List<BasicExpressionDTO> basicExpressions = new ArrayList<>();
+
+        for (Object[] basicExpressionObjects : expressions) {
+            BasicExpressionDTO basicXpat = new BasicExpressionDTO();
+            basicXpat.setGeneId(basicExpressionObjects[3].toString());
+            basicXpat.setStageId(basicExpressionObjects[4].toString());
+            basicXpat.setAssay(basicExpressionObjects[5].toString());
+
+            if (basicExpressionObjects[2] != null) {
+                Integer pubMedId = (Integer) basicExpressionObjects[2];
+                basicXpat.setEvidence(new PublicationAgrDTO(basicExpressionObjects[1].toString(), pubMedId));
+            }
+            else {
+                basicXpat.setEvidence(new PublicationAgrDTO(basicExpressionObjects[1].toString(), null));
+            }
+
+            List<String> annotationPages = new ArrayList<>();
+            annotationPages.add("gene/expression/annotation/detail");
+            basicXpat.setCrossReference(new CrossReferenceDTO("ZFIN", basicExpressionObjects[8].toString(), annotationPages));
+
+            basicXpat.setAnatomicalStructureTermId(basicExpressionObjects[6].toString());
+
+
+            if (basicExpressionObjects[7] != null) {
+
+                if (basicExpressionObjects[7].toString().startsWith("GO:")) {
+                    basicXpat.setCellularComponentTermId(basicExpressionObjects[7].toString());
+                } else if (basicExpressionObjects[7].toString().startsWith("MPATH:")) {
+                    basicXpat.setAnatomicalSubStructureQualifierTermId(basicExpressionObjects[7].toString());
+                } else if (basicExpressionObjects[7].toString().startsWith("BPSO:")) {
+                    basicXpat.setAnatomicalSubStructureQualifierTermId(basicExpressionObjects[7].toString());
+                } else {
+                    basicXpat.setAnatomicalSubStructureQualifierTermId(basicExpressionObjects[7].toString());
+                }
+                basicXpat.setWhereExpressedStatement(basicExpressionObjects[6].toString()+" "+basicExpressionObjects[7].toString());
+            }
+            else {
+                basicXpat.setWhereExpressedStatement(basicExpressionObjects[6].toString());
+            }
+
+            basicExpressions.add(basicXpat);
+        }
+        return basicExpressions;
     }
 
     public int getExpressionFigureCountForClone(Clone clone) {

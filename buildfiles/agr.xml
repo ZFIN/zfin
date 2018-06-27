@@ -15,6 +15,10 @@
         <antcall target="create-phenotype-info-file-test"  />
     </target>
 
+    <target name="create-basic-wt-expression-test" >
+        <antcall target="create-basic-wt-expression-info-file-test"  />
+    </target>
+
     <target name="agr-test" >
         <antcall target="create-basic-gene-info-file-test"  />
     </target>
@@ -33,6 +37,10 @@
 
     <target name="create-basic-phenotype" >
         <antcall target="create-basic-phenotype-info-file"  />
+    </target>
+
+    <target name="create-basic-wt-expression" >
+        <antcall target="create-basic-wt-expression-info-file"  />
     </target>
 
     <target name="create-basic-gene-info-file" depends=""
@@ -77,6 +85,16 @@
             <classpath refid="classpath"/>
         </java>
     </target>
+
+    <target name="create-basic-wt-expression-info-file" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.BasicExpressionInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="6G">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
 
     <target name="create-disease-info-file-test" depends=""
             description="Tests to make sure that the system is alive and working properly.">
