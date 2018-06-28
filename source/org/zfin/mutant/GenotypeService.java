@@ -3,9 +3,6 @@ package org.zfin.mutant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.feature.repository.FeatureService;
-import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
 import org.zfin.marker.Marker;
 
@@ -19,7 +16,7 @@ public class GenotypeService {
     public static final String DELIMITER = ", ";
 
     public static SortedSet<Marker> getAffectedMarker(Genotype genotype) {
-SortedSet<Marker> affectedGenes=new TreeSet<>();
+        SortedSet<Marker> affectedGenes = new TreeSet<>();
         for (GenotypeFeature genotypeFeature : genotype.getGenotypeFeatures()) {
             Feature feature = genotypeFeature.getFeature();
             SortedSet<Marker> genes = feature.getAffectedGenes();
@@ -30,13 +27,14 @@ SortedSet<Marker> affectedGenes=new TreeSet<>();
             }
 
         }
-return  affectedGenes;
+        return affectedGenes;
 
     }
 
     public static void createGenotypeNames(Genotype genotype, List<Genotype> genotypeBackgroundList) {
-        if (genotype == null)
+        if (genotype == null) {
             return;
+        }
         if (CollectionUtils.isEmpty(genotype.getGenotypeFeatures())) {
             return;
         }
@@ -76,8 +74,9 @@ return  affectedGenes;
                 handle += genotypeBackground.getHandle();
                 handle += DELIMITER;
             }
-            if (genotypeBackgroundList.size() > 0)
+            if (genotypeBackgroundList.size() > 0) {
                 handle = StringUtils.removeEnd(handle, DELIMITER);
+            }
         }
         genotype.setHandle(handle);
         genotype.setNickname(handle);
@@ -98,15 +97,18 @@ return  affectedGenes;
     public static Genotype createGenotype(List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<Genotype> genotypeBackgroundList) {
         // if empty feature list then use the background genotype as the genotype
         if (CollectionUtils.isEmpty(genotypeFeatureDTOList)) {
-            if (genotypeBackgroundList.size() > 1)
+            if (genotypeBackgroundList.size() > 1) {
                 throw new IllegalStateException("Can not have more than one background genotype when no feature is given");
+            }
             return genotypeBackgroundList.get(0);
         }
         Genotype genotype = new Genotype();
         genotype.setWildtype(false);
-        if (genotypeBackgroundList != null)
-            for (Genotype genotypeBackground : genotypeBackgroundList)
+        if (genotypeBackgroundList != null) {
+            for (Genotype genotypeBackground : genotypeBackgroundList) {
                 genotype.setBackground(genotypeBackground);
+            }
+        }
         Set<GenotypeFeature> genotypeFeatureSet = new HashSet<>(genotypeFeatureDTOList.size());
         for (GenotypeFeatureDTO dto : genotypeFeatureDTOList) {
             GenotypeFeature genotypeFeature = new GenotypeFeature();
@@ -122,5 +124,28 @@ return  affectedGenes;
         return genotype;
     }
 
+    public static String getParentalZygosityDisplay(Zygosity momZygosity, Zygosity dadZygosity) {
+        StringBuilder displayString = new StringBuilder("");
+        boolean unknown = true;
+
+        if (momZygosity.getZygositySymbol().length() > 0) {
+            displayString.append("&#9792;");
+            displayString.append(momZygosity.getZygositySymbol());
+            unknown = false;
+        }
+
+        if (dadZygosity.getZygositySymbol().length() > 0) {
+            displayString.append("&nbsp;");
+            displayString.append("&#9794;");
+            displayString.append(dadZygosity.getZygositySymbol());
+            unknown = false;
+        }
+
+        if (unknown) {
+            return "Unknown";
+        }
+
+        return displayString.toString();
+    }
 
 }

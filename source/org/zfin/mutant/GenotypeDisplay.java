@@ -4,15 +4,19 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.marker.Marker;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * A genotype display.
  */
 public class GenotypeDisplay implements Comparable<GenotypeDisplay> {
+
+    private static final List<String> ZYGOSITY_ORDER = Arrays.asList(
+            "Homozygous",
+            "Heterozygous",
+            "Complex",
+            "Unknown"
+    );
 
     private Genotype genotype;
     private String zygosity;   // this may be different from the zygocity in GenotypeFeature
@@ -28,8 +32,9 @@ public class GenotypeDisplay implements Comparable<GenotypeDisplay> {
     }
 
     public String getZygosity() {
-        if (zygosity != null)
+        if (zygosity != null) {
             return zygosity;
+        }
 
         if (genotype.getGenotypeFeatures().size() > 1) {
             setZygosity("Complex");
@@ -74,25 +79,7 @@ public class GenotypeDisplay implements Comparable<GenotypeDisplay> {
     }
 
     public String getParentalZygosityDisplay() {
-        StringBuilder displayString = new StringBuilder("");
-        boolean unknown = true;
-        if (momZygosity.getZygositySymbol().length() > 0) {
-            displayString.append("&#9792;");
-            displayString.append(momZygosity.getZygositySymbol());
-            unknown = false;
-        }
-
-        if (dadZygosity.getZygositySymbol().length() > 0) {
-            displayString.append("&nbsp;");
-            displayString.append("&#9794;");
-            displayString.append(dadZygosity.getZygositySymbol());
-            unknown = false;
-        }
-
-        if (unknown)
-            return "Unknown";
-        else
-            return displayString.toString();
+        return GenotypeService.getParentalZygosityDisplay(momZygosity, dadZygosity);
     }
 
     public SortedSet<Marker> getAffectedGenes() {
@@ -104,35 +91,28 @@ public class GenotypeDisplay implements Comparable<GenotypeDisplay> {
         SortedSet<Marker> affectedGenes = new TreeSet<>();
         Marker affectedGene;
         for (Feature feature : relatedFeatures) {
-           featureMarkerRelationships = feature.getFeatureMarkerRelations();
-           for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelationships) {
-               if (featureMarkerRelationship != null) {
-                   if (featureMarkerRelationship.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
-                       affectedGene = featureMarkerRelationship.getMarker();
-                       if (affectedGene.isInTypeGroup(Marker.TypeGroup.GENEDOM)|| affectedGene.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)){
-
-                           affectedGenes.add(affectedGene);
-                       }
-                   }
-               }
-           }
+            featureMarkerRelationships = feature.getFeatureMarkerRelations();
+            for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelationships) {
+                if (featureMarkerRelationship != null) {
+                    if (featureMarkerRelationship.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                        affectedGene = featureMarkerRelationship.getMarker();
+                        if (affectedGene.isInTypeGroup(Marker.TypeGroup.GENEDOM) || affectedGene.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
+                            affectedGenes.add(affectedGene);
+                        }
+                    }
+                }
+            }
         }
         return affectedGenes;
     }
 
-    public int compareTo(GenotypeDisplay another) {
-        if (another.getZygosity().equalsIgnoreCase("Homozygous") && !getZygosity().equalsIgnoreCase("Homozygous")) {
-            return 1;
-        } else if (another.getZygosity().equalsIgnoreCase("Heterozygous") && getZygosity().equalsIgnoreCase("Homozygous")) {
-            return -1;
-        } else if (another.getZygosity().equalsIgnoreCase("Heterozygous") && !getZygosity().equalsIgnoreCase("Heterozygous")) {
-            return 1;
-        } else if (another.getZygosity().equalsIgnoreCase("Unknown") && (getZygosity().equalsIgnoreCase("Homozygous") || getZygosity().equalsIgnoreCase("Heterozygous"))) {
-            return -1;
-        } else if (another.getZygosity().equalsIgnoreCase("Unknown") && !getZygosity().equalsIgnoreCase("Unknown")) {
-            return 1;
-        } else {
-            return genotype.compareTo(another.getGenotype());
+    public int compareTo(GenotypeDisplay other) {
+        int thisIndex = ZYGOSITY_ORDER.indexOf(this.getZygosity());
+        int otherIndex = ZYGOSITY_ORDER.indexOf(other.getZygosity());
+        int compare = Integer.compare(thisIndex, otherIndex);
+        if (compare != 0) {
+            return compare;
         }
+        return this.getGenotype().compareTo(other.getGenotype());
     }
 }
