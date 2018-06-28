@@ -5,18 +5,18 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExpressionTermIdentifiersDTO {
 
-    private String whereExpressionStatement;
+    private String whereExpressedStatement;
     private String cellularComponentTermId;
     private String anatomicalStructureTermId;
     private String anatommicalSubStructureTermId;
     private String anatomicalStructureQualifierTermId;
 
-    public String getWhereExpressionStatement() {
-        return whereExpressionStatement;
+    public String getWhereExpressedStatement() {
+        return whereExpressedStatement;
     }
 
-    public void setWhereExpressionStatement(String whereExpressionStatement) {
-        this.whereExpressionStatement = whereExpressionStatement;
+    public void setWhereExpressedStatement(String whereExpressedStatement) {
+        this.whereExpressedStatement = whereExpressedStatement;
     }
 
     public String getCellularComponentTermId() {
@@ -54,7 +54,7 @@ public class ExpressionTermIdentifiersDTO {
 
     public ExpressionTermIdentifiersDTO(String whereExpressedStatement, String cellularComponentTermId,
                                         String anatomicalStructureTermId, String anatomicalStructureQualifierTermId, String anatommicalSubStructureTermId) {
-        this.whereExpressionStatement = whereExpressedStatement;
+        this.whereExpressedStatement = whereExpressedStatement;
         this.cellularComponentTermId = cellularComponentTermId;
         this.anatomicalStructureTermId = anatomicalStructureTermId;
         this.anatomicalStructureQualifierTermId = anatomicalStructureQualifierTermId;
