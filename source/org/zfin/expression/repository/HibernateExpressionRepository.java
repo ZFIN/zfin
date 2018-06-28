@@ -318,6 +318,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             else {
                 whereExpressedStatement = basicExpressionObjects[9].toString();
             }
+
             ExpressionTermIdentifiersDTO wildtypeExpressionTermIdentifiers = new ExpressionTermIdentifiersDTO(whereExpressedStatement, cellularComponentTermId,
                     anatomicalStructureTermId, anatomicalSubStructureTermId,
                     anatomicalStructureQualifierTermId);
