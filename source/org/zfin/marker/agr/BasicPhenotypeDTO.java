@@ -13,11 +13,27 @@ public class BasicPhenotypeDTO  {
     private String objectId;
     private String pubMedId;
     private String pubModId;
+    private PublicationAgrDTO evidence;
     private List<PhenotypeTermIdentifierDTO> phenotypeTermIdentifiers;
     private String phenotypeStatement;
+
     @JsonSerialize(using = JsonDateSerializer.class)
     private GregorianCalendar dateAssigned = new GregorianCalendar();
+    public PublicationAgrDTO getEvidence() {
+        return evidence;
+    }
 
+    public void setEvidence(PublicationAgrDTO evidence) {
+        this.evidence = evidence;
+    }
+
+    public GregorianCalendar getDateAssigned() {
+        return dateAssigned;
+    }
+
+    public void setDateAssigned(GregorianCalendar dateAssigned) {
+        this.dateAssigned = dateAssigned;
+    }
     public String getObjectId() {
         return objectId;
     }
@@ -26,21 +42,6 @@ public class BasicPhenotypeDTO  {
         this.objectId = objectId;
     }
 
-    public String getPubMedId() {
-        return pubMedId;
-    }
-
-    public void setPubMedId(String pubMedId) {
-        this.pubMedId = pubMedId;
-    }
-
-    public String getPubModId() {
-        return pubModId;
-    }
-
-    public void setPubModId(String pubModId) {
-        this.pubModId = pubModId;
-    }
 
     public List<PhenotypeTermIdentifierDTO> getPhenotypeTermIdentifiers() {
         return phenotypeTermIdentifiers;

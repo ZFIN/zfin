@@ -29,6 +29,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.agr.BasicPhenotypeDTO;
 import org.zfin.marker.agr.BasicExpressionDTO;
 import org.zfin.marker.agr.PhenotypeTermIdentifierDTO;
+import org.zfin.marker.agr.PublicationAgrDTO;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -599,45 +600,42 @@ public class HibernateMutantRepository implements MutantRepository {
 
     @Override
     public List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects(){
-        final String alleleQueryString = "select distinct fmrel1.fmrel_ftr_zdb_id, psg_short_name, zdb_id, nvl(accession_no,'') as accession_no,"+
-                " e1a.term_ont_id as psg_e1a_id, nvl(e1b.term_ont_id,'') as psg_e1b_id, nvl(e2a.term_ont_id,'') as psg_e2a_id, nvl(e2b.term_ont_id,'') as psg_e2b_id, quality.term_ont_id as psg_quality_id" +
-                "  from feature_marker_relationship fmrel1, mutant_fast_search, phenotype_source_generated, phenotype_observation_generated," +
-                "        figure, publication, fish_experiment, fish, genotype_feature, term e1a, term quality, outer term e1b, outer term e2a, outer term e2b" +
-                "  where mfs_genox_zdb_id = pg_genox_zdb_id" +
-                "  and pg_id = psg_pg_id" +
-                "  and pg_fig_zdb_id = fig_zdb_id" +
-                "  and fig_source_zdb_id = zdb_id" +
-                "  and fmrel1.fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id" +
-                "  and mfs_genox_zdb_id = pg_genox_zdb_id" +
-                "  and mfs_genox_zdb_id = genox_zdb_id" +
-                "  and genox_fish_zdb_id = fish_zdb_id" +
-                "  and fish_genotype_zdb_id = genofeat_geno_zdb_id" +
-                "  and genofeat_feature_zdb_id = fmrel1.fmrel_ftr_zdb_id" +
-                "  and psg_e1a_zdb_id = e1a.term_zdb_id"+
-                "  and psg_e1b_zdb_id = e1b.term_zdb_id"+
-                "  and psg_e2a_zdb_id = e2a.term_zdb_id" +
-                "  and psg_e2b_zdb_id = e2b.term_zdb_id" +
-                "  and psg_quality_zdb_id = quality.term_zdb_id" +
-                "  and get_obj_type(fmrel1.fmrel_ftr_zdb_id) = 'ALT'" +
-                "  and fmrel1.fmrel_type = 'is allele of' and not exists" +
-                "               (select 'x' from feature_marker_relationship fmrel2" +
-                "                     where fmrel1.fmrel_zdb_id != fmrel2.fmrel_zdb_id and fmrel1.fmrel_ftr_zdb_id = fmrel2.fmrel_ftr_zdb_id" +
-                "                     and fmrel2.fmrel_type != 'created by')";
+        final String alleleQueryString = "select distinct fmrel1.fmrel_ftr_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
+                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id" +
+                "                from feature_marker_relationship fmrel1" +
+                "                join genotype_feature on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
+                "                join fish on genofeat_geno_zdb_id = fish_genotype_zdb_id" +
+                "                join fish_experiment on fish_zdb_id = genox_fish_zdb_id" +
+                "                join mutant_fast_search on mfs_genox_zdb_id = genox_zdb_id" +
+                "                join phenotype_source_generated on pg_genox_zdb_id = genox_zdb_id" +
+                "                join phenotype_observation_generated on psg_pg_id = psg_id" +
+                "                join figure on fig_zdb_id = pg_fig_zdb_id" +
+                "                join publication on fig_source_zdb_id = zdb_id" +
+                "                join term as e1a on psg_e1a_zdb_id = e1a.term_zdb_id" +
+                "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
+                "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
+                "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
+                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
+                "                  where get_obj_type(fmrel1.fmrel_ftr_zdb_id) = 'ALT'" +
+                "                  and fmrel1.fmrel_type = 'is allele of' and not exists" +
+                "                               (select 'x' from feature_marker_relationship fmrel2" +
+                "                                     where fmrel1.fmrel_zdb_id != fmrel2.fmrel_zdb_id and fmrel1.fmrel_ftr_zdb_id = fmrel2.fmrel_ftr_zdb_id" +
+                "                                     and fmrel2.fmrel_type != 'created by')";
 
-        final String geneQueryString = "select distinct mfs_mrkr_zdb_id, psg_short_name, zdb_id, nvl(accession_no,'') as accession_no,"+
-                " e1a.term_ont_id as psg_e1a_id, nvl(e1b.term_ont_id,'') as psg_e1b_id, nvl(e2a.term_ont_id,'') as psg_e2a_id, nvl(e2b.term_ont_id,'') as psg_e2b_id, quality.term_ont_id as psg_quality_id" +
-                "        from mutant_fast_search, phenotype_source_generated, phenotype_observation_generated," +
-                "                        figure, publication, term e1a, term quality, outer term  e1b, outer term e2a, outer term e2b" +
-                "                where mfs_genox_zdb_id = pg_genox_zdb_id" +
-                "                and pg_id = psg_pg_id" +
-                "                and pg_fig_zdb_id = fig_zdb_id" +
-                "                and fig_source_zdb_id = zdb_id" +
-                "                and e1a.term_zdb_id = psg_e1a_zdb_id"+
-                "                and e1b.term_zdb_id = psg_e1b_zdb_id"+
-                "                and e2a.term_zdb_id = psg_e2a_zdb_id"+
-                "                and e2b.term_zdb_id = psg_e2b_zdb_id"+
-                "                and psg_quality_zdb_id = quality.term_zdb_id" +
-                "                and get_obj_type(mfs_mrkr_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
+        final String geneQueryString = "select distinct mfs_mrkr_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
+                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, " +
+                "                e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id" +
+                "                        from mutant_fast_search" +
+                "                        join phenotype_source_generated on pg_genox_zdb_id = mfs_genox_zdb_id" +
+                "                        join phenotype_observation_generated on psg_pg_id = pg_id" +
+                "                        join figure on pg_fig_zdb_id = fig_zdb_id" +
+                "                        join publication on fig_source_zdb_id = zdb_id " +
+                "                        join term as e1a on e1a.term_zdb_id = psg_e1a_zdb_id" +
+                "                        join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
+                "                        left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
+                "                        left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
+                "                        left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
+                "                        where get_obj_type(mfs_mrkr_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
 
         final Query alleleQuery = HibernateUtil.currentSession().createSQLQuery(alleleQueryString);
         final Query geneQuery = HibernateUtil.currentSession().createSQLQuery(geneQueryString);
@@ -652,8 +650,14 @@ public class HibernateMutantRepository implements MutantRepository {
             BasicPhenotypeDTO basicPheno = new BasicPhenotypeDTO();
             basicPheno.setObjectId(basicPhenoObjects[0].toString());
             basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
-            basicPheno.setPubModId(basicPhenoObjects[2].toString());
-            basicPheno.setPubMedId(basicPhenoObjects[3].toString());
+
+            if (basicPhenoObjects[3] != null) {
+                Integer pubMedId = (Integer) basicPhenoObjects[3];
+                basicPheno.setEvidence(new PublicationAgrDTO(basicPhenoObjects[2].toString(), pubMedId));
+            }
+            else {
+                basicPheno.setEvidence(new PublicationAgrDTO(basicPhenoObjects[2].toString(), null));
+            }
 
             PhenotypeTermIdentifierDTO termIdentifierE1aDTO = new PhenotypeTermIdentifierDTO();
             PhenotypeTermIdentifierDTO termIdentifierE1bDTO = new PhenotypeTermIdentifierDTO();
@@ -690,7 +694,6 @@ public class HibernateMutantRepository implements MutantRepository {
                 termIdentifierE2bDTO.setTermOrder(termOrderCounter++);
                 termIdentifiers.add(termIdentifierE2bDTO);
             }
-
 
 
             basicPheno.setPhenotypeTermIdentifiers(termIdentifiers);

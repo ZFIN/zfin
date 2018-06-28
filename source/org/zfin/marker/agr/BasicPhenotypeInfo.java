@@ -40,25 +40,13 @@ public class BasicPhenotypeInfo extends AbstractScriptWrapper {
 
         //Object to JSON in String
         String jsonInString = writer.writeValueAsString(basicPhenotypeDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.3_1_phenotype.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.4_1_phenotype.json"))) {
             out.print(jsonInString);
         }
     }
 
     public AllPhenotypeDTO getBasicPhenotypeInfo(int numberOrRecords) {
         List<BasicPhenotypeDTO> basicPhenoDTOList = getMutantRepository().getBasicPhenotypeDTOObjects();
-        basicPhenoDTOList.forEach((BasicPhenotypeDTO basicPhenoItem) -> {
-                    if (basicPhenoItem.getPubMedId() != null && !basicPhenoItem.getPubMedId().isEmpty()) {
-                        basicPhenoItem.setPubMedId("PMID:" + basicPhenoItem.getPubMedId());
-                    }
-                    else {
-                        basicPhenoItem.setPubMedId(null);
-                    }
-                    basicPhenoItem.setObjectId(DataProvider.ZFIN + ":" + basicPhenoItem.getObjectId());
-                    basicPhenoItem.setPubModId(DataProvider.ZFIN + ":" + basicPhenoItem.getPubModId());
-
-                }
-        );
 
         AllPhenotypeDTO allPhenotypeDTO = new AllPhenotypeDTO();
         allPhenotypeDTO.setPhenotypeList(basicPhenoDTOList);
