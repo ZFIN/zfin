@@ -87,7 +87,11 @@ public class GeneAddController {
         Marker newGene = new Marker();
         newGene.setMarkerType(markerRepository.getMarkerTypeByName(formBean.getType()));
         newGene.setName(formBean.getName());
-        newGene.setAbbreviation(formBean.getAbbreviation());
+        if (formBean.getType().equals("EFG")) {
+            newGene.setAbbreviation(formBean.getName());
+        } else{
+            newGene.setAbbreviation(formBean.getAbbreviation());
+    }
         newGene.setPublicComments(formBean.getPublicNote());
 
         Publication reference = publicationRepository.getPublication(formBean.getPublicationId());
