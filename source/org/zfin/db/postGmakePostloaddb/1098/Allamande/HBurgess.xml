@@ -9,12 +9,12 @@
 
     <changeSet author="pm" id="HBurgess">
         <loadData file="source/org/zfin/db/postGmakePostloaddb/1098/Allamande/HBurgess.csv"
-                  catalogName="${DBNAME}" schemaName="public" tableName="feature_data" encoding="UTF-8">
-            <column name="featureAbb" type="String"/>
-            <column name="lineNum" type="String"/>
-            <column name="otherFeatureId" type="String"/>
-            <column name="constructId" type="String"/>
-            <column name="pubID" type="String"/>
+                  tableName="feature_data" encoding="UTF-8">
+            <column name="feature_abb" type="String"/>
+            <column name="line_num" type="String"/>
+            <column name="other_feature_id" type="String"/>
+            <column name="construct_id" type="String"/>
+            <column name="pub_id" type="String"/>
 
         </loadData>
 
