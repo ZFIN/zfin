@@ -9,7 +9,7 @@ create table pre_feature (
         preftr_feature_abbrev varchar(70),
         preftr_line_number varchar(70),
         preftr_lab_prefix_id int8,
-        preftr_tg_suffix varchar(5) default null,preftr_otherPub varchar(50), preftr_otherftr varchar(50),preftr_otherftrAbbrev varchar(70)
+        preftr_data_source varchar(50), preftr_tg_suffix varchar(5) default null,preftr_otherPub varchar(50), preftr_otherftr varchar(50),preftr_otherftrAbbrev varchar(70)
 );
 
 
@@ -21,7 +21,7 @@ insert into pre_feature (
       preftr_feature_abbrev,
       preftr_line_number,
       preftr_lab_prefix_id,
-      preftr_tg_suffix,preftr_otherPub,preftr_otherftr,preftr_otherftrAbbrev
+      preftr_data_source,preftr_tg_suffix,preftr_otherPub,preftr_otherftr,preftr_otherftrAbbrev
       )
   select distinct
                   feature_abb,
@@ -29,7 +29,7 @@ insert into pre_feature (
                   'DNA',
                   construct_id,
                   feature_abb,
-                  line_num,187,'Et',pub_id, other_feature_id,feature_abbrev
+                  line_num,187,'ZDB-LAB-121114-1','Et',pub_id, other_feature_id,feature_abbrev
 
     from feature_data,feature where feature_abb not in (select feature_abbrev from feature) and other_feature_id=feature_zdb_id;
 
@@ -86,7 +86,13 @@ select  preftr_feature_zdb_id,
         preftr_mutagee
  from pre_feature;
 
-
+insert into int_data_source (
+    ids_data_zdb_id,
+    ids_source_zdb_id
+)
+select  preftr_feature_zdb_id,
+        preftr_data_source
+ from pre_feature;
 
 create table pre_feature_marker_relationship (
         prefmrel_feature_zdb_id text,
