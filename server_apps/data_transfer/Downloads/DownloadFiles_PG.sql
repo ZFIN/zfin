@@ -1267,28 +1267,26 @@ drop view anatomy_relationship;
 
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_stage_anatomy.txt' with delimiter as '	' null as '';'
 create view xpat_stage_anatomy as
-select xpatres_zdb_id,
-       xpatres_xpatex_zdb_id,
-       xpatres_start_stg_zdb_id,
-       xpatres_end_stg_zdb_id,
-       superterm.term_ont_id,
-       subterm.term_ont_id as id2,
-       xpatres_expression_found
- from expression_result join term superterm
-                          on superterm.term_zdb_id = xpatres_superterm_zdb_id
-                        join expression_Experiment
-                          on xpatex_zdb_id = xpatres_xpatex_zdb_id
-                        full outer join term subterm 
-                          on subterm.term_zdb_id = xpatres_subterm_zdb_id
-                        full outer join clone
-                          on clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
- where not exists(select 'x' from expression_experiment, marker
-                   where xpatex_zdb_id = xpatres_xpatex_zdb_id
-                     and xpatex_gene_zdb_id is not null
-                     and xpatex_gene_zdb_id = mrkr_zdb_id
-                     and mrkr_abbrev like 'WITHDRAWN%')
- order by xpatres_xpatex_zdb_id
-;
+  SELECT
+    xpatres_zdb_id,
+    xpatres_xpatex_zdb_id,
+    xpatres_start_stg_zdb_id,
+    xpatres_end_stg_zdb_id,
+    superterm.term_ont_id,
+    subterm.term_ont_id AS id2,
+    xpatres_expression_found
+  FROM expression_result
+    JOIN term superterm ON superterm.term_zdb_id = xpatres_superterm_zdb_id
+    JOIN expression_Experiment ON xpatex_zdb_id = xpatres_xpatex_zdb_id
+    LEFT OUTER JOIN term subterm ON subterm.term_zdb_id = xpatres_subterm_zdb_id
+    LEFT OUTER JOIN clone ON clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+  WHERE NOT exists(SELECT 'x'
+                   FROM expression_experiment, marker
+                   WHERE xpatex_zdb_id = xpatres_xpatex_zdb_id
+                         AND xpatex_gene_zdb_id IS NOT NULL
+                         AND xpatex_gene_zdb_id = mrkr_zdb_id
+                         AND mrkr_abbrev LIKE 'WITHDRAWN%')
+  ORDER BY xpatres_xpatex_zdb_id;
 \copy (select * from xpat_stage_anatomy) to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_stage_anatomy.txt' with delimiter as '	' null as '';
 drop view xpat_stage_anatomy;
 
@@ -2283,17 +2281,22 @@ JOIN fish_experiment
 drop view fishModelDisease;
 
 \echo 'experiment details file'
-create view experimentDetails as
-  select expcond_exp_zdb_id, z.term_ont_id, a.term_ont_id as id2, g.term_ont_id as id3, c.term_ont_id as id4, t.term_ont_id as id5
-    from experiment_condition
-    full outer join term z on expcond_zeco_Term_Zdb_id = z.term_zdb_id
-    full outer join term a on expcond_ao_Term_zdb_id = a.term_Zdb_id
-    full outer join term g on expcond_go_cc_term_Zdb_id = g.term_Zdb_id
-    full outer join term c on expcond_chebi_term_zdb_id = c.term_Zdb_id
-    full outer join term t on expcond_taxon_Term_zdb_id = t.term_Zdb_id
-;
+CREATE VIEW experimentDetails AS
+  SELECT
+    expcond_exp_zdb_id,
+    z.term_ont_id,
+    a.term_ont_id AS id2,
+    g.term_ont_id AS id3,
+    c.term_ont_id AS id4,
+    t.term_ont_id AS id5
+  FROM experiment_condition
+    LEFT OUTER JOIN term z ON expcond_zeco_Term_Zdb_id = z.term_zdb_id
+    LEFT OUTER JOIN term a ON expcond_ao_Term_zdb_id = a.term_Zdb_id
+    LEFT OUTER JOIN term g ON expcond_go_cc_term_Zdb_id = g.term_Zdb_id
+    LEFT OUTER JOIN term c ON expcond_chebi_term_zdb_id = c.term_Zdb_id
+    LEFT OUTER JOIN term t ON expcond_taxon_Term_zdb_id = t.term_Zdb_id;
 \copy (select * from experimentDetails) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/experiment_details.txt' with delimiter as '	' null as '';
-drop view experimentDetails;
+DROP VIEW experimentDetails;
 
 \echo 'inno/pheno construct report'
 create view innophenoconstructs as
