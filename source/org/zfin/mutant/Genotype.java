@@ -174,7 +174,7 @@ public class Genotype implements Comparable, EntityZdbID {
             return getComplexity().compareTo(otherGenotype.getComplexity());
         }
 
-        return getNameOrder().compareTo(otherGenotype.getNameOrder());
+        return getName().compareTo(otherGenotype.getName());
     }
 
     public Set<GenotypeExternalNote> getExternalNotes() {
