@@ -24,14 +24,14 @@ insert into pre_feature (
       preftr_tg_suffix,preftr_otherPub,preftr_otherftr,preftr_otherftrAbbrev
       )
   select distinct
-                  featureAbb,
+                  feature_abb,
                   'embryos',
                   'DNA',
-                  constructId,
-                  featureAbb,
-                  lineNum,187,'Et',pubID, otherFeatureId,feature_abbrev
+                  construct_id,
+                  feature_abb,
+                  line_num,187,'Et',pub_id, other_feature_id,feature_abbrev
 
-    from feature_data,feature where featureAbb not in (select feature_abbrev from feature) and otherFeatureId=feature_zdb_id;
+    from feature_data,feature where feature_abb not in (select feature_abbrev from feature) and other_feature_id=feature_zdb_id;
 
 
 alter table pre_feature add preftr_feature_zdb_id varchar(50);
@@ -350,5 +350,4 @@ drop table pre_geno_ftr_relationship;
 
 
 update genotype set geno_handle = geno_handle;
-
 
