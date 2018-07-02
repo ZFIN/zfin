@@ -41,7 +41,7 @@
     </category>
 
     <!-- This should silence proxy warnings about == that show up when loading transcripts in hibernate -->
-    <category name="org.hibernate.engine.internal.StatefulPersistenceContext.ProxyWarnLog" additivity="true">
+    <category name="org.hibernate.engine.internal.StatefulPersistenceContext" additivity="true">
       <priority value="error"/>
     </category>
 
