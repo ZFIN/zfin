@@ -57,7 +57,8 @@
       	       	    and fdbdt_super_type = 'sequence'
       	       	    and fdbcont_organism_common_name = 'Zebrafish'
 		    and fdb_db_name = 'GenBank' ;
-
+vDblinkFdbcontZdbIdOut=vFdbcontZdbId;
+	      vDblinkLengthOut=vAccbkLength;
 
 
       else
