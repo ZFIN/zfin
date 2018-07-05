@@ -26,7 +26,7 @@ use ZFINPerlModules;
 sub sendErrorReport ($) {
 
   my $SUBJECT = "Auto from $dbname SWISS-PROT:".$_[0];
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$SUBJECT","report.txt");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$SUBJECT","report.txt");
 
 }
 
@@ -581,12 +581,12 @@ close (POSTLOADREPORT);
 
 #------------------ Send statistics of changes of record counts with the load ----------------
 $subject = "Auto from $dbname: " . "post UniProt load statistics";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_CURATOR|-->","$subject","postUniProtLoadStatistics.txt");
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","postUniProtLoadStatistics.txt");
+ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_CURATOR|-->',"$subject","postUniProtLoadStatistics.txt");
+ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","postUniProtLoadStatistics.txt");
 
 #------------------ Send log of the load ----------------
 $subject = "Auto from $dbname: " . "UniProt load log";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","report.txt");
+ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","report.txt");
 
 print "\n create_file_for_swiss_prot.pl\n";
 system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/create_file_for_swiss_prot_PG.pl");

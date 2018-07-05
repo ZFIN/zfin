@@ -46,14 +46,14 @@ sub sendMailWithAttachedReport {
 
     # Create a new multipart message:
     my $msg = new MIME::Lite 
-	From    => "$ENV{LOGNAME}",
-	To      => "$MAILTO",
-	Subject => "$SUBJECT",
+	From    => '$ENV{LOGNAME}',
+	To      => '$MAILTO',
+	Subject => '$SUBJECT',
 	Type    => 'multipart/mixed';
 
     attach $msg 
 	Type     => 'text/plain',   
-	Path     => "$TXTFILE";
+	Path     => '$TXTFILE';
 
     # Output the message to sendmail
     

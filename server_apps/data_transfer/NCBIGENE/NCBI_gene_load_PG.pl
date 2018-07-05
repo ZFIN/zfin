@@ -155,10 +155,10 @@ $fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
 print LOG "Done with preparing the delete list and the list for mapping.\n\n";
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: prepareLog1 file";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","prepareLog1");
+ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","prepareLog1");
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: prepareLog2 file";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","prepareLog2");
+ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","prepareLog2");
 
 # This is a hash to store the zdb ids of db_link record to be deleted; used at later step
 # key: dblink zdb id
@@ -1664,7 +1664,7 @@ print STATS "\nMapping result statistics: number of N:1 (ZFIN to NCBI) - $ctNtoO
 print STATS "\nMapping result statistics: number of N:N (NCBI to ZFIN) - $ctNtoNfromNCBI\n\n";
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: List of N to N";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","reportNtoN");
+ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","reportNtoN");
 
 #--------------------- report 1:N ---------------------------------------------
 
@@ -1687,7 +1687,7 @@ foreach $zdbId (sort keys %oneToN) {
 close ONETON;
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: List of 1 to N";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","reportOneToN");
+ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","reportOneToN");
 
 #------------------- report N:1 -------------------------------------------------
 
@@ -1710,7 +1710,7 @@ foreach $ncbiId (sort keys %nToOne) {
 close NTOONE;
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: List of N to 1";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","reportNtoOne");
+ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","reportNtoOne");
 
 ##-----------------------------------------------------------------------------------
 ## Step 6: map ZFIN gene records to NCBI gene Ids based on common Vega Gene Id
@@ -2666,14 +2666,14 @@ print STATS "\ntotal: $ctGenesGainRefSeq\n\n\n";
 close STATS;
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: Statistics";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","reportStatistics");
+ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","reportStatistics");
 
 print LOG "\n\nAll done! \n\n\n";
 
 close LOG;
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: log file";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","logNCBIgeneLoad");
+ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","logNCBIgeneLoad");
 
 #------------------------------------------------
 # remove old files
@@ -2727,15 +2727,15 @@ sub doSystemCommand {
 
 sub reportErrAndExit {
   $subjectError = $_[0];
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subjectError","logNCBIgeneLoad");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subjectError","logNCBIgeneLoad");
   close LOG;
   exit -1;
 }
 
 sub sendLoadLogs {
   $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog1 file";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","loadLog1");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","loadLog1");
 
 ##  $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog2 file";
-##  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","loadLog2");
+##  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","loadLog2");
 }
