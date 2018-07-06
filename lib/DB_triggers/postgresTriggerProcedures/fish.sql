@@ -1,27 +1,33 @@
 DROP TRIGGER IF EXISTS fish_trigger
 ON fish;
+DROP TRIGGER IF EXISTS fish_affected_trigger
+ON fish;
 
-CREATE OR REPLACE FUNCTION fish()
+CREATE OR REPLACE FUNCTION fish_trigger()
   RETURNS trigger AS $BODY$
-DECLARE fish_functional_affected_gene_count fish.fish_functional_affected_gene_count%type;
-        fish_order                          fish.fish_order%type;
-
 BEGIN
-  SELECT *
-  FROM getFishOrder(NEW.fish_zdb_id)
-  INTO fish_order, fish_functional_affected_gene_count;
-
   NEW.fish_name = scrub_char(NEW.fish_name);
   NEW.fish_name_order = zero_pad(NEW.fish_name);
   NEW.fish_full_name = get_fish_full_name(NEW.fish_zdb_id, NEW.fish_genotype_zdb_id, NEW.fish_name);
-  NEW.fish_order = fish_order;
-  NEW.fish_functional_affected_gene_count = fish_functional_affected_gene_count;
+  NEW.fish_order=9999999999;
+  NEW.fish_functional_affected_gene_count=0;
+   RETURN NEW;
+END;
+$BODY$ LANGUAGE plpgsql;
 
-  RETURN NEW;
+CREATE OR REPLACE FUNCTION fish_affected()
+  RETURNS trigger AS $BODY$
+BEGIN
+ PERFORM getFishOrder(NEW.fish_zdb_id);
+
+  RETURN NULL;
 END;
 $BODY$ LANGUAGE plpgsql;
 
 CREATE TRIGGER fish_trigger
-BEFORE UPDATE OR INSERT ON fish
-FOR EACH ROW
-EXECUTE PROCEDURE fish();
+BEFORE  INSERT OR UPDATE  ON fish
+FOR EACH ROW EXECUTE PROCEDURE fish_trigger();
+
+CREATE TRIGGER fish_affected_trigger
+AFTER  INSERT OR UPDATE  ON fish
+FOR EACH ROW EXECUTE PROCEDURE fish_affected();
