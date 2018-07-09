@@ -45,25 +45,29 @@ public class FishDetailController {
 
     private static final Logger LOG = Logger.getLogger(FishDetailController.class);
 
-    @Autowired
-    GenotypeDetailController genotypeDetailController;
+    @RequestMapping(value = "/fish-detail/{zdbID}")
+    protected String showCuratedFish(@PathVariable String zdbID, Model model) {
 
-
-    @RequestMapping(value = "/fish-detail/{ID}")
-    protected String showCuratedFish(@PathVariable("ID") String fishZdbId, Model model, HttpServletResponse response) {
-
-        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishZdbId);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
 
         if (fish == null) {
-            String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(fishZdbId);
-            if (newZdbID != null) {
-                LOG.debug("found a replaced zdbID for: " + fishZdbId + "->" + newZdbID);
-                return "redirect:/" + newZdbID;
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+
+                Fish replacedFish = RepositoryFactory.getMutantRepository().getFish(zdbID);
+
+                if (replacedFish != null) {
+                    fish = replacedFish;
+                } else {
+                    return "redirect:/" + replacedZdbID;
+                }
             }
-            else{
-                response.setStatus(HttpStatus.NOT_FOUND.value());
-                return LookupStrings.idNotFound(model, fishZdbId);
-            }
+        }
+
+        if (fish == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
         if (fish.isWildtypeWithoutReagents()) {
@@ -79,7 +83,7 @@ public class FishDetailController {
         model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition", "phenotypeStatement"));
 
         // disease model
-        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishZdbId);
+        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModelsByFish(zdbID);
         model.addAttribute("diseases", getDiseaseModelDisplay(diseaseAnnotations));
 
         // Expression data

@@ -47,7 +47,7 @@ foreach $line (@lines) {
 
 ### download and unzip the xml files
 foreach $d (@downloadList) {
-  $url = "ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/zebrafish_7955/XML/".$d;
+  $url = "ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/archive/zebrafish_7955/XML/".$d;
   system("/local/bin/wget -q $url -O $d");
   system("/local/bin/gunzip $d");
 }
@@ -55,7 +55,7 @@ undef @lines; undef @downloadList;
 print "\nDownloaded and unzipped XML files of dbSNP data\n";
 
 ### download and unzip the files containing SNP Submitter-Referenced accessions
-$ftpDir = "ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/zebrafish_7955/database/organism_data/";
+$ftpDir = "ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/archive/zebrafish_7955/database/organism_data/";
 $d = "SubSNP.bcp.gz";
 $url = $ftpDir.$d;
 system("/local/bin/wget -q $url -O $d");

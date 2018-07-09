@@ -1,4 +1,5 @@
-create or replace function getFishOrder (vFishId text,  out fishOrder bigint,  out numAffectedGene  int) as $func$
+create or replace function getFishOrder (vFishId text)
+returns void as $$
 
 
 declare workingZyg  zygocity.zyg_name%TYPE;
@@ -64,7 +65,7 @@ for workingMrkr in
 		 and b.fishstr_fish_zdb_id = b2.fishstr_fish_zdb_id
 
     loop 
-	
+  	raise notice 'workingMarkerNone: %', workingMrkr;
 	   if (existingMrkr = 'none')
 	   then
 		 existingMrkr := workingMrkr;
@@ -85,6 +86,7 @@ for workingMrkr in
 end loop ;
 raise notice 'endLoop: %', fishOrder;
 raise notice 'existingMrkr: %', existingMrkr;
+raise notice 'wMrkr: %', workingMrkr;
 
  genoIsWT = (select geno_is_wildtype from genotype, fish
     	       	       where fish_genotype_zdb_id = geno_Zdb_id
@@ -153,7 +155,8 @@ end if;
 
 raise notice 'end: %', fishOrder;
 raise notice 'end: %', numAffectedGene;
-
+update fish set fish_order=fishOrder where fish_zdb_id=vFishId;
+update fish set fish_functional_affected_gene_count=numAffectedGene where fish_zdb_id=vFishId;
 --return fishOrder, numAffectedGene;
 
 end;
