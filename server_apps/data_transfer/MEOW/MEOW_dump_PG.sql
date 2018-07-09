@@ -134,16 +134,16 @@ create index meow_exp1_zdb_id_idx on meow_exp1(zdb_id);
 
 --  Okay, now write it to a file
 
-\copy (select distinct * from meow_exp1 order by abbrev, source_zdb_id) to 'zfin_genes.txt' with DELIMITER '	'
+\copy (select distinct * from meow_exp1 order by abbrev, source_zdb_id) to 'zfin_genes.txt' with (DELIMITER '	', NULL '')
 
 
 -- Create the file of known correspondences
 
-\copy (select distinct mrkr_zdb_id, mrkr_abbrev from feature_marker_relationship, marker where fmrel_mrkr_zdb_id = mrkr_zdb_id and fmrel_type = 'is allele of') to 'zfin_genes_mutants.txt' with DELIMITER '	';
+\copy (select distinct mrkr_zdb_id, mrkr_abbrev from feature_marker_relationship, marker where fmrel_mrkr_zdb_id = mrkr_zdb_id and fmrel_type = 'is allele of') to 'zfin_genes_mutants.txt' with (DELIMITER '	', NULL '');
 
 -- NOW let's create the table of pubs associated with these genes.
 
-\copy  (select recattrib_data_zdb_id, zdb_id, title, authors, to_char(pub_date, 'MM/DD/YYYY'), jrnl_abbrev||pub_volume||':'||pub_pages as source, accession_no from publication, record_attribution, journal where zdb_id = recattrib_source_zdb_id and jrnl_zdb_id= pub_jrnl_zdb_id and exists (select 't' from meow_exp1 where zdb_id =recattrib_data_zdb_id)) to 'zfin_pubs.txt' with DELIMITER '	';
+\copy  (select recattrib_data_zdb_id, zdb_id, title, authors, to_char(pub_date, 'MM/DD/YYYY'), jrnl_abbrev||pub_volume||':'||pub_pages as source, accession_no from publication, record_attribution, journal where zdb_id = recattrib_source_zdb_id and jrnl_zdb_id= pub_jrnl_zdb_id and exists (select 't' from meow_exp1 where zdb_id =recattrib_data_zdb_id)) to 'zfin_pubs.txt' with (DELIMITER '	', NULL '');
 
 -- Now the ortholog!
 create temp table meow_exp3 (
@@ -160,9 +160,9 @@ insert into meow_exp3
    where exists (select 't' from meow_exp1 where zdb_id = ortho_zebrafish_gene_zdb_id)
    and organism_taxid = ortho_other_species_taxid;
 
-\copy (select * from meow_exp3) to 'zfin_orthos.txt' with DELIMITER '	';
+\copy (select * from meow_exp3) to 'zfin_orthos.txt' with (DELIMITER '	', NULL '');
 
-\copy (select ortho_zebrafish_gene_zdb_id, fdb_db_name, oef_accession_number from ortholog, ortholog_external_reference, foreign_db_contains, foreign_db where exists (select 't' from meow_exp3 where ortho_id = ortho_zdb_id) and oef_fdbcont_zdb_id = fdbcont_zdb_id and fdbcont_fdb_db_id = fdb_db_pk_id and ortho_zdb_id = oef_ortho_zdb_id) to 'zfin_ortholinks.txt' with DELIMITER '	';
+\copy (select ortho_zebrafish_gene_zdb_id, fdb_db_name, oef_accession_number from ortholog, ortholog_external_reference, foreign_db_contains, foreign_db where exists (select 't' from meow_exp3 where ortho_id = ortho_zdb_id) and oef_fdbcont_zdb_id = fdbcont_zdb_id and fdbcont_fdb_db_id = fdb_db_pk_id and ortho_zdb_id = oef_ortho_zdb_id) to 'zfin_ortholinks.txt' with (DELIMITER '	', NULL '');
 
 drop table meow_exp3;
 
@@ -182,7 +182,7 @@ and dblink_fdbcont_zdb_id = fdbcont_zdb_id union
      and mrel_type != 'gene produces transcript' -- supporting evidence
      and exists (select 't' from meow_exp1 where mrel_mrkr_1_zdb_id =zdb_id) ;
 
-\copy (select * from tmp_out) to 'zfin_dblinks.txt' with DELIMITER '	';
+\copy (select * from tmp_out) to 'zfin_dblinks.txt' with (DELIMITER '	', NULL '');
 
 create temp table tmp_sc_out as 
 select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num
@@ -194,7 +194,7 @@ from marker
     ) on dblink_linked_recid = mrkr_zdb_id
 where mrkr_type = 'EST';
 
-\copy (select * from tmp_sc_out order by mrkr_zdb_id) to 'SC.txt' with DELIMITER '	';
+\copy (select * from tmp_sc_out order by mrkr_zdb_id) to 'SC.txt' with (DELIMITER '	', NULL '');
 
 create temp table tmp_sc_sts as select distinct mrkr_zdb_id, mrkr_abbrev, dblink_acc_num
     from marker, db_link, foreign_db_contains, foreign_db
@@ -205,17 +205,17 @@ create temp table tmp_sc_sts as select distinct mrkr_zdb_id, mrkr_abbrev, dblink
       and fdbcont_fdb_db_id= fdb_db_pk_id
     ;
 
-\copy (select * from tmp_sc_sts order by mrkr_zdb_id) to 'SC_sts.txt' with DELIMITER '	';
+\copy (select * from tmp_sc_sts order by mrkr_zdb_id) to 'SC_sts.txt' with (DELIMITER '	', NULL '');
 
-\copy (select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data) to 'zdb_history.txt' with DELIMITER '	';
+\copy (select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data) to 'zdb_history.txt' with (DELIMITER '	', NULL '');
 
 -- generate a file with genes that have expression data in ZFIN
 -- NCBI will use the gene symbol to link to xpatselect page.
 
-\copy (select xpatex_gene_zdb_id, mrkr_abbrev from expression_experiment2 join marker on mrkr_zdb_id = xpatex_gene_zdb_id) to 'xpat.txt' with DELIMITER '	';
+\copy (select xpatex_gene_zdb_id, mrkr_abbrev from expression_experiment2 join marker on mrkr_zdb_id = xpatex_gene_zdb_id) to 'xpat.txt' with (DELIMITER '	', NULL '');
 
 
-\copy ( select zdb_id, abbrev, metric from panels) to 'panels.txt' with DELIMITER '	';
+\copy ( select zdb_id, abbrev, metric from panels) to 'panels.txt' with (DELIMITER '	', NULL '');
 
 create temp table tmp_sanger_mappings as select distinct pm.target_id, pm.zdb_id, pm.abbrev, pm.OR_lg, pm.lg_location,
         case
@@ -233,21 +233,21 @@ create temp table tmp_sanger_mappings as select distinct pm.target_id, pm.zdb_id
         where substring(pm.zdb_id,1,8) <> 'ZDB-ALT-'
         order by 1;
 
-\copy (select * from tmp_sanger_mappings) to 'sanger_mappings.txt' with DELIMITER '	' ;
+\copy (select * from tmp_sanger_mappings) to 'sanger_mappings.txt' with (DELIMITER '	', NULL '');
 
-\copy (select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from paneled_markers where substring(zdb_id,1,7) <> 'ZDB-ALT' order by 1) to 'mappings.txt' with DELIMITER '	'
+\copy (select distinct target_id, zdb_id, abbrev, OR_lg, lg_location from paneled_markers where substring(zdb_id,1,7) <> 'ZDB-ALT' order by 1) to 'mappings.txt' with (DELIMITER '	', NULL '');
 
 --- generate file with zmap mapping data
 
-\copy (select zdb_id, abbrev, abbrevp, panel_id, zmap_chromosome, lg_location from zmap_pub_pan_mark) to 'zmap_mappings.txt' with DELIMITER '	';
+\copy (select zdb_id, abbrev, abbrevp, panel_id, zmap_chromosome, lg_location from zmap_pub_pan_mark) to 'zmap_mappings.txt' with (DELIMITER '	', NULL '');
 
-\copy (select distinct zdb_id, abbrev from paneled_markers) to 'markers.txt' with DELIMITER '	';
+\copy (select distinct zdb_id, abbrev from paneled_markers) to 'markers.txt' with (DELIMITER '	', NULL '');
 
-\copy (select distinct mrkr_zdb_id, dalias_alias from marker, data_alias where mrkr_zdb_id = dalias_data_zdb_id order by 1) to 'marker_alias.txt' with DELIMITER '	';
+\copy (select distinct mrkr_zdb_id, dalias_alias from marker, data_alias where mrkr_zdb_id = dalias_data_zdb_id order by 1) to 'marker_alias.txt' with (DELIMITER '	', NULL '');
 
-\copy (select substring(dblink_acc_num,1,20) as ottdarg,substring(mrkr_zdb_id,1,25) as zdb_id, mrkr_abbrev symbol, dalias_alias alias from db_link join marker on mrkr_zdb_id = dblink_linked_recid left outer join data_alias on mrkr_zdb_id = dalias_data_zdb_id where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-14' order by 1) to 'sanger_alias.txt' with DELIMITER '	';
+\copy (select substring(dblink_acc_num,1,20) as ottdarg,substring(mrkr_zdb_id,1,25) as zdb_id, mrkr_abbrev symbol, dalias_alias alias from db_link join marker on mrkr_zdb_id = dblink_linked_recid left outer join data_alias on mrkr_zdb_id = dalias_data_zdb_id where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-14' order by 1) to 'sanger_alias.txt' with (DELIMITER '	', NULL '');
 
-\copy (select distinct mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id from marker_relationship, meow_exp1 where substring(mrel_type,1,4) = 'gene' and mrel_mrkr_1_zdb_id = meow_exp1.zdb_id order by 1) to 'gene_relationships.txt' with DELIMITER '	';
+\copy (select distinct mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id from marker_relationship, meow_exp1 where substring(mrel_type,1,4) = 'gene' and mrel_mrkr_1_zdb_id = meow_exp1.zdb_id order by 1) to 'gene_relationships.txt' with (DELIMITER '	', NULL '');
  
 drop table meow_exp1;
 
