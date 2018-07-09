@@ -653,7 +653,7 @@ public class OntologyManager {
 
 
         if (terms.size() == 0) {
-            logger.info("No terms for term: " + termName + " and ontology: " + ontology.getOntologyName());
+            logger.debug("No terms for term: " + termName + " and ontology: " + ontology.getOntologyName());
             return null;
         } else {
             for (TermDTO term : terms) {

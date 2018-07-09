@@ -57,12 +57,12 @@ insert into genotype (
     geno_zdb_id,
     geno_display_name,
     geno_handle,
-    geno_nickname,geno_is_wildtype
+    geno_nickname,geno_is_wildtype,geno_name_order
 )
 select  pregeno_geno_id,
         pregeno_display_name,
         pregeno_handle,
-        pregeno_nick_name,pregeno_wildtype
+        pregeno_nick_name,pregeno_wildtype,'cb'
  from pre_geno;
 
 insert into external_note select * from pre_extnote;

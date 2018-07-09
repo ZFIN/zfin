@@ -225,14 +225,15 @@ foreach (@records) {
     unlink $temprecd;
     unlink $probrecd;	
 
-}   # while loop for the whole SP file
+}   # for loop for SP file
 close PUB;
 
-print "\nFinal report: \n";
-print "\t problem records(#) : $num_prob \n";
-print "\t ok records(#)  : $num_ok \n";
-printf ("\t ok percentage   : %.1f\%\n", 100 - $num_prob/($num_prob+$num_ok) * 100.0);
-
+open CHECKREP, ">checkreport.txt" or die "Cannot open checkreport.txt:$!";
+print CHECKREP  "\nFinal report: \n";
+print CHECKREP "\t problem records(#) : $num_prob \n";
+print CHECKREP "\t ok records(#)  : $num_ok \n";
+printf CHECKREP ("\t ok percentage   : %.1f\%\n", 100 - $num_prob/($num_prob+$num_ok) * 100.0);
+close CHECKREP;
 
 #---------------------------------------------------------------------------------------
 #

@@ -48,8 +48,7 @@ task loadDb() {
         String unloadPath;
         if (unloads.exists()) {
             File latest = unloads.listFiles().last()
-	    File latestBakDump = latest.listFiles().last()
-	    print ("$latestBakDump ")
+            File latestBakDump = latest.listFiles().last()
             unloadPath = latestBakDump.getPath()
         }
 
@@ -328,26 +327,27 @@ project(':server_apps:data_transfer') {
     }
 }
 
-task deploy01(dependsOn: 'deployPostgres')
-task deploy02(dependsOn: ':server_apps:apache:deployFiles')
-task deploy03(dependsOn: ':server_apps:sysexecs:deployFiles')
-task deploy04(dependsOn: ':server_apps:DB_maintenance:deployFiles')
-task deploy05(dependsOn: ':server_apps:data_transfer:deployFiles')
-task deploy06(dependsOn: ':server_apps:Reports:deployFiles')
-task deploy07(dependsOn: 'deployPackageFiles')
-task deploy08(dependsOn: ':cgi-bin:deployFiles')
-task deploy09(dependsOn: 'makePostgresVersion')
 
-task make {
-    dependsOn deploy01
-    dependsOn deploy02
-    dependsOn deploy03
-    dependsOn deploy04
-    dependsOn deploy05
-    dependsOn deploy06
-    dependsOn deploy07
-    dependsOn deploy08
-    dependsOn deploy09
+task postloaddb(type: GradleBuild) {
+    tasks = ['liquibasePreBuild',
+             'update',
+             'deployPostgresFunctions',
+             'dropTriggers',
+             'dropFunctions'
+    ]
+}
+
+task make(type: GradleBuild) {
+    tasks = ['deployPostgres',
+             ':server_apps:apache:deployFiles',
+             ':server_apps:sysexecs:deployFiles',
+             ':server_apps:DB_maintenance:deployFiles',
+             ':server_apps:data_transfer:deployFiles',
+             ':server_apps:Reports:deployFiles',
+             'deployPackageFiles',
+             ':cgi-bin:deployFiles',
+             'makePostgresVersion'
+    ]
 }
 
 task createSchemaSpy() {

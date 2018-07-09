@@ -1,3 +1,4 @@
+
 -------------------------------------------------------------------------
 --This function checks on insert or update of db_link, the length of the
 --sequence and the type (represented by the dblink_fdbcont_zdb_id) are
@@ -39,10 +40,9 @@
 
 			if vFdbcontType = 'other' then
 
-
-
  	 			 vDblinkFdbcontZdbIdOut=vDblinkFdbcontZdbId;
  	 			  vDblinkLengthOut = vDblinkLength;
+
 
 			end if ;
 		end if ;
@@ -75,12 +75,10 @@ vDblinkFdbcontZdbIdOut=vFdbcontZdbId;
 
           then 
 
-
                vDbLinkLengthOut = vUpdateLength;
 
 
 	  else 
-
 
 	      vDblinkFdbcontZdbIdOut=vDblinkFdbcontZdbId;
 	      vDblinkLengthOut=vDblinkLength;

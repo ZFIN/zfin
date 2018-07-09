@@ -14,6 +14,7 @@ import org.zfin.gwt.curation.ui.CurationModuleType;
 import org.zfin.gwt.curation.ui.CurationService;
 import org.zfin.gwt.curation.ui.PublicationNotFoundException;
 import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.EntityID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -62,7 +63,7 @@ public class CurationController implements CurationService {
         }
 
         List<Marker> markers = pubRepository.getGenesByPublication(publicationID);
-        return getListOfMarkerDtos(markers);
+        return getListOfMarkerDtosForMarker(markers);
     }
 
     private List<String> assayDtos;
@@ -89,6 +90,14 @@ public class CurationController implements CurationService {
             env.setName(antibody.getAbbreviation());
             env.setZdbID(antibody.getZdbID());
             markers.add(env);
+        }
+        return markers;
+    }
+
+    public List<MarkerDTO> getListOfMarkerDtosForMarker(List<Marker> markerList) {
+        List<MarkerDTO> markers = new ArrayList<>();
+        for (Marker marker : markerList) {
+            markers.add(DTOConversionService.convertToMarkerDTO(marker));
         }
         return markers;
     }
