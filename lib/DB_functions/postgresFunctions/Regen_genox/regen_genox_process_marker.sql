@@ -53,7 +53,7 @@ select mrel_mrkr_2_zdb_id, genox_zdb_id
     and get_obj_type(mrel_mrkr_2_Zdb_id) in ('GENE', 'LNCRNAG', 'LINCRNAG','MIRNAG','PIRNAG','SCRNAG','SNORNAG', 'TRNAG','RRNAG','NCRNAG','SRPRNAG')
  and genox_is_std_or_generic_control = 't' 
    and mrel_mrkr_2_zdb_id = rggz_zdb_id and mrel_mrkr_2_zdb_id !='ZDB-GENE-990415-270'
- and mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'
+ and get_obj_type(mrel_mrkr_1_Zdb_id) in ('TALEN','CRISPR','MRPHLNO')
 and not exists (Select 'x' from regen_genox_temp
       	  	 	 where mrel_mrkr_2_zdb_id = rggt_mrkr_Zdb_id
 			 and genox_zdb_id = rggt_genox_zdb_id);
@@ -131,7 +131,7 @@ select mrel_mrkr_2_zdb_id, rgct_genox_zdb_id
     and get_obj_type(mrel_mrkr_2_Zdb_id) in ('GENE', 'LNCRNAG', 'LINCRNAG','MIRNAG','PIRNAG','SCRNAG','SNORNAG', 'TRNAG','RRNAG','NCRNAG','SRPRNAG')
     and mrel_mrkr_2_zdb_id = rggz_zdb_id
     and mrel_mrkr_2_zdb_id = rggz_zdb_id and mrel_mrkr_2_zdb_id !='ZDB-GENE-990415-270'
- and mrel_mrkr_1_zdb_id like 'ZDB-MRPH%'
+ and get_obj_type(mrel_mrkr_1_Zdb_id) in ('TALEN','CRISPR','MRPHLNO')
 and not exists (Select 'x' from regen_genox_temp
       	  	 	 where mrel_mrkr_2_zdb_id = rggt_mrkr_Zdb_id
 			 and genox_zdb_id = rggt_genox_zdb_id);

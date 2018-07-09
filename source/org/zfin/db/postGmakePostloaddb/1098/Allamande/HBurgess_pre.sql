@@ -2,10 +2,10 @@
 --changeset pm:HBurgess_pre
 
 create table feature_data (
- featureAbb text not null,
-        lineNum text not null,
-        otherFeatureId text,
-        constructId text not null,
-        pubID text
+ feature_abb text not null,
+        line_num text not null,
+        other_feature_id text,
+        construct_id text not null,
+        pub_id text
         ) ;
 
