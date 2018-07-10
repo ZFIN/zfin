@@ -8,5 +8,3 @@
     <include file="source/org/zfin/db/load/1098/allemande/INF-3498.sql" />
 
 </databaseChangeLog>
-
-   

@@ -76,6 +76,14 @@ task loadDb() {
 
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
 
+task buildDatabase(type: GradleBuild) {
+    tasks = ['liquibasePreBuild']
+}
+
+task buildPostGmakeDatabase(type: GradleBuild) {
+    tasks = ['liquibasePostBuild']
+}
+
 sourceSets {
     main {
         java {
