@@ -1,6 +1,6 @@
 \set QUIET on
 \pset footer off
-\pset borders 0
+\pset border 0
 
 \echo 'total MGC clones in ZFIN'
 
