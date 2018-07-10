@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="sierra" id="restore-table">
+        <loadData file="source/org/zfin/db/load/1098/ChickenDance/xpatex.csv"
+                  tableName="tmp_xpatex" encoding="UTF-8">
+            <column name="xpatex_zdb_id" type="String"/>
+            <column name="xpatex_assay_name" type="String"/>
+            <column name="xpatex_gene_zdb_id" type="String"/>
+            <column name="xpatex_probe_feature_zdb_id" type="String"/>
+            <column name="xpatex_direct_submission_date" type="String"/>
+            <column name="xpatex_dblink_zdb_id" type="String"/>
+            <column name="xpatex_genox_zdb_id" type="String"/>
+            <column name="xpatex_atb_zdb_id" type="String"/>
+            <column name="xpatex_source_zdb_id" type="String"/>
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>
