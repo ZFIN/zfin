@@ -1257,49 +1257,6 @@
                     cacheImpl="SortedMapBackedCache"
             />
 
-            <entity name="fish_str_via_created_feature"
-                    query="select
-                            mrkr_abbrev as sequence_targeting_reagent,
-                            mrkr_zdb_id as xref,
-                            fish_zdb_id
-                            from fish
-                                 join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
-                                 join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-                                 join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id and fmrel_type = 'created by';"
-                    where="fish_zdb_id=fish.id"
-                    cacheImpl="SortedMapBackedCache"
-            />
-
-            <entity name="fish_str_via_created_feature_gene"
-                    query="select
-                            mrkr_abbrev as gene,
-                            mrkr_name as gene_full_name,
-                            fish_zdb_id
-                            from fish
-                                 join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
-                                 join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-                                 join marker_relationship on fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id and fmrel_type = 'created by'
-                                 join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id
-                            where mrkr_type in ('GENE','GENEP');"
-                    where="fish_zdb_id=fish.id"
-                    cacheImpl="SortedMapBackedCache"
-            />
-
-            <entity name="fish_str_via_created_feature_gene_previous_name"
-                    query="select
-                            dalias_alias as gene_previous_name,
-                            fish_zdb_id
-                            from fish
-                                 join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
-                                 join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-                                 join marker_relationship on fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id and fmrel_type = 'created by'
-                                 join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id
-                                 join data_alias on dalias_data_zdb_id = mrkr_zdb_id
-                            where mrkr_type in ('GENE','GENEP');"
-                    where="fish_zdb_id=fish.id"
-                    cacheImpl="SortedMapBackedCache"
-            />
-
             <entity name="fish_construct"
                     query="select
                             mrkr_name as construct,
