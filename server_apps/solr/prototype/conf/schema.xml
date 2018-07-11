@@ -779,7 +779,7 @@
         <!-- used by parameterized fish search -->
         <field name="figure_id" type="string" indexed="true" stored="true" />
 
-        <field name="mutation_type" type="keyword" indexed="true" stored="true" />
+        <field name="mutation_type" type="keyword" indexed="true" stored="true" multiValued="true" />
 
         <!-- using string rather than boolean so these can be facet values -->
         <field name="has_image" type="string" indexed="true" stored="true" />
