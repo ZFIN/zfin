@@ -12,6 +12,15 @@ then
 
 
 end if ;
+if clone_problem_type is  null
+then
+       update marker_relationship
+         set (mrel_type, mrel_comments) = ('gene encodes small segment', null)
+         where mrel_mrkr_2_zdb_id = clone_mrkr_zdb_id
+         and mrel_type in ('gene has artifact');
+
+
+end if ;
 
 end
 
