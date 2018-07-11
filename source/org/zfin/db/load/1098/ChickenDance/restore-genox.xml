@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="sierra" id="restore-genox">
+        <loadData file="source/org/zfin/db/load/1098/ChickenDance/genox.csv"
+                  tableName="tmp_genox" encoding="UTF-8">
+            <column name="genox_zdb_id" type="String"/>
+            <column name="genox_exp_zdb_id" type="String"/>
+            <column name="genox_fish_zdb_id" type="String"/>
+            <column name="genox_is_standard" type="String"/>
+            <column name="genox_is_std_or_generic_control" type="String"/>
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>

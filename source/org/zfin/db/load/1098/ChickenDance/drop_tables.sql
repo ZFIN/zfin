@@ -4,3 +4,4 @@
 drop table tmp_xpatex;
 drop table tmp_efs;
 drop table tmp_xpatres;
+drop table tmp_genox;
