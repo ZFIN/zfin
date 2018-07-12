@@ -2,7 +2,7 @@
 --changeset sierra:restore_genox_pre
 
 
-create table tmp_genox(genox_zdb_id text,
+create table tmp_genox_restore(genox_zdb_id text,
        genox_fish_zdb_id text,
        genox_exp_zdb_id text,
        genox_is_standard boolean,

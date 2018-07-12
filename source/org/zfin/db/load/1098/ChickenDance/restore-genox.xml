@@ -7,7 +7,7 @@
 
     <changeSet author="sierra" id="restore-genox">
         <loadData file="source/org/zfin/db/load/1098/ChickenDance/genox.csv"
-                  tableName="tmp_genox" encoding="UTF-8">
+                  tableName="tmp_genox_restore" encoding="UTF-8">
             <column name="genox_zdb_id" type="String"/>
             <column name="genox_exp_zdb_id" type="String"/>
             <column name="genox_fish_zdb_id" type="String"/>
