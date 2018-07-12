@@ -1,14 +1,15 @@
-drop trigger if exists pub_correspondence_sent_tracker_trigger on pub_correspondence_sent_tracker;
+DROP TRIGGER IF EXISTS pub_correspondence_sent_tracker_trigger
+ON pub_correspondence_sent_tracker;
 
-create or replace function pub_correspondence_sent_tracker()
-returns trigger as
-$BODY$
-begin
-   perform updatePubLastSentEmailDate(NEW.pubcst_pub_zdb_id,NEW.pubcst_date_sent);
-   RETURN NULL;
-end;
+CREATE OR REPLACE FUNCTION pub_correspondence_sent_tracker()
+  RETURNS trigger AS $BODY$
+BEGIN
+  PERFORM updatePubLastCorrespondenceDate(NEW.pubcst_pub_zdb_id, NEW.pubcst_date_sent);
+  RETURN NULL;
+END;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger pub_correspondence_sent_tracker_trigger after insert or update on pub_correspondence_sent_tracker
- for each row
- execute procedure pub_correspondence_sent_tracker();
+CREATE TRIGGER pub_correspondence_sent_tracker_trigger
+AFTER INSERT OR UPDATE ON pub_correspondence_sent_tracker
+FOR EACH ROW
+EXECUTE PROCEDURE pub_correspondence_sent_tracker();

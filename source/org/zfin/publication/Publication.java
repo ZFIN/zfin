@@ -43,7 +43,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     private Set<CorrespondenceSentMessage> sentMessages;
     private Set<CorrespondenceReceivedMessage> receivedMessages;
-    private Date lastSentEmailDate;
+    private Date lastCorrespondenceDate;
 
     private boolean deletable;
     private boolean indexed;
@@ -283,12 +283,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.receivedMessages = receivedMessages;
     }
 
-    public Date getLastSentEmailDate() {
-        return lastSentEmailDate;
+    public Date getLastCorrespondenceDate() {
+        return lastCorrespondenceDate;
     }
 
-    public void setLastSentEmailDate(Date lastSentEmailDate) {
-        this.lastSentEmailDate = lastSentEmailDate;
+    public void setLastCorrespondenceDate(Date lastCorrespondenceDate) {
+        this.lastCorrespondenceDate = lastCorrespondenceDate;
     }
 
     public String getCitation() {

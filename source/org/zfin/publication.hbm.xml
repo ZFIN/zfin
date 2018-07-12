@@ -104,7 +104,7 @@
             <one-to-many class="org.zfin.publication.CorrespondenceReceivedMessage"/>
         </set>
 
-        <property name="lastSentEmailDate" column="pub_last_sent_email_date"/>
+        <property name="lastCorrespondenceDate" column="pub_last_correspondence_date"/>
 
     </class>
 
