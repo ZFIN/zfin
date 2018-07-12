@@ -25,10 +25,104 @@ update tmp_xpatex
  set xpatex_probe_feature_zdb_id = null
  where xpatex_probe_feature_zdb_id = '';
 
-
-
 delete from tmp_xpatex
  where xpatex_zdb_id in (select xpatex_zdb_id from expression_experiment2);
+
+delete from tmp_xpatex as txpatex
+  where exists (select 'x' from expression_experiment2 as xpatex
+                       where xpatex.xpatex_gene_zdb_id = txpatex.xpatex_gene_zdb_id
+                       and xpatex.xpatex_assay_name = txpatex.xpatex_assay_name
+                       and xpatex.xpatex_atb_zdb_id = txpatex.xpatex_atb_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id = txpatex.xpatex_probe_feature_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id is not null
+                       and xpatex.xpatex_gene_zdb_id is not null
+                       and xpatex.xpatex_atb_zdb_id is not null)
+    and txpatex.xpatex_probe_feature_zdb_id is not null
+                       and txpatex.xpatex_gene_zdb_id is not null
+                       and txpatex.xpatex_atb_zdb_id is not null;
+
+delete from tmp_xpatex as txpatex
+  where exists (select 'x' from expression_experiment2 as xpatex
+                       where xpatex.xpatex_gene_zdb_id = txpatex.xpatex_gene_zdb_id
+                       and xpatex.xpatex_assay_name = txpatex.xpatex_assay_name
+                       and xpatex.xpatex_atb_zdb_id = txpatex.xpatex_atb_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id = txpatex.xpatex_probe_feature_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id is null
+                       and xpatex.xpatex_gene_zdb_id is not null
+                       and xpatex.xpatex_atb_zdb_id is not null)
+    and txpatex.xpatex_probe_feature_zdb_id is null
+                       and txpatex.xpatex_gene_zdb_id is not null
+                       and txpatex.xpatex_atb_zdb_id is not null;
+
+
+
+delete from tmp_xpatex as txpatex
+  where exists (select 'x' from expression_experiment2 as xpatex
+                       where xpatex.xpatex_gene_zdb_id = txpatex.xpatex_gene_zdb_id
+                       and xpatex.xpatex_assay_name = txpatex.xpatex_assay_name
+                       and xpatex.xpatex_atb_zdb_id = txpatex.xpatex_atb_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id = txpatex.xpatex_probe_feature_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id is not null
+                       and xpatex.xpatex_gene_zdb_id is null
+                       and xpatex.xpatex_atb_zdb_id is not null)
+    and txpatex.xpatex_probe_feature_zdb_id is not null
+                       and txpatex.xpatex_gene_zdb_id is null
+                       and txpatex.xpatex_atb_zdb_id is not null;
+
+delete from tmp_xpatex as txpatex
+  where exists (select 'x' from expression_experiment2 as xpatex
+                       where xpatex.xpatex_gene_zdb_id = txpatex.xpatex_gene_zdb_id
+                       and xpatex.xpatex_assay_name = txpatex.xpatex_assay_name
+                       and xpatex.xpatex_atb_zdb_id = txpatex.xpatex_atb_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id = txpatex.xpatex_probe_feature_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id is not null
+                       and xpatex.xpatex_gene_zdb_id is not null
+                       and xpatex.xpatex_atb_zdb_id is  null)
+    and txpatex.xpatex_probe_feature_zdb_id is not null
+                       and txpatex.xpatex_gene_zdb_id is not null
+                       and txpatex.xpatex_atb_zdb_id is null;
+
+
+delete from tmp_xpatex as txpatex
+  where exists (select 'x' from expression_experiment2 as xpatex
+                       where xpatex.xpatex_gene_zdb_id = txpatex.xpatex_gene_zdb_id
+                       and xpatex.xpatex_assay_name = txpatex.xpatex_assay_name
+                       and xpatex.xpatex_atb_zdb_id = txpatex.xpatex_atb_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id = txpatex.xpatex_probe_feature_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id is null
+                       and xpatex.xpatex_gene_zdb_id is not null
+                       and xpatex.xpatex_atb_zdb_id is null)
+    and txpatex.xpatex_probe_feature_zdb_id is null
+                       and txpatex.xpatex_gene_zdb_id is not null
+                       and txpatex.xpatex_atb_zdb_id is null;
+
+
+delete from tmp_xpatex as txpatex
+  where exists (select 'x' from expression_experiment2 as xpatex
+                       where xpatex.xpatex_gene_zdb_id = txpatex.xpatex_gene_zdb_id
+                       and xpatex.xpatex_assay_name = txpatex.xpatex_assay_name
+                       and xpatex.xpatex_atb_zdb_id = txpatex.xpatex_atb_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id = txpatex.xpatex_probe_feature_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id is  null
+                       and xpatex.xpatex_gene_zdb_id is  null
+                       and xpatex.xpatex_atb_zdb_id is  not null)
+    and txpatex.xpatex_probe_feature_zdb_id is null
+                       and txpatex.xpatex_gene_zdb_id is null
+                       and txpatex.xpatex_atb_zdb_id is not null;
+
+delete from tmp_xpatex as txpatex
+  where exists (select 'x' from expression_experiment2 as xpatex
+                       where xpatex.xpatex_gene_zdb_id = txpatex.xpatex_gene_zdb_id
+                       and xpatex.xpatex_assay_name = txpatex.xpatex_assay_name
+                       and xpatex.xpatex_atb_zdb_id = txpatex.xpatex_atb_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id = txpatex.xpatex_probe_feature_zdb_id
+                       and xpatex.xpatex_probe_feature_zdb_id is  null
+                       and xpatex.xpatex_gene_zdb_id is not null
+                       and xpatex.xpatex_atb_zdb_id is not null)
+    and txpatex.xpatex_probe_feature_zdb_id is  null
+                       and txpatex.xpatex_gene_zdb_id is not null
+                       and txpatex.xpatex_atb_zdb_id is not null;
+
 
 insert into expression_experiment2 (xpatex_zdb_id,
                                     xpatex_assay_name,
