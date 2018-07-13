@@ -39,5 +39,4 @@ unload to 'sangerInputWithoutDuplicates.unl'  select distinct * from sanger_pre_
 
 commit work;
 
---execute function regen_names();
 

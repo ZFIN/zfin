@@ -46,11 +46,7 @@
 
   #this is for security, we wouldn't want somebody to pass in arbitrary sql
 
-  if ($Q->param('run')  eq "regen_names") 
-   {
-    $statement = "execute function regen_names();";
-   } 
-  elsif ($Q->param('run') eq "regen_fishsearch") 
+  if ($Q->param('run') eq "regen_fishsearch")
    {
     $statement = "execute function regen_fishsearch();";
    } 

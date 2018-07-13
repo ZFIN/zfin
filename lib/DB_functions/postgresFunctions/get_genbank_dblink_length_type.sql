@@ -1,3 +1,4 @@
+
 -------------------------------------------------------------------------
 --This function checks on insert or update of db_link, the length of the
 --sequence and the type (represented by the dblink_fdbcont_zdb_id) are
@@ -9,8 +10,9 @@
 
   create or replace function get_genbank_dblink_length_type (vDblinkAccNum varchar(30),
 						  vDblinkLength integer,
-					 	  vDblinkFdbcontZdbId text)
-  returns $vDblinkFdbcontZdbId$ as varchar, $vDblinkLength$ as integer ;
+
+					 	  vDblinkFdbcontZdbId text, out vDblinkFdbcontZdbIdOut text, out  vDblinkLengthOut int) as $func$
+
   
 
     declare vAccbkLength 	 accession_bank.accbk_length%TYPE;
@@ -18,12 +20,14 @@
      vFdbcontZdbID	 db_link.dblink_fdbcont_zdb_id%TYPE;
      vUpdateLength	 db_link.dblink_length%TYPE ;
 
-      if exists (select *
+   begin
+
+      if (select count(*)
         	       	from accession_bank, foreign_db_contains, foreign_db
   		       	where accbk_acc_num = vDblinkAccNum
 			and fdb_db_pk_id = fdbcont_fdb_db_id
                        	and accbk_fdbcont_zdb_id = fdbcont_zdb_id
-			and fdb_db_name = 'GenBank')
+			and fdb_db_name = 'GenBank') > 0 
 
       then
 		if vDblinkFdbcontZdbId is not null then
@@ -36,7 +40,9 @@
 
 			if vFdbcontType = 'other' then
 
- 	 			return vDblinkFdbcontZdbId, vDblinkLength ;
+ 	 			 vDblinkFdbcontZdbIdOut=vDblinkFdbcontZdbId;
+ 	 			  vDblinkLengthOut = vDblinkLength;
+
 
 			end if ;
 		end if ;
@@ -51,8 +57,9 @@
       	       	    and fdbdt_super_type = 'sequence'
       	       	    and fdbcont_organism_common_name = 'Zebrafish'
 		    and fdb_db_name = 'GenBank' ;
+vDblinkFdbcontZdbIdOut=vFdbcontZdbId;
+	      vDblinkLengthOut=vAccbkLength;
 
-	        return vFdbcontZdbId, vAccbkLength ;
 
       else
       
@@ -68,15 +75,16 @@
 
           then 
 
-               vDbLinkLength = vUpdateLength;
-	       return vDblinkFdbcontZdbId, vDblinkLength ;
+               vDbLinkLengthOut = vUpdateLength;
+
 
 	  else 
 
-	      return vDblinkFdbcontZdbId, vDblinkLength ;
+	      vDblinkFdbcontZdbIdOut=vDblinkFdbcontZdbId;
+	      vDblinkLengthOut=vDblinkLength;
 
 	  end if ;
 
       end if ;
-end
-$$vDblinkFdbcontZdbId$, $vDblinkLength$ LANGUAGE plpgsql
+end;
+$func$ LANGUAGE plpgsql ;

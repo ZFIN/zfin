@@ -10,7 +10,6 @@ create or replace function regen_anatomy_counts()
   --  all_term_contains: each and every ancestor and descendant
 
 
-  -- see regen_names.sql for details on how to debug SPL routines.
       -- set standard set of session params
    begin  
       

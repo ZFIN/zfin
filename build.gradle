@@ -20,7 +20,7 @@ def dbname = env['DBNAME']
 def sourceroot = env['SOURCEROOT']
 def pgbindir = env['PGBINDIR']
 def pgdata = env['PGDATA']
-def targetroot = env['TARGETROOT']
+String targetroot = env['TARGETROOT']
 
 dependencies {
     compile 'org.liquibase:liquibase-core:3.4.1'
@@ -44,11 +44,12 @@ project.ext.set("pgbindir", pgbindir)
 //dependsOn: ['lib:DB_functions:postgresFunctions:killConnectionsToPostgres']
 task loadDb() {
     doLast {
-        File unloads = file('/research/zunloads/databases/postgres_self_dumps/darwindb/')
+        File unloads = file('/research/zunloads/databases/zfindb/')
         String unloadPath;
         if (unloads.exists()) {
             File latest = unloads.listFiles().last()
-            unloadPath = latest.getPath()
+            File latestBakDump = latest.listFiles().last()
+            unloadPath = latestBakDump.getPath()
         }
 
         //use -DB=... path if specified, also, yes, I'm being cute so that it will be -DB=...
@@ -75,6 +76,14 @@ task loadDb() {
 
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
 
+task buildDatabase(type: GradleBuild) {
+    tasks = ['liquibasePreBuild']
+}
+
+task buildPostGmakeDatabase(type: GradleBuild) {
+    tasks = ['liquibasePostBuild']
+}
+
 sourceSets {
     main {
         java {
@@ -93,6 +102,7 @@ task liquibasePreBuild() {
         liquibase {
             activities {
                 main {
+                    println preChangeLog
                     changeLogFile preChangeLog
                     url 'jdbc:postgresql://localhost:5432/' + dbname
                 }
@@ -101,6 +111,8 @@ task liquibasePreBuild() {
     }
 }
 
+liquibasePreBuild.finalizedBy(update)
+
 String postChangeLog = "$projectDir/source/org/zfin/db/postGmakePostloaddb/db.changelog.master.xml"
 task liquibasePostBuild() {
     doLast {
@@ -108,6 +120,7 @@ task liquibasePostBuild() {
         liquibase {
             activities {
                 main {
+                    changeLogFile preChangeLog
                     Properties properties = new Properties()
                     properties.setProperty("SOURCEROOT", ".")
                     changeLogFile postChangeLog
@@ -117,6 +130,8 @@ task liquibasePostBuild() {
         }
     }
 }
+
+liquibasePostBuild.finalizedBy(update)
 
 // variables used for translation of keys in files in SOURCEROOT copied into TARGETROOT
 def translateVariableSet = [
@@ -129,6 +144,7 @@ def translateVariableSet = [
         'GBROWSE_PATH_FROM_ROOT',
         'GENBANK_DAILY_EMAIL',
         'GO_EMAIL_ERR',
+        'GO_EMAIL_CURATOR',
         'GROOVY_CLASSPATH',
         'INFORMIX_DIR',
         'INFORMIX_SERVER',
@@ -145,6 +161,8 @@ def translateVariableSet = [
         'SIDEBAR_COLOR',
         'SOURCEROOT',
         'SQLHOSTS_FILE',
+        'SWISSPROT_EMAIL_REPORT',
+        'SWISSPROT_EMAIL_CURATOR',
         'SWISSPROT_EMAIL_ERR',
         'TARGETROOT',
         'USER',
@@ -200,10 +218,6 @@ task makePostgresVersion {
     }
 }
 
-File[] fileList(String dir) {
-    file(dir).listFiles({ file -> file.isFile() } as FileFilter).sort()
-}
-
 /*
     allprojects.findAll { it.path.startsWith(":server_apps:data_transfer:") }.each { p ->
         println p.path
@@ -220,16 +234,128 @@ task printProp() {
 }
 
 
-task make {
-    dependsOn makePostgresVersion
-    dependsOn ':server_apps:apache:deployDirectoryToTargetroot'
-    dependsOn ':server_apps:Reports:deployDirectoryToTargetroot'
-    dependsOn ':server_apps:DB_maintenance:deployDirectoryToTargetroot'
-    dependsOn ':server_apps:data_transfer:deployDirectoryToTargetroot'
-    dependsOn ':server_apps:sysexecs:deployDirectoryToTargetroot'
-    dependsOn ':server_apps:sysexecs:deployDirectoryToTargetroot'
-    dependsOn ':server_apps:Reports:deployDirectoryToTargetroot'
-    dependsOn deployPostgres
+
+project(':server_apps:sysexecs') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+        from(project.projectDir) {
+            ttNameMap.each { name, value ->
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            exclude '**/Makefile', '**/build.gradle'
+        }
+        into targetroot + pName
+    }
+}
+
+project(':server_apps:apache') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+        from(project.projectDir) {
+            ttNameMap.each { name, value ->
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            exclude '**/Makefile', '**/build.gradle'
+        }
+        into targetroot + pName
+    }
+}
+
+project(':server_apps:Reports') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+        from(project.projectDir) {
+            ttNameMap.each { name, value ->
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            exclude '**/Makefile', '**/build.gradle'
+        }
+        into targetroot + pName
+    }
+}
+
+project(':server_apps:DB_maintenance') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+        from(project.projectDir) {
+            ttNameMap.each { name, value ->
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            exclude '**/Makefile', '**/build.gradle', '**/postgres/liquibase/*'
+        }
+        into targetroot + pName
+    }
+}
+
+project('cgi-bin') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+        from(project.projectDir) {
+            ttNameMap.each { name, value ->
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            exclude '**/Makefile', '**/build.gradle'
+        }
+        into targetroot + pName
+    }
+}
+
+task deployPerlFiles(type: Copy) {
+    description 'Deploy perl files into TARGETROOT'
+    group 'ZFIN Deployment'
+    doLast{
+    String file = projectDir;
+     file =+ '/server_apps/ZFINPerlModules_PG.pm'
+      println file
+        from(file) {
+            ttNameMap.each { name, value ->
+                if (value != null)
+                    filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+        }
+        into(targetroot + '/server_apps/')
+	}
+
+}
+
+task deployPackageFiles(type: Copy, dependsOn: deployPerlFiles) {
+    description 'Deploy package.json into TARGETROOT'
+    group 'ZFIN Deployment'
+    String packageFile = 'package.json'
+    doLast{
+    from(packageFile)
+    into(targetroot)
+    }
+}
+
+project(':server_apps:data_transfer') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+        from(project.projectDir) {
+            ttNameMap.each { name, value ->
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            exclude '**/Makefile', '**/build.gradle', '**/SangerMutants/*'
+        }
+        into targetroot + pName
+    }
+}
+
+
+task postloaddb(type: GradleBuild) {
+    tasks = ['liquibasePreBuild',
+             'update',
+             'deployPostgresFunctions',
+             'dropTriggers',
+             'dropFunctions'
+    ]
+}
+
+task make(type: GradleBuild) {
+    tasks = ['deployPostgres',
+             ':server_apps:apache:deployFiles',
+             ':server_apps:sysexecs:deployFiles',
+             ':server_apps:DB_maintenance:deployFiles',
+             ':server_apps:data_transfer:deployFiles',
+             ':server_apps:Reports:deployFiles',
+             'deployPackageFiles',
+             ':cgi-bin:deployFiles',
+             'makePostgresVersion'
+    ]
 }
 
 task createSchemaSpy() {
@@ -255,6 +381,25 @@ task createSchemaSpy() {
                     ttNameMap.get('TARGETROOT') + "/home/schemaSpy",
             ]
         }
+    }
+}
+
+class ZfinTargetCopy extends Copy {
+
+    String projectName;
+    String pName;
+    Map ttMap;
+    String target;
+
+    public ZfinTargetCopy() {
+        projectName = project.path
+        pName = projectName.replace(":", "/")
+        description 'Deploy ' + pName + ' to TARGETROOT'
+        group 'ZFIN Deployment'
+    }
+
+    @TaskAction
+    void executeTask() {
     }
 }
 

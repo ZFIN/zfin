@@ -20,7 +20,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.AllMarkerNamesFastSearch;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -852,13 +851,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         mr.renameMarker(antibody, pub, MarkerHistory.Reason.NOT_SPECIFIED, abName, abName);
         session.flush();
-    }
-
-    @Test
-    public void getAllMapNameForAntibodies() {
-        String string = "pdx";
-        List<AllMarkerNamesFastSearch> all = getAntibodyRepository().getAllNameAntibodyMatches(string);
-        assertTrue(all != null);
     }
 
     @Test

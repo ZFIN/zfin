@@ -13,7 +13,7 @@ begin
   zdb_date := substring(zdbId from length(objType)+6 for 6);
 
   --| Determine Century |--
-  if (substr(zdb_date,0,1) = '9') then
+  if (substring(zdb_date for 1) = '9') then
        century := '19';
   else
       century := '20';
@@ -30,7 +30,7 @@ begin
   
   ELSE
       -- date format YYYYMMDD.
-      dateFromId := century || zdb_date || '  ';
+      dateFromId := century || zdb_date;
   
   END IF;
 

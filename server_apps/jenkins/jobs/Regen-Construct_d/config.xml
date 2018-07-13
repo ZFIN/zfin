@@ -22,7 +22,7 @@
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
     <hudson.tasks.Shell>
-      <command>echo &apos;execute procedure regen_construct()&apos; | $INFORMIXDIR/bin/dbaccess $DBNAME </command>
+      <command>echo &apos;select regen_construct()&apos; | psql $DBNAME </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

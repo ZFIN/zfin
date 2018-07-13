@@ -1,8 +1,8 @@
 create or replace function get_stg_name_html(
   stgZdbId        text,
-  nameType  	  varchar(30) default NULL)
+  nameType  	  text default NULL)
 
-  returns varchar(200) as $stgNameHtml$
+  returns text as $stgNameHtml$
   
   -- Generates a string containing the stage name with embedded hot links to 
   -- the stage index page except the Unknown stage. 
@@ -26,9 +26,9 @@ create or replace function get_stg_name_html(
    stgNameExt      stage.stg_name_ext%TYPE;
 
    col            int;
-   stgUrl		varchar(60) := '/zf_info/zfbook/stages/index.html';
-   stgNameAnchor	varchar(60);
-   stgNameHtml    varchar(200);
+   stgUrl		text := '/zf_info/zfbook/stages/index.html';
+   stgNameAnchor	text;
+   stgNameHtml    text;
 
   begin
 
@@ -43,12 +43,12 @@ create or replace function get_stg_name_html(
      stgNameHtml = stgName;
   else
        col = 1;
-      while (substring(stgName from col for 1) <> ':'
-	 AND substring(stgName from col for 1) <> ' ' )
+      while (substring(stgName,col,1) <> ':'
+	 AND substring(stgName,col,1) <> ' ' ) loop
          col = col + 1;
-      end while
+      end loop;
 
-       stgNameAnchor = substring(stgName from 1 for col - 1);
+       stgNameAnchor = substring(stgName,1,(col-1));
 
       if (nameType = 'abbrev') then
          stgNameHtml = '<a href='' || stgUrl || '#' || stgNameAnchor || ''>' || stgAbbrev || '</a>';

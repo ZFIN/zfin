@@ -1,5 +1,5 @@
 #!/bin/bash
-//private/apps/groovy/bin/groovy -cp "/opt/zfin/www_homes/punkt/home/WEB-INF/lib*:/opt/zfin/source_roots/punkt/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/punkt/home/WEB-INF/classes:/private/apps/tomcat/endorsed/*:." "$0" $@; exit $?
+//private/apps/groovy/bin/groovy -cp "<!--|GROOVY_CLASSPATH|-->:." "$0" $@; exit $?
 
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
@@ -57,7 +57,7 @@ PubmedUtils.dbaccess DBNAME, """
     is_major BOOLEAN
   );
 
-  \\copy tmp_mesh FROM '$MESH_TO_LOAD' delimiter '|';
+  \\copy tmp_mesh FROM '$MESH_TO_LOAD' with delimiter '|' null '';
 
   INSERT INTO mesh_heading (mh_pub_zdb_id, mh_mesht_mesh_descriptor_id, mh_descriptor_is_major_topic)
     SELECT DISTINCT publication.zdb_id, tmp_mesh.descriptor_id, tmp_mesh.is_major

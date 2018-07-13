@@ -79,7 +79,7 @@ public class AntibodyCreateController {
         String antibodyName = formBean.getAntibodyName();
 
         Antibody newAntibody = new Antibody();
-        newAntibody.setAbbreviation(antibodyName.toLowerCase());
+        newAntibody.setAbbreviation(antibodyName);
         newAntibody.setName(formBean.getAntibodyName());
 
         String pubZdbID = formBean.getAntibodyPublicationZdbID().trim();

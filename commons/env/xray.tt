@@ -67,7 +67,7 @@
 <!--|SECURE_HTTP|-->	https://
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
-<!--|SITE_BACKGROUND|-->	#FFFFCC
+<!--|SITE_BACKGROUND|-->	#76d6bb url(data:image/png;base64\,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAARklEQVQoU2NkwAQNDAwMIIwCGNH4MEUYipEVokui8GEKkQWxskEKcSmCuQosj89qZOfDFRIylYEYq8Emk2w1lnCHC4GdBQDbyhMLoQmFYAAAAABJRU5ErkJggg==)
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/xray
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	cuboid.zfin.org

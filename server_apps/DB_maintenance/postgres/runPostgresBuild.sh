@@ -101,6 +101,8 @@ head -n -2 ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql > ${SOURC
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql
 
+echo 'alter table fish_components alter column fc_fish_name type text' | psql ${DBNAME}
+
 
 endTime=$(date)
 echo $endTime

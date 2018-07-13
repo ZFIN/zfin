@@ -6,7 +6,6 @@
     <properties class="hudson.model.View$PropertyList"/>
     <jobNames>
         <comparator class="hudson.util.CaseInsensitiveComparator"/>
-        <string>Check-Extent_d</string>
         <string>Check-Term-Stage-Range_d</string>
 	<string>Check-STR-Gene-Abbreviation_m</string>
         <string>Elsevier-Reports_w</string>

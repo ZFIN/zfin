@@ -32,6 +32,7 @@ import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.presentation.TermHistogramBean;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.sequence.FeatureDBLink;
@@ -886,6 +887,9 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public void runFeatureNameFastSearchUpdate(final Feature feature) {
+        if (Boolean.valueOf(ZfinPropertiesEnum.USE_POSTGRES.value())) {
+            return;
+        }
         Session session = currentSession();
         session.doWork(new Work() {
             @Override

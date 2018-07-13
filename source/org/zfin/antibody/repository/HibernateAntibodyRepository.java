@@ -20,11 +20,7 @@ import org.zfin.expression.TextOnlyFigure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.AllMarkerNamesFastSearch;
-import org.zfin.infrastructure.AllNamesFastSearch;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerType;
-import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
@@ -96,7 +92,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             if (searchCriteria.getAntigenNameFilterType() == FilterType.BEGINS) {
                 query.setParameter("markerName", searchCriteria.getAntigenGeneName().toLowerCase().trim() + "%");
             }
-            query.setParameterList("genePrecedence", getGenePrecedenceInClause());
         }
         if (searchCriteria.isHostSpeciesDefined()) {
             query.setParameter("hostSpecies", searchCriteria.getHostSpecies());
@@ -125,18 +120,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return antibodyObjects;
     }
 
-    private List<String> getGenePrecedenceInClause() {
-        AllNamesFastSearch.Precedence[] genePrecedence = AllNamesFastSearch.getGenePrecedences();
-        if (genePrecedence == null) {
-            return null;
-        }
-        List<String> list = new ArrayList<>(genePrecedence.length);
-        for (AllMarkerNamesFastSearch.Precedence precedence : genePrecedence) {
-            list.add(precedence.toString());
-        }
-        return list;
-    }
-
     public int getNumberOfAntibodies(AntibodySearchCriteria searchCriteria) {
         Session session = HibernateUtil.currentSession();
         StringBuilder hql = new StringBuilder("select count(distinct antibody)");
@@ -156,7 +139,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             } else if (searchCriteria.getAntigenNameFilterType() == FilterType.BEGINS) {
                 query.setParameter("markerName", searchCriteria.getAntigenGeneName().toLowerCase() + "%");
             }
-            query.setParameterList("genePrecedence", getGenePrecedenceInClause());
         }
         if (searchCriteria.isHostSpeciesDefined()) {
             query.setParameter("hostSpecies", searchCriteria.getHostSpecies());
@@ -414,31 +396,35 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
             hql.append(",  AbstractMarkerRelationshipInterface rel   ");
         }
-        if (!StringUtils.isEmpty(searchCriteria.getName())) {
-            hql.append(",  AllMarkerNamesFastSearch mapAntibody   ");
-        }
-        if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
-            hql.append(",  AllMarkerNamesFastSearch mapGene   ");
-        }
         if (searchCriteria.isAnatomyDefined()) {
             hql.append(",  ExpressionTermFastSearch expressionTerm, ExpressionResult expressionResult ");
+        }
+
+        if (StringUtils.isNotEmpty(searchCriteria.getName())) {
+            hql.append("left outer join antibody.aliases atbAliases ");
+        }
+        if (StringUtils.isNotEmpty(searchCriteria.getAntigenGeneName())) {
+            hql.append("left outer join rel.firstMarker antigenGenes ");
+            hql.append("left outer join antigenGenes.aliases geneAliases ");
         }
 
         if (searchCriteria.isAny()) {
             hql.append("where ");
         }
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
-            hql.append(" mapAntibody.marker =  antibody AND mapAntibody.nameLowerCase like :name ");
+            hql.append(" (lower(antibody.name) like :name OR ");
+            hql.append("  lower(antibody.abbreviation) like :name OR ");
+            hql.append("  lower(atbAliases.alias) like :name) ");
             hasOneWhereClause = true;
         }
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
             if (hasOneWhereClause) {
                 hql.append(" AND ");
             }
-            hql.append("    rel.secondMarker = antibody ");
-            hql.append("    AND mapGene.marker =  rel.firstMarker ");
-            hql.append("    AND mapGene.nameLowerCase like :markerName ");
-            hql.append("    AND mapGene.precedence in (:genePrecedence) ");
+            hql.append(" rel.secondMarker = antibody ");
+            hql.append(" AND (lower(antigenGenes.name) like :markerName OR ");
+            hql.append("      lower(antigenGenes.abbreviation) like :markerName OR ");
+            hql.append("      lower(geneAliases.alias) like :markerName) ");
             hasOneWhereClause = true;
         }
         if (searchCriteria.isAssaySearch()) {
@@ -536,19 +522,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         }
         query.setMaxResults(paginationBean.getMaxDisplayRecordsInteger());
         query.setFirstResult(paginationBean.getFirstRecord() - 1);
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<AllMarkerNamesFastSearch> getAllNameAntibodyMatches(String string) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(AllMarkerNamesFastSearch.class);
-        criteria.add(Restrictions.like("nameLowerCase", "%" + string + "%"));
-        Criteria marker = criteria.createCriteria("marker");
-        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-        MarkerType type = mr.getMarkerTypeByName(Marker.Type.ATB.toString());
-        marker.add(Restrictions.eq("markerType", type));
-        return (List<AllMarkerNamesFastSearch>) marker.list();
-
     }
 
     public List<AntibodyStatistics> getAntibodyStatistics(GenericTerm aoTerm, PaginationBean pagination, boolean includeSubstructures) {

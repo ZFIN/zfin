@@ -105,8 +105,12 @@ delete from zdb_active_data where zactvd_zdb_id = 'ZDB-ALT-150430-1';
 
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values ('ZDB-ALT-150430-1', 'ZDB-ALT-130205-1');
 
-select get_id('DALIAS') as dalias_id into temp tmp_alias_id
-  from single;
+create temp table tmp_alias_id (
+dalias_id varchar(50)
+);
+
+insert into tmp_alias_id
+select get_id('DALIAS') from single;
 
 
 insert into zdb_active_data select dalias_id from tmp_alias_id;

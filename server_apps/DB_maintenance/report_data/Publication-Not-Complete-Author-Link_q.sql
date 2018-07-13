@@ -9,9 +9,9 @@ FROM   publication,
 WHERE  num_auths > (SELECT Count(*) 
                     FROM   int_person_pub 
                     WHERE  target_id = publication.zdb_id) 
-       AND authors LIKE "%" 
-                        || Replace(NAME, "-", ",") 
-                        || "%" 
+       AND authors LIKE '%' 
+                        || Replace(NAME, '-', ',') 
+                        || '%' 
        AND EXISTS (SELECT 'x'
                        FROM   int_person_pub 
                        WHERE  target_id = publication.zdb_id) 

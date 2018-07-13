@@ -1,4 +1,4 @@
-DROP TRIGGER IF EXISTS marker_name_order
+DROP TRIGGER IF EXISTS marker_name_order_trigger
 ON marker;
 
 CREATE OR REPLACE FUNCTION marker_name_order()
@@ -30,8 +30,6 @@ BEGIN
   PERFORM p_check_mrkr_abbrev(NEW.mrkr_name,
                               NEW.mrkr_abbrev,
                               NEW.mrkr_type);
-
-  PERFORM mhist_event(NEW.mrkr_zdb_id, '', NEW.mrkr_abbrev, '', NEW.mrkr_name);
 
   PERFORM p_populate_go_root_terms(NEW.mrkr_zdb_id,
                                    NEW.mrkr_name,

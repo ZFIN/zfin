@@ -13,7 +13,6 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerHistory;
-import org.zfin.marker.MarkerType;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
@@ -154,24 +153,6 @@ public interface InfrastructureRepository {
     ExternalNote getExternalNoteByID(String zdbID);
 
     /**
-     * Retrieves Markers that match a given string (contains).
-     *
-     * @param string search string
-     * @return list of AllNamesFastSearch
-     */
-    List<AllNamesFastSearch> getAllNameMarkerMatches(String string);
-
-    /**
-     * Retrieves Markers that match a given string (contains) for a specified marker type.
-     *
-     * @param string search string
-     * @param type   marker type
-     * @return list of AllNamesFastSearch
-     */
-    List<AllMarkerNamesFastSearch> getAllNameMarkerMatches(String string, MarkerType type);
-
-
-    /**
      * Retrieves standard PublicationAttributions.
      *
      * @param dataZdbID
@@ -204,14 +185,6 @@ public interface InfrastructureRepository {
      * @return List of data aliases
      */
     List<String> getDataAliasesWithAbbreviation(String aliasLowerName);
-
-    /**
-     * Retrieve zdbIDs from entities that best match a given name
-     *
-     * @param name string
-     * @return list of strings
-     */
-    List<String> getBestNameMatch(String name);
 
     /**
      * Retrieves all Assays.

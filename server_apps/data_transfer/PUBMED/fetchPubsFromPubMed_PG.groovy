@@ -99,13 +99,15 @@ PARSE_PUBS.withWriter { pubLog ->
     Iterator articles
     CSVPrinter printer = new CSVPrinter(pubLog, CSVFormat.TDF.withQuote(null))
     if (args.size() > 0) {
-        def articleSet = PubmedUtils.getFromPubmed(args)
-        articles = articleSet.PubmedArticle
+        args.eachWithIndex { accession, index ->
+            def article = PubmedUtils.getFromPubmed(accession).PubmedArticle
+            processArticle(printer, article, index)
+        }
     } else {
         def query = 'zebrafish[TW] OR "zebra fish"[TW] OR "danio rerio"[ALL]'
         articles = PubmedUtils.searchPubmed(query)
+        articles.eachWithIndex{ GPathResult article, int i -> processArticle(printer, article, i) }
     }
-    articles.eachWithIndex{ GPathResult article, int i -> processArticle(printer, article, i) }
 }
 
 dbaccessProc = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +

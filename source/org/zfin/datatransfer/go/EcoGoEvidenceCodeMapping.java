@@ -41,6 +41,7 @@ public class EcoGoEvidenceCodeMapping {
         mapping.put("ECO:0000320", "IKR");
         mapping.put("ECO:0000321", "IRD");
         mapping.put("ECO:0000245", "RCA");
+        mapping.put("ECO:0000353", "IPI");
         // duplicate EDO assignment...
 //        mapping.put("ECO:0000320", "IMR");
     }

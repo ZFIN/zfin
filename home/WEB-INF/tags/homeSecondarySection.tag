@@ -144,7 +144,7 @@
         <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,<br>
         <a href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/">GRC</a>,
         <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a>,
-        <a href="http://www.ncbi.nlm.nih.gov/projects/mapview/map_search.cgi?taxid=7955">NCBI</a>, <a
+        <a href="https://www.ncbi.nlm.nih.gov/genome/gdv/?org=danio-rerio">NCBI</a>, <a
                 href="http://genome.igib.res.in/">FishMap</a>
     </li>
 

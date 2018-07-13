@@ -40,5 +40,8 @@
 -->
     <!-- starting fresh with migration to postgres -->
 
+    <include file="source/org/zfin/db/load/1098/allemande/db.changelog.master.xml" /> 
+    <include file="source/org/zfin/db/load/1098/ChickenDance/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1099/bhangra/db.changelog.master.xml" />
 
 </databaseChangeLog>

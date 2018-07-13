@@ -7,7 +7,6 @@ import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.AllMarkerNamesFastSearch;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
@@ -154,15 +153,6 @@ public interface AntibodyRepository {
      * @return antibody object
      */
     Antibody getAntibodyByName(String antibodyName);
-
-
-    /**
-     * Retrieve all Antibodies that match in name or alias a given string
-     *
-     * @param string matching string
-     * @return list
-     */
-    List<AllMarkerNamesFastSearch> getAllNameAntibodyMatches(String string);
 
     /**
      * Get all antibodyAOStatistics records for a given ao term.

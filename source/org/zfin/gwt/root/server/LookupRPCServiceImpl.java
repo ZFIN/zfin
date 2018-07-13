@@ -228,7 +228,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
      */
     public SuggestOracle.Response getMarkerSuggestions(SuggestOracle.Request req, Map<String, String> options) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
-        String query = req.getQuery();
+        String query = req.getQuery().trim();
         highlighter.setMatch(query);
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);

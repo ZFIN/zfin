@@ -335,7 +335,7 @@ public class BlastResultMapper {
             else {
                 List<Accession> accessions = RepositoryFactory.getSequenceRepository().getAccessionsByNumber(hitAccessionID);
                 if (accessions.size() == 0 && hitAccessionID.startsWith("ZFIN")) {
-                    logger.warn("removing unmapped ZFIN accession: " + hitAccessionID);
+                    logger.info("removing unmapped ZFIN accession: " + hitAccessionID);
                     hitViewBeanIterator.remove();
                     continue hitLoop;
                 } else if (accessions.size() > 0) {

@@ -293,33 +293,6 @@ public class SiteSearchHelper {
         return queryTerm;
     }
 
-    /**
-     * This function returns a direct data page link as the first hit if the query term
-     * matches genes/markers/clones/mutants/anatomy item name/symbol.
-     *
-     * @return string
-     */
-    public String getBestMatchHTML() {
-        String queryTerm = getQueryTerm();
-        String matchId = RelatedTermsService.getBestMatchId(queryTerm);
-        String returnResults = "";
-
-        if (matchId.length() > 0) {
-            String viewPageUrl;
-            if (ActiveData.isValidActiveData(matchId, ActiveData.Type.GENO)) {
-                viewPageUrl = "/action/genotype/view/" + matchId;
-            } else if (matchId.startsWith("ZDB-ANAT") || matchId.startsWith("ZDB-TERM")) {
-                viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + matchId;
-            } else {
-                viewPageUrl = "/" + matchId;
-            }
-            returnResults += "<br><span class='best_match'>Exact Match: ";
-            returnResults += "<a href='" + viewPageUrl + "'><b>" + queryTerm + "</b></a> ";
-            returnResults += "</span>";
-        }
-        return returnResults;
-    }
-
     public SearchResults getSearchResults() {
         return searchResults;
     }

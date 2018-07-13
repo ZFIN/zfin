@@ -428,9 +428,5 @@
         <property name="oboID" column="szm_term_ont_id"/>
         <property name="termName" column="szm_term_name"/>
     </class>
-
-    <sql-query name="markerNamesFastSearchUpdate" callable="true">
-        {call regen_names_marker(:markerZdbID)}
-    </sql-query>
 </hibernate-mapping>
 

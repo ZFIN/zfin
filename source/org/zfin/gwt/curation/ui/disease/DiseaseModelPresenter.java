@@ -61,7 +61,7 @@ public class DiseaseModelPresenter implements Presenter {
         AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.ADD_HUMAN_DISEASE_ANNOTATIONS_START);
         diseaseRpcService.addHumanDiseaseAnnotation(disease,
                 new RetrieveDiseaseModelListCallBack(disease, "Could not add a new disease model", view.getErrorLabel(),
-                        AjaxCallEventType.ADD_HUMAN_DISEASE_ANNOTATIONS_STOP));
+                        AjaxCallEventType.ADD_HUMAN_DISEASE_ANNOTATIONS_STOP, true));
         view.getLoadingImage().setVisible(true);
     }
 
@@ -113,7 +113,7 @@ public class DiseaseModelPresenter implements Presenter {
         // human disease model list
         AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.GET_HUMAN_DISEASE_LIST_START);
         diseaseRpcService.getHumanDiseaseModelList(publicationID,
-                new RetrieveDiseaseModelListCallBack(null, view.getErrorLabel(), AjaxCallEventType.GET_HUMAN_DISEASE_LIST_STOP));
+                new RetrieveDiseaseModelListCallBack(null, view.getErrorLabel(), AjaxCallEventType.GET_HUMAN_DISEASE_LIST_STOP, false));
 
         // environment list
         retrieveEnvironmentList();
@@ -252,17 +252,20 @@ public class DiseaseModelPresenter implements Presenter {
 
     class RetrieveDiseaseModelListCallBack extends ZfinAsyncCallback<List<DiseaseAnnotationDTO>> {
 
+        private boolean createDeleteModel;
         private DiseaseAnnotationDTO diseaseAnnotation;
 
-        public RetrieveDiseaseModelListCallBack(String errorMessage, ErrorHandler errorLabel, AjaxCallEventType event) {
+        public RetrieveDiseaseModelListCallBack(String errorMessage, ErrorHandler errorLabel, AjaxCallEventType event, Boolean createDeleteModel) {
             super(errorMessage, errorLabel, view.loadingImage,
                     HumanDiseaseModule.getModuleInfo(), event);
+            this.createDeleteModel = createDeleteModel;
         }
 
-        public RetrieveDiseaseModelListCallBack(DiseaseAnnotationDTO diseaseAnnotation, String errorMessage, ErrorHandler errorLabel, AjaxCallEventType event) {
+        public RetrieveDiseaseModelListCallBack(DiseaseAnnotationDTO diseaseAnnotation, String errorMessage, ErrorHandler errorLabel, AjaxCallEventType event, Boolean createDeleteModel) {
             super(errorMessage, errorLabel, view.loadingImage,
                     HumanDiseaseModule.getModuleInfo(), event);
             this.diseaseAnnotation = diseaseAnnotation;
+            this.createDeleteModel = createDeleteModel;
         }
 
         @Override
@@ -291,8 +294,12 @@ public class DiseaseModelPresenter implements Presenter {
             updateDiseaseList(modelDTOs);
             view.getLoadingImage().setVisible(false);
             processing = false;
-            if (diseaseAnnotation != null)
-                AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CREATE_DISEASE_MODEL, diseaseAnnotation.toString()));
+            if (createDeleteModel) {
+                String id = "";
+                if(diseaseAnnotation != null)
+                    id = diseaseAnnotation.toString();
+                AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CD_DISEASE_MODEL, id));
+            }
         }
 
         private void populateSingleRowDiseaseTable(int index, DiseaseAnnotationDTO disease, DiseaseAnnotationModelDTO dto) {
@@ -330,7 +337,7 @@ public class DiseaseModelPresenter implements Presenter {
             AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.DELETE_DISEASE_MODEL_START);
             diseaseRpcService.deleteDiseaseModel(diseaseAnnotationDTO,
                     new RetrieveDiseaseModelListCallBack("Could not delete Disease model", view.getErrorLabel(),
-                            AjaxCallEventType.DELETE_DISEASE_MODEL_STOP));
+                            AjaxCallEventType.DELETE_DISEASE_MODEL_STOP, true));
         }
     }
 
@@ -345,7 +352,7 @@ public class DiseaseModelPresenter implements Presenter {
         public void onClick(ClickEvent event) {
             AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.DELETE_DISEASE_ANNOTATION_MODEL_START);
             diseaseRpcService.deleteDiseaseAnnotationModel(diseaseAnnotationModelDTO,
-                    new RetrieveDiseaseModelListCallBack("Could not delete Disease model", view.getErrorLabel(), AjaxCallEventType.DELETE_DISEASE_ANNOTATION_MODEL_STOP));
+                    new RetrieveDiseaseModelListCallBack("Could not delete Disease model", view.getErrorLabel(), AjaxCallEventType.DELETE_DISEASE_ANNOTATION_MODEL_STOP, true));
         }
     }
 
