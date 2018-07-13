@@ -15,6 +15,7 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.*;
 import org.zfin.ontology.*;
@@ -285,10 +286,15 @@ public class OntologyTermDetailController {
     }
 
     private boolean hasExpressionData(Term anatomyTerm) {
-        AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatistics(anatomyTerm.getZdbID());
-        if (statistics == null || statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
-            return true;
+      //  AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatistics(anatomyTerm.getZdbID());
+        GenericTerm anatTerm=getOntologyRepository().getTermByZdbID(anatomyTerm.getZdbID());
+     /*   if (statistics == null || statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
+            return true;*/
         // check for antibody records including substructures
+        PaginationResult<MarkerStatistic> emr=
+                getPublicationRepository().getAllExpressedMarkers(anatTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
+        if (emr != null && emr.getTotalCount() > 0)
+            return true;
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(1);
         int numOfAntibodies = getAntibodyRepository().getAntibodyCount(anatomyTerm, true);
