@@ -47,10 +47,10 @@ print "\nctInactivePubs = $ctInactivePubs\n\n";
 if ($ctInactivePubs == 0) {
   #$subjectError = "Auto from " . $dbname . ": updatepubstatus.pl :: There is no non-active publications found with PUBMED accession.";
   #ZFINPerlModules->sendMailWithAttachedReport("xshao\@zfin.org",$subjectError,"updatepubstatus.pl");
-    if (-s "<!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs_PG.txt"){
+    if (-s "<!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs.txt"){
     }
     else {
-	system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs_PG.txt");
+	system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs.txt");
     }
   exit;
 }
@@ -86,7 +86,7 @@ $cur_insert_update->finish();
 
 $dbh->disconnect();
 
-open (ACTIVATED, ">listOfActivatedPubs_PG.txt") ||  die "Cannot open listOfActivatedPubs_PG.txt : $!\n";
+open (ACTIVATED, ">listOfActivatedPubs.txt") ||  die "Cannot open listOfActivatedPubs.txt : $!\n";
 
 foreach $updatedPubId (sort keys %updatedPublications) {
   $pubmedid = $updatedPublications{$updatedPubId};
@@ -95,10 +95,10 @@ foreach $updatedPubId (sort keys %updatedPublications) {
 
 close(ACTIVATED);
 
-if (-s "<!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs_PG.txt"){
+if (-s "<!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs.txt"){
     }
     else {
-	system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs_PG.txt");
+	system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs.txt");
     }
 
 
