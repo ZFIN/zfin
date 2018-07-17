@@ -2528,31 +2528,33 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                    SELECT genox_fish_zdb_id,
-                           genox_exp_zdb_id,
-                           CASE
-                             WHEN genox_fish_zdb_id IS NOT NULL THEN 'is_a_model'
-                             ELSE ' '
-                           END,
-                           term_ont_id,
-                           term_name,
-                           da_pub_zdb_id,
-                           accession_no,
-                           CASE dat_evidence_code
-                             WHEN "IC" THEN "IC, ECO:0000205"
-                             WHEN "TAS" THEN "TAS, ECO:0000033"
-                             ELSE dat_evidence_code
-                           END  
-                    FROM   disease_annotation,
-                           publication,
-                           term,
-                    OUTER  fish_experiment
-                    WHERE  genox_zdb_id = da_genox_zdb_id
-                           AND da_term_zdb_id = term_zdb_id
-                           AND da_pub_zdb_id = zdb_id;
+                  SELECT
+                    genox_fish_zdb_id,
+                    genox_exp_zdb_id,
+                    CASE
+                    WHEN genox_fish_zdb_id IS NOT NULL
+                      THEN 'is_a_model'
+                    ELSE ''
+                    END,
+                    term_ont_id,
+                    term_name,
+                    dat_source_zdb_id,
+                    accession_no,
+                    CASE dat_evidence_term_zdb_id
+                    WHEN 'ZDB-TERM-170419-151'
+                      THEN 'IC, ECO:ECO:0000305'
+                    WHEN 'ZDB-TERM-170419-33'
+                      THEN 'TAS, ECO:ECO:0000304'
+                    ELSE dat_evidence_term_zdb_id
+                    END
+                  FROM disease_annotation
+                    INNER JOIN term ON dat_term_zdb_id = term.term_zdb_id
+                    INNER JOIN publication ON dat_source_zdb_id = zdb_id
+                    LEFT OUTER JOIN disease_annotation_model ON damo_dat_zdb_id = dat_zdb_id
+                    LEFT OUTER JOIN fish_experiment ON genox_zdb_id = damo_genox_zdb_id;
                 ]]>
             </Query>
-            <Column id="1" unique="true">Fish ZDB ID</Column>
+            <Column id="1">Fish ZDB ID</Column>
             <Column id="2">Environment ZDB ID</Column>
             <Column id="3">is_a_model</Column>
             <Column id="4">DO Term ID</Column>

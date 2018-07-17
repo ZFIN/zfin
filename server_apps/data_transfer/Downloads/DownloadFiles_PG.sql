@@ -2251,32 +2251,29 @@ from marker, marker_sequence
 drop view talenFasta;
 
 \echo '\copy (select * from fishModelDisease) fish_model_disease.txt'
-create view fishModelDisease as
-SELECT genox_fish_zdb_id,
-       genox_exp_zdb_id,
-       CASE
-         WHEN genox_fish_zdb_id IS NOT NULL THEN 'is_a_model'
-         ELSE ' '
-       END,
-       term_ont_id,
-       term_name,
-       dat_source_zdb_id,
-       accession_no,
-       CASE dat_evidence_term_zdb_id
-         WHEN 'ZDB-TERM-170419-151' THEN 'IC, ECO:ECO:0000305'
-         WHEN 'ZDB-TERM-170419-33' THEN 'TAS, ECO:ECO:0000304'
-         ELSE dat_evidence_term_zdb_id
-       END
-FROM disease_annotation_model
-JOIN disease_annotation
-  ON damo_dat_Zdb_id=dat_zdb_id
-JOIN publication
-  ON dat_source_zdb_id = zdb_id
-JOIN term
-  ON dat_term_zdb_id = term_zdb_id
-JOIN fish_experiment
-  ON genox_zdb_id = damo_genox_zdb_id
-;
+CREATE VIEW fishModelDisease AS
+  SELECT
+    genox_fish_zdb_id,
+    genox_exp_zdb_id,
+    CASE
+    WHEN genox_fish_zdb_id IS NOT NULL
+      THEN 'is_a_model'
+    ELSE ''
+    END,
+    term_ont_id,
+    term_name,
+    dat_source_zdb_id,
+    accession_no,
+    CASE dat_evidence_term_zdb_id
+    WHEN 'ZDB-TERM-170419-251' THEN 'IC, ECO:0000305'
+    WHEN 'ZDB-TERM-170419-250' THEN 'TAS, ECO:0000304'
+    ELSE dat_evidence_term_zdb_id
+    END
+  FROM disease_annotation
+    INNER JOIN term ON dat_term_zdb_id = term.term_zdb_id
+    INNER JOIN publication ON dat_source_zdb_id = zdb_id
+    LEFT OUTER JOIN disease_annotation_model ON damo_dat_zdb_id = dat_zdb_id
+    LEFT OUTER JOIN fish_experiment ON genox_zdb_id = damo_genox_zdb_id;
 \copy (select * from fishModelDisease) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease.txt' with delimiter as '	' null as '';
 drop view fishModelDisease;
 
