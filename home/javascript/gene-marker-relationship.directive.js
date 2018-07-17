@@ -112,7 +112,7 @@
             if (!mkrreln.newAttribution) {
                 mkrreln.errorMessage = 'Attribution/reference cannot be empty.';
             } else {
-                MarkerService.addGeneMarkerRelationshipReference(mkrreln.otherLink, mkrreln.newAttribution)
+                MarkerService.addRelationshipReference(mkrreln.otherLink.markerRelationshipZdbId, mkrreln.newAttribution)
                     .then(function (relationship) {
                         mkrreln.relationships.attributionZdbIDs = relationship.attributionZdbIDs;
                         mkrreln.newAttribution = '';
@@ -127,7 +127,7 @@
 
         function deleteAttribution(ind) {
 
-            MarkerService.removeMarkerRelationshipReference(mkrreln.otherLink, mkrreln.otherLink.attributionZdbIDs[ind])
+            MarkerService.removeRelationshipReference(mkrreln.otherLink.markerRelationshipZdbId, mkrreln.otherLink.attributionZdbIDs[ind])
                 .then(function () {
                     mkrreln.otherLink.attributionZdbIDs.splice(ind, 1);
                     mkrreln.errorMessage = '';
@@ -145,7 +145,7 @@
 
 
         function deleteRelationship() {
-            MarkerService.removeRelationship(mkrreln.otherLink)
+            MarkerService.removeRelationship(mkrreln.otherLink.markerRelationshipZdbId)
                 .then(function () {
                     mkrreln.relationships.splice(mkrreln.ind, 1);
                     close();

@@ -74,7 +74,7 @@
         }
 
         function remove(relationship, index) {
-            MarkerService.removeRelationship(relationship)
+            MarkerService.removeRelationship(relationship.zdbID)
                 .then(function () {
                     vm.relationships.splice(index, 1);
                 })
@@ -88,14 +88,14 @@
         }
 
         function addReference(pubId) {
-            return MarkerService.addRelationshipReference(vm.editing, pubId)
+            return MarkerService.addRelationshipReference(vm.editing.zdbID, pubId)
                 .then(function (relationship) {
                     vm.editing.references = relationship.references;
                 });
         }
 
         function removeReference(reference, index) {
-            return MarkerService.removeRelationshipReference(vm.editing, reference)
+            return MarkerService.removeRelationshipReference(vm.editing.zdbID, reference.zdbID)
                 .then(function () {
                     vm.editing.references.splice(index, 1);
                 });
