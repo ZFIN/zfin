@@ -586,18 +586,23 @@ public class TranscriptRPCServiceImpl extends ZfinRemoteServiceServlet implement
     }
 
     public List<ReferenceDatabaseDTO> getTranscriptAddableNucleotideSequenceReferenceDatabases(TranscriptDTO transcriptDTO) {
-//        if(internalNucleotideSequenceReferenceDatabases == null){
-        if (transcriptDTO.getTranscriptType().equals(TranscriptType.Type.MIRNA.toString())) {
-            // todo: this should use curatedMatureMiRNA or something like that (see 3564)
-            transcriptEditAddableNucleotideSequenceReferenceDatabases =
-                    DTOConversionService.convertToReferenceDatabaseDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
-                            DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_MIRNA_NUCLEOTIDE_SEQUENCE));
-        } else {
-            transcriptEditAddableNucleotideSequenceReferenceDatabases =
-                    DTOConversionService.convertToReferenceDatabaseDTOs(RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(
-                            DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE));
+//      if (geneEditAddableNucleotideReferenceDatabases == null) {
+        transcriptEditAddableNucleotideSequenceReferenceDatabases = new ArrayList<ReferenceDatabaseDTO>();
+        List<ReferenceDatabase> refdbs;
+        refdbs = RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_MIRNA_NUCLEOTIDE_SEQUENCE);
+        for (ReferenceDatabase refdb : refdbs) {
+            transcriptEditAddableNucleotideSequenceReferenceDatabases.add(DTOConversionService.convertToReferenceDatabaseDTO(refdb));
         }
+        List<ReferenceDatabase> refdbs1;
+        refdbs1 = RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
+        for (ReferenceDatabase refdb : refdbs1) {
+            transcriptEditAddableNucleotideSequenceReferenceDatabases.add(DTOConversionService.convertToReferenceDatabaseDTO(refdb));
+        }
+
+
+
 //        }
+        System.out.println(transcriptEditAddableNucleotideSequenceReferenceDatabases.size());
         return transcriptEditAddableNucleotideSequenceReferenceDatabases;
     }
 

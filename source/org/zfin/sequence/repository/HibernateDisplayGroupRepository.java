@@ -25,6 +25,7 @@ public class HibernateDisplayGroupRepository implements DisplayGroupRepository {
     }
 
     public List<ReferenceDatabase> getReferenceDatabasesForDisplayGroup(DisplayGroup.GroupName... groupNames) {
+
         Session session = HibernateUtil.currentSession();
         String hql = "" +
                 "select rd from ReferenceDatabase rd join rd.displayGroups dg  " +
