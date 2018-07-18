@@ -40,8 +40,9 @@ public class NomenclatureSubmissionController {
     @RequestMapping(value = "/history/{zdbID}")
     public String getHistoryView(@PathVariable("zdbID") String zdbID,
                                  Model model) {
-        if (zdbID == null)
+        if (zdbID == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
         if (marker == null) {
             model.addAttribute(LookupStrings.ZDB_ID, "No marker with ID " + zdbID + " found");
@@ -49,20 +50,22 @@ public class NomenclatureSubmissionController {
         model.addAttribute("marker", marker);
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ZFIN Marker History");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Marker History");
         return "nomenclature/history-view.page";
     }
 
     @RequestMapping(value = "/view/{zdbID}")
     public String getView(@PathVariable("zdbID") String zdbID,
                           Model model) {
-        if (zdbID == null)
+        if (zdbID == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
         MarkerHistory history = getMarkerRepository().getMarkerHistory(zdbID);
-        if (history == null)
+        if (history == null) {
             throw new RuntimeException("No Marker History record found");
+        }
         model.addAttribute("markerHistory", history);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ZFIN Marker History");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Marker History Event");
         return "nomenclature/event-view.page";
     }
 
@@ -154,11 +157,13 @@ public class NomenclatureSubmissionController {
     public List<PublicationDTO> addAttribution(@PathVariable String zdbID,
                                                @RequestBody String pubID) throws InvalidWebRequestException {
         Publication publication = getPublicationRepository().getPublication(pubID);
-        if (publication == null)
+        if (publication == null) {
             throw new InvalidWebRequestException("No publication found for ID: " + pubID, null);
+        }
         MarkerHistory history = getMarkerRepository().getMarkerHistory(zdbID);
-        if (history == null)
+        if (history == null) {
             throw new InvalidWebRequestException("No Marker History record found for ID: " + zdbID, null);
+        }
 
         Transaction tx = null;
 
@@ -168,8 +173,9 @@ public class NomenclatureSubmissionController {
             tx.commit();
         } catch (Exception e) {
             try {
-                if (tx != null)
+                if (tx != null) {
                     tx.rollback();
+                }
             } catch (HibernateException he) {
                 LOG.error("Error during roll back of transaction", he);
             }
@@ -185,8 +191,9 @@ public class NomenclatureSubmissionController {
     public Boolean update(@PathVariable String zdbID,
                           @RequestBody Nomenclature nomenclature) {
         MarkerHistory history = getMarkerRepository().getMarkerHistory(zdbID);
-        if (history == null)
+        if (history == null) {
             throw new RuntimeException("No Marker History record found");
+        }
 
         Transaction tx = null;
 
@@ -197,8 +204,9 @@ public class NomenclatureSubmissionController {
             tx.commit();
         } catch (Exception e) {
             try {
-                if (tx != null)
+                if (tx != null) {
                     tx.rollback();
+                }
             } catch (HibernateException he) {
                 LOG.error("Error during roll back of transaction", he);
             }
@@ -214,11 +222,13 @@ public class NomenclatureSubmissionController {
     public List<PublicationDTO> deleteAttribution(@PathVariable String zdbID,
                                                   @PathVariable String pubID) {
         Publication publication = getPublicationRepository().getPublication(pubID);
-        if (publication == null)
+        if (publication == null) {
             throw new RuntimeException("No publication found");
+        }
         MarkerHistory history = getMarkerRepository().getMarkerHistory(zdbID);
-        if (history == null)
+        if (history == null) {
             throw new RuntimeException("No Marker History record found");
+        }
 
         Transaction tx = null;
 
@@ -228,8 +238,9 @@ public class NomenclatureSubmissionController {
             tx.commit();
         } catch (Exception e) {
             try {
-                if (tx != null)
+                if (tx != null) {
                     tx.rollback();
+                }
             } catch (HibernateException he) {
                 LOG.error("Error during roll back of transaction", he);
             }
@@ -245,8 +256,9 @@ public class NomenclatureSubmissionController {
     @RequestMapping(value = "attributions/{zdbID}", method = RequestMethod.GET)
     public List<PublicationDTO> getAttributions(@PathVariable String zdbID) {
         MarkerHistory history = getMarkerRepository().getMarkerHistory(zdbID);
-        if (history == null)
+        if (history == null) {
             throw new RuntimeException("No Marker History record found");
+        }
         List<PublicationAttribution> attributionList = getInfrastructureRepository().getPublicationAttributions(zdbID);
         List<PublicationDTO> dtoList = new ArrayList<>(attributionList.size());
         for (PublicationAttribution attribution : attributionList) {

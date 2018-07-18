@@ -1,12 +1,11 @@
 <jsp:useBean id="submission" scope="request" type="org.zfin.nomenclature.NameSubmission"/>
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
+<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
-<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
+<%@ attribute name="headerText" required="true" %>
 
 <div class="container-fluid">
-    <h1><tiles:getAsString name="headerText" /></h1>
+    <h1>${headerText}</h1>
 
     <c:choose>
         <c:when test="${sent}">
@@ -33,7 +32,7 @@
         <dd>${submission.laboratory}</dd>
     </dl>
 
-    <tiles:insertAttribute name="submission-submit" />
+    <jsp:doBody />
 
     <h3>Publication Status</h3>
     <dl>

@@ -1,11 +1,14 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
+<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
-<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
+<%@ attribute name="headerText" required="true" %>
+<%@ attribute name="resourcesList" fragment="true" required="true" %>
+<%@ attribute name="submissionForm" fragment="true" required="true" %>
+
+<jsp:useBean id="submission" class="org.zfin.nomenclature.NameSubmission" scope="request"/>
 
 <div class="container-fluid">
-    <h1><tiles:getAsString name="headerText"/></h1>
+    <h1>${headerText}</h1>
 
     <h3>Nomenclature Resources</h3>
     <p>
@@ -13,11 +16,11 @@
         possible naming conflicts.
     </p>
     <ul>
-        <tiles:insertAttribute name="resources-list"/>
+        <jsp:invoke fragment="resourcesList"/>
     </ul>
     <p>
         <b>Need additional assistance? <a href="mailto:<%= ZfinPropertiesEnum.NOMEN_COORDINATOR.value()%>">Contact the
-        Nomenclature Coordinator</a></b>
+            Nomenclature Coordinator</a></b>
     </p>
 
     <hr>
@@ -55,7 +58,7 @@
             </div>
         </div>
 
-        <tiles:insertAttribute name="submission-form"/>
+        <jsp:invoke fragment="submissionForm"/>
 
         <h3>Publication Status</h3>
 
@@ -65,7 +68,7 @@
                     <div class="radio">
                         <label>
                             <form:radiobutton path="pubStatus" value="${option}"/>
-                            ${option}
+                                ${option}
                         </label>
                     </div>
                 </c:forEach>
@@ -106,70 +109,70 @@
 <script src="/javascript/jquery.validate.min.js"></script>
 <script src="/javascript/multirow-table.js"></script>
 <script>
-    $(function() {
+  $(function() {
 
-        $(".citations-group").hide();
+    $(".citations-group").hide();
+    $(".reserve-group").hide();
+    $("input[type=radio][name=pubStatus]").change(function () {
+      if (this.value == 'Published') {
+        $(".citations-group label").addClass("required");
+        $(".citations-group").show();
         $(".reserve-group").hide();
-        $("input[type=radio][name=pubStatus]").change(function () {
-            if (this.value == 'Published') {
-                $(".citations-group label").addClass("required");
-                $(".citations-group").show();
-                $(".reserve-group").hide();
-            } else {
-                $(".citations-group label").removeClass("required");
-                $(".citations-group").show();
-                $(".reserve-group").show();
-            }
-        });
-
-        $("#nomenclature").validate({
-            rules: {
-                name: { required: true },
-                email2: {
-                    required: true,
-                    email: true
-                },
-                laboratory: { required: true },
-                geneName: { required: true },
-                geneSymbol: { required: true },
-                pubStatus: { required: true },
-                citations: {
-                    required: {
-                        depends: function () {
-                            return $('input[name=pubStatus]:checked').val() === 'Published';
-                        }
-                    }
-                },
-                reserveType: {
-                    required: {
-                        depends: function () {
-                            return $('input[name=pubStatus]:checked').val() !== 'Published';
-                        }
-                    }
-                }
-            },
-            messages: {
-                pubStatus: "Please select an option",
-                reserveType: "Please select an option"
-            },
-            highlight: function(el) {
-                $(el).closest('.form-group').addClass('has-error');
-            },
-            unhighlight: function(el) {
-                $(el).closest('.form-group').removeClass('has-error');
-            },
-            errorElement: 'span',
-            errorClass: 'help-block',
-            errorPlacement: function (error, element) {
-                if (element.is(':radio')) {
-                    error.prependTo(element.closest('.radio').parent());
-                } else {
-                    error.insertAfter(element);
-                }
-            }
-        });
-
-        <%-- hide as a spam prevention tactic --%>
-        $(".alternate-email").hide();
+      } else {
+        $(".citations-group label").removeClass("required");
+        $(".citations-group").show();
+        $(".reserve-group").show();
+      }
     });
+
+    $("#nomenclature").validate({
+      rules: {
+        name: { required: true },
+        email2: {
+          required: true,
+          email: true
+        },
+        laboratory: { required: true },
+        geneName: { required: true },
+        geneSymbol: { required: true },
+        pubStatus: { required: true },
+        citations: {
+          required: {
+            depends: function () {
+              return $('input[name=pubStatus]:checked').val() === 'Published';
+            }
+          }
+        },
+        reserveType: {
+          required: {
+            depends: function () {
+              return $('input[name=pubStatus]:checked').val() !== 'Published';
+            }
+          }
+        }
+      },
+      messages: {
+        pubStatus: "Please select an option",
+        reserveType: "Please select an option"
+      },
+      highlight: function(el) {
+        $(el).closest('.form-group').addClass('has-error');
+      },
+      unhighlight: function(el) {
+        $(el).closest('.form-group').removeClass('has-error');
+      },
+      errorElement: 'span',
+      errorClass: 'help-block',
+      errorPlacement: function (error, element) {
+        if (element.is(':radio')) {
+          error.prependTo(element.closest('.radio').parent());
+        } else {
+          error.insertAfter(element);
+        }
+      }
+    });
+
+    <%-- hide as a spam prevention tactic --%>
+    $(".alternate-email").hide();
+  });
 </script>
