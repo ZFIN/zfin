@@ -32,6 +32,8 @@ begin
 
      perform populate_feature_tracking(NEW.feature_abbrev, NEW.feature_name, NEW.feature_zdb_id); 
 
+     perform p_update_related_genotype_names(NEW.feature_zdb_id);
+
      RETURN NEW;
 end;
 $BODY$ LANGUAGE plpgsql;

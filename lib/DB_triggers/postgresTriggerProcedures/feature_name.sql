@@ -14,7 +14,7 @@ begin
 
      perform fhist_event(NEW.feature_zdb_id,
        		'reassigned', NEW.feature_name, OLD.feature_name);
-     
+     perform p_update_related_genotype_names(NEW.feature_zdb_id);
      RETURN NEW;
 end;
 $BODY$ LANGUAGE plpgsql;
