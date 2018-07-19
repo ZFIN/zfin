@@ -608,7 +608,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                join fish_experiment on fish_zdb_id = genox_fish_zdb_id" +
                 "                join mutant_fast_search on mfs_genox_zdb_id = genox_zdb_id" +
                 "                join phenotype_source_generated on pg_genox_zdb_id = genox_zdb_id" +
-                "                join phenotype_observation_generated on psg_pg_id = psg_id" +
+                "                join phenotype_observation_generated on psg_pg_id = pg_id" +
                 "                join figure on fig_zdb_id = pg_fig_zdb_id" +
                 "                join publication on fig_source_zdb_id = zdb_id" +
                 "                join term as e1a on psg_e1a_zdb_id = e1a.term_zdb_id" +
@@ -648,7 +648,7 @@ public class HibernateMutantRepository implements MutantRepository {
         List<BasicPhenotypeDTO> basicPhenos = new ArrayList<BasicPhenotypeDTO>();
         for (Object[] basicPhenoObjects : phenos) {
             BasicPhenotypeDTO basicPheno = new BasicPhenotypeDTO();
-            basicPheno.setObjectId(basicPhenoObjects[0].toString());
+            basicPheno.setObjectId("ZFIN:"+basicPhenoObjects[0].toString());
             basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
 
             if (basicPhenoObjects[3] != null) {
