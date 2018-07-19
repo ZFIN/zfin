@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.AbstractZfinMailSender;
-import org.zfin.framework.mail.MailSender;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.PublicationDTO;
@@ -84,18 +83,7 @@ public class NomenclatureSubmissionController {
         // get rid of any blank rows from homology table
         removeEmptyRows(submission.getHomologyInfoList());
 
-        // send email to nomenclature coordinator if decoy email field is empty
-        boolean sent = false;
-        if (StringUtils.isEmpty(submission.getEmail())) {
-            MailSender mailer = AbstractZfinMailSender.getInstance();
-            sent = mailer.sendMail("Gene Submission: " + submission.getGeneSymbol(),
-                    submission.toString(),
-                    false,
-                    submission.getEmail2(),
-                    ZfinPropertiesEnum.NOMEN_COORDINATOR.value().split(" "));
-        }
-        model.addAttribute("sent", sent);
-
+        model.addAttribute("sent", sendNameSubmissionEmail(submission));
         return "nomenclature/gene-name-submit.page";
     }
 
@@ -115,20 +103,7 @@ public class NomenclatureSubmissionController {
         // get rid of any blank rows from line information table
         removeEmptyRows(submission.getLineDetails());
 
-        // send email to nomenclature coordinator if decoy email field is empty
-        boolean sent = false;
-        if (StringUtils.isEmpty(submission.getEmail())) {
-            MailSender mailer = AbstractZfinMailSender.getInstance();
-            List<LineInfo> details = submission.getLineDetails();
-            sent = mailer.sendMail(
-                    "Mutant Submission: " + (details.size() > 0 ? details.get(0).getDesignation() : ""),
-                    submission.toString(),
-                    false,
-                    submission.getEmail2(),
-                    ZfinPropertiesEnum.NOMEN_COORDINATOR.value().split(" "));
-        }
-        model.addAttribute("sent", sent);
-
+        model.addAttribute("sent", sendNameSubmissionEmail(submission));
         return "nomenclature/line-name-submit.page";
     }
 
@@ -254,6 +229,21 @@ public class NomenclatureSubmissionController {
             dtoList.add(DTOConversionService.convertToPublicationDTO(attribution.getPublication()));
         }
         return dtoList;
+    }
+
+    private boolean sendNameSubmissionEmail(NameSubmission submission) {
+        // send email to nomenclature coordinator if decoy email field is empty to reduce spam
+        if (StringUtils.isNotEmpty(submission.getEmail())) {
+            return false;
+        }
+
+        return AbstractZfinMailSender.getInstance().sendMail(
+                submission.getSubjectLine(),
+                submission.toString(),
+                false,
+                submission.getEmail2(),
+                ZfinPropertiesEnum.NOMEN_COORDINATOR.value().split(" ")
+        );
     }
 
 }

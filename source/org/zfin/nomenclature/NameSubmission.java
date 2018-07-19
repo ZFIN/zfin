@@ -1,6 +1,6 @@
 package org.zfin.nomenclature;
 
-public class NameSubmission {
+public abstract class NameSubmission {
 
     private String name;
     private String email;
@@ -75,5 +75,7 @@ public class NameSubmission {
                 "Publication Citations: " + citations + "\n" +
                 "Comments: " + comments + "\n\n";
     }
+
+    public abstract String getSubjectLine();
 
 }

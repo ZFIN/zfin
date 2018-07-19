@@ -40,4 +40,9 @@ public class LineNameSubmission extends NameSubmission {
         }
         return sb.toString();
     }
+
+    @Override
+    public String getSubjectLine() {
+        return "Mutant Submission: " + (lineDetails.size() > 0 ? lineDetails.get(0).getDesignation() : "");
+    }
 }

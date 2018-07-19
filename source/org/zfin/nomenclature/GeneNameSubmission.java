@@ -87,4 +87,8 @@ public class GeneNameSubmission extends NameSubmission {
         return sb.toString();
     }
 
+    @Override
+    public String getSubjectLine() {
+        return "Gene Submission: " + this.getGeneSymbol();
+    }
 }
