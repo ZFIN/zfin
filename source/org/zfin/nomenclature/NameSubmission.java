@@ -8,7 +8,6 @@ public class NameSubmission {
     private String laboratory;
     private String pubStatus;
     private String citations;
-    private String reserveType;
     private String comments;
 
     public String getName() {
@@ -59,14 +58,6 @@ public class NameSubmission {
         this.citations = citations;
     }
 
-    public String getReserveType() {
-        return reserveType;
-    }
-
-    public void setReserveType(String reserveType) {
-        this.reserveType = reserveType;
-    }
-
     public String getComments() {
         return comments;
     }
@@ -82,7 +73,6 @@ public class NameSubmission {
                 "Submitter Lab: " + laboratory + "\n\n" +
                 "Publication Status: " + pubStatus + "\n" +
                 "Publication Citations: " + citations + "\n" +
-                "Reservation Status: " + reserveType + "\n\n" +
                 "Comments: " + comments + "\n\n";
     }
 

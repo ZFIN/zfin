@@ -104,6 +104,20 @@
             </c:forEach>
         </div>
     </jsp:attribute>
+
+    <jsp:attribute name="keepPrivateOption">
+        <div class="form-group keep-private-group">
+            <label class="col-sm-2 control-label required">Add lines and all data to database</label>
+            <div class="col-sm-6 radio">
+                <label>
+                    <form:radiobutton path="keepPrivate" value="immediately" /> immediately (will be publicly viewable immediately)
+                </label>
+                <label>
+                    <form:radiobutton path="keepPrivate" value="after publication" /> after manuscript publication (only line designation/allele number and lab of origin will be immediately viewable; data will be added to record when publication is curated)
+                </label>
+            </div>
+        </div>
+    </jsp:attribute>
 </zfin2:nomenclatureForm>
 
 <script>

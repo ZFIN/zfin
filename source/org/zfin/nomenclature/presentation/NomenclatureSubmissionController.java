@@ -1,7 +1,6 @@
 package org.zfin.nomenclature.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -138,18 +137,8 @@ public class NomenclatureSubmissionController {
         return Arrays.asList("Published", "In Press", "Submitted", "In Preparation", "Unpublished");
     }
 
-    @ModelAttribute("reserveTypeOptions")
-    public List<String> getReserveTypeOptions() {
-        return Arrays.asList("in my name", "as an anonymous submission");
-    }
-
     private static void removeEmptyRows(Collection<? extends EmptyTestable> collection) {
-        CollectionUtils.filter(collection, new Predicate() {
-            @Override
-            public boolean evaluate(Object o) {
-                return (o instanceof EmptyTestable) && !((EmptyTestable) o).isEmpty();
-            }
-        });
+        CollectionUtils.filter(collection, o -> (o instanceof EmptyTestable) && !((EmptyTestable) o).isEmpty());
     }
 
     @ResponseBody

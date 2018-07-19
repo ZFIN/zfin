@@ -3,6 +3,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="headerText" required="true" %>
+<%@ attribute name="keepPrivateOption" fragment="true" required="false" %>
 
 <div class="container-fluid">
     <h1>${headerText}</h1>
@@ -42,10 +43,8 @@
             <dt>Citations</dt>
             <dd>${submission.citations}</dd>
         </c:if>
-        <c:if test="${!empty submission.reserveType}">
-            <dt>Reserved</dt>
-            <dd>${submission.reserveType}</dd>
-        </c:if>
+
+        <jsp:invoke fragment="keepPrivateOption" />
     </dl>
 
     <h3>Additional Comments</h3>

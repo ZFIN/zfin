@@ -4,6 +4,7 @@
 <%@ attribute name="headerText" required="true" %>
 <%@ attribute name="resourcesList" fragment="true" required="true" %>
 <%@ attribute name="submissionForm" fragment="true" required="true" %>
+<%@ attribute name="keepPrivateOption" fragment="true" required="false" %>
 
 <jsp:useBean id="submission" class="org.zfin.nomenclature.NameSubmission" scope="request"/>
 
@@ -82,16 +83,7 @@
             </div>
         </div>
 
-        <div class="form-group reserve-group">
-            <label class="col-sm-2 control-label required">Reserve name</label>
-            <div class="col-sm-6">
-                <c:forEach items="${reserveTypeOptions}" var="option">
-                    <label class="radio-inline">
-                        <form:radiobutton path="reserveType" value="${option}"/> ${option}
-                    </label>
-                </c:forEach>
-            </div>
-        </div>
+        <jsp:invoke fragment="keepPrivateOption" />
 
         <h3>Additional Comments</h3>
 
@@ -112,16 +104,16 @@
   $(function() {
 
     $(".citations-group").hide();
-    $(".reserve-group").hide();
+    $(".keep-private-group").hide();
     $("input[type=radio][name=pubStatus]").change(function () {
-      if (this.value == 'Published') {
+      if (this.value === 'Published') {
         $(".citations-group label").addClass("required");
         $(".citations-group").show();
-        $(".reserve-group").hide();
+        $(".keep-private-group").hide();
       } else {
         $(".citations-group label").removeClass("required");
         $(".citations-group").show();
-        $(".reserve-group").show();
+        $(".keep-private-group").show();
       }
     });
 
@@ -143,7 +135,7 @@
             }
           }
         },
-        reserveType: {
+        keepPrivate: {
           required: {
             depends: function () {
               return $('input[name=pubStatus]:checked').val() !== 'Published';
@@ -153,7 +145,7 @@
       },
       messages: {
         pubStatus: "Please select an option",
-        reserveType: "Please select an option"
+        keepPrivate: "Please select an option"
       },
       highlight: function(el) {
         $(el).closest('.form-group').addClass('has-error');
