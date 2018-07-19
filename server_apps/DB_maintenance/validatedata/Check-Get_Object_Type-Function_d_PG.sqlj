@@ -6,5 +6,5 @@ subquery
 list query
 not exists
 select get_obj_name($2)
-from $1 limit 1
+from $1 limit 1;
               
