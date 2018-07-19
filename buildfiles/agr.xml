@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="agr" basedir=".">
 
-
+   <target name="create-alliance-files" >
+        <antcall target="create-disease"  />
+        <antcall target="create-basic-phenotype" />
+        <antcall target="create-basic-wt-expression"/>
+        <antcall target="create-allele"/>
+        <antcall target="create-bgi"/>
+    </target>
 
     <target name="create-bgi-test" >
         <antcall target="create-basic-gene-info-file-test"  />
