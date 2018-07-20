@@ -10,4 +10,5 @@
    <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/PUB-468.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/PUB-469.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/PUB-471.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/ZFIN-5976.sql" />
 </databaseChangeLog>
