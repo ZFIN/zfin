@@ -221,7 +221,7 @@ public class FacetBuilderService {
         //todo: need this in the index still?
         facetGroups.add(buildSingleFacetGroup("Consequence", "rna_consequence", false));
         facetGroups.add(buildSingleFacetGroup("Mutagen", "mutagen", false));
-        facetGroups.add(buildSingleFacetGroup("Source", "source", false));
+        facetGroups.add(buildSingleFacetGroup("Source", SOURCE.getName(), false));
         facetGroups.add(buildSingleFacetGroup("Lab of Origin", "lab_of_origin", false));
         facetGroups.add(buildSingleFacetGroup("Institution", "institution", false));
         //screen used to be here, removed as a result of case 11323
@@ -242,7 +242,7 @@ public class FacetBuilderService {
 
         facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true));
         facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true));
-
+        facetGroups.add(buildSingleFacetGroup("Source", SOURCE.getName(), false));
 
         return facetGroups;
     }
@@ -279,6 +279,8 @@ public class FacetBuilderService {
         FacetGroup background = new FacetGroup("Background");
         background.addFacet(buildFacet(BACKGROUND.getName(), true));
         facetGroups.add(background);
+
+        facetGroups.add(buildSingleFacetGroup("Source", SOURCE.getName(), false));
 
         return facetGroups;
 

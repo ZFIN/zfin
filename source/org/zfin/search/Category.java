@@ -1,7 +1,5 @@
 package org.zfin.search;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,7 +88,7 @@ public enum Category {
             PUBLICATION_STATUS,
             CURATION_LOCATION,
             PUB_OWNER
-                ),
+    ),
     FIGURE("Figure",
             ZEBRAFISH_GENE,
             REPORTER_GENE,
@@ -116,7 +114,7 @@ public enum Category {
             TARGET
     ),
     EXPRESSIONS("Expression",
-            asList( FacetQueryEnum.ANY_ZEBRAFISH_GENE,
+            asList(FacetQueryEnum.ANY_ZEBRAFISH_GENE,
                     FacetQueryEnum.ANY_REPORTER_GENE,
                     FacetQueryEnum.ANY_WILDTYPE,
                     FacetQueryEnum.ANY_MUTANT,
@@ -153,7 +151,8 @@ public enum Category {
     COMMUNITY("Community",
             TYPE
     ),
-    FISH("Fish", AFFECTED_GENE,
+    FISH("Fish",
+            AFFECTED_GENE,
             FieldName.DISEASE,
             EXPRESSION_ANATOMY_TF,
             AFFECTED_ANATOMY_TF,
@@ -165,9 +164,19 @@ public enum Category {
             FieldName.SEQUENCE_TARGETING_REAGENT,
             FieldName.CONSTRUCT,
             SEQUENCE_ALTERATION,
-            BACKGROUND),
-    REPORTER_LINE("Reporter Line", REPORTER_GENE, EXPRESSION_ANATOMY_TF,REGULATORY_REGION, STAGE),
-    JOURNAL("Journal", RELATED_ACCESSION),
+            BACKGROUND,
+            SOURCE
+    ),
+    REPORTER_LINE("Reporter Line",
+            REPORTER_GENE,
+            EXPRESSION_ANATOMY_TF,
+            REGULATORY_REGION,
+            STAGE,
+            SOURCE
+    ),
+    JOURNAL("Journal",
+            RELATED_ACCESSION
+    ),
     STR_RELATIONSHIP("STR Relationship");
 
 
@@ -176,7 +185,7 @@ public enum Category {
         this.fieldNames = fieldNames;
         this.facetQueries = new ArrayList<>();
     }
-    
+
     Category(String name,
              List<FacetQueryEnum> facetQueries,
              FieldName... fieldNames) {
@@ -190,11 +199,13 @@ public enum Category {
     private List<FacetQueryEnum> facetQueries;
 
     public static Category getCategory(String name) {
-        if (name == null)
+        if (name == null) {
             return null;
+        }
         for (Category category : values()) {
-            if (category.getName().equals(name))
+            if (category.getName().equals(name)) {
                 return category;
+            }
         }
         return null;
     }
@@ -212,8 +223,9 @@ public enum Category {
     }
 
     public String getConcatenateFieldNames() {
-        if (fieldNames == null)
+        if (fieldNames == null) {
             return null;
+        }
         StringBuilder builder = new StringBuilder();
         for (FieldName fieldName : fieldNames) {
             builder.append(fieldName.getName());
@@ -260,10 +272,12 @@ public enum Category {
  *  need to be queried.   Eventually, buildFacetGroup shouldn't require the SOLR response, and another method like
   *  populateFacetGroups(...)  would inject the facets into structure and this code can go away ..  */
     public static Map<String, String> getFacetMap() {
-        if (facetMap != null && facetMap.size() > 0)
+        if (facetMap != null && facetMap.size() > 0) {
             return facetMap;
-        for (Category category : Category.values())
+        }
+        for (Category category : Category.values()) {
             facetMap.put(category.getName(), category.getConcatenateFieldNames());
+        }
 
         return facetMap;
     }

@@ -4,7 +4,6 @@ import org.apache.log4j.Logger
 import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.response.FacetField
-import org.apache.solr.client.solrj.response.PivotField
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
@@ -103,7 +102,8 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.MISEXPRESSED_GENE,
                         FieldName.PHENOTYPE_STATEMENT,
                         FieldName.SEQUENCE_ALTERATION,
-                        FieldName.SEQUENCE_TARGETING_REAGENT
+                        FieldName.SEQUENCE_TARGETING_REAGENT,
+                        FieldName.SOURCE,
                 ],
                 (Category.MUTANT)                    : [
                         FieldName.AFFECTED_ANATOMY_TF,
@@ -203,7 +203,8 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                 ],
                 (Category.REPORTER_LINE)             : [
                         FieldName.EXPRESSION_ANATOMY_TF,
-                        FieldName.REGULATORY_REGION
+                        FieldName.REGULATORY_REGION,
+                        FieldName.SOURCE,
                 ],
                 (Category.JOURNAL)                   : [
                         FieldName.RELATED_ACCESSION
@@ -229,8 +230,8 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         Category.EXPRESSIONS                | ["Expressed Gene", "Expressed In Anatomy", "Stage", "Has Image", "Is Wildtype and Clean", "Assay", "Genotype", "Sequence Targeting Reagent (STR)", "Conditions"]
         Category.PHENOTYPE                  | ["Phenotypic Gene", "Phenotype Statement", "Stage", "Manifests In", "Genotype", "Sequence Targeting Reagent (STR)", "Is Monogenic", "Conditions", "Has Image"]
         Category.DISEASE                    | ["Gene", "Disease Model"]
-        Category.FISH                       | ["Affected Genomic Region", "Is Model Of", "Expression Anatomy", "Phenotype", "Sequence Targeting Reagent (STR)", "Construct", "Mutation / Tg", "Background"]
-        Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage"]
+        Category.FISH                       | ["Affected Genomic Region", "Is Model Of", "Expression Anatomy", "Phenotype", "Sequence Targeting Reagent (STR)", "Construct", "Mutation / Tg", "Background", "Source"]
+        Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage", "Source"]
         Category.MUTANT                     | ["Type", "Affected Genomic Region", "Phenotype", "Consequence", "Mutagen", "Source", "Lab of Origin", "Institution"]
         Category.CONSTRUCT                  | ["Type", "Regulatory Region", "Coding Sequence", "Inserted In Gene", "Expressed In", "Reporter Color", "Engineered Region"]
         Category.SEQUENCE_TARGETING_REAGENT | ["Type", "Target"]
