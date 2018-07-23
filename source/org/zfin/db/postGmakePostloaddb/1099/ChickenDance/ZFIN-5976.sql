@@ -32,17 +32,17 @@ delete from zdb_active_data where zactvd_zdb_id = 'ZDB-ATB-100430-8';
 
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values ('ZDB-ATB-100430-8', 'ZDB-ATB-090413-1');
 
-create temp table tmp_alias_id (
+create temp table temp_alias_id (
 dalias_id varchar(50)
 );
 
-insert into tmp_alias_id
+insert into temp_alias_id
 select get_id('DALIAS') from single;
 
 
-insert into zdb_active_data select dalias_id from tmp_alias_id;
+insert into zdb_active_data select dalias_id from temp_alias_id;
 
 insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
                             select dalias_id, 'ZDB-ATB-090413-1', 'Ab2-tpm', '1'
-                              from tmp_alias_id;
+                              from temp_alias_id;
 
