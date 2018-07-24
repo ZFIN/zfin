@@ -1,21 +1,16 @@
 package org.zfin.mutant.presentation;
 
 import org.zfin.expression.Figure;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.marker.Marker;
-import org.zfin.mutant.*;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.PhenotypeService;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -96,11 +91,6 @@ public class FishStatistics extends EntityStatistics {
     public Set<Publication> getPublicationSet() {
         return publicationSet;
     }
-
-    public List<Marker> getAffectedMarkers() {
-        return FishService.getAffectedGenes(fish);
-    }
-
 
     public Set<PhenotypeStatementWarehouse> getPhenotypeObserved() {
         Set<PhenotypeStatementWarehouse> phenotypeObserved = new TreeSet<>();

@@ -3,6 +3,7 @@ package org.zfin.mutant;
 import org.zfin.fish.repository.FishService;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.marker.Marker;
+import org.zfin.profile.FishSupplier;
 
 import java.util.List;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     private String handle;
     private long order;
     private boolean wildtype;
-
+    private Set<FishSupplier> suppliers;
     private Set<FishExperiment> fishExperiments;
 
     private List<SequenceTargetingReagent> strList;
@@ -162,6 +163,14 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public boolean isClean() {
         return fishFunctionalAffectedGeneCount == 0;
+    }
+
+    public Set<FishSupplier> getSuppliers() {
+        return suppliers;
+    }
+
+    public void setSuppliers(Set<FishSupplier> suppliers) {
+        this.suppliers = suppliers;
     }
 
     @Override

@@ -26,7 +26,7 @@
             <c:forEach var="genoStat" items="${formBean.genotypeStatistics}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
                     <td>
-                        <zfin:link entity="${genoStat.affectedMarkers}"/>
+                        <zfin:link entity="${genoStat.fish.affectedGenes}"/>
                     </td>
                     <td>
                         <zfin:link entity="${genoStat.fish}"/>

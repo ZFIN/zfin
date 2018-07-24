@@ -180,6 +180,7 @@
                                     WHEN 'BAC' THEN 'Marker'
                                     WHEN 'CDNA' THEN 'Marker'
                                     WHEN 'EST' THEN 'Marker'
+                                    WHEN 'FISH' THEN 'Fish  '
                                     WHEN 'FOSMID' THEN 'Marker'
                                     WHEN 'PAC' THEN 'Marker'
                                     WHEN 'GENO' THEN 'Genoty'
@@ -207,6 +208,10 @@
 
         <subclass name="org.zfin.profile.FeatureSupplier" discriminator-value="Featur">
             <many-to-one name="feature" column="idsup_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+
+        <subclass name="org.zfin.profile.FishSupplier" discriminator-value="Fish  ">
+            <many-to-one name="fish" column="idsup_data_zdb_id" insert="false" update="false"/>
         </subclass>
     </class>
 
