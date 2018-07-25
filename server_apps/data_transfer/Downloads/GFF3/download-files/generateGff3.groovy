@@ -35,11 +35,11 @@ backboneFile.write(constantFile.text)
 def transcriptFile = new File("E_drerio_transcript.gff3")
 backboneFile << transcriptFile.text
 
-def contigFile = new File('ensembl_contig.gff3')
+def contigFile = new File('/research/zprodmore/gff3/ensembl_contig.gff3')
 def destination = new File(downloadDir + "ensembl_contig.gff3")
 destination.write(contigFile.text)
 
-def knockdownFile = new File('E_zfin_knockdown_reagents.gff3')
+def knockdownFile = new File("${env['TARGETROOT']}/server_apps/data_transfer/Downloads/GFF3/E_zfin_knockdown_reagents.gff3")
 destination = new File(downloadDir + "E_zfin_knockdown_reagents.gff3")
 destination.write(knockdownFile.text)
 
