@@ -109,9 +109,10 @@ public class GenotypeDetailController {
         }
         GenotypeBean form = new GenotypeBean();
         form.setGenotype(genotype);
+        retrievePublicationData(form, genotype);
         if (!genotype.isWildtype()) {
             retrieveGenotypeAndFeatureData(form, genotype);
-            retrievePublicationData(form, genotype);
+
             List<GenotypeFishResult> allFish = new ArrayList<>();
 
                     List<GenotypeFishResult> fishSummaryList = FishService.getFishExperiementSummaryForGenotype(genotype);
