@@ -7,7 +7,7 @@ update marker set mrkr_abbrev='Tg(-0.8myl7:NLS-DsRedx)' where mrkr_zdb_id='ZDB-T
 
 
 
-delete from construct_component where cc_construct_Zdb_id='ZDB-TGCONSTRCT-110222-3' and cc_order=9
+delete from construct_component where cc_construct_Zdb_id='ZDB-TGCONSTRCT-110222-3' and cc_order=9;
 
 update construct_component set cc_order=11 where cc_construct_zdb_id='ZDB-TGCONSTRCT-110222-3' and cc_order=10;
 insert into construct_component (cc_construct_Zdb_id,cc_Component_type,cc_component_category,cc_component,cc_component_zdb_id,cc_cassette_number,cc_order) values ('ZDB-TGCONSTRCT-110222-3','coding sequence of','coding component','NLS','ZDB-EREGION-110816-1',1,9);
