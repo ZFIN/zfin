@@ -302,6 +302,20 @@ unload to 'expression-subterm-updates.unl'
       and replacement.term_zdb_id = prim_zdb_id
       and sec_zdb_id = xpatres_subterm_zdb_id;
 
+delete from expression_result2
+where exists (
+select 'x' from sec_oks
+where xpatres_subterm_zdb_id = sec_zdb_id
+and exists (
+select 'x' from expression_result2 as er2
+ where xpatres_efs_id = er2.xpatres_efs_id
+ and xpatres_expression_found= er2.xpatres_expression_found
+ and xpatres_superterm_zdb_id = er2.xpatres_superterm_zdb_id
+ and er2.xpatres_subterm_zdb_id = prim_zdb_id
+)
+);
+
+
 update expression_result2
   set xpatres_subterm_zdb_id = (Select prim_zdb_id
       			        from sec_oks
