@@ -6,8 +6,6 @@
 <%@ attribute name="submissionForm" fragment="true" required="true" %>
 <%@ attribute name="keepPrivateOption" fragment="true" required="false" %>
 
-<jsp:useBean id="submission" class="org.zfin.nomenclature.NameSubmission" scope="request"/>
-
 <div class="container-fluid">
     <h1>${headerText}</h1>
 
