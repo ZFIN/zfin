@@ -145,10 +145,7 @@ public class ConditionAddView extends AbstractViewComposite {
 
             dataTable.setWidget(row, 3, deleteImage);
 
-        if (dto.isUsed()&&dto.conditionDTOList.size()==1&&dto.conditionDTOList.contains(lastCondition)){
-            Window.alert("last condition and experiment used");
-        }
-
+       
 
     }
 
