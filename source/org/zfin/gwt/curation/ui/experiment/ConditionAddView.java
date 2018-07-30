@@ -6,6 +6,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.ui.AbstractViewComposite;
 import org.zfin.gwt.root.dto.ConditionDTO;
@@ -139,9 +140,16 @@ public class ConditionAddView extends AbstractViewComposite {
         controlTable.setText(0, 2, "");
     }
 
-    public void addDeleteButton(DeleteImage deleteImage, int elementIndex) {
+    public void addDeleteButton(DeleteImage deleteImage, int elementIndex, ExperimentDTO dto,ConditionDTO lastCondition) {
         int row = elementIndex + 1;
-        dataTable.setWidget(row, 3, deleteImage);
+
+            dataTable.setWidget(row, 3, deleteImage);
+
+        if (dto.isUsed()&&dto.conditionDTOList.size()==1&&dto.conditionDTOList.contains(lastCondition)){
+            Window.alert("last condition and experiment used");
+        }
+
+
     }
 
     public void addCopyCheckBox(CheckBox checkBox, int elementIndex) {
