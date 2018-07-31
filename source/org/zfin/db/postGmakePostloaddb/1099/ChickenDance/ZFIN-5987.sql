@@ -14,9 +14,9 @@ insert into construct_component (cc_construct_Zdb_id,cc_Component_type,cc_compon
 insert into construct_component (cc_construct_Zdb_id,cc_Component_type,cc_component_category,cc_component_zdb_id,cc_component,cc_cassette_number,cc_order) values ('ZDB-TGCONSTRCT-110222-3','coding sequence of','coding component','ZDB-EFG-081029-1','DsRedx',1,10);
 
 update construct_marker_relationship set conmrkrrel_relationship_type='coding sequence of' where conmrkrrel_construct_zdb_id='ZDB-TGCONSTRCT-110222-3' and conmrkrrel_mrkr_zdb_id='ZDB-EREGION-110816-1';
-update construct_marker_relationship set conmrkrrel_relationship_type='coding sequence of' where conmrkrrel_construct_zdb_id='ZDB-TGCONSTRCT-110222-3' and conmrkrrel_mrkr_zdb_id='ZDB-EREGION-110816-1';
+update construct_marker_relationship set conmrkrrel_relationship_type='coding sequence of' where conmrkrrel_construct_zdb_id='ZDB-TGCONSTRCT-110222-3' and conmrkrrel_mrkr_zdb_id='ZDB-EFG-081029-1';
 update marker_relationship set mrel_type='coding sequence of' where mrel_mrkr_1_zdb_id='ZDB-TGCONSTRCT-110222-3' and mrel_mrkr_2_zdb_id='ZDB-EREGION-110816-1';
-update marker_relationship set mrel_type='coding sequence of' where mrel_mrkr_1_zdb_id='ZDB-TGCONSTRCT-110222-3' and mrel_mrkr_2_zdb_id='ZDB-EREGION-110816-1';
+update marker_relationship set mrel_type='coding sequence of' where mrel_mrkr_1_zdb_id='ZDB-TGCONSTRCT-110222-3' and mrel_mrkr_2_zdb_id='ZDB-EFG-081029-1';
 
 
 

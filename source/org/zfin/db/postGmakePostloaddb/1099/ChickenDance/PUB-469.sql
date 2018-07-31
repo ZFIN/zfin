@@ -15,6 +15,8 @@ update publication_file
                                 set pf_pub_zdb_id = 'ZDB-PUB-140606-4'
                               where pf_pub_zdb_id = 'ZDB-PUB-140325-6';
 
+delete from publication_file where pf_original_file_name = 'ZDB-PUB-140325-6.pdf';
+
 update publication_note 
                                 set pnote_pub_zdb_id = 'ZDB-PUB-140606-4'
                               where pnote_pub_zdb_id = 'ZDB-PUB-140325-6';

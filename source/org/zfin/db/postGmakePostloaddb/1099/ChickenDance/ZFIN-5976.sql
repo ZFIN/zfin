@@ -28,6 +28,8 @@ delete from zdb_replaced_data where zrepld_old_zdb_id = 'ZDB-ATB-100430-8';
 
 update zdb_replaced_data set zrepld_new_zdb_id = 'ZDB-ATB-090413-1' where zrepld_new_zdb_id = 'ZDB-ATB-100430-8';
 
+update marker set mrkr_comments = 'The antibody recognizes an epitope on skeletal and cardiac tropomyosin. The antibody shows no reaction with denatured protein by immunoblotting. No cross-reactivity has been observed with smooth muscle or non-muscle tropomyosin.' where mrkr_zdb_id = 'ZDB-ATB-090413-1';
+
 delete from zdb_active_data where zactvd_zdb_id = 'ZDB-ATB-100430-8';
 
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values ('ZDB-ATB-100430-8', 'ZDB-ATB-090413-1');
