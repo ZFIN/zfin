@@ -645,13 +645,7 @@ public class ResultService {
             result.setName(sb.toString());
 
             //This needs to be last, it serves as a title for the fish component table below
-            if (xpatex.getFishExperiment().getFish().isWildtypeWithoutReagents()) {
-                result.addAttribute(FISH, FishPresentation.getName(xpatex.getFishExperiment().getFish()));
-            } else {
-                result.addAttribute(FISH, "");
-            }
-
-
+            result.addAttribute(FISH, getFishDisplay(xpatex.getFishExperiment().getFish()));
         }
 
 
@@ -738,7 +732,7 @@ public class ResultService {
                 result.setName(sb.toString());
             }
             //This needs to be last, it serves as a title for the fish component table below
-            result.addAttribute(FISH, "");
+            result.addAttribute(FISH, getFishDisplay(phenotypeExperiment.getFishExperiment().getFish()));
 
         }
 
@@ -889,6 +883,14 @@ public class ResultService {
             sb.append("</ul>");
         }
         return sb.toString();
+    }
+
+    private String getFishDisplay(Fish fish) {
+        if (fish.isWildtypeWithoutReagents()) {
+            return FishPresentation.getName(fish);
+        } else {
+            return FishPresentation.getLink(fish, true);
+        }
     }
 
     private class SupplierLinkTransformer implements Transformer {

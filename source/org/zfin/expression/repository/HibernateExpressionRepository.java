@@ -40,6 +40,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
@@ -66,6 +67,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     private Logger logger = Logger.getLogger(HibernateExpressionRepository.class);
 
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
 
 
     public int getWtExpressionFigureCountForGene(Marker marker) {
@@ -1651,15 +1653,134 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param sequenceTargetingReagent sequenceTargetingReagent
      * @return list of expression results
      */
+    /*public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
+            String sql = "select" +
+                "        expression0_.xpatres_zdb_id as xpatres_1_57_," +
+                "        expression0_.xpatres_expression_found as xpatres_2_57_," +
+                "        expression0_.xpatres_comments as xpatres_3_57_," +
+                "        expression0_.xpatres_xpatex_zdb_id as xpatres_4_57_," +
+                "        expression0_.xpatres_subterm_zdb_id as xpatres_5_57_," +
+                "        expression0_.xpatres_superterm_zdb_id as xpatres_6_57_," +
+                "        expression0_.xpatres_start_stg_zdb_id as xpatres_7_57_," +
+                "        expression0_.xpatres_end_stg_zdb_id as xpatres_8_57_,expression1_.xpatex_gene_zdb_id,expression1_.xpatex_genox_zdb_id" +
+                "    from" +
+                "        expression_result expression0_ cross" +
+                "    join" +
+                "        expression_experiment expression1_ cross" +
+                "    join" +
+                "        fish_experiment fishexperi2_ cross" +
+                "    join" +
+                "        fish fish3_ cross" +
+                "    join" +
+                "        genotype genotype4_ cross" +
+                "    join" +
+                "        clean_expression_fast_search cleanexpfa5_" +
+                "    where" +
+                "        fishexperi2_.genox_zdb_id=expression1_.xpatex_genox_zdb_id" +
+                "        and fish3_.fish_zdb_id=fishexperi2_.genox_fish_zdb_id" +
+                "        and genotype4_.geno_zdb_id=fish3_.fish_genotype_zdb_id" +
+                "        and expression0_.xpatres_xpatex_zdb_id=expression1_.xpatex_zdb_id" +
+                "        and (" +
+                "            expression1_.xpatex_gene_zdb_id like 'ZDB-GENE%'" +
+                "            or expression1_.xpatex_gene_zdb_id like '%RNAG%'" +
+                "        )" +
+                "and genotype4_.geno_is_wildtype='t'" +
+                "        and cleanexpfa5_.cefs_genox_zdb_id=fishexperi2_.genox_zdb_id" +
+                "        and cleanexpfa5_.cefs_mrkr_Zdb_id= :strID" +
+                " union " +
+                                "select" +
+                "        expression0_.xpatres_zdb_id as xpatres_1_57_," +
+                "        expression0_.xpatres_expression_found as xpatres_2_57_," +
+                "        expression0_.xpatres_comments as xpatres_3_57_," +
+                "        expression0_.xpatres_xpatex_zdb_id as xpatres_4_57_," +
+                "        expression0_.xpatres_subterm_zdb_id as xpatres_5_57_," +
+                "        expression0_.xpatres_superterm_zdb_id as xpatres_6_57_," +
+                "        expression0_.xpatres_start_stg_zdb_id as xpatres_7_57_," +
+                "        expression0_.xpatres_end_stg_zdb_id as xpatres_8_57_,expression1_.xpatex_gene_zdb_id,expression1_.xpatex_genox_zdb_id" +
+                "    from" +
+                "        expression_result expression0_ cross" +
+                "    join" +
+                "        expression_experiment expression1_ cross" +
+                "    join" +
+                "        fish_experiment fishexperi2_ cross" +
+                "    join" +
+                "        fish fish3_ cross" +
+                "    join" +
+                "        genotype genotype4_ cross" +
+                "    join" +
+                "        clean_expression_fast_search cleanexpfa5_ cross" +
+                " join" +
+                " genotype_feature genofeat cross" +
+                " join" +
+                " feature_marker_relationship fmrel" +
+                "    where" +
+                "        fishexperi2_.genox_zdb_id=expression1_.xpatex_genox_zdb_id" +
+                "        and fish3_.fish_zdb_id=fishexperi2_.genox_fish_zdb_id" +
+                "        and genotype4_.geno_zdb_id=fish3_.fish_genotype_zdb_id" +
+                " and genotype4_.geno_zdb_id=genofeat.genofeat_geno_zdb_id" +
+                " and genofeat.genofeat_feature_zdb_id=fmrel.fmrel_ftr_zdb_id" +
+                " and fmrel.fmrel_type = 'contains innocuous sequence feature'" +
+                "        and expression0_.xpatres_xpatex_zdb_id=expression1_.xpatex_zdb_id" +
+                "        and (" +
+                "            expression1_.xpatex_gene_zdb_id like 'ZDB-GENE%'" +
+                "            or expression1_.xpatex_gene_zdb_id like '%RNAG%'" +
+                "        )" +
+                "        and cleanexpfa5_.cefs_genox_zdb_id=fishexperi2_.genox_zdb_id" +
+                "        and cleanexpfa5_.cefs_mrkr_Zdb_id = :strID ";
+
+
+        return (List<ExpressionResult>) HibernateUtil.currentSession().createSQLQuery(sql)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        ExpressionResult expressionResults = new ExpressionResult();
+                        expressionResults.setXpatresID(Integer.parseInt(tuple[0].toString()));
+                        expressionResults.setExpressionFound(Boolean.parseBoolean(tuple[1].toString()));
+                        if (tuple[2] != null) {
+                            expressionResults.setComment(tuple[2].toString());
+                        }
+                        expressionResults.setExpressionExperiment(getExpressionExperiment(tuple[3].toString()));
+                        if (tuple[4] != null) {
+                            expressionResults.setSubTerm(ontologyRepository.getTermByZdbID(tuple[4].toString()));
+                        }
+                        if (tuple[5] != null) {
+                            expressionResults.setSuperTerm(ontologyRepository.getTermByZdbID(tuple[5].toString()));
+                        }
+                        expressionResults.setStartStage(anatomyRepository.getStageByID(tuple[6].toString()));
+                        expressionResults.setEndStage(anatomyRepository.getStageByID(tuple[7].toString()));
+
+                        return expressionResults;
+                    }
+                })
+                .setParameter("strID", sequenceTargetingReagent.getZdbID())
+                .list();
+
+
+
+
+
+
+    }
+*/
     public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
+
+       /* String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox, Fish fish, Genotype geno, CleanExpFastSrch cefs " +
+                "        where fishox = xpExp.fishExperiment " +
+                "        and fish = fishox.fish " +
+                "        and geno = fish.genotype " +
+                "        and geno.wildtype = 't' " +
+                "        and xpRslt.expressionExperiment = xpExp " +
+                " and (xpExp.gene.zdbID like 'ZDB-GENE%' or xpExp.gene.zdbID like '%RNAG%')" +
+                " and cefs.fishExperiment=fishox" +
+                " and cefs.gene=:str";*/
 
         String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox, Fish fish, Genotype geno, CleanExpFastSrch cefs " +
                 "        where fishox = xpExp.fishExperiment " +
                 "        and fish = fishox.fish " +
                 "        and geno = fish.genotype " +
-                "        and geno.wildtype = 't' " +
+
                 "        and xpRslt.expressionExperiment = xpExp " +
                 " and (xpExp.gene.zdbID like 'ZDB-GENE%' or xpExp.gene.zdbID like '%RNAG%')" +
                 " and cefs.fishExperiment=fishox" +
@@ -1675,7 +1796,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return expressionResults;
     }
 
-
     public List<String> getExpressionFigureIDsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
         String sql = " select distinct xpatfig_fig_zdb_id  " +
                 "   from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, clean_expression_fast_search  " +
@@ -1685,9 +1805,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "    and xpatex_genox_zdb_id = genox_zdb_id " +
                 "    and genox_fish_zdb_id = fish_zdb_id " +
                 "    and fish_genotype_zdb_id = geno_zdb_id " +
-                "    and geno_is_wildtype = 't' " +
+
                 "    and cefs_genox_zdb_id = genox_zdb_id " +
-                "    and cefs_mrkr_zdb_id = :strID ";
+                "    and cefs_mrkr_zdb_id = :strID "
+               ;
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
@@ -1705,7 +1826,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
                 "   and genox_fish_zdb_id = fish_zdb_id " +
                 "   and fish_genotype_zdb_id = geno_zdb_id " +
-                "   and geno_is_wildtype = 't' " +
+
                 "   and cefs_genox_zdb_id = genox_zdb_id " +
                 "   and cefs_mrkr_zdb_id = :strID ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
@@ -1725,7 +1846,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and cefs_genox_zdb_id = genox_zdb_id " +
                 "   and genox_fish_zdb_id = fish_zdb_id " +
                 "   and fish_genotype_zdb_id = geno_zdb_id " +
-                "   and geno_is_wildtype = 't' " +
+         
                 "   and cefs_mrkr_zdb_id = :strID ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);

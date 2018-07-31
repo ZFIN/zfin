@@ -81,7 +81,7 @@ public class ConditionAddPresenter implements HandlesError {
 
     public void populateData() {
         int elementIndex = 0;
-
+String onlyCondition="";
         copyConditionsCheckBoxList.clear();
         if (dtoList.isEmpty()) {
             view.emptyDataTable();
@@ -109,10 +109,18 @@ public class ConditionAddPresenter implements HandlesError {
                 copyConditionsCheckBoxList.add(checkBox);
                 view.addCopyCheckBox(checkBox, elementIndex);
                 DeleteImage deleteImage = new DeleteImage("Delete Experiment Condition " + conditionDTO.getZdbID());
-                deleteImage.addClickHandler(new DeleteConditionClickHandler(conditionDTO, this));
-                view.addDeleteButton(deleteImage, elementIndex);
-                elementIndex++;
                 lastCondition = conditionDTO;
+                if (dto.isUsed()&&dto.conditionDTOList.size()==1&&dto.conditionDTOList.contains(lastCondition)){
+                 
+                     onlyCondition="true";
+                }
+                else{
+                     onlyCondition="false";
+                }
+                deleteImage.addClickHandler(new DeleteConditionClickHandler(conditionDTO, this,onlyCondition));
+                view.addDeleteButton(deleteImage, elementIndex,dto,lastCondition);
+                elementIndex++;
+//                lastCondition = conditionDTO;
             }
         }
     }
@@ -328,16 +336,25 @@ public class ConditionAddPresenter implements HandlesError {
 
         private ConditionDTO conditionDTO;
         private ConditionAddPresenter presenter;
+        private String onlyCond;
+        private String message="";
 
 
-        public DeleteConditionClickHandler(ConditionDTO conditionDTO, ConditionAddPresenter presenter) {
+        public DeleteConditionClickHandler(ConditionDTO conditionDTO, ConditionAddPresenter presenter,String onlyCond) {
             this.conditionDTO = conditionDTO;
             this.presenter = presenter;
+            this.onlyCond=onlyCond;
         }
 
         @Override
         public void onClick(ClickEvent clickEvent) {
-            String message = "Are you sure you want to delete this condition?";
+
+if (onlyCond=="true"){
+     message="Last condition for this experiment. Are you sure you want to delete this condition";
+}
+else {
+    message = "Are you sure you want to delete this condition?";
+}
             if (!Window.confirm(message))
                 return;
             view.loadingImage.setVisible(true);

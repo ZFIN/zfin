@@ -10,4 +10,11 @@
    <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/PUB-468.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/PUB-469.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/PUB-471.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/ZFIN-5976.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/CUR-816.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/ZFIN-5966.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/ZFIN-5987.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/CUR-825.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/ZFIN-5991.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/CUR-826.sql" />
 </databaseChangeLog>

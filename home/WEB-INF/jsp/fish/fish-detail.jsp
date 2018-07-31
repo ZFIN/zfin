@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<jsp:useBean id="formBean" class="org.zfin.fish.presentation.FishBean" scope="request"/>
+<jsp:useBean id="fish" class="org.zfin.mutant.Fish" scope="request"/>
 
 
     <zfin2:dataManager zdbID="${fish.fishID}"/>
@@ -45,11 +45,11 @@
 
         </td>
     </tr>
+
+    <c:if test="${!empty fish.suppliers}">
+        <zfin2:genotypeSuppliers genotype="${fish.genotype}" />
+    </c:if>
 </table>
-</p>
-
-
-</p>
 
 <c:if test="${!fishIsWildtypeWithoutReagents}">
     <div class="summary">

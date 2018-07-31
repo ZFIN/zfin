@@ -576,11 +576,13 @@ public class ExpressionService {
             return null;
         }
 
+        System.out.println(expressionResults.size());
         // a map of zdbIDs of expressed genes as keys and display objects as values
         Map<String, ExpressionDisplay> map = new HashMap<>();
 
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
+            System.out.println(expressedGene.getAbbreviation());
             if (expressedGene != null) {
                 FishExperiment fishox = xpResult.getExpressionExperiment().getFishExperiment();
                 Experiment exp = fishox.getExperiment();
@@ -593,6 +595,9 @@ public class ExpressionService {
 
                 if (showCondition && exp.isChemical()) {
                     key += "chemical";
+                }
+                if (CollectionUtils.isEmpty(xpResult.getFigures())){
+                    return null;
                 }
 
                 Set<Figure> figs = xpResult.getFigures();

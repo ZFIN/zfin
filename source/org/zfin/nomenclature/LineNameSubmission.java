@@ -5,6 +5,7 @@ import java.util.List;
 public class LineNameSubmission extends NameSubmission {
 
     private List<LineInfo> lineDetails;
+    private String keepPrivate;
 
     public List<LineInfo> getLineDetails() {
         return lineDetails;
@@ -14,8 +15,17 @@ public class LineNameSubmission extends NameSubmission {
         this.lineDetails = lineDetails;
     }
 
+    public String getKeepPrivate() {
+        return keepPrivate;
+    }
+
+    public void setKeepPrivate(String keepPrivate) {
+        this.keepPrivate = keepPrivate;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString());
+        sb.append("Add data: ").append(keepPrivate).append("\n\n");
         for (int i = 0; i < lineDetails.size(); i++) {
             LineInfo info = lineDetails.get(i);
             sb.append(i + 1).append(". Genetic Background: ").append(info.getBackground()).append("\n")
@@ -29,5 +39,10 @@ public class LineNameSubmission extends NameSubmission {
                     .append("\n");
         }
         return sb.toString();
+    }
+
+    @Override
+    public String getSubjectLine() {
+        return "Mutant Submission: " + (lineDetails.size() > 0 ? lineDetails.get(0).getDesignation() : "");
     }
 }

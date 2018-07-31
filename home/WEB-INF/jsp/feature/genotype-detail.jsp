@@ -92,73 +92,8 @@
         </tr>
     </c:if>
 
-    <tr>
-        <th>
-            <c:choose>
-                <c:when test="${fn:length(formBean.genotype.suppliers) ne null && fn:length(formBean.genotype.suppliers) > 1}">
-                    Current&nbsp;Sources:
-                </c:when>
-                <c:otherwise>
-                    Current&nbsp;Source:
-                </c:otherwise>
-            </c:choose>
-        </th>
-        <td>
-            <c:choose>
-                <c:when test="${formBean.genotype.suppliers ne null && fn:length(formBean.genotype.suppliers) > 0}">
-                    <c:forEach var="supplier" items="${formBean.genotype.suppliers}" varStatus="status">
-                        <c:choose>
-                            <c:when test="${formBean.genotype.extinct}">
-                                ${supplier.organization.name}&nbsp;&nbsp;<font size="3" color="red">Extinct</font><img src="/images/warning-noborder.gif" border="0" alt="extinct" width="20" align="top" height="20">&nbsp;
-                            </c:when>
-                            <c:otherwise>
-                                <a href="/action/profile/view/${supplier.organization.zdbID}"
-                                   id="${supplier.organization.zdbID}">
-                                        ${supplier.organization.name}</a>
-                                <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>
-                                <c:choose>
-                                    <c:when test="${supplier.moensLab}">&nbsp;
-                                        <c:forEach var="affectedGene"
-                                                   items="${formBean.fishStatistics.affectedMarkers}"
-                                                   varStatus="loop">
-                                            (<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${affectedGene.abbreviation}"><font size="-1">request this mutant</font></a>)
-                                            <c:if test="${!loop.last}">,&nbsp;
-                                            </c:if>
-                                        </c:forEach>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <c:if test="${supplier.solnicaLab}">&nbsp;
-                                            <c:forEach var="affectedGene"
-                                                       items="${formBean.fishStatistics.affectedMarkers}"
-                                                       varStatus="loop">
-                                                (<a href="http://devbio.wustl.edu/solnicakrezellab/${affectedGene.abbreviation}.htm"><font size="-1">request this mutant</font></a>)
-                                                <c:if test="${!loop.last}">,&nbsp;</c:if>
-                                            </c:forEach>
-                                        </c:if>
-                                        <zfin2:orderThis accessionNumber="${formBean.genotype.zdbID}"
-                                                         organization="${supplier.organization}"/>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:if test="${!status.last}"><br/></c:if>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-                    <c:choose>
-                        <c:when test="${formBean.genotype.extinct}">
-                            <font size="3" color="red">extinct</font> <img src="/images/warning-noborder.gif"
-                                                                           alt="extinct" width="20" align="top"
-                                                                           height="20">
-                        </c:when>
-                        <c:otherwise>
-                            No data available
-                        </c:otherwise>
-                    </c:choose>
-                </c:otherwise>
-            </c:choose>
-        </td>
-    </tr>
+    <zfin2:genotypeSuppliers genotype="${formBean.genotype}" />
+
 </table>
 
 

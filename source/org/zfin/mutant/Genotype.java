@@ -5,6 +5,7 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.fish.FishAnnotation;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.marker.Marker;
 import org.zfin.profile.GenotypeSupplier;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -263,6 +264,9 @@ public class Genotype implements Comparable, EntityZdbID {
         externalNotes.add(note);
     }
 
+    public Collection<Marker> getAffectedGenes() {
+        return GenotypeService.getAffectedMarker(this);
+    }
 
     /* Only putting TU in for now, since it's the only wildtype that's specified by name
      * rather than generically looking at the isWildtype boolean */

@@ -1873,6 +1873,18 @@
                     cacheImpl="SortedMapBackedCache"
             />
 
+            <entity name="fish_supplier"
+                    query="select lab.zdb_id as xref, lab.name as source, idsup_data_zdb_id as fish_zdb_id
+                          from int_data_supplier
+                          inner join lab on idsup_supplier_zdb_id = lab.zdb_id
+                          union
+                          select company.zdb_id as xref, company.name as source, idsup_data_zdb_id
+                          from int_data_supplier
+                          inner join company on idsup_supplier_zdb_id = company.zdb_id;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="fish_zdb_id=fish.id"
+            />
+
         </entity>
 
         <entity name="construct"

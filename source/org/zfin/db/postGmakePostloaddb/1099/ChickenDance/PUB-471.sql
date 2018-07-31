@@ -21,6 +21,8 @@ update publication_file
                                 set pf_pub_zdb_id = 'ZDB-PUB-961219-23'
                               where pf_pub_zdb_id = 'ZDB-PUB-171210-4';
 
+delete from publication_file where pf_original_file_name = 'ZDB-PUB-171210-4.pdf';
+
 delete from pub_tracking_history where pth_pub_zdb_id = 'ZDB-PUB-171210-4';
 
 delete from withdrawn_data where wd_old_zdb_id = 'ZDB-PUB-171210-4';

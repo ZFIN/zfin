@@ -1,12 +1,12 @@
 <jsp:useBean id="submission" scope="request" type="org.zfin.nomenclature.NameSubmission"/>
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
+<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
-<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
+<%@ attribute name="headerText" required="true" %>
+<%@ attribute name="keepPrivateOption" fragment="true" required="false" %>
 
 <div class="container-fluid">
-    <h1><tiles:getAsString name="headerText" /></h1>
+    <h1>${headerText}</h1>
 
     <c:choose>
         <c:when test="${sent}">
@@ -33,7 +33,7 @@
         <dd>${submission.laboratory}</dd>
     </dl>
 
-    <tiles:insertAttribute name="submission-submit" />
+    <jsp:doBody />
 
     <h3>Publication Status</h3>
     <dl>
@@ -43,10 +43,8 @@
             <dt>Citations</dt>
             <dd>${submission.citations}</dd>
         </c:if>
-        <c:if test="${!empty submission.reserveType}">
-            <dt>Reserved</dt>
-            <dd>${submission.reserveType}</dd>
-        </c:if>
+
+        <jsp:invoke fragment="keepPrivateOption" />
     </dl>
 
     <h3>Additional Comments</h3>

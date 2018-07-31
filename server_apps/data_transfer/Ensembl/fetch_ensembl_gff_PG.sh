@@ -94,16 +94,17 @@ if [[ ( "${post}" != "${prior}" ) && ${geterr} -eq 0  ]] ; then
 	./gtf2gff3.pl|\
 	nawk -v OFS='|' '/^[^#]/{$2="Ensembl_"$2;att=substr(substr($9,1,length($9)-1),4);\
 		for(i=0;i<4;i++){if(match(att,/;[^=]*=/)){sub(/;[^=]*=/,"|",att)}\
-			else{att=att"|"} }$9=att;print}' > $gffdir/drerio_ensembl.${ver}.unl
+			else{att=att"|"} }$9=att;print}' > $gffdir/drerio_ensembl_pg.${ver}.unl
+	sed -i 's/.$//' $gffdir/drerio_ensembl_pg.${ver}.unl
 
 	# ensure accessible
-	chmod g+w $gffdir/drerio_ensembl.${ver}.unl
+	chmod g+w $gffdir/drerio_ensembl_pg.${ver}.unl
 
 	# symlink as current version
-	unlink  $gffdir/drerio_ensembl.unl
-	ln -s  $gffdir/drerio_ensembl.${ver}.unl $gffdir/drerio_ensembl.unl
+	unlink  $gffdir/drerio_ensembl_pg.unl
+	ln -s  $gffdir/drerio_ensembl_pg.${ver}.unl $gffdir/drerio_ensembl_pg.unl
 
-	echo "$gffdir/drerio_ensembl.${ver}.unl -->  $gffdir/drerio_ensembl.unl"
+	echo "$gffdir/drerio_ensembl_pg.${ver}.unl -->  $gffdir/drerio_ensembl_pg.unl"
 fi
 
 
