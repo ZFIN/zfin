@@ -115,7 +115,7 @@ public class GenotypeDetailController {
 
             List<GenotypeFishResult> allFish = new ArrayList<>();
 
-                    List<GenotypeFishResult> fishSummaryList = FishService.getFishExperiementSummaryForGenotype(genotype);
+                    List<GenotypeFishResult> fishSummaryList = FishService.getFishExperimentSummaryForGenotype(genotype);
                     for (GenotypeFishResult fishSummary : fishSummaryList) {
                         if (fishSummary.getFish().getStrList().isEmpty()) {
                             fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));

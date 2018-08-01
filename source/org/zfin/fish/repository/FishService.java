@@ -535,7 +535,7 @@ public class FishService {
         return figureEntities;
     }
 
-    public static List<GenotypeFishResult> getFishExperiementSummaryForGenotype(Genotype genotype) {
+    public static List<GenotypeFishResult> getFishExperimentSummaryForGenotype(Genotype genotype) {
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
         List<FishExperiment> fishExperimentList = mutantRepository.getFishExperiment(genotype);
         List<GenotypeFishResult> fishGenotypePhenotypeStatisticsList = createResult(fishExperimentList);

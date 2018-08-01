@@ -145,7 +145,7 @@ public class ConditionAddView extends AbstractViewComposite {
 
             dataTable.setWidget(row, 3, deleteImage);
 
-       
+
 
     }
 

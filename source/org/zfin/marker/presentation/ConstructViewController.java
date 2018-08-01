@@ -19,10 +19,9 @@ import org.zfin.mutant.GenotypeService;
 import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.mutant.repository.MutantRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/marker")
@@ -112,20 +111,37 @@ public class ConstructViewController {
             List<Feature> features = featureRepository.getFeaturesByConstruct(construct);
             markerBean.setTransgenics(features);
 
-            List<GenotypeFishResult> allFish = new ArrayList<>();
+            List<GenotypeFishResult> allFish = new ArrayList<>(new LinkedHashSet<>());
+            allFish.clear();
             for (Feature feature : features) {
+                
                 List<Genotype> genotypes = mutantRepository.getGenotypesByFeature(feature);
+
                 for (Genotype genotype : genotypes) {
-                    List<GenotypeFishResult> fishSummaryList = FishService.getFishExperiementSummaryForGenotype(genotype);
+                    System.out.println(genotype.getAbbreviation());
+                    List<GenotypeFishResult> fishSummaryList = FishService.getFishExperimentSummaryForGenotype(genotype);
                     for (GenotypeFishResult fishSummary : fishSummaryList) {
                         if (fishSummary.getFish().getStrList().isEmpty()) {
                             fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));
+
+                            }
+                        if (!allFish.contains(fishSummary)) {
+
                             allFish.add(fishSummary);
+
 
                         }
                     }
                 }
             }
+            HashSet hs = new HashSet();
+            hs.addAll(allFish);
+            allFish.clear();
+            allFish.addAll(hs);
+            allFish.stream().distinct().collect(Collectors.toList());;
+            Collections.sort(allFish);
+
+
             markerBean.setFish(allFish);
         }
 
