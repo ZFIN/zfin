@@ -4,28 +4,28 @@
 date;
 setenv INSTANCE <!--|INSTANCE|-->;
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres_PG.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres_PG.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres.txt
 
 endif
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres_PG.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres_PG.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt
 
 endif
 
-if ( -e <!--|SOURCEROOT|-->/reports/tests/phenotypeMartUnitTestsPostgres_PG.txt) then
- /bin/rm <!--|SOURCEROOT|-->/reports/tests/phenotypeMartUnitTestsPostgres_PG.txt
+if ( -e <!--|SOURCEROOT|-->/reports/tests/phenotypeMartUnitTestsPostgres.txt) then
+ /bin/rm <!--|SOURCEROOT|-->/reports/tests/phenotypeMartUnitTestsPostgres.txt
 endif
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartUnitTestsPostgres_PG.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartUnitTestsPostgres_PG.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartUnitTestsPostgres.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartUnitTestsPostgres.txt
 endif
 
 
 echo "done with file delete" ;
 # build up the warehouse
-<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMart_PG.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres_PG.txt
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres.txt
 
 if ($? != 0) then
  echo "regen phenotype mart (the building tables, not the public tables) failed on";
@@ -38,8 +38,8 @@ date;
 cd <!--|SOURCEROOT|-->
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
-/private/bin/ant run-phenotypemart-unittests >&! reports/tests/phenotypeMartUnitTests_PG.txt
-cp reports/tests/phenotypeMartUnitTests_PG.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/.
+/private/bin/ant run-phenotypemart-unittests >&! reports/tests/phenotypeMartUnitTests.txt
+cp reports/tests/phenotypeMartUnitTests.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/.
 
 if ($? != 0) then
    echo "regen phenotype mart (the building tables, not the public tables) failed on unit tests";  
@@ -52,7 +52,7 @@ echo "done with phenotype mart building public" ;
 
 # move the current table data to backup, move the new data to current.
 
-${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartRegen_PG.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres_PG.txt
+${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt
 
 if ($? != 0) then
    echo "refresh phenotype mart (the public tables) failed and was rolled back";
@@ -78,7 +78,7 @@ echo "done with regen_anatomy_counts()";
 
 
 echo "start regen_pheno_term_regen()";
-${PGBINDIR}/psql $DBNAME < $TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen_PG.sql
+${PGBINDIR}/psql $DBNAME < $TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql
 date;
 echo "done with pheno_term_regen()";
 

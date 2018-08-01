@@ -126,7 +126,7 @@ $dbname = "<!--|DB_NAME|-->";
 
 print "\nRunning zfishbook pre-process script ...\n\n";
 
-system("preprocess_zfishbook_PG.pl");
+system("preprocess_zfishbook.pl");
 
 open (ERRREPORT, "report") || die "Cannot open report : $!\n";
 

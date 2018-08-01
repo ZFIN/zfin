@@ -10,7 +10,7 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/MEOW";
 print "beginning in ". `pwd` ."\n";
 system("rm -f ./*.txt");
 print "running MEOW_dump.sql on <!--|DB_NAME|-->\n";
-system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < MEOW_dump_PG.sql");
+system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < MEOW_dump.sql");
 system("scp ./*.txt <!--|FTP_ROOT|-->/pub/transfer/MEOW/");
 
 exit;

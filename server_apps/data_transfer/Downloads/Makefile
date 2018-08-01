@@ -22,9 +22,9 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads
 
 SUBDIRS = GFF3 intermineData
 
-GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql patoNumbers.sql FBcase8787.pl patoNumbers.pl DownloadFiles_PG.sql generateStagedAnatomy_PG.pl patoNumbers_PG.pl patoNumbers_PG.sql DownloadFiles_PG.pl 
+GENERICS = generateStagedAnatomy.pl DownloadFiles.pl DownloadFiles.sql patoNumbers.sql FBcase8787.pl patoNumbers.pl
 
-STATICS = build.xml set_download_timestamp.sql dataCommonsIdDump.sql dataCommonsIdDump_PG.sql 
+STATICS = build.xml set_download_timestamp.sql dataCommonsIdDump.sql
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.

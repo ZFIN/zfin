@@ -1,6 +1,6 @@
 #!/private/bin/perl -w
 #
-# reportPubsForGeneAndFeature_PG.pl
+# reportPubsForGeneAndFeature.pl
 #
 # This script executes the SQLs to get all the publications at ZFIN for genes and features.
 

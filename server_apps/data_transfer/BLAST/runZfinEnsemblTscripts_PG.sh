@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-../runSqlFiles.groovy getEnsemblTscripts_PG.sql
+../runSqlFiles.groovy getEnsemblTscripts.sql

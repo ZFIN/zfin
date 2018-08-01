@@ -149,7 +149,7 @@ while(<FASTA>) {
 
 close(REFPR);
 
-ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f referenceProteome_PG.sql");
+ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f referenceProteome.sql");
 
 exit;
 

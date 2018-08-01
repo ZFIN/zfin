@@ -21,13 +21,13 @@ echo ""
 
 echo "running fetch_ensdarg.sql vs ensembldb.ensembl.org  ->  ensdarG.unl"
 
-/bin/cat fetch_ensdarG_PG.mysql | \
+/bin/cat fetch_ensdarG.mysql | \
  /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur|\
  /bin/sed 's/\(ZDB-GENE-[0-9\-]*\).*\(ENSDARG[0-9]*\).*/\1|\2/g'|\
  /usr/bin/tr '\011' \| >  ensdarG.unl;
 
 echo "running fetch_ensdarT_dbacc.mysql vs ensembldb.ensembl.org  -> ensdarT_dbacc.unl"
-/bin/cat fetch_ensdarT_dbacc_PG.mysql | \
+/bin/cat fetch_ensdarT_dbacc.mysql | \
 /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur |\
 /usr/bin/nawk '{print $1 "|" $2 }' > ensdarT_dbacc.unl;
 

@@ -1218,7 +1218,7 @@
     </script>
 
     <c:if test="${formBean.markerToDelete.markerType.name ne 'ATB'}">
-        <form id="mergeTheGenes" action="/cgi-bin/merge_markers_PG.pl">
+        <form id="mergeTheGenes" action="/cgi-bin/merge_markers.pl">
             <input type="hidden" id="zdbIDToDelete" name="OID" value="${formBean.zdbIDToDelete}">
             <input type="hidden" id="merge_oid" name="merge_oid" value="none">
             <input type="hidden" id="intoMarkerAbbrev" name="intoMarkerAbbrev" value="none">

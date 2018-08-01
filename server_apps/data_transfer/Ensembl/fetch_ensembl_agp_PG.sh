@@ -22,7 +22,7 @@ echo `pwd`
 echo ""
 echo "get DNA clones that are in ZFIN into: zfin_DNA_clone.txt"
 
-${PGBINDIR}/psql $DBNAME < unload_zfin_DNA_clone_PG.sql
+${PGBINDIR}/psql $DBNAME < unload_zfin_DNA_clone.sql
 
 echo "convert agp to gff3 and augment with zfin clone data as: "
 echo "${dest}/E_full_zfin_clone.gff3"

@@ -17,7 +17,7 @@ runScriptFiles.setQueryFiles(
         "zfin_tginsertion_gff3.sql",
         "zfin_zmp_gff3.sql",
         "E_drerio_transcript_gff3.sql",
-        "E_zfin_ensembl_gene_PG.sql",
+        "E_zfin_ensembl_gene.sql",
         "E_zfin_gene_alias_scattered_gff3.sql",
         "E_expression_gff3.sql",
         "E_phenotype_gff3.sql",

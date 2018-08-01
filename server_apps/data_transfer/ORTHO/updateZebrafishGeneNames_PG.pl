@@ -173,7 +173,7 @@ foreach $newName (keys %newGeneNames) {
 close(UPDATELIST);
 
 if ($ctProblem == 0) {
-    $cmd = "psql -d <!--|DB_NAME|--> -a -f updateZebrafishGeneNames_PG.sql >updateZebrafishGeneNameSQLlog1";
+    $cmd = "psql -d <!--|DB_NAME|--> -a -f updateZebrafishGeneNames.sql >updateZebrafishGeneNameSQLlog1";
     system($cmd);
 
     system("/bin/cat updateZebrafishGeneNameSQLlog2 >> updateZebrafishGeneNameSQLlog1");

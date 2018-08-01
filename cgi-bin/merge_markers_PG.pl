@@ -9,7 +9,7 @@ use HTTP::Request::Common qw/GET/;
 use LWP::UserAgent;
 use URI::Escape qw/uri_escape/;
 
-## merge_markers_PG.pl is called by merge-marker.jsp
+## merge_markers.pl is called by merge-marker.jsp
 
 my $data = new CGI();
 

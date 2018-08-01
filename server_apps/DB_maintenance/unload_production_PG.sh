@@ -3,7 +3,7 @@
 set pth=/research/zunloads/databases/${DBNAME}
 set dirname=`date +"%Y.%m.%d.1"`
 
-${SOURCEROOT}/server_apps/DB_maintenance/set_unload_timestamp_PG.sh
+${SOURCEROOT}/server_apps/DB_maintenance/set_unload_timestamp.sh
 
 # increment until we get name which has not been taken
 while ( -d $pth/$dirname )

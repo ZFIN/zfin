@@ -48,7 +48,7 @@ foreach $id (keys %identifiers) {
 }
 close IDS;
 
-ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile_PG.sql");
+ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile.sql");
 
 ZFINPerlModules->doSystemCommand("./goparser.pl");
 

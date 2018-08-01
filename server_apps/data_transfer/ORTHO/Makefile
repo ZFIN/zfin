@@ -19,8 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/ORTHO
 
-GENERICS = runOrthology.pl loadAndUpdateNCBIOrthologs.sql parseOrthoFile.pl downloadFiles.pl reportOrthoNameChanges.pl updateZebrafishGeneNames.pl \
-           loadAndUpdateNCBIOrthologs_PG.sql reportOrthoNameChanges_PG.pl runOrthology_PG.pl updateZebrafishGeneNames_PG.pl updateZebrafishGeneNames_PG.sql parseOrthoFile_PG.pl
+GENERICS = runOrthology.pl loadAndUpdateNCBIOrthologs.sql parseOrthoFile.pl downloadFiles.pl reportOrthoNameChanges.pl updateZebrafishGeneNames.pl
 STATICS =  updateZebrafishGeneNames.sql compareNcbiMgiOmim.pl
 
 

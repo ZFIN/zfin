@@ -136,8 +136,8 @@ sub downloadFiles($$) {
 #
 # Now, get the subroutines for handling each type of data.
 
-require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullEstsFromZirc_PG.pl");
-require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullGenoFromResourceCenter_PG.pl");
+require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullEstsFromZirc.pl");
+require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullGenoFromResourceCenter.pl");
 #require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullAtbFromZirc.pl");
 
 #----------------------------------------------------------------------
@@ -196,7 +196,7 @@ $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $passwor
 $dbh->commit();
 $dbh->disconnect();
 
-system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks_PG.sh");
+system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks.sh");
 #&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
 
 exit 0;

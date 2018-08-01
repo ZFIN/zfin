@@ -221,11 +221,11 @@ $numMrkrProcessBefore = countData($sql);
 #--------------- Delete records from last SWISS-PROT loading-----
 
 ##system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_addbackattr.sql  >out 2>addBackAttributionReport.txt");
-system("psql -d <!--|DB_NAME|--> -a -f sp_addbackattr_PG.sql >addBackAttributionReport.txt");
+system("psql -d <!--|DB_NAME|--> -a -f sp_addbackattr.sql >addBackAttributionReport.txt");
 
 print "\n delete records source from last SWISS-PROT loading.\n";
 ##system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete.sql >out 2>deletereport.txt");
-system("psql -d <!--|DB_NAME|--> -a -f sp_delete_PG.sql >deletereport.txt");                  
+system("psql -d <!--|DB_NAME|--> -a -f sp_delete.sql >deletereport.txt");
 
 # good records for loading
 # concatenate okfile ok2file
@@ -235,7 +235,7 @@ system("cat ok2file >> okfile");
 
 # ----------- Parse the SWISS-PROT file ----------------
 print "\n sp_parser.pl okfile \n";
-system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_parser_PG.pl okfile");
+system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_parser.pl okfile");
 
 $count = 0;
 $retry = 1;
@@ -253,7 +253,7 @@ while( !( -e "dr_dblink.unl" &&
       $count = 0;
       $retry = 0;
       print "retry sp_parser.pl\n";
-      system("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_parser_PG.pl okfile");
+      system("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_parser.pl okfile");
     }
     else
     {
@@ -267,7 +267,7 @@ system("ls *.unl");
 
 # ------------ Parse spkw2go ---------------
 print "\nsptogo.pl spkw2go\n";
-system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sptogo_PG.pl spkw2go");
+system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sptogo.pl spkw2go");
 $count = 0;
 $retry = 1;
 # wait till parsing is finished
@@ -281,7 +281,7 @@ while( !( -e "sp_mrkrgoterm.unl")) {
       $count = 0;
       $retry = 0;
       print "retry sptogo.pl\n";
-      system("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sptogo_PG.pl spkw2go");
+      system("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sptogo.pl spkw2go");
     }
     else
     {
@@ -293,7 +293,7 @@ while( !( -e "sp_mrkrgoterm.unl")) {
 
 # ------------ Parse interpro2go ---------------
 print "\niptogo.pl interpro2go\n";
-system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/iptogo_PG.pl interpro2go");
+system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/iptogo.pl interpro2go");
 $count = 0;
 $retry = 1;
 # wait till parsing is finished
@@ -307,7 +307,7 @@ while( !( -e "ip_mrkrgoterm.unl")) {
       $count = 0;
       $retry = 0;
       print "retry iptogo.pl\n";
-      system("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/iptogo_PG.pl interpro2go");
+      system("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/iptogo.pl interpro2go");
     }
     else
     {
@@ -321,7 +321,7 @@ while( !( -e "ip_mrkrgoterm.unl")) {
 # ------------ Parse ec2go ---------------
 
 print "\nectogo.pl ec2go\n";
-system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/ectogo_PG.pl ec2go");
+system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/ectogo.pl ec2go");
 $count = 0;
 $retry = 1;
 # wait till parsing is finished
@@ -335,7 +335,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
       $count = 0;
       $retry = 0;
       print "retry ectogo.pl\n";
-      system("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/ectogo_PG.pl ec2go");
+      system("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/ectogo.pl ec2go");
     }
     else
     {
@@ -349,7 +349,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 # ------------ Loading ---------------------
 print "\nloading...\n";
 ##system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load.sql >out 2> report.txt");
-system("psql -d <!--|DB_NAME|--> -a -f sp_load_PG.sql > report.txt");
+system("psql -d <!--|DB_NAME|--> -a -f sp_load.sql > report.txt");
 
 #--------------------------- record counts after loading finishes ----------------------------
 
@@ -589,7 +589,7 @@ $subject = "Auto from $dbname: " . "UniProt load log";
 ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","report.txt");
 
 print "\n create_file_for_swiss_prot.pl\n";
-system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/create_file_for_swiss_prot_PG.pl");
+system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/create_file_for_swiss_prot.pl");
 
 exit;
 

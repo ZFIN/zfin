@@ -184,8 +184,9 @@ task setup {
     }
     Map filteredMap = new HashMap()
     project.ext.ttNameMap.each { name, value ->
-        if (translateVariableSet.contains(name))
+        if (translateVariableSet.contains(name)) {
             filteredMap.put(name, value)
+        }
     }
     project.ext.ttNameMap = filteredMap
     //println filteredMap.size()
@@ -303,10 +304,8 @@ project('cgi-bin') {
 task deployPerlFiles(type: Copy) {
     description 'Deploy perl files into TARGETROOT'
     group 'ZFIN Deployment'
-    doLast{
-    String file = projectDir;
-     file =+ '/server_apps/ZFINPerlModules_PG.pm'
-      println file
+    doLast {
+        String file = projectDir + '/server_apps/ZFINPerlModules.pm'
         from(file) {
             ttNameMap.each { name, value ->
                 if (value != null)
@@ -314,17 +313,16 @@ task deployPerlFiles(type: Copy) {
             }
         }
         into(targetroot + '/server_apps/')
-	}
-
+    }
 }
 
 task deployPackageFiles(type: Copy, dependsOn: deployPerlFiles) {
     description 'Deploy package.json into TARGETROOT'
     group 'ZFIN Deployment'
     String packageFile = 'package.json'
-    doLast{
-    from(packageFile)
-    into(targetroot)
+    doLast {
+        from(packageFile)
+        into(targetroot)
     }
 }
 
@@ -391,12 +389,12 @@ task createSchemaSpy() {
 
 class ZfinTargetCopy extends Copy {
 
-    String projectName;
-    String pName;
-    Map ttMap;
-    String target;
+    String projectName
+    String pName
+    Map ttMap
+    String target
 
-    public ZfinTargetCopy() {
+    ZfinTargetCopy() {
         projectName = project.path
         pName = projectName.replace(":", "/")
         description 'Deploy ' + pName + ' to TARGETROOT'

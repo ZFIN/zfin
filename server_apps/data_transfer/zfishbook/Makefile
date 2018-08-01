@@ -19,8 +19,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/zfishbook
 
-GENERICS = zfishbook.pl preprocess_zfishbook.pl zfishbook.sh zfishbook_PG.pl preprocess_zfishbook_PG.pl zfishbook_PG.sh             
-STATICS = loadZfishbookData.sql cleanupGBTfeatureNotes.sql loadZfishbookData_PG.sql cleanupGBTfeatureNotes_PG.sql README
+GENERICS = zfishbook.pl preprocess_zfishbook.pl zfishbook.sh
+STATICS = loadZfishbookData.sql cleanupGBTfeatureNotes.sql README
 
 # Define targets that require special handling.
 
@@ -47,6 +47,3 @@ $(HTTP_DATA_TRANSFER_DIR) :
 
 run :
 	$(TARGETDIR)/zfishbook.pl
-
-run_PG :
-	$(TARGETDIR)/zfishbook_PG.pl

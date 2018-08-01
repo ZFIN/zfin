@@ -12,14 +12,14 @@ set cur=`/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`
 # what is being used as the most current release
 echo "Using Ensembl release: $cur"
 
-/bin/cat fetch_ensdarT_dbacc_PG.mysql | \
+/bin/cat fetch_ensdarT_dbacc.mysql | \
 /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur |\
 /usr/bin/nawk '{print $1 "|" $2 "|"}' >! ensdarT_dbacc.unl;
 
 
 if ($1 == "commit") then
 	echo "*** COMMITING load_ensdarT_dbacc.sql <!--|DB_NAME|--> ***"
-	cat load_ensdarT_dbacc_PG.sql commit_PG.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
+	cat load_ensdarT_dbacc.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
 	# incase log is not there
 	touch fetch_ensembl.log 
 	echo "Using Ensembl release: $cur   `date`" >> fetch_ensembl.log
@@ -28,5 +28,5 @@ else
 	echo "*** Just Testing load_ensdarT_dbacc.sql into <!--|DB_NAME|--> .***  "
 	echo "To load use:  gmake run_transcript_commit"
 	echo ""
-	cat load_ensdarT_dbacc_PG.sql rollback_PG.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
+	cat load_ensdarT_dbacc.sql rollback.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
 endif

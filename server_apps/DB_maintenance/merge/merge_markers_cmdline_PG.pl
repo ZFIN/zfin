@@ -3,10 +3,10 @@
 use strict;
 use DBI;
 
-## merge_markers_cmdline_PG.pl Marker_ZDB_ID1 Marker_ZDB_ID2
+## merge_markers_cmdline.pl Marker_ZDB_ID1 Marker_ZDB_ID2
 
 ## check commandline parameters
-die "Usage: merge_markers_cmdline_PG.pl Marker_ZDB_ID1 Marker_ZDB_ID2\n" if @ARGV != 2;
+die "Usage: merge_markers_cmdline.pl Marker_ZDB_ID1 Marker_ZDB_ID2\n" if @ARGV != 2;
 
 my $recordToBeDeleted = $ARGV[0]; 
 my $recordToBeMergedInto = $ARGV[1];

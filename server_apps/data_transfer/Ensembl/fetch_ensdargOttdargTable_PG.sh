@@ -17,7 +17,7 @@ echo "Using Ensembl release: $cur"
 # return in informix's load file format.
 echo " fetch_ensdargOttdarg.sql vs ensembldb.ensembl.org"
 
-/bin/cat fetch_ensdargOttdargTable_PG.mysql | \
+/bin/cat fetch_ensdargOttdargTable.mysql | \
 /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur >!  ensdargOttdarg.unl;
 
 /bin/expand -t 2 ensdargOttdarg.unl > ensdargOttdarg1.unl
@@ -29,7 +29,7 @@ echo " fetch_ensdargOttdarg.sql vs ensembldb.ensembl.org"
 
 
 echo "*** loading ensdargOttdargs into <!--|DB_NAME|--> ***"
-    ${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/loadEnsdargOttdarg_PG.sql
+    ${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/loadEnsdargOttdarg.sql
     # Log what is being used as the most current release
     if (! -f fetch_ensdargOttdargTable.log) then
 	    touch fetch_ensdargOttdargTable.log

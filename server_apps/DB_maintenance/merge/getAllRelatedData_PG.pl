@@ -1,8 +1,7 @@
 #!/private/bin/perl
 
-## getAllRelatedData_PG.pl
-## getAllRelatedData_PG.pl ZDB_ID
-## only run on PostGreSQL
+## getAllRelatedData.pl
+## getAllRelatedData.pl ZDB_ID
 
 ## This program is used to generate all related data for a given ZFIN record
 
@@ -10,7 +9,7 @@ use strict;
 use DBI;
 
 ## check commandline parameters
-die "Usage: getAllRelatedData_PG.pl ZDBID\n" if @ARGV != 1;
+die "Usage: getAllRelatedData.pl ZDBID\n" if @ARGV != 1;
 
 my $record = $ARGV[0]; 
 

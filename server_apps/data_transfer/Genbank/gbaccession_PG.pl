@@ -73,7 +73,7 @@ while( !(-e "$unzipfile") ) {
 # parse out accession number, length, datatype for zebrafish records,
 # also parse out flat file into several fasta files for blast db update
 
-system ("parseDaily_PG.pl $unzipfile")  &&  &writeReport("parseDaily_PG.pl failed.");
+system ("parseDaily.pl $unzipfile")  &&  &writeReport("parseDaily.pl failed.");
 
 
 # only move the FASTA files and flat files to development_machine if that script
@@ -96,7 +96,7 @@ if ($move_blast_files_to_development eq "true") {
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
     
     # load the updates into accesson_bank and db_link
-    system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < GenBank-Accession-Update_d_PG.sql >> $report 2>&1");
+    system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < GenBank-Accession-Update_d.sql >> $report 2>&1");
 } else {
     &writeReport("Failed to rename the daily accession file.");
 }

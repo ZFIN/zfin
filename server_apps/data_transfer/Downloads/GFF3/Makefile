@@ -37,8 +37,7 @@ STATICS = gather_alias.awk rollback.sql commit.sql load_drerio_vega_id.sql \
 	 get_talen_seq_2.sql sam2gff3.groovy merge_gff3.groovy gff32unl.groovy \
 	 load_knockdown_reagents.sql load_burgess_lin.sh load_knockdown_reagents.sh \
 	 reportMissedTalens.groovy reportMissedCRISPR.groovy reportMissedMO.groovy \
-	 runSqlFiles.groovy get_mo_and_crispr_seq_PG.sql get_talen_seq_1_PG.sql \
-	 get_talen_seq_2_PG.sql load_knockdown_reagents_PG.sql load_knockdown_reagents_PG.sh
+	 runSqlFiles.groovy
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -103,7 +102,7 @@ load_ensembl: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/rollback.sql
 load_ensembl_commit: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/commit.sql
 	cd $(TARGETDIR) && LoadEnsemblGFF3.pl commit
 
-load_ensembl_PG:
+load_ensembl:
 	loadEnsemblGff3.groovy
 
 

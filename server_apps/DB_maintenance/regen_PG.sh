@@ -27,10 +27,10 @@ echo "Starting regen_fish_Components at `date`"
 echo 'select regen_fish_components();' | ${PGBINDIR}/psql ${DBNAME}
 
 echo "Starting regen_pheno_fast_search at `date`"
-${PGBINDIR}/psql ${DBNAME} < ${TARGETROOT}/server_apps/DB_maintenance/pheno/pheno_term_regen_PG.sql
+${PGBINDIR}/psql ${DBNAME} < ${TARGETROOT}/server_apps/DB_maintenance/pheno/pheno_term_regen.sql
 
 echo "starting regenExpressionSearchAnatomy at `date`"
-${PGBINDIR}/psql -d ${DBNAME} -f ${TARGETROOT}/server_apps/DB_maintenance/warehouse/expressionMart/regenExpressionSearchAnatomy_PG.sql
+${PGBINDIR}/psql -d ${DBNAME} -f ${TARGETROOT}/server_apps/DB_maintenance/warehouse/expressionMart/regenExpressionSearchAnatomy.sql
 
 echo "vacuum daily"
 echo 'vacuum (analyze)' | ${PGBINDIR}/psql ${DBNAME}

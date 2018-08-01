@@ -150,7 +150,7 @@ $fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
 ##$cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2";
 ##&doSystemCommand($cmd);
 
-&doSystemCommand("psql -d <!--|DB_NAME|--> -a -f prepareNCBIgeneLoad_PG.sql >prepareLog1 2> prepareLog2");
+&doSystemCommand("psql -d <!--|DB_NAME|--> -a -f prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2");
 
 print LOG "Done with preparing the delete list and the list for mapping.\n\n";
 
@@ -2320,7 +2320,7 @@ if (!-e "toLoad.unl" || $ctToLoad == 0) {
 }
 
 
-&doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadNCBIgeneAccs_PG.sql >loadLog1 2> loadLog2");
+&doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadNCBIgeneAccs.sql >loadLog1 2> loadLog2");
 
 print LOG "\nDone with the deltion and loading!\n\n";
 

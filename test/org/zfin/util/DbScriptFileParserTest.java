@@ -95,7 +95,7 @@ public class DbScriptFileParserTest {
     // This is a bit volatile as any change in the number of queries in those files
     // will break this unit test. But it's worth it for now as we adjust the parser...
     public void checkSqlFiles() {
-        String fileName = "server_apps/data_transfer/Downloads/GFF3/download-files/E_zfin_ensembl_gene_PG.sql";
+        String fileName = "server_apps/data_transfer/Downloads/GFF3/download-files/E_zfin_ensembl_gene.sql";
         File file = new File(fileName);
         if (!file.exists())
             fail("Could not find script file");
@@ -104,7 +104,7 @@ public class DbScriptFileParserTest {
         assertNotNull(queries);
         assertEquals(56, queries.size());
 
-        fileName = "server_apps/data_transfer/LoadOntology/handleRelationships_PG.sql";
+        fileName = "server_apps/data_transfer/LoadOntology/handleRelationships.sql";
         file = new File(fileName);
         if (!file.exists())
             fail("Could not find script file");
@@ -113,7 +113,7 @@ public class DbScriptFileParserTest {
         assertNotNull(queries);
         assertEquals(33, queries.size());
 
-        fileName = "server_apps/data_transfer/LoadOntology/handleSynonyms_PG.sql";
+        fileName = "server_apps/data_transfer/LoadOntology/handleSynonyms.sql";
         file = new File(fileName);
         if (!file.exists())
             fail("Could not find script file");
@@ -122,7 +122,7 @@ public class DbScriptFileParserTest {
         assertNotNull(queries);
         assertEquals(42, queries.size());
 
-        fileName = "server_apps/data_transfer/LoadOntology/loadTerms_PG.sql";
+        fileName = "server_apps/data_transfer/LoadOntology/loadTerms.sql";
         file = new File(fileName);
         if (!file.exists())
             fail("Could not find script file");
@@ -131,7 +131,7 @@ public class DbScriptFileParserTest {
         assertNotNull(queries);
         assertEquals(89, queries.size());
 
-        fileName = "server_apps/data_transfer/LoadOntology/loadDBxrefs_PG.sql";
+        fileName = "server_apps/data_transfer/LoadOntology/loadDBxrefs.sql";
         file = new File(fileName);
         if (!file.exists())
             fail("Could not find script file");
@@ -140,7 +140,7 @@ public class DbScriptFileParserTest {
         assertNotNull(queries);
         assertEquals(13, queries.size());
 
-        fileName = "server_apps/data_transfer/LoadOntology/loadSubsets_PG.sql";
+        fileName = "server_apps/data_transfer/LoadOntology/loadSubsets.sql";
         file = new File(fileName);
         if (!file.exists())
             fail("Could not find script file");

@@ -450,8 +450,8 @@ print LOG "For all $ctFoundMIMwithSymbolOnGenemap records that found with symbol
 
 ##################################################################################################################################################################
 
-ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadOMIM_PG.sql");
-ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f update_omimp_termxref_mapping_PG.sql");
+ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadOMIM.sql");
+ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f update_omimp_termxref_mapping.sql");
 
 print LOG "\nAll done!\n\n\n";
 

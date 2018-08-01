@@ -21,10 +21,10 @@ SUBDIRS   = LinkOut Journal
 GENERICS  = addMeshTermsToAllPubs.groovy \
             addGeoIdsToAllPubs.groovy \
             fetchPubsFromPubMed.groovy \
-            loadNewPubs.sql loadNewPubs_PG.sql \
+            loadNewPubs.sql \
             updatePublicationDate.groovy \
-            updatepubstatus.pl updatepubstatus_PG.pl 
-STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy loadMeshTerms_PG.groovy 
+            updatepubstatus.pl
+STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy
 
 # ---------------  Production Rules  ------------------------------------
 
