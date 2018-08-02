@@ -135,6 +135,9 @@ public class FishService {
                                 + " OR " + FieldName.AFFECTED_CELLULAR_COMPONENT.getName() + ":\"" + term + "\""
                 );
             }
+
+            //if we're searching for phenotype, we don't actually want features back, so exclude them here
+            query.addFilterQuery(FieldName.CATEGORY.getName() + ":\"" + Category.FISH.getName() + "\"");
         }
 
         return query;
