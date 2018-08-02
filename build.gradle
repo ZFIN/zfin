@@ -44,7 +44,7 @@ project.ext.set("pgbindir", pgbindir)
 task loadDatabase() {
     doLast {
         File unloads = file('/research/zunloads/databases/zfindb/')
-        String unloadPath;
+        String unloadPath
         if (unloads.exists()) {
             File latest = unloads.listFiles().last()
             File latestBakDump = latest.listFiles().last()
@@ -192,38 +192,6 @@ task setup {
     //println filteredMap.size()
 }
 
-
-task makePostgresVersion {
-    doLast {
-        copy {
-            def serverApps = ttNameMap.get('TARGETROOT')
-            serverApps += '/server_apps'
-            println "Copying files in directory:: " + serverApps
-            from(serverApps) {
-                include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh', '**/*_PG.groovy', '**/*_PG.pm', '**/*_PG.cgi'
-                rename '(.*)_PG(.*)', '$1$2'
-            }
-            into serverApps
-            eachFile { FileCopyDetails fcd ->
-                println fcd.path
-            }
-        }
-        copy {
-            def targetRoot = ttNameMap.get('TARGETROOT')
-            targetRoot += '/cgi-bin'
-            println "Copying files in directory:: " + targetRoot
-            from(targetRoot) {
-                include '**/*_PG.sql', '**/*_PG.sqlj', '**/*_PG.pl', '**/*_PG.sh', '**/*_PG.groovy', '**/*_PG.pm', '**/*_PG.cgi'
-                rename '(.*)_PG(.*)', '$1$2'
-            }
-            into targetRoot
-            eachFile { FileCopyDetails fcd ->
-                println fcd.path
-            }
-        }
-    }
-}
-
 /*
     allprojects.findAll { it.path.startsWith(":server_apps:data_transfer:") }.each { p ->
         println p.path
@@ -356,8 +324,7 @@ task make(type: GradleBuild) {
              ':server_apps:data_transfer:deployFiles',
              ':server_apps:Reports:deployFiles',
              'deployPackageFiles',
-             ':cgi-bin:deployFiles',
-             'makePostgresVersion'
+             ':cgi-bin:deployFiles'
     ]
 }
 
@@ -365,7 +332,7 @@ task createSchemaSpy() {
     doLast {
         println 'Creating ER diagram for ' + ttNameMap.get('DB_NAME') + ' ...'
         javaexec {
-            main = "-jar";
+            main = "-jar"
             args = [
                     "lib/Java/schemaSpy_5.0.0.jar",
                     "-t",
