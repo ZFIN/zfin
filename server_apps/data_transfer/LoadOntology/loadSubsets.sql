@@ -7,8 +7,7 @@
 
 !echo "load term_subset";
 
-create temp table tmp_subset (id varchar(30), subset_name varchar(40), subset_def varchar(100), subset varchar(10))
-with no log;
+create temp table tmp_subset (id varchar(60), subset_name varchar(100), subset_def varchar(400), subset varchar(10));
 
 load from subsetdefs_header.unl
   insert into tmp_subset;
@@ -67,21 +66,18 @@ insert into ontology_subset(osubset_subset_name, osubset_subset_definition, osub
 		        and osubset_ont_id = ont_pk_id)
    and 	default_namespace = ont_default_namespace;
 
-create temp table tmp_term_subset (term_id varchar(40), subset_name varchar(40), subset varchar(10))
- with no log;
+create temp table tmp_term_subset (term_id varchar(40), subset_name varchar(100), subset varchar(10));
 
 load from term_subset.unl
   insert into tmp_term_subset;
 
-create temp table tmp_full_term_subset (full_term_zdb_id varchar(40), term_id varchar(40), subset_name varchar(40), subset varchar(10))
- with no log;
+create temp table tmp_full_term_subset (full_term_zdb_id varchar(40), term_id varchar(40), subset_name varchar(200), subset varchar(30));
 
 insert into tmp_full_term_subset (full_term_zdb_id, term_id, subset_name, subset)
 select
 (select term_zdb_id from term where term_ont_Id = term_id), term_id, subset_name, subset from tmp_term_subset;
 
-create index ftzdb_id_index on tmp_full_term_subset (full_term_zdb_id)
-  using btree in idxdbs3;
+create index ftzdb_id_index on tmp_full_term_subset (full_term_zdb_id);
 
 unload to debug
     select count(*) from tmp_full_term_subset;
@@ -141,4 +137,5 @@ insert into term_subset (termsub_term_zdb_id, termsub_subset_id)
     and not exists (Select 'x' from term_subset
                            where termsub_term_zdb_id = term_zdb_id
                            and termsub_subset_id = osubset_pk_id );
+
 

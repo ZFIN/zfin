@@ -48,8 +48,8 @@ insert into phenotype_generated_curated_mapping_bkup (pgcm_pg_id, pgcm_source_id
 
 
 update zdb_flag
-  set (zflag_is_on,zflag_last_modified) = ("t",current year to second)
- where zflag_name = "regen_phenotypemart" ;
+  set (zflag_is_on,zflag_last_modified) = ('t',now())
+ where zflag_name = 'regen_phenotypemart';
 
 
 commit work;
@@ -102,12 +102,10 @@ insert into phenotype_generated_curated_mapping (pgcm_pg_id, pgcm_source_id, pgc
  select pgcm_pg_id, pgcm_source_id, pgcm_id_type from phenotype_generated_curated_mapping_temp;
 
 update zdb_flag
-  set (zflag_is_on,zflag_last_modified) = ("f",current year to second)
- where zflag_name = "regen_phenotypemart" ;
+  set (zflag_is_on,zflag_last_modified) = ('f',now())
+ where zflag_name = 'regen_phenotypemart' ;
 
 update warehouse_run_tracking
- set wrt_last_loaded_date = current year to second
- where wrt_mart_name = "phenotype mart";
+ set wrt_last_loaded_date = now()
+ where wrt_mart_name = 'phenotype mart';
 
-update statistics high for table phenotype_source_generated;
-update statistics high for table phenotype_observation_generated;

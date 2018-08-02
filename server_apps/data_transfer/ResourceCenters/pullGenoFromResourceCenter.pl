@@ -243,7 +243,7 @@ sub geno_load($) {
                                        select epfz_geno_zdb_id,
  	                                      epfz_geno_zdb_id,
 	                                      epfz_geno_zdb_id,
-	                                      current year to second,
+	                                      now(),
 	                                      epfz_geno_zdb_id
                                          from geno_pulled_from_zirc
                                          where not exists (select 'x'
@@ -729,9 +729,8 @@ sub geno_main($$$) {
     my $curFirstTable = $dbh->do('create temp table tmp_geno_pulled_from_zirc
           ( epfz_alt_zdb_id  varchar(50),
             epfz_background_zdb_id varchar(50),
-            epfz_zygocity  varchar(40))
-            with no log;
-        ');
+            epfz_zygocity  varchar(40));
+                    ');
 
 
     my $curSecondTable = $dbh->do('create temp table geno_pulled_from_zirc
@@ -743,12 +742,12 @@ sub geno_main($$$) {
 	    epfz_geno_handle varchar(150),
 	    epfz_geno_display_name varchar(150),
             epfz_genofeat_zdb_id varchar(50),
-            epfz_fish_Zdb_id varchar(50))
-           with no log; ');
+            epfz_fish_Zdb_id varchar(50));
+            ');
 
     my $resourceTable = $dbh->do('create temp table geno_available
-          ( geno_zdb_id  varchar(50))
-            with no log; ');
+          ( geno_zdb_id  varchar(50));
+            ');
 
     &writeReport("*** Temp tables created. ***\n");
 

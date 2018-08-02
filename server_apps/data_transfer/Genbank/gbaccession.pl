@@ -12,12 +12,6 @@ my ($mailprog, $md_date, $prefix, $unzipfile, $newfile, $dir_on_development_mach
 
 $mailprog = '/usr/lib/sendmail -t -oi -oem';
 
-#set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Genbank/";
 
 $report = "acc_update.report";
@@ -102,7 +96,7 @@ if ($move_blast_files_to_development eq "true") {
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
     
     # load the updates into accesson_bank and db_link
-    system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> GenBank-Accession-Update_d.sql >> $report 2>&1");
+    system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < GenBank-Accession-Update_d.sql >> $report 2>&1");
 } else {
     &writeReport("Failed to rename the daily accession file.");
 }
@@ -135,8 +129,8 @@ sub sendReport() {
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "$report") || die "cannot open report";
 
-    print MAIL "To: <!--|GENBANK_DAILY_EMAIL|-->\n";
-    print MAIL "Subject: GenBank accession update report\n";
+    print MAIL 'To: <!--|GENBANK_DAILY_EMAIL|-->';
+    print MAIL "\nSubject: GenBank accession update report\n";
     while(my $line = <REPORT>)
     {
       print MAIL $line;

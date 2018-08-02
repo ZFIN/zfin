@@ -1,10 +1,8 @@
 #! /bin/tcsh -e
 
 #$1 db name
-setenv INFORMIXSERVER <!--|INFORMIX_SERVER|-->
-setenv INFROMIXDIR <!--|INFORMIX_DIR|-->
-set EXPRESSIONMARTDIR=<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart 
-set FULL_SCRIPT_FILE=$EXPRESSIONMARTDIR/expressionMartAutomated.sql 
+set EXPRESSIONMARTDIR=<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart
+set FULL_SCRIPT_FILE=$EXPRESSIONMARTDIR/expressionMartAutomated.sql
 set CONVERT_EXPRESSIONMART_FILE=$EXPRESSIONMARTDIR/expressionMartRegen.sql
 set ALL_EXPRESSIONMART_SCRIPTS=$EXPRESSIONMARTDIR/allExpressionMart.sql
 
@@ -16,39 +14,12 @@ set expressionMartScripts=( begin.sql \
 	     dropTables.sql \
 	     commit.sql \
 	     begin.sql \
-	     createTables.sql \
-	     commit.sql \
-	     begin.sql \
-	     insertESAGeneGenox1.sql \
-	     commit.sql \
-	     begin.sql \
-	     insertESAGeneGenox2.sql \
-	     commit.sql \
-	     begin.sql \
-	     insertDistinctGeneGenox2.sql \
-	     commit.sql \
-	     begin.sql \
-	     insertDistinctGeneGenox.sql \
-	     commit.sql \
-	     begin.sql \
-	     updateDistinctGeneGenox.sql \
-	     commit.sql \
-	     begin.sql \
-	     truncateFinalTable.sql \
-	     commit.sql \
-	     begin.sql \
-	     finalInsert.sql \
-	     commit.sql \
-	     begin.sql \
 	     populateTables.sql \
 	     commit.sql \
 	    );
  
 set regenExpressionMartScripts=( begin.sql \
 	     refreshExpressionMart.sql \
-	     commit.sql \
-	     begin.sql \
-	     finalInsert.sql \
 	     commit.sql \
 	     );
 
@@ -68,10 +39,10 @@ end
 
 if ("X$1" == "X") then
 echo "ready to start dropTables.sql DBNAME from environment." ;
-/private/apps/Informix/informix/bin/dbaccess -a $DBNAME $FULL_SCRIPT_FILE
+${PGBINDIR}/psql $DBNAME < $FULL_SCRIPT_FILE
 else
 echo "ready to start dropTables.sql DBNAME provided from script call." ;
-/private/apps/Informix/informix/bin/dbaccess -a $1 $FULL_SCRIPT_FILE
+${PGBINDIR}/psql $1 < $FULL_SCRIPT_FILE
 
 
 

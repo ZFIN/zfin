@@ -16,8 +16,7 @@ SELECT dat_source_zdb_id,
 FROM   term
        join disease_annotation on dat_term_zdb_id = term_zdb_id
        left outer join disease_annotation_model on damo_dat_zdb_id = dat_zdb_id
-WHERE
-       term_is_obsolete = 't';
+WHERE  term_is_obsolete = 't';
 
 -- report secondary disease term usage
 unload to 'merged_terms'
@@ -38,4 +37,5 @@ FROM   term
        join disease_annotation on dat_term_zdb_id = term_zdb_id
        left outer join disease_annotation_model on damo_dat_zdb_id = dat_zdb_id
 WHERE  term_is_secondary= 't';
+
 

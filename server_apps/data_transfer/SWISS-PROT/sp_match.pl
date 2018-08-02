@@ -32,16 +32,16 @@ close OK;
   $dbname = "<!--|DB_NAME|-->";
 
   $subject = "Auto from $dbname: SWISS-PROT check report";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","checkreport.txt");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","checkreport.txt");
   		
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: SWISS-PROT problem file";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","allproblems.txt");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","allproblems.txt");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: PubMed not in ZFIN";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","pubmed_not_in_zfin");  
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","pubmed_not_in_zfin");  
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: report of processing pre_zfin.org";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","redGeneReport.txt");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","redGeneReport.txt");

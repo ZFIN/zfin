@@ -63,8 +63,8 @@ system("rm -f *2go");
 &downloadGOtermFiles();
 
 print "\n delete records source from last ec2go loading.\n";
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete_ec2gopart.sql >out 2>report.txt");
-
+###system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete_ec2gopart.sql >out 2>report.txt");
+system("psql -d <!--|DB_NAME|--> -a -f sp_delete_ec2gopart.sql > report.txt");
 
 # ------------ Parse ec2go ---------------
 
@@ -95,8 +95,8 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 
 # ------------ Loading ---------------------
 print "\nloading...\n";
-system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load_ec2gopart.sql >out 2> report2.txt");
-
+##system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load_ec2gopart.sql >out 2> report2.txt");
+system("psql -d <!--|DB_NAME|--> -a -f sp_load_ec2gopart.sql >out 2> report2.txt");
 open F, "out" or die "Cannot open out";
 if (<F>) {
    &sendErrorReport("Failed to load ec2go part of SWISS_PROT records");

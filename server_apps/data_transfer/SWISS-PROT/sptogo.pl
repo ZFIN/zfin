@@ -42,7 +42,7 @@ while(<>) {
     $spkwName =~ s/\s+$//; #remove trailing spaces
     
     ## FB case: 6392 -- not to map GO:0005515    
-    print KWGO "$spID|$spkwName|$term[1]|$id[1]|\n" if (($term_id[1] ne "GO:0005515") && ($term_id[1] ne "GO:0005488"));
+    print KWGO "$spID|$spkwName|$term[1]|$id[1]\n" if (($term_id[1] ne "GO:0005515") && ($term_id[1] ne "GO:0005488"));
     
   }
  @line=(); @ip=(); @term_id=(); @term=(); @id=();   

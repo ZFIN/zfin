@@ -4,17 +4,12 @@ create temp table tmp_acc_bk (
 	tp_acc_num	     varchar(30) not null,
 	tp_length            integer,
 	tp_fdbcont_zdb_id    varchar(50)
-	)with no log;
+	);
 
 create unique index tmp_acc_bk_primary_key 
 	on tmp_acc_bk(tp_acc_num);
 
-load from nc_zf_acc.unl insert into tmp_acc_bk;
-
-update statistics high for table tmp_acc_bk;
-
-!echo "---update the accession_bank---"
-!echo "some accessions get length synchronized with daily file..."
+\copy tmp_acc_bk from ./nc_zf_acc.unl;
 
 update accession_bank
    set accbk_length = (select tp_length
@@ -26,11 +21,9 @@ update accession_bank
    and accbk_fdbcont_zdb_id in 
 		(select fdbcont_zdb_id
 		   from foreign_db_contains, foreign_db
-		  where fdb_db_name= "GenBank"
+		  where fdb_db_name= 'GenBank'
 		  and fdbcont_fdb_db_id = fdb_db_pk_id
 		);
-
-!echo "Add new accessions into accession_bank"
 
 delete from tmp_acc_bk
       where exists (select 't' 
@@ -42,8 +35,6 @@ insert into accession_bank (accbk_acc_num, accbk_length, accbk_fdbcont_zdb_id)
      select * from tmp_acc_bk;
 
 
-!echo "---update the db_link---"
-
 update db_link 
    set dblink_length = (select tp_length
 		       from tmp_acc_bk
@@ -52,7 +43,7 @@ update db_link
  where dblink_fdbcont_zdb_id in 
 		(select fdbcont_zdb_id
 		   from foreign_db_contains, foreign_db
-		  where fdb_db_name= "GenBank"
+		  where fdb_db_name= 'GenBank'
 		  and fdbcont_fdb_db_id = fdb_db_pk_id
 		)
    and exists 
@@ -62,5 +53,5 @@ update db_link
 		    and (tp_length <> db_link.dblink_length
 			or db_link.dblink_length is null)
 		 );
-!echo "-- we assumed that the data type is stable... -- " 
+
 commit work;

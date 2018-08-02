@@ -1,9 +1,13 @@
 #!/bin/bash
-//usr/bin/env groovy -cp "<!--|GROOVY_CLASSPATH|-->:." "$0" $@; exit $?
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
 
-import java.time.LocalDate
+import groovy.util.slurpersupport.GPathResult
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
+import groovy.xml.StreamingMarkupBuilder
+import java.time.LocalDate
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
@@ -11,7 +15,15 @@ final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_
 final PARSE_MESH = new File(WORKING_DIR, "parseMesh.log")
 final PARSE_PUBS = new File(WORKING_DIR, "parsePubs.log")
 
-def processArticle = { pubmedArticle, idx ->
+def getTextWithMarkup(node) {
+    // this is weird and maybe a little hacky but when, for example, the title or abstract contains html markup
+    // the full document is no longer valid XML so the groovy XML tools don't give a very nice way to extract it.
+    nodeString = new StreamingMarkupBuilder().bindNode(node).toString()
+    nodeMatch = nodeString =~ /^<(\w*)\b[^>]*>(.*?)<\/\1>$/
+    return (nodeMatch ? nodeMatch[0][2] : nodeString).replaceAll(/\R+/, ' ')
+}
+
+def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
     row = []
     medlineCitation = pubmedArticle.MedlineCitation
     pmid = medlineCitation.PMID.text()
@@ -23,25 +35,20 @@ def processArticle = { pubmedArticle, idx ->
     row.push(medlineCitation.KeywordList.Keyword.iterator().collect { it.text().trim() }.join(", "))
 
     article = medlineCitation.Article
-    articleText = article.ArticleTitle.text().replaceAll("\\n", "")
-    articleText = articleText.replaceAll("\\r", "")
-    articleText = articleText.replaceAll(/\.+$/, '')
-    row.push(articleText)
+    row.push(getTextWithMarkup(article.ArticleTitle).replaceAll(/\.+$/, ''))
     row.push(article.Pagination.text())
 
     fullAbstract = ''
     article.Abstract.AbstractText.each { abstractText ->
         label = abstractText.@Label.text() ?: abstractText.@NlmCategory.text()
-        text = abstractText.text().replaceAll(/\|/, '\\|')
+        text = getTextWithMarkup(abstractText)
         if (label && label != 'UNLABELLED' && label != 'UNASSIGNED') {
             fullAbstract += "<div class='pub-abstract-section'><span class='pub-abstract-section-label'>${label.toLowerCase().capitalize()}</span> ${text}</div>"
         } else {
             fullAbstract += text
         }
     }
-    abstractFile = new File(WORKING_DIR, "abstract${idx}.clob")
-    abstractFile.write(fullAbstract, "UTF-8")
-    row.push(abstractFile.absolutePath)
+    row.push(fullAbstract)
 
     authors = []
     article.AuthorList.Author.each { author ->
@@ -82,11 +89,10 @@ def processArticle = { pubmedArticle, idx ->
     }
 
     row.push(pubmedArticle.PubmedData.PublicationStatus.text())
-
-    PARSE_PUBS.append(row.collect { it.toString().replaceAll(/\|/, '\\\\|') }.join('|') + "\n", "UTF-8")
+    
+    printer.printRecord(row.collect { col -> col.toString().replace('\n', '\\n') })
 }
 
-WORKING_DIR.eachFileMatch(~/abstract.*\.clob/) { it.delete() }
 WORKING_DIR.eachFileMatch(~/new.*\.txt/) { it.delete() }
 WORKING_DIR.eachFileMatch(~/loadSQL.*\.txt/) { it.delete() }
 PARSE_MESH.delete()
@@ -95,15 +101,21 @@ PARSE_PUBS.delete()
 PARSE_MESH.createNewFile()
 PARSE_PUBS.createNewFile()
 
-if (args.size() > 0) {
-    def articleSet = PubmedUtils.getFromPubmed(args)
-    articleSet.PubmedArticle.eachWithIndex(processArticle)
-} else {
-    def query = 'zebrafish[TW] OR "zebra fish"[TW] OR "danio rerio"[ALL]'
-    PubmedUtils.searchPubmed(query).eachWithIndex(processArticle)
+PARSE_PUBS.withWriter { pubLog ->
+    def articles
+    CSVPrinter printer = new CSVPrinter(pubLog, CSVFormat.TDF.withQuote(null))
+    if (args.size() > 0) {
+        def articleSet = PubmedUtils.getFromPubmed(args)
+        articles = articleSet.PubmedArticle
+    } else {
+        def query = 'zebrafish[TW] OR "zebra fish"[TW] OR "danio rerio"[ALL]'
+        articles = PubmedUtils.searchPubmed(query)
+    }
+    articles.eachWithIndex{ GPathResult article, int i -> processArticle(printer, article, i) }
 }
 
-dbaccessProc = ['/bin/bash', '-c', "${ZfinPropertiesEnum.INFORMIXDIR}/bin/dbaccess " +
-        "-a ${ZfinPropertiesEnum.DB_NAME} ${WORKING_DIR.absolutePath}/loadNewPubs.sql " +
+dbaccessProc = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
+        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/loadNewPubs.sql " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 dbaccessProc.waitFor()
+

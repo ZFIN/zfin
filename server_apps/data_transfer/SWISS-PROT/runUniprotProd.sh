@@ -9,6 +9,7 @@ echo "#########################################################################"
 
 echo "Remove old files: okfile, *2go" 
 /bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/okfile
+/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/ok2file
 /bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/ec2go
 /bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/interpro2go
 /bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/spkw2go
@@ -22,8 +23,8 @@ echo "Copy new files from /research/zarchive/load_files/UniProt/"
 echo "#########################################################################"
 
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/SWISS-PROT/;
-/local/bin/gmake run ;
+/local/bin/gmake runPG ;
 
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/GO;
-/local/bin/gmake run ;
+/local/bin/gmake runPG ;
 

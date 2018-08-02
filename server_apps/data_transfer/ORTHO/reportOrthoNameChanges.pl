@@ -145,12 +145,18 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 ### needs to change to conform to new schema.
 $sqlGetZFgeneNamesByHumanAndMouseOrth =
-'select distinct organism_common_name,ortho_other_species_name,ortho_other_species_symbol,oef_accession_number,ortho_zebrafish_gene_zdb_id,mrkr_abbrev,mrkr_name from ortholog, ortholog_external_reference ,marker, organism where oef_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-27","ZDB-FDBCONT-040412-28","ZDB-FDBCONT-040412-23") and ortho_zdb_id = oef_ortho_zdb_id and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id and mrkr_type = "GENE" and organism_taxid = ortho_other_species_taxid order by mrkr_abbrev;';
+"select distinct organism_common_name, ortho_other_species_name, ortho_other_species_symbol, oef_accession_number, ortho_zebrafish_gene_zdb_id, mrkr_abbrev,mrkr_name 
+   from ortholog, ortholog_external_reference, marker, organism 
+  where oef_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-27','ZDB-FDBCONT-040412-28','ZDB-FDBCONT-040412-23') 
+    and ortho_zdb_id = oef_ortho_zdb_id 
+    and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id 
+    and mrkr_type = 'GENE'
+    and organism_taxid = ortho_other_species_taxid order by mrkr_abbrev;";
 
 $cur = $dbh->prepare($sqlGetZFgeneNamesByHumanAndMouseOrth);
 $cur->execute();

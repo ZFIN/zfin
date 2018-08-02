@@ -1,7 +1,6 @@
 begin work;
 
-create temp table tmp_id (id varchar(100), id2 varchar(100), uri varchar(200), destination_url varchar(200), outgoing_uri varchar(200), entity_type varchar(100), biolink_type varchar(100))
-with no log;
+create temp table tmp_id (id text, id2 text, uri text, destination_url text, outgoing_uri text, entity_type text, biolink_type text);
 
 insert into tmp_id (id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
  select 'ZFIN:'||feature_zdb_id, 'ZFIN:'||feature_zdb_id, 'http://zfin.org/'||'ZFIN:'||feature_zdb_id,'http://zfin.org/'||'ZFIN:'||feature_zdb_id, 'http://zfin.org/'||'ZFIN:'||feature_zdb_id, 'feature', szm_term_ont_id from feature, so_zfin_mapping
@@ -34,11 +33,6 @@ insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, bio
 
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
  select fdb_db_display_name||':'||dblink_acc_num,fdb_db_display_name||':'||dblink_acc_num, fdb_db_query||dblink_acc_num||fdb_url_suffix, fdb_db_query||dblink_acc_num||fdb_url_suffix, fdb_db_query||dblink_acc_num||fdb_url_suffix, 'cross reference',''
-   from db_link, foreign_db_contains, foreign_db
-    where dblink_fdbcont_zdb_id = fdbcont_zdb_id
-    and fdbcont_fdb_db_id = fdb_db_pk_id;
-
-select first 1 fdb_db_display_name||':'||dblink_acc_num 
    from db_link, foreign_db_contains, foreign_db
     where dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcont_fdb_db_id = fdb_db_pk_id;
@@ -81,8 +75,8 @@ insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, bio
 
 select count(*) from tmp_id;
 
-unload to 'zfin_ids.txt'
-select * from tmp_id;
+
+\copy (select * from tmp_id) to 'zfin_ids.txt';
 
 --rollback work;
 

@@ -14,10 +14,9 @@ set cur=`/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`
 echo "Using Ensembl release: $cur"
 
 # send a query to the current database returning 1:1 ensdargs and zdbids
-# return in informix's load file format.
-echo " fetch_ensdarg.sql vs ensembldb.ensembl.org"
 
-/bin/cat fetch_ensdarg.sql | \
+
+/bin/cat fetch_ensdarg.mysql | \
 /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur |\
 /bin/sed 's/\(ZDB-GENE-[0-9\-]*\).*\(ENSDARG[0-9]*\).*/\1|\2|/g' |\
 /usr/bin/tr '\011' \| >!  ensdarg.unl;
@@ -27,13 +26,13 @@ echo " fetch_ensdarg.sql vs ensembldb.ensembl.org"
 
 if ($1 == "commit") then
 	echo "*** COMMITING load_ensdarg.sql into <!--|DB_NAME|--> ***"
-	cat load_ensdarg.sql commit.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
+	cat load_ensdarg.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
 	# Log what is being used as the most current release
 	if (! -f fetch_ensembl.log) then
 		touch fetch_ensembl.log
 	endif
 	echo "Using Ensembl release: $cur   `date`" >> fetch_ensembl.log
-	cat updateMarkerChromosomeLocation.sql commit.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
+	cat updateMarkerChromosomeLocation.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
 	echo "Updated marker_chromosome_location" >> fetch_ensembl.log
 
 else
@@ -41,8 +40,8 @@ else
 	echo "*** Just Testing load_ensdarg.sql into <!--|DB_NAME|--> .***  "
 	echo "To load use:  gmake run_commit"
 	echo ""
-	cat load_ensdarg.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
-	cat updateMarkerChromosomeLocation.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
+	cat load_ensdarg.sql rollback.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
+	cat updateMarkerChromosomeLocation.sql rollback.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
 	echo "Updated marker_chromosome_location" >> fetch_ensembl.log
 
 endif

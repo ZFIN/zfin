@@ -1,10 +1,10 @@
 begin work;
 
-        set pdqpriority high;
+ --       set pdqpriority high;
 
 	create temp table pre_delete(
-		rec_data_zdb_id		varchar(50)
-		)with no log;
+		rec_data_zdb_id		text
+		);
 		
 	insert into pre_delete
 		select recattrib_data_zdb_id from record_attribution
@@ -25,8 +25,9 @@ begin work;
 
 --!echo '//Delete from zdb_active_data and cause delete cascades on DB link, MRKRGOEV and EXT note records'
 	delete from zdb_active_data
-		where zactvd_zdb_id in (select * from pre_delete);
+		where zactvd_zdb_id in (select 'x' from pre_delete);
 
-unload to 'checkDeletedEc2go' select * from pre_delete;
+\copy (select * from pre_delete) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/checkDeletedEc2go' with delimiter as '|' null as '';
 
+--rollback work;
 commit work;

@@ -1,40 +1,56 @@
 #!/bin/bash
 
-# for testing just till the "collapse.awk" propagates to /private...
-#COMMONS_BIN=/research/zusers/tomc/Projects/TRUNK/ZFIN_WWW/commons/bin
-COMMONS_BIN=/private/ZfinLinks/Commons/bin
+(${PGBINDIR}/psql ${DBNAME} -q << END
 
-(${INFORMIXDIR}/bin/dbaccess -a <!--|DB_NAME|--> << END
+CREATE TEMP TABLE tmp_counts (
+    tmp_label     text,
+    tmp_count     text
+);
 
- select "          count" type from single;
+INSERT INTO tmp_counts
+    VALUES ('type', 'count');
 
- select count(mrkr_zdb_id) uninf_all from marker
-  where mrkr_zdb_id[1,8] == 'ZDB-GENE'
-    and mrkr_abbrev like "%:%"
- ;
- select count(mrkr_zdb_id) uninf_si from marker
- where mrkr_zdb_id[1,8] == 'ZDB-GENE'
-    and mrkr_abbrev like "si:%"
- ;
- select count(mrkr_zdb_id) uninf_zgc from marker
-  where mrkr_zdb_id[1,8] == 'ZDB-GENE'
-    and mrkr_abbrev like "zgc:%"
- ;
- select count(mrkr_zdb_id) uninf_all_orth
-  from marker join ortholog on mrkr_zdb_id == ortho_zebrafish_gene_zdb_id
-  where mrkr_zdb_id[1,8] == 'ZDB-GENE'
-    and mrkr_abbrev like "%:%"
- ;
- select count(mrkr_zdb_id) uninf_si_orth
-  from marker join ortholog on mrkr_zdb_id == ortho_zebrafish_gene_zdb_id
-  where mrkr_zdb_id[1,8] == 'ZDB-GENE'
-    and mrkr_abbrev like "si:%"
- ;
- select count(mrkr_zdb_id) uninf_zgc_orth
-  from marker join ortholog on mrkr_zdb_id == ortho_zebrafish_gene_zdb_id
- where mrkr_zdb_id[1,8] == 'ZDB-GENE'
-    and mrkr_abbrev like "zgc:%"
-;
+INSERT INTO tmp_counts
+    SELECT 'uninf_all', COUNT(mrkr_zdb_id)
+    FROM marker
+    WHERE SUBSTRING(mrkr_zdb_id from 1 for 8) = 'ZDB-GENE'
+    AND mrkr_abbrev LIKE '%:%';
+
+INSERT INTO tmp_counts
+    SELECT 'uninf_si', COUNT(mrkr_zdb_id)
+    FROM marker
+    WHERE SUBSTRING(mrkr_zdb_id from 1 for 8) = 'ZDB-GENE'
+    AND mrkr_abbrev LIKE 'si:%';
+
+INSERT INTO tmp_counts
+    SELECT 'uninf_zgc', COUNT(mrkr_zdb_id)
+    FROM marker
+    WHERE SUBSTRING(mrkr_zdb_id from 1 for 8) = 'ZDB-GENE'
+    AND mrkr_abbrev LIKE 'zgc:%';
+
+INSERT INTO tmp_counts
+    SELECT 'uninf_all_orth', COUNT(mrkr_zdb_id)
+    FROM marker
+    JOIN ortholog ON mrkr_zdb_id = ortho_zebrafish_gene_zdb_id
+    WHERE SUBSTRING(mrkr_zdb_id from 1 for 8) = 'ZDB-GENE'
+    AND mrkr_abbrev LIKE '%:%';
+
+INSERT INTO tmp_counts
+    SELECT 'uninf_si_orth', COUNT(mrkr_zdb_id)
+    FROM marker
+    JOIN ortholog ON mrkr_zdb_id = ortho_zebrafish_gene_zdb_id
+    WHERE SUBSTRING(mrkr_zdb_id from 1 for 8) = 'ZDB-GENE'
+    AND mrkr_abbrev LIKE 'si:%';
+
+INSERT INTO tmp_counts
+    SELECT 'uninf_zgc_orth', COUNT(mrkr_zdb_id)
+    FROM marker
+    JOIN ortholog ON mrkr_zdb_id = ortho_zebrafish_gene_zdb_id
+    WHERE SUBSTRING(mrkr_zdb_id from 1 for 8) = 'ZDB-GENE'
+    AND mrkr_abbrev LIKE 'zgc:%';
+
+COPY tmp_counts TO STDOUT
+
 END
 
-)> result.log
+) > result.log

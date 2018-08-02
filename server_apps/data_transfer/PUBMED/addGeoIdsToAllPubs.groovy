@@ -11,11 +11,11 @@ GEO_TO_LOAD = "geoIds.txt"
 GEO_PRE = "geoListPre.txt"
 GEO_POST = "geoListPost.txt"
 
-PubmedUtils.dbaccess DBNAME, """
-UNLOAD TO $GEO_PRE
+PubmedUtils.psql DBNAME, """
+ \\copy (
   SELECT pdx_pub_zdb_id, pdx_accession_number
   FROM pub_db_xref
-  WHERE pdx_fdbcont_zdb_id = 'ZDB-FDBCONT-070919-1';
+  WHERE pdx_fdbcont_zdb_id = 'ZDB-FDBCONT-070919-1' ) to '$GEO_PRE' delimiter '|';
 """
 
 def searchUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term=\"Danio+rerio\"[Organism]+AND+\"gse\"[Filter]&usehistory=y"
@@ -40,16 +40,15 @@ new File(GEO_TO_LOAD).withWriter { output ->
     }
 }
 
-PubmedUtils.dbaccess DBNAME, """
+PubmedUtils.psql DBNAME, """
 BEGIN WORK;
 
 CREATE TEMP TABLE tmp_geo (
   accession_number varchar(50),
-  pubmed_id varchar(50)
-) WITH NO LOG;
+  pubmed_id integer
+);
 
-LOAD FROM $GEO_TO_LOAD
-  INSERT INTO tmp_geo;
+\\copy tmp_geo from '$GEO_TO_LOAD' ( FORMAT CSV, DELIMITER('|') );
 
 DELETE FROM tmp_geo
   WHERE EXISTS (
@@ -68,10 +67,10 @@ INSERT INTO pub_db_xref (pdx_pub_zdb_id, pdx_accession_number, pdx_fdbcont_zdb_i
   FROM publication
   INNER JOIN tmp_geo on publication.accession_no = tmp_geo.pubmed_id;
 
-UNLOAD TO $GEO_POST
+\\copy (
   SELECT pdx_pub_zdb_id, pdx_accession_number
   FROM pub_db_xref
-  WHERE pdx_fdbcont_zdb_id = 'ZDB-FDBCONT-070919-1';
+  WHERE pdx_fdbcont_zdb_id = 'ZDB-FDBCONT-070919-1' ) to '$GEO_POST' delimiter '|';
 
 COMMIT WORK;
 """

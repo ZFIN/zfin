@@ -2,10 +2,9 @@
 -- add attribution (publication of J. Smith and/or Johson SNP) to Talbot SNPs, if shared common dbSNP rs id
 begin work;
 
-create temp table tmp_record_attribution (tmp_snp_id varchar(50), tmp_pub_id varchar(50)) with no log;
+create temporary table tmp_record_attribution (tmp_snp_id text, tmp_pub_id text);
 
-load from forrecordattrtable.unl 
-  insert into tmp_record_attribution;
+copy tmp_record_attribution from '<!--|ROOT_PATH|-->/server_apps/data_transfer/SNP/forrecordattrtable.unl' (delimiter '|');
 
 insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id)
    select tmp_snp_id,tmp_pub_id from tmp_record_attribution; 

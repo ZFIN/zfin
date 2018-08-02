@@ -197,8 +197,8 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $cur = $dbh->prepare('select distinct omimp_name, omimp_ortho_zdb_id from omim_phenotype;');
 $cur->execute();
@@ -216,7 +216,6 @@ while ($cur->fetch()) {
 print "total number of OMIM phenotype names stored at ZFIN: $ctOMIMphenotypeNamesAtZFIN";
 
 print LOG "total number of OMIM phenotype names stored at ZFIN: $ctOMIMphenotypeNamesAtZFIN";
-
 
 open (GENEMAP, "genemap.txt") || die "Cannot open genemap.txt : $!\n";
 
@@ -264,7 +263,8 @@ foreach $line (@lines) {
 
      $ctFoundMIMwithSymbolOnGenemap++;
 
-     $cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and oef_accession_number = ?;');
+     $sqlOrth = "select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-25' and oef_accession_number = ?;";
+     $cur = $dbh->prepare($sqlOrth);
      $cur->execute($mimNumGene);
      my ($ZFINgeneId);
      my ($dblinkAcc);
@@ -283,7 +283,8 @@ foreach $line (@lines) {
      $humanGeneSymLowerCaseA = $humanGeneSymLowerCase . "a";
      $humanGeneSymLowerCaseB = $humanGeneSymLowerCase . "b";
 
-     $cur = $dbh->prepare('select mrkr_zdb_id from marker where mrkr_zdb_id like "ZDB-GENE%" and (mrkr_abbrev = ? or mrkr_abbrev = ? or mrkr_abbrev = ?);');
+     $sqlGene = "select mrkr_zdb_id from marker where mrkr_zdb_id like 'ZDB-GENE%' and (mrkr_abbrev = ? or mrkr_abbrev = ? or mrkr_abbrev = ?);";
+     $cur = $dbh->prepare($sqlGene);
      $cur->execute($humanGeneSymLowerCase,$humanGeneSymLowerCaseA,$humanGeneSymLowerCaseB);
      my ($ZFINgeneIdSimilarSym);
      $cur->bind_columns(\$ZFINgeneIdSimilarSym);
@@ -323,7 +324,7 @@ foreach $line (@lines) {
                    ### if there is single or double quote in $omimPhenotypeName, the hash won't prevent duplication
                    ### if ($disorder ne "" && !exists($OMIMphenotypeNamesAtZFIN{$disorder})) {
                    if ($disorder ne "") {
-                     print OMIM "$key|$mimNumGene|$disorder|$phenotypeOMIMnum|\n";
+                     print OMIM "$key|$mimNumGene|$disorder|$phenotypeOMIMnum\n";
                      $ctInput++;
                    }
                  }
@@ -347,7 +348,7 @@ foreach $line (@lines) {
                    ### if there is single or double quote in $omimPhenotypeName, the hash won't prevent duplication
                    ### if ($disorder ne "" && !exists($OMIMphenotypeNamesAtZFIN{$disorder})) {
                    if ($disorder ne "") {
-                     print OMIM "$key|$mimNumGene|$disorder||\n";
+                     print OMIM "$key|$mimNumGene|$disorder|\n";
                      $ctInput++;
                    }
                  }
@@ -379,7 +380,9 @@ $ctTotalOnGenmap = $ctTotalOnGenmap - 4;
 close OMIM;
 close CHECKNOPHENO;
 
-$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25";');
+##################################################################################################################################################################
+$sqlOmim = "select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-25';";
+$cur = $dbh->prepare($sqlOmim);
 $cur->execute();
 my ($orthoId, $omimNum);
 $cur->bind_columns(\$geneId,\$omimNum);
@@ -393,7 +396,6 @@ while ($cur->fetch()) {
 
 print LOG " \n";
 
-$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25";');
 $cur->execute();
 $cur->bind_columns(\$geneId,\$omimNum);
 
@@ -406,7 +408,6 @@ while ($cur->fetch()) {
 
 print LOG " \n";
 
-$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25";');
 $cur->execute();
 $cur->bind_columns(\$geneId,\$omimNum);
 
@@ -419,7 +420,6 @@ while ($cur->fetch()) {
 
 print LOG " \n";
 
-$cur = $dbh->prepare('select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25";');
 $cur->execute();
 $cur->bind_columns(\$geneId,\$omimNum);
 
@@ -450,8 +450,8 @@ print LOG "For all $ctFoundMIMwithSymbolOnGenemap records that found with symbol
 
 ##################################################################################################################################################################
 
-ZFINPerlModules->doSystemCommand("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadOMIM.sql");
-ZFINPerlModules->doSystemCommand("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> update_omimp_termxref_mapping.sql");
+ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadOMIM.sql");
+ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f update_omimp_termxref_mapping.sql");
 
 print LOG "\nAll done!\n\n\n";
 
@@ -471,9 +471,9 @@ if ($ctHumanGenePhenoPossibleOrth > 0) {
 
    if ($ctPossibleMatchGeneWithPheno > 0) {
        $subject = "Auto from $dbname: " . "OMIM.pl :: $ctPossibleMatchGeneWithPheno human genes with phenotype, with no match to ZF gene via OMIM, but with similar symbol";
-       ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","human_genes_with_pheno_possible_ortho.txt");
+       ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","human_genes_with_pheno_possible_ortho.txt");
    } else {
-       ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","no new human gene with phenotype, with no match to ZF gene via OMIM, but with similar symbol","alreadyReportedHumanOrthologyCandidate");
+       ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"no new human gene with phenotype, with no match to ZF gene via OMIM, but with similar symbol","alreadyReportedHumanOrthologyCandidate");
    }
 }
 
@@ -493,9 +493,9 @@ if ($ctHumanGenePhenoNoOrth > 0) {
 
    if ($ctNoMatchGeneWithPheno > 0) {
        $subject = "Auto from $dbname: " . "OMIM.pl :: $ctNoMatchGeneWithPheno human genes with phenotype, with no match to ZF gene via OMIM, and without similar symbol";
-       ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","human_genes_with_pheno_but_not_ortho.txt");
+       ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","human_genes_with_pheno_but_not_ortho.txt");
    } else {
-       ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","no new human gene with phenotype, with no match to ZF gene via OMIM, and without similar symbol","alreadyReportedHumanGenes");
+       ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"no new human gene with phenotype, with no match to ZF gene via OMIM, and without similar symbol","alreadyReportedHumanGenes");
    }
 }
 
@@ -505,7 +505,6 @@ print "\nctNoMatchGeneWithPheno = $ctNoMatchGeneWithPheno\n\n" ;
 
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/alreadyReportedHumanOrthologyCandidate /research/zarchive/load_files/OMIM/");
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/alreadyReportedHumanGenes /research/zarchive/load_files/OMIM/");
-
 
 exit;
 

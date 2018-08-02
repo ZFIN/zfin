@@ -1,8 +1,7 @@
 begin work;
 
 create temp table external_reference_temp_pre
-(term_ont_id_temp varchar(50), database_id_temp varchar(20), reference_temp varchar(80))
-with no log;
+(term_ont_id_temp varchar(50), database_id_temp text, reference_temp varchar(500));
 
 -- load all references into temp table
 load from term_references.unl
@@ -12,27 +11,22 @@ select * from external_reference_temp_pre;
 
 -- copy into new table
 create temp table external_reference_temp
-(tdr_foreign_db_id_temp int8, tdr_term_zdb_id_temp varchar(50), tdr_term_ont_id_temp varchar(50), tdr_database_id_temp varchar(20), tdr_reference_temp varchar(80))
-with no log;
+(tdr_foreign_db_id_temp int8, tdr_term_zdb_id_temp varchar(50), tdr_term_ont_id_temp varchar(50), tdr_database_id_temp text, tdr_reference_temp varchar(500));
 
 insert into external_reference_temp
 select 0, (SELECT NULL::INTEGER FROM single), term_ont_id_temp, database_id_temp, reference_temp from external_reference_temp_pre;
 
 create index exreftemp_reference_id_index
-  on external_reference_temp (tdr_reference_temp)
- using btree in idxdbs3;
+  on external_reference_temp (tdr_reference_temp);
 
 create index exreftemp_database_id_index
-  on external_reference_temp (tdr_database_id_temp)
- using btree in idxdbs1;
+  on external_reference_temp (tdr_database_id_temp);
 
 create index exreftemp_term_id_index
-  on external_reference_temp (tdr_term_zdb_id_temp)
- using btree in idxdbs1;
+  on external_reference_temp (tdr_term_zdb_id_temp);
 
 create index exreftemp_term_ont_id_index
-  on external_reference_temp (tdr_term_ont_id_temp)
- using btree in idxdbs2;
+  on external_reference_temp (tdr_term_ont_id_temp);
 
 !echo "Number of records";
 
@@ -63,14 +57,14 @@ update external_reference_temp
  where exists (
   select 'x' from foreign_db where
   tdr_foreign_db_id_temp = fdb_db_pk_id AND
-  upper(fdb_db_name) = 'HTTP' and upper(tdr_reference_temp[1,4]) != 'HTTP');
+  upper(fdb_db_name) = 'HTTP' and upper(substring(tdr_reference_temp from 1 for 4)) != 'HTTP');
 
 update external_reference_temp
  set tdr_reference_temp = 'https:'||tdr_reference_temp
  where exists (
   select 'x' from foreign_db where
   tdr_foreign_db_id_temp = fdb_db_pk_id AND
-  upper(fdb_db_name) = 'HTTPS' and upper(tdr_reference_temp[1,5]) != 'HTTPS');
+  upper(fdb_db_name) = 'HTTPS' and upper(substring(tdr_reference_temp from 1 for 5)) != 'HTTPS');
 
 -- put the ZFA: in front of the reference back as it was parsed out due to the semicolon
 update external_reference_temp
@@ -160,3 +154,4 @@ drop table external_reference_temp;
 
 --rollback work;
 commit work;
+

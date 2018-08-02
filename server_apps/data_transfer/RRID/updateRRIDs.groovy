@@ -6,29 +6,17 @@ import org.zfin.util.ReportGenerator
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
-def dbaccess (String dbname, String sql) {
-  proc = "dbaccess -a $dbname".execute()
-  proc.getOutputStream().with {
-    write(sql.bytes)
-    close()
-  }
-  proc.waitFor()
-  proc.getErrorStream().eachLine { println(it) }
-  if (proc.exitValue()) {
-    throw new RuntimeException("dbaccess call failed")
-  }
-  proc
-}
+
 
 
 
 dbname = System.getenv("DBNAME")
 println("Loading RRIDs into $dbname")
 
-dbaccess dbname, """
+psql dbname, """
 create temp table tmp_dblink (dblink_id varchar(50), data_id varchar(50), fdbcont_id varchar(50),
-       	    	  	     		acc_num varchar(50))
- with no log;
+       	    	  	     		acc_num varchar(50));
+
 
 insert into tmp_dblink (dblink_id, data_id, fdbcont_id, acc_num)
   select get_id('DBLINK'), feature_zdb_id, 

@@ -1,78 +1,57 @@
 begin work ;
-
- select dalias_data_Zdb_id as id1, dalias_alias as id2
- from marker, data_alias
- where mrkr_zdb_id = dalias_data_zdb_id
-into temp tmp_3 with no log;
 		 
-create temp table tmp_identifiers (id varchar(50), id2 lvarchar(1500))
-with no log;
+create temporary table tmp_identifiers (id text, id2 text);
+\copy tmp_identifiers from '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/ids.unl' (delimiter '|');
 
-insert into tmp_identifiers (id)
- select distinct id1 from tmp_3;
+create index tmpidentifiers_index on tmp_identifiers (id);
 
-create index tmp3_index on tmp_3 (id1)
-using btree in idxdbs3;
+create temporary table tmp_go_annot (mev_zdb_id text,anno_group_id bigint,annoextn text);
 
-create index tmpidentifiers_index on tmp_identifiers (id)
-using btree in idxdbs2;
 
-update tmp_identifiers
-  set id2 = replace(replace(replace(substr(multiset (select distinct item replace(id2,",","Sierra") from tmp_3
-							  where tmp_3.id1 = tmp_identifiers.id
-
-							 )::lvarchar(4000),11),""),"'}",""),"'","");
-
-create temp table tmp_go_annot (mev_zdb_id varchar(50),anno_group_id int8,annoextn lvarchar(255)) with no log;
-insert into tmp_go_annot (mev_zdb_id,anno_group_id,annoextn) select distinct mrkrgoev_zdb_id, mgtaeg_annotation_extension_group_id, term_name||'('||mgtae_term_text||')'
+insert into tmp_go_annot (mev_zdb_id,anno_group_id,annoextn)
+select distinct mrkrgoev_zdb_id, mgtaeg_annotation_extension_group_id, term_name||'('||mgtae_term_text||')'
 from marker_go_term_evidence, marker_go_term_annotation_extension_group, marker_go_term_annotation_extension,term
 where mrkrgoev_zdb_id= mgtaeg_mrkrgoev_zdb_id and mgtae_relationship_term_zdb_id=term_zdb_id and mgtae_extension_group_id=mgtaeg_annotation_extension_group_id ;
 
-create temp table tmp_go_identifiers (goid varchar(50), goid2 int8,goid3 lvarchar(1500))
-with no log;
+create temporary table tmp_go_identifiers (goid text, goid2 bigint,goid3 text);
 
-insert into tmp_go_identifiers (goid,goid2)
- select distinct mev_zdb_id,anno_group_id from tmp_go_annot;
+insert into tmp_go_identifiers(goid, goid2, goid3)
+select mev_zdb_id,anno_group_id
+, STRING_AGG(annoextn,',')
+from tmp_go_annot
+group by mev_zdb_id,anno_group_id
+order by 1;
 
-update tmp_go_identifiers  set goid3 = replace(replace(replace(substr(multiset (select distinct item replace(annoextn,",","Prita") from tmp_go_annot
-                                                          where tmp_go_annot.mev_zdb_id = tmp_go_identifiers.goid and tmp_go_annot.anno_group_id=tmp_go_identifiers.goid2
-
-                                                         )::lvarchar(4000),11),""),"'}",""),"'","");
-
-create temp table tmp_go_identifiers_pipes (goidtmp varchar(50), goid3tmp lvarchar(2000))
-with no log;
-
+create temporary table tmp_go_identifiers_pipes (goidtmp text, goid3tmp text);
 insert into tmp_go_identifiers_pipes (goidtmp)
  select distinct goid from tmp_go_identifiers;
+update tmp_go_identifiers_pipes
+set goid3tmp=(select STRING_AGG(goid3,'|') from tmp_go_identifiers where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp);
 
-update tmp_go_identifiers_pipes  set goid3tmp = replace(replace(replace(substr(multiset (select distinct item replace(goid3,",","Prita") from tmp_go_identifiers
-                                                          where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp
-                                                          )::lvarchar(4000),11),""),"'}",""),"'","");
+create temporary table tmp_go_proteinid (mgev_zdb_id text,proteinid text);
 
-
-create temp table tmp_go_proteinid (mgev_zdb_id varchar(50),proteinid varchar(255)) with no log;
 insert into tmp_go_proteinid (mgev_zdb_id,proteinid) select distinct mrkrgoev_zdb_id, nvl(fdb_db_name||':'||dblink_acc_num,'')
 from marker_go_term_evidence, foreign_db, db_link,foreign_db_contains
 where mrkrgoev_protein_dblink_zdb_id= dblink_Zdb_id and dblink_fdbcont_zdb_id=fdbcont_zdb_id and fdbcont_fdb_db_id=fdb_db_pk_id ;
 
 
-create temp table tmp_go (mv_zdb_id varchar(50),
-       	    	  	 m_zdb_id varchar(50),
-			 m_abbrev lvarchar,
-			 m_name lvarchar,
-			 t_ont_id varchar(50),
-			 mv_source_id varchar(50),
-			 ac_no int8,
-			 mv_ev_code varchar(30),
-			 if_from lvarchar,
-			 mv_flag varchar(50),
-			 t_ont varchar(100),
-			 mv_date_modified datetime year to second,
-			 mv_created_by varchar(100),
-			 id2 lvarchar(4000),
-			 mv_annoextn lvarchar(1000),
-			 gene_type varchar(100),geneproduct_id varchar(255))
-with no log;
+create temporary table tmp_go (mv_zdb_id text,
+       	    	  	 m_zdb_id text,
+			 m_abbrev text,
+			 m_name text,
+			 t_ont_id text,
+			 mv_source_id text,
+			 ac_no text,
+			 mv_ev_code text,
+			 if_from text,
+			 mv_flag text,
+			 t_ont text,
+			 mv_date_modified timestamp without time zone,
+			 mv_created_by text,
+			 id2 text,
+			 mv_annoextn text,
+			 gene_type text,geneproduct_id text);
+
 
 insert into tmp_go (mv_zdb_id,
        m_zdb_id,
@@ -92,21 +71,17 @@ insert into tmp_go (mv_zdb_id,
        geneproduct_id
 )
 select mrkrgoev_zdb_id,
-				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term1.term_ont_id, mrkrgoev_source_zdb_id,
+				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid
-			   from marker_go_term_evidence, marker, term term1, publication, so_zfin_mapping,
-					   outer inference_group_member,
-					   outer  tmp_go_identifiers_pipes,
-					   outer tmp_go_proteinid
-			  where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
-			    and mrkrgoev_term_zdb_id = term1.term_zdb_id
-			    and mrkrgoev_source_zdb_id  = zdb_id
-			    and mrkr_type = szm_object_type
-			    and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
-			    and mrkrgoev_zdb_id=goidtmp
-			    and mrkrgoev_zdb_id=mgev_zdb_id;
-
+				upper(substring(term_ontology from 1 for 1)), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid
+			   from marker_go_term_evidence
+			   join marker on mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
+			   join term on mrkrgoev_term_zdb_id = term_zdb_id
+			   join publication on mrkrgoev_source_zdb_id  = zdb_id
+			   join so_zfin_mapping on mrkr_type = szm_object_type
+		           full outer join inference_group_member on mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
+		           full outer join tmp_go_identifiers_pipes on  mrkrgoev_zdb_id=goidtmp
+			         full outer join tmp_go_proteinid on mrkrgoev_zdb_id=mgev_zdb_id ;
 
 select distinct gene_type from tmp_go where gene_type is not null;
 
@@ -116,14 +91,6 @@ update tmp_go
 update tmp_go
 set mv_created_by='UniProt' where mv_created_by='UniProtKB';
 
-select * from tmp_go where mv_zdb_id='ZDB-MRKRGOEV-180328-54';
-select first 1 * from tmp_go
- where m_abbrev = 'pax8';
-
-select first 1 * from tmp_go;
-  
-
-unload to 'go.zfin' delimiter '	' 
-		select * from tmp_go;
+\copy (select * from tmp_go) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.zfin' with delimiter as '	' null as '';
 
 commit work;

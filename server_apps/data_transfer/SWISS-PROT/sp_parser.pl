@@ -27,9 +27,8 @@ my $zfindbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
 
-
-my $dbh = DBI->connect ("DBI:Informix:$zfindbname", $username, $password)
-          or die "Cannot connect to Informix database: $DBI::errstr\n";
+my $dbh = DBI->connect ("DBI:Pg:dbname=$zfindbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $kwMultLinesConcatenated = " ";
 while (<>) {
@@ -149,7 +148,7 @@ while (<>) {
               $dbname eq "PROSITE"
 #              or   $dbname eq "UniProt" # UniProt added in the UniProt section
               ){
-              print DBLINK "$gene|$dbname|$acc_num||\n";
+              print DBLINK "$gene|$dbname|$acc_num|\n";
           }
       }
       next;
@@ -183,7 +182,7 @@ while (<>) {
            	 $kwToPrint =~ s/\s+$//;     ## strip trailing space
            	 $kwToPrint =~ s/\.$//;     ## strip trailing period (.)
 	         foreach $gene (@gene_array) {
-	            print KEYWD "$gene|$kwToPrint|\n";
+	            print KEYWD "$gene|$kwToPrint\n";
 	         }
 	       } elsif ($kw =~ m/(.*)$/) {     ## some records still with old format that does not contain braces
            	 $kwToPrint = $1;
@@ -191,7 +190,7 @@ while (<>) {
            	 $kwToPrint =~ s/\s+$//;     ## strip trailing space
            	 $kwToPrint =~ s/\.$//;     ## strip trailing period (.)
 	         foreach $gene (@gene_array) {
-	            print KEYWD "$gene|$kwToPrint|\n";
+	            print KEYWD "$gene|$kwToPrint\n";
 	         }
 	       }
         }
@@ -210,25 +209,25 @@ while (<>) {
     chop $prm_ac;
     while ($sp_ac = shift @sp_ac){
       chop $sp_ac;
-      print ACC "$prm_ac|$sp_ac|\n" if ($sp_ac ne '' );
+      print ACC "$prm_ac|$sp_ac\n" if ($sp_ac ne '' );
     }
 
     if (@cc) {
 
       foreach $gene (@gene_array) {
 	  # '|' is in use in the comments field, thus use '$' to be delimiter
-	  print COMMT "$gene\$$prm_ac\$".join("<br>",@cc)."\$\n";
+	  print COMMT "$gene\$$prm_ac\$".join("<br>",@cc)."\n";
       }
     }
 
    foreach $gene (@gene_array) {
 
-	print DBLINK "$gene|UniProtKB|$prm_ac|$len|\n";
+	print DBLINK "$gene|UniProtKB|$prm_ac|$len\n";
     }
 
     if (length($ecnumber)>0){
 	  foreach $gene (@gene_array) {
-	    print DBLINK "$gene|EC|$ecnumber||\n";
+	    print DBLINK "$gene|EC|$ecnumber|\n";
 	  }
     }
 

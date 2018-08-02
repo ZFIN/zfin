@@ -1,4 +1,4 @@
 #!/bin/bash -e
 
-<!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/Reports/AnnualStats/stats.sql
+psql -d <!--|DB_NAME|--> -a -f stats.sql
 

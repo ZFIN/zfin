@@ -14,32 +14,10 @@
 #   Antibodies
 # We generate locations for Morpholinos
 #
-# define GLOBALS
-# set environment variables
 
-$ENV{"DBDATE"}="Y4MD-";
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
-chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/GFF3";
-print "starting here: \n". `pwd`. "\n";
-
-print "generating tracks\n";
-
-###  Ensembl
-my $cmd = "cat " .
-    "E_unload_zfin_tginsertion_gff.sql ".
-    "unload_ZMP.sql " .
-    "E_unload_transcript_gff.sql " .
-    "E_unload_ensembl_contig.sql " .
-    "E_unload_zfin_knockdown_reagents.sql " .
-    "E_zfin_ensembl_gene.sql " .        # begin gene transaction
-    "E_unload_alias_scattered.sql " .
-    "E_unload_xpat_gff.sql " .
-    "E_unload_pheno_gff.sql " .
-    "E_unload_antibody_gff.sql " .
-    "rollback.sql | $ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|-->";
-
+# Note: Once we fully switched to Postgres, modify the Jenkins job to call the groovy script directly.
+# this perl script is just created so we can easily swithc between Informix and Postgres for Jenkins jobs
+# by renaming files.
+chdir "download-files";
+my $cmd = "./generateGff3.groovy ";
 system($cmd);

@@ -14,8 +14,18 @@ def out = new BufferedOutputStream(file)
 out << new URL(DOWNLOAD_URL).openStream()
 out.close()
 
-def dbaccess (String dbname, String sql) {
-    proc = "dbaccess -a $dbname".execute()
+static Process dbaccess (String dbname, String sql) {
+    def usePostgres = System.getenv()['USE_POSTGRES']
+    println usePostgres
+    sql = sql .replace("\n","")
+    sql = sql .replace("\\copy","\n  \\copy")
+    println sql
+
+    def proc
+    if (usePostgres == 'true')
+        proc = "psql -d $dbname -a".execute()
+    else
+        proc = "dbaccess -a $dbname".execute()
     proc.getOutputStream().with {
         write(sql.bytes)
         close()
@@ -26,6 +36,10 @@ def dbaccess (String dbname, String sql) {
         throw new RuntimeException("dbaccess call failed")
     }
     proc
+}
+
+static Process psql (String dbname, String sql) {
+    return dbaccess(dbname, sql)
 }
 
 
@@ -56,28 +70,22 @@ pantherIDs.each { csv ->
 dbname = System.getenv("DBNAME")
 println("Loading terms into $dbname")
 
-dbaccess dbname, """
-  UNLOAD TO $PRE_FILE
-    SELECT dblink_linked_recid,dblink_acc_num
-    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
+
+psql dbname, """
+
+\\copy(SELECT dblink_linked_recid,dblink_acc_num
+    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65)) TO $PRE_FILE;
 
   CREATE TEMP TABLE tmp_terms(
-    dblinkid varchar(50),
-    id varchar(50),
-    name varchar(50),
-    fdbcontid varchar(50)
-      ) with no log;
+    dblinkid text,
+    id text,
+    name text,
+    fdbcontid text
+  ) ;
 
-  LOAD FROM $OUTFILE
-    INSERT INTO tmp_terms;
-
+  \\COPY tmp_terms FROM '$OUTFILE' delimiter '|' ;
 
 
-
-
-update tmp_terms set id = (select zrepld_new_zdb_id from zdb_replaced_data where id=zrepld_old_zdb_id) where id in (select zrepld_old_zdb_id
-                                  from zdb_replaced_data);
-unload to 'test.unl' select id from tmp_terms where id not in (select mrkr_zdb_id from marker where mrkr_type='GENE');
 update tmp_terms set fdbcontid = (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
 
 delete from tmp_terms where id not in (select mrkr_zdb_id from marker where mrkr_type='GENE');
@@ -97,9 +105,9 @@ insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 
 
 
-  UNLOAD TO $POST_FILE
-    SELECT dblink_linked_recid,dblink_acc_num
-    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
+  \\copy (SELECT dblink_linked_recid,dblink_acc_num
+    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65)) TO $POST_FILE
+    ;
 """
 
 if (args) {

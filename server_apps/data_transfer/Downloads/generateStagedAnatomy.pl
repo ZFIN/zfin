@@ -26,11 +26,12 @@ my $output = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsSt
 
 open (OUT,">$output") or &emailError ("Can not open $output to write");
 
-my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-                       '', '', 
-                       {AutoCommit => 1,RaiseError => 1}
+my $dbname = "<!--|DB_NAME|-->";
+
+my $dbh = DBI->connect("DBI:Pg:dbname=$dbname;host=localhost",
+                       "", "", 
                       )
-    || &emailError("Failed while connecting to <!--|DB_NAME|--> "); 
+    or die "Cannot connect to database: $DBI::errstr\n"; 
 
 $lastStgZdbId = "";
 
@@ -75,7 +76,7 @@ exit;
 sub emailError($)
   {
     open(MAIL, "| $mailprog") || die "Cannot open mailprog $mailprog";
-    print MAIL "To: <!--|DEFAULT_EMAIL|-->\n";
+    print MAIL 'To: <!--|DEFAULT_EMAIL|-->\n';
     print MAIL "Subject: generateStageAnatomy.pl error\n";
     print MAIL "$_[0]";
     close MAIL;

@@ -6,10 +6,10 @@ begin work;
 
 
 create table pre_db_link (
-        predblink_data_zdb_id varchar(50) not null,
+        predblink_data_zdb_id text not null,
         predblink_acc_num varchar(50) not null,
         predblink_acc_num_display varchar(50) not null,
-        predblink_fdbcont_zdb_id varchar(50) not null
+        predblink_fdbcont_zdb_id text not null
 );
 
 insert into pre_db_link (
@@ -25,35 +25,30 @@ insert into pre_db_link (
      and fdbcont_fdb_db_id = fdb_db_pk_id 
      and fdb_db_name = 'zfishbook';
      
-! echo "         into pre_db_link table."  
 
 
-alter table pre_db_link add predblink_dblink_zdb_id varchar(50);
+alter table pre_db_link add predblink_dblink_zdb_id text;
 
 update pre_db_link set predblink_dblink_zdb_id = get_id('DBLINK');
 
-unload to 'pre_db_link_cleanupZfishbook' select * from pre_db_link order by predblink_acc_num;
-
-! echo "         to pre_db_link_cleanupZfishbook"  
+\copy (select * from pre_db_link order by predblink_acc_num) to 'pre_db_link_cleanupZfishbook' ;
  
 insert into zdb_active_data select predblink_dblink_zdb_id from pre_db_link;
 
-! echo "         into zdb_active_data table."  
+
 
 insert into db_link (dblink_linked_recid,dblink_acc_num, dblink_zdb_id ,dblink_acc_num_display,dblink_fdbcont_zdb_id) 
   select predblink_data_zdb_id, predblink_acc_num, predblink_dblink_zdb_id, predblink_acc_num_display, predblink_fdbcont_zdb_id 
     from pre_db_link; 
 
-! echo "         into db_link table."      
+
 
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)  
   select predblink_dblink_zdb_id,'ZDB-PUB-120111-1' from pre_db_link;
 
-! echo "         into record_attribution table."  
 
-unload to 'updatedFeaturesToCleanUpZfishbookComments' 
-   select feature_abbrev, feature_name, feature_zdb_id 
+create temp table tmp_updateComments as   select feature_abbrev, feature_name, feature_zdb_id 
      from feature
     where feature_comments like '%zfishbook.org%' 
       and exists (select "x" from data_alias where dalias_data_zdb_id = feature_zdb_id and dalias_alias like 'GBT%')
@@ -62,6 +57,8 @@ unload to 'updatedFeaturesToCleanUpZfishbookComments'
 update feature set feature_comments = '' 
              where feature_comments like '%zfishbook.org%' 
                and exists (select "x" from data_alias where dalias_data_zdb_id = feature_zdb_id and dalias_alias like 'GBT%');
+
+\copy (select * from tmp_updateComments) to 'updatedFeaturesToCleanUpZfishbookComments'; 
 
 
 drop table pre_db_link;

@@ -68,36 +68,76 @@ else {
 
 }
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> DownloadFiles.sql") and die "there was an error in the DownloadFiles.sql";
+system("psql -d <!--|DB_NAME|--> -a -f DownloadFiles.sql") and die "there was an error in the DownloadFiles.sql";
 system("./patoNumbers.pl") and die "there was an error in patoNumbers.pl";
 
 system("./generateStagedAnatomy.pl") and die "there was an error in generateStagedAnatomy.pl";
 
-
+$dbname = "<!--|DB_NAME|-->";
+$username = "";
+$password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-                       '',
-                       '',
-		       {AutoCommit => 1,RaiseError => 1}
-		      )
-    or die ("Failed while connecting to <!--|DB_NAME|-->");
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password) 
+    or die "Cannot connect to database: $DBI::errstr\n";
 
+## create downloadsStaging/identifiersForIntermine.txt
+$sql = "select feature_zdb_id as id1, feature_zdb_id as id2
+          from feature
+        union
+        select feature_zdb_id as id1, feature_abbrev as id2
+          from feature       
+        union
+        select mrkr_zdb_id as id1,mrkr_zdb_id as id2
+          from marker
+        union
+        select mrkr_zdb_id as id1, mrkr_abbrev as id2
+          from marker         
+        union
+        select dblink_linked_recid as id1, dblink_acc_num as id2
+          from db_link
+        union
+        select zrepld_new_zdb_id as id1, zrepld_old_zdb_id as id2         
+          from zdb_replaced_data
+         where exists (Select 'x' from marker where mrkr_zdb_id = zrepld_new_zdb_id)
+        order by 2;";       
+
+$cur = $dbh->prepare($sql);
+$cur->execute();
+$cur->bind_columns(\$id1, \$id2);
+
+%identifiers = ();        
+while ($cur->fetch()) {   
+  if (!exists($identifiers{$id1})) {
+     $identifiers{$id1} = $id2;
+  } else {
+     $identifiers{$id1} = $identifiers{$id1} . "," . $id2;
+  }
+}
+
+$cur->finish();
+
+open (IDS, ">downloadsStaging/identifiersForIntermine.txt") || die "Cannot open identifiersForIntermine.txt : $!\n";
+foreach $id (keys %identifiers) {
+  $v = $identifiers{$id};
+  print IDS "$id\t$v\n";
+}
+close IDS;
 
 ### FB case 8651, Include Publication in Morpholino Data Download
 
-$sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, b.szm_term_ont_id, mo.mrkr_abbrev,
+$sql = "select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, mo.mrkr_zdb_id as id2, b.szm_term_ont_id as id3, mo.mrkr_abbrev as abbr2,
 	       seq_sequence, mo.mrkr_comments
           from marker gn, marker mo, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
          where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
            and mo.mrkr_zdb_id = mrel_mrkr_1_zdb_id
            and a.szm_object_type = gn.mrkr_type
            and b.szm_object_type = mo.mrkr_type
-           and (mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-")-- note ommits pseudogenes, hope that was deliberate
-           and mrel_mrkr_1_zdb_id[1,12] = "ZDB-MRPHLNO-"
-           and mrel_type = "knockdown reagent targets gene"
+           and substring(mrel_mrkr_2_zdb_id from 1 for 9) = 'ZDB-GENE-'   -- note ommits pseudogenes, hope that was deliberate
+           and substring(mrel_mrkr_1_zdb_id from 1 for 12) = 'ZDB-MRPHLNO-'
+           and mrel_type = 'knockdown reagent targets gene'
            and mo.mrkr_zdb_id = seq_mrkr_zdb_id
-      order by gn.mrkr_abbrev;';
+      order by gn.mrkr_abbrev;";
 
 $cur = $dbh->prepare($sql);
 $cur->execute();
@@ -148,18 +188,18 @@ close MOWITHPUBS;
 
 ## generate a file with antibodies and associated expression experiment
 ## ZFIN-5654
-$sql = '
+$sql = "
  select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
-	"" as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
+	'' as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
 	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
  from expression_experiment, fish_experiment, fish, marker atb
  where xpatex_genox_Zdb_id = genox_zdb_id
  and genox_fish_zdb_id = fish_Zdb_id
  and atb.mrkr_zdb_id = xpatex_atb_zdb_id
    and xpatex_gene_zdb_id is null
- AND not exists (Select "x" from clone
+ AND not exists (Select 'x' from clone
       where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-      and clone_problem_type = "Chimeric")
+      and clone_problem_type = 'Chimeric')
 UNION
  select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
 	gene.mrkr_abbrev as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
@@ -170,11 +210,11 @@ UNION
  and atb.mrkr_zdb_id = xpatex_atb_zdb_id
  and gene.mrkr_zdb_id = xpatex_gene_zdb_id
    and xpatex_gene_zdb_id is not null
- and gene.mrkr_abbrev not like "WITHDRAWN:"
- AND not exists (Select "x" from clone
+ and gene.mrkr_abbrev not like 'WITHDRAWN:'
+ AND not exists (Select 'x' from clone
       where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-      and clone_problem_type = "Chimeric");
-';
+      and clone_problem_type = 'Chimeric');
+";
 $cur = $dbh->prepare($sql);
 $cur->execute();
 $cur->bind_columns(\$abId, \$abSym, \$geneId, \$geneSym, \$xpType, \$xpId, \$pubId, \$fishId, \$envId); 
@@ -220,18 +260,18 @@ $TALENfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/
 
 open (TALENWITHPUBS, ">$TALENfileWithPubsAndNoHTMLtags") || die "Cannot open $TALENfileWithPubsAndNoHTMLtags : $!\n";
 
-$sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb_id, b.szm_term_ont_id, talen.mrkr_abbrev,
+$sql = "select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb_id as id2, b.szm_term_ont_id as id3, talen.mrkr_abbrev as abbr2,
 	       seq_sequence, seq_sequence_2, talen.mrkr_comments
           from marker gn, marker talen, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
          where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
            and talen.mrkr_zdb_id = mrel_mrkr_1_zdb_id
            and a.szm_object_type = gn.mrkr_type
            and b.szm_object_type = talen.mrkr_type
-           and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
-           and mrel_mrkr_1_zdb_id[1,10] = "ZDB-TALEN-"
-           and mrel_type = "knockdown reagent targets gene"
+           and substring(mrel_mrkr_2_zdb_id from 1 for 9) = 'ZDB-GENE-' -- note ommits pseudogenes, hope that was deliberate
+           and substring(mrel_mrkr_1_zdb_id from 1 for 10) = 'ZDB-TALEN-'
+           and mrel_type = 'knockdown reagent targets gene'
            and talen.mrkr_zdb_id = seq_mrkr_zdb_id
-      order by gn.mrkr_abbrev;';
+      order by gn.mrkr_abbrev;";
 
 $cur = $dbh->prepare($sql);
 $cur->execute();
@@ -251,10 +291,8 @@ while ($cur->fetch()) {
     %pubIds = ();
     $numOfPubs = 0;
     my ($pub);
-    $innerSql = "select distinct recattrib_source_zdb_id from record_attribution where recattrib_data_zdb_id = " . "\"" . $talen_id . "\";";
-        
-    $curInner = $dbh->prepare($innerSql);
-    $curInner->execute();
+    $curInner = $dbh->prepare("select distinct recattrib_source_zdb_id from record_attribution where recattrib_data_zdb_id = ?");
+    $curInner->execute($talen_id);
     $curInner->bind_columns(\$pub);
     while ($curInner->fetch()) {
          $pubIds{$pub} = 1;
@@ -282,18 +320,18 @@ $CRISPRfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer
 
 open (CRISPRWITHPUBS, ">$CRISPRfileWithPubsAndNoHTMLtags") || die "Cannot open $CRISPRfileWithPubsAndNoHTMLtags : $!\n";
 
-$sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zdb_id, b.szm_term_ont_id, crispr.mrkr_abbrev,
+$sql = "select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zdb_id as id2, b.szm_term_ont_id as id3, crispr.mrkr_abbrev as abbr2,
 	       seq_sequence, crispr.mrkr_comments
           from marker gn, marker crispr, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
          where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
            and crispr.mrkr_zdb_id = mrel_mrkr_1_zdb_id
            and a.szm_object_type = gn.mrkr_type
            and b.szm_object_type = crispr.mrkr_type
-           and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
-           and mrel_mrkr_1_zdb_id[1,11] = "ZDB-CRISPR-"
-           and mrel_type = "knockdown reagent targets gene"
+           and substring(mrel_mrkr_2_zdb_id from 1 for 9) = 'ZDB-GENE-' -- note ommits pseudogenes, hope that was deliberate
+           and substring(mrel_mrkr_1_zdb_id from 1 for 11) = 'ZDB-CRISPR-'
+           and mrel_type = 'knockdown reagent targets gene'
            and crispr.mrkr_zdb_id = seq_mrkr_zdb_id
-      order by gn.mrkr_abbrev;';
+      order by gn.mrkr_abbrev;";
 
 $cur = $dbh->prepare($sql);
 $cur->execute();
@@ -313,10 +351,8 @@ while ($cur->fetch()) {
     %pubIds = ();
     $numOfPubs = 0;
     my ($pub);
-    $innerSql = "select distinct recattrib_source_zdb_id from record_attribution where recattrib_data_zdb_id = " . "\"" . $crispr_id . "\";";
-        
-    $curInner = $dbh->prepare($innerSql);
-    $curInner->execute();
+    $curInner = $dbh->prepare("select distinct recattrib_source_zdb_id from record_attribution where recattrib_data_zdb_id = ?");
+    $curInner->execute($crispr_id);
     $curInner->bind_columns(\$pub);
     while ($curInner->fetch()) {
          $pubIds{$pub} = 1;

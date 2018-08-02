@@ -63,17 +63,17 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $sqlGetZFgeneNamesByHumanAndMouseOrth =
-'select distinct ortho_zebrafish_gene_zdb_id,mrkr_abbrev,mrkr_name ' . 
-  'from ortholog,marker,ortholog_external_reference ' . 
- 'where oef_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-27","ZDB-FDBCONT-040412-28","ZDB-FDBCONT-040412-23") ' .
-   'and oef_ortho_zdb_id = ortho_zdb_id ' .
-   'and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id ' .
-   'and mrkr_type = "GENE" ' .
-   'order by mrkr_abbrev;';
+"select distinct ortho_zebrafish_gene_zdb_id,mrkr_abbrev,mrkr_name
+   from ortholog,marker,ortholog_external_reference 
+  where oef_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-27','ZDB-FDBCONT-040412-28','ZDB-FDBCONT-040412-23')
+   and oef_ortho_zdb_id = ortho_zdb_id
+   and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+   and mrkr_type = 'GENE'
+   order by mrkr_abbrev;";
 
 $cur = $dbh->prepare($sqlGetZFgeneNamesByHumanAndMouseOrth);
 $cur->execute();
@@ -173,20 +173,20 @@ foreach $newName (keys %newGeneNames) {
 close(UPDATELIST);
 
 if ($ctProblem == 0) {
-    $cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> updateZebrafishGeneNames.sql >updateZebrafishGeneNameSQLlog1 2> updateZebrafishGeneNameSQLlog2";
+    $cmd = "psql -d <!--|DB_NAME|--> -a -f updateZebrafishGeneNames.sql >updateZebrafishGeneNameSQLlog1";
     system($cmd);
 
     system("/bin/cat updateZebrafishGeneNameSQLlog2 >> updateZebrafishGeneNameSQLlog1");
 
     $subject = "Auto from $dbname: " . "updateZebrafishGeneNames.pl :: updateZebrafishGeneNameSQLlog";
-    ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","updateZebrafishGeneNameSQLlog1");
+    ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","updateZebrafishGeneNameSQLlog1");
 
 
     $subject = "Auto from $dbname: " . "List of $ctValidNewGeneNames gene names that have been updated based on inputfile by Ken according to NCBI orthology info";
-    ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","geneNamesUpdatedReport");
+    ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","geneNamesUpdatedReport");
 } else {
     $subject = "Auto from $dbname: " . "List of $ctProblem problematic gene names";
-    ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","problemNames");
+    ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","problemNames");
 }
 
 exit;

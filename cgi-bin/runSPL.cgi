@@ -11,14 +11,14 @@
  print $Q->header();
  print $Q->start_html(-TITLE=>"ZFIN Regen",-BGCOLOR=>'white')."\n";
  print "<script language='JavaScript' src='/javascript/header.js'></script>";
-  ### the hard coded env paths need a better idea
-  $ENV{INFORMIXDIR}      = '<!--|INFORMIX_DIR|-->';
-  $ENV{INFORMIXSERVER}   = '<!--|INFORMIX_SERVER|-->';
-  $ENV{INFORMIXSQLHOSTS} = '<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->';
-  $ENV{"ONCONFIG"}       = "<!--|ONCONFIG_FILE|-->";
-  ### open a handle on the db
-  my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '', {AutoCommit => 1, RaiseError => 1})
-  || die "Failed while connecting to <!--|DB_NAME|--> "; #$DBI::errstr";
+
+    ### open a handle on the db
+    my $dbname = "<!--|DB_NAME|-->";
+    my $username = "";
+    my $password = "";
+    ### open a handle on the db
+    my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+        or die "\n\nCannot connect to PostgreSQL database: $DBI::errstr\n\n";
 
   print "<CENTER><TABLE width=400 bgcolor=#000000 border=2><TR><TD><font color=#FFFF66>";
 
@@ -46,11 +46,7 @@
 
   #this is for security, we wouldn't want somebody to pass in arbitrary sql
 
-  if ($Q->param('run')  eq "regen_names") 
-   {
-    $statement = "execute function regen_names();";
-   } 
-  elsif ($Q->param('run') eq "regen_fishsearch") 
+  if ($Q->param('run') eq "regen_fishsearch")
    {
     $statement = "execute function regen_fishsearch();";
    } 

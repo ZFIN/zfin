@@ -38,8 +38,8 @@ ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properti
 
 def client = new FTPClient()
 def db = [
-        url: "jdbc:informix-sqli://${ZfinPropertiesEnum.SQLHOSTS_HOST}:${ZfinPropertiesEnum.INFORMIX_PORT}/${ZfinPropertiesEnum.DBNAME}:INFORMIXSERVER=${ZfinPropertiesEnum.INFORMIXSERVER};DB_LOCALE=en_US.utf8",
-        driver: 'com.informix.jdbc.IfxDriver'
+        url: "jdbc:postgresql://localhost:5432/${ZfinPropertiesEnum.DBNAME}",
+        driver: 'org.postgresql.Driver'
 ]
 
 def fail = { String message ->

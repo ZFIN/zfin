@@ -12,13 +12,13 @@ $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
+$dbname = "<!--|DB_NAME|-->";
+$username = "";
+$password = "";
+
 ### open a handle on the db
-my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-                       '',
-                       '',
-		       {AutoCommit => 1,RaiseError => 1}
-		      )
-  || emailError("Failed while connecting to <!--|DB_NAME|-->");
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/";
 chdir "$dir";
@@ -65,47 +65,49 @@ sub gp2proteinReport()
 #    or with no association (union3)
 #    only show the ZdbID.
 #
-    my $cur = $dbh->prepare('
+    my $cur = $dbh->prepare("
 select
 distinct m.mrkr_zdb_id,fdb_db_name,dbl.dblink_acc_num,dbl.dblink_length
 from marker m,db_link dbl, foreign_db_contains fdbc, foreign_db
 where m.mrkr_zdb_id = dbl.dblink_linked_recid
 and dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
-and m.mrkr_zdb_id like "ZDB-GENE-%"
-and fdb_db_name = "UniProtKB"
+and m.mrkr_zdb_id like 'ZDB-GENE-%'
+and fdb_db_name = 'UniProtKB'
 and fdbcont_fdb_db_id = fdb_db_pk_id
 union
 select
-distinct m.mrkr_zdb_id, "","",0
-from marker m join db_link dbl on m.mrkr_zdb_id= dbl.dblink_linked_recid join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
-where m.mrkr_zdb_id like "ZDB-GENE-%"
+distinct m.mrkr_zdb_id, '' as b1, '' as b2, 0
+from marker m 
+join db_link dbl on m.mrkr_zdb_id = dbl.dblink_linked_recid 
+join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
+where m.mrkr_zdb_id like 'ZDB-GENE-%'
 and not exists
 (
    select
-   "t"
+   'x'
    from db_link dbl , foreign_db_contains fdbc, foreign_db
    where dbl.dblink_linked_recid=m.mrkr_zdb_id
    and fdbc.fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id
-   and m.mrkr_zdb_id like "ZDB-GENE-%"
-   and fdb_db_name = "UniProtKB"
+   and m.mrkr_zdb_id like 'ZDB-GENE-%'
+   and fdb_db_name = 'UniProtKB'
    and fdbcont_fdb_db_id = fdb_db_pk_id
 )
 union
 select
-distinct m.mrkr_zdb_id,"","",0
+distinct m.mrkr_zdb_id, '' as b3, '' as b4, 0
 from marker m
-where m.mrkr_zdb_id like "ZDB-GENE-%"
+where m.mrkr_zdb_id like 'ZDB-GENE-%'
 and not exists
 (
    select
-   "t"
+   'x'
    from db_link dbl , foreign_db_contains fdbc
    where dbl.dblink_linked_recid=m.mrkr_zdb_id
    and fdbc.fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id
-   and m.mrkr_zdb_id like "ZDB-GENE-%"
+   and m.mrkr_zdb_id like 'ZDB-GENE-%'
 )
-order by m.mrkr_zdb_id
-                                ;'
+order by 1
+                                ;"
 			   );
     $cur->execute;
     my($mrkr_id,$db_name,$acc_num,$db_length);

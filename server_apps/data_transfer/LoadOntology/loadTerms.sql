@@ -1,13 +1,27 @@
 begin work;
 
-create temp table tmp_header (format_ver varchar(10), data_ver varchar(10), datet varchar(20), saved_by varchar(50), auto varchar(50), default_namespace varchar(50), remark varchar(100))
-with no log;
+CREATE temp TABLE tmp_header
+  (
+     format_ver        VARCHAR(10),
+     data_ver          VARCHAR(10),
+     datet             VARCHAR(20),
+     saved_by          VARCHAR(50),
+     auto              VARCHAR(50),
+     default_namespace VARCHAR(50),
+     remark            VARCHAR(100)
+  );
 
 load from ontology_header.unl
   insert into tmp_header;
 
-create temp table tmp_syndef (namespace varchar(50), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))
-with no log;
+ CREATE temp TABLE tmp_syndef
+  (
+     namespace   VARCHAR(50),
+     TYPE        VARCHAR(30),
+     def         VARCHAR(100),
+     scoper      VARCHAR(30),
+     syntypedefs VARCHAR(20)
+  );
 
 load from syntypedefs_header.unl
   insert into tmp_syndef;
@@ -52,8 +66,12 @@ unload to new_aliases.unl
      where not exists (Select 'x' from alias_group
      	       	      	      where aliasgrp_name = type);
 
-create temp table tmp_suggestion (id varchar(30), suggested_id varchar(30), consider varchar(10))
-with no log;
+ CREATE temp TABLE tmp_suggestion
+  (
+     id           VARCHAR(30),
+     suggested_id VARCHAR(300),
+     consider     VARCHAR(10)
+  );
 
 load from term_consider.unl
  insert into tmp_suggestion;
@@ -61,12 +79,12 @@ load from term_consider.unl
 
 create temp table tmp_term_onto_with_dups (
 		term_id			varchar(50),
-		term_name		varchar(255),
+		term_name		text,
 		term_onto		varchar(50),
-		term_definition		lvarchar,
-		term_comment		lvarchar,
+		term_definition		text,
+		term_comment		text,
 		term_is_obsolete	boolean default 'f'
-	)with no log;
+	);
 
 --load the ontology file
 
@@ -80,12 +98,12 @@ where term_onto is null;
 
 create temp table tmp_term_onto_no_dups (
 		term_id			varchar(50),
-		term_name		varchar(255),
+		term_name		text,
 		term_onto		varchar(50),
-		term_definition		lvarchar,
-		term_comment		lvarchar,
+		term_definition		text,
+		term_comment		text,
 		term_is_obsolete	boolean default 'f'
-	)with no log;
+	);
 
 insert into tmp_term_onto_no_dups
   select distinct term_id,
@@ -98,12 +116,10 @@ insert into tmp_term_onto_no_dups
 
 
 create index rterm_name_index
-  on tmp_term_onto_no_dups (term_name)
-  using btree in idxdbs3 ;
+  on tmp_term_onto_no_dups (term_name);
 
 create index rterm_id_index
-  on tmp_term_onto_no_dups (term_id)
-  using btree in idxdbs2 ;
+  on tmp_term_onto_no_dups (term_id);
 
 --update statistics high for table tmp_term_onto_no_dups ;
 
@@ -115,14 +131,13 @@ select * from term
 create temp table tmp_term 	(
 			 term_zdb_id		varchar(50),
 			 term_id		varchar(50),
-			 term_name		varchar(255),
+			 term_name		text,
 			 term_ontology		varchar(50),
-			 term_definition	lvarchar,
-			 term_comment		lvarchar,
+			 term_definition	text,
+			 term_comment		text,
 			 term_is_obsolete	boolean default 'f',
 			 term_ontology_id  int8
-	)
-with no log;
+	);
 
 insert into tmp_term (
 			term_id,
@@ -176,9 +191,8 @@ unload to updated_term_names_count
 
 create temp table tmp_term_name_changed 	(
 			 term_id		varchar(50),
-			 term_name		varchar(255)
-	)
-with no log;
+			 term_name		text
+	);
 
 --unload to debug
 --  select * from tmp_term_onto_no_dups;
@@ -210,13 +224,15 @@ where exists (select 'x'
 
 -- filter out term records with modified definitions
 create temp table tmp_term_definition_changed 	(
-			 term_definition		lvarchar,
-			 term_definition_old		lvarchar,
+			 term_definition		text,
+			 term_definition_old		text,
 			 term_id		varchar(50)
-	)
-with no log;
+	);
 
-insert into tmp_term_definition_changed 
+create index tmp_term_definition_changed_index
+  on tmp_term_definition_changed (term_id);
+
+insert into tmp_term_definition_changed
   select
   	no_dups.term_definition,
   	term.term_definition,
@@ -254,11 +270,14 @@ where exists (select 'x'
 
 -- filter out term records with modified comments
 create temp table tmp_term_comment_changed 	(
-			 term_comment		lvarchar,
-			 term_comment_old		lvarchar,
+			 term_comment		text,
+			 term_comment_old		text,
 			 term_id		varchar(50)
-	)
-with no log;
+	);
+
+create index tmp_term_comment_changed_index
+  on tmp_term_comment_changed (term_id);
+
 
 insert into tmp_term_comment_changed 
   select
@@ -399,8 +418,10 @@ insert into term (term_zdb_id,
 
 --update statistics high for table term ;
 
-create temp table tmp_obsoletes (term_id varchar(50))
-with no log ;
+CREATE temp TABLE tmp_obsoletes
+  (
+     term_id VARCHAR(50)
+  ) ;
 
 load from term_obsolete.unl
   insert into tmp_obsoletes ;
@@ -410,8 +431,10 @@ load from term_obsolete.unl
 -- set all other terms back to obsolete = 'f'
 
 -- obsoletes from term table
-create temp table tmp_term_obsoletes (term_id varchar(50))
-with no log ;
+CREATE temp TABLE tmp_term_obsoletes
+  (
+     term_id VARCHAR(50)
+  )  ;
 
 insert into tmp_term_obsoletes (term_id)
   select term.term_ont_id from term as term , tmp_term_onto_no_dups as t where 
@@ -467,8 +490,12 @@ update term
 
 !echo "load term replacements";
 
-create temp table tmp_replaced (replaced_id varchar(50), term_id varchar(50), termrep varchar(20))
-with no log;
+ CREATE temp TABLE tmp_replaced
+  (
+     replaced_id VARCHAR(50),
+     term_id     VARCHAR(50),
+     termrep     VARCHAR(20)
+  ) ;
 
 load from term_replaced.unl
   insert into tmp_replaced;
@@ -489,8 +516,12 @@ insert into obsolete_term_replacement (obstermrep_term_zdb_id, obstermrep_term_r
 
 !echo "LOAD SUGGESTIONS aka consider";
 
-create temp table tmp_consider (term_id varchar(50), replaced_id varchar(50), termrep varchar(20))
-with no log;
+CREATE temp TABLE tmp_consider
+  (
+     term_id     VARCHAR(50),
+     replaced_id VARCHAR(300),
+     termrep     VARCHAR(20)
+  );
 
 load from term_consider.unl
   insert into tmp_consider;
@@ -514,3 +545,4 @@ insert into obsolete_term_suggestion (obstermsug_term_zdb_id, obstermsug_term_su
 
 --rollback work;
 commit work;
+

@@ -12,14 +12,14 @@ MESH_TO_LOAD = "meshHeadings.txt"
 PUB_IDS_AFTER_LOAD = "pubIdListPost.txt"
 
 PubmedUtils.dbaccess DBNAME, """
-  UNLOAD TO $PUB_IDS_TO_CHECK
+  \\copy (
   SELECT accession_no, zdb_id
   FROM publication
   WHERE accession_no IS NOT NULL
   AND zdb_id NOT IN (
     SELECT DISTINCT mh_pub_zdb_id
     FROM mesh_heading
-  );
+  )  ) to '$PUB_IDS_TO_CHECK' delimiter '|';
 """
 
 batchSize = 2000
@@ -48,17 +48,16 @@ new File(MESH_TO_LOAD).withWriter { output ->
 }
 
 PubmedUtils.dbaccess DBNAME, """
-  BEGIN WORK;
+ BEGIN WORK;
 
   CREATE TEMP TABLE tmp_mesh (
-    pmid VARCHAR(30),
+    pmid integer,
     descriptor_id VARCHAR(10),
     qualifier_id VARCHAR(10),
     is_major BOOLEAN
-  ) WITH NO LOG;
+  );
 
-  LOAD FROM $MESH_TO_LOAD
-    INSERT INTO tmp_mesh;
+  \\copy tmp_mesh FROM '$MESH_TO_LOAD' with delimiter '|' null '';
 
   INSERT INTO mesh_heading (mh_pub_zdb_id, mh_mesht_mesh_descriptor_id, mh_descriptor_is_major_topic)
     SELECT DISTINCT publication.zdb_id, tmp_mesh.descriptor_id, tmp_mesh.is_major
@@ -73,14 +72,14 @@ PubmedUtils.dbaccess DBNAME, """
     INNER JOIN publication ON tmp_mesh.pmid = publication.accession_no AND mesh_heading.mh_pub_zdb_id = publication.zdb_id
     WHERE tmp_mesh.qualifier_id IS NOT NULL;
 
-  UNLOAD TO $PUB_IDS_AFTER_LOAD
+  \\copy (
     SELECT accession_no, zdb_id
     FROM publication
     WHERE accession_no IS NOT NULL
     AND zdb_id NOT IN (
       SELECT DISTINCT mh_pub_zdb_id
       FROM mesh_heading
-    );
+    ) ) to '$PUB_IDS_AFTER_LOAD' delimiter '|';
 
   COMMIT WORK;
 """

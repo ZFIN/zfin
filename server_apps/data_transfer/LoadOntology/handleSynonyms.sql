@@ -3,8 +3,11 @@ create temp table tmp_syns (term_id varchar(30),
 			    scoper varchar(30),
 			    type varchar(30), 
 			    syn varchar(30),
-			    alias_group varchar(30))
-with no log;
+			    alias_group varchar(100))
+;
+
+create index tmp_syns_index
+  on tmp_syns (synonym);
 
 !echo "start of the synonym loading";
 load from term_synonyms.unl
@@ -17,15 +20,14 @@ select * from tmp_syns;
 
 update tmp_syns
   set type = null
-  where trim(type) like "[%";
+  where trim(type) like '[%';
 
 update tmp_syns
   set type = 'alias'
   where type is null ;
 
 create index tmp_syn_synonym_index
-  on tmp_syns(synonym)
-  using btree in idxdbs3;
+  on tmp_syns(synonym);
 
 --update statistics high for table tmp_syns;
 --update statistics high for table data_alias;
@@ -130,8 +132,7 @@ create temp table tmp_syns_with_ids (zdb_id varchar(50),
 				     scoper varchar(30), 
 				     data_id varchar(50), 
 				     alias_group_id int, 
-				     scoper_group_id int)
-with no log;
+				     scoper_group_id int);
 
 
 insert into tmp_syns_with_ids (term_id, synonym, type,scoper)
@@ -175,7 +176,7 @@ select distinct type from tmp_syns_with_ids;
 select distinct scoper from tmp_syns_with_ids where scoper != type;
 
 update tmp_syns_with_ids
-  set zdb_id = get_id("DALIAS");
+  set zdb_id = get_id('DALIAS');
 
 insert into zdb_active_data
   select zdb_id from tmp_syns_with_ids;
@@ -306,4 +307,5 @@ select * from tmp_syns_with_ids;
 --  select dblink_id, (select term_zdb_id from term where term_ont_id = id),
 --  	 xref_id,fdbcont_id,xref_id
 --    from tmp_xrefs_with_fdbcont_dblink;
+
 

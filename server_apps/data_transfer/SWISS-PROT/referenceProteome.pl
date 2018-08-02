@@ -17,16 +17,8 @@ use ZFINPerlModules;
 
 # set environment variables
 
-$ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
-$ENV{"INFORMIXSERVER"}="waffle";
-$ENV{"ONCONFIG"}="onconfig";
-$ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
 
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"DBDATE"}="Y4MD-";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"CLIENT_LOCALE"}="en_US.utf8";
 $ENV{"DB_LOCALE"}="en_US.utf8";
 
@@ -40,8 +32,8 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $sqlGetGenesNoProteinButHavingXpatOrPheno = "select distinct mrkr_abbrev, mrkr_zdb_id 
                                                from marker where mrkr_type = 'GENE' 
@@ -157,7 +149,7 @@ while(<FASTA>) {
 
 close(REFPR);
 
-ZFINPerlModules->doSystemCommand("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> referenceProteome.sql");
+ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f referenceProteome.sql");
 
 exit;
 

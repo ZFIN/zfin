@@ -18,8 +18,7 @@ ORDER  BY ct DESC
 subquery
 list subquery
 exists
-SELECT FIRST 3
-       mrkr_zdb_id,
+SELECT mrkr_zdb_id,
        mrkr_abbrev,
        '$2',
        zdb_id,
@@ -41,6 +40,7 @@ WHERE  mrkr_zdb_id = recattrib_data_zdb_id
                                           AND cur_closed_date IS NOT NULL ) ))
        AND mrkr_zdb_id = '$0'
 ORDER  BY pub_date
+LIMIT 3;
 
 --rollback work;
 

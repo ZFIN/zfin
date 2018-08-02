@@ -1,17 +1,9 @@
-#!/bin/tcsh
+#!/bin/tcsh -e
 
-setenv INFORMIXDIR <!--|INFORMIX_DIR|-->
-setenv INFORMIXSERVER <!--|INFORMIX_SERVER|-->
-setenv ONCONFIG <!--|ONCONFIG_FILE|-->
-setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->
-setenv LD_LIBRARY_PATH ${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
-setenv PATH <!--|INFORMIX_DIR|-->/bin:/private/ZfinLinks/Commons/bin:$PATH
-setenv INSTANCE 
-setenv ENVIRONMENT <!--|ENVIRONMENT|-->
-set pth=/research/zunloads/databases/<!--|DB_NAME|-->
+set pth=/research/zunloads/databases/${DBNAME}
 set dirname=`date +"%Y.%m.%d.1"`
 
-$INFORMIXDIR/bin/dbaccess $DBNAME <!--|ROOT_PATH|-->/server_apps/DB_maintenance/set_unload_timestamp.sql
+${SOURCEROOT}/server_apps/DB_maintenance/set_unload_timestamp.sh
 
 # increment until we get name which has not been taken
 while ( -d $pth/$dirname )
@@ -21,36 +13,26 @@ while ( -d $pth/$dirname )
 	set dirname=$y.$x
 end
 
-# A while back unloads from production to the NFS mounted development RAID
-# started taking a really long time, as much as 8 times longer than 
-# unloading the DB directly on to production disk and then copying it.
-# Therefore, to speed up the process from over 4 hours to well under
-# an hour, do the unload to production disk and then copy it.
+echo "pg_dumpall starting"
 
-if ($ENVIRONMENT != "development") then
-  /private/ZfinLinks/Commons/bin/unloaddb.pl <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
-  #  $? is the return value of the last-executed command.  
-  #  When it works correctly, unloaddb.pl returns 0. 
-  if ($? != "0") then
-    /bin/rm -rf $pth/$dirname
-  else
-    /bin/cp -pr <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname $pth/$dirname
-    # sed -i would be easier but does not work on solaris.
-    /bin/rm -rf <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
-    chgrp -R fishadmin $pth/$dirname
-    chmod -R g+rw $pth/$dirname
-  endif
+${PGBINDIR}/pg_dumpall --clean --verbose --no-role-passwords >  $pth/`date +"%Y.%m.%d.1"`.dumpall
+
+
+mkdir $pth/$dirname
+
+echo "pg_dump starting"
+
+${PGBINDIR}/pg_dump -Fc ${DBNAME} -f $pth/$dirname/`date +"%Y.%m.%d.1"`.bak
+
+if ($? != "0") then
+  /bin/rm -rf $pth/$dirname
+  echo "unload_production failed"
 else 
-  /private/ZfinLinks/Commons/bin/unloaddb.pl <!--|DB_NAME|--> $pth/$dirname
-  if ($? != "0") then
-    /bin/rm -rf $pth/$dirname
-  else 
-    chgrp -R fishadmin $pth/$dirname
-    chmod -R g+rw $pth/$dirname
+  chgrp -R fishadmin $pth/$dirname
+  chmod -R g+rw $pth/$dirname
 
-    chgrp -R fishadmin $pth/$dirname
-    chmod -R g+rw $pth/$dirname
+  chgrp -R fishadmin $pth/$dirname
+  chmod -R g+rw $pth/$dirname
 
-    echo "unloaddb.pl completed successfully."
-  endif
+  echo "pg_dumpall completed successfully."
 endif

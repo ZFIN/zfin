@@ -4,10 +4,6 @@
 # from NCBI, reporting problems, and update the journal data accordingly.
 
 #set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
@@ -56,7 +52,7 @@ while(<ALLJOURNALS>) {
   } elsif ($journalLine =~ m/^NlmId/) {
       $journalLine =~ s/NlmId://;
       $journalLine =~ s/^\s+//;
-      print NCBIJOURNALS "$journalLine|\n";
+      print NCBIJOURNALS "$journalLine\n";
   } else {
       next;
   }
@@ -67,7 +63,7 @@ close ALLJOURNALS;
 close NCBIJOURNALS;
 
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> checkAndUpdateJournals.sql") && die "Checking and updating journals failed.";
+system("psql -d <!--|DB_NAME|--> -a -f  checkAndUpdateJournals.sql") && die "Checking and updating journals failed.";
 
 open (WRONGISSN, "><!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt") ||  die "Cannot open wrongIssnPrintByMedAbbr.txt : $!\n";
 
@@ -75,7 +71,7 @@ print WRONGISSN "journal zdbID|journal abbrev|issn print currently stored|issn p
 
 close WRONGISSN;
 
-system("/bin/cat <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader.txt >> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
+system("/bin/cat <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader.txt >> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
 
 exit;
 

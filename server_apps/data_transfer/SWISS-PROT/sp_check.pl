@@ -16,14 +16,10 @@
 
 use DBI;
 
-print "\n\nStart sp_check.pl\n";
-
 # Take a SP file as input (content format restricted). 
 
 # Create the output files and give them titles. 
 init_files();
-
-print "\n\nDone with init_files\n";
 
 my $num_ok = 0;    # number of good records that are going to be loaded 
 my $num_prob = 0;  # number of problem records
@@ -36,9 +32,9 @@ my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
 
-
-my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
+### open a handle on the db
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 # if PubMed number not in zfin, output to a single file
 open PUB, ">pubmed_not_in_zfin" or die "Cannot open the pubmed_not_in_zfin:$!";
@@ -47,12 +43,9 @@ $/ = "//\n";
 open (UNPT, "zfin.dat") ||  die "Cannot open zfin.dat : $!\n";
 @records = <UNPT>;
 close UNPT;
-$ct = 0;
 foreach (@records) {
+   
     init_var ();     # Initialize the variables and arrays 
-
-    $ct++;
-    print $_ if $ct == 0;
 
     # records in probfile contains AC, RX, DR EMBL lines
     # they go to one of the prob# files for curator review. 
@@ -235,16 +228,12 @@ foreach (@records) {
 }   # for loop for SP file
 close PUB;
 
-print "\n ct = $ct\n\n";
-
 open CHECKREP, ">checkreport.txt" or die "Cannot open checkreport.txt:$!";
 print CHECKREP  "\nFinal report: \n";
 print CHECKREP "\t problem records(#) : $num_prob \n";
 print CHECKREP "\t ok records(#)  : $num_ok \n";
 printf CHECKREP ("\t ok percentage   : %.1f\%\n", 100 - $num_prob/($num_prob+$num_ok) * 100.0);
 close CHECKREP;
-
-exit;
 
 #---------------------------------------------------------------------------------------
 #

@@ -14,17 +14,14 @@ create temp table tmp_ncbi (species int,
 			    feature_type varchar(50),
 			    group_label varchar(50),
 			    transcript varchar(50),
-			    evidence_code varchar(50))
-with no log;
+			    evidence_code varchar(50));
 
-load from process_seq_gene.md
- insert into tmp_ncbi;
+\copy tmp_ncbi from process_seq_gene.md ;
 
 select first 1 * from tmp_ncbi;
 
 create index tmp_ncbi_ottdarg_index
-  on tmp_ncbi(accnum)
- using btree in idxdbs1;
+  on tmp_ncbi(accnum);
 
 delete from sequence_feature_chromosome_location_generated
  where sfclg_location_source = 'NCBIStartEndLoader';

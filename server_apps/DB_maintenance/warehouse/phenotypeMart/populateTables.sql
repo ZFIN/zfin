@@ -1,3 +1,9 @@
+create temp table tmp_pheno (genox_id text,
+			     fig_id text,
+			     start_id text,
+			     end_id text);
+
+insert into tmp_pheno (genox_id, fig_id, start_id, end_id)		
 select xpatex_genox_zdb_id as genox_id, efs_fig_zdb_id as fig_id, efs_start_stg_zdb_id as start_id, efs_end_stg_zdb_id as end_id
   from expression_experiment2, expression_figure_stage
   where xpatex_zdb_id = efs_xpatex_zdb_id
@@ -7,7 +13,7 @@ select xpatex_genox_zdb_id as genox_id, efs_fig_zdb_id as fig_id, efs_start_stg_
 union
 select phenox_genox_zdb_id, phenox_fig_zdb_id, phenox_start_Stg_zdb_id, phenox_end_stg_zdb_id
   from phenotype_experiment
-into temp tmp_pheno;
+;
 
 insert into phenotype_source_generated_temp (pg_genox_zdb_id, pg_fig_zdb_id, pg_start_stg_zdb_id, pg_end_stg_zdb_id)
 select distinct genox_id, fig_id, start_id, end_id
@@ -46,7 +52,7 @@ insert into phenotype_observation_generated_temp (psg_pg_id,  psg_e1a_zdb_id, ps
                                                   psg_e2b_zdb_id, psg_tag, psg_quality_zdb_id, psg_pre_eap_phenotype)
   select pg_id, phenos_entity_1_superterm_zdb_id, 'part of', phenos_entity_1_subterm_Zdb_id,
          phenos_entity_2_superterm_zdb_id, 'part of', phenos_entity_2_subterm_Zdb_id,
-         phenos_tag, phenos_quality_zdb_id, case when phenox_created_date < '2016-02-15 00:00:00' then 't' else 'f' end
+         phenos_tag, phenos_quality_zdb_id, case when phenox_created_date < '2016-02-15 00:00:00'::date then true else false end
     from phenotype_experiment, phenotype_statement, phenotype_source_generated_temp
     where phenox_genox_Zdb_id = pg_genox_Zdb_id
     and phenox_fig_Zdb_id =pg_fig_zdb_id
@@ -115,8 +121,6 @@ update phenotype_observation_generated_temp
   set psg_short_name = psg_e1a_name||nvl(' '||psg_e1b_name,'')||' '||psg_mrkr_Abbrev||nvl(' '||psg_mrkr_relation,'')||nvl(' '||psg_quality_name,'')||', '||psg_tag
   where psg_mrkr_zdb_id is not null;
 
-update statistics high for table phenotype_source_generated_temp;
-update statistics high for table phenotype_observation_generated_temp;
 
 insert into phenotype_generated_curated_mapping_temp (pgcm_pg_id, pgcm_source_id, pgcm_id_type)
   select distinct pg_id, xpatex_zdb_id, 'expression'

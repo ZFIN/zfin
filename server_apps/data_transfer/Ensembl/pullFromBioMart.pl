@@ -2,10 +2,6 @@
 use DBI;
 use MIME::Lite;
 
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 sub downloadFiles() {
    
@@ -25,13 +21,8 @@ sub downloadFiles() {
 
 
 
-my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-		       '',
-		       '',
-		       {AutoCommit => 0, RaiseError => 1}
-		       )
-  || errorExit("Failed while connecting to <!--|DB_NAME|--> ");
-
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $dbh->commit();
 $dbh->disconnect();

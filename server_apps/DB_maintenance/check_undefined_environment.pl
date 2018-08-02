@@ -63,10 +63,6 @@ sub sendEnv ($$){
 #
 
 #set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/";
 
@@ -77,11 +73,11 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) or die "Cannot connect to Informix database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password) or die "Cannot connect to Informix database: $DBI::errstr\n";
 
-$sql = 'select exp_zdb_id, exp_name, exp_source_zdb_id
+$sql = "select exp_zdb_id, exp_name, exp_source_zdb_id
           from experiment, curation
-         where not exists (select "x" from experiment_condition where exp_zdb_id = expcond_exp_zdb_id) and exp_name <> "_Generic-control" and exp_source_zdb_id = cur_pub_zdb_id and cur_closed_date is not null and cur_closed_date != "";';
+         where not exists (select 'x' from experiment_condition where exp_zdb_id = expcond_exp_zdb_id) and exp_name <> '_Generic-control' and exp_source_zdb_id = cur_pub_zdb_id and cur_closed_date is not null and cur_closed_date is not null ;";
 
 $cur = $dbh->prepare($sql);
 $cur ->execute();
@@ -90,13 +86,13 @@ $cur->bind_columns(\$expZdbId,\$expName,\$pubId);
 
 %experimentNames = ();
 %pubIds = ();
-      
+
 while ($cur->fetch()) {
    $experimentNames{$expZdbId} = $expName;
    $pubIds{$expZdbId} = $pubId;
 }
 
-$cur->finish(); 
+$cur->finish();
 
 open (REPORT, ">undefinedEnvReport.txt") || die "Cannot open undefinedEnvReport.txt : $!\n";
 
@@ -105,18 +101,18 @@ foreach $key (sort keys %pubIds) {
    $ctTotal++;
    $publicationId = $pubIds{$key};
    $expimentName = $experimentNames{$key};
-   
-   $sql = 'select distinct cur_curator_zdb_id, full_name, email 
+
+   $sql = "select distinct cur_curator_zdb_id, full_name, email
              from experiment,curation, person
             where cur_pub_zdb_id = exp_source_zdb_id
               and cur_curator_zdb_id = zdb_id
-              and not exists (select "x" from experiment_condition 
-                               where exp_zdb_id = expcond_exp_zdb_id) 
-                                 and exp_name <> "_Generic-control" 
-                                 and cur_pub_zdb_id = exp_source_zdb_id 
-                                 and cur_topic in ("Antibodies", "Expression", "Features (Mutant)", "Genotype", "Phenotype", "Transcripts", "Transgenic Construct") 
+              and not exists (select 'x' from experiment_condition
+                               where exp_zdb_id = expcond_exp_zdb_id)
+                                 and exp_name <> '_Generic-control'
+                                 and cur_pub_zdb_id = exp_source_zdb_id
+                                 and cur_topic in ('Antibodies', 'Expression', 'Features (Mutant)', 'Genotype', 'Phenotype', 'Transcripts', 'Transgenic Construct')
                                  and exp_zdb_id = ?
-                                 and exp_source_zdb_id = ?; ' ;
+                                 and exp_source_zdb_id = ?; " ;
  
    $cur = $dbh->prepare($sql);
    $cur ->execute($key,$publicationId);  

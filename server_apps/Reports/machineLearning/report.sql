@@ -1,81 +1,88 @@
-begin work ;
+BEGIN WORK;
 
-create temp table tmp_report (zdb_id varchar(50),
-       	    	  	      symbol varchar(255),
-			      name varchar(255),
-			      pubs_with_go int default 0,
-			      pubs_with_xpat int default 0,
-			      number_go int default 0,
-			      number_xpat int default 0)
-with no log;
+CREATE TEMP TABLE tmp_report (
+  zdb_id         varchar(50),
+  symbol         varchar(255),
+  name           varchar(255),
+  pubs_with_go   int DEFAULT 0,
+  pubs_with_xpat int DEFAULT 0,
+  number_go      int DEFAULT 0,
+  number_xpat    int DEFAULT 0
+);
 
-insert into tmp_report (zdb_id, symbol, name)
- select mrkr_Zdb_id, mrkr_abbrev, mrkr_name 
- from marker
- where mrkr_type = 'GENE';
+INSERT INTO tmp_report (zdb_id, symbol, name)
+  SELECT
+    mrkr_Zdb_id,
+    mrkr_abbrev,
+    mrkr_name
+  FROM marker
+  WHERE mrkr_type = 'GENE';
 
-create unique index mrkr_indx 
- on tmp_report(zdb_id)
- using  btree in idxdbs3;
+CREATE UNIQUE INDEX mrkr_indx
+  ON tmp_report (zdb_id);
 
-update tmp_report
- set pubs_with_go = (Select count(distinct mrkrgoev_source_zdb_id)
-     		    	    from marker_go_term_evidence, publication
-			    where jtype = 'Journal'
-			    and mrkrgoev_source_zdb_id = publication.zdb_id
-			    and mrkrgoev_mrkr_zdb_id = tmp_report.zdb_id
-			    and pub_completion_date is not null)
- where exists (Select 'x' from marker_go_term_evidence
-			    where mrkrgoev_mrkr_zdb_id = zdb_id);
+UPDATE tmp_report
+SET pubs_with_go = (SELECT count(DISTINCT mrkrgoev_source_zdb_id)
+                    FROM marker_go_term_evidence, publication
+                    WHERE jtype = 'Journal'
+                          AND mrkrgoev_source_zdb_id = publication.zdb_id
+                          AND mrkrgoev_mrkr_zdb_id = tmp_report.zdb_id
+                          AND pub_completion_date IS NOT NULL)
+WHERE exists(SELECT 'x'
+             FROM marker_go_term_evidence
+             WHERE mrkrgoev_mrkr_zdb_id = zdb_id);
 
-update tmp_report
- set number_go = (select count(*) from marker_go_term_evidence
-     	       	 	 where mrkrgoev_mrkr_zdb_id = zdb_id)
- where exists (Select 'x' from marker_go_term_evidence
-			    where mrkrgoev_mrkr_zdb_id = zdb_id);
+UPDATE tmp_report
+SET number_go = (SELECT count(*)
+                 FROM marker_go_term_evidence
+                 WHERE mrkrgoev_mrkr_zdb_id = zdb_id)
+WHERE exists(SELECT 'x'
+             FROM marker_go_term_evidence
+             WHERE mrkrgoev_mrkr_zdb_id = zdb_id);
 
-select count(*) from tmp_report
- where number_go !=0
-and (pubs_with_go = 0 or pubs_with_go = '');
+SELECT count(*)
+FROM tmp_report
+WHERE number_go != 0
+      AND pubs_with_go = 0;
 
-select first 1 * from tmp_report
- where number_go != 0;
+SELECT *
+FROM tmp_report
+WHERE number_go != 0
+LIMIT 1;
 
-update tmp_report
- set pubs_with_xpat = (select count(distinct xpatex_source_Zdb_id)
-     		      	      from expression_experiment2, publication
-			    where jtype = 'Journal'
-			    and publication.zdb_id = xpatex_source_zdb_id
-			      and xpatex_gene_zdb_id = tmp_report.zdb_id
-			      and pub_completion_date is not null)
- where exists (Select 'x' from expression_experiment2
-			      where xpatex_gene_zdb_id = zdb_id);
+UPDATE tmp_report
+SET pubs_with_xpat = (SELECT count(DISTINCT xpatex_source_Zdb_id)
+                      FROM expression_experiment2, publication
+                      WHERE jtype = 'Journal'
+                            AND publication.zdb_id = xpatex_source_zdb_id
+                            AND xpatex_gene_zdb_id = tmp_report.zdb_id
+                            AND pub_completion_date IS NOT NULL)
+WHERE exists(SELECT 'x'
+             FROM expression_experiment2
+             WHERE xpatex_gene_zdb_id = zdb_id);
 
-update tmp_report
- set number_xpat = (select count(*)
-     		      	      from expression_experiment2
-			      where xpatex_gene_zdb_id = zdb_id)
- where exists (Select 'x' from expression_experiment2
-			      where xpatex_gene_zdb_id = zdb_id);
-
-
-select count(*) from tmp_report
- where number_xpat !=0
-and (pubs_with_xpat = 0 or pubs_with_xpat = '');
-
-select first 1 * from tmp_report
- where number_xpat != 0;
+UPDATE tmp_report
+SET number_xpat = (SELECT count(*)
+                   FROM expression_experiment2
+                   WHERE xpatex_gene_zdb_id = zdb_id)
+WHERE exists(SELECT 'x'
+             FROM expression_experiment2
+             WHERE xpatex_gene_zdb_id = zdb_id);
 
 
-unload to machineLearningReport_161129.txt
- select zdb_id,
- 	symbol ,
-	name,
-	pubs_with_go,
-	pubs_with_xpat,
-	number_go,
-	number_xpat
- from tmp_Report;
+SELECT count(*)
+FROM tmp_report
+WHERE number_xpat != 0
+      AND pubs_with_xpat = 0;
+
+SELECT *
+FROM tmp_report
+WHERE number_xpat != 0
+LIMIT 1;
+
+
+\COPY tmp_report TO machineLearningReport_161129.txt;
+
 --commit work;
 
-rollback work;
+ROLLBACK WORK;

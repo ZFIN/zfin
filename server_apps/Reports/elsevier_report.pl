@@ -1,4 +1,4 @@
-#! /private/bin/perl -w 
+#!/private/bin/perl -w
 
 
 ##
@@ -12,10 +12,6 @@ use MIME::Lite;
 
 # set environment variables
 
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $mailprog = '/usr/lib/sendmail -t -oi -oem';
 
@@ -31,12 +27,13 @@ sub openReport()
 
 # open a handle on the db
 
-my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-                       '', 
-                       '', 
-                       {AutoCommit => 1,RaiseError => 1}
-                      )
-  || emailError("Failed while connecting to <!--|DB_NAME|--> "); 
+$dbname = "<!--|DB_NAME|-->";
+$username = "";
+$password = "";
+
+### open a handle on the db
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to database: $DBI::errstr\n";
 
 
 # move into the appropriate directory

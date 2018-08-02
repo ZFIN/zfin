@@ -1,25 +1,20 @@
 begin work ;
 
-create temp table tmp_orthos (taxonId int, 
-       	    	  	      ncbiGeneId varchar(50),
-			      chromosome varchar(10),
-			      position varchar(50),
-			      symbol varchar(255),
-			      name varchar(255),
-			      xrefDbname varchar(50),
-			      xrefAccNum varchar(50),
-			      xref varchar(50),
-			      lastUpdated varchar(20))
-with no log;
-
-
+create temporary table tmp_orthos (taxonId integer, 
+       	    	  	      ncbiGeneId text,
+			      chromosome text,
+			      position text,
+			      symbol text,
+			      name text,
+			      xrefDbname text,
+			      xrefAccNum text,
+			      xref text,
+			      lastUpdated text);
 
 --have to tab delimit the file because pipes are used throughout 
 --the chromosome and position fields
 
-load from "<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt"
- DELIMITER '	'
-insert into tmp_orthos;
+\copy tmp_orthos from '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt' (delimiter '	');
 
 delete from tmp_orthos
  where taxonId not in ('10090','7227','9606');
@@ -28,33 +23,27 @@ update tmp_orthos
   set xrefDbname= 'OMIM'
  where xrefdbname = 'MIM';
 
-create temp table just_ncbi_info (taxonId int, 
-       	    	  	      ncbiGeneId varchar(50),
-			      chromosome varchar(10),
-			      position varchar(50),
-			      symbol varchar(255),
-			      name varchar(255))
-with no log;
+create temporary table just_ncbi_info (taxonId integer, 
+       	    	  	      ncbiGeneId text,
+			      chromosome text,
+			      position text,
+			      symbol text,
+			      name text);
 
 create index tmp_chrom_index
- on just_ncbi_info (chromosome)
-using btree in idxdbs1;
+ on just_ncbi_info (chromosome);
 
 create index tmp_position_index
- on just_ncbi_info (position)
-using btree in idxdbs2;
+ on just_ncbi_info (position);
 
 create index tmp_symbol_index
- on just_ncbi_info(symbol)
- using btree in idxdbs2;
+ on just_ncbi_info(symbol);
 
 create index tmp_name_index
- on just_ncbi_info(name)
- using btree in idxdbs1;
+ on just_ncbi_info(name);
 
 create index tmp_ncbigeneid_index
- on just_ncbi_info(ncbigeneid)
- using btree in idxdbs3;
+ on just_ncbi_info(ncbigeneid);
 
 
 insert into just_ncbi_info 
@@ -66,14 +55,18 @@ insert into just_ncbi_info
 			      name
   from tmp_orthos;
 
-update statistics high for table just_ncbi_info;
-update statistics high for table ncbi_ortholog;
+--update statistics high for table just_ncbi_info;
+--update statistics high for table ncbi_ortholog;
 
-unload to changedSymbols.txt
+create view changedSymbols as
 select ncbiGeneId, name, symbol
   from tmp_orthos, ncbi_ortholog
  where ncbiGeneId = noi_ncbi_gene_id
  and symbol != noi_symbol;
+ 
+\copy (select * from changedSymbols) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/changedSymbols.txt' with delimiter as '|' null as '';
+
+drop view changedSymbols;
 
 update ortholog
   set ortho_other_species_chromosome = (Select distinct chromosome
@@ -135,10 +128,13 @@ delete from ncbi_ortholog
  where not exists (Select 'x' from just_ncbi_info
        	   	  	  where ncbiGeneId = noi_ncbi_gene_id);
 
-unload to missingNcbiGeneIdsWithOrthos.txt
+create view missingNcbiGeneIdsWithOrthos as
   select * from ortholog
  where not exists (Select 'x' from ncbi_ortholog
        	   	  	  where noi_ncbi_gene_id = ortho_other_species_ncbi_gene_id);
+\copy (select * from missingNcbiGeneIdsWithOrthos) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/missingNcbiGeneIdsWithOrthos.txt' with delimiter as '|' null as '';
+drop view missingNcbiGeneIdsWithOrthos;
+
 
 update ortholog
   set ortho_other_species_ncbi_gene_is_obsolete = 't'
@@ -167,32 +163,27 @@ insert into ncbi_ortholog (noi_ncbi_gene_id, noi_chromosome,noi_symbol, noi_name
 
 ---Now we do external references.
 
-create temp table tmp_ortho_xref (ortho_zdb_id varchar(50), ncbigeneid varchar(50), fdbcont_id varchar(50), xrefDbname varchar(50), xrefaccnum varchar(50), taxonid varchar(50))
-with no log;
+create temporary table tmp_ortho_xref (ortho_zdb_id text, ncbigeneid text, fdbcont_id text, xrefDbname text, xrefaccnum text, taxonid text);
 
 insert into tmp_ortho_xref (ncbigeneid, xrefdbname, xrefaccnum, taxonid)
  select distinct ncbigeneid, xrefdbname, xrefaccnum, taxonid
    from tmp_orthos;
 
 insert into tmp_ortho_xref (ncbigeneid, xrefdbname, xrefaccnum, taxonid)
- select distinct ncbigeneid, "Gene", ncbigeneid, taxonid
+ select distinct ncbigeneid, 'Gene', ncbigeneid, taxonid
    from tmp_orthos;
 
 create index tmp_ortho_index 
- on tmp_ortho_xref (ortho_Zdb_id)
- using btree in idxdbs1;
+ on tmp_ortho_xref (ortho_Zdb_id);
 
 create index tmp_ncbigeneid_xref_index 
- on tmp_ortho_xref (ncbigeneid)
- using btree in idxdbs1;
+ on tmp_ortho_xref (ncbigeneid);
 
 create index tmp_fdbcontid_index 
- on tmp_ortho_xref (fdbcont_id)
- using btree in idxdbs2;
+ on tmp_ortho_xref (fdbcont_id);
 
 create index tmp_orthoref_index 
- on tmp_ortho_xref (ncbigeneid, xrefaccnum, fdbcont_id)
- using btree in idxdbs2;
+ on tmp_ortho_xref (ncbigeneid, xrefaccnum, fdbcont_id);
 
 update tmp_ortho_xref
   set taxonid = 'Mouse'
@@ -241,7 +232,7 @@ delete from ortholog_external_reference
        	      	      where ncbigeneid = ortho_other_species_ncbi_gene_id
 		      and ortholog.ortho_zdb_id = tmp_ortho_xref.ortho_zdb_id);
 
-update statistics high for table tmp_ortho_xref;
+--update statistics high for table tmp_ortho_xref;
 
 insert into ncbi_ortholog_external_reference (noer_other_species_ncbi_gene_id, noer_other_species_accession_number, noer_fdbcont_zdb_id)
   select distinct ncbigeneid, xrefaccnum, fdbcont_id
@@ -265,39 +256,38 @@ insert into ortholog_load_tracking (olt_load_name,
 					olt_number_of_omim_links,
 					olt_number_of_gene_links,
 					olt_number_of_flybase_links)
-select "ncbi ortho load" as namer, current year to second as dater,
+select 'ncbi ortho load' as namer, now()::timestamp(0) as dater,
 ( select count(*) as mgi_count
     from ortholog_external_reference, foreign_db_contains, foreign_db
    where oef_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
-   and fdb_db_name = "MGI"),
+   and fdb_db_name = 'MGI'),
 ( select count(*) as hgnc_count
    from ortholog_external_reference, foreign_db_contains, foreign_db
    where oef_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
-   and fdb_db_name = "HGNC"),
+   and fdb_db_name = 'HGNC'),
  (select count(*) as omim_count
     from ortholog_external_reference, foreign_db_contains, foreign_db
    where oef_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
-   and fdb_db_name = "OMIM"),
+   and fdb_db_name = 'OMIM'),
  (select count(*) as gene_count
     from ortholog_external_reference, foreign_db_contains, foreign_db
    where oef_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
-   and fdb_db_name = "Gene"),
+   and fdb_db_name = 'Gene'),
  (select count(*) as flybase_count
     from ortholog_external_reference, foreign_db_contains, foreign_db
    where oef_fdbcont_zdb_id = fdbcont_zdb_id
    and fdbcont_fdb_db_id = fdb_db_pk_id
-   and fdb_db_name = "FLYBASE")
+   and fdb_db_name = 'FLYBASE')
  from single;
 
-unload to ortho_statistics.txt
- delimiter "	"
- select "load name",current year to second,"number of MGI links",
- 	"number of HGNC links", "number of OMIM links",
-	"number of GENE links", "number of FLYBASE links"
+create view orthoStats as
+ select 'load name' as name,now()::timestamp(0),'number of MGI links' as n1,
+ 	'number of HGNC links' as n2, 'number of OMIM links' as n3,
+	'number of GENE links' as n4, 'number of FLYBASE links' as n5
  from single
 union
  select olt_load_name,
@@ -307,7 +297,10 @@ union
 					olt_number_of_omim_links,
 					olt_number_of_gene_links,
 					olt_number_of_flybase_links from ortholog_load_tracking
-   where olt_last_run > current year to second - 30 units day;
+   where olt_last_run > NOW() - INTERVAL '30 days';
+   
+\copy (select * from orthoStats) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/ortho_statistics.txt' with delimiter as '	' null as '';
+drop view orthoStats;
 
 commit work;
 

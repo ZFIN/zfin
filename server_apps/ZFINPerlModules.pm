@@ -46,14 +46,14 @@ sub sendMailWithAttachedReport {
 
     # Create a new multipart message:
     my $msg = new MIME::Lite 
-	From    => "$ENV{LOGNAME}",
-	To      => "$MAILTO",
-	Subject => "$SUBJECT",
+	From    => '$ENV{LOGNAME}',
+	To      => '$MAILTO',
+	Subject => '$SUBJECT',
 	Type    => 'multipart/mixed';
 
     attach $msg 
 	Type     => 'text/plain',   
-	Path     => "$TXTFILE";
+	Path     => '$TXTFILE';
 
     # Output the message to sendmail
     
@@ -69,7 +69,7 @@ sub countData() {
   my $nRecords = 0;
 
   ### open a handle on the db
-  my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
+    my $dbh = DBI->connect('DBI:Pg:dbname=<!--|DB_NAME|-->;host=localhost',
                        '',
                        '',
 		       {AutoCommit => 1,RaiseError => 1}

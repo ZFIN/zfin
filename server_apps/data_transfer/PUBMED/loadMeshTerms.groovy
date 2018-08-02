@@ -18,8 +18,9 @@ def download (ftp, filename, closure) {
   }
 }
 
+
 def withMeshFtpSite (closure) {
-  ftp = new FTPClient();
+  ftp = new FTPClient()
   ftp.connect("nlmpubs.nlm.nih.gov")
   ftp.enterLocalPassiveMode()
   ftp.login("anonymous", "zfinadmn@zfin.org")
@@ -34,8 +35,8 @@ def parse (InputStream inputStream) {
   parser.parse(inputStream)
 }
 
-def dbaccess (String dbname, String sql) {
-  proc = "dbaccess -a $dbname".execute()
+def psql (String dbname, String sql) {
+  proc = "psql $dbname ".execute()
   proc.getOutputStream().with {
     write(sql.bytes)
     close()
@@ -43,7 +44,7 @@ def dbaccess (String dbname, String sql) {
   proc.waitFor()
   proc.getErrorStream().eachLine { println(it) }
   if (proc.exitValue()) {
-    throw new RuntimeException("dbaccess call failed")
+    throw new RuntimeException("psql call failed")
   }
   proc
 }
@@ -58,14 +59,14 @@ withMeshFtpSite { ftp ->
     descFile = names.find { it =~ /desc\d{4}.xml/ }
     if (!descFile) {
       println "Failed to find descYYYY.xml file! Listed files were: ${names.join(", ")}"
-      System.exit(1);
+      System.exit(1)
     }
     download(ftp, descFile) { stream ->
       xml = parse(stream)
       records = xml.DescriptorRecord.each { record ->
         id = record.DescriptorUI.text()
         name = record.DescriptorName.String.text()
-        out.writeLine("$id|$name|DESCRIPTOR")
+        out.writeLine("$id\t$name\tDESCRIPTOR")
       }
       println("Parsed ${records.size()} descriptor terms")
     }
@@ -73,14 +74,14 @@ withMeshFtpSite { ftp ->
     qualFile = names.find { it =~ /qual\d{4}.xml/ }
     if (!descFile) {
       println "Failed to find qualYYYY.xml file! Listed files were: ${names.join(", ")}"
-      System.exit(1);
+      System.exit(1)
     }
     download(ftp, qualFile) { stream ->
       xml = parse(stream)
       records = xml.QualifierRecord.each { record ->
         id = record.QualifierUI.text()
         name = record.QualifierName.String.text()
-        out.writeLine("$id|$name|QUALIFIER")
+        out.writeLine("$id\t$name\tQUALIFIER")
       }
       println("Parsed ${records.size()} qualifier terms")
     }
@@ -90,32 +91,35 @@ withMeshFtpSite { ftp ->
 dbname = System.getenv("DBNAME")
 println("Loading terms into $dbname")
 
-dbaccess dbname, """
-  UNLOAD TO $PRE_FILE
-    SELECT mesht_mesh_id, mesht_term_name, mesht_type
-    FROM mesh_term;
+psql dbname, """
+  \\COPY (SELECT mesht_mesh_id, mesht_term_name, mesht_type FROM mesh_term) to '$PRE_FILE';
 
   CREATE TEMP TABLE tmp_terms(
-    id varchar(10),
-    name varchar(255),
-    type varchar(30)
-  ) with no log;
+    id text,
+    name text,
+    type text
+  ) ;
 
-  LOAD FROM $OUTFILE
-    INSERT INTO tmp_terms;
+  \\COPY tmp_terms FROM '$OUTFILE';
 
   DELETE FROM mesh_term
     WHERE mesht_mesh_id NOT IN (SELECT id FROM tmp_terms);
+    
+  UPDATE mesh_term
+    SET mesht_term_name = (
+      SELECT name
+      FROM tmp_terms
+      WHERE mesht_mesh_id = id
+    );
+    
+  INSERT INTO mesh_term (mesht_mesh_id, mesht_term_name, mesht_type)
+    SELECT id, name, type
+    FROM tmp_terms
+    WHERE id NOT IN (
+      SELECT mesht_mesh_id FROM mesh_term
+    );
 
-  MERGE INTO mesh_term USING tmp_terms ON mesh_term.mesht_mesh_id = tmp_terms.id
-    WHEN MATCHED THEN
-    UPDATE SET mesh_term.mesht_term_name = tmp_terms.name
-    WHEN NOT MATCHED THEN
-    INSERT (mesht_mesh_id, mesht_term_name, mesht_type) VALUES (id, name, type);
-
-  UNLOAD TO $POST_FILE
-    SELECT mesht_mesh_id, mesht_term_name, mesht_type
-    FROM mesh_term;
+  \\COPY (SELECT mesht_mesh_id, mesht_term_name, mesht_type FROM mesh_term) to '$POST_FILE';
 """
 
 if (args) {
@@ -129,8 +133,8 @@ if (args) {
   new ReportGenerator().with {
     setReportTitle("Report for ${args[0]}")
     includeTimestamp()
-    addDataTable("${added.size()} terms added", ["ID", "Term", "Type"], added.collect { it.split("\\|") as List })
-    addDataTable("${removed.size()} terms removed", ["ID", "Term", "Type"], removed.collect { it.split("\\|") as List })
+    addDataTable("${added.size()} terms added", ["ID", "Term", "Type"], added.collect { it.split("\t") as List })
+    addDataTable("${removed.size()} terms removed", ["ID", "Term", "Type"], removed.collect { it.split("\t") as List })
     writeFiles(new File("."), "loadMeshTermsReport")
   }
 }

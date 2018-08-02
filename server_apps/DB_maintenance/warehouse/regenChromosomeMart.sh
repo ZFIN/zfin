@@ -4,28 +4,28 @@
 
 setenv INSTANCE <!--|INSTANCE|-->;
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/runChromosomeMartReport.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/runChromosomeMartReport.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartReportPostgres.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMartReportPostgres.txt
 
 endif
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/regenChromosomeMartReport.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/regenChromosomeMartReport.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/regenChromosomeMartReportPostgres.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/regenChromosomeMartReportPostgres.txt
 
 endif
 
-if ( -e <!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTests.txt) then
- /bin/rm <!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTests.txt
+if ( -e <!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTestsPostgres.txt) then
+ /bin/rm <!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTestsPostgres.txt
 endif
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/chromosomeMartUnitTests.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/chromosomeMartUnitTests.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartUnitTestsPostgres.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartUnitTests.txt
 
 endif
 
 echo "done with file delete" ;
 # build up the warehouse
-<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/runChromosomeMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/runChromosomeMartReport.txt
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/runChromosomeMart.sh 
 
 if ($? != 0) then
  echo "regen chromosome mart (the building tables, not the public tables) failed";
@@ -38,8 +38,8 @@ echo "done with runchromosomemart on <!--|DB_NAME|--> ";
 cd <!--|SOURCEROOT|-->
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
-/private/bin/ant run-chromosomemart-unittests >&! reports/tests/chromosomeMartUnitTests.txt
-cp reports/tests/chromosomeMartUnitTests.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/.
+/private/bin/ant run-chromosomemart-unittests >&! reports/tests/chromosomeMartUnitTestsPostgres.txt
+cp reports/tests/chromosomeMartUnitTestsPostgres.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/.
 
 if ($? != 0) then
    echo "regen chromosome mart (the building tables, not the public tables) failed on unit tests";
@@ -50,7 +50,7 @@ endif
 
 # move the current table data to backup, move the new data to current.
 
-<!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/chromosomeMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenChromosomeMartReport.txt
+${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/chromosomeMartRegen.sql 
 
 if ($? != 0) then
    echo "refresh chromosome mart (the public tables) failed and was rolled back";

@@ -14,8 +14,6 @@ set cur=`/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`
 # what is being used as the most current release
 echo "Using Ensembl release: $cur"
 
-# send a query to the current database returning 1:1 ensdargs and zdbids
-# return in informix's load file format.
 echo " fetch_sangerMutantInfo.sql vs ensembldb.ensembl.org"
 
 /bin/cat fetch_sangerMutantInfo.mysql | \
@@ -29,7 +27,7 @@ echo " fetch_sangerMutantInfo.sql vs ensembldb.ensembl.org"
 
 
 echo "*** loading SangerMutantData into <!--|DB_NAME|--> ***"
-    <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/loadSangerMutantData.sql
+    ${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/loadSangerMutantData.sql
     # Log what is being used as the most current release
     if (! -f fetch_sangerMutantData.log) then
 	    touch fetch_sangerMutantData.log
@@ -49,7 +47,7 @@ echo "*** loading SangerMutantData into <!--|DB_NAME|--> ***"
 
 
 echo "*** loading SangerMutantData into <!--|DB_NAME|--> ***"
-    <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/loadEnsdarPMapping.sql
+     ${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/loadEnsdarPMapping.sql
     # Log what is being used as the most current release
     if (! -f fetch_ensdarPMapping.log) then
 	    touch fetch_ensdarPMapping.log

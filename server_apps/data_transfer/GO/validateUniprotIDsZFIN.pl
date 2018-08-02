@@ -140,18 +140,19 @@ print "$dir\n";
 system("/bin/rm -f *.plain") and die "can not rm old plain data files";
 
 ### open a handle on the db
-$dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-                       '', 
-                       '',                     
-		       {AutoCommit => 1,RaiseError => 1}
-		      ) 
-|| sendErrorReport("Failed while connecting to <!--|DB_NAME|-->"); 
+$dbname = "<!--|DB_NAME|-->";
+$username = "";
+$password = "";
+
+### open a handle on the db
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
   
-$cur = $dbh->prepare('select distinct dblink_acc_num 
+$cur = $dbh->prepare("select distinct dblink_acc_num 
                         from db_link, foreign_db_contains, foreign_db 
                        where dblink_fdbcont_zdb_id = fdbcont_zdb_id 
                          and fdbcont_fdb_db_id = fdb_db_pk_id 
-                         and fdb_db_name = "UniProtKB";');
+                         and fdb_db_name = 'UniProtKB';");
 
 $cur->execute;
 

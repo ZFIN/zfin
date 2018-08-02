@@ -17,18 +17,18 @@ $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 # call patoNumbers.sql to prepare some download files and some pre-processed files
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> patoNumbers.sql");
+system("psql -d <!--|DB_NAME|--> -a -f patoNumbers.sql");
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password) 
+    or die "Cannot connect to database: $DBI::errstr\n";
 
 # get the ZDB Gene Id/NCBI Gene Id pairs
-$cur = $dbh->prepare('select distinct dblink_linked_recid, dblink_acc_num from db_link where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-1";');
+$cur = $dbh->prepare("select distinct dblink_linked_recid, dblink_acc_num from db_link where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1';");
 $cur->execute();
 my ($zdbGeneId, $NCBIgeneId);
 $cur->bind_columns(\$zdbGeneId,\$NCBIgeneId);
@@ -41,7 +41,7 @@ while ($cur->fetch()) {
 }
 
 # get the ZDB ortholog Id/NCBI Gene Id of the human ortholog pairs
-$cur = $dbh->prepare('select distinct ortho_zdb_id, oef_accession_number from ortholog,ortholog_external_reference where oef_fdbcont_Zdb_id = "ZDB-FDBCONT-040412-27" and ortho_zdb_id = oef_ortho_zdb_id;');
+$cur = $dbh->prepare("select distinct ortho_zdb_id, oef_accession_number from ortholog,ortholog_external_reference where oef_fdbcont_Zdb_id = 'ZDB-FDBCONT-040412-27' and ortho_zdb_id = oef_ortho_zdb_id;");
 $cur->execute();
 my ($ZDBorthologId, $humanOrthoNCBIgeneId);
 $cur->bind_columns(\$ZDBorthologId,\$humanOrthoNCBIgeneId);

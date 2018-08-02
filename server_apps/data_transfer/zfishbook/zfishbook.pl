@@ -16,7 +16,7 @@ sub sendLoadOutput($) {
 
   my $SUBJECT="Auto from ".$_[0]." : zfishbook data - new genotypes";
   my $MAILTO="xshao\@zfin.org,yvonne\@uoneuro.uoregon.edu";
-  my $TXTFILE="./pre_geno.unl";
+  #my $TXTFILE="./pre_geno.unl";
  
   # Create a new multipart message:
   my $msg3 = new MIME::Lite 
@@ -112,13 +112,6 @@ sub sendLoadLogs($) {
 #   Main
 #
 
-
-#set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/zfishbook/";
 
 #remove old files
@@ -159,13 +152,11 @@ print "\nPre-processing done. doTheLoad =  $doTheLoad   \n\n";
 
 print "\n\nStarting to load ...\n\n\n" if $doTheLoad > 0;
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadZfishbookData.sql >log1 2> log2") if $doTheLoad > 0;
+system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> log2") if $doTheLoad > 0;
 
-##system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> cleanupGBTfeatureNotes.sql");
+#sendLoadLogs("$dbname") if $doTheLoad > 0;
 
-sendLoadLogs("$dbname") if $doTheLoad > 0;
-
-sendLoadOutput("$dbname") if $doTheLoad > 0;
+#sendLoadOutput("$dbname") if $doTheLoad > 0;
 
 print "\n\nLoading data done.\n\n\n" if $doTheLoad > 0;
 

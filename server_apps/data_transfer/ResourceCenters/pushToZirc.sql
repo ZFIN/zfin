@@ -3,27 +3,27 @@
 
 -- Generate wild type list
 
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinWildtype'
-  delimiter '	'
-  select geno_zdb_id, get_genotype_display(geno_zdb_id)
+ create VIEW zfinWildType as
+ select geno_zdb_id, get_genotype_display(geno_zdb_id)
     from genotype
-    where geno_is_wildtype = "t";
+    where geno_is_wildtype = 't';
+    \copy (SELECT * FROM zfinWildType) to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinWildtype' with delimiter as '	';
+DROP VIEW zfinWildType;
 
 -- generate aliases for wild types
 
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinWildtypeAliases'
-  delimiter '	'
+create VIEW zfinWildtypeAliases as
   select dalias_data_zdb_id, dalias_alias
     from data_alias, genotype
     where dalias_data_zdb_id = geno_zdb_id
       and geno_is_wildtype = "t";
+      \copy (SELECT * FROM  zfinWildtypeAliases) to  '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinWildtypeAliases' with   delimiter as '	';
+     DROP VIEW zfinWildtypeAliases;
 
 
 -- generate feature list
-
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinFeatures'
-  delimiter '	'
-  select feature_zdb_id as feature_id, 
+create VIEW zfinFeatures as
+  select feature_zdb_id as feature_id,
 	 feature_name as allele_feature_name, 
 	 fmrel_mrkr_zdb_id as affected_gene,
 	 geno_zdb_id as genotype,
@@ -35,54 +35,59 @@ unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinFeatures'
     and genofeat_feature_zdb_id = feature_zdb_id 
     and lnkg_zdb_id = lnkgmem_linkage_zdb_id
     and lnkgmem_member_zdb_id = feature_zdb_id;
+    \copy (SELECT * from zfinFeatures)  to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinFeatures' with   delimiter as  '	';
+    DROP VIEW zfinFeatures;
 
 -- generate aliases for features
-
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinFeatureAliases'
-  delimiter '	'
+create VIEW zfinFeatureAliases as
   select dalias_data_zdb_id, dalias_alias
     from data_alias, feature
     where dalias_data_zdb_id = feature_zdb_id;
+\copy (SELECT * FROM zfinFeatureAliases) to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinFeatureAliases' with  delimiter as '	';
+DROP VIEW zfinFeatureAliases;
 
 -- generate genotype alias
 
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinGenotypeAliases'
-  delimiter '	'
+create VIEW zfinGenotypeAliases as
   select dalias_data_zdb_id, dalias_alias
     from data_alias, genotype
     where dalias_data_zdb_id = geno_zdb_id;
+    \copy (SELECT * FROM zfinGenotypeAliases) to  '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinGenotypeAliases' with  delimiter as  '	';
+    DROP VIEW zfinGenotypeAliases;
 
 -- generate locus list
 
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinLoci'
-  delimiter '	'
+
+create VIEW zfinLoci as
   select distinct fmrel_mrkr_zdb_id, mrkr_name, mrkr_abbrev 
     from feature_marker_relationship, marker
     where fmrel_mrkr_zdb_id = mrkr_zdb_id;
+    \copy (SELECT * FROM  zfinLoci) to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinLoci' with   delimiter as  '	';
+    DROP VIEW zfinLoci;
 
 -- generate aliases for locii
-
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinLocusAliases'
-  delimiter '	'
+create VIEW zfinLocusAliases as
   select distinct dalias_data_zdb_id, dalias_alias
     from data_alias, feature_marker_relationship, marker
     where dalias_data_zdb_id = mrkr_zdb_id
     and mrkr_zdb_id = fmrel_mrkr_zdb_id
     order by 1;
+    \copy (SELECT * FROM  zfinLocusAliases) to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinLocusAliases' with  delimiter  as '	';
+    DROP VIEW zfinLocusAliases;
 
 -- Generate EST list
-
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinEsts'
-  delimiter '	'
+CREATE VIEW zfinEsts as
   select mrkr_zdb_id, mrkr_name, mrkr_abbrev
     from marker
     where mrkr_type = "EST";
+    \copy (SELECT * FROM  zfinEsts) to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinLocusEsts' with  delimiter  as '	';
+    DROP VIEW zfinEsts;
 
 -- generate EST aliases
-
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinEstAliases'
-  delimiter '	'
+CREATE VIEW zfinEstAliases as
   select dalias_data_zdb_id, dalias_alias
     from data_alias, marker
     where dalias_data_zdb_id = mrkr_zdb_id
       and mrkr_type = "EST";
+      \copy (SELECT * from zfinEstAliases) to  '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinEstAliases' with   delimiter as '	';
+      DROP VIEW zfinEstAliases;

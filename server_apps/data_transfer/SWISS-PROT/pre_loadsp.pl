@@ -56,7 +56,7 @@ sub downloadGOtermFiles () {
 
 sub sendErrorReport ($) {
     my $subject = "Auto from SWISS-PROT:".$_[0];
-    ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","report.txt");  
+    ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","report.txt");  
 }
 
 #------------------ Send Running Result ----------------
@@ -66,19 +66,19 @@ sub sendRunningResult {
   my $dbname = $_[0];
   #----- One mail send out the checking report----
   my $subject = "Auto from $dbname: SWISS-PROT check report";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","checkreport.txt");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","checkreport.txt");
   		
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: SWISS-PROT problem file";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","allproblems.txt");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","allproblems.txt");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: PubMed not in ZFIN";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","pubmed_not_in_zfin");  
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","pubmed_not_in_zfin");  
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: report of processing pre_zfin.org";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","redGeneReport.txt");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","redGeneReport.txt");
 }
 
 
@@ -174,8 +174,8 @@ my $password = "";
 ########################################################################################################
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
-    or die "Cannot connect to Informix database: $DBI::errstr\n";
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 my $sqlGetManuallyEnteredUniProtIDsWithMultGenes = "select distinct db1.dblink_acc_num from db_link db1
                                                      where exists(select 'x' from record_attribution
@@ -203,7 +203,7 @@ print "\nNumber of manually curated UniProt IDs with multiple genes: $ctManually
 
 if ($ctManuallyEnteredUniProtIDsWithMultGenes > 0) {
   my $subject = "Auto from SWISS-PROT: manually curated UniProt IDs with multiple genes";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","manuallyCuratedUniProtIDsWithMultipleGenes.txt");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","manuallyCuratedUniProtIDsWithMultipleGenes.txt");
 }
 
 my $sqlGetManuallyEnteredUniProtIDs = "select dblink_acc_num from db_link
@@ -253,7 +253,7 @@ print "\nNumber of Invalid Manually curated UniProt IDs: $numInvalidUniProtIDs\n
 
 if ($numInvalidUniProtIDs > 0) {
   my $subject = "Auto from SWISS-PROT: invalid manually curated UniProt IDs";
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","invalidManuallyCuratedUniProtIDs.txt");
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","invalidManuallyCuratedUniProtIDs.txt");
 }
 
 &downloadGOtermFiles();

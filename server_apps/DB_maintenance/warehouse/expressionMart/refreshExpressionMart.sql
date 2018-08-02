@@ -42,27 +42,10 @@ select xpatres_zdb_id,
 insert into expression_pattern_figure_bkup (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id)
  select xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id from expression_pattern_figure;
 
---drop index expression_experiment_marker_foreign_key_index ;
---drop index expression_experiment_primary_key_index ;
---drop index expression_experiment_source_foreign_key_index ;
---drop index xpatex_atb_zdb_id_index;
---drop index xpatex_featexp_zdb_id_foreign_key_index;
---drop index xpatex_gene_zdb_id_foreign_key_index ;
---drop index expression_result_end_stg_foreign_key_index; 
---drop index expression_result_primary_key_index ;
---drop index expression_result_start_stg_foreign_key_index ;
---drop index expression_result_subterm_foreign_key_index ;
---drop index expression_result_superterm_foreign_key_index; 
---drop index expression_result_xpatex_foreign_key_index;
---drop index expression_pattern_figure_fig_foreign_key ;
---drop index expression_pattern_figure_xpatres_foreign_key_index ;
-
-!time;
-
 
 update zdb_flag
-  set (zflag_is_on,zflag_last_modified) = ("t",current year to second)
- where zflag_name = "regen_expressionmart" ;
+  set (zflag_is_on,zflag_last_modified) = ('t',now())
+ where zflag_name = 'regen_expressionmart' ;
 
 delete from expression_experiment;
 delete from expression_result;
@@ -107,14 +90,10 @@ insert into expression_pattern_figure (xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_i
  select xpatfig_xpatres_zdb_id, xpatfig_fig_zdb_id from expression_pattern_figure_temp;
 
 
-update statistics high for table expression_experiment;
-update statistics high for table expression_result;
-update statistics high for table expression_pattern_Figure;
-
 update zdb_flag
-  set (zflag_is_on,zflag_last_modified) = ("f",current year to second)
- where zflag_name = "regen_expressionmart" ;
+  set (zflag_is_on,zflag_last_modified) = ('f',now())
+ where zflag_name = 'regen_expressionmart' ;
 
 update warehouse_run_tracking
- set wrt_last_loaded_date = current year to second
- where wrt_mart_name = "expression mart";
+ set wrt_last_loaded_date = now()
+ where wrt_mart_name = 'expression mart';

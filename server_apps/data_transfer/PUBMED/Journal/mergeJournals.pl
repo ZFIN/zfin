@@ -8,10 +8,7 @@ use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
 
 #set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
@@ -45,8 +42,9 @@ $sql = 'select jrnl_zdb_id from journal;';
 $numJournalsBefore = ZFINPerlModules->countData($sql);
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
-  or die "Cannot connect to Informix database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to database: $DBI::errstr\n";
+
 
 $ct = 0;
 while(<JOURNALS>) {
@@ -119,7 +117,7 @@ print "\nct = $ct\n\n";
 #remove the used input file
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/mergeJournalInput");
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> insertJournalAlias.sql") && die "inserting journal alias failed.";
+system("psql -d <!--|DB_NAME|--> -a -f <!--|DB_NAME|--> insertJournalAlias.sql") && die "inserting journal alias failed.";
 
 exit;
 

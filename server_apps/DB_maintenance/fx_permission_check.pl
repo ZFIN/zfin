@@ -15,11 +15,6 @@ use MIME::Lite;
 
 # set environment variables
 
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
 ## -------  MAIN -------- ##
 $dataDirectory = 'fx_permission';
 system("rm -rf $dataDirectory");
@@ -27,12 +22,7 @@ mkdir "$dataDirectory";
 
 # open a handle on the db
 
-my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-                       '', 
-                       '', 
-                       {AutoCommit => 1,RaiseError => 1}
-                      )
-  || emailError("Failed while connecting to <!--|DB_NAME|--> "); 
+my $dbh = DBI->connect ("DBI:Pg:dbname=<!--|DB_NAME|-->;host=localhost", '','') or die "Cannot connect to database: $DBI::errstr\n";
 
 
 # set the mail program
@@ -81,7 +71,7 @@ while ($cur->fetch) {
                 and (fig_caption is null or fig_caption = '')
                 and (cur_topic = 'Expression' or cur_topic = 'Phenotype')
                 and cur_closed_date is not null 
-                and fig_comments != 'image quality poor, permission exception'
+                and fig_comments is distinct from 'image quality poor, permission exception'
                 and fig_source_zdb_id = publication.zdb_id 
                 and cur_pub_zdb_id = publication.zdb_id 
                 and pub_can_show_images = 't' 

@@ -20,7 +20,7 @@ create temp table tmp_rels (
 	termrel_term_1_id varchar(50),
 	termrel_term_2_id varchar(50),
 	termrel_type varchar(100)
- ) with no log ;
+ ) ;
 
 
 load from term_relationships.unl
@@ -38,7 +38,7 @@ create temp table tmp_rels_zdb (
 	ttermrel_ont_id_2 varchar(50),
 	ttermrel_type varchar(100),
 	ttermrel_ontology varchar(30)
- ) with no log ;
+ );
 
 insert into tmp_rels_zdb (ttermrel_ont_id_1, ttermrel_ont_id_2, ttermrel_type)
   select termrel_term_1_id, termrel_term_2_id, termrel_type
@@ -46,12 +46,10 @@ insert into tmp_rels_zdb (ttermrel_ont_id_1, ttermrel_ont_id_2, ttermrel_type)
 
 
 create index rtermrels_term_1_id_index
-  on tmp_rels_zdb (ttermrel_term_1_zdb_id)
-  using btree in idxdbs1 ;
+  on tmp_rels_zdb (ttermrel_term_1_zdb_id);
 
 create index rtermrels_term_2_id_index
-  on tmp_rels_zdb (ttermrel_term_2_zdb_id)
-  using btree in idxdbs2 ;
+  on tmp_rels_zdb (ttermrel_term_2_zdb_id);
 
 update tmp_rels_zdb
   set ttermrel_term_1_zdb_id = (Select term_Zdb_id from term
@@ -76,7 +74,7 @@ create temp table tmp_zfin_rels  (
 	termrel_term_1_zdb_id varchar(50),
 	termrel_term_2_zdb_id varchar(50),
 	termrel_type varchar(100)
-) with no log ;
+);
 
 
 insert into tmp_zfin_rels(
@@ -90,33 +88,28 @@ insert into tmp_zfin_rels(
 	from tmp_rels_zdb ;
 
 update tmp_zfin_rels
-  set termrel_zdb_id = get_id("TERMREL");
+  set termrel_zdb_id = get_id('TERMREL');
 
 
 create index tmp_rel_1_index
-  on tmp_zfin_rels (termrel_term_1_zdb_id)
-  using btree in idxdbs2;
+  on tmp_zfin_rels (termrel_term_1_zdb_id);
 
 create index tmp_rel_2_index
-  on tmp_zfin_rels (termrel_term_2_zdb_id)
-  using btree in idxdbs2;
+  on tmp_zfin_rels (termrel_term_2_zdb_id);
+
 
 create index tmp_reltype_index_zfin_rels
-  on tmp_zfin_rels (termrel_type)
-  using btree in idxdbs2;
+  on tmp_zfin_rels (termrel_type);
 
 
 create index tmp_rels_1_index
-  on tmp_rels (termrel_term_1_id)
-  using btree in idxdbs3;
+  on tmp_rels (termrel_term_1_id);
 
 create index tmp_rels_2_index
-  on tmp_rels (termrel_term_2_id)
-  using btree in idxdbs3;
+  on tmp_rels (termrel_term_2_id);
 
 create index tmp_reltype_index_rels
-  on tmp_rels (termrel_type)
-  using btree in idxdbs3;
+  on tmp_rels (termrel_type);
 
 
 --update statistics high for table zdb_active_data;
@@ -207,3 +200,4 @@ delete from term_relationship
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_2_zdb_id);
+

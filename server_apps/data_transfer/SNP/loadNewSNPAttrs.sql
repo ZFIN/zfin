@@ -3,11 +3,11 @@
 -- need forsnpdattrtable.unl 
 
 begin work;
+  
+copy snp_download_attribution from '<!--|ROOT_PATH|-->/server_apps/data_transfer/SNP/forsnpdattrtable.unl' (delimiter '|');
+  
 
-load from forsnpdattrtable.unl 
-  insert into snp_download_attribution;
-
-! echo "                           into snp_download_attribution table."
+--! echo "                           into snp_download_attribution table."
 
 commit work;
 --rollback work;

@@ -6,9 +6,8 @@
 create temp table tmp_dbxrefs (
 term_id varchar(30),
 xref_db varchar(50),
-xref_accession varchar(80),
-type varchar(30))
-with no log;
+xref_accession varchar(400),
+type varchar(30));
 
 load from term_xref.unl
   insert into tmp_dbxrefs;
@@ -18,9 +17,12 @@ load from term_xref.unl
 create temp table tmp_dbxrefs_with_ids (
 tmp_term_zdb_id varchar(30),
 tmp_xref_db varchar(50),
-tmp_xref_db_id int8,
-tmp_xref_accession varchar(80))
-with no log;
+tmp_xref_db_id bigint,
+tmp_xref_accession varchar(400));
+
+create index tmp_dbxrefs_with_ids_index
+  on tmp_dbxrefs_with_ids (tmp_term_zdb_id);
+
 
 insert into tmp_dbxrefs_with_ids
 select term_zdb_id, xref_db,0, xref_accession
@@ -50,9 +52,9 @@ FROM   term_xref
 WHERE  NOT EXISTS (SELECT 'x'
                    FROM   tmp_dbxrefs_with_ids
                    WHERE  tx_term_zdb_id = tmp_term_zdb_id
-                          AND nvl(tx_fdb_db_id, '') = nvl(tmp_xref_db_id, '')
+                          AND nvl(tx_fdb_db_id, 0) = nvl(tmp_xref_db_id, 0)
                           AND tx_full_accession = tmp_xref_db
-                                                  || ":"
+                                                  || ':'
                                                   || tmp_xref_accession)
        AND EXISTS (SELECT 'x'
                    FROM   term,
@@ -67,9 +69,9 @@ DELETE FROM term_xref
 WHERE  NOT EXISTS (SELECT 'x'
                    FROM   tmp_dbxrefs_with_ids
                    WHERE  tx_term_zdb_id = tmp_term_zdb_id
-                          AND nvl(tx_fdb_db_id, '') = nvl(tmp_xref_db_id,'')
+                          AND nvl(tx_fdb_db_id, 0) = nvl(tmp_xref_db_id,0)
                           AND tx_full_accession = tmp_xref_db
-                                                  || ":"
+                                                  || ':'
                                                   || tmp_xref_accession)
        AND EXISTS (SELECT 'x'
                    FROM   term,
@@ -85,21 +87,19 @@ WHERE  EXISTS (SELECT 'x'
                FROM   term_xref
                WHERE  tx_term_zdb_id = tmp_term_zdb_id
                       AND tx_full_accession = tmp_xref_db
-                                              || ":"
+                                              || ':'
                                               || tmp_xref_accession
-                      AND nvl(tx_fdb_db_id, '') = nvl(tmp_xref_db_id, ''));
+                      AND nvl(tx_fdb_db_id, 0) = nvl(tmp_xref_db_id, 0));
 
 --for statistics load the new xrefs that will be added
 
 unload to new_xrefs
 SELECT tmp_term_zdb_id,
        term_ont_id,
-       tmp_xref_db || ":" || tmp_xref_accession
-FROM   tmp_dbxrefs_with_ids,
-       term,
-       outer foreign_db
-WHERE  fdb_db_pk_id = tmp_xref_db_id
-       AND term_zdb_Id = tmp_term_zdb_id;
+       tmp_xref_db || ':' || tmp_xref_accession
+FROM   tmp_dbxrefs_with_ids
+       join term on  term_zdb_Id = tmp_term_zdb_id
+       left outer join foreign_db on fdb_db_pk_id = tmp_xref_db_id;
 
 INSERT INTO term_xref
             (tx_term_zdb_id,
@@ -109,7 +109,7 @@ INSERT INTO term_xref
              tx_fdb_db_id)
 SELECT DISTINCT tmp_term_zdb_id,
                 tmp_xref_db
-                || ":"
+                || ':'
                 || tmp_xref_accession,
                 tmp_xref_db,
                 tmp_xref_accession,
@@ -119,11 +119,12 @@ WHERE  NOT EXISTS (SELECT 'x'
                    FROM   term_xref
                    WHERE  tmp_term_zdb_id = tx_term_zdb_id
                           AND tmp_xref_db
-                              || ":"
+                              || ':'
                               || tmp_xref_accession = tx_full_accession
                           AND tx_prefix = tmp_xref_db
                           AND tx_accession = tmp_xref_accession
                           AND tx_fdb_db_id = tmp_xref_db_id);
+
 
 
 

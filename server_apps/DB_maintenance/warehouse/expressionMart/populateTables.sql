@@ -38,6 +38,3 @@ insert into expression_pattern_figure_temp (xpatfig_xpatres_zdb_id, xpatfig_fig_
  and xpatres_start_stg_zdb_id = efs_start_stg_zdb_id
  and xpatres_end_stg_zdb_id = efs_end_stg_zdb_id ;
 
-update statistics high for table expression_experiment_temp;
-update statistics high for table expression_result_temp;
-update statistics high for table expression_pattern_figure_temp;

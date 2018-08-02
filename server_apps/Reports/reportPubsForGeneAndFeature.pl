@@ -1,4 +1,4 @@
-#! /private/bin/perl -w
+#!/private/bin/perl -w
 #
 # reportPubsForGeneAndFeature.pl
 #
@@ -70,10 +70,7 @@ sub sendReportFeaturePubs($) {
 #
 
 #set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+
 
 ## remove old reports
 system("rm -f pubListForGene");
@@ -95,63 +92,64 @@ my $username = "";
 my $password = "";
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) or die "Cannot connect to Informix database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
-my $sqlPubGene = '
+my $sqlPubGene = "
            select recattrib_data_zdb_id, recattrib_source_zdb_id 
              from record_attribution 
-            where recattrib_data_zdb_id like "ZDB-GENE-%" 
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+            where recattrib_data_zdb_id like 'ZDB-GENE-%' 
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union 
            select mrel_mrkr_2_zdb_id, recattrib_source_zdb_id 
              from record_attribution, marker_relationship 
             where recattrib_data_zdb_id = mrel_zdb_id
-              and mrel_mrkr_2_zdb_id like "ZDB-GENE-%"
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+              and mrel_mrkr_2_zdb_id like 'ZDB-GENE-%'
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select mrel_mrkr_1_zdb_id, recattrib_source_zdb_id 
 	     from record_attribution, marker_relationship 
 	    where recattrib_data_zdb_id = mrel_zdb_id
-              and mrel_mrkr_1_zdb_id like "ZDB-GENE-%"
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+              and mrel_mrkr_1_zdb_id like 'ZDB-GENE-%'
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select dalias_data_zdb_id, recattrib_source_zdb_id 
 	     from record_attribution, data_alias 
 	    where recattrib_data_zdb_id = dalias_zdb_id
-              and dalias_data_zdb_id like "ZDB-GENE-%" 
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+              and dalias_data_zdb_id like 'ZDB-GENE-%' 
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select dblink_linked_recid, recattrib_source_zdb_id 
 	     from record_attribution, db_link 
 	    where recattrib_data_zdb_id = dblink_zdb_id
-              and dblink_linked_recid like "ZDB-GENE-%" 
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+              and dblink_linked_recid like 'ZDB-GENE-%' 
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select ortho_zebrafish_gene_zdb_id, recattrib_source_zdb_id 
 	     from record_attribution, ortholog 
 	    where recattrib_data_zdb_id = ortho_zdb_id
-              and oevdisp_gene_zdb_id like "ZDB-GENE-%"  
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+              and oevdisp_gene_zdb_id like 'ZDB-GENE-%'  
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select mrkrgoev_mrkr_zdb_id, recattrib_source_zdb_id 
 	     from record_attribution, marker_go_term_evidence 
 	    where recattrib_data_zdb_id = mrkrgoev_zdb_id
-              and mrkrgoev_mrkr_zdb_id like "ZDB-GENE-%"   
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+              and mrkrgoev_mrkr_zdb_id like 'ZDB-GENE-%'   
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select fmrel_mrkr_zdb_id, recattrib_source_zdb_id 
 	     from record_attribution, feature_marker_relationship 
 	    where recattrib_data_zdb_id = fmrel_zdb_id
-              and fmrel_mrkr_zdb_id like "ZDB-GENE-%"  
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+              and fmrel_mrkr_zdb_id like 'ZDB-GENE-%'  
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select fmrel_mrkr_zdb_id, recattrib_source_zdb_id 
 	     from record_attribution, feature_marker_relationship, genotype_feature 
 	    where recattrib_data_zdb_id = genofeat_zdb_id
 	      and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
-              and fmrel_mrkr_zdb_id like "ZDB-GENE-%"  
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
-           ;';
+              and fmrel_mrkr_zdb_id like 'ZDB-GENE-%'  
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
+           ;"
               
               
 
@@ -185,36 +183,36 @@ foreach my $k (sort keys %pubsForGenes) {
 
 close (REPORT1);
 
-my $sqlPubFeature = '
+my $sqlPubFeature = "
            select recattrib_data_zdb_id, recattrib_source_zdb_id 
              from record_attribution 
-            where recattrib_data_zdb_id like "ZDB-ALT-%" 
-            and recattrib_source_zdb_id like "ZDB-PUB-%"
+            where recattrib_data_zdb_id like 'ZDB-ALT-%' 
+            and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select dalias_data_zdb_id, recattrib_source_zdb_id 
 	     from record_attribution, data_alias 
 	    where recattrib_data_zdb_id = dalias_zdb_id
-              and dalias_data_zdb_id like "ZDB-ALT-%"    
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+              and dalias_data_zdb_id like 'ZDB-ALT-%'    
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select dblink_linked_recid, recattrib_source_zdb_id 
 	     from record_attribution, db_link 
 	    where recattrib_data_zdb_id = dblink_zdb_id
-              and dblink_linked_recid like "ZDB-ALT-%"    
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+              and dblink_linked_recid like 'ZDB-ALT-%'    
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select fmrel_ftr_zdb_id, recattrib_source_zdb_id 
 	     from record_attribution, feature_marker_relationship 
 	    where recattrib_data_zdb_id = fmrel_zdb_id
-              and fmrel_ftr_zdb_id like "ZDB-ALT-%"       
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
+              and fmrel_ftr_zdb_id like 'ZDB-ALT-%'       
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
            union
            select genofeat_feature_zdb_id, recattrib_source_zdb_id 
 	     from record_attribution, genotype_feature 
 	    where recattrib_data_zdb_id = genofeat_zdb_id
-              and genofeat_feature_zdb_id like "ZDB-ALT-%"  
-              and recattrib_source_zdb_id like "ZDB-PUB-%"
-           ;';
+              and genofeat_feature_zdb_id like 'ZDB-ALT-%'  
+              and recattrib_source_zdb_id like 'ZDB-PUB-%'
+           ;"
 
 
 $cur = $dbh->prepare($sqlPubFeature);

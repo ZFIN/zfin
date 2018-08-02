@@ -15,28 +15,35 @@
 
 begin work;
 
-set pdqpriority 50;
+--set pdqpriority 50;
 
 --the unloaded record if already in, only add zdb_id into record_attribution with SWISS_PROT source
---	create temp table exist_record (
---		extrecd_zdb_id	varchar(50),
---		new_zdb_id	varchar(50)
+--	create temporary table exist_record (
+--		extrecd_zdb_id	text,
+--		new_zdb_id	text
 --		) with no log;
 
 ------------------ loading db_link --------------------------
 
---!echo 'Create temp table db_link_with_dups'
-	create temp table db_link_with_dups (
-               linked_recid varchar(50),
-               db_name varchar(50),
-               acc_num varchar(50),
-               length integer
-              ) with no log;
+--!echo 'Create temporary table db_link_with_dups'
+	create temporary table db_link_with_dups (
+               linked_recid text,
+               db_name text,
+               acc_num text,
+               length text
+              );
 
 --!echo 'Load from dr_dblink.unl'
-	load from dr_dblink.unl insert into db_link_with_dups;
+        copy db_link_with_dups from '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/dr_dblink.unl' (delimiter '|');
 --!echo '		from dr_dblink.unl'
 
+
+update db_link_with_dups 
+ set length = null
+ where length = '';
+
+alter table db_link_with_dups 
+  alter column length type integer USING length::integer;
 
 --!echo 'Update merged gene ids'
 	update db_link_with_dups
@@ -46,23 +53,23 @@ set pdqpriority 50;
          where linked_recid in (select zrepld_old_zdb_id 
                                   from zdb_replaced_data); 
 
---!echo 'Create temp table pre_db_link'
-	create temp table pre_db_link (
-               linked_recid varchar(50),
-               db_name varchar(50),
-               acc_num varchar(50),
-               info varchar(80),
-	       	   dblink_zdb_id varchar(50),
-               acc_num_disp varchar(50),
-               dblink_fdbcont_zdb_id varchar(50),
+--!echo 'Create temporary table pre_db_link'
+	create temporary table pre_db_link (
+               linked_recid text,
+               db_name text,
+               acc_num text,
+               info text,
+	       dblink_zdb_id text,
+               acc_num_disp text,
+               dblink_fdbcont_zdb_id text,
                length integer
-              ) with no log;
+              );
               
 --!echo 'Create pre_db_link_acc_index on pre_db_link (acc_num)'              
 	create index pre_db_link_acc_index on pre_db_link (acc_num,linked_recid,dblink_fdbcont_zdb_id);
 
 	insert into pre_db_link (linked_recid,db_name,acc_num,length,info,acc_num_disp)     
-	       		select distinct *, today ||" Swiss-Prot",acc_num 
+	       		select distinct *, current_date ||' Swiss-Prot',acc_num 
 			      from db_link_with_dups;
 --!echo '		into pre_db_link'
 
@@ -74,11 +81,11 @@ set pdqpriority 50;
 				  where lower(db_name)=lower(fdb_db_name)
                                     and fdbcont_fdb_db_id = fdb_db_pk_id
 				    and fdbcont_fdbdt_id = fdbdt_pk_id
-                                    and fdbcont_organism_common_name = "Zebrafish"
-                    and (  (fdbdt_super_type = "protein" 
-                            and fdbdt_data_type = "domain")
-                        or (fdbdt_super_type = "sequence" 
-                            and fdbdt_data_type = "Polypeptide")
+                                    and fdbcont_organism_common_name = 'Zebrafish'
+                    and (  (fdbdt_super_type = 'protein' 
+                            and fdbdt_data_type = 'domain')
+                        or (fdbdt_super_type = 'sequence' 
+                            and fdbdt_data_type = 'Polypeptide')
                         )
 				); 
 
@@ -91,9 +98,9 @@ set pdqpriority 50;
 		);
 --!echo '		from pre_db_link'
 
-        update statistics high for table pre_db_link;
+     --   update statistics high for table pre_db_link;
 
-	update pre_db_link set dblink_zdb_id = get_id("DBLINK"); 
+	update pre_db_link set dblink_zdb_id = get_id('DBLINK'); 
 
 
 --!echo 'Insert into zdb_active_data'
@@ -112,7 +119,7 @@ set pdqpriority 50;
 
 --!echo 'Attribute db links to the internal pub record'
 	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-		select dblink_zdb_id, "ZDB-PUB-020723-2"
+		select dblink_zdb_id, 'ZDB-PUB-020723-2'
 		  from pre_db_link;
 --!echo '		into record_attribution'
 
@@ -130,93 +137,105 @@ set pdqpriority 50;
 -- 2. InterPro to GO
 -- 3. ec to GO
 
-	create temp table spkw_goterm_with_dups (
-		sp_kwd_id	varchar(50),
-		sp_kwd_name  	varchar(80),
-		goterm_name  	varchar(100),
-		goterm_id  	varchar(10)
-	)with no log;
+	create temporary table spkw_goterm_with_dups (
+		sp_kwd_id	text,
+		sp_kwd_name  	text,
+		goterm_name  	text,
+		goterm_id  	text
+	);
 
 --!echo 'Load sp_mrkrgoterm.unl: spkwtogo translation table'
-	load from sp_mrkrgoterm.unl insert into spkw_goterm_with_dups;
+	copy spkw_goterm_with_dups from '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_mrkrgoterm.unl' (delimiter '|');
+	
 	create index spkw_goterm_with_dups_keyword_index
 		on spkw_goterm_with_dups (sp_kwd_name);
 
 --!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
 -- order the boolean column secondary, obsolete makes the obsolete(t) comes first,
 -- secondary(t) comes second, if obsolete&secondary(?) comes last. 
-	unload to "spkw2go_obsl_secd.unl" 
-		select distinct "UniProtKB-KW:"||sp_kwd_id, s.goterm_name, s.goterm_id,
+	create view spkw2go_obsl_secd as
+		select distinct 'UniProtKB-KW:'||sp_kwd_id, s.goterm_name, s.goterm_id,
 			t.term_is_obsolete, t.term_is_secondary 
 		  from spkw_goterm_with_dups s, term t
-		 where "GO:"||s.goterm_id = t.term_ont_id
-	 	   and (t.term_is_obsolete = "t"
-		       or t.term_is_secondary = "t")
+		 where 'GO:'||s.goterm_id = t.term_ont_id
+	 	   and (t.term_is_obsolete = 't'
+		       or t.term_is_secondary = 't')
 		  order by t.term_is_secondary, t.term_is_obsolete;	
+	\copy (select * from spkw2go_obsl_secd) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/spkw2go_obsl_secd.unl' with delimiter as '|' null as '';	
+	drop view spkw2go_obsl_secd;	  
+		  
 	delete from spkw_goterm_with_dups
-		where "GO:"||goterm_id in (select term_ont_id
+		where 'GO:'||goterm_id in (select term_ont_id
 				       from term
-			              where term_is_obsolete = "t"
-		                        or  term_is_secondary = "t"
+			              where term_is_obsolete = 't'
+		                        or  term_is_secondary = 't'
 				     );		
 
-	create temp table ip_goterm_with_dups (
-		ip_acc  varchar(20),
-		goterm_name  varchar(100),
-		goterm_id  varchar(10)
-		)with no log;
+	create temporary table ip_goterm_with_dups (
+		ip_acc  text,
+		goterm_name  text,
+		goterm_id  text
+		);
 
 --!echo 'Load ip_mrkrgoterm.unl: iptogo translation table'
-	load from ip_mrkrgoterm.unl insert into ip_goterm_with_dups;
+	copy ip_goterm_with_dups from '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/ip_mrkrgoterm.unl' (delimiter '|');
+	
 --!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
-	unload to "ip2go_obsl_secd.unl" 
-		select distinct "InterPro:"||ip_acc, i.goterm_name, i.goterm_id, 
+	create view ip2go_obsl_secd as
+		select distinct 'InterPro:'||ip_acc, i.goterm_name, i.goterm_id, 
 			t.term_is_obsolete, t.term_is_secondary 
 		  from ip_goterm_with_dups i,  term t
-	         where "GO:"||i.goterm_id = t.term_ont_id
-	           and (t.term_is_obsolete = "t"
-	             or t.term_is_secondary = "t")
-		order by t.term_is_secondary, t.term_is_obsolete;	
+	         where 'GO:'||i.goterm_id = t.term_ont_id
+	           and (t.term_is_obsolete = 't'
+	             or t.term_is_secondary = 't')
+		order by t.term_is_secondary, t.term_is_obsolete;
+	\copy (select * from ip2go_obsl_secd) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/ip2go_obsl_secd.unl' with delimiter as '|' null as '';	
+	drop view ip2go_obsl_secd;		
+		
 	delete from ip_goterm_with_dups 
-		where "GO:"||goterm_id in (select term_ont_id
+		where 'GO:'||goterm_id in (select term_ont_id
 				       from term
-			              where term_is_obsolete = "t"
-		                        or  term_is_secondary = "t"
+			              where term_is_obsolete = 't'
+		                        or  term_is_secondary = 't'
 				     );		
 --!echo 'Load ec_mrkrgoterm.unl: ectogo translation table'
 
-	create temp table ec_goterm_with_dups (
-		ec_acc  varchar(20),
-		goterm_name  varchar(100),
-		goterm_id  varchar(10)
-		)with no log;
+	create temporary table ec_goterm_with_dups (
+		ec_acc  text,
+		goterm_name  text,
+		goterm_id  text
+		);
 
-	load from ec_mrkrgoterm.unl insert into ec_goterm_with_dups;
+	copy ec_goterm_with_dups from '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/ec_mrkrgoterm.unl' (delimiter '|');
+	
 --!echo 'unload obsolete or secondary goterm, send to curators, delete from loading'
-	unload to "ec2go_obsl_secd.unl" 
-		select distinct "EC:"||ec_acc, e.goterm_name, e.goterm_id,
+	create view ec2go_obsl_secd as
+		select distinct 'EC:'||ec_acc, e.goterm_name, e.goterm_id,
 			t.term_is_obsolete, t.term_is_secondary 
 		  from ec_goterm_with_dups e, term t
-	         where "GO:"||e.goterm_id = t.term_ont_id
-	           and (t.term_is_obsolete = "t"
-		       or t.term_is_secondary = "t")
-		order by t.term_is_secondary, t.term_is_obsolete;	
+	         where 'GO:'||e.goterm_id = t.term_ont_id
+	           and (t.term_is_obsolete = 't'
+		       or t.term_is_secondary = 't')
+		order by t.term_is_secondary, t.term_is_obsolete;
+	\copy (select * from ec2go_obsl_secd) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/ec2go_obsl_secd.unl' with delimiter as '|' null as '';	
+	drop view ec2go_obsl_secd;	
+		
 	delete from ec_goterm_with_dups 
-		where "GO:"||goterm_id in (select term_ont_id
+		where 'GO:'||goterm_id in (select term_ont_id
 				       from term
-			              where term_is_obsolete = "t"
-		                        or  term_is_secondary = "t"
+			              where term_is_obsolete = 't'
+		                        or  term_is_secondary = 't'
 				     );		
 
 
 --!echo ' load in information of keywords with specific S-P record'
-	create temp table sp_kwd (
-		mrkr_zdb_id varchar(50),
-		sp_kwd      varchar(80)
-		)with no log;
+	create temporary table sp_kwd (
+		mrkr_zdb_id text,
+		sp_kwd      text
+		);
 
 --!echo 'Load kd_spkeywd.unl'
-	load from kd_spkeywd.unl insert into sp_kwd;
+	copy sp_kwd from '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/kd_spkeywd.unl' (delimiter '|');
 
 --!echo 'Update merged gene ids'
 	update sp_kwd
@@ -226,59 +245,55 @@ set pdqpriority 50;
          where mrkr_zdb_id in (select zrepld_old_zdb_id 
                                   from zdb_replaced_data); 
 
-	create temp table pre_marker_go_term_evidence (
-                pre_mrkrgoev_zdb_id 	varchar(50), 
-		mrkr_zdb_id		varchar(50),
-		go_zdb_id		varchar(50),
-		mrkrgoev_source		varchar(50),
-                mrkrgoev_inference 	varchar(80),
-                mrkrgoev_note           lvarchar
-	)with no log;
+	create temporary table pre_marker_go_term_evidence (
+                pre_mrkrgoev_zdb_id 	text, 
+		mrkr_zdb_id		text,
+		go_zdb_id		text,
+		mrkrgoev_source		text,
+                mrkrgoev_inference 	text,
+                mrkrgoev_note           text
+	);
 
 
 create index pmge_mrkr_id_index
-  on pre_marker_go_term_evidence (mrkr_zdb_id)
-  using btree in idxdbs2;
+  on pre_marker_go_term_evidence (mrkr_zdb_id);
 
 
 --!echo 'Load spkw'
 	insert into pre_marker_go_term_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
 					    mrkrgoev_inference, mrkrgoev_note)
-		select distinct sk.mrkr_zdb_id, term_zdb_id, "ZDB-PUB-020723-1", 
-		       "UniProtKB-KW:"||sg.sp_kwd_id, "ZFIN SP keyword 2 GO"
+		select distinct sk.mrkr_zdb_id, term_zdb_id, 'ZDB-PUB-020723-1' as pubid, 
+		       'UniProtKB-KW:'||sg.sp_kwd_id as text1, 'ZFIN SP keyword 2 GO' as text2
 		  from sp_kwd sk,  spkw_goterm_with_dups sg, term
 		 where sk.sp_kwd = sg.sp_kwd_name
-		   and term_ont_id = "GO:"||sg.goterm_id;
+		   and term_ont_id = 'GO:'||sg.goterm_id;
 
 --!echo 'Load intepro'
 	insert into pre_marker_go_term_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, 
 					    mrkrgoev_inference, mrkrgoev_note)
-		select distinct db.linked_recid, term_zdb_id, "ZDB-PUB-020724-1",
-		       "InterPro:"||ip.ip_acc, "ZFIN InterPro 2 GO"
+		select distinct db.linked_recid, term_zdb_id, 'ZDB-PUB-020724-1' as pubid,
+		       'InterPro:'||ip.ip_acc as text1, 'ZFIN InterPro 2 GO' as text2
 		  from pre_db_link db, ip_goterm_with_dups ip, term
 	 	 where db.acc_num = ip.ip_acc
-		   and term_ont_id = "GO:"||ip.goterm_id;
+		   and term_ont_id = 'GO:'||ip.goterm_id;
 	
 --!echo 'Load ec'
         insert into pre_marker_go_term_evidence (mrkr_zdb_id, go_zdb_id, mrkrgoev_source,  
 					    mrkrgoev_inference, mrkrgoev_note)
-		select distinct db.linked_recid, term_zdb_id, "ZDB-PUB-031118-3", 
-		       "EC:"||ec.ec_acc, "ZFIN EC acc 2 GO"
+		select distinct db.linked_recid, term_zdb_id, 'ZDB-PUB-031118-3' as pubid, 
+		       'EC:'||ec.ec_acc as text1, 'ZFIN EC acc 2 GO' as text2
 		from pre_db_link db, ec_goterm_with_dups ec, term
 		where db.acc_num = ec.ec_acc
-		  and term_ont_id = "GO:"||ec.goterm_id;
-
-
+		  and term_ont_id = 'GO:'||ec.goterm_id;
                
+	update pre_marker_go_term_evidence set pre_mrkrgoev_zdb_id = get_id ('MRKRGOEV');
 
-	update pre_marker_go_term_evidence set pre_mrkrgoev_zdb_id = get_id ("MRKRGOEV");
-
---!echo 'do not include "unknown" terms and root terms if any'
+--!echo 'do not include 'unknown' terms and root terms if any'
         delete from pre_marker_go_term_evidence where go_zdb_id in 
 		(select term_zdb_id 
 		   from term 
-		  where term_ont_id in ("GO:0005554", "GO:0000004", "GO:0008372",
-					 "GO:0005575", "GO:0003674", "GO:0008150"));
+		  where term_ont_id in ('GO:0005554', 'GO:0000004', 'GO:0008372',
+					 'GO:0005575', 'GO:0003674', 'GO:0008150'));
 
 -- if a known go term is assigned to the same marker that has an unknown go term, delete the unknown one
 -- db trigger is added for this purpose. 
@@ -289,11 +304,11 @@ delete from pre_marker_go_term_evidence p
 		       	   	  	      where a.mrkr_zdb_id = p.mrkr_zdb_id
 					      and a.mrkr_abbrev like 'WITHDRAWN%');
 
--- if a go term is in one of the two "do not annoate" subsets remove from load and report. see case 12290
-!echo "unload restricted go subset annotations";
+-- if a go term is in one of the two 'do not annoate' subsets remove from load and report. see case 12290
+--!echo 'unload restricted go subset annotations';
 
-unload to droppedAnnotationsViaSubsetViolations.txt
-select "The following annotations were not added to ZFIN because the GO term being used in the translation file (interpro2go, ec2go, or UniprotKB_kw2go) is marked as being part of the 'gocheck_do_not_annotate' subset.  See case 12296 for details.","",""
+create view droppedAnnotationsViaSubsetViolations as
+select 'The following annotations were not added to ZFIN because the GO term being used in the translation file (interpro2go, ec2go, or UniprotKB_kw2go) is marked as being part of the gocheck_do_not_annotate subset.  See case 12296 for details.','' as b1,'' as b2
  from single
 union
 select mrkr_zdb_id, term_ont_id, mrkrgoev_source
@@ -302,24 +317,24 @@ where term.term_zdb_id = pre_marker_go_term_evidence.go_zdb_id
  and exists (Select 'x' from term_subset, ontology_subset
        	      	      where termsub_term_zdb_id = term.term_zdb_id
 		      and termsub_subset_id = osubset_pk_id
-		      and osubset_subset_name in ("gocheck_do_not_annotate"));
+		      and osubset_subset_name = 'gocheck_do_not_annotate');
+\copy (select * from droppedAnnotationsViaSubsetViolations) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/droppedAnnotationsViaSubsetViolations.txt' with delimiter as '|' null as '';	
+drop view droppedAnnotationsViaSubsetViolations;
 
 delete from pre_marker_go_Term_evidence
  where exists (Select 'x' from term_subset, ontology_subset
        	      	      where termsub_term_zdb_id = go_zdb_id
 		      and termsub_subset_id = osubset_pk_id
-		      and osubset_subset_name in ("gocheck_do_not_annotate"));
-
-
-
-update statistics high for table pre_marker_go_term_evidence;
+		      and osubset_subset_name = 'gocheck_do_not_annotate');
+		      
+--update statistics high for table pre_marker_go_term_evidence;
 
 --!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data
 		select pre_mrkrgoev_zdb_id from pre_marker_go_term_evidence;
 --!echo '		into zdb_active_data'
 
-!echo "delete root go terms in bulk" ;
+--!echo 'delete root go terms in bulk' ;
 
 delete from marker_go_term_evidence
        where mrkrgoev_term_zdb_id in ('ZDB-TERM-091209-6070','ZDB-TERM-091209-2432','ZDB-TERM-091209-4029')
@@ -342,8 +357,8 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_term_zdb_id,
 				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,mrkrgoev_date_entered,mrkrgoev_date_modified,
 				mrkrgoev_annotation_organization,mrkrgoev_external_load_date,mrkrgoev_notes)
-		select p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id, p.mrkrgoev_source, "IEA", 
-		       CURRENT, CURRENT, '5', CURRENT, p.mrkrgoev_note
+		select p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id, p.mrkrgoev_source, 'IEA' as iea, 
+		       now() as time1, now() as time2, '5' as org, now() as time3, p.mrkrgoev_note
 		  from pre_marker_go_term_evidence p;
 --!echo '		into marker_go_term_evidence'
 	
@@ -365,17 +380,18 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 ---------------- loading cc field -----------------------------
 
 -- loading cc
-        create temp table temp_mrkr_cc (
-                gene_zdb_id      varchar(50),
-		sp_acc_num	 varchar(50),
-                cc_note          lvarchar(8192)
-        )with no log;
+        create temporary table temporary_mrkr_cc (
+                gene_zdb_id      text,
+		sp_acc_num	 text,
+                cc_note          text
+        );
 
 --!echo 'Load cc_external.unl'
-        load from cc_external.unl delimiter '$' insert into temp_mrkr_cc;
+        --load from cc_external.unl delimiter '$' insert into temporary_mrkr_cc;
+        copy temporary_mrkr_cc from '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/cc_external.unl' (delimiter '$');
 
 --!echo 'Update merged gene ids'
-	update temp_mrkr_cc
+	update temporary_mrkr_cc
 	   set gene_zdb_id =  (select zrepld_new_zdb_id
                                  from zdb_replaced_data
                                 where zrepld_old_zdb_id = gene_zdb_id)
@@ -383,32 +399,32 @@ and exists (Select 'x' from pre_marker_go_term_evidence
                                   from zdb_replaced_data); 
 
 
-        create temp table temp_nondupl_mrkr_cc (
-                nondupl_gene_zdb_id      varchar(50),
-		nondupl_sp_acc_num	 varchar(50),
-                nondupl_cc_note          lvarchar(8192)
-        )with no log;
+        create temporary table temporary_nondupl_mrkr_cc (
+                nondupl_gene_zdb_id      text,
+		nondupl_sp_acc_num	 text,
+                nondupl_cc_note          text
+        );
 
-        insert into temp_nondupl_mrkr_cc (nondupl_gene_zdb_id,nondupl_sp_acc_num,nondupl_cc_note)
+        insert into temporary_nondupl_mrkr_cc (nondupl_gene_zdb_id,nondupl_sp_acc_num,nondupl_cc_note)
          select distinct gene_zdb_id, sp_acc_num, cc_note
-	          from temp_mrkr_cc;
+	          from temporary_mrkr_cc;
 
-        create temp table pre_external_note(
-                p_extnote_zdb_id          varchar(50),
-                p_extnote_data_zdb_id     varchar(50), 
-                p_extnote_note            lvarchar(8192),
-                p_extnote_source_zdb_id   varchar(50)
-        )with no log;
+        create temporary table pre_external_note(
+                p_extnote_zdb_id          text,
+                p_extnote_data_zdb_id     text, 
+                p_extnote_note            text,
+                p_extnote_source_zdb_id   text
+        );
         
         insert into pre_external_note (p_extnote_note,p_extnote_data_zdb_id, p_extnote_source_zdb_id)
-                select nondupl_cc_note, dblink_zdb_id, "ZDB-PUB-020723-2"
-	          from temp_nondupl_mrkr_cc, db_link
+                select nondupl_cc_note, dblink_zdb_id, 'ZDB-PUB-020723-2'
+	          from temporary_nondupl_mrkr_cc, db_link
 		 where nondupl_gene_zdb_id = dblink_linked_recid
 		   and nondupl_sp_acc_num  = dblink_acc_num
-		   and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-47";
+		   and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-47';
 
         update pre_external_note
-                        set p_extnote_zdb_id = get_id("EXTNOTE");
+                        set p_extnote_zdb_id = get_id('EXTNOTE');
 
 
 --!echo 'Insert EXTNOTE into zdb_active_data'
@@ -429,19 +445,21 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 
 --!echo 'unload accession# with no attribution'
 -- accession from EC, Pfam, POSITE, InterPro, SwissProt
-	unload to "accession_with_no_attribution" 
-		select dblink_linked_recid, dblink_acc_num
- 		  from db_link
- 		 where dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-49",
-						 "ZDB-FDBCONT-040412-50",
-					 	 "ZDB-FDBCONT-040412-51",
-						 "ZDB-FDBCONT-040412-48",
-						 "ZDB-FDBCONT-040412-47")
+        create view accessionWithNoAttribution as
+                select dblink_linked_recid, dblink_acc_num
+                  from db_link
+                 where dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-49',
+                                                 'ZDB-FDBCONT-040412-50',
+                                                 'ZDB-FDBCONT-040412-51',
+                                                 'ZDB-FDBCONT-040412-48',
+                                                 'ZDB-FDBCONT-040412-47')
                    and not exists (
                         select 'x' from record_attribution
                          where recattrib_data_zdb_id = dblink_zdb_id )
-	      order by dblink_linked_recid ;
+              order by dblink_linked_recid ;
 
+        \copy (select * from accessionWithNoAttribution) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/accession_with_no_attribution' with delimiter as '|' null as '';
+        drop view accessionWithNoAttribution;
 
 --rollback work;
 commit work;

@@ -311,7 +311,7 @@ sub est_main($$) {
     my $cur = $dbh->do('
         create temp table est_pulled_from_zirc
           ( epfz_est_zdb_id  varchar(50) not null )
-          with no log;');
+          ;');
 
     # parse routine populates the temp table.
     &est_parse($dbh, $zircZdbId, $zircEstFile);

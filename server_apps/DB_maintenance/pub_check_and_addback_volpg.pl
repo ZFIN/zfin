@@ -18,12 +18,6 @@ use XML::Twig;
 #   Main
 #
 
-#set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
 print "processing the publication checking and would add missing vol and page numbers ... \n";
 
 print "remove and re-create Update-Publication-Volume-And-Pages_w directory\n";
@@ -35,15 +29,15 @@ my $username = "";
 my $password = "";
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) or die "Cannot connect to Informix database: $DBI::errstr\n";
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password) or die "Cannot connect to database: $DBI::errstr\n";
 
-my $sql = 'select distinct zdb_id, accession_no, title 
+my $sql = "select distinct zdb_id, accession_no, title
           from publication 
-         where status = "active" 
-           and jtype in ("Journal", "Review") 
-           and (pub_pages is null or pub_volume is null or pub_pages = "" or pub_volume = "") 
+         where status = 'active'
+           and jtype in ('Journal', 'Review')
+           and (pub_pages is null or pub_volume is null or pub_pages = '' or pub_volume = '')
            and accession_no is not null 
-           and title is not null';
+           and title is not null";
 
 my $cur = $dbh->prepare($sql);
 $cur ->execute();
@@ -68,12 +62,12 @@ my $directory = "./Update-Publication-Volume-And-Pages_w/";
 open (REPORT, ">", $directory . "updated-publications.txt") || die "Cannot open update-publications.txt : $!\n";
 open (NOTUPDATED, ">", $directory . "not-updated-publications.txt") || die "Cannot open not-updated-publications.txt : $!\n";
 
-$sql = 'select zdb_id
+$sql = "select zdb_id
           from publication 
-         where status = "active" 
-           and jtype in ("Journal", "Review") 
+         where status = 'active'
+           and jtype in ('Journal', 'Review')
            and (pub_pages is null or pub_volume is null) 
-           and (accession_no is null)';
+           and (accession_no is null)";
 
 $cur = $dbh->prepare($sql);
 $cur ->execute();
@@ -172,9 +166,9 @@ print "$updated pubs fixed with vol and/or page numbers\n\n\n";
 print "processing the publication checking and would fix the bad pub_doi ... \n";
 
 
-$sql = 'select distinct zdb_id, pub_doi
+$sql = "select distinct zdb_id, pub_doi
           from publication
-         where pub_doi like "% %"';
+         where pub_doi like '% %'";
 
 $cur = $dbh->prepare($sql);
 $cur ->execute();

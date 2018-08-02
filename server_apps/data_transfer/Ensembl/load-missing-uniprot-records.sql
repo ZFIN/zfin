@@ -3,10 +3,9 @@ CREATE temp TABLE ensembl_gene_raw
   (
      ensembl_id VARCHAR(50) not null,
      uniprot_id VARCHAR(20) not null
-  ) with no log;
+  ) ;
 
-load from ensembl-uniprot.unl
-  insert into ensembl_gene_raw;
+\copy ensembl_gene_raw from 'ensembl-uniprot.unl'
 
 --select * from ensembl_gene_raw;
 --select * from uniprot;
@@ -42,7 +41,7 @@ CREATE temp TABLE double_gene_uniprot
   (
      uniprot_id VARCHAR(20),
      count      INTEGER
-  ) with no log;
+  ) ;
 
 INSERT INTO double_gene_uniprot
 SELECT uniprot_id,
@@ -53,7 +52,7 @@ HAVING Count(*) > 1;
 
 select * From double_gene_uniprot;
 
-!echo "uniprot records that are associated to more than one gene";
+--!echo "uniprot records that are associated to more than one gene";
 
 select count(*) From double_gene_uniprot;
 
@@ -74,8 +73,7 @@ CREATE temp TABLE uniprot
      gene_symbol VARCHAR(50)
   ) with no log;
 
-load from uniprot.unl
-  insert into uniprot;
+\copy uniprot from 'uniprot.unl';
 
 CREATE temp TABLE ensembl_gene
   (
@@ -107,7 +105,7 @@ CREATE temp TABLE ensembl_gene_with_zdb
      dblink_zdb_id     VARCHAR(50) NOT NULL,
      uniprot_id VARCHAR(20) NOT NULL,
      length     INTEGER
-  ) with no log;
+  ) ;
 
 INSERT INTO ensembl_gene_with_zdb
 SELECT eg.ensembl_id,
@@ -153,8 +151,7 @@ SELECT zdb_id,
 FROM   ensembl_gene_with_zdb;
 
 -- report created new DB Links
-unload to 'new_uniprot_ids'
-SELECT * FROM  ensembl_gene_with_zdb;
+\copy (SELECT * FROM  ensembl_gene_with_zdb) to 'new_uniprot_ids';
 
 -- attribute given pub to these new uniprot IDs
 INSERT INTO record_attribution

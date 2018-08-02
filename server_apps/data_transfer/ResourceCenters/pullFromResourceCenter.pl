@@ -110,7 +110,7 @@ sub downloadFiles($$) {
 	$labZdbId = "ZDB-LAB-130607-1";
     }
     elsif ($resourceCenter eq "Baier"){
-	if (system("/local/bin/wget --user=Extranet --password=neuro89mpi https://sp.neuro.mpg.de/extranet/Shared%20Documents/Baier/$filename")) {
+	if (system("/local/bin/wget --user=SPneuroShare --password=neuro89mpi https://sharepoint.neuro.mpg.de/sites/SPNeuroShare/Shared%20Documents/Baier/$filename")) {
 	    &errorExit("Failed to download $filename file from Baier.","  See $wgetStatusFile for details.");
 	}
 	$labZdbId = "ZDB-LAB-990120-1";
@@ -149,10 +149,7 @@ require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullGenoF
 # define GLOBALS
 
 # set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+
 
 # Hard code the ZDB ID of ZIRC
 my $zircZdbId = "ZDB-LAB-991005-53";
@@ -170,13 +167,8 @@ system("/bin/chmod ug+w <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCen
 #  Open Database.
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/";
-my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-		       '',
-		       '',
-		       {AutoCommit => 0, RaiseError => 1}
-		       )
-  || errorExit("Failed while connecting to <!--|DB_NAME|--> ");
-
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+              or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 # Now do the work.
 # Each function below does more or less the same steps:
@@ -194,13 +186,8 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 $dbh->commit();
 $dbh->disconnect();
 
-$dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-		       '',
-		       '',
-		       {AutoCommit => 0, RaiseError => 1}
-		       )
-  || errorExit("Failed while connecting to <!--|DB_NAME|--> ");
-
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+           or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 &geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
 &geno_main($dbh, $czrcZdbId,"CZRC");           # Genotype availability CZRC

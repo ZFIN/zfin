@@ -4,28 +4,28 @@
 date;
 setenv INSTANCE <!--|INSTANCE|-->;
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReport.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReport.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres.txt
 
 endif
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReport.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReport.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt
 
 endif
 
-if ( -e <!--|SOURCEROOT|-->/reports/tests/phenotypeMartUnitTests.txt) then
- /bin/rm <!--|SOURCEROOT|-->/reports/tests/phenotypeMartUnitTests.txt
+if ( -e <!--|SOURCEROOT|-->/reports/tests/phenotypeMartUnitTestsPostgres.txt) then
+ /bin/rm <!--|SOURCEROOT|-->/reports/tests/phenotypeMartUnitTestsPostgres.txt
 endif
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartUnitTests.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartUnitTests.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartUnitTestsPostgres.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartUnitTestsPostgres.txt
 endif
 
 
 echo "done with file delete" ;
 # build up the warehouse
-<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReport.txt
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/runPhenotypeMartReportPostgres.txt
 
 if ($? != 0) then
  echo "regen phenotype mart (the building tables, not the public tables) failed on";
@@ -52,7 +52,7 @@ echo "done with phenotype mart building public" ;
 
 # move the current table data to backup, move the new data to current.
 
-<!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReport.txt
+${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt
 
 if ($? != 0) then
    echo "refresh phenotype mart (the public tables) failed and was rolled back";
@@ -64,19 +64,21 @@ date;
 
 echo "start regen_genox()";
 
-echo "execute procedure regen_genox()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+echo "select regen_genox();" | ${PGBINDIR}/psql $DBNAME;
 
 date;
 echo "done with regen_genox()";
 
+
 echo "start regen_anatomy_counts()";
-echo "execute procedure regen_anatomy_counts()" | /private/apps/Informix/informix/bin/dbaccess $DBNAME;
+echo "select regen_anatomy_counts()" | ${PGBINDIR}/psql $DBNAME
 date;
 echo "done with regen_anatomy_counts()";
 
 
+
 echo "start regen_pheno_term_regen()";
-$INFORMIXDIR/bin/dbaccess $DBNAME $TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql
+${PGBINDIR}/psql $DBNAME < $TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql
 date;
 echo "done with pheno_term_regen()";
 

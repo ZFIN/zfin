@@ -1,20 +1,20 @@
 begin work;
 
 create temp table refProteome (
-    uniprot_id         varchar(50)    
-) with no log;
+    uniprot_id         text    
+) ;
 
-load from refProteome.tab insert into refProteome;
+copy refProteome from '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/refProteome.tab' (delimiter '	');
 
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/refProteomeSorted.tab'
- DELIMITER "	"
+create view refProtSorted as
   select distinct uniprot_id
     from refProteome
    where uniprot_id is not null
  order by uniprot_id;
+\copy (select * from refProtSorted) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/refProteomeSorted.tab' with delimiter as '	' null as '';
+drop view refProtSorted;
 
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/genesWithProteinAndWithXpatOrPhenoNotWithRefPr.tab'
- DELIMITER "	"
+create view genesWithProteinAndWithXpatOrPhenoNotWithRefPr as
   select distinct mrkr_abbrev, mrkr_zdb_id
     from marker 
    where mrkr_type = 'GENE'
@@ -30,5 +30,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/genesWithProt
                      where mrkr_zdb_id = dblink_linked_recid
                        and dblink_acc_num = uniprot_id)
    order by mrkr_abbrev;
+\copy (select * from genesWithProteinAndWithXpatOrPhenoNotWithRefPr) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/genesWithProteinAndWithXpatOrPhenoNotWithRefPr.tab' with delimiter as '	' null as '';
+drop view genesWithProteinAndWithXpatOrPhenoNotWithRefPr;
 
 commit work;

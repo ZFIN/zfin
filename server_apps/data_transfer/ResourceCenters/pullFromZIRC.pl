@@ -132,10 +132,7 @@ require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/pullGenoF
 # define GLOBALS
 
 # set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+
 
 # Hard code the ZDB ID of ZIRC
 my $zircZdbId = "ZDB-LAB-991005-53";
@@ -148,15 +145,10 @@ system("/bin/chmod ug+w <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCen
 #  CD into working directory
 #  remove old downloaded files.
 #  Open Database.
-
+my $dbname = "<!--|DB_NAME|-->";
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/";
-my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-		       '',
-		       '',
-		       {AutoCommit => 0, RaiseError => 1}
-		       )
-  || errorExit("Failed while connecting to <!--|DB_NAME|--> ");
-
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 # Now do the work.
 # Each function below does more or less the same steps:
@@ -168,20 +160,15 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 $dbh->commit();
 $dbh->disconnect();
 
-$dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-		       '',
-		       '',
-		       {AutoCommit => 0, RaiseError => 1}
-		       )
-  || errorExit("Failed while connecting to <!--|DB_NAME|--> ");
-
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 &geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
 
 $dbh->commit();
 $dbh->disconnect();
 
-system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks.sh");
+system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinksPG.sh");
 #&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
 
 exit 0;

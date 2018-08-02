@@ -9,10 +9,6 @@ use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
 
 #set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
@@ -26,10 +22,10 @@ system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/log1");
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/log2");
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
   || die("Failed while connecting to <!--|DB_NAME|--> ");
 
-$cur_get_nonactive_pubs = $dbh->prepare('select accession_no, zdb_id from publication where (status is null or status != "active") and accession_no is not null;');
+$cur_get_nonactive_pubs = $dbh->prepare("select accession_no, zdb_id from publication where (status is null or status != 'active') and accession_no is not null;");
 $cur_get_nonactive_pubs->execute();
 $cur_get_nonactive_pubs->bind_columns(\$pub_acc_no,\$pub_zdbId);
 
@@ -62,8 +58,8 @@ if ($ctInactivePubs == 0) {
 $ctUpdated = 0;
 %updatedPublications = ();
 
-$cur_update_pub = $dbh->prepare_cached('update publication set status = "active" where accession_no = ?;');
-$cur_insert_update = $dbh->prepare_cached('insert into updates (submitter_id, rec_id,field_name,new_value,upd_when) select (select zdb_id from person where full_name = "Pub Activation Script"), zdb_id,"status","active",current from publication where accession_no = ?;');
+$cur_update_pub = $dbh->prepare_cached("update publication set status = 'active' where accession_no = ?;");
+$cur_insert_update = $dbh->prepare_cached("insert into updates (submitter_id, rec_id,field_name,new_value,upd_when) select (select zdb_id from person where full_name = 'Pub Activation Script'), zdb_id,'status','active',now() from publication where accession_no = ?;");
 
 foreach $pubZDBid (sort keys %nonActivePubAccessions) {
     $pubmedId = $nonActivePubAccessions{$pubZDBid};
