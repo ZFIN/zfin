@@ -1,4 +1,4 @@
-package org.zfin.infrastructure ;
+package org.zfin.infrastructure;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
@@ -9,33 +9,32 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**  Tests MarkerEnum
- *
+/**
+ * Tests MarkerEnum
  */
 public class EnumValidationTest extends AbstractDatabaseTest {
 
 
     private static Logger logger = Logger.getLogger(EnumValidationTest.class);
 
-    private EnumValidationService enumValidationService = new EnumValidationService(); 
+    private EnumValidationService enumValidationService = new EnumValidationService();
 
     @Test
-    public void validateAllServices(){
-        try{
+    public void validateAllServices() {
+        try {
             enumValidationService.checkAllEnums();
-        }
-        catch(EnumValidationException eve){
+        } catch (EnumValidationException eve) {
             logger.fatal(eve);
-            fail(eve.toString()) ;
+            fail(eve.toString());
         }
         String report = enumValidationService.getReport();
-        assertEquals(null, report);
+        if (enumValidationService.isReportError())
+            assertEquals(null, report);
     }
 
 
-
     @Test
-    public void getCollectionDifference(){
+    public void getCollectionDifference() {
         List<String> namesOne = new ArrayList<String>();
         namesOne.add("Walter");
         namesOne.add("Heinrich");
@@ -45,11 +44,11 @@ public class EnumValidationTest extends AbstractDatabaseTest {
         namesTwo.add("Heinrich");
 
         String errorReport = EnumValidationService.getCollectionDifferenceReport(namesOne, namesTwo, String.class);
-        assertNull(errorReport );
+        assertNull(errorReport);
 
         namesTwo.add("Ingrid");
         errorReport = EnumValidationService.getCollectionDifferenceReport(namesOne, namesTwo, String.class);
-        assertNotNull(errorReport );
+        assertNotNull(errorReport);
 
     }
 

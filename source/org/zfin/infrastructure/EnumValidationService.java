@@ -45,12 +45,14 @@ public class EnumValidationService {
     private static final Logger logger = Logger.getLogger(EnumValidationService.class);
 
     private StringBuilder report;
+    private boolean reportError;
 
     public void checkAllEnums() throws EnumValidationException {
         logger.info("Begin validation");
         Method[] methods = this.getClass().getMethods();
         int count = 0;
         for (Method method : methods) {
+            reportError = true;
             if (method.isAnnotationPresent(ServiceTest.class) && !method.isAnnotationPresent(Ignore.class)) {
                 try {
                     logger.info("running method: " + method.getName());
@@ -336,6 +338,7 @@ public class EnumValidationService {
 
     @ServiceTest
     public void validateGenomeLocationSources() throws EnumValidationException {
+        reportError = false;
         String hql = "select distinct g.source from GenomeLocation g";
         List typeList = HibernateUtil.currentSession().createQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, GenomeLocation.Source.values());
@@ -407,7 +410,7 @@ public class EnumValidationService {
 
     public <T> void checkEnumVersusDatabaseCollection(List<T> databaseList, Enum[] enumValues, boolean allowNullEnumValue)
             throws EnumValidationException {
-        List<String> enumList = new ArrayList<String>();
+        List<String> enumList = new ArrayList<>();
         Enum enumType = null;
         for (Enum type : enumValues) {
             if (type.toString() != null || !allowNullEnumValue) {
@@ -491,5 +494,13 @@ public class EnumValidationService {
         if (report == null)
             return null;
         return report.toString();
+    }
+
+    public boolean isReportError() {
+        return reportError;
+    }
+
+    public void setReportError(boolean reportError) {
+        this.reportError = reportError;
     }
 }
