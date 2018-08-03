@@ -57,6 +57,7 @@ public class EnumValidationService {
                 try {
                     logger.info("running method: " + method.getName());
                     method.invoke(this);
+                    System.out.println(method.getName()+":"+reportError);
                     ++count;
                 } catch (IllegalAccessException iae) {
                     if (iae.getCause() instanceof EnumValidationException) {
@@ -342,6 +343,7 @@ public class EnumValidationService {
         String hql = "select distinct g.source from GenomeLocation g";
         List typeList = HibernateUtil.currentSession().createQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, GenomeLocation.Source.values());
+        System.out.println(":"+reportError);
     }
 
     @ServiceTest
@@ -431,9 +433,11 @@ public class EnumValidationService {
             reason += "ENUMERATION VALIDATION REPORT: " + LINE_SEPARATOR + message;
             reason += LINE_SEPARATOR + "*******************************************************************************";
             logger.warn(reason);
-            if (report == null)
-                report = new StringBuilder();
-            report.append(message);
+            if(reportError) {
+                if (report == null)
+                    report = new StringBuilder();
+                report.append(message);
+            }
         }
     }
 
