@@ -8,7 +8,7 @@ import java.util.List;
 public class AlleleDTO extends ZfinDTO {
 
   private String symbol;
-  private String gene;
+  private String geneId;
   private List<CrossReferenceDTO> crossReferences;
   private String symbolText;
 
@@ -22,12 +22,12 @@ public class AlleleDTO extends ZfinDTO {
 
 
 
-  public String getGene() {
-    return gene;
+  public String getGeneId() {
+    return geneId;
   }
 
-  public void setGene(String gene) {
-    this.gene = gene;
+  public void setGeneId(String geneId) {
+    this.geneId = geneId;
   }
 
   public String getSymbol() {
