@@ -72,7 +72,7 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
                 // set to the new one
                 dto.copyFrom(changeEvent.getDTO());
 
-           //     handleTranscriptTypes();
+                handleTranscriptTypes();
             }
         });
 
@@ -258,23 +258,9 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
                     }
 
                 });
-
-                        AbstractListBox databaseListBoxWrapper = nucleotideSequenceArea.getDatabaseListBoxWrapper();
-                        databaseListBoxWrapper.clear();
-                        databaseListBoxWrapper.addItem(AbstractListBox.EMPTY_CHOICE, AbstractListBox.NULL_STRING);
-
-        TranscriptRPCService.App.getInstance().getTranscriptAddableNucleotideSequenceReferenceDatabases(dto,
-                new MarkerEditCallBack<List<ReferenceDatabaseDTO>>("error loading available sequence databases: ") {
-                    public void onSuccess(List<ReferenceDatabaseDTO> referenceDatabaseDTOs) {
-                        for (ReferenceDatabaseDTO referenceDatabaseDTO : referenceDatabaseDTOs) {
-                            databaseListBoxWrapper.addItem(referenceDatabaseDTO.getBlastName(), referenceDatabaseDTO.getZdbID());
-                        }
-                        nucleotideSequenceArea.activate();
-                    }
-                    });
     }
 
-    /*void handleTranscriptTypes() {
+    void handleTranscriptTypes() {
         boolean proteinsVisible = dto.getTranscriptType().equals("mRNA"); //messenger, not micro!
         proteinSequenceArea.setVisible(proteinsVisible);
         relatedProteinsBox.setVisible(proteinsVisible);
@@ -283,12 +269,6 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
         boolean targetedGenesVisible = dto.getTranscriptType().equals("miRNA");
         RootPanel.get(targetedGenesTitle).setVisible(targetedGenesVisible);
         targetedGenesBox.setVisible(targetedGenesVisible);
-        nucleotideSequenceArea.setVisible(targetedGenesVisible);
-        AbstractListBox databaseListBoxWrapper = nucleotideSequenceArea.getDatabaseListBoxWrapper();
-        databaseListBoxWrapper.clear();
-        databaseListBoxWrapper.addItem(AbstractListBox.EMPTY_CHOICE, AbstractListBox.NULL_STRING);
-        databaseListBoxWrapper.addItem("test", "testdb");
-        databaseListBoxWrapper.addItem("test1", "testdb1");
 
         TranscriptRPCService.App.getInstance().getTranscriptAddableNucleotideSequenceReferenceDatabases(dto,
                 new MarkerEditCallBack<List<ReferenceDatabaseDTO>>("error loading available sequence databases: ") {
@@ -296,15 +276,13 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
                         AbstractListBox databaseListBoxWrapper = nucleotideSequenceArea.getDatabaseListBoxWrapper();
                         databaseListBoxWrapper.clear();
                         databaseListBoxWrapper.addItem(AbstractListBox.EMPTY_CHOICE, AbstractListBox.NULL_STRING);
-                        databaseListBoxWrapper.addItem("test", "testdb");
-                        databaseListBoxWrapper.addItem("test1", "testdb1");
                         for (ReferenceDatabaseDTO referenceDatabaseDTO : referenceDatabaseDTOs) {
                             databaseListBoxWrapper.addItem(referenceDatabaseDTO.getBlastName(), referenceDatabaseDTO.getZdbID());
                         }
                         nucleotideSequenceArea.activate();
                     }
                 });
-    }*/
+    }
 
     protected void loadDTO() {
         try {
@@ -315,7 +293,7 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
                     new MarkerEditCallBack<TranscriptDTO>("failed to find zdbID: " + zdbID + " ") {
                         public void onSuccess(TranscriptDTO transcriptDTO) {
                             setDTO(transcriptDTO);
-                            //handleTranscriptTypes();
+                            handleTranscriptTypes();
                         }
                     });
         } catch (Exception e) {

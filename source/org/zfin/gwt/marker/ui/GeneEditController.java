@@ -198,7 +198,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
 
             public void start(SequenceAddEvent sequenceAddEvent) {
                 proteinPublicationPanel.setVisible(true);
-                proteinSequenceArea.newSequenceBox.setVisible(true);
+                
             }
         });
 
