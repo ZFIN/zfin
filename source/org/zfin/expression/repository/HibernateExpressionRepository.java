@@ -280,7 +280,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         for (Object[] basicExpressionObjects : expressions) {
             BasicExpressionDTO basicXpat = new BasicExpressionDTO();
-            basicXpat.setGeneId(basicExpressionObjects[3].toString());
+            basicXpat.setGeneId("ZFIN:"+basicExpressionObjects[3].toString());
             basicXpat.setWhenExpressedStage(basicExpressionObjects[4].toString());
             basicXpat.setAssay(basicExpressionObjects[5].toString());
 
@@ -308,11 +308,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
                 if (basicExpressionObjects[7].toString().startsWith("GO:")) {
                     cellularComponentTermId = basicExpressionObjects[7].toString();
-                } else if (basicExpressionObjects[7].toString().startsWith("MPATH:")) {
+                }
+                if (basicExpressionObjects[7].toString().startsWith("MPATH:")) {
                     anatomicalSubStructureTermId = basicExpressionObjects[7].toString();
-                } else if (basicExpressionObjects[7].toString().startsWith("BPSO:")) {
+                }
+                if (basicExpressionObjects[7].toString().startsWith("BSPO:")) {
                     anatomicalStructureQualifierTermId = basicExpressionObjects[7].toString();
-                } else {
+                }
+                if (basicExpressionObjects[7].toString().startsWith("ZFA:")) {
                     anatomicalSubStructureTermId = basicExpressionObjects[7].toString();
                 }
                 whereExpressedStatement = basicExpressionObjects[9].toString()+" "+basicExpressionObjects[10].toString();
@@ -322,8 +325,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             }
 
             ExpressionTermIdentifiersDTO wildtypeExpressionTermIdentifiers = new ExpressionTermIdentifiersDTO(whereExpressedStatement, cellularComponentTermId,
-                    anatomicalStructureTermId, anatomicalSubStructureTermId,
-                    anatomicalStructureQualifierTermId);
+                    anatomicalStructureTermId, anatomicalSubStructureTermId, anatomicalStructureQualifierTermId);
 
             basicXpat.setWildtypeExpressionTermIdentifiers(wildtypeExpressionTermIdentifiers);
 

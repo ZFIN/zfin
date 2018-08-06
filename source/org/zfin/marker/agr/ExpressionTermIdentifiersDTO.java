@@ -8,7 +8,7 @@ public class ExpressionTermIdentifiersDTO {
     private String whereExpressedStatement;
     private String cellularComponentTermId;
     private String anatomicalStructureTermId;
-    private String anatommicalSubStructureTermId;
+    private String anatomicalSubStructureTermId;
     private String anatomicalStructureQualifierTermId;
 
     public String getWhereExpressedStatement() {
@@ -35,12 +35,12 @@ public class ExpressionTermIdentifiersDTO {
         this.anatomicalStructureTermId = anatomicalStructureTermId;
     }
 
-    public String getAnatommicalSubStructureTermId() {
-        return anatommicalSubStructureTermId;
+    public String getAnatomicalSubStructureTermId() {
+        return anatomicalSubStructureTermId;
     }
 
-    public void setAnatommicalSubStructureTermId(String anatommicalSubStructureTermId) {
-        this.anatommicalSubStructureTermId = anatommicalSubStructureTermId;
+    public void setAnatomicalSubStructureTermId(String anatommicalSubStructureTermId) {
+        this.anatomicalSubStructureTermId = anatommicalSubStructureTermId;
     }
 
     public String getAnatomicalStructureQualifierTermId() {
@@ -53,12 +53,12 @@ public class ExpressionTermIdentifiersDTO {
 
 
     public ExpressionTermIdentifiersDTO(String whereExpressedStatement, String cellularComponentTermId,
-                                        String anatomicalStructureTermId, String anatomicalStructureQualifierTermId, String anatommicalSubStructureTermId) {
+                                        String anatomicalStructureTermId, String anatomicalSubStructureTermId, String anatomicalStructureQualifierTermId) {
         this.whereExpressedStatement = whereExpressedStatement;
         this.cellularComponentTermId = cellularComponentTermId;
         this.anatomicalStructureTermId = anatomicalStructureTermId;
         this.anatomicalStructureQualifierTermId = anatomicalStructureQualifierTermId;
-        this.anatommicalSubStructureTermId = anatommicalSubStructureTermId;
+        this.anatomicalSubStructureTermId = anatomicalSubStructureTermId;
 
     }
 }
