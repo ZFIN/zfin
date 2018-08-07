@@ -8,3 +8,11 @@ where geno_zdb_id = 'ZDB-GENO-150430-1';
 update fish
   set fish_name = 'uwm12Tg'
 where fish_zdb_id = 'ZDB-FISH-150901-10562';
+
+update genotype
+ set geno_display_name = 'uwm12Tg; uwm24Tg'
+where geno_zdb_id = 'ZDB-GENO-150508-4';
+
+update fish
+  set fish_name = 'uwm12Tg; uwm24Tg'
+where fish_zdb_id = 'ZDB-FISH-150901-10563';
