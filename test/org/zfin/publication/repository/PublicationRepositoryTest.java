@@ -774,7 +774,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAllPublicationLocationsShouldReturnNineValues() {
         List<PublicationTrackingLocation> locations = publicationRepository.getAllPublicationLocations();
-        assertThat(locations, hasSize(9));
+        assertThat(locations, hasSize(10));
     }
 
     @Test

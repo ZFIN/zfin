@@ -26,6 +26,9 @@ public class PublicationTrackingLocation {
     @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingLocation$Role")})
     private Role role;
 
+    @Column(name = "ptl_display_order")
+    private int displayOrder;
+
     public long getId() {
         return id;
     }
@@ -48,5 +51,13 @@ public class PublicationTrackingLocation {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public int getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }
