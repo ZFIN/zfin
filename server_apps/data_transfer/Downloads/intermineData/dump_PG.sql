@@ -191,7 +191,7 @@ create view xpatres as
     on genox_zdb_id = xpatex_genox_zdb_id
   join fish
     on fish_zdb_id = genox_fish_zdb_id;
-\copy (select * from xpatres) to './2xpatres.txt' with delimiter as '|' null as '';
+\copy (select * from xpatres) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/2xpatres.txt' with delimiter as '|' null as '';
 drop view xpatres;
 
 --\copy (select * from xpatfig) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/3xpatfig.txt' with delimiter as '|' null as '';
@@ -474,7 +474,7 @@ select tscript_mrkr_Zdb_id,
   full outer join transcript_type on tscript_type_id = tscriptt_pk_id
   full outer join tscript_type_status_definition on tscript_type_id = ttsdef_tscript_status_id
 ;
-\copy (select * from trans) to './8transcript3.txt' with delimiter as '|' null as '';
+\copy (select * from trans) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/8transcript.txt' with delimiter as '|' null as '';
 drop view trans;
 
 create view clones as
@@ -518,7 +518,7 @@ create view pubs as
          jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages, substring(get_date_from_id(zdb_id,'YYYYMMDD') from 1 for 4)
     from publication
 where accession_no not in ('24135484','22615492','22071262','23603293','11581520','22328273','19700757');
-\copy (select * from pubs) to './1pubs.txt' with delimiter as '|' null as '';
+\copy (select * from pubs) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_pubs/1pubs.txt' with delimiter as '|' null as '';
 drop view pubs;
 
 create view journals as
@@ -608,10 +608,11 @@ select fdmd_zdb_id,
     fdmd_exon_number,
     fdmd_intron_number,
     (select term_ont_id as id2
-       from term where fdmd_gene_localization_term_zdb_id =term_Zdb_id)
+       from term where fdmd_gene_localization_term_zdb_id =term_Zdb_id),
+     feature_type
   from feature_dna_mutation_detail, feature
   where fdmd_feature_zdb_id = feature_zdb_id;
-\copy (select * from dnaMutationDetail) to './dnaMutationDetail.txt' with delimiter as '|' null as '';
+\copy (select * from dnaMutationDetail) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dnaMutationDetail/dnaMutationDetail.txt' with delimiter as '|' null as '';
 drop view dnaMutationDetail;
 
 create view transcriptMutationDetail as
@@ -619,7 +620,7 @@ select ftmd_zdb_id,
     (select term_ont_id from term where term_zdb_id = ftmd_transcript_consequence_term_zdb_id),
     ftmd_feature_zdb_id,
     ftmd_exon_number,
-    ftmd_intron_number
+    ftmd_intron_number, feature_type
   from feature_transcript_mutation_detail
   , feature
  where ftmd_feature_zdb_id = feature_zdb_id;
@@ -637,7 +638,7 @@ select fpmd_zdb_id,
     (select term_ont_id as id2 from term where fpmd_mutant_or_stop_protein_term_zdb_id = term_Zdb_id),
     fpmd_number_amino_acids_removed,
     fpmd_number_amino_acids_added,
-    (select term_ont_id as id3 from term where fpmd_protein_consequence_term_zdb_id=term_Zdb_id)
+    (select term_ont_id as id3 from term where fpmd_protein_consequence_term_zdb_id=term_Zdb_id), feature_abbrev
  from feature_protein_mutation_detail, feature
       where fpmd_feature_zdb_id = feature_zdb_id;
 \copy (select * from proteinMutationDetail) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/proteinMutationDetail/proteinMutationDetail.txt' with delimiter as '|' null as '';

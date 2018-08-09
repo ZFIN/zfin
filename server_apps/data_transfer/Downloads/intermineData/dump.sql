@@ -142,6 +142,7 @@ select source_id, target_id from int_person_company
 union
 select source_id, target_id from int_person_pub;
 
+<<<<<<< HEAD
 
 --unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/1xpat.txt"
 -- select * from expression_experiment
@@ -161,6 +162,30 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 
 --unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/3xpatfig.txt"
 -- select * from expression_pattern_figure;
+=======
+create view xpatres as
+ select res.xpatres_pk_id, res.xpatres_expression_found, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id as id2,xpatex.xpatex_source_zdb_id,xpatex.xpatex_assay_name,xpatex.xpatex_probe_feature_zdb_id, xpatex.xpatex_gene_zdb_id, xpatex.xpatex_dblink_zdb_id, xpatex.xpatex_genox_zdb_id, xpatex.xpatex_atb_zdb_id, xpatfig.efs_fig_Zdb_id, termt.term_ont_id as id3, fish_zdb_id, genox_exp_zdb_id
+  from expression_experiment2 xpatex
+  join expression_figure_stage xpatfig
+    on xpatfig.efs_xpatex_zdb_id = xpatex.xpatex_zdb_id
+  join expression_result2 res
+    on res.xpatres_efs_id = xpatfig.efs_pk_id
+  join stage a
+    on xpatfig.efs_start_stg_zdb_id = a.stg_zdb_id
+  join stage b 
+    on xpatfig.efs_end_stg_zdb_id = b.stg_zdb_id
+  join term anat
+    on res.xpatres_superterm_zdb_id = anat.term_zdb_id
+  full outer join term termt 
+    on res.xpatres_subterm_zdb_id = termt.term_zdb_id
+  join fish_experiment
+    on genox_zdb_id = xpatex_genox_zdb_id
+  join fish
+    on fish_zdb_id = genox_fish_zdb_id;
+\copy (select * from xpatres) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/2xpatres.txt' with delimiter as '|' null as '';
+drop view xpatres;
+
+>>>>>>> dcf5f9830... IMINE-301
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_figures/1figs.txt"
  select fig_zdb_id,fig_label,replace(fig_caption,'
@@ -227,9 +252,12 @@ update tmp_pato
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_phenotypes/1apato.txt"
   select * from tmp_pato;
 
+<<<<<<< HEAD
 --unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_phenotypes/2apatofig.txt"
 --  select * from apato_figure;
 
+=======
+>>>>>>> dcf5f9830... IMINE-301
 --genotypesFeatures
 
 
@@ -398,6 +426,7 @@ select tscript_mrkr_Zdb_id,
        replace(ttsdef_definition,'
 ',''), 
        tscripts_status
+<<<<<<< HEAD
   from transcript,
        outer transcript_status,
        outer transcript_type,
@@ -412,6 +441,21 @@ select clone_mrkr_zdb_id, replace(clone_comments,'
 ',''),clone_vector_name, clone_polymerase_name, clone_insert_size, clone_cloning_site,clone_digest,
 			 clone_probelib_zdb_id, clone_sequence_type, replace(clone_pcr_amplification,'
 ',''), clone_rating, clone_problem_type,probe_library.*
+=======
+  from transcript
+  full outer join transcript_status on  tscript_status_id = tscripts_pk_id
+  full outer join transcript_type on tscript_type_id = tscriptt_pk_id
+  full outer join tscript_type_status_definition on tscript_type_id = ttsdef_tscript_status_id
+;
+\copy (select * from trans) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/8transcript.txt' with delimiter as '|' null as '';
+drop view trans;
+
+create view clones as
+select clone_mrkr_zdb_id, regexp_replace(clone_comments,E'(^[\\n\\r]+)|([\\n\\r]+$)', '', 'g' ),
+    clone_vector_name, clone_polymerase_name, clone_insert_size, clone_cloning_site,clone_digest,
+			 clone_probelib_zdb_id, clone_sequence_type, regexp_replace(clone_pcr_amplification,E'(^[\\n\\r]+)|([\\n\\r]+$)', '', 'g' ) as r2,
+    clone_rating, clone_problem_type,probe_library.*
+>>>>>>> dcf5f9830... IMINE-301
  from clone,probe_library
   where clone_probelib_zdb_id = probelib_zdb_id
   and get_obj_type(clone_mrkr_Zdb_id) != 'GENE';
@@ -444,6 +488,11 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   	 jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages, substr(get_date_from_id(zdb_id,'YYYYMMDD'),1,4)
     from publication
 where accession_no not in ('24135484','22615492','22071262','23603293','11581520','22328273','19700757');
+<<<<<<< HEAD
+=======
+\copy (select * from pubs) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_pubs/1pubs.txt' with delimiter as '|' null as '';
+drop view pubs;
+>>>>>>> dcf5f9830... IMINE-301
 
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_journals/1journals.txt"
@@ -454,11 +503,20 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   select goev_code, goev_name
     from go_evidence_code;
 
+<<<<<<< HEAD
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/lab/feature-prefix-source.txt"
+=======
+create view featurePrefixSource as
+>>>>>>> dcf5f9830... IMINE-301
 select sfp_prefix_id, sfp_source_zdb_id
 From source_feature_prefix
  where get_obj_type(sfp_source_zdb_id) = "LAB"
  and sfp_current_designation = 't';
+<<<<<<< HEAD
+=======
+\copy (select * from eaturePrefixSource) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/lab/feature-prefix-source.txt' with delimiter as '|' null as '';
+drop view featurePrefixSource;
+>>>>>>> dcf5f9830... IMINE-301
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/company/company-feature-prefix-source.txt"
 select sfp_prefix_id, sfp_source_zdb_id
@@ -524,17 +582,28 @@ select fdmd_zdb_id,
     fdmd_number_removed_dna_base_pairs,
     fdmd_exon_number,
     fdmd_intron_number,
+<<<<<<< HEAD
     (select term_ont_id 
        from term where fdmd_gene_localization_term_zdb_id =term_Zdb_id)
   from feature_dna_mutation_detail, feature
   where fdmd_feature_zdb_id = feature_zdb_id;
+=======
+    (select term_ont_id as id2
+       from term where fdmd_gene_localization_term_zdb_id =term_Zdb_id),
+    feature_type
+  from feature_dna_mutation_detail, feature
+  where fdmd_feature_zdb_id = feature_zdb_id;
+\copy (select * from dnaMutationDetail) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dnaMutationDetail/dnaMutationDetail.txt' with delimiter as '|' null as '';
+drop view dnaMutationDetail;
+>>>>>>> dcf5f9830... IMINE-301
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/transcriptMutationDetail/transcriptMutationDetail.txt"
 select ftmd_zdb_id,
     (select term_ont_id from term where term_zdb_id = ftmd_transcript_consequence_term_zdb_id),
     ftmd_feature_zdb_id,
     ftmd_exon_number,
-    ftmd_intron_number
+    ftmd_intron_number,
+    feature_type
   from feature_transcript_mutation_detail
   , feature
  where ftmd_feature_zdb_id = feature_zdb_id;
@@ -550,7 +619,12 @@ select fpmd_zdb_id,
     (select term_ont_id from term where fpmd_mutant_or_stop_protein_term_zdb_id = term_Zdb_id),
     fpmd_number_amino_acids_removed,
     fpmd_number_amino_acids_added,
+<<<<<<< HEAD
     (select term_ont_id from term where fpmd_protein_consequence_term_zdb_id=term_Zdb_id)
+=======
+    (select term_ont_id as id3 from term where fpmd_protein_consequence_term_zdb_id=term_Zdb_id),
+    feature_type
+>>>>>>> dcf5f9830... IMINE-301
  from feature_protein_mutation_detail, feature
       where fpmd_feature_zdb_id = feature_zdb_id;
 
