@@ -32,7 +32,6 @@
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
-<!--|INFORMIXSQLHOSTS|-->	/private/apps/Informix/informix/etc/sqlhosts
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waldo
