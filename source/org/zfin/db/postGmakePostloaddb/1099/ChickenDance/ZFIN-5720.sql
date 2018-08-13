@@ -5,3 +5,4 @@ update genotype set geno_display_name = 'Tüpfel long fin' where geno_zdb_id = '
 
 update data_alias set dalias_alias = 'Tübingen long fin' where dalias_zdb_id = 'ZDB-DALIAS-070518-18';
 
+update genotype set geno_display_name = 'Tübingen' where geno_zdb_id = 'ZDB-GENO-990623-3';
