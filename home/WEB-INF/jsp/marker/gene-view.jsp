@@ -71,6 +71,10 @@
         <zfin2:humanDiseaseOnGene gene="${formBean.marker}" diseases="${formBean.diseaseDisplays}"/>
     </div>
 
+    <div id="diseaseModels">
+        <zfin2:experimentalModels gene="${formBean.marker}" diseaseModels="${formBean.diseaseModelDisplays}"/>
+    </div>
+
     <%-- gene ontology--%>
     <zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}"/>
 

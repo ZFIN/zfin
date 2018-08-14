@@ -5,11 +5,15 @@ import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.DiseaseAnnotationModel;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.presentation.DiseaseModelDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +41,7 @@ public class MarkerBean extends PaginationBean {
     private boolean hasMarkerHistory;
     private List<PreviousNameLight> previousNames;
     private List<GeneProductsBean> geneProductsBean;
+    private Collection<DiseaseModelDisplay> diseaseModelDisplays;
 
     public List<MarkerRelationshipPresentation> getRelatedMarkers() {
         return relatedMarkers;
@@ -266,5 +271,13 @@ public class MarkerBean extends PaginationBean {
 
     public void setDiseaseDisplays(List<DiseaseDisplay> diseaseDisplays) {
         this.diseaseDisplays = diseaseDisplays;
+    }
+
+    public Collection<DiseaseModelDisplay> getDiseaseModelDisplays() {
+        return diseaseModelDisplays;
+    }
+
+    public void setDiseaseModelDisplays(Collection<DiseaseModelDisplay> diseaseModelDisplays) {
+        this.diseaseModelDisplays = diseaseModelDisplays;
     }
 }

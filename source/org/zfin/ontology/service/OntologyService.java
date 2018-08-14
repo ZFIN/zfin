@@ -1,5 +1,8 @@
 package org.zfin.ontology.service;
 
+import org.apache.commons.collections.MapIterator;
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
@@ -11,12 +14,14 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.OmimPhenotype;
+import org.zfin.mutant.presentation.DiseaseModelDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.NcbiOrthoExternalReference;
 import org.zfin.orthology.NcbiOtherSpeciesGene;
 import org.zfin.orthology.repository.OrthologyRepository;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.DisplayGroup;
@@ -254,6 +259,31 @@ public class OntologyService {
             builder.append(subterm.getTermName());
         }
         return builder.toString();
+    }
+
+    public static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseAnnotationModel> models) {
+        MultiKeyMap map = new MultiKeyMap();
+        for (DiseaseAnnotationModel model : models) {
+            if (!map.containsKey(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())) {
+                map.put(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment(), new ArrayList<Publication>());
+            }
+            if (!((Collection<Publication>) map.get(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())).contains(model.getDiseaseAnnotation().getPublication()))
+                ((Collection<Publication>) map.get(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())).add(model.getDiseaseAnnotation().getPublication());
+        }
+
+        List<DiseaseModelDisplay> modelDisplays = new ArrayList<>();
+        MapIterator it = map.mapIterator();
+        while (it.hasNext()) {
+            it.next();
+            MultiKey key = (MultiKey) it.getKey();
+            DiseaseModelDisplay display = new DiseaseModelDisplay();
+            display.setDisease((GenericTerm) key.getKey(0));
+            display.setExperiment((FishExperiment) key.getKey(1));
+            display.setPublications((Collection<Publication>) it.getValue());
+            modelDisplays.add(display);
+        }
+        Collections.sort(modelDisplays);
+        return modelDisplays;
     }
 }
 

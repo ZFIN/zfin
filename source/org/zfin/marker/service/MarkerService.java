@@ -17,6 +17,7 @@ import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -24,6 +25,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.presentation.DiseaseDisplay;
+import org.zfin.ontology.service.OntologyService;
 import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.OrthologEvidence;
 import org.zfin.orthology.presentation.OrthologEvidencePresentation;
@@ -862,6 +864,8 @@ public class MarkerService {
                 diseaseDisplaysList.addAll(diseaseDisplays);
                 markerBean.setDiseaseDisplays(diseaseDisplaysList);
             }
+            List<DiseaseAnnotationModel> diseaseAnnotationModels = RepositoryFactory.getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
+            markerBean.setDiseaseModelDisplays(OntologyService.getDiseaseModelDisplay(diseaseAnnotationModels));
         }
 
         markerBean.setMarkerTypeDisplay(getMarkerTypeString(marker));

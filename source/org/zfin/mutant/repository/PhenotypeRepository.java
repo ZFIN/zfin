@@ -9,6 +9,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.PublicationLink;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -291,4 +292,11 @@ public interface PhenotypeRepository {
     List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String entityID, String publicationID);
 
     boolean hasPhenotypeStructures(String publicationID);
+
+    /**
+     * Retrieve disease models by gene
+     * @param gene
+     * @return
+     */
+    List<DiseaseAnnotationModel> getDiseaseAnnotationModelsByGene(Marker gene);
 }

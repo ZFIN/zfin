@@ -24,6 +24,7 @@ import org.zfin.publication.presentation.PublicationLink;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
+import java.math.BigInteger;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -986,5 +987,32 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         query.setParameter("fishID", fishID);
         query.setParameter("pubID", publicationID);
         return (List<DiseaseAnnotationModel>) query.list();
+    }
+
+    @Override
+    public List<DiseaseAnnotationModel> getDiseaseAnnotationModelsByGene(Marker gene) {
+        Session session = HibernateUtil.currentSession();
+        String hql1 = "select distinct model from DiseaseAnnotationModel model, FishExperiment fishExp, Fish fish, GenotypeFeature genoFeat, FeatureMarkerRelationship featMrkr " +
+                      " where model.fishExperiment = fishExp " +
+                      "   and fishExp.fish = fish " +
+                      "   and fish.genotype = genoFeat.genotype " +
+                      "   and genoFeat.feature = featMrkr.feature " +
+                      "   and featMrkr.marker.zdbID = :geneZdbID ";
+        Query query = session.createQuery(hql1);
+        query.setParameter("geneZdbID", gene.getZdbID());
+
+        List<DiseaseAnnotationModel> diseaseAnnotationModels = (List<DiseaseAnnotationModel>) query.list();
+
+        String hql2 = "select distinct model from DiseaseAnnotationModel model, FishExperiment fishExp, FishStr fishStr, MarkerRelationship mrkrRel " +
+                      " where model.fishExperiment = fishExp " +
+                      "   and fishExp.fish.zdbID = fishStr.fishID " +
+                      "   and fishStr.strID = mrkrRel.firstMarker.zdbID " +
+                      "   and mrkrRel.secondMarker.zdbID = :geneZdbID ";
+        Query query2 = session.createQuery(hql2);
+        query2.setParameter("geneZdbID", gene.getZdbID());
+
+        diseaseAnnotationModels.addAll((List<DiseaseAnnotationModel>) query2.list());
+
+        return diseaseAnnotationModels;
     }
 }

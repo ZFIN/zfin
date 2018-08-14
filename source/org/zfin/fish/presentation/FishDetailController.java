@@ -27,6 +27,7 @@ import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.DiseaseModelDisplay;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -84,7 +85,7 @@ public class FishDetailController {
 
         // disease model
         List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModelsByFish(zdbID);
-        model.addAttribute("diseases", getDiseaseModelDisplay(diseaseAnnotations));
+        model.addAttribute("diseases", OntologyService.getDiseaseModelDisplay(diseaseAnnotations));
 
         // Expression data
         ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
@@ -135,30 +136,7 @@ public class FishDetailController {
         return "fish/fish-detail-popup.popup";
     }
 
-    private static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseAnnotationModel> models) {
-        MultiKeyMap map = new MultiKeyMap();
-       for (DiseaseAnnotationModel model : models) {
-            if (!map.containsKey(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())) {
-                map.put(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment(), new ArrayList<Publication>());
-            }
-            if (!((Collection<Publication>) map.get(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())).contains(model.getDiseaseAnnotation().getPublication()))
-                 ((Collection<Publication>) map.get(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())).add(model.getDiseaseAnnotation().getPublication());
-        }
 
-        List<DiseaseModelDisplay> modelDisplays = new ArrayList<>();
-        MapIterator it = map.mapIterator();
-        while (it.hasNext()) {
-            it.next();
-            MultiKey key = (MultiKey) it.getKey();
-            DiseaseModelDisplay display = new DiseaseModelDisplay();
-            display.setDisease((GenericTerm) key.getKey(0));
-            display.setExperiment((FishExperiment) key.getKey(1));
-            display.setPublications((Collection<Publication>) it.getValue());
-            modelDisplays.add(display);
-        }
-        Collections.sort(modelDisplays);
-        return modelDisplays;
-    }
 
 
 
