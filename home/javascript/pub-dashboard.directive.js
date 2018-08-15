@@ -55,11 +55,11 @@
                 display: 'Last status change (newest)'
             },
             {
-                value: 'pub.lastSentEmailDate',
+                value: 'pub.lastCorrespondenceDate',
                 display: 'Last correspondence (oldest)'
             },
             {
-                value: '-pub.lastSentEmailDate',
+                value: '-pub.lastCorrespondenceDate',
                 display: 'Last correspondence (newest)'
             }
         ];
