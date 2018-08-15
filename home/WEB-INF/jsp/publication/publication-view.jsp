@@ -147,7 +147,12 @@
         </tr>
         <tr>
             <th>Curation Status:</th>
-            <td>${curationStatusDisplay}</td>
+            <td>
+                ${curationStatusDisplay}
+                <c:if test="${publication.indexed}"><br>Indexed,
+                    <fmt:formatDate value="${publication.indexedDate.time}" pattern="MM/dd/yy" />
+                </c:if>
+            </td>
         </tr>
         <tr>
             <th>Author Correspondence:</th>
