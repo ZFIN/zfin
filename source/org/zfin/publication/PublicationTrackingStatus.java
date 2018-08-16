@@ -10,7 +10,6 @@ public class PublicationTrackingStatus {
         NEW,
         READY_FOR_INDEXING,
         INDEXING,
-        INDEXED,
         READY_FOR_CURATION,
         CURATING,
         WAIT,

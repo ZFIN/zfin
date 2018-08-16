@@ -35,7 +35,6 @@
         var vm = this;
 
         vm.statuses = [];
-        vm.indexedStatus = null;
         vm.locations = [];
         vm.priorities = [];
         vm.curators = [];
@@ -62,9 +61,6 @@
         function activate() {
             PublicationService.getStatuses()
                 .then(function (response) {
-                    vm.indexedStatus = zf.find(response.data, function (s) {
-                        return s.type === 'INDEXED';
-                    });
                     vm.statuses = response.data.filter(function (s) {
                         return !s.hidden;
                     });
@@ -157,23 +153,9 @@
         function updateStatus(validate) {
             vm.processing = true;
             var isClosing = vm.current.status.type === 'CLOSED';
-            var isIndexed = vm.original.status &&
-                vm.original.status.type === 'INDEXING' &&
-                vm.current.status.type === 'READY_FOR_CURATION';
             var update;
             if (validate && isClosing) {
                 update = validateBeforeClose();
-            } else if (isIndexed) {
-                var indexed = {
-                    location: null,
-                    owner: vm.curator,
-                    pubZdbID: vm.pubId,
-                    status: vm.indexedStatus
-                };
-                update = PublicationService.updateStatus(indexed)
-                    .then(function () {
-                        doStatusUpdate(isClosing)
-                    });
             } else {
                 update = doStatusUpdate(isClosing);
             }

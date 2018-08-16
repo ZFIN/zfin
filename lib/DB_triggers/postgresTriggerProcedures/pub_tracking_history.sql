@@ -14,8 +14,6 @@ begin
                                                 NEW.pth_claimed_by);
         perform updatePubCompletionDate(NEW.pth_pub_zdb_id,
                                                 NEW.pth_status_id);
-        perform updatePubIndexedDate(NEW.pth_pub_zdb_id,
-                                                NEW.pth_status_id);
         RETURN NEW;
 end;
 $BODY$ LANGUAGE plpgsql;
