@@ -7,7 +7,16 @@
         var template = '' +
             '<div class="panel panel-default">' +
             '  <div class="panel-heading">' +
-            '    <h3 class="panel-title">Status</h3>' +
+            '    <h3 class="panel-title">' +
+            '      Status' +
+            '      <span class="pull-right">\n' +
+            '      <small>\n' +
+            '          <a ng-href="/action/publication/{{vm.pubId}}/status-history" target="_blank">\n' +
+            '              History <i class="fas fa-external-link-alt"></i>\n' +
+            '          </a>\n' +
+            '      </small>\n' +
+            '    </span>' +
+            '    </h3>' +
             '  </div>' +
             '  <div publication-status pub-id="{{vm.pubId}}" curator-id="{{vm.curatorId}}" topics="vm.topics" notes="vm.notes"></div>' +
             '</div>' +

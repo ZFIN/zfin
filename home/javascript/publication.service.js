@@ -14,7 +14,9 @@
             addTopic               : addTopic,
             updateTopic            : updateTopic,
             getStatus              : getStatus,
+            getIndexed             : getIndexed,
             updateStatus           : updateStatus,
+            updateIndexed          : updateIndexed,
             getNotes               : getNotes,
             addNote                : addNote,
             updateNote             : updateNote,
@@ -57,12 +59,20 @@
             return $http.get('/action/publication/' + id + '/status');
         }
 
+        function getIndexed(id) {
+            return $http.get('/action/publication/' + id + '/indexed');
+        }
+
         function  updateStatus(status, checkOwner) {
             var endpoint = '/status';
             if (checkOwner) {
                 endpoint += '?checkOwner=true';
             }
             return $http.post('/action/publication/' + status.pubZdbID + endpoint, status);
+        }
+
+        function updateIndexed(indexed) {
+            return $http.post('/action/publication/' + indexed.pubZdbID + '/indexed', indexed);
         }
 
         function getNotes(id) {

@@ -196,7 +196,7 @@ public class PublicationTrackingController {
         Publication publication = publicationRepository.getPublication(zdbID);
         PublicationTrackingHistory pth = publicationRepository.currentTrackingStatus(publication);
 
-        if (checkOwner && pth.getOwner() != null && dto.getOwner() != null && pth.getOwner().getZdbID() != dto.getOwner().getZdbID()) {
+        if (checkOwner && pth.getOwner() != null && dto.getOwner() != null && !Objects.equals(pth.getOwner().getZdbID(), dto.getOwner().getZdbID())) {
             throw new InvalidWebRequestException("Pub already claimed");
         }
 
@@ -222,6 +222,28 @@ public class PublicationTrackingController {
         // refresh to get fully populated status and location objects
         session.refresh(newStatus);
         return converter.toCurationStatusDTO(publicationRepository.currentTrackingStatus(publication));
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{zdbID}/indexed", method = RequestMethod.GET)
+    public IndexedStatusDTO getIndexedStatus(@PathVariable String zdbID) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+        return converter.toIndexedStatusDTO(publication);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{zdbID}/indexed", method = RequestMethod.POST)
+    public IndexedStatusDTO setIndexedStatus(@PathVariable String zdbID, @RequestBody IndexedStatusDTO dto) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+        publication.setIndexed(dto.isIndexed());
+        publication.setIndexedDate(new GregorianCalendar());
+        session.save(publication);
+        tx.commit();
+
+        return converter.toIndexedStatusDTO(publication);
     }
 
     @RequestMapping(value = "/{zdbID}/status-history")

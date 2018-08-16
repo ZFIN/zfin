@@ -16,6 +16,7 @@
 
 <script src="/javascript/publication-author-notif.directive.js"></script>
 <script src="/javascript/publication-correspondence.directive.js"></script>
+<script src="/javascript/publication-indexed.directive.js"></script>
 <script src="/javascript/publication-notes.directive.js"></script>
 <script src="/javascript/publication-status.directive.js"></script>
 <script src="/javascript/publication-topics.directive.js"></script>

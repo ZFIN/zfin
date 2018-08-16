@@ -154,6 +154,18 @@ public class CurationDTOConversionService {
         return dto;
     }
 
+    public IndexedStatusDTO toIndexedStatusDTO(Publication publication) {
+        if (publication == null) {
+            return null;
+        }
+
+        IndexedStatusDTO dto = new IndexedStatusDTO();
+        dto.setPubZdbID(publication.getZdbID());
+        dto.setIndexed(publication.isIndexed());
+        dto.setIndexedDate(publication.getIndexedDate());
+        return dto;
+    }
+
     public DashboardPublicationBean toDashboardPublicationBean(PublicationTrackingHistory status) {
         if (status == null) {
             return null;
