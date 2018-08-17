@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION fish_affected()
 BEGIN
  PERFORM getFishOrder(NEW.fish_zdb_id);
 
-  RETURN NULL;
+  RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 

@@ -2,7 +2,7 @@ create or replace function getFishOrder (vFishId text)
 returns void as $$
 
 
-declare workingZyg  zygocity.zyg_name%TYPE;
+declares workingZyg  zygocity.zyg_name%TYPE;
  workingMrkr  genotype_feature.genofeat_feature_zdb_id%TYPE;
  existingMrkr  genotype_feature.genofeat_feature_zdb_id%TYPE := 'none';
  affectorType varchar(20);
@@ -15,6 +15,7 @@ begin
 --find the functional number of affected genes.
 numAffectedGene = 0;
 fishOrder = 9999999999;
+raise notice 'FISH: %', vFishId;
 for workingMrkr in
 	--get the allele-ish genes
 	select  fmrel_mrkr_zdb_id  
@@ -84,6 +85,8 @@ for workingMrkr in
 
 	   
 end loop ;
+raise notice 'FISH: %', vFishId;
+update fish set fish_order=fishOrder where fish_zdb_id=vFishId;
 raise notice 'endLoop: %', fishOrder;
 raise notice 'existingMrkr: %', existingMrkr;
 raise notice 'wMrkr: %', workingMrkr;
@@ -153,8 +156,9 @@ else
 	 raise notice 'features=1: %', fishOrder;
 end if;
 
-raise notice 'end: %', fishOrder;
+raise notice 'en: %', fishOrder;
 raise notice 'end: %', numAffectedGene;
+raise notice 'FISH: %', vFishId;
 update fish set fish_order=fishOrder where fish_zdb_id=vFishId;
 update fish set fish_functional_affected_gene_count=numAffectedGene where fish_zdb_id=vFishId;
 --return fishOrder, numAffectedGene;
