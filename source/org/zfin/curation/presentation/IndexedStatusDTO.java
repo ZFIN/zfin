@@ -7,6 +7,7 @@ public class IndexedStatusDTO {
     private String pubZdbID;
     private boolean indexed;
     private Calendar indexedDate;
+    private PersonDTO indexer;
 
     public String getPubZdbID() {
         return pubZdbID;
@@ -30,5 +31,13 @@ public class IndexedStatusDTO {
 
     public void setIndexedDate(Calendar indexedDate) {
         this.indexedDate = indexedDate;
+    }
+
+    public PersonDTO getIndexer() {
+        return indexer;
+    }
+
+    public void setIndexer(PersonDTO indexer) {
+        this.indexer = indexer;
     }
 }

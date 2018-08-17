@@ -10,28 +10,22 @@
     <c:if test="${!empty publication.fileName}"> <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="far fa-file-pdf"></i></a></c:if>
   </p>
 
-  <c:forEach items="${statusUpdates}" var="item">
+  <c:forEach items="${events}" var="event">
     <div class="media">
       <div class="media-left">
         <div class="thumb-container">
-          <zfin2:profileImage className="thumb-image" value="${item.updater}"/>
+          <zfin2:profileImage className="thumb-image" value="${event.performedBy}"/>
         </div>
       </div>
       <div class="media-body">
         <h4 class="media-heading">
-            ${item.updater.firstName}&nbsp;${item.updater.lastName}
+            ${event.performedBy.firstName}&nbsp;${event.performedBy.lastName}
           <small>
-            <fmt:formatDate value="${item.date.time}" pattern="yyyy-MM-dd h:mm a"/>
+            <fmt:formatDate value="${event.date.time}" pattern="yyyy-MM-dd h:mm a"/>
           </small>
         </h4>
         <p>
-          Status changed to <b>${item.status.name}</b>
-          <c:if test="${!empty item.owner}">
-            <br>Owner changed to <b>${item.owner.firstName}&nbsp;${item.owner.lastName}</b>
-          </c:if>
-          <c:if test="${!empty item.location}">
-            <br>Location changed to <b>${item.location.name}</b>
-          </c:if>
+          ${event.display}
         </p>
       </div>
     </div>

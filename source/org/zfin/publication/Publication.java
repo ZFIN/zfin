@@ -46,9 +46,11 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Date lastCorrespondenceDate;
 
     private boolean deletable;
-    private boolean indexed;
     private boolean canShowImages;
+
+    private boolean indexed;
     private GregorianCalendar indexedDate;
+    private Person indexedBy;
 
     public String getZdbID() {
         return zdbID;
@@ -128,6 +130,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setIndexedDate(GregorianCalendar indexedDate) {
         this.indexedDate = indexedDate;
+    }
+
+    public Person getIndexedBy() {
+        return indexedBy;
+    }
+
+    public void setIndexedBy(Person indexedBy) {
+        this.indexedBy = indexedBy;
     }
 
     public Journal getJournal() {

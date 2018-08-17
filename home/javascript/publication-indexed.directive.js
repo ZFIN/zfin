@@ -16,7 +16,8 @@
         '    <div class="text-danger">{{vm.error}}</div>' +
         '</form>',
       scope: {
-        pubId: '@'
+        pubId: '@',
+        curator: '='
       },
       controller: PublicationIndexedController,
       controllerAs: 'vm',
@@ -47,6 +48,7 @@
 
     function handleToggle() {
       vm.saving = true;
+      vm.indexed.indexer = vm.curator;
       PublicationService.updateIndexed(vm.indexed)
         .then(function (response) {
           vm.error = '';

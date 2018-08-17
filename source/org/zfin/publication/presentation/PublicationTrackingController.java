@@ -240,6 +240,7 @@ public class PublicationTrackingController {
         Transaction tx = session.beginTransaction();
         publication.setIndexed(dto.isIndexed());
         publication.setIndexedDate(new GregorianCalendar());
+        publication.setIndexedBy(profileRepository.getPerson(dto.getIndexer().getZdbID()));
         session.save(publication);
         tx.commit();
 
@@ -253,9 +254,16 @@ public class PublicationTrackingController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
+        List<PublicationEvent> events = new ArrayList<>();
+        events.addAll(publicationRepository.fullTrackingHistory(publication));
+        if (publication.isIndexed()) {
+            events.add(new IndexedEvent(publication));
+        }
+        events.sort(Comparator.comparing(PublicationEvent::getDate).reversed());
+
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Status History for " + publication.getTitle());
         model.addAttribute("publication", publication);
-        model.addAttribute("statusUpdates", publicationRepository.fullTrackingHistory(publication));
+        model.addAttribute("events", events);
         return "publication/status-history.page";
     }
 

@@ -163,6 +163,7 @@ public class CurationDTOConversionService {
         dto.setPubZdbID(publication.getZdbID());
         dto.setIndexed(publication.isIndexed());
         dto.setIndexedDate(publication.getIndexedDate());
+        dto.setIndexer(toPersonDTO(publication.getIndexedBy()));
         return dto;
     }
 

@@ -1,13 +1,14 @@
 package org.zfin.publication;
 
 import org.zfin.profile.Person;
+import org.zfin.publication.presentation.PublicationEvent;
 
 import javax.persistence.*;
 import java.util.GregorianCalendar;
 
 @Entity
 @Table(name = "pub_tracking_history")
-public class PublicationTrackingHistory {
+public class PublicationTrackingHistory implements PublicationEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -88,6 +89,7 @@ public class PublicationTrackingHistory {
         this.updater = updater;
     }
 
+    @Override
     public GregorianCalendar getDate() {
         return date;
     }
@@ -102,5 +104,29 @@ public class PublicationTrackingHistory {
 
     public void setIsCurrent(Boolean isCurrent) {
         this.isCurrent = isCurrent;
+    }
+
+    @Override
+    public Person getPerformedBy() {
+        return updater;
+    }
+
+    @Override
+    public String getDisplay() {
+        StringBuilder display = new StringBuilder();
+        display.append("Status changed to <b>").append(status.getName()).append("</b>");
+        if (owner != null) {
+            display.append("<br>Owner changed to <b>")
+                    .append(owner.getFirstName())
+                    .append(" ")
+                    .append(owner.getLastName())
+                    .append("</b>");
+        }
+        if (location != null) {
+            display.append("<br>Location changed to <b>")
+                    .append(location.getName())
+                    .append("</b>");
+        }
+        return display.toString();
     }
 }
