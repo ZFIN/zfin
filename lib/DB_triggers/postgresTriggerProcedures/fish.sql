@@ -9,8 +9,9 @@ BEGIN
   NEW.fish_name = scrub_char(NEW.fish_name);
   NEW.fish_name_order = zero_pad(NEW.fish_name);
   NEW.fish_full_name = get_fish_full_name(NEW.fish_zdb_id, NEW.fish_genotype_zdb_id, NEW.fish_name);
-  NEW.fish_order=9999999999;
-  NEW.fish_functional_affected_gene_count=0;
+  --NEW.fish_order=9999999999;
+  --NEW.fish_functional_affected_gene_count=0;
+ 
    RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
@@ -18,9 +19,16 @@ $BODY$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fish_affected()
   RETURNS trigger AS $BODY$
 BEGIN
- PERFORM getFishOrder(NEW.fish_zdb_id);
 
-  RETURN NEW;
+
+  select * FROM
+
+ getFishOrder(NEW.fish_zdb_id)
+ INTO NEW.fish_order,NEW.fish_functional_affected_gene_count;
+ raise notice 'end: %', NEW.fish_functional_affected_gene_count;
+
+-- get_genbank_dblink_length_type
+     RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 

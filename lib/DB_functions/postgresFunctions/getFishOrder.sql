@@ -1,5 +1,4 @@
-create or replace function getFishOrder (vFishId text)
-returns void as $$
+create or replace function getFishOrder (vFishId text,  out fishOrderOut bigint,  out numAffectedGeneOut  int) as $func$
 
 
 declare workingZyg  zygocity.zyg_name%TYPE;
@@ -11,13 +10,11 @@ declare workingZyg  zygocity.zyg_name%TYPE;
  strExists int8;
  genoIsWT boolean := 'f';
  numAffectedGene int8 := 0;
-fishOrder bigint := 9999999999;
+ fishOrder bigint := 9999999999;
 begin
 
 --find the functional number of affected genes.
---numAffectedGene = 0;
---fishOrder = 9999999999;
-raise notice 'FISH: %', vFishId;
+
 for workingMrkr in
 	--get the allele-ish genes
 	select  fmrel_mrkr_zdb_id  
@@ -68,7 +65,7 @@ for workingMrkr in
 		 and b.fishstr_fish_zdb_id = b2.fishstr_fish_zdb_id
 
     loop 
-  	raise notice 'workingMarkerNone: %', workingMrkr;
+
 	   if (existingMrkr = 'none')
 	   then
 		 existingMrkr := workingMrkr;
@@ -87,11 +84,8 @@ for workingMrkr in
 
 	   
 end loop ;
-raise notice 'FISH: %', vFishId;
-update fish set fish_order=fishOrder where fish_zdb_id=vFishId;
 raise notice 'endLoop: %', fishOrder;
 raise notice 'existingMrkr: %', existingMrkr;
-raise notice 'wMrkr: %', workingMrkr;
 
  genoIsWT = (select geno_is_wildtype from genotype, fish
     	       	       where fish_genotype_zdb_id = geno_Zdb_id
@@ -158,13 +152,13 @@ else
 	 raise notice 'features=1: %', fishOrder;
 end if;
 
-raise notice 'en: %', fishOrder;
+raise notice 'end: %', fishOrder;
 raise notice 'end: %', numAffectedGene;
-raise notice 'FISH: %', vFishId;
-update fish set fish_order=fishOrder where fish_zdb_id=vFishId;
-update fish set fish_functional_affected_gene_count=numAffectedGene where fish_zdb_id=vFishId;
---return fishOrder, numAffectedGene;
 
+--return fishOrder, numAffectedGene;
+numAffectedGeneOut=numAffectedGene;
+fishOrderOut=fishOrder;
 end;
 
-$$ LANGUAGE plpgsql;
+
+$func$ LANGUAGE plpgsql ;
