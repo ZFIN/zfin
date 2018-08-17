@@ -30,3 +30,30 @@ WHERE pth_status_id = 16;
 -- remove indexed status itself
 DELETE FROM pub_tracking_status
 WHERE pts_pk_id = 16;
+
+-- mark pubs that went directly from Indexing to Closed, Waiting, or Curating
+-- that aren't currently on Holly's dashboard as indexed.
+UPDATE publication update_pub
+SET pub_is_indexed = TRUE,
+  pub_indexed_by   = 'ZDB-PERS-100329-1',
+  pub_indexed_date = sub.indexed_date
+FROM (
+       SELECT
+         pub.zdb_id                                AS pub_zdb_id,
+         indexing.pth_status_made_non_current_date AS indexed_date
+       FROM publication pub
+         INNER JOIN pub_tracking_history indexing ON pub.zdb_id = indexing.pth_pub_zdb_id
+         CROSS JOIN pub_tracking_history NEXT
+         INNER JOIN pub_tracking_status indexing_status ON indexing.pth_status_id = indexing_status.pts_pk_id
+         INNER JOIN pub_tracking_status next_status ON NEXT.pth_status_id = next_status.pts_pk_id
+         INNER JOIN pub_tracking_history CURRENT ON pub.zdb_id = CURRENT.pth_pub_zdb_id
+       WHERE indexing_status.pts_status = 'INDEXING'
+             AND next_status.pts_status IN ('WAIT', 'CLOSED', 'CURATING')
+             AND indexing.pth_pub_zdb_id = NEXT.pth_pub_zdb_id
+             AND NEXT.pth_status_insert_date > indexing.pth_status_insert_date
+             AND EXTRACT('epoch' FROM (NEXT.pth_status_insert_date - indexing.pth_status_made_non_current_date)) < 90
+             AND pub.pub_is_indexed = 'f'
+             AND CURRENT.pth_status_is_current = 't'
+             AND (CURRENT.pth_claimed_by IS NULL OR CURRENT.pth_claimed_by != 'ZDB-PERS-100329-1')
+     ) AS sub
+WHERE update_pub.zdb_id = sub.pub_zdb_id;
