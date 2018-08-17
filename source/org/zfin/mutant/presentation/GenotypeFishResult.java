@@ -64,7 +64,7 @@ public class GenotypeFishResult implements Comparable<GenotypeFishResult> {
 
         GenotypeFishResult that = (GenotypeFishResult) o;
 
-        return fish.getFishID().equals(that.fish.getFishID());
+        return fish.getAbbreviation().equals(that.fish.getAbbreviation());
 
     }
 
@@ -75,6 +75,6 @@ public class GenotypeFishResult implements Comparable<GenotypeFishResult> {
 
     @Override
     public int compareTo(GenotypeFishResult o) {
-        return fish.getFishID().compareTo(o.getFish().getFishID());
+        return fish.getAbbreviation().compareTo(o.getFish().getAbbreviation());
     }
 }
