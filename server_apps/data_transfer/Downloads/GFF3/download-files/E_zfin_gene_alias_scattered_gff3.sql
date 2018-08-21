@@ -11,7 +11,7 @@ select
 	zeg_score,
 	zeg_strand,
 	zeg_frame,
-	zeg_ID_Name ||';Alias='|| zeg_Alias as attribute
+	zeg_ID_Name ||';Alias='|| zeg_gene_zdb_id as attribute
 from zfin_ensembl_gene
 group by 1,2,3,6,7,8,9
 ------------------------------ RefSeq----------------------------
@@ -28,7 +28,7 @@ select
 	zeg_ID_Name ||';Alias='|| refseq.dblink_acc_num as attribute
 from  zfin_ensembl_gene, db_link refseq
 where refseq.dblink_fdbcont_zdb_id  in ('ZDB-FDBCONT-040412-38','ZDB-FDBCONT-040412-39') -- protein as well
-			and refseq.dblink_linked_recid =  zeg_Alias
+			and refseq.dblink_linked_recid =  zeg_gene_zdb_id
 group by 1,2,3,6,7,8,9
 ------------------------------ensdarG---------------------------
 union
@@ -44,7 +44,7 @@ select
 	zeg_ID_Name ||';Alias='|| vGdbl.dblink_acc_num as attribute
 from zfin_ensembl_gene, db_link vGdbl
 where vGdbl.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-14'
-			and vGdbl.dblink_linked_recid = zeg_alias
+			and vGdbl.dblink_linked_recid = zeg_gene_zdb_id
 group by 1,2,3,6,7,8,9
 --------------------------------ottdarT--------------------------------
 union
@@ -59,7 +59,7 @@ select
 	zeg_frame,
 	zeg_ID_Name ||';Alias='|| tscript_load_id as attribute
 from zfin_ensembl_gene, transcript, marker_relationship
-where mrel_mrkr_1_zdb_id = zeg_alias
+where mrel_mrkr_1_zdb_id = zeg_gene_zdb_id
 			and tscript_mrkr_zdb_id = mrel_mrkr_2_zdb_id
 			and mrel_type = 'gene produces transcript'
 group by 1,2,3,6,7,8,9
@@ -76,7 +76,7 @@ select
 	zeg_frame,
 	zeg_ID_Name ||';Alias='|| dalias_alias_lower as attribute
 from  zfin_ensembl_gene, data_alias
-where dalias_data_zdb_id = zeg_alias
+where dalias_data_zdb_id = zeg_gene_zdb_id
 			and dalias_group_id = 1
 			and dalias_alias not like '% %'
 			and dalias_alias not like '%;%'

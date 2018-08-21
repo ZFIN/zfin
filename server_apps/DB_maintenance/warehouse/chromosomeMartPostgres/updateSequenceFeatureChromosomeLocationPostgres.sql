@@ -161,7 +161,8 @@ select distinct dblink_linked_recid,
   and dblink_acc_num = accnum1
   and fdb_db_pk_id = fdbcont_fdb_db_id
  and start is not null
- and ender is not null;
+ and ender is not null
+ and exists (select 'x' from zfin_ensembl_gene where zeg_gene_zdb_id = dblink_linked_recid);
 
 insert into sequence_feature_chromosome_location_generated (
   sfclg_chromosome, sfclg_data_zdb_id, sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource, sfclg_assembly, sfclg_pub_zdb_id)

@@ -59,7 +59,7 @@ select distinct
 -- index creation on temp tables within a transaction ids broken on waldo 2011/Oct/6
 -- aparently may work if temp table is created first...
 
-create index tmp_vega_zeg_alias_idx on  tmp_vega_zeg(alias);
+create index tmp_vega_zeg_gene_zdb_id_idx on  tmp_vega_zeg(alias);
 create index tmp_vega_zeg_gstart_idx on tmp_vega_zeg(gstart);
 create index tmp_vega_zeg_gend_idx on   tmp_vega_zeg(gend);
 
@@ -336,8 +336,7 @@ from marker
   join db_link on dblink_linked_recid = mrkr_zdb_id
 where dblink_acc_num like 'ENSDARG%';
 
-select * from tmp_ensembl_not_one_to_one;
-
+select count(*) from tmp_ensembl_not_one_to_one;
 
 ----------------- Extra ensdarG 1:1 ----------------------------
 create temp table tmp_ensembl_zeg as
@@ -402,7 +401,7 @@ insert into zfin_ensembl_gene (
     zeg_strand,
     zeg_frame,
     zeg_ID_Name,
-    zeg_Alias
+    zeg_gene_zdb_id
 )
 select
     gff_seqname,
@@ -437,7 +436,7 @@ insert into zfin_ensembl_gene (
     zeg_strand,
     zeg_frame,
     zeg_ID_Name,
-    zeg_Alias
+    zeg_gene_zdb_id
 )
 	SELECT
 		 gff_seqname,

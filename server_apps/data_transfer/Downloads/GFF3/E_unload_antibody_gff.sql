@@ -10,10 +10,10 @@ select
 	zeg_score,
 	zeg_strand,
 	zeg_frame,
-	zeg_ID_Name ||';Alias='|| zeg_Alias attribute
+	zeg_ID_Name ||';Alias='|| zeg_gene_zdb_id attribute
  from zfin_ensembl_gene, marker_relationship
  where mrel_type == 'gene product recognized by antibody'
-   and mrel_mrkr_1_zdb_id == zeg_Alias
+   and mrel_mrkr_1_zdb_id == zeg_gene_zdb_id
  group by 1,3,6,7,8,9
  order by 1,4,5,9
 ;

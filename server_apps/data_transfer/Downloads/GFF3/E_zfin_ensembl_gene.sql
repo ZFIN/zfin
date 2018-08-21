@@ -26,7 +26,7 @@ create temp table tmp_vega_zeg(
 	strand char(1),
 	frame char(1),
 	id_name varchar(255),
-	alias varchar(55)
+	gene_zdb_id varchar(55)
 ) with no log
 ;
 
@@ -47,7 +47,7 @@ select distinct ----------------------- ottdarT <--> ensdarT -------------------
      ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
 	   || ';so_term_name=' || szm_term_name
 	   || ';curie=' || 'ZFIN:' || gene.mrkr_zdb_id as id_name,
-	gene.mrkr_zdb_id alias
+	gene.mrkr_zdb_id gene_zdb_id
  from  marker gene, marker_type_group_member, marker_relationship, gff3 vt, gff3 et, db_link vTdbl, db_link eTdbl, so_zfin_mapping
  where mtgrpmem_mrkr_type = mrkr_type
    and mtgrpmem_mrkr_type_group = 'GENEDOM'
@@ -69,22 +69,22 @@ select distinct ----------------------- ottdarT <--> ensdarT -------------------
 -- index creation on temp tables within a transaction ids broken on waldo 2011/Oct/6
 -- aparently may work if temp table is created first...
 
-create index tmp_vega_zeg_alias_idx on  tmp_vega_zeg(alias) in idxdbs3;
+create index tmp_vega_zeg_gene_zdb_id_idx on  tmp_vega_zeg(gene_zdb_id) in idxdbs3;
 create index tmp_vega_zeg_gstart_idx on tmp_vega_zeg(gstart) in idxdbs2;
 create index tmp_vega_zeg_gend_idx on   tmp_vega_zeg(gend) in idxdbs1;
 
-update statistics high for table tmp_vega_zeg(alias,gstart,gend);
+update statistics high for table tmp_vega_zeg(gene_zdb_id,gstart,gend);
 
 ! echo "any ott based genes on multiple LG?"   -- 6, 5 w/2 tscripts 1 w/4
-select a.alias dup_lg ,count(*) howmany
+select a.gene_zdb_id dup_lg ,count(*) howmany
  from tmp_vega_zeg a, tmp_vega_zeg b
- where a.alias == b.alias
+ where a.gene_zdb_id == b.gene_zdb_id
    and  a.gff_seqname != b.gff_seqname
   group by 1  into temp tmp_dup_vega_zeg with no log
 ;
 
 delete from tmp_vega_zeg where exists (
-	select 't' from tmp_dup_vega_zeg where dup_lg == alias
+	select 't' from tmp_dup_vega_zeg where dup_lg == gene_zdb_id
 );
 select distinct * from  tmp_dup_vega_zeg;
 drop table  tmp_dup_vega_zeg;
@@ -96,13 +96,13 @@ drop table  tmp_dup_vega_zeg;
 
 --------------------------------------------------------------
 ! echo "remove strandedness when vega dissagrees with vega (regardless of extents)"
-select a.Alias
+select a.Gene_Zdb_Id
 from  tmp_vega_zeg a, tmp_vega_zeg b
 	 where b.gff_seqname ==  a.gff_seqname
 	   --and b.gstart    ==  a.gstart
 	   --and b.gend      ==  a.gend
 	   and b.strand      !=  a.strand
-	   and b.Alias       ==  a.Alias
+	   and b.Gene_Zdb_Id       ==  a.Gene_Zdb_Id
  into temp tmp_strand with no log
 ;
 
@@ -112,7 +112,7 @@ select distinct * from  tmp_strand order by 1;
 
 update tmp_vega_zeg set strand = '.' where exists (
 	select 't' from tmp_strand
-	 where  tmp_strand.alias ==  tmp_vega_zeg.alias
+	 where  tmp_strand.gene_zdb_id ==  tmp_vega_zeg.gene_zdb_id
 );
 
 drop table tmp_strand;
@@ -130,14 +130,14 @@ select distinct * from tmp_vega_zeg into temp tmp_vz with no log;
 update tmp_vega_zeg set gend = (
 	select max(tmp_vz.gend) from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gend        >   tmp_vega_zeg.gend
 	   and tmp_vega_zeg.gend between tmp_vz.gstart and tmp_vz.gend
 
 )where exists (
 select 't' from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gend        >   tmp_vega_zeg.gend
 	   and tmp_vega_zeg.gend between tmp_vz.gstart and tmp_vz.gend
 );
@@ -156,13 +156,13 @@ select * from tmp_vega_zeg into temp tmp_vz with no log;
 update tmp_vega_zeg set gstart = (
 	select min(tmp_vz.gstart) from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gstart      <   tmp_vega_zeg.gstart
 	   and tmp_vega_zeg.gstart between tmp_vz.gstart and tmp_vz.gend
 )where exists (
 select 't' from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gstart      <   tmp_vega_zeg.gstart
        and tmp_vega_zeg.gstart between tmp_vz.gstart and tmp_vz.gend
 );
@@ -173,7 +173,7 @@ delete from tmp_vega_zeg;
 insert into tmp_vega_zeg select * from tmp_distinct_vega_zeg;
 drop table tmp_distinct_vega_zeg;
 
-update statistics high for table tmp_vega_zeg(alias,gstart,gend);
+update statistics high for table tmp_vega_zeg(gene_zdb_id,gstart,gend);
 
 ! echo "if the gap between clusters of a gene's transcripts is not longer"
 ! echo "than the longer cluster, then merge those transcript clusters"
@@ -184,7 +184,7 @@ update statistics high for table tmp_vega_zeg(alias,gstart,gend);
 update tmp_vega_zeg set gend = (
 	select max(tmp_vz.gend) from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gstart	   >   tmp_vega_zeg.gend
 	   and (
 	   		(tmp_vz.gstart - tmp_vega_zeg.gend) <= (tmp_vega_zeg.gend - tmp_vega_zeg.gstart)
@@ -195,7 +195,7 @@ update tmp_vega_zeg set gend = (
 )where exists (
 select 't' from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gstart	   >   tmp_vega_zeg.gend
 	   and (
 	   		(tmp_vz.gstart - tmp_vega_zeg.gend) <= (tmp_vega_zeg.gend - tmp_vega_zeg.gstart)
@@ -212,13 +212,13 @@ select distinct * from tmp_vega_zeg into temp tmp_vz with no log;
 update tmp_vega_zeg set gstart = (
 	select min(tmp_vz.gstart) from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gstart      <   tmp_vega_zeg.gstart
 	   and tmp_vega_zeg.gstart between tmp_vz.gstart and tmp_vz.gend
 )where exists (
 select 't' from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gstart      <   tmp_vega_zeg.gstart
 	   and tmp_vega_zeg.gstart between tmp_vz.gstart and tmp_vz.gend
 );
@@ -228,7 +228,7 @@ select 't' from tmp_vz
 update tmp_vega_zeg set gend = (
 	select max(tmp_vz.gend) from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gstart	   >   tmp_vega_zeg.gend
 	   and (
 	   		(tmp_vz.gstart - tmp_vega_zeg.gend) <= (tmp_vega_zeg.gend - tmp_vega_zeg.gstart)
@@ -238,7 +238,7 @@ update tmp_vega_zeg set gend = (
 )where exists (
 select 't' from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gstart	   >   tmp_vega_zeg.gend
 	   and (
 	   		(tmp_vz.gstart - tmp_vega_zeg.gend) <= (tmp_vega_zeg.gend - tmp_vega_zeg.gstart)
@@ -255,13 +255,13 @@ select  distinct * from tmp_vega_zeg into temp tmp_vz with no log;
 update tmp_vega_zeg set gstart = (
 	select min(tmp_vz.gstart) from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gstart      <   tmp_vega_zeg.gstart
 	   and tmp_vega_zeg.gstart between tmp_vz.gstart and tmp_vz.gend
 )where exists (
 select 't' from tmp_vz
 	 where tmp_vz.gff_seqname ==  tmp_vega_zeg.gff_seqname
-	   and tmp_vz.Alias      ==  tmp_vega_zeg.Alias
+	   and tmp_vz.Gene_Zdb_Id      ==  tmp_vega_zeg.Gene_Zdb_Id
 	   and tmp_vz.gstart      <   tmp_vega_zeg.gstart
 	   and tmp_vega_zeg.gstart between tmp_vz.gstart and tmp_vz.gend
 );
@@ -279,7 +279,7 @@ drop table tmp_distinct_vega_zeg;
 
 ! echo "what are the distances between the gene extents on the same chr?"
 select
-	a.Alias[1,25] zdb,
+	a.Gene_Zdb_Id[1,25] zdb,
 	b.gstart - a.gend gap,
 	(case when a.gend - a.gstart  >  b.gend - b.gstart
 	 then a.gend - a.gstart
@@ -293,7 +293,7 @@ select
 	 count(*) howmany
  from tmp_vega_zeg a,tmp_vega_zeg b
  where a.gff_seqname ==  b.gff_seqname
-   and a.Alias      ==  b.Alias
+   and a.Gene_Zdb_Id      ==  b.Gene_Zdb_Id
    and a.gend  < b.gstart
  group by 1,2,3,4
  order by 1,4,2
@@ -305,11 +305,11 @@ dropped and we hopr they have an 2nsdarG1:1 relationship and will use
 ensembls transcript set to determine gene extent if any
 }
 
-select distinct alias disjoint from tmp_vega_zeg group by 1 having count(*) > 1
+select distinct gene_zdb_id disjoint from tmp_vega_zeg group by 1 having count(*) > 1
 into temp tmp_disjoint_vega_zeg with no log;
 
 delete from tmp_vega_zeg where exists (
-	select 't' from tmp_disjoint_vega_zeg where alias == disjoint
+	select 't' from tmp_disjoint_vega_zeg where gene_zdb_id == disjoint
 );
 select * from tmp_disjoint_vega_zeg;
 drop table tmp_disjoint_vega_zeg;
@@ -353,7 +353,7 @@ select ----------------- Extra ensdarG 1:1 ----------------------------
      ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
 	   || ';so_term_name=' || szm_term_name
 	   || ';curie=' || 'ZFIN:' || gene.mrkr_zdb_id as id_name,
-	gene.mrkr_zdb_id alias
+	gene.mrkr_zdb_id gene_zdb_id
  from  marker gene, db_link eGdbl, gff3, so_zfin_mapping
  where gene.mrkr_type[1,4] == 'GENE'
    and gene.mrkr_type = szm_object_type
@@ -363,7 +363,7 @@ select ----------------- Extra ensdarG 1:1 ----------------------------
    and gff_source[1,8] == 'Ensembl_'
    and gff_feature in ('mRNA','transcript')
    and not exists ( -- avoid mudding the waters
-   	select 't' from tmp_vega_zeg where gene.mrkr_zdb_id == tmp_vega_zeg.alias
+   	select 't' from tmp_vega_zeg where gene.mrkr_zdb_id == tmp_vega_zeg.gene_zdb_id
   )
    and not exists (
     select 't' from tmp_ensembl_not_one_to_one tenoto where tenoto.mrkr_zdb_id = gene.mrkr_zdb_id
@@ -375,9 +375,9 @@ select ----------------- Extra ensdarG 1:1 ----------------------------
 
 
 ! echo "any ens based genes on multiple LG? (should be zero)"   -- 0
-select a.alias[1,25] zdb ,count(*) bezero
+select a.gene_zdb_id[1,25] zdb ,count(*) bezero
  from tmp_ensembl_zeg a, tmp_ensembl_zeg b
- where a.alias == b.alias
+ where a.gene_zdb_id == b.gene_zdb_id
    and  a.gff_seqname != b.gff_seqname
   group by 1
 ;
@@ -401,7 +401,7 @@ insert into zfin_ensembl_gene (
     zeg_strand,
     zeg_frame,
     zeg_ID_Name,
-    zeg_Alias
+    zeg_Gene_Zdb_Id
 )
 select
     gff_seqname,
@@ -413,7 +413,7 @@ select
     strand,
     frame,
     ID_Name,
-    Alias
+    Gene_Zdb_Id
  from tmp_vega_zeg
  group by
     gff_seqname,
@@ -423,7 +423,7 @@ select
     strand,
     frame,
     ID_Name,
-    Alias
+    Gene_Zdb_Id
 ;
 
 insert into zfin_ensembl_gene (
@@ -436,7 +436,7 @@ insert into zfin_ensembl_gene (
     zeg_strand,
     zeg_frame,
     zeg_ID_Name,
-    zeg_Alias
+    zeg_Gene_Zdb_Id
 )
 select
     gff_seqname,
@@ -448,7 +448,7 @@ select
     gff_strand,
     frame,
     ID_Name,
-    Alias
+    Gene_Zdb_Id
  from tmp_ensembl_zeg
  group by
     gff_seqname,
@@ -458,7 +458,7 @@ select
     gff_strand,
     frame,
     ID_Name,
-    Alias
+    Gene_Zdb_Id
 ;
 
 
@@ -485,6 +485,6 @@ update statistics high for table zfin_ensembl_gene;
 ! echo ""
 ! echo "Begin ensembl gff3 gene related unloads"
 ! echo ""
--- unload genes,alias,antibody,pheno,xpat,...
+-- unload genes,gene_zdb_id,antibody,pheno,xpat,...
 
 

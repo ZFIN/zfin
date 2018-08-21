@@ -10,11 +10,11 @@ select
 	zeg_score,
 	zeg_strand,
 	zeg_frame,
-	zeg_ID_Name ||';Alias='||  zeg_Alias attribute
+	zeg_ID_Name ||';Alias='||  zeg_gene_zdb_id attribute
  from zfin_ensembl_gene,
  expression_experiment2, expression_result2, expression_figure_stage
  where xpatex_gene_zdb_id is not NULL
-   and xpatex_gene_zdb_id == zeg_Alias
+   and xpatex_gene_zdb_id == zeg_gene_zdb_id
    and xpatex_zdb_id = efs_xpatex_zdb_id
    and xpatres_expression_found = 't'
    and xpatres_efs_id = efs_pk_id

@@ -84,24 +84,6 @@ showstore:
 $(TARGETDIR)/drerio_vega_id.unl: $(STORE)/drerio_vega_id.unl
 	cp $< $@
 
-load_vega: $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/LoadVegaGFF3.pl \
-           $(TARGETDIR)/rollback.sql $(TARGETDIR)/unload_assembly_clone_gff.sql \
-           $(TARGETDIR)/drerio_vega_id.unl $(TARGETDIR)/unload_zfin_morpholino.sql
-	cd $(TARGETDIR) && LoadVegaGFF3.pl rollback
-
-load_vega_commit: $(TARGETDIR)/load_drerio_vega_id.sql $(TARGETDIR)/LoadVegaGFF3.pl \
-           $(TARGETDIR)/commit.sql $(TARGETDIR)/unload_assembly_clone_gff.sql \
-           $(TARGETDIR)/drerio_vega_id.unl $(TARGETDIR)/unload_zfin_morpholino.sql
-	cd $(TARGETDIR) && LoadVegaGFF3.pl commit
-
-# $(TARGETDIR)/drerio_ensembl.unl
-load_ensembl: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/rollback.sql
-	cd $(TARGETDIR) && LoadEnsemblGFF3.pl rollback
-
-# $(TARGETDIR)/drerio_ensembl.unl
-load_ensembl_commit: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/commit.sql
-	cd $(TARGETDIR) && LoadEnsemblGFF3.pl commit
-
 load_ensembl:
 	loadEnsemblGff3.groovy
 
@@ -152,7 +134,7 @@ $(TARGETDIR)/gather_alias.awk
 #	cd $(STORE) && nice +10 /opt/misc/bowtie/bowtie-build --big -f $< $@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-BOWTIE_E_IDX = $(GLOBALSTORE)/Ensembl_GRCz10.81
+BOWTIE_E_IDX = $(GLOBALSTORE)/Ensembl_GRCz11
 BOWTIE_V_IDX = $(GLOBALSTORE)/VEGA45_LG_DNA
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

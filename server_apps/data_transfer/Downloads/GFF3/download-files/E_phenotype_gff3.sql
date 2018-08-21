@@ -10,9 +10,9 @@ select
 	zeg_score,
 	zeg_strand,
 	zeg_frame,
-	zeg_ID_Name ||';Alias='|| zeg_Alias as attribute
+	zeg_ID_Name ||';Alias='|| zeg_gene_zdb_id as attribute
  from zfin_ensembl_gene
-      join mutant_fast_search on zeg_Alias = mfs_mrkr_zdb_id
+      join mutant_fast_search on zeg_gene_zdb_id = mfs_mrkr_zdb_id
       join phenotype_source_generated on pg_genox_zdb_id = mfs_genox_zdb_id
  where exists (Select 'x' from phenotype_observation_generated
        	      	         where pg_id = psg_pg_id
