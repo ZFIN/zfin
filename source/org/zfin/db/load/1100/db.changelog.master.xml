@@ -6,8 +6,8 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/load/1100/restore_ept_pre.sql"/>
-    <include file="source/org/zfin/db/load/1100/restore_ept.xml"/>
-    <include file="source/org/zfin/db/load/1100/restore-ept.sql"/>
+    <include file="source/org/zfin/db/load/1100/restore-ept.xml"/>
+    <include file="source/org/zfin/db/load/1100/restore_ept.sql"/>
 
 </databaseChangeLog>
 

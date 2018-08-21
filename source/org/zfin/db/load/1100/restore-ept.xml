@@ -8,11 +8,11 @@
     <changeSet author="sierra" id="restore-ept">
         <loadData file="source/org/zfin/db/load/1100/ept_merge.csv"
                   tableName="tmp_expression_phenotype_term" encoding="UTF-8">
-            <column name="ept_pk_id" type="Integer"/>
+            <column name="ept_pk_id" type="Numeric"/>
             <column name="ept_relational_term" type="String"/>
             <column name="ept_qualifier_term_zdb_id" type="String"/>
             <column name="ept_tag" type="String"/>
-            <column name="ept_xpatres_id" type="String"/>
+            <column name="ept_xpatres_id" type="Numeric"/>
         </loadData>
 
     </changeSet>
