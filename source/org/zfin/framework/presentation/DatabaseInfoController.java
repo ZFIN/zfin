@@ -9,14 +9,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.exec.ExecProcess;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -89,9 +92,12 @@ public class DatabaseInfoController {
         return "view-session-info.page";
     }
 
-    @RequestMapping("/svn-version")
-    public String viewSvnInfo() throws ServletException {
-        return "svn-version";
+    @RequestMapping("/deployed-version")
+    public String viewDeployedVersion(Model model) throws ServletException, IOException, InterruptedException {
+        model.addAttribute("commit", ExecProcess.exec("git rev-parse HEAD"));
+        model.addAttribute("branch", ExecProcess.exec("git rev-parse --abbrev-ref HEAD"));
+        model.addAttribute("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
+        return "deployed-version";
     }
 
     @RequestMapping("/phenotype-curation-history")

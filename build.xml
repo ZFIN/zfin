@@ -554,8 +554,6 @@
                     <include name="templates/**"/>
                 </fileset>
             </move>
-            <move file="@{from}/java-deploy-version.html" todir="@{to}" failonerror="false"/>
-
         </sequential>
     </macrodef>
 
@@ -611,13 +609,11 @@
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
 
-    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release,generateVersionInfo"
+    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <copy-indexer-build-file-with-env-variables/>
 <!--        <jsp-compile/> -->
     </target>
-
-    <target name="generateVersionInfo" depends="generateJSPVersionFile,generateStaticJavaFile"/>
 
     <macrodef name="removeWebAppLocation">
         <attribute name="location"/>
@@ -761,25 +757,6 @@
         <echo message="Has pre-redirctories: ${has.pre-directories}"/>
         <echo message="Has post-redirctories: ${has.post-directories}"/>
     </target>
-
-    <target name="generateJSPVersionFile">
-        <echo message="${pre.jsp-version.file}"/>
-        <delete file="${pre.jsp-version.file}"/>
-        <exec executable="/bin/sh">
-            <arg value="${basedir}/buildfiles/generateVersion.sh"/>
-            <arg value="${pre.jsp-version.file}"/>
-        </exec>
-    </target>
-
-    <target name="generateStaticJavaFile">
-        <echo message="${pre.static-java-version.file}"/>
-        <delete file="${pre.static-java-version.file}"/>
-        <exec executable="/bin/sh" failifexecutionfails="false">
-            <arg value="${basedir}/buildfiles/generateVersion.sh"/>
-            <arg value="${pre.static-java-version.file}"/>
-        </exec>
-    </target>
-
 
     <taskdef resource="task.properties" classpath="lib/Java/grand-1.8.jar">
         <classpath refid="extended.classpath"/>

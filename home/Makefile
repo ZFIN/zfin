@@ -40,9 +40,7 @@ FTPTARGET = $(TARGETDIR)/transfer
 
 CLIENTAPPSTARGET = $(TARGETDIR)/client_apps
 
-GENERATE_VERSION = gmake-deploy-version.html
-
-ENDEMICTARGETS_POSTTARGETS = $(FTPTARGET) $(CLIENTAPPSTARGET) $(GENERATE_VERSION)
+ENDEMICTARGETS_POSTTARGETS = $(FTPTARGET) $(CLIENTAPPSTARGET)
 
 # If we are building a mirror then disable calling gmake with no target.
 
@@ -67,10 +65,6 @@ $(FTPTARGET) :
 
 $(CLIENTAPPSTARGET) :
 	if [ ! -h $(CLIENTAPPSTARGET) ] ; then ln -s $(TARGETDIR)/../client_apps $(CLIENTAPPSTARGET); fi
-
-$(GENERATE_VERSION) :
-	../buildfiles/generateVersion.sh $(TARGETROOT)/home/$(GENERATE_VERSION)
-
 
 postloaddb :
 	$(foreach PLDIR,$(POSTLOADDB_SUBDIRS), $(MAKE) -C $(PLDIR) $@)

@@ -13,8 +13,6 @@
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="web.conf" value="${web-inf.dir}/conf"/>
     <property name="lib" value="${basedir}/lib/Java"/>
-    <property name="java-static-version.file.name" value="java-deploy-version.html"/>
-    <property name="jsp-version.file.name" value="svn_version.jsp"/>
     <property name="gwt.lib" value="${lib}/gwt"/>
     <property name="jwebunit.lib" value="${lib}/jwebunit"/>
     <property name="doi.dir" value="${basedir}/server_apps/data_transfer/DOI"/>

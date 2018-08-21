@@ -190,9 +190,9 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/lookup-table.jsp"/>
     </definition>
 
-    <definition name="svn-version" extends="dev_layout">
-        <put-attribute name="staticTitle" value="SVN Version"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/svn_version.jsp"/>
+    <definition name="deployed-version" extends="dev_layout">
+        <put-attribute name="staticTitle" value="Deployed Version"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/deployed-version.jsp"/>
     </definition>
 
     <definition name="error-page" extends="main_layout">

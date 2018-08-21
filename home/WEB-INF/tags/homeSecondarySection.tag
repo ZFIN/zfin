@@ -104,7 +104,7 @@
 
     <h3> Development </h3>
     <ul>
-        <li><a href="/action/devtool/home"><em>Developer Tools</em></a> &bull; <a href="/gmake-deploy-version.html"><em>Deployed
+        <li><a href="/action/devtool/home"><em>Developer Tools</em></a> &bull; <a href="/action/devtool/deployed-version"><em>Deployed
             Version</em></a></li>
         &bull; <a href="/jobs"><em>Jenkins Jobs</em></a> &bull; <a href="/solr/"><em>Solr</em></a></li>
     </ul>

@@ -95,5 +95,10 @@ public class ExecProcess {
         return commandLine.toString();
     }
 
+    public static String exec(String command) throws IOException, InterruptedException {
+        ExecProcess process = new ExecProcess(command);
+        process.exec();
+        return process.getStandardOutput();
+    }
 
 }

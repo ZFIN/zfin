@@ -9,16 +9,6 @@
     <property name="pre-home.target" value="${TARGETROOT}/pre-home"/>
     <property name="post-home.target" value="${TARGETROOT}/post-home"/>
 
-    <!-- static-version file targets -->
-    <property name="static-java-version.file" value="${home.target}/${java-static-version.file.name}"/>
-    <property name="pre.static-java-version.file" value="${pre-home.target}/${java-static-version.file.name}"/>
-    <property name="post.static-java-version.file" value="${post-home.target}/${java-static-version.file.name}"/>
-
-    <!-- jsp-version file targets -->
-    <property name="jsp-version.file" value="${home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
-    <property name="pre.jsp-version.file" value="${pre-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
-    <property name="post.jsp-version.file" value="${post-home.target}/WEB-INF/jsp/dev-tools/${jsp-version.file.name}"/>
-
     <!-- gwt targets -->
     <property name="gwt.target" value="${home.target}/gwt"/>
     <property name="gwt.pre-target" value="${pre-home.target}/gwt"/>
