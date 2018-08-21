@@ -7,7 +7,7 @@
 
     <include file="source/org/zfin/db/load/1100/restore_ept_pre.sql"/>
     <include file="source/org/zfin/db/load/1100/restore_ept.xml"/>
-    <include file="source/org/zfin/db/load/1100/restore_ept.sql"/>
+    <include file="source/org/zfin/db/load/1100/restore-ept.sql"/>
 
 </databaseChangeLog>
 
