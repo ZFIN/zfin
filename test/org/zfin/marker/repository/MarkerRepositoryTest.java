@@ -819,7 +819,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void getStrainForTranscript() {
         Genotype g = markerRepository.getStrainForTranscript("ZDB-TSCRIPT-090929-10104");
         assertNotNull(g);
-        assertEquals("Tuebingen", g.getName());
+        assertEquals("Tübingen", g.getName());
     }
 
     @Test
