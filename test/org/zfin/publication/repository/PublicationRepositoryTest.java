@@ -739,9 +739,9 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
 
-    public void getAllPublicationStatusesShouldReturnSixteenValues() {
+    public void getAllPublicationStatusesShouldReturnCorrectNumberOfValues() {
         List<PublicationTrackingStatus> statuses = publicationRepository.getAllPublicationStatuses();
-        assertThat(statuses, hasSize(16));
+        assertThat(statuses, hasSize(15));
     }
 
     @Test
@@ -772,7 +772,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getAllPublicationLocationsShouldReturnNineValues() {
+    public void getAllPublicationLocationsShouldReturnCorrectNumberOfValues() {
         List<PublicationTrackingLocation> locations = publicationRepository.getAllPublicationLocations();
         assertThat(locations, hasSize(10));
     }
