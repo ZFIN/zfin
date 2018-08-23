@@ -119,6 +119,16 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         handleChanges();
     }
 
+    @UiHandler("insertedSequence")
+    void onChangeInsertedSequence(KeyUpEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("deletedSequence")
+    void onChangeDeletedSequence(KeyUpEvent event) {
+        handleChanges();
+    }
+
     @UiHandler("exonNumber")
     void onChangeExonNumber(@SuppressWarnings("unused") KeyUpEvent event) {
         validateNumber(exonNumber);

@@ -860,6 +860,8 @@ public class DTOConversionService {
         dto.setNumberRemovedBasePair(detail.getNumberRemovedBasePair());
         dto.setPositionStart(detail.getDnaPositionStart());
         dto.setPositionEnd(detail.getDnaPositionEnd());
+        dto.setInsertedSequence(detail.getInsertedSequence());
+        dto.setDeletedSequence(detail.getDeletedSequence());
         dto.setExonNumber(detail.getExonNumber());
         dto.setIntronNumber(detail.getIntronNumber());
         dto.setSequenceReferenceAccessionNumber(detail.getDnaSequenceReferenceAccessionNumber());
