@@ -228,6 +228,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             dto.setPositionEnd(dto.getPositionStart());
         dto.setNumberAddedBasePair(plusBasePair.getBoxValue());
         dto.setNumberRemovedBasePair(minusBasePair.getBoxValue());
+        dto.setInsertedSequence(insertedSequence.getBoxValue());
+        dto.setDeletedSequence(deletedSequence.getBoxValue());
         dto.setSequenceReferenceAccessionNumber(WidgetUtil.getStringFromField(zfinAccessionBox.getAccessionNumber()));
         dto.setExonNumber(exonNumber.getBoxValue());
         dto.setIntronNumber(intronNumber.getBoxValue());
@@ -268,6 +270,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         intronNumber.clear();
         plusBasePair.clear();
         minusBasePair.clear();
+        insertedSequence.clear();
+        deletedSequence.clear();
         zfinAccessionBox.clear();
         zfinAccessionBox.setFlagVisibility(false);
         clearError();
@@ -283,6 +287,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         fields.add(intronNumber);
         fields.add(plusBasePair);
         fields.add(minusBasePair);
+        fields.add(insertedSequence);
+        fields.add(deletedSequence);
         fields.add(zfinAccessionBox.getAccessionNumber());
         return fields;
     }
@@ -298,12 +304,16 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             positionEnd.clear();
             plusBasePair.clear();
             minusBasePair.clear();
+            insertedSequence.clear();
+            deletedSequence.clear();
             return;
         }
         nucleotideChangeList.setIndexForValue(dto.getChangeTermOboId());
         localizationTerm.setIndexForValue(dto.getLocalizationTermOboID());
         plusBasePair.setNumber(dto.getNumberAddedBasePair());
         minusBasePair.setNumber(dto.getNumberRemovedBasePair());
+        insertedSequence.setText(dto.getInsertedSequence());
+        deletedSequence.setText(dto.getDeletedSequence());
         positionStart.setNumber(dto.getPositionStart());
         positionEnd.setNumber(dto.getPositionEnd());
         exonNumber.setNumber(dto.getExonNumber());
