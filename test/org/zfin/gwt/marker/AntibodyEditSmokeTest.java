@@ -12,6 +12,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.Collection;
 import java.util.List;
+import org.junit.Ignore;
 
 @RunWith(Parameterized.class)
 public class AntibodyEditSmokeTest extends AbstractSecureSmokeTest {
@@ -19,7 +20,8 @@ public class AntibodyEditSmokeTest extends AbstractSecureSmokeTest {
     public AntibodyEditSmokeTest(WebClient webClient) throws Exception {
         super(webClient);
     }
-
+    
+    @Ignore
     @Test
     public void testAntibodyEditPage() throws Exception {
         final String zdbID = "ZDB-ATB-081002-19";
