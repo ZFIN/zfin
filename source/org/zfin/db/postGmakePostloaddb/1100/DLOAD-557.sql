@@ -36,11 +36,13 @@ insert into marker (
     mrkr_zdb_id,
     mrkr_name,
     mrkr_abbrev,
+    mrkr_type,
     mrkr_owner
 )
 select  precne_cne_zdb_id,
         precne_cne_name,
         precne_cne_abbrev,
+        'CNE',
         'ZDB-PERS-981201-7'
 
  from pre_cne;
