@@ -9,7 +9,7 @@
 
     <changeSet author="pm" id="DLOAd-557">
         <loadData file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-557.csv"
-                  tableName="cne_data" encoding="UTF-8">
+                  tableName="cnedata" encoding="UTF-8">
 
             <column name="cneid" type="String"/>
             <column name="zfishchr" type="String"/>
