@@ -9,23 +9,23 @@ import java.util.List;
 public class MetaDataDTO {
 
     private GregorianCalendar dateProduced = new GregorianCalendar();
-    private List<DataProviderDTO> dataProviderList;
+    private DataProviderDTO dataProvider;
 
     @JsonSerialize(using = JsonDateSerializer.class)
     public GregorianCalendar getDateProduced() {
         return dateProduced;
     }
 
-    public MetaDataDTO(List<DataProviderDTO> dataProviderList) {
-        this.dataProviderList = dataProviderList;
+    public MetaDataDTO(DataProviderDTO dataProvider) {
+        this.dataProvider = dataProvider;
     }
 
-    public List<DataProviderDTO> getDataProvider() {
-        return dataProviderList;
+    public DataProviderDTO getDataProvider() {
+        return dataProvider;
     }
 
-    public void setDataProvider(List<DataProviderDTO> dataProviderList) {
-        this.dataProviderList = dataProviderList;
+    public void setDataProvider(DataProviderDTO dataProvider) {
+        this.dataProvider = dataProvider;
     }
 
 }

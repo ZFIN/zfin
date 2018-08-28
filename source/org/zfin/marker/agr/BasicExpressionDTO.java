@@ -14,18 +14,26 @@ public class BasicExpressionDTO {
 
     private String geneId;
     private PublicationAgrDTO evidence;
-    private String whenExpressedStage;
     private CrossReferenceDTO crossReference;
     private String assay;
-    private List<DataProviderDTO> dataProviderList;
-    private ExpressionTermIdentifiersDTO wildtypeExpressionTermIdentifiers;
+    private DataProviderDTO dataProvider;
+    private ExpressionStageIdentifiersDTO whenExpressed;
+    private ExpressionTermIdentifiersDTO whereExpressed;
 
-    public ExpressionTermIdentifiersDTO getWildtypeExpressionTermIdentifiers() {
-        return wildtypeExpressionTermIdentifiers;
+    public ExpressionStageIdentifiersDTO getWhenExpressed() {
+        return whenExpressed;
     }
 
-    public void setWildtypeExpressionTermIdentifiers(ExpressionTermIdentifiersDTO wildtypeExpressionTermIdentifiers) {
-        this.wildtypeExpressionTermIdentifiers = wildtypeExpressionTermIdentifiers;
+    public void setWhenExpressed(ExpressionStageIdentifiersDTO whenExpressed) {
+        this.whenExpressed = whenExpressed;
+    }
+
+    public ExpressionTermIdentifiersDTO getWhereExpressed() {
+        return whereExpressed;
+    }
+
+    public void setWhereExpressed(ExpressionTermIdentifiersDTO whereExpressed) {
+        this.whereExpressed = whereExpressed;
     }
 
     public CrossReferenceDTO getCrossReference() {
@@ -36,12 +44,12 @@ public class BasicExpressionDTO {
         this.crossReference = crossReference;
     }
 
-    public List<DataProviderDTO> getDataProviderList() {
-        return dataProviderList;
+    public DataProviderDTO getDataProvider() {
+        return dataProvider;
     }
 
-    public void setDataProviderList(List<DataProviderDTO> dataProviderList) {
-        this.dataProviderList = dataProviderList;
+    public void setDataProviderList(DataProviderDTO dataProvider) {
+        this.dataProvider = dataProvider;
     }
 
     public String getGeneId() {
@@ -59,10 +67,6 @@ public class BasicExpressionDTO {
     public void setEvidence(PublicationAgrDTO evidence) {
         this.evidence = evidence;
     }
-
-    public String getWhenExpressedStage() { return whenExpressedStage; }
-
-    public void setWhenExpressedStage(String whenExpressedStage) { this.whenExpressedStage = whenExpressedStage; }
 
     public String getAssay() { return assay; }
 
