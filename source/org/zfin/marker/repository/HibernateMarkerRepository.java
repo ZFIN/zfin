@@ -3101,10 +3101,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Set<DataNote> dataNotes = marker.getDataNotes();
         for (DataNote dataNote : dataNotes) {
             if (dataNote.getZdbID().equals(note.getZdbID())) {
-                HibernateUtil.createTransaction();
                 InfrastructureService.insertUpdate(marker, "removed curator note " + dataNote.getNote());
                 HibernateUtil.currentSession().delete(dataNote);
-                HibernateUtil.flushAndCommitCurrentSession();
                 return;
             }
         }

@@ -92,26 +92,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         logger.error("note not found with zdbID: " + noteDTO.getZdbID());
     }
 
-    /**
-     * @param noteDTO Note DTO
-     */
-    public void removeCuratorNote(NoteDTO noteDTO) {
-        logger.info("remove curator note: " + noteDTO.getNoteData() + " - " + noteDTO.getZdbID());
-        Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
-        Set<DataNote> dataNotes = marker.getDataNotes();
-        for (DataNote dataNote : dataNotes) {
-            if (dataNote.getZdbID().equals(noteDTO.getZdbID())) {
-                HibernateUtil.createTransaction();
-                InfrastructureService.insertUpdate(marker, "removed curator note " + dataNote.getNote());
-                HibernateUtil.currentSession().delete(dataNote);
-                HibernateUtil.flushAndCommitCurrentSession();
-                return;
-            }
-        }
-        logger.error("note not found with zdbID: " + noteDTO.getZdbID());
-    }
-
-
     public void editPublicNote(NoteDTO noteDTO) {
         HibernateUtil.createTransaction();
         Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
