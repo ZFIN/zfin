@@ -2675,28 +2675,6 @@ close LOG;
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: log file";
 ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","logNCBIgeneLoad");
 
-#------------------------------------------------
-# remove old files
-#------------------------------------------------
-
-system("/bin/rm -f prepareLog*");
-system("/bin/rm -f loadLog*");
-system("/bin/rm -f logNCBIgeneLoad");
-system("/bin/rm -f debug*");
-system("/bin/rm -f report*");
-system("/bin/rm -f toDelete.unl");
-system("/bin/rm -f toMap.unl");
-system("/bin/rm -f toLoad.unl");
-system("/bin/rm -f length.unl");
-system("/bin/rm -f noLength.unl");
-system("/bin/rm -f seq.fasta");
-
-system("/bin/rm -f zf_gene_info");
-system("/bin/rm -f gene2unigene");
-system("/bin/rm -f gene2accession");
-system("/bin/rm -f RefSeqCatalog");
-system("/bin/rm -f RELEASE_NUMBER");
-
 system("/bin/date");
 
 exit;
@@ -2735,7 +2713,4 @@ sub reportErrAndExit {
 sub sendLoadLogs {
   $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog1 file";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","loadLog1");
-
-##  $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog2 file";
-##  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","loadLog2");
 }

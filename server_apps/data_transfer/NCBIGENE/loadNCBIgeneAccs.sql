@@ -67,8 +67,8 @@ insert into zdb_active_data select zdb_id from ncbi_gene_load;
 
 --!echo 'Insert the new records into db_link table'
 
-insert into db_link (dblink_linked_recid, dblink_acc_num, dblink_info, dblink_zdb_id, dblink_length, dblink_fdbcont_zdb_id) 
-select mapped_zdb_gene_id, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, sequence_length, fdbcont_zdb_id 
+insert into db_link (dblink_linked_recid, dblink_acc_num, dblink_acc_num_display, dblink_info, dblink_zdb_id, dblink_length, dblink_fdbcont_zdb_id) 
+select mapped_zdb_gene_id, ncbi_accession, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, sequence_length, fdbcont_zdb_id 
   from ncbi_gene_load;
     
 --! echo "Attribute the new db_link records to one of the 2 load publications, depending on what kind of mapping"
