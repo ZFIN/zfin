@@ -1,7 +1,7 @@
 --liquibase formatted sql
 --changeset pm:DLOAD-533_pre
 
-create table feature_data (
+create table featuredata (
  allele text not null,
         geneid text not null
             ) ;

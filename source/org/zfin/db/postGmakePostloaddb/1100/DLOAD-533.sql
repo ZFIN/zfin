@@ -5,20 +5,20 @@
 
 
 
-update feature_data
+update featuredata
 	   set geneid =  (select zrepld_new_zdb_id
                                  from zdb_replaced_data
                                 where zrepld_old_zdb_id = geneid)
          where geneid in (select zrepld_old_zdb_id
                                   from zdb_replaced_data);
 
-delete from feature_data where allele in (select feature_abbrev from feature);
+delete from featuredata where allele in (select feature_abbrev from feature);
 
-insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select distinct geneid, 'ZDB-PUB-130425-4' from feature_data where geneid not in (select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id='ZDB-PUB-130425-4');
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select distinct geneid, 'ZDB-PUB-130425-4' from featuredata where geneid not in (select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id='ZDB-PUB-130425-4');
 
-insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select distinct feature_zdb_id, 'ZDB-PUB-130425-4' from feature_data, feature where feature_abbrev=allele and feature_zdb_id not in (select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id='ZDB-PUB-130425-4');
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select distinct feature_zdb_id, 'ZDB-PUB-130425-4' from featuredata, feature where feature_abbrev=allele and feature_zdb_id not in (select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id='ZDB-PUB-130425-4');
 
-insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select fmrel_zdb_id , 'ZDB-PUB-130425-4' from feature, feature_marker_relationship where feature_zdb_id=fmrel_ftr_zdb_id and feature_abbrev in (select allele from feature_data) and fmrel_zdb_id not in (select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id='ZDB-PUB-130425-4');
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id) select fmrel_zdb_id , 'ZDB-PUB-130425-4' from feature, feature_marker_relationship where feature_zdb_id=fmrel_ftr_zdb_id and feature_abbrev in (select allele from featuredata) and fmrel_zdb_id not in (select recattrib_data_zdb_id from record_attribution where recattrib_source_zdb_id='ZDB-PUB-130425-4');
 
  
 
@@ -48,7 +48,7 @@ insert into pre_feature (
                   'ENU',
                   SUBSTR(allele,3),
                   fp_pk_id
-    from feature_data, feature_prefix
+    from featuredata, feature_prefix
      where fp_prefix = 'sa'
      and allele like 'sa%'
      and allele not in (select feature_abbrev from feature);
