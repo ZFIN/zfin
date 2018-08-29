@@ -73,14 +73,15 @@ insert into feature (
     feature_abbrev,
     feature_type,
     feature_lab_prefix_id,
-    feature_line_number
+    feature_line_number,feature_name_order,feature_abbrev_order
 )
 select  distinct preftr_feature_zdb_id,
         preftr_feature_abbrev,
         preftr_feature_abbrev,
         'POINT_MUTATION',
         preftr_lab_prefix_id,
-        preftr_line_number
+        preftr_line_number,preftr_feature_abbrev,
+        preftr_feature_abbrev
  from pre_feature;
  
 insert into record_attribution (
