@@ -639,13 +639,33 @@ foreach $acc (keys %supportingAccZFIN) {
 
    $ref_arrayOfGenes = $supportingAccZFIN{$acc};
 
-   if ($#$ref_arrayOfGenes > 0) {  ## if the last index > 0, indicating more than 1 genes supported
-       $ctAccZFINSupportingMoreThan1++;
-       $accZFINsupportingMoreThan1{$acc} = $ref_arrayOfGenes;
+   if ($#$ref_arrayOfGenes > 0) {  
+       @zdbGeneIDs = @$ref_arrayOfGenes;
+       $firstZDBID = $zdbGeneIDs[0];
+       $ctZdbGeneIds = 0;
+       $numDifferentGenes = 0;
+       foreach $zdbGeneID (@$ref_arrayOfGenes) {
+         $ctZdbGeneIds++;
+         if ($ctZdbGeneIds > 0) {
+           $numDifferentGenes++ if $zdbGeneID ne $firstZDBID;
+           $firstZDBID = $zdbGeneID;
+         }
+       }
+       
+       if ($numDifferentGenes > 0) { ## if the last index > 0, and not the same zdb gene ID, indicating more than 1 genes supported
+           $ctAccZFINSupportingMoreThan1++;
+           $accZFINsupportingMoreThan1{$acc} = $ref_arrayOfGenes;
 
-       foreach $genesInQuestion (@$ref_arrayOfGenes) {
-         $ref_arrayOfAccs = $supportedGeneZFIN{$genesInQuestion};
-         $geneZFINwithAccSupportingMoreThan1{$genesInQuestion} = $ref_arrayOfAccs;
+           foreach $genesInQuestion (@$ref_arrayOfGenes) {
+             $ref_arrayOfAccs = $supportedGeneZFIN{$genesInQuestion};
+             $geneZFINwithAccSupportingMoreThan1{$genesInQuestion} = $ref_arrayOfAccs;
+           }       
+       } else { ## the acc only supports 1 gene
+           $ctAccZFINSupportingOnly1++;
+
+           foreach $geneWithAccSupportingOnly1 (@$ref_arrayOfGenes) { ## only 1 element in the array
+             $accZFINsupportingOnly1{$acc} = $geneWithAccSupportingOnly1;
+           }       
        }
    } else {  ## the acc only supports 1 gene
 
