@@ -20,7 +20,9 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-533_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-533.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-533.sql" />
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-554_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-554.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-554.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/zfa_uberon_mapping.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/UBERON_ZFA.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/AGR-173.sql"/>
