@@ -211,7 +211,9 @@ public class PublicationTrackingController {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
         if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
-            curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+            if (!newStatus.getStatus().getName().equals("Closed, Partially curated")) {
+                curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+            }
             expressionRepository.deleteExpressionStructuresForPub(publication);
             publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
             mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
