@@ -49,6 +49,11 @@ public class MarkerNotesController {
         return "marker/omim-phenotype-note.insert";
     }
 
+    @RequestMapping("/note/disease-model")
+    public String getDiseaseModelNote() {
+        return "marker/disease-model-note.insert";
+    }
+
     @RequestMapping("/note/sequence-targeting-reagent-gbrowse")
     public String getSTRGbrowseNote() {
         return "marker/sequence-targeting-reagent-gbrowse-note.insert";

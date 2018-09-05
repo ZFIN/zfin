@@ -4,13 +4,14 @@
 <%@ attribute name="gene" type="org.zfin.marker.Marker" %>
 
 
-<zfin2:subsection title="DISEASE ASSOCIATED WITH <i>${gene.abbreviation}</i> VIA EXPERIMENTAL MODELS" showNoData="true"
+<zfin2:subsection title="DISEASE ASSOCIATED WITH <i>${gene.abbreviation}</i> VIA EXPERIMENTAL MODELS <a class='popup-link info-popup-link' href='/action/marker/note/disease-model'></a>" showNoData="true"
                   test="${fn:length(diseaseModels) ne null && fn:length(diseaseModels) > 0}">
     <table class="summary groupstripes">
         <thead>
         <tr>
             <th>Human Disease</th>
             <th>Fish</th>
+            <th>Conditions</th>
             <th>Citations</th>
         </tr>
         </thead>
@@ -23,10 +24,11 @@
                     </zfin:groupByDisplay>
                 </td>
                 <td><zfin:link entity="${disease.experiment.fish}"/></td>
+                <td><zfin:link entity="${disease.experiment.experiment}"/></td>
                 <td>
                     <c:choose>
                         <c:when test="${fn:length(disease.publications) == 1}">
-                            (<a href="/${disease.publications[0].zdbID}">1</a>)
+                            <zfin:link entity="${disease.publications[0]}"/>
                         </c:when>
                         <c:otherwise>
                             <a href="/action/ontology/fish-model-publication-list/${disease.disease.oboID}/${disease.experiment.fish.zdbID}">
