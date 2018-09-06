@@ -39,7 +39,7 @@ fdmd_feature_zdb_id from feature_dna_mutation_detail);
 insert into feature_dna_mutation_Detail (fdmd_zdb_id, fdmd_feature_zdb_id, fdmd_dna_mutation_term_Zdb_id)
  select distinct ftrtemp, fdmd_zdb_idtemp, ref1temp
   from tmp_load
- where feature_zdb_id is not null
+ where fdmd_zdb_idtemp is not null
 ;
 
 insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) select distinct ftrtemp,'ZDB-PUB-130425-4' from tmp_load where fdmd_zdb_idtemp is not null;
