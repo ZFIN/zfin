@@ -23,27 +23,26 @@ update ftrMutDetsnew
 
 insert into zdb_Active_data
  select fdmd_zdb_id from ftrMutDetsnew;
+create temp table tmp_load (ftrtemp varchar(50), ref1temp varchar(50), fdmd_zdb_idtemp varchar(50)) ;
 
+ insert into tmp_load(ftrtemp, ref1temp , fdmd_zdb_idtemp)
  select fdmd_zdb_id, ref1, feature_zdb_id
    from ftrMutDetsnew, feature
- where feature_abbrev = ftr
-into temp tmp_load;
+ where feature_abbrev = ftr;
 
-insert into tmp_load (fdmd_zdb_id, ref1, feature_zdb_id)
-  select distinct fdmd_zdb_id, ref1, dalias_data_zdb_id
-   from data_alias, ftrMutDetsnew
- where dalias_alias = ftr;
 
-delete  from tmp_load where feature_zdb_id in (select
+
+
+delete  from tmp_load where fdmd_zdb_idtemp  in (select
 fdmd_feature_zdb_id from feature_dna_mutation_detail);
 
 insert into feature_dna_mutation_Detail (fdmd_zdb_id, fdmd_feature_zdb_id, fdmd_dna_mutation_term_Zdb_id)
- select distinct fdmd_zdb_id, feature_zdb_id, ref1
+ select distinct ftrtemp, fdmd_zdb_idtemp, ref1temp
   from tmp_load
  where feature_zdb_id is not null
 ;
 
-insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) select distinct fdmd_zdb_id,'ZDB-PUB-130425-4' from tmp_load where feature_zdb_id is not null;
+insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) select distinct ftrtemp,'ZDB-PUB-130425-4' from tmp_load where fdmd_zdb_idtemp is not null;
 
 
 
