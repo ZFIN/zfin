@@ -142,9 +142,9 @@ sa45138,splice_site_variant
 sa45138,splice_site_variant
 sa45139,splice_site_variant
 sa45139,splice_site_variant
-sa45140,"splice_site_variant,stop_gained"
-sa45140,"splice_site_variant,stop_gained"
-sa45140,"splice_site_variant,stop_gained"
+sa45140,splice_site_variant
+sa45140,splice_site_variant
+sa45140,splice_site_variant
 sa45141,splice_site_variant
 sa45142,stop_gained
 sa45143,stop_gained
@@ -314,8 +314,8 @@ sa45236,splice_site_variant
 sa45237,stop_gained
 sa45237,stop_gained
 sa45238,stop_gained
-sa45239,"splice_site_variant,stop_gained"
-sa45239,"splice_site_variant,stop_gained"
+sa45239,splice_site_variant
+sa45239,splice_site_variant
 sa45240,stop_gained
 sa45241,stop_gained
 sa45242,stop_gained
@@ -478,7 +478,7 @@ sa45322,stop_gained
 sa45322,stop_gained
 sa45322,
 sa45323,stop_gained
-sa45324,"splice_site_variant,stop_gained"
+sa45324,splice_site_variant
 sa45325,stop_gained
 sa45325,stop_gained
 sa45326,splice_site_variant
@@ -576,8 +576,8 @@ sa45361,splice_site_variant
 sa45361,
 sa45361,
 sa45362,
-sa45362,"splice_site_variant,stop_gained"
-sa45362,"splice_site_variant,stop_gained"
+sa45362,splice_site_variant
+sa45362,splice_site_variant
 sa45363,splice_site_variant
 sa45363,
 sa45364,stop_gained
@@ -738,7 +738,7 @@ sa45436,splice_site_variant
 sa45436,splice_site_variant
 sa45437,stop_gained
 sa45438,splice_site_variant
-sa45439,"splice_site_variant,stop_gained"
+sa45439,splice_site_variant
 sa45440,splice_site_variant
 sa45441,stop_gained
 sa45442,stop_gained
@@ -1456,8 +1456,8 @@ sa45829,stop_gained
 sa45830,splice_site_variant
 sa45830,splice_site_variant
 sa45830,splice_site_variant
-sa45831,"splice_site_variant,stop_gained"
-sa45831,"splice_site_variant,stop_gained"
+sa45831,splice_site_variant
+sa45831,splice_site_variant
 sa45832,splice_site_variant
 sa45832,
 sa45833,splice_site_variant
