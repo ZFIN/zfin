@@ -11,7 +11,7 @@
 create temp table ftrMutDetsnew (ftr varchar(50), ref1 varchar(50), ref2 varchar(10),mutDisplay varchar(10), fdmd_zdb_id varchar(50)) ;
 
 insert into ftrMutDetsnew (ftr,ref1,ref2,mutDisplay, fdmd_zdb_id)
-select ftr,ref1,ref2,trim(ref1)||">"||trim(ref2), get_id('FDMD')
+select ftr,ref1,ref2,trim(ref1)||'>'||trim(ref2), get_id('FDMD')
        from ftrmutdets
        where ref1!=''
        and ref2!='';

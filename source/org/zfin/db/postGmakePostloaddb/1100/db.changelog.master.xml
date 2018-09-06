@@ -26,9 +26,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/zfa_uberon_mapping.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/UBERON_ZFA.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/AGR-173.sql"/>
-
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/CUR-808.sql" />
-
      <include file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-559a_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-559a.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-559a.sql" />
