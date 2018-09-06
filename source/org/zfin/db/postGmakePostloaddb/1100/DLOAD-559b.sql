@@ -4,7 +4,7 @@
 
 
 
-create temp table ftCq (ftmd varchar(50),featureAbb varchar(50),featurezdb varchar(50),cq1 varchar(50),cqzdb varchar(50)) with no log;
+create temp table ftCq (ftmd varchar(50),featureAbb varchar(50),featurezdb varchar(50),cq1 varchar(50),cqzdb varchar(50));
 
 insert into ftCq
        select distinct ftr,ftr,ftr,cons,cons

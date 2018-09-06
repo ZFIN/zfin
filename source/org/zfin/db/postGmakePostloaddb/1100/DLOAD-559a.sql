@@ -48,8 +48,4 @@ insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) s
 
 
 
-drop table pre_feature;
-drop table pre_feature_marker_relationship;
-drop table pre_db_link;
-drop table sanger_input_known;
-drop table sanger_locations;
+
