@@ -9,7 +9,7 @@
 
     <changeSet author="pm" id="DLOAD-559b">
         <loadData file="source/org/zfin/db/postGmakePostloaddb/1100/DLOAD-559b.csv"
-                  tableName="ftrConsequence" encoding="UTF-8">
+                  tableName="ftrconsequence" encoding="UTF-8">
 
             <column name="ftr" type="String"/>
             <column name="cons" type="String"/>

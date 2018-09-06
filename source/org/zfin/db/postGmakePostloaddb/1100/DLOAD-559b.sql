@@ -8,7 +8,7 @@ create temp table ftCq (ftmd varchar(50),featureAbb varchar(50),featurezdb varch
 
 insert into ftCq
        select distinct ftr,ftr,ftr,cons,cons
-        from ftrConsequence
+        from ftrconsequence
 	where cons is not null
 	 and ftr in (Select feature_abbrev from feature);
 
