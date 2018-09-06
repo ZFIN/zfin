@@ -3,6 +3,8 @@
 
 delete from pub_tracking_history where pth_pub_zdb_id = 'ZDB-PUB-180731-2';
 
+update publication set accession_no = '30057306' where zdb_id = 'ZDB-PUB-180726-7';
+
 delete from withdrawn_data where wd_old_zdb_id = 'ZDB-PUB-180731-2';
 
 update withdrawn_data set wd_new_zdb_id = 'ZDB-PUB-180726-7' where wd_new_zdb_id = 'ZDB-PUB-180731-2';
