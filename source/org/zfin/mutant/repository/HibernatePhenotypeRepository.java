@@ -992,10 +992,8 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<DiseaseAnnotationModel> getDiseaseAnnotationModelsByGene(Marker gene) {
         Session session = HibernateUtil.currentSession();
-        String hql1 = "select distinct model from DiseaseAnnotationModel model, FishExperiment fishExp, Fish fish, GenotypeFeature genoFeat, FeatureMarkerRelationship featMrkr " +
-                      " where model.fishExperiment = fishExp " +
-                      "   and fishExp.fish = fish " +
-                      "   and fish.genotype = genoFeat.genotype " +
+        String hql1 = "select distinct model from DiseaseAnnotationModel model, GenotypeFeature genoFeat, FeatureMarkerRelationship featMrkr " +
+                      " where model.fishExperiment.fish.genotype = genoFeat.genotype " +
                       "   and genoFeat.feature = featMrkr.feature " +
                       "   and featMrkr.marker.zdbID = :geneZdbID ";
         Query query = session.createQuery(hql1);
