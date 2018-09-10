@@ -736,13 +736,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     }
 
-
-    @Test
-    public void getAllPublicationStatusesShouldReturnCorrectNumberOfValues() {
-        List<PublicationTrackingStatus> statuses = publicationRepository.getAllPublicationStatuses();
-        assertThat(statuses, hasSize(16));
-    }
-
     @Test
     public void getPublicationTrackingStatusShouldReturnObjectForValidId() {
         PublicationTrackingStatus status = publicationRepository.getPublicationTrackingStatus(1);
@@ -757,17 +750,10 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getPublicationStatusByNameShouldReturnObjectForValidName() {
-        String name = "Waiting for Nomenclature";
+        PublicationTrackingStatus.Name name = PublicationTrackingStatus.Name.WAITING_FOR_NOMENCLATURE;
         PublicationTrackingStatus status = publicationRepository.getPublicationStatusByName(name);
         assertThat(status, is(notNullValue()));
         assertThat(status.getName(), is(name));
-    }
-
-    @Test
-    public void getPublicationStatusByNameShouldReturnNullForInvalidName() {
-        String name = "This is not a real status";
-        PublicationTrackingStatus status = publicationRepository.getPublicationStatusByName(name);
-        assertThat(status, is(nullValue()));
     }
 
     @Test

@@ -211,7 +211,7 @@ public class PublicationTrackingController {
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
         if (newStatus.getStatus().getType() == PublicationTrackingStatus.Type.CLOSED) {
-            if (!newStatus.getStatus().getName().equals("Closed, Partially curated")) {
+            if (newStatus.getStatus().getName() != PublicationTrackingStatus.Name.CLOSED_PARTIALLY_CURATED) {
                 curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
             }
             expressionRepository.deleteExpressionStructuresForPub(publication);
