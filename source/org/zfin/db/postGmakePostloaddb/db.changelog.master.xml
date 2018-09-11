@@ -41,6 +41,7 @@
 
     <!-- No more sprint directories - releases only! -->
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/db.changelog.master.xml"/>
 
 <!-- starting fresh with migration to postgres -->
 </databaseChangeLog>
