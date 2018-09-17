@@ -10,7 +10,7 @@ public interface IsDirtyWidget<T> extends IsWidget {
     String NULL_STRING = "null";
 
     String DIRTY_STYLE = "dirty";
-    String CLEAN_STYLE = "table";
+    String CLEAN_STYLE = "clean";
 
     boolean isDirty(T value);
 }

@@ -677,6 +677,8 @@ public class DTOConversionService {
         detail.setIntronNumber(dnaChangeDTO.getIntronNumber());
         detail.setNumberAddedBasePair(dnaChangeDTO.getNumberAddedBasePair());
         detail.setNumberRemovedBasePair(dnaChangeDTO.getNumberRemovedBasePair());
+        detail.setInsertedSequence(dnaChangeDTO.getInsertedSequence());
+        detail.setDeletedSequence(dnaChangeDTO.getDeletedSequence());
         detail.setDnaPositionStart(dnaChangeDTO.getPositionStart());
         detail.setDnaPositionEnd(dnaChangeDTO.getPositionEnd());
         detail.setGeneLocalizationTerm(getGeneLocalizationTermRepository().getControlledVocabularyTerm(dnaChangeDTO.getLocalizationTermOboID()));
@@ -858,6 +860,8 @@ public class DTOConversionService {
         dto.setNumberRemovedBasePair(detail.getNumberRemovedBasePair());
         dto.setPositionStart(detail.getDnaPositionStart());
         dto.setPositionEnd(detail.getDnaPositionEnd());
+        dto.setInsertedSequence(detail.getInsertedSequence());
+        dto.setDeletedSequence(detail.getDeletedSequence());
         dto.setExonNumber(detail.getExonNumber());
         dto.setIntronNumber(detail.getIntronNumber());
         dto.setSequenceReferenceAccessionNumber(detail.getDnaSequenceReferenceAccessionNumber());

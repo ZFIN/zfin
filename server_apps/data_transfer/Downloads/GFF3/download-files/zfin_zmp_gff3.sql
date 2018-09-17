@@ -12,5 +12,5 @@ copy (
       ',' || feature_abbrev || ',' || feature_name
   FROM sequence_feature_chromosome_location_generated
   JOIN feature ON feature_zdb_id = sfclg_data_zdb_id
-  WHERE sfclg_assembly = 'GRCz10'
+  WHERE sfclg_assembly = 'GRCz11'
   ORDER BY 1,4,5,9 ) to 'zfin_zmp.gff3' DELIMITER '	'

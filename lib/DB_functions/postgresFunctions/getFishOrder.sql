@@ -1,4 +1,4 @@
-create or replace function getFishOrder (vFishId text,  out fishOrderOut bigint,  out numAffectedGeneOut  int) as $func$
+create or replace function getFishOrder (vFishId text, vGenoId text, out fishOrderOut bigint,  out numAffectedGeneOut  int) as $func$
 
 
 declare workingZyg  zygocity.zyg_name%TYPE;
@@ -14,9 +14,17 @@ declare workingZyg  zygocity.zyg_name%TYPE;
 begin
 
 --find the functional number of affected genes.
-
+raise notice 'fishid: %', vFishId;
+raise notice 'geno: %', vGenoId;
 for workingMrkr in
 	--get the allele-ish genes
+	select  fmrel_mrkr_zdb_id
+	   from fish, genotype_Feature, feature_marker_Relationship
+	   where fish_genotype_zdb_id =vGenoId
+   	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+	   and fish_genotype_zdb_id =genofeat_geno_zdb_id
+	   and fmrel_type in ('is allele of','markers missing','markers present','markers moved')
+	 union
 	select  fmrel_mrkr_zdb_id  
 	   from fish, genotype_Feature, feature_marker_Relationship
 	   where fish_genotype_zdb_id =genofeat_geno_zdb_id
@@ -69,9 +77,10 @@ for workingMrkr in
 	   if (existingMrkr = 'none')
 	   then
 		 existingMrkr := workingMrkr;
+
 		 numAffectedGene := numAffectedGene + 1;
 		 fishOrder := 10000000100;
-		 raise notice 'existingMarkerNone: %', fishOrder;
+
            else
 	     if (existingMrkr != workingMrkr)
 	     then
@@ -86,6 +95,7 @@ for workingMrkr in
 end loop ;
 raise notice 'endLoop: %', fishOrder;
 raise notice 'existingMrkr: %', existingMrkr;
+raise notice 'workingMrkr: %', workingMrkr;
 
  genoIsWT = (select geno_is_wildtype from genotype, fish
     	       	       where fish_genotype_zdb_id = geno_Zdb_id

@@ -29,7 +29,7 @@ public abstract class ArchiveService {
     // list of dated archive directories
     protected List<File> archiveDirectories;
     // archive Date string list
-    protected List<String> archiveDateList = new ArrayList<String>();
+    protected List<String> archiveDateList = new ArrayList<>();
 
     // number of dated archive directories
     protected int numberOfArchiveDirectories;
@@ -43,11 +43,11 @@ public abstract class ArchiveService {
         if (archiveDirs != null)
             archiveDirectories = Arrays.asList(archiveDirs);
         else
-            archiveDirectories = new ArrayList<File>();
+            archiveDirectories = new ArrayList<>();
         Collections.sort(archiveDirectories);
         Collections.reverse(archiveDirectories);
 
-        List<File> relevantDirectories = new ArrayList<File>();
+        List<File> relevantDirectories = new ArrayList<>();
         for (File file : archiveDirectories) {
             String archiveDirectoryName = file.getName();
             boolean lastCharacterIsNumber = Character.isDigit(archiveDirectoryName.charAt(archiveDirectoryName.length() - 1));
@@ -118,7 +118,7 @@ public abstract class ArchiveService {
     private List<String> getArchiveDateList() {
         checkCacheStatus();
         List<String> unloadDates;
-        unloadDates = new ArrayList<String>(archiveDirectories.size());
+        unloadDates = new ArrayList<>(archiveDirectories.size());
         for (File file : archiveDirectories)
             unloadDates.add(file.getName());
         return unloadDates;
@@ -212,16 +212,11 @@ public abstract class ArchiveService {
     protected List<Date> getAllArchiveDates() {
         checkCacheStatus();
         List<String> allUnloadedDateStrings = getAllArchiveDateStrings();
-        List<Date> dates = new ArrayList<Date>(allUnloadedDateStrings.size());
+        List<Date> dates = new ArrayList<>(allUnloadedDateStrings.size());
         for (String dataString : allUnloadedDateStrings) {
             dates.add(getArchiveDate(dataString));
         }
-        Collections.sort(dates, new Comparator<Date>() {
-            @Override
-            public int compare(Date o1, Date o2) {
-                return -o1.compareTo(o2);
-            }
-        });
+        dates.sort((o1, o2) -> -o1.compareTo(o2));
         return dates;
     }
 

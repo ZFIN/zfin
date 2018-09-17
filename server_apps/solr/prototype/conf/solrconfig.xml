@@ -241,6 +241,9 @@
          <!-- This is essentially the page size of the gallery mode pages-->
          <str name="f.img_zdb_id.facet.limit">50</str>
          <str name="f.type_0.facet.sort">index</str>
+         <str name="f.type_0.facet.limit">100</str>
+         <str name="f.type_1.facet.limit">100</str>
+         <str name="f.type_2.facet.limit">100</str>
 
 
         <str name="q.alt">*:*</str>

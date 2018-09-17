@@ -106,7 +106,7 @@
                                     no sequence available
                                 </c:if>
                                 <c:if test="${empty nonWithdrawnTranscript.displayedSequenceDBLinks}">
-                                    nonWithdrawnTranscript.displayedSequenceDBLinks is empty
+                                    <%--nonWithdrawnTranscript.displayedSequenceDBLinks is empty--%>
                                 </c:if>
                                 <c:if test="${unlinkedTranscript eq null || unlinkedTranscript ne nonWithdrawnTranscript.marker}">
                                     <c:choose>

@@ -63,16 +63,16 @@ public class PublicationDashboardController {
     @RequestMapping("/curating-bin")
     public String showReadyForCurationBin(Model model) {
         return showBin(model,
-                publicationRepository.getPublicationStatusByName("Ready for Curation"),
-                publicationRepository.getPublicationStatusByName("Curating"),
+                publicationRepository.getPublicationStatusByName(PublicationTrackingStatus.Name.READY_FOR_CURATION),
+                publicationRepository.getPublicationStatusByName(PublicationTrackingStatus.Name.CURATING),
                 Page.CURATING_BIN);
     }
 
     @RequestMapping("/indexing-bin")
     public String showReadyForIndexingBin(Model model) {
         return showBin(model,
-                publicationRepository.getPublicationStatusByName("Ready for Indexing"),
-                publicationRepository.getPublicationStatusByName("Indexing"),
+                publicationRepository.getPublicationStatusByName(PublicationTrackingStatus.Name.READY_FOR_INDEXING),
+                publicationRepository.getPublicationStatusByName(PublicationTrackingStatus.Name.INDEXING),
                 Page.INDEXING_BIN);
     }
 

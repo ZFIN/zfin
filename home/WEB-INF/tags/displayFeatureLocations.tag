@@ -20,7 +20,7 @@
                 <zfin:alternating-tr loopName="loop">
                     <td><zfin:link entity="${member.feature}"/></td>
                     <td>${member.chromosome}</td>
-                    <td> <fmt:formatNumber value="${member.start}" pattern="##,###"/><c:if test="${!empty member.end && member.end != member.end}">
+                    <td> <fmt:formatNumber value="${member.start}" pattern="##,###"/><c:if test="${!empty member.end && member.start != member.end}">
                         - <fmt:formatNumber value="${member.end}" pattern="##,###"/>
                     </c:if></td>
                     <td>${member.assembly}</td>

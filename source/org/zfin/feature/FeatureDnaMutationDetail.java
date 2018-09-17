@@ -35,6 +35,10 @@ public class FeatureDnaMutationDetail implements Cloneable {
     private Integer numberAddedBasePair;
     @Column(name = "fdmd_number_removed_dna_base_pairs")
     private Integer numberRemovedBasePair;
+    @Column(name = "fdmd_inserted_sequence")
+    private String insertedSequence;
+    @Column(name = "fdmd_deleted_sequence")
+    private String deletedSequence;
     @Column(name = "fdmd_exon_number")
     private Integer exonNumber;
     @Column(name = "fdmd_intron_number")
@@ -125,6 +129,22 @@ public class FeatureDnaMutationDetail implements Cloneable {
 
     public void setNumberRemovedBasePair(Integer numberRemovedBasePair) {
         this.numberRemovedBasePair = numberRemovedBasePair;
+    }
+
+    public String getInsertedSequence() {
+        return insertedSequence;
+    }
+
+    public void setInsertedSequence(String insertedSequence) {
+        this.insertedSequence = insertedSequence;
+    }
+
+    public String getDeletedSequence() {
+        return deletedSequence;
+    }
+
+    public void setDeletedSequence(String deletedSequence) {
+        this.deletedSequence = deletedSequence;
     }
 
     public String getZdbID() {

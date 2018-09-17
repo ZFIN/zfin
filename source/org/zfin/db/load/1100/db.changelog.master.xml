@@ -8,6 +8,8 @@
     <include file="source/org/zfin/db/load/1100/restore_ept_pre.sql"/>
     <include file="source/org/zfin/db/load/1100/restore-ept.xml"/>
     <include file="source/org/zfin/db/load/1100/restore_ept.sql"/>
+    <include file="source/org/zfin/db/load/1100/cne_to_sfcl.sql"/>
+    <include file="source/org/zfin/db/load/1100/CUR-835.sql"/>
 
 </databaseChangeLog>
 

@@ -34,7 +34,7 @@
                 <td>
                     <c:choose>
                         <c:when test="${fishModel.publications.size() == 1}">
-                            (<a href="/${fishModel.publication.zdbID}">1</a>)
+                            <zfin:link entity="${fishModel.publication}"/>
                         </c:when>
                         <c:otherwise>
                             (<a href="/action/ontology/fish-model-publication-list/${term.oboID}/${fishModel.fishModel.fish.zdbID}?environmentKey=${fishModel.fishModel.experiment.conditionKey}">${fishModel.publications.size()}</a>)

@@ -23,7 +23,7 @@ BEGIN
 
   select * FROM
 
- getFishOrder(NEW.fish_zdb_id)
+ getFishOrder(NEW.fish_zdb_id,NEW.fish_genotype_zdb_id)
  INTO NEW.fish_order,NEW.fish_functional_affected_gene_count;
  raise notice 'end: %', NEW.fish_functional_affected_gene_count;
 
@@ -37,5 +37,5 @@ BEFORE  INSERT OR UPDATE  ON fish
 FOR EACH ROW EXECUTE PROCEDURE fish_trigger();
 
 CREATE TRIGGER fish_affected_trigger
-AFTER  INSERT OR UPDATE  ON fish
+BEFORE  INSERT OR UPDATE  ON fish
 FOR EACH ROW EXECUTE PROCEDURE fish_affected();

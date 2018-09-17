@@ -12,6 +12,7 @@ import org.zfin.search.presentation.Facet;
 import org.zfin.search.presentation.FacetGroup;
 import org.zfin.search.presentation.FacetQuery;
 import org.zfin.search.presentation.FacetValue;
+import org.zfin.util.URLCreator;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -32,6 +33,14 @@ public class FacetBuilderService {
 
     public FacetBuilderService(QueryResponse response, String baseUrl, Map<String, Boolean> filterQuerySelectionMap) {
         this.response = response;
+
+        //assume that all facet links will need to reset to the first page
+        if (StringUtils.isNotEmpty(baseUrl)) {
+            URLCreator urlCreator = new URLCreator(baseUrl);
+            urlCreator.removeNameValuePair("page");
+            baseUrl = urlCreator.getURL();
+        }
+
         this.baseUrl = baseUrl;
         this.filterQuerySelectionMap = filterQuerySelectionMap;
     }

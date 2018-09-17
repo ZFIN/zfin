@@ -1905,7 +1905,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         HibernateUtil.createTransaction();
         session.save(publication);
         PublicationTrackingHistory trackingEntry = new PublicationTrackingHistory();
-        PublicationTrackingStatus newStatus = getPublicationStatusByName("New");
+        PublicationTrackingStatus newStatus = getPublicationStatusByName(PublicationTrackingStatus.Name.NEW);
         trackingEntry.setPublication(publication);
         trackingEntry.setStatus(newStatus);
         trackingEntry.setUpdater(ProfileService.getCurrentSecurityUser());
@@ -2286,7 +2286,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (PublicationTrackingStatus) HibernateUtil.currentSession().get(PublicationTrackingStatus.class, id);
     }
 
-    public PublicationTrackingStatus getPublicationStatusByName(String name) {
+    public PublicationTrackingStatus getPublicationStatusByName(PublicationTrackingStatus.Name name) {
         return (PublicationTrackingStatus) HibernateUtil.currentSession()
                 .createCriteria(PublicationTrackingStatus.class)
                 .add(Restrictions.eq("name", name))
@@ -2335,7 +2335,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         for (Object item : countList) {
             Object[] tuple = (Object[]) item;
             PublicationTrackingStatus pubStatus = (PublicationTrackingStatus) tuple[0];
-            counts.put(pubStatus.getName(), (long) tuple[1]);
+            counts.put(pubStatus.getName().toString(), (long) tuple[1]);
         }
 
         DashboardPublicationList result = new DashboardPublicationList();

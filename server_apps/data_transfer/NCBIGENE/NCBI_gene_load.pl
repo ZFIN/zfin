@@ -639,13 +639,33 @@ foreach $acc (keys %supportingAccZFIN) {
 
    $ref_arrayOfGenes = $supportingAccZFIN{$acc};
 
-   if ($#$ref_arrayOfGenes > 0) {  ## if the last index > 0, indicating more than 1 genes supported
-       $ctAccZFINSupportingMoreThan1++;
-       $accZFINsupportingMoreThan1{$acc} = $ref_arrayOfGenes;
+   if ($#$ref_arrayOfGenes > 0) {  
+       @zdbGeneIDs = @$ref_arrayOfGenes;
+       $firstZDBID = $zdbGeneIDs[0];
+       $ctZdbGeneIds = 0;
+       $numDifferentGenes = 0;
+       foreach $zdbGeneID (@$ref_arrayOfGenes) {
+         $ctZdbGeneIds++;
+         if ($ctZdbGeneIds > 0) {
+           $numDifferentGenes++ if $zdbGeneID ne $firstZDBID;
+           $firstZDBID = $zdbGeneID;
+         }
+       }
+       
+       if ($numDifferentGenes > 0) { ## if the last index > 0, and not the same zdb gene ID, indicating more than 1 genes supported
+           $ctAccZFINSupportingMoreThan1++;
+           $accZFINsupportingMoreThan1{$acc} = $ref_arrayOfGenes;
 
-       foreach $genesInQuestion (@$ref_arrayOfGenes) {
-         $ref_arrayOfAccs = $supportedGeneZFIN{$genesInQuestion};
-         $geneZFINwithAccSupportingMoreThan1{$genesInQuestion} = $ref_arrayOfAccs;
+           foreach $genesInQuestion (@$ref_arrayOfGenes) {
+             $ref_arrayOfAccs = $supportedGeneZFIN{$genesInQuestion};
+             $geneZFINwithAccSupportingMoreThan1{$genesInQuestion} = $ref_arrayOfAccs;
+           }       
+       } else { ## the acc only supports 1 gene
+           $ctAccZFINSupportingOnly1++;
+
+           foreach $geneWithAccSupportingOnly1 (@$ref_arrayOfGenes) { ## only 1 element in the array
+             $accZFINsupportingOnly1{$acc} = $geneWithAccSupportingOnly1;
+           }       
        }
    } else {  ## the acc only supports 1 gene
 
@@ -2675,28 +2695,6 @@ close LOG;
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: log file";
 ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","logNCBIgeneLoad");
 
-#------------------------------------------------
-# remove old files
-#------------------------------------------------
-
-system("/bin/rm -f prepareLog*");
-system("/bin/rm -f loadLog*");
-system("/bin/rm -f logNCBIgeneLoad");
-system("/bin/rm -f debug*");
-system("/bin/rm -f report*");
-system("/bin/rm -f toDelete.unl");
-system("/bin/rm -f toMap.unl");
-system("/bin/rm -f toLoad.unl");
-system("/bin/rm -f length.unl");
-system("/bin/rm -f noLength.unl");
-system("/bin/rm -f seq.fasta");
-
-system("/bin/rm -f zf_gene_info");
-system("/bin/rm -f gene2unigene");
-system("/bin/rm -f gene2accession");
-system("/bin/rm -f RefSeqCatalog");
-system("/bin/rm -f RELEASE_NUMBER");
-
 system("/bin/date");
 
 exit;
@@ -2735,7 +2733,4 @@ sub reportErrAndExit {
 sub sendLoadLogs {
   $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog1 file";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","loadLog1");
-
-##  $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog2 file";
-##  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","loadLog2");
 }

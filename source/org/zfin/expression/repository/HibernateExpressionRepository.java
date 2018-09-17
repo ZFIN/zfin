@@ -1,6 +1,8 @@
 package org.zfin.expression.repository;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -28,10 +30,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
-import org.zfin.marker.agr.BasicExpressionDTO;
-import org.zfin.marker.agr.CrossReferenceDTO;
-import org.zfin.marker.agr.ExpressionTermIdentifiersDTO;
-import org.zfin.marker.agr.PublicationAgrDTO;
+import org.zfin.marker.agr.*;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
@@ -50,6 +49,7 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
+import javax.ws.rs.core.MultivaluedMap;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -243,9 +243,38 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return Integer.parseInt(result.toString());
     }
 
+
+    private Map<String, List<UberonSlimTermDTO>> getAllZfaUberonMap() {
+        final String zumQueryString = "select distinct contained.term_ont_id, zum_uberon_id " +
+                " from term as contained " +
+                "     join all_term_contains on alltermcon_contained_zdb_id = contained.term_zdb_id" +
+                "     join zfa_uberon_mapping on zum_zfa_term_zdb_id = alltermcon_container_zdb_id";
+
+        final Query zumQuery = HibernateUtil.currentSession().createSQLQuery(zumQueryString);
+
+        List<Object[]> zfaUberonRelationships = zumQuery.list();
+
+        Map<String, List<UberonSlimTermDTO>> zfaUberonMap = new HashMap<>();
+
+        for (Object[] zum : zfaUberonRelationships) {
+            String zfaId = zum[0].toString();
+            UberonSlimTermDTO uberonSlimTermDTO = new UberonSlimTermDTO(zum[1].toString());
+
+            if (zfaUberonMap.get(zfaId) == null) {
+                List<UberonSlimTermDTO> uberonIds = new ArrayList<>();
+                uberonIds.add(uberonSlimTermDTO);
+                zfaUberonMap.put(zfaId, uberonIds);
+            } else {
+                zfaUberonMap.get(zfaId).add(uberonSlimTermDTO);
+            }
+        }
+
+        return zfaUberonMap;
+    }
+
     public List<BasicExpressionDTO> getBasicExpressionDTOObjects() {
 
-        final String expressionQueryString = "select xpatres_zdb_id," +
+        final String expressionQueryString = "select distinct xpatres_zdb_id," +
                 "       xpatex_source_zdb_id, " +
                 "       accession_no," +
                 "       xpatex_gene_zdb_id, " +
@@ -255,7 +284,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "       subterm.term_ont_id as subterm_id, " +
                 "       xpatres_fig_zdb_id, " +
                 "       superterm.term_name as superterm_name, " +
-                "       subterm.term_name as subterm_name" +
+                "       subterm.term_name as subterm_name," +
+                "       case when container.stg_hours_end <= 48.00 then 'UBERON:0000068' " +
+                "            when container.stg_name_long like 'Hatching%' then 'post embryonic, pre-adult' " +
+                "            when container.stg_name_long like 'Larval%' then 'post embryonic, pre-adult' " +
+                "            when container.stg_name_long like 'Juvenile%' then 'post embryonic, pre-adult' " +
+                "            when container.stg_name = 'Adult' then 'UBERON:0000113' " +
+                "       else null end as uberon_stage,   " +
+                "       container.stg_name as stage_name" +
                 "  from expression_experiment" +
                 "  join expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id" +
                 "  join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id" +
@@ -266,11 +302,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "  join stage as ends on ends.stg_zdb_id = xpatres_end_stg_zdb_id" +
                 "  join stage as container on container.stg_hours_start >= starts.stg_hours_start " +
                 "       and container.stg_hours_end <= ends.stg_hours_end" +
-                "  join expression_pattern_assay on xpatassay_name = xpatex_assay_name" +
-                "  left outer join term as subterm on subterm.term_zdb_id = xpatres_subterm_zdb_id" +
+                "  join expression_pattern_assay on xpatassay_name = xpatex_assay_name " +
+                "  left outer join term as subterm on subterm.term_zdb_id = xpatres_subterm_zdb_id " +
+                "  left outer join all_term_contains as super_parents on superterm.term_zdb_id = super_parents.alltermcon_contained_zdb_id " +
+                "  left outer join zfa_uberon_mapping as super_uberon on super_parents.alltermcon_container_zdb_id = super_uberon.zum_zfa_term_zdb_id " +
+                "  left outer join all_term_contains as sub_parents on subterm.term_zdb_id = sub_parents.alltermcon_contained_zdb_id " +
+                "  left outer join zfa_uberon_mapping as sub_uberon on sub_parents.alltermcon_container_zdb_id = sub_uberon.zum_zfa_term_zdb_id " +
                 "  where fish_is_wildtype = 't'" +
-                "  and genox_is_std_or_generic_control = 't'" +
-                "  and xpatex_gene_zdb_id is not null";
+                "  and genox_is_std_or_generic_control = 't' " +
+                "  and xpatres_expression_found = 't' " +
+                "  and xpatex_gene_zdb_id is not null" +
+                "  and container.stg_zdb_id != 'ZDB-STAGE-050211-1' " +
+                "  and xpatres_start_stg_zdb_id != 'ZDB-STAGE-050211-1' " +
+                "  and xpatres_end_stg_zdb_id != 'ZDB-STAGE-050211-1' ";
 
         final Query expressionQuery = HibernateUtil.currentSession().createSQLQuery(expressionQueryString);
 
@@ -278,56 +322,72 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         List<BasicExpressionDTO> basicExpressions = new ArrayList<>();
 
-        for (Object[] basicExpressionObjects : expressions) {
-            BasicExpressionDTO basicXpat = new BasicExpressionDTO();
-            basicXpat.setGeneId("ZFIN:"+basicExpressionObjects[3].toString());
-            basicXpat.setWhenExpressedStage(basicExpressionObjects[4].toString());
-            basicXpat.setAssay(basicExpressionObjects[5].toString());
+        Map<String, List<UberonSlimTermDTO>> zfaUberonMap = getAllZfaUberonMap();
 
-            if (basicExpressionObjects[2] != null) {
-                Integer pubMedId = (Integer) basicExpressionObjects[2];
-                basicXpat.setEvidence(new PublicationAgrDTO(basicExpressionObjects[1].toString(), pubMedId));
-            }
-            else {
-                basicXpat.setEvidence(new PublicationAgrDTO(basicExpressionObjects[1].toString(), null));
-            }
+        for (Object[] basicExpressionObjects : expressions) {
+
+            //get the array objects converted to named vars & handle basic null stuff
+            String pubZdbId = basicExpressionObjects[1].toString();
+            Integer pubMedId = basicExpressionObjects[2] != null ? (Integer) basicExpressionObjects[2] : null;
+            String geneZdbId = basicExpressionObjects[3].toString();
+            String stageZfaId = basicExpressionObjects[4].toString();
+            String assay = basicExpressionObjects[5].toString();
+            String anatomicalStructureTermId = basicExpressionObjects[6].toString();
+            String subTermId = basicExpressionObjects[7] != null ? basicExpressionObjects[7].toString() : null;
+            String superTermName = basicExpressionObjects[9].toString();
+            String subTermName = basicExpressionObjects[10] != null ? basicExpressionObjects[10].toString() : null;
+            UberonSlimTermDTO stageUberonDTO = basicExpressionObjects[11] != null ? new UberonSlimTermDTO(basicExpressionObjects[11].toString()) : null;
+            String stageName = basicExpressionObjects[12] != null ? basicExpressionObjects[12].toString() : null;
+
+            BasicExpressionDTO basicXpat = new BasicExpressionDTO();
+            basicXpat.setGeneId("ZFIN:" + geneZdbId);
+
+            basicXpat.setWhenExpressed(
+                    new ExpressionStageIdentifiersDTO(
+                            stageName,
+                            stageZfaId,
+                            stageUberonDTO));
+
+            basicXpat.setAssay(assay);
+            basicXpat.setEvidence(new PublicationAgrDTO(pubZdbId, pubMedId));
 
             List<String> annotationPages = new ArrayList<>();
             annotationPages.add("gene/expression/annotation/detail");
             basicXpat.setCrossReference(new CrossReferenceDTO("ZFIN", basicExpressionObjects[8].toString(), annotationPages));
 
-
-            String anatomicalStructureTermId = basicExpressionObjects[6].toString();
             String whereExpressedStatement = null;
             String cellularComponentTermId = null;
             String anatomicalSubStructureTermId = null;
             String anatomicalStructureQualifierTermId = null;
+            Set<UberonSlimTermDTO> anatomicalStructureUberonSlimTermIds = new HashSet<>();
 
+            whereExpressedStatement = superTermName;
 
-            if (basicExpressionObjects[7] != null) {
+            if (subTermId != null) {
+                if (subTermId.startsWith("GO:")) { cellularComponentTermId = subTermId; }
+                if (subTermId.startsWith("MPATH:")) { anatomicalSubStructureTermId = subTermId; }
+                if (subTermId.startsWith("BSPO:")) { anatomicalStructureQualifierTermId = subTermId; }
+                if (subTermId.startsWith("ZFA:")) { anatomicalSubStructureTermId = subTermId; }
 
-                if (basicExpressionObjects[7].toString().startsWith("GO:")) {
-                    cellularComponentTermId = basicExpressionObjects[7].toString();
+                whereExpressedStatement += " " + subTermName;
+
+                if (zfaUberonMap.get(subTermId) != null) {
+                    anatomicalStructureUberonSlimTermIds.addAll(zfaUberonMap.get(subTermId));
                 }
-                if (basicExpressionObjects[7].toString().startsWith("MPATH:")) {
-                    anatomicalSubStructureTermId = basicExpressionObjects[7].toString();
-                }
-                if (basicExpressionObjects[7].toString().startsWith("BSPO:")) {
-                    anatomicalStructureQualifierTermId = basicExpressionObjects[7].toString();
-                }
-                if (basicExpressionObjects[7].toString().startsWith("ZFA:")) {
-                    anatomicalSubStructureTermId = basicExpressionObjects[7].toString();
-                }
-                whereExpressedStatement = basicExpressionObjects[9].toString()+" "+basicExpressionObjects[10].toString();
             }
-            else {
-                whereExpressedStatement = basicExpressionObjects[9].toString();
+
+            if (zfaUberonMap.get(anatomicalStructureTermId) != null) {
+                anatomicalStructureUberonSlimTermIds.addAll(zfaUberonMap.get(anatomicalStructureTermId));
+            }
+
+            if (CollectionUtils.isEmpty(anatomicalStructureUberonSlimTermIds)) {
+                anatomicalStructureUberonSlimTermIds.add(new UberonSlimTermDTO("Other"));
             }
 
             ExpressionTermIdentifiersDTO wildtypeExpressionTermIdentifiers = new ExpressionTermIdentifiersDTO(whereExpressedStatement, cellularComponentTermId,
-                    anatomicalStructureTermId, anatomicalSubStructureTermId, anatomicalStructureQualifierTermId);
+                    anatomicalStructureTermId, anatomicalSubStructureTermId, anatomicalStructureQualifierTermId, anatomicalStructureUberonSlimTermIds);
 
-            basicXpat.setWildtypeExpressionTermIdentifiers(wildtypeExpressionTermIdentifiers);
+            basicXpat.setWhereExpressed(wildtypeExpressionTermIdentifiers);
 
             basicExpressions.add(basicXpat);
         }

@@ -1,6 +1,8 @@
 package org.zfin.gwt.curation.ui.feature;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -12,16 +14,11 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import org.zfin.gwt.curation.ui.AbstractViewComposite;
 import org.zfin.gwt.root.dto.MutationDetailDnaChangeDTO;
-import org.zfin.gwt.root.ui.IsDirtyWidget;
-import org.zfin.gwt.root.ui.NumberTextBox;
-import org.zfin.gwt.root.ui.StringListBox;
-import org.zfin.gwt.root.ui.ZfinAccessionBox;
+import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.WidgetUtil;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.zfin.gwt.root.dto.FeatureTypeEnum.SEQUENCE_VARIANT;
 
 public class MutationDetailDNAView extends AbstractViewComposite {
 
@@ -30,8 +27,6 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     public static final String FIVE_PRIME_SPLICE = "SO:0000163";
     public static final String EXON = "SO:0000147";
     public static final String INTRON = "SO:0000188";
-    public static final String INSERTION = "insertion";
-    public static final String DELETION = "deletion";
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("MutationDetailDNAView.ui.xml")
@@ -63,7 +58,19 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     @UiField
     NumberTextBox plusBasePair;
     @UiField
-    Grid dataTable;
+    StringTextBox insertedSequence;
+    @UiField
+    StringTextBox deletedSequence;
+    @UiField
+    TableRowElement nucleotideChangeRow;
+    @UiField
+    TableRowElement insertionLengthRow;
+    @UiField
+    TableRowElement insertionSequenceRow;
+    @UiField
+    TableRowElement deletionLengthRow;
+    @UiField
+    TableRowElement deletionSequenceRow;
     @UiField
     Label positionDash;
     @UiField
@@ -112,6 +119,16 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         handleChanges();
     }
 
+    @UiHandler("insertedSequence")
+    void onChangeInsertedSequence(KeyUpEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("deletedSequence")
+    void onChangeDeletedSequence(KeyUpEvent event) {
+        handleChanges();
+    }
+
     @UiHandler("exonNumber")
     void onChangeExonNumber(@SuppressWarnings("unused") KeyUpEvent event) {
         validateNumber(exonNumber);
@@ -150,51 +167,49 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     }
 
     public void showPointMutationUI() {
-        dataTable.resizeRows(1);
-        dataTable.resizeColumns(1);
-        int row = 0;
-        dataTable.setWidget(row, 0, nucleotideChangeList);
+        showRow(nucleotideChangeRow, true);
+        showRow(insertionLengthRow, false);
+        showRow(insertionSequenceRow, false);
+        showRow(deletionLengthRow, false);
+        showRow(deletionSequenceRow, false);
         positionStart.setVisible(true);
         positionDash.setVisible(false);
         positionEnd.setVisible(false);
     }
 
     public void showPlusBP() {
-        dataTable.resizeRows(1);
-        dataTable.resizeColumns(3);
-        int row = 0;
-        dataTable.setText(row, 0, INSERTION);
-        dataTable.setWidget(row, 1, plusBasePair);
-        dataTable.setText(row, 2, "bp");
+        showRow(nucleotideChangeRow, false);
+        showRow(insertionLengthRow, true);
+        showRow(insertionSequenceRow, true);
+        showRow(deletionLengthRow, false);
+        showRow(deletionSequenceRow, false);
         showHideBaseFields(true);
     }
 
     public void showMinusBP() {
-        dataTable.resizeRows(1);
-        dataTable.resizeColumns(3);
-        int row = 0;
-        dataTable.setText(row, 0, DELETION);
-        dataTable.setWidget(row, 1, minusBasePair);
-        dataTable.setText(row, 2, "bp");
+        showRow(nucleotideChangeRow, false);
+        showRow(insertionLengthRow, false);
+        showRow(insertionSequenceRow, false);
+        showRow(deletionLengthRow, true);
+        showRow(deletionSequenceRow, true);
         showHideBaseFields(true);
     }
 
     public void showPlusMinusBP() {
-        dataTable.resizeRows(2);
-        dataTable.resizeColumns(3);
-        int row = 0;
-        dataTable.setText(row, 0, INSERTION);
-        dataTable.setWidget(row, 1, plusBasePair);
-        dataTable.setText(row, 2, "bp");
-        row++;
-        dataTable.setText(row, 0, DELETION);
-        dataTable.setWidget(row, 1, minusBasePair);
-        dataTable.setText(row, 2, "bp");
+        showRow(nucleotideChangeRow, false);
+        showRow(insertionLengthRow, true);
+        showRow(insertionSequenceRow, true);
+        showRow(deletionLengthRow, true);
+        showRow(deletionSequenceRow, true);
         showHideBaseFields(true);
     }
 
     public void showTgFields() {
-        dataTable.resizeRows(0);
+        showRow(nucleotideChangeRow, false);
+        showRow(insertionLengthRow, false);
+        showRow(insertionSequenceRow, false);
+        showRow(deletionLengthRow, false);
+        showRow(deletionSequenceRow, false);
         showHideBaseFields(false);
     }
 
@@ -203,6 +218,10 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         positionEnd.setVisible(show);
         positionDash.setVisible(show);
         zfinAccessionBox.setVisible(show);
+    }
+
+    private void showRow(TableRowElement row, boolean show) {
+        row.getStyle().setDisplay(show ? Style.Display.TABLE_ROW : Style.Display.NONE);
     }
 
     public MutationDetailDnaChangeDTO getDto() {
@@ -219,6 +238,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             dto.setPositionEnd(dto.getPositionStart());
         dto.setNumberAddedBasePair(plusBasePair.getBoxValue());
         dto.setNumberRemovedBasePair(minusBasePair.getBoxValue());
+        dto.setInsertedSequence(insertedSequence.getBoxValue());
+        dto.setDeletedSequence(deletedSequence.getBoxValue());
         dto.setSequenceReferenceAccessionNumber(WidgetUtil.getStringFromField(zfinAccessionBox.getAccessionNumber()));
         dto.setExonNumber(exonNumber.getBoxValue());
         dto.setIntronNumber(intronNumber.getBoxValue());
@@ -259,6 +280,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         intronNumber.clear();
         plusBasePair.clear();
         minusBasePair.clear();
+        insertedSequence.clear();
+        deletedSequence.clear();
         zfinAccessionBox.clear();
         zfinAccessionBox.setFlagVisibility(false);
         clearError();
@@ -274,6 +297,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         fields.add(intronNumber);
         fields.add(plusBasePair);
         fields.add(minusBasePair);
+        fields.add(insertedSequence);
+        fields.add(deletedSequence);
         fields.add(zfinAccessionBox.getAccessionNumber());
         return fields;
     }
@@ -289,12 +314,16 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             positionEnd.clear();
             plusBasePair.clear();
             minusBasePair.clear();
+            insertedSequence.clear();
+            deletedSequence.clear();
             return;
         }
         nucleotideChangeList.setIndexForValue(dto.getChangeTermOboId());
         localizationTerm.setIndexForValue(dto.getLocalizationTermOboID());
         plusBasePair.setNumber(dto.getNumberAddedBasePair());
         minusBasePair.setNumber(dto.getNumberRemovedBasePair());
+        insertedSequence.setText(dto.getInsertedSequence());
+        deletedSequence.setText(dto.getDeletedSequence());
         positionStart.setNumber(dto.getPositionStart());
         positionEnd.setNumber(dto.getPositionEnd());
         exonNumber.setNumber(dto.getExonNumber());
