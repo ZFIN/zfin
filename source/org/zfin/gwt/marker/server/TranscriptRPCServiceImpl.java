@@ -448,7 +448,7 @@ public class TranscriptRPCServiceImpl extends ZfinRemoteServiceServlet implement
 
             InfrastructureService.insertUpdate(transcript, updateComment);
 
-            markerRepository.runMarkerNameFastSearchUpdate(transcript);
+         //   markerRepository.runMarkerNameFastSearchUpdate(transcript);
 
             session.flush();
             transaction.commit();
