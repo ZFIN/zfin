@@ -32,14 +32,14 @@ insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id,
 				       sfclg_end,
 				       sfclg_acc_num,
 				       sfclg_location_source,
-				       sfclg_fdb_db_id)
+				       sfclg_fdb_db_id, sfclg_evidence_code)
 select distinct dblink_linked_recid,
        		chrom,
 		start,
 		end,
 		accnum,
 		'NCBIStartEndLoader',
-		fdb_db_pk_id
+		fdb_db_pk_id, 'ZDB-TERM-170419-250'
   from db_link, tmp_ncbi, foreign_db, foreign_db_contains
   where dblink_Fdbcont_zdb_id = fdbcont_Zdb_id
   and dblink_acc_num = accnum

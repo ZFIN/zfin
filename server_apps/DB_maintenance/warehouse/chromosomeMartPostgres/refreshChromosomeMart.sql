@@ -16,14 +16,16 @@ insert into sequence_feature_chromosome_location_generated_bkup (sfclg_chromosom
     sfclg_end,
     sfclg_location_source,
     sfclg_location_subsource,
-    sfclg_fdb_db_id)
+    sfclg_fdb_db_id,
+    sfclg_evidence_code)
 select sfclg_chromosome, sfclg_data_zdb_id,
     sfclg_acc_num ,
     sfclg_start ,
     sfclg_end,
     sfclg_location_source,
     sfclg_location_subsource,
-    sfclg_fdb_db_id from sequence_feature_chromosome_location_generated
+    sfclg_fdb_db_id,
+    sfclg_evidence_code from sequence_feature_chromosome_location_generated
 where trim(sfclg_location_source) in ('other map location','General Load');
 
 delete from linkage_membership_search;
@@ -41,14 +43,16 @@ insert into sequence_feature_chromosome_location_generated (sfclg_chromosome, sf
     sfclg_end,
     sfclg_location_source,
     sfclg_location_subsource,
-    sfclg_fdb_db_id)
+    sfclg_fdb_db_id,
+    sfclg_evidence_code)
  select distinct sfclg_chromosome, sfclg_data_zdb_id,
     sfclg_acc_num ,
     sfclg_start ,
     sfclg_end,
     sfclg_location_source,
     sfclg_location_subsource,
-    sfclg_fdb_db_id from sequence_feature_chromosome_location_generated_temp
+    sfclg_fdb_db_id,
+    sfclg_evidence_code from sequence_feature_chromosome_location_generated_temp
 where trim(sfclg_location_source) in ('other map location','General Load');
 
 
