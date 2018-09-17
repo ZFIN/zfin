@@ -2,7 +2,7 @@
 --changeset sierra:CUR-840.sql
 
 alter table sequence_feature_chromosome_location
- add (sfcl_evidence_code text);
+ add sfcl_evidence_code text;
 
 update sequence_feature_chromosome_location 
  set sfcl_evidence_code = 'ZDB-TERM-170419-250'
@@ -13,10 +13,10 @@ alter table sequence_feature_chromosome_location
  set not null;
 
 alter table sequence_feature_chromosome_location 
- add constraint evidence_code_fk (sfcl_evidence_code) 
+ add constraint evidence_code_fk foreign key (sfcl_evidence_code) 
  references term (term_zdb_id);
 
 alter table sequence_feature_chromosome_location
  add constraint evidence_code_one_of_three_check 
- check (sfcl_evidence_code in ('ZDB-TERM-170419-250','ZDB-TERM-170419-251','ZDB-TERM-170419-312');
+ check (sfcl_evidence_code in ('ZDB-TERM-170419-250','ZDB-TERM-170419-251','ZDB-TERM-170419-312'));
 
