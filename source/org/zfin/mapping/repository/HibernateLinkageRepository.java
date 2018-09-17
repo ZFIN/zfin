@@ -431,10 +431,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
                 panelCount.setPanel(panel);
                 panelCount.setLg((String) row[5]);
                 panelCount.setMarkerType((String) row[3]);
-                if (ZfinPropertiesEnum.USE_POSTGRES.toString().equals("true"))
-                    panelCount.setCount(((BigInteger) row[6]).longValue());
-                else
-                    panelCount.setCount(((BigDecimal) row[6]).longValue());
+                panelCount.setCount(((BigInteger) row[6]).longValue());
                 panelCountList.add(panelCount);
             }
             return panelCountList;

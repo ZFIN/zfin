@@ -237,10 +237,6 @@ public class CloneRPCServiceImpl extends ZfinRemoteServiceServlet implements Clo
             clone.setName(cloneDTO.getName());
 
             InfrastructureService.insertUpdate(clone, "Name", oldName, clone.getName());
-            //run regen script
-            if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-                markerRepository.runMarkerNameFastSearchUpdate(clone);
-            }
         }
 
 

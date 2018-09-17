@@ -5,8 +5,6 @@ import org.zfin.util.ReportGenerator
 import static com.xlson.groovycsv.CsvParser.parseCsv
 
 
-
-
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 DOWNLOAD_URL = "ftp://ftp.pantherdb.org/sequence_classifications/12.0/PANTHER_Sequence_Classification_files/PTHR12.0_zebrafish"
 def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
@@ -14,18 +12,13 @@ def out = new BufferedOutputStream(file)
 out << new URL(DOWNLOAD_URL).openStream()
 out.close()
 
-static Process dbaccess (String dbname, String sql) {
-    def usePostgres = System.getenv()['USE_POSTGRES']
-    println usePostgres
-    sql = sql .replace("\n","")
-    sql = sql .replace("\\copy","\n  \\copy")
+static Process dbaccess(String dbname, String sql) {
+    sql = sql.replace("\n", "")
+    sql = sql.replace("\\copy", "\n  \\copy")
     println sql
 
     def proc
-    if (usePostgres == 'true')
-        proc = "psql -d $dbname -a".execute()
-    else
-        proc = "dbaccess -a $dbname".execute()
+    proc = "psql -d $dbname -a".execute()
     proc.getOutputStream().with {
         write(sql.bytes)
         close()
@@ -38,13 +31,13 @@ static Process dbaccess (String dbname, String sql) {
     proc
 }
 
-static Process psql (String dbname, String sql) {
+static Process psql(String dbname, String sql) {
     return dbaccess(dbname, sql)
 }
 
 
 println "done"
-File inputFile=new File("PTHR12.0_zebrafish")
+File inputFile = new File("PTHR12.0_zebrafish")
 OUTFILE = "panther.unl"
 PRE_FILE = "prepanther.unl"
 POST_FILE = "postpanther.unl"
@@ -52,14 +45,14 @@ POST_FILE = "postpanther.unl"
 
 def pantherIDs = parseCsv(new FileReader(inputFile), separator: '|')
 new File(OUTFILE).withWriter { outFile ->
-pantherIDs.each { csv ->
+    pantherIDs.each { csv ->
 
         def zfinID = csv[1].substring(csv[1].lastIndexOf('=') + 1)
         def pantid = csv[2].split('\t')
         def colon = (pantid[2].indexOf(':'))
         def panthid = pantid[2]
         def pantherID = panthid.substring(0, colon)
-      def fdbcontid='ZDB-FDBCONT'
+        def fdbcontid = 'ZDB-FDBCONT'
         if (zfinID.startsWith('ZDB')) {
             outFile.writeLine("$zfinID|$zfinID|$pantherID|$fdbcontid")
         }

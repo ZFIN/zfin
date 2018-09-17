@@ -633,9 +633,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         InfrastructureService.insertUpdate(marker, updateComment);
-        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-            runMarkerNameFastSearchUpdate(marker);
-        }
         return markerAlias;
     }
 
@@ -674,11 +671,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         currentSession().flush();
 
         currentSession().refresh(marker);
-
-        // run the fast search table script so the alias is not showing up any more.
-        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-            runMarkerNameFastSearchUpdate(marker);
-        }
     }
 
     public void deleteMarkerRelationship(MarkerRelationship mrel) {
@@ -821,11 +813,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         updateComment += StringUtils.isNotBlank(attributionZdbID) ? (" with attribution " + attributionZdbID) : " without attribution";
         InfrastructureService.insertUpdate(marker, updateComment);
 
-        //accessions will end up in the fast search table associated with the marker
-        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-            runMarkerNameFastSearchUpdate(marker);
-        }
-
         return mdb;
     }
 
@@ -875,21 +862,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (MarkerFamilyName) criteria.uniqueResult();
     }
 
-    /**
-     * This executes the regen_names_marker() procedure.
-     * Since Informix Dialect does not support stored procedures
-     * we create our own callable statement and then execute it
-     * via straight JDBC.
-     *
-     * @param marker Marker
-     */
-    public void runMarkerNameFastSearchUpdate(final Marker marker) {
-        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-            InformixUtil.runInformixProcedure("regen_names_marker", marker.getZdbID());
-        }
-
-    }
-
     public void createMarker(Marker marker, Publication pub, boolean insertUpdate) {
         if (marker.getName() == null) {
             throw new RuntimeException("Cannot create a new marker without a name.");
@@ -920,10 +892,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
             infrastructureRepository.insertUpdatesTable(marker, "New " + marker.getType().name(), "");
         }
 
-        // run procedure for fast search table
-        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-            InformixUtil.runInformixProcedure("regen_names_marker", marker.getZdbID());
-        }
     }
 
     public void createMarker(Marker marker, Publication pub) {
@@ -1600,9 +1568,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         history.setEvent(MarkerHistory.Event.REASSIGNED);
         MarkerAlias alias = getMarkerRepository().addMarkerAlias(marker, marker.getAbbreviation(), publication);
         history.setMarkerAlias(alias);
-        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-            getMarkerRepository().runMarkerNameFastSearchUpdate(marker);
-        }
         getInfrastructureRepository().insertMarkerHistory(history);
         infrastructureRepository.insertRecordAttribution(alias.getZdbID(), publication.getZdbID());
     }
@@ -3152,11 +3117,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String updateComment = "Adding dblink " + mdb.getReferenceDatabase().getForeignDB().getDisplayName() + ":" + mdb.getAccessionNumber();
         updateComment += StringUtils.isNotBlank(attributionZdbID) ? (" with attribution " + attributionZdbID) : " without attribution";
         InfrastructureService.insertUpdate(marker, updateComment);
-
-        //accessions will end up in the fast search table associated with the marker
-        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-            runMarkerNameFastSearchUpdate(marker);
-        }
 
         return mdb;
     }

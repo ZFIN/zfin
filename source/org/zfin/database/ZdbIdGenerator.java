@@ -174,10 +174,7 @@ public class ZdbIdGenerator implements IdentifierGenerator, Configurable {
     }
 
     private void setQueryToRetrieveID() {
-        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("true"))
-            query = "select get_id('" + objectType + "') ";
-        else
-            query = "execute function get_id('" + objectType + "') ";
+        query = "select get_id('" + objectType + "') ";
     }
 
     private Serializable doWorkInCurrentTransaction(final String query) throws SQLException {

@@ -84,9 +84,7 @@ public class UpdatesCheckFilter implements Filter {
             // the current threadLocal
             try {
                 HibernateUtil.closeSession();
-                if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false"))
-                    SysmasterHibernateUtil.closeSession();
-            } catch (Exception ee){
+            } catch (Exception ee) {
                 logger.warn(ee);
             }
 //            callSmtpAppender((HttpServletRequest) request, locks);

@@ -62,8 +62,6 @@ public class ZfinActionServlet extends DispatcherServlet {
             public void run() {
                 WebHostDatabaseStatisticsCache.getInstance().cacheAll();
                 HibernateUtil.closeSession();
-                if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false"))
-                    SysmasterHibernateUtil.closeSession();
             }
         };
         t.start();
@@ -72,8 +70,6 @@ public class ZfinActionServlet extends DispatcherServlet {
     private void initDatabase() {
         // initialize Hibernate
         HibernateUtil.init();
-        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false"))
-            SysmasterHibernateUtil.init();
         Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
         stats.setStatisticsEnabled(true);
     }

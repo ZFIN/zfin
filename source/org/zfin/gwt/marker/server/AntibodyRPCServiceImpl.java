@@ -175,10 +175,6 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
             antibody.setName(dto.getName());
 
             InfrastructureService.insertUpdate(antibody, "Antibody Name", oldName, antibody.getName());
-            //run regen script
-            if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-                markerRepository.runMarkerNameFastSearchUpdate(antibody);
-            }
         }
 
         HibernateUtil.currentSession().update(antibody);

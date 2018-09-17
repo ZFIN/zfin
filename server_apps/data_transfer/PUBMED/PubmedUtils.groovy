@@ -66,18 +66,13 @@ class PubmedUtils {
         }
     }
 
-    static Process dbaccess (String dbname, String sql) {
-        def usePostgres = System.getenv()['USE_POSTGRES']
-        println usePostgres 
-        sql = sql .replace("\n","")
-        sql = sql .replace("\\copy","\n  \\copy")
+    static Process dbaccess(String dbname, String sql) {
+        sql = sql.replace("\n", "")
+        sql = sql.replace("\\copy", "\n  \\copy")
         println sql
 
         def proc
-        if (usePostgres == 'true')
-            proc = "psql -d $dbname -a".execute()
-        else
-            proc = "dbaccess -a $dbname".execute()
+        proc = "psql -d $dbname -a".execute()
         proc.getOutputStream().with {
             write(sql.bytes)
             close()
@@ -90,7 +85,7 @@ class PubmedUtils {
         proc
     }
 
-    static Process psql (String dbname, String sql) {
+    static Process psql(String dbname, String sql) {
         return dbaccess(dbname, sql)
     }
 

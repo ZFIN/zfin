@@ -208,7 +208,7 @@ public class SequenceTargetingReagentViewController {
                 , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
         ));
         for (MarkerRelationshipPresentation targetGene : knockdownRelationships) {
-            InformixUtil.runInformixProcedure("regen_genox_marker", targetGene.getZdbId());
+            InformixUtil.runProcedure("regen_genox_marker", targetGene.getZdbId());
         }
         return knockdownRelationships.size();
     }

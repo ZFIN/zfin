@@ -176,8 +176,6 @@ public interface MarkerRepository {
 
     MarkerFamilyName getMarkerFamilyName(String name);
 
-    void runMarkerNameFastSearchUpdate(Marker marker);
-
     void createMarker(Marker marker, Publication publication, boolean insertUpdate);
 
     void createMarker(Marker marker, Publication publication);

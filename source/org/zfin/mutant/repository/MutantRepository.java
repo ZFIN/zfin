@@ -210,8 +210,6 @@ public interface MutantRepository {
     List<PhenotypeStatementWarehouse> getPhenotypeStatementsByGenotype(Genotype genotype);
     List<PhenotypeStatementWarehouse> getPhenotypeStatementsByFishExperiment(FishExperiment fishExperiment);
 
-    void runFeatureNameFastSearchUpdate(Feature feature);
-
     /**
      * Returns list of phenotype statements that are annotated with a term marked secondary.
      *

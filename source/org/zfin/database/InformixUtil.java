@@ -25,7 +25,7 @@ public class InformixUtil {
      * @param procedureName informix procedure name
      * @param arguments     array of arguments that are passed into the procedure call.
      */
-    public static void runInformixProcedure(final String procedureName, final String... arguments) {
+    public static void runProcedure(final String procedureName, final String... arguments) {
         final LoggingUtil loggingUtil = new LoggingUtil(LOG);
         Session session = currentSession();
         // ensure that all records are being processed before this call.
@@ -33,10 +33,7 @@ public class InformixUtil {
         session.doWork(connection -> {
             CallableStatement statement = null;
             StringBuffer sql = new StringBuffer();
-            if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("true"))
-                sql = sql.append("SELECT ");
-            else
-                sql = sql.append("EXECUTE PROCEDURE ");
+            sql = sql.append("SELECT ");
             sql.append(procedureName);
             if (arguments != null) {
                 sql.append("(");
@@ -87,10 +84,7 @@ public class InformixUtil {
         String value = session.doReturningWork(connection -> {
             CallableStatement statement = null;
             StringBuffer sql = new StringBuffer();
-            if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("true"))
-                sql = sql.append("SELECT ");
-            else
-                sql = sql.append("EXECUTE PROCEDURE ");
+            sql = sql.append("SELECT ");
             sql.append(functionName);
             if (arguments != null) {
                 sql.append("(");

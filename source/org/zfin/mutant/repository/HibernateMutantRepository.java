@@ -891,38 +891,6 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<PhenotypeStatementWarehouse>) query.list();
     }
 
-    public void runFeatureNameFastSearchUpdate(final Feature feature) {
-        if (Boolean.valueOf(ZfinPropertiesEnum.USE_POSTGRES.value())) {
-            return;
-        }
-        Session session = currentSession();
-        session.doWork(new Work() {
-            @Override
-            public void execute(Connection connection) throws SQLException {
-                CallableStatement statement = null;
-                String sql = "execute procedure regen_names_feature(?)";
-                try {
-                    statement = connection.prepareCall(sql);
-                    String zdbID = feature.getZdbID();
-                    statement.setString(1, zdbID);
-                    statement.execute();
-                    logger.info("Execute stored procedure: " + sql + " with the argument " + zdbID);
-                } catch (SQLException e) {
-                    logger.error("Could not run: " + sql, e);
-                    logger.error(DbSystemUtil.getLockInfo());
-                } finally {
-                    if (statement != null) {
-                        try {
-                            statement.close();
-                        } catch (SQLException e) {
-                            logger.error(e);
-                        }
-                    }
-                }
-            }
-        });
-    }
-
     /**
      * Returns list of phenotype statements that are annotated with a term marked secondary.
      *

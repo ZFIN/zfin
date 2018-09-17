@@ -342,9 +342,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), pubZdbID, RecordAttribution.SourceType.STANDARD);
 
         HibernateUtil.flushAndCommitCurrentSession();
-        mutantRepository.runFeatureNameFastSearchUpdate(feature);
-
-
     }
 
     public void addFeatureSequence(String sequence, String ftrZdbID, String pubZdbID) throws ValidationException {

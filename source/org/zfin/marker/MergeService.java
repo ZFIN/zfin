@@ -90,11 +90,6 @@ public class MergeService {
         );
 
 
-        // regen
-        if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-            markerRepository.runMarkerNameFastSearchUpdate(markerToMergeInto);
-        }
-
         // this may be unnecessary
         HibernateUtil.currentSession().update(markerToMergeInto);
 

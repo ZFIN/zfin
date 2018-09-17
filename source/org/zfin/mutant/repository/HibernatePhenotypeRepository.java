@@ -24,7 +24,6 @@ import org.zfin.publication.presentation.PublicationLink;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.math.BigInteger;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -322,7 +321,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param phenotypeExperiment Phenotype
      */
     public void runRegenGenotypeFigureScript(PhenotypeExperiment phenotypeExperiment) {
-        InformixUtil.runInformixProcedure("regen_genofig_phenox", phenotypeExperiment.getId() + "");
+        InformixUtil.runProcedure("regen_genofig_phenox", phenotypeExperiment.getId() + "");
     }
 
     /**

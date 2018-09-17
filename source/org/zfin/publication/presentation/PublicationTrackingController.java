@@ -486,7 +486,7 @@ public class PublicationTrackingController {
 
         // make sure all the expression data will appear on the all-figure-view page we
         // link to in the email
-        InformixUtil.runInformixProcedure("regen_expression_mart_per_pub", id);
+        InformixUtil.runProcedure("regen_expression_mart_per_pub", id);
 
         boolean sent = mailer.sendHtmlMail(
                 "ZFIN Author Notification",

@@ -37,7 +37,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
 import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -291,7 +290,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         );
         infrastructureRepository.deleteActiveDataByZdbID(zdbID);
         HibernateUtil.flushAndCommitCurrentSession();
-        InformixUtil.runInformixProcedure("regen_construct_marker", constructRelationshipDTO.getConstructDTO().getZdbID() + "");
+        InformixUtil.runProcedure("regen_construct_marker", constructRelationshipDTO.getConstructDTO().getZdbID() + "");
     }
 
     //
@@ -421,11 +420,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
             //accession numbers end up in the name tables, so a regen will make the accession
             //search in markerselect work for this new sequence.
-            if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-
-                    markerRepository.runMarkerNameFastSearchUpdate(marker);
-                }
-
             transaction.commit();
             return dbLinkDTO;
         } catch (Exception e) {
@@ -459,12 +453,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                     + "' with attribution: " + pubZdbID;
 
             InfrastructureService.insertUpdate(marker, updateComment);
-
-            //accession numbers end up in the name tables, so a regen will make the accession
-            //search in markerselect work for this new sequence.
-            if (ZfinPropertiesEnum.USE_POSTGRES.value().equals("false")) {
-                markerRepository.runMarkerNameFastSearchUpdate(marker);
-            }
 
             transaction.commit();
             return dbLinkDTO;
@@ -1230,7 +1218,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         infrastructureRepository.insertPublicAttribution(constructRelationship.getZdbID(), constructRelationshipDTO.getPublicationZdbID());
 //        infrastructureRepository.insertUpdatesTable(markerRelationship.getZdbID(), "ConstructMarkerRelationship", markerRelationship.toString(), "Created construct marker relationship");
         HibernateUtil.flushAndCommitCurrentSession();
-        //InformixUtil.runInformixProcedure("regen_construct_marker", construct.getZdbID() + "");
+        //InformixUtil.runProcedure("regen_construct_marker", construct.getZdbID() + "");
     }
 
     @Override
