@@ -252,7 +252,7 @@ public class TranscriptService {
         HibernateUtil.currentSession().save(transcript);
         HibernateUtil.currentSession().flush();
         //finally, run the regen names script
-        markerRepository.runMarkerNameFastSearchUpdate(transcript);
+      //  markerRepository.runMarkerNameFastSearchUpdate(transcript);
 
         return transcript;
     }
