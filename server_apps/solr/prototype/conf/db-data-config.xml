@@ -4520,6 +4520,14 @@ and child.term_ontology = 'disease_ontology';
                     where="pub_zdb_id=publication.id"
             />
 
+            <entity name="publication_replaced_ids"
+                    query="select zrepld_old_zdb_id as related_accession, zrepld_new_zdb_id as current_id from zdb_replaced_data
+                           union
+                           select wd_old_zdb_id as related_accession, wd_new_zdb_id as current_id from withdrawn_data"
+                    where="current_id=publication.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
+
             <entity name="pub_gene_slow"
                     query="
                         select distinct recattrib_source_zdb_id as pub_zdb_id,
