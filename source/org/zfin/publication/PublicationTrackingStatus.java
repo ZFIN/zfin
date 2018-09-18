@@ -1,5 +1,7 @@
 package org.zfin.publication;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import javax.persistence.*;
 import java.util.Arrays;
 
@@ -41,6 +43,8 @@ public class PublicationTrackingStatus {
             this.display = display;
         }
 
+        @Override
+        @JsonValue
         public String toString() {
             return display;
         }

@@ -114,7 +114,7 @@ public class PublicationTrackingHistory implements PublicationEvent {
     @Override
     public String getDisplay() {
         StringBuilder display = new StringBuilder();
-        display.append("Status changed to <b>").append(status.getName()).append("</b>");
+        display.append("Status changed to <b>").append(status.getName().toString()).append("</b>");
         if (owner != null) {
             display.append("<br>Owner changed to <b>")
                     .append(owner.getFirstName())
