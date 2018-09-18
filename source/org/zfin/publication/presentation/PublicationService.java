@@ -6,8 +6,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
-import org.zfin.framework.presentation.EntityPresentation;
-import org.zfin.gwt.root.ui.PrivateNoteEntry;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
@@ -105,7 +103,7 @@ public class PublicationService {
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
         PublicationTrackingHistory status = publicationRepository.currentTrackingStatus(publication);
         if (status != null) {
-            sb.append(status.getStatus().getName())
+            sb.append(status.getStatus().getName().toString())
                     .append(", ")
                     .append(DateFormat.getDateInstance(DateFormat.SHORT).format(status.getDate().getTime()));
         }
