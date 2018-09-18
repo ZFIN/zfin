@@ -35,6 +35,8 @@ public interface MarkerRPCService extends RemoteService {
 
     // note methods
 
+    void removeCuratorNote(NoteDTO noteDTO);
+
     NoteDTO addCuratorNote(NoteDTO noteDTO);
 
     void editCuratorNote(NoteDTO noteDTO);

@@ -37,6 +37,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -71,6 +72,20 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         transaction.commit();
         noteDTO.setZdbID(dataNote.getZdbID());
         return noteDTO;
+    }
+
+    public void removeCuratorNote(NoteDTO noteDTO) {
+        logger.info("remove curator note: " + noteDTO.getNoteData() + " - " + noteDTO.getZdbID());
+        Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
+        Set<DataNote> dataNotes = marker.getDataNotes();
+        for (DataNote dataNote : dataNotes) {
+            if (dataNote.getZdbID().equals(noteDTO.getZdbID())) {
+                InfrastructureService.insertUpdate(marker, "removed curator note " + dataNote.getNote());
+                HibernateUtil.currentSession().delete(dataNote);
+                return;
+            }
+        }
+        logger.error("note not found with zdbID: " + noteDTO.getZdbID());
     }
 
     /**
@@ -290,7 +305,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         );
         infrastructureRepository.deleteActiveDataByZdbID(zdbID);
         HibernateUtil.flushAndCommitCurrentSession();
-        InformixUtil.runProcedure("regen_construct_marker", constructRelationshipDTO.getConstructDTO().getZdbID() + "");
     }
 
     //
@@ -1218,7 +1232,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         infrastructureRepository.insertPublicAttribution(constructRelationship.getZdbID(), constructRelationshipDTO.getPublicationZdbID());
 //        infrastructureRepository.insertUpdatesTable(markerRelationship.getZdbID(), "ConstructMarkerRelationship", markerRelationship.toString(), "Created construct marker relationship");
         HibernateUtil.flushAndCommitCurrentSession();
-        //InformixUtil.runProcedure("regen_construct_marker", construct.getZdbID() + "");
+        //InformixUtil.runInformixProcedure("regen_construct_marker", construct.getZdbID() + "");
     }
 
     @Override
