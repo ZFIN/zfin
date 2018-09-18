@@ -175,14 +175,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void runRegenNamesMarkerProcedure() {
-        boolean success = true;
-        Marker marker = markerRepository.getGeneByID("ZDB-GENE-990415-8"); // pax2a
-        markerRepository.runMarkerNameFastSearchUpdate(marker);
-        assertTrue("Successful execution of stored procedure", success);
-    }
-
-    @Test
     public void markerHistory() {
 
         // egr2b
