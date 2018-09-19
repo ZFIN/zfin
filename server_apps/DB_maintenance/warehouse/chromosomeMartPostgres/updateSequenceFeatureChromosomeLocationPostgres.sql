@@ -128,7 +128,7 @@ insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id,
 				       sfclg_end,
 				       sfclg_acc_num,
 				       sfclg_location_source,
-				       sfclg_fdb_db_id)
+				       sfclg_fdb_db_id,sfclg_evidence_code)
 select distinct dblink_linked_recid,
        		chrom1,
 		start,
@@ -149,7 +149,7 @@ insert into sequence_feature_chromosome_location_generated (sfclg_data_Zdb_id,
 				       sfclg_end,
 				       sfclg_acc_num,
 				       sfclg_location_source,
-				       sfclg_fdb_db_id)
+				       sfclg_fdb_db_id,sfclg_evidence_code)
 select distinct dblink_linked_recid,
        		chrom1,
 		start,
