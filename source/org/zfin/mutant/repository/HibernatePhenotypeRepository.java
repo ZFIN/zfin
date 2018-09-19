@@ -23,7 +23,8 @@ import org.zfin.publication.presentation.FigurePresentation;
 import org.zfin.publication.presentation.PublicationLink;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-
+import java.lang.Long;
+import java.math.BigInteger;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -990,25 +991,21 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     @Override
     public List<DiseaseAnnotationModel> getDiseaseAnnotationModelsByGene(Marker gene) {
-        Session session = HibernateUtil.currentSession();
-        String hql1 = "select distinct model from DiseaseAnnotationModel model, GenotypeFeature genoFeat, FeatureMarkerRelationship featMrkr " +
-                      " where model.fishExperiment.fish.genotype = genoFeat.genotype " +
-                      "   and genoFeat.feature = featMrkr.feature " +
-                      "   and featMrkr.marker.zdbID = :geneZdbID ";
-        Query query = session.createQuery(hql1);
-        query.setParameter("geneZdbID", gene.getZdbID());
+        String sql = "select distinct damo_pk_id " +
+                     "  from disease_annotation_model, mutant_fast_search " +
+                     " where mfs_genox_zdb_id = damo_genox_zdb_id " +
+                     "   and mfs_mrkr_zdb_id = :geneZdbID ";
 
-        List<DiseaseAnnotationModel> diseaseAnnotationModels = (List<DiseaseAnnotationModel>) query.list();
+        List<BigInteger> modelZdbIds = (List<BigInteger>) HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("geneZdbID", gene.getZdbID())
+                .list();
 
-        String hql2 = "select distinct model from DiseaseAnnotationModel model, FishExperiment fishExp, FishStr fishStr, MarkerRelationship mrkrRel " +
-                      " where model.fishExperiment = fishExp " +
-                      "   and fishExp.fish.zdbID = fishStr.fishID " +
-                      "   and fishStr.strID = mrkrRel.firstMarker.zdbID " +
-                      "   and mrkrRel.secondMarker.zdbID = :geneZdbID ";
-        Query query2 = session.createQuery(hql2);
-        query2.setParameter("geneZdbID", gene.getZdbID());
-
-        diseaseAnnotationModels.addAll((List<DiseaseAnnotationModel>) query2.list());
+        List<DiseaseAnnotationModel> diseaseAnnotationModels = new ArrayList<>();
+        for (BigInteger id : modelZdbIds) {
+            long zdbId = id.longValue();
+            DiseaseAnnotationModel model = (DiseaseAnnotationModel) HibernateUtil.currentSession().get(DiseaseAnnotationModel.class, zdbId);
+            diseaseAnnotationModels.add(model);
+        }
 
         return diseaseAnnotationModels;
     }
