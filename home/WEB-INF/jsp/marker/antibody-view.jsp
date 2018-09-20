@@ -7,7 +7,8 @@
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${formBean.editURL}"
-                   deleteURL="${formBean.deleteURL}"/>
+                   deleteURL="${formBean.deleteURL}"
+                   mergeURL="${formBean.mergeURL}" />
 
 
 <div style="float: right">
