@@ -8,13 +8,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.TransgenicSuffix;
-import org.zfin.gwt.root.ui.Revertible;
-import org.zfin.gwt.root.ui.StringTextBox;
-import org.zfin.gwt.root.ui.ZfinAccessionBox;
+import org.zfin.gwt.root.ui.*;
 
 public class FeatureAddView extends AbstractFeatureView implements Revertible {
 
@@ -33,6 +32,17 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
     TextArea curatorNoteBox;
     @UiField
     TextArea publicNoteBox;
+    @UiField
+    StringTextBox featureChromosome;
+    @UiField
+    StringTextBox featureChrAssembly;
+    @UiField
+    NumberTextBox featureStartLoc;
+    @UiField
+    NumberTextBox featureEndLoc;
+    @UiField
+    StringListBox featureEvidenceCode;
+
 
     public FeatureAddView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -43,8 +53,13 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         }
         featureSuffixBox.addEnumValues(TransgenicSuffix.values());
         mutageeBox.addEnumValues(Mutagee.values());
+        setFeatureEvidenceCodes();
     }
-
+    private void setFeatureEvidenceCodes() {
+        featureEvidenceCode.addItem("TAS");
+        featureEvidenceCode.addItem("IC");
+        featureEvidenceCode.addItem("IEA");
+    }
     @UiHandler("saveButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
         super.onclickSaveButton(event);
@@ -62,6 +77,10 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         publicNoteBox.setEnabled(true);
         curatorNoteBox.setEnabled(true);
         featureAliasBox.setEnabled(true);
+        featureChromosome.setEnabled(true);
+        featureChrAssembly.setEnabled(true);
+        featureStartLoc.setEnabled(true);
+        featureEndLoc.setEnabled(true);
         featureSequenceBox.getAccessionNumber().setEnabled(true);
         handleDirty();
     }
@@ -79,6 +98,14 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         featureNameBox.clear();
         featureAliasBox.setEnabled(false);
         featureAliasBox.clear();
+        featureChromosome.setEnabled(false);
+        featureChromosome.clear();
+        featureChrAssembly.setEnabled(false);
+        featureChrAssembly.clear();
+        featureStartLoc.setEnabled(false);
+        featureStartLoc.clear();
+        featureEndLoc.setEnabled(false);
+        featureEndLoc.clear();
         featureSequenceBox.getAccessionNumber().setEnabled(false);
         featureSequenceBox.getAccessionNumber().clear();
         featureSequenceBox.setFlagVisibility(false);
@@ -117,6 +144,11 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         featureSequenceBox.getAccessionNumber().setEnabled(false);
         publicNoteBox.setEnabled(false);
         curatorNoteBox.setEnabled(false);
+        /*featureChromosome.setEnabled(false);
+        featureChrAssembly.setEnabled(false);
+        featureStartLoc.setEnabled(false);
+        featureEndLoc.setEnabled(false);*/
+
     }
 
 

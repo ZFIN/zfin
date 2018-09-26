@@ -31,7 +31,9 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
 
     public void go() {
         setLabOfOriginsValues();
+
     }
+
 
     private void setLabOfOriginsValues() {
         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_LABS_OF_ORIGIN_WITH_PREFIX_START);
@@ -177,7 +179,23 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         featureDTO.setKnownInsertionSite(view.knownInsertionCheckBox.getValue());
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         featureDTO.setTransgenicSuffix(view.featureSuffixBox.getSelectedText());
-        featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
+       featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
+      /*  featureDTO.setFeatureChromosome(view.featureChromosome.getText());
+        featureDTO.setFeatureAssembly(view.featureChrAssembly.getValue());
+        featureDTO.setFeatureStartLoc(view.featureStartLoc.getBoxValue());
+        featureDTO.setFeatureEndLoc(view.featureEndLoc.getBoxValue());
+        String itemText=view.featureEvidenceCode.getItemText(view.featureEvidenceCode.getSelectedIndex());
+        System.out.println(itemText);
+
+        if (itemText.equals("TAS")) {
+            featureDTO.setEvidence("ZDB-TERM-170419-250");
+        }
+        if (itemText.equals("IC")) {
+            featureDTO.setEvidence("ZDB-TERM-170419-251");
+        }
+        if (itemText.equals("IEA")) {
+            featureDTO.setEvidence("ZDB-TERM-170419-312");
+        }*/
 
         if (view.hasMutationDetails()) {
             featureDTO.setDnaChangeDTO(view.mutationDetailDnaView.getDto());

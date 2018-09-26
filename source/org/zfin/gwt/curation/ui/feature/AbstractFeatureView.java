@@ -38,6 +38,16 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiField
     StringListBox mutagenBox;
     @UiField
+    StringTextBox featureChromosome;
+    @UiField
+    StringTextBox featureChrAssembly;
+    @UiField
+    NumberTextBox featureStartLoc;
+    @UiField
+    NumberTextBox featureEndLoc;
+    @UiField
+    StringListBox featureEvidenceCode;
+    @UiField
     StringListBox labOfOriginBox;
     @UiField
     StringTextBox lineNumberBox;
@@ -137,6 +147,11 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         handleChanges();
     }
 
+    @UiHandler("featureChromosome")
+    void onKeyUpChr(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
     protected void handleChanges() {
         clearErrors();
         presenter.handleDirty();
@@ -219,6 +234,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         featureSuffixBox.setVisible(false);
         featureNameBox.setVisible(true);
         featureNameBox.setEnabled(false);
+        featureChromosome.setText("");
 
         switch (featureTypeSelected) {
             case TRANSGENIC_INSERTION:
@@ -275,6 +291,17 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         mutagenBox.setDirty(false);
         lineNumberBox.clear();
         lineNumberBox.setDirty(false);
+
+        featureEvidenceCode.setSelectedIndex(0);
+        featureEvidenceCode.setDirty(false);
+        featureChromosome.setDirty(false);
+        featureChromosome.clear();
+        featureChrAssembly.setDirty(false);
+        featureChrAssembly.clear();
+        featureStartLoc.setDirty(false);
+        featureStartLoc.clear();
+        featureEndLoc.setDirty(false);
+        featureEndLoc.clear();
         featureDisplayName.clear();
         featureDisplayName.setDirty(false);
         mutationDetailDnaView.resetGUI();
@@ -301,7 +328,12 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         featureTypeBox.setEnabled(false);
         labOfOriginBox.setEnabled(false);
         labDesignationBox.setEnabled(false);
-        lineNumberBox.setEnabled(false);
+       /* lineNumberBox.setEnabled(false);
+        featureChromosome.setEnabled(false);
+        featureChrAssembly.setEnabled(false);
+        featureStartLoc.setEnabled(false);
+        featureEndLoc.setEnabled(false);
+        featureEvidenceCode.setEnabled(false);*/
         dominantCheckBox.setEnabled(false);
         featureNameBox.setEnabled(false);
         mutageeBox.setEnabled(false);

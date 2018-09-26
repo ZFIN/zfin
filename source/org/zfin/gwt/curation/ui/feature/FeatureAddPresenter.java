@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui.feature;
 
 
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
@@ -109,8 +110,22 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
     public FeatureDTO createDTOFromGUI() {
         FeatureDTO featureDTO = super.createDTOFromGUI(view);
 
-        featureDTO.setFeatureSequence(view.featureSequenceBox.getAccession());
+       featureDTO.setFeatureSequence(view.featureSequenceBox.getAccession());
+        featureDTO.setFeatureChromosome(view.featureChromosome.getText());
+        featureDTO.setFeatureAssembly(view.featureChrAssembly.getText());
+        featureDTO.setFeatureStartLoc(view.featureStartLoc.getBoxValue());
+        featureDTO.setFeatureEndLoc(view.featureEndLoc.getBoxValue());
 
+        String itemText=view.featureEvidenceCode.getItemText(view.featureEvidenceCode.getSelectedIndex());
+        if (itemText.equals("TAS")) {
+            featureDTO.setEvidence("ZDB-TERM-170419-250");
+        }
+        if (itemText.equals("IC")) {
+            featureDTO.setEvidence("ZDB-TERM-170419-251");
+        }
+        if (itemText.equals("IEA")) {
+            featureDTO.setEvidence("ZDB-TERM-170419-312");
+        }
         if (StringUtils.isNotEmptyTrim(view.featureAliasBox.getText())) {
             featureDTO.setAlias(view.featureAliasBox.getText());
         }
@@ -146,6 +161,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
         final FeatureDTO featureDTO = createDTOFromGUI();
 
         String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
+        System.out.println(errorMessage);
         if (errorMessage != null) {
             setError(errorMessage);
             return;
@@ -171,6 +187,11 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
             public void onSuccess(final FeatureDTO result) {
                 //Window.alert("Feature successfully created");
                 view.featureTypeBox.setSelectedIndex(0);
+                view.featureChromosome.clear();
+                view.featureChrAssembly.clear();
+                view.featureStartLoc.clear();
+                view.featureEndLoc.clear();
+                view.featureDisplayName.clear();
                 view.message.setText("Feature created: " + result.getName() + " [" + result.getZdbID() + "]");
                 view.notWorking();
                 view.saveButton.setEnabled(false);
