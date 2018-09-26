@@ -8,6 +8,7 @@ import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
+import org.zfin.mapping.FeatureLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.Genotype;
@@ -53,6 +54,7 @@ public interface FeatureRepository {
      * Save a new Lab object. If it exists a runtime exception is thrown.
      */
     Organization getLabByFeature(Feature ftr);
+    FeatureLocation getLocationByFeature(Feature ftr);
 
     String getPrefixById(int labPrefixID);
 
@@ -81,6 +83,7 @@ public interface FeatureRepository {
     FeatureAssay addFeatureAssay(Feature feature, Mutagen mutagen, Mutagee mutagee);
 
     FeatureAssay getFeatureAssay(Feature feature);
+    FeatureLocation getFeatureLocation(Feature feature);
 
     List<Marker> getMarkersByFeature(Feature feature);
 
@@ -112,6 +115,7 @@ public interface FeatureRepository {
     void deleteFeatureDBLink(Feature feature, DBLink sequence);
 
     DataNote addFeatureDataNote(Feature feature, String noteData);
+
 
     List<String> getAllFeaturePrefixes();
     List<Feature> getSingleAffectedGeneAlleles();

@@ -12,6 +12,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityNotes;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.mapping.FeatureLocation;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
@@ -63,7 +64,11 @@ public class Feature implements EntityNotes, EntityZdbID {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feature_lab_prefix_id")
     private FeaturePrefix featurePrefix;
+
+
+
     @Column(name = "feature_abbrev", nullable = false)
+
     private String abbreviation;
     @Column(name = "feature_tg_suffix")
     private String transgenicSuffix;
@@ -101,7 +106,8 @@ public class Feature implements EntityNotes, EntityZdbID {
     private Set<FeatureAlias> aliases;
     @OneToOne(mappedBy = "feature", fetch = FetchType.EAGER)
     private FeatureAssay featureAssay;
-    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "feature", fetch = FetchType.EAGER)
     private Set<FeatureDBLink> dbLinks;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
@@ -181,6 +187,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     public void setUnspecifiedFeature(Boolean unspecifiedFeature) {
         isUnspecifiedFeature = unspecifiedFeature;
     }
+
 
 
     public FeaturePrefix getFeaturePrefix() {
@@ -305,6 +312,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     public void setGenotypeFeatures(Set<GenotypeFeature> genotypeFeatures) {
         this.genotypeFeatures = genotypeFeatures;
     }
+
 
 
     public int compareTo(Object otherFeature) {

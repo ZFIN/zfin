@@ -27,6 +27,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.FeatureLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.Genotype;
@@ -350,6 +351,21 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     }
 
+    public FeatureLocation getLocationByFeature(Feature ftr) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct fs  from  FeatureLocation fs " +
+                "     where fs.feature = :ftr " ;
+
+
+
+        Query query = session.createQuery(hql);
+        query.setParameter("ftr", ftr);
+        return ((FeatureLocation) query.uniqueResult());
+
+    }
+
+
+
     public String getPrefixById(int labPrefixID) {
         Session session = HibernateUtil.currentSession();
         String hqlLab1 = " select fp.prefixString from  FeaturePrefix fp where fp.featurePkID =:labPrefixID ";
@@ -517,6 +533,13 @@ public class HibernateFeatureRepository implements FeatureRepository {
         criteria.setMaxResults(1);
         FeatureAssay ftrAss = (FeatureAssay) criteria.uniqueResult();
         return ftrAss;
+    }
+    public FeatureLocation getFeatureLocation(Feature feature) {
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureLocation.class);
+        criteria.add(Restrictions.eq("feature", feature));
+        criteria.setMaxResults(1);
+        FeatureLocation ftrLocation = (FeatureLocation) criteria.uniqueResult();
+        return ftrLocation;
     }
 
     @Override

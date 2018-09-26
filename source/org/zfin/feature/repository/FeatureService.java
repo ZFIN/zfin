@@ -101,7 +101,7 @@ public class FeatureService {
 
     public static List<FeatureGenomeLocation> getPhysicalLocations(Feature feature) {
         List<FeatureGenomeLocation> locations = RepositoryFactory.getLinkageRepository().getGenomeLocation(feature);
-        Collections.sort(locations);
+        //Collections.sort(locations);
         CollectionUtils.filter(locations, new Predicate() {
             @Override
             public boolean evaluate(Object o) {
