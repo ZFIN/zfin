@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.server;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,8 +22,11 @@ import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.FeatureGenomeLocation;
+import org.zfin.mapping.FeatureLocation;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.Organization;
 import org.zfin.profile.repository.ProfileRepository;
@@ -51,6 +55,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     private static InfrastructureRepository infrastructureRepository = getInfrastructureRepository();
     private static FeatureRepository featureRepository = getFeatureRepository();
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
+    private static OntologyRepository ontologyRepository=RepositoryFactory.getOntologyRepository();
     private List<Organization> labsOfOrigin = null;
 
 
@@ -111,6 +116,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class, featureDTO.getZdbID());
         FeatureTypeEnum oldFeatureType = feature.getType();
         String oldFtrName = feature.getName();
+
         String newFtrName = featureDTO.getName();
         HibernateUtil.createTransaction();
         feature.setType(featureDTO.getFeatureType());
@@ -140,6 +146,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         feature.setName(featureDTO.getName());
 
 
+
         feature.setDominantFeature(featureDTO.getDominant());
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
         feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
@@ -156,7 +163,31 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (featureDTO.getMutagee() != null) {
             featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
         }
+        FeatureLocation fgl = featureRepository.getFeatureLocation(feature);
+        if (fgl==null){
+            if (featureDTO.getFeatureChromosome() != null) {
+                fgl = new FeatureLocation();
+                fgl.setFeature(feature);
+                fgl.setSfclChromosome(featureDTO.getFeatureChromosome());
+                fgl.setSfclAssembly(featureDTO.getFeatureAssembly());
+                fgl.setSfclStart(featureDTO.getFeatureStartLoc());
+                fgl.setSfclEnd(featureDTO.getFeatureEndLoc());
 
+                fgl.setSfclEvidence(ontologyRepository.getTermByZdbID(featureDTO.getEvidence()));
+            }
+        }
+        else {
+            if (featureDTO.getFeatureChromosome() != null) {
+                System.out.println(featureDTO.getFeatureChromosome());
+                fgl.setFeature(feature);
+                fgl.setSfclChromosome(featureDTO.getFeatureChromosome());
+                fgl.setSfclAssembly(featureDTO.getFeatureAssembly());
+                fgl.setSfclStart(featureDTO.getFeatureStartLoc());
+                fgl.setSfclEnd(featureDTO.getFeatureEndLoc());
+                fgl.setSfclEvidence(ontologyRepository.getTermByZdbID(featureDTO.getEvidence()));
+
+            }
+        }
         // get labs of origin for feature
         Organization existingLabOfOrigin = featureRepository.getLabByFeature(feature);
         if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin != null) {
@@ -463,7 +494,38 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 }
                 feature.getAliases().add(featureAlias);
             }
+
+
             getFeatureRepository().saveFeature(feature, publication);
+
+            if (StringUtils.isNotBlank((featureDTO.getFeatureChromosome()))){
+                FeatureLocation fgl = new FeatureLocation();
+                fgl.setFeature(feature);
+                fgl.setSfclChromosome(featureDTO.getFeatureChromosome());
+                fgl.setSfclAssembly(featureDTO.getFeatureAssembly());
+                fgl.setSfclStart(featureDTO.getFeatureStartLoc());
+                fgl.setSfclEnd(featureDTO.getFeatureEndLoc());
+
+               fgl.setSfclEvidence(ontologyRepository.getTermByZdbID(featureDTO.getEvidence()));
+               // fgl.setSfclEvidence(ontologyRepository.getTermByZdbID("ZDB-TERM-170419-250"));
+
+                HibernateUtil.currentSession().save(fgl);
+                if (publication != null) {
+                    PublicationAttribution pa = new PublicationAttribution();
+                    pa.setSourceZdbID(publication.getZdbID());
+                    pa.setDataZdbID(fgl.getZdbID());
+                    pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+                    pa.setPublication(publication);
+                    Set<PublicationAttribution> pubattr = new HashSet<>();
+                    pubattr.add(pa);
+
+
+                    currentSession().save(pa);
+
+                }
+                //feature.setFeatureLocation(fgl);
+            }
+
 
 
             if (StringUtils.isNotEmpty(featureDTO.getFeatureSequence())) {
