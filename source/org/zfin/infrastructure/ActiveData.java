@@ -233,6 +233,7 @@ public class ActiveData implements ZdbID {
         EREGION(DeleteRegionRule.class),
         RUN,
         SALIAS,
+        SFCL,
         SNP,
         SSLP,
         STAGE,
