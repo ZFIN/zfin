@@ -140,6 +140,7 @@
         <many-to-one name="attribution" column="sfclg_pub_zdb_id" class="org.zfin.publication.Publication" insert="false" update="false"/>
         <property name="gbrowseTrack" column="sfclg_gbrowse_track" type="gbrowseTrackType"/>
         <property name="assembly" column="sfclg_assembly" type="string"/>
+        <many-to-one name="evidence" column="sfclg_evidence_code" />
 
         <subclass name="MarkerGenomeLocation" discriminator-value="Mark">
             <many-to-one name="marker" column="sfclg_data_zdb_id" insert="false" update="false"/>
@@ -148,6 +149,26 @@
         <subclass name="FeatureGenomeLocation" discriminator-value="Feat">
             <many-to-one name="feature" column="sfclg_data_zdb_id" insert="false" update="false"/>
         </subclass>
+    </class>
+
+    <class name="org.zfin.mapping.FeatureLocation" table="sequence_feature_chromosome_location">
+        <id name="zdbID" type="string">
+            <column name="sfcl_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">SFCL</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+
+        <property name="sfclChromosome" column="sfcl_chromosome" type="string"/>
+        <many-to-one name="feature"  column="sfcl_feature_zdb_id"  />
+        <property name="sfclStart" column="sfcl_start_position" type="java.lang.Integer"/>
+        <property name="sfclEnd" column="sfcl_end_position" type="java.lang.Integer"/>
+        <property name="sfclAssembly" column="sfcl_assembly" type="string"/>
+        <many-to-one name="sfclEvidence" column="sfcl_evidence_code"/>
+
+
     </class>
 
 
