@@ -1,6 +1,10 @@
 package org.zfin.gwt.root.dto;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.zfin.marker.agr.EvidenceDTO;
+import org.zfin.util.JsonDateSerializer;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,8 +32,34 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
     protected FeatureTypeEnum featureType;
     protected String lineNumber;
     protected String labPrefix;
+
+    protected String evidence;
+    public String getFeatureAssembly() {
+        return featureAssembly;
+    }
+
+    public void setFeatureAssembly(String featureAssembly) {
+        this.featureAssembly = featureAssembly;
+    }
+
+
+
     protected List<String> featureAliases;
     protected String featureSequence;
+    protected String featureChromosome;
+    protected String featureAssembly;
+    protected Integer featureStartLoc;
+
+    public String getEvidence() {
+        return evidence;
+    }
+
+    public void setEvidence(String evidence) {
+        this.evidence = evidence;
+    }
+
+    protected Integer featureEndLoc;
+
     protected List<String> featureSequences;
     protected String displayNameForGenotypeBase;
     protected String displayNameForGenotypeSuperior;
@@ -55,6 +85,15 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
 
     protected String labOfOrigin;
     protected String transgenicSuffix;
+
+    public String getFeatureChromosome() {
+        return featureChromosome;
+    }
+
+    public void setFeatureChromosome(String featureChromosome) {
+        this.featureChromosome = featureChromosome;
+    }
+
     protected int labPrefixID;
 
     public FeatureDTO() {
@@ -78,6 +117,21 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
         this.optionalName = optionalName;
     }
 
+    public Integer getFeatureStartLoc() {
+        return featureStartLoc;
+    }
+
+    public void setFeatureStartLoc(Integer featureStartLoc) {
+        this.featureStartLoc = featureStartLoc;
+    }
+
+    public Integer getFeatureEndLoc() {
+        return featureEndLoc;
+    }
+
+    public void setFeatureEndLoc(Integer featureEndLoc) {
+        this.featureEndLoc = featureEndLoc;
+    }
 
     public List<String> getFeatureAliases() {
         return featureAliases;

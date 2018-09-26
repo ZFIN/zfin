@@ -43,6 +43,7 @@ public interface MarkerRPCService extends RemoteService {
 
     void editPublicNote(NoteDTO noteDTO);
 
+
     // self-attribution
 
     void addAttribution(String zdbID, String pubZdbID);

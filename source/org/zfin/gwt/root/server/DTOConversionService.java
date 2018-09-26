@@ -23,6 +23,7 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.mapping.FeatureLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
@@ -771,6 +772,29 @@ public class DTOConversionService {
                     featureDTO.setMutagen(feature.getFeatureAssay().getMutagen().toString());
                 }
             }
+            System.out.println(feature.getAbbreviation());
+            FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getLocationByFeature(feature);
+            if (ftrLocation != null){
+                System.out.println(ftrLocation.getSfclAssembly());
+                System.out.println(ftrLocation.getSfclChromosome());
+
+
+
+                    featureDTO.setFeatureChromosome(ftrLocation.getSfclChromosome().toString());
+                featureDTO.setFeatureAssembly(ftrLocation.getSfclAssembly().toString());
+                featureDTO.setFeatureStartLoc(ftrLocation.getSfclStart());
+                featureDTO.setFeatureEndLoc(ftrLocation.getSfclEnd());
+                featureDTO.setEvidence(ftrLocation.getSfclEvidence().getZdbID().toString());
+                if (ftrLocation.getSfclEvidence().getZdbID().equals("ZDB-TERM-170419-250")){
+                    featureDTO.setEvidence("TAS");
+                }
+                if (ftrLocation.getSfclEvidence().getZdbID().equals("ZDB-TERM-170419-251")){
+                    featureDTO.setEvidence("IC");
+                }
+
+                }
+
+
 
             Set<FeatureNote> featureNotes = feature.getExternalNotes();
             if (CollectionUtils.isNotEmpty(featureNotes)) {
@@ -1729,7 +1753,7 @@ public class DTOConversionService {
         fish.setGenotype(convertToGenotypeFromGenotypeDTO(newFish.getGenotypeDTO()));
         fish.setName(fish.getGenotype().getName());
         fish.setNameOrder(fish.getName());
-        fish.setOrder(0);
+       // fish.setOrder(0);
         fish.setHandle(fish.getGenotype().getHandle());
         String strName = "";
         if (CollectionUtils.isNotEmpty(newFish.getStrList())) {
