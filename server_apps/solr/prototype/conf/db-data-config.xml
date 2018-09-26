@@ -1179,11 +1179,9 @@
                     cacheImpl="SortedMapBackedCache"
             />
 
-            <!-- this probably shouldn't actually come in as alias because it will get boosted higher, but
-                 adding a sequence_alteration_alias field seems like a bit too much... -->
             <entity name="fish_feature_alias"
                     query="select
-                            dalias_alias as alias,
+                            dalias_alias as feature_alias,
                             fish_zdb_id
                             from fish
                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id

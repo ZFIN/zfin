@@ -545,6 +545,7 @@
         <field name="proper_name" type="abbrev" indexed="true" stored="true" termVectors="true" termPositions="true" termOffsets="true" />
         <field name="full_name" type="text" indexed="true" stored="true" required="true"  termVectors="true" termPositions="true" termOffsets="true" />
         <field name="alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+        <field name="feature_alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
         <field name="genotype_full_name" type="string" indexed="true" stored="true"/>
         <field name="ortholog_other_species_symbol" type="abbrev" indexed="true" stored="true" multiValued="true"   />
         <field name="ortholog_other_species_name" type="abbrev" indexed="true" stored="true" multiValued="true"   />
@@ -596,16 +597,13 @@
         <field name="prefix" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="institution" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="lab_of_origin" type="keyword" indexed="true" stored="true" multiValued="true"   />
-        <!--<field name="screen" type="keyword" indexed="true" stored="true" />-->
+
         <field name="rna_consequence" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="mutagen" type="keyword" indexed="true" stored="true" />
 
         <field name="allele" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="sequence_alteration" type="keyword" indexed="true" stored="true" multiValued="true"   />
-        <!-- this means it'll do starts-with matching of feature aliases, but not features, that seems a little odd... -->
-        <!--
-           <field name="sequence_alteration_alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
-        -->
+
         <field name="background" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="complexity" type="long" indexed="true" stored="true" multiValued="false" default="10000000000"/>
 
@@ -616,8 +614,6 @@
         <field name="antigen_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="antigen_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
         <field name="antigen_gene_previous_name" type="text" indexed="true" stored="true" multiValued="true"   />
-
-        <!--<field name="genes_with_altered_expression" type="keyword" indexed="true" stored="true" multiValued="true" />-->
 
         <field name="gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />
@@ -1056,17 +1052,11 @@
     <copyField source="alias" dest="alias_k"/>
     <copyField source="alias" dest="alias_t"/>
 
-    <!-- DANGER! unintended consequence!! -->
-    <!--
-        <copyField source="name" dest="name_sn"/>
-        <copyField source="full_name" dest="full_name_sn"/>
-        <copyField source="alias" dest="alias_sn"/>
-    -->
+    <copyField source="feature_alias" dest="feature_alias_ac"/>
+    <copyField source="feature_alias" dest="feature_alias_kac"/>
+    <copyField source="feature_alias" dest="feature_alias_k"/>
+    <copyField source="feature_alias" dest="feature_alias_t"/>
 
-
-    <!--
-        <copyField source="disease_model" dest="nomenclature_suggest"/>
-    -->
     <copyField source="ortholog_other_species_symbol" dest="ortholog_other_species_symbol_ac"/>
     <copyField source="ortholog_other_species_symbol" dest="ortholog_other_species_symbol_kac"/>
     <copyField source="ortholog_other_species_name" dest="ortholog_other_species_name_ac"/>

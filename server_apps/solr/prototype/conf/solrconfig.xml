@@ -276,7 +276,7 @@
 
 
           <!-- Solr seems to prefer that these all be on a single line. -->
-          <str name="hl.fl"> abstract affected_gene affected_gene_full_name affected_gene_previous_name affected_gene_t affected_anatomy_hl affected_biological_process_hl affected_cellular_component_hl affected_molecular_function_hl alias_t allele allele_t anatomy_hl antigen_gene antigen_gene_full_name antigen_gene_previous_name attributed_publication author_string author_year background background_t biography biological_process_hl caption category_t cellular_component_hl chromosome clone coding_sequence coding_sequence_full_name construct_name construct_t definition disease_model_t disease_t email_address engineered_region_full_name expressed_gene expressed_gene_full_name expressed_gene_previous_name expressed_in_hl expression_anatomy_hl expression_observation full_mesh_term_t full_name_t gene gene_full_name gene_previous_name genotype_full_name id_t inserted_in_gene inserted_in_gene_full_name inserted_in_gene_previous_name institution_t journal journal_t lab_member_name lab_of_origin labeled_anatomy_hl labeled_anatomy_parent_hl labeled_cellular_component_hl marker_abbrev misexpressed_gene molecular_function_hl mutagen name note omim_id ortholog_organism ortholog_organism_t ortholog_other_species_name_t ortholog_other_species_symbol phenotype_quality_hl phenotype_statement_t postal_address prefix probe promoter_full_name registered_author_t regulatory_region related_accession_t related_gene_symbol related_marker related_marker reporter_gene reporter_gene_full_name reporter_gene_previous_name rna_consequence sequence_alteration sequence_targeting_reagent_t synonym_phenotype_statement_t target target_full_name target_previous_name type_t zebrafish_gene zebrafish_gene_full_name zebrafish_gene_previous_name</str>
+          <str name="hl.fl"> abstract affected_gene affected_gene_full_name affected_gene_previous_name affected_gene_t affected_anatomy_hl affected_biological_process_hl affected_cellular_component_hl affected_molecular_function_hl alias_t feature_alias_t allele allele_t anatomy_hl antigen_gene antigen_gene_full_name antigen_gene_previous_name attributed_publication author_string author_year background background_t biography biological_process_hl caption category_t cellular_component_hl chromosome clone coding_sequence coding_sequence_full_name construct_name construct_t definition disease_model_t disease_t email_address engineered_region_full_name expressed_gene expressed_gene_full_name expressed_gene_previous_name expressed_in_hl expression_anatomy_hl expression_observation full_mesh_term_t full_name_t gene gene_full_name gene_previous_name genotype_full_name id_t inserted_in_gene inserted_in_gene_full_name inserted_in_gene_previous_name institution_t journal journal_t lab_member_name lab_of_origin labeled_anatomy_hl labeled_anatomy_parent_hl labeled_cellular_component_hl marker_abbrev misexpressed_gene molecular_function_hl mutagen name note omim_id ortholog_organism ortholog_organism_t ortholog_other_species_name_t ortholog_other_species_symbol phenotype_quality_hl phenotype_statement_t postal_address prefix probe promoter_full_name registered_author_t regulatory_region related_accession_t related_gene_symbol related_marker related_marker reporter_gene reporter_gene_full_name reporter_gene_previous_name rna_consequence sequence_alteration sequence_targeting_reagent_t synonym_phenotype_statement_t target target_full_name target_previous_name type_t zebrafish_gene zebrafish_gene_full_name zebrafish_gene_previous_name</str>
 
           <!-- an experiment for phrase boosting -->
 
@@ -509,6 +509,9 @@
              ortholog_other_species_symbol_t^2.0
              construct_name^2.0
              construct_alias
+
+             feature_alias
+             feature_alias_t
 
              construct
              construct_t
@@ -869,6 +872,9 @@
                 construct
                 construct_t
 
+                feature_alias
+                feature_alias_t
+
                 sequence_targeting_reagent
                 sequence_targeting_reagent_t
 
@@ -884,15 +890,11 @@
                 related_gene_symbol
             </str>
 
-            <str name="bf">
-                sum($complexity_boost,$popularity_boost,$images_boost,$jtype_boost)
+            <str name="boost">
+                $complexity_boost
             </str>
 
-            <str name="complexity_boost">mul(recip(complexity,1,1,1),1000000)</str>
-            <str name="popularity_boost">mul(sqrt(popularity),0.001)</str>
-            <!--<str name="recency_boost">mul(recip(ms(NOW/HOUR,tdate),3.16e-11,1,1),0.001)</str>-->
-            <str name="images_boost">mul(exists(has_image),0.1)</str>
-            <str name="jtype_boost">mul(exists(query({!v='publication_type:Journal'})),0.001)</str>
+            <str name="complexity_boost">sub(10,scale(complexity,1,10))</str>
         </lst>
     </requestHandler>
 
