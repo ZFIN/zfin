@@ -221,7 +221,9 @@
                     <td>
                         <c:choose>
                             <c:when test="${fn:length(formBean.featureLocations)>0}">
+
                                 <zfin2:displayFullLocation location="${formBean.featureLocations[0]}" hideLink="${empty formBean.feature.affectedGenes}"/>
+                                    
                             </c:when>
                             <c:otherwise>
                                 <zfin2:displayLocation entity="${formBean.feature}" hideLink="${empty formBean.feature.affectedGenes}"/>
