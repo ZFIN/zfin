@@ -267,8 +267,9 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             genoDTO.setZdbID(genotype.getZdbID());
             genoDTO.setName(genotype.getName());
             fishDTO.setGenotypeDTO(genoDTO);
-            createFish(publication, fishDTO, report);
+            Fish newFish=createFish(publication, fishDTO, report);
             HibernateUtil.flushAndCommitCurrentSession();
+            getMutantRepository().updateFishAffectedGeneCount(newFish);
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             String message = e.getMessage();
@@ -361,13 +362,15 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         return dtoList;
     }
 
-    protected void createFish(Publication publication, FishDTO newFish, GenotypeCreationReportDTO report) throws TermNotFoundException {
+    protected Fish  createFish(Publication publication, FishDTO newFish, GenotypeCreationReportDTO report) throws TermNotFoundException {
         Fish fish = DTOConversionService.convertToFishFromFishDTO(newFish);
+
         if (getMutantRepository().createFish(fish, publication)) {
             report.addMessage("created new fish " + fish.getHandle());
         } else {
             report.addMessage("imported fish " + fish.getHandle());
         }
+        return fish;
     }
 
     @Override
