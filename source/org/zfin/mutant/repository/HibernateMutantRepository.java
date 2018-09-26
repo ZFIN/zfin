@@ -1824,6 +1824,17 @@ public class HibernateMutantRepository implements MutantRepository {
                 .executeUpdate();
     }
 
+    public void updateFishAffectedGeneCount(Fish fish) {
+        HibernateUtil.currentSession().createSQLQuery(
+                "UPDATE fish " +
+                        "SET fish_name = fish_name " +
+                        "WHERE fish.fish_Zdb_id=:fishID ;")
+
+                .setString("fishID", fish.getZdbID())
+                .executeUpdate();
+    }
+
+
     @Override
     public List<PhenotypeStatementWarehouse> getPhenotypeStatementForMarker(Marker marker) {
         String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, GeneGenotypeExperiment gge " +

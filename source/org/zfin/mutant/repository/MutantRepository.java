@@ -480,6 +480,7 @@ public interface MutantRepository {
     void saveGenotype(Genotype genotype, String publicationID);
 
     void updateGenotypeNicknameWithHandleForPublication(Publication publication);
+    void updateFishAffectedGeneCount(Fish fish);
 
     List<PhenotypeStatementWarehouse> getPhenotypeStatementForMarker(Marker marker);
 
