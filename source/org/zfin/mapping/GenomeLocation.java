@@ -2,6 +2,7 @@ package org.zfin.mapping;
 
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 
@@ -24,9 +25,18 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     protected Publication attribution;
     protected GBrowseTrack gbrowseTrack;
     protected String assembly;
+    private GenericTerm evidence;
 
     public long getID() {
         return ID;
+    }
+
+    public GenericTerm getEvidence() {
+        return evidence;
+    }
+
+    public void setEvidence(GenericTerm evidence) {
+        this.evidence = evidence;
     }
 
     public void setID(long ID) {
