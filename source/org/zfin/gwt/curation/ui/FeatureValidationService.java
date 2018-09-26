@@ -14,7 +14,8 @@ public class FeatureValidationService {
 
         // should never get here
         if (!isFeatureSaveable(featureDTO))
-            return "You must specify a lab prefix, feature type, and feature line number.";
+            return "You must specify a lab prefix, feature type, and feature line number,assembly, start and end positions.";
+
 
         FeatureTypeEnum featureTypeEnum = featureDTO.getFeatureType();
         switch (featureTypeEnum) {
@@ -31,6 +32,7 @@ public class FeatureValidationService {
 
     public static boolean isFeatureSaveable(FeatureDTO dtoFromGUI) {
         if (dtoFromGUI.getFeatureType() == null) return false;
+
 
         switch (dtoFromGUI.getFeatureType()) {
             case TRANSGENIC_INSERTION:
@@ -69,6 +71,7 @@ public class FeatureValidationService {
                 Window.alert("Unknown feature type: " + dtoFromGUI.getFeatureType());
                 return false;
         }
+
     }
 
     /**
