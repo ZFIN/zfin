@@ -156,6 +156,8 @@ my $curAddNewMrkrHistory = $dbh->prepare($sqlInsertMrkrHistory);
 $curAddNewMrkrHistory->execute();
 $curAddNewMrkrHistory->finish();
 
+if ($type1 ne 'ATB') {
+
 ### FB case 11133
 
 my $goawayFieldValue = "ZFIN:".$recordToBeDeleted;
@@ -293,6 +295,8 @@ while ($curGetFishName->fetch()) {
 $curGetFishName->finish();
 $curUpdateFishName->finish();
 
+} ## end of if (type1 ne 'ATB')
+
 ### MRDL-121
 ### get the public notes and concatenate them 
 
@@ -376,9 +380,10 @@ if ($recordToBeDeleted =~ m/MRPHLNO/ || $recordToBeDeleted =~ m/CRISP/ || $recor
      $mrkrRelIDs{$mrkrRelID} = 1;  
   }
   $curGetMrkrRelIds->finish();
-    
-  foreach $fishId (keys %fishIDs) {
-     $curDelete->execute($fishId);              
+
+  my $fishZdbId;    
+  foreach $fishZdbId (keys %fishIDs) {
+     $curDelete->execute($fishZdbId);              
   }
 
   my $mrkrRelationId;

@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Collections;
 
+import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
+
 /**
  * Note that this is only for merging markers and does not handle genotypes or features.
  */
@@ -71,7 +73,7 @@ public class MergeMarkerController {
             , @ModelAttribute("formBean") MergeBean formBean
             , BindingResult result
     ) throws Exception {
-        //    String type = zdbIDToDelete.substring(4, 8);
+        String type = zdbIDToDelete.substring(4, 8);
 
         Marker markerToDelete;
 
@@ -84,7 +86,12 @@ public class MergeMarkerController {
         //        model.addAttribute("markerToDeleteId", markerToDelete.getZdbID());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
         //      }
-        return "marker/merge-marker.page";
+
+        if (type.startsWith("ATB")) {
+            return "marker/merge-antibody.page";
+        } else {
+            return "marker/merge-marker.page";
+        }
     }
 
     @RequestMapping(value = "/merge", method = RequestMethod.POST)
@@ -473,5 +480,60 @@ public class MergeMarkerController {
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         markerRepository.copyStrSequence(sourceStr, targetStr);
         return;
+    }
+
+    // looks up anitibody to be merged into
+    @RequestMapping(value = "/find-antibody-to-merge-into", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<AntibodyLookupEntry> lookupAntibodyToMergeInto(@RequestParam("term") String lookupString, @RequestParam("exclude") String zdbId) {
+        List<AntibodyLookupEntry> foundList = RepositoryFactory.getMarkerRepository().getAntibodyForString(lookupString, "ATB");
+        List<AntibodyLookupEntry> processedFoundList = new ArrayList<>();
+        for (AntibodyLookupEntry ab : foundList) {
+            if (!ab.getId().equals(zdbId)) {
+                processedFoundList.add(ab);
+            }
+        }
+        return processedFoundList;
+    }
+
+    @RequestMapping(value = "/get-antibody-clonal-type", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String getClonalTypeForAntibodyId(@RequestParam("antibodyZdbId") String antibodyZdbId) {
+        Antibody antibody = getAntibodyRepository().getAntibodyByID(antibodyZdbId);
+        return antibody.getClonalType();
+    }
+
+    @RequestMapping(value = "/get-antibody-heavy-chain-isotype", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String getHeavyChainIsotypeForAntibodyId(@RequestParam("antibodyZdbId") String antibodyZdbId) {
+        Antibody antibody = getAntibodyRepository().getAntibodyByID(antibodyZdbId);
+        return antibody.getHeavyChainIsotype();
+    }
+
+    @RequestMapping(value = "/get-antibody-light-chain-isotype", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String getLightChainIsotypeForAntibodyId(@RequestParam("antibodyZdbId") String antibodyZdbId) {
+        Antibody antibody = getAntibodyRepository().getAntibodyByID(antibodyZdbId);
+        return antibody.getLightChainIsotype();
+    }
+
+    @RequestMapping(value = "/get-antibody-host-species", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String getHostSpeciesForAntibodyId(@RequestParam("antibodyZdbId") String antibodyZdbId) {
+        Antibody antibody = getAntibodyRepository().getAntibodyByID(antibodyZdbId);
+        return antibody.getHostSpecies();
+    }
+
+    @RequestMapping(value = "/get-antibody-immunogen-species", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String getImmunogenSpeciesForAntibodyId(@RequestParam("antibodyZdbId") String antibodyZdbId) {
+        Antibody antibody = getAntibodyRepository().getAntibodyByID(antibodyZdbId);
+        return antibody.getImmunogenSpecies();
     }
 }

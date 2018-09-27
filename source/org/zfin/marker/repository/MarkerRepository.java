@@ -216,7 +216,7 @@ public interface MarkerRepository {
      * @param pubZdbId
      * @return list of marker objects
      */
-  
+
     List<Marker> getConstructsByAttribution(String name);
 
     // clone methods
@@ -504,5 +504,7 @@ public interface MarkerRepository {
     ZfinSoTerm getSoIdByMarkerType(String markerType);
 
     String getDbsnps(String cloneId);
+
+    List<AntibodyLookupEntry> getAntibodyForString(String lookupString, String type);
 
 }

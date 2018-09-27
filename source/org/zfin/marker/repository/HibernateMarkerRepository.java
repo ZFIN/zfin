@@ -3226,5 +3226,30 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return sb.toString();
     }
 
+    @Override
+    public List<AntibodyLookupEntry> getAntibodyForString(String lookupString, String type) {
+        String hql = " select ab from Marker ab " +
+                "where " +
+                "lower(ab.abbreviation) like :lookupString " +
+                "and ab.markerType.name = :type " +
+                "order by ab.abbreviation  ";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
+                .setString("type", type)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] sequenceTargetingReagents) {
+                        Marker antibody = (Marker) tuple[0];
+                        AntibodyLookupEntry abSuggestionList = new AntibodyLookupEntry();
+                        abSuggestionList.setId(antibody.getZdbID());
+                        abSuggestionList.setLabel(antibody.getAbbreviation());
+                        abSuggestionList.setValue(antibody.getAbbreviation());
+                        return abSuggestionList;
+                    }
+                })
+                .list()
+                ;
+    }
+
 }
 
