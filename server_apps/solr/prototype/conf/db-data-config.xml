@@ -638,8 +638,7 @@
                              left outer join term as sub_1 on psg_e1b_zdb_id = sub_1.term_zdb_id
                              join term as quality on psg_quality_zdb_id = quality.term_zdb_id
                              left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
-                             left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
-                        where psg_tag != 'normal'"
+                             left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id;"
                     cacheImpl="SortedMapBackedCache"
                     where="gene_zdb_id=gene.id"
             >
@@ -1450,8 +1449,7 @@
                                  left outer join term as sub_1 on psg_e1b_zdb_id = sub_1.term_zdb_id
                                  join term as quality on psg_quality_zdb_id = quality.term_zdb_id
                                  left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
-                                 left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
-                            where psg_tag != 'normal'"
+                                 left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id"
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
             >
@@ -2306,8 +2304,7 @@
                             psg_short_name as phenotype_statement,
                             'pg-' || pg_id as pg_id
                             from phenotype_observation_generated
-                                 join phenotype_source_generated on psg_pg_id = pg_id
-                            where psg_tag != 'normal';"
+                                 join phenotype_source_generated on psg_pg_id = pg_id;"
                     where="pg_id=phenotype.id"
                     cacheImpl="SortedMapBackedCache"
             >
@@ -3737,8 +3734,7 @@
                                  left outer join term as sub_1 on psg_e1b_zdb_id = sub_1.term_zdb_id
                                  join term as quality on psg_quality_zdb_id = quality.term_zdb_id
                                  left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
-                                 left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
-                            where psg_tag != 'normal';"
+                                 left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id;"
                     cacheImpl="SortedMapBackedCache"
                     where="feature_zdb_id=feature.id"
             >
@@ -5064,8 +5060,7 @@ and child.term_ontology = 'disease_ontology';
                                  left outer join term as sub_1 on psg_e1b_zdb_id = sub_1.term_zdb_id
                                  join term as quality on psg_quality_zdb_id = quality.term_zdb_id
                                  left outer join term as super_2 on psg_e2a_zdb_id = super_2.term_zdb_id
-                                 left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id
-                            where psg_tag != 'normal';"
+                                 left outer join term as sub_2 on psg_e2b_zdb_id = sub_2.term_zdb_id"
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
             >
