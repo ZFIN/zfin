@@ -93,8 +93,10 @@ public class TranscriptService {
             rm.setDisplayedSequenceDBLinks(RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(transcript, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE));
             rtd.add(rm);
         }
-
-        if (displayGBrowseImage && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)) {
+        
+        if (displayGBrowseImage
+                && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)
+                && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
             GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder()
                     .landmark(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0))
                     .tracks(GBrowseTrack.TRANSCRIPTS);
