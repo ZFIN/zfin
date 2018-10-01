@@ -1,12 +1,8 @@
 package org.zfin.ontology.service;
 
-import org.apache.commons.collections.MapIterator;
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.feature.Feature;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -23,13 +19,14 @@ import org.zfin.orthology.NcbiOtherSpeciesGene;
 import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DBLink;
 import org.zfin.sequence.DisplayGroup;
-import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.service.SequenceService;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
@@ -262,27 +259,26 @@ public class OntologyService {
     }
 
     public static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseAnnotationModel> models) {
-        MultiKeyMap map = new MultiKeyMap();
-        for (DiseaseAnnotationModel model : models) {
-            if (!map.containsKey(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())) {
-                map.put(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment(), new ArrayList<Publication>());
-            }
-            if (!((Collection<Publication>) map.get(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())).contains(model.getDiseaseAnnotation().getPublication()))
-                ((Collection<Publication>) map.get(model.getDiseaseAnnotation().getDisease(), model.getFishExperiment())).add(model.getDiseaseAnnotation().getPublication());
-        }
+        Map<GenericTerm, Map<FishExperiment, List<Publication>>> doubleMap = models.stream()
+                .collect(Collectors.groupingBy(o -> o.getDiseaseAnnotation().getDisease(),
+                        Collectors.groupingBy(DiseaseAnnotationModel::getFishExperiment,
+                                Collectors.mapping(model -> model.getDiseaseAnnotation().getPublication(), toList()))));
 
-        List<DiseaseModelDisplay> modelDisplays = new ArrayList<>();
-        MapIterator it = map.mapIterator();
-        while (it.hasNext()) {
-            it.next();
-            MultiKey key = (MultiKey) it.getKey();
-            DiseaseModelDisplay display = new DiseaseModelDisplay();
-            display.setDisease((GenericTerm) key.getKey(0));
-            display.setExperiment((FishExperiment) key.getKey(1));
-            display.setPublications((Collection<Publication>) it.getValue());
-            modelDisplays.add(display);
-        }
-        Collections.sort(modelDisplays);
+        List modelDisplays = doubleMap.entrySet().stream()
+                .map(genericTermMapEntry -> {
+                    GenericTerm term = genericTermMapEntry.getKey();
+                    return genericTermMapEntry.getValue().entrySet().stream()
+                            .map(fishExperimentListEntry -> {
+                                DiseaseModelDisplay display = new DiseaseModelDisplay();
+                                display.setDisease(term);
+                                display.setExperiment(fishExperimentListEntry.getKey());
+                                display.setPublications(fishExperimentListEntry.getValue());
+                                return display;
+                            })
+                            .collect(toList());
+                })
+                .flatMap(Collection::stream)
+                .collect(toList());
         return modelDisplays;
     }
 }
