@@ -156,6 +156,176 @@ my $curAddNewMrkrHistory = $dbh->prepare($sqlInsertMrkrHistory);
 $curAddNewMrkrHistory->execute();
 $curAddNewMrkrHistory->finish();
 
+if ($type1 eq 'ATB') {
+
+my $firstRecord = "none";
+my $firstFound = 0;
+my $secondRecord = "none";
+my $secondFound = 0;
+
+my $sqlGetIsoType = "select atb_type from antibody where atb_zdb_id = ?;";
+my $curGetIsoType = $dbh->prepare_cached($sqlGetIsoType);
+$curGetIsoType->execute($recordToBeDeleted);
+$curGetIsoType->bind_columns(\$firstRecord);
+
+while ($curGetIsoType->fetch()) {
+   $firstFound = 1;
+}
+
+if($firstFound == 1 && $firstRecord ne 'none' && $firstRecord ne '') {
+   $curGetIsoType->execute($recordToBeMergedInto);
+   
+   $curGetIsoType->bind_columns(\$secondRecord); 
+   
+   while ($curGetIsoType->fetch()) {
+      $secondFound = 1;    
+   }   
+   
+   if($secondRecord eq 'none' || $secondRecord eq '') {
+      my $sqlUpdateIsoType = "update antibody set atb_type = ? where atb_zdb_id = ?;";
+      my $curUpdateIsoType = $dbh->prepare_cached($sqlUpdateIsoType);                
+      $curUpdateIsoType->execute($firstRecord, $recordToBeMergedInto);
+      $curUpdateIsoType->finish();
+   } 
+}
+
+$curGetIsoType->finish();
+
+$firstRecord = "none";
+$firstFound = 0;
+$secondRecord = "none";
+$secondFound = 0;
+
+my $sqlGetHeavyChainIsotype = "select atb_hviso_name from antibody where atb_zdb_id = ?;";
+my $curGetHeavyChainIsotype = $dbh->prepare_cached($sqlGetHeavyChainIsotype);
+$curGetHeavyChainIsotype->execute($recordToBeDeleted);
+$curGetHeavyChainIsotype->bind_columns(\$firstRecord);
+
+while ($curGetHeavyChainIsotype->fetch()) {
+   $firstFound = 1;
+}
+
+if($firstFound == 1 && $firstRecord ne 'none' && $firstRecord ne '') {
+   $curGetHeavyChainIsotype->execute($recordToBeMergedInto);
+   
+   $curGetHeavyChainIsotype->bind_columns(\$secondRecord); 
+   
+   while ($curGetHeavyChainIsotype->fetch()) {
+      $secondFound = 1;    
+   }   
+   
+   if($secondRecord eq 'none' || $secondRecord eq '') {
+      my $sqlUpdateHeavyChainIsotype = "update antibody set atb_hviso_name = ? where atb_zdb_id = ?;";
+      my $curUpdateHeavyChainIsotype = $dbh->prepare_cached($sqlUpdateHeavyChainIsotype);                
+      $curUpdateHeavyChainIsotype->execute($firstRecord, $recordToBeMergedInto);
+      $curUpdateHeavyChainIsotype->finish();
+   } 
+}
+
+$curGetHeavyChainIsotype->finish();
+
+$firstRecord = "none";
+$firstFound = 0;
+$secondRecord = "none";
+$secondFound = 0;
+
+my $sqlGetLightChainIsotype = "select atb_ltiso_name from antibody where atb_zdb_id = ?;";
+my $curGetLightChainIsotype = $dbh->prepare_cached($sqlGetLightChainIsotype);
+$curGetLightChainIsotype->execute($recordToBeDeleted);
+$curGetLightChainIsotype->bind_columns(\$firstRecord);
+
+while ($curGetLightChainIsotype->fetch()) {
+   $firstFound = 1;
+}
+
+if($firstFound == 1 && $firstRecord ne 'none' && $firstRecord ne '') {
+   $curGetLightChainIsotype->execute($recordToBeMergedInto);
+   
+   $curGetLightChainIsotype->bind_columns(\$secondRecord); 
+   
+   while ($curGetLightChainIsotype->fetch()) {
+      $secondFound = 1;    
+   }   
+   
+   if($secondRecord eq 'none' || $secondRecord eq '') {
+      my $sqlUpdateLightChainIsotype = "update antibody set atb_ltiso_name = ? where atb_zdb_id = ?;";
+      my $curUpdateLightChainIsotype = $dbh->prepare_cached($sqlUpdateLightChainIsotype);                
+      $curUpdateLightChainIsotype->execute($firstRecord, $recordToBeMergedInto);
+      $curUpdateLightChainIsotype->finish();
+   } 
+}
+
+$curGetLightChainIsotype->finish();
+
+$firstRecord = "none";
+$firstFound = 0;
+$secondRecord = "none";
+$secondFound = 0;
+
+my $sqlGetHostSpecies = "select atb_host_organism from antibody where atb_zdb_id = ?;";
+my $curGetHostSpecies = $dbh->prepare_cached($sqlGetHostSpecies);
+$curGetHostSpecies->execute($recordToBeDeleted);
+$curGetHostSpecies->bind_columns(\$firstRecord);
+
+while ($curGetHostSpecies->fetch()) {
+   $firstFound = 1;
+}
+
+if($firstFound == 1 && $firstRecord ne 'none' && $firstRecord ne '') {
+   $curGetHostSpecies->execute($recordToBeMergedInto);
+   
+   $curGetHostSpecies->bind_columns(\$secondRecord); 
+   
+   while ($curGetHostSpecies->fetch()) {
+      $secondFound = 1;    
+   }   
+   
+   if($secondRecord eq 'none' || $secondRecord eq '') {
+      my $sqlUpdateHostSpecies = "update antibody set atb_host_organism = ? where atb_zdb_id = ?;";
+      my $curUpdateHostSpecies = $dbh->prepare_cached($sqlUpdateHostSpecies);                
+      $curUpdateHostSpecies->execute($firstRecord, $recordToBeMergedInto);
+      $curUpdateHostSpecies->finish();
+   } 
+}
+
+$curGetHostSpecies->finish();
+
+
+$firstRecord = "none";
+$firstFound = 0;
+$secondRecord = "none";
+$secondFound = 0;
+
+my $sqlGetImmunogenSpecies = "select atb_immun_organism from antibody where atb_zdb_id = ?;";
+my $curGetImmunogenSpecies = $dbh->prepare_cached($sqlGetImmunogenSpecies);
+$curGetImmunogenSpecies->execute($recordToBeDeleted);
+$curGetImmunogenSpecies->bind_columns(\$firstRecord);
+
+while ($curGetImmunogenSpecies->fetch()) {
+   $firstFound = 1;
+}
+
+if($firstFound == 1 && $firstRecord ne 'none' && $firstRecord ne '') {
+   $curGetImmunogenSpecies->execute($recordToBeMergedInto);
+   
+   $curGetImmunogenSpecies->bind_columns(\$secondRecord); 
+   
+   while ($curGetImmunogenSpecies->fetch()) {
+      $secondFound = 1;    
+   }   
+   
+   if($secondRecord eq 'none' || $secondRecord eq '') {
+      my $sqlUpdateImmunogenSpecies = "update antibody set atb_immun_organism = ? where atb_zdb_id = ?;";
+      my $curUpdateImmunogenSpecies = $dbh->prepare_cached($sqlUpdateImmunogenSpecies);                
+      $curUpdateImmunogenSpecies->execute($firstRecord, $recordToBeMergedInto);
+      $curUpdateImmunogenSpecies->finish();
+   } 
+}
+
+$curGetImmunogenSpecies->finish();
+
+}  ## end of if ($type1 eq 'ATB')
+
 if ($type1 ne 'ATB') {
 
 ### FB case 11133
