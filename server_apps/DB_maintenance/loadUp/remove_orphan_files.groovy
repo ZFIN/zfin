@@ -74,15 +74,15 @@ Sql.withInstance(db) { Sql sql ->
     }
 
     sql.eachRow("SELECT image from person where image is not null"){ row ->
-       imageFiles.add(imageFullPath + "/profile/" + row.image) 
+       imageFiles.add(imageFullPath + row.image) 
     }
 
     sql.eachRow("SELECT image from company where image is not null"){ row ->
-       imageFiles.add(imageFullPath + "/profile/" + row.image) 
+       imageFiles.add(imageFullPath + row.image) 
     }
 
     sql.eachRow("SELECT image from lab where image is not null"){ row ->
-       imageFiles.add(imageFullPath + "/profile/" + row.image) 
+       imageFiles.add(imageFullPath + row.image) 
     }
     sql.eachRow("SELECT pf_file_name FROM publication_file") { row ->
         pubFiles.add(pdfFullPath + row.pf_file_name)
