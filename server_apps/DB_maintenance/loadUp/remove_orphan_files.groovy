@@ -73,6 +73,17 @@ Sql.withInstance(db) { Sql sql ->
         }
     }
 
+    sql.eachRow("SELECT image from person"){ row ->
+       imageFiles.add(imageFullPath + "/profile" + row.image) 
+    }
+
+    sql.eachRow("SELECT image from company"){ row ->
+       imageFiles.add(imageFullPath + "/profile" + row.image) 
+    }
+
+    sql.eachRow("SELECT image from lab"){ row ->
+       imageFiles.add(imageFullPath + "/profile" + row.image) 
+    }
     sql.eachRow("SELECT pf_file_name FROM publication_file") { row ->
         pubFiles.add(pdfFullPath + row.pf_file_name)
     }
