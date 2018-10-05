@@ -6,7 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
    <include file="source/org/zfin/db/load/1101/feature_sequence.sql"/>
-
+   <include file="source/org/zfin/db/load/1101/fix_dalias.sql"/>
 </databaseChangeLog>
 
    
