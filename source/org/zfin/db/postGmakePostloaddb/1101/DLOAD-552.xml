@@ -9,7 +9,7 @@
 
     <changeSet author="pm" id="DLOAD-552">
     <loadData file="source/org/zfin/db/postGmakePostloaddb/1101/DLOAD-552.csv"
-              tableName="sanger_flank_sequence" encoding="UTF-8">
+              tableName="sanger_flanking_sequence" encoding="UTF-8">
         <column name="allele" type="String"/>
         <column name="ref" type="String"/>
         <column name="alt" type="String"/>
