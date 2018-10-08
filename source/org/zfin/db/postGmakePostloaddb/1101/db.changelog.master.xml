@@ -12,8 +12,8 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/HBurgessChr_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/HBurgessChr.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/HBurgessChr.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1101/DLOAD-552_pre.sql" />
+   <!-- <include file="source/org/zfin/db/postGmakePostloaddb/1101/DLOAD-552_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/DLOAD-552.xml" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1101/DLOAD-552.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/DLOAD-552.sql" />-->
 
 </databaseChangeLog>
