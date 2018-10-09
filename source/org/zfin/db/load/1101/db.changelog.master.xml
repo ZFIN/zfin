@@ -7,6 +7,7 @@
 
    <include file="source/org/zfin/db/load/1101/feature_sequence.sql"/>
    <include file="source/org/zfin/db/load/1101/fix_dalias.sql"/>
+   <include file="source/org/zfin/db/load/1101/remove_constraint.sql"/>
 </databaseChangeLog>
 
    
