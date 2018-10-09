@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset pm:ZFIN-6006
+--changeset pm:ZFIN-6006a
 
 
 update sequence_feature_chromosome_location

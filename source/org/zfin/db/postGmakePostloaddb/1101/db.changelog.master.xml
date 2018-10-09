@@ -8,7 +8,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/CUR-840.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/CUR-840-warehouse.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/zum_update_for_v2_0.sql"/>
-    <include file="source/org/zfin/db/postGmakePostloaddb/1101/ZFIN-6006.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/ZFIN-6006a.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/ZFIN-6306.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/HBurgessChr_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/HBurgessChr.xml" />
