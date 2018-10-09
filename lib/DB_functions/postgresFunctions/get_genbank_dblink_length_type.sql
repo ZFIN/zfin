@@ -1,90 +1,73 @@
+CREATE OR REPLACE FUNCTION get_genbank_dblink_length_type(                              vDblinkAccNum          TEXT,
+                                                                                        vDblinkLength          INTEGER,
+                                                                                        vDblinkFdbcontZdbId    TEXT,
+  OUT                                                                                   vDblinkFdbcontZdbIdOut TEXT,
+  OUT                                                                                   vDblinkLengthOut       INT) AS $func$
 
--------------------------------------------------------------------------
---This function checks on insert or update of db_link, the length of the
---sequence and the type (represented by the dblink_fdbcont_zdb_id) are
---consistant with those values in the table accession_bank (accession_bank
---holds sequence records updated daily from NCBI/GenBank).  In fact,
---it replaces dblink_fdbcont_zdb_id, and dblink_length if the accession_number
---is from GenBank.
--------------------------------------------------------------------------
+DECLARE vAccbkLength  accession_bank.accbk_length%TYPE;
+        vFdbcontType  foreign_db_data_type.fdbdt_data_type%TYPE;
+        vFdbcontZdbID db_link.dblink_fdbcont_zdb_id%TYPE;
+        vUpdateLength db_link.dblink_length%TYPE;
 
-  create or replace function get_genbank_dblink_length_type (vDblinkAccNum varchar(30),
-						  vDblinkLength integer,
+BEGIN
 
-					 	  vDblinkFdbcontZdbId text, out vDblinkFdbcontZdbIdOut text, out  vDblinkLengthOut int) as $func$
+  IF (SELECT count(*)
+      FROM accession_bank, foreign_db_contains, foreign_db
+      WHERE accbk_acc_num = vDblinkAccNum
+            AND fdb_db_pk_id = fdbcont_fdb_db_id
+            AND accbk_fdbcont_zdb_id = fdbcont_zdb_id
+            AND fdb_db_name = 'GenBank') > 0
+  THEN
+    IF vDblinkFdbcontZdbId IS NOT NULL
+    THEN
+      RAISE NOTICE 'fdbcontsecond: %', vDblinkFdbcontZdbId;
+      SELECT fdbdt_data_type
+      INTO vFdbcontType
+      FROM foreign_db_contains, foreign_db_data_Type
+      WHERE fdbcont_zdb_id = vDblinkFdbcontZdbId
+            AND fdbcont_fdbdt_id = fdbdt_pk_id;
 
-  
+      IF vFdbcontType = 'other'
+      THEN
+        vDblinkFdbcontZdbIdOut = vDblinkFdbcontZdbId;
+        vDblinkLengthOut = vDblinkLength;
+      END IF;
 
-    declare vAccbkLength 	 accession_bank.accbk_length%TYPE;
-     vFdbcontType 	 foreign_db_data_type.fdbdt_data_type%TYPE;
-     vFdbcontZdbID	 db_link.dblink_fdbcont_zdb_id%TYPE;
-     vUpdateLength	 db_link.dblink_length%TYPE ;
+    END IF;
+    SELECT
+      accbk_length,
+      accbk_fdbcont_zdb_id
+    INTO vAccbkLength, vFdbcontZdbId
+    FROM accession_bank, foreign_db_contains, foreign_db_data_type, foreign_db
+    WHERE accbk_acc_num = vDblinkAccNum
+          AND accbk_fdbcont_zdb_id = fdbcont_zdb_id
+          AND fdbcont_fdb_db_id = fdb_db_pk_id
+          AND fdbcont_fdbdt_id = fdbdt_pk_id
+          AND fdbdt_super_type = 'sequence'
+          AND fdbcont_organism_common_name = 'Zebrafish'
+          AND fdb_db_name = 'GenBank';
+    vDblinkFdbcontZdbIdOut = vFdbcontZdbId;
+    vDblinkLengthOut = vAccbkLength;
 
-   begin
+  ELSE
+    vUpdateLength = (SELECT accbk_length
+                     FROM accession_bank, foreign_db_contains, foreign_db
+                     WHERE accbk_acc_num = vDblinkAccNum
+                           AND fdbcont_fdb_db_id = fdb_db_pk_id
+                           AND accbk_fdbcont_zdb_id = fdbcont_zdb_id
+                           AND fdb_db_name != 'GenBank'
+                           AND accbk_length IS NOT NULL);
 
-      if (select count(*)
-        	       	from accession_bank, foreign_db_contains, foreign_db
-  		       	where accbk_acc_num = vDblinkAccNum
-			and fdb_db_pk_id = fdbcont_fdb_db_id
-                       	and accbk_fdbcont_zdb_id = fdbcont_zdb_id
-			and fdb_db_name = 'GenBank') > 0 
+    IF vDbLinkLength IS NULL AND vUpdateLength IS NOT NULL
+    THEN
+      vDbLinkLengthOut = vUpdateLength;
+      vDblinkFdbcontZdbIdOut = vDblinkFdbcontZdbId;
+    ELSE
+      vDblinkFdbcontZdbIdOut = vDblinkFdbcontZdbId;
+      vDblinkLengthOut = vDblinkLength;
+    END IF;
 
-      then
-		if vDblinkFdbcontZdbId is not null then
+  END IF;
 
-        		select fdbdt_data_type
-	  		  into vFdbcontType
-          		  from foreign_db_contains, foreign_db_data_Type
-          		  where fdbcont_zdb_id = vDblinkFdbcontZdbId 
-			  and fdbcont_fdbdt_id = fdbdt_pk_id;
-
-			if vFdbcontType = 'other' then
-
- 	 			 vDblinkFdbcontZdbIdOut=vDblinkFdbcontZdbId;
- 	 			  vDblinkLengthOut = vDblinkLength;
-
-
-			end if ;
-		end if ;
-
-             	select accbk_length, accbk_fdbcont_zdb_id
-    	       	  into vAccbkLength, vFdbcontZdbId
-    	       	  from accession_bank, foreign_db_contains, foreign_db_data_type, foreign_db
-    	       	  where accbk_acc_num = vDblinkAccNum
-		    and accbk_fdbcont_zdb_id = fdbcont_zdb_id
-		    and fdbcont_fdb_db_id =fdb_db_pk_id
-		    and fdbcont_fdbdt_id = fdbdt_pk_id    
-      	       	    and fdbdt_super_type = 'sequence'
-      	       	    and fdbcont_organism_common_name = 'Zebrafish'
-		    and fdb_db_name = 'GenBank' ;
-vDblinkFdbcontZdbIdOut=vFdbcontZdbId;
-	      vDblinkLengthOut=vAccbkLength;
-
-
-      else
-      
-          vUpdateLength = (select accbk_length
-        	       	      	 from accession_bank, foreign_db_contains, foreign_db
-  		       		      where accbk_acc_num = vDblinkAccNum
-				      and fdbcont_fdb_db_id = fdb_db_pk_id
-                       		      and accbk_fdbcont_zdb_id = fdbcont_zdb_id
-				      and fdb_db_name != 'GenBank'
-				      and accbk_length is not null);
-
-          if vDbLinkLength is null and vUpdateLength is not null
-
-          then 
-
-               vDbLinkLengthOut = vUpdateLength;
-
-
-	  else 
-
-	      vDblinkFdbcontZdbIdOut=vDblinkFdbcontZdbId;
-	      vDblinkLengthOut=vDblinkLength;
-
-	  end if ;
-
-      end if ;
-end;
-$func$ LANGUAGE plpgsql ;
+END;
+$func$ LANGUAGE plpgsql;
