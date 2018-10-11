@@ -25,6 +25,7 @@
 <filter token="CATALINA_HOME" value="${CATALINA_HOME}"/>
 <filter token="CATALINA_PID" value="${CATALINA_PID}"/>
 <filter token="CGI_BIN_DIR_NAME" value="${CGI_BIN_DIR_NAME}"/>
+<filter token="CLIENT_LOCALE" value="${CLIENT_LOCALE}"/>
 <filter token="CONFIGURATION_DIRECTORY" value="${CONFIGURATION_DIRECTORY}"/>
 <filter token="COOKIE_PATH" value="${COOKIE_PATH}"/>
 <filter token="COUNT_PATO_ERR" value="${COUNT_PATO_ERR}"/>
@@ -40,6 +41,7 @@
 <filter token="CURATORS_AT_ZFIN" value="${CURATORS_AT_ZFIN}"/>
 <filter token="DATABASE_UNLOAD_DIRECTORY" value="${DATABASE_UNLOAD_DIRECTORY}"/>
 <filter token="DBNAME" value="${DBNAME}"/>
+<filter token="DB_LOCALE" value="${DB_LOCALE}"/>
 <filter token="DB_NAME" value="${DB_NAME}"/>
 <filter token="DB_OWNER" value="${DB_OWNER}"/>
 <filter token="DEBUGPORT" value="${DEBUGPORT}"/>
@@ -67,6 +69,7 @@
 <filter token="GO_EMAIL_CURATOR" value="${GO_EMAIL_CURATOR}"/>
 <filter token="GO_EMAIL_ERR" value="${GO_EMAIL_ERR}"/>
 <filter token="GRADLE_USER_HOME" value="${GRADLE_USER_HOME}"/>
+<filter token="GROOVY_CLASSPATH" value="${GROOVY_CLASSPATH}"/>
 <filter token="GROOVY_HOME" value="${GROOVY_HOME}"/>
 <filter token="HAS_PARTNER" value="${HAS_PARTNER}"/>
 <filter token="HEADER_BACKGROUND" value="${HEADER_BACKGROUND}"/>
@@ -130,8 +133,6 @@
 <filter token="PGBINDIR" value="${PGBINDIR}"/>
 <filter token="PGDATA" value="${PGDATA}"/>
 <filter token="PGDATABASE" value="${PGDATABASE}"/>
-<filter token="PG_XML_COMMENT_CLOSE" value="${PG_XML_COMMENT_CLOSE}"/>
-<filter token="PG_XML_COMMENT_OPEN" value="${PG_XML_COMMENT_OPEN}"/>
 <filter token="PRODUCTION_NOTIFICATION_EMAIL" value="${PRODUCTION_NOTIFICATION_EMAIL}"/>
 <filter token="REQUEST_NEW_ANATOMY_EMAIL" value="${REQUEST_NEW_ANATOMY_EMAIL}"/>
 <filter token="ROOT_PATH" value="${ROOT_PATH}"/>
@@ -149,6 +150,7 @@
 <filter token="SOLR_CREATE_BACKUPS" value="${SOLR_CREATE_BACKUPS}"/>
 <filter token="SOLR_HOME" value="${SOLR_HOME}"/>
 <filter token="SOLR_HOST" value="${SOLR_HOST}"/>
+<filter token="SOLR_MEMORY" value="${SOLR_MEMORY}"/>
 <filter token="SOLR_PORT" value="${SOLR_PORT}"/>
 <filter token="SOURCEROOT" value="${SOURCEROOT}"/>
 <filter token="SQLHOSTS_FILE" value="${SQLHOSTS_FILE}"/>
