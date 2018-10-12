@@ -1193,7 +1193,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public List<Marker> getGenesAndMarkersByPublication(String pubID) {
         // directly annotated markers
-        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM);
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
         markerTypes.addAll(markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MK));
         Set<Marker> markers = new TreeSet<>(getMarkersByPublication(pubID, markerTypes));
 
