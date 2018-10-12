@@ -14,7 +14,7 @@ create table variant_flanking_sequence (vfseq_data_zdb_id text,
 ;
 
 alter table variant_flanking_sequence
- add primary key (vfseq_data_zdb_id, vseq_type);
+ add primary key (vfseq_data_zdb_id, vfseq_type);
 
 create index vfseq_variantion_index
  on variant_flanking_sequence (vfseq_variation);
@@ -25,10 +25,12 @@ alter table variant_flanking_sequence
  on delete cascade;
 
 alter table variant_flanking_sequence 
- add constraint check vfseq_flanking_sequence_type_check vfseq_flanking_sequence_type in ('genomic','cDNA');
+ add constraint  vfseq_flanking_sequence_type_check check (vfseq_flanking_sequence_type ='genomic' 
+     or vfseq_flanking_sequence_type = 'cDNA');
 
 alter table variant_flanking_sequence
- add constraint check vfseq_flanking_sequence_origin_check vfseq_flanking_sequence_origin in ('inferred from genomic','directly sequenced', 'unknown');
+ add constraint  vfseq_flanking_sequence_origin_check check (vfseq_flanking_sequence_origin = 'inferred from genomic'
+     or vfseq_flanking_sequence_origin = 'directly sequenced' or vfseq_flanking_sequence_origin = 'unknown');
 
 create unique index vfseq_alternate_key_index 
  on variant_flanking_sequence (vfseq_data_zdb_id, vfseq_flanking_sequence_type);
