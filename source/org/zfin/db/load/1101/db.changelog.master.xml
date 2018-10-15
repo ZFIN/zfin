@@ -10,6 +10,7 @@
    <include file="source/org/zfin/db/load/1101/CUR-846.sql"/>
    <include file="source/org/zfin/db/load/1101/add_key_for_variant_flanking_sequence.sql"/>
    <include file="source/org/zfin/db/load/1101/add_zdb_object_type.sql"/>
+   <include file="source/org/zfin/db/load/1101/add_vfseq_seq.sql"/>
 </databaseChangeLog>
 
    
