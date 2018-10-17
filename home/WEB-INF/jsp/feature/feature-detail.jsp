@@ -361,6 +361,45 @@
         </c:if>
     </table>
 </zfin2:subsection>
+<zfin2:subsection title="FLANKING SEQUENCE"
+                  showNoData="true"
+                  test="${!empty formBean.varSequence}">
+    <table class="summary horizontal-solidblock">
+        <c:if test="${!empty formBean.varSequence}">
+            <tr>
+            <tr>
+                <td>
+                        ${formBean.varSequence.vfsLeftEnd}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                       <span style="color: red;">
+                               ${formBean.varSequence.vfsVariation}
+                       </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                        ${formBean.varSequence.vfsRightEnd}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <c:choose>
+                    <c:when test="${fn:length(formBean.varSeqAttributions) == 1}">
+                        (<a href="/${formBean.varSeqAttributions[0].sourceZdbID}">1</a>)
+                    </c:when>
+                    <c:when test="${fn:length(formBean.varSeqAttributions) > 1}">
+                        (<a href="/action/publication/list/${formBean.varSequence.zdbID}">${fn:length(formBean.varSeqAttributions)}</a>)
+                    </c:when>
+                </c:choose>
+                </td>
+            </tr>
+
+        </c:if>
+    </table>
+</zfin2:subsection>
 
 <zfin2:externalNotes notes="${formBean.externalNotes}" />
 
