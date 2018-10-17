@@ -6,6 +6,7 @@ import org.zfin.feature.FeatureNote;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.FeatureGenomeLocation;
+import org.zfin.mapping.VariantSequence;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeDisplay;
@@ -36,7 +37,18 @@ public class FeatureBean {
     private List<PublicationAttribution> dnaChangeAttributions;
     private List<PublicationAttribution> transcriptConsequenceAttributions;
     private List<PublicationAttribution> proteinConsequenceAttributions;
+    private List<PublicationAttribution> varSeqAttributions;
     private List<FeatureNote> externalNotes;
+
+    public VariantSequence getVarSequence() {
+        return varSequence;
+    }
+
+    public void setVarSequence(VariantSequence varSequence) {
+        this.varSequence = varSequence;
+    }
+
+    private VariantSequence varSequence;
 
     public Set<FeatureDBLink> getGenbankDbLinks() {
         return genbankDbLinks;
@@ -199,6 +211,14 @@ public class FeatureBean {
 
     public void setProteinConsequenceAttributions(List<PublicationAttribution> proteinConsequenceAttributions) {
         this.proteinConsequenceAttributions = proteinConsequenceAttributions;
+    }
+
+    public List<PublicationAttribution> getVarSeqAttributions() {
+        return varSeqAttributions;
+    }
+
+    public void setVarSeqAttributions(List<PublicationAttribution> varSeqAttributions) {
+        this.varSeqAttributions = varSeqAttributions;
     }
 
     public List<FeatureNote> getExternalNotes() {

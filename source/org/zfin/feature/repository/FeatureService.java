@@ -13,6 +13,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
+import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -164,6 +165,15 @@ public class FeatureService {
                 RecordAttribution.SourceType.STANDARD);
     }
 
+    public static List<PublicationAttribution> getFlankSeqAttr(Feature feature) {
+        VariantSequence varSeq=RepositoryFactory.getFeatureRepository().getFeatureVariant(feature);
+        if (varSeq == null){
+            return null;
+        }
+        return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
+                varSeq.getZdbID(),
+                RecordAttribution.SourceType.STANDARD);
+    }
     public static Set<FeatureMarkerRelationship> getSortedConstructRelationships(Feature feature) {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
         if (fmrelationships == null) {

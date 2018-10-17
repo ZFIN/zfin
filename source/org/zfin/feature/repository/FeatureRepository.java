@@ -9,6 +9,7 @@ import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.mapping.FeatureLocation;
+import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.Genotype;
@@ -83,6 +84,7 @@ public interface FeatureRepository {
     FeatureAssay addFeatureAssay(Feature feature, Mutagen mutagen, Mutagee mutagee);
 
     FeatureAssay getFeatureAssay(Feature feature);
+    VariantSequence getFeatureVariant(Feature feature);
     FeatureLocation getFeatureLocation(Feature feature);
 
     List<Marker> getMarkersByFeature(Feature feature);

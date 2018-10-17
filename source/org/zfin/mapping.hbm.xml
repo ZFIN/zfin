@@ -151,6 +151,30 @@
         </subclass>
     </class>
 
+    <class name="org.zfin.mapping.VariantSequence" table="variant_flanking_sequence">
+        <id name="zdbID" type="string">
+            <column name="vfseq_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">VFSEQ</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+            <property name="vseqDataZDB" column="vfseq_data_zdb_id"/>
+            <property name="vfsType" column="vfseq_type" />
+
+
+            <property name="vfsTargetSequence" not-null="true" column="vfseq_sequence"/>
+            <property name="vfsOffsetStart" column="vfseq_offset_start" />
+            <property name="vfsOffsetStop" column="vfseq_offset_stop"/>
+            <property name="vfsVariation" column="vfseq_variation"/>
+            <property name="vfsLeftEnd" column="vfseq_five_prime_flanking_sequence"/>
+        <property name="vfsRightEnd" column="vfseq_three_prime_flanking_sequence"/>
+        <property name="vfsFlankType" column="vfseq_flanking_sequence_type"/>
+        <property name="vfsFlankOrigin" column="vfseq_flanking_sequence_origin"/>
+
+    </class>
+
     <class name="org.zfin.mapping.FeatureLocation" table="sequence_feature_chromosome_location">
         <id name="zdbID" type="string">
             <column name="sfcl_zdb_id" not-null="true"/>

@@ -1,3 +1,4 @@
+
 package org.zfin.sequence;
 
 public class SNPMarkerSequence {
@@ -78,3 +79,4 @@ public class SNPMarkerSequence {
     }
 
 }
+

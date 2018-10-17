@@ -237,15 +237,15 @@
             </component>
         </joined-subclass>
 
-        <joined-subclass name="org.zfin.marker.SNP" table="variant_sequence">
-            <key column="vseq_data_zdb_id"/>
+        <joined-subclass name="org.zfin.marker.SNP" table="snp_sequence">
+            <key column="seq_mrkr_zdb_id"/>
             <component name="sequence">
-                <property name="targetSequence" not-null="true" column="vseq_sequence"/>
-                <property name="offsetStart" column="vseq_offset_start" type="long" not-null="false"/>
-                <property name="offsetStop" column="vseq_offset_stop" type="long" not-null="false"/>
-                <property name="variation" column="vseq_variation" type="string" not-null="false"/>
-                <property name="type" column="vseq_type" type="string" not-null="false"/>
-                <property name="leftEnd" column="vseq_five_prime_end" type="string" not-null="true"/>
+                <property name="targetSequence" not-null="true" column="seq_sequence"/>
+                <property name="offsetStart" column="seq_offset_start" type="long" not-null="false"/>
+                <property name="offsetStop" column="seq_offset_stop" type="long" not-null="false"/>
+                <property name="variation" column="seq_variation" type="string" not-null="false"/>
+                <property name="type" column="seq_type" type="string" not-null="false"/>
+                <property name="leftEnd" column="seq_left_end" type="string" not-null="true"/>
             </component>
         </joined-subclass>
 

@@ -28,6 +28,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureLocation;
+import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.Genotype;
@@ -534,6 +535,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
         FeatureAssay ftrAss = (FeatureAssay) criteria.uniqueResult();
         return ftrAss;
     }
+    public VariantSequence getFeatureVariant(Feature feature) {
+        Session session = HibernateUtil.currentSession();
+        String hqlSeq = " select vs from  VariantSequence vs where vs.vseqDataZDB =:ftrID";
+        Query queryLab = session.createQuery(hqlSeq);
+        queryLab.setParameter("ftrID", feature.getZdbID());
+        return (VariantSequence) queryLab.uniqueResult();
+
+           }
     public FeatureLocation getFeatureLocation(Feature feature) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureLocation.class);
         criteria.add(Restrictions.eq("feature", feature));

@@ -87,7 +87,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-    public SNP getSNPByID(String zdbID) {
+   public SNP getSNPByID(String zdbID) {
         Session session = currentSession();
 
         return (SNP) session.get(SNP.class, zdbID);

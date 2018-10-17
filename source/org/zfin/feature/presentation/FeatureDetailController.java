@@ -84,6 +84,8 @@ public class FeatureDetailController {
         form.setDnaChangeAttributions(FeatureService.getDnaChangeAttributions(feature));
         form.setTranscriptConsequenceAttributions(FeatureService.getTranscriptConsequenceAttributions(feature));
         form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
+        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
+        form.setVarSeqAttributions(FeatureService.getFlankSeqAttr(feature));
 
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
