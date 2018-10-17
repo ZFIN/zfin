@@ -481,6 +481,19 @@ $curGeneZDBidsSymbols->finish();
 # Step 5-1: initial set of ZFIN records
 #-----------------------------------------
 
+open (ZFINGENESUPPORTED, "toMap.unl") ||  die "Cannot open toMap.unl : $!\n";
+$ctSupportedZFINgenes = 0;
+%zfinGenes = {};
+while (<ZFINGENESUPPORTED>) {
+  if ($_) {
+    $ctSupportedZFINgenes++;
+    chop;
+    $zfinGenes{$_} = 1;
+  }
+}
+
+close ZFINGENESUPPORTED;
+
 ## the following SQL is used to getl the GenBank RNA accessions as evidence of (supporting) a gene record at ZFIN
 
 $sqlGetSupportingGenBankRNAs = "select dblink_acc_num
@@ -518,16 +531,7 @@ open (ZFINGENESUPPORTED, "toMap.unl") ||  die "Cannot open toMap.unl : $!\n";
 
 %supportingAccZFIN = ();
 
-$ctSupportedZFINgenes = 0;
-while (<ZFINGENESUPPORTED>) {
-  chomp;
-
-  if ($_) {
-    $ctSupportedZFINgenes++;
-    chop;
-
-    $geneZDBidSupported = $_;
-
+foreach $geneZDBidSupported (keys %zfinGenes) {
     my $GenBankAccAtZFIN;
 
     $curGetSupportingGenBankRNAs->execute($geneZDBidSupported, $geneZDBidSupported);
@@ -568,8 +572,6 @@ while (<ZFINGENESUPPORTED>) {
        }
 
     }
-
-  }
 
 }
 

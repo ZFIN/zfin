@@ -15,7 +15,8 @@ begin work;
 --!echo 'This piece of SQL for FB case 9915 should be kept because curator may accidentally curate such accessions which should be maintained by the load with no attribution again'
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-  select dblink_zdb_id,'ZDB-PUB-020723-3' from db_link
+  select dblink_zdb_id,'ZDB-PUB-020723-3'
+    from db_link
    where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-44'      -- UniGene
      and not exists (select 1 from record_attribution
                       where recattrib_data_zdb_id = dblink_zdb_id);
@@ -26,7 +27,8 @@ create temp table pre_delete (dblink_loaded_zdb_id		text
 --!echo 'Prepare the delete list with accession records in record_attribution table attributed to NCBI gene load publications (ZDB-PUB-020723-3, ZDB-PUB-130725-2)'
 		
 insert into pre_delete
-select recattrib_data_zdb_id from record_attribution
+select distinct recattrib_data_zdb_id
+  from record_attribution
  where recattrib_source_zdb_id in ('ZDB-PUB-020723-3', 'ZDB-PUB-130725-2');
 
 create index pd_data_id_index
@@ -101,8 +103,8 @@ delete from pre_delete
 
 create temp table backup_accession_length (	
         temp_acc_num	       varchar(30) not null,
-	temp_length            integer,
-	temp_fdbcont_zdb_id    text
+	      temp_length            integer,
+	      temp_fdbcont_zdb_id    text
 	                                  );
                              
 --!echo 'Get the list of the genes supported by GenBank RNA sequenecs'
