@@ -16,7 +16,11 @@ public class FeatureValidationService {
         if (!isFeatureSaveable(featureDTO))
             return "You must specify a lab prefix, feature type, and feature line number,assembly, start and end positions.";
 
-
+        if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
+            if (StringUtils.isEmpty(featureDTO.getFeatureAssembly())) {
+                return "You must specify an assembly if you specify a chromosome";
+            }
+        }
         FeatureTypeEnum featureTypeEnum = featureDTO.getFeatureType();
         switch (featureTypeEnum) {
             case COMPLEX_SUBSTITUTION:
@@ -33,6 +37,13 @@ public class FeatureValidationService {
     public static boolean isFeatureSaveable(FeatureDTO dtoFromGUI) {
         if (dtoFromGUI.getFeatureType() == null) return false;
 
+
+       /* if (StringUtils.isEmpty(dtoFromGUI.getFeatureChromosome())) {
+            if (dtoFromGUI.getFeatureStartLoc()==null){
+                Window.alert("You must specify a location if you specify a chromosome");
+                return false;
+            }
+        }*/
 
         switch (dtoFromGUI.getFeatureType()) {
             case TRANSGENIC_INSERTION:
