@@ -24,6 +24,10 @@ public class DownloadableSequencesController {
             switch (blastDownloadBean.getAction()) {
                 case MORPHOLINO:
                     return download("zfin_mrph.fa", BlastDownloadService.getMorpholinoDownload(), response);
+                case CRISPR:
+                    return download("zfin_crispr.fa", BlastDownloadService.getCrisprDownload(), response);
+                case TALEN:
+                    return download("zfin_talen.fa", BlastDownloadService.getTalenDownload(), response);
                 case GENBANK_ALL:
                     return download("zfin_genbank_acc.unl", BlastDownloadService.getGenbankAllDownload(), response);
                 case GENBANK_CDNA:

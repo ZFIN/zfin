@@ -3,16 +3,14 @@ package org.zfin.sequence.blast;
 import org.apache.log4j.Logger;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.repository.RepositoryFactory;
 
 import java.io.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests blast file generation from downloads file.
@@ -35,6 +33,45 @@ public class BlastDownloadsTest extends AbstractDatabaseTest{
         File tempFile = File.createTempFile("morpholino",".fa") ;
         logger.info("writing to file: "+ tempFile);
 		tempFile.deleteOnExit();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+        writer.write(fastaFile);
+
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(tempFile)) ;
+        RichSequenceIterator iterator = RichSequence.IOTools.readFastaDNA(bufferedReader,null) ;
+        assertNotNull(iterator) ;
+        assertTrue(iterator.hasNext());
+        assertNotNull(iterator.nextRichSequence());
+        assertTrue(iterator.hasNext());
+    }
+
+    @Test
+    public void blastTalenDownload() throws Exception{
+        String fastaFile = BlastDownloadService.getTalenDownload();
+        assertNotNull(fastaFile) ;
+        assertTrue(fastaFile.length()>1000) ;
+        File tempFile = File.createTempFile("talen",".fa") ;
+        logger.info("writing to file: "+ tempFile);
+        tempFile.deleteOnExit();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+        writer.write(fastaFile);
+
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(tempFile)) ;
+        RichSequenceIterator iterator = RichSequence.IOTools.readFastaDNA(bufferedReader,null) ;
+        assertNotNull(iterator) ;
+        assertTrue(iterator.hasNext());
+        assertNotNull(iterator.nextRichSequence());
+        assertTrue(iterator.hasNext());
+    }
+
+
+    @Test
+    public void blastCrisprDownload() throws Exception{
+        String fastaFile = BlastDownloadService.getCrisprDownload();
+        assertNotNull(fastaFile) ;
+        assertTrue(fastaFile.length()>1000) ;
+        File tempFile = File.createTempFile("crispr",".fa") ;
+        logger.info("writing to file: "+ tempFile);
+        tempFile.deleteOnExit();
         BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
         writer.write(fastaFile);
 

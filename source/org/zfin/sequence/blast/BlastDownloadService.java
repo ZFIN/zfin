@@ -30,7 +30,41 @@ public class BlastDownloadService {
         // generates fasta file of the form:
         // > (morpholino zdbID) (morpholino name)
         // sequence
-        List<STRMarkerSequence> strList = RepositoryFactory.getMutantRepository().getSequenceTargetingReagentsWithMarkerRelationships();
+        List<STRMarkerSequence> strList = RepositoryFactory.getMutantRepository().getMorpholinosWithMarkerRelationships();
+
+        // method A
+        // this is a slower method
+//        return getFastaStringFromStringBuilder(morpholinoList) ;
+
+
+        // method B, if there are no weird defline dependencies
+        return getFastaStringFromBioJava(strList) ;
+
+    }
+
+    public static String getTalenDownload(){
+
+        // generates fasta file of the form:
+        // > (morpholino zdbID) (morpholino name)
+        // sequence
+        List<STRMarkerSequence> strList = RepositoryFactory.getMutantRepository().getTalensWithMarkerRelationships();
+
+        // method A
+        // this is a slower method
+//        return getFastaStringFromStringBuilder(morpholinoList) ;
+
+
+        // method B, if there are no weird defline dependencies
+        return getFastaStringFromBioJava(strList) ;
+
+    }
+
+    public static String getCrisprDownload(){
+
+        // generates fasta file of the form:
+        // > (morpholino zdbID) (morpholino name)
+        // sequence
+        List<STRMarkerSequence> strList = RepositoryFactory.getMutantRepository().getCrisprsWithMarkerRelationships();
 
         // method A
         // this is a slower method

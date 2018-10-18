@@ -162,6 +162,12 @@ public interface MutantRepository {
 
     List<STRMarkerSequence> getSequenceTargetingReagentsWithMarkerRelationships();
 
+    List<STRMarkerSequence> getMorpholinosWithMarkerRelationships();
+
+    List<STRMarkerSequence> getCrisprsWithMarkerRelationships();
+
+    List<STRMarkerSequence> getTalensWithMarkerRelationships();
+
     /**
      * Retrieve all distinct marker go evidence objects for a given term.
      *

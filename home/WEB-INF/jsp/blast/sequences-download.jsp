@@ -9,6 +9,8 @@
 
     <%--from getShortSeq.pl--%>
     <li><a href="/action/blast/blast-files?action=MORPHOLINO">zfin_mrph</a>
+        <li><a href="/action/blast/blast-files?action=TALEN">zfin_talen</a>
+        <li><a href="/action/blast/blast-files?action=CRISPR">zfin_crispr</a>
 
         <%--from getZfinGbAcc.pl--%>
         <%--should be all genbank--%>

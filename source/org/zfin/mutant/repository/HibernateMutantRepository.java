@@ -735,6 +735,92 @@ public class HibernateMutantRepository implements MutantRepository {
         return strSequences;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<STRMarkerSequence> getMorpholinosWithMarkerRelationships() {
+
+        // using this type of query for both speed (an explicit join)
+        // and because createSQLQuery had trouble binding the lvarchar of s.sequence
+        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
+                "inner join m.sequence s " +
+                "inner join m.firstMarkerRelationships  " +
+                "where m.markerType in  (:moType) ";
+
+        final Query query = HibernateUtil.currentSession().createQuery(queryString);
+        query.setString("moType", Marker.Type.MRPHLNO.toString());
+
+        List<Object[]> sequences = query
+                .list();
+
+        List<STRMarkerSequence> strSequences = new ArrayList<STRMarkerSequence>();
+        for (Object[] seqObjects : sequences) {
+            STRMarkerSequence strSequence = new STRMarkerSequence();
+            strSequence.setZdbID(seqObjects[0].toString());
+            strSequence.setName(seqObjects[1].toString());
+            strSequence.setSequence(seqObjects[2].toString());
+            strSequences.add(strSequence);
+        }
+        return strSequences;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<STRMarkerSequence> getCrisprsWithMarkerRelationships() {
+
+        // using this type of query for both speed (an explicit join)
+        // and because createSQLQuery had trouble binding the lvarchar of s.sequence
+        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
+                "inner join m.sequence s " +
+                "inner join m.firstMarkerRelationships  " +
+                "where m.markerType in  (:crisprType) ";
+
+        final Query query = HibernateUtil.currentSession().createQuery(queryString);
+        query.setString("crisprType", Marker.Type.CRISPR.toString());
+
+        List<Object[]> sequences = query
+                .list();
+
+        List<STRMarkerSequence> strSequences = new ArrayList<STRMarkerSequence>();
+        for (Object[] seqObjects : sequences) {
+            STRMarkerSequence strSequence = new STRMarkerSequence();
+            strSequence.setZdbID(seqObjects[0].toString());
+            strSequence.setName(seqObjects[1].toString());
+            strSequence.setSequence(seqObjects[2].toString());
+            strSequences.add(strSequence);
+        }
+        return strSequences;
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<STRMarkerSequence> getTalensWithMarkerRelationships() {
+
+        // using this type of query for both speed (an explicit join)
+        // and because createSQLQuery had trouble binding the lvarchar of s.sequence
+        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
+                "inner join m.sequence s " +
+                "inner join m.firstMarkerRelationships  " +
+                "where m.markerType in  (:talenType) ";
+
+        final Query query = HibernateUtil.currentSession().createQuery(queryString);
+        query.setString("talenType", Marker.Type.TALEN.toString());
+
+        List<Object[]> sequences = query
+                .list();
+
+        List<STRMarkerSequence> strSequences = new ArrayList<STRMarkerSequence>();
+        for (Object[] seqObjects : sequences) {
+            STRMarkerSequence strSequence = new STRMarkerSequence();
+            strSequence.setZdbID(seqObjects[0].toString());
+            strSequence.setName(seqObjects[1].toString());
+            strSequence.setSequence(seqObjects[2].toString());
+            strSequences.add(strSequence);
+        }
+        return strSequences;
+    }
+
     /**
      * Retrieve phenotypes that have an annotation to a given term
      * with tag=abnormal and the term either in super or sub position
