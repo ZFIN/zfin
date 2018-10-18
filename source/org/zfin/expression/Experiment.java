@@ -8,9 +8,7 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
 @Entity
@@ -197,5 +195,20 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
             }
         }
         return displayConditions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Experiment that = (Experiment) o;
+        return new HashSet<>(experimentConditions).equals(new HashSet<>(that.experimentConditions));
+    }
+
+    @Override
+    public int hashCode() {
+        if (experimentConditions == null)
+            return 11;
+        return experimentConditions.stream().mapToInt(ExperimentCondition::hashCode).sum();
     }
 }
