@@ -34,7 +34,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @JoinColumn(name = "exp_source_zdb_id")
     private Publication publication;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
-    private List<ExperimentCondition> experimentConditions;
+    private Set<ExperimentCondition> experimentConditions;
 
 
     public String getZdbID() {
@@ -89,11 +89,11 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return (name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
     }
 
-    public List<ExperimentCondition> getExperimentConditions() {
+    public Set<ExperimentCondition> getExperimentConditions() {
         return experimentConditions;
     }
 
-    public void setExperimentConditions(List<ExperimentCondition> experimentConditions) {
+    public void setExperimentConditions(Set<ExperimentCondition> experimentConditions) {
         this.experimentConditions = experimentConditions;
     }
 
@@ -178,7 +178,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
             experimentConditions = new HashSet<>();
         experimentConditions.add(condition);*/
         if (experimentConditions == null)
-            experimentConditions = new ArrayList<>();
+            experimentConditions = new HashSet<>();
         experimentConditions.add(condition);
     }
 
