@@ -910,8 +910,11 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease) {
         String hql = "select damo  from DiseaseAnnotationModel damo  " +
                 "left join fetch damo.fishExperiment fx " +
-                "left join fetch fx.experiment " +
-                "left join fetch damo.diseaseAnnotation " +
+                "left join fetch fx.experiment exp " +
+                "left join fetch fx.fish " +
+                "left join fetch exp.experimentConditions " +
+                "left join fetch damo.diseaseAnnotation da " +
+                "left join fetch da.publication " +
                 "where " +
                 "damo.diseaseAnnotation.disease = :disease";
         Query query = HibernateUtil.currentSession().createQuery(hql);

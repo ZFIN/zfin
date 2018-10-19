@@ -18,6 +18,7 @@ import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.*;
+import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
@@ -180,7 +181,8 @@ public class OntologyTermDetailController {
             model.addAttribute("diseaseGenes", numberOfGenes);
             form.setAgrDiseaseLinks(OntologyService.getAGRLinks(term));
             form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term));
-            model.addAttribute("fishModels", OntologyService.getDiseaseModelsWithFishModel(term));
+            List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModel(term);
+            model.addAttribute("fishModels", diseaseModelsWithFishModel);
         }
         model.addAttribute("isDiseaseTerm", isDiseaseTerm);
         model.addAttribute("showPhenotypeSection", !term.getOntology().equals(Ontology.ECO));
@@ -286,12 +288,12 @@ public class OntologyTermDetailController {
     }
 
     private boolean hasExpressionData(Term anatomyTerm) {
-      //  AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatistics(anatomyTerm.getZdbID());
-        GenericTerm anatTerm=getOntologyRepository().getTermByZdbID(anatomyTerm.getZdbID());
+        //  AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatistics(anatomyTerm.getZdbID());
+        GenericTerm anatTerm = getOntologyRepository().getTermByZdbID(anatomyTerm.getZdbID());
      /*   if (statistics == null || statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
             return true;*/
         // check for antibody records including substructures
-        PaginationResult<MarkerStatistic> emr=
+        PaginationResult<MarkerStatistic> emr =
                 getPublicationRepository().getAllExpressedMarkers(anatTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
         if (emr != null && emr.getTotalCount() > 0)
             return true;
@@ -409,5 +411,5 @@ public class OntologyTermDetailController {
     public String getOntologyRelationshipNote() {
         return "ontology/ontology-relationship-note.insert";
     }
-    
+
 }

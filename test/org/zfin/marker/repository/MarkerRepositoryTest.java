@@ -752,7 +752,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         List<MarkerRelationshipPresentation> knockdowns = markerRepository
                 .getRelatedMarkerDisplayForTypes(m, false, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
         assertThat(knockdowns.size(), greaterThan(2));
-        assertThat(knockdowns.size(), lessThan(8));
+        assertThat(knockdowns.size(), lessThan(20));
 
         MarkerRelationshipPresentation mrp = knockdowns.get(0);
         assertEquals("MO1-tnnt2a", mrp.getAbbreviation());

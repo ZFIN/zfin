@@ -29,7 +29,10 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -450,10 +453,14 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
 
     @Test
     public void getHumanDiseaseModelsByDisease() {
-        //ABCD syndrome
-        GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:0050600");
+        //cancer
+        GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:162");
         List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease);
-        assertNotNull(diseaseAnnotations);
+        Map<FishExperiment, List<DiseaseAnnotationModel>> fishExperimentMap = diseaseAnnotations.stream()
+                .filter(Objects::nonNull)
+                .collect(groupingBy(DiseaseAnnotationModel::getFishExperiment));
+
+        assertNotNull(fishExperimentMap);
     }
 
     @Test

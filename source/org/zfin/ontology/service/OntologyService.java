@@ -158,8 +158,6 @@ public class OntologyService {
     }
 
     public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
-        SequenceService sequenceService = new SequenceService();
-
         if (term == null) {
             return null;
         }
