@@ -24,8 +24,7 @@ public class ExperimentPresentation extends EntityPresentation {
             return "control";
         //if (experiment.isStandard())
         //    return "standard or control";
-        TreeSet<ExperimentCondition> conditions = experiment.getExperimentConditions();
-        return ExperimentConditionPresentation.getLink(conditions, experiment, suppressPopupLink);
+        return ExperimentConditionPresentation.getLink(experiment.getExperimentConditions(), experiment, suppressPopupLink);
     }
 
 

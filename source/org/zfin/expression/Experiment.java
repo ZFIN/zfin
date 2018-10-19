@@ -6,10 +6,7 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
 @Entity
@@ -35,7 +32,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @JoinColumn(name = "exp_source_zdb_id")
     private Publication publication;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
-    private TreeSet<ExperimentCondition> experimentConditions;
+    private SortedSet<ExperimentCondition> experimentConditions;
 
 
     public String getZdbID() {
@@ -90,11 +87,11 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return (name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
     }
 
-    public TreeSet<ExperimentCondition> getExperimentConditions() {
+    public Set<ExperimentCondition> getExperimentConditions() {
         return experimentConditions;
     }
 
-    public void setExperimentConditions(TreeSet<ExperimentCondition> experimentConditions) {
+    public void setExperimentConditions(SortedSet<ExperimentCondition> experimentConditions) {
         this.experimentConditions = experimentConditions;
     }
 
