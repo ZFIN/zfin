@@ -233,7 +233,10 @@ public class OntologyService {
         return fishExperimentMap.entrySet().stream()
                 .map(entry -> {
                     FishModelDisplay display = new FishModelDisplay(entry.getKey());
-                    display.setPublications(entry.getValue().stream().map(DiseaseAnnotationModel::getDiseaseAnnotation).map(DiseaseAnnotation::getPublication).collect(Collectors.toSet()));
+                    display.setPublications(entry.getValue().stream()
+                            .map(DiseaseAnnotationModel::getDiseaseAnnotation)
+                            .map(DiseaseAnnotation::getPublication)
+                            .collect(Collectors.toSet()));
                     return display;
                 })
                 .sorted()
