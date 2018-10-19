@@ -2,13 +2,14 @@ package org.zfin.expression;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
 @Entity
@@ -34,7 +35,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @JoinColumn(name = "exp_source_zdb_id")
     private Publication publication;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
-    private Set<ExperimentCondition> experimentConditions;
+    private TreeSet<ExperimentCondition> experimentConditions;
 
 
     public String getZdbID() {
@@ -89,11 +90,11 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return (name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
     }
 
-    public Set<ExperimentCondition> getExperimentConditions() {
+    public TreeSet<ExperimentCondition> getExperimentConditions() {
         return experimentConditions;
     }
 
-    public void setExperimentConditions(Set<ExperimentCondition> experimentConditions) {
+    public void setExperimentConditions(TreeSet<ExperimentCondition> experimentConditions) {
         this.experimentConditions = experimentConditions;
     }
 
@@ -178,7 +179,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
             experimentConditions = new HashSet<>();
         experimentConditions.add(condition);*/
         if (experimentConditions == null)
-            experimentConditions = new HashSet<>();
+            experimentConditions = new TreeSet<>();
         experimentConditions.add(condition);
     }
 
