@@ -315,7 +315,8 @@ task postloaddb(type: GradleBuild) {
              'update',
              'deployPostgresFunctions',
              'dropTriggers',
-             'dropFunctions'
+             'dropFunctions',
+             'liquibasePostBuild'
     ]
 }
 
