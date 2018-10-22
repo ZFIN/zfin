@@ -515,4 +515,9 @@ public class GenericTerm implements Term<GenericTermRelationship> {
         }
         return childSet;
     }
+
+    public String getEntityType(){
+        return "Term";
+    }
+
 }

@@ -10,6 +10,15 @@
     </tr>
     </tbody>
 </table>
+<p/>
+<div class="titlebar">
+    <h1>Citations</h1> (${citationList.numOfPublications} total)
+</div>
+<p/>
+<span class="primary-entity-attributes">
+<b>${term.entityType}:</b>
+        <zfin:link entity="${term}"/>
+</span> <br/>
 
 <zfin2:citationList pubListBean="${citationList}" url="/action/ontology/disease-publication-list/${term.oboID}?">
 
