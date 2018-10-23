@@ -2,15 +2,12 @@ package org.zfin.expression;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
+import org.hibernate.annotations.SortNatural;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
 @Entity
@@ -36,7 +33,8 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @JoinColumn(name = "exp_source_zdb_id")
     private Publication publication;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
-    private List<ExperimentCondition> experimentConditions;
+    @SortNatural
+    private SortedSet<ExperimentCondition> experimentConditions;
 
 
     public String getZdbID() {
@@ -55,14 +53,6 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         this.name = name;
     }
 
-   /* public List<ExperimentCondition> getExperimentConditions() {
-        return experimentConditions;
-    }
-
-    public void setExperimentConditions(List<ExperimentCondition> experimentConditions) {
-        this.experimentConditions = experimentConditions;
-    }*/
-
     public Publication getPublication() {
         return publication;
     }
@@ -70,14 +60,6 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     public void setPublication(Publication publication) {
         this.publication = publication;
     }
-/*
-    public Set<ExperimentCondition> getExperimentConditions() {
-        return experimentConditions;
-    }*/
-
-   /* public void setExperimentConditions(Set<ExperimentCondition> experimentConditions) {
-        this.experimentConditions = experimentConditions;
-    }*/
 
     public boolean isStandard() {
         return (name.equalsIgnoreCase(Experiment.STANDARD) || name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
@@ -91,11 +73,11 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return (name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
     }
 
-    public List<ExperimentCondition> getExperimentConditions() {
+    public Set<ExperimentCondition> getExperimentConditions() {
         return experimentConditions;
     }
 
-    public void setExperimentConditions(List<ExperimentCondition> experimentConditions) {
+    public void setExperimentConditions(SortedSet<ExperimentCondition> experimentConditions) {
         this.experimentConditions = experimentConditions;
     }
 
@@ -180,7 +162,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
             experimentConditions = new HashSet<>();
         experimentConditions.add(condition);*/
         if (experimentConditions == null)
-            experimentConditions = new ArrayList<>();
+            experimentConditions = new TreeSet<>();
         experimentConditions.add(condition);
     }
 
@@ -197,5 +179,20 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
             }
         }
         return displayConditions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Experiment that = (Experiment) o;
+        return new HashSet<>(experimentConditions).equals(new HashSet<>(that.experimentConditions));
+    }
+
+    @Override
+    public int hashCode() {
+        if (experimentConditions == null)
+            return 11;
+        return experimentConditions.stream().mapToInt(ExperimentCondition::hashCode).sum();
     }
 }

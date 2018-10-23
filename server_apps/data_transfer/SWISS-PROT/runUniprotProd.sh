@@ -22,9 +22,10 @@ echo "Copy new files from /research/zarchive/load_files/UniProt/"
 
 echo "#########################################################################"
 
-cd <!--|SOURCEROOT|-->/server_apps/data_transfer/SWISS-PROT/;
-/local/bin/gmake runPG ;
+echo "running loadsp.pl"
+./loadsp.pl ;
 
-cd <!--|SOURCEROOT|-->/server_apps/data_transfer/GO;
-/local/bin/gmake runPG ;
+echo "running go.pl"
+cd <!--|TARGETROOT|-->/server_apps/data_transfer/GO;
+./go.pl ;
 

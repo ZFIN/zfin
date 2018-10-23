@@ -1,10 +1,7 @@
 package org.zfin.feature;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
+import org.hibernate.annotations.*;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
@@ -12,7 +9,6 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityNotes;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.mapping.FeatureLocation;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
@@ -20,7 +16,10 @@ import org.zfin.profile.FeatureSource;
 import org.zfin.profile.FeatureSupplier;
 import org.zfin.sequence.FeatureDBLink;
 
+import javax.persistence.CascadeType;
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -91,7 +90,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Column(name = "feature_unspecified")
     private Boolean isUnspecifiedFeature;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
-    @Sort(type = SortType.NATURAL)
+    @SortNatural
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
     @Column(name = "feature_type")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
@@ -110,7 +109,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @OneToMany(mappedBy = "feature", fetch = FetchType.EAGER)
     private Set<FeatureDBLink> dbLinks;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)
+    @SortNatural
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private SortedSet<FeatureTranscriptMutationDetail> featureTranscriptMutationDetailSet;
 

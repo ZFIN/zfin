@@ -7,6 +7,7 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.OmimPhenotype;
@@ -26,6 +27,7 @@ import org.zfin.sequence.service.SequenceService;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
@@ -154,9 +156,8 @@ public class OntologyService {
         }
         return summaryLinks;
     }
-    public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
-        SequenceService sequenceService = new SequenceService();
 
+    public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
         if (term == null) {
             return null;
         }
@@ -224,26 +225,22 @@ public class OntologyService {
         if (CollectionUtils.isEmpty(modelList)) {
             return null;
         }
-        Map<FishExperiment, FishModelDisplay> map = new HashMap<>();
-        for (DiseaseAnnotationModel model : modelList) {
-            // ignore disease models without fish models
-            if (model == null) {
-                continue;
-            }
 
-            FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
-            display.addPublication(model.getDiseaseAnnotation().getPublication());
+        Map<FishExperiment, List<DiseaseAnnotationModel>> fishExperimentMap = modelList.stream()
+                .filter(Objects::nonNull)
+                .collect(groupingBy(DiseaseAnnotationModel::getFishExperiment));
 
-            FishModelDisplay mapModel = map.get(model.getFishExperiment());
-            if (mapModel == null) {
-                map.put(model.getFishExperiment(), display);
-            } else {
-                mapModel.addPublication(model.getDiseaseAnnotation().getPublication());
-            }
-        }
-        List<FishModelDisplay> displayList = new ArrayList<>(map.values());
-        Collections.sort(displayList);
-        return displayList;
+        return fishExperimentMap.entrySet().stream()
+                .map(entry -> {
+                    FishModelDisplay display = new FishModelDisplay(entry.getKey());
+                    display.setPublications(entry.getValue().stream()
+                            .map(DiseaseAnnotationModel::getDiseaseAnnotation)
+                            .map(DiseaseAnnotation::getPublication)
+                            .collect(Collectors.toSet()));
+                    return display;
+                })
+                .sorted()
+                .collect(Collectors.toList());
     }
 
 

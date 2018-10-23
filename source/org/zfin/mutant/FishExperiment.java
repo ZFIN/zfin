@@ -3,6 +3,7 @@ package org.zfin.mutant;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -98,5 +99,18 @@ public class FishExperiment implements Comparable<FishExperiment> {
 
     public void setGeneGenotypeExperiments(Set<GeneGenotypeExperiment> geneGenotypeExperiments) {
         this.geneGenotypeExperiments = geneGenotypeExperiments;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        FishExperiment that = (FishExperiment) o;
+        return Objects.equals(experiment, that.experiment) &&
+                Objects.equals(fish, that.fish);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(experiment, fish);
     }
 }
