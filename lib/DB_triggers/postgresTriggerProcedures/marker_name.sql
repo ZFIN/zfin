@@ -13,7 +13,6 @@ begin
      	    			   NEW.mrkr_name, 
 				   NEW.mrkr_type,
      	    			   NEW.mrkr_abbrev);
-     raise notice 'M name: % symbol % ', NEW.mrkr_name, NEW.mrkr_abbrev;
      perform p_check_mrkr_abbrev (NEW.mrkr_name,
      	    			 NEW.mrkr_abbrev,
 				 NEW.mrkr_type);
