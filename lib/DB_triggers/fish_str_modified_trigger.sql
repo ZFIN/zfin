@@ -1,7 +1,0 @@
-create trigger fish_str_modified_trigger update of fishstr_str_zdb_id, fishstr_fish_zdb_id
- on fish_str
-  referencing old as o_fstr 
-  new as n_fstr
-for each row (
-    	 execute procedure p_set_fish_to_modified(n_fstr.fishstr_fish_zdb_id),
-	 execute procedure p_update_related_fish_name());
