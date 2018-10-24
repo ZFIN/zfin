@@ -1,5 +1,5 @@
 include 'lib:DB_functions:postgresFunctions'
-include 'lib:DB_triggers:postgresTriggerProcedures'
+include 'lib:DB_triggers'
 include 'server_apps:apache'
 include 'server_apps:DB_maintenance'
 include 'server_apps:data_transfer'
