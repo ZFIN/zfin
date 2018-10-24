@@ -311,7 +311,7 @@
             <echo>OBO file: @{oboDirectory}</echo>
             <echo>script Files: @{scripts}</echo>
             <antcall target="clear-output-directory"/>
-            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="no" maxmemory="4g"
+            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="4g"
                   failonerror="true">
                 <classpath refid="classpath"/>
                 <arg value="-localOboFileName"/>

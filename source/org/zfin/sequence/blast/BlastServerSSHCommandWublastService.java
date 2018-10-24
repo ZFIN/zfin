@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * @deprecated No longer used.  Use MountedWublastBlastService instead.
+ * deprecated No longer used.  Use MountedWublastBlastService instead.
  */
 public final class BlastServerSSHCommandWublastService extends BlastServerSGEWublastService {
 

@@ -80,12 +80,14 @@
         <attribute name="sql-query-file"/>
         <attribute name="directory"/>
         <sequential>
-            <java classname="org.zfin.properties.RunSqlQueryTask" fork="false" classpathref="extended.classpath"
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
                   failonerror="true">
                 <arg value="${DBNAME}"/>
                 <arg value="@{sql-query-file}"/>
                 <arg value="@{directory}"/>
+            <jvmarg value="--add-opens=java.base/jdk.internal.reflect=ALL-UNNAMED"/>
             </java>
+
         </sequential>
     </macrodef>
 

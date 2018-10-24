@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * This class is responsible getting database abbreviation sizes
  *
- * @deprecated Use WebHostDatabaseStatisticsCache instead.
+ * deprecated Use WebHostDatabaseStatisticsCache instead.
  */
 public class BlastServerDatabaseStatisticsCache extends AbstractDatabaseStatisticsCache {
 

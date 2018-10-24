@@ -134,6 +134,7 @@
                 <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
                 <jvmarg value="-Xmx1024m"/>
                 <jvmarg value="-Xverify:none"/>
+                <jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
                 <test name="@{testClass}" todir="${test.reports.dir}" outfile="@{outFile}">
                     <formatter type="brief"/>
                     <formatter type="xml"/>
@@ -266,6 +267,17 @@ test(s) need to be run before committing changes or pushing files to production 
                showoutput="false"
 	       includeantruntime="false">
              <jvmarg value="-Xverify:none"/>
+             <jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
+             <jvmarg value="--add-opens=java.base/java.util=ALL-UNNAMED"/>
+             <jvmarg value="--add-opens=java.base/java.io=ALL-UNNAMED"/>
+             <jvmarg value="--add-opens=java.base/java.util.regex=ALL-UNNAMED"/>
+             <jvmarg value="--add-opens=java.base/java.nio.file=ALL-UNNAMED"/>
+             <jvmarg value="--add-opens=java.base/sun.nio.fs=ALL-UNNAMED"/>
+             <jvmarg value="--add-opens=java.base/java.math=ALL-UNNAMED"/>
+             <jvmarg value="--add-opens=java.base/java.lang.reflect=ALL-UNNAMED"/>
+             <jvmarg value="--add-opens=java.base/java.security=ALL-UNNAMED"/>
+             <jvmarg value="--add-opens=java.base/java.net=ALL-UNNAMED"/>
+             <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED"/>
              <classpath>
  		<path refid="extended.classpath"/>
              </classpath>
@@ -384,11 +396,10 @@ test(s) need to be run before committing changes or pushing files to production 
         <groovyc srcdir="test"
                destdir="${classbin.dir}"
                classpathref="extended.classpath"
-               fork="yes"
+               fork="no"
                encoding="${encoding}"
-               includeAntRuntime="no"
                memoryMaximumSize="256m">
-            <javac encoding="${encoding}" deprecation="${javac.deprecation}" debug="on" source="1.8" target="1.8"/>
+            <javac encoding="${encoding}" deprecation="${javac.deprecation}" debug="on" />
         </groovyc>
 
         <!--
@@ -541,7 +552,7 @@ test(s) need to be run before committing changes or pushing files to production 
     <!--This is used to determine if output should be mailed.  Could be handed in, as well.-->
     <target name="smokeTests" if="notproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
 
-        <junit fork="false"
+        <junit fork="true"
                printsummary="yes"
                haltonfailure="false"
                haltonerror="false"
@@ -553,6 +564,7 @@ test(s) need to be run before committing changes or pushing files to production 
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
+            <jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
             <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}"
                   todir="${test.reports.dir}"
                   haltonerror="false" haltonfailure="true"

@@ -207,8 +207,8 @@
                      verbose="0"
                      listErrors="true"
                      compile="false"
-                     compilerSourceVM="1.8"
-                     compilerTargetVM="1.8"
+                     compilerSourceVM="1.11"
+                     compilerTargetVM="1.11"
             />
             <javac srcdir="${pre.jsp-compile}"
                    destdir="${pre.jsp-compile}"
@@ -217,7 +217,7 @@
                    includeAntRuntime="no"
                    memoryMaximumSize="256m"
                    debug="true"
-                   target="1.8"/>
+                   target="1.11"/>
             <echo message=":JSP COMPILE SUCCESSFUL:"/>
         </sequential>
     </macrodef>
