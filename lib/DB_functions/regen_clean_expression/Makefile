@@ -16,7 +16,7 @@
 TOP = ../../../..
 include $(TOP)/make.include
 
-DIR = lib/DB_functions/postgresFunctions/regenCleanExpression
+DIR = lib/DB_functions/regenCleanExpression
 TARGETDIR = $(TARGETROOT)/$(DIR)
 TESTDIR = /tmp/$(DBNAME)/$(DIR)
 

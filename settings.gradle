@@ -1,4 +1,4 @@
-include 'lib:DB_functions:postgresFunctions'
+include 'lib:DB_functions'
 include 'lib:DB_triggers'
 include 'server_apps:apache'
 include 'server_apps:DB_maintenance'

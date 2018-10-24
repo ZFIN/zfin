@@ -16,7 +16,7 @@ ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/c
 # create the update statements that we need to load up the clobs.
 ${SOURCEROOT}/server_apps/DB_maintenance/postgres/createClobLoadStatements.sh
 
-${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/lib/DB_functions/postgresFunctions/bytea_import.sql
+${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/lib/DB_functions/bytea_import.sql
 
 # load up the clobs into postgres
 ${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/clobLoad.sql
