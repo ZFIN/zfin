@@ -8,7 +8,7 @@
 
 
     <changeSet author="pm" id="ZFIN-5893">
-    <loadData file="source/org/zfin/db/postGmakePostloaddb/1101/ZFIN-5893.csv"
+    <loadData file="source/org/zfin/db/postGmakePostloaddb/1102/ZFIN-5893.csv"
               tableName="inputensdarg" encoding="UTF-8">
         <column name="ensdarg" type="String"/>
 
