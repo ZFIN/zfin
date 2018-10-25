@@ -40,12 +40,19 @@ create or replace function marker_abbrev_update()
 returns trigger as
 $BODY$
 
+declare mrkr_abbrev marker.mrkr_abbrev%TYPE;
+	mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE;
+    
+
 begin
 
      
-     NEW.mrkr_abbrev = scrub_char(NEW.mrkr_abbrev);
+     mrkr_abbrev = scrub_char(NEW.mrkr_abbrev);
      
-     NEW.mrkr_abbrev_order = zero_pad(NEW.mrkr_abbrev_order);
+     mrkr_abbrev_order = zero_pad(NEW.mrkr_abbrev_order);
+
+     NEW.mrkr_abbrev_order = mrkr_abbrev_order;
+     NEW.mrkr_abbrv = mrkr_abbrev;
 
      perform p_check_mrkr_abbrev(NEW.mrkr_name,
 			        NEW.mrkr_abbrev,
