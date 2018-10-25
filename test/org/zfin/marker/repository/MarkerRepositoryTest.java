@@ -38,6 +38,7 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -754,7 +755,9 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertThat(knockdowns.size(), greaterThan(2));
         assertThat(knockdowns.size(), lessThan(20));
 
-        MarkerRelationshipPresentation mrp = knockdowns.get(0);
+        Optional<MarkerRelationshipPresentation> mrpr = knockdowns.stream().filter(presentation -> presentation.getAbbreviation().equals("MO1-tnnt2a")).findFirst();
+        assertTrue(mrpr.isPresent());
+        MarkerRelationshipPresentation mrp = mrpr.get();
         assertEquals("MO1-tnnt2a", mrp.getAbbreviation());
         assertThat(mrp.getNumAttributions(), greaterThan(1));
         assertThat(mrp.getNumAttributions(), lessThan(4));
