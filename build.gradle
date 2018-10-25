@@ -30,7 +30,7 @@ dependencies {
 }
 
 task deployPostgres(dependsOn: ['lib:DB_functions:postgresFunctions:deployPostgresFunctions',
-                                'lib:DB_triggers:postgresTriggerProcedures:deployPostgresTrigger']) {
+                                'lib:DB_triggers:postgresTriggerProcedures:deployPostgresTriggers']) {
     description "Deploy all postgres code"
 }
 

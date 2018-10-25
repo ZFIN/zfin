@@ -3,10 +3,10 @@ def dbname = env['DBNAME']
 def pgbindir = env['PGBINDIR']
 def pgdata = env['PGDATA']
 
-task deployPostgresTrigger {
-    description = "deploy postgres trigger into PG"
+task deployPostgresTriggers {
+    description = "deploy postgres triggers into PG"
     doLast {
-        println "deploying postgres trigger ..."
+        println "deploying postgres triggers ..."
         int numberOfTrigger = runSqlFiles(".")
         println "deployed "+numberOfTrigger +" trigger ..."
     }
