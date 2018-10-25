@@ -15,7 +15,9 @@ begin
 
      NEW.mrkr_abbrev = scrub_char(NEW.mrkr_abbrev);
      
-     NEW.mrkr_abbrev_order = zero_pad(NEW.mrkr_abbrev_order);
+     mrkr_abbrev_order = zero_pad(NEW.mrkr_abbrev_order);
+
+     NEW.mrkr_abbrev_order = mrkr_abbrev_order;
 
      perform p_check_mrkr_abbrev(NEW.mrkr_name,
 			        NEW.mrkr_abbrev,
