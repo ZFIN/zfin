@@ -176,6 +176,7 @@ def translateVariableSet = [
         'USER',
         'VALIDATION_EMAIL_DBA',
         'WEBDRIVER_PATH_FROM_ROOT',
+	'WEBHOST_BLASTDB_TO_COPY',
         'WEBHOST_FASTA_FILE_PATH',
 ]
 
