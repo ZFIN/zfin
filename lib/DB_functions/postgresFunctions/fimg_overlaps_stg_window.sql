@@ -1,4 +1,4 @@
-create function 
+create or replace function 
 fimg_overlaps_stg_window (
   imgZdbId       image.img_zdb_id%TYPE,
   startStageZdbId stage.stg_zdb_id%TYPE,
