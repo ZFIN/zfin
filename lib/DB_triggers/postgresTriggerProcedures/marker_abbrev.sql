@@ -9,15 +9,17 @@ $BODY$
 
 declare mrkr_abbrev marker.mrkr_abbrev%TYPE;
 	mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE;
-    
+        mrkr_name marker.mrkr_name%TYPE;
 
 begin
 
-     NEW.mrkr_abbrev = scrub_char(NEW.mrkr_abbrev);
-     
+     mrkr_name = scrub_char(NEW.mrkr_name);
+     mrkr_abbrev = scrub_char(NEW.mrkr_abbrev);
      mrkr_abbrev_order = zero_pad(NEW.mrkr_abbrev_order);
 
      NEW.mrkr_abbrev_order = mrkr_abbrev_order;
+     NEW.mrkr_abbrev = mrkr_abbrev;
+     NEW.mrkr_name = mrkr_name;
 
      perform p_check_mrkr_abbrev(NEW.mrkr_name,
 			        NEW.mrkr_abbrev,
@@ -42,17 +44,18 @@ $BODY$
 
 declare mrkr_abbrev marker.mrkr_abbrev%TYPE;
 	mrkr_abbrev_order marker.mrkr_abbrev_order%TYPE;
+        mrkr_name marker.mrkr_name%TYPE;
     
-
 begin
 
-     
+     mrkr_name = scrub_char(NEW.mrkr_name);
      mrkr_abbrev = scrub_char(NEW.mrkr_abbrev);
      
-     mrkr_abbrev_order = zero_pad(NEW.mrkr_abbrev_order);
+     mrkr_abbrev_order = zero_pad(mrkr_abbrev);
 
      NEW.mrkr_abbrev_order = mrkr_abbrev_order;
-     NEW.mrkr_abbrv = mrkr_abbrev;
+     NEW.mrkr_abbrev = mrkr_abbrev;
+     NEW.mrkr_name = mrkr_name;
 
      perform p_check_mrkr_abbrev(NEW.mrkr_name,
 			        NEW.mrkr_abbrev,
