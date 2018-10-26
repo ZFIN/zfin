@@ -1,3 +1,6 @@
+#!/bin/bash
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
+
 import org.apache.log4j.Logger
 import org.hibernate.criterion.Restrictions
 import org.zfin.Species
@@ -32,11 +35,13 @@ Logger log = Logger.getLogger(getClass())
 
 def env = System.getenv()
 
-AbstractScriptWrapper abstractScriptWrapper = new AbstractScriptWrapper()
+/*AbstractScriptWrapper abstractScriptWrapper = new AbstractScriptWrapper()
 abstractScriptWrapper.initProperties("${env['TARGETROOT']}/home/WEB-INF/zfin.properties")
 abstractScriptWrapper.initDatabaseWithoutSysmaster()
-abstractScriptWrapper.initializeLogger("./log4j.xml")
+abstractScriptWrapper.initializeLogger("./log4j.xml")*/
 
+ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+new HibernateSessionCreator()
 Session session = HibernateUtil.currentSession()
 session.beginTransaction()
 
@@ -44,8 +49,9 @@ session.beginTransaction()
 def markerPrefix = "CRISPR"
 def markerDelim = "-"
 
+//the file that is loaded ultimately for this load comes from a bit of preprocessing. The processing is done in my (pm) personal directory. (right now under 1102DLOAD-572)
 
-def burgessCRISPR = parseCsv(new FileReader("/research/zunloads/projects/CRISPRz/crisprLoad201610.csv"))
+def burgessCRISPR = parseCsv(new FileReader("crisprtoload.csv"))
 
 burgessCRISPR.each { csv ->
 
@@ -58,10 +64,11 @@ burgessCRISPR.each { csv ->
             pmid: $csv.pmid
             """
     )
-    def crisprIndex = 1
-    Marker tgtGene = RepositoryFactory.markerRepository.getMarkerByID(csv.geneid)
+   def crisprIndex = 1
+    tgtGene = RepositoryFactory.markerRepository.getMarkerOrReplacedByID(csv.geneid);
 
-    List<Publication> publication1 = RepositoryFactory.publicationRepository.getPublicationByPmid(csv.pmid)
+
+    List<Publication> publication1 = RepositoryFactory.publicationRepository.getPublicationByPmid(Integer.parseInt(csv.pmid))
     if (publication1.empty) {
         usePub2 = true
     } else {
@@ -72,12 +79,14 @@ burgessCRISPR.each { csv ->
     Publication publication2 = RepositoryFactory.publicationRepository.getPublication("ZDB-PUB-151209-4") /*data load pub*/
     crisprName = markerPrefix+crisprIndex+markerDelim+csv.geneabbrev
 
-
 //if a crispr for the gene already exists in ZFIN(but with a different sequence increment the crispr number)
-    if (RepositoryFactory.markerRepository.getMarkerByName(crisprName)) {
-        crisprCount = RepositoryFactory.markerRepository.getCrisprCount(csv.geneid)
+    if (RepositoryFactory.markerRepository.getMarkerByName(crisprName)!=null) {
+        crisprCount = RepositoryFactory.markerRepository.getCrisprCount(tgtGene.zdbID)
+        println(crisprCount)
+
         crisprIndex = crisprCount + 1
         crisprName = markerPrefix + crisprIndex + markerDelim + csv.geneabbrev
+        println crisprName
     }
 
     def crisprseq = csv.sequence
@@ -85,14 +94,10 @@ burgessCRISPR.each { csv ->
 
     newSequenceTargetingReagentSequence.setSequence(crisprseq)
     newSequenceTargetingReagentSequence.setType("Nucleotide")
-/*
-    Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
-            .add(Restrictions.eq("zdbID", "ZDB-PERS-030612-2"))  //Doug
-            .uniqueResult();
-*/
- // Person owner = getPerson("ZDB-PERS-030612-2")
+
     Marker newCRISPR = createNewCrispr(newSequenceTargetingReagentSequence, crisprName,publication2)
     MarkerAlias crisprAlias = createNewAlias(newCRISPR,csv.crisprID,publication2)
+    println(tgtGene.zdbID)
     MarkerRelationship newReln= createNewReln(newCRISPR,tgtGene,publication2)
     DBLink newDBLink=createNewDBLink(newCRISPR,csv.crisprID,publication2)
 
