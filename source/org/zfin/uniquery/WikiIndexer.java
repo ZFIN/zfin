@@ -1,7 +1,6 @@
 package org.zfin.uniquery;
 
 import org.apache.log4j.Logger;
-import org.zfin.uniquery.categories.SiteSearchCategories;
 import org.zfin.wiki.*;
 import org.zfin.wiki.service.WikiWebService;
 
@@ -19,7 +18,9 @@ public class WikiIndexer {
 
     public WikiIndexer() {
         // obtain wiki spaces to be indexed
-        List<SearchCategory> wikiCategories = SiteSearchCategories.getWikiCategories();
+        //List<SearchCategory> wikiCategories = SiteSearchCategories.getWikiCategories();
+        // need to find the categories from faceted search if we ever wanted to index the wiki within FS
+        List<SearchCategory> wikiCategories = null;
         if (wikiCategories == null)
             return;
 

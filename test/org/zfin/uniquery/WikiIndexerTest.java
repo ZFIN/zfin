@@ -1,7 +1,6 @@
 package org.zfin.uniquery;
 
 import org.zfin.properties.ZfinProperties;
-import org.zfin.uniquery.categories.SiteSearchCategories;
 import org.zfin.wiki.WikiLoginException;
 
 import java.io.File;
@@ -18,7 +17,6 @@ public class WikiIndexerTest {
         File zfinProperties = new File(webInf, "zfin.properties");
 
         ZfinProperties.init(zfinProperties.getAbsolutePath());
-        SiteSearchCategories.init(confDirectory.getAbsolutePath(), null);
         WikiIndexer indexer = new WikiIndexer();
         indexer.getUrlSummary();
     }

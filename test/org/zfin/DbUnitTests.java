@@ -67,7 +67,6 @@ import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.presentation.RenoRedundancyCandidateControllerTest;
 import org.zfin.sequence.reno.presentation.SingleAssociatedGenesFromQueryTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
-import org.zfin.uniquery.SequenceIdListTest;
 import org.zfin.webservice.MarkerSoapDbTest;
 import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
 
@@ -143,7 +142,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         RenoMultiRunTest.class,
         RenoRedundancyCandidateControllerTest.class,
         RenoRepositoryTest.class,
-        SequenceIdListTest.class,
         //SequenceRepositorySpec.class,
         SequenceRepositoryTest.class,
         SequenceTargetingReagentAddBeanValidatorSpec.class,

@@ -603,7 +603,6 @@
 
     <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
-        <copy-indexer-build-file-with-env-variables/>
         <!--        <jsp-compile/> -->
     </target>
 
@@ -699,14 +698,11 @@
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
         <removeWebAppDir dir="${home.target}"/>
         <copyWebApp from="${web.dir}" to="${home.target}"/>
-
-        <copy-indexer-build-file-with-env-variables/>
     </target>
 
     <target name="dirtydeploy" depends="compile,instrument"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
         <copyWebApp from="${web.dir}" to="${home.target}"/>
-        <copy-indexer-build-file-with-env-variables/>
         <antcall target="deploy-solr"/>
     </target>
 
@@ -715,20 +711,6 @@
         <!-- move non-binary files in order to not replace any characters in Binary files -->
         <copyWebApp from="${web.dir}" to="${pre-home.target}" overwrite="true"/>
     </target>
-
-    <macrodef name="copy-indexer-build-file-with-env-variables">
-        <sequential>
-            <copy file="buildfiles/indexer.xml"
-                  tofile="${TARGETROOT}/server_apps/quicksearch/build.xml"
-                  overwrite="true">
-                <filterset>
-                    <filter token="INDEXER_WIKI_HOSTNAME" value="${INDEXER_WIKI_HOSTNAME}"/>
-                    <filter token="MUTANT_NAME" value="${MUTANT_NAME}"/>
-                </filterset>
-            </copy>
-        </sequential>
-    </macrodef>
-
 
     <target name="prepareDeploy" description="Remove existing pre-release folder">
         <delete dir="${pre-web-inf}"/>

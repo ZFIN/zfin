@@ -63,8 +63,6 @@ import org.zfin.sequence.blast.SequenceTest;
 import org.zfin.sequence.blast.presentation.BlastPresentationServiceTest;
 import org.zfin.sequence.reno.presentation.RunCandidatePresentationTest;
 import org.zfin.sequence.reno.presentation.RunPresentationTest;
-import org.zfin.uniquery.IndexerUtilTest;
-import org.zfin.uniquery.SiteSearchTest;
 import org.zfin.util.*;
 
 
@@ -101,7 +99,6 @@ import org.zfin.util.*;
         GwtStringUtilsTest.class,
         HighlighterTest.class,
         HighlightUtilTest.class,
-        IndexerUtilTest.class,
         InferenceUnitTest.class,
         ListFormatterTest.class,
         MailTest.class,
@@ -135,7 +132,6 @@ import org.zfin.util.*;
         SectionVisibilityTest.class,
         SequenceTest.class,
         SerializationTests.class,
-        SiteSearchTest.class,
         SolrQueryFacadeSpec.class,
         SolrServiceSpec.class,
         SortAnatomyResultsTest.class,

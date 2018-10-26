@@ -1,16 +1,13 @@
 package org.zfin.util.database.presentation;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.Person;
-import org.zfin.uniquery.SiteSearchIndexService;
 import org.zfin.util.FileInfo;
 import org.zfin.util.database.UnloadIndexingService;
 import org.zfin.util.database.UnloadService;
 import org.zfin.util.downloads.DownloadFileService;
-import org.zfin.util.downloads.jaxb.DownloadCategory;
 import org.zfin.util.downloads.jaxb.DownloadFileEntry;
 import org.zfin.util.downloads.presentation.DownloadFileInfo;
 
@@ -33,8 +30,6 @@ public class UnloadBean {
     private String entityID;
     private DownloadFileService downloadFileService;
 
-    @Autowired
-    private SiteSearchIndexService siteSearchIndexService;
     private String sortBy;
     private String downloadFileName;
     private String fileType;
@@ -157,18 +152,6 @@ public class UnloadBean {
         LinkedHashMap<String, String> dateList = new LinkedHashMap<String, String>();
         List<String> dates = unloadService.getUnIndexedTables();
         Collections.sort(dates);
-        for (String date : dates) {
-            dateList.put(date, date);
-        }
-        return dateList;
-    }
-
-    public Map<String, String> getIndexDateList() {
-        LinkedHashMap<String, String> dateList = new LinkedHashMap<String, String>();
-        List<String> dates;
-        dates = siteSearchIndexService.getAllArchiveDateStrings();
-        Collections.sort(dates);
-        Collections.reverse(dates);
         for (String date : dates) {
             dateList.put(date, date);
         }

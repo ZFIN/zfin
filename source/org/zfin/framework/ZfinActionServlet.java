@@ -5,7 +5,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.zfin.ontology.RelationshipDisplayNames;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.WebHostDatabaseStatisticsCache;
-import org.zfin.uniquery.categories.SiteSearchCategories;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -39,8 +38,6 @@ public class ZfinActionServlet extends DispatcherServlet {
         super.init(config);
         webRoot = getServletContext().getRealPath("/");
         ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue(webRoot);
-        ZfinPropertiesEnum.INDEXER_DIRECTORY.setValue(getServletContext().getInitParameter("quicksearch-index-directory"));
-        initCategories();
         // Added this to the application context to make it easier to use global values.
         // ToDo: Should add all global parameters into application context and have it added
         // to the right context. There might be parameters that should only apply on a session scope...
@@ -74,20 +71,6 @@ public class ZfinActionServlet extends DispatcherServlet {
         stats.setStatisticsEnabled(true);
     }
 
-
-    /**
-     * Initialize the Zfin Site search categories by reading the property file and
-     * making the parameters available.
-     */
-    private void initCategories() {
-        String file = getInitParameter(SITE_SEARCH_CATEGORIES_FILE);
-        String dirRel = getInitParameter(PROPERTY_FILE_DIR_PARAM);
-        String dir = getConcatenatedDir(webRoot, dirRel);
-        dir = getConcatenatedDir(dir, "conf");
-        SiteSearchCategories.init(dir, file);
-        // Check if any type strings collide with stop words.
-        SiteSearchCategories.getAllSearchCategories();
-    }
 
     // ToDo: create utilities method that takes an array of dir's and creates
     // a valid file name.

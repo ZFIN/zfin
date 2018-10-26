@@ -162,20 +162,6 @@
                     <td class="col-md-1">
                     </td>
                     <td class="col-md-2">
-                        <a href="/action/unload/summary">Browse Data History</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-1">
-                    </td>
-                    <td class="col-md-2">
-                        <a href="/action/unload/index-summary">Site Search Index</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-1">
-                    </td>
-                    <td class="col-md-2">
                         <a href="/action/unload/downloads/archive">Download Files Archive</a>
                     </td>
                 </tr>
