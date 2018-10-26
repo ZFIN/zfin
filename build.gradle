@@ -29,8 +29,8 @@ dependencies {
     compile localGroovy()
 }
 
-task deployPostgres(dependsOn: ['lib:DB_functions:deployPostgresFunctions',
-                                'lib:DB_triggers:deployPostgresTrigger']) {
+task deployPostgres(dependsOn: ['deployPostgresFunctions',
+                                'deployPostgresTrigger']) {
     description "Deploy all postgres code"
 }
 
@@ -322,7 +322,8 @@ task postloaddb(type: GradleBuild) {
 }
 
 task make(type: GradleBuild) {
-    tasks = ['deployPostgres',
+    tasks = ['deployPostgresFunctions',
+	     'deployPostgresTriggers',
              ':server_apps:apache:deployFiles',
              ':server_apps:sysexecs:deployFiles',
              ':server_apps:DB_maintenance:deployFiles',
