@@ -27,6 +27,11 @@ public class SubmissionFormController {
         return "zebrashare/new-submission.page";
     }
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String home(@ModelAttribute("formBean") SubmissionFormBean formBean) {
+        return "zebrashare/home.page";
+    }
+
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String processSubmissionForm(@Valid @ModelAttribute("formBean") SubmissionFormBean formBean,
                                         BindingResult result) {
