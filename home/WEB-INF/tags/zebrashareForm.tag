@@ -23,6 +23,7 @@
         <label class="col-sm-3 control-label">Abstract</label>
         <div class="col-sm-8">
             <form:textarea path="abstractText" cssClass="form-control" rows="8"/>
+            <form:errors path="abstractText" cssClass="text-danger" />
         </div>
     </div>
 
@@ -30,6 +31,7 @@
         <label class="col-sm-3 control-label">Submitter Name</label>
         <div class="col-sm-8">
             <form:input path="submitterName" cssClass="form-control"/>
+            <form:errors path="submitterName" cssClass="text-danger" />
         </div>
     </div>
 
@@ -37,6 +39,7 @@
         <label class="col-sm-3 control-label">Submitter Email</label>
         <div class="col-sm-8">
             <form:input path="submitterEmail" cssClass="form-control"/>
+            <form:errors path="submitterEmail" cssClass="text-danger" />
         </div>
     </div>
 
