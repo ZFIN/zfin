@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 
 import javax.validation.Valid;
 
@@ -24,6 +27,15 @@ public class SubmissionFormController {
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String showSubmissionForm(@ModelAttribute("formBean") SubmissionFormBean formBean) {
+        Person user = ProfileService.getCurrentSecurityUser();
+        if (user != null) {
+            if (StringUtils.isEmpty(formBean.getSubmitterName())) {
+                formBean.setSubmitterName(user.getDisplay());
+            }
+            if (StringUtils.isEmpty(formBean.getSubmitterEmail())) {
+                formBean.setSubmitterEmail(user.getEmail());
+            }
+        }
         return "zebrashare/new-submission.page";
     }
 

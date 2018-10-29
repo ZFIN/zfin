@@ -6,6 +6,9 @@ public class SubmissionFormBean {
     private String title;
     private String abstractText;
 
+    private String submitterName;
+    private String submitterEmail;
+
     public String getAuthors() {
         return authors;
     }
@@ -30,4 +33,19 @@ public class SubmissionFormBean {
         this.abstractText = abstractText;
     }
 
+    public String getSubmitterName() {
+        return submitterName;
+    }
+
+    public void setSubmitterName(String submitterName) {
+        this.submitterName = submitterName;
+    }
+
+    public String getSubmitterEmail() {
+        return submitterEmail;
+    }
+
+    public void setSubmitterEmail(String submitterEmail) {
+        this.submitterEmail = submitterEmail;
+    }
 }
