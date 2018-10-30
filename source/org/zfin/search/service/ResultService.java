@@ -549,7 +549,6 @@ public class ResultService {
 
             //Show the gene name if there is one, and the probe isn't chimeric (if there is one)
             if (xpatex.getGene() != null) {
-
                 if (xpatex.getProbe() == null) {
                     result.addAttribute(GENE, MarkerPresentation.getAbbreviation(xpatex.getGene()));
                 } else if (!xpatex.getProbe().isChimeric()) {
@@ -707,6 +706,10 @@ public class ResultService {
             }
             if (CollectionUtils.isNotEmpty(constructs)) {
                 result.addAttribute(CONSTRUCT, withCommasAndLink(constructs, "name", "zdbID"));
+            }
+
+            if (StringUtils.isNotEmpty(phenotypeExperiment.getFigure().getCaption())) {
+                result.addAttribute(CAPTION, collapsible(phenotypeExperiment.getFigure().getCaption()));
             }
 
             result.setFeatureGenes(FishService.getFeatureGenes(phenotypeExperiment.getFishExperiment().getFish()));
