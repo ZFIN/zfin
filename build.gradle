@@ -78,7 +78,7 @@ task loadDatabase() {
 }
 
 task loadDb(type: GradleBuild) {
-    tasks = ['loadDatabase', 'postloaddb']
+    tasks = ['loadDatabase']
 }
 
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
