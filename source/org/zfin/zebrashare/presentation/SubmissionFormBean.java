@@ -1,5 +1,7 @@
 package org.zfin.zebrashare.presentation;
 
+import org.zfin.profile.Lab;
+
 public class SubmissionFormBean {
 
     private String authors;
@@ -8,6 +10,7 @@ public class SubmissionFormBean {
 
     private String submitterName;
     private String submitterEmail;
+    private String labZdbId;
 
     public String getAuthors() {
         return authors;
@@ -47,5 +50,13 @@ public class SubmissionFormBean {
 
     public void setSubmitterEmail(String submitterEmail) {
         this.submitterEmail = submitterEmail;
+    }
+
+    public String getLabZdbId() {
+        return labZdbId;
+    }
+
+    public void setLabZdbId(String labZdbId) {
+        this.labZdbId = labZdbId;
     }
 }

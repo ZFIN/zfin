@@ -1,28 +1,50 @@
 package org.zfin.zebrashare.presentation;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
+import org.zfin.profile.presentation.LabPresentation;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 
 import javax.validation.Valid;
+import java.util.Collection;
 
 @Controller
 @RequestMapping("/zebrashare")
 public class SubmissionFormController {
+
+    @Autowired
+    private ProfileRepository profileRepository;
 
     private static final Logger LOG = Logger.getLogger(SubmissionFormController.class);
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.addValidators(new SubmissionFormValidator());
+    }
+
+    @ModelAttribute("labOptions")
+    private Collection<Lab> getLabOptions() {
+        Person user = ProfileService.getCurrentSecurityUser();
+        if (user == null) {
+            return null;
+        }
+        HibernateUtil.currentSession().refresh(user);
+        return user.getLabs();
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -48,12 +70,16 @@ public class SubmissionFormController {
     public String processSubmissionForm(@Valid @ModelAttribute("formBean") SubmissionFormBean formBean,
                                         BindingResult result) {
         if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                LOG.error(error.toString());
+            }
             return "zebrashare/new-submission.page";
         }
 
         LOG.warn(formBean.getTitle());
         LOG.warn(formBean.getAuthors());
         LOG.warn(formBean.getAbstractText());
+        LOG.warn(formBean.getLabZdbId());
 
         return "redirect:/";
     }
