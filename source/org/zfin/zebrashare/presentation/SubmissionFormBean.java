@@ -1,5 +1,6 @@
 package org.zfin.zebrashare.presentation;
 
+import org.springframework.web.multipart.MultipartFile;
 import org.zfin.profile.Lab;
 
 public class SubmissionFormBean {
@@ -12,6 +13,8 @@ public class SubmissionFormBean {
     private String submitterEmail;
     private String labZdbId;
     private String[] editors;
+
+    private MultipartFile dataFile;
 
     public String getAuthors() {
         return authors;
@@ -67,5 +70,13 @@ public class SubmissionFormBean {
 
     public void setEditors(String[] editors) {
         this.editors = editors;
+    }
+
+    public MultipartFile getDataFile() {
+        return dataFile;
+    }
+
+    public void setDataFile(MultipartFile dataFile) {
+        this.dataFile = dataFile;
     }
 }

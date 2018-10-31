@@ -2,7 +2,7 @@
 
 <%@attribute name="formBean" type="org.zfin.zebrashare.presentation.SubmissionFormBean" required="true" %>
 
-<form:form method="POST" commandName="formBean" class="form-horizontal" id="zebrashareForm">
+<form:form method="POST" commandName="formBean" class="form-horizontal" id="zebrashareForm" enctype="multipart/form-data">
     <div class="form-group">
         <label class="col-sm-3 control-label">Authors</label>
         <div class="col-sm-8">
@@ -70,6 +70,15 @@
         <div class="col-sm-8">
             <input id="userLookup" class="form-control" />
             <div id="selectedUsers"></div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Data File</label>
+        <div class="col-sm-8">
+            <input type="file" name="dataFile" cssClass="form-control"
+                   accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"/>
+            <form:errors path="dataFile" cssClass="text-danger" />
         </div>
     </div>
 

@@ -81,7 +81,10 @@ public class SubmissionFormController {
         LOG.warn(formBean.getAuthors());
         LOG.warn(formBean.getAbstractText());
         LOG.warn(formBean.getLabZdbId());
-        Arrays.stream(formBean.getEditors()).forEach(LOG::warn);
+        if (formBean.getEditors() != null) {
+            Arrays.stream(formBean.getEditors()).forEach(LOG::warn);
+        }
+        LOG.warn(formBean.getDataFile().getOriginalFilename());
 
         return "redirect:/";
     }
