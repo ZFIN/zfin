@@ -11,6 +11,7 @@ public class SubmissionFormBean {
     private String submitterName;
     private String submitterEmail;
     private String labZdbId;
+    private String[] editors;
 
     public String getAuthors() {
         return authors;
@@ -58,5 +59,13 @@ public class SubmissionFormBean {
 
     public void setLabZdbId(String labZdbId) {
         this.labZdbId = labZdbId;
+    }
+
+    public String[] getEditors() {
+        return editors;
+    }
+
+    public void setEditors(String[] editors) {
+        this.editors = editors;
     }
 }

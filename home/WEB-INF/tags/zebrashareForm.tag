@@ -2,7 +2,7 @@
 
 <%@attribute name="formBean" type="org.zfin.zebrashare.presentation.SubmissionFormBean" required="true" %>
 
-<form:form method="POST" commandName="formBean" class="form-horizontal">
+<form:form method="POST" commandName="formBean" class="form-horizontal" id="zebrashareForm">
     <div class="form-group">
         <label class="col-sm-3 control-label">Authors</label>
         <div class="col-sm-8">
@@ -66,9 +66,45 @@
     </div>
 
     <div class="form-group">
+        <label class="col-sm-3 control-label">Who Can Edit Alleles Associated With This Publication?</label>
+        <div class="col-sm-8">
+            <input id="userLookup" class="form-control" />
+            <div id="selectedUsers"></div>
+        </div>
+    </div>
+
+    <div class="form-group">
         <div class="col-sm-offset-3 col-sm-8">
             <button type="submit" class="btn btn-primary">Submit</button>
             <a class="btn btn-default" href="/">Cancel</a>
         </div>
     </div>
 </form:form>
+
+<script>
+    $(function () {
+        var form = $('#zebrashareForm');
+        form.on('keyup keypress', function(e) {
+            var keyCode = e.keyCode || e.which;
+            if (keyCode === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        $('#userLookup')
+            .autocompletify('/action/profile/find-member?term=%QUERY')
+            .on('typeahead:select', function(event, item) {
+                $(this).typeahead('val', '');
+                var hiddenInput = $('<input hidden name="editors" value="' + item.id  + '"/>');
+                var userDisplay = $('<p class="form-control-static">' + item.value + '</p>');
+                var removeButton = $('<button class="btn btn-link"><i class="fas fa-times"></i></button>');
+                removeButton.on('click', function () {
+                    hiddenInput.remove();
+                    userDisplay.remove();
+                });
+                userDisplay.append(removeButton);
+                form.append(hiddenInput);
+                $('#selectedUsers').append(userDisplay);
+            });
+    });
+</script>

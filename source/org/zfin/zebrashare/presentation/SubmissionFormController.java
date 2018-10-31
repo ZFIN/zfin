@@ -21,6 +21,7 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.Collection;
 
 @Controller
@@ -80,6 +81,7 @@ public class SubmissionFormController {
         LOG.warn(formBean.getAuthors());
         LOG.warn(formBean.getAbstractText());
         LOG.warn(formBean.getLabZdbId());
+        Arrays.stream(formBean.getEditors()).forEach(LOG::warn);
 
         return "redirect:/";
     }
