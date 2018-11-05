@@ -76,9 +76,21 @@
     <div class="form-group">
         <label class="col-sm-3 control-label">Data File</label>
         <div class="col-sm-8">
-            <input type="file" name="dataFile" cssClass="form-control"
+            <input type="file" name="dataFile"
                    accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"/>
             <form:errors path="dataFile" cssClass="text-danger" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Images</label>
+        <div class="col-sm-8">
+            <div class="file-drag-target">
+                <input multiple type="file" id="imageFiles" name="imageFiles"
+                       accept=".png,.gif,.jpeg,.jpg,image/png,image/gif,image/jpeg"/>
+                <label for="imageFiles"><strong>Choose files</strong></label> or drag them here
+            </div>
+            <div id="selectedFiles"></div>
         </div>
     </div>
 
@@ -92,7 +104,40 @@
 
 <script>
     $(function () {
+        var handleImageFiles = function (fileList) {
+            for (var i = 0; i < fileList.length; i++) {
+                var file = fileList[i];
+                if (file.type !== 'image/gif' && file.type !== 'image/jpeg' && file.type !== 'image/png') {
+                    continue
+                }
+                $('#selectedFiles').append(renderCaptionInput(file));
+            }
+        };
+        var renderCaptionInput = function (file) {
+            var reader = new FileReader();
+            var mediaContainer = $(
+                '<div class="media">' +
+                '  <div class="media-left">' +
+                '    <div class="thumb-container">' +
+                '      <img class="media-object thumb-image" src="">' +
+                '    </div>' +
+                '  </div>' +
+                '  <div class="media-body">' +
+                '    <h4 class="media-heading">' + file.name + '</h4>' +
+                '    <textarea name="captions" class="form-control" rows="4" placeholder="Enter caption here"></textarea>' +
+                '  </div>' +
+                '</div>'
+            );
+            reader.onload = function (e) {
+                mediaContainer.find('img').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(file);
+            return mediaContainer;
+        };
+
         var form = $('#zebrashareForm');
+        var imageFiles = $('#imageFiles');
+
         form.on('keyup keypress', function(e) {
             var keyCode = e.keyCode || e.which;
             if (keyCode === 13) {
@@ -115,5 +160,23 @@
                 form.append(hiddenInput);
                 $('#selectedUsers').append(userDisplay);
             });
+        $('.file-drag-target')
+            .on('dragover', function (evt) {
+                evt.preventDefault();
+                $(this).addClass('hover');
+            })
+            .on('dragleave', function (evt) {
+                evt.preventDefault();
+                $(this).removeClass('hover');
+            })
+            .on('drop', function (evt) {
+                evt.preventDefault();
+                $(this).removeClass('hover');
+                imageFiles[0].files = evt.originalEvent.dataTransfer.files;
+            });
+        imageFiles.on('change', function() {
+            $('.file-drag-target').hide();
+            handleImageFiles(this.files);
+        });
     });
 </script>

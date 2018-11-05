@@ -23,6 +23,7 @@ import org.zfin.profile.service.ProfileService;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/zebrashare")
@@ -85,6 +86,15 @@ public class SubmissionFormController {
             Arrays.stream(formBean.getEditors()).forEach(LOG::warn);
         }
         LOG.warn(formBean.getDataFile().getOriginalFilename());
+        if (formBean.getImageFiles() != null) {
+            Arrays.stream(formBean.getImageFiles())
+                    .filter(Objects::nonNull)
+                    .filter(f -> f.getContentType().startsWith("image/"))
+                    .forEach(f -> LOG.warn(f.getOriginalFilename()));
+        }
+        if (formBean.getCaptions() != null) {
+            Arrays.stream(formBean.getCaptions()).forEach(LOG::warn);
+        }
 
         return "redirect:/";
     }

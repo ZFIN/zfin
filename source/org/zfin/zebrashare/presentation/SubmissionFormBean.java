@@ -15,6 +15,8 @@ public class SubmissionFormBean {
     private String[] editors;
 
     private MultipartFile dataFile;
+    private MultipartFile[] imageFiles;
+    private String[] captions;
 
     public String getAuthors() {
         return authors;
@@ -78,5 +80,21 @@ public class SubmissionFormBean {
 
     public void setDataFile(MultipartFile dataFile) {
         this.dataFile = dataFile;
+    }
+
+    public MultipartFile[] getImageFiles() {
+        return imageFiles;
+    }
+
+    public void setImageFiles(MultipartFile[] imageFiles) {
+        this.imageFiles = imageFiles;
+    }
+
+    public String[] getCaptions() {
+        return captions;
+    }
+
+    public void setCaptions(String[] captions) {
+        this.captions = captions;
     }
 }
