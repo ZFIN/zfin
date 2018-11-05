@@ -4,5 +4,5 @@
 create table featurezmpdata (
  allele text not null,
         ensdargid text not null,
-        geneabbrev not null
+        geneabbrev text not null
             ) ;
