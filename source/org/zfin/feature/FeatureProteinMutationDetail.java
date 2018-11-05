@@ -19,7 +19,7 @@ public class FeatureProteinMutationDetail implements Cloneable {
             })
     @Column(name = "fpmd_zdb_id")
     private String zdbID;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "fpmd_feature_zdb_id")
     private Feature feature;
     @ManyToOne(fetch = FetchType.LAZY)

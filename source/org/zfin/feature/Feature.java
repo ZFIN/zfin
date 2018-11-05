@@ -20,10 +20,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Feature business entity.
@@ -116,12 +113,16 @@ public class Feature implements EntityNotes, EntityZdbID {
     //I followed the same mapping for feature protein mutation details and dna mutation details(Prita)
     //I added the SAVE_UPDATE cascade type to ensure updates, inserts and deletes. (case 14286)
 
-    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private Set<FeatureProteinMutationDetail> featureProteinMutationDetailSet;
+
+    @Transient
     private FeatureProteinMutationDetail featureProteinMutationDetail;
-    @OneToOne(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    private FeatureDnaMutationDetail featureDnaMutationDetail;
+    private Set<FeatureDnaMutationDetail> featureDnaMutationDetailSet;
 
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = false)
     private Set<SecondaryFeature> secondaryFeatureSet;
@@ -348,19 +349,39 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public FeatureProteinMutationDetail getFeatureProteinMutationDetail() {
-        return featureProteinMutationDetail;
+        if(CollectionUtils.isEmpty(featureProteinMutationDetailSet))
+            return null;
+        return featureProteinMutationDetailSet.stream().findAny().get();
     }
 
     public void setFeatureProteinMutationDetail(FeatureProteinMutationDetail featureProteinMutationDetail) {
-        this.featureProteinMutationDetail = featureProteinMutationDetail;
+        featureProteinMutationDetailSet = Collections.singleton(featureProteinMutationDetail);
+    }
+
+    public Set<FeatureProteinMutationDetail> getFeatureProteinMutationDetailSet() {
+        return featureProteinMutationDetailSet;
+    }
+
+    public void setFeatureProteinMutationDetailSet(Set<FeatureProteinMutationDetail> featureProteinMutationDetailSet) {
+        this.featureProteinMutationDetailSet = featureProteinMutationDetailSet;
     }
 
     public FeatureDnaMutationDetail getFeatureDnaMutationDetail() {
-        return featureDnaMutationDetail;
+        if(CollectionUtils.isEmpty(featureDnaMutationDetailSet))
+            return null;
+        return featureDnaMutationDetailSet.stream().findAny().get();
     }
 
     public void setFeatureDnaMutationDetail(FeatureDnaMutationDetail featureDnaMutationDetail) {
-        this.featureDnaMutationDetail = featureDnaMutationDetail;
+        featureDnaMutationDetailSet = Collections.singleton(featureDnaMutationDetail);
+    }
+
+    public Set<FeatureDnaMutationDetail> getFeatureDnaMutationDetailSet() {
+        return featureDnaMutationDetailSet;
+    }
+
+    public void setFeatureDnaMutationDetailSet(Set<FeatureDnaMutationDetail> featureDnaMutationDetailSet) {
+        this.featureDnaMutationDetailSet = featureDnaMutationDetailSet;
     }
 
     public Genotype getSingleRelatedGenotype() {
@@ -570,7 +591,7 @@ public class Feature implements EntityNotes, EntityZdbID {
 
 
     public String getGeneLocalizationStatement() {
-        return mutationDetailsConversionService.geneLocalizationStatement(featureDnaMutationDetail);
+        return mutationDetailsConversionService.geneLocalizationStatement(getFeatureDnaMutationDetail());
     }
 
     public String getTranscriptConsequenceStatement() {
