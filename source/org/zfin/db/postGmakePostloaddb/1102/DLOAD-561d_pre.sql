@@ -3,5 +3,5 @@
 
 create table featurezmp (
  allele text not null,
- geneabbrev not null
+ geneabbrev text not null
             ) ;
