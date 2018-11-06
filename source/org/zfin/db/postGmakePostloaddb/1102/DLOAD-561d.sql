@@ -15,7 +15,7 @@ update pre_gene set gene_zdb_id=get_id('GENE');
 insert into zdb_active_data select gene_zdb_id from pre_gene;
 
 
-insert into record_attribution (recattrib_data_zdb_id,recattrib_source_zdb_id) select dblink_id,'ZDB-PUB-130425-4' from pre_gene;
+
 
 insert into marker(mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_owner,mrkr_type) select distinct gene_zdb_id,gene_abbrev,gene_name,'ZDB-PERS-040722-4','GENE' from pre_gene;
 
