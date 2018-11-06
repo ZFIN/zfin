@@ -76,8 +76,12 @@
     <div class="form-group">
         <label class="col-sm-3 control-label">Data File</label>
         <div class="col-sm-8">
-            <input type="file" name="dataFile"
-                   accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"/>
+            <label class="btn btn-default">
+                Choose file
+                <input type="file" id="dataFile" name="dataFile" style="display: none;"
+                       accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"/>
+            </label>
+            <span id="dataFileName"></span>
             <form:errors path="dataFile" cssClass="text-danger" />
         </div>
     </div>
@@ -88,7 +92,7 @@
             <div class="file-drag-target">
                 <input multiple type="file" id="imageFiles" name="imageFiles"
                        accept=".png,.gif,.jpeg,.jpg,image/png,image/gif,image/jpeg"/>
-                <label for="imageFiles"><strong>Choose files</strong></label> or drag them here
+                <label for="imageFiles" class="btn btn-default">Choose files</label> or drag them here
             </div>
             <div id="selectedFiles"></div>
         </div>
@@ -104,21 +108,28 @@
 
 <script>
     $(function () {
-        var handleImageFiles = function (fileList) {
+        var form = $('#zebrashareForm');
+        var imageFiles = $('#imageFiles');
+
+        var handleImageFiles = function () {
+            var selectedFiles = $('#selectedFiles');
+            selectedFiles.empty();
+            var fileList = imageFiles[0].files;
             for (var i = 0; i < fileList.length; i++) {
                 var file = fileList[i];
                 if (file.type !== 'image/gif' && file.type !== 'image/jpeg' && file.type !== 'image/png') {
                     continue
                 }
-                $('#selectedFiles').append(renderCaptionInput(file));
+                selectedFiles.append(renderCaptionInput(file));
             }
         };
+
         var renderCaptionInput = function (file) {
             var reader = new FileReader();
             var mediaContainer = $(
                 '<div class="media">' +
                 '  <div class="media-left">' +
-                '    <div class="thumb-container">' +
+                '    <div style="width: 128px; height: 128px; text-align: center">' +
                 '      <img class="media-object thumb-image" src="">' +
                 '    </div>' +
                 '  </div>' +
@@ -134,9 +145,6 @@
             reader.readAsDataURL(file);
             return mediaContainer;
         };
-
-        var form = $('#zebrashareForm');
-        var imageFiles = $('#imageFiles');
 
         form.on('keyup keypress', function(e) {
             var keyCode = e.keyCode || e.which;
@@ -173,10 +181,14 @@
                 evt.preventDefault();
                 $(this).removeClass('hover');
                 imageFiles[0].files = evt.originalEvent.dataTransfer.files;
+                imageFiles.trigger('change');
             });
         imageFiles.on('change', function() {
             $('.file-drag-target').hide();
-            handleImageFiles(this.files);
+            handleImageFiles();
         });
+        $('#dataFile').on('change', function () {
+            $('#dataFileName').text(this.files[0].name);
+        })
     });
 </script>
