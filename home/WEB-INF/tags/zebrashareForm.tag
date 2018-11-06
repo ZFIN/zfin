@@ -94,6 +94,14 @@
                        accept=".png,.gif,.jpeg,.jpg,image/png,image/gif,image/jpeg"/>
                 <label for="imageFiles" class="btn btn-default">Choose files</label> or drag them here
             </div>
+            <div class="right-align">
+                <a id="clearImages" class="btn btn-link hidden">
+                <span class="text-danger">
+                    <i class="fas fa-times"></i> Remove images
+                </span>
+                </a>
+            </div>
+
             <div id="selectedFiles"></div>
         </div>
     </div>
@@ -185,10 +193,18 @@
             });
         imageFiles.on('change', function() {
             $('.file-drag-target').hide();
+            $('#clearImages').removeClass('hidden');
             handleImageFiles();
         });
         $('#dataFile').on('change', function () {
             $('#dataFileName').text(this.files[0].name);
-        })
+        });
+        $('#clearImages').on('click', function (event) {
+            event.preventDefault();
+            $('.file-drag-target').show();
+            $(this).addClass('hidden');
+            imageFiles[0].value = '';
+            handleImageFiles();
+        });
     });
 </script>
