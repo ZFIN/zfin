@@ -16,6 +16,8 @@ public class OmimPhenotypeDisplay {
     private String omimNum;
     private ArrayList<String> humanGene;
 
+    private HumanGeneDetail humanGeneDetail;
+
     public DBLink getHumanAccession() {
         return humanAccession;
     }
@@ -75,5 +77,13 @@ public class OmimPhenotypeDisplay {
 
     public void setZfinGene(List<Marker> zfinGene) {
         this.zfinGene = zfinGene;
+    }
+
+    public HumanGeneDetail getHumanGeneDetail() {
+        return humanGeneDetail;
+    }
+
+    public void setHumanGeneDetail(HumanGeneDetail humanGeneDetail) {
+        this.humanGeneDetail = humanGeneDetail;
     }
 }

@@ -1,10 +1,27 @@
-
 -- loadOMIM.sql
 -- input file: pre_load_input_omim.txt, which is the parsing result of OMIM.pl
 -- records loaded to OMIM_Phenotype table are dumped to whatHaveBeenInsertedIntoOmimPhenotypeTable.txt for checking
 -- no duplication of omimp_gene_zdb_id and omimp_name
 
 begin work;
+
+create temp table geneDetails (
+    mimNum    text not null,
+    geneName  text,
+    geneSym   text not null    
+) ;
+
+create index geneDetails_mim_num_idx on geneDetails(mimNum);
+create index geneDetails_gene_sym_idx on geneDetails(geneSym);
+
+copy geneDetails from '<!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/human_gene_detail.txt' (delimiter '|');
+
+insert into human_gene_detail(hgd_gene_id, hgd_gene_name, hgd_gene_symbol)
+  select mimNum, geneName, geneSym
+    from geneDetails
+   where not exists( select 'x' from human_gene_detail where hgd_gene_id = mimNum);
+
+select count(*) from human_gene_detail;   
 
 create temp table omimPhenotypesAndGenes (
     gene_zdb_id    varchar(50) not null,
@@ -64,13 +81,14 @@ create view whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated as
  where exists (select 1 from omim_phenotype
                 where omimp_name = phenotype
                   and omimp_ortho_zdb_id = ortho_id
-                  and (omimp_omim_id <> phenotype_omim_id
+                  and (omimp_omim_id != phenotype_omim_id
                     or (omimp_omim_id is null and phenotype_omim_id is not null)
                     or (phenotype_omim_id is null and omimp_omim_id is not null))
               )
    order by gene_zdb_id;
 \copy (select * from whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated.txt';
-drop view whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated;
+drop view whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated;    
+
 
 --update the null omimp_omim_id in omim_phenotype table
 update omim_phenotype set omimp_omim_id = (
@@ -83,8 +101,7 @@ update omim_phenotype set omimp_omim_id = (
     and exists (select 1 from omimPhenotypesAndGenesOrtho
                   where omimp_name = phenotype
                     and omimp_ortho_zdb_id = ortho_id 
-                    and phenotype_omim_id is not null);     
-
+                    and phenotype_omim_id is not null); 
 
 --update the omimp_omim_id in omim_phenotype table to null where omimp_omim_id used to be not null but now OMIM has change it to null; should be rare
 update omim_phenotype set omimp_omim_id = null
@@ -152,6 +169,100 @@ create view genesWithMIMnotFoundOnOMIMPtable as
                      where omimp_ortho_zdb_id = ortho_zdb_id);
 \copy (select * from genesWithMIMnotFoundOnOMIMPtable) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/genesWithMIMnotFoundOnOMIMPtable.txt';
 drop view genesWithMIMnotFoundOnOMIMPtable;
+
+create temp table omimPhenotypesAndHumanGenes (
+    gene_omim_num  text not null,
+    phenotype      text not null,  
+    phenotype_omim_id  text    
+) ;
+
+copy omimPhenotypesAndHumanGenes from '<!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/pre_load_human_gene_omim.txt' (delimiter '|');
+
+delete from omim_phenotype
+ where omimp_human_gene_id is not null
+   and omimp_ortho_zdb_id is null
+   and not exists (select 1 from omimPhenotypesAndHumanGenes
+                    where omimp_name = phenotype
+                      and omimp_ortho_zdb_id is null
+                      and omimp_human_gene_id is not null 
+                      and omimp_human_gene_id = gene_omim_num);
+                      
+--update the null omimp_omim_id in omim_phenotype table
+update omim_phenotype set omimp_omim_id = (
+ select distinct phenotype_omim_id
+   from omimPhenotypesAndHumanGenes
+  where omimp_name = phenotype
+    and omimp_ortho_zdb_id is null
+    and omimp_human_gene_id is not null
+    and omimp_human_gene_id = gene_omim_num
+    and phenotype_omim_id is not null
+) where omimp_omim_id is null
+    and exists (select 1 from omimPhenotypesAndHumanGenes
+                  where omimp_name = phenotype
+                    and omimp_ortho_zdb_id is null
+                    and omimp_human_gene_id = gene_omim_num 
+                    and phenotype_omim_id is not null);     
+
+
+--update the null omimp_human_gene_id in omim_phenotype table
+update omim_phenotype set omimp_human_gene_id = (
+ select distinct gene_omim_num
+   from omimPhenotypesAndHumanGenes
+  where omimp_name = phenotype
+    and omimp_ortho_zdb_id is null
+    and omimp_human_gene_id is not null
+    and omimp_human_gene_id = gene_omim_num
+    and phenotype_omim_id is not null
+) where omimp_human_gene_id is null
+    and exists (select 1 from omimPhenotypesAndHumanGenes
+                  where omimp_name = phenotype
+                    and omimp_ortho_zdb_id is null
+                    and omimp_human_gene_id is not null
+                    and omimp_human_gene_id = gene_omim_num 
+                    and phenotype_omim_id is not null);  
+
+--update the omimp_omim_id in omim_phenotype table to null where omimp_omim_id used to be not null but now OMIM has change it to null; should be rare
+update omim_phenotype set omimp_omim_id = null
+ where omimp_omim_id is not null
+   and omimp_ortho_zdb_id is null
+   and exists (select 1 from omimPhenotypesAndHumanGenes
+                where omimp_name = phenotype
+                  and omimp_ortho_zdb_id is null
+                  and omimp_human_gene_id is not null
+                  and omimp_human_gene_id = gene_omim_num 
+                  and phenotype_omim_id is null);                          
+
+insert into omim_phenotype (omimp_human_gene_id, omimp_name, omimp_omim_id)
+ select gene_omim_num,phenotype,phenotype_omim_id
+   from omimPhenotypesAndHumanGenes
+  where not exists (select 1 from omim_phenotype
+                     where omimp_human_gene_id is not null
+                       and omimp_ortho_zdb_id is null
+                       and omimp_human_gene_id = gene_omim_num
+                       and phenotype = omimp_name);
+
+
+create temp table orthMimNumbers (
+    orthID  text not null,
+    omim_id text not null 
+) ;
+
+copy orthMimNumbers from '<!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/ortholog_mim.txt' (delimiter '|');
+
+update omim_phenotype set omimp_human_gene_id = (
+ select distinct omim_id
+   from orthMimNumbers
+  where omimp_ortho_zdb_id is not null
+    and omimp_ortho_zdb_id = orthID
+    and omimp_human_gene_id is null
+    and exists(select 1 from human_gene_detail
+                where hgd_gene_id = omim_id)
+) where omimp_human_gene_id is null
+    and exists (select 1 from orthMimNumbers
+                  where omimp_ortho_zdb_id is not null
+                    and omimp_ortho_zdb_id = orthID
+                    and exists(select 1 from human_gene_detail
+                                where hgd_gene_id = omim_id));
 
 --rollback work;
 

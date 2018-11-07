@@ -14,6 +14,7 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
     private String omimNum;
     private Ortholog ortholog;
     private Set<TermExternalReference> externalReferences;
+    private String humanGeneMimNumber;
 
     public long getId() {
         return id;
@@ -88,4 +89,11 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
         }
     }
 
+    public String getHumanGeneMimNumber() {
+        return humanGeneMimNumber;
+    }
+
+    public void setHumanGeneMimNumber(String humanGeneMimNumber) {
+        this.humanGeneMimNumber = humanGeneMimNumber;
+    }
 }

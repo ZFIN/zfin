@@ -164,44 +164,54 @@ public class OntologyService {
         Map<String, OmimPhenotypeDisplay> map = new HashMap<>();
         Set<TermExternalReference> termXRef = term.getExternalReferences();
         ArrayList<String> hA = new ArrayList<>();
+        List<OmimPhenotypeDisplay> omimDisplaysNoOrth = new ArrayList<>();
+        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
         for (TermExternalReference xRef : termXRef) {
             Set<OmimPhenotype> omimResults = xRef.getOmimPhenotypes();
 
             for (OmimPhenotype omimResult : omimResults) {
-                // form the key
-                if (omimResult.getOrtholog().getOrganism().getCommonName().startsWith("Hu")) {
-                    String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
+                if (omimResult.getOrtholog() != null) {
+                    // form the key
+                    if (omimResult.getOrtholog().getOrganism().getCommonName().startsWith("Hu")) {
+                        String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
 
 
-                    OmimPhenotypeDisplay omimDisplay;
+                        OmimPhenotypeDisplay omimDisplay;
 
-                    // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
-                    // otherwise, just get the display object from the map
-                    if (!map.containsKey(key)) {
-                        omimDisplay = new OmimPhenotypeDisplay();
-                        map.put(key, omimDisplay);
-                    } else {
-                        omimDisplay = map.get(key);
-                    }
-                    omimDisplay.setOrthology(omimResult.getOrtholog());
-                    //  omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
-                    NcbiOtherSpeciesGene ncbiOtherGene = omimResult.getOrtholog().getNcbiOtherSpeciesGene();
-                    Set<NcbiOrthoExternalReference> ncbiExternalReferenceList = ncbiOtherGene.getNcbiExternalReferenceList();
-                    List<String> accessions = new ArrayList<>();
-                    for (NcbiOrthoExternalReference othrRef : ncbiExternalReferenceList) {
-                        if (othrRef.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.OMIM) {
-                            accessions.add(othrRef.getAccessionNumber());
+                        // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
+                        // otherwise, just get the display object from the map
+                        if (!map.containsKey(key)) {
+                            omimDisplay = new OmimPhenotypeDisplay();
+                            map.put(key, omimDisplay);
+                        } else {
+                            omimDisplay = map.get(key);
+                        }
+                        omimDisplay.setOrthology(omimResult.getOrtholog());
+                        //  omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
+                        NcbiOtherSpeciesGene ncbiOtherGene = omimResult.getOrtholog().getNcbiOtherSpeciesGene();
+                        Set<NcbiOrthoExternalReference> ncbiExternalReferenceList = ncbiOtherGene.getNcbiExternalReferenceList();
+                        List<String> accessions = new ArrayList<>();
+                        for (NcbiOrthoExternalReference othrRef : ncbiExternalReferenceList) {
+                            if (othrRef.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.OMIM) {
+                                accessions.add(othrRef.getAccessionNumber());
+                            }
+                        }
+                        omimDisplay.setOmimAccession(accessions.get(0));
+                        omimDisplay.setName(omimResult.getName());
+                        omimDisplay.setOmimNum(omimResult.getOmimNum());
+                        omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
+                        if (omimResult.getOrtholog() != null) {
+
+                            hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
+                            omimDisplay.setHumanGene(hA);
                         }
                     }
-                    omimDisplay.setOmimAccession(accessions.get(0));
-                    omimDisplay.setName(omimResult.getName());
-                    omimDisplay.setOmimNum(omimResult.getOmimNum());
-                    omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
-                    if (omimResult.getOrtholog() != null) {
-
-                        hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
-                        omimDisplay.setHumanGene(hA);
-                    }
+                } else {
+                    OmimPhenotypeDisplay omimDisplayNoOrth = new OmimPhenotypeDisplay();
+                    omimDisplayNoOrth.setName(omimResult.getName());
+                    omimDisplayNoOrth.setHumanGeneDetail(ontologyRepository.getHumanGeneDetailById(omimResult.getHumanGeneMimNumber()));
+                    omimDisplayNoOrth.setOmimNum(omimResult.getOmimNum());
+                    omimDisplaysNoOrth.add(omimDisplayNoOrth);
                 }
             }
 
@@ -213,9 +223,13 @@ public class OntologyService {
 
         if (map.values().size() > 0) {
             omimDisplays.addAll(map.values());
+            omimDisplays.sort(new OmimPhenotypeDisplayComparator());
         }
-        omimDisplays.sort(new OmimPhenotypeDisplayComparator());
 
+        if(omimDisplaysNoOrth.size() > 0) {
+            omimDisplaysNoOrth.sort(new OmimPhenotypeDisplayComparator());
+            omimDisplays.addAll(omimDisplaysNoOrth);
+        }
 
         return omimDisplays;
     }

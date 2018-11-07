@@ -300,6 +300,7 @@
         <property name="name" column="omimp_name"/>
         <property name="omimNum" column="omimp_omim_id"/>
         <many-to-one name="ortholog" column="omimp_ortho_zdb_id"/>
+        <property name="humanGeneMimNumber" column="omimp_human_gene_id"/>
 
         <set name="externalReferences" lazy="true" table="omimp_termxref_mapping" access="field">
             <key column="otm_omimp_id"/>

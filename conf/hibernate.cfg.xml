@@ -124,6 +124,7 @@
         <mapping class="org.zfin.mutant.PhenotypeTermFastSearch"/>
         <mapping class="org.zfin.mutant.PhenotypeWarehouse"/>
         <mapping class="org.zfin.ontology.ConsiderTerm"/>
+        <mapping class="org.zfin.ontology.HumanGeneDetail"/>
         <mapping class="org.zfin.ontology.GenericTerm"/>
         <mapping class="org.zfin.ontology.GenericTerm"/>
         <mapping class="org.zfin.ontology.GenericTermRelationship"/>
@@ -136,7 +137,7 @@
         <mapping class="org.zfin.ontology.TermDefinitionReference"/>
         <mapping class="org.zfin.ontology.TermExternalReference"/>
         <mapping class="org.zfin.ontology.TermStage"/>
-        <mapping class="org.zfin.ontology.TransitiveClosure"/>
+        <mapping class="org.zfin.ontology.TransitiveClosure"/>        
         <mapping class="org.zfin.publication.CorrespondenceComposedMessage"/>
         <mapping class="org.zfin.publication.CorrespondenceReceivedMessage"/>
         <mapping class="org.zfin.publication.CorrespondenceRecipient"/>
@@ -154,7 +155,7 @@
         <mapping class="org.zfin.sequence.reno.RedundancyRun"/>
         <mapping class="org.zfin.sequence.reno.Run"/>
         <mapping class="org.zfin.sequence.reno.RunCandidate"/>
-        <mapping class="org.zfin.Species"/>
-
+        <mapping class="org.zfin.Species"/>        
+          
     </session-factory>
 </hibernate-configuration>

@@ -1,5 +1,6 @@
 package org.zfin.ontology.repository;
 
+import org.zfin.ontology.HumanGeneDetail;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
@@ -335,5 +336,7 @@ public interface OntologyRepository {
     List<GenericTerm> getActiveTermsWithoutRelationships();
 
     List<GenericTerm> getTermsInSubset(String subsetName);
+
+    HumanGeneDetail getHumanGeneDetailById(String id);
 
 }

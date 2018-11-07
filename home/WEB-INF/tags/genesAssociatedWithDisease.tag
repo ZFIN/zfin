@@ -27,20 +27,26 @@
                 <td>
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${omimTermDisplay}"
                                          groupByBean="orthology.symbol">
-                        <a href="http://omim.org/entry/${omimGene.omimAccession}">${omimGene.orthology.symbol}</a>
-
-                        <%--${omimGene.orthology.abbreviation}--%>
-                    </zfin:groupByDisplay>
+            <c:choose>
+                <c:when test="${omimGene.orthology != null}">
+                    <a href="http://omim.org/entry/${omimGene.omimAccession}">${omimGene.orthology.symbol}</a>
+                </c:when>
+                <c:otherwise>
+                    <a href="http://omim.org/entry/${omimGene.humanGeneDetail.geneMimNumber}">${omimGene.humanGeneDetail.geneSymbol}</a>
+                </c:otherwise>
+            </c:choose>    
+                     </zfin:groupByDisplay>
                 </td>
 
                 <td>
+                    <c:if test="${omimGene.orthology != null}">
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${omimTermDisplay}"
                                          groupByBean="orthology.symbol">
                         <zfin2:toggledLinkList collection="${omimGene.zfinGene}" maxNumber="3"
                                                commaDelimited="true"/>
 
                     </zfin:groupByDisplay>
-
+                    </c:if>
 
                 </td>
                 <td>

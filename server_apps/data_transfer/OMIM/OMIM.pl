@@ -36,11 +36,10 @@ open (REPORTEDBEFORE, "alreadyReportedHumanOrthologyCandidate") ||  die "Cannot 
 
 close(REPORTEDBEFORE);
 
-# Use the following hash to store the gene records already examined
+# Use the following hash to store the human gene records that may have zf orthology and have already been examined
 
-# %zdbGeneIdsAlreadyExamined
-# key: ZDB gene ID
-# value: gene symbol
+# key: human gene symbol
+# value: OMIM ID
 
 %humanGenePossibleOrthAlreadyReported = ();
 
@@ -58,18 +57,24 @@ open (ALREADY, "alreadyReportedHumanGenes") ||  die "Cannot open alreadyReported
 
 close(ALREADY);
 
-# Use the following hash to store the gene records already examined
+# Use the following hash to store the human gene records that don't have zf orthology and have been already examined
 
-# %zdbGeneIdsAlreadyExamined
-# key: ZDB gene ID
-# value: gene symbol
+# key: human gene symbol
+# value: OMIM ID
 
 %humanGeneAlreadyReported = ();
+
+# value: human gene symbol
+# key: OMIM ID
+
+%humanGenesWithNoZfOrth = ();
+
 
 foreach $line (@linesAlreadyReported) {
 
   if ($line =~ m/(.+)\s+(\d+)/) {
       $humanGeneAlreadyReported{$1} = $2;
+      $humanGenesWithNoZfOrth{$2} = $1;
   }
 
 }
@@ -119,6 +124,10 @@ $ctMim2genes = 0;
 ### value: human ortholog symbol on mim2gene.txt
 %ncbiGeneIdsHGNCsymbols = ();
 
+### key: NCBI gene Id on mim2gene.txt
+### value: OMIM number on mim2gene.txt
+%ncbiGeneIdsMimNumbers = ();
+
 ### key: OMIM Gene number on mim2gene.txt
 ### value: NCBI gene Id on mim2gene.txt
 %mimNumsNCBIids = ();
@@ -128,6 +137,7 @@ $ctMim2genes = 0;
 %allDiscontinuedMIMnums = ();
 
 $ctMimHGNCsymbols = $ctHGNCsymbolsNCBIgeneIds = $ctAllDiscontinuedMIMnums = 0;
+
 
 ### parsing mim2gene.txt
 # Copyright (c) 1966-2016 Johns Hopkins University. Use of this file adheres to the terms specified at http://omim.org/help/agreement.
@@ -176,6 +186,7 @@ foreach $mim2gene (@mim2genes) {
      $HGNCsymbolsNCBIgeneIds{$HGNCsymbol} = $NCBIid;
      $ncbiGeneIdsHGNCsymbols{$NCBIid} = $HGNCsymbol;
      $mimNumsNCBIids{$mimNum} = $NCBIid;
+     $ncbiGeneIdsMimNumbers{$NCBIid} = $mimNum;
    }
 }
 
@@ -200,6 +211,38 @@ $password = "";
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
+$cur_orth_ncbi = $dbh->prepare("select ortho_zdb_id, ortho_other_species_ncbi_gene_id from ortholog where ortho_other_species_taxid = 9606;");
+$cur_orth_ncbi->execute();
+my ($orthID, $humanGeneNcbiID);
+$cur_orth_ncbi->bind_columns(\$orthID, \$humanGeneNcbiID);
+
+$ctHumanOrth = 0;
+%humanOrthNcbiIDs = ();
+while ($cur_orth_ncbi->fetch()) {
+   $humanOrthNcbiIDs{$orthID} = $humanGeneNcbiID;
+   $ctHumanOrth++;
+}
+
+print "total number of human orthologues stored at ZFIN: $ctHumanOrth\n";
+
+$cur_orth_ncbi->finish();
+
+open (ORTHMIM, ">ortholog_mim.txt") || die "Cannot open ortholog_mim.txt : $!\n";
+
+$ctOrthMims = 0;
+foreach $orthId (keys %humanOrthNcbiIDs) {
+  $ncbiGeneIdOfHumanOrth = $humanOrthNcbiIDs{$orthId};
+  if(exists($ncbiGeneIdsMimNumbers{$ncbiGeneIdOfHumanOrth})) {
+    $ctOrthMims++;
+    print ORTHMIM "$orthId|$ncbiGeneIdsMimNumbers{$ncbiGeneIdOfHumanOrth}\n";
+    print "\n$orthId|$ncbiGeneIdsMimNumbers{$ncbiGeneIdOfHumanOrth}\n" if $ctOrthMims < 6;
+  }
+}
+
+close ORTHMIM;
+
+print "\n\nctOrthMims is $ctOrthMims\n\n";
+
 $cur = $dbh->prepare('select distinct omimp_name, omimp_ortho_zdb_id from omim_phenotype;');
 $cur->execute();
 my ($omimPhenotypeName, $orthoId);
@@ -213,13 +256,19 @@ while ($cur->fetch()) {
    $ctOMIMphenotypeNamesAtZFIN++;
 }
 
-print "total number of OMIM phenotype names stored at ZFIN: $ctOMIMphenotypeNamesAtZFIN";
+$cur->finish();
+
+print "\ntotal number of OMIM phenotype names stored at ZFIN: $ctOMIMphenotypeNamesAtZFIN\n";
 
 print LOG "total number of OMIM phenotype names stored at ZFIN: $ctOMIMphenotypeNamesAtZFIN";
 
 open (GENEMAP, "genemap.txt") || die "Cannot open genemap.txt : $!\n";
 
 open (OMIM, ">pre_load_input_omim.txt") || die "Cannot open pre_load_input_omim.txt : $!\n";
+
+open (GENEDETAILS, ">human_gene_detail.txt") || die "Cannot open human_gene_detail.txt : $!\n";
+
+open (OMIM2, ">pre_load_human_gene_omim.txt") || die "Cannot open pre_load_human_gene_omim.txt : $!\n";
 
 open (CHECKNOPHENO, ">genemap_records_with_no_phenotype.txt") || die "Cannot open genemap_records_with_no_phenotype.txt : $!\n";
 
@@ -254,22 +303,27 @@ foreach $line (@lines) {
    chop($line);
    @fields = split(/\t/, $line);
 
+
+   $humanGeneName = $fields[7];
+
    ### not all filed[8] numbers are OMIM numbers for gene; many for phenotype
    $mimNumGene = $fields[8];
 
 
    ### only process those with Gene OMIM numbers having HGNC symbols
    if (exists($mimNumsHGNCsymbols{$mimNumGene})) {
+   
+     print GENEDETAILS "$mimNumGene|$humanGeneName|$mimNumsHGNCsymbols{$mimNumGene}\n";
 
      $ctFoundMIMwithSymbolOnGenemap++;
 
      $sqlOrth = "select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-25' and oef_accession_number = ?;";
-     $cur = $dbh->prepare($sqlOrth);
-     $cur->execute($mimNumGene);
+     $cur_orth = $dbh->prepare($sqlOrth);
+     $cur_orth->execute($mimNumGene);
      my ($ZFINgeneId);
      my ($dblinkAcc);
-     $cur->bind_columns(\$ZFINgeneId,\$dblinkAcc);
-     while ($cur->fetch()) {
+     $cur_orth->bind_columns(\$ZFINgeneId,\$dblinkAcc);
+     while ($cur_orth->fetch()) {
         $ZDBgeneIdOMIMnums{$ZFINgeneId} = $mimNumGene;
 
         $allMIMnumsZDBgeneIdsOnGeneMap{$mimNumGene} = $ZFINgeneId;
@@ -278,20 +332,22 @@ foreach $line (@lines) {
         $ctMatchedOMIM++;
      }
 
+     $cur_orth->finish();
+
      $humanGene = $mimNumsHGNCsymbols{$mimNumGene};
      $humanGeneSymLowerCase = lc($humanGene);
      $humanGeneSymLowerCaseA = $humanGeneSymLowerCase . "a";
      $humanGeneSymLowerCaseB = $humanGeneSymLowerCase . "b";
 
      $sqlGene = "select mrkr_zdb_id from marker where mrkr_zdb_id like 'ZDB-GENE%' and (mrkr_abbrev = ? or mrkr_abbrev = ? or mrkr_abbrev = ?);";
-     $cur = $dbh->prepare($sqlGene);
-     $cur->execute($humanGeneSymLowerCase,$humanGeneSymLowerCaseA,$humanGeneSymLowerCaseB);
+     $cur_gene = $dbh->prepare($sqlGene);
+     $cur_gene->execute($humanGeneSymLowerCase,$humanGeneSymLowerCaseA,$humanGeneSymLowerCaseB);
      my ($ZFINgeneIdSimilarSym);
-     $cur->bind_columns(\$ZFINgeneIdSimilarSym);
-     while ($cur->fetch()) {
+     $cur_gene->bind_columns(\$ZFINgeneIdSimilarSym);
+     while ($cur_gene->fetch()) {
         $matchedSymbolFound = 1;
      }
-
+     $cur_gene->finish();
 
      $phenotypesIn3Fileds = $fields[11];
 
@@ -336,6 +392,7 @@ foreach $line (@lines) {
                      $humanGeneMimNumPhenoNoOrth{$humanGene} = $mimNumGene;
                      $ctHumanGenePhenoNoOrth++;
                  }
+                 print OMIM2 "$mimNumGene|$disorder|$phenotypeOMIMnum\n";
              }
          } elsif ($phenotype =~ m/\s+\([0-9]\)$/) {   ## no phenotype OMIM number
              @disordrTextPlus = split(/\s+\([0-9]\)$/, $phenotype);
@@ -378,17 +435,19 @@ foreach $line (@lines) {
 $ctTotalOnGenmap = $ctTotalOnGenmap - 4;
 
 close OMIM;
+close GENEDETAILS;
+close OMIM2;
 close CHECKNOPHENO;
 
 ##################################################################################################################################################################
 $sqlOmim = "select distinct ortho_zebrafish_gene_zdb_id, oef_accession_number from ortholog, ortholog_external_reference where oef_ortho_zdb_id = ortho_zdb_id and oef_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-25';";
-$cur = $dbh->prepare($sqlOmim);
-$cur->execute();
+$cur_omim = $dbh->prepare($sqlOmim);
+$cur_omim->execute();
 my ($orthoId, $omimNum);
-$cur->bind_columns(\$geneId,\$omimNum);
+$cur_omim->bind_columns(\$geneId,\$omimNum);
 
 print LOG "\nOMIM numbers on ZFIN not found on mim2gene.txt :\n\n";
-while ($cur->fetch()) {
+while ($cur_omim->fetch()) {
    if (!exists($allMimNums{$omimNum})) {
       print LOG "$orthoId\t$omimNum\n";
    }
@@ -396,11 +455,11 @@ while ($cur->fetch()) {
 
 print LOG " \n";
 
-$cur->execute();
-$cur->bind_columns(\$geneId,\$omimNum);
+$cur_omim->execute();
+$cur_omim->bind_columns(\$geneId,\$omimNum);
 
 print LOG "\nOMIM numbers on ZFIN found on mim2gene.txt but missing symbol on mim2gene.txt:\n\n";
-while ($cur->fetch()) {
+while ($cur_omim->fetch()) {
    if (exists($allMimNums{$omimNum}) && !exists($mimNumsHGNCsymbols{$omimNum})) {
       print LOG "$geneId\t$omimNum\n";
    }
@@ -408,11 +467,11 @@ while ($cur->fetch()) {
 
 print LOG " \n";
 
-$cur->execute();
-$cur->bind_columns(\$geneId,\$omimNum);
+$cur_omim->execute();
+$cur_omim->bind_columns(\$geneId,\$omimNum);
 
 print LOG "\nOMIM numbers on ZFIN found to be discontinued (removed) on mim2gene.txt:\n\n";
-while ($cur->fetch()) {
+while ($cur_omim->fetch()) {
    if (exists($allDiscontinuedMIMnums{$omimNum})) {
       print LOG "$geneId\t$omimNum\n";
    }
@@ -420,12 +479,12 @@ while ($cur->fetch()) {
 
 print LOG " \n";
 
-$cur->execute();
-$cur->bind_columns(\$geneId,\$omimNum);
+$cur_omim->execute();
+$cur_omim->bind_columns(\$geneId,\$omimNum);
 
 print LOG "\nOMIM numbers on ZFIN not found on genemap file: \n\n";
 $ctNotFoundOnGeneMap = 0;
-while ($cur->fetch()) {
+while ($cur_omim->fetch()) {
    if (!exists($allMIMnumsZDBgeneIdsOnGeneMap{$omimNum})) {
       print LOG "$geneId\t$omimNum\n";
       $ctNotFoundOnGeneMap++;
@@ -436,7 +495,7 @@ print "ctNotFoundOnGeneMap : $ctNotFoundOnGeneMap\n";
 
 print LOG "ctNotFoundOnGeneMap : $ctNotFoundOnGeneMap\n";
 
-$cur->finish();
+$cur_omim->finish();
 
 $dbh->disconnect();
 
@@ -507,8 +566,6 @@ system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/alreadyReportedHum
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/alreadyReportedHumanGenes /research/zarchive/load_files/OMIM/");
 
 exit;
-
-
 
 
 

@@ -4,6 +4,7 @@ import org.hibernate.*;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.zfin.ontology.HumanGeneDetail;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.RelationshipSorting;
 import org.zfin.expression.ExpressionResult;
@@ -1055,5 +1056,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
         Query query = session.createSQLQuery(sql);
         query.setString("subsetN", subsetName);
         return query.list();
+    }
+
+    @Override
+    public HumanGeneDetail getHumanGeneDetailById(String id) {
+        Session session = HibernateUtil.currentSession();
+        return (HumanGeneDetail) session.get(HumanGeneDetail.class, id);
     }
 }
