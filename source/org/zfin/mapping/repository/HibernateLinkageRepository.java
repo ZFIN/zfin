@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.ZdbID;
@@ -214,6 +215,19 @@ public class HibernateLinkageRepository implements LinkageRepository {
             list = new ArrayList<>();
         }
         return list;
+    }
+
+    public List<FeatureGenomeLocation> getFeatureLocations(Marker marker) {
+        Query query1 = HibernateUtil.currentSession().createQuery(
+                "select  loc from FeatureGenomeLocation loc,FeatureMarkerRelationship fmrel " +
+                        "where fmrel.marker = :marker and  " +
+                        "fmrel.type  = :relation and " +
+                         "loc.feature = fmrel.feature and loc.assembly in ('GRCz11','GRCz10','Zv9') order by loc.feature.abbreviationOrder asc,substring(loc.assembly,4) desc");
+        query1.setParameter("marker", marker);
+        query1.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        List<FeatureGenomeLocation> list1 = (List<FeatureGenomeLocation>) query1.list();
+
+        return list1;
     }
 
     @Override

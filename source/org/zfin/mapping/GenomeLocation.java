@@ -22,10 +22,14 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     protected String detailedSource;
     protected String accessionNumber;
     protected GenomeBrowserMetaData metaData;
+
+
+
     protected Publication attribution;
     protected GBrowseTrack gbrowseTrack;
     protected String assembly;
     private GenericTerm evidence;
+
 
     public long getID() {
         return ID;

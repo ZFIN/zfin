@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
@@ -18,6 +19,8 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
@@ -211,13 +214,14 @@ public class MappingDetailController {
         Marker marker = markerRepository.getMarkerByID(markerID);
 
         // genetic mapping Panels
-        List<Feature> featureList = getFeatureRepository().getFeaturesByMarker(marker);
+       // List<Feature> featureList = getFeatureRepository().getFeaturesByMarker(marker);
 
 
-        for (Feature featureL : featureList) {
-            List<FeatureGenomeLocation> featureLocationList = FeatureService.getPhysicalLocations(featureL);
-            model.addAttribute("allelicFeatures",featureLocationList);
-        }
+//        for (Feature featureL : featureList) {
+            List<FeatureGenomeLocation> featureLocationList = getLinkageRepository().getFeatureLocations(marker);
+         Collections.sort(featureLocationList);
+           model.addAttribute("allelicFeatures",featureLocationList);
+        
 
         List<MappedMarker> mappedMarkers = getLinkageRepository().getMappedMarkers(marker);
 
