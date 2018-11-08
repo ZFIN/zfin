@@ -6,6 +6,10 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
    <include file="source/org/zfin/db/load/1102/ZFIN-5778.sql"/>
+   <include file="source/org/zfin/db/load/1102/zebrashare_data_edit_permission.sql"/>
+   <include file="source/org/zfin/db/load/1102/zebrashare_pub_table_edits.sql"/>
+   <include file="source/org/zfin/db/load/1102/update_fig_image_date.sql"/>
 </databaseChangeLog>
 
    
+
