@@ -9,9 +9,9 @@
    <include file="source/org/zfin/db/postGmakePostloaddb/1102/ZFIN-5893_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1102/ZFIN-5893.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1102/ZFIN-5893.sql" />
-  <!--  <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-572_pre.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-572_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-572.xml" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-572.sql" />-->
+    <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-572.sql" />
  <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561a_pre.sql" />
  <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561a.xml" />
  <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561a.sql" />
