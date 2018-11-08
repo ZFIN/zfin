@@ -27,6 +27,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.Marker;
@@ -1007,7 +1008,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
         query.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
 
         return (List<Feature>) query.list();
+
+
     }
+
 
     public List<Feature> getFeaturesByConstruct(Marker marker) {
         Session session = HibernateUtil.currentSession();
