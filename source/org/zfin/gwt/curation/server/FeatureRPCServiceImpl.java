@@ -174,6 +174,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 fgl.setSfclEnd(featureDTO.getFeatureEndLoc());
 
                 fgl.setSfclEvidence(ontologyRepository.getTermByZdbID(featureDTO.getEvidence()));
+                HibernateUtil.currentSession().save(fgl);
             }
         }
         else {
@@ -185,6 +186,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 fgl.setSfclStart(featureDTO.getFeatureStartLoc());
                 fgl.setSfclEnd(featureDTO.getFeatureEndLoc());
                 fgl.setSfclEvidence(ontologyRepository.getTermByZdbID(featureDTO.getEvidence()));
+                HibernateUtil.currentSession().save(fgl);
 
             }
         }

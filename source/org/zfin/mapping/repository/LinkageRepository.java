@@ -110,6 +110,7 @@ public interface LinkageRepository {
      * @return
      */
     List<LinkageMember> getLinkageMemberForMarker(Marker marker);
+    List<FeatureGenomeLocation> getFeatureLocations(Marker marker);
 
     /**
      * Retrieves genome location information.

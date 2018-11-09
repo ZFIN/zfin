@@ -8,6 +8,7 @@ import org.zfin.feature.Feature;
 public class FeatureGenomeLocation extends GenomeLocation {
 
     private Feature feature;
+    private String assemblyNum;
 
     public Feature getFeature() {
         return feature;
@@ -17,4 +18,8 @@ public class FeatureGenomeLocation extends GenomeLocation {
         this.feature = feature;
         this.entityID = feature.getZdbID();
     }
+
+
+
+
 }
