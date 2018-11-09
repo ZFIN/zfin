@@ -10,7 +10,7 @@
    <include file="source/org/zfin/db/load/1102/zebrashare_pub_table_edits.sql"/>
    <include file="source/org/zfin/db/load/1102/update_fig_image_date.sql"/>
    <include file="source/org/zfin/db/load/1102/remove_num_auths.sql"/>
-   <include file="source/org/zfin/db/load/1102/zebrashare_submission_metadata.sql"/>
+   <include file="source/org/zfin/db/load/1102/zebrashare_metadata.sql"/>
 </databaseChangeLog>
 
    
