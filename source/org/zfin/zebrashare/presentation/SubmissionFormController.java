@@ -1,11 +1,9 @@
 package org.zfin.zebrashare.presentation;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -16,21 +14,21 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
-import org.zfin.profile.presentation.LabPresentation;
-import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationTrackingLocation;
+import org.zfin.publication.PublicationTrackingStatus;
+import org.zfin.publication.repository.PublicationRepository;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
 
 @Controller
 @RequestMapping("/zebrashare")
 public class SubmissionFormController {
 
     @Autowired
-    private ProfileRepository profileRepository;
+    private PublicationRepository publicationRepository;
 
     private static final Logger LOG = Logger.getLogger(SubmissionFormController.class);
 
@@ -78,23 +76,32 @@ public class SubmissionFormController {
             return "zebrashare/new-submission.page";
         }
 
-        LOG.warn(formBean.getTitle());
-        LOG.warn(formBean.getAuthors());
-        LOG.warn(formBean.getAbstractText());
-        LOG.warn(formBean.getLabZdbId());
-        if (formBean.getEditors() != null) {
-            Arrays.stream(formBean.getEditors()).forEach(LOG::warn);
-        }
-        LOG.warn(formBean.getDataFile().getOriginalFilename());
-        if (formBean.getImageFiles() != null) {
-            Arrays.stream(formBean.getImageFiles())
-                    .filter(Objects::nonNull)
-                    .filter(f -> f.getContentType().startsWith("image/"))
-                    .forEach(f -> LOG.warn(f.getOriginalFilename()));
-        }
-        if (formBean.getCaptions() != null) {
-            Arrays.stream(formBean.getCaptions()).forEach(LOG::warn);
-        }
+        Publication publication = new Publication();
+        publication.setTitle(formBean.getTitle());
+        publication.setAuthors(formBean.getAuthors());
+        publication.setAbstractText(formBean.getAbstractText());
+        publication.setZebrasharePublic(false);
+        publication.setJournal(publicationRepository.findJournalByAbbreviation("zebraShare"));
+        publication.setType(Publication.Type.JOURNAL);
+        publicationRepository.addPublication(publication, PublicationTrackingStatus.Name.READY_FOR_CURATION, PublicationTrackingLocation.Name.ZEBRASHARE);
+
+        LOG.warn(publication.getZdbID());
+
+
+//        LOG.warn(formBean.getLabZdbId());
+//        if (formBean.getEditors() != null) {
+//            Arrays.stream(formBean.getEditors()).forEach(LOG::warn);
+//        }
+//        LOG.warn(formBean.getDataFile().getOriginalFilename());
+//        if (formBean.getImageFiles() != null) {
+//            Arrays.stream(formBean.getImageFiles())
+//                    .filter(Objects::nonNull)
+//                    .filter(f -> f.getContentType().startsWith("image/"))
+//                    .forEach(f -> LOG.warn(f.getOriginalFilename()));
+//        }
+//        if (formBean.getCaptions() != null) {
+//            Arrays.stream(formBean.getCaptions()).forEach(LOG::warn);
+//        }
 
         return "redirect:/";
     }

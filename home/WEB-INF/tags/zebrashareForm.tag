@@ -8,6 +8,12 @@
         <div class="col-sm-8">
             <form:textarea path="authors" cssClass="form-control"/>
             <form:errors path="authors" cssClass="text-danger" />
+            <span class="help-block">
+                Enter each author as the last name followed by the first and (where appproriate) middle initials
+                followed by periods. Each name should be separated by a comma. For example:
+                <span class="nowrap">Hargrove J.M.</span>, <span class="nowrap">Lacasse N.D.</span>, and
+                <span class="nowrap">Kataoka U.</span>
+            </span>
         </div>
     </div>
 

@@ -45,31 +45,13 @@ public class PublicationFileController {
                                                                           @RequestParam MultipartFile file) {
         Publication publication = publicationRepository.getPublication(id);
         PublicationFileType type = publicationRepository.getPublicationFileType(fileType);
-        PublicationFile pubFile;
-
-
-        Transaction tx = HibernateUtil.createTransaction();
-
-        if (type.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
-            // if there already is an original article for this pub, we need to delete that
-            // record because there can be only one of those.
-            PublicationFile existingArticle = publicationRepository.getOriginalArticle(publication);
-            if (existingArticle != null) {
-                HibernateUtil.currentSession().delete(existingArticle);
-                HibernateUtil.currentSession().flush();
-            }
-        }
 
         try {
-            pubFile = publicationService.processPublicationFile(
-                    publication, file.getOriginalFilename(), type, file.getInputStream());
+            publicationRepository.addPublicationFile(publication, type, file);
         } catch (IOException e) {
             LOG.error("Error processing pub file", e);
             throw new InvalidWebRequestException("Error processing file");
         }
-
-        HibernateUtil.currentSession().save(pubFile);
-        tx.commit();
 
         // return the whole list because we might have replaced the original article, and to keep the sorting right
         return publication.getFiles().stream()
