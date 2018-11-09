@@ -12,7 +12,6 @@
    <include file="source/org/zfin/db/load/1102/remove_num_auths.sql"/>
    <include file="source/org/zfin/db/load/1102/zebrashare_metadata.sql"/>
    <include file="source/org/zfin/db/load/1102/add_zdb_id.sql"/>
+   <include file="source/org/zfin/db/load/1102/zebrashare_add_metadata_columns.sql"/>
+
 </databaseChangeLog>
-
-   
-

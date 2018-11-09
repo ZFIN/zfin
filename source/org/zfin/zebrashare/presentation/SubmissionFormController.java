@@ -14,12 +14,14 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationFileType;
 import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -31,7 +33,13 @@ import java.util.GregorianCalendar;
 public class SubmissionFormController {
 
     @Autowired
+    private ProfileRepository profileRepository;
+
+    @Autowired
     private PublicationRepository publicationRepository;
+
+    @Autowired
+    private ZebrashareRepository zebrashareRepository;
 
     private static final Logger LOG = Logger.getLogger(SubmissionFormController.class);
 
@@ -97,6 +105,14 @@ public class SubmissionFormController {
             LOG.error(e);
             return "zebrashare/new-submission.page";
         }
+
+        zebrashareRepository.addZebrashareSubmissionMetadata(
+                publication,
+                ProfileService.getCurrentSecurityUser(),
+                profileRepository.getLabById(formBean.getLabZdbId()),
+                formBean.getSubmitterName(),
+                formBean.getSubmitterEmail()
+        );
 
         LOG.warn(publication.getZdbID());
 

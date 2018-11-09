@@ -155,7 +155,8 @@
         <mapping class="org.zfin.sequence.reno.RedundancyRun"/>
         <mapping class="org.zfin.sequence.reno.Run"/>
         <mapping class="org.zfin.sequence.reno.RunCandidate"/>
-        <mapping class="org.zfin.Species"/>        
+        <mapping class="org.zfin.Species"/>
+        <mapping class="org.zfin.zebrashare.ZebrashareSubmissionMetadata"/>
           
     </session-factory>
 </hibernate-configuration>
