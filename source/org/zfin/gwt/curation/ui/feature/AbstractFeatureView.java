@@ -234,7 +234,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         featureSuffixBox.setVisible(false);
         featureNameBox.setVisible(true);
         featureNameBox.setEnabled(false);
-        featureChromosome.setText("");
 
         switch (featureTypeSelected) {
             case TRANSGENIC_INSERTION:
