@@ -16,12 +16,15 @@ import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationFileType;
 import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.repository.PublicationRepository;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 
 @Controller
 @RequestMapping("/zebrashare")
@@ -83,7 +86,17 @@ public class SubmissionFormController {
         publication.setZebrasharePublic(false);
         publication.setJournal(publicationRepository.findJournalByAbbreviation("zebraShare"));
         publication.setType(Publication.Type.JOURNAL);
+        publication.setEntryDate(new GregorianCalendar());
         publicationRepository.addPublication(publication, PublicationTrackingStatus.Name.READY_FOR_CURATION, PublicationTrackingLocation.Name.ZEBRASHARE);
+        try {
+            publicationRepository.addPublicationFile(
+                    publication,
+                    publicationRepository.getPublicationFileTypeByName(PublicationFileType.Name.OTHER),
+                    formBean.getDataFile());
+        } catch (IOException e) {
+            LOG.error(e);
+            return "zebrashare/new-submission.page";
+        }
 
         LOG.warn(publication.getZdbID());
 
