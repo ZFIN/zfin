@@ -190,6 +190,21 @@ public class AnnualStatsController {
                     annualStatsDisplay.setOrder(6);
                     annualStatsDisplay.setAnnualStats(stat);
                     xpPhenoStats.add(annualStatsDisplay);
+                }  else if (stat.getType().equals("Expression Phenotype")) {
+                    annualStatsDisplay.setCategory("Expression Phenotype");
+                    annualStatsDisplay.setOrder(7);
+                    annualStatsDisplay.setAnnualStats(stat);
+                    xpPhenoStats.add(annualStatsDisplay);
+                }  else if (stat.getType().equals("Diseases with Models")) {
+                    annualStatsDisplay.setCategory("Diseases with Models");
+                    annualStatsDisplay.setOrder(8);
+                    annualStatsDisplay.setAnnualStats(stat);
+                    xpPhenoStats.add(annualStatsDisplay);
+                }  else if (stat.getType().equals("Disease Models")) {
+                    annualStatsDisplay.setCategory("Disease Models");
+                    annualStatsDisplay.setOrder(9);
+                    annualStatsDisplay.setAnnualStats(stat);
+                    xpPhenoStats.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Mapped markers")) {
                     annualStatsDisplay.setCategory("Mapped Markers");
                     annualStatsDisplay.setOrder(0);
@@ -274,3 +289,4 @@ public class AnnualStatsController {
         return "infrastructure/annual-stats-view.page";
     }
 }
+

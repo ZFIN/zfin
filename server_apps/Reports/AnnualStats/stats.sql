@@ -153,6 +153,24 @@ select count(distinct (mfs_mrkr_Zdb_id)), 'Expression & Phenotype', 'Genes with 
  and phenox_genox_zdb_id = mfs_genox_zdb_id
 and (mfs_mrkr_zdb_id like 'ZDB-GENE%' or mfs_mrkr_zdb_id like '%RNAG%');
 
+-- number of diseases with fish models
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(distinct dat_term_zdb_id), 'Expression & Phenotype', 'Diseases with Models', now() from disease_annotation where exists(select 1 from disease_annotation_model where damo_dat_zdb_id = dat_zdb_id);
+
+-- number of disease models
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), 'Expression & Phenotype', 'Disease Models', now() from disease_annotation_model;
+
+-- number of EaP
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), 'Expression & Phenotype', 'Expression Phenotype', now() from phenotype_observation_generated
+ where exists(select 1 from phenotype_source_generated, expression_experiment2
+                      where psg_pg_id = pg_id
+                        and xpatex_genox_zdb_id = pg_genox_zdb_id
+                        and xpatex_gene_zdb_id = psg_mrkr_zdb_id);
+
+
+
 -- Images annotated for expression
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Expression & Phenotype', 'Images', now() from image
