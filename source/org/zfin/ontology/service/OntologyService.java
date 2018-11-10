@@ -175,8 +175,7 @@ public class OntologyService {
                     if (omimResult.getOrtholog().getOrganism().getCommonName().startsWith("Hu")) {
                         String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
 
-
-                        OmimPhenotypeDisplay omimDisplay;
+                        OmimPhenotypeDisplay omimDisplay = new OmimPhenotypeDisplay();
 
                         // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
                         // otherwise, just get the display object from the map
@@ -200,8 +199,7 @@ public class OntologyService {
                         omimDisplay.setName(omimResult.getName());
                         omimDisplay.setOmimNum(omimResult.getOmimNum());
                         omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
-                        if (omimResult.getOrtholog() != null) {
-
+                        if (omimResult.getOrtholog().getNcbiOtherSpeciesGene() != null) {
                             hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
                             omimDisplay.setHumanGene(hA);
                         }
