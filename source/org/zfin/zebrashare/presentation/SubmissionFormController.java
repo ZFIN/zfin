@@ -1,6 +1,7 @@
 package org.zfin.zebrashare.presentation;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -10,6 +11,10 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MultipartFile;
+import org.zfin.expression.FigureFigure;
+import org.zfin.expression.Image;
+import org.zfin.figure.service.ImageService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.Lab;
@@ -95,6 +100,7 @@ public class SubmissionFormController {
         publication.setJournal(publicationRepository.findJournalByAbbreviation("zebraShare"));
         publication.setType(Publication.Type.JOURNAL);
         publication.setEntryDate(new GregorianCalendar());
+        publication.setPublicationDate(new GregorianCalendar());
         publicationRepository.addPublication(publication, PublicationTrackingStatus.Name.READY_FOR_CURATION, PublicationTrackingLocation.Name.ZEBRASHARE);
         try {
             publicationRepository.addPublicationFile(
@@ -116,20 +122,40 @@ public class SubmissionFormController {
 
         LOG.warn(publication.getZdbID());
 
+        if (formBean.getImageFiles().length != formBean.getCaptions().length) {
+            LOG.error("Mismatched number of images and captions: " + formBean.getImageFiles().length + " vs " + formBean.getCaptions().length);
+            return "zebrashare/new-submission.page";
+        }
+        Transaction tx = HibernateUtil.createTransaction();
+        for (int i = 0; i < formBean.getImageFiles().length; i++) {
+            MultipartFile imageFile = formBean.getImageFiles()[i];
+            String caption = formBean.getCaptions()[i];
+            String label = "Fig. " + (i + 1);
 
+            FigureFigure figure = new FigureFigure();
+            figure.setLabel(label);
+            figure.setCaption(caption);
+            figure.setPublication(publication);
+            figure.setInsertedBy(ProfileService.getCurrentSecurityUser());
+            figure.setInsertedDate(new GregorianCalendar());
+            figure.setUpdatedBy(ProfileService.getCurrentSecurityUser());
+            figure.setUpdatedDate(new GregorianCalendar());
+            HibernateUtil.currentSession().save(figure);
+
+            try {
+                Image image = ImageService.processImage(figure, imageFile, ProfileService.getCurrentSecurityUser());
+                image.setExternalName(imageFile.getOriginalFilename());
+                HibernateUtil.currentSession().save(image);
+            } catch (IOException e) {
+                LOG.error(e);
+                return "zebrashare/new-submission.page";
+            }
+
+        }
+        tx.commit();
 //        LOG.warn(formBean.getLabZdbId());
 //        if (formBean.getEditors() != null) {
 //            Arrays.stream(formBean.getEditors()).forEach(LOG::warn);
-//        }
-//        LOG.warn(formBean.getDataFile().getOriginalFilename());
-//        if (formBean.getImageFiles() != null) {
-//            Arrays.stream(formBean.getImageFiles())
-//                    .filter(Objects::nonNull)
-//                    .filter(f -> f.getContentType().startsWith("image/"))
-//                    .forEach(f -> LOG.warn(f.getOriginalFilename()));
-//        }
-//        if (formBean.getCaptions() != null) {
-//            Arrays.stream(formBean.getCaptions()).forEach(LOG::warn);
 //        }
 
         return "redirect:/";

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.GregorianCalendar;
 
 public class ImageService {
 
@@ -54,6 +55,10 @@ public class ImageService {
         image.setImageFilename("tmpvalue");
         image.setThumbnail("tmpvalue");
         image.setVideoStill(isVideoStill);
+        image.setInsertedDate(new GregorianCalendar());
+        image.setInsertedBy(owner);
+        image.setUpdatedDate(new GregorianCalendar());
+        image.setUpdatedBy(owner);
         HibernateUtil.currentSession().save(image);
         figure.addImage(image);
         return image;

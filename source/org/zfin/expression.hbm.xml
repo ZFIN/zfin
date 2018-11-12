@@ -37,6 +37,11 @@
             <column name="fig_full_label"/>
         </property>
 
+        <property name="insertedDate" column="fig_inserted_date"/>
+        <property name="updatedDate" column="fig_updated_date"/>
+        <many-to-one name="insertedBy" column="fig_inserted_by" class="org.zfin.profile.Person"/>
+        <many-to-one name="updatedBy" column="fig_updated_by" class="org.zfin.profile.Person"/>
+
         <set name="expressionResults" lazy="true" inverse="true" table="expression_pattern_figure">
             <key column="xpatfig_fig_zdb_id"/>
             <many-to-many class="org.zfin.expression.ExpressionResult" column="xpatfig_xpatres_zdb_id"/>
@@ -96,6 +101,10 @@
         <property name="preparation" column="img_preparation" not-null="true"/>
         <property name="label" column="img_label"/>
         <property name="comments" column="img_comments"/>
+        <property name="insertedDate" column="img_inserted_date"/>
+        <property name="updatedDate" column="img_updated_date"/>
+        <many-to-one name="insertedBy" column="img_inserted_by" class="org.zfin.profile.Person"/>
+        <many-to-one name="updatedBy" column="img_updated_by" class="org.zfin.profile.Person"/>
 
         <many-to-one name="owner" column="img_owner_zdb_id" class="org.zfin.profile.Person" not-null="true"/>
 

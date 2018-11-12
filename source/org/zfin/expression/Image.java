@@ -5,6 +5,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.Person;
 
 import java.io.Serializable;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,6 +41,11 @@ public class Image implements Serializable {
     private Set<Video> videos;
 
     private ImageStage imageStage;
+
+    private GregorianCalendar insertedDate;
+    private GregorianCalendar updatedDate;
+    private Person insertedBy;
+    private Person updatedBy;
 
 
     public Figure getFigure() {
@@ -200,6 +206,38 @@ public class Image implements Serializable {
 
     public void setVideos(Set<Video> videos) {
         this.videos = videos;
+    }
+
+    public GregorianCalendar getInsertedDate() {
+        return insertedDate;
+    }
+
+    public void setInsertedDate(GregorianCalendar insertedDate) {
+        this.insertedDate = insertedDate;
+    }
+
+    public GregorianCalendar getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(GregorianCalendar updatedDate) {
+        this.updatedDate = updatedDate;
+    }
+
+    public Person getInsertedBy() {
+        return insertedBy;
+    }
+
+    public void setInsertedBy(Person insertedBy) {
+        this.insertedBy = insertedBy;
+    }
+
+    public Person getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(Person updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     public Video getFirstVideo() {

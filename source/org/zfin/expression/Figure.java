@@ -1,10 +1,12 @@
 package org.zfin.expression;
 
 import org.zfin.marker.Marker;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.mutant.PhenotypeExperiment;
 
 import java.io.Serializable;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,6 +42,10 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     private Set<Image> images;
     private Publication publication;
     private Set<Marker> constructs;
+    private GregorianCalendar insertedDate;
+    private GregorianCalendar updatedDate;
+    private Person insertedBy;
+    private Person updatedBy;
 
     public String getZdbID() {
         return zdbID;
@@ -129,6 +135,38 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
 
     public void setPublication(Publication publication) {
         this.publication = publication;
+    }
+
+    public GregorianCalendar getInsertedDate() {
+        return insertedDate;
+    }
+
+    public void setInsertedDate(GregorianCalendar insertedDate) {
+        this.insertedDate = insertedDate;
+    }
+
+    public GregorianCalendar getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(GregorianCalendar updatedDate) {
+        this.updatedDate = updatedDate;
+    }
+
+    public Person getInsertedBy() {
+        return insertedBy;
+    }
+
+    public void setInsertedBy(Person insertedBy) {
+        this.insertedBy = insertedBy;
+    }
+
+    public Person getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(Person updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     public abstract Type getType();
