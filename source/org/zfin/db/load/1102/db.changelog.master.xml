@@ -13,5 +13,6 @@
    <include file="source/org/zfin/db/load/1102/zebrashare_metadata.sql"/>
    <include file="source/org/zfin/db/load/1102/add_zdb_id.sql"/>
    <include file="source/org/zfin/db/load/1102/zebrashare_add_metadata_columns.sql"/>
+   <include file="source/org/zfin/db/load/1102/zebrashare_update_sequence_name.sql"/>
 
 </databaseChangeLog>

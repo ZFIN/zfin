@@ -26,12 +26,13 @@ import org.zfin.publication.PublicationFileType;
 import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.zebrashare.ZebrashareEditor;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.GregorianCalendar;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/zebrashare")
@@ -152,6 +153,21 @@ public class SubmissionFormController {
             }
 
         }
+
+        Set<Person> editors = Arrays.stream(Optional.ofNullable(formBean.getEditors()).orElse(new String[]{}))
+                .map(id -> profileRepository.getPerson(id))
+                .collect(Collectors.toSet());
+        editors.add(ProfileService.getCurrentSecurityUser());
+        for (Person person : editors) {
+            ZebrashareEditor editor = new ZebrashareEditor();
+            editor.setPerson(person);
+            editor.setPublication(publication);
+            editor.setSubmitter(person == ProfileService.getCurrentSecurityUser());
+            HibernateUtil.currentSession().save(editor);
+        }
+
+
+
         tx.commit();
 //        LOG.warn(formBean.getLabZdbId());
 //        if (formBean.getEditors() != null) {

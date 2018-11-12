@@ -109,6 +109,11 @@
 
         <property name="lastCorrespondenceDate" column="pub_last_correspondence_date"/>
 
+        <set name="zebrashareEditors" lazy="true" table="zebrashare_data_edit_permission">
+            <key column="zdep_pub_zdb_id" />
+            <one-to-many class="org.zfin.zebrashare.ZebrashareEditor" />
+        </set>
+
     </class>
 
     <class name="org.zfin.publication.DOIAttempt" table="doi_attempts">

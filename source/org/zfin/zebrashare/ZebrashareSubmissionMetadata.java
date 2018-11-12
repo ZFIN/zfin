@@ -8,28 +8,29 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name="zebrashare_submission_metadata")
+@Table(name = "zebrashare_submission_metadata")
 public class ZebrashareSubmissionMetadata implements Serializable {
 
     @Id
-    @ManyToOne
-    @JoinColumn(name="zsm_pub_zdb_id")
+    @MapsId
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "zsm_pub_zdb_id")
     private Publication publication;
 
     // this is the account that was logged in while submitting
     @ManyToOne
-    @JoinColumn(name="zsm_submitter_zdb_id")
+    @JoinColumn(name = "zsm_submitter_zdb_id")
     private Person submitter;
 
     // this is the contact info they provided in the form
-    @Column(name="zsm_submitter_name")
+    @Column(name = "zsm_submitter_name")
     private String submitterName;
 
-    @Column(name="zsm_submitter_email")
+    @Column(name = "zsm_submitter_email")
     private String submitterEmail;
 
     @ManyToOne
-    @JoinColumn(name="zsm_lab_of_origin_zdb_id")
+    @JoinColumn(name = "zsm_lab_of_origin_zdb_id")
     private Lab labOfOrigin;
 
     public Publication getPublication() {
@@ -71,4 +72,5 @@ public class ZebrashareSubmissionMetadata implements Serializable {
     public void setLabOfOrigin(Lab labOfOrigin) {
         this.labOfOrigin = labOfOrigin;
     }
+
 }

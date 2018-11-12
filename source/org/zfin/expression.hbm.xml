@@ -99,6 +99,7 @@
         <property name="direction" column="img_direction" not-null="true"/>
         <property name="form" column="img_form" not-null="true"/>
         <property name="preparation" column="img_preparation" not-null="true"/>
+        <property name="externalName" column="img_external_name"/>
         <property name="label" column="img_label"/>
         <property name="comments" column="img_comments"/>
         <property name="insertedDate" column="img_inserted_date"/>
