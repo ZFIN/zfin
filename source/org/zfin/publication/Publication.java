@@ -5,6 +5,7 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.profile.Person;
+import org.zfin.zebrashare.ZebrashareEditor;
 
 import java.io.Serializable;
 import java.util.*;
@@ -51,6 +52,9 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private boolean indexed;
     private GregorianCalendar indexedDate;
     private Person indexedBy;
+
+    private boolean zebrasharePublic;
+    private Set<ZebrashareEditor> zebrashareEditors;
 
     public String getZdbID() {
         return zdbID;
@@ -299,6 +303,22 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setLastCorrespondenceDate(Date lastCorrespondenceDate) {
         this.lastCorrespondenceDate = lastCorrespondenceDate;
+    }
+
+    public boolean isZebrasharePublic() {
+        return zebrasharePublic;
+    }
+
+    public void setZebrasharePublic(boolean zebrasharePublic) {
+        this.zebrasharePublic = zebrasharePublic;
+    }
+
+    public Set<ZebrashareEditor> getZebrashareEditors() {
+        return zebrashareEditors;
+    }
+
+    public void setZebrashareEditors(Set<ZebrashareEditor> zebrashareEditors) {
+        this.zebrashareEditors = zebrashareEditors;
     }
 
     public String getCitation() {

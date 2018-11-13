@@ -153,7 +153,7 @@ class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
         def status = new PublicationTrackingHistory(
                 publication: new Publication(zdbID: "ZDB-PUB-123456-7"),
                 status: new PublicationTrackingStatus(id: 5, type: PublicationTrackingStatus.Type.CURATING, name: PublicationTrackingStatus.Name.CURATING),
-                location: new PublicationTrackingLocation(id: 2, name: "Bin 2", role: PublicationTrackingLocation.Role.CURATOR),
+                location: new PublicationTrackingLocation(id: 2, name: PublicationTrackingLocation.Name.BIN_2, role: PublicationTrackingLocation.Role.CURATOR),
                 owner: person.patrick,
                 updater: person.monte,
                 date: new GregorianCalendar(2015, 8, 30, 3, 4, 5),

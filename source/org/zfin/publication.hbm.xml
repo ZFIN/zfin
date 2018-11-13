@@ -56,6 +56,7 @@
         <property name="status" column="status" type="publicationStatus"/>
         <property name="errataAndNotes" column="pub_errata_and_notes"/>
         <property name="keywords" column="keywords"/>
+        <property name="zebrasharePublic" column="pub_zebrashare_is_public"/>
 
         <many-to-one name="journal" class="org.zfin.publication.Journal" column="pub_jrnl_zdb_id" />
 
@@ -107,6 +108,11 @@
         </set>
 
         <property name="lastCorrespondenceDate" column="pub_last_correspondence_date"/>
+
+        <set name="zebrashareEditors" lazy="true" table="zebrashare_data_edit_permission">
+            <key column="zdep_pub_zdb_id" />
+            <one-to-many class="org.zfin.zebrashare.ZebrashareEditor" />
+        </set>
 
     </class>
 

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 import org.zfin.antibody.Antibody;
 import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.PersonDTO;
@@ -45,11 +46,13 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardPublicationList;
+import org.zfin.publication.presentation.PublicationService;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,6 +66,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Autowired
     private CurationDTOConversionService converter;
+
+    @Autowired
+    private PublicationService publicationService;
 
     Logger logger = Logger.getLogger(HibernatePublicationRepository.class);
 
@@ -1901,18 +1907,25 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public void addPublication(Publication publication) {
+        addPublication(publication, PublicationTrackingStatus.Name.NEW, null);
+    }
+
+    public void addPublication(Publication publication, PublicationTrackingStatus.Name status, PublicationTrackingLocation.Name location) {
         Session session = HibernateUtil.currentSession();
         HibernateUtil.createTransaction();
         session.save(publication);
         PublicationTrackingHistory trackingEntry = new PublicationTrackingHistory();
-        PublicationTrackingStatus newStatus = getPublicationStatusByName(PublicationTrackingStatus.Name.NEW);
+        PublicationTrackingStatus newStatus = getPublicationStatusByName(status);
+        if (location != null) {
+            PublicationTrackingLocation newLocation = getPublicationTrackingLocationByName(location);
+            trackingEntry.setLocation(newLocation);
+        }
         trackingEntry.setPublication(publication);
         trackingEntry.setStatus(newStatus);
         trackingEntry.setUpdater(ProfileService.getCurrentSecurityUser());
         trackingEntry.setDate(new GregorianCalendar());
         session.save(trackingEntry);
         HibernateUtil.flushAndCommitCurrentSession();
-
     }
 
 
@@ -2304,6 +2317,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (PublicationTrackingLocation) HibernateUtil.currentSession().get(PublicationTrackingLocation.class, id);
     }
 
+    public PublicationTrackingLocation getPublicationTrackingLocationByName(PublicationTrackingLocation.Name name) {
+        return (PublicationTrackingLocation) HibernateUtil.currentSession()
+                .createCriteria(PublicationTrackingLocation.class)
+                .add(Restrictions.eq("name", name))
+                .uniqueResult();
+    }
+
     public DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count,
                                                             int offset, String sort) {
 
@@ -2401,6 +2421,23 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .add(Restrictions.eq("publication", publication))
                 .add(Restrictions.eq("type", originalArticle))
                 .uniqueResult();
+    }
+
+    public PublicationFile addPublicationFile(Publication publication, PublicationFileType type, MultipartFile file) throws IOException {
+        Transaction tx = HibernateUtil.createTransaction();
+        if (type.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
+            // if there already is an original article for this pub, we need to delete that
+            // record because there can be only one of those.
+            PublicationFile existingArticle = getOriginalArticle(publication);
+            if (existingArticle != null) {
+                HibernateUtil.currentSession().delete(existingArticle);
+                HibernateUtil.currentSession().flush();
+            }
+        }
+        PublicationFile pubFile = publicationService.processPublicationFile(publication, file.getOriginalFilename(), type, file.getInputStream());
+        HibernateUtil.currentSession().save(pubFile);
+        tx.commit();
+        return pubFile;
     }
 
     public CorrespondenceSentMessage addSentCorrespondence(Publication publication, CorrespondenceDTO dto) {

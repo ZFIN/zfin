@@ -759,7 +759,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAllPublicationLocationsShouldReturnCorrectNumberOfValues() {
         List<PublicationTrackingLocation> locations = publicationRepository.getAllPublicationLocations();
-        assertThat(locations, hasSize(10));
+        assertThat(locations, hasSize(PublicationTrackingLocation.Name.values().length));
     }
 
     @Test

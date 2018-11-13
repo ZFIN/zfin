@@ -18,5 +18,7 @@ public class SubmissionFormValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "title.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "authors", "authors.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "abstractText", "abstract.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "submitterName", "zebrashare.name.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "submitterEmail", "zebrashare.email.empty");
     }
 }

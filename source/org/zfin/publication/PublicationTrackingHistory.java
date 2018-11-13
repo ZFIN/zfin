@@ -124,7 +124,7 @@ public class PublicationTrackingHistory implements PublicationEvent {
         }
         if (location != null) {
             display.append("<br>Location changed to <b>")
-                    .append(location.getName())
+                    .append(location.getName().toString())
                     .append("</b>");
         }
         return display.toString();

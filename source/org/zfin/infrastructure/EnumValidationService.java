@@ -164,6 +164,13 @@ public class EnumValidationService {
         checkEnumVersusDatabaseCollection(roleList, PublicationTrackingLocation.Role.values());
     }
 
+    @ServiceTest
+    public void validateCurationLocation() throws EnumValidationException {
+        String hql = "select distinct ptl_location_display from pub_tracking_location";
+        List locationList = HibernateUtil.currentSession().createSQLQuery(hql).list();
+        checkEnumVersusDatabaseCollection(locationList, PublicationTrackingLocation.Name.values());
+    }
+
     /**
      * @throws EnumValidationException
      */

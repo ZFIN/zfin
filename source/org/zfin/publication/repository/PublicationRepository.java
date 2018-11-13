@@ -1,5 +1,6 @@
 package org.zfin.publication.repository;
 
+import org.springframework.web.multipart.MultipartFile;
 import org.zfin.antibody.Antibody;
 import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.expression.Experiment;
@@ -27,6 +28,7 @@ import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
+import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedSet;
@@ -508,6 +510,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     void addPublication(Publication publication);
 
+    void addPublication(Publication publication, PublicationTrackingStatus.Name status, PublicationTrackingLocation.Name location);
+
     List<String> getFeatureNamesWithNoGenotypesForPub(String pubZdbID);
 
     int deleteExpressionExperimentIDswithNoExpressionResult(Publication publication);
@@ -578,6 +582,8 @@ public interface PublicationRepository extends PaginationParameter {
     PublicationFileType getPublicationFileTypeByName(PublicationFileType.Name name);
 
     PublicationFile getOriginalArticle(Publication publication);
+
+    PublicationFile addPublicationFile(Publication publication, PublicationFileType type, MultipartFile file) throws IOException;
 
     CorrespondenceSentMessage addSentCorrespondence(Publication publication, CorrespondenceDTO dto);
 
