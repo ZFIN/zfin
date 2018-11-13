@@ -121,8 +121,6 @@ public class SubmissionFormController {
                 formBean.getSubmitterEmail()
         );
 
-        LOG.warn(publication.getZdbID());
-
         if (formBean.getImageFiles().length != formBean.getCaptions().length) {
             LOG.error("Mismatched number of images and captions: " + formBean.getImageFiles().length + " vs " + formBean.getCaptions().length);
             return "zebrashare/new-submission.page";
@@ -166,13 +164,9 @@ public class SubmissionFormController {
             HibernateUtil.currentSession().save(editor);
         }
 
-
-
         tx.commit();
-//        LOG.warn(formBean.getLabZdbId());
-//        if (formBean.getEditors() != null) {
-//            Arrays.stream(formBean.getEditors()).forEach(LOG::warn);
-//        }
+
+        LOG.info(publication.getZdbID());
 
         return "redirect:/";
     }

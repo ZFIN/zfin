@@ -30,6 +30,7 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.orthology.Ortholog;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -78,7 +79,8 @@ public class PublicationViewController {
             }
         }
 
-        if (publication == null) {
+        if (publication == null ||
+                (!ProfileService.isRootUser() && !publication.isZebrasharePublic())) {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
