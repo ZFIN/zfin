@@ -8,10 +8,10 @@
 <%@ attribute name="title" required="false" %>
 
 <c:if test="${empty title}">
-    <c:set var="title" value="GENE ONTOLOGY"/>
+    <c:set var="title" value="GENE ONTOLOGY "/>
 </c:if>
 
-<zfin2:subsection title=""
+<zfin2:subsection title="${title}"
                   test="${geneOntologyOnMarker.goTermCount>0}" showNoData="true">
     <span class="summaryTitle">${title}
         <authz:authorize access="hasRole('root')">
