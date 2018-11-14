@@ -122,6 +122,8 @@ burgessCRISPR.each { csv ->
     else
         session.getTransaction().commit()
 
+session.close()
+println "done"
 
     public Person getPerson(String zdbID) {
         return (Person) HibernateUtil.currentSession().createCriteria(Person.class)
