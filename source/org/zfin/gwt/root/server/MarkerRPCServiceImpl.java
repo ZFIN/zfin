@@ -891,7 +891,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         Marker firstMarker = markerRepository.getMarkerByID(markerDTO.getZdbID());
         Marker secondMarker = markerRepository.getMarkerByAbbreviation(markerDTO.getName());
-
+System.out.println(firstMarker.getAbbreviation());
+        System.out.println(secondMarker.getAbbreviation());
 
         if (secondMarker == null || firstMarker == null) {
             throw new TermNotFoundException(markerDTO.getName(), markerDTO.getMarkerRelationshipType());
@@ -929,6 +930,9 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                 if (secondMarker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                     MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE);
                 }
+                if (secondMarker.isInTypeGroup(Marker.TypeGroup.CLONEDOM)) {
+                    MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
+                }
 
 
             }
@@ -936,7 +940,10 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             //  MarkerService.addMarkerRelationship(firstMarker, secondMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
             //    ExpressionExperiment2 expExpt=RepositoryFactory.getExpressionRepository().get
         } else {
-            MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
+            if (secondMarker.isInTypeGroup(Marker.TypeGroup.CLONEDOM)) {
+                MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
+            }
+            //MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
         }
 
         logger.debug("addMarkerRelationship, first marker: " + firstMarker.getAbbreviation()
