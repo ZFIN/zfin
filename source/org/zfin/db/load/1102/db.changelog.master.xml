@@ -14,5 +14,7 @@
    <include file="source/org/zfin/db/load/1102/add_zdb_id.sql"/>
    <include file="source/org/zfin/db/load/1102/zebrashare_add_metadata_columns.sql"/>
    <include file="source/org/zfin/db/load/1102/zebrashare_update_sequence_name.sql"/>
-
+   <include file="source/org/zfin/db/load/1102/update_fig_updated_date.sql"/>
+<include file="source/org/zfin/db/load/1102/CUR-854.sql"/>
+<include file="source/org/zfin/db/load/1102/expcond_alternate_key.sql"/>
 </databaseChangeLog>
