@@ -17,4 +17,5 @@
    <include file="source/org/zfin/db/load/1102/update_fig_updated_date.sql"/>
 <include file="source/org/zfin/db/load/1102/CUR-854.sql"/>
 <include file="source/org/zfin/db/load/1102/expcond_alternate_key.sql"/>
+<include file="source/org/zfin/db/load/1102/add_default_date.sql"/>
 </databaseChangeLog>
