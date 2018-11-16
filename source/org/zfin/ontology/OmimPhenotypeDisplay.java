@@ -15,6 +15,7 @@ public class OmimPhenotypeDisplay {
     private String name;
     private String omimNum;
     private ArrayList<String> humanGene;
+    private String symbol;
 
     private HumanGeneDetail humanGeneDetail;
 
@@ -85,5 +86,13 @@ public class OmimPhenotypeDisplay {
 
     public void setHumanGeneDetail(HumanGeneDetail humanGeneDetail) {
         this.humanGeneDetail = humanGeneDetail;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 }
