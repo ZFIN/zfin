@@ -22,17 +22,17 @@
 
         <c:forEach var="omimGene" items="${omimTermDisplay}" varStatus="loop">
             <zfin:alternating-tr loopName="loop" groupBeanCollection="${omimTermDisplay}"
-                                 groupByBean="orthology.symbol">
+                                 groupByBean="symbol">
 
                 <td>
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${omimTermDisplay}"
-                                         groupByBean="orthology.symbol">
+                                         groupByBean="symbol">
             <c:choose>
                 <c:when test="${omimGene.orthology != null}">
-                    <a href="http://omim.org/entry/${omimGene.omimAccession}">${omimGene.orthology.symbol}</a>
+                    <a href="http://omim.org/entry/${omimGene.omimAccession}">${omimGene.symbol}</a>
                 </c:when>
                 <c:otherwise>
-                    <a href="http://omim.org/entry/${omimGene.humanGeneDetail.geneMimNumber}">${omimGene.humanGeneDetail.geneSymbol}</a>
+                    <a href="http://omim.org/entry/${omimGene.humanGeneDetail.geneMimNumber}">${omimGene.symbol}</a>
                 </c:otherwise>
             </c:choose>    
                      </zfin:groupByDisplay>
@@ -41,7 +41,7 @@
                 <td>
                     <c:if test="${omimGene.orthology != null}">
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${omimTermDisplay}"
-                                         groupByBean="orthology.symbol">
+                                         groupByBean="symbol">
                         <zfin2:toggledLinkList collection="${omimGene.zfinGene}" maxNumber="3"
                                                commaDelimited="true"/>
 
