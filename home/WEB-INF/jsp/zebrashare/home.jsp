@@ -7,7 +7,7 @@
     <h2>About ZebraShare</h2>
     zebraShare is intended to help establish fruitful collaborations by sharing mutant fish lines, and information about
     these mutants, particularly when authors do not otherwise see a clear path to publication.
-
+    </p>
     More specifically, zebraShare is a intended to help researchers form collaborations that put carefully constructed
     mutant lines to good use, augmenting sharing resources available through other services (i.e. ZIRC). zebraShare is
     intended for researchers that wish to advertise and share high quality mutants that laboratories are not currently
@@ -16,18 +16,20 @@
     zebraShare labs may decide to pursue these lines again. If fish lines are shared through zebraShare there is an
     explicit expectation that collaborating labs will discuss appropriate authorship if research culminates in
     presentations or publications.
+    </p>
 
     To promote sharing of high quality lines, we ask that users only contribute lines with a confirmed lesion, carried
     to at minimum the F2 generation. This is not, for instance, a database for sharing tested CRISPRs. Other resources
-    are already available for this (eg CRISPRz).
+    are already available for this (e.g. CRISPRz).
+    </p>
 
     Why do we invite data about wild-type looking fish? First, we invite data about a-phenotypic mutants to avoid
     unnecessary duplication of efforts. Second, we think this data is important because it can reveal information about
-    a gene’s requirements. Finally, understanding which single genes seem dispensable can help researchers hone in on
+    a gene's requirements. Finally, understanding which single genes seem dispensable can help researchers hone in on
     the genes or gene-combinations which are most important to pattern tissues.
 
     <h2>How to make your submission to zebraShare</h2>
-    Download the <a href="">zebraShare Submission Workbook</a> and fill out all the details for your alleles (use the
+    Download the <a href="/zf_info/zebrashareSubmission.xlxs">zebraShare Submission Workbook</a> and fill out all the details for your alleles (use the
     Allele tab).
 
     </p>
