@@ -29,7 +29,7 @@
     the genes or gene-combinations which are most important to pattern tissues.
 
     <h2>How to make your submission to zebraShare</h2>
-    Download the <a href="/zf_info/zebrashareSubmission.xlxs">zebraShare Submission Workbook</a> and fill out all the details for your alleles (use the
+    Download the <a href="/zf_info/zebraShareSubmission.xlxs">zebraShare Submission Workbook</a> and fill out all the details for your alleles (use the
     Allele tab).
 
     </p>
