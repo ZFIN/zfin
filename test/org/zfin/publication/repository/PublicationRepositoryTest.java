@@ -641,7 +641,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         m = getMarkerRepository().getMarkerByAbbreviation("pax6a");
         numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
         assertThat(numberPubs, greaterThan(190));
-        assertThat(numberPubs, lessThan(300));
+        assertThat(numberPubs, lessThan(500));
 
     }
 
