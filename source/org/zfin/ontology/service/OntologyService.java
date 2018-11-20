@@ -186,6 +186,7 @@ public class OntologyService {
                             omimDisplay = map.get(key);
                         }
                         omimDisplay.setOrthology(omimResult.getOrtholog());
+                        omimDisplay.setSymbol(omimResult.getOrtholog().getSymbol());
                         //  omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
                         NcbiOtherSpeciesGene ncbiOtherGene = omimResult.getOrtholog().getNcbiOtherSpeciesGene();
                         Set<NcbiOrthoExternalReference> ncbiExternalReferenceList = ncbiOtherGene.getNcbiExternalReferenceList();
@@ -209,6 +210,7 @@ public class OntologyService {
                     omimDisplayNoOrth.setName(omimResult.getName());
                     omimDisplayNoOrth.setHumanGeneDetail(ontologyRepository.getHumanGeneDetailById(omimResult.getHumanGeneMimNumber()));
                     omimDisplayNoOrth.setOmimNum(omimResult.getOmimNum());
+                    omimDisplayNoOrth.setSymbol(omimDisplayNoOrth.getHumanGeneDetail().getGeneSymbol());
                     omimDisplaysNoOrth.add(omimDisplayNoOrth);
                 }
             }

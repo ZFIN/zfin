@@ -14,14 +14,11 @@ public class OmimPhenotypeDisplayComparator implements Comparator<OmimPhenotypeD
         else if (display2 == null)
             return 1;
 
-        String humanAbbrev1 = display1.getOrthology().getNcbiOtherSpeciesGene().getAbbreviation();
-        String humanAbbrev2 = display2.getOrthology().getNcbiOtherSpeciesGene().getAbbreviation();
-
-        if (humanAbbrev1 != null && humanAbbrev2 != null) {
-            return humanAbbrev1.compareTo(humanAbbrev2);
-        }
-        humanAbbrev1 = display1.getHumanGeneDetail().getGeneSymbol();
-        humanAbbrev2 = display2.getHumanGeneDetail().getGeneSymbol();
-        return humanAbbrev1.compareTo(humanAbbrev2);
+        if (display1.getHumanGeneDetail() != null && display2.getHumanGeneDetail() != null && display1.getHumanGeneDetail().getGeneSymbol() != null && display2.getHumanGeneDetail().getGeneSymbol() != null)
+            return display1.getHumanGeneDetail().getGeneSymbol().compareTo(display2.getHumanGeneDetail().getGeneSymbol());
+        else if (display1.getOrthology() != null && display2.getOrthology() != null && display1.getOrthology().getNcbiOtherSpeciesGene() != null && display2.getOrthology().getNcbiOtherSpeciesGene() != null)
+            return display1.getOrthology().getNcbiOtherSpeciesGene().getAbbreviation().compareTo(display2.getOrthology().getNcbiOtherSpeciesGene().getAbbreviation());
+        else
+            return display1.getName().compareTo(display2.getName());
     }
 }
