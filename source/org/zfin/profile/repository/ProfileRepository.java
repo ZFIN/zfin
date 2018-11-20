@@ -154,6 +154,8 @@ public interface ProfileRepository {
 
     Lab getLabById(String labZdbId);
 
+    Lab getLabByName(String name);
+
     List<OrganizationLink> getSupplierLinksForZdbId(String zdbID);
 
     Company getCompanyById(String zdbID);

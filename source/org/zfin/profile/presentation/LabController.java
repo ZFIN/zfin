@@ -5,12 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
@@ -24,6 +21,7 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +45,7 @@ public class LabController {
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+        binder.addValidators(new LabValidator());
     }
 
     public static enum TAB_INDEX {
@@ -99,13 +98,15 @@ public class LabController {
 
 
     @RequestMapping(value = "/lab/edit/{zdbID}", method = RequestMethod.POST)
-    public String submitEdit(@PathVariable String zdbID, Model model, Lab newLab, Errors errors)
-            throws Exception {
+    public String submitEdit(@PathVariable String zdbID, Model model, @Valid @ModelAttribute("formBean") Lab newLab, BindingResult errors) {
+        if (errors.hasErrors()) {
+            return "profile/profile-edit.page";
+        }
+
         final Lab lab = profileRepository.getLabById(zdbID);
 
         final String securityPersonZdbId = profileService.isEditableBySecurityPerson(lab.getContactPerson() != null ? lab.getContactPerson().getZdbID() : null);
 
-        model.addAttribute(LookupStrings.FORM_BEAN, lab);
         model.addAttribute(LookupStrings.ERRORS, errors);
         model.addAttribute("members", profileRepository.getLabMembers(zdbID));
         model.addAttribute(LookupStrings.SELECTED_TAB, TAB_INDEX.INFORMATION.getLabel());
@@ -122,10 +123,6 @@ public class LabController {
         if (newLab.getContactPerson() != null &&
                 StringUtils.equals(newLab.getContactPerson().getZdbID(), "none")) {
             newLab.setContactPerson(null);
-        }
-
-        if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
         }
 
         final List<BeanFieldUpdate> fields = new ArrayList<>();
@@ -146,7 +143,7 @@ public class LabController {
     }
 
     @RequestMapping(value = "/lab/view/{zdbID}", method = RequestMethod.GET)
-    public String viewLab(String zdbID, Model model) {
+    public String viewLab(@PathVariable String zdbID, Model model) {
         Lab lab = profileRepository.getLabById(zdbID);
         if (lab == null) {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
@@ -196,13 +193,15 @@ public class LabController {
 
 
     @RequestMapping(value = "/lab/create", method = RequestMethod.GET)
-    public String createLabSetup(Model model, Lab lab) {
-        model.addAttribute(LookupStrings.FORM_BEAN, lab);
+    public String createLabSetup(Model model, @ModelAttribute("formBean") Lab lab) {
         return "profile/create-lab.page";
     }
 
     @RequestMapping(value = "/lab/create", method = RequestMethod.POST)
-    public String createLab(Lab lab) {
+    public String createLab(@Valid @ModelAttribute("formBean") Lab lab, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "profile/create-lab.page";
+        }
         HibernateUtil.createTransaction();
         profileService.createLab(lab);
         HibernateUtil.flushAndCommitCurrentSession();
