@@ -362,7 +362,11 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
         Query query = session.createQuery(hql);
         query.setParameter("ftr", ftr);
-        return ((FeatureLocation) query.uniqueResult());
+        List<FeatureLocation> fl= query.list();
+        if (fl.size()>1) {
+            return (fl.get(0));
+        }
+        return null;
 
     }
 
