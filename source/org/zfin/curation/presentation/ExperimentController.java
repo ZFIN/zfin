@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.RootLogger;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.expression.Experiment;
@@ -18,9 +19,11 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.*;
@@ -54,6 +57,16 @@ public class ExperimentController implements ExperimentCurationService {
         return list;
     }
 
+    @Autowired
+    HttpServletResponse response;
+
+    @ExceptionHandler({ValidationException.class})
+    public @ResponseBody
+    String handleException(ValidationException ex) {
+        response.setStatus(500);
+        return ex.getMessage();
+    }
+
     @Override
     @RequestMapping(value = "/{publicationID}/create-condition", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
@@ -66,6 +79,7 @@ public class ExperimentController implements ExperimentCurationService {
         String experimentID = conditionDTO.getEnvironmentZdbID();
         if (experimentID == null)
             throw new ValidationException("No experimentID provided");
+        checkTermDependency(conditionDTO);
         HibernateUtil.createTransaction();
         try {
             Experiment experiment = getExpressionRepository().getExperimentByID(experimentID);
@@ -101,6 +115,33 @@ public class ExperimentController implements ExperimentCurationService {
         }
 
         return getExperiments(publicationID);
+
+    }
+
+    static private Map<String, String> zecoTaxonMap = new HashMap<>();
+
+    static {
+        zecoTaxonMap.put("ZECO:0000106", "NCBITaxon:2");
+        zecoTaxonMap.put("ZECO:0000110", "NCBITaxon:10239");
+        zecoTaxonMap.put("ZECO:0000107", "NCBITaxon:4751");
+    }
+
+    private void checkTermDependency(ConditionDTO conditionDTO) throws ValidationException {
+        StringBuilder builder = new StringBuilder();
+
+        // Check Zeco - Taxonomy
+        if (conditionDTO.getZecoTerm() != null) {
+            if (conditionDTO.getTaxonTerm() != null) {
+                zecoTaxonMap.forEach((zecoID, taxonID) -> {
+                    if (OntologyService.isPartOfSubTree(conditionDTO.getZecoTerm(), zecoID) &&
+                            !OntologyService.isPartOfSubTree(conditionDTO.getTaxonTerm(), taxonID)) {
+                        builder.append("Zeco term '" + conditionDTO.getZecoTerm().getTermName() + "' requires a taxon term under '" + taxonID + "'");
+                    }
+                });
+            }
+        }
+        if (builder.toString().length() > 0)
+            throw new ValidationException(builder.toString());
 
     }
 
@@ -184,7 +225,7 @@ public class ExperimentController implements ExperimentCurationService {
     @RequestMapping(value = "/{publicationID}/delete-condition", method = RequestMethod.DELETE, produces = "application/json")
     @ResponseBody
     public List<ExperimentDTO> deleteCondition(@PathVariable String publicationID,
-                                                @RequestBody ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException {
+                                               @RequestBody ConditionDTO conditionDTO) throws ValidationException, TermNotFoundException {
         if (conditionDTO == null)
             throw new ValidationException("No condition entity provided");
         String experimentID = conditionDTO.getEnvironmentZdbID();

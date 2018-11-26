@@ -292,5 +292,10 @@ public class OntologyService {
                 .collect(toList());
         return modelDisplays;
     }
+
+    public static boolean isPartOfSubTree(TermDTO zecoTerm, String rootTerm) {
+        TermDTO root = OntologyManager.getInstance().getTermByID(rootTerm);
+        return root.hasChild(zecoTerm);
+    }
 }
 
