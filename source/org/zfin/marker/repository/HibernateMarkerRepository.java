@@ -111,7 +111,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public Marker getGeneByID(String zdbID) {
-        if (!zdbID.startsWith("ZDB-GENE")) return null;
+        if (!zdbID.startsWith("ZDB-GENE")) {
+            if (!zdbID.contains("RNAG")) {
+                return null;
+            }
+        }
         return (Marker) HibernateUtil.currentSession().createCriteria(Marker.class)
                 .add(Restrictions.eq("zdbID", zdbID))
                 .uniqueResult();
