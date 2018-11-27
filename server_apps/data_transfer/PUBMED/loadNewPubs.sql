@@ -183,7 +183,6 @@ insert into publication (
 insert into publication (
   zdb_id,
   authors,
-  num_auths,
   title,
   keywords,
   accession_no,
@@ -196,7 +195,6 @@ insert into publication (
   select
     zdb_id,
     authors,
-    numAuthors,
     title,
     keywords,
     pmid,
