@@ -33,7 +33,6 @@ create temp table tmp_new_pubs (
   pages text,
   abstract text,
   authors text,
-  numAuthors int,
   year text,
   month text,
   day text,
@@ -54,7 +53,6 @@ insert into tmp_new_pubs
     pages,
     abstract,
     authors,
-    numAuthors,
     year,
     month,
     day,
@@ -155,7 +153,6 @@ where length(day) = 1;
 insert into publication (
   zdb_id,
   authors,
-  num_auths,
   pub_date,
   title,
   keywords,
@@ -169,7 +166,6 @@ insert into publication (
   select
     zdb_id,
     authors,
-    numAuthors,
     to_date(month||'/'||day||'/'||year,'MM/DD/YYYY'),
     title,
     keywords,

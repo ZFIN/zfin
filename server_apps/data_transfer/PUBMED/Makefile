@@ -20,11 +20,10 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
 SUBDIRS   = LinkOut Journal
 GENERICS  = addMeshTermsToAllPubs.groovy \
             addGeoIdsToAllPubs.groovy \
-            fetchPubsFromPubMed.groovy \
             loadNewPubs.sql \
             updatePublicationDate.groovy \
             updatepubstatus.pl
-STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy
+STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy fetchPubsFromPubMed.groovy
 
 # ---------------  Production Rules  ------------------------------------
 
