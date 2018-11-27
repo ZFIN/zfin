@@ -192,6 +192,11 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                 view.featureStartLoc.clear();
                 view.featureEndLoc.clear();
                 view.featureDisplayName.clear();
+                view.publicNoteBox.setText("");
+                view.curatorNoteBox.setText("");
+                view.mutationDetailDnaView.resetGUI();
+                view.mutationDetailTranscriptView.resetGUI();
+
                 view.message.setText("Feature created: " + result.getName() + " [" + result.getZdbID() + "]");
                 view.notWorking();
                 view.saveButton.setEnabled(false);

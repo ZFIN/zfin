@@ -165,7 +165,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         FeatureLocation fgl = featureRepository.getFeatureLocation(feature);
         if (fgl==null){
-            if (featureDTO.getFeatureChromosome() != null) {
+            System.out.println(featureDTO.getFeatureChromosome());
+            if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
                 fgl = new FeatureLocation();
                 fgl.setFeature(feature);
                 fgl.setSfclChromosome(featureDTO.getFeatureChromosome());
@@ -179,7 +180,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
         }
         else {
-            if (featureDTO.getFeatureChromosome() != null) {
+            if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
                 System.out.println(featureDTO.getFeatureChromosome());
                 fgl.setFeature(feature);
                 fgl.setSfclChromosome(featureDTO.getFeatureChromosome());

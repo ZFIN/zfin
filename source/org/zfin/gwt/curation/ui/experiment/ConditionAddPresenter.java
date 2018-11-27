@@ -412,5 +412,11 @@ else {
                 AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.CREATE_EXPERIMENT_CONDITION, conditionDTO.getName()));
             }
         }
+
+        @Override
+        public void onFailure(Method method, Throwable throwable) {
+            super.onFailureBase(method, throwable);
+            errorHandler.setError(method.getResponse().getText());
+        }
     }
 }

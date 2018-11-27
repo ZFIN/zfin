@@ -18,12 +18,9 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
 
     public static final String ACTIVE_STATUS = "active";
 
-    // handles both lab and company
-    @NotNull
-    @Size(min = 16, max = 25)
     private String zdbID;
 
-    @NotNull
+    @NotNull(message = "Name is required")
     @Size(min = 1, max = 150, message = "Must not be empty and less than 150 characters.")
     protected String name;
 

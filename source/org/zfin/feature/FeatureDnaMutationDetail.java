@@ -19,7 +19,7 @@ public class FeatureDnaMutationDetail implements Cloneable {
             })
     @Column(name = "fdmd_zdb_id")
     private String zdbID;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "fdmd_feature_zdb_id")
     private Feature feature;
     @Column(name = "fdmd_dna_position_start")

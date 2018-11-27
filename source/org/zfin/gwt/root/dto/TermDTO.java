@@ -347,4 +347,10 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
         }
         return childSet;
     }
+
+    public boolean hasChild(TermDTO term) {
+        if (term.getOboID().equals(this.getOboID()))
+            return true;
+        return getChildrenTerms().stream().anyMatch(termDTO -> termDTO.getOboID().equals(term.getOboID()));
+    }
 }

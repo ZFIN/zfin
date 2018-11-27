@@ -41,7 +41,7 @@ STATICS = 227.gif fish.gif logo.jpeg \
 	glossary.html GO.html blast_info.html \
 	author_guidelines.html author_guide_checklist.html \
 	zfin_stats.html zfin_statistics.png nomen.html stars.html \
-	syntax_help.html
+	syntax_help.html zebraShareSubmission.xlxs
 
 
 # ---------------  Production Rules  ------------------------------------

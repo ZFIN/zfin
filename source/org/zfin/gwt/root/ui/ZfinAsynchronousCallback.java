@@ -90,6 +90,15 @@ public class ZfinAsynchronousCallback<T> implements MethodCallback<T> {
 
     @Override
     public void onFailure(Method method, Throwable throwable) {
+        onFailureBase(method, throwable);
+        if (module != null && eventType != null)
+            AppUtils.fireAjaxCall(module, eventType);
+        Window.alert(errorHandler.toString());
+        if (errorHandler != null)
+            errorHandler.setError(throwable.getMessage());
+    }
+
+    public void onFailureBase(Method method, Throwable throwable) {
         onFailureCleanup();
         if (handleConnectionError(throwable)) return;
         if (handleDuplicateRecords(throwable)) return;
@@ -101,9 +110,6 @@ public class ZfinAsynchronousCallback<T> implements MethodCallback<T> {
             loadingImage.setVisible(false);
         if (module != null && eventType != null)
             AppUtils.fireAjaxCall(module, eventType);
-        Window.alert(errorHandler.toString());
-        if (errorHandler != null)
-            errorHandler.setError(throwable.getMessage());
     }
 
     @Override

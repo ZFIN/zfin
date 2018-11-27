@@ -309,11 +309,6 @@
         <url-pattern>/webservice/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>zfin</servlet-name>
-        <url-pattern>/cgi-bin/*</url-pattern>
-    </servlet-mapping>
-
     <!-- time in minutes after which an idle user session is invalidated -->
     <!--this will invalidate guest sessions-->
     <!--other sessions are validated via IP and the remember_me token and are valid for 4 days

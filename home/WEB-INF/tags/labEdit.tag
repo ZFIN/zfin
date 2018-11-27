@@ -40,7 +40,7 @@
                         </td>
                         <td>
                             <form:input size="50" path="name"/>
-                            <zfin2:errors errorResult="${errors}" path="name"/>
+                            <form:errors path="name" cssClass="error-inline"/>
                         </td>
                     </tr>
                     <tr>
@@ -49,7 +49,7 @@
                         </td>
                         <td>
                             <form:input path="phone"/>
-                            <zfin2:errors errorResult="${errors}" path="phone"/>
+                            <form:errors path="phone" cssClass="error-inline"/>
                         </td>
                     </tr>
                     <tr>
@@ -58,7 +58,7 @@
                         </td>
                         <td>
                             <form:input path="fax"/>
-                            <zfin2:errors errorResult="${errors}" path="fax"/>
+                            <form:errors path="fax" cssClass="error-inline"/>
                         </td>
                     </tr>
                     <tr>
@@ -67,7 +67,7 @@
                         </td>
                         <td>
                             <form:input size="50" path="email"/>
-                            <zfin2:errors errorResult="${errors}" path="email"/>
+                            <form:errors errorResult="${errors}" path="email" cssClass="error-inline"/>
                         </td>
                     </tr>
                     <tr>
@@ -76,7 +76,7 @@
                         </td>
                         <td>
                             <form:input size="50" path="url"/>
-                            <zfin2:errors errorResult="${errors}" path="url"/>
+                            <form:errors errorResult="${errors}" path="url" cssClass="error-inline"/>
                         </td>
                     </tr>
                     <tr>
@@ -132,7 +132,7 @@
                 <form:label path="bio">Statement of Research Interests</form:label>
                 <br/>
                 <form:textarea cols="80" rows="10" htmlEscape="false" path="bio"/>
-                <zfin2:errors errorResult="${errors}" path="bio"/>
+                <form:errors path="bio" cssClass="error-inline"/>
                 <br/>
 
                 <input type="submit" value="Save"/>

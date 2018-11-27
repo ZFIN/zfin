@@ -370,6 +370,13 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
     @Override
+    public Lab getLabByName(String name) {
+        return (Lab) HibernateUtil.currentSession().createCriteria(Lab.class)
+                .add(Restrictions.eq("name", name))
+                .uniqueResult();
+    }
+
+    @Override
     public List<OrganizationLink> getSupplierLinksForZdbId(String zdbID) {
         String sql = "" +
                 "SELECT id.idsup_supplier_zdb_id," +
