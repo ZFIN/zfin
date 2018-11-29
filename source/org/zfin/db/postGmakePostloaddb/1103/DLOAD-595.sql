@@ -11,7 +11,7 @@ update marker_relationship set mrel_mrkr_2_zdb_id='ZDB-EREGION-181127-1' where m
  update construct_marker_relationship set conmrkrrel_mrkr_zdb_id ='ZDB-EREGION-181127-1' where conmrkrrel_construct_zdb_id ='ZDB-ETCONSTRCT-151102-1' and conmrkrrel_mrkr_zdb_id='ZDB-EREGION-121107-1';
 
 
-update construct_component set cc_order=20 where cc_construct_zdb_id='ZDB-ETCONSTRCT-151102-2' and cc_order=19
+update construct_component set cc_order=20 where cc_construct_zdb_id='ZDB-ETCONSTRCT-151102-2' and cc_order=19;
 update construct_component set cc_order=19 where cc_construct_zdb_id='ZDB-ETCONSTRCT-151102-2' and cc_order=18;
 update construct_component set cc_order=18 where cc_construct_zdb_id='ZDB-ETCONSTRCT-151102-2' and cc_order=17;
 update construct_component set cc_order=17 where cc_construct_zdb_id='ZDB-ETCONSTRCT-151102-2' and cc_order=16;
