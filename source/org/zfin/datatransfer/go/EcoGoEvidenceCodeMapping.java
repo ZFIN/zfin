@@ -16,6 +16,7 @@ public class EcoGoEvidenceCodeMapping {
         mapping.put("ECO:0000322", "IEA");
         mapping.put("ECO:0000265", "IEA");
         mapping.put("ECO:0000256", "IEA");
+        mapping.put("ECO:0000501", "IEA");
         mapping.put("ECO:0000307", "ND");
         mapping.put("ECO:0000269", "EXP");
         mapping.put("ECO:0000314", "IDA");
