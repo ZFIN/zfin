@@ -172,6 +172,7 @@ public class CompanyController {
     @RequestMapping(value = "/company/create", method = RequestMethod.GET)
     public String createCompanySetup(Model model, Company company) {
         model.addAttribute(LookupStrings.FORM_BEAN, company);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Company");
         return "profile/create-company.page";
     }
 

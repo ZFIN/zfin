@@ -82,11 +82,12 @@ public class PublicationEditController {
 
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public String showNewPublicationForm(@ModelAttribute PublicationBean publicationBean) {
+    public String showNewPublicationForm(@ModelAttribute PublicationBean publicationBean, Model model) {
         // default type should be journal
         Publication publication = new Publication();
         publication.setType(Publication.Type.JOURNAL);
         publicationBean.setPublication(publication);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Publication");
         return "publication/add-publication.page";
     }
 
@@ -97,6 +98,7 @@ public class PublicationEditController {
                                         RedirectAttributes ra) { // keeps the query parameters off of the redirect URL
 
         if (result.hasErrors()) {
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Publication");
             return "publication/add-publication.page";
         }
 
@@ -109,6 +111,7 @@ public class PublicationEditController {
             }
         } catch (Exception e) {
             model.addAttribute("error", "Error saving publication.");
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Publication");
             return "publication/add-publication.page";
         }
         return "redirect:/" + newPublication.getZdbID();

@@ -3,6 +3,7 @@ package org.zfin.feature.presentation;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.validation.Valid;
@@ -28,8 +30,8 @@ public class AlleleDesignationCreateController {
     }
 
     @RequestMapping("/alleleDesig-add-form")
-    protected String showForm() throws Exception {
-
+    protected String showForm(Model model) throws Exception {
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Line Designation");
         return "feature/alleleDesig-add-form.page";
     }
 

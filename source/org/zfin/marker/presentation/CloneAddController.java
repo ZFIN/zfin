@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.profile.Person;
@@ -31,6 +32,7 @@ public class CloneAddController {
     ) throws Exception {
         model.addAttribute("cloneMarkerTypes", MarkerService.getCloneMarkerTypes());
         model.addAttribute("cloneLibraries", RepositoryFactory.getMarkerRepository().getProbeLibraries());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Clone");
         return "marker/clone-add.page";
     }
 

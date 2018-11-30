@@ -304,6 +304,7 @@ public class PersonController {
                                     Person person,
                                     Errors errors) {
         model.addAttribute(LookupStrings.FORM_BEAN, person);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Person");
 
         if (!StringUtils.isEmpty(organizationZdbId)) {
             return createPersonSetupWithOrganization(organizationZdbId, model, person, errors);
@@ -314,7 +315,7 @@ public class PersonController {
 
 
     /*
-     * Create a new person using an existing organization (lab/company) as a starting place     
+     * Create a new person using an existing organization (lab/company) as a starting place
      */
     @RequestMapping(value = "/person/create/{organization}", method = RequestMethod.GET)
     public String createPersonSetupWithOrganization(@PathVariable("organization") String organizationZdbID,
