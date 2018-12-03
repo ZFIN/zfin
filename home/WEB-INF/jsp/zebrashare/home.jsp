@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css">
 
 <div class="container">
-    <h2>About ZebraShare</h2>
+    <h2>About zebraShare</h2>
     zebraShare is intended to help establish fruitful collaborations by sharing mutant fish lines, and information about
     these mutants, particularly when authors do not otherwise see a clear path to publication.
     </p>
@@ -29,7 +29,7 @@
     the genes or gene-combinations which are most important to pattern tissues.
 
     <h2>How to make your submission to zebraShare</h2>
-    Download the <a href="/zf_info/zebraShareSubmission.xlxs">zebraShare Submission Workbook</a> and fill out all the details for your alleles (use the
+    Download the <a href="/zf_info/zebraShareSubmission.xls">zebraShare Submission Workbook</a> and fill out all the details for your alleles (use the
     Allele tab).
 
     </p>
