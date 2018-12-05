@@ -1,7 +1,6 @@
-select feature_zdb_id, feature_name
- from feature
+select feature_zdb_id, feature_name,fdmd_gene_localization_term_zdb_id,term_name,fdmd_exon_number,fdmd_intron_number
+ from feature,term,feature_dna_mutation_detail
  where exists (Select 'x' from feature_dna_mutation_detail
-       	      	      where fdmd_feature_zdb_id = feature_zdb_id
-		      and fdmd_gene_localization_term_zdb_id in (Select term_zdb_id from term where term_name not in ('five_prime_cis_splice_site','three_prime_cis_splice_site','splice_junction'))
-
-	         and (fdmd_exon_number is not null or fdmd_intron_number is not null));
+       	      	      where fdmd_feature_zdb_id = feature_zdb_id and feature_zdb_id=fdmd_feature_zdb_id
+					      and fdmd_gene_localization_term_zdb_id in (Select term_zdb_id from term where term_name not in ('five_prime_cis_splice_site','three_prime_cis_splice_site','splice_junction'))
+	         and (fdmd_exon_number is not null or fdmd_intron_number is not null)) and fdmd_gene_localization_term_zdb_id=term_zdb_id and fdmd_feature_zdb_id = feature_zdb_id;
