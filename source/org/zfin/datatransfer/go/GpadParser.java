@@ -46,6 +46,10 @@ public class GpadParser extends FpInferenceGafParser {
         gafEntry.setEvidenceCode(evidenceCode);
         if (evidenceCode == null)
             logger.error("bad gaf file: empty evidence code in line: " + lineNumber);
+        gafEntry.setInferences(record.get(Header.WITH_OR_FROM)
+                .replaceAll("EMBL:", "GenBank:")
+                .replaceAll("protein_id:", "GenPept:")
+        );
         return gafEntry;
     }
 
