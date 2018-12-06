@@ -10,7 +10,7 @@ import java.util.List;
  * Note: TAS is only for filtering out imported evidence (case 6447).
  */
 public enum GoEvidenceCodeEnum implements IsSerializable {
-    IDA, IPI, IGI, IMP, IEP, IC, ISS, IEA, ND, NAS, TAS, IBA, IBD, IKR, IMR, IRD;
+    IDA, IPI, IGI, IMP, IEP, IC, ISS, IEA, ND, NAS, TAS, IBA, IBD, IKR, IMR, IRD,ISO;
 
     public static final int CARDINALITY_ANY = -1;
     public static final int CARDINALITY_ONE_OR_MORE = -2;
