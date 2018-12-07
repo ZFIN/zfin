@@ -24,4 +24,6 @@
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-510_load.xml" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-510.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/PUB-487.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/PUB-490.sql" />
+
 </databaseChangeLog>

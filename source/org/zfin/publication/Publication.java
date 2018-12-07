@@ -53,7 +53,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private GregorianCalendar indexedDate;
     private Person indexedBy;
 
-    private boolean zebrasharePublic;
+    private boolean zebrasharePublic = true;
     private Set<ZebrashareEditor> zebrashareEditors;
 
     public String getZdbID() {
