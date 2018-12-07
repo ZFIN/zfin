@@ -163,7 +163,7 @@ public class PublicationEditController {
             Collection<BeanFieldUpdate> updates = publicationService.mergePublicationFromForm(publication, existingPublication);
             publicationRepository.updatePublications(Arrays.asList(existingPublication));
             for (BeanFieldUpdate update : updates) {
-                infrastructureRepository.insertUpdatesTable(publication, update, "Edit pub");
+                infrastructureRepository.insertUpdatesTable(existingPublication, update, "Edit pub");
             }
         } catch (Exception e) {
             model.addAttribute("error", "Error saving publication.");
