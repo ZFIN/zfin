@@ -1,44 +1,34 @@
+#!/bin/bash
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
 import org.apache.log4j.Logger
-import org.hibernate.Query
 import org.hibernate.Session
-import org.hibernate.criterion.Restrictions
 import org.zfin.anatomy.DevelopmentStage
 import org.zfin.expression.*
 import org.zfin.figure.service.ImageService
-import org.zfin.figure.service.VideoService
+import org.zfin.framework.HibernateSessionCreator
 import org.zfin.framework.HibernateUtil
 import org.zfin.marker.Marker
 import org.zfin.mutant.Genotype
 import org.zfin.mutant.Fish
-import org.zfin.feature.Feature
 import org.zfin.mutant.FishExperiment
 import org.zfin.ontology.Ontology
 import org.zfin.ontology.Term
-import org.zfin.ontology.datatransfer.AbstractScriptWrapper
-import org.zfin.profile.Person
+import org.zfin.properties.ZfinProperties
 import org.zfin.publication.Publication
 import org.zfin.repository.RepositoryFactory
-
 import static com.xlson.groovycsv.CsvParser.parseCsv
-import static org.zfin.repository.RepositoryFactory.getFeatureRepository
-import static org.zfin.repository.RepositoryFactory.getMutantRepository
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository
 
 Logger log = Logger.getLogger(getClass());
 
 def env = System.getenv()
 
-AbstractScriptWrapper abstractScriptWrapper = new AbstractScriptWrapper()
-abstractScriptWrapper.initProperties("${env['TARGETROOT']}/home/WEB-INF/zfin.properties")
-abstractScriptWrapper.initDatabaseWithoutSysmaster()
-abstractScriptWrapper.initializeLogger("./log4j.xml")
+ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
+new HibernateSessionCreator()
 Session session = HibernateUtil.currentSession()
 session.beginTransaction()
 
 
-Term unspecified = RepositoryFactory.ontologyRepository.getTermByOboID("ZFA:0001093")
-Term subTerm1 = RepositoryFactory.ontologyRepository.getTermByName("neural rod", Ontology.ANATOMY)
 //this map is used to map file name to figure, so that if it's a second expression result for a given figure,
 // it can be looked up rather than re-created.  Also, the total number of figures created will be checked
 // at the end as a confirmation that the script didn't add the same figure multiple times.
@@ -52,9 +42,9 @@ def sameFigure = [:]
         .uniqueResult();*/
 //Person owner=RepositoryFactory.profileRepository.getPerson("ZDB-PERS-030520-2")
 
-def burgessImages = parseCsv(new FileReader("/research/zunloads/projects/HBurgess/hburgessexp23Feb.txt"), separator: '\t')
+def burgessImages = parseCsv(new FileReader("/research/zunloads/projects/HBurgess/legend-hburgess.txt"), separator: '\t')
 //def burgessImages = parseCsv(new FileReader("/research/zusers/pm/Projects/releases/HBurgess/234.txt"),separator: '\t')
-String mediaDir = "/research/zunloads/projects/HBurgess/images2/"
+String mediaDir = "/research/zunloads/projects/HBurgess/images3/"
 
 
 figureLabelIndex = 0
