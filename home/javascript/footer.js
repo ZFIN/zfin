@@ -4,7 +4,7 @@ document.write(
     '<div id="footer">' + 
     '  <div id="footerlinks">' + 
     '    <a href="/">Home</a>' +
-    '    <a href="/ZFIN/misc_html/tips.html" title="Frequently asked questions">Help and Tips</a>' +
+    '    <a href="https://wiki.zfin.org/display/general/ZFIN+Tips" title="Frequently asked questions">Help and Tips</a>' +
     '    <a href="/zf_info/glossary.html" title="Terms useful in understanding zebrafish development, anatomy, genetics and bioinformatics">Glossary</a>' +
     '    <a href="/zf_info/news/committees.html" title="Committees and working groups">Committees</a>' +
     '    <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="Citing ZFIN resources in publications">Citing ZFIN</a>' +
