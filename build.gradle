@@ -64,12 +64,13 @@ task loadDatabase() {
 
         println "Loading $unloadPath into $dbname"
         exec {
-	    ignoreExitValue = true
+            ignoreExitValue = true
             commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql $dbname";
         }
-        exec { 
-	    ignoreExitValue = true
-	    commandLine 'dropdb', dbname }
+        exec {
+            ignoreExitValue = true
+            commandLine 'dropdb', dbname
+        }
         exec { commandLine 'createdb', dbname }
         exec { commandLine "bash", "-c", "pg_restore -j 4 -d $dbname $unloadPath" }
         exec { commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
@@ -176,7 +177,7 @@ def translateVariableSet = [
         'USER',
         'VALIDATION_EMAIL_DBA',
         'WEBDRIVER_PATH_FROM_ROOT',
-	'WEBHOST_BLASTDB_TO_COPY',
+        'WEBHOST_BLASTDB_TO_COPY',
         'WEBHOST_FASTA_FILE_PATH',
 ]
 
@@ -211,7 +212,17 @@ task printProp() {
     }
 }
 
-
+project(':home:zf_info') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+        from(project.projectDir) {
+            ttNameMap.each { name, value ->
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            exclude '**/Makefile'
+        }
+        into targetroot + pName
+    }
+}
 
 project(':server_apps:sysexecs') {
     task "deployFiles"(type: ZfinTargetCopy) {
@@ -323,7 +334,8 @@ task postloaddb(type: GradleBuild) {
 
 task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
-	     'deployPostgresTriggers',
+             'deployPostgresTriggers',
+             ':home:zf_info:deployFiles',
              ':server_apps:apache:deployFiles',
              ':server_apps:sysexecs:deployFiles',
              ':server_apps:DB_maintenance:deployFiles',
