@@ -552,13 +552,13 @@ public class DTOConversionService {
         returnDTO.setMarkerDTO(DTOConversionService.convertToMarkerDTO(markerGoTermEvidence.getMarker()));
         returnDTO.setOrganizationSource(markerGoTermEvidence.getGafOrganization().getOrganization());
         returnDTO.setNote(markerGoTermEvidence.getNote());
-        Set<String> noctuaLinks=new HashSet<>();
+        Set<String> noctuaLinks = new HashSet<>();
 
-        if (markerGoTermEvidence.getNoctuaModelId()!=null) {
-          for (NoctuaModel noctua:markerGoTermEvidence.getNoctuaModels()){
-              noctuaLinks.add(noctua.getId());
-          }
-          returnDTO.setNoctuaModels(noctuaLinks);
+        if (markerGoTermEvidence.getNoctuaModelId() != null) {
+            for (NoctuaModel noctua : markerGoTermEvidence.getNoctuaModels()) {
+                noctuaLinks.add(noctua.getId());
+            }
+            returnDTO.setNoctuaModels(noctuaLinks);
         }
         returnDTO.setPublicationZdbID(markerGoTermEvidence.getSource().getZdbID());
         // date modified and created not used here, as not needed
@@ -576,17 +576,17 @@ public class DTOConversionService {
         }
         Set<MarkerGoTermAnnotationExtn> mgtaeSet = new HashSet<>();
         Set<String> annotLinks = new HashSet<>();
-        if (markerGoTermEvidence.getGoTermAnnotationExtnGroup()!=null){
+        if (markerGoTermEvidence.getGoTermAnnotationExtnGroup() != null) {
             for (MarkerGoTermAnnotationExtnGroup mgtaeg : markerGoTermEvidence.getGoTermAnnotationExtnGroup()) {
 
                 for (MarkerGoTermAnnotationExtn mgtae : mgtaeg.getMgtAnnoExtns()) {
                     mgtaeSet.add(mgtae);
                     annotLinks.add(MarkerGoEvidencePresentation.generateAnnotationExtensionLink(mgtae));
-                    }
-
-
                 }
+
+
             }
+        }
 
 
         returnDTO.setInferredFrom(inferredFromSet);
@@ -774,26 +774,24 @@ public class DTOConversionService {
             }
             System.out.println(feature.getAbbreviation());
             FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getLocationByFeature(feature);
-            if (ftrLocation != null){
+            if (ftrLocation != null) {
                 System.out.println(ftrLocation.getSfclAssembly());
                 System.out.println(ftrLocation.getSfclChromosome());
 
 
-
-                    featureDTO.setFeatureChromosome(ftrLocation.getSfclChromosome().toString());
+                featureDTO.setFeatureChromosome(ftrLocation.getSfclChromosome().toString());
                 featureDTO.setFeatureAssembly(ftrLocation.getSfclAssembly().toString());
                 featureDTO.setFeatureStartLoc(ftrLocation.getSfclStart());
                 featureDTO.setFeatureEndLoc(ftrLocation.getSfclEnd());
                 featureDTO.setEvidence(ftrLocation.getSfclEvidence().getZdbID().toString());
-                if (ftrLocation.getSfclEvidence().getZdbID().equals("ZDB-TERM-170419-250")){
+                if (ftrLocation.getSfclEvidence().getZdbID().equals("ZDB-TERM-170419-250")) {
                     featureDTO.setEvidence("TAS");
                 }
-                if (ftrLocation.getSfclEvidence().getZdbID().equals("ZDB-TERM-170419-251")){
+                if (ftrLocation.getSfclEvidence().getZdbID().equals("ZDB-TERM-170419-251")) {
                     featureDTO.setEvidence("IC");
                 }
 
-                }
-
+            }
 
 
             Set<FeatureNote> featureNotes = feature.getExternalNotes();
@@ -1753,7 +1751,7 @@ public class DTOConversionService {
         fish.setGenotype(convertToGenotypeFromGenotypeDTO(newFish.getGenotypeDTO()));
         fish.setName(fish.getGenotype().getName());
         fish.setNameOrder(fish.getName());
-       // fish.setOrder(0);
+        // fish.setOrder(0);
         fish.setHandle(fish.getGenotype().getHandle());
         String strName = "";
         if (CollectionUtils.isNotEmpty(newFish.getStrList())) {
@@ -1850,10 +1848,10 @@ public class DTOConversionService {
         dto.setPublication(convertToPublicationDTO(model.getPublication()));
 
         dto.setDisease(convertToTermDTO(model.getDisease()));
-        if (model.getEvidenceCode().equals("ZDB-TERM-170419-250")){
+        if (model.getEvidenceCode().equals("ZDB-TERM-170419-250")) {
             dto.setEvidenceCode("TAS");
         }
-        if (model.getEvidenceCode().equals("ZDB-TERM-170419-251")){
+        if (model.getEvidenceCode().equals("ZDB-TERM-170419-251")) {
             dto.setEvidenceCode("IC");
         }
         //dto.setEvidenceCode(model.getEvidenceCode());
@@ -1991,9 +1989,13 @@ public class DTOConversionService {
     }
 
     public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionResult2 result, boolean shallow) {
+        return convertToExpressedTermDTO(result, shallow, true);
+    }
+
+    public static ExpressedTermDTO convertToExpressedTermDTO(ExpressionResult2 result, boolean shallow, boolean superShallow) {
         ExpressedTermDTO dto = new ExpressedTermDTO();
         dto.setExpressionFound(result.isExpressionFound());
-        dto.setEntity(convertToEntityDTO(result.getEntity(), shallow, true));
+        dto.setEntity(convertToEntityDTO(result.getEntity(), shallow, superShallow));
         dto.setId(result.getID());
         List<EapQualityTermDTO> dtoList = new ArrayList<>();
         if (result.getPhenotypeTermSet() != null) {
