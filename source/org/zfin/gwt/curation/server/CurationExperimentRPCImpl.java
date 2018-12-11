@@ -485,7 +485,10 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         List<PileStructureAnnotationDTO> newStructureList = new ArrayList<>(updateExpressionDTO.getStructures().size());
         StageRangeIntersection intersection = new StageRangeIntersection(expressionFigureStageDTO.getStart(), expressionFigureStageDTO.getEnd());
         for (PileStructureAnnotationDTO pileStructure : updateExpressionDTO.getStructures()) {
-            ExpressedTermDTO expressedTerm = pileStructure.getExpressedTerm();
+            ExpressedTermDTO expressedTermShallow = pileStructure.getExpressedTerm();
+            // retrieve expressionResult2 to obtain stage info for expressed Terms
+            ExpressionResult2 expressionResult2 = getExpressionRepository().getExpressionResult2(pileStructure.getExpressedTerm().getId());
+            ExpressedTermDTO expressedTerm = DTOConversionService.convertToExpressedTermDTO(expressionResult2, false, false);
             if (intersection.isOverlap(expressedTerm))
                 newStructureList.add(pileStructure);
         }

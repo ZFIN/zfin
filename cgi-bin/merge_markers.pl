@@ -666,6 +666,20 @@ $curNonRootCelComp->finish();
 
 $curDeleteMrkrGoEvd->finish();
 
+# ZFIN-6073 duplicate Alliance link
+my $deleteDuplicateAlianceLink = "delete from zdb_active_data 
+                                   where exists(select 1 from db_link
+                                                        where dblink_zdb_id = zactvd_zdb_id 
+                                                          and dblink_linked_recid = ? 
+                                                          and dblink_acc_num = ? 
+                                                          and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-171018-1');";
+
+my $curDeleteDuplicateAlianceLink = $dbh->prepare_cached($deleteDuplicateAlianceLink);
+
+$curDeleteDuplicateAlianceLink->execute($recordToBeMergedInto, $recordToBeDeleted);
+
+$curDeleteDuplicateAlianceLink->finish();
+
 # regne_genox
 my $regenGenox = "select regen_genox_marker(?);";
 my $curRegenGenox = $dbh->prepare($regenGenox);

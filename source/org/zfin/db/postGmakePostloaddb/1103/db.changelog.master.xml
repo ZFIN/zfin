@@ -26,5 +26,7 @@
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/PUB-487.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/PUB-490.sql" />
    <!--<include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861.sql" />-->
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6073.sql" />
+
 
 </databaseChangeLog>
