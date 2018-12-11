@@ -48,9 +48,7 @@
         </description>
         <name>isSectionVisible</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-        <function-signature>boolean isSectionVisible(java.lang.String,
-            org.zfin.framework.presentation.SectionVisibility)
-        </function-signature>
+        <function-signature>boolean isSectionVisible(java.lang.String,org.zfin.framework.presentation.SectionVisibility)</function-signature>
         <example>
             ${fn:isSectionVisible(name, visibility)}">
         </example>
