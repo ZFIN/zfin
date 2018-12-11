@@ -100,6 +100,8 @@ create temp table tmp_new_journals as
 select distinct journaltitle, iso, issn from tmp_new_pubs
 where journal_zdb_id is null;
 
+delete from tmp_new_journals where journaltitle = 'Medical research archives' or issn = '2375-1916';
+
 create temp table tmp_ids as
 select get_id('JRNL') as id, journaltitle, iso, issn
 from tmp_new_journals;
