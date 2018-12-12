@@ -658,8 +658,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getNumberDirectionPublications() {
         int numDirectPubs = publicationRepository.getNumberDirectPublications("ZDB-ATB-081002-19");
-        assertThat(numDirectPubs, greaterThan(100));
-        assertThat(numDirectPubs, lessThan(200));
+        assertThat(numDirectPubs, greaterThan(150));
+        assertThat(numDirectPubs, lessThan(300));
     }
 
     @Test
