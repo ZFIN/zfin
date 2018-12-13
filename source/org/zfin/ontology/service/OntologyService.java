@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 /**
@@ -293,9 +294,19 @@ public class OntologyService {
         return modelDisplays;
     }
 
-    public static boolean isPartOfSubTree(TermDTO zecoTerm, String rootTerm) {
+    public static boolean isPartOfSubTree(TermDTO childTerm, String rootTerm) {
         TermDTO root = OntologyManager.getInstance().getTermByID(rootTerm);
-        return root.hasChild(zecoTerm);
+        return hasChild(root, childTerm);
     }
+
+    public static boolean hasChild(TermDTO root, TermDTO allegedChildTerm) {
+        if (allegedChildTerm.getOboID().equals(root.getOboID()))
+            return true;
+        GenericTerm term = getOntologyRepository().getTermByOboID(root.getOboID());
+        // check the closure if the given term is a child
+        List<TransitiveClosure> transitiveClosures = getOntologyRepository().getChildrenTransitiveClosures(term);
+        return transitiveClosures.stream().anyMatch(closure -> closure.getChild().getOboID().equals(allegedChildTerm.getOboID()));
+    }
+
 }
 

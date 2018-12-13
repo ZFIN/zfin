@@ -19,6 +19,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -135,7 +136,8 @@ public class ExperimentController implements ExperimentCurationService {
                 zecoTaxonMap.forEach((zecoID, taxonID) -> {
                     if (OntologyService.isPartOfSubTree(conditionDTO.getZecoTerm(), zecoID) &&
                             !OntologyService.isPartOfSubTree(conditionDTO.getTaxonTerm(), taxonID)) {
-                        builder.append("Zeco term '" + conditionDTO.getZecoTerm().getTermName() + "' requires a taxon term under '" + taxonID + "'");
+                        String requiredRootTermName = getOntologyRepository().getTermByOboID(taxonID).getTermName();
+                        builder.append("Zeco term '" + conditionDTO.getZecoTerm().getTermName() + "' requires a taxon term under the '" + requiredRootTermName + "' root term.");
                     }
                 });
             }
