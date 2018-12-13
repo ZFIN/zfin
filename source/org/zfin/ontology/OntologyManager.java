@@ -249,6 +249,9 @@ public class OntologyManager {
         initOntologyMapFast(Ontology.SPATIAL);
         serializeOntology(Ontology.SPATIAL);
 
+        initOntologyMapFast(Ontology.MMO);
+        serializeOntology(Ontology.MMO);
+
         initOntologyMapFast(Ontology.MPATH);
         serializeOntology(Ontology.MPATH);
 

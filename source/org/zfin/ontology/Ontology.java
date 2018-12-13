@@ -54,7 +54,8 @@ public enum Ontology implements Serializable {
     CELL("cl", "Cell Ontology", false, "CL:"),
     ZFIN_RO("zfin-ro", "ZFIN Relation Ontology", false, "RO:"),
     UBERON("uberon", "Uberon Ontology", false, "UBERON:"),
-    GO_QUALIFIER("go_qualifier", "GO Qualifier for GO Annotations", false, "RO:");
+    GO_QUALIFIER("go_qualifier", "GO Qualifier for GO Annotations", false, "RO:"),
+    MMO("mmo","Measurement Methods Ontology", false, "MMO:", true, true);
 
     private String ontologyName;
     private String commonName;
@@ -170,7 +171,8 @@ public enum Ontology implements Serializable {
                 Ontology.ZECO_TAXONONY,
                 Ontology.CHEBI,
                 Ontology.ECO,
-                Ontology.SO};
+                Ontology.SO,
+                Ontology.MMO};
     }
 
     public static List<Ontology> getOntologies(String name) {

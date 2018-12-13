@@ -29,6 +29,7 @@
     <property name="goQualifierOboURL" value="go-qualifier.obo"/>
     <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
     <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
+    <property name="mmoURL" value="http://ontologies.berkeleybop.org/mmo.obo"/>
 
     <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
@@ -89,6 +90,24 @@
         <property name="oboFileURL" value="${spatialOboURL}"/>
         <antcall target="download-ontology"/>
     </target>
+
+
+    <target name="load-m">
+        <antcall target="load-mmo-ontology"/>
+    </target>
+
+    <target name="load-mmo-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="mmo.obo"/>
+    </target>
+
+
+  <target name="download-mmo-ontology">
+        <property name="localOboFile" value="mmo.obo"/>
+        <property name="oboFileURL" value="${mmoURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+
 
     <target name="load-anatomy-ontology" depends="init">
         <property name="localOboFilePath" value="${run-directory}/zebrafish_anatomy.obo"/>
@@ -237,6 +256,8 @@
     <target name="load-quality" depends="download-quality-ontology,load-quality-ontology"/>
 
     <target name="load-spatial" depends="download-spatial-ontology,load-spatial-ontology"/>
+
+    <target name="load-mmo" depends="download-mmo-ontology,load-mmo-ontology"/>
 
     <target name="load-gene" depends="download-gene-ontology,load-gene-ontology"/>
 
@@ -518,6 +539,7 @@
             download-anatomy-ontology
             download-gene-ontology
             download-spatial-ontology
+            download-mmo-ontology
             download-mpath-ontology
             download-sequence-ontology
             download-chebi-ontology
@@ -530,6 +552,7 @@
             load-anatomy-ontology
             load-gene-ontology
             load-spatial-ontology
+            load-mmo-ontology
             load-mpath-ontology
             load-sequence-ontology
             load-so-ontology
@@ -543,6 +566,7 @@
             load-anatomy
             load-mpath
             load-sequence
+            load-mmo
         </echo>
     </target>
 
