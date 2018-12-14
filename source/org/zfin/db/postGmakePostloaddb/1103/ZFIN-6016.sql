@@ -246,7 +246,7 @@ update record_attribution set recattrib_data_zdb_id = (select id from small_nucl
 
 delete from zdb_active_data where zactvd_zdb_id = 'ZDB-GENE-140912-2';
 
-update marker set mrkr_name = 'small nuclear RNA u11', mrkr_abbrev = 'rnu11', mrkr_comments = 'corresponds to ENSDARG00000080410 in ensembl' where mrkr_zdb_id = (select id from small_nuclear_rna_id);
+update marker set mrkr_name = 'small nuclear RNA u11', mrkr_abbrev = 'snrnau11', mrkr_comments = 'corresponds to ENSDARG00000080410 in ensembl' where mrkr_zdb_id = (select id from small_nuclear_rna_id);
 
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) select 'ZDB-GENE-140912-2', id from small_nuclear_rna_id;
 
