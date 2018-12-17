@@ -1,8 +1,6 @@
 --liquibase formatted sql
 --changeset pm:DLOAD-599
 
-create temp table aa (file text, ftr1 text,ftr2 text,ftr3 text, ftr4 text);
-\copy aa  from 'DLOAD-599.csv' delimiter ',';
 create temp table aa1 (alleleid text, allele text, filehtm text);
 insert into aa1 (select feature_zdb_id, feature_abbrev,file from aa, feature where ftr1||'Tg'=feature_abbrev);
 insert into aa1 (select feature_zdb_id, feature_abbrev,file from aa, feature where ftr2||'Tg'=feature_abbrev);
