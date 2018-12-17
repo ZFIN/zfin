@@ -413,7 +413,7 @@
     OTHER <zfin:abbrev entity="${formBean.feature}"/> PAGES
 </c:set>
 <div id="other-pages">
-    <zfin2:subsection title="${title}" test="${!empty formBean.summaryPageDbLinks}" showNoData="true" noDataText="No links to external sites">
+    <zfin2:subsection title="${title}" test="${!empty formBean.summaryPageDbLinks || !empty formBean.aaLink}"  showNoData="true" noDataText="No links to external sites">
         <table class="summary horizontal-solidblock">
         <c:forEach var="link" items="${formBean.summaryPageDbLinks}" varStatus="loop">
             <tr>
@@ -432,6 +432,12 @@
                 </td>
             </tr>
         </c:forEach>
+
+            <c:if test="${!empty formBean.aaLink}">
+                <tr>
+                    <td>
+                        <a href="/AdamAmsterdamFiles/${formBean.aaLink}">File:${formBean.feature.name}</a> <a href="ZDB-PUB-050913-8">(1)</a></td></tr>
+            </c:if>
         </table>
     </zfin2:subsection>
 </div>
