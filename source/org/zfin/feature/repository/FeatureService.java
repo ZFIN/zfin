@@ -174,6 +174,15 @@ public class FeatureService {
                 varSeq.getZdbID(),
                 RecordAttribution.SourceType.STANDARD);
     }
+
+    public static String getAALink(Feature feature){
+        String aaLink=RepositoryFactory.getFeatureRepository().getAALink(feature);
+        System.out.println(aaLink);
+        if (aaLink == null){
+            return null;
+        }
+        return aaLink;
+    }
     public static Set<FeatureMarkerRelationship> getSortedConstructRelationships(Feature feature) {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
         if (fmrelationships == null) {

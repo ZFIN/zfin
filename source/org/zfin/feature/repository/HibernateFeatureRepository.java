@@ -546,8 +546,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Query queryLab = session.createQuery(hqlSeq);
         queryLab.setParameter("ftrID", feature.getZdbID());
         return (VariantSequence) queryLab.uniqueResult();
-
            }
+
+    public String getAALink(Feature feature){
+        Session session = HibernateUtil.currentSession();
+        String hqlSeq = " select af_file_location from  amsterdam_file ams  where ams.af_feature_zdb_id =:ftrID";
+        Query queryLab = session.createSQLQuery(hqlSeq);
+        queryLab.setParameter("ftrID", feature.getZdbID());
+        return (String) queryLab.uniqueResult();
+    }
+
     public FeatureLocation getFeatureLocation(Feature feature) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureLocation.class);
         criteria.add(Restrictions.eq("feature", feature));

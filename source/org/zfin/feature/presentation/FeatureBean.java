@@ -40,6 +40,16 @@ public class FeatureBean {
     private List<PublicationAttribution> varSeqAttributions;
     private List<FeatureNote> externalNotes;
 
+    public String getAaLink() {
+        return aaLink;
+    }
+
+    public void setAaLink(String aaLink) {
+        this.aaLink = aaLink;
+    }
+
+    private String aaLink;
+
     public VariantSequence getVarSequence() {
         return varSequence;
     }

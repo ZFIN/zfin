@@ -86,6 +86,10 @@ public class FeatureDetailController {
         form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
         form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
         form.setVarSeqAttributions(FeatureService.getFlankSeqAttr(feature));
+        if (feature.getAbbreviation().startsWith("hi")) {
+
+            form.setAaLink(FeatureService.getAALink(feature));
+        }
 
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
