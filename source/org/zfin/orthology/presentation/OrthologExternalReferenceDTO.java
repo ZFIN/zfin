@@ -6,9 +6,18 @@ public class OrthologExternalReferenceDTO {
 
     private String accessionNumber;
     private ReferenceDatabaseDTO referenceDatabaseDTO;
+    private String symbol;
 
     public String getAccessionNumber() {
         return accessionNumber;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
     public void setAccessionNumber(String accessionNumber) {

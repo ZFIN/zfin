@@ -1934,6 +1934,7 @@ public class DTOConversionService {
         OrthologExternalReferenceDTO dto = new OrthologExternalReferenceDTO();
         dto.setAccessionNumber(reference.getAccessionNumber());
         dto.setReferenceDatabaseDTO(convertToReferenceDatabaseDTO(reference.getReferenceDatabase()));
+        dto.setSymbol(reference.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
         return dto;
     }
 
