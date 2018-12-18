@@ -1,5 +1,7 @@
 package org.zfin.ontology;
 
+import org.apache.log4j.Logger;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -55,7 +57,7 @@ public enum Ontology implements Serializable {
     ZFIN_RO("zfin-ro", "ZFIN Relation Ontology", false, "RO:"),
     UBERON("uberon", "Uberon Ontology", false, "UBERON:"),
     GO_QUALIFIER("go_qualifier", "GO Qualifier for GO Annotations", false, "RO:"),
-    MMO("mmo","Measurement Methods Ontology", false, "MMO:", true, true);
+    MEASUREMENT_METHODS_ONTOLOGY("Measurement Methods Ontology","Measurement Methods Ontology", false, "MMO:", true, true);
 
     private String ontologyName;
     private String commonName;
@@ -64,6 +66,8 @@ public enum Ontology implements Serializable {
     private String oboIdPrefix;
     private boolean expressionData;
     private boolean phenotypeData;
+
+    private static Logger LOG;
 
     private Ontology(String name, String commonName, boolean composed) {
         this.ontologyName = name;
@@ -147,6 +151,7 @@ public enum Ontology implements Serializable {
             return null;
         for (Ontology ontology : values()) {
             if (ontology.getOntologyName().equals(name))
+                    LOG.info("ontology name" + ontology.getOntologyName());
                 return ontology;
         }
         return null;
@@ -172,7 +177,7 @@ public enum Ontology implements Serializable {
                 Ontology.CHEBI,
                 Ontology.ECO,
                 Ontology.SO,
-                Ontology.MMO};
+                Ontology.MEASUREMENT_METHODS_ONTOLOGY};
     }
 
     public static List<Ontology> getOntologies(String name) {

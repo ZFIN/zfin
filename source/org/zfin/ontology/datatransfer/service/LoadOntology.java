@@ -1104,9 +1104,13 @@ public class LoadOntology extends AbstractValidateDataReportTask {
      */
     private boolean newerVersionFound() {
         String ontologyName = oboSession.getDefaultNamespace().getID();
+        LOG.info("ontologyName" + ontologyName);
+        LOG.info("ontology namespace" + oboSession.getDefaultNamespace());
+        LOG.info("ontology namespace id "+ oboSession.getDefaultNamespace().getID());
         ontology = Ontology.getOntology(ontologyName);
-        if (ontology == null)
-            throw new RuntimeException();
+        if (ontology == null) {
+            LOG.info ("ontology is null");
+            throw new RuntimeException();}
 
         OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
         OntologyMetadata dbMetadata = ontologyRepository.getOntologyMetadata(ontologyName);
