@@ -1,5 +1,10 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.zfin.profile.*;
 import org.apache.log4j.Logger
 import org.hibernate.Session
 import org.zfin.anatomy.DevelopmentStage
@@ -17,6 +22,11 @@ import org.zfin.properties.ZfinProperties
 import org.zfin.publication.Publication
 import org.zfin.repository.RepositoryFactory
 import static com.xlson.groovycsv.CsvParser.parseCsv
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 Logger log = Logger.getLogger(getClass());
 
@@ -27,6 +37,7 @@ ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properti
 new HibernateSessionCreator()
 Session session = HibernateUtil.currentSession()
 session.beginTransaction()
+login("ZDB-PERS-030520-2")
 
 
 //this map is used to map file name to figure, so that if it's a second expression result for a given figure,
@@ -325,5 +336,49 @@ geno: $csv.ftr2; $csv.ftr1(TL)
     }
 
 
+public void login(String userID)
+{
+
+        Authentication auth = new Authentication() {
+            @Override
+            public Collection<? extends GrantedAuthority> getAuthorities() {
+                return null;
+            }
+
+            @Override
+            public Object getCredentials() {
+                return null;
+            }
+
+            @Override
+            public Object getDetails() {
+                return null;
+            }
+
+            @Override
+            public Object getPrincipal() {
+                Person person = RepositoryFactory.getProfileRepository().getPerson(userID);
+                return person;
+            }
+
+            @Override
+            public boolean isAuthenticated() {
+                return false;
+            }
+
+            @Override
+            public void setAuthenticated(boolean b) throws IllegalArgumentException {
+
+            }
+
+            @Override
+            public String getName() {
+                return null;
+            }
+        };
+
+    SecurityContext securityContext = SecurityContextHolder.getContext();
+    securityContext.setAuthentication(auth);
+}
 
 
