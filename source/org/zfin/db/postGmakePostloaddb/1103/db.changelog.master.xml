@@ -41,5 +41,6 @@
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-599.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-5863.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-863.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-864.sql" />
 
 </databaseChangeLog>
