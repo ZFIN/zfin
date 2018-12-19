@@ -233,8 +233,8 @@ public class FishServiceTest extends AbstractDatabaseTest {
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
         assertNotNull(matchingTextList);
-        assertTrue("One Match", matchingTextList.size() == 1);
-        assertEquals("Affected Genomic Region Name", matchingTextList.iterator().next().getDescriptor());
+        assertTrue("One Match", matchingTextList.size() == 10);
+        matchingTextList.stream().anyMatch(matchingText -> matchingText.getDescriptor().equals("Affected Genomic Region Name"));
     }
 
     @Test
