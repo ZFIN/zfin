@@ -51,14 +51,9 @@
         <td>{{ortholog.ncbiOtherSpeciesGeneDTO.chromosome}}</td>
         <td>
             <div ng-repeat="reference in ortholog.orthologExternalReferenceDTOSet">
-
-                <a ng-if="reference.referenceDatabaseDTO.name == 'HGNC'" ng-href="{{reference.referenceDatabaseDTO.url}}{{reference.symbol}}">
-                {{reference.referenceDatabaseDTO.name}}:{{reference.accessionNumber}}
-                </a></ng-if>
-
-                <a ng-if="reference.referenceDatabaseDTO.name != 'HGNC'" ng-href="{{reference.referenceDatabaseDTO.url}}{{reference.accessionNumber}}">
+                <a ng-href="{{reference.referenceDatabaseDTO.url}}{{reference.accessionNumber}}">
                     {{reference.referenceDatabaseDTO.name}}:{{reference.accessionNumber}}
-                </a></ng-if>
+                </a>
             </div>
         </td>
         <td ng-show="vm.edit">
