@@ -19,7 +19,7 @@
             <td>
                 <c:forEach var="gene" items="${feature.featureMarkerRelations}">
                     <li style="list-style-type: none;">
-                        <c:if test="${gene.featureMarkerRelationshipType.affectedMarkerFlag eq 'true'}">
+                        <c:if test="${gene.featureMarkerRelationshipType.affectedMarkerFlag eq 'true' && fn:contains(gene.marker.zdbID,'GENE')}">
                             <a href="/${gene.marker.zdbID}"> <i>${gene.marker.abbreviation}</i></a>
                         </c:if>
                     </li>
