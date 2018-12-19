@@ -21,6 +21,7 @@ public enum GoDefaultPublication implements PubEnum {
     GOREF_UNIRULE("GO_REF:0000104","ZDB-PUB-170525-1",InferenceCategory.UNIRULE,false),
     GOREF_UNIPROT("GO_REF:0000024", "ZDB-PUB-110105-1", InferenceCategory.UNIPROTKB, false),
     GOREF_PAINT("GO_REF:0000033", "ZDB-PUB-110330-1", InferenceCategory.PANTHER, false),
+    GOREF_ADD("GO_REF:0000015", "ZDB-PUB-031118-1"),
     ;
 
     private final String title;
@@ -103,6 +104,7 @@ public enum GoDefaultPublication implements PubEnum {
             goRefPubs.add(GOREF_ENSEMBL);
             goRefPubs.add(GOREF_UNIPROT);
             goRefPubs.add(GOREF_PAINT);
+            goRefPubs.add(GOREF_ADD);
         }
         return goRefPubs;
     }
