@@ -203,7 +203,14 @@ public enum OntologyDTO implements IsSerializable {
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
-    };
+    },
+    MMO(24,"Measurement Methods Ontology", "mmo",false){
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
+            ;
 
     private int index;
     private String displayName;
