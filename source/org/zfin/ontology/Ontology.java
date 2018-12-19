@@ -1,6 +1,7 @@
 package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
+import org.zfin.profile.service.ProfileService;
 
 import java.io.Serializable;
 import java.util.*;
@@ -14,7 +15,7 @@ public enum Ontology implements Serializable {
     ANATOMY_FULL("zebrafish_anatomical_ontology", "Anatomy Ontology including stage ontology", false),
     // stages
     STAGE("zebrafish_stages", "Zebrafish Stage Ontology", false, "ZFS:"),
-    CHEBI("chebi_ontology","Chebi",false,"CHEBI:"),
+    CHEBI("chebi_ontology", "Chebi", false, "CHEBI:"),
     DISEASE_ONTOLOGY("disease_ontology", "Human Disease", false, "DOID:"),
     ECO("eco", "Evidence Ontology", false, "ECO:"),
     GO_ONTOLOGY("gene_ontology", "Full Gene Ontology: Default namespace", true),
@@ -50,14 +51,14 @@ public enum Ontology implements Serializable {
     MPATH_NEOPLASM("mpath_neoplasm", "mouse_pathology.ontology", "Mouse Cancer Pathology Ontology-Neoplasm Branch", false, "MPATH:"),
     SO("sequence", "sequence", "Sequence Ontology", false, "SO:"),
     AOGO(ANATOMY.getOntologyName() + "," + GO.getOntologyName(), "AO and GO", true),
-    AOGODO(ANATOMY.getOntologyName() + "," + GO.getOntologyName()+ "," + DISEASE_ONTOLOGY.getOntologyName(), "AO, GO and DO", true),
+    AOGODO(ANATOMY.getOntologyName() + "," + GO.getOntologyName() + "," + DISEASE_ONTOLOGY.getOntologyName(), "AO, GO and DO", true),
     ZECO("zebrafish_experimental_conditions_ontology", "Zebrafish Environment Condition Ontology", false, "ZECO:"),
     ZECO_TAXONONY("zeco_taxonomy", "Taxonomy for ZECO", false, "NCBITaxon:"),
     CELL("cl", "Cell Ontology", false, "CL:"),
     ZFIN_RO("zfin-ro", "ZFIN Relation Ontology", false, "RO:"),
     UBERON("uberon", "Uberon Ontology", false, "UBERON:"),
     GO_QUALIFIER("go_qualifier", "GO Qualifier for GO Annotations", false, "RO:"),
-    MEASUREMENT_METHODS_ONTOLOGY("Measurement Methods Ontology","Measurement Methods Ontology", false, "MMO:", true, true);
+    MEASUREMENT_METHODS_ONTOLOGY("Measurement Methods Ontology", "Measurement Methods Ontology", false, "MMO:", true, true);
 
     private String ontologyName;
     private String commonName;
@@ -67,7 +68,7 @@ public enum Ontology implements Serializable {
     private boolean expressionData;
     private boolean phenotypeData;
 
-    private static Logger LOG;
+    private static Logger LOG = Logger.getLogger(Ontology.class);
 
     private Ontology(String name, String commonName, boolean composed) {
         this.ontologyName = name;
@@ -151,7 +152,6 @@ public enum Ontology implements Serializable {
             return null;
         for (Ontology ontology : values()) {
             if (ontology.getOntologyName().equals(name))
-                    LOG.info("ontology name" + ontology.getOntologyName());
                 return ontology;
         }
         return null;
