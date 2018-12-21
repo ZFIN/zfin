@@ -446,8 +446,6 @@ public class PhenotypeService {
                     if (sortBy.equals("fish")) {
                         key += pheno.getPhenotypeWarehouse().getFishExperiment().getFish().getZdbID();
                     }
-                } else if (groupBy.equals("str")){
-                    key = keyPheno;
                 } else {
                     key = keyPheno + pheno.getPhenotypeWarehouse().getFishExperiment().getFish().getZdbID();
                 }
