@@ -18,3 +18,6 @@ update marker set mrkr_name=replace(mrkr_name,'E1b','E1B') where mrkr_name like 
 update marker set mrkr_abbrev=replace(mrkr_abbrev,'E1b','E1B') where mrkr_abbrev like '%E1b%' and mrkr_type like '%CONSTRCT%';
 
 
+update construct set construct_name=replace(construct_name,'ADV.','') where construct_name like '%ADV%';
+update marker set mrkr_name=replace(mrkr_name,'ADV.','') where mrkr_name like '%ADV%';
+update marker set mrkr_abbrev=replace(mrkr_abbrev,'ADV.','') where mrkr_abbrev like '%ADV%';
