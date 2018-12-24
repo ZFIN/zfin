@@ -27,6 +27,9 @@
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861_pre.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861.xml" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861b_pre.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861b.xml" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861b.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6073.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/PUB-489.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-601_pre.sql" />
