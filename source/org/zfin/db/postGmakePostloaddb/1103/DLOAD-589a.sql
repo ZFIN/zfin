@@ -27,5 +27,5 @@ insert into variant_flanking_sequence (vfseq_zdb_id,vfseq_data_zdb_id, vfseq_typ
 select distinct vfseqid, alleleid, 'Genomic',50,50,sequence,SUBSTRING(sequence,1,50),SUBSTRING(sequence,56),'genomic','directly sequenced',variation from new_sanger_flanking_sequence;
 
 insert into record_attribution(recattrib_Data_Zdb_id,recattrib_source_zdb_id,recattrib_source_type) select vfseqid,'ZDB-PUB-130425-4', 'standard' from new_sanger_flanking_sequence;
-
+update variant_flanking_sequence set vfseq_variation= substring(vfseq_sequence,52,3);
 drop table new_sanger_flanking_sequence;
