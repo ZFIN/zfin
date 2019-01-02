@@ -246,7 +246,8 @@ public class GafService {
         }
 
         for (MarkerGoTermEvidence gafReportAnnotation : gafJobData.getNewEntries()) {
-            newGafEntryZdbIds.add(gafReportAnnotation.getZdbID());
+            if (gafReportAnnotation.getZdbID() != null)
+                newGafEntryZdbIds.add(gafReportAnnotation.getZdbID());
         }
         for (MarkerGoTermEvidence updated : gafJobData.getUpdateEntries()) {
             newGafEntryZdbIds.add(updated.getZdbID());

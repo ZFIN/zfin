@@ -102,6 +102,21 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     @Override
     public void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
 
+        // has this marker already a non-root term annotation?
+        if (markerGoTermEvidenceToAdd.getGoTerm().isRoot()) {
+            String hql = "select count(*) from MarkerGoTermEvidence where " +
+                    "marker = :marker AND goTerm != :goTerm AND goTerm.ontology = :ontology" ;
+            Query query = HibernateUtil.currentSession().createQuery(hql);
+            query.setParameter("marker", markerGoTermEvidenceToAdd.getMarker());
+            query.setParameter("goTerm", markerGoTermEvidenceToAdd.getGoTerm());
+            query.setParameter("ontology", markerGoTermEvidenceToAdd.getGoTerm().getOntology());
+            Long count = (Long) query.uniqueResult();
+            if (count > 0)
+                throw  new RuntimeException("Cannot add root-term annotation "+markerGoTermEvidenceToAdd.getGoTerm().getOboID() +
+                        " for marker '"+markerGoTermEvidenceToAdd.getMarker().getAbbreviation()+
+                        "' as there are already non-root term annotations existent.");
+        }
+
         HibernateUtil.currentSession().save(markerGoTermEvidenceToAdd);
         // have to do this after we add inferences
         if (CollectionUtils.isNotEmpty(markerGoTermEvidenceToAdd.getInferredFrom())) {
@@ -116,7 +131,6 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                 mgtaeGroup.setMgtaegMarkerGoEvidence(markerGoTermEvidenceToAdd);
                 HibernateUtil.currentSession().save(mgtaeGroup);
                 for (MarkerGoTermAnnotationExtn mgtaedata : mgtaeGroup.getMgtAnnoExtns()) {
-
                     if (mgtaedata.getAnnotExtnGroupID().getId() != null) {
                         HibernateUtil.currentSession().save(mgtaedata);
                     }
