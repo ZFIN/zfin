@@ -62,7 +62,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     private FeaturePrefix featurePrefix;
 
 
-
     @Column(name = "feature_abbrev", nullable = false)
 
     private String abbreviation;
@@ -189,7 +188,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
 
-
     public FeaturePrefix getFeaturePrefix() {
         return featurePrefix;
     }
@@ -314,7 +312,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
 
-
     public int compareTo(Object otherFeature) {
         return getAbbreviationOrder().compareTo(((Feature) otherFeature).getAbbreviationOrder());
     }
@@ -349,13 +346,14 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public FeatureProteinMutationDetail getFeatureProteinMutationDetail() {
-        if(CollectionUtils.isEmpty(featureProteinMutationDetailSet))
+        if (CollectionUtils.isEmpty(featureProteinMutationDetailSet))
             return null;
         return featureProteinMutationDetailSet.stream().findAny().get();
     }
 
     public void setFeatureProteinMutationDetail(FeatureProteinMutationDetail featureProteinMutationDetail) {
-        featureProteinMutationDetailSet = Collections.singleton(featureProteinMutationDetail);
+        featureProteinMutationDetailSet.clear();
+        featureProteinMutationDetailSet.add(featureProteinMutationDetail);
     }
 
     public Set<FeatureProteinMutationDetail> getFeatureProteinMutationDetailSet() {
@@ -367,13 +365,14 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public FeatureDnaMutationDetail getFeatureDnaMutationDetail() {
-        if(CollectionUtils.isEmpty(featureDnaMutationDetailSet))
+        if (CollectionUtils.isEmpty(featureDnaMutationDetailSet))
             return null;
         return featureDnaMutationDetailSet.stream().findAny().get();
     }
 
     public void setFeatureDnaMutationDetail(FeatureDnaMutationDetail featureDnaMutationDetail) {
-        featureDnaMutationDetailSet = Collections.singleton(featureDnaMutationDetail);
+        featureDnaMutationDetailSet.clear();
+        featureDnaMutationDetailSet.addAll(Collections.singleton(featureDnaMutationDetail));
     }
 
     public Set<FeatureDnaMutationDetail> getFeatureDnaMutationDetailSet() {
@@ -470,7 +469,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
             if (ftrmarkrel.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
                     || ftrmarkrel.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
-                    ) {
+            ) {
 
                 tgConstructs.add(ftrmarkrel.getMarker());
             }

@@ -772,13 +772,9 @@ public class DTOConversionService {
                     featureDTO.setMutagen(feature.getFeatureAssay().getMutagen().toString());
                 }
             }
-            System.out.println(feature.getAbbreviation());
+            logger.debug(feature.getAbbreviation());
             FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getLocationByFeature(feature);
             if (ftrLocation != null) {
-                System.out.println(ftrLocation.getSfclAssembly());
-                System.out.println(ftrLocation.getSfclChromosome());
-
-
                 featureDTO.setFeatureChromosome(ftrLocation.getSfclChromosome().toString());
                 featureDTO.setFeatureAssembly(ftrLocation.getSfclAssembly().toString());
                 featureDTO.setFeatureStartLoc(ftrLocation.getSfclStart());
