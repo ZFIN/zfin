@@ -352,8 +352,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public void setFeatureProteinMutationDetail(FeatureProteinMutationDetail featureProteinMutationDetail) {
-        if (featureProteinMutationDetailSet == null) ;
-        featureProteinMutationDetailSet = new HashSet<>();
         featureProteinMutationDetailSet.clear();
         featureProteinMutationDetailSet.add(featureProteinMutationDetail);
     }
@@ -373,8 +371,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public void setFeatureDnaMutationDetail(FeatureDnaMutationDetail featureDnaMutationDetail) {
-        if (featureDnaMutationDetailSet == null)
-            featureDnaMutationDetailSet = new HashSet<>();
         featureDnaMutationDetailSet.clear();
         featureDnaMutationDetailSet.addAll(Collections.singleton(featureDnaMutationDetail));
     }

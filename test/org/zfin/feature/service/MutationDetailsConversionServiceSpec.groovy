@@ -47,20 +47,23 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
     @Unroll
     def 'dna statement point mutations'() {
+        def dnaMutationDetail = new FeatureDnaMutationDetail(
+                geneLocalizationTerm: localization,
+                exonNumber: exon,
+                intronNumber: intron,
+                dnaPositionStart: position == null ? null : new Integer(position), // curation interface sets both fields
+                dnaPositionEnd: position == null ? null : new Integer(position),   // to the same value in this case
+                referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                dnaSequenceReferenceAccessionNumber: accession,
+                dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G')
+        )
         setup:
         def feature = new Feature(
                 type: FeatureTypeEnum.POINT_MUTATION,
-                featureDnaMutationDetail: new FeatureDnaMutationDetail(
-                        geneLocalizationTerm: localization,
-                        exonNumber: exon,
-                        intronNumber: intron,
-                        dnaPositionStart: position == null ? null : new Integer(position), // curation interface sets both fields
-                        dnaPositionEnd: position == null ? null : new Integer(position),   // to the same value in this case
-                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
-                        dnaSequenceReferenceAccessionNumber: accession,
-                        dnaMutationTerm: new DnaMutationTerm(displayName: 'A>G')
-                )
         )
+        Set<FeatureDnaMutationDetail> details = new HashSet<>()
+        details.add(dnaMutationDetail)
+        feature.setFeatureDnaMutationDetailSet(details)
 
         when:
         def presentation = converter.convert(feature)
@@ -153,19 +156,22 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
     @Unroll
     def 'dna statement for deletions'() {
+        def dnaMutationDetail = new FeatureDnaMutationDetail(
+                numberRemovedBasePair: 10,
+                geneLocalizationTerm: localization,
+                exonNumber: exon,
+                intronNumber: intron,
+                dnaPositionStart: position,
+                referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                dnaSequenceReferenceAccessionNumber: accession
+        )
         setup:
         def feature = new Feature(
                 type: FeatureTypeEnum.DELETION,
-                featureDnaMutationDetail: new FeatureDnaMutationDetail(
-                        numberRemovedBasePair: 10,
-                        geneLocalizationTerm: localization,
-                        exonNumber: exon,
-                        intronNumber: intron,
-                        dnaPositionStart: position,
-                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
-                        dnaSequenceReferenceAccessionNumber: accession
-                )
         )
+        Set<FeatureDnaMutationDetail> details = new HashSet<>()
+        details.add(dnaMutationDetail)
+        feature.setFeatureDnaMutationDetailSet(details)
 
         when:
         def presentation = converter.convert(feature)
@@ -185,19 +191,22 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
     @Unroll
     def 'dna statement for insertions'() {
+        def dnaMutationDetail = new FeatureDnaMutationDetail(
+                numberAddedBasePair: 13,
+                geneLocalizationTerm: localization,
+                exonNumber: exon,
+                intronNumber: intron,
+                dnaPositionStart: position,
+                referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                dnaSequenceReferenceAccessionNumber: accession
+        )
         setup:
         def feature = new Feature(
                 type: FeatureTypeEnum.INSERTION,
-                featureDnaMutationDetail: new FeatureDnaMutationDetail(
-                        numberAddedBasePair: 13,
-                        geneLocalizationTerm: localization,
-                        exonNumber: exon,
-                        intronNumber: intron,
-                        dnaPositionStart: position,
-                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
-                        dnaSequenceReferenceAccessionNumber: accession
-                )
         )
+        Set<FeatureDnaMutationDetail> details = new HashSet<>()
+        details.add(dnaMutationDetail)
+        feature.setFeatureDnaMutationDetailSet(details)
 
         when:
         def presentation = converter.convert(feature)
@@ -217,20 +226,23 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
     @Unroll
     def 'dna statement for indels'() {
+        def dnaMutationDetail = new FeatureDnaMutationDetail(
+                numberAddedBasePair: added,
+                numberRemovedBasePair: removed,
+                geneLocalizationTerm: localization,
+                exonNumber: exon,
+                intronNumber: intron,
+                dnaPositionStart: position,
+                referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                dnaSequenceReferenceAccessionNumber: accession
+        )
         setup:
         def feature = new Feature(
                 type: FeatureTypeEnum.INDEL,
-                featureDnaMutationDetail: new FeatureDnaMutationDetail(
-                        numberAddedBasePair: added,
-                        numberRemovedBasePair: removed,
-                        geneLocalizationTerm: localization,
-                        exonNumber: exon,
-                        intronNumber: intron,
-                        dnaPositionStart: position,
-                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
-                        dnaSequenceReferenceAccessionNumber: accession
-                )
         )
+        Set<FeatureDnaMutationDetail> details = new HashSet<>()
+        details.add(dnaMutationDetail)
+        feature.setFeatureDnaMutationDetailSet(details)
 
         when:
         def presentation = converter.convert(feature)
@@ -252,18 +264,21 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
     @Unroll
     def 'dna statement for transgenics'() {
+        def dnaMutationDetail = new FeatureDnaMutationDetail(
+                geneLocalizationTerm: localization,
+                exonNumber: exon,
+                intronNumber: intron,
+                dnaPositionStart: position,
+                referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                dnaSequenceReferenceAccessionNumber: accession
+        )
         setup:
         def feature = new Feature(
                 type: FeatureTypeEnum.TRANSGENIC_INSERTION,
-                featureDnaMutationDetail: new FeatureDnaMutationDetail(
-                        geneLocalizationTerm: localization,
-                        exonNumber: exon,
-                        intronNumber: intron,
-                        dnaPositionStart: position,
-                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
-                        dnaSequenceReferenceAccessionNumber: accession
-                )
         )
+        Set<FeatureDnaMutationDetail> details = new HashSet<>()
+        details.add(dnaMutationDetail)
+        feature.setFeatureDnaMutationDetailSet(details)
 
         when:
         def presentation = converter.convert(feature)
@@ -388,20 +403,22 @@ class MutationDetailsConversionServiceSpec extends AbstractZfinSpec {
 
     @Unroll
     def 'protein consequence statement'() {
-        setup:
-        def feature = new Feature(
-                featureProteinMutationDetail: new FeatureProteinMutationDetail(
-                        wildtypeAminoAcid: wtAA == null ? null : new AminoAcidTerm(displayName: wtAA),
-                        mutantAminoAcid: mutantAA == null ? null : new AminoAcidTerm(displayName: mutantAA),
-                        numberAminoAcidsAdded: addedAA,
-                        numberAminoAcidsRemoved: removedAA,
-                        proteinConsequence: term == null ? null : new ProteinConsequence(displayName: term),
-                        proteinPositionStart: start == null ? null : new Integer(start),
-                        proteinPositionEnd: end == null ? null : new Integer(end),
-                        referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
-                        proteinSequenceReferenceAccessionNumber: accession
-                )
+        def proteinMutationDetail = new FeatureProteinMutationDetail(
+                wildtypeAminoAcid: wtAA == null ? null : new AminoAcidTerm(displayName: wtAA),
+                mutantAminoAcid: mutantAA == null ? null : new AminoAcidTerm(displayName: mutantAA),
+                numberAminoAcidsAdded: addedAA,
+                numberAminoAcidsRemoved: removedAA,
+                proteinConsequence: term == null ? null : new ProteinConsequence(displayName: term),
+                proteinPositionStart: start == null ? null : new Integer(start),
+                proteinPositionEnd: end == null ? null : new Integer(end),
+                referenceDatabase: db == null ? null : new ReferenceDatabase(foreignDB: new ForeignDB(displayName: db)),
+                proteinSequenceReferenceAccessionNumber: accession
         )
+        def feature = new Feature()
+        setup:
+        Set<FeatureProteinMutationDetail> detail = new HashSet<>()
+        detail.add(proteinMutationDetail)
+        feature.setFeatureProteinMutationDetailSet(detail)
 
         when:
         def presentation = converter.convert(feature)
