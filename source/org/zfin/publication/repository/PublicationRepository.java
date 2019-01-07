@@ -10,6 +10,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.SourceAlias;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -607,4 +608,5 @@ public interface PublicationRepository extends PaginationParameter {
 
     Long getDirectlyAttributed(Publication publication);
 
+    PublicationAttribution createPublicationAttribution(Publication publication, Marker marker);
 }

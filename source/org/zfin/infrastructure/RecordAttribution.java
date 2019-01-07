@@ -29,7 +29,7 @@ public class RecordAttribution implements Serializable {
     @Column(name = "recattrib_pk_id")
     private long id;
     @Column(name = "recattrib_data_zdb_id")
-    private String dataZdbID;
+    protected String dataZdbID;
     @Column(name = "recattrib_source_zdb_id")
     private String sourceZdbID;
     @Column(name = "recattrib_source_type")

@@ -2600,4 +2600,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 " where recattrib_source_zdb_id = :zdbID ";
         return getCount(sql, publication.getZdbID());
     }
+
+    @Override
+    public PublicationAttribution createPublicationAttribution(Publication publication, Marker marker) {
+        PublicationAttribution pa = new PublicationAttribution();
+        pa.setMarker(marker);
+        pa.setPublication(publication);
+        pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+        HibernateUtil.currentSession().save(pa);
+        return pa;
+    }
 }

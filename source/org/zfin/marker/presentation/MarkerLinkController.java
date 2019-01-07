@@ -11,6 +11,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.presentation.JSONMessageList;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -26,10 +27,10 @@ import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 @Controller
 @RequestMapping("/marker")
@@ -97,6 +98,13 @@ public class MarkerLinkController {
         String accessionNo = null;
         ReferenceDatabase refDB = null;
 
+        DBLink link = null;
+
+        HibernateUtil.createTransaction();
+        // assume there's only one pub coming in on a new db link
+        String pubId = newLink.getReferences().stream().findFirst().get().getZdbID();
+        Publication publication = getPublicationRepository().getPublication(pubId);
+
         if (!errors.hasErrors()) {
             marker = markerRepository.getMarkerByID(markerId);
             accessionNo = newLink.getAccession();
@@ -104,9 +112,16 @@ public class MarkerLinkController {
 
             Collection<? extends DBLink> links = marker.getDbLinks();
             if (CollectionUtils.isNotEmpty(links)) {
-                for (DBLink link : marker.getDbLinks()) {
-                    if (link.getReferenceDatabase().equals(refDB) && link.getAccessionNumber().equals(accessionNo)) {
-                        errors.reject("marker.link.duplicate");
+                for (DBLink dbLink : marker.getDbLinks()) {
+                    if (dbLink.getReferenceDatabase().equals(refDB) && dbLink.getAccessionNumber().equals(accessionNo)) {
+                        List<Publication> publications = dbLink.getPublications().stream().map(PublicationAttribution::getPublication).collect(Collectors.toList());
+                        if (publications.contains(publication)) {
+                            errors.reject("marker.dbLink.duplicate");
+                        } else {
+                            PublicationAttribution pa = getPublicationRepository().createPublicationAttribution(publication, marker);
+                            dbLink.getPublications().add(pa);
+                            link = dbLink;
+                        }
                     }
                 }
             }
@@ -116,17 +131,13 @@ public class MarkerLinkController {
             throw new InvalidWebRequestException("Invalid marker DBLink", errors);
         }
 
-
-        // assume there's only one pub coming in on a new db link
-        String pubId = newLink.getReferences().iterator().next().getZdbID();
-
-        HibernateUtil.createTransaction();
-        DBLink link = null;
-        if (newLink.getLength() != null) {
-            int len = Integer.parseInt(newLink.getLength());
-            link = markerRepository.addDBLinkWithLenth(marker, accessionNo, refDB, pubId, len);
-        } else {
-            link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
+        if(link == null) {
+            if (newLink.getLength() != null) {
+                int len = Integer.parseInt(newLink.getLength());
+                link = markerRepository.addDBLinkWithLenth(marker, accessionNo, refDB, pubId, len);
+            } else {
+                link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
+            }
         }
         HibernateUtil.flushAndCommitCurrentSession();
 

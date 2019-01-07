@@ -15,7 +15,7 @@ public class PublicationAttribution extends RecordAttribution implements Seriali
     @JoinColumn(name = "recattrib_source_zdb_id", insertable = false, updatable = false)
     protected Publication publication;
 
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recattrib_data_zdb_id", insertable = false, updatable = false)
     protected Marker marker;
 
@@ -34,6 +34,7 @@ public class PublicationAttribution extends RecordAttribution implements Seriali
 
     public void setMarker(Marker marker) {
         this.marker = marker;
+        setDataZdbID(marker.getZdbID());
     }
 
     public int compareTo(PublicationAttribution pubAttrib) {
