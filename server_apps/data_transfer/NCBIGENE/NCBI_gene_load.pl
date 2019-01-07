@@ -62,6 +62,7 @@ system("/bin/rm -f noLength.unl");
 system("/bin/rm -f seq.fasta");
 
 system("/bin/rm -f zf_gene_info");
+system("/bin/rm -f gene2vega");
 system("/bin/rm -f gene2unigene");
 system("/bin/rm -f gene2accession");
 system("/bin/rm -f RefSeqCatalog");
@@ -106,6 +107,10 @@ $ftpNCBIrefSeqCatalog = $catlogFolder . $catalogFile;
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz");
 
 &doSystemCommand("/local/bin/gunzip gene2accession.gz");
+
+&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene2vega.gz");
+
+&doSystemCommand("/local/bin/gunzip gene2vega.gz");
 
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2unigene");
 
@@ -318,6 +323,7 @@ $numGenesGenBankBefore = ZFINPerlModules->countData($sql);
 
 #--------------------------------------------------------------------------------------------
 # Step 4: Parse zf_gene_info file to get the NCBI records with gene Id, symbol, and Vega Id
+#         Since zf_gene_info file no loger has Vega IDs, have to parse gene2vega instead
 #--------------------------------------------------------------------------------------------
 
 # a hash to store Vega Gene Id and the ONLY related NCBI gene Id
@@ -433,23 +439,97 @@ $ctlines--;    ## because the first line is just the description of the fileds
 open STATS, '>', "reportStatistics" or die "can not open reportStatistics" ;
 
 print LOG "\nTotal number of records on NCBI's Danio_rerio.gene_info file: $ctlines\n\n";
-print LOG "\nctVegaIdsNCBI:  $ctVegaIdsNCBI\n\n";
+print LOG "\nctVegaIdsNCBI:  $ctVegaIdsNCBI\n\n" if $ctVegaIdsNCBI > 0;
 
 print STATS "\nTotal number of records on NCBI's Danio_rerio.gene_info file: $ctlines\n";
-print STATS "\nNumber of Vega Gene Id/NCBI Gene Id pairs on Danio_rerio.gene_info file: $ctVegaIdsNCBI\n\n";
+print STATS "\nNumber of Vega Gene Id/NCBI Gene Id pairs on Danio_rerio.gene_info file: $ctVegaIdsNCBI\n\n" if $ctVegaIdsNCBI > 0;
 
-print STATS "On NCBI's Danio_rerio.gene_info file, the following Vega Ids correspond to more than 1 NCBI genes\n\n";
-print LOG "On NCBI's Danio_rerio.gene_info file, the following Vega Ids correspond to more than 1 NCBI genes\n";
+if ($ctVegaIdsNCBI == 0) {
+  $ctlines = $ctVegaIdsNCBI = 0;
+  open (VEGAINFO, "gene2vega") ||  die "Cannot open gene2vega : $!\n";
 
-$ctVegaIdWithMultipleNCBIgene = 0;
-foreach $vega (sort keys %vegaIdwithMultipleNCBIids) {
-  $ctVegaIdWithMultipleNCBIgene++;
-  $ref_arrayNCBIGenes = $vegaIdwithMultipleNCBIids{$vega};
-  print LOG "$vega @$ref_arrayNCBIGenes\n";
-  print STATS "$vega @$ref_arrayNCBIGenes\n";
+  #Format: #tax_id GeneID  Vega_gene_identifier    RNA_nucleotide_accession.version        Vega_rna_identifier     protein_accession.version       Vega_protein_identifier
+
+  # Sample record:
+  # 7955    30037   OTTDARG00000032698      NM_130907.2     OTTDART00000045738      NP_570982.2     OTTDARP00000036100
+
+  while (<VEGAINFO>) {
+    chomp;
+
+    if ($_) {
+      $ctlines++;
+
+      ## the first line is just description of the fields (format, as show above), not the data
+      next if $ctlines < 2;
+
+      undef @fields;
+      @fields = split("\t");
+
+      $taxId = $fields[0];
+
+      ## don't process if it is not zebrafish gene
+      next if $taxId ne "7955";
+
+      $NCBIgeneId = $fields[1];
+      $VegaIdNCBI = $fields[2];
+
+      $ctVegaIdsNCBI++;
+
+      ## if the Vega Gene Id is found in the hash of those with multiple NCBI gene ids
+      ## or, if the Vega Gene Id is found in the hash of those with on;y 1 NCBI gene id,
+      ## but the corresponding NCBI gene id is not the same as the NCBI gene id of this row,
+      ## it means the Vega Id here must correspond to multiple NCBI gene Ids
+
+      if (exists($vegaIdwithMultipleNCBIids{$VegaIdNCBI}) ||
+           (exists($vegaIdsNCBIids{$VegaIdNCBI}) && $vegaIdsNCBIids{$VegaIdNCBI} ne $NCBIgeneId)) {
+
+        ## if the Vega Gene Id is not found in the hash of those with multiple NCBI gene ids yet,
+        ## get the corresponding NCBI gene Id from the hash of %vegaIdsNCBIids, put it and
+        ## the NCBI gene id of the current row into an anonymous array;
+        ## set the reference to this anonymous array as the value of %vegaIdwithMultipleNCBIids
+
+        if (!exists($vegaIdwithMultipleNCBIids{$VegaIdNCBI})) {
+            $firstNCBIgeneIdFound = $vegaIdsNCBIids{$VegaIdNCBI};
+            $ref_arrayNCBIGenes = [$firstNCBIgeneIdFound,$NCBIgeneId];
+            $vegaIdwithMultipleNCBIids{$VegaIdNCBI} = $ref_arrayNCBIGenes;
+        } else {
+            ## otherwise, get the value of %vegaIdwithMultipleNCBIids, which is a reference to an anonymous array
+            ## and push the NCBI gene Id at current row to this array
+
+            $ref_arrayNCBIGenes = $vegaIdwithMultipleNCBIids{$VegaIdNCBI};
+            push(@$ref_arrayNCBIGenes, $NCBIgeneId);
+        }
+      }
+
+      $vegaIdsNCBIids{$VegaIdNCBI} = $NCBIgeneId;
+    }
+  }
+
+  close(VEGAINFO);
+
+  $ctlines--;    ## because the first line is just the description of the fileds
+
+  print LOG "\nTotal number of records on NCBI's gene2vega file: $ctlines\n\n";
+  print LOG "\nctVegaIdsNCBI:  $ctVegaIdsNCBI\n\n" if $ctVegaIdsNCBI > 0;
+
+  print STATS "\nTotal number of records on NCBI's gene2vega file: $ctlines\n";
+  print STATS "\nNumber of Vega Gene Id/NCBI Gene Id pairs on gene2vega file: $ctVegaIdsNCBI\n\n" if $ctVegaIdsNCBI > 0;
 }
 
-print LOG "\nctVegaIdWithMultipleNCBIgene = $ctVegaIdWithMultipleNCBIgene\n\n";
+if($ctVegaIdsNCBI > 0) {
+  print STATS "On NCBI's gene2vega file, the following Vega Ids correspond to more than 1 NCBI genes\n\n";
+  print LOG "On NCBI's gene2vega file, the following Vega Ids correspond to more than 1 NCBI genes\n";
+
+  $ctVegaIdWithMultipleNCBIgene = 0;
+  foreach $vega (sort keys %vegaIdwithMultipleNCBIids) {
+    $ctVegaIdWithMultipleNCBIgene++;
+    $ref_arrayNCBIGenes = $vegaIdwithMultipleNCBIids{$vega};
+    print LOG "$vega @$ref_arrayNCBIGenes\n";
+    print STATS "$vega @$ref_arrayNCBIGenes\n";
+  }
+
+  print LOG "\nctVegaIdWithMultipleNCBIgene = $ctVegaIdWithMultipleNCBIgene\n\n";
+}
 
 ##-------------------------------------------------------------------------------------------
 ## Get and store ZFIN gene zdb id and symbol
@@ -512,8 +592,6 @@ $sqlGetSupportingGenBankRNAs = "select dblink_acc_num
                                                  and dblink_linked_recid = mrel_mrkr_2_zdb_id);";
 
 $curGetSupportingGenBankRNAs = $handle->prepare($sqlGetSupportingGenBankRNAs);
-
-open (ZFINGENESUPPORTED, "toMap.unl") ||  die "Cannot open toMap.unl : $!\n";
 
 ## %supportedGeneZFIN is a hash to store references to arrays of GenBank RNA accession(s) supporting ZDB gene Id
 ## key:    zdb gene id
@@ -578,8 +656,6 @@ foreach $geneZDBidSupported (keys %zfinGenes) {
 print LOG "ctSupportedZFINgenes::: $ctSupportedZFINgenes\n\n";
 
 print LOG "Total number of ZFIN gene records supported by GenBank RNA: $ctSupportedZFINgenes\n\n";
-
-close ZFINGENESUPPORTED;
 
 $curGetSupportingGenBankRNAs->finish();
 
@@ -2736,3 +2812,4 @@ sub sendLoadLogs {
   $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog1 file";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","loadLog1");
 }
+
