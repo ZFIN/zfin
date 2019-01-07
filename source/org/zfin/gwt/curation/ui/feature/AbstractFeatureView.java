@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui.feature;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -71,6 +72,9 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     Label transcriptChangeFirstColumn;
     @UiField
     Label dnaChangeFirstColumn;
+
+    public AbstractFeatureView() {
+    }
 
     @UiHandler("showHideToggle")
     void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
@@ -152,6 +156,26 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         handleChanges();
     }
 
+    @UiHandler("featureEvidenceCode")
+    void onChangeEvidenceCode(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("featureChrAssembly")
+    void onChangeAssembly(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("featureStartLoc")
+    void onChangeStartLocation(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("featureEndLoc")
+    void onChangeEndLocation(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
     protected void handleChanges() {
         clearErrors();
         presenter.handleDirty();
@@ -167,7 +191,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         handleChanges();
     }
 
-    @UiHandler("featureTypeBox")
     void onChangeFeatureType(@SuppressWarnings("unused") ChangeEvent event) {
         errorLabel.clearAllErrors();
         message.setText("");
@@ -412,5 +435,11 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         }
     }
 
+    void setFeatureEvidenceCodeList() {
+        featureEvidenceCode.addItem("");
+        featureEvidenceCode.addItem("IC");
+        featureEvidenceCode.addItem("TAS");
+        featureEvidenceCode.addItem("IEA");
+    }
 
 }

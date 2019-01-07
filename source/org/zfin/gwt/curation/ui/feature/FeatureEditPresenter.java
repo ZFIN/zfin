@@ -145,7 +145,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         col.addBoolean(view.featureChrAssembly.isDirty((dto.getFeatureAssembly())));
         col.addBoolean(view.featureStartLoc.isDirty((dto.getFeatureStartLoc())));
         col.addBoolean(view.featureEndLoc.isDirty((dto.getFeatureEndLoc())));
-        //col.addBoolean(view.featureEvidenceCode.isDirty((dto.getEvidence())));
+        col.addBoolean(view.featureEvidenceCode.isDirty((dto.getEvidence())));
 
         col.addBoolean(view.labDesignationBox.isDirty(dto.getLabPrefix()));
         col.addBoolean(view.featureSuffixBox.isDirty(dto.getTransgenicSuffix()));
@@ -171,23 +171,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         featureDTO.setPublicNoteList(dto.getPublicNoteList());
         featureDTO.setCuratorNotes(dto.getCuratorNotes());
-
-        featureDTO.setFeatureChromosome(view.featureChromosome.getText());
-        featureDTO.setFeatureAssembly(view.featureChrAssembly.getText());
-        featureDTO.setFeatureStartLoc(view.featureStartLoc.getBoxValue());
-        featureDTO.setFeatureEndLoc(view.featureEndLoc.getBoxValue());
-
-        String itemText=view.featureEvidenceCode.getItemText(view.featureEvidenceCode.getSelectedIndex());
-        System.out.println(itemText);
-        if (itemText.equals("TAS")) {
-            featureDTO.setEvidence("ZDB-TERM-170419-250");
-        }
-        if (itemText.equals("IC")) {
-            featureDTO.setEvidence("ZDB-TERM-170419-251");
-        }
-        if (itemText.equals("IEA")) {
-            featureDTO.setEvidence("ZDB-TERM-170419-312");
-        }
 
         return featureDTO;
     }
@@ -240,7 +223,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     public void updateFeature() {
         FeatureDTO featureDTO = createDTOFromGUI();
         System.out.println(featureDTO.getEvidence());
-        // if a public note was added (they persist immedately) update this feature with it
+        // if a public note was added (they persist immediately) update this feature with it
         // so validation can happen correctly
         if (featureDTO.getPublicNoteList() == null || featureDTO.getPublicNoteList().size() == 0)
             featureDTO.setPublicNoteList(featureNotesPresenter.featureDTO.getPublicNoteList());

@@ -68,5 +68,11 @@ public class FeatureServiceTest extends AbstractDatabaseTest {
         assertThat(attributions, is(notNullValue()));
         assertThat(attributions, is(not(empty())));
     }
+
+    @Test
+    public void checkFeatureGenomeEvidenceMapping(){
+        String evidenceCode = "TAS";
+        String termId = FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(evidenceCode);
+    }
 }
 

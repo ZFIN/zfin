@@ -26,7 +26,7 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     interface MyUiBinder extends UiBinder<FlowPanel, FeatureEditView> {
     }
 
-    FeatureEditPresenter editPresenter;
+    private FeatureEditPresenter editPresenter;
     @UiField
     StringListBox featureEditList;
     @UiField
@@ -41,6 +41,7 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
     FeatureNotesView featureNotesView;
 
     public FeatureEditView() {
+        super();
         initWidget(uiBinder.createAndBindUi(this));
         featureTypeBox.addNull();
         for (FeatureTypeEnum featureTypeEnum : FeatureTypeEnum.values()) {
@@ -48,12 +49,7 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
         }
         featureSuffixBox.addEnumValues(TransgenicSuffix.values());
         mutageeBox.addEnumValues(Mutagee.values());
-       setFeatureEvidenceCodes();
-    }
-    private void setFeatureEvidenceCodes() {
-        featureEvidenceCode.addItem("TAS");
-        featureEvidenceCode.addItem("IC");
-        featureEvidenceCode.addItem("IEA");
+        setFeatureEvidenceCodeList();
     }
 
     @UiHandler("featureEditList")

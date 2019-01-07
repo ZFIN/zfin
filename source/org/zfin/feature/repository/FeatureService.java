@@ -74,7 +74,7 @@ public class FeatureService {
         if (fmrelationships == null) {
             return null;
         }
-        Set<FeatureMarkerRelationship> createdByRelationship=new HashSet<>();
+        Set<FeatureMarkerRelationship> createdByRelationship = new HashSet<>();
         for (FeatureMarkerRelationship ftrmrkrRelationship : fmrelationships) {
             if (ftrmrkrRelationship != null) {
                 if (ftrmrkrRelationship.getMarker().getMarkerType().getType() == Marker.Type.CRISPR
@@ -166,8 +166,8 @@ public class FeatureService {
     }
 
     public static List<PublicationAttribution> getFlankSeqAttr(Feature feature) {
-        VariantSequence varSeq=RepositoryFactory.getFeatureRepository().getFeatureVariant(feature);
-        if (varSeq == null){
+        VariantSequence varSeq = RepositoryFactory.getFeatureRepository().getFeatureVariant(feature);
+        if (varSeq == null) {
             return null;
         }
         return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
@@ -175,14 +175,15 @@ public class FeatureService {
                 RecordAttribution.SourceType.STANDARD);
     }
 
-    public static String getAALink(Feature feature){
-        String aaLink=RepositoryFactory.getFeatureRepository().getAALink(feature);
+    public static String getAALink(Feature feature) {
+        String aaLink = RepositoryFactory.getFeatureRepository().getAALink(feature);
         System.out.println(aaLink);
-        if (aaLink == null){
+        if (aaLink == null) {
             return null;
         }
         return aaLink;
     }
+
     public static Set<FeatureMarkerRelationship> getSortedConstructRelationships(Feature feature) {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
         if (fmrelationships == null) {
@@ -193,7 +194,7 @@ public class FeatureService {
             if (ftrmrkrRelation != null) {
                 if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
                         || ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
-                        ) {
+                ) {
                     constructMarkers.add(ftrmrkrRelation);
                 }
             }
@@ -319,7 +320,7 @@ public class FeatureService {
     }
 
     public static ReferenceDatabase getForeignDbMutationDetailProtein(String accessionNumber) {
-        ForeignDB.AvailableName[] databases = {AvailableName.GENBANK, AvailableName.REFSEQ, AvailableName.UNIPROTKB,AvailableName.GENPEPT};
+        ForeignDB.AvailableName[] databases = {AvailableName.GENBANK, AvailableName.REFSEQ, AvailableName.UNIPROTKB, AvailableName.GENPEPT};
         ForeignDBDataType.DataType[] dataTypes = {DataType.POLYPEPTIDE};
 
         List<ReferenceDatabase> genBankRefDB = getSequenceRepository().getReferenceDatabases(Arrays.asList(databases),
@@ -332,5 +333,24 @@ public class FeatureService {
                 return referenceDatabase;
         }
         return null;
+    }
+
+    private static Map<String, String> featureGenomeLocationEvidenceCodeMap = new HashMap<>();
+
+    static {
+        featureGenomeLocationEvidenceCodeMap.put("ZDB-TERM-170419-250", "TAS");
+        featureGenomeLocationEvidenceCodeMap.put("ZDB-TERM-170419-251", "IC");
+        featureGenomeLocationEvidenceCodeMap.put("ZDB-TERM-170419-312", "IEA");
+    }
+
+    public static String getFeatureGenomeLocationEvidenceCode(String termID) {
+        return featureGenomeLocationEvidenceCodeMap.get(termID);
+    }
+
+    public static String getFeatureGenomeLocationEvidenceCodeTerm(String evidenceCode) {
+        Optional<Map.Entry<String, String>> entry = featureGenomeLocationEvidenceCodeMap.entrySet().stream()
+                .filter(evidenceEntry -> evidenceEntry.getValue().equals(evidenceCode))
+                .findAny();
+        return entry.map(Map.Entry::getKey).orElse(null);
     }
 }
