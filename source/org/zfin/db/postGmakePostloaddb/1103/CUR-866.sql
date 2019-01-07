@@ -21,3 +21,15 @@ update marker set mrkr_abbrev=replace(mrkr_abbrev,'E1b','E1B') where mrkr_abbrev
 update construct set construct_name=replace(construct_name,'ADV.','') where construct_name like '%ADV%';
 update marker set mrkr_name=replace(mrkr_name,'ADV.','') where mrkr_name like '%ADV%';
 update marker set mrkr_abbrev=replace(mrkr_abbrev,'ADV.','') where mrkr_abbrev like '%ADV%';
+
+
+update construct set construct_name='Tg(gnat2:TagRFP-FYVE)' where construct_zdb_id='ZDB-TGCONSTRCT-161017-5';
+update marker set mrkr_name='Tg(gnat2:TagRFP-FYVE)' where mrkr_zdb_id='ZDB-TGCONSTRCT-161017-5';
+update marker set mrkr_abbrev='Tg(gnat2:TagRFP-FYVE)' where mrkr_zdb_id='ZDB-TGCONSTRCT-161017-5';
+
+update construct set construct_name='Tg(ELTC:EGFP)' where construct_zdb_id='ZDB-TGCONSTRCT-101103-3';
+update marker set mrkr_name='Tg(ELTC:EGFP)' where mrkr_zdb_id='ZDB-TGCONSTRCT-101103-3';
+update marker set mrkr_abbrev='Tg(ELTC:EGFP)' where mrkr_zdb_id='ZDB-TGCONSTRCT-101103-3';
+
+
+
