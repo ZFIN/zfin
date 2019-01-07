@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui.feature;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.curation.ui.FeatureValidationService;
 import org.zfin.gwt.root.dto.FeatureDTO;
@@ -132,7 +133,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                             } else {
                                 view.labDesignationBox.addItem(featurePrefixDTO.getPrefix());
                             }
-                           
+
                         }
                         // always has zf
                         if (!hasZf) {
@@ -179,23 +180,14 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         featureDTO.setKnownInsertionSite(view.knownInsertionCheckBox.getValue());
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         featureDTO.setTransgenicSuffix(view.featureSuffixBox.getSelectedText());
-       featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
-      /*  featureDTO.setFeatureChromosome(view.featureChromosome.getText());
-        featureDTO.setFeatureAssembly(view.featureChrAssembly.getValue());
+        featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
+
+        // genome Location
+        featureDTO.setEvidence(view.featureEvidenceCode.getSelectedItemText());
+        featureDTO.setFeatureChromosome(view.featureChromosome.getText());
+        featureDTO.setFeatureAssembly(view.featureChrAssembly.getText());
         featureDTO.setFeatureStartLoc(view.featureStartLoc.getBoxValue());
         featureDTO.setFeatureEndLoc(view.featureEndLoc.getBoxValue());
-        String itemText=view.featureEvidenceCode.getItemText(view.featureEvidenceCode.getSelectedIndex());
-        System.out.println(itemText);
-
-        if (itemText.equals("TAS")) {
-            featureDTO.setEvidence("ZDB-TERM-170419-250");
-        }
-        if (itemText.equals("IC")) {
-            featureDTO.setEvidence("ZDB-TERM-170419-251");
-        }
-        if (itemText.equals("IEA")) {
-            featureDTO.setEvidence("ZDB-TERM-170419-312");
-        }*/
 
         if (view.hasMutationDetails()) {
             featureDTO.setDnaChangeDTO(view.mutationDetailDnaView.getDto());

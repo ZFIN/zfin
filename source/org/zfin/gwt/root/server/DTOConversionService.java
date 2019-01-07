@@ -775,18 +775,11 @@ public class DTOConversionService {
             logger.debug(feature.getAbbreviation());
             FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getLocationByFeature(feature);
             if (ftrLocation != null) {
-                featureDTO.setFeatureChromosome(ftrLocation.getSfclChromosome().toString());
-                featureDTO.setFeatureAssembly(ftrLocation.getSfclAssembly().toString());
+                featureDTO.setFeatureChromosome(ftrLocation.getSfclChromosome());
+                featureDTO.setFeatureAssembly(ftrLocation.getSfclAssembly());
                 featureDTO.setFeatureStartLoc(ftrLocation.getSfclStart());
                 featureDTO.setFeatureEndLoc(ftrLocation.getSfclEnd());
-                featureDTO.setEvidence(ftrLocation.getSfclEvidence().getZdbID().toString());
-                if (ftrLocation.getSfclEvidence().getZdbID().equals("ZDB-TERM-170419-250")) {
-                    featureDTO.setEvidence("TAS");
-                }
-                if (ftrLocation.getSfclEvidence().getZdbID().equals("ZDB-TERM-170419-251")) {
-                    featureDTO.setEvidence("IC");
-                }
-
+                featureDTO.setEvidence(FeatureService.getFeatureGenomeLocationEvidenceCode(ftrLocation.getSfclEvidence().getZdbID()));
             }
 
 

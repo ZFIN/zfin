@@ -32,19 +32,9 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
     TextArea curatorNoteBox;
     @UiField
     TextArea publicNoteBox;
-    @UiField
-    StringTextBox featureChromosome;
-    @UiField
-    StringTextBox featureChrAssembly;
-    @UiField
-    NumberTextBox featureStartLoc;
-    @UiField
-    NumberTextBox featureEndLoc;
-    @UiField
-    StringListBox featureEvidenceCode;
-
 
     public FeatureAddView() {
+        super();
         initWidget(uiBinder.createAndBindUi(this));
         featureTypeBox.clear();
         featureTypeBox.addNull();
@@ -53,13 +43,9 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         }
         featureSuffixBox.addEnumValues(TransgenicSuffix.values());
         mutageeBox.addEnumValues(Mutagee.values());
-        setFeatureEvidenceCodes();
+        setFeatureEvidenceCodeList();
     }
-    private void setFeatureEvidenceCodes() {
-        featureEvidenceCode.addItem("TAS");
-        featureEvidenceCode.addItem("IC");
-        featureEvidenceCode.addItem("IEA");
-    }
+
     @UiHandler("saveButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
         super.onclickSaveButton(event);

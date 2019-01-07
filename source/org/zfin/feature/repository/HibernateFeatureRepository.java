@@ -115,7 +115,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 " where fmrel1.type in (:relation) and " +
                 "not exists (select 'x' from FeatureMarkerRelationship fmrel2 " +
                 "where fmrel1.zdbID != fmrel2.zdbID and fmrel1.feature = fmrel2.feature " +
-                "and fmrel2.type != :createdBy )" ;
+                "and fmrel2.type != :createdBy )";
 
         Query query = currentSession().createQuery(hql);
         query.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
@@ -355,21 +355,15 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     public FeatureLocation getLocationByFeature(Feature ftr) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct fs  from  FeatureLocation fs " +
-                "     where fs.feature = :ftr " ;
-
-
+        String hql = "select fs  from  FeatureLocation fs " +
+                "     where fs.feature = :feature ";
 
         Query query = session.createQuery(hql);
-        query.setParameter("ftr", ftr);
-        List<FeatureLocation> fl= query.list();
-        if (fl.size()>1) {
-            return (fl.get(0));
-        }
-        return null;
+        query.setParameter("feature", ftr);
+        FeatureLocation fl = (FeatureLocation) query.uniqueResult();
+        return fl;
 
     }
-
 
 
     public String getPrefixById(int labPrefixID) {
@@ -540,15 +534,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
         FeatureAssay ftrAss = (FeatureAssay) criteria.uniqueResult();
         return ftrAss;
     }
+
     public VariantSequence getFeatureVariant(Feature feature) {
         Session session = HibernateUtil.currentSession();
         String hqlSeq = " select vs from  VariantSequence vs where vs.vseqDataZDB =:ftrID";
         Query queryLab = session.createQuery(hqlSeq);
         queryLab.setParameter("ftrID", feature.getZdbID());
         return (VariantSequence) queryLab.uniqueResult();
-           }
+    }
 
-    public String getAALink(Feature feature){
+    public String getAALink(Feature feature) {
         Session session = HibernateUtil.currentSession();
         String hqlSeq = " select af_file_location from  amsterdam_file ams  where ams.af_feature_zdb_id =:ftrID";
         Query queryLab = session.createSQLQuery(hqlSeq);
