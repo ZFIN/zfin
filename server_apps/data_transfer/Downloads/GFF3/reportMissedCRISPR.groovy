@@ -25,7 +25,7 @@ def ignoreList = [
 def logfile = "$targetroot/server_apps/data_transfer/Downloads/GFF3/mo_seq_E_miss.fa"
 def ids = new File(logfile)
         .collect { it =~ /zdb_id=([^;]+);/ }
-        .findAll { it.contains 'ZDB-CRISPR' }
+        .findAll { it}
         .collect { [it.group(1)] }
         .findAll { it.findAll{it1 -> it1.contains('ZDB-CRISPR')}}
         .unique()
