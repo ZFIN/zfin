@@ -27,6 +27,7 @@ def ids = new File(logfile)
         .collect { it =~ /zdb_id=([^;]+);/ }
         .findAll { it.contains 'ZDB-CRISPR' }
         .collect { [it.group(1)] }
+        .findAll { it.findAll{it1 -> it1.contains('ZDB-CRISPR')}}
         .unique()
 ids.removeAll(ignoreList)
 
