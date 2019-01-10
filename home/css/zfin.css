@@ -1113,3 +1113,41 @@ input + label {
 .fa-animation-container {
     display: inline-block;
 }
+
+.zebrashare-button {
+    display: flex;
+    justify-content: center;
+    background: #5ba87f;
+    color: white;
+    border-radius: 8px;
+    padding: 4rem;
+    height: 160px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom-width: 4px;
+    transition: background-color 400ms;
+    max-width: 700px;
+    margin: 20px auto;
+}
+
+.zebrashare-button:hover {
+    color: white;
+    text-decoration: none;
+    background: #6cb990;
+}
+
+.zebrashare-button .inner {
+    display: flex;
+    flex-direction: row;
+}
+
+.zebrashare-button .icon {
+    font-size: 5rem;
+}
+
+.zebrashare-button .info {
+    padding-left: 1.5rem;
+}
+
+.zebrashare-button h3 {
+    margin: 0;
+}

@@ -1,5 +1,6 @@
 package org.zfin.zebrashare.presentation;
 
+import cern.jet.math.Mult;
 import org.apache.log4j.Logger;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,7 @@ public class SubmissionFormController {
         return "zebrashare/new-submission.page";
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public String home(@ModelAttribute("formBean") SubmissionFormBean formBean) {
         return "zebrashare/home.page";
     }
@@ -121,13 +122,20 @@ public class SubmissionFormController {
                 formBean.getSubmitterEmail()
         );
 
-        if (formBean.getImageFiles().length != formBean.getCaptions().length) {
-            LOG.error("Mismatched number of images and captions: " + formBean.getImageFiles().length + " vs " + formBean.getCaptions().length);
+        MultipartFile[] imageFiles = formBean.getImageFiles() == null ? null :
+                Arrays.stream(formBean.getImageFiles())
+                        .filter(file -> !file.isEmpty())
+                        .toArray(MultipartFile[]::new);
+
+        int numImages = imageFiles == null ? 0 : imageFiles.length;
+        int numCaptions = formBean.getCaptions() == null ? 0 : formBean.getCaptions().length;
+        if (numImages != numCaptions) {
+            LOG.error("Mismatched number of images and captions: " + numImages + " vs " + numCaptions);
             return "zebrashare/new-submission.page";
         }
         Transaction tx = HibernateUtil.createTransaction();
-        for (int i = 0; i < formBean.getImageFiles().length; i++) {
-            MultipartFile imageFile = formBean.getImageFiles()[i];
+        for (int i = 0; i < imageFiles.length; i++) {
+            MultipartFile imageFile = imageFiles[i];
             String caption = formBean.getCaptions()[i];
             String label = "Fig. " + (i + 1);
 

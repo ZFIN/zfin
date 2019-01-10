@@ -27,7 +27,7 @@ public class PublicationTrackingLocation {
         INDEXER_PRIORITY_2("2"),
         INDEXER_PRIORITY_3("3"),
         DISEASE("Disease"),
-        ZEBRASHARE("zebraShare");
+        ZEBRASHARE("ZebraShare");
 
         private String display;
 

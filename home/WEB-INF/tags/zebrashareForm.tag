@@ -3,6 +3,28 @@
 <%@attribute name="formBean" type="org.zfin.zebrashare.presentation.SubmissionFormBean" required="true" %>
 
 <form:form method="POST" commandName="formBean" class="form-horizontal" id="zebrashareForm" enctype="multipart/form-data">
+    <h3>Submitter</h3>
+    <p>We will contact this person if we have questions about this submission.</p>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Submitter Name</label>
+        <div class="col-sm-8">
+            <form:input path="submitterName" cssClass="form-control"/>
+            <form:errors path="submitterName" cssClass="text-danger" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Submitter Email</label>
+        <div class="col-sm-8">
+            <form:input path="submitterEmail" cssClass="form-control"/>
+            <form:errors path="submitterEmail" cssClass="text-danger" />
+        </div>
+    </div>
+
+    <hr />
+
+    <h3>Attribution</h3>
+    <p>We will make a ZFIN publication record and use it for attribution of the alleles.</p>
     <div class="form-group">
         <label class="col-sm-3 control-label">Authors</label>
         <div class="col-sm-8">
@@ -20,7 +42,7 @@
     <div class="form-group">
         <label class="col-sm-3 control-label">Title</label>
         <div class="col-sm-8">
-            <form:textarea path="title" cssClass="form-control"/>
+            <form:textarea path="title" cssClass="form-control" placeholder="e.g. A CRISPR Mutagenesis Screen of Sox9a"/>
             <form:errors path="title" cssClass="text-danger" />
         </div>
     </div>
@@ -28,24 +50,8 @@
     <div class="form-group">
         <label class="col-sm-3 control-label">Abstract</label>
         <div class="col-sm-8">
-            <form:textarea path="abstractText" cssClass="form-control" rows="8"/>
+            <form:textarea path="abstractText" cssClass="form-control" rows="8" placeholder="e.g. CRISPRs were used to create premature stops in each exon of the sox9a gene. Only mutations in exon 1 and 2 resulted in any observable phenotype, which included small eyes."/>
             <form:errors path="abstractText" cssClass="text-danger" />
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-sm-3 control-label">Submitter Name</label>
-        <div class="col-sm-8">
-            <form:input path="submitterName" cssClass="form-control"/>
-            <form:errors path="submitterName" cssClass="text-danger" />
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-sm-3 control-label">Submitter Email</label>
-        <div class="col-sm-8">
-            <form:input path="submitterEmail" cssClass="form-control"/>
-            <form:errors path="submitterEmail" cssClass="text-danger" />
         </div>
     </div>
 
@@ -79,8 +85,11 @@
         </div>
     </div>
 
+    <hr />
+
+    <h3>Files</h3>
     <div class="form-group">
-        <label class="col-sm-3 control-label">Data File</label>
+        <label class="col-sm-3 control-label">Submission Workbook</label>
         <div class="col-sm-8">
             <label class="btn btn-default">
                 Choose file
