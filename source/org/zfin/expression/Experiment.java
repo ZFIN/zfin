@@ -170,7 +170,6 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     public String getDisplayAllConditions() {
         String displayConditions = "";
         Iterator iterator = experimentConditions.iterator();
-        System.out.println(experimentConditions.size());
         if (iterator.hasNext()) {
             ExperimentCondition firstExperimentCondition = (ExperimentCondition) iterator.next();
             displayConditions = firstExperimentCondition.getDisplayName();
