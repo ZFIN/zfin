@@ -69,11 +69,11 @@ burgessImages.each { csv ->
             ftr1:   $csv.ftr1
             ftr2:   $csv.ftr2
             superterm: $csv.superterm
-
+            subterm: $csv.subterm
             stage:     $csv.stagestart
             orientation: $csv.orientation
             figLegend: $csv.figlegend
-geno: $csv.ftr2; $csv.ftr1(TL)
+
 
             """
     )
@@ -83,13 +83,16 @@ geno: $csv.ftr2; $csv.ftr1(TL)
 
     //  Fish burgessFish=RepositoryFactory.mutantRepository.getFish(csv.fishid)
     genoStr = csv.ftr2 + "; " + csv.ftr1
-    print genoStr
 
+    if (csv.ftr2=="-") {
+        genoStr = csv.ftr1
+    }
+    print genoStr
     Genotype burgessGeno = RepositoryFactory.mutantRepository.getGenotypeByName(genoStr)
     if (burgessGeno == null) {
         List<Genotype> bGenos = RepositoryFactory.mutantRepository.getGenotypesByFeature(RepositoryFactory.featureRepository.getFeatureByAbbreviation(csv.ftr1))
         for (Genotype item : bGenos) {
-            if (item.zdbID.contains("ZDB-GENO-151216")) {
+            if (item.zdbID.contains("ZDB-GENO-151216")||item.zdbID.contains("ZDB-GENO-1901")) {
 
                 print(item.name)
                 burgessGeno = item
@@ -150,7 +153,9 @@ geno: $csv.ftr2; $csv.ftr1(TL)
      }
 
         ExpressionExperiment2 expressionExperiment = getOrCreateExpressionExperiment(fishExperiment, gene, publication, assay)
-        ExpressionResult2 expressionResult = createExpressionResult(expressionExperiment, superTerm, csv.subterm, stage, figure)
+//        ExpressionResult2 expressionResult = createExpressionResult(expressionExperiment, superTerm, csv.subterm, stage, figure)
+
+        ExpressionResult2 expressionResult = createExpressionResult(expressionExperiment, superTerm, csv.subterm,stage, figure)
 
         assert (gene)
         assert (publication)
@@ -215,10 +220,14 @@ geno: $csv.ftr2; $csv.ftr1(TL)
         return figure
     }
 
-    ExpressionResult2 createExpressionResult(ExpressionExperiment2 expressionExperiment,
+   /* ExpressionResult2 createExpressionResult(ExpressionExperiment2 expressionExperiment,
                                              Term superTerm, String subterm,
                                              DevelopmentStage stage,
-                                             Figure figure) {
+                                             Figure figure) {*/
+        ExpressionResult2 createExpressionResult(ExpressionExperiment2 expressionExperiment,
+                                                 Term superTerm, String subTermStr,
+                                                 DevelopmentStage stage,
+                                                 Figure figure) {
 
 
         ExpressionFigureStage expFigStage = RepositoryFactory.expressionRepository.getExperimentFigureStage(expressionExperiment.zdbID, figure.zdbID, stage.zdbID, stage.zdbID)
@@ -239,14 +248,19 @@ geno: $csv.ftr2; $csv.ftr1(TL)
             expressionResult.with {
 
                 setSuperTerm(superTerm)
-                if (superTerm.termName == "sensory system") {
-                    print "subterm"
-                    setSubTerm(RepositoryFactory.ontologyRepository.getTermByName("cranial ganglion", Ontology.ANATOMY))
+                if (subTermStr!=''){
+                    Term subTerm = RepositoryFactory.ontologyRepository.getTermByName(subTermStr, Ontology.ANATOMY)
+                    print(subTerm.getZdbID())
+                    setSubTerm(subTerm)
+
                 }
-                if (subterm == "anterior region") {
-                    print "ant"
-                    setSubTerm(RepositoryFactory.ontologyRepository.getTermByOboID("BSPO:0000071"))
-                }
+
+
+
+
+
+
+
                 setExpressionFigureStage(expFigStage1)
                 setExpressionFound(true)
             }
@@ -266,13 +280,12 @@ geno: $csv.ftr2; $csv.ftr1(TL)
             expressionResult.with {
 
                 setSuperTerm(superTerm)
-                if (superTerm.termName == "sensory system") {
-                    print "subterm"
-                    setSubTerm(RepositoryFactory.ontologyRepository.getTermByName("cranial ganglion", Ontology.ANATOMY))
-                }
-                if (subterm == "anterior region") {
-                    print "ant"
-                    setSubTerm(RepositoryFactory.ontologyRepository.getTermByOboID("BSPO:0000071"))
+                if (subTermStr!=''){
+                    Term subTerm = RepositoryFactory.ontologyRepository.getTermByName(subTermStr, Ontology.ANATOMY)
+                    print(subTerm.getZdbID())
+                    setSubTerm(subTerm)
+
+
                 }
                 setExpressionFigureStage(expFigStage)
                 setExpressionFound(true)
