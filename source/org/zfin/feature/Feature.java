@@ -28,7 +28,6 @@ import java.util.*;
  */
 @Entity
 @Table(name = "feature")
-@Audit
 // Only update attributes that have changed.
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
 public class Feature implements EntityNotes, EntityZdbID {
