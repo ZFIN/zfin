@@ -2,7 +2,6 @@ package org.zfin.feature;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.*;
-import org.hibernate.envers.Audited;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
