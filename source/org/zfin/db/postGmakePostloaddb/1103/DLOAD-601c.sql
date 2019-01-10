@@ -1,6 +1,7 @@
 --liquibase formatted sql
 --changeset pm:DLOAD-601c
 
+drop table if exists ftrmutdetsnew
 create temp table ftrMutDetsnew (ftr varchar(50), ref1 varchar(50), ref2 varchar(10),mutDisplay varchar(10), fdmd_zdb_id varchar(50)) ;
 
 insert into ftrMutDetsnew (ftr,ref1,ref2,mutDisplay, fdmd_zdb_id)
@@ -18,7 +19,7 @@ insert into zdb_Active_data
  select fdmd_zdb_id from ftrMutDetsnew;
 
 
---drop table tmp_load;
+drop table if exists tmp_load;
 create temp table tmp_load (ftrtemp varchar(50), ref1temp varchar(50), fdmd_zdb_idtemp varchar(50)) ;
 
  insert into tmp_load(ftrtemp, ref1temp , fdmd_zdb_idtemp)
