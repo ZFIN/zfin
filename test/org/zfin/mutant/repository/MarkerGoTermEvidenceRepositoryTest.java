@@ -221,8 +221,7 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getNoctuaModel() {
-        NoctuaModel model  = markerGoTermEvidenceRepository.getNoctuaModel("gomodel:59dc728000000555");
-        // TODO have to wait until we load noctua models int ZFIN...
-        //assertNotNull(model);
+        NoctuaModel model = markerGoTermEvidenceRepository.getNoctuaModel("gomodel:59dc728000000555");
+        assertNotNull(model);
     }
 }
