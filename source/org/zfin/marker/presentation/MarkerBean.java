@@ -4,6 +4,7 @@ import org.zfin.audit.AuditLogItem;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.mapping.presentation.MappedMarkerBean;
+import org.zfin.marker.AllianceGeneDesc;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.Fish;
@@ -39,9 +40,19 @@ public class MarkerBean extends PaginationBean {
     private PhenotypeOnMarkerBean phenotypeOnMarkerBeans; // TODO: replace with presentation object?
     private GeneOntologyOnMarkerBean geneOntologyOnMarkerBeans ; // TODO: replace with presentation object?
     private boolean hasMarkerHistory;
+
+    public AllianceGeneDesc getAllianceGeneDesc() {
+        return allianceGeneDesc;
+    }
+
+    public void setAllianceGeneDesc(AllianceGeneDesc allianceGeneDesc) {
+        this.allianceGeneDesc = allianceGeneDesc;
+    }
+
     private List<PreviousNameLight> previousNames;
     private List<GeneProductsBean> geneProductsBean;
     private Collection<DiseaseModelDisplay> diseaseModelDisplays;
+    private AllianceGeneDesc allianceGeneDesc;
 
     public List<MarkerRelationshipPresentation> getRelatedMarkers() {
         return relatedMarkers;

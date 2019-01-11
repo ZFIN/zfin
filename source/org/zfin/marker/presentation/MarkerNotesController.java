@@ -48,6 +48,10 @@ public class MarkerNotesController {
     public String getOmimPhenotypeNote() {
         return "marker/omim-phenotype-note.insert";
     }
+    @RequestMapping("/note/automated-gene-desc")
+    public String getGeneDescription() {
+        return "marker/automated-gene-desc-note.insert";
+    }
 
     @RequestMapping("/note/disease-model")
     public String getDiseaseModelNote() {

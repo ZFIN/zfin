@@ -38,6 +38,7 @@ public interface MarkerRepository {
     SNP getSNPByID(String zdbID);
 
     ConstructCuration getConstructByID(String zdbID);
+    AllianceGeneDesc getGeneDescByMkr(Marker marker);
 
     Marker getMarkerOrReplacedByID(String zdbID);
 

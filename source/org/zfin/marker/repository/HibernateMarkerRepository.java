@@ -99,6 +99,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (ConstructCuration) session.get(ConstructCuration.class, zdbID);
     }
 
+    public AllianceGeneDesc getGeneDescByMkr(Marker marker){
+        Session session = currentSession();
+
+        String hql = "select  agd from AllianceGeneDesc agd " +
+                "      where agd.gene= :geneID " ;
+
+
+        Query query = session.createQuery(hql);
+        query.setString("geneID", marker.getZdbID());
+
+        return (AllianceGeneDesc) query.uniqueResult();
+    }
+
     @Override
     public Marker getMarkerOrReplacedByID(String zdbID) {
         Marker marker = getMarkerByID(zdbID);
