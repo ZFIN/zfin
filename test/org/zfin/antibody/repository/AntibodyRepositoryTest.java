@@ -58,7 +58,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-ATB-080421-2";
 
         Antibody ab = getAntibodyRepository().getAntibodyByID(zdbID);
-        assertTrue(ab == null);
+        assertNull(ab);
     }
 
     /**
@@ -68,13 +68,13 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void getAntibodyWithCC() {
         String abName = "zm-4";
         Antibody ab = getAntibodyRepository().getAntibodyByName(abName);
-        assertTrue(ab != null);
+        assertNotNull(ab);
 
         Set<ExpressionExperiment> labelings = ab.getAntibodyLabelings();
-        assertTrue(labelings != null);
+        assertNotNull(labelings);
 
         Set<MarkerSupplier> antibodyLabSuppliers = ab.getSuppliers();
-        assertTrue(antibodyLabSuppliers != null);
+        assertNotNull(antibodyLabSuppliers);
 
         assertEquals(antibodyLabSuppliers.size(), 1);
 
@@ -83,7 +83,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertEquals("Zebrafish International Resource Center (ZIRC)", lab.getName());
 
         Set<SourceUrl> orgUrls = lab.getOrganizationUrls();
-        assertTrue(orgUrls != null);
+        assertNotNull(orgUrls);
 
         SourceUrl orgUrl = orgUrls.iterator().next();
         assertEquals("order", orgUrl.getBusinessPurpose());
@@ -101,7 +101,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         ab.setAntibodyNameFilterType(FilterType.CONTAINS);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(ab);
-        assertTrue(abs != null);
+        assertNotNull(abs);
     }
 
     /**
@@ -117,7 +117,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         ab.setPaginationBean(new PaginationBean());
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(ab);
-        assertTrue(abs != null);
+        assertNotNull(abs);
     }
 
     /**
@@ -143,7 +143,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 */
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -163,7 +163,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAnatomyEveryTerm(true);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -182,7 +182,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAnatomyEveryTerm(true);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -209,7 +209,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAnatomyEveryTerm(true);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -234,7 +234,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAnatomyEveryTerm(true);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertNotNull(numberOfAb);
@@ -256,7 +256,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAnatomyEveryTerm(true);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
     }
@@ -275,7 +275,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAnatomyEveryTerm(true);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -283,7 +283,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAnatomyTermIDs("ZDB-TERM-091209-16699");
         searchCriteria.setAnatomyTermNames("axon part");
         abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
     }
 
     // Test search by immunogen species only
@@ -297,7 +297,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setImmunogenSpecies(immunogenSpecies);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -315,7 +315,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setHostSpecies(hostSpecies);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -333,7 +333,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setClonalType(type.getValue());
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -351,7 +351,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setZircOnly(zircOnly);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -359,7 +359,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         zircOnly = false;
         searchCriteria.setZircOnly(zircOnly);
         abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -378,18 +378,18 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAntigenNameFilterType(FilterType.CONTAINS);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
         boolean foundGene = false;
         Antibody foundAB = null;
         for (Antibody ab : abs.getPopulatedResults()) {
 
             List<Marker> markers = ab.getAllRelatedMarker();
             for (Marker marker : markers) {
-                if (marker.getAbbreviation().indexOf(antigenName) > -1) {
+                if (marker.getAbbreviation().contains(antigenName)) {
                     foundAB = ab;
                     foundGene = true;
                 }
-                if (marker.getName().indexOf(antigenName) > -1) {
+                if (marker.getName().contains(antigenName)) {
                     foundAB = ab;
                     foundGene = true;
                 }
@@ -397,7 +397,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
                 if (aliases == null)
                     continue;
                 for (MarkerAlias alias : aliases) {
-                    if (alias.getAlias().indexOf(antigenName) > -1) {
+                    if (alias.getAlias().contains(antigenName)) {
                         foundAB = ab;
                         foundGene = true;
                     }
@@ -423,7 +423,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAntigenNameFilterType(FilterType.BEGINS);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
     }
@@ -438,7 +438,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAntigenNameFilterType(FilterType.BEGINS);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
     }
@@ -456,7 +456,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAntibodyNameFilterType(FilterType.CONTAINS);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
         assertTrue(abs.getPopulatedResults().size() > 0);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
@@ -474,7 +474,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAntibodyNameFilterType(FilterType.CONTAINS);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
 
@@ -494,8 +494,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAntigenNameFilterType(FilterType.CONTAINS);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
-        assertEquals(true, abs.getPopulatedResults().size() > 0);
+        assertNotNull(abs);
+        assertTrue(abs.getPopulatedResults().size() > 0);
 
         boolean foundGene = false;
         Antibody foundAB = null;
@@ -541,8 +541,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAssay(assayName);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
-        assertEquals(true, abs.getPopulatedResults().size() > 0);
+        assertNotNull(abs);
+        assertTrue(abs.getPopulatedResults().size() > 0);
     }
 
     // Test search by: host and immunogen species
@@ -558,7 +558,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setImmunogenSpecies(immunogenSpecies);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -583,7 +583,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setAnatomyTermIDs(termID);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -610,7 +610,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setZircOnly(zircOnly);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -618,7 +618,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         searchCriteria.setZircOnly(false);
 
         abs = getAntibodyRepository().getAntibodies(searchCriteria);
-        assertTrue(abs != null);
+        assertNotNull(abs);
 
         numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
@@ -630,7 +630,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     public void getHostSpeciesList() {
 
         List<Species> species = getAntibodyRepository().getHostSpeciesList();
-        assertTrue(species != null);
+        assertNotNull(species);
 
     }
 
@@ -721,7 +721,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 //        String aoID = "ZDB-ANAT-010921-415"; // this is a text-only figure for the anatomy item
 
         // cerebellum
-        String aoID = "ZDB-ANAT-010921-522";
         GenericTerm aoTerm = getOntologyRepository().getTermByName("cerebellum", Ontology.ANATOMY);
 
         PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsWithFigures(antibody, aoTerm);
@@ -737,7 +736,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         Publication pub = pr.getPublication(pubZdbID);
 
         List<Antibody> abs = getAntibodyRepository().getAntibodiesByPublication(pub);
-        assertTrue(abs != null);
+        assertNotNull(abs);
     }
 
     @Test
@@ -746,7 +745,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         Antibody antibody = getAntibodyRepository().getAntibodyByName(abName);
 
         Set<MarkerSupplier> suppliers = antibody.getSuppliers();
-        assertTrue(suppliers != null);
+        assertNotNull(suppliers);
 
     }
 
@@ -759,7 +758,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         List<RecordAttribution> rec = ir.getRecordAttributions(data);
-        assertTrue(rec != null);
+        assertNotNull(rec);
     }
 
     @Test
@@ -769,7 +768,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         Antibody ab = getAntibodyRepository().getAntibodyByName(antibodyName);
 
         Set<AntibodyExternalNote> notes = ab.getExternalNotes();
-        assertTrue(notes != null);
+        assertNotNull(notes);
 
     }
 
@@ -782,8 +781,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
         Organization org = profileRepository.getOrganizationByName(name);
         MarkerSupplier sup = profileRepository.getSpecificSupplier(antibody, org);
-        assertTrue(sup != null);
-        assertTrue(sup.getOrganization() != null);
+        assertNotNull(sup);
+        assertNotNull(sup.getOrganization());
     }
 
     @Test
@@ -797,7 +796,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
                 SourceUrl url = org.getOrganizationOrderURL();
                 String urlString = supplier.getOrderURL();
 
-                assertTrue(org != null);
+                assertNotNull(org);
             }
         }
 
@@ -805,7 +804,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
         Organization org = profileRepository.getOrganizationByName(name);
         MarkerSupplier sup = profileRepository.getSpecificSupplier(antibody, org);
-        assertTrue(sup.getOrganization() != null);
+        assertNotNull(sup.getOrganization());
     }
 
     @Test
@@ -856,7 +855,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getUsedAntibodies() {
         List<Species> all = getAntibodyRepository().getUsedHostSpeciesList();
-        assertTrue(all != null);
+        assertNotNull(all);
     }
 
     @Test
@@ -867,7 +866,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         GenericTerm aoTerm = getOntologyRepository().getTermByName(aoTermName, Ontology.ANATOMY);
 
         PaginationResult<Publication> pubs = getAntibodyRepository().getPublicationsWithFigures(antibody, aoTerm);
-        assertTrue(pubs != null);
+        assertNotNull(pubs);
     }
 
     @Test
@@ -878,7 +877,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         GenericTerm aoTerm = getOntologyRepository().getTermByName(aoTermName, Ontology.ANATOMY);
 
         List<Figure> figures = getAntibodyRepository().getFiguresPerAoTerm(antibody, aoTerm);
-        assertTrue(figures != null);
+        assertNotNull(figures);
     }
 
     @Test
@@ -921,7 +920,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         // real name is Ab-F59
         String antibodyName = "AB-F59";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
-        assertTrue(antibody != null);
+        assertNotNull(antibody);
     }
 
     @Test
@@ -935,12 +934,12 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         pagination.setMaxDisplayRecords(5);
         // without substructures
         PaginationResult<AntibodyStatistics> result = AnatomyService.getAntibodyStatistics(term, pagination, false);
-        assertTrue(result != null);
+        assertNotNull(result);
         assertTrue(result.getTotalCount() > 0);
         assertTrue(result.getPopulatedResults().size() > 1);
         // including substructures
         result = AnatomyService.getAntibodyStatistics(term, pagination, true);
-        assertTrue(result != null);
+        assertNotNull(result);
         assertTrue(result.getTotalCount() > 0);
 
     }
@@ -955,7 +954,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         // real name is Ab-Eng
         String antibodyName = "Ab1-eng";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
-        assertTrue(antibody != null);
+        assertNotNull(antibody);
 
         List<Figure> figures = getAntibodyRepository().getFiguresForAntibodyWithTermsAtStage(antibody, term, null, null, null, false);
         assertNotNull(figures);
