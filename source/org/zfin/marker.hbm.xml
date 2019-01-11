@@ -200,6 +200,7 @@
             <one-to-many class="org.zfin.marker.OrthologyNote"/>
         </set>
 
+
         <joined-subclass name="org.zfin.antibody.Antibody" table="antibody">
             <key column="atb_zdb_id"/>
 
@@ -419,6 +420,24 @@
             <column name="mrkr_name"/>
         </property>
     </class>
+
+
+    <class name="org.zfin.marker.AllianceGeneDesc" table="gene_description">
+        <id name="id">
+            <column name="gd_pk_id"/>
+        </id>
+        <property name="gene" column="gd_gene_zdb_id"  not-null="true"/>
+        <property name="gdFuncDesc" column="gd_go_function_description"/>
+        <property name="gdProcDesc" column="gd_go_process_description" />
+        <property name="gdGoCompDesc" column="gd_go_component_description"/>
+        <property name="gdDoDesc" column="gd_do_description" />
+        <property name="gdDoExpDesc" column="gd_do_experimental_description" />
+        <property name="gdDoBioMkrDesc" column="gd_do_biomarker_description" />
+        <property name="gdDoOrthoDesc" column="gd_do_orthology_description" />
+        <property name="gdOrthoDesc" column="gd_orthology_description" />
+        <property name="gdDesc" column="gd_description" />
+    </class>
+
 
     <class name="ZfinSoTerm" table="so_zfin_mapping">
         <id name="ID">
