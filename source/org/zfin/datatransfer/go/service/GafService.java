@@ -638,7 +638,6 @@ public class GafService {
         try {
             markerGoTermEvidenceToRemove = markerGoTermEvidenceRepository.getNdExistsForGoGeneEvidenceCode(markerGoTermEvidenceToAdd);
             if (markerGoTermEvidenceToRemove != null) {
-                System.out.println(markerGoTermEvidenceToRemove.getZdbID());
                 logger.debug("removing existing with Nd evidence: " + markerGoTermEvidenceToRemove);
                 markerGoTermEvidenceRepository.removeEvidence(markerGoTermEvidenceToRemove);
                 gafJobData.addRemoved(markerGoTermEvidenceToRemove);
