@@ -1,6 +1,5 @@
 package org.zfin.zebrashare.presentation;
 
-import cern.jet.math.Mult;
 import org.apache.log4j.Logger;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
