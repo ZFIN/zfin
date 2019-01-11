@@ -48,6 +48,16 @@
     <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"
                     soTerm="${formBean.zfinSoTerm}" userID="${formBean.user.zdbID}"/>
 
+<zfin2:subsection title="AUTOMATED DESCRIPTION <a class='popup-link info-popup-link' href='/action/marker/note/automated-gene-desc'></a>">
+    <table>
+                   <tr>
+
+        <td>
+            <zfin2:toggleTextLength text="${formBean.allianceGeneDesc.gdDesc}" idName="${zfn:generateRandomDomID()}" shortLength="200"/>
+        </td>
+    </tr>
+    </table>
+</zfin2:subsection>
 
     <zfin2:uninformativeGeneName name="${formBean.marker.abbreviation}"
                                  fromChimericClone="${formBean.hasChimericClone}"/>
