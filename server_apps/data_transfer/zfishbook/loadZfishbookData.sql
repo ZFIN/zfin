@@ -29,7 +29,6 @@ create temp table ekkerLabData (
 \copy (select * from ekkerLabData) to 'ekkerLabData.unl' delimiter '|';
 
 
-
 create table pre_feature (
         preftr_indx int not null,
         preftr_feature_name varchar(255),
@@ -76,8 +75,8 @@ insert into pre_feature (
     from ekkerLabData, marker, feature_prefix
    where ekker_constructId = mrkr_zdb_id
      and fp_prefix = ekker_prefix
-     and ekker_featureId is null
-     and ekker_geneId is null;
+     and ekker_featureId = ''
+     and ekker_geneId = '';
 
 
 -- if the feature is not in ZFIN and there is affected gene
@@ -108,9 +107,11 @@ insert into pre_feature (
     from ekkerLabData, marker, feature_prefix
    where ekker_constructId = mrkr_zdb_id
      and fp_prefix = ekker_prefix
-     and ekker_featureId is null
-     and ekker_geneId is not null;
+     and ekker_featureId = ''
+     and ekker_geneId = '';
 
+
+delete from pre_feature where preftr_tg_suffix is null;
 
 alter table pre_feature add preftr_feature_zdb_id varchar(50);
 
@@ -142,6 +143,7 @@ select  preftr_feature_zdb_id,
         preftr_tg_suffix,
         preftr_known_insertion_site
  from pre_feature;
+
 
 -- load record_attribution table
 insert into record_attribution (
@@ -193,9 +195,12 @@ insert into pre_feature_marker_relationship (prefmrel_feature_zdb_id,prefmrel_ma
   select preftr_feature_zdb_id, ekker_geneId, 'is allele of'
     from pre_feature, ekkerLabData
    where preftr_indx = ekker_indx
-     and ekker_geneId is not null
-     and ekker_featureId is null;
+     and ekker_geneId = ''
+     and ekker_featureId = '';
 
+delete from pre_feature_marker_relationship where prefmrel_marker_zdb_id is null;
+
+delete from pre_feature_marker_relationship where prefmrel_marker_zdb_id = '';
 
 alter table pre_feature_marker_relationship add prefmrel_zdb_id text;
 
@@ -203,7 +208,6 @@ update pre_feature_marker_relationship set prefmrel_zdb_id = get_id('FMREL');
 
 
 insert into zdb_active_data select prefmrel_zdb_id from pre_feature_marker_relationship;
-
 
 -- load feature_marker_relationship table
 insert into feature_marker_relationship (
@@ -218,8 +222,6 @@ select  prefmrel_zdb_id,
         prefmrel_marker_zdb_id
  from pre_feature_marker_relationship;
 
-
-
 -- load record_attribution table
 insert into record_attribution (
     recattrib_data_zdb_id,
@@ -228,7 +230,6 @@ insert into record_attribution (
 select  prefmrel_zdb_id,
         'ZDB-PUB-120111-1'
  from pre_feature_marker_relationship;
-
 
 
 create table pre_data_alias (
@@ -247,10 +248,9 @@ insert into pre_data_alias (
                   preftr_alias,
                   aliasgrp_significance
     from pre_feature, alias_group
-   where preftr_alias is not null
+   where (preftr_alias is not null or preftr_alias != '')
      and aliasgrp_name = 'alias';
-
-
+     
 
 -- if the feature is already in ZFIN before the loading
 insert into pre_data_alias (
@@ -262,13 +262,14 @@ insert into pre_data_alias (
                   ekker_alias,
                   aliasgrp_significance
     from ekkerLabData, alias_group
-   where ekker_alias is not null
-     and ekker_featureId is not null
+   where (ekker_alias is not null or ekker_alias != '')
+     and (ekker_featureId is not null or ekker_featureId != '')
      and aliasgrp_name = 'alias'
      and not exists (select 'x' from data_alias
                                where dalias_data_zdb_id = ekker_featureId
                                  and dalias_alias = ekker_alias);
 
+delete from pre_data_alias where predalias_data_zdb_id is null or predalias_data_zdb_id = '';
 
 alter table pre_data_alias add predalias_dalias_zdb_id text;
 
@@ -299,6 +300,7 @@ insert into record_attribution (
 select  predalias_dalias_zdb_id,
         'ZDB-PUB-120111-1'
  from pre_data_alias;
+     
 
 create table pre_geno (
         pregeno_feature_id text not null,
@@ -320,9 +322,8 @@ select preftr_feature_zdb_id,
        preftr_feature_abbrev || '[1,U,U]' || 'AB'
   from pre_feature, ekkerLabData
  where preftr_indx = ekker_indx
-   and ekker_geneId is null;
-
-
+   and (ekker_geneId is null or ekker_geneId = '');
+   
 -- load pre_geno table for those features newly added by this script and having affected gene
 insert into pre_geno (
         pregeno_feature_id,
@@ -367,10 +368,9 @@ select ekker_featureId,
        feature_abbrev || '[1,U,U]' || 'AB',
        feature_abbrev || '[1,U,U]' || 'AB'
   from ekkerLabData, feature
- where ekker_geneId is null
+ where (ekker_geneId is null or ekker_geneId = '')
    and ekker_featureId = feature_zdb_id;
-
-
+   
 delete from pre_geno
  where exists (select 'x' from genotype
                          where geno_handle = pregeno_handle);
@@ -408,7 +408,6 @@ insert into record_attribution (
 select  pregeno_geno_id,
         'ZDB-PUB-120111-1'
  from pre_geno;
-
 
 insert into zdb_active_data select pregeno_fish_id from pre_geno;
 
@@ -537,6 +536,9 @@ insert into pre_db_link (
      and not exists (select * from db_link
                              where dblink_acc_num = ekker_alias
                                and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-120213-1');
+                               
+                               
+delete from pre_db_link where predblink_data_zdb_id is null or predblink_data_zdb_id = '';                            
 
 alter table pre_db_link add predblink_dblink_zdb_id text;
 
@@ -566,8 +568,6 @@ drop table pre_db_link;
 -- execute the geno_complexity_trigger
 update genotype set geno_handle = geno_handle;
 
---rollback work;
+rollback work;
 
-commit work;
-
-
+--commit work;

@@ -15,7 +15,7 @@ use MIME::Lite;
 sub sendLoadOutput($) {
 
   my $SUBJECT="Auto from ".$_[0]." : zfishbook data - new genotypes";
-  my $MAILTO="xshao\@zfin.org,yvonne\@uoneuro.uoregon.edu";
+  my $MAILTO="xshao\@zfin.org";
   #my $TXTFILE="./pre_geno.unl";
  
   # Create a new multipart message:
@@ -35,7 +35,7 @@ sub sendLoadOutput($) {
   $msg3->print(\*SENDMAIL);
 
   my $SUBJECT="Auto from ".$_[0]." : zfishbook data - new features";
-  my $MAILTO="xshao\@zfin.org,yvonne\@uoneuro.uoregon.edu";
+  my $MAILTO="xshao\@zfin.org";
   my $TXTFILE="./pre_feature.unl";
  
   # Create a new multipart message:
@@ -120,7 +120,7 @@ system("rm -f *.unl");
 system("rm -f *.dat");
 system("rm -f report");
 system("rm -f log1");
-system("rm -f log2");
+##system("rm -f log2");
 
 $dbname = "<!--|DB_NAME|-->";
 
@@ -152,7 +152,7 @@ print "\nPre-processing done. doTheLoad =  $doTheLoad   \n\n";
 
 print "\n\nStarting to load ...\n\n\n" if $doTheLoad > 0;
 
-system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> log2") if $doTheLoad > 0;
+system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < loadZfishbookData.sql >log1") if $doTheLoad > 0;
 
 #sendLoadLogs("$dbname") if $doTheLoad > 0;
 

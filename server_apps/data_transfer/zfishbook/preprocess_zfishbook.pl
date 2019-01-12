@@ -87,9 +87,10 @@ $gtCnstructIds{"RP15"} = "ZDB-GTCONSTRCT-100121-2";
 $gtCnstructIds{"RP1"} = "ZDB-GTCONSTRCT-130315-3";
 $gtCnstructIds{"RP4"} = "ZDB-GTCONSTRCT-130315-2";
 $gtCnstructIds{"RP7"} = "ZDB-GTCONSTRCT-130315-1";
+$gtCnstructIds{"RP2.3"} = "ZDB-GTCONSTRCT-190109-1";
 
 
-open (ZFISHBOOKDATA, "/research/zarchive/load_files/Zfishbook/Nov_2016/zfishbookData.txt") || die "Cannot open zfishbookData.txt : $!\n";
+open (ZFISHBOOKDATA, "/research/zarchive/load_files/Zfishbook/Nov_2018/zfishbookData.txt") || die "Cannot open zfishbookData.txt : $!\n";
 @lines=<ZFISHBOOKDATA>;
 close(ZFISHBOOKDATA);
 %prviousNames = ();
@@ -251,7 +252,7 @@ foreach $line (@lines) {
       
       ### look up data_alias table
       if ($featureId eq "") {
-        $cur = $dbh->prepare('select dalias_data_zdb_id from data_alias where dalias_data_zdb_id like "ZDB-ALT-%" and dalias_alias = ?;');
+        $cur = $dbh->prepare("select dalias_data_zdb_id from data_alias where dalias_data_zdb_id like 'ZDB-ALT-%' and dalias_alias = ?;");
         $cur->execute($allele);
         my ($ZFINfeatureIdFromAlias);
         $cur->bind_columns(\$ZFINfeatureIdFromAlias);
@@ -291,7 +292,7 @@ foreach $line (@lines) {
 
       ### look up data_alias table with mnXXXX without trailing 'Gt'
       if ($featureId eq "") {
-        $cur = $dbh->prepare('select dalias_data_zdb_id from data_alias where dalias_data_zdb_id like "ZDB-ALT-%" and dalias_alias = ?;');
+        $cur = $dbh->prepare("select dalias_data_zdb_id from data_alias where dalias_data_zdb_id like 'ZDB-ALT-%' and dalias_alias = ?;");
         $cur->execute($alleleWithoutGt);
         my ($ZFINfeatureIdFromAliasWithoutGt);
         $cur->bind_columns(\$ZFINfeatureIdFromAliasWithoutGt);
@@ -330,7 +331,7 @@ foreach $line (@lines) {
 
       ### look up data_alias table with with GBTXXX
       if ($featureId eq "") {
-        $cur = $dbh->prepare('select dalias_data_zdb_id from data_alias where dalias_data_zdb_id like "ZDB-ALT-%" and dalias_alias = ?;');
+        $cur = $dbh->prepare("select dalias_data_zdb_id from data_alias where dalias_data_zdb_id like 'ZDB-ALT-%' and dalias_alias = ?;");
         $cur->execute($prev);
         my ($ZFINfeatureIdFromAliasGBT);
         $cur->bind_columns(\$ZFINfeatureIdFromAliasGBT);
@@ -372,5 +373,6 @@ close (REPORT);
 sendReport("$dbname");
 
 exit;
+
 
 
