@@ -568,6 +568,6 @@ drop table pre_db_link;
 -- execute the geno_complexity_trigger
 update genotype set geno_handle = geno_handle;
 
-rollback work;
+--rollback work;
 
---commit work;
+commit work;
