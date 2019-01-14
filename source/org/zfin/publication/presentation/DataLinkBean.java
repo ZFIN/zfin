@@ -40,4 +40,13 @@ public class DataLinkBean {
     public void setCount(Long count) {
         this.count = count;
     }
+
+    @Override
+    public String toString() {
+        return "DataLinkBean{" +
+                "path='" + path + '\'' +
+                ", label='" + label + '\'' +
+                ", count=" + count +
+                '}';
+    }
 }

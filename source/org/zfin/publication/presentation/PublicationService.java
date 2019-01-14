@@ -85,7 +85,7 @@ public class PublicationService {
         if (publication == null) {
             return false;
         }
-        if (publication.isUnpublished()) {
+        if (publication.isUnpublished() && CollectionUtils.size(publication.getFigures()) > 100) {
             return false;
         }
 
@@ -398,7 +398,7 @@ public class PublicationService {
 
         long expressionCount = publicationRepository.getExpressionCount(publication);
         long phenotypeCount = publicationRepository.getPhenotypeCount(publication);
-        if (expressionCount > 0 || phenotypeCount > 0) {
+        if (showFiguresLink(publication) && (expressionCount > 0 || phenotypeCount > 0)) {
             String label = getExpressionAndPhenotypeLabel(expressionCount, phenotypeCount);
             links.add(new DataLinkBean(
                     "/action/figure/all-figure-view/" + publication.getZdbID(),

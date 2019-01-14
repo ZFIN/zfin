@@ -194,7 +194,7 @@
     ${abstractText}
 </zfin2:subsection>
 
-<zfin2:subsection title="ADDITIONAL INFORMATION" showNoData="true" test="${allowCuration && !empty dataLinks}">
+<zfin2:subsection title="ADDITIONAL INFORMATION" showNoData="true">
     <ul>
         <c:forEach items="${dataLinks}" var="link">
             <li>
