@@ -70,9 +70,6 @@
         <fileset dir="${jwebunit.lib}">
             <include name="*.jar"/>
         </fileset>
-        <!--<fileset dir="${CATALINA_HOME}/common/lib">-->
-            <!--<include name="ifxjdbc.jar"/>-->
-        <!--</fileset>-->
     </path>
 
     <path id="log4j">
