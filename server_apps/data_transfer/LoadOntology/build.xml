@@ -29,7 +29,7 @@
     <property name="goQualifierOboURL" value="go-qualifier.obo"/>
     <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
     <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
-    <property name="mmoURL" value="http://ontologies.berkeleybop.org/mmo.obo"/>
+    <property name="mmoURL" value="file:///home/informix/Curation/mmo.obo"/>
 
     <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
