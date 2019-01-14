@@ -31,5 +31,9 @@ update construct set construct_name='Tg(ELTC:EGFP)' where construct_zdb_id='ZDB-
 update marker set mrkr_name='Tg(ELTC:EGFP)' where mrkr_zdb_id='ZDB-TGCONSTRCT-101103-3';
 update marker set mrkr_abbrev='Tg(ELTC:EGFP)' where mrkr_zdb_id='ZDB-TGCONSTRCT-101103-3';
 
+update construct set construct_name='Tg(4xUAS:EGFP-FYVE)' where construct_zdb_id='ZDB-TGCONSTRCT-150424-4';
+update marker set mrkr_name='Tg(4xUAS:EGFP-FYVE)' where mrkr_zdb_id='ZDB-TGCONSTRCT-150424-4';
+update marker set mrkr_abbrev='Tg(4xUAS:EGFP-FYVE)' where mrkr_zdb_id='ZDB-TGCONSTRCT-150424-4';
+
 
 
