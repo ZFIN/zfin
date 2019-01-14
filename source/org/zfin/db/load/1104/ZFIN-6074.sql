@@ -19,7 +19,7 @@ alter table feature_community_contribution
  foreign key (fcc_feature_zdb_id)
  references feature on delete cascade; 
 
-CREATE TABLE post_AUD
+CREATE TABLE post_aud
 (
     id      BIGINT NOT NULL,
     REV     INTEGER NOT NULL,

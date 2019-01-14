@@ -8,7 +8,6 @@
         <!--    it could be that since jndi was used anyway, that this was ignored -->
         <!--        <property name="connection.isolation">1</property>-->
 
-
         <property name="hibernate.query.substitutions">true 't', false 'f'</property>
         <property name="dialect">@DIALECT@</property>
         <property name="connection.datasource">java:comp/env/jdbc/zfin</property>
@@ -18,7 +17,8 @@
         <property name="hibernate.cache.use_query_cache">false</property>
         <property name="hibernate.jdbc.batch_size">20</property>
         <property name="cache.provider_configuration_file_resource_path">ehcache.xml</property>
-
+        <property name="org.hibernate.envers.audit_table_suffix">_audit</property>
+        <property name="org.hibernate.envers.do_not_audit_optimistic_locking_field">true</property>
 
         <!-- Connection Pooling parameters -->
         <!--
@@ -158,6 +158,16 @@
         <mapping class="org.zfin.Species"/>
         <mapping class="org.zfin.zebrashare.ZebrashareEditor"/>
         <mapping class="org.zfin.zebrashare.ZebrashareSubmissionMetadata"/>
-          
+ <!--<listener class="org.hibernate.envers.event.AuditEventListener" type="post-insert"/>
+
+<listener class="org.hibernate.envers.event.AuditEventListener" type="post-update"/>
+
+<listener class="org.hibernate.envers.event.AuditEventListener" type="post-delete"/>
+
+<listener class="org.hibernate.envers.event.AuditEventListener" type="pre-collection-update"/>
+
+<listener class="org.hibernate.envers.event.AuditEventListener" type="pre-collection-remove"/>
+
+<listener class="org.hibernate.envers.event.AuditEventListener" type="post-collection-recreate"/>-->
     </session-factory>
 </hibernate-configuration>
