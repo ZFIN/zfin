@@ -9,6 +9,12 @@ insert into ftCq
         from ftrconsequence,feature
 	where cons is not null
 	 and ftr =feature_abbrev and feature_zdb_id like 'ZDB-ALT-1812%' and feature_abbrev like 'sa%';
+	 insert into ftCq
+       select distinct ftr,ftr,ftr,cons,cons
+        from ftrconsequence,feature
+	where cons is not null
+	 and ftr =feature_abbrev and feature_zdb_id like 'ZDB-ALT-19%' and feature_abbrev like 'sa%';
+
 
 update ftCq set ftmd =  get_id('FTMD');
 
