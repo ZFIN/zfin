@@ -773,7 +773,7 @@ public class DTOConversionService {
                 }
             }
             logger.debug(feature.getAbbreviation());
-            FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getLocationByFeature(feature);
+            FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getFeatureLocation(feature);
             if (ftrLocation != null) {
                 featureDTO.setFeatureChromosome(ftrLocation.getSfclChromosome());
                 featureDTO.setFeatureAssembly(ftrLocation.getSfclAssembly());
