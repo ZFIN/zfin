@@ -35,5 +35,10 @@ update construct set construct_name='Tg(4xUAS:EGFP-FYVE)' where construct_zdb_id
 update marker set mrkr_name='Tg(4xUAS:EGFP-FYVE)' where mrkr_zdb_id='ZDB-TGCONSTRCT-150424-4';
 update marker set mrkr_abbrev='Tg(4xUAS:EGFP-FYVE)' where mrkr_zdb_id='ZDB-TGCONSTRCT-150424-4';
 
+update construct set construct_name='Tg(elavl3-UBCI:Cerulean)' where construct_zdb_id='ZDB-TGCONSTRCT-160824-4';
+update marker set mrkr_name='Tg(elavl3-UBCI:Cerulean)' where mrkr_zdb_id='ZDB-TGCONSTRCT-160824-4';
+update marker set mrkr_abbrev='Tg(elavl3-UBCI:Cerulean)' where mrkr_zdb_id='ZDB-TGCONSTRCT-160824-4';
+
+
 
 
