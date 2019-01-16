@@ -41,6 +41,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static org.zfin.repository.RepositoryFactory.getMarkerGoTermEvidenceRepository;
+
 /**
  * Gene Association File Service
  */
@@ -52,7 +54,7 @@ public class GafService {
 
     protected SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
     protected PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-    protected MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository = RepositoryFactory.getMarkerGoTermEvidenceRepository();
+    protected MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository = getMarkerGoTermEvidenceRepository();
     protected OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     protected MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     protected ReferenceDatabase uniprot;
@@ -138,6 +140,13 @@ public class GafService {
                         throw new GafValidationError("A duplicate entry is being added:" +
                                 FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
                                 FileUtil.LINE_SEPARATOR + gafEntry);
+                    }
+                    String errorMessage = getMarkerGoTermEvidenceRepository().isValidMarkerGoTerm(annotationToAdd);
+                    if (errorMessage != null) {
+                        throw new GafValidationError(errorMessage +
+                                FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
+                                FileUtil.LINE_SEPARATOR + gafEntry);
+
                     }
                     gafJobData.addNewEntry(annotationToAdd);
 
