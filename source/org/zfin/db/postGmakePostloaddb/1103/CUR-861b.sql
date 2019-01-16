@@ -45,6 +45,6 @@ delete from construct_component where cc_component='.' and cc_construct_Zdb_id i
 
 
 
-7
+
 
 
