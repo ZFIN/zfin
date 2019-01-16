@@ -39,6 +39,8 @@ public interface MarkerGoTermEvidenceRepository {
      */
     void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
 
+    String isValidMarkerGoTerm(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
+
     void removeEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
 
     void updateEvidence(MarkerGoTermEvidence markerGoTermEvidence);

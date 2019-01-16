@@ -1,9 +1,11 @@
 package org.zfin.ontology.repository;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.zfin.datatransfer.go.FpInferenceGafParser;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
@@ -20,6 +22,7 @@ import java.util.TreeSet;
  */
 public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvidenceRepository {
 
+    protected Logger logger = Logger.getLogger(HibernateMarkerGoTermEvidenceRepository.class);
 
     @Override
     @SuppressWarnings("unchecked")
@@ -100,21 +103,40 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     }
 
     @Override
-    public void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
-
-        // has this marker already a non-root term annotation?
+    public String isValidMarkerGoTerm(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
         if (markerGoTermEvidenceToAdd.getGoTerm().isRoot()) {
             String hql = "select count(*) from MarkerGoTermEvidence where " +
-                    "marker = :marker AND goTerm != :goTerm AND goTerm.ontology = :ontology" ;
+                    "marker = :marker AND goTerm != :goTerm AND goTerm.ontology = :ontology";
             Query query = HibernateUtil.currentSession().createQuery(hql);
             query.setParameter("marker", markerGoTermEvidenceToAdd.getMarker());
             query.setParameter("goTerm", markerGoTermEvidenceToAdd.getGoTerm());
             query.setParameter("ontology", markerGoTermEvidenceToAdd.getGoTerm().getOntology());
             Long count = (Long) query.uniqueResult();
             if (count > 0)
-                throw  new RuntimeException("Cannot add root-term annotation "+markerGoTermEvidenceToAdd.getGoTerm().getOboID() +
-                        " for marker '"+markerGoTermEvidenceToAdd.getMarker().getAbbreviation()+
+                return "Cannot add root-term annotation " + markerGoTermEvidenceToAdd.getGoTerm().getOboID() +
+                        " for marker '" + markerGoTermEvidenceToAdd.getMarker().getAbbreviation() +
+                        "' as there are already non-root term annotations existent.";
+        }
+        return null;
+    }
+
+    @Override
+    public void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
+
+        // has this marker already a non-root term annotation?
+        if (markerGoTermEvidenceToAdd.getGoTerm().isRoot()) {
+            String hql = "select count(*) from MarkerGoTermEvidence where " +
+                    "marker = :marker AND goTerm != :goTerm AND goTerm.ontology = :ontology";
+            Query query = HibernateUtil.currentSession().createQuery(hql);
+            query.setParameter("marker", markerGoTermEvidenceToAdd.getMarker());
+            query.setParameter("goTerm", markerGoTermEvidenceToAdd.getGoTerm());
+            query.setParameter("ontology", markerGoTermEvidenceToAdd.getGoTerm().getOntology());
+            Long count = (Long) query.uniqueResult();
+            if (count > 0)
+                logger.info("Cannot add root-term annotation " + markerGoTermEvidenceToAdd.getGoTerm().getOboID() +
+                        " for marker '" + markerGoTermEvidenceToAdd.getMarker().getAbbreviation() +
                         "' as there are already non-root term annotations existent.");
+            return;
         }
 
         HibernateUtil.currentSession().save(markerGoTermEvidenceToAdd);
