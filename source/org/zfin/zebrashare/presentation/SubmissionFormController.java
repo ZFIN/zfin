@@ -102,7 +102,10 @@ public class SubmissionFormController {
         publication.setType(Publication.Type.JOURNAL);
         publication.setEntryDate(new GregorianCalendar());
         publication.setPublicationDate(new GregorianCalendar());
-        publicationRepository.addPublication(publication, PublicationTrackingStatus.Name.READY_FOR_CURATION, PublicationTrackingLocation.Name.ZEBRASHARE);
+        publicationRepository.addPublication(publication,
+                PublicationTrackingStatus.Name.WAITING_FOR_NOMENCLATURE,
+                null,
+                profileRepository.getPerson("ZDB-PERS-981201-7")); // Amy Singer
         try {
             publicationRepository.addPublicationFile(
                     publication,

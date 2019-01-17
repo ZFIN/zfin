@@ -23,6 +23,7 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
+import org.zfin.profile.Person;
 import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.PaginationParameter;
@@ -510,7 +511,10 @@ public interface PublicationRepository extends PaginationParameter {
 
     void addPublication(Publication publication);
 
-    void addPublication(Publication publication, PublicationTrackingStatus.Name status, PublicationTrackingLocation.Name location);
+    void addPublication(Publication publication,
+                        PublicationTrackingStatus.Name status,
+                        PublicationTrackingLocation.Name location,
+                        Person owner);
 
     List<String> getFeatureNamesWithNoGenotypesForPub(String pubZdbID);
 

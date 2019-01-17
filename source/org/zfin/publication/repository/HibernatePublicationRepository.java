@@ -42,6 +42,7 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
+import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.*;
@@ -1907,10 +1908,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public void addPublication(Publication publication) {
-        addPublication(publication, PublicationTrackingStatus.Name.NEW, null);
+        addPublication(publication, PublicationTrackingStatus.Name.NEW, null, null);
     }
 
-    public void addPublication(Publication publication, PublicationTrackingStatus.Name status, PublicationTrackingLocation.Name location) {
+    public void addPublication(Publication publication,
+                               PublicationTrackingStatus.Name status,
+                               PublicationTrackingLocation.Name location,
+                               Person owner) {
         Session session = HibernateUtil.currentSession();
         HibernateUtil.createTransaction();
         session.save(publication);
@@ -1919,6 +1923,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         if (location != null) {
             PublicationTrackingLocation newLocation = getPublicationTrackingLocationByName(location);
             trackingEntry.setLocation(newLocation);
+        }
+        if (owner != null) {
+            trackingEntry.setOwner(owner);
         }
         trackingEntry.setPublication(publication);
         trackingEntry.setStatus(newStatus);
