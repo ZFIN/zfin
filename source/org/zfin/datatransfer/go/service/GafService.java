@@ -474,7 +474,7 @@ public class GafService {
             int colonIndex = identifierText.indexOf(":");
             mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex + 1, identifierText.length()));
         }
-        if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")))) {
+        if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")|| (identifierText.startsWith("ZFA"))))) {
             int colonIndex = identifierText.indexOf(":");
             String annotExtnPrefix = identifierText.substring(0, colonIndex);
             GenericTerm annotExtnTerm = ontologyRepository.getTermByOboID(identifierText);
