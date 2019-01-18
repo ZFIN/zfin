@@ -53,8 +53,6 @@
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6089_load.xml" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6089.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-5795.sql" />
-
-   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6093.sql" />
    <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6121.sql" />
 
 </databaseChangeLog>
