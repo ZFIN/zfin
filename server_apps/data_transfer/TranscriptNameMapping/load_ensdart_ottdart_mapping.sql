@@ -16,7 +16,6 @@ create temp table tmp_ensdart_map (ensdarg_gene_stable_id text,
 
 \copy tmp_ensdart_map from mart_export.txt with  DELIMITER ',';
 
-
 create temp table tmp_counter (counter int, transcript_name text);
 
 insert into tmp_counter
@@ -70,5 +69,5 @@ where mrkr_zdb_id in (Select zfin_gene_zdb_id from ensdart_name_mapping, marker 
 
 \copy (select ensdart_stable_id, ensdart_versioned_id, ensdarg_id, zfin_gene_zdb_id, ensembl_tscript_name, mrkr_name, ottdart_id from ensdart_name_mapping, marker where zfin_gene_zdb_id = mrkr_zdb_id) to name_updates.txt with delimiter ' ';
                   
---commit work;
-rollback work;
+commit work;
+--rollback work;

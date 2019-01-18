@@ -1,6 +1,5 @@
 begin work;
 
-
 create temp table ens_zdb( ez_zdb text, ez_ens varchar(20)) ;
 
 --! echo "ensdarG.unl -> load_ensdarG.sql"
@@ -20,7 +19,6 @@ delete from ens_zdb;
 insert into ens_zdb (ez_zdb, ez_ens) select ez_zdb, ez_ens from tmp_ens_zdb;
 drop table tmp_ens_zdb;
 
-
 --! echo "if a gene has been merged, fix its zdbid"
 update ens_zdb set ez_zdb = (
 	select zrepld_new_zdb_id
@@ -33,7 +31,6 @@ update ens_zdb set ez_zdb = (
 --! echo "unload rows to confirm all zdbids still exists:  >0 is bad."
 \copy (select * from ens_zdb where not exists (select 'x' from zdb_active_data where zactvd_zdb_id = ez_zdb)) to 'zdb_ids_not_in_zdb_active_data.txt';
 
-
 delete from ens_zdb where not exists (select 'x' from zdb_active_data where zactvd_zdb_id = ez_zdb);
 
 create temp table tmp_ens_zdbDups (ez_zdb text, ez_ens varchar(20));
@@ -45,7 +42,6 @@ union
 select dblink_linked_recid as ez_zdb, dblink_acc_num as ez_ens
   from db_link
  where dblink_Acc_num like 'ENSDARG%';
-
 
 --! echo "unload rows to confirm zdb-ens pairs are unique within and between ENSDARG data sources."
 
