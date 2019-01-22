@@ -1,20 +1,33 @@
 package org.zfin.zebrashare.presentation;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.web.multipart.MultipartFile;
-import org.zfin.profile.Lab;
+
+import javax.validation.constraints.NotNull;
 
 public class SubmissionFormBean {
 
+    @NotBlank(message = "At least one author is required")
     private String authors;
+
+    @NotBlank(message = "A title is required")
     private String title;
+
+    @NotBlank(message = "An abstract is required")
     private String abstractText;
 
+    @NotBlank(message = "Submitter name is required")
     private String submitterName;
+
+    @NotBlank(message = "Submitter email is required")
     private String submitterEmail;
+
     private String labZdbId;
     private String[] editors;
 
+    @NotNull(message = "Submission workbook must be provided")
     private MultipartFile dataFile;
+
     private MultipartFile[] imageFiles;
     private String[] captions;
 

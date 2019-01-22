@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
 import org.zfin.figure.service.ImageService;
@@ -49,11 +50,6 @@ public class SubmissionFormController {
 
     private static final Logger LOG = Logger.getLogger(SubmissionFormController.class);
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.addValidators(new SubmissionFormValidator());
-    }
-
     @ModelAttribute("labOptions")
     private Collection<Lab> getLabOptions() {
         Person user = ProfileService.getCurrentSecurityUser();
@@ -62,6 +58,11 @@ public class SubmissionFormController {
         }
         HibernateUtil.currentSession().refresh(user);
         return user.getLabs();
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String home(@ModelAttribute("formBean") SubmissionFormBean formBean) {
+        return "zebrashare/home.page";
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -78,14 +79,10 @@ public class SubmissionFormController {
         return "zebrashare/new-submission.page";
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public String home(@ModelAttribute("formBean") SubmissionFormBean formBean) {
-        return "zebrashare/home.page";
-    }
-
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String processSubmissionForm(@Valid @ModelAttribute("formBean") SubmissionFormBean formBean,
-                                        BindingResult result) {
+                                        BindingResult result,
+                                        RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             for (ObjectError error : result.getAllErrors()) {
                 LOG.error(error.toString());
@@ -176,9 +173,17 @@ public class SubmissionFormController {
 
         tx.commit();
 
-        LOG.info(publication.getZdbID());
+        redirectAttributes.addFlashAttribute("publication", publication);
 
-        return "redirect:/";
+        return "redirect:success";
+    }
+
+    @RequestMapping(value = "/success", method = RequestMethod.GET)
+    public String showSuccessMessage(@ModelAttribute Publication publication) {
+        if (publication.getZdbID() == null) {
+            return "redirect:new";
+        }
+        return "zebrashare/success.page";
     }
 
 }
