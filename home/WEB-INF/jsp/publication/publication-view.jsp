@@ -181,6 +181,51 @@
     </div>
 </div>
 
+<c:if test="${!empty zebraShareMetadata}">
+    <zfin2:subsection title="ZEBRASHARE SUBMISSION DETAILS">
+        <table class="primary-entity-attributes">
+            <tr>
+                <th>Submitter:</th>
+                <td>${zebraShareMetadata.submitterName} (${zebraShareMetadata.submitterEmail})</td>
+            </tr>
+            <tr>
+                <th>Editors:</th>
+                <td>
+                    <c:choose>
+                        <c:when test="${!empty zebraShareEditors}">
+                            <c:forEach items="${zebraShareEditors}" var="editor">
+                                <div><zfin:link entity="${editor.person}"/></div>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="no-data-tag"><i>None</i></span>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+            </tr>
+            <tr>
+                <th>Lab of Origin:</th>
+                <td><zfin:link entity="${zebraShareMetadata.labOfOrigin}"/></td>
+            </tr>
+            <tr>
+                <th>Figure Filenames:</th>
+                <td>
+                    <c:choose>
+                        <c:when test="${!empty zebraShareFigures}">
+                            <c:forEach items="${zebraShareFigures}" var="figure">
+                                <div>${figure.img.externalName} &rarr; ${figure.label}</div>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="no-data-tag"><i>None</i></span>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+            </tr>
+        </table>
+    </zfin2:subsection>
+</c:if>
+
 <%--todo: this should probably change both visually and in the code, doesn't match UI guidelines, so there's no classes for it and it seems wrong to make them --%>
 
 <c:if test="${showFiguresLink}">

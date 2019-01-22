@@ -36,6 +36,8 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
+import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
+import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,6 +68,9 @@ public class PublicationViewController {
     @Autowired
     private PublicationService publicationService;
 
+    @Autowired
+    private ZebrashareRepository zebrashareRepository;
+
     @RequestMapping("/publication/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
@@ -94,6 +99,14 @@ public class PublicationViewController {
         model.addAttribute("dataLinks", publicationService.getPublicationDataLinks(publication));
         model.addAttribute("numDirectlyAttributed", publicationRepository.getDirectlyAttributed(publication));
         model.addAttribute("allowDelete", publicationRepository.canDeletePublication(publication));
+
+        ZebrashareSubmissionMetadata zebraShareMetadata = zebrashareRepository.getZebraShareSubmissionMetadataForPublication(publication);
+        if (zebraShareMetadata != null) {
+            model.addAttribute("zebraShareMetadata", zebraShareMetadata);
+            model.addAttribute("zebraShareEditors", zebrashareRepository.getZebraShareEditorsForPublication(publication));
+            model.addAttribute("zebraShareFigures", publicationRepository.getFiguresByPublication(publication.getZdbID()));
+        }
+
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         return "publication/publication-view.page";
     }

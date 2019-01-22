@@ -1,12 +1,16 @@
 package org.zfin.zebrashare.repository;
 
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
+import org.zfin.zebrashare.ZebrashareEditor;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
+
+import java.util.List;
 
 @Repository
 public class HibernateZebrashareRepository implements ZebrashareRepository {
@@ -29,6 +33,22 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
 
         tx.commit();
         return metadata;
+    }
+
+    @Override
+    public ZebrashareSubmissionMetadata getZebraShareSubmissionMetadataForPublication(Publication publication) {
+        return (ZebrashareSubmissionMetadata) HibernateUtil.currentSession()
+                .createCriteria(ZebrashareSubmissionMetadata.class)
+                .add(Restrictions.eq("publication", publication))
+                .uniqueResult();
+    }
+
+    @Override
+    public List<ZebrashareEditor> getZebraShareEditorsForPublication(Publication publication) {
+        return (List<ZebrashareEditor>) HibernateUtil.currentSession()
+                .createCriteria(ZebrashareEditor.class)
+                .add(Restrictions.eq("publication", publication))
+                .list();
     }
 
 }
