@@ -17,6 +17,6 @@ alter table feature_community_contribution
   alter column fcc_date_added drop not null
 ;
 
-alter table faeture_community_contribution
+alter table feature_community_contribution
  add constraint fcc_person_fk_odc
  foreign key (fcc_added_by) references person on delete cascade;
