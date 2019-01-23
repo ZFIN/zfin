@@ -11,7 +11,7 @@ ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properti
 
 
 def psql (String dbname, String sql) {
-    proc = "psql $dbname < ".execute()
+    proc = "psql $dbname ".execute()
     proc.getOutputStream().with {
         write(sql.bytes)
         close()
@@ -23,7 +23,6 @@ def psql (String dbname, String sql) {
     }
     proc
 }
-
 
 println "done"
 
@@ -37,37 +36,26 @@ dbname = System.getenv("DBNAME")
 println("Loading db link terms into $dbname")
 
 psql dbname, """
- \\COPY (SELECT mrkr_zdb_id,mrkr_zdb_id,mrkr_zdb_id,fdbcont_zdb_id
-    FROM marker, marker_type_group_member,foreign_db_contains where mrkr_type=mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM' and fdbcont_fdb_db_id=(select fdb_db_pk_id from foreign_db where fdb_db_name ='AGR Gene')) TO $PRE_MRKR_FILE
-    ;
-
+ \\COPY (SELECT mrkr_zdb_id,mrkr_zdb_id,mrkr_zdb_id,fdbcont_zdb_id FROM marker, marker_type_group_member,foreign_db_contains where mrkr_type=mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM' and fdbcont_fdb_db_id=(select fdb_db_pk_id from foreign_db where fdb_db_name ='AGR Gene') and mrkr_zdb_id not in (select dblink_linked_recid from db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-171018-1'))  TO 'agrgenes.unl';
   CREATE TEMP TABLE tmp_terms(
     dblinkid text,
     mrkrid text,
-    accession varchar(50),
+    accession text,
     fdbcontid text
       ) ;
 
-  \\COPY tmp_terms  FROM $PRE_MRKR_FILE;
+  \\COPY tmp_terms  FROM '$PRE_MRKR_FILE';
 
-  \\COPY (SELECT term_Zdb_id,term_zdb_id,term_ont_id,fdbcont_zdb_id
-    FROM term,foreign_db_contains where term_ontology_id=14 and fdbcont_fdb_db_id=(select fdb_db_pk_id from foreign_db where fdb_db_name ='AGR Disease') TO $PRE_TERM_FILE
-    ;
+  \\COPY (SELECT term_Zdb_id,term_zdb_id,term_ont_id,fdbcont_zdb_id  FROM term,foreign_db_contains where term_ontology_id=14 and fdbcont_fdb_db_id=(select fdb_db_pk_id from foreign_db where fdb_db_name ='AGR Disease') and term_zdb_id not in (select dblink_linked_recid from db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-171018-2')) TO '$PRE_TERM_FILE';
 
   CREATE TEMP TABLE tmp_disease(
     dblinkid text,
     termid text,
-    accession varchar(50),
+    accession text,
     fdbcontid text
       ) ;
 
-  \\COPY INSERT INTO tmp_disease FROM $PRE_TERM_FILE;
-
-
-
-
-
-
+  \\COPY tmp_disease FROM '$PRE_TERM_FILE';
 
 
 update tmp_terms set dblinkid = get_id('DBLINK');
@@ -91,8 +79,6 @@ insert into db_link (dblink_linked_recid,dblink_acc_num, dblink_zdb_id ,dblink_a
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
   select dblinkid,'ZDB-PUB-171009-1' from tmp_disease;
-
-
 
 
 """
