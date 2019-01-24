@@ -1,7 +1,7 @@
 package org.zfin.profile.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
@@ -703,7 +703,7 @@ public class ProfileService {
 
     public void validateLab(Lab lab, Errors errors) {
         Lab existingLab = RepositoryFactory.getProfileRepository().getLabByName(lab.getName());
-        if (existingLab != null && !lab.getZdbID().equals(existingLab.getZdbID())) {
+        if (existingLab != null && !StringUtils.equals(lab.getZdbID(), existingLab.getZdbID())) {
             errors.rejectValue("name", "lab.name.duplicate", new String[]{existingLab.getZdbID()}, "");
         }
     }
