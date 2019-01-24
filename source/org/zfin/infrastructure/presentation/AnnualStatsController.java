@@ -57,7 +57,7 @@ public class AnnualStatsController {
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH);
             int day = cal.get(Calendar.DAY_OF_MONTH);
-            if (year != 2015 && month == 0 && day == 1 && !stat.getType().equals("Full length cDNA clones (ZGC)")) {
+            if (year != 2015 && ((month == 0 && day == 1) || (year == 2019 && month == 0 && day == 23)) && !stat.getType().equals("Full length cDNA clones (ZGC)")) {
                 AnnualStatsDisplay annualStatsDisplay = new AnnualStatsDisplay();
                 int ct = stat.getCount();
                 if (ct == 0) {
@@ -289,4 +289,5 @@ public class AnnualStatsController {
         return "infrastructure/annual-stats-view.page";
     }
 }
+
 
