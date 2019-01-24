@@ -15,7 +15,7 @@ def out = new File("$gff3Dir/zfin_genes.gff3").newWriter()
 
 List<GenomeFeature> genes = loadFile("$gff3Dir/E_zfin_gene_alias.gff3")
 Map transcripts = loadFileWithParentMap("$gff3Dir/E_drerio_transcript.gff3")
-Map exons = loadFileWithParentMap("$gff3Dir/E_drerio_constant.gff3")
+Map exons = loadFileWithParentMap("$gff3Dir/E_drerio_backbone.gff3")
 
 List ensdargMaps = getEnsdargMaps()
 Map ensdargToGene = ensdargMaps[0]

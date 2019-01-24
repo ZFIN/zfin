@@ -18,14 +18,14 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3
+            <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/
                 ./reportMissedCRISPR.groovy $JOB_NAME
             </command>
         </hudson.tasks.Shell>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/Downloads/GFF3/crisprBowtieReport*</artifacts>
+            <artifacts>server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/crisprBowtieReport*</artifacts>
             <allowEmptyArchive>false</allowEmptyArchive>
             <onlyIfSuccessful>false</onlyIfSuccessful>
             <fingerprint>false</fingerprint>
@@ -44,7 +44,7 @@
                     <email>
                         <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                        <body>${FILE,path=&quot;server_apps/data_transfer/Downloads/GFF3/crisprBowtieReport.html&quot;}</body>
+                        <body>${FILE,path=&quot;server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/crisprBowtieReport.html&quot;}</body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
@@ -61,7 +61,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/data_transfer/Downloads/GFF3/crisprBowtieReport.html&quot;}
+                            ${FILE,path=&quot;server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/crisprBowtieReport.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
@@ -81,7 +81,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/data_transfer/Downloads/GFF3/crisprBowtieReport.html&quot;}
+                            ${FILE,path=&quot;server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/crisprBowtieReport.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>

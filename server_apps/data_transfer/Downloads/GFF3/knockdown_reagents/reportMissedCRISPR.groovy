@@ -22,7 +22,7 @@ def ignoreList = [
 ]
 
 // nothing really to run here. just need to pick up the result from the latest GFF run and report it.
-def logfile = "$targetroot/server_apps/data_transfer/Downloads/GFF3/mo_seq_E_miss.fa"
+def logfile = "$targetroot/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/mo_seq_E_miss.fa"
 def ids = new File(logfile)
         .collect { it =~ /zdb_id=([^;]+);/ }
         .findAll { it}

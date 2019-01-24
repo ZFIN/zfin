@@ -22,7 +22,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3
+      <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents
 ./load_knockdown_reagents.sh
       </command>
     </hudson.tasks.Shell>

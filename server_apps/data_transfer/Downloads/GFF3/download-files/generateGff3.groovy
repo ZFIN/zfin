@@ -37,10 +37,12 @@ backboneFile << transcriptFile.text
 
 def contigFile = new File('/research/zprodmore/gff3/ensembl_contig.gff3')
 def destination = new File(downloadDir + "ensembl_contig.gff3")
+//.text method writes the entire content of the file, contigFile, to the new destination.
 destination.write(contigFile.text)
 
-def knockdownFile = new File("${env['TARGETROOT']}/server_apps/data_transfer/Downloads/GFF3/E_zfin_knockdown_reagents.gff3")
+def knockdownFile = new File("${env['TARGETROOT']}/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/E_zfin_knockdown_reagents.gff3")
 destination = new File(downloadDir + "E_zfin_knockdown_reagents.gff3")
+//.text method writes the entire content of the file, knockdownFile, to the new destination.
 destination.write(knockdownFile.text)
 
 def aliasFileName = "E_zfin_gene_alias.gff3"

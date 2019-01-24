@@ -18,14 +18,14 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3
+            <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3/knockdown_reagents
                 ./reportMissedTalens.groovy $JOB_NAME
             </command>
         </hudson.tasks.Shell>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/Downloads/GFF3/talenBowtieReport*</artifacts>
+            <artifacts>server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/talenBowtieReport*</artifacts>
             <allowEmptyArchive>false</allowEmptyArchive>
             <onlyIfSuccessful>false</onlyIfSuccessful>
             <fingerprint>false</fingerprint>
@@ -63,7 +63,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/data_transfer/Downloads/GFF3/talenBowtieReport.html&quot;}
+                            ${FILE,path=&quot;server_apps/data_transfer/Downloads/GFF3/knockdown_reagents/talenBowtieReport.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
