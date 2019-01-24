@@ -1,7 +1,6 @@
 package org.zfin.publication.repository;
 
 import org.hibernate.Session;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +75,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getMappingDetailsCount() {
         String pubZdbId = "ZDB-PUB-050607-10";
         Publication testPublication = publicationRepository.getPublication(pubZdbId);
-        long number = publicationRepository.getMappingDetailsCount(testPublication);
+        publicationRepository.getMappingDetailsCount(testPublication);
         assertNotNull("Test publication is retrieved", testPublication);
         assertEquals("Test publication has the right title", "LZIC regulates neuronal survival during zebrafish development", testPublication.getTitle());
     }
@@ -182,22 +181,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("postgres")
-    public void getNumOfPublicationsPerAOAndGli1Mutant() {
-        // lateral floor plate
-        String aoZdbID = "ZDB-TERM-100331-1214";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        // Genotype: gli1^te370a/+
-        String genotypeZdbID = "ZDB-GENO-070307-4";
-        Genotype genotype = new Genotype();
-        genotype.setZdbID(genotypeZdbID);
-        int number = mutantRepository.getNumberOfPublicationsPerAnatomyAndMutantWithFigures(item, genotype);
-//        assertEquals("1 publication",1, number);
-        assertTrue(number > 0);
-    }
-
-    @Test
     public void getFigurePublicationsForProbes() {
         //  probe eu815
         String probeZdbID = "ZDB-EST-051103-38";
@@ -212,7 +195,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
         List<Publication> pubs = publicationRepository.getPublicationsWithFiguresPerProbeAndAnatomy(gene, probe, item);
-        assertTrue(pubs != null);
+        assertNotNull(pubs);
 //        assertEquals("1 publication", 1, pubs.size());
 
     }
@@ -309,7 +292,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         geno.setZdbID(genoZdbID);
         // brain
         PaginationResult<Figure> figs = publicationRepository.getFiguresByGeno(geno);
-        assertTrue(figs.getPopulatedResults() != null);
+        assertNotNull(figs.getPopulatedResults());
     }
 
 
@@ -322,7 +305,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // brain
 
         PaginationResult<Publication> pubs = publicationRepository.getAllAssociatedPublicationsForFeature(feature, 0);
-        assertTrue(pubs.getPopulatedResults() != null);
+        assertNotNull(pubs.getPopulatedResults());
 //        assertEquals("1 figure", 1, figs.size());
 
     }
@@ -337,7 +320,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
 
         PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoExp(geno);
-        assertTrue(figs.getPopulatedResults() != null);
+        assertNotNull(figs.getPopulatedResults());
 //        assertEquals("1 figure", 1, figs.size());
 
     }
@@ -378,7 +361,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // brain
 
         PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFiguresbyGeno(geno);
-        assertTrue(pubs.getPopulatedResults() != null);
+        assertNotNull(pubs.getPopulatedResults());
 //        assertEquals("1 publication", 1, publications.size());
 
     }
@@ -394,7 +377,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
         List<Figure> figs = publicationRepository.getFiguresByGeneAndAnatomy(marker, item);
-        assertTrue(figs != null);
+        assertNotNull(figs);
     }
 
     @Test
@@ -403,7 +386,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         OntologyRepository aoRepository = RepositoryFactory.getOntologyRepository();
         GenericTerm item = aoRepository.getTermByName(termName, Ontology.ANATOMY);
         List<Publication> qualityPubs = publicationRepository.getHighQualityProbePublications(item);
-        assertTrue(qualityPubs != null);
+        assertNotNull(qualityPubs);
 //        assertEquals("2 pubs", 2, qualityPubs.size());
 
     }
@@ -428,7 +411,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         Marker pax2a = getMarkerRepository().getMarkerByAbbreviation("pax2a");
 
         PaginationResult<Publication> qualityPubs = publicationRepository.getPublicationsWithFigures(pax2a, item);
-        assertTrue(qualityPubs != null);
+        assertNotNull(qualityPubs);
 //        assertEquals("2 pubs", 2, qualityPubs.size());
 
     }
@@ -438,7 +421,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<Marker> experiments = publicationRepository.getGenesByPublication(zdbID);
-        assertTrue(experiments != null);
+        assertNotNull(experiments);
     }
 
     @Test
@@ -446,7 +429,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<String> experiments = publicationRepository.getDistinctFigureLabels(zdbID);
-        assertTrue(experiments != null);
+        assertNotNull(experiments);
     }
 
     @Test
@@ -454,7 +437,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<Genotype> experiments = publicationRepository.getFishUsedInExperiment(zdbID);
-        assertTrue(experiments != null);
+        assertNotNull(experiments);
     }
 
     @Test
@@ -462,7 +445,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-970210-18";
 
         List<Genotype> experiments = publicationRepository.getGenotypesInPublication(zdbID);
-        assertTrue(experiments != null);
+        assertNotNull(experiments);
     }
 
     @Test
@@ -470,7 +453,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<Experiment> experiments = publicationRepository.getExperimentsByPublication(zdbID);
-        assertTrue(experiments != null);
+        assertNotNull(experiments);
     }
 
     @Test
@@ -478,7 +461,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String nickname = "WT";
 
         Genotype geno = publicationRepository.getGenotypeByHandle(nickname);
-        assertTrue(geno != null);
+        assertNotNull(geno);
     }
 
     @Test
@@ -486,7 +469,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<Genotype> genotypes = publicationRepository.getNonWTGenotypesByPublication(zdbID);
-        assertTrue(genotypes != null);
+        assertNotNull(genotypes);
     }
 
     @Test
@@ -494,7 +477,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<Antibody> antibodyList = publicationRepository.getAntibodiesByPublication(zdbID);
-        assertTrue(antibodyList != null);
+        assertNotNull(antibodyList);
     }
 
     @Test
@@ -503,7 +486,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String geneID = "ZDB-GENE-990415-30";
 
         List<Antibody> antibodyList = publicationRepository.getAntibodiesByPublicationAndGene(zdbID, geneID);
-        assertTrue(antibodyList != null);
+        assertNotNull(antibodyList);
     }
 
     @Test
@@ -513,7 +496,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String antibodyID = "ZDB-ATB-081002-19 ";
 
         List<Marker> antibodyList = publicationRepository.getGenesByAntibody(zdbID, antibodyID);
-        assertTrue(antibodyList != null);
+        assertNotNull(antibodyList);
     }
 
     @Test
@@ -521,7 +504,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-080306-3";
 
         List<Marker> geneList = publicationRepository.getGenesByPublication(zdbID);
-        assertTrue(geneList != null);
+        assertNotNull(geneList);
     }
 
     @Test
@@ -531,7 +514,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String geneID = "ZDB-GENE-990415-30";
 
         List<MarkerDBLink> antibodyList = publicationRepository.getDBLinksByGene(zdbID, geneID);
-        assertTrue(antibodyList != null);
+        assertNotNull(antibodyList);
     }
 
     @Test
@@ -541,7 +524,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String geneID = "ZDB-GENE-020426-1";
 
         List<MarkerDBLink> cloneDBLinks = publicationRepository.getDBLinksForCloneByGene(zdbID, geneID);
-        assertTrue(cloneDBLinks != null);
+        assertNotNull(cloneDBLinks);
     }
 
     @Test
@@ -594,7 +577,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         //this image is a table, ensuring that it should start out without any anatomy
         Image image = publicationRepository.getImageById(imageZdbID);
 
-        assertTrue(image.getTerms().size() == 0);
+        assertEquals(0, image.getTerms().size());
 
         GenericTerm liver = ontologyRepository.getTermByName("liver", Ontology.ANATOMY);
         GenericTerm brain = ontologyRepository.getTermByName("brain", Ontology.ANATOMY);

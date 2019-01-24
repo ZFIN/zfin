@@ -2,7 +2,6 @@ package org.zfin.infrastructure;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
@@ -40,13 +39,9 @@ import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
-/**
- * Class InfrastructureRepositoryTest.
- */
-
 public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
-    private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+    private final InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     @Test
     public void persistActiveData() {
@@ -89,7 +84,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         String name = "acerebellar";
         List<String> list = infrastructureRepository.getDataAliasesWithAbbreviation(name);
         assertNotNull(list);
-        assertTrue(list.size() == 1);
+        assertEquals(1, list.size());
         assertEquals("fgf8a", list.get(0));
     }
 
@@ -149,7 +144,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         String alias = "organelle atp synthesis coupled electron transport";
         List<DataAlias> groups = infrastructureRepository.getDataAliases(alias);
         assertNotNull(groups);
-        assertTrue(!groups.isEmpty());
+        assertFalse(groups.isEmpty());
     }
 
     @Test
@@ -178,7 +173,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         source.setZdbID(pubID);
 
         RecordAttribution rec = infrastructureRepository.getRecordAttribution(data, source, RecordAttribution.SourceType.STANDARD);
-        Assert.assertTrue(rec == null);
+        assertNull(rec);
 
         PublicationAttribution record = new PublicationAttribution();
         record.setDataZdbID("externalNoteZdbID");
@@ -186,16 +181,13 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         pub.setZdbID(pubID);
         record.setPublication(pub);
         rec = infrastructureRepository.getPublicationAttribution(record);
-        Assert.assertTrue(rec == null);
-
+        assertNull(rec);
     }
 
     @Test
     public void getExternalNote() {
         String externalNoteZdbID = "ZDB-EXTNOTE-080424-1";
-
         infrastructureRepository.getExternalNoteByID(externalNoteZdbID);
-
     }
 
 
@@ -309,7 +301,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
-        List<List<String>> list = null;
+        List<List<String>> list;
         list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
         assertNotNull(list);
     }
@@ -323,7 +315,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
-        List<List<String>> list = null;
+        List<List<String>> list;
         list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
         assertNotNull(list);
     }
@@ -388,8 +380,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     public void getExternalNotes() {
         Antibody antibody = getAntibodyRepository().getAntibodyByID("ZDB-ATB-081002-19");
         Set<AntibodyExternalNote> externalNotes = antibody.getExternalNotes();
-        List<ExternalNote> notes = new ArrayList<>();
-        notes.addAll(externalNotes);
+        List<ExternalNote> notes = new ArrayList<>(externalNotes);
         assertEquals(1, notes.size());
 
         notes.clear();
@@ -477,7 +468,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getDistinctPublicationsByData() {
         long count = infrastructureRepository.getDistinctPublicationsByData("ZDB-GENO-100511-2");
-        assertThat((int) (long) count, greaterThan(1));
+        assertThat((int) count, greaterThan(1));
     }
 
     @Test

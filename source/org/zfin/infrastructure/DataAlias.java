@@ -28,8 +28,8 @@ import java.util.Set;
 public class DataAlias implements Comparable, EntityAttribution, Serializable, EntityZdbID {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorDataAlias")
+    @GenericGenerator(name = "zfinGeneratorDataAlias",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "DALIAS"),

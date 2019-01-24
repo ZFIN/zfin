@@ -1,25 +1,15 @@
 package org.zfin.construct;
 
-import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.profile.Person;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Prita
- * Date: 4/1/14
- * Time: 12:15 PM
- * To change this template use File | Settings | File Templates.
- */
 public class ConstructCuration {
 
     private String zdbID;
-private String publicComments;
+    private String publicComments;
     private Person owner;
     private Set<ConstructRelationship> constructRelations;
 
@@ -86,7 +76,6 @@ private String publicComments;
     private Date createdDate;
 
 
-
     public String getName() {
         return name;
     }
@@ -94,10 +83,6 @@ private String publicComments;
     public void setName(String name) {
         this.name = name;
     }
-
-
-
-
 
 
 }

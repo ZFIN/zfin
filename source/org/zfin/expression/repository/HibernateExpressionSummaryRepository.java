@@ -1,6 +1,6 @@
 package org.zfin.expression.repository;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionStageAnatomyContainer;

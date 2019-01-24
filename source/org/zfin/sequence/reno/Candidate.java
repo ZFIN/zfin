@@ -11,8 +11,8 @@ import java.util.Date;
 public class Candidate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorCandidate")
+    @GenericGenerator(name = "zfinGeneratorCandidate",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "CND"),

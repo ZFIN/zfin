@@ -25,12 +25,12 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
         String termName = "optic primordium";
 
         Term item = getOntologyRepository().getTermByName(termName, Ontology.ANATOMY);
-        assertTrue(item != null);
+        assertNotNull(item);
         Set<TermAlias> synonyms = item.getAliases();
         assertNotNull(synonyms);
         // check that none of the synonyms are secondary ids
         for (TermAlias syn : synonyms) {
-            assertEquals(" Not a secondary id", false, syn.getAliasGroup().getName().equals(DataAliasGroup.Group.SECONDARY_ID.name()));
+            assertNotEquals(" Not a secondary id", syn.getAliasGroup().getName(), DataAliasGroup.Group.SECONDARY_ID.name());
         }
     }
 
@@ -70,7 +70,7 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
         double startHours = 10;
         double endHours = 144;
         List<GenericTerm> terms = getAnatomyRepository().getTermsDevelopingFromWithOverlap(termID, startHours, endHours);
-        assertTrue(terms != null);
+        assertNotNull(terms);
         assertTrue(terms.size() > 0);
     }
 

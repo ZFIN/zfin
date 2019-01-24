@@ -1,20 +1,16 @@
 package org.zfin.feature;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
-import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,7 +19,6 @@ import static org.junit.Assert.assertNotNull;
 
 public class FeatureServiceTest extends AbstractDatabaseTest {
 
-    static Logger logger = LogManager.getLogger(FeatureServiceTest.class);
     FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
 
     @Test

@@ -2,6 +2,7 @@ package org.zfin.framework;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.internal.util.ReflectHelper;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.usertype.ParameterizedType;
@@ -69,9 +70,10 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
         return x.hashCode();
     }
 
-    public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = rs.getString(names[0]);
-        if (rs.wasNull()) {
+    @Override
+    public Object nullSafeGet(ResultSet resultSet, String[] names, SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException, SQLException {
+        String name = resultSet.getString(names[0]);
+        if (resultSet.wasNull()) {
             return null;
         }
         if (enumClass.getName().equals(GenomeLocation.Source.class.getName())) {
@@ -97,7 +99,7 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
         return Enum.valueOf(enumClass, name);
     }
 
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
         if (value == null) {
             st.setNull(index, StandardBasicTypes.STRING.sqlType());
         } else {

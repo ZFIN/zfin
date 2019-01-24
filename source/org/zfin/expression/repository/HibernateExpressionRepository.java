@@ -6,11 +6,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.Work;
+import org.hibernate.query.Query;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -48,6 +48,7 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
+import java.math.BigInteger;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -63,10 +64,10 @@ import static org.zfin.repository.RepositoryFactory.*;
 @Repository
 public class HibernateExpressionRepository implements ExpressionRepository {
 
-    private Logger logger = LogManager.getLogger(HibernateExpressionRepository.class);
+    private final Logger logger = LogManager.getLogger(HibernateExpressionRepository.class);
 
-    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-    private AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
+    private final OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private final AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
 
 
     public int getWtExpressionFigureCountForGene(Marker marker) {
@@ -97,7 +98,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "             and clone_problem_type = 'Chimeric' " +
                 "         ) ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", marker.getZdbID());
+        query.setParameter("markerZdbID", marker.getZdbID());
         Object result = query.uniqueResult();
 
         return Integer.parseInt(result.toString());
@@ -145,7 +146,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "          where genox_geno_zdb_id = :genotypeZdbID " +
                 "         and xpatex_atb_zdb_id is null ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("genotypeZdbID", genotype.getZdbID());
+        query.setParameter("genotypeZdbID", genotype.getZdbID());
         Object result = query.uniqueResult();
         return Integer.parseInt(result.toString());
     }
@@ -153,9 +154,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public Publication getExpressionSinglePub(Marker marker) {
         String sql = "  select p from Publication p join p.expressionExperiments ee where ee.gene = :gene ";
-        Query query = HibernateUtil.currentSession().createQuery(sql);
-        query.setString("gene", marker.getZdbID());
-        List<Publication> pubs = query.list();
+        Query<Publication> query = HibernateUtil.currentSession().createQuery(sql, Publication.class);
+        query.setParameter("gene", marker);
+        List<Publication> pubs = query.getResultList();
 
         if (CollectionUtils.isEmpty(pubs)) {
             logger.debug("a single pub not returned for marker expression: " + marker);
@@ -174,10 +175,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "where ee.gene = :gene " +
                 "and not exists (from Clone as clone " +
                 "where ee.probe = clone and clone.problem = :chimeric)";
-        Query query = HibernateUtil.currentSession().createQuery(sql);
-        query.setString("gene", marker.getZdbID());
+        Query<Publication> query = HibernateUtil.currentSession().createQuery(sql, Publication.class);
+        query.setParameter("gene", marker);
         query.setParameter("chimeric", Clone.ProblemType.CHIMERIC);
-        return query.list();
+        return query.getResultList();
     }
 
     @Override
@@ -188,10 +189,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "and ee.assay.name = 'mRNA in situ hybridization' " +
                 "and not exists (from Clone as clone " +
                 "where ee.probe = clone and clone.problem = :chimeric)";
-        Query query = HibernateUtil.currentSession().createQuery(sql);
-        query.setString("gene", marker.getZdbID());
+        Query<Publication> query = HibernateUtil.currentSession().createQuery(sql, Publication.class);
+        query.setParameter("gene", marker.getZdbID());
         query.setParameter("chimeric", Clone.ProblemType.CHIMERIC);
-        return query.list();
+        return query.getResultList();
     }
 
     public int getExpressionPubCountForGene(Marker marker) {
@@ -210,10 +211,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "         where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
                 "         and substring(mrkr_abbrev from 1 for 10) = 'WITHDRAWN:' " +
                 "     ) ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", marker.getZdbID());
-        Object result = query.uniqueResult();
-        return Integer.parseInt(result.toString());
+        Query<BigInteger> query = HibernateUtil.currentSession().createNativeQuery(sql);
+        query.setParameter("markerZdbID", marker.getZdbID());
+        return query.getSingleResult().intValue();
     }
 
 
@@ -223,10 +223,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "           expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
                 "      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "     where xpatex_gene_zdb_id = :markerZdbID ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", marker.getZdbID());
-        Object result = query.uniqueResult();
-        return Integer.parseInt(result.toString());
+        Query<BigInteger> query = HibernateUtil.currentSession().createNativeQuery(sql);
+        query.setParameter("markerZdbID", marker.getZdbID());
+        return query.getSingleResult().intValue();
     }
 
     public int getExpressionPubCountForClone(Clone clone) {
@@ -235,10 +234,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "           expression_result on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
                 "      join expression_pattern_figure on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "     where xpatex_probe_feature_zdb_id = :markerZdbID ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", clone.getZdbID());
-        Object result = query.uniqueResult();
-        return Integer.parseInt(result.toString());
+        Query<BigInteger> query = HibernateUtil.currentSession().createNativeQuery(sql);
+        query.setParameter("markerZdbID", clone.getZdbID());
+        return query.getSingleResult().intValue();
     }
 
 
@@ -250,10 +248,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "                join expression_experiment " +
                 "			on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
                 "          where xpatex_gene_zdb_id = :markerZdbID ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", marker.getZdbID());
-        Object result = query.uniqueResult();
-        return Integer.parseInt(result.toString());
+        Query<BigInteger> query = HibernateUtil.currentSession().createNativeQuery(sql);
+        query.setParameter("markerZdbID", marker.getZdbID());
+        return query.getSingleResult().intValue();
     }
 
 
@@ -477,7 +474,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "			on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
                 "          where xpatex_probe_feature_zdb_id = :markerZdbID ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", clone.getZdbID());
+        query.setParameter("markerZdbID", clone.getZdbID());
         Object result = query.uniqueResult();
         return Integer.parseInt(result.toString());
     }
@@ -503,7 +500,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "     and clone_problem_type = 'Chimeric' " +
                 "     ) ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", marker.getZdbID());
+        query.setParameter("markerZdbID", marker.getZdbID());
         query.setMaxResults(1);
         query.setResultTransformer(new BasicTransformerAdapter() {
             @Override
@@ -541,7 +538,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "             and clone_problem_type = 'Chimeric' " +
                 "         ) ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", marker.getZdbID());
+        query.setParameter("markerZdbID", marker.getZdbID());
         Object result = query.uniqueResult();
         return Integer.parseInt(result.toString());
     }
@@ -569,7 +566,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "             and clone_problem_type = 'Chimeric' " +
                 "         ) ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", marker.getZdbID());
+        query.setParameter("markerZdbID", marker.getZdbID());
         Object result = query.uniqueResult();
         return Integer.parseInt(result.toString());
     }
@@ -586,10 +583,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "           on xpatex_genox_zdb_id = genox_zdb_id " +
                 "          where genox_fish_zdb_id = :fishID " +
                 "         and xpatex_atb_zdb_id is null ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("fishID", fish.getZdbID());
-        Object result = query.uniqueResult();
-        return Integer.parseInt(result.toString());
+        Query<BigInteger> query = HibernateUtil.currentSession().createNativeQuery(sql);
+        query.setParameter("fishID", fish.getZdbID());
+        return query.getSingleResult().intValue();
     }
 
     public int getImagesFromPubAndClone(Publication publication, Clone clone) {
@@ -601,8 +597,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 " p.zdbID  = :publicationZdbID ";
         Session session = currentSession();
         Query query1 = session.createQuery(hql);
-        query1.setString("markerZdbID", clone.getZdbID());
-        query1.setString("publicationZdbID", publication.getZdbID());
+        query1.setParameter("markerZdbID", clone.getZdbID());
+        query1.setParameter("publicationZdbID", publication.getZdbID());
         return ((Number) query1.uniqueResult()).intValue();
     }
 
@@ -619,7 +615,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "           and pub.jtype = 'Unpublished' " +
                 "           group by m.mrkr_zdb_id,m.mrkr_abbrev, pub.zdb_id, pub.pub_mini_ref; ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", clone.getZdbID());
+        query.setParameter("markerZdbID", clone.getZdbID());
 
         query.setResultTransformer(new ResultTransformer() {
             @Override
@@ -673,7 +669,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "         ) " +
                 "         group by m.mrkr_zdb_id, m.mrkr_abbrev, pub.zdb_id, pub.pub_mini_ref ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", marker.getZdbID());
+        query.setParameter("markerZdbID", marker.getZdbID());
 
         query.setResultTransformer(new ResultTransformer() {
             @Override
@@ -718,7 +714,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "           and pub.jtype = 'Unpublished' " +
                 "         group by m.mrkr_zdb_id, m.mrkr_abbrev, pub.zdb_id, pub.pub_mini_ref ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("markerZdbID", marker.getZdbID());
+        query.setParameter("markerZdbID", marker.getZdbID());
 
         query.setResultTransformer(new ResultTransformer() {
             @Override
@@ -750,32 +746,29 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
 
-    @SuppressWarnings("unchecked")
     public ExpressionExperiment getExpressionExperiment(String experimentID) {
         Session session = HibernateUtil.currentSession();
-        return (ExpressionExperiment) session.get(ExpressionExperiment.class, experimentID);
+        return session.get(ExpressionExperiment.class, experimentID);
     }
 
-    @SuppressWarnings("unchecked")
     public ExpressionExperiment2 getExpressionExperiment2(String experimentID) {
         Session session = HibernateUtil.currentSession();
-        return (ExpressionExperiment2) session.get(ExpressionExperiment2.class, experimentID);
+        return session.get(ExpressionExperiment2.class, experimentID);
     }
 
-    @SuppressWarnings("unchecked")
     public List<ExpressionExperiment2> getExpressionExperiment2ByPub(String pubID, String geneID) {
         Session session = HibernateUtil.currentSession();
         String hql = "from ExpressionExperiment2 where publication.zdbID = :pubID " +
                 "AND gene.zdbID = :geneID ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", pubID);
-        query.setString("geneID", geneID);
+        Query<ExpressionExperiment2> query = session.createQuery(hql, ExpressionExperiment2.class);
+        query.setParameter("pubID", pubID);
+        query.setParameter("geneID", geneID);
 
-        return (List<ExpressionExperiment2>) query.list();
+        return query.getResultList();
     }
 
     public ExpressionDetailsGenerated getExpressionExperiment2(long id) {
-        return (ExpressionDetailsGenerated) currentSession().get(ExpressionDetailsGenerated.class, id);
+        return currentSession().get(ExpressionDetailsGenerated.class, id);
     }
 
     @Override
@@ -798,10 +791,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param assay assay name
      * @return expression Assay
      */
-    @SuppressWarnings("unchecked")
     public ExpressionAssay getAssayByName(String assay) {
         Session session = HibernateUtil.currentSession();
-        return (ExpressionAssay) session.get(ExpressionAssay.class, assay);
+        return session.get(ExpressionAssay.class, assay);
     }
 
     /**
@@ -810,10 +802,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param genbankID genbank id
      * @return MarkerDBLink
      */
-    @SuppressWarnings("unchecked")
     public MarkerDBLink getMarkDBLink(String genbankID) {
         Session session = HibernateUtil.currentSession();
-        return (MarkerDBLink) session.get(MarkerDBLink.class, genbankID);
+        return session.get(MarkerDBLink.class, genbankID);
     }
 
     public FishExperiment getFishExperimentByID(String fishExpID) {
@@ -855,7 +846,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      */
     public Experiment getExperimentByID(String experimentID) {
         Session session = HibernateUtil.currentSession();
-        return (Experiment) session.get(Experiment.class, experimentID);
+        return session.get(Experiment.class, experimentID);
     }
 
     public Experiment getExperimentByPubAndName(String pubID, String experimentID) {
@@ -915,7 +906,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         infraRep.deleteActiveDataByZdbID(experiment.getZdbID());
     }
 
-    @SuppressWarnings("unchecked")
     public List<ExpressionExperiment2> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID) {
         String hql = "select experiment from ExpressionExperiment2 experiment "
                 + "       left join experiment.gene as gene "
@@ -932,12 +922,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "             fishox.experiment.name, " +
                 "             experiment.assay.displayOrder ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("pubID", publicationID);
+        query.setParameter("pubID", publicationID);
         if (geneZdbID != null) {
-            query.setString("geneID", geneZdbID);
+            query.setParameter("geneID", geneZdbID);
         }
         if (fishID != null) {
-            query.setString("fishID", fishID);
+            query.setParameter("fishID", fishID);
         }
         query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
 
@@ -948,14 +938,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String hql = "select experiment from ExpressionExperiment2 experiment "
                 + "     where experiment.fishExperiment.experiment.zdbID = :experimentID ";
 
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("experimentID", experimentID);
-
-
-        return (List<ExpressionExperiment2>) query.list();
+        Query<ExpressionExperiment2> query = HibernateUtil.currentSession().createQuery(hql, ExpressionExperiment2.class);
+        query.setParameter("experimentID", experimentID);
+        return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ExpressionExperiment> getExperiments(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
@@ -965,10 +952,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "    order by gene.abbreviationOrder, " +
                 "             experiment.fishExperiment.fish.name, " +
                 "             experiment.assay.displayOrder ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
-
-        return (List<ExpressionExperiment>) query.list();
+        Query<ExpressionExperiment> query = session.createQuery(hql, ExpressionExperiment.class);
+        query.setParameter("pubID", publicationID);
+        return query.getResultList();
 
     }
 
@@ -1013,16 +999,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 + "             , efs.startStage.abbreviation "
                 + " ";
         Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
+        query.setParameter("pubID", publicationID);
 
         if (geneZdbID != null) {
-            query.setString("geneZdbID", geneZdbID);
+            query.setParameter("geneZdbID", geneZdbID);
         }
         if (StringUtils.isNotEmpty(figureZdbID)) {
-            query.setString("figureZdbID", figureZdbID);
+            query.setParameter("figureZdbID", figureZdbID);
         }
         if (fishZdbID != null) {
-            query.setString("fishZdbID", fishZdbID);
+            query.setParameter("fishZdbID", fishZdbID);
         }
 
         return (List<ExpressionFigureStage>) query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
@@ -1050,12 +1036,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "             fishox.experiment.name, " +
                 "             experiment.assay.displayOrder ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("pubID", publicationID);
+        query.setParameter("pubID", publicationID);
         if (geneZdbID != null) {
-            query.setString("geneID", geneZdbID);
+            query.setParameter("geneID", geneZdbID);
         }
         if (fishID != null) {
-            query.setString("fishID", fishID);
+            query.setParameter("fishID", fishID);
         }
         query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
 
@@ -1073,7 +1059,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "           and fishox.fish = fish" +
                 "    order by fish.handle ";
         Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
+        query.setParameter("pubID", publicationID);
 
         return (List<Genotype>) query.list();
     }
@@ -1297,10 +1283,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         hql += " AND efs.endStage.zdbID = :endID ";
         hql += " AND efs.figure.zdbID = :figureID ";
         Query query = session.createQuery(hql);
-        query.setString("experimentID", experimentZdbID);
-        query.setString("startID", startStageID);
-        query.setString("endID", endStageID);
-        query.setString("figureID", figureID);
+        query.setParameter("experimentID", experimentZdbID);
+        query.setParameter("startID", startStageID);
+        query.setParameter("endID", endStageID);
+        query.setParameter("figureID", figureID);
 
         return (ExpressionFigureStage) query.uniqueResult();
     }
@@ -1674,7 +1660,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "        and xpRslt.expressionExperiment = xpExp " +
                 "        and xpExp.gene != null";
         Query query = session.createQuery(hql);
-        query.setString("genotypeID", genotype.getZdbID());
+        query.setParameter("genotypeID", genotype.getZdbID());
 
         return (List<ExpressionResult>) query.list();
     }
@@ -1717,7 +1703,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
                 "   and genox_fish_zdb_id = :fishID ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("fishID", fish.getZdbID());
+        query.setParameter("fishID", fish.getZdbID());
 
         return (List<String>) query.list();
     }
@@ -1733,7 +1719,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
                 "   and genox_fish_zdb_id = :fishID ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("fishID", fish.getZdbID());
+        query.setParameter("fishID", fish.getZdbID());
 
         return (List<String>) query.list();
     }
@@ -1746,7 +1732,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "        and fishox = xpExp.fishExperiment " +
                 "        and xpRslt.expressionExperiment = xpExp " +
                 "        and xpExp.gene != null" +
-                "        and xpExp.gene.zdbID not like :markerId)";
+                "        and xpExp.gene.zdbID not like :markerId";
         Query query = session.createQuery(hql);
         query.setParameter("fish", fish);
         query.setParameter("markerId", "%" + "ZDB-EFG" + "%");
@@ -1762,7 +1748,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "        and fishox = xpExp.fishExperiment " +
                 "        and xpRslt.expressionExperiment = xpExp " +
                 "        and xpExp.gene != null" +
-                "        and xpExp.gene.zdbID like :markerId)";
+                "        and xpExp.gene.zdbID like :markerId";
         Query query = session.createQuery(hql);
         query.setParameter("fish", fish);
         query.setParameter("markerId", "%" + "ZDB-EFG" + "%");
@@ -1988,7 +1974,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "    and cefs_mrkr_zdb_id = :strID ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("strID", sequenceTargetingReagent.getZdbID());
+        query.setParameter("strID", sequenceTargetingReagent.getZdbID());
 
         return (List<String>) query.list();
     }
@@ -2007,8 +1993,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and cefs_genox_zdb_id = genox_zdb_id " +
                 "   and cefs_mrkr_zdb_id = :strID ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("strID", sequenceTargetingReagent.getZdbID());
-        query.setString("expressedGeneID", expressedGene.getZdbID());
+        query.setParameter("strID", sequenceTargetingReagent.getZdbID());
+        query.setParameter("expressedGeneID", expressedGene.getZdbID());
         return (List<String>) query.list();
     }
 
@@ -2027,7 +2013,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and cefs_mrkr_zdb_id = :strID ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("strID", sequenceTargetingReagent.getZdbID());
+        query.setParameter("strID", sequenceTargetingReagent.getZdbID());
         return (List<String>) query.list();
     }
 
@@ -2039,12 +2025,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public Set<String> getAllDistinctExpressionTermIDs() {
         String hql = "select distinct result.entity.superterm.id from ExpressionResult as result";
-        List<String> results = HibernateUtil.currentSession().createQuery(hql).list();
+        List<String> results = HibernateUtil.currentSession().createQuery(hql, String.class).getResultList();
         Set<String> expressedTerms = new HashSet<>(2000);
         expressedTerms.addAll(results);
         // sub terms
         hql = "select distinct result.entity.subterm.id from ExpressionResult as result";
-        results = HibernateUtil.currentSession().createQuery(hql).list();
+        results = HibernateUtil.currentSession().createQuery(hql, String.class).getResultList();
         expressedTerms.addAll(results);
         return expressedTerms;
     }
@@ -2057,19 +2043,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public Set<String> getAllDistinctPhenotypeTermIDs() {
         String hql = "select distinct pheno.entity.superterm.id from PhenotypeStatement as pheno";
-        List<String> results = HibernateUtil.currentSession().createQuery(hql).list();
+        List<String> results = HibernateUtil.currentSession().createQuery(hql, String.class).list();
         Set<String> expressedTerms = new HashSet<>(2000);
         expressedTerms.addAll(results);
         // sub terms
         hql = "select distinct pheno.entity.subterm.id from PhenotypeStatement as pheno";
-        results = HibernateUtil.currentSession().createQuery(hql).list();
+        results = HibernateUtil.currentSession().createQuery(hql, String.class).list();
         expressedTerms.addAll(results);
         // super terms related
         hql = "select distinct pheno.relatedEntity.superterm.id from PhenotypeStatement as pheno";
-        results = HibernateUtil.currentSession().createQuery(hql).list();
+        results = HibernateUtil.currentSession().createQuery(hql, String.class).list();
         expressedTerms.addAll(results);
         hql = "select distinct pheno.relatedEntity.subterm.id from PhenotypeStatement as pheno";
-        results = HibernateUtil.currentSession().createQuery(hql).list();
+        results = HibernateUtil.currentSession().createQuery(hql, String.class).list();
         expressedTerms.addAll(results);
         return expressedTerms;
     }
@@ -2089,17 +2075,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "result.entity.superterm = :superTerm " +
                 "AND result.startStage = :start " +
                 "AND result.endStage = :end ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
+        Query<ExpressionResult> query = HibernateUtil.currentSession().createQuery(hql, ExpressionResult.class);
         query.setParameter("superTerm", range.getSuperTerm());
         query.setParameter("start", range.getStart());
         query.setParameter("end", range.getEnd());
-        return (List<ExpressionResult>) query
-                .list();
+        return query.list();
     }
 
     @Override
     public ExpressionResult getExpressionResult(Long expressionResultID) {
-        return (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class, expressionResultID);
+        return HibernateUtil.currentSession().get(ExpressionResult.class, expressionResultID);
     }
 
     @Override
@@ -2480,7 +2465,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "order by er.startStage.hoursStart asc ";
         DevelopmentStage startStage = (DevelopmentStage) HibernateUtil.currentSession()
                 .createQuery(hql)
-                .setString("zdbID", zdbID)
+                .setParameter("zdbID", zdbID)
                 .setParameter("chimeric", Clone.ProblemType.CHIMERIC)
                 .setMaxResults(1)
                 .uniqueResult();
@@ -2502,7 +2487,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "order by er.endStage.hoursEnd desc  ";
         DevelopmentStage endStage = (DevelopmentStage) HibernateUtil.currentSession()
                 .createQuery(hql2)
-                .setString("zdbID", zdbID)
+                .setParameter("zdbID", zdbID)
                 .setParameter("chimeric", Clone.ProblemType.CHIMERIC)
                 .setMaxResults(1)
                 .uniqueResult();
@@ -2546,10 +2531,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "    order by gene.abbreviationOrder, " +
                 "             experiment.fishExperiment.fish.name, " +
                 "             experiment.assay.displayOrder ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
+        Query<ExpressionExperiment2> query = session.createQuery(hql, ExpressionExperiment2.class);
+        query.setParameter("pubID", publicationID);
 
-        return (List<ExpressionExperiment2>) query.list();
+        return query.list();
     }
 
     @Override
@@ -2570,14 +2555,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         hql += "    order by result.expressionFigureStage.figure.orderingLabel, " +
                 "             result.expressionFigureStage.expressionExperiment.fishExperiment.fish.nameOrder, " +
                 "             result.expressionFigureStage.startStage.abbreviation ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("pubID", publicationID);
+        Query<ExpressionResult2> query = HibernateUtil.currentSession().createQuery(hql, ExpressionResult2.class);
+        query.setParameter("pubID", publicationID);
         if (StringUtils.isNotEmpty(figureID))
-            query.setString("figID", figureID);
+            query.setParameter("figID", figureID);
         if (StringUtils.isNotEmpty(fishID))
-            query.setString("fishID", fishID);
+            query.setParameter("fishID", fishID);
 
-        return (List<ExpressionResult2>) query.list();
+        return query.list();
     }
 
     @Override
@@ -2586,10 +2571,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "     where result.phenotypeTermSet IS NOT EMPTY " +
                 " AND genoFeature.feature.zdbID = :zdbID " +
                 " AND genoFeature in elements(result.expressionFigureStage.expressionExperiment.fishExperiment.fish.genotype.genotypeFeatures) ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("zdbID", featureID);
-
-        return (List<ExpressionResult2>) query.list();
+        Query<ExpressionResult2> query = HibernateUtil.currentSession().createQuery(hql, ExpressionResult2.class);
+        query.setParameter("zdbID", featureID);
+        return query.getResultList();
     }
 
     @Override
@@ -2607,10 +2591,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String hql = "select xpExp from ExpressionExperiment2 xpExp, FishExperiment fishox " +
                 "      where fishox.fish = :fish " +
                 "        and fishox = xpExp.fishExperiment ";
-        Query query = session.createQuery(hql);
+        Query<ExpressionExperiment2> query = session.createQuery(hql, ExpressionExperiment2.class);
         query.setParameter("fish", fish);
-
-        return (List<ExpressionExperiment2>) query.list();
+        return query.getResultList();
     }
 
     @Override
@@ -2620,10 +2603,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String hql = "select result from ExpressionResult2 as result " +
                 "      where expressionFigureStage.expressionExperiment.gene = :gene " +
                 "AND result.phenotypeTermSet is not empty ";
-        Query query = session.createQuery(hql);
+        Query<ExpressionResult2> query = session.createQuery(hql, ExpressionResult2.class);
         query.setParameter("gene", gene);
-
-        return (List<ExpressionResult2>) query.list();
+        return query.getResultList();
     }
 
     @Override
@@ -2633,10 +2615,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String hql = "select result from ExpressionResult2 as result " +
                 "      where expressionFigureStage.expressionExperiment.gene = :gene " +
                 "AND result.phenotypeTermSet is empty ";
-        Query query = session.createQuery(hql);
+        Query<ExpressionResult2> query = session.createQuery(hql, ExpressionResult2.class);
         query.setParameter("gene", gene);
-
-        return (List<ExpressionResult2>) query.list();
+        return query.getResultList();
     }
 
     @Override
@@ -2646,10 +2627,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String hql = "from Experiment  " +
                 "      where publication.zdbID = :pubID " +
                 "      order by name ";
-        Query query = session.createQuery(hql);
+        Query<Experiment> query = session.createQuery(hql, Experiment.class);
         query.setParameter("pubID", publicationID);
-
-        return (List<Experiment>) query.list();
+        return query.getResultList();
     }
 
     @Override
@@ -2659,7 +2639,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     @Override
     public ExperimentCondition getExperimentCondition(String conditionID) {
-        return (ExperimentCondition) HibernateUtil.currentSession().get(ExperimentCondition.class, conditionID);
+        return HibernateUtil.currentSession().get(ExperimentCondition.class, conditionID);
     }
 
     @Override
@@ -2675,7 +2655,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     @Override
     public ExpressionFigureStage getExperimentFigureStage(long id) {
-        return (ExpressionFigureStage) HibernateUtil.currentSession().get(ExpressionFigureStage.class, id);
+        return HibernateUtil.currentSession().get(ExpressionFigureStage.class, id);
     }
 
     @Override
@@ -2685,24 +2665,23 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String hql = "from ExpressionFigureStage  " +
                 "      where figure.zdbID = :figID ";
 
-        Query query = session.createQuery(hql);
+        Query<ExpressionFigureStage> query = session.createQuery(hql, ExpressionFigureStage.class);
         query.setParameter("figID", fig.getZdbID());
-
-        return (List<ExpressionFigureStage>) query.list();
+        return query.getResultList();
     }
 
     @Override
     public List<MarkerDBLink> getAllDbLinks(ForeignDB.AvailableName database) {
         Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery("from MarkerDBLink " +
-                "where referenceDatabase.foreignDB.dbName = :database");
+        Query<MarkerDBLink> query = session.createQuery("from MarkerDBLink " +
+                "where referenceDatabase.foreignDB.dbName = :database", MarkerDBLink.class);
         query.setParameter("database", database);
-        return (List<MarkerDBLink>) query.list();
+        return query.getResultList();
     }
 
     @Override
     public ExpressionResult2 getExpressionResult2(long id) {
-        return (ExpressionResult2) HibernateUtil.currentSession().get(ExpressionResult2.class, id);
+        return HibernateUtil.currentSession().get(ExpressionResult2.class, id);
     }
 
     public List<ExpressionFigureStage> getExperimentFigureStagesByIds(List<Integer> expressionIDs) {
@@ -2726,11 +2705,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
 
     @Override
-    public ArrayList<HTPDataset> getAllHTPDatasets() {
+    public List<HTPDataset> getAllHTPDatasets() {
         Session session = HibernateUtil.currentSession();
         String hql = "select htpdset from HTPDataset htpdset";
-        Query query = session.createQuery(hql);
-        return (ArrayList<HTPDataset>) query.list();
+        Query<HTPDataset> query = session.createQuery(hql, HTPDataset.class);
+        return query.getResultList();
     }
 
     @Override
@@ -2739,20 +2718,20 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
         String hql = "select htpaid.accessionNumber from HTPDatasetAlternateIdentifier htpaid" +
                 "     where htpaid.htpDataset.zdbID = :datasetId";
-        Query query = session.createQuery(hql);
+        Query<String> query = session.createQuery(hql, String.class);
         query.setParameter("datasetId", datasetId);
-        return (ArrayList<String>) query.list();
+        return (ArrayList<String>) query.getResultList();
     }
 
     @Override
-    public ArrayList<Publication> getHTPPubs(String datasetId) {
+    public List<Publication> getHTPPubs(String datasetId) {
 
         Session session = HibernateUtil.currentSession();
         String hql = "select htppid.publication from HTPDatasetPublication htppid" +
                 "     where htppid.htpDataset.zdbID = :datasetId";
-        Query query = session.createQuery(hql);
+        Query<Publication> query = session.createQuery(hql, Publication.class);
         query.setParameter("datasetId", datasetId);
-        return (ArrayList<Publication>) query.list();
+        return query.getResultList();
     }
 
 
@@ -2770,29 +2749,29 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
-    public ArrayList<HTPDatasetSample> getAllHTPDatasetSamples() {
+    public List<HTPDatasetSample> getAllHTPDatasetSamples() {
         Session session = HibernateUtil.currentSession();
         String hql = "select htpdsetsample from HTPDatasetSample htpdsetsample";
-        Query query = session.createQuery(hql);
-        return (ArrayList<HTPDatasetSample>) query.list();
+        Query<HTPDatasetSample> query = session.createQuery(hql, HTPDatasetSample.class);
+        return query.getResultList();
     }
 
     @Override
-    public ArrayList<HTPDatasetSampleDetail> getAllHTPDatasetSampleDetails() {
+    public List<HTPDatasetSampleDetail> getAllHTPDatasetSampleDetails() {
         Session session = HibernateUtil.currentSession();
         String hql = "select htpdsetsampledetail from HTPDatasetSampleDetail htpdsetsampledetail";
-        Query query = session.createQuery(hql);
-        return (ArrayList<HTPDatasetSampleDetail>) query.list();
+        Query<HTPDatasetSampleDetail> query = session.createQuery(hql, HTPDatasetSampleDetail.class);
+        return query.getResultList();
     }
 
     @Override
-    public ArrayList<HTPDatasetSampleDetail> getSampleDetail(HTPDatasetSample sample) {
+    public List<HTPDatasetSampleDetail> getSampleDetail(HTPDatasetSample sample) {
         Session session = HibernateUtil.currentSession();
         String hql = "select htpdsetsampledetail from HTPDatasetSampleDetail htpdsetsampledetail " +
                 "where htpdsetsampledetail.htpDatasetSample = :sample";
-        Query query = session.createQuery(hql);
+        Query<HTPDatasetSampleDetail> query = session.createQuery(hql, HTPDatasetSampleDetail.class);
         query.setParameter("sample", sample);
-        return (ArrayList<HTPDatasetSampleDetail>) query.list();
+        return query.getResultList();
     }
 
 

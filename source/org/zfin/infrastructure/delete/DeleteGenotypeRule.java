@@ -1,13 +1,8 @@
 package org.zfin.infrastructure.delete;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -53,9 +48,9 @@ public class DeleteGenotypeRule extends AbstractDeleteEntityRule implements Dele
 
         List<Fish> fishList = RepositoryFactory.getMutantRepository().getFishByGenotype(genotype);
 
-            if (CollectionUtils.isNotEmpty(fishList)) {
-                addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish", fishList);
-            }
+        if (CollectionUtils.isNotEmpty(fishList)) {
+            addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish", fishList);
+        }
 
 
         return validationReportList;

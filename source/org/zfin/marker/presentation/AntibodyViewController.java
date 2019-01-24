@@ -1,7 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,9 +21,8 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/antibody")
+@Log4j2
 public class AntibodyViewController {
-
-    private Logger logger = LogManager.getLogger(AntibodyViewController.class);
 
     @Autowired
     private MarkerRepository markerRepository;
@@ -38,9 +36,9 @@ public class AntibodyViewController {
         AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
 
         zdbID = markerService.getActiveMarkerID(zdbID);
-        logger.info("zdbID: " + zdbID);
+        log.info("zdbID: " + zdbID);
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
-        logger.info("antibody: " + antibody);
+        log.info("antibody: " + antibody);
         antibodyBean.setMarker(antibody);
 
 
@@ -53,8 +51,7 @@ public class AntibodyViewController {
         antibodyBean.setAntigenGenes(markerRepository.getRelatedMarkerDisplayForTypes(antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
 
         // set external notes (same as orthology)
-        List<ExternalNote> listOfNotes = new ArrayList<>();
-        listOfNotes.addAll(antibody.getExternalNotes());
+        List<ExternalNote> listOfNotes = new ArrayList<>(antibody.getExternalNotes());
         antibodyBean.setExternalNotes(listOfNotes);
 
         // set labeling

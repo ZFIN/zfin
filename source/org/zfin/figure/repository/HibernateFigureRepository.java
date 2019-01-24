@@ -2,13 +2,11 @@ package org.zfin.figure.repository;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
@@ -27,7 +25,6 @@ import static java.util.Calendar.YEAR;
 
 @Repository
 public class HibernateFigureRepository implements FigureRepository {
-    private static Logger logger = LogManager.getLogger(HibernateFigureRepository.class);
 
     public Figure getFigure(String zdbID) {
         Session session = HibernateUtil.currentSession();
@@ -46,7 +43,7 @@ public class HibernateFigureRepository implements FigureRepository {
                 " where figure.zdbID = :zdbID";
 
         Query query = session.createQuery(hql);
-        query.setParameter("zdbID",zdbID);
+        query.setParameter("zdbID", zdbID);
 
         return (Figure) query.list().get(0);
     }
@@ -62,7 +59,7 @@ public class HibernateFigureRepository implements FigureRepository {
         if (probe != null) {
             probeZdbID = probe.getZdbID();
         }
-        
+
         Session session = HibernateUtil.currentSession();
 
         String sql = "SELECT ids_source_zdb_id " +
@@ -76,21 +73,21 @@ public class HibernateFigureRepository implements FigureRepository {
         }
 
         Query query = session.createSQLQuery(sql);
-        query.setParameter("pubZdbID",publication.getZdbID());
+        query.setParameter("pubZdbID", publication.getZdbID());
         if (probeZdbID != null) {
             query.setParameter("probeZdbID", probeZdbID);
         }
 
 
         for (Object o : query.list()) {
-            String personZdbID = (String)o;
+            String personZdbID = (String) o;
             Person person = RepositoryFactory.getProfileRepository().getPerson(personZdbID);
             if (person != null && !submitters.contains(person))
                 submitters.add(person);
         }
 
         //these are going to be small lists, sorting here keeps the query & join small
-        Collections.sort(submitters, ComparatorCreator.orderBy("lastName", "firstName"));
+        submitters.sort(ComparatorCreator.orderBy("lastName", "firstName"));
 
         return submitters;
 
@@ -179,10 +176,6 @@ public class HibernateFigureRepository implements FigureRepository {
         Calendar oneYearAgo = Calendar.getInstance();
         oneYearAgo.add(YEAR, -1);
         query.setParameter("oneYearAgo", oneYearAgo);
-
-//        Calendar twoYearsAgo = Calendar.getInstance();
-//        twoYearsAgo.add(YEAR, -2);
-//        query.setParameter("twoYearsAgo", twoYearsAgo);
 
         query.setParameter("closedCurated", PublicationTrackingStatus.Name.CLOSED_CURATED);
 

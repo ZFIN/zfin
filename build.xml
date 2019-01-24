@@ -100,9 +100,9 @@
 
     <!-- ensure git is looking in the source tree directory for hooks -->
     <exec executable="git">
-        <arg value="config" />
-        <arg value="core.hooksPath" />
-        <arg value=".githooks" />
+        <arg value="config"/>
+        <arg value="core.hooksPath"/>
+        <arg value=".githooks"/>
     </exec>
 
 
@@ -346,35 +346,16 @@
     </path>
 
     <target name="instrument" depends="compile">
-        <taskdef name="instrument" classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
+        <taskdef name="enhance" classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
             <classpath refid="extended.classpath"/>
             <classpath path="${classbin.dir}"/>
         </taskdef>
 
-        <instrument verbose="true">
-            <fileset dir="${TARGETROOT}/home/WEB-INF/classes">
-                <include name="org/zfin/ontology/GenericTerm.class"/>
-                <include name="org/zfin/profile/Person.class"/>
-                <include name="org/zfin/expression/Figure.class"/>
-                <include name="org/zfin/expression/TextOnlyFigure.class"/>
-                <include name="org/zfin/expression/FigureFigure.class"/>
-                <include name="org/zfin/ontology/**Term.class"/>
-                <include name="org/zfin/publication/CorrespondenceComposedMessage.class"/>
-                <include name="org/zfin/publication/CorrespondenceSentMessage.class"/>
-                <include name="org/zfin/publication/Publication.class"/>
-            </fileset>
-            <fileset dir="${SOURCEROOT}/home/WEB-INF/classes">
-                <include name="org/zfin/ontology/GenericTerm.class"/>
-                <include name="org/zfin/profile/Person.class"/>
-                <include name="org/zfin/expression/Figure.class"/>
-                <include name="org/zfin/expression/TextOnlyFigure.class"/>
-                <include name="org/zfin/expression/FigureFigure.class"/>
-                <include name="org/zfin/ontology/**Term.class"/>
-                <include name="org/zfin/publication/CorrespondenceComposedMessage.class"/>
-                <include name="org/zfin/publication/CorrespondenceSentMessage.class"/>
-                <include name="org/zfin/publication/Publication.class"/>
-            </fileset>
-        </instrument>
+        <enhance base="${classbin.dir}" dir="${classbin.dir}/org/zfin/publication" failOnError="false" enableLazyInitialization="true"
+                 enableDirtyTracking="false"
+                 enableAssociationManagement="false"
+                 enableExtendedEnhancement="false">
+        </enhance>
     </target>
 
     <target name="compile" depends="prepare"
@@ -393,7 +374,7 @@
                encoding="${encoding}"
                includeAntRuntime="no"
                memoryMaximumSize="556m"
-               debug="true" />
+               debug="true"/>
         <echo message=":JAVA COMPILE SUCCESSFUL:"/>
     </target>
 

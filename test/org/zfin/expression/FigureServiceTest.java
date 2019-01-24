@@ -1,6 +1,7 @@
 package org.zfin.expression;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
@@ -31,11 +32,11 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
     static Logger logger = LogManager.getLogger(FigureServiceTest.class);
 
-    private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-    private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-    private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-    private FigureViewService figureViewService = new FigureViewService();
+    private final PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+    private final MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+    private final MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+    private final OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private final FigureViewService figureViewService = new FigureViewService();
 
     @Test
     public void expressionGenesTest() {
@@ -73,7 +74,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         boolean withImgOnly = false;
 
         List<FigureSummaryDisplay> figureSummaryList = FigureService.createExpressionFigureSummary(genox, pax2a, withImgOnly);
-        
+
         assertThat("figureSummaryList is not null", figureSummaryList, notNullValue());
         assertThat("figureSummaryList is not empty", figureSummaryList, not(empty()));
 
@@ -103,7 +104,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         String figureLabel = fig5Summary.getPublication().getShortAuthorList() + " " + fig5Summary.getFigure().getLabel();
         assertThat(figureLabel + " should contain " + oticPlacodeStatement.getEntity().getSuperterm().getTermName(),
                 fig5Summary.getExpressionStatementList(), hasItem(oticPlacodeStatement));
-        //ectoderm is associaed with sox9a in this figure, not pax2a, if it comes in, the gene parameter is being ignored
+        //ectoderm is associated with sox9a in this figure, not pax2a, if it comes in, the gene parameter is being ignored
         assertThat(figureLabel + " should NOT contain " + ectodermStatement.getEntity().getSuperterm().getTermName(),
                 fig5Summary.getExpressionStatementList(), not(hasItem(ectodermStatement)));
 
@@ -117,8 +118,8 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
         Figure figure = publicationRepository.getFigure("ZDB-FIG-041108-3");
 
-        ExpressionStatement presentStatement = generateExpressionStatement("ZFA:0000138", null, true);
-        ExpressionStatement notPresentStatement = generateExpressionStatement("ZFA:0000016", null, true);
+        ExpressionStatement presentStatement = generateExpressionStatement("ZFA:0000138", true);
+        ExpressionStatement notPresentStatement = generateExpressionStatement("ZFA:0000016", true);
 
         boolean imagesOnly = false;
 
@@ -135,8 +136,8 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
         Figure figure = publicationRepository.getFigure("ZDB-FIG-060201-11");
 
-        ExpressionStatement presentStatement = generateExpressionStatement("ZFA:0000138", null, false);
-        ExpressionStatement notPresentStatement = generateExpressionStatement("ZFA:0007046", null, true);
+        ExpressionStatement presentStatement = generateExpressionStatement("ZFA:0000138", false);
+        ExpressionStatement notPresentStatement = generateExpressionStatement("ZFA:0007046", true);
 
         boolean imagesOnly = false;
 
@@ -224,13 +225,10 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         return figureSummaryList;
     }
 
-    private ExpressionStatement generateExpressionStatement(String superTermOboID, String subTermOboID, boolean isExpressionFound) {
+    private ExpressionStatement generateExpressionStatement(String superTermOboID, boolean isExpressionFound) {
         ExpressionStatement statement = new ExpressionStatement();
         PostComposedEntity entity = new PostComposedEntity();
         entity.setSuperterm(ontologyRepository.getTermByOboID(superTermOboID));
-        if (subTermOboID != null) {
-            entity.setSubterm(ontologyRepository.getTermByOboID(subTermOboID));
-        }
         statement.setEntity(entity);
         statement.setExpressionFound(isExpressionFound);
 

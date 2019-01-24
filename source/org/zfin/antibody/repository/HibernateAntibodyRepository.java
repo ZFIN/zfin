@@ -2,10 +2,10 @@ package org.zfin.antibody.repository;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.Species;
 import org.zfin.anatomy.DevelopmentStage;
@@ -43,7 +43,7 @@ import static org.hibernate.criterion.Restrictions.isNotEmpty;
 @Repository
 public class HibernateAntibodyRepository implements AntibodyRepository {
 
-    private AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
+    private final AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
 
     // These attributes are cashed for performance reasons
     // They are static, i.e. they do not change all that often.
@@ -55,7 +55,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     public Antibody getAntibodyByID(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        return (Antibody) session.get(Antibody.class, zdbID);
+        return session.get(Antibody.class, zdbID);
     }
 
     /**
@@ -71,13 +71,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return (Antibody) query.uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public PaginationResult<Antibody> getAntibodies(AntibodySearchCriteria searchCriteria) {
         Session session = HibernateUtil.currentSession();
-        StringBuilder hql = new StringBuilder("select distinct antibody ");
-        hql.append(getAntibodiesByNameAndLabelingQueryBlock(searchCriteria));
-        hql.append("order by antibody.abbreviationOrder");
-        Query query = session.createQuery(hql.toString());
+        String hql = "select distinct antibody " + getAntibodiesByNameAndLabelingQueryBlock(searchCriteria) +
+                "order by antibody.abbreviationOrder";
+        Query<Antibody> query = session.createQuery(hql, Antibody.class);
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
             if (searchCriteria.getAntibodyNameFilterType() == FilterType.CONTAINS) {
                 query.setParameter("name", "%" + searchCriteria.getName().toLowerCase() + "%");
@@ -227,7 +225,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     @SuppressWarnings("unchecked")
     public PaginationResult<Antibody> getAntibodiesByAOTerm(GenericTerm aoTerm, PaginationBean paginationBean, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
-        StringBuffer hql = new StringBuffer();
+        StringBuilder hql = new StringBuilder();
         hql.append("select distinct antibody from Antibody antibody, ExpressionExperiment expExp,  ");
         hql.append("                ExpressionResult res, FishExperiment fishox, ");
         hql.append("                Experiment exp ");
@@ -249,7 +247,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         hql.append("       and res.expressionFound = :expressionFound ");
         hql.append("       and fishox.standardOrGenericControl = :standardOrGeneric ");
         hql.append("order by antibody.abbreviationOrder");
-        Query query = session.createQuery(hql.toString());
+        Query<Antibody> query = session.createQuery(hql.toString(), Antibody.class);
         query.setParameter("wildType", true);
         query.setParameter("aoTerm", aoTerm);
         query.setParameter("expressionFound", true);
@@ -326,17 +324,16 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return new PaginationResult<>((List<Publication>) pubs.list());
     }
 
-    @SuppressWarnings("unchecked")
     public List<Antibody> getAntibodiesByPublication(Publication publication) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct antibody from Antibody as antibody, PublicationAttribution pubAttribute " +
                 "            where pubAttribute.publication = :pub AND " +
                 "            pubAttribute.dataZdbID = antibody.zdbID order by antibody.abbreviationOrder ";
-        Query query = session.createQuery(hql);
+        Query<Antibody> query = session.createQuery(hql, Antibody.class);
         query.setParameter("pub", publication);
 
-        return (List<Antibody>) query.list();
+        return query.list();
 
     }
 
@@ -575,15 +572,14 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                     "     where stat.superterm = :aoterm and " +
                     "           stat.subterm = :aoterm";
         }
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("aoterm", aoTerm);
-        return ((Number) query.uniqueResult()).intValue();
+        return ((Number) HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("aoterm", aoTerm)
+                .getSingleResult()).intValue();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Antibody> getAllAntibodies() {
-        Query query = HibernateUtil.currentSession().createQuery("from Antibody a order by a.name asc");
-        return query.list();
+        Query<Antibody> query = HibernateUtil.currentSession().createQuery("from Antibody a order by a.name asc", Antibody.class);
+        return query.getResultList();
     }
 
     @Override

@@ -1,18 +1,20 @@
 package org.zfin.construct.repository;
 
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.infrastructure.*;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.ZdbFlag;
+import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.profile.service.ProfileService;
@@ -30,7 +32,6 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 @Repository
 public class HibernateConstructRepository implements ConstructRepository {
 
-    private static Logger logger = LogManager.getLogger(org.zfin.construct.repository.HibernateConstructRepository.class);
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
 
     private ZfinEntity getZfinEntity(String zdbID, String name) {
@@ -98,19 +99,7 @@ public class HibernateConstructRepository implements ConstructRepository {
         query.setParameter("pubID", publicationZdbID);
         query.setParameterList("constructRelationshipType", constructRelationshipList);
         List<ConstructRelationship> constructRelationships = (List<ConstructRelationship>) query.list();
-        Collections.sort(constructRelationships, new Comparator<ConstructRelationship>() {
-            @Override
-            public int compare(ConstructRelationship o1, ConstructRelationship o2) {
-                return o1.getConstruct().getName().compareTo(o2.getConstruct().getName());
-            }
-        });
-        // order
-        /*Collections.sort(markerRelationships, new Comparator<ConstructRelationship>(){
-            @Override
-            public int compare(ConstructRelationship o1, ConstructRelationship o2) {
-                return o1.getFirstMarker().getAbbreviationOrder().compareTo(o2.getFirstMarker().getAbbreviationOrder()) ;
-            }
-        });*/
+        constructRelationships.sort(Comparator.comparing(o -> o.getConstruct().getName()));
         return constructRelationships;
     }
 
@@ -188,7 +177,7 @@ public class HibernateConstructRepository implements ConstructRepository {
         return (ConstructCuration) session.get(ConstructCuration.class, conName);
     }
 
-    public List<Marker> getAllConstructs(){
+    public List<Marker> getAllConstructs() {
         List<String> types = new ArrayList<String>();
 
         types.add(Marker.Type.TGCONSTRCT.name());
@@ -231,7 +220,7 @@ public class HibernateConstructRepository implements ConstructRepository {
     }
 
     @Override
-    public List<ConstructComponent> getConstructComponentsByConstructZdbId(String constructZdbId){
+    public List<ConstructComponent> getConstructComponentsByConstructZdbId(String constructZdbId) {
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria = session.createCriteria(ConstructComponent.class);

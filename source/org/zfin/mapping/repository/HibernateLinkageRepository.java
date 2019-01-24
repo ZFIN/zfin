@@ -1,12 +1,11 @@
 package org.zfin.mapping.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
@@ -19,10 +18,8 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -30,9 +27,6 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 
 @Repository
 public class HibernateLinkageRepository implements LinkageRepository {
-
-    private Logger logger = LogManager.getLogger(HibernateLinkageRepository.class);
-
 
     public HibernateLinkageRepository() {
     }
@@ -43,13 +37,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
         String hql = " select distinct  mm.lg " +
                 " from MappedMarker  mm where " +
                 " mm.marker.zdbID = :markerZdbID order by mm.lg  ";
-        Query query = session.createQuery(hql);
-        query.setString("markerZdbID", marker.getZdbID());
-
-
-        List<String> lgs = query.list();
-
-        return lgs;
+        Query<String> query = session.createQuery(hql, String.class);
+        query.setParameter("markerZdbID", marker.getZdbID());
+        return query.getResultList();
     }
 
 
@@ -69,89 +59,88 @@ public class HibernateLinkageRepository implements LinkageRepository {
      */
     public List<Panel> getAllPanels() {
         Session session = HibernateUtil.currentSession();
-        return (List<Panel>) session.createQuery("from Panel").list();
+        return session.createQuery("from Panel", Panel.class).getResultList();
     }
 
     @Override
     public List<MeioticPanel> getMeioticPanels() {
         Session session = HibernateUtil.currentSession();
-        return (List<MeioticPanel>) session.createQuery("from MeioticPanel").list();
+        return session.createQuery("from MeioticPanel", MeioticPanel.class).getResultList();
     }
 
     @Override
     public List<RadiationPanel> getRadiationPanels() {
         Session session = HibernateUtil.currentSession();
-        return (List<RadiationPanel>) session.createQuery("from RadiationPanel").list();
+        return session.createQuery("from RadiationPanel", RadiationPanel.class).getResultList();
     }
 
     @Override
     public Panel getPanelByName(String name) {
         Session session = HibernateUtil.currentSession();
         String hql = "from Panel where name = :name";
-        Query query = session.createQuery(hql);
-        query.setString("name", name);
-        return (Panel) query.uniqueResult();
+        Query<Panel> query = session.createQuery(hql, Panel.class);
+        query.setParameter("name", name);
+        return query.getSingleResult();
     }
 
     @Override
     public Panel getPanelByAbbreviation(String name) {
         Session session = HibernateUtil.currentSession();
         String hql = "from Panel where abbreviation = :name";
-        Query query = session.createQuery(hql);
-        query.setString("name", name);
-        return (Panel) query.uniqueResult();
+        Query<Panel> query = session.createQuery(hql, Panel.class);
+        query.setParameter("name", name);
+        return query.getSingleResult();
     }
 
     @Override
     public List<MappedMarker> getMappedMarkers(ZdbID marker) {
-        Query query = HibernateUtil.currentSession().createQuery("from MappedMarker where marker = :marker");
+        Query<MappedMarker> query = HibernateUtil.currentSession().createQuery("from MappedMarker where marker = :marker", MappedMarker.class);
         query.setParameter("marker", marker);
-        return (List<MappedMarker>) query.list();
+        return query.getResultList();
     }
 
     @Override
     public List<Linkage> getLinkagesForMarker(Marker marker) {
-        Query query = HibernateUtil.currentSession().createQuery("" +
+        Query<Linkage> query = HibernateUtil.currentSession().createQuery("" +
                 "select link from Linkage as link, LinkageMember as linkageMember " +
                 "where linkageMember member of link.linkageMemberSet " +
-                "and linkageMember.markerOneZdbId = :ID ");
+                "and linkageMember.markerOneZdbId = :ID ", Linkage.class);
         query.setParameter("ID", marker.getZdbID());
-        return (List<Linkage>) query.list();
+        return query.getResultList();
     }
 
     @Override
     public List<Marker> getMappedClonesContainingGene(Marker marker) {
-        Query query = HibernateUtil.currentSession().createQuery(
+        Query<Marker> query = HibernateUtil.currentSession().createQuery(
                 "select m from  Marker as m, MarkerRelationship as rel " +
                         "where rel.secondMarker = :marker  and " +
                         "rel.type in :relationshipTypes and " +
-                        "m = rel.firstMarker ");
+                        "m = rel.firstMarker ", Marker.class);
         query.setParameter("marker", marker);
         query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
                 MarkerRelationship.Type.CLONE_CONTAINS_GENE, MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT});
-        List<Marker> list = (List<Marker>) query.list();
+        List<Marker> list = query.getResultList();
         if (list == null) {
             list = new ArrayList<>();
         }
 
-        Query query2 = HibernateUtil.currentSession().createQuery(
+        Query<Marker> query2 = HibernateUtil.currentSession().createQuery(
                 "select distinct m from  Marker as m, MarkerRelationship as rel1, MarkerRelationship as rel2  " +
                         "where rel1.firstMarker = :marker  and " +
                         "rel1.type = :relationshipType1 and " +
                         "rel2.type = :relationshipType2 and " +
                         "rel2.secondMarker = rel1.secondMarker and " +
-                        "m = rel2.firstMarker ");
+                        "m = rel2.firstMarker ", Marker.class);
         query2.setParameter("marker", marker);
         query2.setParameter("relationshipType1", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
         query2.setParameter("relationshipType2", MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
-        List<Marker> list2 = (List<Marker>) query2.list();
+        List<Marker> list2 = query2.getResultList();
         if (list2 != null) {
             list.addAll(list2);
         }
         Set<Marker> set = new HashSet<>(list.size());
         set.addAll(list);
-        List<Marker> objects = new ArrayList<>();
-        objects.addAll(set);
+        List<Marker> objects = new ArrayList<>(set);
         return objects;
     }
 
@@ -174,25 +163,25 @@ public class HibernateLinkageRepository implements LinkageRepository {
 
     @Override
     public List<PrimerSet> getPrimerSetList(Marker marker) {
-        Query query = HibernateUtil.currentSession().createQuery("from PrimerSet where marker = :marker");
+        Query<PrimerSet> query = HibernateUtil.currentSession().createQuery("from PrimerSet where marker = :marker", PrimerSet.class);
         query.setParameter("marker", marker);
-        return (List<PrimerSet>) query.list();
+        return query.getResultList();
     }
 
     @Override
     public List<Marker> getMarkersEncodedByMarker(Marker marker) {
-        Query query = HibernateUtil.currentSession().createQuery(
+        Query<Marker> query = HibernateUtil.currentSession().createQuery(
                 "select m from  Marker as m, MarkerRelationship as rel " +
                         "where rel.firstMarker = :marker  and " +
                         "rel.type in :relationshipTypes and " +
                         "m = rel.secondMarker and " +
                         " ( exists (from MappedMarker where marker = m) or " +
                         " exists (from LinkageMember as linkageMember " +
-                        "where linkageMember.markerOneZdbId = :markerID and linkageMember.markerTwoZdbId = m.zdbID))");
+                        "where linkageMember.markerOneZdbId = :markerID and linkageMember.markerTwoZdbId = m.zdbID))", Marker.class);
         query.setParameter("markerID", marker.getZdbID());
         query.setParameter("marker", marker);
         query.setParameter("relationshipTypes", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
-        List<Marker> list = (List<Marker>) query.list();
+        List<Marker> list = query.getResultList();
         if (list == null) {
             list = new ArrayList<>();
         }
@@ -201,16 +190,16 @@ public class HibernateLinkageRepository implements LinkageRepository {
 
     @Override
     public List<Marker> getMarkersContainedIn(Marker marker) {
-        Query query = HibernateUtil.currentSession().createQuery(
+        Query<Marker> query = HibernateUtil.currentSession().createQuery(
                 "select distinct m from  Marker as m, MarkerRelationship as rel, MarkerGenomeLocation as loc " +
                         "where rel.firstMarker = :marker  and " +
                         "rel.type in :relationshipTypes and " +
                         "m = rel.secondMarker and " +
-                        "loc.marker = rel.secondMarker ");
+                        "loc.marker = rel.secondMarker ", Marker.class);
         query.setParameter("marker", marker);
         query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
                 MarkerRelationship.Type.CLONE_CONTAINS_GENE});
-        List<Marker> list = (List<Marker>) query.list();
+        List<Marker> list = query.getResultList();
         if (list == null) {
             list = new ArrayList<>();
         }
@@ -222,9 +211,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
                 "select  loc from FeatureGenomeLocation loc,FeatureMarkerRelationship fmrel " +
                         "where fmrel.marker = :marker and  " +
                         "fmrel.type  = :relation and " +
-                         "loc.feature = fmrel.feature and loc.assembly in ('GRCz11','GRCz10','Zv9') order by loc.feature.abbreviationOrder asc,substring(loc.assembly,4) desc");
+                        "loc.feature = fmrel.feature and loc.assembly in ('GRCz11','GRCz10','Zv9') order by loc.feature.abbreviationOrder asc,substring(loc.assembly,4) desc");
         query1.setParameter("marker", marker);
-        query1.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        query1.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
         List<FeatureGenomeLocation> list1 = (List<FeatureGenomeLocation>) query1.list();
 
         return list1;
@@ -232,12 +221,12 @@ public class HibernateLinkageRepository implements LinkageRepository {
 
     @Override
     public List<LinkageMember> getLinkageMemberForMarker(Marker marker) {
-        Query query = HibernateUtil.currentSession().createQuery(
+        Query<LinkageMember> query = HibernateUtil.currentSession().createQuery(
                 "from LinkageMember as linkageMember " +
                         "where linkageMember.markerOneZdbId = :ID " +
-                        "order by linkageMember.linkage.publication.shortAuthorList");
+                        "order by linkageMember.linkage.publication.shortAuthorList", LinkageMember.class);
         query.setParameter("ID", marker.getZdbID());
-        return (List<LinkageMember>) query.list();
+        return query.getResultList();
     }
 
     @Override
@@ -252,7 +241,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
     public List<MarkerGenomeLocation> getGenomeLocation(Marker marker, GenomeLocation.Source... sources) {
         Criteria query = HibernateUtil.currentSession().createCriteria(MarkerGenomeLocation.class);
         query.add(Restrictions.eq("marker", marker));
-        query.add(Restrictions.in("source", sources));
+        query.add(Restrictions.in("source", (Object[]) sources));
         query.addOrder(Order.asc("chromosome"));
         return query.list();
     }
@@ -269,7 +258,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
     public List<FeatureGenomeLocation> getGenomeLocation(Feature feature, GenomeLocation.Source... sources) {
         Criteria query = HibernateUtil.currentSession().createCriteria(FeatureGenomeLocation.class);
         query.add(Restrictions.eq("feature", feature));
-        query.add(Restrictions.in("source", sources));
+        query.add(Restrictions.in("source", (Object[]) sources));
         return query.list();
     }
 
@@ -452,9 +441,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
         } else {
             Session session = HibernateUtil.currentSession();
             String hql = "from PanelCount where panel = :panel order by lg";
-            Query query = session.createQuery(hql);
+            Query<PanelCount> query = session.createQuery(hql, PanelCount.class);
             query.setParameter("panel", panel);
-            return (List<PanelCount>) query.list();
+            return query.getResultList();
         }
     }
 

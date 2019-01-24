@@ -12,8 +12,8 @@ import java.util.Date;
 public class DataNote implements Comparable<DataNote> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorDataNote")
+    @GenericGenerator(name = "zfinGeneratorDataNote",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "DNOTE"),

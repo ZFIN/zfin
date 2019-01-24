@@ -1,6 +1,6 @@
 package org.zfin.orthology.repository;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.zfin.framework.HibernateUtil;
@@ -91,7 +91,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                 "   order by organism_common_name, ortho_other_species_symbol, oev_evidence_code, oev_pub_zdb_id ";
 
         return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("geneID", geneId)
+                .setParameter("geneID", geneId)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public OrthologySlimPresentation transformTuple(Object[] tuple, String[] aliases) {

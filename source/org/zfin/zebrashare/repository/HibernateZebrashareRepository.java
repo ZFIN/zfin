@@ -1,6 +1,6 @@
 package org.zfin.zebrashare.repository;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -118,10 +118,10 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
                 "select editor.publication " +
                 "from ZebrashareEditor editor " +
                 "where editor.person = :person";
-        return (List<Publication>) HibernateUtil.currentSession()
-                .createQuery(hql)
+        return HibernateUtil.currentSession()
+                .createQuery(hql ,Publication.class)
                 .setParameter("person", person)
-                .list();
+                .getResultList();
     }
 
 }

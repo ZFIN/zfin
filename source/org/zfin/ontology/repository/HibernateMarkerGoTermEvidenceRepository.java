@@ -1,11 +1,11 @@
 package org.zfin.ontology.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-import org.zfin.datatransfer.go.FpInferenceGafParser;
+import org.hibernate.query.Query;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
@@ -19,19 +19,19 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
+ *
  */
 public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvidenceRepository {
 
     protected Logger logger = LogManager.getLogger(HibernateMarkerGoTermEvidenceRepository.class);
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForMarkerAbbreviation(String abbreviation) {
         String hql = "from MarkerGoTermEvidence ev where ev.marker.abbreviation like :abbreviation " +
                 " order by zdbID ";
 
-        return (List<MarkerGoTermEvidence>) HibernateUtil.currentSession().createQuery(hql)
-                .setString("abbreviation", abbreviation)
+        return HibernateUtil.currentSession().createQuery(hql, MarkerGoTermEvidence.class)
+                .setParameter("abbreviation", abbreviation)
                 .list();
     }
 
@@ -53,31 +53,27 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForPubZdbID(String publicationID) {
-        return (List<MarkerGoTermEvidence>)
-                HibernateUtil.currentSession().createQuery(" " +
-                        " from MarkerGoTermEvidence ev" +
-                        " left join fetch ev.inferredFrom " +
-                        " join fetch ev.marker " +
-                        " where ev.source = :pubZdbID " +
-                        " order by ev.marker.abbreviation , ev.goTerm.termName " +
-                        "")
-                        .setString("pubZdbID", publicationID)
-                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                        .list();
+        return HibernateUtil.currentSession().createQuery(" " +
+                " from MarkerGoTermEvidence ev" +
+                " left join fetch ev.inferredFrom " +
+                " join fetch ev.marker " +
+                " where ev.source.zdbID = :pubZdbID " +
+                " order by ev.marker.abbreviation , ev.goTerm.termName " +
+                "", MarkerGoTermEvidence.class)
+                .setParameter("pubZdbID", publicationID)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .getResultList();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForMarkerZdbIDOrdered(String markerID) {
-        return (List<MarkerGoTermEvidence>)
-                HibernateUtil.currentSession().createQuery(" " +
-                        " from MarkerGoTermEvidence ev where ev.marker.zdbID = :markerZdbID " +
-                        " order by ev.goTerm.ontology , marker.abbreviation , ev.goTerm.termName " +
-                        "")
-                        .setString("markerZdbID", markerID)
-                        .list();
+        return HibernateUtil.currentSession().createQuery(" " +
+                " from MarkerGoTermEvidence ev where ev.marker.zdbID = :markerZdbID " +
+                " order by ev.goTerm.ontology , marker.abbreviation , ev.goTerm.termName " +
+                "", MarkerGoTermEvidence.class)
+                .setParameter("markerZdbID", markerID)
+                .getResultList();
     }
 
     @Override
@@ -200,11 +196,10 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     /**
      * Get marker go term evidences that have duplicate go, marker, pub, evdicencecode, flag, and inferences
      *
-     * @param markerGoTermEvidenceToAdd
+     * @param markerGoTermEvidenceToAdd evidence term
      * @return Returns list of almost matching.
      */
     @Override
-    @SuppressWarnings("unchecked")
     public List<MarkerGoTermEvidence> getLikeMarkerGoTermEvidencesButGo(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
         String hql = " select ev from MarkerGoTermEvidence ev " +
                 "  where  " +
@@ -225,19 +220,19 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
         } else {
             hql += " and ev.qualifierRelation is null ";
         }
-        Query query = HibernateUtil.currentSession().createQuery(hql)
+        Query<MarkerGoTermEvidence> query = HibernateUtil.currentSession().createQuery(hql, MarkerGoTermEvidence.class)
                 .setParameter("pub", markerGoTermEvidenceToAdd.getSource())
                 .setParameter("marker", markerGoTermEvidenceToAdd.getMarker())
                 .setParameter("evidenceCode", markerGoTermEvidenceToAdd.getEvidenceCode());
 
         if (markerGoTermEvidenceToAdd.getFlag() != null) {
-            query.setString("flag", markerGoTermEvidenceToAdd.getFlag().toString());
+            query.setParameter("flag", markerGoTermEvidenceToAdd.getFlag().toString());
         }
         if (markerGoTermEvidenceToAdd.getQualifierRelation() != null) {
-            query.setString("qualifierRelation", markerGoTermEvidenceToAdd.getQualifierRelation().getOboID());
+            query.setParameter("qualifierRelation", markerGoTermEvidenceToAdd.getQualifierRelation());
         }
 
-        return (List<MarkerGoTermEvidence>) query.list();
+        return query.getResultList();
     }
 
     @Override
@@ -245,11 +240,9 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
 
         String hql = " delete from MarkerGoTermEvidence ev where ev.zdbID in (:zdbIDs) ";
 
-        int deleted = HibernateUtil.currentSession().createQuery(hql)
+        return HibernateUtil.currentSession().createQuery(hql)
                 .setParameterList("zdbIDs", zdbIDs)
                 .executeUpdate();
-
-        return deleted;
     }
 
     @Override
@@ -259,7 +252,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                 "         where mrkrgoev_mrkr_zdb_id = :markerZdbId   ";
         return Integer.parseInt(HibernateUtil.currentSession()
                 .createSQLQuery(sql)
-                .setString("markerZdbId", m.getZdbID())
+                .setParameter("markerZdbId", m.getZdbID())
                 .uniqueResult().toString());
     }
 
@@ -272,8 +265,8 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
      * and term_ontology = '$ontology'
      * order by goev_display_order, term_name
      *
-     * @param m
-     * @return
+     * @param m marker
+     * @return evidence Term
      */
     @Override
     public MarkerGoTermEvidence getFirstEvidenceForMarkerOntology(Marker m, Ontology ontology) {
@@ -298,11 +291,11 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
         String hql = " select infGrpMem from InferenceGroupMember infGrpMem " +
                 "  where infGrpMem.inferredFrom = :inferredFrom ";
 
-        List<InferenceGroupMember> inferenceGroupMembers = HibernateUtil.currentSession().createQuery(hql)
+        List<InferenceGroupMember> inferenceGroupMembers = HibernateUtil.currentSession().createQuery(hql, InferenceGroupMember.class)
                 .setParameter("inferredFrom", inferredFromSTR)
-                .list();
+                .getResultList();
 
-        SortedSet<GenericTerm> genericTerms = new TreeSet<GenericTerm>();
+        SortedSet<GenericTerm> genericTerms = new TreeSet<>();
         for (InferenceGroupMember inferenceGroupMember : inferenceGroupMembers) {
             String markerGoTermEvidenceZdbID = inferenceGroupMember.getMarkerGoTermEvidenceZdbID();
             MarkerGoTermEvidence markerGoTermEvidence = getMarkerGoTermEvidenceByZdbID(markerGoTermEvidenceZdbID);
@@ -315,7 +308,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
 
     @Override
     public NoctuaModel getNoctuaModel(String modelID) {
-        return (NoctuaModel) HibernateUtil.currentSession().get(NoctuaModel.class, modelID);
+        return HibernateUtil.currentSession().get(NoctuaModel.class, modelID);
     }
 
     @Override

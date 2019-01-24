@@ -6,10 +6,12 @@ import org.hibernate.MappingException;
 import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.Configurable;
 import org.hibernate.id.IdentifierGenerationException;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.jdbc.ReturningWork;
+import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.framework.HibernateUtil;
@@ -17,7 +19,6 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Company;
 import org.zfin.profile.Lab;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.Serializable;
@@ -107,7 +108,7 @@ public class ZdbIdGenerator implements IdentifierGenerator, Configurable {
      *
      * @return Serializable String that is the ZDBId.
      */
-    public Serializable generate(SessionImplementor session, Object object) throws HibernateException {
+    public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
 
         if (isMarker) {
             Marker marker = (Marker) object;
@@ -164,7 +165,8 @@ public class ZdbIdGenerator implements IdentifierGenerator, Configurable {
     }
 
 
-    public void configure(Type type, Properties params, Dialect d) throws MappingException {
+    @Override
+    public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
         objectType = params.getProperty("type");
         insertActiveData = Boolean.valueOf(params.getProperty("insertActiveData"));
         insertActiveSource = Boolean.valueOf(params.getProperty("insertActiveSource"));
@@ -199,4 +201,5 @@ public class ZdbIdGenerator implements IdentifierGenerator, Configurable {
                 }
         );
     }
+
 }

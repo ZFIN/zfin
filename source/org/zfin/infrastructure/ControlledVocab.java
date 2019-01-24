@@ -11,8 +11,8 @@ import javax.persistence.*;
 @org.hibernate.annotations.Entity(dynamicUpdate = true)
 public class ControlledVocab {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorVocab")
+    @GenericGenerator(name = "zfinGeneratorVocab",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "CV"),

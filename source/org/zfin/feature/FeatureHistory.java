@@ -11,8 +11,8 @@ import java.util.Date;
 public class FeatureHistory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorFeatureHistory")
+    @GenericGenerator(name = "zfinGeneratorFeatureHistory",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "NOMEN"),

@@ -43,8 +43,8 @@ public class Feature implements EntityNotes, EntityZdbID {
     public static final String UNSPECIFIED = "unspecified";
     public static final String UNKNOWN = "Unknown";
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorFeature")
+    @GenericGenerator(name = "zfinGeneratorFeature",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "ALT"),
@@ -60,7 +60,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     @OneToMany(mappedBy = "feature", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<FeatureNote> externalNotes;
     @OneToMany(mappedBy = "feature", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-
     @Transient
     private String publicComments;
     @Column(name = "feature_line_number")

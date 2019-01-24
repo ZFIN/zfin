@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -87,7 +87,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         Session session = HibernateUtil.currentSession();
         long stageID = stage.getStageID();
         if (stageID != 0) {
-            return (DevelopmentStage) session.load(DevelopmentStage.class, stageID);
+            return session.load(DevelopmentStage.class, stageID);
         }
         java.lang.String zdbID = stage.getZdbID();
         if (!StringUtils.isEmpty(zdbID)) {
@@ -113,7 +113,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         if (stageID == null)
             return null;
         Session session = HibernateUtil.currentSession();
-        return (DevelopmentStage) session.get(DevelopmentStage.class, stageID);
+        return session.get(DevelopmentStage.class, stageID);
     }
 
     public DevelopmentStage getStageByName(java.lang.String stageName) {
@@ -137,9 +137,9 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
                 "AND stats.type = :type " +
                 "ORDER BY info.sequenceNumber ";
         Query query = session.createQuery(hql);
-        query.setString("zdbID", zdbID);
-        query.setString("aoName", "unspecified");
-        query.setBoolean("obsolete", true);
+        query.setParameter("zdbID", zdbID);
+        query.setParameter("aoName", "unspecified");
+        query.setParameter("obsolete", true);
         query.setParameter("type", AnatomyStatistics.Type.GENE);
         List<Object[]> objects = query.list();
         List<AnatomyStatistics> items = createStatisticsWithTreeInfo(objects);
@@ -206,7 +206,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         List<GenericTermRelationship> ones = (List<GenericTermRelationship>) query.list();
         if (ones == null)
             return null;
-        List<GenericTerm> terms = new ArrayList<GenericTerm>();
+        List<GenericTerm> terms = new ArrayList<>();
         for (GenericTermRelationship one : ones) {
             terms.add(one.getTermTwo());
         }
@@ -240,7 +240,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
         if (objects == null) {
             return null;
         }
-        List<AnatomyStatistics> stats = new ArrayList();
+        List<AnatomyStatistics> stats = new ArrayList<>();
         for (Object[] object : objects) {
             AnatomyStatistics stat = (AnatomyStatistics) object[0];
             AnatomyTreeInfo treeInfo = (AnatomyTreeInfo) object[1];

@@ -2,15 +2,10 @@ package org.zfin.framework;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.proxy.HibernateProxy;
 import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.repository.SessionCreator;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * Utility class for web applications to make a database session object
@@ -38,12 +33,28 @@ public class HibernateUtil {
      */
     public static void init() {
         try {
+            if (sessionFactory != null) {
+                return;
+                //throw new RuntimeException("SessionFactory already instantiated");
+            }
+            // Create the SessionFactory
+            Configuration configuration = new Configuration();
+            configuration.setInterceptor(new StringCleanInterceptor());
+            sessionFactory = configuration.addPackage("org.zfin.expression.*").configure().buildSessionFactory();
+        } catch (Throwable ex) {
+            log.error("Initial SessionFactory creation failed.", ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
+
+    public static void initTest() {
+        try {
             if (sessionFactory != null)
                 throw new RuntimeException("SessionFactory already instantiated");
             // Create the SessionFactory
-            Configuration configuration = new AnnotationConfiguration();
+            Configuration configuration = new Configuration();
             configuration.setInterceptor(new StringCleanInterceptor());
-            sessionFactory = configuration.addPackage("org.zfin.expression.*").configure().buildSessionFactory();
+            sessionFactory = configuration.addPackage("org.zfin.expression.*").configure("hibernate1.cfg.xml").buildSessionFactory();
         } catch (Throwable ex) {
             log.error("Initial SessionFactory creation failed.", ex);
             throw new ExceptionInInitializerError(ex);
@@ -85,7 +96,6 @@ public class HibernateUtil {
      *
      * @return current {@link org.hibernate.Session}
      * @throws org.hibernate.HibernateException
-     *
      */
     public static Session currentSession() {
         // if no session factory is created yet we may be in hosted mode. Then

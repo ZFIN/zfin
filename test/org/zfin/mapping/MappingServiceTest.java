@@ -9,9 +9,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
-import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 public class MappingServiceTest extends AbstractDatabaseTest {
 
@@ -60,9 +58,13 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         location = MappingService.getChromosomeLocationDisplay(marker);
         assertNotNull(location);
 
-        Feature feature=getFeatureRepository().getFeatureByID("ZDB-ALT-100505-3");
-        FeatureLocation fl=getFeatureRepository().getLocationByFeature(feature);
+        Feature feature = getFeatureRepository().getFeatureByID("ZDB-ALT-100505-3");
+        FeatureLocation fl = getFeatureRepository().getLocationByFeature(feature);
         assertNotNull(fl);
+
+        feature = getFeatureRepository().getFeatureByID("ZDB-ALT-100505-3a");
+        fl = getFeatureRepository().getLocationByFeature(feature);
+        assertNull(fl);
 
     }
 

@@ -9,8 +9,8 @@ import javax.persistence.*;
 @Table(name = "source_alias")
 public class SourceAlias {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorSourceAlias")
+    @GenericGenerator(name = "zfinGeneratorSourceAlias",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "SALIAS"),

@@ -22,14 +22,6 @@ public interface FishRepository {
     Fish getFishByName(String name);
 
     /**
-     * retrieve all figures for given fish id
-     *
-     * @param fishID fish ID
-     * @return set of figures
-     */
-    Set<ZfinFigureEntity> getPhenotypeFigures(String fishID);
-
-    /**
      * Retrieve the Warehouse summary info for a given mart.
      *
      * @param mart mart

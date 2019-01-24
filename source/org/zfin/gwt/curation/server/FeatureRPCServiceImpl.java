@@ -577,10 +577,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 HashSet<FeatureNote> featureNoteSet = new HashSet<>(featureDTO.getPublicNoteList().size());
                 feature.setExternalNotes(featureNoteSet);
             }
-            if (CollectionUtils.isNotEmpty(featureDTO.getPublicNoteList())) {
+
+            if(featureDTO.getPublicNoteList() != null) {
                 for (NoteDTO note : featureDTO.getPublicNoteList()) {
-
-
                     FeatureNote featureNote = new FeatureNote();
                     featureNote.setFeature(feature);
                     featureNote.setNote(note.getNoteData());
@@ -596,7 +595,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                     } else {
                         featureNote.setTag(ExternalNote.Type.FEATURE.toString());
                     }
-
                     feature.getExternalNotes().add(featureNote);
                 }
             }

@@ -44,6 +44,7 @@
         <Logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="error"/>
         <Logger name="org.zfin" level="warn"/>
         <Logger name="org.zfin.ontology.OntologySerializationService" level="info"/>
+        <Logger name="org.hibernate.orm.deprecation" level="error"/>
         <Root level="warn">
             <AppenderRef ref="rollingFileAppender"/>
             <AppenderRef ref="rollingJSONFileAppender"/>

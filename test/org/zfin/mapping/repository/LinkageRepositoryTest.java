@@ -20,7 +20,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 
 public class LinkageRepositoryTest extends AbstractDatabaseTest {
 
-    private LinkageRepository linkageRepository = getLinkageRepository();
+    private final LinkageRepository linkageRepository = getLinkageRepository();
 
     @Before
     public void setUp() {
@@ -31,13 +31,13 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     public void findLinkageForMappedRNAClones() {
         Session session = currentSession();
 
-        Clone clone = (Clone) session.get(Clone.class, "ZDB-CDNA-040425-812");
+        Clone clone = session.get(Clone.class, "ZDB-CDNA-040425-812");
         List<String> mappedMarkerList = linkageRepository.getDirectMappedMarkers(clone);
         assertNotNull(mappedMarkerList);
         assertEquals(1, mappedMarkerList.size());
         assertEquals("8", mappedMarkerList.get(0));
 
-        clone = (Clone) session.get(Clone.class, "ZDB-EST-020816-240");
+        clone = session.get(Clone.class, "ZDB-EST-020816-240");
         mappedMarkerList = linkageRepository.getDirectMappedMarkers(clone);
         assertNotNull(mappedMarkerList);
         assertEquals(2, mappedMarkerList.size());
@@ -48,7 +48,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void findLinkageForUnMappedRNAClones() {
         Session session = currentSession();
-        Clone clone = (Clone) session.get(Clone.class, "ZDB-EST-000329-419");
+        Clone clone = session.get(Clone.class, "ZDB-EST-000329-419");
         Set<String> lgs = linkageRepository.getChromosomeLocations(clone);
         assertNotNull(lgs);
         assertEquals(1, lgs.size());
@@ -59,7 +59,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     public void findLinkageForGene() {
         Session session = currentSession();
         // pax2a
-        Marker gene = (Marker) session.get(Marker.class, "ZDB-GENE-990415-8");
+        Marker gene = session.get(Marker.class, "ZDB-GENE-990415-8");
         assertNotNull(gene);
         Set<String> lgs = linkageRepository.getChromosomeLocations(gene);
         assertNotNull(lgs);
@@ -69,7 +69,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     public void findLinkageForMappedClones() {
         Session session = currentSession();
 
-        Clone clone = (Clone) session.get(Clone.class, "ZDB-BAC-030616-10");
+        Clone clone = session.get(Clone.class, "ZDB-BAC-030616-10");
         String display = MappingService.getChromosomeLocationDisplay(clone);
         assertNotNull(display);
         assertEquals("14", display);
@@ -79,7 +79,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     public void displayScaffoldingLocation() {
         Session session = currentSession();
 
-        Marker gene = (Marker) session.get(Marker.class, "ZDB-GENE-070831-1");
+        Marker gene = session.get(Marker.class, "ZDB-GENE-070831-1");
         String display = MappingService.getChromosomeLocationDisplay(gene);
         assertNotNull(display);
         assertTrue(display.startsWith("15"));
@@ -88,7 +88,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getLinkage() {
         Session session = currentSession();
-        Linkage linkage = (Linkage) session.get(Linkage.class, "ZDB-LINK-090608-1");
+        Linkage linkage = session.get(Linkage.class, "ZDB-LINK-090608-1");
         assertNotNull(linkage);
     }
 
@@ -98,29 +98,27 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
         // adding relationship, it would be better to create the test cases rather
         // than using the existing genes which might be merged
         LinkageRepository linkageRepository = getLinkageRepository();
-        Marker marker1 = (Marker) currentSession().get(Marker.class, "ZDB-EST-000426-1181");
+        Marker marker1 = currentSession().get(Marker.class, "ZDB-EST-000426-1181");
         assertTrue("marker lg list contains all self panel mappings", linkageRepository.getChromosomeLocations(marker1).contains("13") && linkageRepository.getChromosomeLocations(marker1).contains("23"));
-        Marker marker2 = (Marker) currentSession().get(Marker.class, "ZDB-GENE-990415-72");
+        Marker marker2 = currentSession().get(Marker.class, "ZDB-GENE-990415-72");
         assertTrue("gene lg list contains its est's panel mapping", linkageRepository.getChromosomeLocations(marker2).contains("23"));
         assertFalse("gene lg list contains no bogus mapping", linkageRepository.getChromosomeLocations(marker2).contains("1"));
-        Marker marker3 = (Marker) currentSession().get(Marker.class, "ZDB-GENE-060526-178");
+        Marker marker3 = currentSession().get(Marker.class, "ZDB-GENE-060526-178");
         assertTrue("gene lg list contains clone's panel mapping", linkageRepository.getChromosomeLocations(marker3).contains("13"));
 
-        Marker marker4 = (Marker) currentSession().get(Marker.class, "ZDB-RAPD-980526-288");
+        Marker marker4 = currentSession().get(Marker.class, "ZDB-RAPD-980526-288");
         assertTrue("marker lg list contains self linkage group mapping", linkageRepository.getChromosomeLocations(marker4).contains("12"));
-        Marker marker5 = (Marker) currentSession().get(Marker.class, "ZDB-BAC-030616-45");
+        Marker marker5 = currentSession().get(Marker.class, "ZDB-BAC-030616-45");
         assertTrue("marker lg list contains linkage mapping of contained marker/segment", linkageRepository.getChromosomeLocations(marker5).contains("9"));
-        Marker marker6 = (Marker) currentSession().get(Marker.class, "ZDB-GENE-061013-119");
+        Marker marker6 = currentSession().get(Marker.class, "ZDB-GENE-061013-119");
         assertTrue("gene lg list contains clone's linkage mapping", linkageRepository.getChromosomeLocations(marker6).contains("19"));
 
-        Marker marker7 = (Marker) currentSession().get(Marker.class, "ZDB-GENE-070117-36");
+        Marker marker7 = currentSession().get(Marker.class, "ZDB-GENE-070117-36");
         assertTrue("gene lg list contains allele's linkage group mapping", linkageRepository.getChromosomeLocations(marker7).contains("23"));
 
-        Marker marker8 = (Marker) currentSession().get(Marker.class, "ZDB-GENE-030131-5474");
+        Marker marker8 = currentSession().get(Marker.class, "ZDB-GENE-030131-5474");
         assertTrue("gene lg list contains linkage group mapping from clone", linkageRepository.getChromosomeLocations(marker8).contains("10"));
 
-      /*  Marker marker8 = (Marker) currentSession().get(Marker.class,"ZDB-GENE-070117-2287");
-        assertTrue("marker lg list contains allele's panel mapping", linkageRepository.getChromosomeLocations(marker8).contains("7"));*/
     }
 
     @Test

@@ -16,8 +16,8 @@ import java.util.Set;
 public class FeatureMarkerRelationship implements Comparable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorFeatureMarkerRelationship")
+    @GenericGenerator(name = "zfinGeneratorFeatureMarkerRelationship",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "FMREL"),

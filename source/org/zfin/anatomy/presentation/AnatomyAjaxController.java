@@ -95,7 +95,7 @@ public class AnatomyAjaxController {
     @RequestMapping(value = "/show-labeled-antibodies/{zdbID}")
     public String showExpressedAntibodies(Model model
             , @PathVariable("zdbID") String termID
-    ) throws Exception {
+    ) {
 
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
@@ -213,9 +213,6 @@ public class AnatomyAjaxController {
         PaginationResult<AntibodyStatistics> antibodies = AnatomyService.getAntibodyStatistics(aoTerm, pagination, false);
         form.setAntibodyStatistics(antibodies.getPopulatedResults());
         form.setAntibodyCount(antibodies.getTotalCount());
-        DbSystemUtil.logLockInfo();
-
-        HibernateUtil.currentSession().flush();
 
         PaginationResult<AntibodyStatistics> antibodiesIncludingSubstructures = AnatomyService.getAntibodyStatistics(aoTerm, pagination, true);
         DbSystemUtil.logLockInfo();

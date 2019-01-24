@@ -1,5 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.marker.presentation.AntibodyMarkerBean" scope="request"/>
+
 <z:attributeList>
     <z:attributeListItem label="Antibody ID">
         <span id="marker-id">${formBean.marker.zdbID}</span>

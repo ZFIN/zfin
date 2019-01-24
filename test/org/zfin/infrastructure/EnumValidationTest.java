@@ -1,6 +1,6 @@
 package org.zfin.infrastructure;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 
@@ -9,37 +9,33 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Tests MarkerEnum
- */
+@Log4j2
 public class EnumValidationTest extends AbstractDatabaseTest {
 
 
-    private static Logger logger = LogManager.getLogger(EnumValidationTest.class);
-
-    private EnumValidationService enumValidationService = new EnumValidationService();
+    private final EnumValidationService enumValidationService = new EnumValidationService();
 
     @Test
     public void validateAllServices() {
         try {
             enumValidationService.checkAllEnums();
         } catch (EnumValidationException eve) {
-            logger.fatal(eve);
+            log.fatal(eve);
             fail(eve.toString());
         }
         String report = enumValidationService.getReport();
         if (enumValidationService.isReportError())
-            assertEquals(null, report);
+            assertNull(report);
     }
 
 
     @Test
     public void getCollectionDifference() {
-        List<String> namesOne = new ArrayList<String>();
+        List<String> namesOne = new ArrayList<>();
         namesOne.add("Walter");
         namesOne.add("Heinrich");
 
-        List<String> namesTwo = new ArrayList<String>();
+        List<String> namesTwo = new ArrayList<>();
         namesTwo.add("Walter");
         namesTwo.add("Heinrich");
 

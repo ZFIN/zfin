@@ -36,9 +36,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
-/**
- * Test class for PhenotypeRepository.
- */
 @SuppressWarnings({"SuppressionAnnotation", "NonBooleanMethodNameMayNotStartWithQuestion"})
 public class PhenotypeRepositoryTest extends AbstractOntologyTest {
 
@@ -244,7 +241,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         // this phenotype has a single go term as a superterm.
         long patoID = 647;
         Session session = HibernateUtil.currentSession();
-        PhenotypeStatement phenotype = (PhenotypeStatement) session.get(PhenotypeStatement.class, patoID);
+        PhenotypeStatement phenotype = session.get(PhenotypeStatement.class, patoID);
         assertNotNull(phenotype);
     }
 
@@ -290,11 +287,9 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     @Test
     public void createPatoRecord() {
         String expressionExperimentID = "ZDB-XPAT-081003-1";
-        String genoxID = "ZDB-GENOX-041102-700";
         String figureID = "ZDB-FIG-050720-1";
         String startID = "ZDB-STAGE-010723-4";
         String endID = "ZDB-STAGE-010723-4";
-        String pubZdbId = "ZDB-PUB-990507-16";
 
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
@@ -331,15 +326,13 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
 
     @Test
     public void getExperimentsHistory() {
-        List<PhenotypeExperiment> phenotypeExperiments =
-                getPhenotypeRepository().getLatestPhenotypeExperiments(3);
+        getPhenotypeRepository().getLatestPhenotypeExperiments(3);
         //assertEquals(0, phenotypeExperiments.size());
     }
 
     @Test
     public void getPhenotypeStatementHistory() {
-        List<PhenotypeStatement> phenotypeStatements =
-                getPhenotypeRepository().getLatestPhenotypeStatements(0, 2);
+        getPhenotypeRepository().getLatestPhenotypeStatements(0, 2);
         //assertEquals(0, phenotypeStatements.size());
     }
 
@@ -490,7 +483,6 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
 
     @Test
     public void getPhenotypeStatementWarehouse() {
-        String ID = "68641";
         PhenotypeStatementWarehouse psw = (PhenotypeStatementWarehouse) HibernateUtil.currentSession().get(PhenotypeStatementWarehouse.class, 68641L);
         // no assertion as this may or may not return an object. These objects are regenerated regularly and thus the id's
         // are not stable. Still want to test that this method does not throw an exception

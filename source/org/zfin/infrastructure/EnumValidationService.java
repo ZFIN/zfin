@@ -1,10 +1,10 @@
 package org.zfin.infrastructure;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.junit.Ignore;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.antibody.Isotype;
@@ -58,7 +58,7 @@ public class EnumValidationService {
                 try {
                     logger.info("running method: " + method.getName());
                     method.invoke(this);
-                    System.out.println(method.getName()+":"+reportError);
+                    System.out.println(method.getName() + ":" + reportError);
                     ++count;
                 } catch (IllegalAccessException iae) {
                     if (iae.getCause() instanceof EnumValidationException) {
@@ -85,7 +85,7 @@ public class EnumValidationService {
         List typeList = HibernateUtil.currentSession().createQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, Marker.Type.values());
 
-        Criteria c = HibernateUtil.currentSession().createCriteria(MarkerType.class);
+        HibernateUtil.currentSession().createCriteria(MarkerType.class);
     }
 
     @ServiceTest
@@ -204,9 +204,6 @@ public class EnumValidationService {
     }
 
 
-    /**
-     * @throws EnumValidationException
-     */
     @ServiceTest
     public void validateFeatureType() throws EnumValidationException {
         String hql = "select ftrtype_name from feature_type";
@@ -358,7 +355,7 @@ public class EnumValidationService {
         String hql = "select distinct g.source from GenomeLocation g";
         List typeList = HibernateUtil.currentSession().createQuery(hql).list();
         checkEnumVersusDatabaseCollection(typeList, GenomeLocation.Source.values());
-        System.out.println(":"+reportError);
+        System.out.println(":" + reportError);
     }
 
     @ServiceTest
@@ -395,7 +392,7 @@ public class EnumValidationService {
                     && inferenceCategory != InferenceCategory.ENSEMBL
                     && inferenceCategory != InferenceCategory.SP_KW
                     && inferenceCategory != InferenceCategory.SP_SL
-                    ) {
+            ) {
                 enums[i] = inferenceCategory;
                 ++i;
             }
@@ -456,7 +453,7 @@ public class EnumValidationService {
             reason += "ENUMERATION VALIDATION REPORT: " + LINE_SEPARATOR + message;
             reason += LINE_SEPARATOR + "*******************************************************************************";
             logger.warn(reason);
-            if(reportError) {
+            if (reportError) {
                 if (report == null)
                     report = new StringBuilder();
                 report.append(message);
