@@ -700,4 +700,11 @@ public class ProfileService {
         }
         return getCurrentSecurityUser().getAccountInfo().getRoot();
     }
+
+    public void validateLab(Lab lab, Errors errors) {
+        Lab existingLab = RepositoryFactory.getProfileRepository().getLabByName(lab.getName());
+        if (existingLab != null && !lab.getZdbID().equals(existingLab.getZdbID())) {
+            errors.rejectValue("name", "lab.name.duplicate", new String[]{existingLab.getZdbID()}, "");
+        }
+    }
 }
