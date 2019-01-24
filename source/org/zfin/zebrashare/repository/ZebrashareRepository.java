@@ -1,5 +1,6 @@
 package org.zfin.zebrashare.repository;
 
+import org.zfin.feature.Feature;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
@@ -21,5 +22,7 @@ public interface ZebrashareRepository {
     ZebrashareSubmissionMetadata getZebraShareSubmissionMetadataForPublication(Publication publication);
 
     List<ZebrashareEditor> getZebraShareEditorsForPublication(Publication publication);
+
+    Publication getZebraSharePublicationForFeature(Feature feature);
 
 }

@@ -1,8 +1,10 @@
 package org.zfin.zebrashare.repository;
 
+import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
@@ -49,6 +51,21 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
                 .createCriteria(ZebrashareEditor.class)
                 .add(Restrictions.eq("publication", publication))
                 .list();
+    }
+
+    @Override
+    public Publication getZebraSharePublicationForFeature(Feature feature) {
+        String hql = "" +
+                "select pub " +
+                "from Feature as feature " +
+                "inner join feature.publications as pubattrib " +
+                "inner join pubattrib.publication as pub " +
+                "inner join pub.journal as journal " +
+                "where feature = :feature " +
+                "and journal.zdbID = 'ZDB-JRNL-181119-2' ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("feature", feature);
+        return (Publication) query.uniqueResult();
     }
 
 }
