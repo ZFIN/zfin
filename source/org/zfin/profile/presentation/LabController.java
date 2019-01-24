@@ -2,12 +2,13 @@ package org.zfin.profile.presentation;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
@@ -21,7 +22,6 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +41,6 @@ public class LabController {
 
     @Autowired
     private ProfileService profileService;
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-        binder.addValidators(new LabValidator());
-    }
 
     public static enum TAB_INDEX {
         INFORMATION("information", 0),
@@ -98,7 +92,9 @@ public class LabController {
 
 
     @RequestMapping(value = "/lab/edit/{zdbID}", method = RequestMethod.POST)
-    public String submitEdit(@PathVariable String zdbID, Model model, @Valid @ModelAttribute("formBean") Lab newLab, BindingResult errors) {
+    public String submitEdit(@PathVariable String zdbID, Model model, @ModelAttribute("formBean") Lab newLab, BindingResult errors) {
+        profileService.validateLab(newLab, errors);
+
         if (errors.hasErrors()) {
             return "profile/profile-edit.page";
         }
@@ -199,7 +195,8 @@ public class LabController {
     }
 
     @RequestMapping(value = "/lab/create", method = RequestMethod.POST)
-    public String createLab(@Valid @ModelAttribute("formBean") Lab lab, BindingResult bindingResult) {
+    public String createLab(@ModelAttribute("formBean") Lab lab, BindingResult bindingResult) {
+        profileService.validateLab(lab, bindingResult);
         if (bindingResult.hasErrors()) {
             return "profile/create-lab.page";
         }
