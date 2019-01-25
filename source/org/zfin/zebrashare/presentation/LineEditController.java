@@ -1,5 +1,6 @@
 package org.zfin.zebrashare.presentation;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,8 @@ public class LineEditController {
 
     @Autowired
     private ZebrashareRepository zebrashareRepository;
+
+    private final static Logger LOG = Logger.getLogger(LineEditController.class);
 
     @RequestMapping(value = "/line-edit/{id}", method = RequestMethod.GET)
     public String viewLineEditForm(@PathVariable String id,

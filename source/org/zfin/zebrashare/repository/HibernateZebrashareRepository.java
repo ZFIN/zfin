@@ -2,6 +2,7 @@ package org.zfin.zebrashare.repository;
 
 import org.hibernate.Query;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.feature.Feature;
@@ -9,6 +10,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
+import org.zfin.zebrashare.FeatureCommunityContribution;
 import org.zfin.zebrashare.ZebrashareEditor;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 
@@ -66,6 +68,16 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("feature", feature);
         return (Publication) query.uniqueResult();
+    }
+
+    @Override
+    public FeatureCommunityContribution getLatestCommunityContribution(Feature feature) {
+        return (FeatureCommunityContribution) HibernateUtil.currentSession()
+                .createCriteria(FeatureCommunityContribution.class)
+                .add(Restrictions.eq("feature", feature))
+                .addOrder(Order.desc("date"))
+                .setMaxResults(1)
+                .uniqueResult();
     }
 
 }

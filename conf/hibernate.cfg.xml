@@ -156,6 +156,7 @@
         <mapping class="org.zfin.sequence.reno.Run"/>
         <mapping class="org.zfin.sequence.reno.RunCandidate"/>
         <mapping class="org.zfin.Species"/>
+        <mapping class="org.zfin.zebrashare.FeatureCommunityContribution"/>
         <mapping class="org.zfin.zebrashare.ZebrashareEditor"/>
         <mapping class="org.zfin.zebrashare.ZebrashareSubmissionMetadata"/>
  <!--<listener class="org.hibernate.envers.event.AuditEventListener" type="post-insert"/>

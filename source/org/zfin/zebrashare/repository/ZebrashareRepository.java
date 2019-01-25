@@ -4,6 +4,7 @@ import org.zfin.feature.Feature;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
+import org.zfin.zebrashare.FeatureCommunityContribution;
 import org.zfin.zebrashare.ZebrashareEditor;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 
@@ -24,5 +25,7 @@ public interface ZebrashareRepository {
     List<ZebrashareEditor> getZebraShareEditorsForPublication(Publication publication);
 
     Publication getZebraSharePublicationForFeature(Feature feature);
+
+    FeatureCommunityContribution getLatestCommunityContribution(Feature feature);
 
 }
