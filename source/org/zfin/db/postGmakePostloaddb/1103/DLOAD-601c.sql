@@ -9,11 +9,6 @@ select ftr,ref1,ref2,trim(ref1)||'>'||trim(ref2), get_id('FDMD')
        from ftrmutdets, feature
        where ref1!=''
        and ref2!='' and feature_abbrev=ftr and feature_zdb_id like 'ZDB-ALT-1812%' and feature_abbrev like 'sa%';
-       insert into ftrMutDetsnew (ftr,ref1,ref2,mutDisplay, fdmd_zdb_id)
-select ftr,ref1,ref2,trim(ref1)||'>'||trim(ref2), get_id('FDMD')
-       from ftrmutdets, feature
-       where ref1!=''
-       and ref2!='' and feature_abbrev=ftr and feature_zdb_id like 'ZDB-ALT-19%' and feature_abbrev like 'sa%';
 
 update ftrMutDetsnew
        set ref1=(select mdcv_term_zdb_id
