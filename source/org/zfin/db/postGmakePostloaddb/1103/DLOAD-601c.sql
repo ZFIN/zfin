@@ -1,7 +1,7 @@
 --liquibase formatted sql
 --changeset pm:DLOAD-601c
 
-drop table if exists ftrmutdetsnew;
+drop table ftrMutDetsnew;
 create temp table ftrMutDetsnew (ftr varchar(50), ref1 varchar(50), ref2 varchar(10),mutDisplay varchar(10), fdmd_zdb_id varchar(50)) ;
 
 insert into ftrMutDetsnew (ftr,ref1,ref2,mutDisplay, fdmd_zdb_id)
@@ -9,6 +9,11 @@ select ftr,ref1,ref2,trim(ref1)||'>'||trim(ref2), get_id('FDMD')
        from ftrmutdets, feature
        where ref1!=''
        and ref2!='' and feature_abbrev=ftr and feature_zdb_id like 'ZDB-ALT-1812%' and feature_abbrev like 'sa%';
+       insert into ftrMutDetsnew (ftr,ref1,ref2,mutDisplay, fdmd_zdb_id)
+select ftr,ref1,ref2,trim(ref1)||'>'||trim(ref2), get_id('FDMD')
+       from ftrmutdets, feature
+       where ref1!=''
+       and ref2!='' and feature_abbrev=ftr and feature_zdb_id like 'ZDB-ALT-19%' and feature_abbrev like 'sa%';
 
 update ftrMutDetsnew
        set ref1=(select mdcv_term_zdb_id
@@ -19,7 +24,7 @@ insert into zdb_Active_data
  select fdmd_zdb_id from ftrMutDetsnew;
 
 
-drop table if exists tmp_load;
+drop table tmp_load;
 create temp table tmp_load (ftrtemp varchar(50), ref1temp varchar(50), fdmd_zdb_idtemp varchar(50)) ;
 
  insert into tmp_load(ftrtemp, ref1temp , fdmd_zdb_idtemp)
