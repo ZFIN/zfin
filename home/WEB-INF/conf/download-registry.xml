@@ -1001,10 +1001,11 @@
             <Column id="8">Start Stage</Column>
             <Column id="9">End Stage</Column>
             <Column id="10">Assay</Column>
-            <Column id="11">Publication ID</Column>
-            <Column id="12">Probe ID</Column>
-            <Column id="13">Antibody ID</Column>
-            <Column id="14">Fish ID</Column>
+            <Column id="11">Assay MMO ID</Column>
+            <Column id="12">Publication ID</Column>
+            <Column id="13">Probe ID</Column>
+            <Column id="14">Antibody ID</Column>
+            <Column id="15">Fish ID</Column>
         </Download>
         <Download orderIndex="4">
             <Name>
@@ -1201,6 +1202,7 @@ select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb
                 (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
                 pg_end_stg_zdb_id,
                 xpatex_assay_name,
+                xpatassay_mmo_id
                 xpatex_probe_feature_zdb_id,
                 (select mrkr_abbrev from marker where mrkr_zdb_id = xpatex_atb_zdb_id),
                 xpatex_atb_zdb_id,
@@ -1209,7 +1211,7 @@ select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb
                 pg_fig_zdb_id,
                 fig_source_zdb_id,
                 pub.accession_no
-from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub,expression_pattern_assay
 where psg_mrkr_zdb_id[1,8] = "ZDB-GENE"
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
@@ -1217,6 +1219,7 @@ where psg_mrkr_zdb_id[1,8] = "ZDB-GENE"
   and genox_zdb_id = pg_genox_zdb_id
   and fig_zdb_id = pg_fig_zdb_id
   and pub.zdb_id = fig_source_zdb_id
+  and xpatex_assay_name=xpatassay_name
                 ]]>
             </Query>
             <Column id="1">Gene Symbol</Column>
@@ -1235,14 +1238,15 @@ where psg_mrkr_zdb_id[1,8] = "ZDB-GENE"
             <Column id="14">End Stage Name</Column>
             <Column id="15">End Stage ID</Column>
             <Column id="16">Assay</Column>
-            <Column id="17">Probe ID</Column>
-            <Column id="18">Antibody Name</Column>
-            <Column id="19">Antibody ID</Column>
-            <Column id="20">Fish ID</Column>
-            <Column id="21">Environment ID</Column>
-            <Column id="22">Figure ID</Column>
-            <Column id="23">Publication ID</Column>
-            <Column id="24">PubMed ID</Column>
+            <Column id="17">Assay MMO ID</Column>
+            <Column id="18">Probe ID</Column>
+            <Column id="19">Antibody Name</Column>
+            <Column id="20">Antibody ID</Column>
+            <Column id="21">Fish ID</Column>
+            <Column id="22">Environment ID</Column>
+            <Column id="23">Figure ID</Column>
+            <Column id="24">Publication ID</Column>
+            <Column id="25">PubMed ID</Column>
         </Download>
         <Download orderIndex="8">
             <Name>
@@ -1276,12 +1280,13 @@ select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_i
                 (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
                 pg_end_stg_zdb_id,
                 xpatex_assay_name,
+                xpatassay_mmo_id
                 genox_fish_zdb_id,
                 genox_exp_zdb_id,
                 pg_fig_zdb_id,
                 fig_source_zdb_id,
                 pub.accession_no
-from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub,expression_pattern_assay
 where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
@@ -1289,6 +1294,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
   and genox_zdb_id = pg_genox_zdb_id
   and fig_zdb_id = pg_fig_zdb_id
   and pub.zdb_id = fig_source_zdb_id
+  and xpatex_assay_name=xpatassay_name
                 ]]>
             </Query>
             <Column id="1">Antibody Name</Column>
@@ -1309,11 +1315,12 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="16">End Stage Name</Column>
             <Column id="17">End Stage ID</Column>
             <Column id="18">Assay</Column>
-            <Column id="19">Fish ID</Column>
-            <Column id="20">Environment ID</Column>
-            <Column id="21">Figure ID</Column>
-            <Column id="22">Publication ID</Column>
-            <Column id="23">PubMed ID</Column>
+            <Column id="19">Assay MMO ID</Column>
+            <Column id="20">Fish ID</Column>
+            <Column id="21">Environment ID</Column>
+            <Column id="22">Figure ID</Column>
+            <Column id="23">Publication ID</Column>
+            <Column id="24">PubMed ID</Column>
         </Download>        
         <Download orderIndex="1">
             <Name>
