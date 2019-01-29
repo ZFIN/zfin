@@ -484,6 +484,44 @@
     </zfin2:subsection>
 </div>
 
+
+<div id="communitycontrib">
+    <zfin2:subsection title="SUPPLEMENTAL INFORMATION" test="${!empty formBean.ftrCommContr}" showNoData="false">
+        <table class="summary horizontal-solidblock">
+            <tr>
+                <th>Functional Consequence:</th>
+                <td>
+                        ${formBean.ftrCommContr.functionalConsequence.toString()}
+
+                </td>
+                <th>Adult Viable:</th>
+                <td>
+                        ${formBean.ftrCommContr.adultViable.toString()}
+
+                </td>
+                <th>Maternal Zygocity Examined:</th>
+                <td>
+                        ${formBean.ftrCommContr.maternalZygosityExamined.toString()}
+
+                </td>
+                <th>Available:</th>
+                <td>
+                        ${formBean.ftrCommContr.currentlyAvailable.toString()}
+
+                </td>
+                <th>Other Line Information:</th>
+                <td>
+                        ${formBean.ftrCommContr.otherLineInformation}
+
+                </td>
+            </tr>
+        </table>
+
+    </zfin2:subsection>
+</div>
+
+
+
 <hr width="80%">
 <a href='/action/publication/list/${formBean.feature.zdbID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
 
