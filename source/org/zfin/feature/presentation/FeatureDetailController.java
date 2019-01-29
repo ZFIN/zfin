@@ -23,6 +23,7 @@ import org.zfin.publication.presentation.PublicationListAdapter;
 import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import java.util.*;
 
@@ -40,6 +41,9 @@ public class FeatureDetailController {
 
     @Autowired
     private LinkageRepository linkageRepository;
+
+    @Autowired
+    private ZebrashareRepository zebrashareRepository;
 
     @Autowired
     private MutationDetailsConversionService mutationDetailsConversionService;
@@ -90,6 +94,7 @@ public class FeatureDetailController {
 
             form.setAaLink(FeatureService.getAALink(feature));
         }
+        form.setFtrCommContr(zebrashareRepository.getLatestCommunityContribution(feature));
 
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);

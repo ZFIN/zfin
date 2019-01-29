@@ -18,12 +18,15 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
+import org.zfin.zebrashare.FeatureCommunityContribution;
+import org.zfin.zebrashare.repository.HibernateZebrashareRepository;
 
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 import static org.zfin.sequence.ForeignDB.AvailableName;
 import static org.zfin.sequence.ForeignDBDataType.DataType;
+
 
 
 @Service
@@ -174,6 +177,8 @@ public class FeatureService {
                 varSeq.getZdbID(),
                 RecordAttribution.SourceType.STANDARD);
     }
+
+
 
     public static String getAALink(Feature feature) {
         String aaLink = RepositoryFactory.getFeatureRepository().getAALink(feature);

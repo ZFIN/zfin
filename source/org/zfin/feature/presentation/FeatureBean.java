@@ -12,6 +12,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.sequence.FeatureDBLink;
+import org.zfin.zebrashare.FeatureCommunityContribution;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +25,9 @@ public class FeatureBean {
     private List<GenoExpStatistics> genoexpStats;
     private MappedMarkerBean mappedMarkerBean;
     private Set<FeatureMarkerRelationship> sortedConstructRelationships;
+
+
+
     private Set<FeatureMarkerRelationship> createdByRelationship;
     private List<PublicationAttribution> featureTypeAttributions;
     private Set<String> featureMap;
@@ -39,6 +43,7 @@ public class FeatureBean {
     private List<PublicationAttribution> proteinConsequenceAttributions;
     private List<PublicationAttribution> varSeqAttributions;
     private List<FeatureNote> externalNotes;
+    private FeatureCommunityContribution ftrCommContr;
 
     public String getAaLink() {
         return aaLink;
@@ -237,6 +242,14 @@ public class FeatureBean {
 
     public void setExternalNotes(List<FeatureNote> externalNotes) {
         this.externalNotes = externalNotes;
+    }
+
+    public FeatureCommunityContribution getFtrCommContr() {
+        return ftrCommContr;
+    }
+
+    public void setFtrCommContr(FeatureCommunityContribution ftrCommContr) {
+        this.ftrCommContr = ftrCommContr;
     }
 }
 
