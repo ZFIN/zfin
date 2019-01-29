@@ -389,6 +389,7 @@ create temp table tmp_xpat_Fish (gene_zdb_id text,
                                  probe_zdb_id text,
                                  probe_abbrev text,
                                  xpatex_assay_name text,
+                                 xpatassay_mmo_id text,
                                  xpat_zdb_id text,
                                  source_zdb_id text,
                                  fish_zdb_id text,
@@ -401,16 +402,17 @@ insert into tmp_xpat_fish (gene_zdb_id,
                                 probe_zdb_id,
                                 probe_abbrev,
                                 xpatex_assay_name,
+                                xpatassay_mmo_id,
                                 xpat_zdb_id,
                                 source_zdb_id,
                                 fish_zdb_id,
                                 xpatex_zdb_id)
 select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
         probe.mrkr_zdb_id as probe_zdb, probe.mrkr_abbrev as probe_abbr,
-        xpatex_assay_name, xpatex_zdb_id xpat_zdb,
+        xpatex_assay_name, xpatassay_mmo_id, xpatex_zdb_id xpat_zdb,
         xpatex_source_zdb_id,
         fish.fish_zdb_id, genox_exp_zdb_id
- from expression_experiment
+ from expression_experiment,expression_pattern_Assay
    join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id  
    join marker as gene on gene.mrkr_zdb_id = xpatex_gene_zdb_id
    join fish as fish on fish.fish_zdb_id = genox_fish_zdb_id
@@ -419,7 +421,7 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
    and exists (
         select 1 from expression_result
          where xpatres_xpatex_zdb_id = xpatex_zdb_id
- ) order by gene_zdb, xpat_zdb, probe_zdb;
+ ) and xpatex_assay_name=xpatassayname order by gene_zdb, xpat_zdb, probe_zdb;
 
 delete from tmp_xpat_fish
  where exists (Select 'x' from clone
@@ -573,6 +575,7 @@ select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb
                 (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id) as stg2,
                 pg_end_stg_zdb_id,
                 xpatex_assay_name,
+                xpatassay_mmo_id,
                 xpatex_probe_feature_zdb_id,
                 (select mrkr_abbrev from marker where mrkr_zdb_id = xpatex_atb_zdb_id) as symbol,
                 xpatex_atb_zdb_id,
@@ -581,11 +584,12 @@ select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb
                 pg_fig_zdb_id as figure,
                 fig_source_zdb_id as publication,
                 pub.accession_no
-from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, expression_result2, fish_experiment, figure, publication pub
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, expression_result2, fish_experiment, figure, publication pub,expression_pattern_assay
 where substring(psg_mrkr_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-LNCR','ZDB-LINC','ZDB-TRNA','ZDB-RRNA','ZDB-MIRN','ZDB-SNOR','ZDB-NCRN','ZDB-PIRN')
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
   and xpatex_gene_zdb_id = psg_mrkr_zdb_id
+  and xpatex_assay_name=xpatassayname
   and efs_xpatex_zdb_id = xpatex_zdb_id
   and efs_fig_zdb_id = pg_fig_zdb_id
   and efs_start_stg_zdb_id = pg_start_stg_zdb_id
@@ -620,15 +624,17 @@ select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_i
                 (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id) as stg2,
                 pg_end_stg_zdb_id,
                 xpatex_assay_name,
+                xpatassay_mmo_id,
                 genox_fish_zdb_id,
                 genox_exp_zdb_id,
                 pg_fig_zdb_id as figure,
                 fig_source_zdb_id as publication,
                 pub.accession_no 
-from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, expression_result2, fish_experiment, figure, publication pub
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, expression_figure_stage, expression_result2, fish_experiment, figure, publication pub,expression_pattern_assay
 where substring(psg_mrkr_zdb_id from 1 for 7) = 'ZDB-ATB'
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_assay_name=xpatassay_name
   and xpatex_atb_zdb_id = psg_mrkr_zdb_id
   and efs_xpatex_zdb_id = xpatex_zdb_id
   and efs_fig_zdb_id = pg_fig_zdb_id
@@ -1519,6 +1525,7 @@ create temp table tmp_wtxpat (
   	startSt text,
   	endSt text,
   	xpatex_assay_name text,
+  	xpatassay_mmo_id text,
   	xpatex_source_zdb_id text,
   	probe_id text,
   	antibody_id text,
@@ -1535,6 +1542,7 @@ insert into tmp_wtxpat (
   	startSt,
   	endSt,
   	xpatex_assay_name,
+  	xpatassay_mmo_id,
   	xpatex_source_zdb_id,
   	probe_id,
   	antibody_id,
@@ -1542,12 +1550,12 @@ insert into tmp_wtxpat (
 )
 select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
        '' as subontid,
-       '' as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name,
+       '' as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name, xpatassay_mmo_id
         xpatex_source_zdb_id,
         case when xpatex_probe_feature_zdb_id = '' then ' ' else xpatex_probe_feature_zdb_id end as probe_id,
         case when xpatex_atb_zdb_id = '' then ' ' else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
  from marker, expression_experiment, fish_experiment, fish, experiment, expression_result, stage startStage, stage endStage,
- term super, genotype
+ term super, genotype, expression_pattern_assay
  where geno_is_wildtype = 't'
    and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
    and xpatres_expression_found = 't'
@@ -1555,9 +1563,11 @@ select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_n
   where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
   and clone_problem_type = 'Chimeric')
    and mrkr_zdb_id = xpatex_gene_zdb_id
+   and xpatex_assay_name=xpatassayname
    and xpatex_genox_zdb_id = genox_zdb_id
    and xpatres_superterm_zdb_id = super.term_zdb_id
    and fish_zdb_id = genox_fish_zdb_id
+
 --   and fish_is_wildtype = 't'
    and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
    and xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -1566,17 +1576,17 @@ select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_n
    and fish_genotype_zdb_id = geno_zdb_id
 and xpatres_subterm_zdb_id is null
  group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,xpatassay_mmo_id
         xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
 union
 select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
        sub.term_ont_id as subontid,
-       sub.term_name as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name,
+       sub.term_name as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name, xpatassay_mmo_id
         xpatex_source_zdb_id,
         case when xpatex_probe_feature_zdb_id = '' then ' ' else xpatex_probe_feature_zdb_id end as probe_id,
         case when xpatex_atb_zdb_id = '' then ' ' else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
  from marker, expression_experiment, fish_experiment, fish, experiment, expression_result, stage startStage, stage endStage,
- term super, genotype, term sub
+ term super, genotype, term sub, expression_pattern_assay
  where geno_is_wildtype = 't'
    and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
    and xpatres_expression_found = 't'
@@ -1585,8 +1595,8 @@ select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_n
   and clone_problem_type = 'Chimeric')
    and mrkr_zdb_id = xpatex_gene_zdb_id
    and xpatex_genox_zdb_id = genox_zdb_id
-   and xpatres_superterm_zdb_id = super.term_zdb_id
-   and fish_zdb_id = genox_fish_zdb_id
+   and xpatres_supeterm_zdb_id = super.term_zdb_id
+   and fish_zdb_id =r genox_fish_zdb_id
 --   and fish_is_wildtype = 't'
    and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
    and xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -1594,6 +1604,7 @@ select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_n
    and xpatres_end_stg_zdb_id = endStage.stg_zdb_id
    and fish_genotype_zdb_id = geno_zdb_id
    and sub.term_zdb_id = xpatres_subterm_zdb_id
+   and xpatex_assay_name=xpatassayname
 and xpatres_subterm_zdb_id is not null
  group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
         subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,

@@ -190,10 +190,11 @@ close MOWITHPUBS;
 ## ZFIN-5654
 $sql = "
  select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
-	'' as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
+	'' as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,xpatassay_mmo_id,
 	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
- from expression_experiment, fish_experiment, fish, marker atb
+ from expression_experiment, fish_experiment, fish, marker atb,expression_pattern_assay
  where xpatex_genox_Zdb_id = genox_zdb_id
+ and xpatex_assay_name=xpatassay_name
  and genox_fish_zdb_id = fish_Zdb_id
  and atb.mrkr_zdb_id = xpatex_atb_zdb_id
    and xpatex_gene_zdb_id is null
@@ -202,10 +203,11 @@ $sql = "
       and clone_problem_type = 'Chimeric')
 UNION
  select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
-	gene.mrkr_abbrev as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
+	gene.mrkr_abbrev as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,,xpatassay_mmo_id,
 	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
- from expression_experiment, fish_experiment, fish, marker atb, marker gene
+ from expression_experiment, fish_experiment, fish, marker atb, marker gene,expression_pattern_assay
  where xpatex_genox_Zdb_id = genox_zdb_id
+ and xpatex_assay_name=xpatassay_name
  and genox_fish_zdb_id = fish_Zdb_id
  and atb.mrkr_zdb_id = xpatex_atb_zdb_id
  and gene.mrkr_zdb_id = xpatex_gene_zdb_id
@@ -232,7 +234,7 @@ while ($cur->fetch()) {
         $geneId = "";
     }
             
-    print ABXPFISH "$abId\t$abSym\t$geneId\t$geneSym\t$xpType\t$xpId\t$pubId\t$fishId\t$envId\n";
+    print ABXPFISH "$abId\t$abSym\t$geneId\t$geneSym\t$xpType\t$xpId\t$xpmmoId\t$pubId\t$fishId\t$envId\n";
 }
 
 close ABXPFISH;
