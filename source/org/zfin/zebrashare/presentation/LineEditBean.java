@@ -7,7 +7,7 @@ public class LineEditBean {
     private FeatureCommunityContribution.FunctionalConsequence functionalConsequence;
     private Boolean adultViable;
     private Boolean maternalZygosityExamined;
-    private Boolean currentlyAvailable;
+    private boolean currentlyAvailable = false;
     private String otherLineInformation;
 
     public FeatureCommunityContribution.FunctionalConsequence getFunctionalConsequence() {

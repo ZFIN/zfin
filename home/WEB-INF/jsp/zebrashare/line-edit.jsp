@@ -31,7 +31,10 @@
         <div class="form-group">
             <form:label cssClass="col-sm-3 control-label" path="functionalConsequence">Functional Consequence</form:label>
             <div class="col-sm-3">
-                <form:select path="functionalConsequence" items="${functionalConsequenceList}" itemLabel="display" cssClass="form-control"/>
+                <form:select path="functionalConsequence" cssClass="form-control">
+                    <form:option value="" />
+                    <form:options items="${functionalConsequenceList}" itemLabel="display" />
+                </form:select>
             </div>
         </div>
 
@@ -61,7 +64,6 @@
             <form:label path="currentlyAvailable" cssClass="col-sm-3 control-label">Currently Available</form:label>
             <div class="col-sm-3">
                 <form:select path="currentlyAvailable" cssClass="form-control">
-                    <form:option value="" />
                     <form:option value="true">Yes</form:option>
                     <form:option value="false">No</form:option>
                 </form:select>
