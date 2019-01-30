@@ -1,7 +1,7 @@
 --liquibase formatted sql
 --changeset pm:DLOAD-617b
 
-drop table ftCq;
+drop table if exists ftCq;
 create temp table ftCq1 (ftmd varchar(50),featureAbb varchar(50),featurezdb varchar(50),cq1 varchar(50),cqzdb varchar(50)) with no log;
 
 insert into ftCq1
