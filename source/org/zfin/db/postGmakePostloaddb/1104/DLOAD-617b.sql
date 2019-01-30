@@ -2,7 +2,7 @@
 --changeset pm:DLOAD-617b
 
 drop table if exists ftCq;
-create temp table ftCq1 (ftmd varchar(50),featureAbb varchar(50),featurezdb varchar(50),cq1 varchar(50),cqzdb varchar(50)) with no log;
+create temp table ftCq1 (ftmd varchar(50),featureAbb varchar(50),featurezdb varchar(50),cq1 varchar(50),cqzdb varchar(50));
 
 insert into ftCq1
        select distinct ftr,ftr,ftr,cons1,cons1
@@ -26,7 +26,7 @@ update ftCq1
 		   where cq1=mdcv_term_display_name);
 
 --laoding second consequence
-create temp table ftCq2 (ftmd varchar(50),featureAbb varchar(50),featurezdb varchar(50),cq2 varchar(50),cqzdb2 varchar(50)) with no log;
+create temp table ftCq2 (ftmd varchar(50),featureAbb varchar(50),featurezdb varchar(50),cq2 varchar(50),cqzdb2 varchar(50));
 
 
 insert into ftCq2
