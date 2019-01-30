@@ -1,23 +1,23 @@
 --liquibase formatted sql
 --changeset pm:DLOAD-617a
 
-drop table ftrMutDets617new;
-create temp table ftrMutDets617new (ftr varchar(50), ref1 varchar(50), ref2 varchar(10),mutDisplay varchar(10), fdmd_zdb_id varchar(50)) ;
+drop table ftrmutdetssangernew;
+create temp table ftrmutdetssangernew (ftr varchar(50), ref1 varchar(50), ref2 varchar(10),mutDisplay varchar(10), fdmd_zdb_id varchar(50)) ;
 
-insert into ftrMutDets617new (ftr,ref1,ref2,mutDisplay, fdmd_zdb_id)
+insert into ftrmutdetssangernew (ftr,ref1,ref2,mutDisplay, fdmd_zdb_id)
 
 select ftr,ref1,ref2,trim(ref1)||'>'||trim(ref2), get_id('FDMD')
-       from ftrMutDets617, feature
+       from ftrmutdetssanger, feature
        where ref1!=''
        and ref2!='' and feature_abbrev=ftr and feature_zdb_id like 'ZDB-ALT-19%' and feature_abbrev like 'sa%';
 
-update ftrMutDets617new
+update ftrmutdetssangernew
        set ref1=(select mdcv_term_zdb_id
        	   	 from mutation_detail_controlled_vocabulary
 		 where mdcv_term_display_name=mutDisplay);
 
 insert into zdb_Active_data
- select fdmd_zdb_id from ftrMutDets617new;
+ select fdmd_zdb_id from ftrmutdetssangernew;
 
 
 drop table tmp_load;
@@ -25,7 +25,7 @@ create temp table tmp_load (ftrtemp varchar(50), ref1temp varchar(50), fdmd_zdb_
 
  insert into tmp_load(ftrtemp, ref1temp , fdmd_zdb_idtemp)
  select fdmd_zdb_id, ref1, feature_zdb_id
-   from ftrMutDets617new, feature
+   from ftrmutdetssangernew, feature
  where feature_abbrev = ftr;
 
 

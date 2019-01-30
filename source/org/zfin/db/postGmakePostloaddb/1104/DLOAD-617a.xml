@@ -9,7 +9,7 @@
 
     <changeSet author="pm" id="DLOAD-617a">
         <loadData file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-617a.csv"
-                  tableName="ftrMutDets617" encoding="UTF-8">
+                  tableName="ftrmutdetssanger" encoding="UTF-8">
 
             <column name="ftr" type="String"/>
             <column name="ref1" type="String"/>

@@ -6,7 +6,7 @@ create temp table ftCq1 (ftmd varchar(50),featureAbb varchar(50),featurezdb varc
 
 insert into ftCq1
        select distinct ftr,ftr,ftr,cons1,cons1
-        from ftrConsequence617, feature
+        from ftrconsequencenew, feature
 	where cons1 is not null
 	 and ftr =feature_abbrev and feature_zdb_id like 'ZDB-ALT-1901%' and feature_abbrev like 'sa%';
 
@@ -31,7 +31,7 @@ create temp table ftCq2 (ftmd varchar(50),featureAbb varchar(50),featurezdb varc
 
 insert into ftCq2
  select distinct ftr,ftr,ftr,cons2,cons2
-  from ftrConsequence617, feature
+  from ftrconsequencenew, feature
   where cons2!=''
   and ftr =feature_abbrev and feature_zdb_id like 'ZDB-ALT-1901%' and feature_abbrev like 'sa%';
 
