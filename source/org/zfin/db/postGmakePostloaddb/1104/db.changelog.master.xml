@@ -11,4 +11,11 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1104/CUR-874.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD_605.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-610.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-617c.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-617a_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-617a.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-617a.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-617b_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-617b.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-617b.sql" />
 </databaseChangeLog>
