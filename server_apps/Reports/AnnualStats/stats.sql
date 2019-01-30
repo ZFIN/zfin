@@ -66,33 +66,35 @@ select count(*), 'Genetics', 'Genotypes', now()
 ;
 
 
+--------------------------------------------------------------------- Functional Annotation ----------------------------------------
+
 -- Genes with GO annotation
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(distinct mrkrgoev_mrkr_zdb_id), 'Genetics', 'Genes with GO annotations', now() from marker_go_term_evidence
+select count(distinct mrkrgoev_mrkr_zdb_id), 'Functional Annotation', 'Genes with GO annotations', now() from marker_go_term_evidence
 ;
 
 -- IEA GO annotations
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(distinct mrkrgoev_mrkr_zdb_id), 'Genetics', 'Genes with IEA GO annotations', now() from marker_go_term_evidence
+select count(distinct mrkrgoev_mrkr_zdb_id), 'Functional Annotation', 'Genes with IEA GO annotations', now() from marker_go_term_evidence
 where mrkrgoev_evidence_code = 'IEA'
 ;
 
 -- Non-IEA GO annotations
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(distinct mrkrgoev_mrkr_zdb_id), 'Genetics', 'Genes with Non-IEA GO anotations', now() 
+select count(distinct mrkrgoev_mrkr_zdb_id), 'Functional Annotation', 'Genes with Non-IEA GO anotations', now() 
 from marker_go_term_evidence
 where mrkrgoev_evidence_code != 'IEA';
 
 -- Total GO annotations
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(*), 'Genetics', 'Total GO Annotations', now() from marker_go_term_evidence
+select count(*), 'Functional Annotation', 'Total GO Annotations', now() from marker_go_term_evidence
 -- wc -l marker_go_term_evidence
 
 ;
 
 --Genes with OMIM disease phenotypes
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(distinct ortho_zebrafish_gene_zdb_id), 'Genetics', 'Genes with OMIM phenotypes', now()
+select count(distinct ortho_zebrafish_gene_zdb_id), 'Functional Annotation', 'Genes with OMIM phenotypes', now()
  from ortholog where exists(select 'x' from omim_phenotype where omimp_ortho_zdb_id = ortho_zdb_id);
 
 ---------------------------------------------------------------Reagents ----------------------------
@@ -130,6 +132,11 @@ select count(*), 'Reagents', 'Antibodies', now() from marker
 --;
 
 ------------------------------------------Expression & Phenotypes---------------------------------
+-- Gene expression experiments
+insert into annual_stats(as_count, as_section, as_type, as_date)
+select count(*), 'Expression & Phenotype', 'Gene expression experiments', now() from expression_experiment2
+;
+
 -- Gene expression patterns
 insert into annual_stats(as_count, as_section, as_type, as_date)
 select count(*), 'Expression & Phenotype', 'Gene expression patterns', now() from expression_result
@@ -194,44 +201,68 @@ select count(*), 'Genomics', 'Links to other databases', now() from db_link, for
    and  fdb_db_name in (
                        --2011-12-16
 ------------------------- ---------
+'Addgene',
+'AGR Disease',
+'AGR Gene',
+'CreZoo',
+'CRISPRz',
 'Curated miRNA Mature', --                  41
 'Curated miRNA Stem Loop', --                3
 'EBI-Cell', --                             776
 'EC', --                                   858
+'Ensembl_Clone',
 'Ensembl(GRCz11)', --                       16279
 'Ensembl_SNP', --                         2024
 'Ensembl_Trans', --                      27310
 'FLYBASE', --                               55
+'FLYBASE-Anatomy',
 'GenBank', --                           160821
 'GenPept', --                            43839
 'Gene', --                               42124
+'GEO',
+'HAMAP',
+'HGNC',
 'InterPro', --                           49367
 'MGI', --                                 8343
+'MGI-Anatomy',
 'MODB', --                                 100
 'MicroCosm', --                            219
 'NCBO-CARO', --                             58
+'Noctua',
+'NovelGene',
 'OMIM', --                                8498
+'PANTHER',
+'PMID',
+'PreEnsembl(Zv7)',
+'PREVEGA',
 'PROSITE', --                            18481
 'PUBPROT', --                              113
 'PUBRNA', --                                 2
 'Pfam', --                               19694
+'QuickGO',
 'RefSeq', --                             31466
+'RRID',
 'SGD', --                                    9
 'Sanger_Clone', --                        4247
+'SignaFish',
+'UBERON',
+'UniPathway',
 'UniGene', --                            22272
 'UniProtKB', --                          25865
+'UniProtKB-SubCell',
+'UniRule',
 'UniSTS', --                              1777
 'VEGA', --                               28392
 'VEGAPROT', --                           21492
 'VEGA_Clone', --                         11468
 'Vega_Trans', --                         28563
-'Vega_Withdrawn', --                      1822
 'WashUZ', --                               548
-'ZFIN_PROT', --                             23
+'zfishbook',
+'zfishbook-constructs',
+'ZMP',
 'dbSNP', --                               2024
 'miRBASE Mature', --                       218
-'miRBASE Stem Loop', --                    336
-'unreleasedRNA' --                         12
+'miRBASE Stem Loop' --                    336
 )
 --and dblink_zdb_id not like 'ZDB-%-12____-%'
 ;
@@ -289,3 +320,4 @@ select count( distinct ortho_zebrafish_gene_zdb_id), 'Orthology', 'Genes w/Mouse
 \copy (select as_date, as_pk_id, as_section, as_type, as_count from annual_stats order by as_date desc, as_pk_id asc) to 'stats.txt' delimiter '|';
 
 commit work ;
+
