@@ -10,7 +10,9 @@ create table  sanger_location_new (
             location1 integer) ;
 
  insert into sanger_location_new (allele1, assembly1,chromosome1,location1)
- select distinct  allele,assembly,chromosome,location from sanger_location , feature where  assembly like 'Zv%' and allele=feature_Abbrev and feature_zdb_id like 'ZDB-ALT-19%' and allele like 'sa%' and chromosome not like 'KN%';
+ select distinct  allele,assembly,chromosome,location from sanger_location , feature where  assembly like 'Zv%' and allele=feature_Abbrev and feature_zdb_id like 'ZDB-ALT-19%' and allele like 'sa%';
+delete from sanger_location_new where chromosome1 like 'Zv%';
+delete from sanger_location_new where chromosome1 like 'KN%';
 
 alter table sanger_location_new add sfclid varchar(50);
 
