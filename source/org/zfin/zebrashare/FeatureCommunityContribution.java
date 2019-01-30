@@ -24,6 +24,10 @@ public class FeatureCommunityContribution {
             this.display = display;
         }
 
+        public String getDisplay() {
+            return display;
+        }
+
         @Override
         public String toString() {
             return display;

@@ -11,64 +11,67 @@
             Edit other line associated with ${publication.shortAuthorList}:
             <select id="other-lines">
                 <c:forEach items="${otherFeatures}" var="other">
-                    <!-- ${formBean.feature.zdbID} // ${other.zdbID} // ${formBean.feature.zdbID == other.zdbID} -->
-                    <option value="${other.zdbID}" ${formBean.feature.zdbID == other.zdbID ? "selected" : ""}>${other.name}</option>
+                    <option value="${other.zdbID}" ${feature.zdbID == other.zdbID ? "selected" : ""}>${other.name}</option>
                 </c:forEach>
             </select>
         </span>
     </c:if>
 
-    <h1>${formBean.feature.name}</h1>
+    <h1>${feature.name}</h1>
+
+    <c:if test="${!empty error}">
+        <div class="alert alert-danger" role="alert">${error}</div>
+    </c:if>
+
+    <c:if test="${!empty success}">
+        <div class="alert alert-success" role="alert">${success}</div>
+    </c:if>
 
     <form:form method="POST" commandName="formBean" cssClass="form-horizontal">
         <div class="form-group">
-            <label class="col-sm-3 control-label">Functional Consequence</label>
+            <form:label cssClass="col-sm-3 control-label" path="functionalConsequence">Functional Consequence</form:label>
             <div class="col-sm-3">
-                <select class="form-control">
-                    <option>Null</option>
-                    <option>Hypomorph</option>
-                    <option>Other</option>
-                    <option>Unknown</option>
-                </select>
+                <form:select path="functionalConsequence" items="${functionalConsequenceList}" itemLabel="display" cssClass="form-control"/>
             </div>
         </div>
 
         <div class="form-group">
-            <label class="col-sm-3 control-label">Adult Viable</label>
+            <form:label path="adultViable" cssClass="col-sm-3 control-label">Adult Viable</form:label>
             <div class="col-sm-3">
-                <select class="form-control">
-                    <option></option>
-                    <option>Yes</option>
-                    <option>No</option>
-                </select>
+                <form:select path="adultViable" cssClass="form-control">
+                    <form:option value="" />
+                    <form:option value="true">Yes</form:option>
+                    <form:option value="false">No</form:option>
+                </form:select>
             </div>
         </div>
 
         <div class="form-group">
-            <label class="col-sm-3 control-label">Maternal Zygocity Examined</label>
+            <form:label path="maternalZygosityExamined" cssClass="col-sm-3 control-label">Maternal Zygocity Examined</form:label>
             <div class="col-sm-3">
-                <select class="form-control">
-                    <option></option>
-                    <option>Yes</option>
-                    <option>No</option>
-                </select>
+                <form:select path="maternalZygosityExamined" cssClass="form-control">
+                    <form:option value="" />
+                    <form:option value="true">Yes</form:option>
+                    <form:option value="false">No</form:option>
+                </form:select>
             </div>
         </div>
 
         <div class="form-group">
-            <label class="col-sm-3 control-label">Currently Available</label>
+            <form:label path="currentlyAvailable" cssClass="col-sm-3 control-label">Currently Available</form:label>
             <div class="col-sm-3">
-                <select class="form-control">
-                    <option>Yes</option>
-                    <option>No</option>
-                </select>
+                <form:select path="currentlyAvailable" cssClass="form-control">
+                    <form:option value="" />
+                    <form:option value="true">Yes</form:option>
+                    <form:option value="false">No</form:option>
+                </form:select>
             </div>
         </div>
 
         <div class="form-group">
-            <label class="col-sm-3 control-label">Other Line Information</label>
+            <form:label path="otherLineInformation" cssClass="col-sm-3 control-label">Other Line Information</form:label>
             <div class="col-sm-9">
-                <textarea class="form-control" rows="5"></textarea>
+                <form:textarea path="otherLineInformation" cssClass="form-control" rows="5"/>
             </div>
         </div>
 
@@ -82,8 +85,20 @@
 
 <script>
     $(function () {
+        var formChanged = false;
         $('#other-lines').on('change', function () {
             window.location.href = '/action/zebrashare/line-edit/' + $(this).val();
         });
+        $('#formBean').on('change', function () {
+            formChanged = true;
+        });
+        $('#formBean').on('submit', function () {
+            formChanged = false;
+        })
+        $(window).on('beforeunload', function () {
+            if (formChanged) {
+                return 'Unsaved changes';
+            }
+        })
     });
 </script>
