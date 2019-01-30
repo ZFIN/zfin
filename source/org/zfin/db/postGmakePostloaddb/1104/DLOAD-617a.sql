@@ -20,7 +20,7 @@ insert into zdb_Active_data
  select fdmd_zdb_id from ftrmutdetssangernew;
 
 
-drop table tmp_load;
+drop table if exists tmp_load;
 create temp table tmp_load (ftrtemp varchar(50), ref1temp varchar(50), fdmd_zdb_idtemp varchar(50)) ;
 
  insert into tmp_load(ftrtemp, ref1temp , fdmd_zdb_idtemp)
