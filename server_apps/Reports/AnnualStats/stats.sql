@@ -81,7 +81,7 @@ where mrkrgoev_evidence_code = 'IEA'
 
 -- Non-IEA GO annotations
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(distinct mrkrgoev_mrkr_zdb_id), 'Functional Annotation', 'Genes with Non-IEA GO Annotations', now() 
+select count(distinct mrkrgoev_mrkr_zdb_id), 'Functional Annotation', 'Genes with Non-IEA GO Annotation', now() 
 from marker_go_term_evidence
 where mrkrgoev_evidence_code != 'IEA';
 
