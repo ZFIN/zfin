@@ -491,27 +491,35 @@
             <tr>
                 <th>Functional Consequence:</th>
                 <td>
-                        ${formBean.ftrCommContr.functionalConsequence.toString()}
+                        ${formBean.ftrCommContr.functionalConsequence.toString()} Added by : ${formBean.ftrCommContr.person.fullName},${formBean.ftrCommContr.date}
 
                 </td>
+            </tr>
+            <tr>
                 <th>Adult Viable:</th>
                 <td>
-                        ${formBean.ftrCommContr.adultViable.toString()}
+                        ${formBean.ftrCommContr.adultViable.toString()} Added by : ${formBean.ftrCommContr.person.fullName},${formBean.ftrCommContr.date}
 
                 </td>
+            </tr>
+            <tr>
                 <th>Maternal Zygocity Examined:</th>
                 <td>
-                        ${formBean.ftrCommContr.maternalZygosityExamined.toString()}
+                        ${formBean.ftrCommContr.maternalZygosityExamined.toString()}Added by : ${formBean.ftrCommContr.person.fullName},${formBean.ftrCommContr.date}
 
                 </td>
-                <th>Available:</th>
+            </tr>
+            <tr>
+            <th>Available:</th>
                 <td>
-                        ${formBean.ftrCommContr.currentlyAvailable.toString()}
+                        ${formBean.ftrCommContr.currentlyAvailable.toString()} Added by : ${formBean.ftrCommContr.person.fullName},${formBean.ftrCommContr.date}
 
                 </td>
+            </tr>
+            <tr>
                 <th>Other Line Information:</th>
                 <td>
-                        ${formBean.ftrCommContr.otherLineInformation}
+                        ${formBean.ftrCommContr.otherLineInformation} Added by : ${formBean.ftrCommContr.person.fullName},${formBean.ftrCommContr.date}
 
                 </td>
             </tr>
