@@ -1551,7 +1551,7 @@ insert into tmp_wtxpat (
 )
 select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
        '' as subontid,
-       '' as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name, xpatassay_mmo_id
+       '' as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name, xpatassay_mmo_id,
         xpatex_source_zdb_id,
         case when xpatex_probe_feature_zdb_id = '' then ' ' else xpatex_probe_feature_zdb_id end as probe_id,
         case when xpatex_atb_zdb_id = '' then ' ' else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
@@ -1577,12 +1577,12 @@ select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_n
    and fish_genotype_zdb_id = geno_zdb_id
 and xpatres_subterm_zdb_id is null
  group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,xpatassay_mmo_id
+        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,xpatassay_mmo_id,
         xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
 union
 select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
        sub.term_ont_id as subontid,
-       sub.term_name as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name, xpatassay_mmo_id
+       sub.term_name as subname, startStage.stg_name as startSt, endStage.stg_name as endSt, xpatex_assay_name, xpatassay_mmo_id,
         xpatex_source_zdb_id,
         case when xpatex_probe_feature_zdb_id = '' then ' ' else xpatex_probe_feature_zdb_id end as probe_id,
         case when xpatex_atb_zdb_id = '' then ' ' else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
@@ -1596,8 +1596,8 @@ select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_n
   and clone_problem_type = 'Chimeric')
    and mrkr_zdb_id = xpatex_gene_zdb_id
    and xpatex_genox_zdb_id = genox_zdb_id
-   and xpatres_supeterm_zdb_id = super.term_zdb_id
-   and fish_zdb_id =r genox_fish_zdb_id
+   and xpatres_superterm_zdb_id = super.term_zdb_id
+   and fish_zdb_id =genox_fish_zdb_id
 --   and fish_is_wildtype = 't'
    and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
    and xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -1608,7 +1608,7 @@ select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_n
    and xpatex_assay_name=xpatassay_name
 and xpatres_subterm_zdb_id is not null
  group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
-        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,xpatassay_mmo_id,
         xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
 ;
 
