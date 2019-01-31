@@ -190,7 +190,7 @@ close MOWITHPUBS;
 ## ZFIN-5654
 $sql = "
  select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
-	'' as geneAbbrev, xpatex_zdb_id as xpat_zdb,, xpatex_assay_name,xpatassay_mmo_id,
+	'' as geneAbbrev, xpatex_zdb_id as xpat_zdb, xpatex_assay_name,xpatassay_mmo_id,
 	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
  from expression_experiment, fish_experiment, fish, marker atb,expression_pattern_assay
  where xpatex_genox_Zdb_id = genox_zdb_id
