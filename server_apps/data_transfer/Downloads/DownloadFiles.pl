@@ -203,7 +203,7 @@ $sql = "
       and clone_problem_type = 'Chimeric')
 UNION
  select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
-	gene.mrkr_abbrev as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,,xpatassay_mmo_id,
+	gene.mrkr_abbrev as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,xpatex_assay_name,xpatassay_mmo_id,
 	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
  from expression_experiment, fish_experiment, fish, marker atb, marker gene,expression_pattern_assay
  where xpatex_genox_Zdb_id = genox_zdb_id
