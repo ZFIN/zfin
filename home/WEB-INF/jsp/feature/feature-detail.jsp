@@ -20,8 +20,8 @@
         <td>
             <table class="primary-entity-attributes">
                 <tr>
-                    <th class="genotype-name-label">
-                        <span class="name-label">Genomic Feature:</span>
+                    <th class="geNotype-name-label">
+                        <span class="name-label">GeNomic Feature:</span>
                     </th>
                     <td>
                         <span class="name-value">${formBean.feature.name}</span>
@@ -33,13 +33,13 @@
                 </c:if>
 
                 <c:if test="${formBean.feature.type.unspecified}">
-                    <br style="font-size:small;"> Note: Unspecified genomic feature records have been created in support of data for which a publication has not specified a genomic feature. </br>
+                    <br style="font-size:small;"> Note: Unspecified geNomic feature records have been created in support of data for which a publication has Not specified a geNomic feature. </br>
                 </c:if>
 
                 <c:if test="${formBean.feature.aliases != null}">
                     <tr>
                         <th>
-                            Synonyms:
+                            SyNonyms:
                         </th>
                         <td>
                             <c:forEach var="featureAlias" items="${formBean.feature.aliases}" varStatus="loop">
@@ -67,7 +67,7 @@
                 </c:if>
                 <tr>
                     <th>
-                        Affected Genomic Regions:
+                        Affected GeNomic Regions:
                     </th>
                     <c:choose>
                         <c:when test="${fn:length(formBean.feature.affectedGenes) > 0 }">
@@ -98,9 +98,9 @@
                         </c:when>
                         <c:otherwise>
                             <c:if test="${formBean.feature.type.transgenic}">
-                                <c:if test="${!(formBean.feature.knownInsertionSite)}">
+                                <c:if test="${!(formBean.feature.kNownInsertionSite)}">
                                     <td>
-                                        This feature is representative of one or more unknown insertion sites.
+                                        This feature is representative of one or more unkNown insertion sites.
                                     </td>
                                 </c:if>
                             </c:if>
@@ -161,11 +161,11 @@
                         <c:set var="mutagen" value="${formBean.feature.featureAssay.mutagen}"/>
                         <c:set var="mutagee" value="${formBean.feature.featureAssay.mutagee}"/>
                         <c:choose>
-                            <c:when test="${mutagen eq null || mutagen eq zfn:getMutagen('not specified')}">
+                            <c:when test="${mutagen eq null || mutagen eq zfn:getMutagen('Not specified')}">
                             </c:when>
-                            <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen eq zfn:getMutagen('not specified')}">
+                            <c:when test="${mutagee eq zfn:getMutagee('Not specified') && mutagen eq zfn:getMutagen('Not specified')}">
                             </c:when>
-                            <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
+                            <c:when test="${mutagee eq zfn:getMutagee('Not specified') && mutagen ne zfn:getMutagen('Not specified')}">
                                 ${mutagen.toString()}&nbsp;
                                 <c:if test="${formBean.createdByRelationship ne null && fn:length(formBean.createdByRelationship) > 0}">
                                     <c:forEach var="createdBy" items="${formBean.createdByRelationship}" varStatus="loop">
@@ -280,23 +280,23 @@
                                     </c:if>
                                     <c:if test="${supplier.solnicaLab}">&nbsp;(<a href="http://devbio.wustl.edu/solnicakrezellab/${formBean.feature.singleRelatedMarker.abbreviation}.htm"><font size="-1">request this mutant</font></a>)
                                     </c:if>
-                                    <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGenotype.zdbID}"><font size="-1">order this</font></a>)
+                                    <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGeNotype.zdbID}"><font size="-1">order this</font></a>)
                                     </c:if>
                                     <c:if test="${!status.last}"><br/></c:if>
                                 </c:forEach>
                             </c:when>
-                            <c:when test="${!empty formBean.genotypeDisplays}">
+                            <c:when test="${!empty formBean.geNotypeDisplays}">
                                 
-                                <c:forEach var="genotypeDisplay" items="${formBean.genotypeDisplays}" varStatus="loop">
-                                    <c:if test="${genotypeDisplay.genotype.extinct}">
-                                        <font size="3" color="red">extinct</font> <img src="/images/warning-noborder.gif"
+                                <c:forEach var="geNotypeDisplay" items="${formBean.geNotypeDisplays}" varStatus="loop">
+                                    <c:if test="${geNotypeDisplay.geNotype.extinct}">
+                                        <font size="3" color="red">extinct</font> <img src="/images/warning-Noborder.gif"
                                                                                        alt="extinct" width="20" align="top"
                                                                                        height="20">
                                     </c:if>
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>
-                                <span class="no-data-tag"></span>
+                                <span class="No-data-tag"></span>
                             </c:otherwise>
                         </c:choose>
                     </td>
@@ -407,13 +407,13 @@
     </table>
 </zfin2:subsection>
 
-<zfin2:externalNotes notes="${formBean.externalNotes}" />
+<zfin2:externalNotes Notes="${formBean.externalNotes}" />
 
 <c:set var="title">
     OTHER <zfin:abbrev entity="${formBean.feature}"/> PAGES
 </c:set>
 <div id="other-pages">
-    <zfin2:subsection title="${title}" test="${!empty formBean.summaryPageDbLinks || !empty formBean.aaLink}"  showNoData="true" noDataText="No links to external sites">
+    <zfin2:subsection title="${title}" test="${!empty formBean.summaryPageDbLinks || !empty formBean.aaLink}"  showNoData="true" NoDataText="No links to external sites">
         <table class="summary horizontal-solidblock">
         <c:forEach var="link" items="${formBean.summaryPageDbLinks}" varStatus="loop">
             <tr>
@@ -442,41 +442,41 @@
     </zfin2:subsection>
 </div>
 
-<div id="genotype">
-    <zfin2:subsection title="GENOTYPES" test="${!empty formBean.genotypeDisplays}" showNoData="true">
-        <table id="genotypes-table" class="summary rowstripes">
+<div id="geNotype">
+    <zfin2:subsection title="GENoTYPES" test="${!empty formBean.geNotypeDisplays}" showNoData="true">
+        <table id="geNotypes-table" class="summary rowstripes">
             <tr>
                 <th width="25%">
                     Zygosity
                 </th>
                 <th width="25%">
-                    Genotype (Background)
+                    GeNotype (Background)
                 </th>
                 <th width="25%">
-                    Affected Genomic Regions
+                    Affected GeNomic Regions
                 </th>
                 <th width="25%">
                     Parental Zygosity
                 </th>
             </tr>
 
-            <c:forEach var="genotypeDisplay" items="${formBean.genotypeDisplays}" varStatus="loop">
-                <zfin:alternating-tr loopName="loop" groupBeanCollection="${formBean.genotypeDisplays}"
+            <c:forEach var="geNotypeDisplay" items="${formBean.geNotypeDisplays}" varStatus="loop">
+                <zfin:alternating-tr loopName="loop" groupBeanCollection="${formBean.geNotypeDisplays}"
                                      groupByBean="zygosity" newGroup="true">
                     <td>
-                        <zfin:groupByDisplay loopName="loop" groupBeanCollection="${formBean.genotypeDisplays}"
+                        <zfin:groupByDisplay loopName="loop" groupBeanCollection="${formBean.geNotypeDisplays}"
                                              groupByBean="zygosity">
-                            ${genotypeDisplay.zygosity}
+                            ${geNotypeDisplay.zygosity}
                         </zfin:groupByDisplay>
                     </td>
                     <td>
-                        <zfin:link entity="${genotypeDisplay.genotype}"/>
+                        <zfin:link entity="${geNotypeDisplay.geNotype}"/>
                     </td>
                     <td>
-                        <zfin:link entity="${genotypeDisplay.affectedGenes}"/>
+                        <zfin:link entity="${geNotypeDisplay.affectedGenes}"/>
                     </td>
                     <td>
-                        <c:if test="${genotypeDisplay.zygosity ne 'Complex'}">${genotypeDisplay.parentalZygosityDisplay}</c:if>
+                        <c:if test="${geNotypeDisplay.zygosity ne 'Complex'}">${geNotypeDisplay.parentalZygosityDisplay}</c:if>
                     </td>
                 </zfin:alternating-tr>
             </c:forEach>
@@ -491,35 +491,35 @@
             <tr>
                 <th>Functional Consequence:</th>
                 <td>
-                        ${formBean.ftrCommContr.functionalConsequence.toString()} Added by : ${formBean.ftrCommContr.person.fullName},${formBean.ftrCommContr.date}
+                        ${formBean.ftrCommContr.functionalConsequence.toString()}  ${formBean.ftrCommContr.submitter.fullName}
 
                 </td>
             </tr>
             <tr>
                 <th>Adult Viable:</th>
-                <td>
-                        ${formBean.ftrCommContr.adultViable.toString()} Added by : ${formBean.ftrCommContr.person.fullName},${formBean.ftrCommContr.date}
+                <td>${formBean.ftrCommContr.adultViable ? "Yes" : "No"}
+                           <td>${formBean.ftrCommContr.submitter.fullName}
 
                 </td>
             </tr>
             <tr>
                 <th>Maternal Zygocity Examined:</th>
                 <td>
-                        ${formBean.ftrCommContr.maternalZygosityExamined.toString()}Added by : ${formBean.ftrCommContr.person.fullName},${formBean.ftrCommContr.date}
+                        ${formBean.ftrCommContr.maternalZygosityExamined ? "Yes" : "No"}  <td> ${formBean.ftrCommContr.submitter.fullName}
 
                 </td>
             </tr>
             <tr>
             <th>Available:</th>
                 <td>
-                        ${formBean.ftrCommContr.currentlyAvailable.toString()} Added by : ${formBean.ftrCommContr.person.fullName},${formBean.ftrCommContr.date}
+                        ${formBean.ftrCommContr.currentlyAvailable ? "Yes" : "No"} <td>  ${formBean.ftrCommContr.submitter.fullName}
 
                 </td>
             </tr>
             <tr>
                 <th>Other Line Information:</th>
                 <td>
-                        ${formBean.ftrCommContr.otherLineInformation} Added by : ${formBean.ftrCommContr.person.fullName},${formBean.ftrCommContr.date}
+                        ${formBean.ftrCommContr.otherLineInformation}  <td>  ${formBean.ftrCommContr.submitter.fullName}
 
                 </td>
             </tr>
@@ -534,7 +534,7 @@
 <a href='/action/publication/list/${formBean.feature.zdbID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
 
 <script type="text/javascript">
-    $('#genotype').tableCollapse({label: 'rows'});
+    $('#geNotype').tableCollapse({label: 'rows'});
     $(".gbrowse-image").gbrowseImage({
         width: 400,
         imageUrl: "${formBean.gBrowseImage.imageUrl}",
