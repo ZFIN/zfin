@@ -190,7 +190,7 @@ close MOWITHPUBS;
 ## ZFIN-5654
 $sql = "
  select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
-	'' as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,xpatassay_mmo_id,
+	'' as geneAbbrev, xpatex_zdb_id as xpat_zdb,, xpatex_assay_name,xpatassay_mmo_id,
 	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
  from expression_experiment, fish_experiment, fish, marker atb,expression_pattern_assay
  where xpatex_genox_Zdb_id = genox_zdb_id
@@ -203,7 +203,7 @@ $sql = "
       and clone_problem_type = 'Chimeric')
 UNION
  select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
-	gene.mrkr_abbrev as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,xpatex_assay_name,xpatassay_mmo_id,
+	gene.mrkr_abbrev as geneAbbrev, xpatex_zdb_id as xpat_zdb,xpatex_assay_name,xpatassay_mmo_id,
 	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
  from expression_experiment, fish_experiment, fish, marker atb, marker gene,expression_pattern_assay
  where xpatex_genox_Zdb_id = genox_zdb_id
@@ -219,7 +219,7 @@ UNION
 ";
 $cur = $dbh->prepare($sql);
 $cur->execute();
-$cur->bind_columns(\$abId, \$abSym, \$geneId, \$geneSym, \$xpType, \$xpId, \$pubId, \$fishId, \$envId); 
+$cur->bind_columns(\$abId, \$abSym, \$geneId, \$geneSym,  \$xpId, \$xpType, \$xpTypeId, \$pubId, \$fishId, \$envId);
 
 
 $abXpatFishFile = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat_fish.txt';

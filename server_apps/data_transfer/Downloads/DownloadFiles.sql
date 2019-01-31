@@ -412,7 +412,8 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
         xpatex_assay_name, xpatassay_mmo_id, xpatex_zdb_id xpat_zdb,
         xpatex_source_zdb_id,
         fish.fish_zdb_id, genox_exp_zdb_id
- from expression_experiment,expression_pattern_Assay
+ from expression_experiment
+ join expression_pattern_assay on xpatassay_name=xpatex_assay_name
    join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id  
    join marker as gene on gene.mrkr_zdb_id = xpatex_gene_zdb_id
    join fish as fish on fish.fish_zdb_id = genox_fish_zdb_id
@@ -421,7 +422,7 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
    and exists (
         select 1 from expression_result
          where xpatres_xpatex_zdb_id = xpatex_zdb_id
- ) and xpatex_assay_name=xpatassayname order by gene_zdb, xpat_zdb, probe_zdb;
+ ) order by gene_zdb, xpat_zdb, probe_zdb;
 
 delete from tmp_xpat_fish
  where exists (Select 'x' from clone
@@ -589,7 +590,7 @@ where substring(psg_mrkr_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-L
   and psg_pg_id = pg_id
   and xpatex_genox_zdb_id = pg_genox_zdb_id
   and xpatex_gene_zdb_id = psg_mrkr_zdb_id
-  and xpatex_assay_name=xpatassayname
+  and xpatex_assay_name=xpatassay_name
   and efs_xpatex_zdb_id = xpatex_zdb_id
   and efs_fig_zdb_id = pg_fig_zdb_id
   and efs_start_stg_zdb_id = pg_start_stg_zdb_id
@@ -1563,7 +1564,7 @@ select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_n
   where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
   and clone_problem_type = 'Chimeric')
    and mrkr_zdb_id = xpatex_gene_zdb_id
-   and xpatex_assay_name=xpatassayname
+   and xpatex_assay_name=xpatassay_name
    and xpatex_genox_zdb_id = genox_zdb_id
    and xpatres_superterm_zdb_id = super.term_zdb_id
    and fish_zdb_id = genox_fish_zdb_id
@@ -1604,7 +1605,7 @@ select mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_n
    and xpatres_end_stg_zdb_id = endStage.stg_zdb_id
    and fish_genotype_zdb_id = geno_zdb_id
    and sub.term_zdb_id = xpatres_subterm_zdb_id
-   and xpatex_assay_name=xpatassayname
+   and xpatex_assay_name=xpatassay_name
 and xpatres_subterm_zdb_id is not null
  group by mrkr_zdb_id, mrkr_abbrev, fish_full_name, super.term_ont_id, super.term_name,
         subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
