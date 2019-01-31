@@ -234,7 +234,7 @@ while ($cur->fetch()) {
         $geneId = "";
     }
             
-    print ABXPFISH "$abId\t$abSym\t$geneId\t$geneSym\t$xpType\t$xpId\t$xpmmoId\t$pubId\t$fishId\t$envId\n";
+    print ABXPFISH "$abId\t$abSym\t$geneId\t$geneSym\t$xpId\t$xpType\t$xpTypeId\t$pubId\t$fishId\t$envId\n";
 }
 
 close ABXPFISH;
