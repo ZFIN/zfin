@@ -46,11 +46,6 @@ public class AnnualStatsController {
         List<AnnualStatsDisplay> genesStats = new ArrayList<>();
         List<AnnualStatsDisplay> geneticsStats = new ArrayList<>();
         List<AnnualStatsDisplay> faStats = new ArrayList<>();
-        List<AnnualStatsDisplay> faStats0 = new ArrayList<>();
-        List<AnnualStatsDisplay> faStats1 = new ArrayList<>();
-        List<AnnualStatsDisplay> faStats2 = new ArrayList<>();
-        List<AnnualStatsDisplay> faStats3 = new ArrayList<>();
-        List<AnnualStatsDisplay> faStats4 = new ArrayList<>();
         List<AnnualStatsDisplay> reagentsStats = new ArrayList<>();
         List<AnnualStatsDisplay> xpPhenoStats = new ArrayList<>();
         List<AnnualStatsDisplay> genomicsStats = new ArrayList<>();
@@ -120,31 +115,26 @@ public class AnnualStatsController {
                     annualStatsDisplay.setOrder(0);
                     annualStatsDisplay.setAnnualStats(stat);
                     faStats.add(annualStatsDisplay);
-                    faStats0.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Genes with IEA GO annotations")) {
                     annualStatsDisplay.setCategory("Genes with Automated GO Annotation");
                     annualStatsDisplay.setOrder(1);
                     annualStatsDisplay.setAnnualStats(stat);
                     faStats.add(annualStatsDisplay);
-                    faStats1.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Genes with Non-IEA GO Annotation")) {
                     annualStatsDisplay.setCategory("Genes with Curated GO");
                     annualStatsDisplay.setOrder(2);
                     annualStatsDisplay.setAnnualStats(stat);
                     faStats.add(annualStatsDisplay);
-                    faStats2.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Total GO Annotations")) {
                     annualStatsDisplay.setCategory("Total GO Annotations");
                     annualStatsDisplay.setOrder(3);
                     annualStatsDisplay.setAnnualStats(stat);
                     faStats.add(annualStatsDisplay);
-                    faStats3.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Genes with OMIM phenotypes")) {
                     annualStatsDisplay.setCategory("Genes with OMIM phenotypes");
                     annualStatsDisplay.setOrder(4);
                     annualStatsDisplay.setAnnualStats(stat);
                     faStats.add(annualStatsDisplay);
-                    faStats4.add(annualStatsDisplay);
                 } else if (stat.getType().equals("Morpholinos")) {
                     annualStatsDisplay.setCategory("Morpholinos");
                     annualStatsDisplay.setOrder(0);
@@ -276,22 +266,6 @@ public class AnnualStatsController {
         model.addAttribute("faStats", faStats);
         model.addAttribute("totalNumFAstats", faStats.size());
 
-        Collections.sort(faStats0);
-        model.addAttribute("faStats0", faStats0);
-        model.addAttribute("totalNumFAstats0", faStats0.size());
-
-        model.addAttribute("faStats1", faStats1);
-        model.addAttribute("totalNumFAstats1", faStats1.size());
-
-        model.addAttribute("faStats2", faStats2);
-        model.addAttribute("totalNumFAstats2", faStats2.size());
-
-        model.addAttribute("faStats3", faStats3);
-        model.addAttribute("totalNumFAstats3", faStats3.size());
-
-        model.addAttribute("faStats4", faStats4);
-        model.addAttribute("totalNumFAstats4", faStats4.size());
-
         Collections.sort(reagentsStats);
         model.addAttribute("reagentsStats", reagentsStats);
         model.addAttribute("totalNumReagentStats", reagentsStats.size());
@@ -315,5 +289,4 @@ public class AnnualStatsController {
         return "infrastructure/annual-stats-view.page";
     }
 }
-
 
