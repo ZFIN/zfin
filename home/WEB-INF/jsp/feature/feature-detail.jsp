@@ -505,14 +505,14 @@
             <tr>
                 <th>Maternal Zygocity Examined:</th>
                 <td width="25%">
-                        ${formBean.ftrCommContr.maternalZygosityExamined ? "Yes" : "No"}, ${formBean.ftrCommContr.submitter.fullName}<td>  <fmt:formatDate value="${formBean.ftrCommContr.date.time}" type="Date" pattern="yyyy/MM/dd"/>
+                        ${formBean.ftrCommContr.maternalZygosityExamined ? "Yes" : "No"}<td> ${formBean.ftrCommContr.submitter.fullName},  <fmt:formatDate value="${formBean.ftrCommContr.date.time}" type="Date" pattern="yyyy/MM/dd"/>
 
                 </td>
             </tr>
             <tr>
             <th>Available:</th>
                 <td width="25%">
-                        ${formBean.ftrCommContr.currentlyAvailable ? "Yes" : "No"}, ${formBean.ftrCommContr.submitter.fullName}<td>  <fmt:formatDate value="${formBean.ftrCommContr.date.time}" type="Date" pattern="yyyy/MM/dd"/>
+                        ${formBean.ftrCommContr.currentlyAvailable ? "Yes" : "No"}<td>{formBean.ftrCommContr.submitter.fullName},  <fmt:formatDate value="${formBean.ftrCommContr.date.time}" type="Date" pattern="yyyy/MM/dd"/>
 
                 </td>
             </tr>
