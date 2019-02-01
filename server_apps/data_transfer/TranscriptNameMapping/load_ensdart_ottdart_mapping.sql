@@ -64,7 +64,7 @@ delete from ensdart_name_mapping
 
 --update marker
 -- set (mrkr_name, mrkr_abbrev)= (select ensembl_tscript_name, ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = zfin_gene_zdb_id)
-where mrkr_zdb_id in (Select zfin_gene_zdb_id from ensdart_name_mapping, marker gene, marker_relationship where-- gene.mrkr_zdb_id = mrel_mrkr_2_zdb_id and zfin_gene_zdb_id = mrel_mrkr_1_zdb_id and gene.mrkr_name like ensembl_tscript_name||'%')
+--where mrkr_zdb_id in (Select zfin_gene_zdb_id from ensdart_name_mapping, marker gene, marker_relationship where-- gene.mrkr_zdb_id = mrel_mrkr_2_zdb_id and zfin_gene_zdb_id = mrel_mrkr_1_zdb_id and gene.mrkr_name like ensembl_tscript_name||'%')
 -- and not exists (Select 'x' from ensdart_name_mapping where mrkr_abbrev = ensembl_tscript_name);
 
 --\copy (select ensdart_stable_id, ensdart_versioned_id, ensdarg_id, zfin_gene_zdb_id, ensembl_tscript_name, mrkr_name, ottdart_id from ensdart_name_mapping, marker where zfin_gene_zdb_id = mrkr_zdb_id) to name_updates.txt with delimiter ' ';
