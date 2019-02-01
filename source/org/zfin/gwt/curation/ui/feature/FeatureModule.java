@@ -34,9 +34,12 @@ public class FeatureModule implements ZfinCurationModule {
     FeatureEditView featureEditView;
     @UiField
     FeatureRelationshipView featureRelationshipView;
+    @UiField
+    FeatureZebrashareEditView featureZebrashareEditView;
 
     private FeatureEditPresenter featureEditPresenter;
     private FeatureRelationshipPresenter featureRelationshipPresenter;
+    private FeatureZebrashareEditPresenter featureZebrashareEditPresenter;
 
     public FeatureModule(String publicationID) {
         this.publicationID = publicationID;
@@ -60,6 +63,10 @@ public class FeatureModule implements ZfinCurationModule {
         featureRelationshipPresenter = new FeatureRelationshipPresenter(featureRelationshipView, publicationID);
         featureRelationshipView.setPresenter(featureRelationshipPresenter);
         featureRelationshipPresenter.go();
+
+        featureZebrashareEditPresenter = new FeatureZebrashareEditPresenter(featureZebrashareEditView, publicationID);
+        featureZebrashareEditView.setPresenter(featureZebrashareEditPresenter);
+        featureZebrashareEditPresenter.go();
 
 
     }
