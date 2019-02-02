@@ -1363,6 +1363,84 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
         </Download>
         <Download orderIndex="1">
             <Name>
+                Ameliorated Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ameliorated_phenotype_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[ ]]>
+            </Query>
+            <Column id="1" unique="true">Fish ID</Column>
+            <Column id="2" unique="true">Fish Name</Column>
+            <Column id="3" unique="true">Start Stage ID</Column>
+            <Column id="4" unique="true">Start Stage Name</Column>
+            <Column id="5" unique="true">End Stage ID</Column>
+            <Column id="6" unique="true">End Stage Name</Column>
+            <Column id="7">Affected Structure or Process 1 subterm ID</Column>
+            <Column id="8">Affected Structure or Process 1 subterm Name</Column>
+            <Column id="9">Post-composed Relationship ID</Column>
+            <Column id="10">Post-composed Relationship Name</Column>
+            <Column id="11">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="12">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="13">Phenotype Keyword ID</Column>
+            <Column id="14">Phenotype Keyword Name</Column>
+            <Column id="15">Phenotype Tag</Column>
+            <Column id="16">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="17">Affected Structure or Process 2 subterm name</Column>
+            <Column id="18">Post-composed Relationship (rel) ID</Column>
+            <Column id="19">Post-composed Relationship (rel) Name</Column>
+            <Column id="20">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="21">Affected Structure or Process 2 superterm name</Column>
+            <Column id="22" unique="true">Publication ID</Column>
+            <Column id="23" unique="true">Environment ID</Column>
+        </Download>      
+        <Download orderIndex="1">
+            <Name>
+                Exacerbated Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>exacerbated_phenotype_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[ ]]>
+            </Query>
+            <Column id="1" unique="true">Fish ID</Column>
+            <Column id="2" unique="true">Fish Name</Column>
+            <Column id="3" unique="true">Start Stage ID</Column>
+            <Column id="4" unique="true">Start Stage Name</Column>
+            <Column id="5" unique="true">End Stage ID</Column>
+            <Column id="6" unique="true">End Stage Name</Column>
+            <Column id="7">Affected Structure or Process 1 subterm ID</Column>
+            <Column id="8">Affected Structure or Process 1 subterm Name</Column>
+            <Column id="9">Post-composed Relationship ID</Column>
+            <Column id="10">Post-composed Relationship Name</Column>
+            <Column id="11">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="12">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="13">Phenotype Keyword ID</Column>
+            <Column id="14">Phenotype Keyword Name</Column>
+            <Column id="15">Phenotype Tag</Column>
+            <Column id="16">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="17">Affected Structure or Process 2 subterm name</Column>
+            <Column id="18">Post-composed Relationship (rel) ID</Column>
+            <Column id="19">Post-composed Relationship (rel) Name</Column>
+            <Column id="20">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="21">Affected Structure or Process 2 superterm name</Column>
+            <Column id="22" unique="true">Publication ID</Column>
+            <Column id="23" unique="true">Environment ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
                 Phenotype of Zebrafish Genes
             </Name>
             <Category>

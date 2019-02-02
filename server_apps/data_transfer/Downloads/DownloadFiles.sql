@@ -506,9 +506,83 @@ create view phenotype_fish as
    and f.fish_zdb_id = gx.genox_fish_zdb_id
    and pg_fig_zdb_id = fig_zdb_id
    and ps.psg_id = tps.phenos_pk_id
+   and psg_tag != 'ameliorated' 
+   and psg_tag != 'exacerbated'
  order by fish_zdb_id, fig_source_zdb_id;
 \copy (select * from phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt' with delimiter as '	' null as '';
 drop view phenotype_fish;
+
+create view ameliorated_phenotype_fish as
+ select distinct f.fish_zdb_id, f.fish_full_name,
+            pg_start_stg_zdb_id,
+            (select stg_name
+                from stage
+                where stg_zdb_id = pg_start_stg_zdb_id),
+            pg_end_stg_zdb_id,
+            (select stg_name as name2 from stage where stg_zdb_id = pg_end_stg_zdb_id),
+              tps.asubterm_ont_id,
+              tps.asubterm_name,
+              tps.arelationship_id,
+              tps.arelationship_name,
+              tps.asuperterm_ont_id,
+              tps.asuperterm_name,
+              tps.quality_id,
+              tps.quality_name,
+              psg_tag,
+              tps.bsubterm_ont_id,
+              tps.bsubterm_name,
+              tps.brelationship_id,
+              tps.brelationship_name,
+              tps.bsuperterm_ont_id,
+              tps.bsuperterm_name,
+              fig_source_zdb_id,
+              gx.genox_exp_zdb_id
+  from phenotype_source_generated, phenotype_observation_generated ps, figure, fish f, fish_experiment gx, tmp_phenotype_statement tps
+ where ps.psg_pg_id = pg_id
+   and pg_genox_zdb_id = gx.genox_zdb_id
+   and f.fish_zdb_id = gx.genox_fish_zdb_id
+   and pg_fig_zdb_id = fig_zdb_id
+   and ps.psg_id = tps.phenos_pk_id
+   and psg_tag = 'ameliorated' 
+ order by fish_zdb_id, fig_source_zdb_id;
+\copy (select * from ameliorated_phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ameliorated_phenotype_fish.txt' with delimiter as '	' null as '';
+drop view ameliorated_phenotype_fish;
+
+create view exacerbated_phenotype_fish as
+ select distinct f.fish_zdb_id, f.fish_full_name,
+            pg_start_stg_zdb_id,
+            (select stg_name
+                from stage
+                where stg_zdb_id = pg_start_stg_zdb_id),
+            pg_end_stg_zdb_id,
+            (select stg_name as name2 from stage where stg_zdb_id = pg_end_stg_zdb_id),
+              tps.asubterm_ont_id,
+              tps.asubterm_name,
+              tps.arelationship_id,
+              tps.arelationship_name,
+              tps.asuperterm_ont_id,
+              tps.asuperterm_name,
+              tps.quality_id,
+              tps.quality_name,
+              psg_tag,
+              tps.bsubterm_ont_id,
+              tps.bsubterm_name,
+              tps.brelationship_id,
+              tps.brelationship_name,
+              tps.bsuperterm_ont_id,
+              tps.bsuperterm_name,
+              fig_source_zdb_id,
+              gx.genox_exp_zdb_id
+  from phenotype_source_generated, phenotype_observation_generated ps, figure, fish f, fish_experiment gx, tmp_phenotype_statement tps
+ where ps.psg_pg_id = pg_id
+   and pg_genox_zdb_id = gx.genox_zdb_id
+   and f.fish_zdb_id = gx.genox_fish_zdb_id
+   and pg_fig_zdb_id = fig_zdb_id
+   and ps.psg_id = tps.phenos_pk_id
+   and psg_tag = 'exacerbated' 
+ order by fish_zdb_id, fig_source_zdb_id;
+\copy (select * from exacerbated_phenotype_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/exacerbated_phenotype_fish.txt' with delimiter as '	' null as '';
+drop view exacerbated_phenotype_fish;
 
 -- generate a file with xpatex and associated figure zdbid's
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig_fish.txt'"
