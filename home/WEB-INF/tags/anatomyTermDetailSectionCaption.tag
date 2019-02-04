@@ -60,14 +60,7 @@
                     <tr align="left">
                         <td>
                             Show all
-                            <c:choose>
-                                <c:when test="${useWebdriverURL}">
-                                    <c:set var="webdriver" value='/${webdriverURL}${structureSearchLink}'/>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="webdriver" value="${structureSearchLink}"/>
-                                </c:otherwise>
-                            </c:choose>
+                            <c:set var="webdriver" value="${structureSearchLink}"/>
                             <a href="${webdriver}">
                                     ${totalRecordCount}
                                 <zfin:choice choicePattern="${choicePattern}"

@@ -19,21 +19,20 @@ import java.util.Map;
  */
 public final class ZfinProperties {
 
-    private static final Logger logger = Logger.getLogger(ZfinProperties.class) ;
+    private static final Logger logger = Logger.getLogger(ZfinProperties.class);
     private static LoadPropertiesTask loadPropertiesTask = new LoadPropertiesTask();
     private static Configuration freeMarkerConfiguration;
 
 
-    public static String[] splitValues(ZfinPropertiesEnum zfinPropertiesEnum){
-        return splitValues(" ",zfinPropertiesEnum) ;
+    public static String[] splitValues(ZfinPropertiesEnum zfinPropertiesEnum) {
+        return splitValues(" ", zfinPropertiesEnum);
     }
 
-    public static String[] splitValues(String s,ZfinPropertiesEnum zfinPropertiesEnum) {
-        if(zfinPropertiesEnum!=null){
+    public static String[] splitValues(String s, ZfinPropertiesEnum zfinPropertiesEnum) {
+        if (zfinPropertiesEnum != null) {
             return zfinPropertiesEnum.value().split(s);
-        }
-        else{
-            return null ;
+        } else {
+            return null;
         }
     }
 
@@ -58,12 +57,13 @@ public final class ZfinProperties {
     }
 
     public static String getCookiePath() {
-        return "/" ;
+        return "/";
     }
 
     public static boolean isPushToWiki() {
         return Boolean.valueOf(ZfinPropertiesEnum.WIKI_PUSH_TO_WIKI.value());
     }
+
     public static String getSessionLogName() {
 //        return "zfin-session.log";
         return ZfinPropertiesEnum.LOG_FILE_SESSION.value();
@@ -77,7 +77,7 @@ public final class ZfinProperties {
     }
 
     public static int getMaxlogFiles() {
-        return Integer.parseInt(ZfinPropertiesEnum.LOG_FILE_MAX.value()) ;
+        return Integer.parseInt(ZfinPropertiesEnum.LOG_FILE_MAX.value());
     }
 
     public static String getServer() {
@@ -104,7 +104,7 @@ public final class ZfinProperties {
     }
 
     private static boolean isTrue(ZfinPropertiesEnum zfinPropertiesEnum) {
-        return Boolean.valueOf(zfinPropertiesEnum.value()) ;
+        return Boolean.valueOf(zfinPropertiesEnum.value());
     }
 
     /**
@@ -122,63 +122,61 @@ public final class ZfinProperties {
                     "' is not valid! Please correct the <Server> tag in the zfin-properties.xml file.");
     }
 
-    public static void setValues(Map<String,String> results){
-        for(String key : results.keySet()){
-            ZfinPropertiesEnum.valueOf(key).setValue(results.put(key,results.get(key)));
+    public static void setValues(Map<String, String> results) {
+        for (String key : results.keySet()) {
+            ZfinPropertiesEnum.valueOf(key).setValue(results.put(key, results.get(key)));
         }
     }
 
 
-    public static void loadFromRPCCall(){
-        LookupRPCService.App.getInstance().getAllZfinProperties(new HandlesErrorCallBack<Map<String,String>>("Failed to load"){
+    public static void loadFromRPCCall() {
+        LookupRPCService.App.getInstance().getAllZfinProperties(new HandlesErrorCallBack<Map<String, String>>("Failed to load") {
 
             @Override
             public void onSuccess(Map<String, String> result) {
-                ZfinProperties.setValues(result) ;
+                ZfinProperties.setValues(result);
             }
         });
     }
 
     public static String getWebHostBlastGetBinary() {
-        return ZfinPropertiesEnum.WEBHOST_BINARY_PATH + "/"+ ZfinPropertiesEnum.WEBHOST_XDGET ;
+        return ZfinPropertiesEnum.WEBHOST_BINARY_PATH + "/" + ZfinPropertiesEnum.WEBHOST_XDGET;
     }
 
     public static String getWebHostBlastPutBinary() {
-        return ZfinPropertiesEnum.WEBHOST_BINARY_PATH + "/"+ ZfinPropertiesEnum.WEBHOST_XDFORMAT;
+        return ZfinPropertiesEnum.WEBHOST_BINARY_PATH + "/" + ZfinPropertiesEnum.WEBHOST_XDFORMAT;
     }
 
     public static void init() {
         // should load from a default file, or from a -DPROPERTY=<path/to/file>
-        if(false==isInit()){
-            if(loadPropertiesTask.getFile()==null){
+        if (false == isInit()) {
+            if (loadPropertiesTask.getFile() == null) {
                 init("home/WEB-INF/zfin.properties");
-            }
-            else{
+            } else {
                 init(loadPropertiesTask.getFile());
             }
         }
     }
 
-    public static boolean isInit(){
-        return 
-            ZfinPropertiesEnum.INSTANCE.value()!=null
-           &&
-            ZfinPropertiesEnum.SECURE_HTTP.value()!=null 
-            ;
+    public static boolean isInit() {
+        return
+                ZfinPropertiesEnum.INSTANCE.value() != null
+                        &&
+                        ZfinPropertiesEnum.SECURE_HTTP.value() != null
+                ;
     }
 
-    public static void validateProperties(){
-        String instance = ZfinPropertiesEnum.INSTANCE.value() ;
-        if(instance==null){
-            instance = System.getenv("INSTANCE") ;
-            logger.error("Instance undefined in properties files, getting from environment["+instance+"]");
+    public static void validateProperties() {
+        String instance = ZfinPropertiesEnum.INSTANCE.value();
+        if (instance == null) {
+            instance = System.getenv("INSTANCE");
+            logger.error("Instance undefined in properties files, getting from environment[" + instance + "]");
         }
-        for(ZfinPropertiesEnum zfinPropertiesEnum : ZfinPropertiesEnum.values()){
-            if(zfinPropertiesEnum.value()==null){
-               logger.error("Property["+zfinPropertiesEnum.name() + " not defined for INSTANCE["+ ZfinPropertiesEnum.INSTANCE+"]");
-            }
-            else{
-                logger.info("Property["+zfinPropertiesEnum.name() + "=["+ zfinPropertiesEnum.value()+"]");
+        for (ZfinPropertiesEnum zfinPropertiesEnum : ZfinPropertiesEnum.values()) {
+            if (zfinPropertiesEnum.value() == null) {
+                logger.error("Property[" + zfinPropertiesEnum.name() + " not defined for INSTANCE[" + ZfinPropertiesEnum.INSTANCE + "]");
+            } else {
+                logger.info("Property[" + zfinPropertiesEnum.name() + "=[" + zfinPropertiesEnum.value() + "]");
             }
         }
     }
@@ -193,14 +191,14 @@ public final class ZfinProperties {
     }
 
     public static String getWebHostUserAtHost() {
-        return ZfinPropertiesEnum.WEBHOST_USER + "@" + ZfinPropertiesEnum.WEBHOST_HOSTNAME ;
+        return ZfinPropertiesEnum.WEBHOST_USER + "@" + ZfinPropertiesEnum.WEBHOST_HOSTNAME;
     }
 
     public static String getCurrentPropertyFile() {
-        if(loadPropertiesTask!=null){
-            return loadPropertiesTask.getFile() ;
+        if (loadPropertiesTask != null) {
+            return loadPropertiesTask.getFile();
         }
-        return null ; 
+        return null;
     }
 
 
@@ -208,7 +206,7 @@ public final class ZfinProperties {
         if (freeMarkerConfiguration == null) {
             freeMarkerConfiguration = new Configuration();
             try {
-                File templateFile = FileUtil.createFile(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), "WEB-INF","templates");
+                File templateFile = FileUtil.createFile(ZfinPropertiesEnum.WEBROOT_DIRECTORY.value(), "WEB-INF", "templates");
                 freeMarkerConfiguration.setDirectoryForTemplateLoading(templateFile);
             } catch (IOException e) {
                 logger.error("Could not find template directory", e);
@@ -218,13 +216,13 @@ public final class ZfinProperties {
     }
 
 
-    public static String getJavaRoot(){
+    public static String getJavaRoot() {
         return getJavaRoot(false);
     }
 
-    public static String getJavaRoot(boolean secure){
+    public static String getJavaRoot(boolean secure) {
         return (secure ? ZfinPropertiesEnum.SECURE_HTTP : ZfinPropertiesEnum.NON_SECURE_HTTP)
-                + ZfinPropertiesEnum.DOMAIN_NAME.value() + "/action" ;
+                + ZfinPropertiesEnum.DOMAIN_NAME.value() + "/action";
     }
 
     public static String getInspectletID() {
@@ -233,6 +231,10 @@ public final class ZfinProperties {
 
     public static Path getOntologyReloadStatusDirectory() {
         return Paths.get(ZfinPropertiesEnum.TARGETROOT.toString() + "/server_apps/data_transfer/LoadOntology/reload-status");
+    }
+
+    public static Path getDownloadReloadStatusDirectory() {
+        return Paths.get(ZfinPropertiesEnum.DOWNLOAD_DIRECTORY.toString() + "/reload-status");
     }
 
 

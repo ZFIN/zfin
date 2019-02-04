@@ -3,12 +3,17 @@ package org.zfin.framework;
 import org.hibernate.stat.Statistics;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.zfin.ontology.RelationshipDisplayNames;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.WebHostDatabaseStatisticsCache;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * <p>
@@ -23,11 +28,6 @@ import java.io.File;
  */
 public class ZfinActionServlet extends DispatcherServlet {
 
-    private String webRoot;
-
-    private static final String PROPERTY_FILE_DIR_PARAM = "property-file-directory";
-    private static final String SITE_SEARCH_CATEGORIES_FILE = "site-search-category-file";
-
     /**
      * This method is called the first time this servlet is instantiated.
      *
@@ -36,12 +36,8 @@ public class ZfinActionServlet extends DispatcherServlet {
      */
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        webRoot = getServletContext().getRealPath("/");
+        String webRoot = getServletContext().getRealPath("/");
         ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue(webRoot);
-        // Added this to the application context to make it easier to use global values.
-        // ToDo: Should add all global parameters into application context and have it added
-        // to the right context. There might be parameters that should only apply on a session scope...
-        config.getServletContext().setAttribute("webdriverURL", ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
         initDatabase();
         if (Boolean.valueOf(ZfinPropertiesEnum.BLAST_CACHE_AT_STARTUP.value())) {
             initBlast();
@@ -54,13 +50,10 @@ public class ZfinActionServlet extends DispatcherServlet {
     }
 
     private void initBlast() {
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                WebHostDatabaseStatisticsCache.getInstance().cacheAll();
-                HibernateUtil.closeSession();
-            }
-        };
+        Thread t = new Thread(() -> {
+            WebHostDatabaseStatisticsCache.getInstance().cacheAll();
+            HibernateUtil.closeSession();
+        });
         t.start();
     }
 
@@ -69,16 +62,6 @@ public class ZfinActionServlet extends DispatcherServlet {
         HibernateUtil.init();
         Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
         stats.setStatisticsEnabled(true);
-    }
-
-
-    // ToDo: create utilities method that takes an array of dir's and creates
-    // a valid file name.
-
-    private String getConcatenatedDir(String dir1, String dir2) {
-        File file1 = new File(dir1);
-        File file2 = new File(file1, dir2);
-        return file2.getAbsolutePath();
     }
 
 

@@ -183,8 +183,10 @@ public class DownloadsArchiveController {
     @RequestMapping(value = "/downloads")
     public String getCurrentDownloadFiles(Model model,
                                           @ModelAttribute("formBean") UnloadBean formBean) throws Exception {
+/*
         if (hasErrors())
             return "unload/download-error-message.page";
+*/
         String date = downloadFileService.getMatchingIndexDirectory();
         formBean.setDate(date);
         formBean.setCurrentDate((true));

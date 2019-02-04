@@ -3,6 +3,7 @@ package org.zfin.util.downloads;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.database.UnloadInfo;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileInfo;
 import org.zfin.util.FileUtil;
@@ -18,7 +19,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
@@ -42,10 +46,29 @@ public class DownloadFileService extends ArchiveService {
         // hard-coded location of the root download archive
         // one archive per instance
         rootArchiveDirectory = ZfinPropertiesEnum.DOWNLOAD_DIRECTORY.toString();
+        startDownloadsWatcherService();
+    }
+
+    private void startDownloadsWatcherService() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        // run a task within a separate thread of this thread pool
+        executor.submit(() -> {
+            Path dir = ZfinProperties.getDownloadReloadStatusDirectory();
+            File file = dir.toFile();
+            if (!file.exists())
+                file.mkdir();
+            try {
+                new WatchDownloadRefresh(this, dir).processEvents();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Download re-fresh thread started: "+Thread.currentThread().getName());
+        });
+
     }
 
     // index single table up-to-date
-    public DownloadFileService(String unloadDirectory) throws IOException {
+    public DownloadFileService(String unloadDirectory) {
         if (unloadDirectory != null)
             rootArchiveDirectory = unloadDirectory;
     }
@@ -83,17 +106,16 @@ public class DownloadFileService extends ArchiveService {
         }
         if (directory == null)
             return null;
-        List<File> downloads = new ArrayList<File>();
-        return (List<String>) Arrays.asList(directory.list());
+        return Arrays.asList(directory.list());
     }
 
     // <date,List<FileInfo>>
-    private Map<String, List<DownloadFileInfo>> allDownloadFileInfoList = new HashMap<String, List<DownloadFileInfo>>();
-    private Map<String, List<DownloadFileInfo>> downloadFileInfoList = new HashMap<String, List<DownloadFileInfo>>();
-    private Map<String, List<DownloadFileInfo>> unofficialDownloadFileInfoList = new HashMap<String, List<DownloadFileInfo>>();
-    private Map<String, List<FileInfo>> unusedDownloadFileInfoMap = new HashMap<String, List<FileInfo>>();
+    private Map<String, List<DownloadFileInfo>> allDownloadFileInfoList = new HashMap<>();
+    private Map<String, List<DownloadFileInfo>> downloadFileInfoList = new HashMap<>();
+    private Map<String, List<DownloadFileInfo>> unofficialDownloadFileInfoList = new HashMap<>();
+    private Map<String, List<FileInfo>> unusedDownloadFileInfoMap = new HashMap<>();
     // cache the different categories
-    private Map<String, List<DownloadCategory>> registryMap = new HashMap<String, List<DownloadCategory>>();
+    private Map<String, List<DownloadCategory>> registryMap = new HashMap<>();
 
     public List<DownloadCategory> getCategoriesByDate(String date) {
         return registryMap.get(date);
@@ -145,14 +167,14 @@ public class DownloadFileService extends ArchiveService {
 
     private void categorizeDownloadFiles(String date, File directory) {
         List<DownloadFileInfo> downloads;
-        downloads = new ArrayList<DownloadFileInfo>();
-        List<FileInfo> unusedDownloadFiles = new ArrayList<FileInfo>();
-        List<DownloadFileInfo> unofficialDownloads = new ArrayList<DownloadFileInfo>();
-        DownloadFileRegistry registry = null;
+        downloads = new ArrayList<>();
+        List<FileInfo> unusedDownloadFiles = new ArrayList<>();
+        List<DownloadFileInfo> unofficialDownloads = new ArrayList<>();
+        DownloadFileRegistry registry;
         try {
             // read registry file
             registry = readRegistryFile(directory, DOWNLOAD_REGISTRY);
-            for (String fileName : directory.list()) {
+            for (String fileName : Objects.requireNonNull(directory.list())) {
                 File dFile = new File(directory, fileName);
                 //
                 DownloadFileEntry downloadFile = registry.getDownloadFileEntryByName(fileName);
@@ -179,7 +201,7 @@ public class DownloadFileService extends ArchiveService {
         Collections.sort(unofficialDownloads);
         unofficialDownloadFileInfoList.put(date, unofficialDownloads);
         unusedDownloadFileInfoMap.put(date, unusedDownloadFiles);
-        List<DownloadFileInfo> allDownloadFiles = new ArrayList<DownloadFileInfo>(downloads);
+        List<DownloadFileInfo> allDownloadFiles = new ArrayList<>(downloads);
         allDownloadFiles.addAll(unofficialDownloads);
         allDownloadFileInfoList.put(date, allDownloadFiles);
     }
@@ -271,9 +293,9 @@ public class DownloadFileService extends ArchiveService {
 
     @Override
     public void updateCache() {
-        archiveDateList = new ArrayList<String>();
+        archiveDateList = new ArrayList<>();
         archiveDirectories = null;
-        downloadFileInfoList = new HashMap<String, List<DownloadFileInfo>>();
+        downloadFileInfoList = new HashMap<>();
         // forces to reread download files and create
         // file collection and
         // date collection
@@ -304,7 +326,7 @@ public class DownloadFileService extends ArchiveService {
         UnloadInfo unloadInfo = getInfrastructureRepository().getUnloadInfo();
         Date unloadDate = unloadInfo.getDate();
         List<Date> allUnloadDates = getAllArchiveDates();
-        List<String> dateList = new ArrayList<String>(allUnloadDates.size());
+        List<String> dateList = new ArrayList<>(allUnloadDates.size());
         for (Date date : allUnloadDates) {
             if (unloadDate.after(date)) {
                 dateList.add(getFormattedDate(date));
