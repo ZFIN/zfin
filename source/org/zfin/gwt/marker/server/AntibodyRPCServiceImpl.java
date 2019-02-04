@@ -171,7 +171,7 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
         if (!antibody.getName().equals(dto.getName())) {
             String oldName = antibody.getName();
 
-            antibody.setAbbreviation(dto.getName().toLowerCase());
+            antibody.setAbbreviation(dto.getName());
             antibody.setName(dto.getName());
 
             InfrastructureService.insertUpdate(antibody, "Antibody Name", oldName, antibody.getName());
