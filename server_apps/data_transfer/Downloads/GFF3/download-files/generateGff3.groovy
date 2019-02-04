@@ -21,8 +21,8 @@ runScriptFiles.setQueryFiles(
         "E_zfin_gene_alias_scattered_gff3.sql",
         "E_expression_gff3.sql",
         "E_phenotype_gff3.sql",
-        "E_antibody_gff3.sql",
-        "generate_alliance_gff3.sql",
+        "E_antibody_gff3.sql"//,
+//        "generate_alliance_gff3.sql"
 )
 runScriptFiles.execute()
 
