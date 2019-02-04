@@ -7,11 +7,12 @@ ON feature;
 CREATE OR REPLACE FUNCTION feature_before()
   RETURNS trigger AS
 $BODY$
+
 BEGIN
   NEW.feature_name = scrub_char(NEW.feature_name);
   NEW.feature_abbrev = scrub_char(NEW.feature_abbrev);
-  NEW.feature_name_order = zero_pad(NEW.feature_name_order);
-  NEW.feature_abbrev_order = zero_pad(NEW.feature_abbrev_order);
+  NEW.feature_name_order = zero_pad(NEW.feature_name);
+  NEW.feature_abbrev_order = zero_pad(NEW.feature_abbrev);
   NEW.feature_line_number = scrub_char(NEW.feature_line_number);
   PERFORM checkFeatureAbbrev(NEW.feature_zdb_id,
                              NEW.feature_type,
@@ -41,7 +42,7 @@ END;
 $BODY$ LANGUAGE plpgsql;
 
 CREATE TRIGGER feature_before_trigger
-AFTER INSERT ON feature
+BEFORE INSERT ON feature
 FOR EACH ROW EXECUTE PROCEDURE feature_before();
 
 CREATE TRIGGER feature_after_trigger
