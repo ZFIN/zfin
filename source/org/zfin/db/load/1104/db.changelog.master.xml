@@ -16,4 +16,5 @@
     <include file="source/org/zfin/db/load/1104/DLOAD-578.sql"/> 
     <include file="source/org/zfin/db/load/1104/ZFIN-6063.sql"/>
     <include file="source/org/zfin/db/load/1104/ZFIN-6112.sql"/>
+    <include file="source/org/zfin/db/load/1104/fcc_audit.sql"/>
 </databaseChangeLog>
