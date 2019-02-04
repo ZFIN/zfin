@@ -34,9 +34,10 @@ genes.each { GenomeFeature gene ->
             String ensdart = transcript.id
 
             //we only want transcripts that have a zdb_id in this file
+            print transcript.getAttributes()
             if (transcript.getAttributes().get(GenomeFeature.ZDB_ID) != null) {
-
                 //replace the ENSDART id with a ZDB_ID
+                print transcript.getAttributes().get(GenomeFeature.ZDB_ID)
                 transcript.addAttribute(GenomeFeature.ID, transcript.getAttributes().get(GenomeFeature.ZDB_ID))
                 transcript.addAttribute(GenomeFeature.PARENT, gene.id)
                 out.println transcript

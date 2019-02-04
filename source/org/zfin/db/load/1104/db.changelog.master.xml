@@ -12,8 +12,8 @@
     <include file="source/org/zfin/db/load/1104/ZFIN-6074-additions.sql"/>
     <include file="source/org/zfin/db/load/1104/ZFIN-6074-datetime.sql"/>
 
-<!--    <include file="source/org/zfin/db/load/1104/ONT-673.sql"/> 
+<!--    <include file="source/org/zfin/db/load/1104/ONT-673.sql"/> --> 
     <include file="source/org/zfin/db/load/1104/DLOAD-578.sql"/> 
-    <include file="source/org/zfin/db/load/1104/add_ensdart_name_mapping.sql"/>-->
     <include file="source/org/zfin/db/load/1104/ZFIN-6063.sql"/>
+    <include file="source/org/zfin/db/load/1104/ZFIN-6112.sql"/>
 </databaseChangeLog>
