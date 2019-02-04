@@ -53,7 +53,6 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private GregorianCalendar indexedDate;
     private Person indexedBy;
 
-    private boolean zebrasharePublic = true;
     private Set<ZebrashareEditor> zebrashareEditors;
 
     public String getZdbID() {
@@ -303,14 +302,6 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setLastCorrespondenceDate(Date lastCorrespondenceDate) {
         this.lastCorrespondenceDate = lastCorrespondenceDate;
-    }
-
-    public boolean isZebrasharePublic() {
-        return zebrasharePublic;
-    }
-
-    public void setZebrasharePublic(boolean zebrasharePublic) {
-        this.zebrasharePublic = zebrasharePublic;
     }
 
     public Set<ZebrashareEditor> getZebrashareEditors() {

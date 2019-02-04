@@ -94,7 +94,6 @@ public class SubmissionFormController {
         publication.setTitle(formBean.getTitle());
         publication.setAuthors(formBean.getAuthors());
         publication.setAbstractText(formBean.getAbstractText());
-        publication.setZebrasharePublic(false);
         publication.setJournal(publicationRepository.findJournalByAbbreviation("zebraShare"));
         publication.setType(Publication.Type.JOURNAL);
         publication.setEntryDate(new GregorianCalendar());

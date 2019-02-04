@@ -82,8 +82,7 @@ public class PublicationViewController {
             }
         }
 
-        if (publication == null ||
-                (!ProfileService.isRootUser() && !publication.isZebrasharePublic())) {
+        if (publication == null) {
             response.setStatus(HttpStatus.SC_NOT_FOUND);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
