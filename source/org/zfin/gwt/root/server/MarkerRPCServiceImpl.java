@@ -891,8 +891,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         Marker firstMarker = markerRepository.getMarkerByID(markerDTO.getZdbID());
         Marker secondMarker = markerRepository.getMarkerByAbbreviation(markerDTO.getName());
-System.out.println(firstMarker.getAbbreviation());
-        System.out.println(secondMarker.getAbbreviation());
+
 
         if (secondMarker == null || firstMarker == null) {
             throw new TermNotFoundException(markerDTO.getName(), markerDTO.getMarkerRelationshipType());
@@ -942,6 +941,9 @@ System.out.println(firstMarker.getAbbreviation());
         } else {
             if (secondMarker.isInTypeGroup(Marker.TypeGroup.CLONEDOM)) {
                 MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
+            }
+            if (firstMarker.isInTypeGroup(Marker.TypeGroup.ATB)) {
+                MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
             }
             //MarkerService.addMarkerRelationship(secondMarker, firstMarker, markerDTO.getPublicationZdbID(), MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType()));
         }
