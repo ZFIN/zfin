@@ -43,7 +43,7 @@ public class FeatureZebrashareEditPresenter implements Presenter {
 
 
 
-    private void loadValues() {
+    public void loadValues() {
 
         // get Feature-Marker-Relationships
         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_START);
