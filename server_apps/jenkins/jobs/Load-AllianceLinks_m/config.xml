@@ -22,11 +22,11 @@
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/Panther/loadAGRReport*</artifacts>
+   <!-- <hudson.tasks.ArtifactArchiver>
+      &lt;!&ndash;<artifacts>server_apps/data_transfer/Panther/loadAGRReport*</artifacts>
       <latestOnly>false</latestOnly>
-      <allowEmptyArchive>false</allowEmptyArchive>
-    </hudson.tasks.ArtifactArchiver>
+      <allowEmptyArchive>false</allowEmptyArchive>&ndash;&gt;
+    </hudson.tasks.ArtifactArchiver>-->
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList>$DEFAULT_RECIPIENTS</recipientList>
       <configuredTriggers>
@@ -34,10 +34,10 @@
           <email>
             <recipientList>pm@zfin.org</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;$TARGETROOT/server_apps/data_transfer/Panther/loadAGRReport.html&quot;}
+            <!--<body>${FILE,path=&quot;$TARGETROOT/server_apps/data_transfer/Panther/loadAGRReport.html&quot;}
 
               See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
-            </body>
+            </body>-->
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
@@ -52,11 +52,11 @@
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
             <recipientList>pm@zfin.org</recipientList>
-            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;$TARGETROOT/server_apps/data_transfer/Panther/alliance-report.html&quot;}
+           <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <!-- <body>${FILE,path=&quot;$TARGETROOT/server_apps/data_transfer/Panther/alliance-report.html&quot;}
 
               See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
-            </body>
+            </body>-->
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
