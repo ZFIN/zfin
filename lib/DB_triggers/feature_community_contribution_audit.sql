@@ -9,14 +9,14 @@ ON feature_community_contribution;
 CREATE OR REPLACE FUNCTION feature_community_contribution_audit_insert()
   RETURNS trigger AS $BODY$
 BEGIN
-      PERFORM fcc_event(OLD.fcc_feature_zdb_id,
-			OLD.fcc_functional_consequence,
-			OLD.fcc_adult_viable,
-			OLD.fcc_maternal_zygosity_examined,
-			OLD.fcc_currently_available,
-			OLD.fcc_other_line_information,
-			OLD.fcc_date_added,
-			OLD.fcc_added_by);
+      PERFORM fcc_event(NEW.fcc_feature_zdb_id,
+			NEW.fcc_functional_consequence,
+			NEW.fcc_adult_viable,
+			NEW.fcc_maternal_zygosity_examined,
+			NEW.fcc_currently_available,
+			NEW.fcc_other_line_information,
+			NEW.fcc_date_added,
+			NEW.fcc_added_by);
 
   RETURN NULL;
 END;
@@ -46,5 +46,5 @@ FOR EACH ROW EXECUTE PROCEDURE feature_community_contribution_audit_insert();
 
 
 CREATE TRIGGER feature_community_contribution_audit_update_trigger
-BEFORE UPDATE on feature_community_contribution
+AFTER UPDATE on feature_community_contribution
 FOR EACH ROW EXECUTE PROCEDURE feature_community_contribution_audit_update();
