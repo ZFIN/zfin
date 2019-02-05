@@ -89,6 +89,7 @@ public class FeatureModule implements ZfinCurationModule {
             if (!eventType.is(EventType.EDIT_FEATURE))
                 featureEditPresenter.loadFeaturesForPub(true);
             featureRelationshipPresenter.onFeatureAddEvent();
+            featureZebrashareEditPresenter.loadValues();
         }
     }
 
