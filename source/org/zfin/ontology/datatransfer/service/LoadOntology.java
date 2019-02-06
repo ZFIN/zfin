@@ -171,6 +171,8 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
         if (loader.initialize(oboFile, cronJobUtil)) {
             loader.runOntologyUpdateProcess();
+        } else {
+            System.exit(-1);
         }
         System.exit(0);
     }
@@ -1106,11 +1108,12 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         String ontologyName = oboSession.getDefaultNamespace().getID();
         LOG.info("ontologyName" + ontologyName);
         LOG.info("ontology namespace" + oboSession.getDefaultNamespace());
-        LOG.info("ontology namespace id "+ oboSession.getDefaultNamespace().getID());
+        LOG.info("ontology namespace id " + oboSession.getDefaultNamespace().getID());
         ontology = Ontology.getOntology(ontologyName);
         if (ontology == null) {
-            LOG.info ("ontology is null");
-            throw new RuntimeException();}
+            LOG.info("ontology is null");
+            throw new RuntimeException();
+        }
 
         OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
         OntologyMetadata dbMetadata = ontologyRepository.getOntologyMetadata(ontologyName);
