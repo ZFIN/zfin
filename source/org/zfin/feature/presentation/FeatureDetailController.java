@@ -95,6 +95,7 @@ public class FeatureDetailController {
             form.setAaLink(FeatureService.getAALink(feature));
         }
         form.setFtrCommContr(zebrashareRepository.getLatestCommunityContribution(feature));
+        form.setZShareOrigPub(zebrashareRepository.getZebraSharePublicationForFeature(feature));
 
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
