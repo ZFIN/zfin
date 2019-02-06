@@ -48,6 +48,11 @@ public class LineEditController {
                                    HttpServletResponse response) {
         Feature feature = featureRepository.getFeatureByID(id);
 
+        if (!ProfileService.isRootUser() && !zebrashareRepository.isAuthorizedSubmitter(feature, ProfileService.getCurrentSecurityUser())) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
         if (feature == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
