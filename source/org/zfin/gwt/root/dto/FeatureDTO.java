@@ -34,6 +34,7 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
     protected String labPrefix;
 
     protected String evidence;
+    protected String assembly;
     public String getFeatureAssembly() {
         return featureAssembly;
     }
@@ -45,6 +46,15 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
 
 
     protected List<String> featureAliases;
+
+    public String getAssembly() {
+        return assembly;
+    }
+
+    public void setAssembly(String assembly) {
+        this.assembly = assembly;
+    }
+
     protected String featureSequence;
     protected String featureChromosome;
     protected String featureAssembly;

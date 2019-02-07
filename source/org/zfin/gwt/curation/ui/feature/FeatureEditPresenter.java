@@ -142,10 +142,10 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         col.addBoolean(view.mutageeBox.isDirty(dto.getMutagee()));
         col.addBoolean(view.mutagenBox.isDirty(dto.getMutagen()));
         col.addBoolean(view.featureChromosome.isDirty((dto.getFeatureChromosome())));
-        col.addBoolean(view.featureChrAssembly.isDirty((dto.getFeatureAssembly())));
-        col.addBoolean(view.featureStartLoc.isDirty((dto.getFeatureStartLoc())));
+                col.addBoolean(view.featureStartLoc.isDirty((dto.getFeatureStartLoc())));
         col.addBoolean(view.featureEndLoc.isDirty((dto.getFeatureEndLoc())));
         col.addBoolean(view.featureEvidenceCode.isDirty((dto.getEvidence())));
+        col.addBoolean(view.featureAssembly.isDirty((dto.getAssembly())));
 
         col.addBoolean(view.labDesignationBox.isDirty(dto.getLabPrefix()));
         col.addBoolean(view.featureSuffixBox.isDirty(dto.getTransgenicSuffix()));
@@ -195,10 +195,10 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.lineNumberBox.setValue(dto.getLineNumber());
         view.mutageeBox.setIndexForText(dto.getMutagee());
         view.featureChromosome.setValue(dto.getFeatureChromosome());
-        view.featureChrAssembly.setValue(dto.getFeatureAssembly());
         view.featureStartLoc.setNumber(dto.getFeatureStartLoc());
         view.featureEndLoc.setNumber(dto.getFeatureEndLoc());
         view.featureEvidenceCode.setIndexForText(dto.getEvidence());
+        view.featureAssembly.setIndexForText(dto.getAssembly());
 
         featureNotesPresenter.setFeatureDTO(dto);
         featureNotesPresenter.rebuildGUI();

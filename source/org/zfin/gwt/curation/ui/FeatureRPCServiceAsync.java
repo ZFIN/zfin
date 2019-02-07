@@ -23,6 +23,8 @@ public interface FeatureRPCServiceAsync {
 
     void getFeaturesForPub(String pubZdbID, AsyncCallback<List<FeatureDTO>> async);
 
+    void getFeaturesForZSharePub(String jrnlZdbID, AsyncCallback<List<FeatureDTO>> async);
+
     void getFeatureMarkerRelationshipsForPub(String publicationZdbID, AsyncCallback<List<FeatureMarkerRelationshipDTO>> featureEditCallBack);
 
     void deleteFeatureMarkerRelationship(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, AsyncCallback<Void> featureEditCallBack);

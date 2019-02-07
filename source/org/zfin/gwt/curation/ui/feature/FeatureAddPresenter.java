@@ -171,7 +171,6 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                 //Window.alert("Feature successfully created");
                 view.featureTypeBox.setSelectedIndex(0);
                 view.featureChromosome.clear();
-                view.featureChrAssembly.clear();
                 view.featureStartLoc.clear();
                 view.featureEndLoc.clear();
                 view.featureDisplayName.clear();

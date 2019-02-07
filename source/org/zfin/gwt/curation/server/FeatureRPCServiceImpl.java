@@ -39,6 +39,7 @@ import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
+import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,6 +57,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     private static FeatureRepository featureRepository = getFeatureRepository();
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private static ZebrashareRepository zshareRepository ;
     private List<Organization> labsOfOrigin = null;
 
 
@@ -328,6 +330,18 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     public List<FeatureDTO> getFeaturesForPub(String publicationId) {
         List<FeatureDTO> featureDTOs = new ArrayList<>();
         List<Feature> features = featureRepository.getFeaturesByPublication(publicationId);
+        if (CollectionUtils.isNotEmpty(features)) {
+            for (Feature f : features) {
+                featureDTOs.add(DTOConversionService.convertToFeatureDTO(f, false));
+            }
+        }
+        Collections.sort(featureDTOs, Comparator.comparing(o -> o.getName().toLowerCase()));
+        return featureDTOs;
+    }
+
+    public List<FeatureDTO> getFeaturesForZSharePub(String jrnlId) {
+        List<FeatureDTO> featureDTOs = new ArrayList<>();
+        List<Feature> features = zshareRepository.getZebraShareFeatureForPub(jrnlId);
         if (CollectionUtils.isNotEmpty(features)) {
             for (Feature f : features) {
                 featureDTOs.add(DTOConversionService.convertToFeatureDTO(f, false));

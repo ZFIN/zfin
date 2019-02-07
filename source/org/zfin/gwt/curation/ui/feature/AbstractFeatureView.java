@@ -41,7 +41,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiField
     StringTextBox featureChromosome;
     @UiField
-    StringTextBox featureChrAssembly;
+    StringListBox featureAssembly;
     @UiField
     NumberTextBox featureStartLoc;
     @UiField
@@ -161,8 +161,9 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         handleChanges();
     }
 
-    @UiHandler("featureChrAssembly")
-    void onChangeAssembly(@SuppressWarnings("unused") KeyUpEvent event) {
+
+    @UiHandler("featureAssembly")
+    void onChangeAssembly(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
     }
 
@@ -318,8 +319,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         featureEvidenceCode.setDirty(false);
         featureChromosome.setDirty(false);
         featureChromosome.clear();
-        featureChrAssembly.setDirty(false);
-        featureChrAssembly.clear();
+        featureAssembly.setSelectedIndex(0);
+        featureAssembly.setDirty(false);
         featureStartLoc.setDirty(false);
         featureStartLoc.clear();
         featureEndLoc.setDirty(false);
@@ -440,6 +441,13 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         featureEvidenceCode.addItem("IC");
         featureEvidenceCode.addItem("TAS");
         featureEvidenceCode.addItem("IEA");
+    }
+
+    void setFeatureAssemblyList() {
+
+        featureAssembly.addItem("GRCz11");
+        featureAssembly.addItem("GRCz10");
+        featureAssembly.addItem("Zv9");
     }
 
 }

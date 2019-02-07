@@ -28,7 +28,8 @@ public class FeatureServiceGWT {
         if (callbackList.size() > 1) {
             return;
         }
-        getFeatureList(publicationID, new AsyncCallback<List<FeatureDTO>>() {
+        String jrnlID="ZDB-JRNL-181119-2";
+                getFeatureListForZebrasharePubs(jrnlID, new AsyncCallback<List<FeatureDTO>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 for (AsyncCallback<List<FeatureDTO>> callBack : callbackList)
@@ -59,6 +60,37 @@ public class FeatureServiceGWT {
         }
         if (dtoList == null || ignoreCache) {
             service.getFeaturesForPub(publicationID, new AsyncCallback<List<FeatureDTO>>() {
+                @Override
+                public void onFailure(Throwable throwable) {
+                    for (AsyncCallback<List<FeatureDTO>> callBack : callbackList)
+                        callBack.onFailure(throwable);
+                    callbackList = null;
+                }
+
+                @Override
+                public void onSuccess(List<FeatureDTO> featureDTOs) {
+                    dtoList = featureDTOs;
+                    for (AsyncCallback<List<FeatureDTO>> callBack : callbackList)
+                        callBack.onSuccess(dtoList);
+                    callbackList = null;
+                }
+            });
+        } else {
+            callback.onSuccess(dtoList);
+        }
+    }
+    public static void getFeatureListForZebrasharePubs(String jrnlID, final AsyncCallback<List<FeatureDTO>> callback) {
+        // if already one callback in list add it and return;
+        if (callbackList == null)
+            callbackList = new ArrayList<>();
+        //GWT.log("Number of callbacks: " + callbackList.size());
+        callbackList.add(callback);
+        // requests that came in after the first one will be handled
+        if (callbackList.size() > 1) {
+            return;
+        }
+        if (dtoList == null ) {
+            service.getFeaturesForZSharePub(jrnlID, new AsyncCallback<List<FeatureDTO>>() {
                 @Override
                 public void onFailure(Throwable throwable) {
                     for (AsyncCallback<List<FeatureDTO>> callBack : callbackList)

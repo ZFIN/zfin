@@ -185,7 +185,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         // genome Location
         featureDTO.setEvidence(view.featureEvidenceCode.getSelectedItemText());
         featureDTO.setFeatureChromosome(view.featureChromosome.getText());
-        featureDTO.setFeatureAssembly(view.featureChrAssembly.getText());
+        featureDTO.setFeatureAssembly(view.featureAssembly.getSelectedItemText());
         featureDTO.setFeatureStartLoc(view.featureStartLoc.getBoxValue());
         featureDTO.setFeatureEndLoc(view.featureEndLoc.getBoxValue());
 

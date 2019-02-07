@@ -44,6 +44,7 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         featureSuffixBox.addEnumValues(TransgenicSuffix.values());
         mutageeBox.addEnumValues(Mutagee.values());
         setFeatureEvidenceCodeList();
+        setFeatureAssemblyList();
     }
 
     @UiHandler("saveButton")
@@ -64,7 +65,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         curatorNoteBox.setEnabled(true);
         featureAliasBox.setEnabled(true);
         featureChromosome.setEnabled(true);
-        featureChrAssembly.setEnabled(true);
         featureStartLoc.setEnabled(true);
         featureEndLoc.setEnabled(true);
         featureSequenceBox.getAccessionNumber().setEnabled(true);
@@ -86,8 +86,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         featureAliasBox.clear();
         featureChromosome.setEnabled(false);
         featureChromosome.clear();
-        featureChrAssembly.setEnabled(false);
-        featureChrAssembly.clear();
         featureStartLoc.setEnabled(false);
         featureStartLoc.clear();
         featureEndLoc.setEnabled(false);

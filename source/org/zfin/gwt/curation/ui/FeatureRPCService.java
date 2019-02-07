@@ -31,6 +31,7 @@ public interface FeatureRPCService extends RemoteService {
 
 
     List<FeatureDTO> getFeaturesForPub(String pubZdbId);
+    List<FeatureDTO> getFeaturesForZSharePub(String jrnlZdbId);
 
     List<OrganizationDTO> getLabsOfOriginWithPrefix();
 

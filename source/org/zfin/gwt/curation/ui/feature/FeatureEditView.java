@@ -50,6 +50,7 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
         featureSuffixBox.addEnumValues(TransgenicSuffix.values());
         mutageeBox.addEnumValues(Mutagee.values());
         setFeatureEvidenceCodeList();
+        setFeatureAssemblyList();
     }
 
     @UiHandler("featureEditList")

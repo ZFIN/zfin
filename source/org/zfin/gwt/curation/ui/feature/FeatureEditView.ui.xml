@@ -125,8 +125,7 @@
 
                         <g:Label text="Assembly"/>
 
-                        <zfin:StringTextBox ui:field="featureChrAssembly" visibleLength="5"/>
-
+                        <zfin:StringListBox ui:field="featureAssembly"/>
                         <g:Label text="Start Location" />
 
                         <zfin:NumberTextBox ui:field="featureStartLoc" visibleLength="7"/>
