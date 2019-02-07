@@ -57,7 +57,7 @@ public enum Ontology implements Serializable {
     ZFIN_RO("zfin-ro", "ZFIN Relation Ontology", false, "RO:"),
     UBERON("uberon", "Uberon Ontology", false, "UBERON:"),
     GO_QUALIFIER("go_qualifier", "GO Qualifier for GO Annotations", false, "RO:"),
-    MMO("Measurement Methods Ontology", "Measurement Methods Ontology", false, "MMO:", true, true);
+    MMO("mmo", "Measurement Methods Ontology", false, "MMO:", true, true);
 
     private String ontologyName;
     private String commonName;

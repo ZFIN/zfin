@@ -88,3 +88,4 @@ ZECO     /action/ontology/term-detail/ZECO
 CHEBI     /action/ontology/term-detail/CHEBI
 NCBITaxon     /action/ontology/term-detail/NCBITaxon
 ECO     /action/ontology/term-detail/ECO
+MMO     /action/ontology/term-detail/MMO
