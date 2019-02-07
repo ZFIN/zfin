@@ -25,6 +25,7 @@ public interface ZebrashareRepository {
     List<ZebrashareEditor> getZebraShareEditorsForPublication(Publication publication);
 
     Publication getZebraSharePublicationForFeature(Feature feature);
+    List<Feature> getZebraShareFeatureForPub(String journalID);
 
     FeatureCommunityContribution getLatestCommunityContribution(Feature feature);
 
