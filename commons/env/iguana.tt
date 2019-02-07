@@ -38,10 +38,8 @@
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
-<!--|INFORMIXSQLHOSTS|-->	/private/apps/Informix/informix/etc/sqlhosts
+<!--|INFORMIXSQLHOSTS|-->	${INFORMIXDIR}/etc/sqlhosts
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
-<!--|INFORMIX_PORT|-->	2002
-<!--|INFORMIX_SERVER|-->	waffle
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	iguana
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
@@ -54,7 +52,6 @@
 <!--|MUTANT_NAME|-->	iguana
 <!--|NOMEN_COORDINATOR|-->	kevin\@zfin.org
 <!--|NON_SECURE_HTTP|-->	http://
-<!--|ONCONFIG_FILE|-->	onconfig
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PARTNER_SOURCEROOT|-->	false

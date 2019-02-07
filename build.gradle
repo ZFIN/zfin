@@ -162,7 +162,6 @@ def translateVariableSet = [
         'LOADUP_FULL_PATH',
         'MOVE_BLAST_FILES_TO_DEVELOPMENT',
         'MUTANT_NAME',
-        'ONCONFIG_FILE',
         'PARTNER_DBNAME',
         'PARTNER_INTERNAL_INSTANCE',
         'ROOT_PATH',

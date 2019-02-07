@@ -50,7 +50,6 @@
 <!--|MUTANT_NAME|-->	beagle
 <!--|NOMEN_COORDINATOR|-->	informix\@zfin.org
 <!--|NON_SECURE_HTTP|-->	http://
-<!--|ONCONFIG_FILE|-->	onconfig
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	informix\@zfin.org

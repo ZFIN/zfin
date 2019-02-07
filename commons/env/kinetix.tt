@@ -51,7 +51,6 @@
 <!--|MUTANT_NAME|-->	zfin.org
 <!--|NOMEN_COORDINATOR|-->	nomenclature_coordinators\@zfin.org
 <!--|NON_SECURE_HTTP|-->	http://
-<!--|ONCONFIG_FILE|-->	onconfig
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PARTNER_SOURCEROOT|-->	false

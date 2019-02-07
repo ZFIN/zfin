@@ -38,10 +38,7 @@
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
-<!--|INFORMIXSQLHOSTS|-->	/private/apps/Informix/informix/etc/sqlhosts
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
-<!--|INFORMIX_PORT|-->	2002
-<!--|INFORMIX_SERVER|-->	waffle
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	franklin
 <!--|INTERNAL_BLAST_PATH|-->	/research/franklin/blastdb/Current
@@ -54,7 +51,6 @@
 <!--|MUTANT_NAME|-->	zfin.org
 <!--|NOMEN_COORDINATOR|-->	nomenclature_coordinators\@zfin.org
 <!--|NON_SECURE_HTTP|-->	http://
-<!--|ONCONFIG_FILE|-->	onconfig
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PARTNER_SOURCEROOT|-->	false

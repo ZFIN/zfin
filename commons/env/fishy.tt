@@ -51,7 +51,6 @@
 <!--|MUTANT_NAME|-->	fishy
 <!--|NOMEN_COORDINATOR|-->	pm\@zfin.org
 <!--|NON_SECURE_HTTP|-->	http://
-<!--|ONCONFIG_FILE|-->	onconfig
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PARTNER_SOURCEROOT|-->	false

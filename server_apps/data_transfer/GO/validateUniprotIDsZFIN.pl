@@ -125,10 +125,6 @@ sub sendInvalidIDs {
 print "\nRunning validation script ...\n\n";
 
 # set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"DATABASE"}="<!--|DB_NAME|-->";
 
 $mailprog = '/usr/lib/sendmail -t -oi -oem';

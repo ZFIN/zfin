@@ -50,7 +50,6 @@
 <!--|MUTANT_NAME|-->	smith
 <!--|NOMEN_COORDINATOR|-->	informix\@zfin.org
 <!--|NON_SECURE_HTTP|-->	http://
-<!--|ONCONFIG_FILE|-->	onconfig
 <!--|PARTNER_DBNAME|-->	darwindb
 <!--|PARTNER_INTERNAL_INSTANCE|-->	darwin
 <!--|PARTNER_SOURCEROOT|-->	/research/zusers/darwin/ZFIN_WWW_trunk
