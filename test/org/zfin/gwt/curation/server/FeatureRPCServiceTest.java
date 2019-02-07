@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.Species;
 import org.zfin.feature.*;
 import org.zfin.feature.repository.FeatureRepository;
@@ -33,6 +34,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.util.ZfinStringUtils;
+import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import java.util.*;
 
@@ -48,6 +50,8 @@ public class FeatureRPCServiceTest extends RemoteServiceServlet implements Featu
     private static InfrastructureRepository infrastructureRepository = getInfrastructureRepository();
     private static FeatureRepository featureRepository = getFeatureRepository();
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
+    @Autowired
+    private ZebrashareRepository zebrashareRepository;
     private List<Organization> labsOfOrigin = null;
 
 
@@ -233,6 +237,22 @@ public class FeatureRPCServiceTest extends RemoteServiceServlet implements Featu
                 return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
             }
         });
+
+        return featureDTOs;
+    }
+
+    public List<FeatureDTO> getFeaturesForZSharePub(String jrnlZdbId) {
+
+        List<FeatureDTO> featureDTOs = new ArrayList<FeatureDTO>();
+        List<Feature> features = zebrashareRepository.getZebraShareFeatureForPub("ZDB-JRNL-181119-2");
+        if (CollectionUtils.isNotEmpty(features)) {
+            for (Feature f : features) {
+
+                featureDTOs.add(DTOConversionService.convertToFeatureDTO(f));
+
+            }
+        }
+
 
         return featureDTOs;
     }
