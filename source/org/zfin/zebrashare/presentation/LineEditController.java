@@ -13,8 +13,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.zebrashare.FeatureCommunityContribution;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
@@ -23,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/zebrashare")
@@ -88,7 +92,12 @@ public class LineEditController {
 
         addModelAttributes(model, feature);
 
+        FeatureCommunityContribution prevContribution = zebrashareRepository.getLatestCommunityContribution(feature);
+        if (prevContribution == null) {
+            prevContribution = new FeatureCommunityContribution();
+        }
         FeatureCommunityContribution newContribution = new FeatureCommunityContribution();
+        Person user = ProfileService.getCurrentSecurityUser();
         newContribution.setFeature(feature);
         newContribution.setFunctionalConsequence(bean.getFunctionalConsequence());
         newContribution.setAdultViable(bean.getAdultViable());
@@ -96,7 +105,7 @@ public class LineEditController {
         newContribution.setCurrentlyAvailable(bean.getCurrentlyAvailable());
         newContribution.setOtherLineInformation(bean.getOtherLineInformation());
         newContribution.setDate(new GregorianCalendar());
-        newContribution.setSubmitter(ProfileService.getCurrentSecurityUser());
+        newContribution.setSubmitter(user);
 
         Transaction tx = HibernateUtil.createTransaction();
         try {
@@ -110,6 +119,23 @@ public class LineEditController {
         }
 
         redirectAttributes.addFlashAttribute("success", "Update saved");
+
+        String subject = String.format("ZebraShare: %s (%s) updated by %s (%s)", feature.getName(), feature.getZdbID(),
+                user.getDisplay(), user.getZdbID());
+        StringBuilder message = new StringBuilder(String.format(
+                "<p>ZebraShare details for feature <a href='https://%1$s/%2$s'>%3$s</a> updated by <a href='https://%1$s/%4$s'>%5$s</a>.</p>",
+                ZfinPropertiesEnum.DOMAIN_NAME, feature.getZdbID(), feature.getName(), user.getZdbID(), user.getDisplay()
+        ));
+        message.append("<table>");
+        appendDiff(message, "Functional Consequence", prevContribution.getFunctionalConsequence(), newContribution.getFunctionalConsequence());
+        appendDiff(message, "Adult Viable", prevContribution.getAdultViable(), newContribution.getAdultViable());
+        appendDiff(message, "Maternal Zygocity Examined", prevContribution.getMaternalZygosityExamined(), newContribution.getMaternalZygosityExamined());
+        appendDiff(message, "Currently Available", prevContribution.getCurrentlyAvailable(), newContribution.getCurrentlyAvailable());
+        appendDiff(message, "Other Line Information", prevContribution.getOtherLineInformation(), newContribution.getOtherLineInformation());
+        message.append("</table>");
+
+        AbstractZfinMailSender.getInstance().sendHtmlMail(subject, message.toString(), new String[] {ZfinPropertiesEnum.CURATORS_AT_ZFIN.toString()}, null);
+
         return "redirect:" + feature.getZdbID();
     }
 
@@ -121,6 +147,34 @@ public class LineEditController {
             model.addAttribute("otherFeatures", featureRepository.getFeaturesByPublication(publication.getZdbID()));
         }
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Line: " + feature.getName());
+    }
+
+    private void appendDiff(StringBuilder message, String label, Object previous, Object updated) {
+        if (Objects.equals(previous, updated)) {
+            return;
+        }
+        message.append("<tr>")
+                .append("<td>").append(label).append(": ").append("</td>")
+                .append("<td>");
+        if (previous != null) {
+            message.append("<span style='background-color:#ffe7e7;text-decoration:line-through;'>")
+                    .append(valueToString(previous))
+                    .append("</span> ");
+        }
+        if (updated != null) {
+            message.append("<span style='background-color:#ddfade;'>")
+                    .append(valueToString(updated))
+                    .append("</span> ");
+        }
+        message.append("</td>")
+                .append("</tr>");
+    }
+
+    private String valueToString(Object value) {
+        if (value instanceof Boolean) {
+            return (Boolean) value ? "Yes" : "No";
+        }
+        return value.toString();
     }
 
 }
