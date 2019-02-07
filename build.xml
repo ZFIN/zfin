@@ -389,8 +389,7 @@
                encoding="${encoding}"
                includeAntRuntime="no"
                memoryMaximumSize="556m"
-               debug="true"
-               target="1.8"/>
+               debug="true" />
         <echo message=":JAVA COMPILE SUCCESSFUL:"/>
     </target>
 

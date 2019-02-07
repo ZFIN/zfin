@@ -483,7 +483,7 @@ public class TrieMap<V>
 
     /**
      * TODO: make the entrySet implementation work properly
-     * @deprecated This does not work like a Map entrySet, as it does not support functions on the map.
+     * This does not work like a Map entrySet, as it does not support functions on the map.
      * @return
      */
     public Set<Map.Entry<String,V>> entrySet() {

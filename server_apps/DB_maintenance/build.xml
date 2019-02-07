@@ -61,7 +61,7 @@
 
     <target name="load-gaf-paint" description="">
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
-              fork="no"
+              fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
@@ -76,7 +76,7 @@
 
     <target name="load-gaf-goa" description="">
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
-              fork="no"
+              fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
@@ -108,7 +108,7 @@
 
     <target name="load-gaf-fpinference" description="">
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
-              fork="no"
+              fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
@@ -135,7 +135,7 @@
 
     <target name="check-eap-pato-terms" description="">
         <echo message="Check EaP terms with the latest PATO ontology"/>
-        <java classname="org.zfin.ontology.jobs.CheckEapPatoTermsJob" fork="no"
+        <java classname="org.zfin.ontology.jobs.CheckEapPatoTermsJob" fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
@@ -194,7 +194,7 @@
     </target>
 
     <target name="remove-go-terms-from-withdrawn-markers" description="">
-        <java classname="org.zfin.ontology.jobs.RemoveGoTermsFromWithdrawnMarkersJob" fork="no"
+        <java classname="org.zfin.ontology.jobs.RemoveGoTermsFromWithdrawnMarkersJob" fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
@@ -205,7 +205,7 @@
     </target>
 
     <target name="regenerate-webhost-curated-databases" description="">
-        <java classname="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob" fork="no"
+        <java classname="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob" fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
@@ -227,7 +227,7 @@
     </target>
 
     <target name="microarray-update" description="">
-        <java classname="org.zfin.datatransfer.microarray.MicroarrayWebserviceJob" fork="no"
+        <java classname="org.zfin.datatransfer.microarray.MicroarrayWebserviceJob" fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="${web-inf.dir}/zfin.properties"/>
@@ -246,7 +246,7 @@
     <target name="validate-data-report-simple" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="no"
+        <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="${DBNAME}"/>
@@ -269,7 +269,7 @@
         <echo message="Create Report"/>
         <echo message="Use database: ${DBNAME}"/>
         <delete dir="${validateData}/report_data/${JobName}"/>
-        <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
+        <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="-jobName"/>
@@ -287,7 +287,7 @@
     <target name="validate-data-report-dynamic" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="no"
+        <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
             <arg value="${DBNAME}"/>
@@ -368,7 +368,7 @@
             <echo message="Use database: ${DBNAME}"/>
             <echo message="Use ParameterValues: ${ParameterValues}"/>
             <delete dir="${validateData}/report_data/${JobName}"/>
-            <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
+            <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="yes"
                   classpathref="extended.classpath"
                   failonerror="true">
                 <arg value="-jobName"/>

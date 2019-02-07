@@ -526,7 +526,7 @@ public class TrieMultiMap<V extends Collection> implements Serializable, Map // 
      * TODO: make the entrySet implementation work properly
      *
      * @return
-     * @deprecated This does not work like a Map entrySet, as it does not support functions on the map.
+     * This does not work like a Map entrySet, as it does not support functions on the map.
      */
     public Set<Map.Entry<String, V>> entrySet() {
         Set<Map.Entry<String, V>> entries = new HashSet<Map.Entry<String, V>>();

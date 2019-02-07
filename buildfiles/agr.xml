@@ -69,7 +69,7 @@
             description="Generates tab delimited file for GO/Noctua">
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.GPIFile" classpathref="extended.classpath"
-              failonerror="true" maxmemory="6G">
+              failonerror="true" maxmemory="6G" fork="yes">
             <classpath refid="classpath"/>
         </java>
     </target>

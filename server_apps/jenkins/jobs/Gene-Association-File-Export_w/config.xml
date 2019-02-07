@@ -2,7 +2,7 @@
 <project>
     <actions/>
     <description>This job produces two files: a gene association file and a gene-to-protein file which
-    ultimately get checked into the GO svn repository (manually by Doug).</description>
+        ultimately get pulled by the GO consortium for use in the GO database.</description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>

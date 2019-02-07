@@ -484,42 +484,42 @@
     </zfin2:subsection>
 </div>
 
-
+<c:if test="${!empty formBean.ftrCommContr}">
 <div id="communitycontrib">
-    <zfin2:subsection title="SUPPLEMENTAL INFORMATION" test="${!empty formBean.ftrCommContr}" showNoData="false">
+    <zfin2:subsection title="SUPPLEMENTAL INFORMATION" test="${!empty formBean.ftrCommContr}" showNoData="false">(<a href="/${formBean.ZShareOrigPub.zdbID}">1</a>)
         <table class="summary horizontal-solidblock">
             <tr>
                 <th>Functional Consequence:</th>
                 <td width="25%">
-                        ${formBean.ftrCommContr.functionalConsequence.toString()} <td>   ${formBean.ftrCommContr.submitter.fullName}, <fmt:formatDate value="${formBean.ftrCommContr.date.time}" type="Date" pattern="yyyy/MM/dd"/>
+                        ${formBean.ftrCommContr.functionalConsequence.toString()}
 
                 </td>
             </tr>
             <tr>
                 <th>Adult Viable:</th>
                 <td width="25%">${formBean.ftrCommContr.adultViable ? "Yes" : "No"}
-                              <td> ${formBean.ftrCommContr.submitter.fullName},  <fmt:formatDate value="${formBean.ftrCommContr.date.time}" type="Date" pattern="yyyy/MM/dd"/>
+
 
                 </td>
             </tr>
             <tr>
                 <th>Maternal Zygocity Examined:</th>
                 <td width="25%">
-                        ${formBean.ftrCommContr.maternalZygosityExamined ? "Yes" : "No"}<td> ${formBean.ftrCommContr.submitter.fullName},  <fmt:formatDate value="${formBean.ftrCommContr.date.time}" type="Date" pattern="yyyy/MM/dd"/>
+                        ${formBean.ftrCommContr.maternalZygosityExamined ? "Yes" : "No"}
 
                 </td>
             </tr>
             <tr>
             <th>Available:</th>
                 <td width="25%">
-                        ${formBean.ftrCommContr.currentlyAvailable ? "Yes" : "No"}<td>{formBean.ftrCommContr.submitter.fullName},  <fmt:formatDate value="${formBean.ftrCommContr.date.time}" type="Date" pattern="yyyy/MM/dd"/>
+                        ${formBean.ftrCommContr.currentlyAvailable ? "Yes" : "No"}
 
                 </td>
             </tr>
             <tr>
                 <th>Other Line Information:</th>
                 <td width="25%">
-                        ${formBean.ftrCommContr.otherLineInformation} <td> ${formBean.ftrCommContr.submitter.fullName}, <fmt:formatDate value="${formBean.ftrCommContr.date.time}" type="Date" pattern="yyyy/MM/dd"/>
+                        ${formBean.ftrCommContr.otherLineInformation}
 
                 </td>
             </tr>
@@ -527,6 +527,7 @@
 
     </zfin2:subsection>
 </div>
+    </c:if>
 
 
 

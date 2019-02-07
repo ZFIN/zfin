@@ -11,6 +11,7 @@ import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.presentation.GenoExpStatistics;
+import org.zfin.publication.Publication;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.zebrashare.FeatureCommunityContribution;
 
@@ -44,6 +45,7 @@ public class FeatureBean {
     private List<PublicationAttribution> varSeqAttributions;
     private List<FeatureNote> externalNotes;
     private FeatureCommunityContribution ftrCommContr;
+    private Publication ZShareOrigPub;
 
     public String getAaLink() {
         return aaLink;
@@ -250,6 +252,14 @@ public class FeatureBean {
 
     public void setFtrCommContr(FeatureCommunityContribution ftrCommContr) {
         this.ftrCommContr = ftrCommContr;
+    }
+
+    public Publication getZShareOrigPub() {
+        return ZShareOrigPub;
+    }
+
+    public void setZShareOrigPub(Publication ZShareOrigPub) {
+        this.ZShareOrigPub = ZShareOrigPub;
     }
 }
 

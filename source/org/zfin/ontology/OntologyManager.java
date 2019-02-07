@@ -27,6 +27,7 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
  * <p/>
  * NOTE: This class should ONLY used CachedTermDTO!!! never GenericTermDTO
  */
+@SuppressWarnings("unchecked")
 public class OntologyManager {
 
     protected final static String QUALITY_PROCESSES_ROOT = "PATO:0001236";
@@ -300,7 +301,6 @@ public class OntologyManager {
      * @param subOntology
      * @param rootOntology
      * @param rootOboIDs
-     * @deprecated
      */
     protected void initRootOntologyMap(Ontology subOntology, Ontology rootOntology, String... rootOboIDs) {
         long startTime = System.currentTimeMillis();
@@ -372,7 +372,6 @@ public class OntologyManager {
      * Load a single ontology.
      *
      * @param ontology Ontology
-     * @deprecated
      */
     public void initSingleOntologyMap(Ontology ontology) {
         resetCounter();
@@ -451,7 +450,6 @@ public class OntologyManager {
     /**
      * @param terms
      * @param ontology
-     * @deprecated
      */
     public void loadTermsIntoOntology(List<GenericTerm> terms, Ontology ontology) {
 
@@ -920,7 +918,7 @@ public class OntologyManager {
             if (term.getStartStage() != null)
                 if (!finalList.contains(term))
                     finalList.add(term);
-        Collections.sort(finalList);
+        finalList.sort(Comparator.naturalOrder());
         return finalList;
     }
 
