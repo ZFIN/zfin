@@ -98,9 +98,6 @@ public interface MarkerRPCService extends RemoteService {
 
     void removeMarkerSupplier(String name, String markerZdbID);
 
-    String getWebDriverPath();
-
-
     // general methods
 
     MarkerDTO addRelatedMarker(MarkerDTO markerDTO) throws TermNotFoundException;

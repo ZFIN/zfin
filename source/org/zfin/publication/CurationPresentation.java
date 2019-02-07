@@ -22,10 +22,6 @@ public class CurationPresentation extends EntityPresentation {
      * @param publication Publication
      * @return html for Publication link
      */
-    public static String getLink(Publication publication) {
-        return getWebdriverLink(uri, publication.getZdbID(), publication.getShortAuthorList());
-    }
-
     public static String getLink(Publication publication, CurationTab tab) {
         StringBuilder sb = getTomcatHyperLinkStart();
         sb.append(uri);

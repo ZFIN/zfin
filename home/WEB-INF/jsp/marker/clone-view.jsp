@@ -46,8 +46,7 @@
     </script>
 
     <c:if test="${formBean.clone.rnaClone}">
-        <zfin2:markerExpression markerExpression="${formBean.markerExpression}" marker="${formBean.marker}"
-                                webdriverRoot="<%=ZfinProperties.getWebDriver()%>"/>
+        <zfin2:markerExpression markerExpression="${formBean.markerExpression}" marker="${formBean.marker}"/>
     </c:if>
 
     <zfin2:markerRelationshipsLight marker="${formBean.clone}"

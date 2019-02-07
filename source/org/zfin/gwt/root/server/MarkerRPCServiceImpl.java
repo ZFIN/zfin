@@ -867,10 +867,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     }
 
-    public String getWebDriverPath() {
-        return "/" + ZfinProperties.getWebDriver();
-    }
-
     public List<ConstructRelationshipDTO> getConstructMarkerRelationshipsForPub(String publicationZdbID) {
 
         List<ConstructRelationshipDTO> constructRelnDTOs = new ArrayList<ConstructRelationshipDTO>();

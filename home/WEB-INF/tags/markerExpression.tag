@@ -5,7 +5,6 @@
 <%@ attribute name="marker" type="org.zfin.marker.Marker" rtexprvalue="true" required="true" %>
 <%@ attribute name="markerExpression" type="org.zfin.expression.presentation.MarkerExpression" rtexprvalue="true"
               required="true" %>
-<%@ attribute name="webdriverRoot" type="java.lang.String" rtexprvalue="true" required="true" %>
 
 <script type="text/javascript">
     function start_note(ref_page) {

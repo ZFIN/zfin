@@ -1,4 +1,3 @@
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -48,23 +47,24 @@
     <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"
                     soTerm="${formBean.zfinSoTerm}" userID="${formBean.user.zdbID}"/>
 
-<zfin2:subsection title="AUTOMATED DESCRIPTION <a class='popup-link info-popup-link' href='/action/marker/note/automated-gene-desc'></a>">
-    <table>
-                   <tr>
+    <zfin2:subsection
+            title="AUTOMATED DESCRIPTION <a class='popup-link info-popup-link' href='/action/marker/note/automated-gene-desc'></a>">
+        <table>
+            <tr>
 
-        <td>
-            <zfin2:toggleTextLength text="${formBean.allianceGeneDesc.gdDesc}" idName="${zfn:generateRandomDomID()}" shortLength="200"/>
-        </td>
-    </tr>
-    </table>
-</zfin2:subsection>
+                <td>
+                    <zfin2:toggleTextLength text="${formBean.allianceGeneDesc.gdDesc}"
+                                            idName="${zfn:generateRandomDomID()}" shortLength="200"/>
+                </td>
+            </tr>
+        </table>
+    </zfin2:subsection>
 
     <zfin2:uninformativeGeneName name="${formBean.marker.abbreviation}"
                                  fromChimericClone="${formBean.hasChimericClone}"/>
 
     <%--// EXPRESSION SECTION--%>
-    <zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}"
-                            webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+    <zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}"/>
 
     <%--// MUTANTS AND TARGETED KNOCKDOWNS--%>
     <div id="mutant-info">
@@ -73,8 +73,7 @@
 
     <%--// PHENOTYPE --%>
 
-    <zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}"
-                     webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+    <zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}"/>
 
     <%--// DISEASE --%>
     <div id="disease">
@@ -89,10 +88,10 @@
     <zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}"/>
 
     <%--protein families, domains, and sites--%>
-<c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
+    <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
 
-    <zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>
-</c:if>
+        <zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>
+    </c:if>
     <%--Transcripts--%>
     <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}"
                                    title="TRANSCRIPTS" showAllTranscripts="true"/>
@@ -101,17 +100,18 @@
 
 
     <zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links">
-                      <c:if test="${!empty formBean.pathwayDBLinks}">
-        <table class="summary">
-            <c:forEach var="link" items="${formBean.pathwayDBLinks}" varStatus="loop">
-                <tr>
-                    <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
-                </tr>
-            </c:forEach>
-        </table>
+        <c:if test="${!empty formBean.pathwayDBLinks}">
+            <table class="summary">
+                <c:forEach var="link" items="${formBean.pathwayDBLinks}" varStatus="loop">
+                    <tr>
+                        <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
+                    </tr>
+                </c:forEach>
+            </table>
         </c:if>
         <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
-            <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedInteractions}" marker="${formBean.marker}"
+            <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedInteractions}"
+                                                      marker="${formBean.marker}"
                                                       title="" maxNumber="5" interactsWith="yes"/>
         </c:if>
         <c:if test="${fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
@@ -121,10 +121,11 @@
 
     </zfin2:subsection>
 
-<c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
-    <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}" marker="${formBean.marker}"
-                                              title="ANTIBODIES" maxNumber="5"/>
-</c:if>
+    <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
+        <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}"
+                                                  marker="${formBean.marker}"
+                                                  title="ANTIBODIES" maxNumber="5"/>
+    </c:if>
 
 
     <%--Plasmid Links--%>

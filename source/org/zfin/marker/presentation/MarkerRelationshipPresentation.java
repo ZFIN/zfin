@@ -81,16 +81,6 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
 
         return s;
 
-//        if (sourceUrl != null) {
-//            return "(<a href=\"" + sourceUrl + (supplierAccession == null ? "" : supplierAccession) + "\">" + sourceDisplayText + "</a>)";
-//        } else if (supplierZdbId != null) {
-//            return "(<a href=\"/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT +
-//                    "?MIval-aa-"
-//                    + (supplierZdbId.contains("COMPANY") ? "companyview.apg" : "labview.apg")
-//                    + "&OID=" + supplierZdbId + "\">order this</a>)";
-//        } else {
-//            return "";
-//        }
     }
 
     public boolean isIs1To2() {

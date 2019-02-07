@@ -41,7 +41,7 @@
 <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}" userID="${formBean.user.zdbID}" />
 
 <%--// EXPRESSION SECTION--%>
-<zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+<zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}"/>
 
 <zfin2:mutantsInGene mutantsOnMarkerBean="${formBean.mutantOnMarkerBeans}" marker="${formBean.marker}"/>
 <%--Transcripts--%>

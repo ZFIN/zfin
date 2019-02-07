@@ -569,10 +569,4 @@
         </attribute>
     </tag>
 
-    <tag>
-        <name>webdriver</name>
-        <tagclass>org.zfin.framework.presentation.tags.WebdriverTag</tagclass>
-        <info>Simple tag, to avoid using ZfinProperties.getWebDriver scripting</info>
-    </tag>
-
 </taglib>

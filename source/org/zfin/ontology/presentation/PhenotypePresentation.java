@@ -21,9 +21,6 @@ public class PhenotypePresentation extends TermPresentation {
         if (phenotypeStatement == null) {
             return null;
         }
-        if (curationLink) {
-            return getCurationLink(phenotypeStatement);
-        }
         StringBuilder phenotypeLink = new StringBuilder(100);
         phenotypeLink.append(getNormalTagNote(phenotypeStatement));
         phenotypeLink.append(getTomcatLink(uri, String.valueOf(phenotypeStatement.getId()),
@@ -32,11 +29,6 @@ public class PhenotypePresentation extends TermPresentation {
             phenotypeLink.append(getPopupLink(phenotypeStatement));
         }
         return phenotypeLink.toString();
-    }
-
-    private static String getCurationLink(PhenotypeStatement phenotypeStatement) {
-        return getWebdriverLink(CurationPresentation.uri + CurationModuleType.PHENOTYPE_CURATION.getValue(), phenotypeStatement.getPhenotypeExperiment().getFigure().getPublication().getZdbID(),
-                "edit");
     }
 
     /**

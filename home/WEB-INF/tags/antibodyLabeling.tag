@@ -1,5 +1,4 @@
 <%@ attribute name="formBean" type="org.zfin.marker.presentation.AntibodyMarkerBean" %>
-<%@ attribute name="webdriverPath" type="java.lang.String" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:set var="antibodyDetailLabeling" value="${formBean.antibodyDetailedLabelings}"/>

@@ -22,13 +22,6 @@ public abstract class EntityPresentation {
      *
      * @return first bit of webdriver links
      */
-    protected static StringBuilder getWebdriverHyperLinkStart() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<a href=\"/");
-        sb.append(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
-        return sb;
-    }
-
     protected static StringBuilder getTomcatHyperLinkStart() {
         StringBuilder sb = new StringBuilder();
         sb.append("<a href=\"" + getTomcatUrlStart());
@@ -219,41 +212,6 @@ public abstract class EntityPresentation {
         sb.append(" title=\"");
         sb.append("\">");
         sb.append("</a>");
-        return sb.toString();
-    }
-
-    public static String getWebdriverLink(String uri, String zdbID, String abbreviation) {
-        StringBuilder sb = getWebdriverHyperLinkStart();
-        sb.append(uri);
-        sb.append(zdbID);
-        sb.append("\">");
-        sb.append(abbreviation);
-        sb.append("</a>");
-        return sb.toString();
-    }
-
-    protected static String getWebdriverLink(String uri, String zdbID, String abbreviation, String idName) {
-        StringBuilder sb = getWebdriverHyperLinkStart();
-        sb.append(uri);
-        sb.append(zdbID);
-        sb.append("\" id='" + idName + "'>");
-        sb.append(abbreviation);
-        sb.append("</a>");
-        return sb.toString();
-    }
-
-    protected static String getWebdriverUrl(String uri, String zdbID) {
-        StringBuilder sb = new StringBuilder("/");
-        sb.append(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
-        sb.append(uri);
-        sb.append(zdbID);
-        return sb.toString();
-    }
-
-    protected static String getWebdriverStartTag(String uri, String zdbID) {
-        StringBuilder sb = new StringBuilder("<a href=\"");
-        sb.append(getWebdriverUrl(uri, zdbID));
-        sb.append("\">");
         return sb.toString();
     }
 

@@ -395,7 +395,4 @@ public class ZfinJSPFunctions {
         return RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(entityID);
     }
 
-    public static String getWebdriverRoot() {
-        return "/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT;
-    }
 }

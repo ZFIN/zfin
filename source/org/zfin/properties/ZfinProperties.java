@@ -48,10 +48,6 @@ public final class ZfinProperties {
         return ZfinPropertiesEnum.INSTANCE.value();
     }
 
-    public static String getWebDriver() {
-        return ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value();
-    }
-
     public static String[] getValidationOtherEmailAddresses() {
         return splitValues(ZfinPropertiesEnum.VALIDATION_EMAIL_OTHER);
     }

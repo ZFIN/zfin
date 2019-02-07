@@ -26,8 +26,6 @@ public class HyperlinkTag extends TagSupport {
             StringBuilder sb = new StringBuilder();
             sb.append("<a href='");
             sb.append(serverName);
-            if (apgFileName != null)
-                sb.append(ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value());
             sb.append("?");
             sb.append(apgFileName + "'>");
             sb.append(name);

@@ -5,7 +5,6 @@
 <%@ attribute name="phenotypeOnMarkerBean" required="true" rtexprvalue="true"
               type="org.zfin.marker.presentation.PhenotypeOnMarkerBean" %>
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
-<%@ attribute name="webdriverRoot" required="true" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="title" required="false" %>
 
 

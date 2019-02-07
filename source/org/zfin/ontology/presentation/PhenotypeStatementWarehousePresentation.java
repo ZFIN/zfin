@@ -18,10 +18,6 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
             return null;
         }
 
-        if (curationLink) {
-            return getCurationLink(phenotypeStatement);
-        }
-
         StringBuilder phenotypeLink = new StringBuilder(100);
         phenotypeLink.append(getTomcatLink(uri, String.valueOf(phenotypeStatement.getId()), phenotypeStatement.getShortName()));
         if (!suppressPopupLink) {
@@ -29,12 +25,6 @@ public class PhenotypeStatementWarehousePresentation extends TermPresentation {
         }
 
         return phenotypeLink.toString();
-    }
-
-    private static String getCurationLink(PhenotypeStatementWarehouse phenotypeStatement) {
-        return getWebdriverLink(CurationPresentation.uri + CurationModuleType.PHENOTYPE_CURATION.getValue(),
-                phenotypeStatement.getPhenotypeExperiment().getFigure().getPublication().getZdbID(),
-                "edit");
     }
 
     /**

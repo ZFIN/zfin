@@ -179,7 +179,6 @@
 <filter token="WAREHOUSE_DUMP_DIR" value="${WAREHOUSE_DUMP_DIR}"/>
 <filter token="WAREHOUSE_REGN_EMAIL" value="${WAREHOUSE_REGN_EMAIL}"/>
 <filter token="WEBDRIVER_LOC" value="${WEBDRIVER_LOC}"/>
-<filter token="WEBDRIVER_PATH_FROM_ROOT" value="${WEBDRIVER_PATH_FROM_ROOT}"/>
 <filter token="WEBHOST_BINARY_PATH" value="${WEBHOST_BINARY_PATH}"/>
 <filter token="WEBHOST_BLASTALL" value="${WEBHOST_BLASTALL}"/>
 <filter token="WEBHOST_BLASTDB_CURL_PATH" value="${WEBHOST_BLASTDB_CURL_PATH}"/>

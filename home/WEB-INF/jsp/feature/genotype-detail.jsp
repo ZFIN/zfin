@@ -1,14 +1,9 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.GenotypeBean" scope="request"/>
 
 <script src="/javascript/table-collapse.js"></script>
 <script type="text/javascript">
-
-    function start_note(ref_page) {
-        top.zfinhelp = open("/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-" + ref_page + ".apg", "notewindow", "scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
-    }
 
     function popup_url(url) {
         open(url, "Description", "toolbar=yes,scrollbars=yes,resizable=yes");
@@ -92,7 +87,7 @@
         </tr>
     </c:if>
 
-    <zfin2:genotypeSuppliers genotype="${formBean.genotype}" />
+    <zfin2:genotypeSuppliers genotype="${formBean.genotype}"/>
 
 </table>
 
@@ -121,7 +116,7 @@
         <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
             <div>
                     ${extNote.note}
-                    &nbsp;(<a href='/${extNote.publication.zdbID}'>1</a>)
+                &nbsp;(<a href='/${extNote.publication.zdbID}'>1</a>)
             </div>
         </c:forEach>
     </div>
@@ -167,7 +162,7 @@
                             <td>
                                 <c:forEach var="source" items="${genoFeat.feature.sources}" varStatus="status">
                                     <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
-                                        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
+                                        <a href="/${source.organization.zdbID}">
                                                 ${source.organization.name}
                                         </a>
                                     </c:if>
@@ -212,12 +207,14 @@
                             </c:forEach>
                         </td>
                         <td>
-                            <zfin2:showFigureData fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"
-                                                  link="/action/fish/phenotype-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
+                            <zfin2:showFigureData
+                                    fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"
+                                    link="/action/fish/phenotype-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
                         </td>
                         <td>
-                            <zfin2:showFigureData fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"
-                                                  link="/action/expression/fish-expression-figure-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
+                            <zfin2:showFigureData
+                                    fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"
+                                    link="/action/expression/fish-expression-figure-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
                         </td>
                     </zfin:alternating-tr>
                 </c:forEach>
