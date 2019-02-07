@@ -80,4 +80,20 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
                 .uniqueResult();
     }
 
+    @Override
+    public boolean isAuthorizedSubmitter(Feature feature, Person person) {
+        String hql = "" +
+                "select 1 " +
+                "from Feature as feature, ZebrashareEditor editor " +
+                "inner join feature.publications as pubattrib " +
+                "inner join pubattrib.publication as pub " +
+                "where feature = :feature " +
+                "and editor.person = :person " +
+                "and editor.publication = pub ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("person", person);
+        query.setParameter("feature", feature);
+        return query.uniqueResult() != null;
+    }
+
 }

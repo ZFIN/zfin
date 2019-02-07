@@ -28,4 +28,6 @@ public interface ZebrashareRepository {
 
     FeatureCommunityContribution getLatestCommunityContribution(Feature feature);
 
+    boolean isAuthorizedSubmitter(Feature feature, Person person);
+
 }
