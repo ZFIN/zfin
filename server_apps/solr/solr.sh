@@ -5,6 +5,8 @@ SOLR_GC_LOGGING_OPTS="-verbose:gc -verbose:sizes -XX:+PrintGCDetails -XX:+PrintG
 export SOLR_LOGS_DIR="$SOLR_HOME/server/logs"
 export SECURITY_OPTS="-Ddisable.configEdit=true"
 
+export JAVA_HOME="/usr/lib/jvm/java-1.8.0"
+
 # solr seems to need to be a subdir of the working directory
 cd $SOLR_HOME/..
 
