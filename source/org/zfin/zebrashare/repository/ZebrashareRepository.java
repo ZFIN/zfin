@@ -31,4 +31,6 @@ public interface ZebrashareRepository {
 
     boolean isAuthorizedSubmitter(Feature feature, Person person);
 
+    List<Publication> getZebraSharePublicationsForPerson(Person person);
+
 }
