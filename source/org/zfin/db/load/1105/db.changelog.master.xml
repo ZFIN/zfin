@@ -6,4 +6,5 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/load/1105/genomic_variant.sql"/>
+    <include file="source/org/zfin/db/load/1105/fix_ensdar_name_map.sql"/>
 </databaseChangeLog>

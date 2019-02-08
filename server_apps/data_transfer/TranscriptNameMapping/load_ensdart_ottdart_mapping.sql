@@ -25,12 +25,12 @@ group by transcript_name having count(*) > 1;
 
 \copy (select ensdart_transcript_stable_id, ensdart_transcript_stable_id_version, tmp_counter.transcript_name, zfin_id from tmp_counter, tmp_ensdart_map where tmp_counter.transcript_name = tmp_ensdart_map.transcript_name order by tmp_counter.transcript_name) to duplicate_names.txt;
 
-insert into ensdart_name_mapping(ensdart_stable_id,
-       ensdart_versioned_id,
-       ensdarg_id, 
-       zfin_gene_zdb_id,
-       ensembl_tscript_name,
-       ottdart_id)
+insert into ensdart_name_mapping(enm_ensdart_stable_id,
+       enm_ensdart_versioned_id,
+       enm_ensdarg_id, 
+       enm_tscript_zdb_id,
+       enm_ensembl_tscript_name,
+       enm_ottdart_id)
   select distinct ensdart_transcript_stable_id, 
                       ensdart_transcript_stable_id_version,
                       ensdarg_gene_stable_id,
