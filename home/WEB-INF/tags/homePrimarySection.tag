@@ -118,10 +118,15 @@
 <ul>
     <li>Data
         <ul>
-            <li><a href="downloads" title="Download bulk data files generated from the ZFIN database" >Downloads</a>
-            <li><a href="/action/zebrashare" title="Submit unpublished alleles to ZebraShare">ZebraShare</a>
-            <li><a href="/action/infrastructure/annual-stats-view" title="Annual summary of ZFIN data content">Statistics</a>
-            <li><a href="/schemaSpy/index.html" title="Browse ZFIN database schema">Data Model</a>
+            <li><a href="downloads" title="Download bulk data files generated from the ZFIN database" >Downloads</a></li>
+            <li>
+                <a href="/action/zebrashare" title="Submit unpublished alleles to ZebraShare">ZebraShare</a>
+                <c:if test="${userHasZebraShareSubmissions}">
+                    <a href="/action/zebrashare/dashboard"><em>View Your ZebraShare Submissions</em></a>
+                </c:if>
+            </li>
+            <li><a href="/action/infrastructure/annual-stats-view" title="Annual summary of ZFIN data content">Statistics</a></li>
+            <li><a href="/schemaSpy/index.html" title="Browse ZFIN database schema">Data Model</a></li>
         </ul>
 </ul>
 
