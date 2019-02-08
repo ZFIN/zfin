@@ -119,7 +119,7 @@
     <li>Data
         <ul>
             <li><a href="downloads" title="Download bulk data files generated from the ZFIN database" >Downloads</a>
-            <li><a href="@SECURE_HTTP@@WIKI_HOST@/display/general/ZFIN+Data+Submissions" title="Submit data directly to the ZFIN database using Phenote">Submit</a>
+            <li><a href="/action/zebrashare" title="Submit unpublished alleles to ZebraShare">ZebraShare</a>
             <li><a href="/action/infrastructure/annual-stats-view" title="Annual summary of ZFIN data content">Statistics</a>
             <li><a href="/schemaSpy/index.html" title="Browse ZFIN database schema">Data Model</a>
         </ul>
