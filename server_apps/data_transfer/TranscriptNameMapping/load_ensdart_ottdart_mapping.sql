@@ -83,5 +83,7 @@ update transcript
 select count(*) From transcript where tscript_ensdart_id is not null;
 select count(*) From transcript where tscript_ensdart_id is null;
 
+
+
 commit work;
 --rollback work;
