@@ -2,12 +2,13 @@ package org.zfin.datatransfer.go;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.zfin.gwt.root.ui.ValidationException;
 
 /**
  * mapping of ECO ID to GO evidence Code
  * http://wiki.geneontology.org/index.php/Evidence_Code_Ontology_(ECO)
  */
-public class EcoGoEvidenceCodeMapping {
+public class EcoGoEvidenceCodeMapping  {
 
     private static Map<String, String> mapping = new HashMap<>(30);
 
@@ -47,9 +48,13 @@ public class EcoGoEvidenceCodeMapping {
 //        mapping.put("ECO:0000320", "IMR");
     }
 
-    public static String getGoEvidenceCode(String ecoId) {
-        if (!mapping.containsKey(ecoId))
-            throw new RuntimeException("Could not find GO evidence code for ECO ID: " + ecoId);
-        return mapping.get(ecoId);
+    public static String getGoEvidenceCode(String ecoId){
+       if (!mapping.containsKey(ecoId)) {
+            //throw new RuntimeException("Could not find GO evidence code for ECO ID: " + ecoId);
+            return null;
+        }
+        else {
+           return mapping.get(ecoId);
+       }
     }
 }

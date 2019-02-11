@@ -84,7 +84,13 @@ public class GpadParser extends FpInferenceGafParser {
 
         gafEntries.forEach(gafEntry -> {
             // replace ECO ID by GO Evidence Code (3-letter codes)
-            gafEntry.setEvidenceCode(EcoGoEvidenceCodeMapping.getGoEvidenceCode(gafEntry.getEvidenceCode()));
+          String ecoCode=EcoGoEvidenceCodeMapping.getGoEvidenceCode(gafEntry.getEvidenceCode());
+          if (ecoCode == null) {
+              logger.error("invalid eco code" + gafEntry.getEvidenceCode());
+          }
+          else {
+              gafEntry.setEvidenceCode(ecoCode);
+          }
 
             // fixed set of qualifiers
             // if thw incoming one is not one of them discard the value
