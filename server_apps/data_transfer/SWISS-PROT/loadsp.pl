@@ -64,10 +64,6 @@ sub countData {
 
 
 #set environment variables
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $dbname = "<!--|DB_NAME|-->";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
@@ -220,11 +216,9 @@ $numMrkrProcessBefore = countData($sql);
 
 #--------------- Delete records from last SWISS-PROT loading-----
 
-##system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_addbackattr.sql  >out 2>addBackAttributionReport.txt");
 system("psql -d <!--|DB_NAME|--> -a -f sp_addbackattr.sql >addBackAttributionReport.txt");
 
 print "\n delete records source from last SWISS-PROT loading.\n";
-##system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete.sql >out 2>deletereport.txt");
 system("psql -d <!--|DB_NAME|--> -a -f sp_delete.sql >deletereport.txt");
 
 # good records for loading
@@ -348,7 +342,6 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 
 # ------------ Loading ---------------------
 print "\nloading...\n";
-##system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load.sql >out 2> report.txt");
 system("psql -d <!--|DB_NAME|--> -a -f sp_load.sql > report.txt");
 
 #--------------------------- record counts after loading finishes ----------------------------

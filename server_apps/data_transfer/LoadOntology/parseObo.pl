@@ -2,11 +2,6 @@
 
 # set environment variables
 
-$ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
-$ENV{"INFORMIXSERVER"}="wanda";
-$ENV{"ONCONFIG"}="onconfig";
-$ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
-
 my $fileName = $ARGV[0];
 # make sure in the right directory
 

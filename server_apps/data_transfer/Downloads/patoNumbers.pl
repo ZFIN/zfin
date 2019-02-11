@@ -11,11 +11,6 @@ use DBI;
 
 # set environment variables
 
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
 # call patoNumbers.sql to prepare some download files and some pre-processed files
 system("psql -d <!--|DB_NAME|--> -a -f patoNumbers.sql");
 

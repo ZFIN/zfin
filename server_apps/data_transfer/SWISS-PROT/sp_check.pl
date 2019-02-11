@@ -23,10 +23,6 @@ init_files();
 
 my $num_ok = 0;    # number of good records that are going to be loaded 
 my $num_prob = 0;  # number of problem records
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";

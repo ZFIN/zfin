@@ -38,7 +38,6 @@
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
-<!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	crick
 <!--|INTERNAL_BLAST_PATH|-->	/research/crick/blastdb/Current

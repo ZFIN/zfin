@@ -27,6 +27,7 @@
 <filter token="CATALINA_HOME" value="${CATALINA_HOME}"/>
 <filter token="CATALINA_PID" value="${CATALINA_PID}"/>
 <filter token="CGI_BIN_DIR_NAME" value="${CGI_BIN_DIR_NAME}"/>
+<filter token="CLIENT_LOCALE" value="${CLIENT_LOCALE}"/>
 <filter token="CONFIGURATION_DIRECTORY" value="${CONFIGURATION_DIRECTORY}"/>
 <filter token="COOKIE_PATH" value="${COOKIE_PATH}"/>
 <filter token="COUNT_PATO_ERR" value="${COUNT_PATO_ERR}"/>
@@ -42,6 +43,7 @@
 <filter token="CURATORS_AT_ZFIN" value="${CURATORS_AT_ZFIN}"/>
 <filter token="DATABASE_UNLOAD_DIRECTORY" value="${DATABASE_UNLOAD_DIRECTORY}"/>
 <filter token="DBNAME" value="${DBNAME}"/>
+<filter token="DB_LOCALE" value="${DB_LOCALE}"/>
 <filter token="DB_NAME" value="${DB_NAME}"/>
 <filter token="DB_OWNER" value="${DB_OWNER}"/>
 <filter token="DEBUGPORT" value="${DEBUGPORT}"/>
@@ -69,6 +71,7 @@
 <filter token="GO_EMAIL_CURATOR" value="${GO_EMAIL_CURATOR}"/>
 <filter token="GO_EMAIL_ERR" value="${GO_EMAIL_ERR}"/>
 <filter token="GRADLE_USER_HOME" value="${GRADLE_USER_HOME}"/>
+<filter token="GROOVY_CLASSPATH" value="${GROOVY_CLASSPATH}"/>
 <filter token="GROOVY_HOME" value="${GROOVY_HOME}"/>
 <filter token="HAS_PARTNER" value="${HAS_PARTNER}"/>
 <filter token="HEADER_BACKGROUND" value="${HEADER_BACKGROUND}"/>
@@ -83,12 +86,6 @@
 <filter token="INDEXER_WIKI_HOSTNAME" value="${INDEXER_WIKI_HOSTNAME}"/>
 <filter token="INDEXER_WIKI_PASSWORD" value="${INDEXER_WIKI_PASSWORD}"/>
 <filter token="INDEXER_WIKI_USERNAME" value="${INDEXER_WIKI_USERNAME}"/>
-<filter token="INFORMIXDIR" value="${INFORMIXDIR}"/>
-<filter token="INFORMIXSERVER" value="${INFORMIXSERVER}"/>
-<filter token="INFORMIXSQLHOSTS" value="${INFORMIXSQLHOSTS}"/>
-<filter token="INFORMIX_DIR" value="${INFORMIX_DIR}"/>
-<filter token="INFORMIX_PORT" value="${INFORMIX_PORT}"/>
-<filter token="INFORMIX_SERVER" value="${INFORMIX_SERVER}"/>
 <filter token="INSPECTLET_ID" value="${INSPECTLET_ID}"/>
 <filter token="INSTANCE" value="${INSTANCE}"/>
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
@@ -119,7 +116,6 @@
 <filter token="NOMEN_COORDINATOR" value="${NOMEN_COORDINATOR}"/>
 <filter token="NON_SECUREPORT" value="${NON_SECUREPORT}"/>
 <filter token="NON_SECURE_HTTP" value="${NON_SECURE_HTTP}"/>
-<filter token="ONCONFIG" value="${ONCONFIG}"/>
 <filter token="ONTOLOGY_LOADER_EMAIL" value="${ONTOLOGY_LOADER_EMAIL}"/>
 <filter token="PARTNER_DBNAME" value="${PARTNER_DBNAME}"/>
 <filter token="PARTNER_INTERNAL_INSTANCE" value="${PARTNER_INTERNAL_INSTANCE}"/>
@@ -147,6 +143,7 @@
 <filter token="SOLR_CREATE_BACKUPS" value="${SOLR_CREATE_BACKUPS}"/>
 <filter token="SOLR_HOME" value="${SOLR_HOME}"/>
 <filter token="SOLR_HOST" value="${SOLR_HOST}"/>
+<filter token="SOLR_MEMORY" value="${SOLR_MEMORY}"/>
 <filter token="SOLR_PORT" value="${SOLR_PORT}"/>
 <filter token="SOURCEROOT" value="${SOURCEROOT}"/>
 <filter token="SQLHOSTS_FILE" value="${SQLHOSTS_FILE}"/>

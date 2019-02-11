@@ -29,7 +29,7 @@
 # ---------
 # Each makefile uses these environmental variables to assist it:
 #
-#  $INFORMIXDIR, $INFORMIXSERVER, $ONCONFIG, $INFORMIXSQLHOSTS, $PATH,
+#  $PATH,
 #    $LD_LIBRARY_PATH These are all assumed to point at the current
 #                  	Informix server.
 #  $DBNAME            Name of the database in $INFORMIXSERVER to work

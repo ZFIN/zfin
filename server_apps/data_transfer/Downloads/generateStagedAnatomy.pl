@@ -15,11 +15,6 @@
 use strict;
 use DBI;
 
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
 my ($stgZdbId, $lastStgZdbId, $stgName, $anatName, $dispIndent);
 my $mailprog = '/usr/lib/sendmail -t -oi -oem';
 my $output = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/staged_anatomy.other";

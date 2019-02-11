@@ -34,11 +34,6 @@ system("/bin/date");
 
 # set environment variables
 
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/";
 
 $dbname = "<!--|DB_NAME|-->";
@@ -152,7 +147,6 @@ $fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
 #    2) a list of ZFIN genes to be mapped, toMap.unl
 #--------------------------------------------------------------------------------------------------------------------
 
-##$cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2";
 ##&doSystemCommand($cmd);
 
 &doSystemCommand("psql -d <!--|DB_NAME|--> -a -f prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2");

@@ -38,8 +38,6 @@
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
-<!--|INFORMIXSQLHOSTS|-->	${INFORMIXDIR}/etc/sqlhosts
-<!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	nagel
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
