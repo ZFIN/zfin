@@ -109,4 +109,16 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
         return query.uniqueResult() != null;
     }
 
+    @Override
+    public List<Publication> getZebraSharePublicationsForPerson(Person person) {
+        String hql = "" +
+                "select editor.publication " +
+                "from ZebrashareEditor editor " +
+                "where editor.person = :person";
+        return (List<Publication>) HibernateUtil.currentSession()
+                .createQuery(hql)
+                .setParameter("person", person)
+                .list();
+    }
+
 }
