@@ -55,20 +55,20 @@ RewriteRule ^/zf_info/zfbook/lab_desig.html /action/feature/line-designations [N
 
 #wild-type lines
 RewriteCond %{QUERY_STRING}     ^MIval=aa-wtlist.apg$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/feature/wildtype-list [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/feature/wildtype-list [NC,R=301]
 
 # retired apg urls
 RewriteCond %{QUERY_STRING}     ^Mival=aa-markerview.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    ^MIval=aa-newmrkrselect.apg
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/search? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/marker/search? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-genotypeview.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/genotype/genotype-detail?zdbID=%1 [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/genotype/genotype-detail?zdbID=%1 [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-showpubs.apg&OID=([A-Z0-9-]+)    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/citation-list/%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/marker/citation-list/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^genotype.zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/genotype/detail$ /%1? [NC,R=301]
@@ -77,47 +77,47 @@ RewriteCond %{QUERY_STRING}     ^anatomyItem.zdbID=([\w-:]+)$    [NC]
 RewriteRule ^/action/anatomy/term-detail /%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-anatomy_item.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/anatomy/anatomy-view/%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/anatomy/anatomy-view/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-mappingdetail.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/mapping/detail/%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/mapping/detail/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-orthoviewdetailed.apg&OID=([\w-]+)&(.*)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1#orthology? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/%1#orthology? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-ortholist.apg&pubID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/publication/%1/orthology-list? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/publication/%1/orthology-list? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-fxfigureview.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-fxallfigures.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/figure/all-figure-view/%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/figure/all-figure-view/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-persview.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-labview.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-companyview.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-sourceview.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-pubview2.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
 
 # Should be removed or rewritten when xpatselect.apg is converted to java
 RewriteCond %{QUERY_STRING}     ^MIval=aa-xpatview.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&xpatsel_geneZdbId=%1&query_results=true [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/?MIval=aa-xpatselect.apg&xpatsel_geneZdbId=%1&query_results=true [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^MIval=aa-xpatselect.apg    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/expression/xpatselect [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/expression/xpatselect [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-pheno_summary.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/%1/phenotype-summary? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/marker/%1/phenotype-summary? [NC,R=301]
 
 RewriteCond %{QUERY_STRING} ^anatomyItem.zdbID=([\w-]+)&wildtype=([\w]+)$ [NC]
 RewriteRule ^/action/anatomy/show-all-morpholino-experiments /action/anatomy/show-all-sequence-targeting-reagents/%1/%2? [NC,R=301]
@@ -152,13 +152,13 @@ RewriteRule /action/anatomy/anatomy-search    /action/ontology/ontology-search [
 RewriteRule ^/action/anatomy/anatomy-view/(.+) /action/ontology/term-detail/$1 [NC]
 
 RewriteCond %{QUERY_STRING}    ^MIval=aa-anatdict.apg
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/ontology/search? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/ontology/search? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    ^MIval=aa-refcrosslist.apg
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/mapping/all-panels? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/mapping/all-panels? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^Mival=aa-crossview.apg&OID=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/mapping/panel-detail/%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/action/mapping/panel-detail/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    MIval=aa-fishselect.apg
 RewriteRule ^.*$ /action/fish/search [NC,R=301]
@@ -174,10 +174,10 @@ RewriteCond %{QUERY_STRING}     ^record=JUMPTOGENE$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /action/marker/search [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOLAB$    [NC]
-RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-labselect.apg [NC,R=301]
+RewriteRule ^/cgi-bin/ZFIN_jump /cgi-bin/webdriver?MIval=aa-labselect.apg [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOPERSON$    [NC]
-RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-quickfindpers.apg [NC,R=301]
+RewriteRule ^/cgi-bin/ZFIN_jump /cgi-bin/webdriver?MIval=aa-quickfindpers.apg [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOPUB$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /action/publication/search [NC,R=301]
@@ -189,7 +189,7 @@ RewriteCond %{QUERY_STRING}     ^record=JUMPTOEST$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /action/marker/search [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOXPAT$    [NC]
-RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg [NC,R=301]
+RewriteRule ^/cgi-bin/ZFIN_jump /cgi-bin/webdriver?MIval=aa-xpatselect.apg [NC,R=301]
 
 RewriteRule ^/action/ontology/ontology-search /action/ontology/search [NC,R=301]
 
@@ -201,7 +201,7 @@ RewriteRule ^/cgi-bin/ZFIN_jump /%1? [NC,R=301]
 
 # catch the jump-to.apg as well!
 RewriteCond %{QUERY_STRING}     ^Mival=aa-jump_to.apg&record=([\w-]+)$    [NC]
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
 
 RewriteRule ^/search(.*)  /action/quicksearch/prototype$1
 RewriteRule ^/prototype(.*)  /action/quicksearch/prototype$1

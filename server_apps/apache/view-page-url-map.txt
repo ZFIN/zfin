@@ -75,7 +75,7 @@ TALEN /action/marker/str/view/ZDB-TALEN
 TERM	/action/ontology/term-detail/ZDB-TERM
 TGCONSTRCT	/action/marker/construct/view/ZDB-TGCONSTRCT
 TSCRIPT	/action/marker/transcript/view/ZDB-TSCRIPT
-XPAT   /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&xpatID=ZDB-XPAT
+XPAT   /cgi-bin/webdriver?MIval=aa-fxallfigures.apg&xpatID=ZDB-XPAT
 ZFA     /action/ontology/term-detail/ZFA
 TERM    /action/ontology/term-detail/ZDB-TERM
 ZFS     /action/ontology/term-detail/ZFS
