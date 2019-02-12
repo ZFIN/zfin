@@ -88,10 +88,10 @@ update tmp_phenotype_statement
   set arelationship_name =
 (
 case
-when (asubterm_ont_id is not null AND a_ontology_name = 'biological_process')
+when (asubterm_ont_id is not null AND (a_ontology_name = 'biological_process' or (asubterm_ont_id like 'GO%' AND asuperterm_ont_id like 'ZFA%' AND a_ontology_name = 'molecular_function')))
 then
 'occurs_in'
-when (asubterm_ont_id is not null AND a_ontology_name != 'biological_process')
+when (asubterm_ont_id is not null AND a_ontology_name != 'biological_process' AND (a_ontology_name != 'molecular_function' OR asubterm_ont_id not like 'GO%' OR asuperterm_ont_id not like 'ZFA%'))
 then
 'part_of'
 else
@@ -104,10 +104,10 @@ update tmp_phenotype_statement
   set arelationship_id =
 (
 case
-when (asubterm_ont_id is not null AND a_ontology_name = 'biological_process')
+when (asubterm_ont_id is not null AND (a_ontology_name = 'biological_process' or (asubterm_ont_id like 'GO%' AND asuperterm_ont_id like 'ZFA%' AND a_ontology_name = 'molecular_function')))
 then
 'BFO:0000066'
-when (asubterm_ont_id is not null AND a_ontology_name != 'biological_process')
+when (asubterm_ont_id is not null AND a_ontology_name != 'biological_process' AND (a_ontology_name != 'molecular_function' OR asubterm_ont_id not like 'GO%' OR asuperterm_ont_id not like 'ZFA%'))
 then
 'BFO:0000050'
 else
@@ -120,10 +120,10 @@ update tmp_phenotype_statement
   set brelationship_name =
 (
 case
-when (bsubterm_ont_id is not null AND b_ontology_name = 'biological_process')
+when (bsubterm_ont_id is not null AND (b_ontology_name = 'biological_process' or (bsubterm_ont_id like 'GO%' AND bsuperterm_ont_id like 'ZFA%' AND b_ontology_name = 'molecular_function')))
 then
 'occurs_in'
-when (bsubterm_ont_id is not null AND b_ontology_name != 'biological_process')
+when (bsubterm_ont_id is not null AND b_ontology_name != 'biological_process' AND (b_ontology_name != 'molecular_function' OR bsubterm_ont_id not like 'GO%' OR bsuperterm_ont_id not like 'ZFA%'))
 then
 'part_of'
 else
@@ -136,10 +136,10 @@ update tmp_phenotype_statement
   set brelationship_id =
 (
 case
-when (bsubterm_ont_id is not null AND b_ontology_name = 'biological_process')
+when (bsubterm_ont_id is not null AND (b_ontology_name = 'biological_process' or (bsubterm_ont_id like 'GO%' AND bsuperterm_ont_id like 'ZFA%' AND b_ontology_name = 'molecular_function')))
 then
 'BFO:0000066'
-when (bsubterm_ont_id is not null AND b_ontology_name != 'biological_process')
+when (bsubterm_ont_id is not null AND b_ontology_name != 'biological_process' AND (b_ontology_name != 'molecular_function' OR bsubterm_ont_id not like 'GO%' OR bsuperterm_ont_id not like 'ZFA%'))
 then
 'BFO:0000050'
 else
