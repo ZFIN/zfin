@@ -2600,4 +2600,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 " where recattrib_source_zdb_id = :zdbID ";
         return getCount(sql, publication.getZdbID());
     }
+
+    @Override
+    public List getMetricsByPETDate() {
+        String dateBin = "week";
+        String hql = String.format(
+                "select new org.zfin.publication.presentation.PubMetricResultBean(status.id, location.id, date_trunc('%1$s', pub.entryDate), count(*)) " +
+                "from PublicationTrackingHistory history " +
+                "left outer join history.status status " +
+                "left outer join history.location location " +
+                "inner join history.publication pub " +
+                "where history.isCurrent = 't' " +
+                "and pub.entryDate >= :start " +
+                "and pub.entryDate <= :end " +
+                "and pub.type = :type " +
+                "group by status.id, location.id, date_trunc('%1$s', pub.entryDate)", dateBin);
+
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("start", new GregorianCalendar(2018, Calendar.JANUARY, 1))
+                .setParameter("end", new GregorianCalendar(2018, Calendar.JUNE, 30))
+                .setParameter("type", Publication.Type.JOURNAL)
+                .list();
+    }
+
 }

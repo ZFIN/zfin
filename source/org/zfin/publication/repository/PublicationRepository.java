@@ -607,4 +607,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     Long getDirectlyAttributed(Publication publication);
 
+    List getMetricsByPETDate();
+
 }
