@@ -65,6 +65,13 @@ unload to debug
 
 !echo "Terms that were merged (became secondary): ";
 
+unload to 'sec_unload.unl'
+select term_ont_id from term
+where exists (Select 'x'
+		  from sec_oks
+		  where term_ont_id = sec_id
+		  and term_is_secondary = 'f');
+
 update term
   set term_is_secondary = 't'
   where exists (Select 'x'
