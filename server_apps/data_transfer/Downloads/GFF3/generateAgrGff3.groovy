@@ -13,8 +13,12 @@ String gff3Dir = ZfinPropertiesEnum.TARGETROOT.value + "/home/data_transfer/Down
 
 def out = new File("$gff3Dir/zfin_genes.gff3").newWriter()
 
+//genes and transcripts could come from SQL replacing the tasks that generate them?
 List<GenomeFeature> genes = loadFile("$gff3Dir/E_zfin_gene_alias.gff3")
+//only mRNA comes out, where's all of the ones with type 'transcript' ?
 Map transcripts = loadFileWithParentMap("$gff3Dir/E_drerio_transcript.gff3")
+
+//parent stuff seems to get lost here, IDs don't seem to line up
 Map exons = loadFileWithParentMap("$gff3Dir/E_drerio_backbone.gff3")
 
 List ensdargMaps = getEnsdargMaps()

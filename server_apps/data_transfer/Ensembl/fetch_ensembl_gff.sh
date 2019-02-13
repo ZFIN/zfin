@@ -92,8 +92,8 @@ if [[ ( "${post}" != "${prior}" ) && ${geterr} -eq 0  ]] ; then
 
 	zcat ${GTF}| sed 's@ (@(@g' | sed 's@ of @of@g' | sed 's@ to @to@g' | sed 's@si: @si:@g'| sed 's@hpx a@hpxa@g' |\
 	./gtf2gff3.pl|\
-	nawk -v OFS='|' '/^[^#]/{$2="Ensembl_"$2;att=substr(substr($9,1,length($9)-1),4);\
-		for(i=0;i<4;i++){if(match(att,/;[^=]*=/)){sub(/;[^=]*=/,"|",att)}\
+	nawk -v OFS='|' '/^[^#]/{$2="Ensembl_"$2;att=substr(substr($9,1,length($9)-1),6);\
+		for(i=0;i<6;i++){if(match(att,/;[^=]*=/)){sub(/;[^=]*=/,"|",att)}\
 			else{att=att"|"} }$9=att;print}' > $gffdir/drerio_ensembl_pg.${ver}.unl
 	sed -i 's/.$//' $gffdir/drerio_ensembl_pg.${ver}.unl
 

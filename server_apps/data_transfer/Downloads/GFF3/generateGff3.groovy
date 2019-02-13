@@ -47,7 +47,7 @@ destination = new File(downloadDir + "E_zfin_knockdown_reagents.gff3")
 destination.write(knockdownFile.text)
 
 def aliasFileName = "E_zfin_gene_alias.gff3"
-def proc = "../gather_alias.awk E_zfin_gene_alias_scattered.tmp".execute()
+def proc = "gather_alias.awk E_zfin_gene_alias_scattered.tmp".execute()
 def buffer = new StringBuffer()
 proc.consumeProcessErrorStream(buffer)
 

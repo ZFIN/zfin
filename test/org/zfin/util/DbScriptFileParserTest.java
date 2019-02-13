@@ -95,7 +95,7 @@ public class DbScriptFileParserTest {
     // This is a bit volatile as any change in the number of queries in those files
     // will break this unit test. But it's worth it for now as we adjust the parser...
     public void checkSqlFiles() {
-        String fileName = "server_apps/data_transfer/Downloads/GFF3/download-files/E_zfin_ensembl_gene.sql";
+        String fileName = "server_apps/data_transfer/Downloads/GFF3/E_zfin_ensembl_gene.sql";
         File file = new File(fileName);
         if (!file.exists())
             fail("Could not find script file");
