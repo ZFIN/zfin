@@ -35,6 +35,10 @@ public class PublicationTrackingLocation {
             this.display = display;
         }
 
+        public String getDisplay() {
+            return display;
+        }
+
         @Override
         @JsonValue
         public String toString() {
