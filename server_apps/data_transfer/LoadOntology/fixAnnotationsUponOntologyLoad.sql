@@ -355,9 +355,6 @@ insert into sec_unload (sec_id, prim_id)
     where exists (select 'x' from
             term where term_ont_id = sec_id) ;
 
-unload to 'sec_unload.unl'
-  select * from sec_unload;
-
 unload to 'debug'
   select * from sec_unload;
 
