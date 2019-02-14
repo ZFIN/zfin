@@ -1151,3 +1151,20 @@ input + label {
 .zebrashare-button h3 {
     margin: 0;
 }
+
+.metrics-checkboxes {
+    column-count: 3;
+}
+
+.metrics-checkboxes > * {
+    display: block;
+}
+
+.metrics-table td {
+    padding-bottom: 1rem !important;
+}
+
+.metrics-table input[type=text] {
+    margin-right: 5px;
+    margin-left: 5px;
+}
