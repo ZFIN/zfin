@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-
 <jsp:useBean id="formBean" class="org.zfin.publication.presentation.PublicationMetricsFormBean" scope="request"/>
 
 <form:form method="GET" commandName="formBean">
@@ -11,9 +10,9 @@
         <tr>
             <th>From</th>
             <td>
-                <form:input path="fromDate" />
+                <form:input path="fromDate" cssClass="date-mask" />
                 <b>To</b>
-                <form:input path="toDate" />
+                <form:input path="toDate" cssClass="date-mask" />
                 <b>By</b>
                 <form:select path="groupBy" items="${intervals}" itemLabel="display" />
             </td>
@@ -55,3 +54,24 @@
         </tr>
     </table>
 </form:form>
+
+<script>
+    $(function () {
+        $('.date-mask')
+            .attr('placeholder', 'yyyy-mm-dd')
+            .on('change keyup', function (evt) {
+                evt.preventDefault();
+                var value = $(this).val();
+                // special handling for backspace or delete
+                if (evt.which === 8 || evt.which === 46) {
+                    if (value.endsWith('-')) {
+                        $(this).val(value.slice(0, -2));
+                    }
+                    return false;
+                }
+                if (value.length === 4 || value.length === 7) {
+                    $(this).val(value + '-');
+                }
+            });
+    });
+</script>
