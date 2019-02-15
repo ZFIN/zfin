@@ -9,5 +9,5 @@
     <include file="source/org/zfin/db/load/1105/fix_ensdar_name_map.sql"/>
     <include file="source/org/zfin/db/load/1105/add_padded_base.sql"/>
     <include file="source/org/zfin/db/load/1105/add_sequence_fgmd.sql"/>
-
+    <include file="source/org/zfin/db/load/1105/add_default_strand.sql"/>
 </databaseChangeLog>
