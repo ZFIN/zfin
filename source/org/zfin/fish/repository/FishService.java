@@ -192,7 +192,7 @@ public class FishService {
             }
             featureGenes.addAll(featureGeneSet);
         }
-        
+
         if (includeStrs) {
             for (Marker str : fish.getStrList()) {
                 Set<MarkerRelationship> mrels = str.getFirstMarkerRelationships();
@@ -291,14 +291,17 @@ public class FishService {
                 figureSummaryDisplay.setFigure(figure);
                 figureSummaryDisplay.setPublication(figure.getPublication());
                 List<PhenotypeStatementWarehouse> phenotypeStatements = FishService.getPhenotypeStatements(figure, fishID);
-                figureSummaryDisplay.setPhenotypeStatementList(FishService.getDistinctPhenotypeStatements(phenotypeStatements));
-                figureSummaryDisplays.add(figureSummaryDisplay);
+                if (phenotypeStatements != null && phenotypeStatements.size() > 0) {
+                    figureSummaryDisplay.setPhenotypeStatementList(FishService.getDistinctPhenotypeStatements(phenotypeStatements));
+                    figureSummaryDisplays.add(figureSummaryDisplay);
+                }
                 if (!figure.isImgless()) {
                     figureSummaryDisplay.setImgCount(figure.getImages().size());
                     figureSummaryDisplay.setThumbnail(figure.getImages().iterator().next().getThumbnail());
                 }
             }
         }
+
         return figureSummaryDisplays;
     }
 
