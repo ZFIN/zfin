@@ -1168,3 +1168,13 @@ input + label {
     margin-right: 5px;
     margin-left: 5px;
 }
+
+.metrics-results {
+    white-space: nowrap;
+    border-collapse: collapse;
+}
+
+.metrics-results td {
+    border: 1px solid #dddddd;
+    padding: 2px;
+}

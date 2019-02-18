@@ -55,6 +55,38 @@
     </table>
 </form:form>
 
+<%--<table>--%>
+    <%--<c:forEach items="${results}" var="result">--%>
+        <%--<tr>--%>
+            <%--<td>${result.status}</td>--%>
+            <%--<td>${result.location}</td>--%>
+            <%--<td>${result.date}</td>--%>
+            <%--<td>${result.count}</td>--%>
+        <%--</tr>--%>
+    <%--</c:forEach>--%>
+<%--</table>--%>
+
+<table class="metrics-results">
+    <c:forEach items="${resultsTable}" var="row" varStatus="rowLoop">
+        <c:if test="${rowLoop.first}">
+            <tr>
+                <td></td>
+                <c:forEach items="${row.value}" var="column">
+                    <td>${column.key}</td>
+                </c:forEach>
+            </tr>
+        </c:if>
+        <tr>
+            <td>${row.key}</td>
+            <c:forEach items="${row.value}" var="column">
+                <td>${column.value}</td>
+            </c:forEach>
+        </tr>
+    </c:forEach>
+</table>
+
+
+
 <script>
     $(function () {
         $('.date-mask')

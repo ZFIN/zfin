@@ -11,9 +11,9 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import org.zfin.antibody.Antibody;
@@ -31,7 +31,10 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
-import org.zfin.infrastructure.*;
+import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.SourceAlias;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -47,6 +50,7 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardPublicationList;
+import org.zfin.publication.presentation.PubMetricResultBean;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
@@ -2602,24 +2606,33 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
-    public List getMetricsByPETDate() {
-        String dateBin = "week";
+    public List<PubMetricResultBean> getMetricsByPETDate(Calendar start,
+                                                         Calendar end,
+                                                         String dateBin,
+                                                         PublicationTrackingStatus.Name[] statuses,
+                                                         boolean currentStatusOnly) {
+        if (statuses.length == 0) {
+            return new ArrayList<>();
+        }
+        String isCurrentClause = currentStatusOnly ? "and history.isCurrent = 't' " : "";
         String hql = String.format(
-                "select new org.zfin.publication.presentation.PubMetricResultBean(status.id, location.id, date_trunc('%1$s', pub.entryDate), count(*)) " +
-                "from PublicationTrackingHistory history " +
-                "left outer join history.status status " +
-                "left outer join history.location location " +
-                "inner join history.publication pub " +
-                "where history.isCurrent = 't' " +
-                "and pub.entryDate >= :start " +
-                "and pub.entryDate <= :end " +
-                "and pub.type = :type " +
-                "group by status.id, location.id, date_trunc('%1$s', pub.entryDate)", dateBin);
+                "select new org.zfin.publication.presentation.PubMetricResultBean(status.name, location.name, date_trunc('%1$s', pub.entryDate), count(*)) " +
+                        "from PublicationTrackingHistory history " +
+                        "left outer join history.status status " +
+                        "left outer join history.location location " +
+                        "inner join history.publication pub " +
+                        "where pub.entryDate >= :start " +
+                        "and pub.entryDate < :end " +
+                        "and pub.type = :type " +
+                        "and status.name in (:statuses) " +
+                        isCurrentClause +
+                        "group by status.name, location.name, date_trunc('%1$s', pub.entryDate)", dateBin);
 
         return HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("start", new GregorianCalendar(2018, Calendar.JANUARY, 1))
-                .setParameter("end", new GregorianCalendar(2018, Calendar.JUNE, 30))
+                .setParameter("start", start)
+                .setParameter("end", end)
                 .setParameter("type", Publication.Type.JOURNAL)
+                .setParameterList("statuses", statuses)
                 .list();
     }
 

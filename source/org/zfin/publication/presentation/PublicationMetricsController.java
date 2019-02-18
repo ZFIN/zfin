@@ -12,7 +12,11 @@ import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.repository.PublicationRepository;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -26,7 +30,7 @@ public class PublicationMetricsController {
 
     @RequestMapping(value = "/metrics", method = RequestMethod.GET)
     public String showSearchForm(@ModelAttribute("formBean") PublicationMetricsFormBean formBean,
-                                 Model model) {
+                                 Model model) throws Exception {
 
         model.addAttribute("statuses", publicationRepository.getAllPublicationStatuses().stream()
                 .map(PublicationTrackingStatus::getName)
@@ -43,17 +47,38 @@ public class PublicationMetricsController {
                 .filter(l -> l.getRole() == PublicationTrackingLocation.Role.CURATOR)
                 .map(PublicationTrackingLocation::getName)
                 .collect(Collectors.toList()));
-        model.addAttribute("results", publicationRepository.getMetricsByPETDate());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Metrics");
 
-        LOG.warn(formBean.getQueryType());
-        LOG.warn(formBean.getFromDate());
-        LOG.warn(formBean.getToDate());
-        LOG.warn(formBean.getGroupBy());
-        LOG.warn(formBean.getStatistics());
-        LOG.warn(formBean.getStatuses());
-        LOG.warn(formBean.getLocations());
-        LOG.warn(formBean.isCurrentStatusOnly());
+        Map<String, Map<String, Long>> resultTable = new LinkedHashMap<>();
+
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM yyyy");
+
+        Calendar start = Calendar.getInstance();
+        start.setTime(inputFormat.parse(formBean.getFromDate()));
+        Calendar end = Calendar.getInstance();
+        end.setTime(inputFormat.parse(formBean.getToDate()));
+
+        Calendar calendar = (Calendar) start.clone();
+        while (calendar.before(end)) {
+            Map<String, Long> row = new LinkedHashMap<>();
+            for (PublicationTrackingStatus.Name status : formBean.getStatuses()) {
+                row.put(status.toString(), 0L);
+            }
+            resultTable.put(outputFormat.format(calendar.getTime()), row);
+            calendar.add(Calendar.MONTH, 1);
+        }
+
+        if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.PET_DATE) {
+            List<PubMetricResultBean> resultList = publicationRepository.getMetricsByPETDate(start, end,
+                    formBean.getGroupBy().toString(), formBean.getStatuses(), formBean.isCurrentStatusOnly());
+            for (PubMetricResultBean result : resultList) {
+                String rowKey = outputFormat.format(result.getDate());
+                resultTable.get(rowKey).put(result.getStatus().toString(), result.getCount());
+            }
+        }
+
+        model.addAttribute("resultsTable", resultTable);
 
         return "publication/metrics.page";
     }
