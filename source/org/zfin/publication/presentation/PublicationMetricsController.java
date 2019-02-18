@@ -52,7 +52,7 @@ public class PublicationMetricsController {
         Map<String, Map<String, Long>> resultTable = new LinkedHashMap<>();
 
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM yyyy");
+        SimpleDateFormat outputFormat = new SimpleDateFormat(formBean.getGroupBy().getFormat());
 
         Calendar start = Calendar.getInstance();
         start.setTime(inputFormat.parse(formBean.getFromDate()));
@@ -66,7 +66,7 @@ public class PublicationMetricsController {
                 row.put(status.toString(), 0L);
             }
             resultTable.put(outputFormat.format(calendar.getTime()), row);
-            calendar.add(Calendar.MONTH, 1);
+            calendar.add(formBean.getGroupBy().getField(), 1);
         }
 
         if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.PET_DATE) {

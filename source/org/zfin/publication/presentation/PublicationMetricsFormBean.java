@@ -4,6 +4,7 @@ import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
 public class PublicationMetricsFormBean implements Serializable {
 
@@ -24,18 +25,30 @@ public class PublicationMetricsFormBean implements Serializable {
     }
 
     public enum Interval {
-        YEAR("Year"),
-        MONTH("Month"),
-        DAY("Day");
+        YEAR("Year", Calendar.YEAR, "yyyy"),
+        MONTH("Month", Calendar.MONTH, "MMMM yyyy"),
+        DAY("Day", Calendar.DAY_OF_MONTH, "dd MMMM yyyy");
 
         private String display;
+        private int field;
+        private String format;
 
-        Interval(String display) {
+        Interval(String display, int field, String format) {
             this.display = display;
+            this.field = field;
+            this.format = format;
         }
 
         public String getDisplay() {
             return display;
+        }
+
+        public int getField() {
+            return field;
+        }
+
+        public String getFormat() {
+            return format;
         }
     }
 
