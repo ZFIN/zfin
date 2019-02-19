@@ -2,6 +2,7 @@ begin work ;
 
 delete from ensdart_ottdart_mapping;
 
+
 \copy ensdart_ottdart_mapping from ensdarT_dbacc.unl with DELIMITER ',';
 
 create temp table tmp_ensdart_map (ensdarg_gene_stable_id text,
@@ -48,22 +49,24 @@ create index enm_ensdart_id_index
 
 --\copy (select distinct tscript_mrkr_zdb_id, tscript_load_id, mrkr_abbrev from transcript, marker where tscript_mrkr_zdb_id = mrkr_zdb_id and not exists (Select 'x' from ensdart_name_mapping where ottdart_id = tscript_load_id) and tscript_status_id != '1' ) to 'missing_ottdart_ensdart_mapping.txt';
 
----\copy (select distinct tscript_mrkr_zdb_id, tscript_load_id, mrkr_abbrev, ensdart_stable_id from transcript, marker, ensdart_name_mapping where tscript_mrkr_zdb_id = mrkr_zdb_id and tscript_load_id = ottdart_id) to 'mapped_ottdart_ensdart.txt' ;
+--\copy (select distinct tscript_mrkr_zdb_id, tscript_load_id, mrkr_abbrev, ensdart_stable_id from transcript, marker, ensdart_name_mapping where tscript_mrkr_zdb_id = mrkr_zdb_id and tscript_load_id = ottdart_id) to 'mapped_ottdart_ensdart.txt' ;
 
 create temp table tmp_dups (tscript_name text, counter int);
 
 insert into tmp_dups
   select enm_ensembl_tscript_name, count(*)
     from ensdart_name_mapping
+    where enm_ensembl_tscript_name is not null
     group by enm_ensembl_tscript_name having count(*)> 1;
 
---delete from ensdart_name_mapping
- -- where ensembl_tscript_name in (select tscript_name from tmp_dups);
 
---update marker
--- set (mrkr_name, mrkr_abbrev)= (select ensembl_tscript_name, ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = zfin_gene_zdb_id)
---where mrkr_zdb_id in (Select zfin_gene_zdb_id from ensdart_name_mapping, marker gene, marker_relationship where-- gene.mrkr_zdb_id = mrel_mrkr_2_zdb_id and zfin_gene_zdb_id = mrel_mrkr_1_zdb_id and gene.mrkr_name like ensembl_tscript_name||'%')
--- and not exists (Select 'x' from ensdart_name_mapping where mrkr_abbrev = ensembl_tscript_name);
+update marker
+ set mrkr_name = (select enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
+ where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id);
+
+update marker
+ set mrkr_abbrev = (select enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
+ where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id);
 
 --\copy (select ensdart_stable_id, ensdart_versioned_id, ensdarg_id, zfin_gene_zdb_id, ensembl_tscript_name, mrkr_name, ottdart_id from ensdart_name_mapping, marker where zfin_gene_zdb_id = mrkr_zdb_id) to name_updates.txt with delimiter ' ';
 
@@ -82,6 +85,29 @@ update transcript
                   
 select count(*) From transcript where tscript_ensdart_id is not null;
 select count(*) From transcript where tscript_ensdart_id is null;
+
+
+delete from db_link
+  where dblink_acc_num like 'ENSDART%';
+
+create temp table tscript_dblink (td_tscript_zdb_id text,
+                       td_dblink_id text);
+
+insert into tscript_dblink (td_tscript_zdb_id, td_dblink_id)
+  select tscript_ensdart_id, get_id('DBLINK')
+   from transcript
+   where tscript_ensdart_id is not null;
+
+insert into zdb_active_data (zactvd_zdb_id)
+ select td_dblink_id from tscript_dblink;
+
+insert into db_link (dblink_zdb_id, dblink_linked_recid, dblink_Acc_num, dblink_fdbcont_zdb_id)
+  select td_dblink_id, td_tscript_zdb_id, tscript_ensdart_id, 'ZDB-FDBCONT-110301-1'
+   from tscript_dblink, transcript
+ where td_tscript_zdb_id = tscript_mrkr_Zdb_id
+  ;
+
+
 
 
 

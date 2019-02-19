@@ -10,4 +10,5 @@
     <include file="source/org/zfin/db/load/1105/add_padded_base.sql"/>
     <include file="source/org/zfin/db/load/1105/add_sequence_fgmd.sql"/>
     <include file="source/org/zfin/db/load/1105/add_default_strand.sql"/>
+    <include file="source/org/zfin/db/load/1105/drop_gff3_pk.sql"/>
 </databaseChangeLog>
