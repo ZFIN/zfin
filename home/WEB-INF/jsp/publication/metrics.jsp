@@ -55,17 +55,6 @@
     </table>
 </form:form>
 
-<%--<table>--%>
-    <%--<c:forEach items="${results}" var="result">--%>
-        <%--<tr>--%>
-            <%--<td>${result.status}</td>--%>
-            <%--<td>${result.location}</td>--%>
-            <%--<td>${result.date}</td>--%>
-            <%--<td>${result.count}</td>--%>
-        <%--</tr>--%>
-    <%--</c:forEach>--%>
-<%--</table>--%>
-
 <table class="metrics-results">
     <c:forEach items="${resultsTable}" var="row" varStatus="rowLoop">
         <c:if test="${rowLoop.first}">
@@ -105,5 +94,16 @@
                     $(this).val(value + '-');
                 }
             });
+
+        $('input[name="queryType"]')
+            .on('change', function () {
+                if (this.value === 'CUMULATIVE') {
+                    $('input[name="statistics"]').removeAttr("disabled");
+                } else {
+                    $('input[value="COUNT"]').attr('checked', 'checked');
+                    $('input[name="statistics"]').attr("disabled", "disabled")
+                }
+            });
+        $('input[value="PET_DATE"]').trigger('change');
     });
 </script>
