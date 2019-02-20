@@ -38,7 +38,7 @@
 
     <h2>About ZebraShare</h2>
     <p>
-        ZebraShare is a intended to help researchers form collaborations that put carefully constructed
+        ZebraShare is intended to help researchers form collaborations that put carefully constructed
         mutant lines to good use, augmenting sharing resources available through other services (i.e. ZIRC). ZebraShare is
         intended for researchers that wish to advertise and share high quality mutants that laboratories are not currently
         pursuing such as those having no observed phenotype. Contribution via ZebraShare does not constitute a publication,
