@@ -101,7 +101,7 @@ group by curator_zdb,pub_zdb;
 
 insert into tmp_cur_counts (ccount_curator_zdb,ccount_category,ccount_pub_zdb) 
 select curator_zdb, 'Environment',count(distinct recattrib_Data_zdb_id) from tmp_cur_pub,record_attribution
-where recattrib_data_zdb_id like 'ZDB-EXPCOND-%'
+where recattrib_data_zdb_id like 'ZDB-EXP%'
 and recattrib_source_zdb_id=pub_zdb
 group by curator_zdb,pub_zdb;
 
