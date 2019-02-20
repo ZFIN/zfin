@@ -60,13 +60,13 @@ insert into tmp_dups
     group by enm_ensembl_tscript_name having count(*)> 1;
 
 
-update marker
- set mrkr_name = (select enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
- where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id);
+--update marker
+-- set mrkr_name = (select enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
+-- where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id);
 
-update marker
- set mrkr_abbrev = (select enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
- where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id);
+--update marker
+-- set mrkr_abbrev = (select enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
+-- where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id);
 
 --\copy (select ensdart_stable_id, ensdart_versioned_id, ensdarg_id, zfin_gene_zdb_id, ensembl_tscript_name, mrkr_name, ottdart_id from ensdart_name_mapping, marker where zfin_gene_zdb_id = mrkr_zdb_id) to name_updates.txt with delimiter ' ';
 
