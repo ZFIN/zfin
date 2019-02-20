@@ -111,6 +111,12 @@ where mrkrgoev_source_zdb_id=pub_zdb
 group by curator_zdb,pub_zdb
 order by curator_zdb;
 
+insert into tmp_cur_counts (ccount_curator_zdb,ccount_category,ccount_pub_zdb)
+select curator_zdb, 'Disease',count(distinct recattrib_Data_zdb_id) from tmp_cur_pub,record_attribution
+where recattrib_data_zdb_id like 'ZDB-DAT-%'
+and recattrib_source_zdb_id=pub_zdb
+group by curator_zdb,pub_zdb;
+
 CREATE temp TABLE tmp_total_counts
 (
   totalcount_curator_zdb VARCHAR(50),
@@ -138,6 +144,7 @@ MAX(CASE WHEN totalcount_category='Genotypes' THEN totalcount_pub_zdb END)||'' A
 MAX(CASE WHEN totalcount_category='GO' THEN totalcount_pub_zdb END)||'' AS totalcount_pub_zdb,
 MAX(CASE WHEN totalcount_category='Expression' THEN totalcount_pub_zdb END) ||''AS totalcount_pub_zdb,
 MAX(CASE WHEN totalcount_category='Phenotype' THEN totalcount_pub_zdb END) ||''AS totalcount_pub_zdb,
+MAX(CASE WHEN totalcount_category='Disease' THEN totalcount_pub_zdb END) ||''AS totalcount_pub_zdb,
 MAX(CASE WHEN totalcount_category='Environment' THEN totalcount_pub_zdb END) ||''AS totalcount_pub_zdb
 from tmp_total_counts, person
 where totalcount_curator_zdb=zdb_id
