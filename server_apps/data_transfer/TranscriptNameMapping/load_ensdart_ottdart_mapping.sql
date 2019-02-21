@@ -128,7 +128,7 @@ create temp table tscript_dblink (td_tscript_zdb_id text,
                        td_dblink_id text);
 
 insert into tscript_dblink (td_tscript_zdb_id, td_dblink_id)
-  select tscript_ensdart_id, get_id('DBLINK')
+  select tscript_mrkr_zdb_id, get_id('DBLINK')
    from transcript
    where tscript_ensdart_id is not null;
 
@@ -146,5 +146,5 @@ insert into record_attribution (recattrib_data_Zdb_id, recattrib_source_zdb_id)
     from tscript_dblink, transcript
   where td_tscript_zdb_id = tscript_mrkr_zdb_id;
 
---commit work;
-rollback work;
+commit work;
+--rollback work;
