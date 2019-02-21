@@ -28,7 +28,10 @@
         <tr>
             <th>Group By</th>
             <td>
-                <form:select path="groupType" items="${groupTypes}" itemLabel="display" />
+                <form:select path="groupType">
+                    <form:option value="" />
+                    <form:options items="${groupTypes}" itemLabel="display" />
+                </form:select>
                 <div id="group-by-checkboxes">
                     <div style="display: ${formBean.groupType == 'ACTIVE' ? 'block' : 'none'};" class="metrics-checkboxes ACTIVE">
                         <form:checkboxes path="activationStatuses" items="${activationStatuses}" itemLabel="display" />
