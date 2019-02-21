@@ -2679,4 +2679,34 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .list();
     }
 
+    @Override
+    public List<PubMetricResultBean> getLocationMetricsByPETDate(Calendar start,
+                                                                 Calendar end,
+                                                                 String dateBin,
+                                                                 PublicationTrackingLocation.Name[] locations,
+                                                                 boolean currentStatusOnly) {
+        if (locations.length == 0) {
+            return null;
+        }
+        String isCurrentClause = currentStatusOnly ? "and history.isCurrent = 't' " : "";
+        String hql = String.format(
+                "select new org.zfin.publication.presentation.PubMetricResultBean(location.name, date_trunc('%1$s', pub.entryDate), count(*)) " +
+                        "from PublicationTrackingHistory history " +
+                        "left outer join history.location location " +
+                        "inner join history.publication pub " +
+                        "where pub.entryDate >= :start " +
+                        "and pub.entryDate < :end " +
+                        "and pub.type = :type " +
+                        "and location.name in (:locations) " +
+                        isCurrentClause +
+                        "group by location.name, date_trunc('%1$s', pub.entryDate)", dateBin);
+
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("start", start)
+                .setParameter("end", end)
+                .setParameter("type", Publication.Type.JOURNAL)
+                .setParameterList("locations", locations)
+                .list();
+    }
+
 }

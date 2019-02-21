@@ -40,12 +40,7 @@ public class PublicationMetricsController {
         model.addAttribute("activationStatuses", Publication.Status.values());
         model.addAttribute("indexedStatuses", indexedStatuses);
         model.addAttribute("statistics", PublicationMetricsFormBean.Statistic.values());
-        List<PublicationTrackingLocation> locations = publicationRepository.getAllPublicationLocations();
-        model.addAttribute("indexingLocations", locations.stream()
-                .filter(l -> l.getRole() == PublicationTrackingLocation.Role.INDEXER)
-                .map(PublicationTrackingLocation::getName)
-                .collect(Collectors.toList()));
-        model.addAttribute("curatingLocations", locations.stream()
+        model.addAttribute("locations", publicationRepository.getAllPublicationLocations().stream()
                 .filter(l -> l.getRole() == PublicationTrackingLocation.Role.CURATOR)
                 .map(PublicationTrackingLocation::getName)
                 .collect(Collectors.toList()));
@@ -61,7 +56,7 @@ public class PublicationMetricsController {
             end.setTime(inputFormat.parse(formBean.getToDate()));
 
             Map<String, Map<String, Long>> resultTable = new LinkedHashMap<>();
-            Object[] rowLabels;
+            Object[] rowLabels = new Object[]{};
             switch (formBean.getGroupType()) {
                 case ACTIVE:
                     rowLabels = formBean.getActivationStatuses();
@@ -72,9 +67,8 @@ public class PublicationMetricsController {
                 case STATUS:
                     rowLabels = formBean.getStatuses();
                     break;
-                default:
-                    rowLabels = new Object[]{};
-                    break;
+                case LOCATION:
+                    rowLabels = formBean.getLocations();
             }
             for (Object rowLabel : rowLabels) {
                 Map<String, Long> row = new LinkedHashMap<>();
@@ -87,7 +81,7 @@ public class PublicationMetricsController {
             }
 
             if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.PET_DATE) {
-                List<PubMetricResultBean> resultList;
+                List<PubMetricResultBean> resultList = new ArrayList<>();
                 switch (formBean.getGroupType()) {
                     case ACTIVE:
                         resultList = publicationRepository.getActivationStatusMetricsByPETDate(start, end, formBean.getGroupBy().toString(), formBean.getActivationStatuses());
@@ -98,8 +92,8 @@ public class PublicationMetricsController {
                     case STATUS:
                         resultList = publicationRepository.getStatusMetricsByPETDate(start, end, formBean.getGroupBy().toString(), formBean.getStatuses(), formBean.isCurrentStatusOnly());
                         break;
-                    default:
-                        resultList = new ArrayList<>();
+                    case LOCATION:
+                        resultList = publicationRepository.getLocationMetricsByPETDate(start, end, formBean.getGroupBy().toString(), formBean.getLocations(), formBean.isCurrentStatusOnly());
                         break;
                 }
                 for (PubMetricResultBean result : resultList) {

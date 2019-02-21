@@ -42,6 +42,9 @@
                     <div style="display: ${formBean.groupType == 'STATUS' ? 'block' : 'none'};" class="metrics-checkboxes STATUS">
                         <form:checkboxes path="statuses" items="${statuses}" itemLabel="display" />
                     </div>
+                    <div style="display: ${formBean.groupType == 'LOCATION' ? 'block' : 'none'};" class="metrics-checkboxes LOCATION">
+                        <form:checkboxes path="locations" items="${locations}" itemLabel="display" />
+                    </div>
                 </div>
             </td>
         </tr>

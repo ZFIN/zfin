@@ -625,4 +625,9 @@ public interface PublicationRepository extends PaginationParameter {
                                                                String dateBin,
                                                                String[] statuses);
 
+    List<PubMetricResultBean> getLocationMetricsByPETDate(Calendar start,
+                                                          Calendar end,
+                                                          String dateBin,
+                                                          PublicationTrackingLocation.Name[] locations,
+                                                          boolean currentStatusOnly);
 }
