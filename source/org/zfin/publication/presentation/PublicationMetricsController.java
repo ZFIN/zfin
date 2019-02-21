@@ -67,7 +67,7 @@ public class PublicationMetricsController {
                     rowLabels = formBean.getActivationStatuses();
                     break;
                 case INDEXED:
-                    rowLabels = indexedStatuses;
+                    rowLabels = formBean.getIndexedStatuses();
                     break;
                 case STATUS:
                     rowLabels = formBean.getStatuses();
@@ -103,7 +103,11 @@ public class PublicationMetricsController {
                         break;
                 }
                 for (PubMetricResultBean result : resultList) {
-                    resultTable.get(result.getCategory().toString()).put(outputFormat.format(result.getDate()), result.getCount());
+                    String rowKey = result.getCategory().toString();
+                    if (!resultTable.containsKey(rowKey)) {
+                        continue;
+                    }
+                    resultTable.get(rowKey).put(outputFormat.format(result.getDate()), result.getCount());
                 }
             }
             model.addAttribute("resultsTable", resultTable);
