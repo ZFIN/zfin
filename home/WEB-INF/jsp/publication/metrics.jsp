@@ -4,16 +4,14 @@
 <form:form method="GET" commandName="formBean">
     <table class="primary-entity-attributes metrics-table">
         <tr>
-            <td colspan="2"><form:radiobuttons path="queryType" items="${queryTypes}" itemLabel="display" /></td>
-        </tr>
-
-        <tr>
-            <th>From</th>
+            <th>Dates</th>
             <td>
+                <form:select path="queryType" items="${queryTypes}" itemLabel="display" />
+                <form:label path="fromDate">From</form:label>
                 <form:input path="fromDate" cssClass="date-mask" />
-                <b>To</b>
+                <form:label path="toDate">To</form:label>
                 <form:input path="toDate" cssClass="date-mask" />
-                <b>By</b>
+                <form:label path="groupBy">By</form:label>
                 <form:select path="groupBy" items="${intervals}" itemLabel="display" />
             </td>
         </tr>
@@ -36,14 +34,14 @@
             </td>
         </tr>
 
-        <tr>
-            <th>Location</th>
-            <td>
-                <div class="metrics-checkboxes">
-                        <form:checkboxes path="locations" items="${curatingLocations}" itemLabel="display" />
-                </div>
-            </td>
-        </tr>
+        <%--<tr>--%>
+            <%--<th>Location</th>--%>
+            <%--<td>--%>
+                <%--<div class="metrics-checkboxes">--%>
+                        <%--<form:checkboxes path="locations" items="${curatingLocations}" itemLabel="display" />--%>
+                <%--</div>--%>
+            <%--</td>--%>
+        <%--</tr>--%>
 
         <tr>
             <td colspan="2"><form:checkbox path="currentStatusOnly" label="Current Status Only" /></td>
@@ -74,8 +72,6 @@
     </c:forEach>
 </table>
 
-
-
 <script>
     $(function () {
         $('.date-mask')
@@ -95,15 +91,15 @@
                 }
             });
 
-        $('input[name="queryType"]')
+        $('[name="queryType"]')
             .on('change', function () {
                 if (this.value === 'CUMULATIVE') {
-                    $('input[name="statistics"]').removeAttr("disabled");
+                    $('[name="statistics"]').removeAttr("disabled");
                 } else {
-                    $('input[value="COUNT"]').attr('checked', 'checked');
-                    $('input[name="statistics"]').attr("disabled", "disabled")
+                    $('[value="COUNT"]').attr('checked', 'checked');
+                    $('[name="statistics"]').attr("disabled", "disabled")
                 }
             });
-        $('input[value="PET_DATE"]').trigger('change');
+        $('[value="PET_DATE"]').trigger('change');
     });
 </script>
