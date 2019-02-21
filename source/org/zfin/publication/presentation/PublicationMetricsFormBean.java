@@ -1,5 +1,6 @@
 package org.zfin.publication.presentation;
 
+import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
 
@@ -70,11 +71,30 @@ public class PublicationMetricsFormBean implements Serializable {
         }
     }
 
+    public enum GroupType {
+        ACTIVE("Active"),
+        INDEXED("Indexed"),
+        STATUS("Status"),
+        LOCATION("Location");
+
+        private String display;
+
+        GroupType(String display) {
+            this.display = display;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
+    }
+
     private QueryType queryType;
     private String fromDate;
     private String toDate;
     private Interval groupBy;
+    private GroupType groupType;
     private Statistic[] statistics;
+    private Publication.Status[] activationStatuses;
     private PublicationTrackingStatus.Name[] statuses;
     private PublicationTrackingLocation.Name[] locations;
     private boolean currentStatusOnly;
@@ -109,6 +129,22 @@ public class PublicationMetricsFormBean implements Serializable {
 
     public void setGroupBy(Interval groupBy) {
         this.groupBy = groupBy;
+    }
+
+    public GroupType getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(GroupType groupType) {
+        this.groupType = groupType;
+    }
+
+    public Publication.Status[] getActivationStatuses() {
+        return activationStatuses;
+    }
+
+    public void setActivationStatuses(Publication.Status[] activationStatuses) {
+        this.activationStatuses = activationStatuses;
     }
 
     public Statistic[] getStatistics() {

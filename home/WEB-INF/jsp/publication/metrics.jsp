@@ -16,7 +16,7 @@
             </td>
         </tr>
 
-        <tr>
+        <tr style="display: none;">
             <th>Show</th>
             <td>
                 <div class="metrics-checkboxes">
@@ -26,22 +26,19 @@
         </tr>
 
         <tr>
-            <th>Status</th>
+            <th>Group By</th>
             <td>
-                <div class="metrics-checkboxes">
-                    <form:checkboxes path="statuses" items="${statuses}" itemLabel="display" />
+                <form:select path="groupType" items="${groupTypes}" itemLabel="display" />
+                <div id="group-by-checkboxes">
+                    <div style="display: ${formBean.groupType == 'ACTIVE' ? 'block' : 'none'};" class="metrics-checkboxes ACTIVE">
+                        <form:checkboxes path="activationStatuses" items="${activationStatuses}" itemLabel="display" />
+                    </div>
+                    <div style="display: ${formBean.groupType == 'STATUS' ? 'block' : 'none'};" class="metrics-checkboxes STATUS">
+                        <form:checkboxes path="statuses" items="${statuses}" itemLabel="display" />
+                    </div>
                 </div>
             </td>
         </tr>
-
-        <%--<tr>--%>
-            <%--<th>Location</th>--%>
-            <%--<td>--%>
-                <%--<div class="metrics-checkboxes">--%>
-                        <%--<form:checkboxes path="locations" items="${curatingLocations}" itemLabel="display" />--%>
-                <%--</div>--%>
-            <%--</td>--%>
-        <%--</tr>--%>
 
         <tr>
             <td colspan="2"><form:checkbox path="currentStatusOnly" label="Current Status Only" /></td>
@@ -89,6 +86,12 @@
                 if (value.length === 4 || value.length === 7) {
                     $(this).val(value + '-');
                 }
+            });
+
+        $('[name="groupType"]')
+            .on('change', function () {
+                $('#group-by-checkboxes').children().hide();
+                $('#group-by-checkboxes').find('.' + this.value).show();
             });
 
         $('[name="queryType"]')

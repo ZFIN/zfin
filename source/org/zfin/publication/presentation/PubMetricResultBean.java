@@ -1,41 +1,28 @@
 package org.zfin.publication.presentation;
 
-import org.zfin.publication.PublicationTrackingLocation;
-import org.zfin.publication.PublicationTrackingStatus;
-
 import java.util.Date;
 
 public class PubMetricResultBean {
 
-    private PublicationTrackingStatus.Name status;
-    private PublicationTrackingLocation.Name location;
+    private Object category;
     private Date date;
     private Long count;
 
     public PubMetricResultBean() {
     }
 
-    public PubMetricResultBean(PublicationTrackingStatus.Name status, PublicationTrackingLocation.Name location, Date date, Long count) {
-        this.status = status;
-        this.location = location;
+    public PubMetricResultBean(Object category, Date date, Long count) {
+        this.category = category;
         this.date = date;
         this.count = count;
     }
 
-    public PublicationTrackingStatus.Name getStatus() {
-        return status;
+    public Object getCategory() {
+        return category;
     }
 
-    public void setStatus(PublicationTrackingStatus.Name status) {
-        this.status = status;
-    }
-
-    public PublicationTrackingLocation.Name getLocation() {
-        return location;
-    }
-
-    public void setLocation(PublicationTrackingLocation.Name location) {
-        this.location = location;
+    public void setCategory(Object category) {
+        this.category = category;
     }
 
     public Date getDate() {
@@ -57,8 +44,7 @@ public class PubMetricResultBean {
     @Override
     public String toString() {
         return "PubMetricResultBean{" +
-                "status=" + status +
-                ", location=" + location +
+                "category=" + category +
                 ", date=" + date +
                 ", count=" + count +
                 '}';

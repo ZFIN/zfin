@@ -606,10 +606,15 @@ public interface PublicationRepository extends PaginationParameter {
 
     Long getDirectlyAttributed(Publication publication);
 
-    List<PubMetricResultBean> getMetricsByPETDate(Calendar start,
-                                                  Calendar end,
-                                                  String dateBin,
-                                                  PublicationTrackingStatus.Name[] statuses,
-                                                  boolean currentStatusOnly);
+    List<PubMetricResultBean> getStatusMetricsByPETDate(Calendar start,
+                                                        Calendar end,
+                                                        String dateBin,
+                                                        PublicationTrackingStatus.Name[] statuses,
+                                                        boolean currentStatusOnly);
+
+    List<PubMetricResultBean> getActivationStatusMetricsByPETDate(Calendar start,
+                                                                  Calendar end,
+                                                                  String dateBin,
+                                                                  Publication.Status[] statuses);
 
 }

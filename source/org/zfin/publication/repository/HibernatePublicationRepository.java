@@ -2606,28 +2606,51 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
-    public List<PubMetricResultBean> getMetricsByPETDate(Calendar start,
-                                                         Calendar end,
-                                                         String dateBin,
-                                                         PublicationTrackingStatus.Name[] statuses,
-                                                         boolean currentStatusOnly) {
+    public List<PubMetricResultBean> getStatusMetricsByPETDate(Calendar start,
+                                                               Calendar end,
+                                                               String dateBin,
+                                                               PublicationTrackingStatus.Name[] statuses,
+                                                               boolean currentStatusOnly) {
         if (statuses.length == 0) {
             return new ArrayList<>();
         }
         String isCurrentClause = currentStatusOnly ? "and history.isCurrent = 't' " : "";
         String hql = String.format(
-                "select new org.zfin.publication.presentation.PubMetricResultBean(status.name, location.name, date_trunc('%1$s', pub.entryDate), count(*)) " +
+                "select new org.zfin.publication.presentation.PubMetricResultBean(status.name, date_trunc('%1$s', pub.entryDate), count(*)) " +
                         "from PublicationTrackingHistory history " +
                         "left outer join history.status status " +
-                        "left outer join history.location location " +
                         "inner join history.publication pub " +
                         "where pub.entryDate >= :start " +
                         "and pub.entryDate < :end " +
                         "and pub.type = :type " +
                         "and status.name in (:statuses) " +
                         isCurrentClause +
-                        "group by status.name, location.name, date_trunc('%1$s', pub.entryDate)", dateBin);
+                        "group by status.name, date_trunc('%1$s', pub.entryDate)", dateBin);
 
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("start", start)
+                .setParameter("end", end)
+                .setParameter("type", Publication.Type.JOURNAL)
+                .setParameterList("statuses", statuses)
+                .list();
+    }
+
+    @Override
+    public List<PubMetricResultBean> getActivationStatusMetricsByPETDate(Calendar start,
+                                                                         Calendar end,
+                                                                         String dateBin,
+                                                                         Publication.Status[] statuses) {
+        if (statuses.length == 0) {
+            return null;
+        }
+        String hql = String.format(
+                "select new org.zfin.publication.presentation.PubMetricResultBean(pub.status, date_trunc('%1$s', pub.entryDate), count(*)) " +
+                        "from Publication pub " +
+                        "where pub.entryDate >= :start " +
+                        "and pub.entryDate < :end " +
+                        "and pub.type = :type " +
+                        "and pub.status in (:statuses) " +
+                        "group by pub.status, date_trunc('%1$s', pub.entryDate)", dateBin);
         return HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("start", start)
                 .setParameter("end", end)
