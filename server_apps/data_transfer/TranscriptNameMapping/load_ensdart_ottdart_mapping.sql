@@ -2,7 +2,6 @@ begin work ;
 
 delete from ensdart_ottdart_mapping;
 
-
 \copy ensdart_ottdart_mapping from ensdarT_dbacc.unl with DELIMITER ',';
 
 create temp table tmp_ensdart_map (ensdarg_gene_stable_id text,
@@ -57,16 +56,36 @@ insert into tmp_dups
   select enm_ensembl_tscript_name, count(*)
     from ensdart_name_mapping
     where enm_ensembl_tscript_name is not null
-    group by enm_ensembl_tscript_name having count(*)> 1;
+    group by enm_ensembl_tscript_name having count(*) > 1;
 
+create temp table tmp_name_exists (nmrkr_zdb_id text);
 
---update marker
--- set mrkr_name = (select enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
--- where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id);
+insert into tmp_name_exists(nmrkr_zdb_id)
+select mrkr_zdb_id
+  from marker
+ where mrkr_abbrev in (select enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id);
+
+select * from ensdart_name_mapping where enm_ensembl_tscript_name = 'them6-201';
+
+select count(*) from tmp_dups;
+
+delete from ensdart_name_mapping
+where exists (select 'x' from tmp_dups where enm_ensembl_tscript_name = tscript_name);
+
+update marker
+ set (mrkr_abbrev,mrkr_name) = (select enm_ensembl_tscript_name, enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
+ where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
+ and not exists (select 'x' from tmp_name_exists where nmrkr_zdb_id = mrkr_zdb_id);
+
+select count(*), mrkr_abbrev 
+  from marker
+group by mrkr_abbrev
+ having count(*) > 1;
 
 --update marker
 -- set mrkr_abbrev = (select enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
--- where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id);
+-- where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
+-- and not exists (select 'x' from tmp_name_exists where nmrkr_zdb_id = mrkr_zdb_id);
 
 --\copy (select ensdart_stable_id, ensdart_versioned_id, ensdarg_id, zfin_gene_zdb_id, ensembl_tscript_name, mrkr_name, ottdart_id from ensdart_name_mapping, marker where zfin_gene_zdb_id = mrkr_zdb_id) to name_updates.txt with delimiter ' ';
 
@@ -105,10 +124,7 @@ insert into db_link (dblink_zdb_id, dblink_linked_recid, dblink_Acc_num, dblink_
   select td_dblink_id, td_tscript_zdb_id, tscript_ensdart_id, 'ZDB-FDBCONT-110301-1'
    from tscript_dblink, transcript
  where td_tscript_zdb_id = tscript_mrkr_Zdb_id
-  ;
-
-
-
+  ; 
 
 
 commit work;
