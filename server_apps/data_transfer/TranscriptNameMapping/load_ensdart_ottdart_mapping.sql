@@ -72,6 +72,26 @@ select count(*) from tmp_dups;
 delete from ensdart_name_mapping
 where exists (select 'x' from tmp_dups where enm_ensembl_tscript_name = tscript_name);
 
+create temp table tmp_alias (dalias_id text, alias text, mrkr_id text);
+
+insert into tmp_alias (alias,mrkr_id)
+ select distinct mrkr_abbrev, mrkr_zdb_id
+   from marker, ensdart_name_mapping 
+   where mrkr_zdb_id = enm_tscript_zdb_id;
+
+update tmp_alias
+ set dalias_id = get_id('DALIAS');
+
+insert into zdb_Active_Data (Zactvd_zdb_id)
+  select dalias_id 
+    from tmp_alias;
+
+insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
+  select dalias_id, mrkr_id, alias, 1
+   from tmp_alias
+ where not exists (Select 'x' from data_alias where dalias_data_zdb_id = mrkr_id
+ and dalias_alias = alias and dalias_group_id = 1);
+
 update marker
  set (mrkr_abbrev,mrkr_name) = (select enm_ensembl_tscript_name, enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
  where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
@@ -81,11 +101,6 @@ select count(*), mrkr_abbrev
   from marker
 group by mrkr_abbrev
  having count(*) > 1;
-
---update marker
--- set mrkr_abbrev = (select enm_ensembl_tscript_name from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
--- where exists (Select 'x' from ensdart_name_mapping where mrkr_Zdb_id = enm_tscript_zdb_id)
--- and not exists (select 'x' from tmp_name_exists where nmrkr_zdb_id = mrkr_zdb_id);
 
 --\copy (select ensdart_stable_id, ensdart_versioned_id, ensdarg_id, zfin_gene_zdb_id, ensembl_tscript_name, mrkr_name, ottdart_id from ensdart_name_mapping, marker where zfin_gene_zdb_id = mrkr_zdb_id) to name_updates.txt with delimiter ' ';
 
@@ -126,6 +141,10 @@ insert into db_link (dblink_zdb_id, dblink_linked_recid, dblink_Acc_num, dblink_
  where td_tscript_zdb_id = tscript_mrkr_Zdb_id
   ; 
 
+insert into record_attribution (recattrib_data_Zdb_id, recattrib_source_zdb_id)
+  select td_dblink_id, 'ZDB-PUB-190221-12'
+    from tscript_dblink, transcript
+  where td_tscript_zdb_id = tscript_mrkr_zdb_id;
 
-commit work;
---rollback work;
+--commit work;
+rollback work;
