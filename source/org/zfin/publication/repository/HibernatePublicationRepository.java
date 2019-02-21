@@ -2659,4 +2659,24 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .list();
     }
 
+    @Override
+    public List<PubMetricResultBean> getIndexedStatusMetricsByPETDate(Calendar start,
+                                                                      Calendar end,
+                                                                      String dateBin,
+                                                                      String[] statuses) {
+        String hql = String.format(
+                "select new org.zfin.publication.presentation.PubMetricResultBean( " +
+                        "case when pub.indexed = 't' then 'Indexed' else 'Unindexed' end, date_trunc('%1$s', pub.entryDate), count(*)) " +
+                        "from Publication pub " +
+                        "where pub.entryDate >= :start " +
+                        "and pub.entryDate < :end " +
+                        "and pub.type = :type " +
+                        "group by pub.indexed, date_trunc('%1$s', pub.entryDate)", dateBin);
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("start", start)
+                .setParameter("end", end)
+                .setParameter("type", Publication.Type.JOURNAL)
+                .list();
+    }
+
 }

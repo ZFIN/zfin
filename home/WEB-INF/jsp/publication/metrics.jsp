@@ -33,6 +33,9 @@
                     <div style="display: ${formBean.groupType == 'ACTIVE' ? 'block' : 'none'};" class="metrics-checkboxes ACTIVE">
                         <form:checkboxes path="activationStatuses" items="${activationStatuses}" itemLabel="display" />
                     </div>
+                    <div style="display: ${formBean.groupType == 'INDEXED' ? 'block' : 'none'};" class="metrics-checkboxes INDEXED">
+                        <form:checkboxes path="indexedStatuses" items="${indexedStatuses}" />
+                    </div>
                     <div style="display: ${formBean.groupType == 'STATUS' ? 'block' : 'none'};" class="metrics-checkboxes STATUS">
                         <form:checkboxes path="statuses" items="${statuses}" itemLabel="display" />
                     </div>

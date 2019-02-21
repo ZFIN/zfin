@@ -30,6 +30,7 @@ public class PublicationMetricsController {
     public String showSearchForm(@ModelAttribute("formBean") PublicationMetricsFormBean formBean,
                                  Model model) throws Exception {
 
+        String[] indexedStatuses = new String[] { "Indexed", "Unindexed" };
         model.addAttribute("statuses", publicationRepository.getAllPublicationStatuses().stream()
                 .map(PublicationTrackingStatus::getName)
                 .collect(Collectors.toList()));
@@ -37,6 +38,7 @@ public class PublicationMetricsController {
         model.addAttribute("intervals", PublicationMetricsFormBean.Interval.values());
         model.addAttribute("groupTypes", PublicationMetricsFormBean.GroupType.values());
         model.addAttribute("activationStatuses", Publication.Status.values());
+        model.addAttribute("indexedStatuses", indexedStatuses);
         model.addAttribute("statistics", PublicationMetricsFormBean.Statistic.values());
         List<PublicationTrackingLocation> locations = publicationRepository.getAllPublicationLocations();
         model.addAttribute("indexingLocations", locations.stream()
@@ -64,6 +66,9 @@ public class PublicationMetricsController {
                 case ACTIVE:
                     rowLabels = formBean.getActivationStatuses();
                     break;
+                case INDEXED:
+                    rowLabels = indexedStatuses;
+                    break;
                 case STATUS:
                     rowLabels = formBean.getStatuses();
                     break;
@@ -86,6 +91,9 @@ public class PublicationMetricsController {
                 switch (formBean.getGroupType()) {
                     case ACTIVE:
                         resultList = publicationRepository.getActivationStatusMetricsByPETDate(start, end, formBean.getGroupBy().toString(), formBean.getActivationStatuses());
+                        break;
+                    case INDEXED:
+                        resultList = publicationRepository.getIndexedStatusMetricsByPETDate(start, end, formBean.getGroupBy().toString(), formBean.getIndexedStatuses());
                         break;
                     case STATUS:
                         resultList = publicationRepository.getStatusMetricsByPETDate(start, end, formBean.getGroupBy().toString(), formBean.getStatuses(), formBean.isCurrentStatusOnly());

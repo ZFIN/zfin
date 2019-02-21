@@ -95,6 +95,7 @@ public class PublicationMetricsFormBean implements Serializable {
     private GroupType groupType;
     private Statistic[] statistics;
     private Publication.Status[] activationStatuses;
+    private String[] indexedStatuses;
     private PublicationTrackingStatus.Name[] statuses;
     private PublicationTrackingLocation.Name[] locations;
     private boolean currentStatusOnly;
@@ -145,6 +146,14 @@ public class PublicationMetricsFormBean implements Serializable {
 
     public void setActivationStatuses(Publication.Status[] activationStatuses) {
         this.activationStatuses = activationStatuses;
+    }
+
+    public String[] getIndexedStatuses() {
+        return indexedStatuses;
+    }
+
+    public void setIndexedStatuses(String[] indexedStatuses) {
+        this.indexedStatuses = indexedStatuses;
     }
 
     public Statistic[] getStatistics() {

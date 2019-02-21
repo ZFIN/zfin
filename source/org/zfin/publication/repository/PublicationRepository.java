@@ -31,7 +31,10 @@ import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.SortedSet;
 
 /**
  * Persistence class that deals with Publication objects.
@@ -616,5 +619,10 @@ public interface PublicationRepository extends PaginationParameter {
                                                                   Calendar end,
                                                                   String dateBin,
                                                                   Publication.Status[] statuses);
+
+    List<PubMetricResultBean> getIndexedStatusMetricsByPETDate(Calendar start,
+                                                               Calendar end,
+                                                               String dateBin,
+                                                               String[] statuses);
 
 }
