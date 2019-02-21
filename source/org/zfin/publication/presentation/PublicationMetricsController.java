@@ -30,7 +30,6 @@ public class PublicationMetricsController {
     public String showSearchForm(@ModelAttribute("formBean") PublicationMetricsFormBean formBean,
                                  Model model) throws Exception {
 
-        String[] indexedStatuses = new String[] { "Indexed", "Unindexed" };
         model.addAttribute("statuses", publicationRepository.getAllPublicationStatuses().stream()
                 .map(PublicationTrackingStatus::getName)
                 .collect(Collectors.toList()));
@@ -38,7 +37,7 @@ public class PublicationMetricsController {
         model.addAttribute("intervals", PublicationMetricsFormBean.Interval.values());
         model.addAttribute("groupTypes", PublicationMetricsFormBean.GroupType.values());
         model.addAttribute("activationStatuses", Publication.Status.values());
-        model.addAttribute("indexedStatuses", indexedStatuses);
+        model.addAttribute("indexedStatuses", PublicationMetricsFormBean.INDEXED_STATUSES);
         model.addAttribute("statistics", PublicationMetricsFormBean.Statistic.values());
         model.addAttribute("locations", publicationRepository.getAllPublicationLocations().stream()
                 .filter(l -> l.getRole() == PublicationTrackingLocation.Role.CURATOR)

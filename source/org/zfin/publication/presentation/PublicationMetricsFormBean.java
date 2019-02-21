@@ -88,16 +88,18 @@ public class PublicationMetricsFormBean implements Serializable {
         }
     }
 
+    public static final String[] INDEXED_STATUSES = new String[] { "Indexed", "Unindexed" };
+
     private QueryType queryType;
     private String fromDate;
     private String toDate;
     private Interval groupBy;
     private GroupType groupType;
     private Statistic[] statistics;
-    private Publication.Status[] activationStatuses;
-    private String[] indexedStatuses;
-    private PublicationTrackingStatus.Name[] statuses;
-    private PublicationTrackingLocation.Name[] locations;
+    private Publication.Status[] activationStatuses = Publication.Status.values();
+    private String[] indexedStatuses = INDEXED_STATUSES;
+    private PublicationTrackingStatus.Name[] statuses = PublicationTrackingStatus.Name.values();
+    private PublicationTrackingLocation.Name[] locations = PublicationTrackingLocation.Name.values();
     private boolean currentStatusOnly;
 
     public QueryType getQueryType() {
