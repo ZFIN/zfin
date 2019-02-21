@@ -49,36 +49,36 @@ public class PublicationMetricsController {
                 .collect(Collectors.toList()));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Metrics");
 
-        Map<String, Map<String, Long>> resultTable = new LinkedHashMap<>();
+        if (formBean.getQueryType() != null) {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat outputFormat = new SimpleDateFormat(formBean.getGroupBy().getFormat());
 
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat outputFormat = new SimpleDateFormat(formBean.getGroupBy().getFormat());
+            Calendar start = Calendar.getInstance();
+            start.setTime(inputFormat.parse(formBean.getFromDate()));
+            Calendar end = Calendar.getInstance();
+            end.setTime(inputFormat.parse(formBean.getToDate()));
 
-        Calendar start = Calendar.getInstance();
-        start.setTime(inputFormat.parse(formBean.getFromDate()));
-        Calendar end = Calendar.getInstance();
-        end.setTime(inputFormat.parse(formBean.getToDate()));
-
-        Calendar calendar = (Calendar) start.clone();
-        while (calendar.before(end)) {
-            Map<String, Long> row = new LinkedHashMap<>();
+            Map<String, Map<String, Long>> resultTable = new LinkedHashMap<>();
             for (PublicationTrackingStatus.Name status : formBean.getStatuses()) {
-                row.put(status.toString(), 0L);
+                Map<String, Long> row = new LinkedHashMap<>();
+                Calendar calendar = (Calendar) start.clone();
+                while (calendar.before(end)) {
+                    row.put(outputFormat.format(calendar.getTime()), 0L);
+                    calendar.add(formBean.getGroupBy().getField(), 1);
+                }
+                resultTable.put(status.toString(), row);
             }
-            resultTable.put(outputFormat.format(calendar.getTime()), row);
-            calendar.add(formBean.getGroupBy().getField(), 1);
+
+            if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.PET_DATE) {
+                List<PubMetricResultBean> resultList = publicationRepository.getMetricsByPETDate(start, end,
+                        formBean.getGroupBy().toString(), formBean.getStatuses(), formBean.isCurrentStatusOnly());
+                for (PubMetricResultBean result : resultList) {
+                    resultTable.get(result.getStatus().toString()).put(outputFormat.format(result.getDate()), result.getCount());
+                }
+            }
+            model.addAttribute("resultsTable", resultTable);
         }
 
-        if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.PET_DATE) {
-            List<PubMetricResultBean> resultList = publicationRepository.getMetricsByPETDate(start, end,
-                    formBean.getGroupBy().toString(), formBean.getStatuses(), formBean.isCurrentStatusOnly());
-            for (PubMetricResultBean result : resultList) {
-                String rowKey = outputFormat.format(result.getDate());
-                resultTable.get(rowKey).put(result.getStatus().toString(), result.getCount());
-            }
-        }
-
-        model.addAttribute("resultsTable", resultTable);
 
         return "publication/metrics.page";
     }
