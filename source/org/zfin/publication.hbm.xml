@@ -96,6 +96,11 @@
             <one-to-many class="org.zfin.publication.PublicationFile"/>
         </set>
 
+        <set name="statusHistory" lazy="true" table="pub_tracking_history" order-by="pth_status_insert_date desc">
+            <key column="pth_pub_zdb_id" />
+            <one-to-many class="org.zfin.publication.PublicationTrackingHistory" />
+        </set>
+
         <set name="sentMessages" lazy="true" table="pub_correspondence_sent_tracker" order-by="pubcst_date_sent desc">
             <key column="pubcst_pub_zdb_id"/>
             <one-to-many class="org.zfin.publication.CorrespondenceSentMessage"/>

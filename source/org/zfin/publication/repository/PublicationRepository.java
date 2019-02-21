@@ -27,6 +27,7 @@ import org.zfin.profile.Person;
 import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.publication.presentation.PubMetricResultBean;
+import org.zfin.publication.presentation.PublicationMetricsFormBean;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -609,25 +610,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     Long getDirectlyAttributed(Publication publication);
 
-    List<PubMetricResultBean> getStatusMetricsByPETDate(Calendar start,
-                                                        Calendar end,
-                                                        String dateBin,
-                                                        PublicationTrackingStatus.Name[] statuses,
-                                                        boolean currentStatusOnly);
-
-    List<PubMetricResultBean> getActivationStatusMetricsByPETDate(Calendar start,
-                                                                  Calendar end,
-                                                                  String dateBin,
-                                                                  Publication.Status[] statuses);
-
-    List<PubMetricResultBean> getIndexedStatusMetricsByPETDate(Calendar start,
-                                                               Calendar end,
-                                                               String dateBin,
-                                                               String[] statuses);
-
-    List<PubMetricResultBean> getLocationMetricsByPETDate(Calendar start,
-                                                          Calendar end,
-                                                          String dateBin,
-                                                          PublicationTrackingLocation.Name[] locations,
-                                                          boolean currentStatusOnly);
+    List<PubMetricResultBean> getMetricsByPETDate(Calendar start,
+                                                  Calendar end,
+                                                  PublicationMetricsFormBean.Interval groupInterval,
+                                                  PublicationMetricsFormBean.GroupType groupType);
 }

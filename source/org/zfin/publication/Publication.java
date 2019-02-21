@@ -42,6 +42,8 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<PublicationDbXref> dbXrefs;
     private SortedSet<PublicationFile> files;
 
+    private Set<PublicationTrackingHistory> statusHistory;
+
     private Set<CorrespondenceSentMessage> sentMessages;
     private Set<CorrespondenceReceivedMessage> receivedMessages;
     private Date lastCorrespondenceDate;
@@ -278,6 +280,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setFiles(SortedSet<PublicationFile> files) {
         this.files = files;
+    }
+
+    public Set<PublicationTrackingHistory> getStatusHistory() {
+        return statusHistory;
+    }
+
+    public void setStatusHistory(Set<PublicationTrackingHistory> statusHistory) {
+        this.statusHistory = statusHistory;
     }
 
     public Set<CorrespondenceSentMessage> getSentMessages() {

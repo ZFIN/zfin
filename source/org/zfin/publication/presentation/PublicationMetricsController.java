@@ -80,29 +80,16 @@ public class PublicationMetricsController {
                 resultTable.put(rowLabel.toString(), row);
             }
 
+            List<PubMetricResultBean> resultList = new ArrayList<>();
             if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.PET_DATE) {
-                List<PubMetricResultBean> resultList = new ArrayList<>();
-                switch (formBean.getGroupType()) {
-                    case ACTIVE:
-                        resultList = publicationRepository.getActivationStatusMetricsByPETDate(start, end, formBean.getGroupBy().toString(), formBean.getActivationStatuses());
-                        break;
-                    case INDEXED:
-                        resultList = publicationRepository.getIndexedStatusMetricsByPETDate(start, end, formBean.getGroupBy().toString(), formBean.getIndexedStatuses());
-                        break;
-                    case STATUS:
-                        resultList = publicationRepository.getStatusMetricsByPETDate(start, end, formBean.getGroupBy().toString(), formBean.getStatuses(), formBean.isCurrentStatusOnly());
-                        break;
-                    case LOCATION:
-                        resultList = publicationRepository.getLocationMetricsByPETDate(start, end, formBean.getGroupBy().toString(), formBean.getLocations(), formBean.isCurrentStatusOnly());
-                        break;
+                resultList = publicationRepository.getMetricsByPETDate(start, end, formBean.getGroupBy(), formBean.getGroupType());
+            }
+            for (PubMetricResultBean result : resultList) {
+                Object rowKey = result.getCategory();
+                if (rowKey == null || !resultTable.containsKey(rowKey.toString())) {
+                    continue;
                 }
-                for (PubMetricResultBean result : resultList) {
-                    String rowKey = result.getCategory().toString();
-                    if (!resultTable.containsKey(rowKey)) {
-                        continue;
-                    }
-                    resultTable.get(rowKey).put(outputFormat.format(result.getDate()), result.getCount());
-                }
+                resultTable.get(rowKey.toString()).put(outputFormat.format(result.getDate()), result.getCount());
             }
             model.addAttribute("resultsTable", resultTable);
         }

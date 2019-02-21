@@ -48,11 +48,7 @@
                 </div>
             </td>
         </tr>
-
-        <tr>
-            <td colspan="2"><form:checkbox path="currentStatusOnly" label="Current Status Only" /></td>
-        </tr>
-
+        
         <tr>
             <td colspan="2"><button type="submit">Submit</button></td>
         </tr>
