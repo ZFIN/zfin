@@ -16,6 +16,9 @@ create temp table tmp_ensdart_map (ensdarg_gene_stable_id text,
 
 \copy tmp_ensdart_map from mart_export.txt with  DELIMITER ',';
 
+select * from tmp_ensdart_map
+  where ensdart_transcript_stable_id = 'ENSDART00000137923';
+
 create temp table tmp_counter (counter int, transcript_name text);
 
 insert into tmp_counter
@@ -40,6 +43,8 @@ insert into ensdart_name_mapping(enm_ensdart_stable_id,
      from transcript, ensdart_ottdart_mapping as eom, tmp_ensdart_map as em
      where tscript_load_id = eom.ottdart_id
      and eom.ensdart_id = ensdart_transcript_stable_id;
+
+
                       
 drop index if exists enm_ensdart_id_index;
 
@@ -68,6 +73,9 @@ select mrkr_zdb_id
 select * from ensdart_name_mapping where enm_ensembl_tscript_name = 'them6-201';
 
 select count(*) from tmp_dups;
+
+select * from ensdart_name_mapping 
+ where enm_ensdart_stable_id = 'ENSDART00000137923';
 
 delete from ensdart_name_mapping
 where exists (select 'x' from tmp_dups where enm_ensembl_tscript_name = tscript_name);
