@@ -678,8 +678,8 @@ public class DTOConversionService {
         detail.setIntronNumber(dnaChangeDTO.getIntronNumber());
         detail.setNumberAddedBasePair(dnaChangeDTO.getNumberAddedBasePair());
         detail.setNumberRemovedBasePair(dnaChangeDTO.getNumberRemovedBasePair());
-        detail.setInsertedSequence(dnaChangeDTO.getInsertedSequence());
-        detail.setDeletedSequence(dnaChangeDTO.getDeletedSequence());
+        /*detail.setInsertedSequence(dnaChangeDTO.getInsertedSequence());
+        detail.setDeletedSequence(dnaChangeDTO.getDeletedSequence());*/
         detail.setDnaPositionStart(dnaChangeDTO.getPositionStart());
         detail.setDnaPositionEnd(dnaChangeDTO.getPositionEnd());
         detail.setGeneLocalizationTerm(getGeneLocalizationTermRepository().getControlledVocabularyTerm(dnaChangeDTO.getLocalizationTermOboID()));
@@ -773,14 +773,24 @@ public class DTOConversionService {
                 }
             }
             logger.debug(feature.getAbbreviation());
-            FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getFeatureLocation(feature);
+            //FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getFeatureLocation(feature);
+            FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getLocationByFeature(feature);
             if (ftrLocation != null) {
                 featureDTO.setFeatureChromosome(ftrLocation.getSfclChromosome());
                 featureDTO.setFeatureAssembly(ftrLocation.getSfclAssembly());
+                featureDTO.setAssembly(ftrLocation.getSfclAssembly());
+                System.out.println(ftrLocation.getSfclAssembly());
                 featureDTO.setFeatureStartLoc(ftrLocation.getSfclStart());
                 featureDTO.setFeatureEndLoc(ftrLocation.getSfclEnd());
                 featureDTO.setEvidence(FeatureService.getFeatureGenomeLocationEvidenceCode(ftrLocation.getSfclEvidence().getZdbID()));
             }
+                FeatureGenomicMutationDetail fgmd=RepositoryFactory.getFeatureRepository().getFeatureGenomicDetail(feature);
+                if (fgmd!=null)
+                {
+                    featureDTO.setFgmdSeqVar(fgmd.getFgmdSeqVar());
+                    featureDTO.setFgmdSeqRef(fgmd.getFgmdSeqRef());
+                }
+
 
 
             Set<FeatureNote> featureNotes = feature.getExternalNotes();
@@ -871,8 +881,8 @@ public class DTOConversionService {
         dto.setNumberRemovedBasePair(detail.getNumberRemovedBasePair());
         dto.setPositionStart(detail.getDnaPositionStart());
         dto.setPositionEnd(detail.getDnaPositionEnd());
-        dto.setInsertedSequence(detail.getInsertedSequence());
-        dto.setDeletedSequence(detail.getDeletedSequence());
+        /*dto.setInsertedSequence(detail.getInsertedSequence());
+        dto.setDeletedSequence(detail.getDeletedSequence());*/
         dto.setExonNumber(detail.getExonNumber());
         dto.setIntronNumber(detail.getIntronNumber());
         dto.setSequenceReferenceAccessionNumber(detail.getDnaSequenceReferenceAccessionNumber());

@@ -59,6 +59,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiField
     Button saveButton;
     @UiField
+    GenomicMutationDetailView genomicMutationDetailView;
+    @UiField
     MutationDetailDNAView mutationDetailDnaView;
     @UiField
     MutationDetailProteinView mutationDetailProteinView;
@@ -72,6 +74,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     Label transcriptChangeFirstColumn;
     @UiField
     Label dnaChangeFirstColumn;
+    @UiField
+    Label variantInfoFirstColumn;
 
     public AbstractFeatureView() {
     }
@@ -199,9 +203,11 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         if (hasMutationDetails()) {
             showMutationDetail();
             mutationDetailDnaView.showFields(MutationDetailType.getType(featureType));
+            genomicMutationDetailView.showFields(MutationDetailType.getType(featureType));
         } else {
             hideMutationDetail();
             mutationDetailDnaView.changePanel.setVisible(false);
+            genomicMutationDetailView.changePanel.setVisible(false);
         }
         handleDirty();
 
@@ -217,9 +223,11 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         dnaChangeFirstColumn.setVisible(false);
         transcriptChangeFirstColumn.setVisible(false);
         proteinChangeFirstColumn.setVisible(false);
+        variantInfoFirstColumn.setVisible(false);
         mutationDetailDnaView.changePanel.setVisible(false);
         mutationDetailTranscriptView.changePanel.setVisible(false);
         mutationDetailProteinView.proteinChangePanel.setVisible(false);
+        genomicMutationDetailView.changePanel.setVisible(false);
     }
 
     protected void showMutationDetail() {
@@ -227,9 +235,11 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         dnaChangeFirstColumn.setVisible(true);
         transcriptChangeFirstColumn.setVisible(true);
         proteinChangeFirstColumn.setVisible(true);
+        variantInfoFirstColumn.setVisible(true);
         mutationDetailDnaView.changePanel.setVisible(true);
         mutationDetailTranscriptView.changePanel.setVisible(true);
         mutationDetailProteinView.proteinChangePanel.setVisible(true);
+        genomicMutationDetailView.changePanel.setVisible(true);
     }
 
 
@@ -330,6 +340,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         mutationDetailDnaView.resetGUI();
         mutationDetailTranscriptView.fullResetGUI();
         mutationDetailProteinView.resetGUI();
+        genomicMutationDetailView.resetGUI();
         knownInsertionCheckBox.setValue(false);
         featureSuffixPanel.setVisible(false);
         saveButton.setEnabled(false);
@@ -444,7 +455,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     }
 
     void setFeatureAssemblyList() {
-
+        featureAssembly.addItem("");
         featureAssembly.addItem("GRCz11");
         featureAssembly.addItem("GRCz10");
         featureAssembly.addItem("Zv9");

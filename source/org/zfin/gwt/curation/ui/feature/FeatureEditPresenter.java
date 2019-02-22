@@ -145,7 +145,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
                 col.addBoolean(view.featureStartLoc.isDirty((dto.getFeatureStartLoc())));
         col.addBoolean(view.featureEndLoc.isDirty((dto.getFeatureEndLoc())));
         col.addBoolean(view.featureEvidenceCode.isDirty((dto.getEvidence())));
-        col.addBoolean(view.featureAssembly.isDirty((dto.getAssembly())));
+        col.addBoolean(view.featureAssembly.isDirty((dto.getFeatureAssembly())));
 
         col.addBoolean(view.labDesignationBox.isDirty(dto.getLabPrefix()));
         col.addBoolean(view.featureSuffixBox.isDirty(dto.getTransgenicSuffix()));
@@ -199,6 +199,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.featureEndLoc.setNumber(dto.getFeatureEndLoc());
         view.featureEvidenceCode.setIndexForText(dto.getEvidence());
         view.featureAssembly.setIndexForText(dto.getAssembly());
+        view.featureAssembly.setIndexForText(dto.getFeatureAssembly());
 
         featureNotesPresenter.setFeatureDTO(dto);
         featureNotesPresenter.rebuildGUI();
@@ -217,6 +218,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.mutationDetailProteinView.populateFields(dto.getProteinChangeDTO());
         view.mutationDetailDnaView.populateFields(dto.getDnaChangeDTO());
         mutationDetailPresenter.setDtoSet(dto.getTranscriptChangeDTOSet());
+        view.genomicMutationDetailView.seqVariant.setValue(dto.getFgmdSeqVar());
+        view.genomicMutationDetailView.seqReference.setValue(dto.getFgmdSeqRef());
     }
 
 

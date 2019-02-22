@@ -62,18 +62,18 @@
                                 <td>insertion</td>
                                 <td><zfin:NumberTextBox ui:field="plusBasePair" visibleLength="4"/> bp</td>
                             </tr>
-                            <tr ui:field="insertionSequenceRow">
+                            <!--<tr ui:field="insertionSequenceRow">
                                 <td>inserted sequence</td>
                                 <td><zfin:StringTextBox ui:field="insertedSequence" /></td>
-                            </tr>
+                            </tr>-->
                             <tr ui:field="deletionLengthRow">
                                 <td>deletion</td>
                                 <td><zfin:NumberTextBox ui:field="minusBasePair" visibleLength="4"/> bp</td>
                             </tr>
-                            <tr ui:field="deletionSequenceRow">
+                            <!--<tr ui:field="deletionSequenceRow">
                                 <td>deleted sequence</td>
                                 <td><zfin:StringTextBox ui:field="deletedSequence" /></td>
-                            </tr>
+                            </tr>-->
                         </table>
                     </g:HTMLPanel>
                 </g:customCell>

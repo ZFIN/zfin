@@ -59,6 +59,7 @@ public class FeatureEditView extends AbstractFeatureView implements Revertible {
         mutationDetailDnaView.resetGUI();
         mutationDetailProteinView.resetGUI();
         mutationDetailTranscriptView.resetGUI();
+        genomicMutationDetailView.resetGUI();
         if (StringUtils.isEmpty(featureID)) {
             setNote("No feature selected");
             resetGUI();

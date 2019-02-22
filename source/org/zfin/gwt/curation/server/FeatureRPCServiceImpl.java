@@ -180,6 +180,22 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             infrastructureRepository.insertPublicAttribution(fgl.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
         }
 
+        FeatureGenomicMutationDetail fgmd = featureRepository.getFeatureGenomicDetail(feature);
+        if (fgmd == null) {
+            fgmd = new FeatureGenomicMutationDetail();
+            fgmd.setFeature(feature);
+        }
+        if (StringUtils.isNotEmpty(featureDTO.getFgmdSeqRef())||(StringUtils.isNotEmpty(featureDTO.getFgmdSeqVar()))) {
+
+            fgmd.setFgmdSeqVar(featureDTO.getFgmdSeqVar());
+            fgmd.setFgmdSeqRef(featureDTO.getFgmdSeqRef());
+            fgmd.setFgmdVarStrand("+");
+            HibernateUtil.currentSession().save(fgmd);
+            infrastructureRepository.insertPublicAttribution(fgmd.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
+        }
+
+        
+
         // get labs of origin for feature
         Organization existingLabOfOrigin = featureRepository.getLabByFeature(feature);
         if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin != null) {
@@ -506,13 +522,32 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 FeatureLocation fgl = new FeatureLocation();
                 fgl.setFeature(feature);
                 fgl.setSfclChromosome(featureDTO.getFeatureChromosome());
+                System.out.println(featureDTO.getFeatureAssembly());
                 fgl.setSfclAssembly(featureDTO.getFeatureAssembly());
                 fgl.setSfclStart(featureDTO.getFeatureStartLoc());
                 fgl.setSfclEnd(featureDTO.getFeatureEndLoc());
                 // convert code into TermID and then get GenericTerm
                 fgl.setSfclEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
-
                 HibernateUtil.currentSession().save(fgl);
+
+            if (StringUtils.isNotEmpty(featureDTO.getFgmdSeqRef())||(StringUtils.isNotEmpty(featureDTO.getFgmdSeqVar()))) {
+                FeatureGenomicMutationDetail fgmd = new FeatureGenomicMutationDetail();
+                fgmd.setFeature(feature);
+                fgmd.setFgmdSeqRef(featureDTO.getFgmdSeqRef());
+                fgmd.setFgmdSeqVar(featureDTO.getFgmdSeqVar());
+                fgmd.setFgmdVarStrand("+");
+                HibernateUtil.currentSession().save(fgmd);
+                PublicationAttribution pa1 = new PublicationAttribution();
+                pa1.setSourceZdbID(publication.getZdbID());
+                pa1.setDataZdbID(fgmd.getZdbID());
+                pa1.setSourceType(RecordAttribution.SourceType.STANDARD);
+                pa1.setPublication(publication);
+                Set<PublicationAttribution> pubattr1 = new HashSet<>();
+                pubattr1.add(pa1);
+                currentSession().save(pa1);
+            }
+
+
                 if (publication != null) {
                     PublicationAttribution pa = new PublicationAttribution();
                     pa.setSourceZdbID(publication.getZdbID());
@@ -521,7 +556,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                     pa.setPublication(publication);
                     Set<PublicationAttribution> pubattr = new HashSet<>();
                     pubattr.add(pa);
+
                     currentSession().save(pa);
+
                 }
             }
 

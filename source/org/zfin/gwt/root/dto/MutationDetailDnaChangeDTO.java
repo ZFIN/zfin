@@ -12,8 +12,8 @@ public class MutationDetailDnaChangeDTO implements IsSerializable {
     private String sequenceReferenceAccessionNumber;
     private Integer numberAddedBasePair;
     private Integer numberRemovedBasePair;
-    private String insertedSequence;
-    private String deletedSequence;
+   /* private String insertedSequence;
+    private String deletedSequence;*/
     private Integer exonNumber;
     private Integer intronNumber;
     private String localizationTermOboID;
@@ -100,19 +100,5 @@ public class MutationDetailDnaChangeDTO implements IsSerializable {
         this.zdbID = zdbID;
     }
 
-    public String getInsertedSequence() {
-        return insertedSequence;
-    }
 
-    public void setInsertedSequence(String insertedSequence) {
-        this.insertedSequence = insertedSequence;
-    }
-
-    public String getDeletedSequence() {
-        return deletedSequence;
-    }
-
-    public void setDeletedSequence(String deletedSequence) {
-        this.deletedSequence = deletedSequence;
-    }
 }

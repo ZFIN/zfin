@@ -57,20 +57,20 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     NumberTextBox minusBasePair;
     @UiField
     NumberTextBox plusBasePair;
-    @UiField
+   /* @UiField
     StringTextBox insertedSequence;
     @UiField
-    StringTextBox deletedSequence;
+    StringTextBox deletedSequence;*/
     @UiField
     TableRowElement nucleotideChangeRow;
     @UiField
     TableRowElement insertionLengthRow;
-    @UiField
-    TableRowElement insertionSequenceRow;
+   /* @UiField
+    TableRowElement insertionSequenceRow;*/
     @UiField
     TableRowElement deletionLengthRow;
-    @UiField
-    TableRowElement deletionSequenceRow;
+   /* @UiField
+    TableRowElement deletionSequenceRow;*/
     @UiField
     Label positionDash;
     @UiField
@@ -119,7 +119,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         handleChanges();
     }
 
-    @UiHandler("insertedSequence")
+    /*@UiHandler("insertedSequence")
     void onChangeInsertedSequence(KeyUpEvent event) {
         handleChanges();
     }
@@ -127,7 +127,7 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     @UiHandler("deletedSequence")
     void onChangeDeletedSequence(KeyUpEvent event) {
         handleChanges();
-    }
+    }*/
 
     @UiHandler("exonNumber")
     void onChangeExonNumber(@SuppressWarnings("unused") KeyUpEvent event) {
@@ -169,9 +169,9 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     public void showPointMutationUI() {
         showRow(nucleotideChangeRow, true);
         showRow(insertionLengthRow, false);
-        showRow(insertionSequenceRow, false);
+        //0showRow(insertionSequenceRow, false);
         showRow(deletionLengthRow, false);
-        showRow(deletionSequenceRow, false);
+        //showRow(deletionSequenceRow, false);
         positionStart.setVisible(true);
         positionDash.setVisible(false);
         positionEnd.setVisible(false);
@@ -180,36 +180,36 @@ public class MutationDetailDNAView extends AbstractViewComposite {
     public void showPlusBP() {
         showRow(nucleotideChangeRow, false);
         showRow(insertionLengthRow, true);
-        showRow(insertionSequenceRow, true);
+        //showRow(insertionSequenceRow, true);
         showRow(deletionLengthRow, false);
-        showRow(deletionSequenceRow, false);
+        //showRow(deletionSequenceRow, false);
         showHideBaseFields(true);
     }
 
     public void showMinusBP() {
         showRow(nucleotideChangeRow, false);
         showRow(insertionLengthRow, false);
-        showRow(insertionSequenceRow, false);
+        //showRow(insertionSequenceRow, false);
         showRow(deletionLengthRow, true);
-        showRow(deletionSequenceRow, true);
+        //showRow(deletionSequenceRow, true);
         showHideBaseFields(true);
     }
 
     public void showPlusMinusBP() {
         showRow(nucleotideChangeRow, false);
         showRow(insertionLengthRow, true);
-        showRow(insertionSequenceRow, true);
+        //showRow(insertionSequenceRow, true);
         showRow(deletionLengthRow, true);
-        showRow(deletionSequenceRow, true);
+        //showRow(deletionSequenceRow, true);
         showHideBaseFields(true);
     }
 
     public void showTgFields() {
         showRow(nucleotideChangeRow, false);
         showRow(insertionLengthRow, false);
-        showRow(insertionSequenceRow, false);
+        //showRow(insertionSequenceRow, false);
         showRow(deletionLengthRow, false);
-        showRow(deletionSequenceRow, false);
+        //showRow(deletionSequenceRow, false);
         showHideBaseFields(false);
     }
 
@@ -238,8 +238,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             dto.setPositionEnd(dto.getPositionStart());
         dto.setNumberAddedBasePair(plusBasePair.getBoxValue());
         dto.setNumberRemovedBasePair(minusBasePair.getBoxValue());
-        dto.setInsertedSequence(insertedSequence.getBoxValue());
-        dto.setDeletedSequence(deletedSequence.getBoxValue());
+       /* dto.setInsertedSequence(insertedSequence.getBoxValue());
+        dto.setDeletedSequence(deletedSequence.getBoxValue());*/
         dto.setSequenceReferenceAccessionNumber(WidgetUtil.getStringFromField(zfinAccessionBox.getAccessionNumber()));
         dto.setExonNumber(exonNumber.getBoxValue());
         dto.setIntronNumber(intronNumber.getBoxValue());
@@ -280,8 +280,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         intronNumber.clear();
         plusBasePair.clear();
         minusBasePair.clear();
-        insertedSequence.clear();
-        deletedSequence.clear();
+        /*insertedSequence.clear();
+        deletedSequence.clear();*/
         zfinAccessionBox.clear();
         zfinAccessionBox.setFlagVisibility(false);
         clearError();
@@ -297,8 +297,8 @@ public class MutationDetailDNAView extends AbstractViewComposite {
         fields.add(intronNumber);
         fields.add(plusBasePair);
         fields.add(minusBasePair);
-        fields.add(insertedSequence);
-        fields.add(deletedSequence);
+      /*  fields.add(insertedSequence);
+        fields.add(deletedSequence);*/
         fields.add(zfinAccessionBox.getAccessionNumber());
         return fields;
     }
@@ -314,16 +314,16 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             positionEnd.clear();
             plusBasePair.clear();
             minusBasePair.clear();
-            insertedSequence.clear();
-            deletedSequence.clear();
+            /*insertedSequence.clear();
+            deletedSequence.clear();*/
             return;
         }
         nucleotideChangeList.setIndexForValue(dto.getChangeTermOboId());
         localizationTerm.setIndexForValue(dto.getLocalizationTermOboID());
         plusBasePair.setNumber(dto.getNumberAddedBasePair());
         minusBasePair.setNumber(dto.getNumberRemovedBasePair());
-        insertedSequence.setText(dto.getInsertedSequence());
-        deletedSequence.setText(dto.getDeletedSequence());
+      /*  insertedSequence.setText(dto.getInsertedSequence());
+        deletedSequence.setText(dto.getDeletedSequence());*/
         positionStart.setNumber(dto.getPositionStart());
         positionEnd.setNumber(dto.getPositionEnd());
         exonNumber.setNumber(dto.getExonNumber());

@@ -35,6 +35,8 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
 
     protected String evidence;
     protected String assembly;
+    protected String fgmdSeqVar;
+    protected String fgmdSeqRef;
     public String getFeatureAssembly() {
         return featureAssembly;
     }
@@ -295,6 +297,22 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
 
     public void setProteinChangeDTO(MutationDetailProteinChangeDTO proteinChangeDTO) {
         this.proteinChangeDTO = proteinChangeDTO;
+    }
+
+    public String getFgmdSeqVar() {
+        return fgmdSeqVar;
+    }
+
+    public void setFgmdSeqVar(String fgmdSeqVar) {
+        this.fgmdSeqVar = fgmdSeqVar;
+    }
+
+    public String getFgmdSeqRef() {
+        return fgmdSeqRef;
+    }
+
+    public void setFgmdSeqRef(String fgmdSeqRef) {
+        this.fgmdSeqRef = fgmdSeqRef;
     }
 
     public Set<MutationDetailTranscriptChangeDTO> getTranscriptChangeDTOSet() {

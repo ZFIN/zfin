@@ -193,6 +193,8 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
             featureDTO.setDnaChangeDTO(view.mutationDetailDnaView.getDto());
             featureDTO.setProteinChangeDTO(view.mutationDetailProteinView.getDto());
             featureDTO.setTranscriptChangeDTOSet(view.mutationDetailTranscriptView.getPresenter().getDtoSet());
+            featureDTO.setFgmdSeqRef(view.genomicMutationDetailView.seqReference.getText());
+            featureDTO.setFgmdSeqVar(view.genomicMutationDetailView.seqVariant.getText());
         }
 
 

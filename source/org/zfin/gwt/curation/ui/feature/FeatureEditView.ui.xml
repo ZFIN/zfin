@@ -150,6 +150,15 @@
             </g:row>
             <g:row>
                 <g:customCell styleName="{style.valign-top} {style.grey-background}">
+                    <g:Label text="Variant info" horizontalAlignment="right" styleName="{style.italics}"
+                             ui:field="variantInfoFirstColumn" visible="false"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin-feature:GenomicMutationDetailView ui:field="genomicMutationDetailView"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell styleName="{style.valign-top} {style.grey-background}">
                     <g:Label text="DNA / cDNA" horizontalAlignment="right" styleName="{style.italics}"
                              ui:field="dnaChangeFirstColumn" visible="false"/>
                 </g:customCell>

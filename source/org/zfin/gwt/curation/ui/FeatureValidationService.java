@@ -17,7 +17,7 @@ public class FeatureValidationService {
             return "You must specify a lab prefix, feature type, and feature line number,assembly, start and end positions.";
 
         if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
-            
+
             if (featureDTO.getFeatureStartLoc()>featureDTO.getFeatureEndLoc()){
                 return "Start location cannot be greater than end location";
             }

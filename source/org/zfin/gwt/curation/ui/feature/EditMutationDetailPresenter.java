@@ -44,8 +44,8 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
             col.addBoolean(mutationDetailDnaView.nucleotideChangeList.isDirty(dnaChangeDTO.getChangeTermOboId()));
             col.addBoolean(mutationDetailDnaView.plusBasePair.isDirty(dnaChangeDTO.getNumberAddedBasePair()));
             col.addBoolean(mutationDetailDnaView.minusBasePair.isDirty(dnaChangeDTO.getNumberRemovedBasePair()));
-            col.addBoolean(mutationDetailDnaView.insertedSequence.isDirty(dnaChangeDTO.getInsertedSequence()));
-            col.addBoolean(mutationDetailDnaView.deletedSequence.isDirty(dnaChangeDTO.getDeletedSequence()));
+            /*col.addBoolean(mutationDetailDnaView.insertedSequence.isDirty(dnaChangeDTO.getInsertedSequence()));
+            col.addBoolean(mutationDetailDnaView.deletedSequence.isDirty(dnaChangeDTO.getDeletedSequence()));*/
             col.addBoolean(mutationDetailDnaView.positionStart.isDirty(dnaChangeDTO.getPositionStart()));
             col.addBoolean(mutationDetailDnaView.positionEnd.isDirty(dnaChangeDTO.getPositionEnd()));
             col.addBoolean(mutationDetailDnaView.exonNumber.isDirty(dnaChangeDTO.getExonNumber()));
