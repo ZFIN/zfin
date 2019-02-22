@@ -79,6 +79,7 @@
         <mapping class="org.zfin.feature.FeatureNote"/>
         <mapping class="org.zfin.feature.FeaturePrefix"/>
         <mapping class="org.zfin.feature.FeatureProteinMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureGenomicMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureTracking"/>
         <mapping class="org.zfin.feature.FeatureTranscriptMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureTypeGroup"/>
