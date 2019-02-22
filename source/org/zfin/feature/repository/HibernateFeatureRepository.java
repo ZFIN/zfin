@@ -358,11 +358,27 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public FeatureLocation getLocationByFeature(Feature ftr) {
         Session session = HibernateUtil.currentSession();
         String hql = "select fs  from  FeatureLocation fs " +
-                "     where fs.feature = :feature ";
+                "     where fs.feature = :feature and fs.sfclAssembly like '%z1%' order by fs.sfclAssembly desc  ";
 
         Query query = session.createQuery(hql);
         query.setParameter("feature", ftr);
+        query.setMaxResults(1);
+
+
         FeatureLocation fl = (FeatureLocation) query.uniqueResult();
+        if (fl==null)
+        {
+            String hql1 = "select fs  from  FeatureLocation fs " +
+                    "     where fs.feature = :feature and fs.sfclAssembly like '%9%' order by fs.sfclAssembly desc ";
+
+            Query query1 = session.createQuery(hql1);
+            query.setParameter("feature", ftr);
+
+
+            FeatureLocation fl1 = (FeatureLocation) query.uniqueResult();
+            return fl1;
+
+        }
         return fl;
 
     }
@@ -559,6 +575,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
         criteria.setMaxResults(1);
         FeatureLocation ftrLocation = (FeatureLocation) criteria.uniqueResult();
         return ftrLocation;
+    }
+
+    public FeatureGenomicMutationDetail getFeatureGenomicDetail(Feature feature) {
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureGenomicMutationDetail.class);
+        criteria.add(Restrictions.eq("feature", feature));
+        criteria.setMaxResults(1);
+        FeatureGenomicMutationDetail fgmd = (FeatureGenomicMutationDetail) criteria.uniqueResult();
+        return fgmd;
     }
 
     @Override

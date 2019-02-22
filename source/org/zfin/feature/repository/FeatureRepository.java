@@ -87,6 +87,7 @@ public interface FeatureRepository {
     VariantSequence getFeatureVariant(Feature feature);
     String getAALink(Feature feature);
     FeatureLocation getFeatureLocation(Feature feature);
+    FeatureGenomicMutationDetail getFeatureGenomicDetail(Feature feature);
 
     List<Marker> getMarkersByFeature(Feature feature);
 
