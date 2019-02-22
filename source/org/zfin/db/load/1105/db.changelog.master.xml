@@ -13,4 +13,6 @@
     <include file="source/org/zfin/db/load/1105/drop_gff3_pk.sql"/>
     <include file="source/org/zfin/db/load/1105/ZFIN-6153.sql"/>
     <include file="source/org/zfin/db/load/1105/ZFIN-6134.sql"/>
+    <include file="source/org/zfin/db/load/1105/INF-3618.sql"/>
+
 </databaseChangeLog>
