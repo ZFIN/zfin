@@ -4,16 +4,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import org.zfin.antibody.Antibody;
@@ -31,7 +28,10 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
-import org.zfin.infrastructure.*;
+import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.SourceAlias;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -2607,6 +2607,17 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         pa.setMarker(marker);
         pa.setPublication(publication);
         pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+
+        String hql = "select pa from PublicationAttribution as pa where " +
+                " pa.sourceZdbID = :pubID and pa.dataZdbID = :markerID AND pa.sourceType = :source ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("pubID", publication.getZdbID());
+        query.setParameter("markerID", marker.getZdbID());
+        query.setParameter("source", RecordAttribution.SourceType.STANDARD);
+        PublicationAttribution pubAttr = (PublicationAttribution) query.uniqueResult();
+        if (pubAttr != null)
+            return pubAttr;
         HibernateUtil.currentSession().save(pa);
         return pa;
     }
