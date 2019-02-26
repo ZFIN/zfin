@@ -73,8 +73,6 @@ public interface MarkerRPCServiceAsync {
 
     void removeMarkerSupplier(String name, String markerZdbID, AsyncCallback<Void> async);
 
-    void getWebDriverPath(AsyncCallback<String> async);
-
     // general methods
 
     void addRelatedMarker(MarkerDTO markerDTO, AsyncCallback<MarkerDTO> async);
