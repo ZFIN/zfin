@@ -96,7 +96,6 @@
 <filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>
 <filter token="JENKINS_PORT" value="${JENKINS_PORT}"/>
 <filter token="JPDA_ADDRESS" value="${JPDA_ADDRESS}"/>
-<filter token="LD_LIBRARY_PATH" value="${LD_LIBRARY_PATH}"/>
 <filter token="LINKBAR_COLOR" value="${LINKBAR_COLOR}"/>
 <filter token="LN54_CONTACT_EMAIL" value="${LN54_CONTACT_EMAIL}"/>
 <filter token="LOADUP_FULL_PATH" value="${LOADUP_FULL_PATH}"/>
