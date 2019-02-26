@@ -212,10 +212,6 @@ public class HibernateSessionCreator {
     }
 
     private String getJdbcUrl(String db) {
-        String informixServer = ZfinPropertiesEnum.INFORMIX_SERVER.value();
-        String informixPort = ZfinPropertiesEnum.INFORMIX_PORT.value();
-        String sqlHostsHost = ZfinPropertiesEnum.SQLHOSTS_HOST.value();
-
         String jdbcUrl;
         jdbcUrl = "jdbc:postgresql://localhost:5432/" + db;
         return jdbcUrl;

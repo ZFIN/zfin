@@ -131,8 +131,8 @@ public class HibernateComparisonSessionFactory implements FactoryBean {
         Configuration config = new Configuration();
         config.setProperty("hibernate.dialect", "org.zfin.database.ZfinInformixDialect");
         config.setProperty("hibernate.connection.driver_class", "com.informix.jdbc.IfxDriver");
-        String informixServer = ZfinPropertiesEnum.INFORMIX_SERVER.value();
-        String informixPort = ZfinPropertiesEnum.INFORMIX_PORT.value();
+        String informixServer = "ToBeDefined";
+        String informixPort = "ToBeDefined";
         String sqlHostsHost = ZfinPropertiesEnum.SQLHOSTS_HOST.value();
         String connectionString = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer + ";DB_LOCALE=en_US.utf8";
 //        System.out.println("connectionString: " + connectionString) ; 
