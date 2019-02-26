@@ -28,20 +28,20 @@ and (fdmd_deleted_sequence is not null or fdmd_inserted_sequence is not null) an
 update featgenomemd set fgmdseqref=upper(fgmdseqref);
 update featgenomemd set fgmdseqvar=upper(fgmdseqvar);
 
-update featgenomemd set fgmdseqref=replace(fgmdseqref,'A','t');
-update featgenomemd set fgmdseqref=replace(fgmdseqref,'T','A');
-update featgenomemd set fgmdseqref=replace(fgmdseqref,'G','c');
-update featgenomemd set fgmdseqref=replace(fgmdseqref,'C','G');
+update featgenomemd set fgmdseqref=replace(fgmdseqref,'A','t') where fgmdstrand='-';
+update featgenomemd set fgmdseqref=replace(fgmdseqref,'T','A') where fgmdstrand='-';
+update featgenomemd set fgmdseqref=replace(fgmdseqref,'G','c') where fgmdstrand='-';
+update featgenomemd set fgmdseqref=replace(fgmdseqref,'C','G') where fgmdstrand='-';
 
-update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'A','t');
-update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'T','A');
-update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'G','c');
-update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'C','G');
+update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'A','t')where fgmdstrand='-'; ;
+update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'T','A') where fgmdstrand='-';;
+update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'G','c') where fgmdstrand='-';;
+update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'C','G') where fgmdstrand='-';;
 
-update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'t','T');
-update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'c','C');
-update featgenomemd set fgmdseqref=replace(fgmdseqref,'t','T');
-update featgenomemd set fgmdseqref=replace(fgmdseqref,'c','C');
+update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'t','T') where fgmdstrand='-';;
+update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'c','C') where fgmdstrand='-';;
+update featgenomemd set fgmdseqref=replace(fgmdseqref,'t','T') where fgmdstrand='-';;
+update featgenomemd set fgmdseqref=replace(fgmdseqref,'c','C') where fgmdstrand='-';;
 
 update featgenomemd set fgmdseqref='N/A' where fgmdseqref is null;
 update featgenomemd set fgmdseqvar='N/A' where fgmdseqvar is null;
