@@ -2,6 +2,7 @@
 <filterset id='allfilters'>
 <filter token="ADAM_AMSTERDAM" value="${ADAM_AMSTERDAM}"/>
 <filter token="ALL_FAILURE_REPORTS_EMAIL" value="${ALL_FAILURE_REPORTS_EMAIL}"/>
+<filter token="ANT_HOME" value="${ANT_HOME}"/>
 <filter token="ANT_OPTS" value="${ANT_OPTS}"/>
 <filter token="AO_EMAIL_CURATOR" value="${AO_EMAIL_CURATOR}"/>
 <filter token="AO_EMAIL_ERR" value="${AO_EMAIL_ERR}"/>
