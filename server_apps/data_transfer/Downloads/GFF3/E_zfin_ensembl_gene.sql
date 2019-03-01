@@ -35,7 +35,7 @@ select distinct
 	'.' frame,
 	'gene_id=' || gene.mrkr_zdb_id
 	   ||';Name=' || gene.mrkr_abbrev
-     ||';full_name=' || replace(replace(gene.mrkr_name,';','%3B'),' ','%20')
+     ||';full_name=' || replace(gene.mrkr_name,';','%3B')
 	   || ';so_term_name=' || szm_term_name
 	   || ';curie=' || 'ZFIN:' || mrkr_zdb_id as id_name,
 	gene.mrkr_zdb_id alias
@@ -46,7 +46,7 @@ select distinct
    and gene.mrkr_type = szm_object_type
    and vTdbl.dblink_linked_recid = mrel_mrkr_2_zdb_id
    and vTdbl.dblink_acc_num = vt.gff_id
-   and vt.gff_source  = 'vega'
+   and vt.gff_source = 'vega'
    and vt.gff_feature = 'transcript'
    and eTdbl.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-110301-1'
    and eTdbl.dblink_linked_recid = vTdbl.dblink_linked_recid

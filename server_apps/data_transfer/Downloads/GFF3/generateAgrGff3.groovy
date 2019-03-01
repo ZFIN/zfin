@@ -2,113 +2,157 @@
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
 import groovy.sql.Sql
+import org.apache.log4j.Logger
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
 import org.zfin.sequence.GenomeFeature
 
-
 ZfinProperties.init("${System.getenv()['SOURCEROOT']}/home/WEB-INF/zfin.properties")
+def db = Sql.newInstance(ZfinPropertiesEnum.JDBC_URL.value(), ZfinPropertiesEnum.JDBC_DRIVER.value())
 
 String gff3Dir = ZfinPropertiesEnum.TARGETROOT.value + "/home/data_transfer/Downloads"
 
-def out = new File("$gff3Dir/zfin_genes.gff3").newWriter()
+List<GenomeFeature> genes = []
+db.eachRow("""
+    select zeg_seqname, zeg_source, zeg_feature, zeg_start, zeg_end,
+    zeg_score, zeg_strand, zeg_frame, 
+    zeg_id_name, zeg_gene_zdb_id
+    from zfin_ensembl_gene
+    order by zeg_seqname asc, zeg_start asc 
+""") { row ->
+    String gff = row.zeg_seqname + "\t" +
+                 row.zeg_source + "\t" +
+                 row.zeg_feature + "\t" +
+                 row.zeg_start + "\t" +
+                 row.zeg_end + "\t" +
+                 row.zeg_score + "\t" +
+                 row.zeg_strand + "\t" +
+                 row.zeg_frame + "\t"
+    gff += "ID=" + row.zeg_gene_zdb_id + ";" + row.zeg_id_name
 
-//genes and transcripts could come from SQL replacing the tasks that generate them?
-List<GenomeFeature> genes = loadFile("$gff3Dir/E_zfin_gene_alias.gff3")
-//only mRNA comes out, where's all of the ones with type 'transcript' ?
-Map transcripts = loadFileWithParentMap("$gff3Dir/E_drerio_transcript.gff3")
+    genes.add(new GenomeFeature(gff))
+}
 
-//parent stuff seems to get lost here, IDs don't seem to line up
-Map exons = loadFileWithParentMap("$gff3Dir/E_drerio_backbone.gff3")
 
-List ensdargMaps = getEnsdargMaps()
-Map ensdargToGene = ensdargMaps[0]
-Map geneToEnsdarg = ensdargMaps[1]
+Map<String,String> ensemblToZfinIDMap = [:]
+Map<String,String> zfinToEnsemblIDMap = [:]
 
-printHeader("$gff3Dir/ensembl_contig.gff3", out)
+db.eachRow(""" 
+    select enm_ensdart_stable_id, enm_tscript_zdb_id
+    from ensdart_name_mapping
+""") { row ->
+    ensemblToZfinIDMap[row.enm_ensdart_stable_id] = row.enm_tscript_zdb_id
+    zfinToEnsemblIDMap[row.enm_tscript_zdb_id] = row.enm_ensdart_stable_id
+}
+
+db.eachRow("""
+    select dblink_acc_num, dblink_linked_recid from db_link where dblink_acc_num like 'ENSDARG%'
+""") { row ->
+    ensemblToZfinIDMap[row.dblink_acc_num] = row.dblink_linked_recid;
+}
+
+Map<String,String> ensemblToZfinNameMap = [:]
+db.eachRow("""
+    select tscript_ensdart_id, mrkr_abbrev
+    from transcript join marker on tscript_mrkr_zdb_id = mrkr_zdb_id
+""") { row ->
+    ensemblToZfinNameMap[row.tscript_ensdart_id, row.mrkr_abbrev]
+}
+
+Map <String,List<GenomeFeature>> ensemblFeatureMap = [:]
+db.eachRow("""
+        select 
+        gff_seqname, gff_source, gff_feature, gff_start, gff_end, gff_score,
+        gff_strand, gff_frame, gff_id, gff_name, gff_parent
+        from gff3
+        where gff_source like 'Ensembl_%'        
+""") { row ->
+    String gff = row.gff_seqname + "\t" +
+                 row.gff_source + "\t" +
+                 row.gff_feature + "\t" +
+                 row.gff_start + "\t" +
+                 row.gff_end + "\t" +
+                 row.gff_score + "\t" +
+                 row.gff_strand + "\t" +
+                 row.gff_frame + "\t"
+
+      //need zdb_id for self & parent on transcripts
+    String parent = ensemblToZfinIDMap[row.gff_parent] ?: row.gff_parent
+    String id = ensemblToZfinIDMap[row.gff_id] ?: row.gff_id
+    String name = ensemblToZfinNameMap[row.gff_id] ?: row.gff_name
+
+    gff += "ID=$id;Name=$name;Parent=$parent"
+
+    if (ensemblFeatureMap[parent]) {
+        ensemblFeatureMap[parent].add(new GenomeFeature(gff))
+    } else {
+        ensemblFeatureMap[parent] = [new GenomeFeature(gff)]
+    }
+
+}
+
+
+File zfinGenesFile = new File("$gff3Dir/zfin_genes.gff3")
+zfinGenesFile.createNewFile()
+def zfinGenesWriter = zfinGenesFile.newWriter()
+
+printHeader("$gff3Dir/ensembl_contig.gff3", zfinGenesWriter)
 
 genes.each { GenomeFeature gene ->
+    zfinGenesWriter.println gene.toString()
+    ensemblFeatureMap[gene.getId()].each { GenomeFeature transcript ->
+        if (transcript.getId().startsWith("ZDB")) {
+            transcript.setSource("ZFIN")
+            zfinGenesWriter.println(transcript.toString())
+            ensemblFeatureMap[transcript.getId()].each { GenomeFeature region ->
+                region.setSource("ZFIN")
+                zfinGenesWriter.println(region)
+            }
 
-    String ensdarg = geneToEnsdarg.get(gene.id)
+        }
 
-    if (ensdarg) {
-        gene.addAttribute(GenomeFeature.ID,ensdarg)
-        out.println gene
-        transcripts.get(ensdarg).each { GenomeFeature transcript ->
-            String ensdart = transcript.id
+    }
+}
 
-            //we only want transcripts that have a zdb_id in this file
-            if (transcript.getAttributes().get(GenomeFeature.ZDB_ID) != null) {
-                //replace the ENSDART id with a ZDB_ID
-                print transcript.getAttributes().get(GenomeFeature.ZDB_ID)
-                transcript.addAttribute(GenomeFeature.ID, transcript.getAttributes().get(GenomeFeature.ZDB_ID))
-                transcript.addAttribute(GenomeFeature.PARENT, gene.id)
-                out.println transcript
-                exons.get(ensdart).each { GenomeFeature exon ->
-                    exon.addAttribute(GenomeFeature.ID, exon.id.replace(ensdart,transcript.id))
-                    exon.addAttribute(GenomeFeature.PARENT, transcript.id)
-                    out.println exon
-                }
+zfinGenesWriter.flush()
+zfinGenesWriter.close()
+
+File ensemblTranscriptsFile = new File("$gff3Dir/ensembl_transcripts.gff3")
+ensemblTranscriptsFile.createNewFile()
+def ensemblTranscriptsWriter = ensemblTranscriptsFile.newWriter()
+
+ensemblFeatureMap.keySet().each { String parent ->
+    ensemblFeatureMap[parent].each { GenomeFeature transcript ->
+        if (transcript.getId()?.startsWith("ENSDART")) { //loop over just the ENSDARTS
+            transcript.getAttributes().remove(GenomeFeature.PARENT) //leave parents off of these transcripts
+            transcript.setSource("Ensembl")
+            ensemblTranscriptsWriter.println transcript
+            ensemblFeatureMap[transcript.getId()].each { GenomeFeature region -> //then print each child of ENSDART
+                region.setSource("Ensembl")
+                ensemblTranscriptsWriter.println region
             }
         }
+
     }
 }
 
+ensemblTranscriptsWriter.flush()
+ensemblTranscriptsWriter.close()
 
-
-
-def loadFile(String filename) {
-    List features = []
-    new File(filename).eachLine() {line ->
-        if (!line.startsWith("#") && line.split("\\t").length == 9) {
-            GenomeFeature feature = new GenomeFeature(line)
-            features.add(feature)
-        }
-
-    }
-    features
+//todo: do something to capture havana transcripts that we don't have a zdb_id for ?
+/*
+db.eachRow("""
+        select 
+        gff_seqname, gff_source, gff_feature, gff_start, gff_end, gff_score,
+        gff_strand, gff_frame, gff_id, gff_name, gff_parent
+        from gff3
+        where gff_source in ('Ensembl_havana', 'Ensembl_ensembl_havana')
+          and gff_id not in (select tscript_ensdart_id from transcript)        
+""") { row ->
+    println row
 }
+*/
 
-Map <String,List<GenomeFeature>> loadFileWithParentMap(String filename) {
-    Map <String,List<GenomeFeature>> features = [:]
-    new File(filename).eachLine() {line ->
-        if (!line.startsWith("#") && line.split("\\t").length == 9) {
-            GenomeFeature feature = new GenomeFeature(line)
-            if (features.get(feature.parent)) {
-                features.get(feature.parent).add(feature)
-            } else {
-                features.put(feature.parent, [feature])
-            }
-        }
-    }
-    features
-}
-
-
-def getEnsdargMaps() {
-
-    Map ensdargToGene = [:]
-    Map geneToEnsdarg = [:]
-
-    String jdbc_driver = ZfinPropertiesEnum.JDBC_DRIVER.value()
-    String jdbc_url = ZfinPropertiesEnum.JDBC_URL.value()
-
-    def db = Sql.newInstance(jdbc_url, jdbc_driver)
-
-    String sql = """
-        select dblink_linked_recid as gene,
-               dblink_acc_num as ensdarg
-        from db_link
-        where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
-    """
-
-    db.eachRow(sql) { row ->
-        geneToEnsdarg.put(row.gene, row.ensdarg)
-        ensdargToGene.put(row.ensdarg, row.gene)
-    }
-
-    [ensdargToGene, geneToEnsdarg]
-}
 
 
 def printHeader(String contigs, BufferedWriter out) {
@@ -128,3 +172,4 @@ def printHeader(String contigs, BufferedWriter out) {
     }
 
 }
+
