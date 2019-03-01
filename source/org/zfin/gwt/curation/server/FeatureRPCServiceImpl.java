@@ -518,7 +518,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
             getFeatureRepository().saveFeature(feature, publication);
 
-            if (StringUtils.isNotBlank((featureDTO.getFeatureChromosome()))) {
+            if (StringUtils.isNotEmpty((featureDTO.getFeatureChromosome()))) {
                 FeatureLocation fgl = new FeatureLocation();
                 fgl.setFeature(feature);
                 fgl.setSfclChromosome(featureDTO.getFeatureChromosome());
@@ -529,6 +529,21 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 // convert code into TermID and then get GenericTerm
                 fgl.setSfclEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
                 HibernateUtil.currentSession().save(fgl);
+
+                    PublicationAttribution pa = new PublicationAttribution();
+                    pa.setSourceZdbID(publication.getZdbID());
+                    pa.setDataZdbID(fgl.getZdbID());
+                    pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+                    pa.setPublication(publication);
+                    Set<PublicationAttribution> pubattr = new HashSet<>();
+                    pubattr.add(pa);
+
+                    currentSession().save(pa);
+
+                
+
+            }
+
 
             if (StringUtils.isNotEmpty(featureDTO.getFgmdSeqRef())||(StringUtils.isNotEmpty(featureDTO.getFgmdSeqVar()))) {
                 FeatureGenomicMutationDetail fgmd = new FeatureGenomicMutationDetail();
@@ -548,19 +563,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
 
-                if (publication != null) {
-                    PublicationAttribution pa = new PublicationAttribution();
-                    pa.setSourceZdbID(publication.getZdbID());
-                    pa.setDataZdbID(fgl.getZdbID());
-                    pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-                    pa.setPublication(publication);
-                    Set<PublicationAttribution> pubattr = new HashSet<>();
-                    pubattr.add(pa);
 
-                    currentSession().save(pa);
-
-                }
-            }
 
 
             if (StringUtils.isNotEmpty(featureDTO.getFeatureSequence())) {
