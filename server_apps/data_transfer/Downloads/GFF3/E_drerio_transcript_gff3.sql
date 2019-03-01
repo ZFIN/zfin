@@ -10,7 +10,7 @@ select
     ';Alias='   || gff_ID
  from ensdart_name_mapping
   right outer join gff3 on gff_ID = enm_ensdart_stable_id
-  left outer join marker on mrkr_zdb_id = enm_tscript_zdb_id
- where substring(gff_source from 1 for 8) = 'Ensembl_'
-   and gff_feature in ('mRNA','transcript')
+  left outer join marker on mrkr_zdb_id = enm_tscript_zdb_id  
+ where gff_source like  'Ensembl_%'
+   and gff_feature <> 'gene'
 order by 1,4,5,3,9 )  to 'E_drerio_transcript.gff3'  DELIMITER '	'

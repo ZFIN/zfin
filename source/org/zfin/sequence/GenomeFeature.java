@@ -25,8 +25,11 @@ public class GenomeFeature {
     public static String GENE_ID = "gene_id";
     public static String PARENT = "Parent";
     public static String ZDB_ID = "zdb_id";
+    public static String NAME = "Name";
 
+    public GenomeFeature( ) {
 
+    }
     public GenomeFeature(String gff3Line ) {
         String[] fields = gff3Line.split("\\t");
         seqid = fields[0];
@@ -64,6 +67,8 @@ public class GenomeFeature {
         return attributes.get(PARENT);
     }
 
+    public String getName() { return attributes.get(NAME); }
+
     public String toString() {
 
 
@@ -89,6 +94,22 @@ public class GenomeFeature {
         return sb.toString();
     }
 
+    public String toUnloadString() {
+        return new StringBuilder()
+            .append(seqid).append("|")
+            .append(source).append("|")
+            .append(type).append("|")
+            .append(start).append("|")
+            .append(end).append("|")
+            .append(score).append("|")
+            .append(strand).append("|")
+            .append(phase).append("|")
+            .append(getAttribute("ID")).append("|")
+            .append(getAttribute("Name")).append("|")
+            .append(getAttribute("Parent")).append("|")
+            .toString();
+    }
+
 
     public String flattenAttributes() {
 
@@ -107,6 +128,19 @@ public class GenomeFeature {
     }
 
     public void addAttribute(String label, String value) {
+        attributes.put(label, value);
+    }
+
+    public String getAttribute(String label) {
+        String attribute = attributes.get(label);
+        if (attribute == null) {
+            return "";
+        } else {
+            return attribute;
+        }
+    }
+
+    public void setAttribute(String label, String value) {
         attributes.put(label, value);
     }
 
