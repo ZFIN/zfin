@@ -324,7 +324,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         mutagenBox.setDirty(false);
         lineNumberBox.clear();
         lineNumberBox.setDirty(false);
-
+        dominantCheckBox.setValue(false);
         featureEvidenceCode.setSelectedIndex(0);
         featureEvidenceCode.setDirty(false);
         featureChromosome.setDirty(false);

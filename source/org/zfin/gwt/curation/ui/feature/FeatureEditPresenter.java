@@ -132,6 +132,10 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
             view.saveButton.setEnabled(true);
             col.addBoolean(true);
         }
+        if (view.dominantCheckBox.getValue() != dto.getDominant()) {
+            view.saveButton.setEnabled(true);
+            col.addBoolean(true);
+        }
         if (view.featureTypeBox.getSelected() != null && dto.getFeatureType() != null) {
             col.addBoolean(view.featureTypeBox.isDirty(dto.getFeatureType().name()));
         } else if ((view.featureTypeBox.getSelected() == null && dto.getFeatureType() != null)
