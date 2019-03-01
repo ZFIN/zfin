@@ -20,7 +20,7 @@ GENERICS = fetch_ensembl_agp.sh pullFromBioMart.pl notifyStaleIds.sh reportEnsem
 
 STATICS  = fetch_ensdarTG.sh fetch_ensdarG.mysql fetch_ensdarT_dbacc.mysql \
 	load_ensdarG.sql load_ensdarT_dbacc.sql fetch_ensdarpInfo.mysql \
-	fetch_ensembl_gff.sh gtf2gff3.pl gtf2gff3.cfg unload_zfin_DNA_clone.sql \
+	fetchEnsemblGff3.groovy unload_zfin_DNA_clone.sql \
 	 agp_to_gff3.awk agp_to_gff3_trim.awk clone_gff3_w_alias.awk  \
 	  rollback.sql commit.sql readme readme.ensembl_mysql fetch_sangerMutantInfo.mysql fetch_ensdargOttdargTable.mysql loadEnsdarPMapping.sql loadSangerMutantData.sql loadEnsdargOttdarg.sql updateSequenceFeatureChromosomeLocation.sql \
 	load-missing-uniprot-records.sql log4j.xml report.properties build.xml
@@ -72,16 +72,12 @@ load_ensdarT_commit: $(TARGETDIR)/load_ensdarT_dbacc.sql \
 	cd $(TARGETDIR)/ && cat $< commit.sql | ${PGBINDIR}/psql -e ${DBNAME}
 
 # 		fetch  Ensembl GTF and convert to gff3
-run_gff: $(TARGETDIR)/fetch_ensembl_gff.sh
-	cd $(TARGETDIR) && fetch_ensembl_gff.sh
+run_gff: $(TARGETDIR)/fetchEnsemblGff3.groovy
+	cd $(TARGETDIR) && fetchEnsemblGff3.groovy
 
 notify_stale: $(TARGETDIR)/notifyStaleIds.sh
 
 run_sanger_mutant_data: $(TARGETDIR)/fetch_sangerMutantInfo.sh
-
-# pre delete any versions of the file to be downloaded
-run_gff_force: $(TARGETDIR)/fetch_ensembl_gff.sh
-	cd $(TARGETDIR) && fetch_ensembl_gff.sh -f
 
 # 		fetch and convert Ensembl AGP to gff3
 run_agp: $(TARGETDIR)/fetch_ensembl_agp.sh $(TARGETDIR)/agp_to_gff3.awk \

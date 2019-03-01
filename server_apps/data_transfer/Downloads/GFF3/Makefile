@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads/GFF3
 
-STATICS = gather_alias.awk runSqlFiles.groovy
+STATICS = runSqlFiles.groovy
 
 SUBDIRS = knockdown_reagents
 
