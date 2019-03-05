@@ -225,7 +225,7 @@
                                 <zfin2:displayFullLocation location="${formBean.featureLocations[1]}" hideLink="${empty formBean.feature.affectedGenes}"/>
                                 </c:if>
                                 <c:if test="${fn:length(formBean.featureLocations)==2}">
-                                    <zfin2:displayFullLocation location="${formBean.featureLocations[0]}" hideLink="${empty formBean.feature.affectedGenes}"/>
+                                    <zfin2:displayFullLocation location="${formBean.featureLocations[1]}" hideLink="${empty formBean.feature.affectedGenes}"/>
                                 </c:if>
                                 <c:if test="${fn:length(formBean.featureLocations)==1}">
                                     <zfin2:displayFullLocation location="${formBean.featureLocations[0]}" hideLink="${empty formBean.feature.affectedGenes}"/>
