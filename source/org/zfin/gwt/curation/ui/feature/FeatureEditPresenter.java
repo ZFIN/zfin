@@ -35,6 +35,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.mutationDetailTranscriptView.setPresenter(mutationDetailPresenter);
         view.mutationDetailDnaView.setPresenter(mutationDetailPresenter);
         view.mutationDetailProteinView.setPresenter(mutationDetailPresenter);
+        view.genomicMutationDetailView.setPresenter(mutationDetailPresenter);
 
     }
 
@@ -147,6 +148,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         col.addBoolean(view.mutagenBox.isDirty(dto.getMutagen()));
         col.addBoolean(view.featureChromosome.isDirty((dto.getFeatureChromosome())));
                 col.addBoolean(view.featureStartLoc.isDirty((dto.getFeatureStartLoc())));
+        col.addBoolean(view.genomicMutationDetailView.seqReference.isDirty(dto.getFgmdSeqRef()));
         col.addBoolean(view.featureEndLoc.isDirty((dto.getFeatureEndLoc())));
         col.addBoolean(view.featureEvidenceCode.isDirty((dto.getEvidence())));
         col.addBoolean(view.featureAssembly.isDirty((dto.getFeatureAssembly())));
@@ -157,6 +159,21 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         col.addBoolean(view.labOfOriginBox.isDirty(dto.getLabOfOrigin()));
 
         col.addBoolean(mutationDetailPresenter.isDirty());
+       /* col.addBoolean(view.genomicMutationDetailView.seqReference.isDirty(dto.getFgmdSeqRef()));
+        col.addBoolean(view.genomicMutationDetailView.seqVariant.isDirty(dto.getFgmdSeqVar()));*/
+       /* if (view.genomicMutationDetailView.seqVariant.getText() != dto.getFgmdSeqVar()) {
+            System.out.println(view.genomicMutationDetailView.seqVariant.getText());
+            System.out.println(dto.getFgmdSeqVar());
+
+            view.saveButton.setEnabled(true);
+            col.addBoolean(true);
+        }
+        if (view.genomicMutationDetailView.seqReference.getText() != dto.getFgmdSeqRef()) {
+            view.saveButton.setEnabled(true);
+            col.addBoolean(true);
+        }*/
+        System.out.println(view.genomicMutationDetailView.seqVariant.getText());
+        System.out.println(dto.getFgmdSeqVar());
         return col.arrivedValue();
     }
 
