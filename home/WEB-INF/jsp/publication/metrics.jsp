@@ -83,9 +83,6 @@
                 var value = $(this).val();
                 // special handling for backspace or delete
                 if (evt.which === 8 || evt.which === 46) {
-                    if (value.endsWith('-')) {
-                        $(this).val(value.slice(0, -2));
-                    }
                     return false;
                 }
                 if (value.length === 4 || value.length === 7) {
