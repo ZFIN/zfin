@@ -13,6 +13,7 @@ import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.repository.PublicationRepository;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public class PublicationMetricsController {
 
     @RequestMapping(value = "/metrics", method = RequestMethod.GET)
     public String showSearchForm(@ModelAttribute("formBean") PublicationMetricsFormBean formBean,
-                                 Model model) throws Exception {
+                                 Model model) {
 
         model.addAttribute("statuses", publicationRepository.getAllPublicationStatuses().stream()
                 .map(PublicationTrackingStatus::getName)
@@ -45,14 +46,28 @@ public class PublicationMetricsController {
                 .collect(Collectors.toList()));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Metrics");
 
+        List<String> errors = new ArrayList<>();
         if (formBean.getQueryType() != null) {
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat outputFormat = new SimpleDateFormat(formBean.getGroupBy().getFormat());
 
             Calendar start = Calendar.getInstance();
-            start.setTime(inputFormat.parse(formBean.getFromDate()));
+            try {
+                start.setTime(inputFormat.parse(formBean.getFromDate()));
+            } catch (ParseException e) {
+                errors.add("Unable to parse From date: \"" + formBean.getFromDate() + "\"");
+            }
             Calendar end = Calendar.getInstance();
-            end.setTime(inputFormat.parse(formBean.getToDate()));
+            try {
+                end.setTime(inputFormat.parse(formBean.getToDate()));
+            } catch (ParseException e) {
+                errors.add("Unable to parse To date: \"" + formBean.getToDate() + "\"");
+            }
+
+            if (!errors.isEmpty()) {
+                model.addAttribute("errors", errors);
+                return "publication/metrics.page";
+            }
 
             Map<String, Map<String, Long>> resultTable = new LinkedHashMap<>();
             Object[] rowLabels = new Object[]{};

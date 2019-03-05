@@ -1,6 +1,14 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <jsp:useBean id="formBean" class="org.zfin.publication.presentation.PublicationMetricsFormBean" scope="request"/>
 
+<c:if test="${!empty errors}">
+    <div class="no-results-found-message">
+        <ul style="text-align: left;">
+            <c:forEach items="${errors}" var="error"><li>${error}</li></c:forEach>
+        </ul>
+    </div>
+</c:if>
+
 <form:form method="GET" commandName="formBean">
     <table class="primary-entity-attributes metrics-table">
         <tr>
