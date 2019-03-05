@@ -217,7 +217,7 @@ public class MutationDetailPresenter {
         return dtoSet == null || dtoSet.isEmpty();
     }
 
-    public void handleDirty() {
+    public void handleDirty(){
 
     }
 

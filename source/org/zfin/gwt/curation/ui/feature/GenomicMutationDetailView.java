@@ -58,12 +58,13 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
 
 
     @UiHandler("seqReference")
-    void onChangeSeqReference(KeyUpEvent event) {
+    void onChangeSeqReference(@SuppressWarnings("unused") KeyUpEvent event)  {
+
         handleChanges();
     }
 
     @UiHandler("seqVariant")
-    void onChangeSeqVariant(KeyUpEvent event) {
+    void onChangeSeqVariant(@SuppressWarnings("unused") KeyUpEvent event) {
         handleChanges();
     }
 

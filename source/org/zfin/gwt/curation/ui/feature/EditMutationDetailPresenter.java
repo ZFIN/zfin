@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui.feature;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.curation.event.DirtyValueEvent;
 import org.zfin.gwt.root.dto.MutationDetailDnaChangeDTO;
 import org.zfin.gwt.root.dto.MutationDetailProteinChangeDTO;
@@ -32,9 +33,21 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
 
     // for the edit feature section
     public boolean isDirty() {
+
+        BooleanCollector col = new BooleanCollector(true);
+        GenomicMutationDetailView genMutView=view.genomicMutationDetailView;
+        if (dto == null) {
+            for (IsDirtyWidget widget : genMutView.getValueFields())
+                col.addBoolean(widget.isDirty(null));
+
+        } else {
+
+            col.addBoolean(genMutView.seqVariant.isDirty(dto.getFgmdSeqVar()));
+            col.addBoolean(genMutView.seqReference.isDirty(dto.getFgmdSeqRef()));
+        }
         MutationDetailDNAView mutationDetailDnaView = view.mutationDetailDnaView;
         MutationDetailDnaChangeDTO dnaChangeDTO = dto.getDnaChangeDTO();
-        BooleanCollector col = new BooleanCollector(true);
+
         if (dnaChangeDTO == null) {
             for (IsDirtyWidget widget : mutationDetailDnaView.getValueFields())
                 col.addBoolean(widget.isDirty(null));
@@ -68,6 +81,8 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
             col.addBoolean(mutationDetailProteinView.positionEnd.isDirty(proteinChangeDTO.getPositionEnd()));
             col.addBoolean(mutationDetailProteinView.zfinAccessionBox.getAccessionNumber().isDirty(proteinChangeDTO.getSequenceReferenceAccessionNumber()));
         }
+
+
         Set<MutationDetailTranscriptChangeDTO> transcriptChangeDTOSet = dto.getTranscriptChangeDTOSet();
         if (transcriptChangeDTOSet == null || transcriptChangeDTOSet.isEmpty()) {
             // check if there are any transcript records created
