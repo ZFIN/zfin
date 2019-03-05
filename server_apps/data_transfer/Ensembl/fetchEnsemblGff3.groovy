@@ -38,8 +38,17 @@ new FTPClient().with {
     disconnect()
 }
 
-"wget \"ftp://$hostname$path$fileName\"".execute()
-"gunzip $fileName".execute()
+String ftpCommand = "/bin/wget ftp://$hostname$path$fileName"
+println "attempting " + ftpCommand
+def proc = ftpCommand.execute()
+def b = new StringBuffer()
+proc.consumeProcessErrorStream(b)
+println proc.text
+println b.toString()
+proc = "/bin/gunzip $fileName".execute()
+b = new StringBuffer()
+println proc.text
+println b.toString()
 fileName = fileName.take(fileName.lastIndexOf('.'))
 
 List<GenomeFeature> features = []
