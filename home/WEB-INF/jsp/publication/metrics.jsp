@@ -110,7 +110,12 @@
                     $('[name="statistics"]').removeAttr("disabled");
                 } else {
                     $('[value="COUNT"]').attr('checked', 'checked');
-                    $('[name="statistics"]').attr("disabled", "disabled")
+                    $('[name="statistics"]').attr("disabled", "disabled");
+                }
+                if (this.value === 'STATUS_DATE') {
+                    $('[value="ACTIVE"]').attr("disabled", "disabled");
+                } else {
+                    $('[value="ACTIVE"]').removeAttr("disabled");
                 }
             });
         $('[value="PET_DATE"]').trigger('change');
