@@ -6,7 +6,7 @@ public class PubMetricResultBean {
 
     private Object category;
     private Date date;
-    private Long count;
+    private Number count;
 
     public PubMetricResultBean() {
     }
@@ -33,11 +33,11 @@ public class PubMetricResultBean {
         this.date = date;
     }
 
-    public Long getCount() {
+    public Number getCount() {
         return count;
     }
 
-    public void setCount(Long count) {
+    public void setCount(Number count) {
         this.count = count;
     }
 

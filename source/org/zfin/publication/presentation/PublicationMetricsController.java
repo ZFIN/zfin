@@ -69,7 +69,7 @@ public class PublicationMetricsController {
                 return "publication/metrics.page";
             }
 
-            Map<String, Map<String, Long>> resultTable = new LinkedHashMap<>();
+            Map<String, Map<String, Number>> resultTable = new LinkedHashMap<>();
             Object[] rowLabels = new Object[]{};
             switch (formBean.getGroupType()) {
                 case ACTIVE:
@@ -85,10 +85,10 @@ public class PublicationMetricsController {
                     rowLabels = formBean.getLocations();
             }
             for (Object rowLabel : rowLabels) {
-                Map<String, Long> row = new LinkedHashMap<>();
+                Map<String, Number> row = new LinkedHashMap<>();
                 Calendar calendar = (Calendar) start.clone();
                 while (calendar.before(end)) {
-                    row.put(outputFormat.format(calendar.getTime()), 0L);
+                    row.put(outputFormat.format(calendar.getTime()), 0);
                     calendar.add(formBean.getGroupBy().getField(), 1);
                 }
                 resultTable.put(rowLabel.toString(), row);
@@ -105,6 +105,7 @@ public class PublicationMetricsController {
                 if (rowKey == null || !resultTable.containsKey(rowKey.toString())) {
                     continue;
                 }
+                LOG.warn(result.getCount().getClass().getName());
                 resultTable.get(rowKey.toString()).put(outputFormat.format(result.getDate()), result.getCount());
             }
             model.addAttribute("resultsTable", resultTable);

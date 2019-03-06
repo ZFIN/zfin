@@ -11,6 +11,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -2654,34 +2655,38 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         boolean currentStatusOnly = false;
         switch (groupType) {
             case INDEXED:
-                groupExpression = "case when pub.indexed = 't' then 'Indexed' else 'Unindexed' end";
-                dateExpression = "pub.indexedDate";
+                groupExpression = "case when pub.pub_is_indexed = 't' then 'Indexed' else 'Unindexed' end";
+                dateExpression = "pub.pub_indexed_date";
                 currentStatusOnly = true;
                 break;
             case STATUS:
-                groupExpression = "status.name";
-                dateExpression = "history.date";
+                groupExpression = "status.pts_status_display";
+                dateExpression = "history.pth_status_insert_date";
                 break;
             case LOCATION:
-                groupExpression = "location.name";
-                dateExpression = "history.date";
+                groupExpression = "location.ptl_location_display";
+                dateExpression = "history.pth_status_insert_date";
                 break;
         }
-        String hql = String.format(
-                "select new org.zfin.publication.presentation.PubMetricResultBean(%1$s, date_trunc('%2$s', %3$s), count(*)) " +
-                        "from Publication pub " +
-                        "left outer join pub.statusHistory history " +
-                        "left outer join history.status status " +
-                        "left outer join history.location location " +
-                        "where %3$s >= :start " +
-                        "and %3$s < :end " +
-                        "and pub.type = :type " +
-                        (currentStatusOnly ? "and history.isCurrent = 't' " : "") +
-                        "group by %1$s, date_trunc('%2$s', %3$s)", groupExpression, groupInterval.toString(), dateExpression);
-        return HibernateUtil.currentSession().createQuery(hql)
+        String sql = String.format(
+                "select u.category as category, u.date as date, count(*) as count " +
+                        "from ( " +
+                        "  select distinct pub.zdb_id, %1$s as category, date_trunc('%2$s', %3$s) as date " +
+                        "  from publication pub " +
+                        "  left outer join pub_tracking_history history on pub.zdb_id = history.pth_pub_zdb_id " +
+                        "  left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id " +
+                        "  left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id " +
+                        "  where %3$s >= :start " +
+                        "  and %3$s < :end " +
+                        "  and pub.jtype = :type " +
+                        (currentStatusOnly ? "and history.pth_status_is_current = 't' " : "") +
+                        ") as u " +
+                        "group by u.category, u.date", groupExpression, groupInterval.toString(), dateExpression);
+        return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("start", start)
                 .setParameter("end", end)
-                .setParameter("type", Publication.Type.JOURNAL)
+                .setParameter("type", Publication.Type.JOURNAL.getDisplay())
+                .setResultTransformer(Transformers.aliasToBean(PubMetricResultBean.class))
                 .list();
     }
 
