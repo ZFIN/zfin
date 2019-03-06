@@ -2632,12 +2632,52 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                         "left outer join pub.statusHistory history " +
                         "left outer join history.status status " +
                         "left outer join history.location location " +
-                        "inner join history.publication pub " +
                         "where pub.entryDate >= :start " +
                         "and pub.entryDate < :end " +
                         "and pub.type = :type " +
                         "and history.isCurrent = 't' " +
                         "group by %1$s, date_trunc('%2$s', pub.entryDate)", groupExpression, groupInterval.toString());
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("start", start)
+                .setParameter("end", end)
+                .setParameter("type", Publication.Type.JOURNAL)
+                .list();
+    }
+
+    @Override
+    public List<PubMetricResultBean> getMetricsByStatusDate(Calendar start,
+                                                            Calendar end,
+                                                            PublicationMetricsFormBean.Interval groupInterval,
+                                                            PublicationMetricsFormBean.GroupType groupType) {
+        String groupExpression = "";
+        String dateExpression = "";
+        boolean currentStatusOnly = false;
+        switch (groupType) {
+            case INDEXED:
+                groupExpression = "case when pub.indexed = 't' then 'Indexed' else 'Unindexed' end";
+                dateExpression = "pub.indexedDate";
+                currentStatusOnly = true;
+                break;
+            case STATUS:
+                groupExpression = "status.name";
+                dateExpression = "history.date";
+                break;
+            case LOCATION:
+                groupExpression = "location.name";
+                dateExpression = "history.date";
+                break;
+        }
+        String hql = String.format(
+                "select new org.zfin.publication.presentation.PubMetricResultBean(%1$s, date_trunc('%2$s', %3$s), count(*)) " +
+                        "from Publication pub " +
+                        "left outer join pub.statusHistory history " +
+                        "left outer join history.status status " +
+                        "left outer join history.location location " +
+                        "where %3$s >= :start " +
+                        "and %3$s < :end " +
+                        "and pub.type = :type " +
+                        (currentStatusOnly ? "and history.isCurrent = 't' " : "") +
+                        "group by %1$s, date_trunc('%2$s', %3$s)", groupExpression, groupInterval.toString(), dateExpression);
         return HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("start", start)
                 .setParameter("end", end)

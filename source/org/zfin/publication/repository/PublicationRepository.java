@@ -614,4 +614,9 @@ public interface PublicationRepository extends PaginationParameter {
                                                   Calendar end,
                                                   PublicationMetricsFormBean.Interval groupInterval,
                                                   PublicationMetricsFormBean.GroupType groupType);
+
+    List<PubMetricResultBean> getMetricsByStatusDate(Calendar start,
+                                                     Calendar end,
+                                                     PublicationMetricsFormBean.Interval groupInterval,
+                                                     PublicationMetricsFormBean.GroupType groupType);
 }

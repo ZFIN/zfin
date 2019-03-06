@@ -97,6 +97,8 @@ public class PublicationMetricsController {
             List<PubMetricResultBean> resultList = new ArrayList<>();
             if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.PET_DATE) {
                 resultList = publicationRepository.getMetricsByPETDate(start, end, formBean.getGroupBy(), formBean.getGroupType());
+            } else if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.STATUS_DATE) {
+                resultList = publicationRepository.getMetricsByStatusDate(start, end, formBean.getGroupBy(), formBean.getGroupType());
             }
             for (PubMetricResultBean result : resultList) {
                 Object rowKey = result.getCategory();
