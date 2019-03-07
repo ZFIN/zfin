@@ -9,6 +9,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-611.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1104/ZFIN-6086.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1104/CUR-874.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1104/CUR-874-b.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD_605.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-610.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1104/DLOAD-617c.sql" />
