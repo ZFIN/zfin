@@ -152,7 +152,6 @@
         <a href="/action/blast/blast">ZFIN</a>,
         <a href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</a>,
         <a href="http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&BLAST_SPEC=OGP__7955__9557">NCBI</a>,
-        <a href="http://danio.mgh.harvard.edu/blast/blast.html">MGH</a>
     </li>
 
     <li>Find cDNAs and ESTs at
