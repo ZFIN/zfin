@@ -49,11 +49,11 @@ def sameFigure = [:]
 //HibernateProfileRepository brings in ProfileService, which requires a validation library that
 //needs to be excluded from the Classpath for this to load up.  Awkward, but easy enough to get a person this way...
 /*Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
-        .add(Restrictions.eq("zdbID", "ZDB-PERS-030612-1"))  //Yvonne
+        .add(Rnewburgess.csvestrictions.eq("zdbID", "ZDB-PERS-030612-1"))  //Yvonne
         .uniqueResult();*/
 //Person owner=RepositoryFactory.profileRepository.getPerson("ZDB-PERS-030520-2")
 
-def burgessImages = parseCsv(new FileReader("/research/zunloads/projects/HBurgess/legend-hburgess.txt"), separator: '\t')
+def burgessImages = parseCsv(new FileReader("/research/zunloads/projects/HBurgess/newburgess.csv"), separator: ',')
 //def burgessImages = parseCsv(new FileReader("/research/zusers/pm/Projects/releases/HBurgess/234.txt"),separator: '\t')
 String mediaDir = "/research/zunloads/projects/HBurgess/images3/"
 
@@ -79,7 +79,7 @@ burgessImages.each { csv ->
     )
 
     Marker gene = RepositoryFactory.markerRepository.getMarkerByName(csv.xpatexgene)
-    Publication publication = RepositoryFactory.publicationRepository.getPublication("ZDB-PUB-151008-10")
+    Publication publication = RepositoryFactory.publicationRepository.getPublication("ZDB-PUB-180514-4")
 
     //  Fish burgessFish=RepositoryFactory.mutantRepository.getFish(csv.fishid)
     genoStr = csv.ftr2 + "; " + csv.ftr1
@@ -91,8 +91,9 @@ burgessImages.each { csv ->
     Genotype burgessGeno = RepositoryFactory.mutantRepository.getGenotypeByName(genoStr)
     if (burgessGeno == null) {
         List<Genotype> bGenos = RepositoryFactory.mutantRepository.getGenotypesByFeature(RepositoryFactory.featureRepository.getFeatureByAbbreviation(csv.ftr1))
+        print bGenos.size();
         for (Genotype item : bGenos) {
-            if (item.zdbID.contains("ZDB-GENO-151216")||item.zdbID.contains("ZDB-GENO-1901")) {
+            if (item.zdbID.contains("ZDB-GENO-151216")||item.zdbID.contains("ZDB-GENO-1901")||item.zdbID.contains("ZDB-GENO-1807")||item.zdbID.contains("ZDB-GENO-1511") ||item.zdbID.contains("ZDB-GENO-130214")) {
 
                 print(item.name)
                 burgessGeno = item
@@ -127,7 +128,10 @@ burgessImages.each { csv ->
         fishExperiment = createFishExperiment(burgessFish, experiment)
     }
 
-    Term superTerm = RepositoryFactory.ontologyRepository.getTermByName(csv.superterm, Ontology.ANATOMY)
+    List<Ontology> ontologies = new ArrayList<>(2);
+    ontologies.add(Ontology.ANATOMY);
+    ontologies.add(Ontology.SPATIAL);
+    Term superTerm = RepositoryFactory.ontologyRepository.getTermByName(csv.superterm, ontologies);
 
     DevelopmentStage stage = RepositoryFactory.anatomyRepository.getStageByID("ZDB-STAGE-010723-35")
 
@@ -168,6 +172,8 @@ burgessImages.each { csv ->
         assert (figure)
         assert (figure.zdbID)
         assert (expressionResult.ID)
+    println expressionResult.ID
+    println fishExperiment.zdbID
         assert (image)
         assert (image.zdbID)
 
@@ -179,12 +185,10 @@ burgessImages.each { csv ->
 //assert(videosAdded.values().size() == 31)
 
 
-    if ("--rollback" in args)
-        session.getTransaction().rollback()
-    else
+
         session.getTransaction().commit()
 
-
+println ("Done with load")
 
 
 
@@ -249,7 +253,10 @@ burgessImages.each { csv ->
 
                 setSuperTerm(superTerm)
                 if (subTermStr!=''){
-                    Term subTerm = RepositoryFactory.ontologyRepository.getTermByName(subTermStr, Ontology.ANATOMY)
+                    List<Ontology> ontologies = new ArrayList<>(2);
+                    ontologies.add(Ontology.ANATOMY);
+                    ontologies.add(Ontology.SPATIAL);
+                    Term subTerm = RepositoryFactory.ontologyRepository.getTermByName(subTermStr, ontologies)
                     print(subTerm.getZdbID())
                     setSubTerm(subTerm)
 
@@ -270,7 +277,7 @@ burgessImages.each { csv ->
                 expressionResult = results.get(0)
 
             HibernateUtil.currentSession().save(expressionResult)
-            // HibernateUtil.currentSession().flush()
+           HibernateUtil.currentSession().flush()
 
 
             return expressionResult
@@ -281,7 +288,10 @@ burgessImages.each { csv ->
 
                 setSuperTerm(superTerm)
                 if (subTermStr!=''){
-                    Term subTerm = RepositoryFactory.ontologyRepository.getTermByName(subTermStr, Ontology.ANATOMY)
+                    List<Ontology> ontologies = new ArrayList<>(2);
+                    ontologies.add(Ontology.ANATOMY);
+                    ontologies.add(Ontology.SPATIAL);
+                    Term subTerm = RepositoryFactory.ontologyRepository.getTermByName(subTermStr, ontologies)
                     print(subTerm.getZdbID())
                     setSubTerm(subTerm)
 
@@ -296,7 +306,7 @@ burgessImages.each { csv ->
                 expressionResult = results.get(0)
 
             HibernateUtil.currentSession().save(expressionResult)
-            // HibernateUtil.currentSession().flush()
+             HibernateUtil.currentSession().flush()
 
 
             return expressionResult
@@ -319,7 +329,7 @@ burgessImages.each { csv ->
         genotypeExperiment.standard = true
         genotypeExperiment.standardOrGenericControl = true
         HibernateUtil.currentSession().save(genotypeExperiment)
-//   HibernateUtil.currentSession().flush()
+   HibernateUtil.currentSession().flush()
 
         return genotypeExperiment
     }
@@ -334,7 +344,7 @@ burgessImages.each { csv ->
         expressionExperiment.setPublication(publication)
         expressionExperiment.setAssay(assay)
         HibernateUtil.currentSession().save(expressionExperiment)
-        //  HibernateUtil.currentSession().flush()
+         HibernateUtil.currentSession().flush()
 
         return expressionExperiment
     }
