@@ -2608,52 +2608,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
-    public List<PubMetricResultBean> getMetricsByPETDate(Calendar start,
-                                                         Calendar end,
-                                                         PublicationMetricsFormBean.Interval groupInterval,
-                                                         PublicationMetricsFormBean.GroupType groupType) {
-        String groupExpression = "";
-        switch (groupType) {
-            case ACTIVE:
-                groupExpression = "pub.status";
-                break;
-            case INDEXED:
-                groupExpression = "case when pub.indexed = 't' then 'Indexed' else 'Unindexed' end";
-                break;
-            case STATUS:
-                groupExpression = "status.name";
-                break;
-            case LOCATION:
-                groupExpression = "location.name";
-                break;
-        }
-        String hql = String.format(
-                "select new org.zfin.publication.presentation.PubMetricResultBean(%1$s, date_trunc('%2$s', pub.entryDate), count(*)) " +
-                        "from Publication pub " +
-                        "left outer join pub.statusHistory history " +
-                        "left outer join history.status status " +
-                        "left outer join history.location location " +
-                        "where pub.entryDate >= :start " +
-                        "and pub.entryDate < :end " +
-                        "and pub.type = :type " +
-                        "and history.isCurrent = 't' " +
-                        "group by %1$s, date_trunc('%2$s', pub.entryDate)", groupExpression, groupInterval.toString());
-        return HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("start", start)
-                .setParameter("end", end)
-                .setParameter("type", Publication.Type.JOURNAL)
-                .list();
-    }
-
-    @Override
-    public List<PubMetricResultBean> getMetricsByStatusDate(Calendar start,
-                                                            Calendar end,
-                                                            PublicationMetricsFormBean.Interval groupInterval,
-                                                            PublicationMetricsFormBean.GroupType groupType) {
+    public List<PubMetricResultBean> getMetricsByDate(Calendar start,
+                                                      Calendar end,
+                                                      PublicationMetricsFormBean.QueryType query,
+                                                      PublicationMetricsFormBean.Interval groupInterval,
+                                                      PublicationMetricsFormBean.GroupType groupType) {
         String groupExpression = "";
         String dateExpression = "";
         boolean currentStatusOnly = false;
         switch (groupType) {
+            case ACTIVE:
+                groupExpression = "pub.status";
+                currentStatusOnly = true;
+                break;
             case INDEXED:
                 groupExpression = "case when pub.pub_is_indexed = 't' then 'Indexed' else 'Unindexed' end";
                 dateExpression = "pub.pub_indexed_date";
@@ -2667,6 +2634,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 groupExpression = "location.ptl_location_display";
                 dateExpression = "history.pth_status_insert_date";
                 break;
+        }
+        if (query == PublicationMetricsFormBean.QueryType.PET_DATE) {
+            dateExpression = "pub.pub_arrival_date";
+            currentStatusOnly = true;
         }
         String sql = String.format(
                 "select u.category as category, u.date as date, count(*) as count " +

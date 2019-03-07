@@ -94,18 +94,13 @@ public class PublicationMetricsController {
                 resultTable.put(rowLabel.toString(), row);
             }
 
-            List<PubMetricResultBean> resultList = new ArrayList<>();
-            if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.PET_DATE) {
-                resultList = publicationRepository.getMetricsByPETDate(start, end, formBean.getGroupBy(), formBean.getGroupType());
-            } else if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.STATUS_DATE) {
-                resultList = publicationRepository.getMetricsByStatusDate(start, end, formBean.getGroupBy(), formBean.getGroupType());
-            }
+            List<PubMetricResultBean> resultList = publicationRepository.getMetricsByDate(start, end,
+                    formBean.getQueryType(), formBean.getGroupBy(), formBean.getGroupType());
             for (PubMetricResultBean result : resultList) {
                 Object rowKey = result.getCategory();
                 if (rowKey == null || !resultTable.containsKey(rowKey.toString())) {
                     continue;
                 }
-                LOG.warn(result.getCount().getClass().getName());
                 resultTable.get(rowKey.toString()).put(outputFormat.format(result.getDate()), result.getCount());
             }
             model.addAttribute("resultsTable", resultTable);

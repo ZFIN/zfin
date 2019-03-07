@@ -610,13 +610,9 @@ public interface PublicationRepository extends PaginationParameter {
 
     Long getDirectlyAttributed(Publication publication);
 
-    List<PubMetricResultBean> getMetricsByPETDate(Calendar start,
-                                                  Calendar end,
-                                                  PublicationMetricsFormBean.Interval groupInterval,
-                                                  PublicationMetricsFormBean.GroupType groupType);
-
-    List<PubMetricResultBean> getMetricsByStatusDate(Calendar start,
-                                                     Calendar end,
-                                                     PublicationMetricsFormBean.Interval groupInterval,
-                                                     PublicationMetricsFormBean.GroupType groupType);
+    List<PubMetricResultBean> getMetricsByDate(Calendar start,
+                                               Calendar end,
+                                               PublicationMetricsFormBean.QueryType query,
+                                               PublicationMetricsFormBean.Interval groupInterval,
+                                               PublicationMetricsFormBean.GroupType groupType);
 }
