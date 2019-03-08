@@ -76,7 +76,10 @@
         <tr>
             <td>${row.key}</td>
             <c:forEach items="${row.value}" var="column">
-                <td>${column.value}</td>
+                <td>
+                    <c:if test="${column.value == null}">--</c:if>
+                    <fmt:formatNumber value="${column.value}" maxFractionDigits="1" />
+                </td>
             </c:forEach>
         </tr>
     </c:forEach>

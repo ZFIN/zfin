@@ -2,16 +2,16 @@ package org.zfin.publication.presentation;
 
 import java.util.Date;
 
-public class PubMetricResultBean {
+public class MetricsByDateBean {
 
     private Object category;
     private Date date;
     private Number count;
 
-    public PubMetricResultBean() {
+    public MetricsByDateBean() {
     }
 
-    public PubMetricResultBean(Object category, Date date, Long count) {
+    public MetricsByDateBean(Object category, Date date, Long count) {
         this.category = category;
         this.date = date;
         this.count = count;
@@ -43,7 +43,7 @@ public class PubMetricResultBean {
 
     @Override
     public String toString() {
-        return "PubMetricResultBean{" +
+        return "MetricsByDateBean{" +
                 "category=" + category +
                 ", date=" + date +
                 ", count=" + count +

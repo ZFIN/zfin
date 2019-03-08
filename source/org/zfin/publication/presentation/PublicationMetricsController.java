@@ -70,6 +70,7 @@ public class PublicationMetricsController {
             }
 
             Map<String, Map<String, Number>> resultTable = new LinkedHashMap<>();
+
             Object[] rowLabels = new Object[]{};
             switch (formBean.getGroupType()) {
                 case ACTIVE:
@@ -84,25 +85,52 @@ public class PublicationMetricsController {
                 case LOCATION:
                     rowLabels = formBean.getLocations();
             }
-            for (Object rowLabel : rowLabels) {
-                Map<String, Number> row = new LinkedHashMap<>();
-                Calendar calendar = (Calendar) start.clone();
-                while (calendar.before(end)) {
-                    row.put(outputFormat.format(calendar.getTime()), 0);
-                    calendar.add(formBean.getGroupBy().getField(), 1);
+
+            if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.CUMULATIVE) {
+                List<CumulativeStatisticsBean> resultList = publicationRepository.getCumulativeMetrics(end, formBean.getGroupType());
+
+                for (Object rowLabel : rowLabels) {
+                    Map<String, Number> row = new LinkedHashMap<>();
+                    row.put(PublicationMetricsFormBean.Statistic.AVERAGE.getDisplay(), null);
+                    row.put(PublicationMetricsFormBean.Statistic.STANDARD_DEVIATION.getDisplay(), null);
+                    row.put(PublicationMetricsFormBean.Statistic.MINIMUM.getDisplay(), null);
+                    row.put(PublicationMetricsFormBean.Statistic.MAXIMUM.getDisplay(), null);
+                    resultTable.put(rowLabel.toString(), row);
                 }
-                resultTable.put(rowLabel.toString(), row);
+
+                for (CumulativeStatisticsBean result : resultList) {
+                    Object rowKey = result.getCategory();
+                    if (rowKey == null || !resultTable.containsKey(rowKey.toString())) {
+                        continue;
+                    }
+                    Map<String, Number> row = resultTable.get(rowKey.toString());
+                    row.put(PublicationMetricsFormBean.Statistic.AVERAGE.getDisplay(), result.getAverage());
+                    row.put(PublicationMetricsFormBean.Statistic.STANDARD_DEVIATION.getDisplay(), result.getStandardDeviation());
+                    row.put(PublicationMetricsFormBean.Statistic.MINIMUM.getDisplay(), result.getMinimum());
+                    row.put(PublicationMetricsFormBean.Statistic.MAXIMUM.getDisplay(), result.getMaximum());
+                }
+            } else {
+                List<MetricsByDateBean> resultList = publicationRepository.getMetricsByDate(start, end, formBean.getQueryType(), formBean.getGroupBy(), formBean.getGroupType());
+
+                for (Object rowLabel : rowLabels) {
+                    Map<String, Number> row = new LinkedHashMap<>();
+                    Calendar calendar = (Calendar) start.clone();
+                    while (calendar.before(end)) {
+                        row.put(outputFormat.format(calendar.getTime()), 0);
+                        calendar.add(formBean.getGroupBy().getField(), 1);
+                    }
+                    resultTable.put(rowLabel.toString(), row);
+                }
+
+                for (MetricsByDateBean result : resultList) {
+                    Object rowKey = result.getCategory();
+                    if (rowKey == null || !resultTable.containsKey(rowKey.toString())) {
+                        continue;
+                    }
+                    resultTable.get(rowKey.toString()).put(outputFormat.format(result.getDate()), result.getCount());
+                }
             }
 
-            List<PubMetricResultBean> resultList = publicationRepository.getMetricsByDate(start, end,
-                    formBean.getQueryType(), formBean.getGroupBy(), formBean.getGroupType());
-            for (PubMetricResultBean result : resultList) {
-                Object rowKey = result.getCategory();
-                if (rowKey == null || !resultTable.containsKey(rowKey.toString())) {
-                    continue;
-                }
-                resultTable.get(rowKey.toString()).put(outputFormat.format(result.getDate()), result.getCount());
-            }
             model.addAttribute("resultsTable", resultTable);
         }
 
