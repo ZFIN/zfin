@@ -39,7 +39,6 @@ public class PublicationMetricsController {
         model.addAttribute("groupTypes", PublicationMetricsFormBean.GroupType.values());
         model.addAttribute("activationStatuses", Publication.Status.values());
         model.addAttribute("indexedStatuses", PublicationMetricsFormBean.INDEXED_STATUSES);
-        model.addAttribute("statistics", PublicationMetricsFormBean.Statistic.values());
         model.addAttribute("locations", publicationRepository.getAllPublicationLocations().stream()
                 .filter(l -> l.getRole() == PublicationTrackingLocation.Role.CURATOR)
                 .map(PublicationTrackingLocation::getName)
@@ -47,25 +46,14 @@ public class PublicationMetricsController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Metrics");
 
         List<String> errors = new ArrayList<>();
-        if (formBean.getQueryType() != null) {
+        if (formBean.getQueryType() != null && formBean.getGroupType() != null) {
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat outputFormat = new SimpleDateFormat(formBean.getGroupBy().getFormat());
 
-            Calendar start = Calendar.getInstance();
-            try {
-                start.setTime(inputFormat.parse(formBean.getFromDate()));
-            } catch (ParseException e) {
-                errors.add("Unable to parse From date: \"" + formBean.getFromDate() + "\"");
-            }
             Calendar end = Calendar.getInstance();
             try {
                 end.setTime(inputFormat.parse(formBean.getToDate()));
             } catch (ParseException e) {
                 errors.add("Unable to parse To date: \"" + formBean.getToDate() + "\"");
-            }
-
-            if (!errors.isEmpty()) {
-                model.addAttribute("errors", errors);
                 return "publication/metrics.page";
             }
 
@@ -110,8 +98,17 @@ public class PublicationMetricsController {
                     row.put(PublicationMetricsFormBean.Statistic.MAXIMUM.getDisplay(), result.getMaximum());
                 }
             } else {
+                Calendar start = Calendar.getInstance();
+                try {
+                    start.setTime(inputFormat.parse(formBean.getFromDate()));
+                } catch (ParseException e) {
+                    errors.add("Unable to parse From date: \"" + formBean.getFromDate() + "\"");
+                    return "publication/metrics.page";
+                }
+
                 List<MetricsByDateBean> resultList = publicationRepository.getMetricsByDate(start, end, formBean.getQueryType(), formBean.getGroupBy(), formBean.getGroupType());
 
+                SimpleDateFormat outputFormat = new SimpleDateFormat(formBean.getGroupBy().getFormat());
                 for (Object rowLabel : rowLabels) {
                     Map<String, Number> row = new LinkedHashMap<>();
                     Calendar calendar = (Calendar) start.clone();

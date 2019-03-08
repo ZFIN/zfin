@@ -1164,16 +1164,24 @@ input + label {
     padding-bottom: 1rem !important;
 }
 
+.metrics-table .control-group {
+    display: inline-block;
+}
+
+.metrics-table .control-group label {
+    float: left;
+}
+
 .metrics-table input[type=text] {
     margin-right: 5px;
     margin-left: 5px;
 }
 
-.metrics-table input:disabled ~ label {
+.metrics-table *:disabled + label {
     color: #cccccc;
 }
 
-.metrics-table input[type='radio'] ~ label {
+.metrics-table input[type='radio'] + label {
     margin-right: 15px;
 }
 

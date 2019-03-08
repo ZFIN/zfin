@@ -15,21 +15,18 @@
             <th>Dates</th>
             <td>
                 <form:select path="queryType" items="${queryTypes}" itemLabel="display" />
-                <form:label path="fromDate">From</form:label>
-                <form:input path="fromDate" cssClass="date-mask" />
-                <form:label path="toDate">To</form:label>
-                <form:input path="toDate" cssClass="date-mask" />
-                <form:label path="groupBy">By</form:label>
-                <form:select path="groupBy" items="${intervals}" itemLabel="display" />
-            </td>
-        </tr>
-
-        <tr style="display: none;">
-            <th>Show</th>
-            <td>
-                <div class="metrics-checkboxes">
-                    <form:checkboxes path="statistics" items="${statistics}" itemLabel="display" />
-                </div>
+                <span class="control-group">
+                    <form:input path="fromDate" cssClass="date-mask" />
+                    <form:label path="fromDate">From</form:label>
+                </span>
+                <span class="control-group">
+                    <form:input path="toDate" cssClass="date-mask" />
+                    <form:label path="toDate">To</form:label>
+                </span>
+                <span class="control-group">
+                    <form:select path="groupBy" items="${intervals}" itemLabel="display" />
+                    <form:label path="groupBy">By</form:label>
+                </span>
             </td>
         </tr>
 
@@ -104,21 +101,31 @@
         $('[name="groupType"]')
             .on('change', function () {
                 $('#group-by-checkboxes').children().hide();
-                $('#group-by-checkboxes').find('.' + this.value).show();
+                if (this.value) {
+                    $('#group-by-checkboxes').find('.' + this.value).show();
+                }
             });
 
         $('[name="queryType"]')
             .on('change', function () {
                 if (this.value === 'CUMULATIVE') {
-                    $('[name="statistics"]').removeAttr("disabled");
-                } else {
-                    $('[value="COUNT"]').attr('checked', 'checked');
-                    $('[name="statistics"]').attr("disabled", "disabled");
-                }
-                if (this.value === 'STATUS_DATE') {
+                    $('[name="fromDate"]').attr("disabled", "disabled");
+                    $('[name="groupBy"]').attr("disabled", "disabled");
                     $('[value="ACTIVE"]').attr("disabled", "disabled");
+                    $('[value="INDEXED"]').attr("disabled", "disabled");
+                } else if (this.value === 'STATUS_DATE') {
+                    $('[name="fromDate"]').removeAttr("disabled");
+                    $('[name="groupBy"]').removeAttr("disabled");
+                    $('[value="ACTIVE"]').attr("disabled", "disabled");
+                    $('[value="INDEXED"]').removeAttr("disabled");
                 } else {
+                    $('[name="fromDate"]').removeAttr("disabled");
+                    $('[name="groupBy"]').removeAttr("disabled");
                     $('[value="ACTIVE"]').removeAttr("disabled");
+                    $('[value="INDEXED"]').removeAttr("disabled");
+                }
+                if ($('[name="groupType"]').find(":selected").attr("disabled")) {
+                    $('[name="groupType"]').val(null).trigger('change');
                 }
             });
         $('[value="PET_DATE"]').trigger('change');
