@@ -689,10 +689,10 @@ public class DTOConversionService {
 
             detail.setDnaSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
             ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailDna(sequenceReferenceAccessionNumber);
-            if (referenceDatabase == null) {
-                throw new NullpointerException("Accession number not found in Genbank, RefSeq or Ensembl: " + sequenceReferenceAccessionNumber);
+            if (referenceDatabase != null) {
+                detail.setReferenceDatabase(referenceDatabase);
             }
-            detail.setReferenceDatabase(referenceDatabase);
+
         } else {
             detail.setDnaSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
         }
@@ -729,10 +729,10 @@ public class DTOConversionService {
         if (StringUtils.isNotEmpty(sequenceReferenceAccessionNumber)) {
             detail.setProteinSequenceReferenceAccessionNumber(sequenceReferenceAccessionNumber);
             ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailProtein(sequenceReferenceAccessionNumber);
-            if (referenceDatabase == null) {
-                throw new NullpointerException("Accession number not found in Genank, RefSeq or UniProt: " + sequenceReferenceAccessionNumber);
+            if (referenceDatabase != null) {
+                detail.setReferenceDatabase(referenceDatabase);
             }
-            detail.setReferenceDatabase(referenceDatabase);
+
         }
         return detail;
     }

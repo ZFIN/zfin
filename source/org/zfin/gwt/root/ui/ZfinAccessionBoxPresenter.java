@@ -21,12 +21,12 @@ public class ZfinAccessionBoxPresenter {
                         boolean valid = dbName != null;
                         if (type.equals("DNA")) {
                             view.validSequenceCharacter.setVisible(valid);
-                            view.faultySequenceCharacter.setVisible(!valid);
+                           // view.faultySequenceCharacter.setVisible(!valid);
                             if (valid)
                                 view.validSequenceCharacter.setTitle(dbName);
                         } else {
                             view.validSequenceCharacter.setVisible(valid);
-                            view.faultySequenceCharacter.setVisible(!valid);
+                            //view.faultySequenceCharacter.setVisible(!valid);
                             if (valid)
                                 view.validSequenceCharacter.setTitle(dbName);
                         }

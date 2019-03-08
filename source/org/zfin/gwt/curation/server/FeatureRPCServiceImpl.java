@@ -219,9 +219,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             FeatureDnaMutationDetail oldDetail = detail.clone();
             String accessionNumber = featureDTO.getDnaChangeDTO().getSequenceReferenceAccessionNumber();
             if (StringUtils.isNotEmpty(accessionNumber)) {
-                if (isValidAccession(accessionNumber, "DNA") == null) {
+                /*if (isValidAccession(accessionNumber, "DNA") == null) {
                     throw new ValidationException("DNA accession Number not found: " + accessionNumber);
-                }
+                }*/
             } else {
                 detail.setDnaSequenceReferenceAccessionNumber(null);
                 detail.setReferenceDatabase(null);
@@ -249,9 +249,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             FeatureProteinMutationDetail oldDetail = proteinDetail.clone();
             String accessionNumber = featureDTO.getProteinChangeDTO().getSequenceReferenceAccessionNumber();
             if (StringUtils.isNotEmpty(accessionNumber)) {
-                if (isValidAccession(accessionNumber, "Protein") == null) {
+                /*if (isValidAccession(accessionNumber, "Protein") == null) {
                     throw new ValidationException("Protein accession Number not found: " + accessionNumber);
-                }
+                }*/
             } else {
                 proteinDetail.setProteinSequenceReferenceAccessionNumber(null);
                 proteinDetail.setReferenceDatabase(null);
