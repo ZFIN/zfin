@@ -44,8 +44,20 @@
                     <div style="display: ${formBean.groupType == 'INDEXED' ? 'block' : 'none'};" class="metrics-checkboxes INDEXED">
                         <form:checkboxes path="indexedStatuses" items="${indexedStatuses}" />
                     </div>
-                    <div style="display: ${formBean.groupType == 'STATUS' ? 'block' : 'none'};" class="metrics-checkboxes STATUS">
-                        <form:checkboxes path="statuses" items="${statuses}" itemLabel="display" />
+                    <div style="display: ${formBean.groupType == 'STATUS' ? 'block' : 'none'};" class="STATUS">
+                        <div class="metrics-checkboxes">
+                            <form:checkboxes path="statuses" items="${statuses}" itemLabel="display" />
+                        </div>
+                        <div class="metrics-checkboxes">
+                            <span>
+                                <input id="all-closed" class="toggle-all" type="checkbox" checked="checked" data-toggle-prefix="CLOSED">
+                                <label for="all-closed">All Closed</label>
+                            </span>
+                            <span>
+                                <input id="all-waiting" class="toggle-all" type="checkbox" checked="checked" data-toggle-prefix="WAITING">
+                                <label for="all-waiting">All Waiting</label>
+                            </span>
+                        </div>
                     </div>
                     <div style="display: ${formBean.groupType == 'LOCATION' ? 'block' : 'none'};" class="metrics-checkboxes LOCATION">
                         <form:checkboxes path="locations" items="${locations}" itemLabel="display" />
@@ -129,5 +141,14 @@
                 }
             });
         $('[value="PET_DATE"]').trigger('change');
+
+        $('.toggle-all').on('change', function () {
+            var $this = $(this);
+            var val = $this.is(':checked');
+            var prefix = $this.data('toggle-prefix');
+            $('[name="statuses"]')
+                .filter(function () { return this.value.startsWith(prefix) })
+                .prop('checked', val);
+        });
     });
 </script>

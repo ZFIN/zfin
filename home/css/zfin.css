@@ -1154,6 +1154,7 @@ input + label {
 
 .metrics-checkboxes {
     column-count: 3;
+    margin-top: 0.5rem;
 }
 
 .metrics-checkboxes > * {
@@ -1166,6 +1167,7 @@ input + label {
 
 .metrics-table .control-group {
     display: inline-block;
+    margin-left: 0.5rem;
 }
 
 .metrics-table .control-group label {
