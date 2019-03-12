@@ -16,15 +16,8 @@
 <span class="name-label">Clone Name: <zfin:link entity="${formBean.marker}"/></span>
 <p>
 <strong>Note:</strong>
-The list of reference SNPs mapped on this genomic clone has been retrieved through data exchange between NCBI and ZFIN. These reference SNP identifiers are created by NCBI during periodic 'builds' of the dbSNP database. SNP details can be obtained by submitting a query to dbSNP. Click the Batch Query button at the bottom of the page and follow instructions at dbSNP to get details
+    The list of reference SNPs mapped on this genomic clone has been retrieved through data exchange between NCBI and ZFIN. These reference SNP identifiers were created by NCBI during periodic 'builds' of the dbSNP database. NCBI has phased out support for non-human organisms in dbSNP and dbVar. Zebrafish SNP details can be obtained from the archive directory <a href="ftp://ftp.ncbi.nih.gov/snp/archive">ftp://ftp.ncbi.nih.gov/snp/archive</a>.
 </p>
 <p>${dbsnps}</p>
 
-<form ACTION="http://www.ncbi.nlm.nih.gov/projects/SNP/dbSNP.cgi" method=post target ="_blank">
-    <input type="hidden" name="organism" value="zebrafish_7955">
-    <input type="hidden" name="result_option" value="RSR">
-    <input type="hidden" name=list value="rslist">
-    <INPUT TYPE="hidden" name="subnum" value="${dbsnps}">
-    <input name="query" type="submit" value="Batch Query">
-</form>
 

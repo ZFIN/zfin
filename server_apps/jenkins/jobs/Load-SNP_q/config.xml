@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/SNP &amp;&amp; dbSNP.pl $DBNAME </command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/SNP &amp;&amp; dbSNP.pl</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

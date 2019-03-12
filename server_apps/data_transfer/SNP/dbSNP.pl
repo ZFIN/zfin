@@ -22,11 +22,19 @@ $dir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/SNP/";
 chdir "$dir";
 print "$dir\n";
 
+system("/bin/date");
+
 ### remove old files 
 system("/bin/rm -f *.report.txt");
 system("/bin/rm -f ds*");
 system("/bin/rm -f Sub*");
-print "\nRemoving old files done.\n";
+
+system("/bin/rm -f *.xml");
+system("/bin/rm -f *.gz");
+system("/bin/rm -f *.bcp");
+
+print "Remove used files done\n";
+
 
 ### open the text file containing the list of the xml files to be downloaded
 open (INP, "downloadListSNPncbi.txt") || die "Can't open downloadListSNPncbi.txt : $!\n";
@@ -76,23 +84,38 @@ $password = "";
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
   
-$cur = $dbh->prepare('select distinct dblink_acc_num, dblink_linked_recid
-                        from db_link;');
+$cur = $dbh->prepare("select distinct dblink_acc_num, dblink_linked_recid
+                        from db_link
+                       where substring(dblink_linked_recid from 1 for 8) in ('ZDB-BAC-', 'ZDB-PAC-', 'ZDB-FOSM');");
 
-$cur->execute;
+$cur->execute();
 
 $cur->bind_columns(\$acc,\$markerZDBid);
     
-### get all ZFIN marker_zdb_id and their accession
+### get all ZFIN BAC/PAC/fosmid marker_zdb_id and their accession 
 %markerZDBids = ();
+$ctMarkers = 0;
 while ($cur->fetch) {
   $markerZDBids{$acc} = $markerZDBid;
+  $ctMarkers++;
 }
+
+$cur->finish();
+
+print "\n ctMarkers ----- $ctMarkers \n";
+
+$curDeleteSnpDownloadAttr = $dbh->prepare('delete from snp_download_attribution;');
+$curDeleteSnpDownloadAttr->execute();
+$curDeleteSnpDownloadAttr->finish();
+
+$curDeleteSnpDownload = $dbh->prepare('delete from snp_download;');
+$curDeleteSnpDownload->execute();
+$curDeleteSnpDownload->finish();
 
 $cur = $dbh->prepare('select snpd_rs_acc_num, snpd_mrkr_zdb_id
                         from snp_download;');
 
-$cur->execute;
+$cur->execute();
 
 $cur->bind_columns(\$rsZFIN,\$mrkrZFIN);
 
@@ -103,6 +126,8 @@ while ($cur->fetch) {
   $rsAndMrkrIDs{"$rsZFIN"."$mrkrZFIN"} = 1;
   $ct++;
 }
+
+$cur->finish();
 
 print "Number of rows in snp_download: $ct\n";
 
@@ -121,20 +146,20 @@ while ($cur->fetch) {
   $ct++;
 }
 
+$cur->finish();
+
 print "Number of rows in snp_download_attribution: $ct\n\n";
 
 ### clean up mapped_marker table
-## $cur = $dbh->prepare('delete from mapped_marker
+## $cur = $dbh->prepare("delete from mapped_marker
 #                            where marker_type = "SNP"
 #                              and marker_id in (select mrel_mrkr_2_zdb_id
 #                                                  from marker_relationship
-#                                                 where mrel_type = "contains polymorphism"
-#                                                   and mrel_mrkr_2_zdb_id[1,8] = "ZDB-SNP-");
-#                     ');
+#                                                 where mrel_type = 'contains polymorphism'
+#                                                   and mrel_mrkr_2_zdb_id like = 'ZDB-SNP-%');
+#                       ");
 #  $cur->execute;
 
-$dbh->disconnect();  
-    
 ### the datafile sent from J. Smith, which contains SNP name, clone name, etc.
 open (JSMITH, "/research/zprod/data/JSmithSNPCloneInfo.txt") || die "Cannot open /research/zprod/data/JSmithSNPCloneInfo.txt : $!\n";
 @lines=<JSMITH>;
@@ -310,18 +335,10 @@ if ($ctNew > 0) {
   &createReport("has added $ctNew new records into snp_download table");
 }
 
-### open a handle on the db
-$dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
-                       '', 
-                       '',                     
-		       {AutoCommit => 1,RaiseError => 1}
-		      )
-  || emailError("Failed while connecting to <!--|DB_NAME|-->"); 
-  
 $cur = $dbh->prepare('select snpd_pk_id,snpd_rs_acc_num,snpd_mrkr_zdb_id
                         from snp_download;');
 
-$cur->execute;
+$cur->execute();
 
 $cur->bind_columns(\$snpdPk,\$snpdRs,\$snpdMrkr);
     
@@ -334,11 +351,13 @@ while ($cur->fetch) {
   }
 }
 
-$cur = $dbh->prepare('select distinct mrkr_name, mrkr_zdb_id, recattrib_source_zdb_id 
+$cur->finish();
+
+$cur = $dbh->prepare("select distinct mrkr_name, mrkr_zdb_id, recattrib_source_zdb_id 
                         from marker, record_attribution 
-                       where recattrib_data_zdb_id = mrkr_zdb_id and mrkr_type = "SNP";');
+                       where recattrib_data_zdb_id = mrkr_zdb_id and mrkr_type = 'SNP';");
                        
-$cur->execute;
+$cur->execute();
 
 $cur->bind_columns(\$snpRsName,\$snpMrkr,\$snpPub);
     
@@ -347,6 +366,8 @@ while ($cur->fetch) {
   $snpRsPubs{"$snpRsName"."$snpPub"} = 1;
   $snpMrkrs{$snpRsName} = $snpMrkr;
 }
+
+$cur->finish();
 
 $dbh->disconnect();   
 
@@ -441,12 +462,7 @@ if ($ctNew3 > 0) {
 
 close REPORT;
 
-### remove used files
-system("/bin/rm -f *.xml") and die "can not rm old xml data file";
-system("/bin/rm -f *.gz") and die "can not rm old .gz files";
-system("/bin/rm -f *.bcp") and die "can not rm old .bcp files";
-
-print "Remove used files done\n";
+system("/bin/date");
 
 print "Done\n";
 
@@ -479,3 +495,4 @@ sub createReport($)
   {
       print REPORT "$_[0]\n";
   }
+
