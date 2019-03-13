@@ -55,7 +55,7 @@
                     <p class="bottom-buffer-sm">You might not want to close this publication yet. Are you sure you want to close it?</p>
                     <ul class="bottom-buffer">
                         <li ng-repeat="warning in vm.warnings">
-                            {{warning}}
+                            <span ng-bind-html="warning | trustedHtml"></span>
                         </li>
                     </ul>
                     <p>

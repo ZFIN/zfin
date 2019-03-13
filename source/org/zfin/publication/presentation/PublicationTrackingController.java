@@ -16,6 +16,7 @@ import org.zfin.curation.repository.CurationRepository;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
@@ -35,6 +36,8 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.*;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.zebrashare.FeatureCommunityContribution;
+import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -72,6 +75,9 @@ public class PublicationTrackingController {
 
     @Autowired
     private PublicationService publicationService;
+
+    @Autowired
+    private ZebrashareRepository zebrashareRepository;
 
     @RequestMapping(value = "/{zdbID}/track")
     public String showPubTracker(Model model, @PathVariable String zdbID) {
@@ -296,6 +302,27 @@ public class PublicationTrackingController {
         }
         if (CollectionUtils.isNotEmpty(figures)) {
             warnings.add("The following figures still have mutants without phenotypes defined: " + StringUtils.join(figures, ", "));
+        }
+
+        List<Feature> zebrashareFeatures = zebrashareRepository.getZebraShareFeatureForPub(zdbID);
+        List<String> zebrashareWarnings = new ArrayList<>();
+        for (Feature feature : zebrashareFeatures) {
+            FeatureCommunityContribution communityContribution = zebrashareRepository.getLatestCommunityContribution(feature);
+            if (communityContribution == null || communityContribution.getFunctionalConsequence() == null) {
+                zebrashareWarnings.add(feature.getName() + " Functional Consequence");
+            }
+            if (communityContribution == null || communityContribution.getAdultViable() == null) {
+                zebrashareWarnings.add(feature.getName() + " Adult Viable");
+            }
+            if (communityContribution == null || communityContribution.getMaternalZygosityExamined() == null) {
+                zebrashareWarnings.add(feature.getName() + " Maternal Zygocity Examined");
+            }
+            if (communityContribution == null || communityContribution.getCurrentlyAvailable() == null) {
+                zebrashareWarnings.add(feature.getName() + " Currently Available");
+            }
+        }
+        if (CollectionUtils.isNotEmpty(zebrashareWarnings)) {
+            warnings.add("The following Zebrashare features have missing details: <br>" + StringUtils.join(zebrashareWarnings, "<br>"));
         }
 
         JSONMessageList messages = new JSONMessageList();

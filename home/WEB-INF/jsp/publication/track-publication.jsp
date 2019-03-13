@@ -14,6 +14,8 @@
 <script src="/javascript/publication.service.js"></script>
 <script src="/javascript/zfinutils.service.js"></script>
 
+<script src="/javascript/trusted-html.filter.js"></script>
+
 <script src="/javascript/publication-author-notif.directive.js"></script>
 <script src="/javascript/publication-correspondence.directive.js"></script>
 <script src="/javascript/publication-indexed.directive.js"></script>
