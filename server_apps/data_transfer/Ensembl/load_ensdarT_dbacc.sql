@@ -33,7 +33,11 @@ create temp table tmp_movedENSDARTs as select ens.dblink_zdb_id as id
 
 delete from db_link
   where exists (Select 'x' from tmp_movedENSDARTs 
-  	       	       where id = dblink_Zdb_id);
+  	       	       where id = dblink_Zdb_id)
+  and not exists (Select 'x' 
+                    from record_attribution 
+                         where recattrib_source_zdb_id = 'ZDB-PUB-190221-12'
+                         and recattrib_data_zdb_id = dblink_zdb_id);
 
 --! echo "drop existing ensdarT that are absent from the file"
 
@@ -45,6 +49,10 @@ delete from zdb_active_data where exists (
 	    	select 't' from ensdarT_dbacc
 	    	 where dblink_acc_num = ensacc_ensdarT
 	   )
+          and not exists (Select 'x' 
+                    from record_attribution 
+                         where recattrib_source_zdb_id = 'ZDB-PUB-190221-12'
+                         and recattrib_data_zdb_id = dblink_zdb_id) 
 );
 
 

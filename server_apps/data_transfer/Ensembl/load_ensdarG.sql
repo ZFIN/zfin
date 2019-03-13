@@ -123,7 +123,7 @@ delete from tmp_drop
 		 and recattrib_source_zdb_id in ('ZDB-PUB-120207-1', 'ZDB-PUB-130213-1', 'ZDB-PUB-130211-1',
                                                  'ZDB-PUB-130725-1', 'ZDB-PUB-130425-4', 'ZDB-PUB-100504-26', 
                                                  'ZDB-PUB-100504-23', 'ZDB-PUB-100504-24','ZDB-PUB-070315-1',
-                                                 'ZDB-PUB-130211-1','ZDB-PUB-120207-1','ZDB-PUB-130213-1'));
+                                                 'ZDB-PUB-130211-1','ZDB-PUB-120207-1','ZDB-PUB-130213-1', 'ZDB-PUB-190221-12'));
 
 --!echo "select from tmp_drop"
 
