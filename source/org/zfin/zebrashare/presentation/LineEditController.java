@@ -120,21 +120,23 @@ public class LineEditController {
 
         redirectAttributes.addFlashAttribute("success", "Update saved");
 
-        String subject = String.format("ZebraShare: %s (%s) updated by %s (%s)", feature.getName(), feature.getZdbID(),
-                user.getDisplay(), user.getZdbID());
-        StringBuilder message = new StringBuilder(String.format(
-                "<p>ZebraShare details for feature <a href='https://%1$s/%2$s'>%3$s</a> updated by <a href='https://%1$s/%4$s'>%5$s</a>.</p>",
-                ZfinPropertiesEnum.DOMAIN_NAME, feature.getZdbID(), feature.getName(), user.getZdbID(), user.getDisplay()
-        ));
-        message.append("<table>");
-        appendDiff(message, "Functional Consequence", prevContribution.getFunctionalConsequence(), newContribution.getFunctionalConsequence());
-        appendDiff(message, "Adult Viable", prevContribution.getAdultViable(), newContribution.getAdultViable());
-        appendDiff(message, "Maternal Zygocity Examined", prevContribution.getMaternalZygosityExamined(), newContribution.getMaternalZygosityExamined());
-        appendDiff(message, "Currently Available", prevContribution.getCurrentlyAvailable(), newContribution.getCurrentlyAvailable());
-        appendDiff(message, "Other Line Information", prevContribution.getOtherLineInformation(), newContribution.getOtherLineInformation());
-        message.append("</table>");
+        if (!ProfileService.isRootUser()) {
+            String subject = String.format("ZebraShare: %s (%s) updated by %s (%s)", feature.getName(), feature.getZdbID(),
+                    user.getDisplay(), user.getZdbID());
+            StringBuilder message = new StringBuilder(String.format(
+                    "<p>ZebraShare details for feature <a href='https://%1$s/%2$s'>%3$s</a> updated by <a href='https://%1$s/%4$s'>%5$s</a>.</p>",
+                    ZfinPropertiesEnum.DOMAIN_NAME, feature.getZdbID(), feature.getName(), user.getZdbID(), user.getDisplay()
+            ));
+            message.append("<table>");
+            appendDiff(message, "Functional Consequence", prevContribution.getFunctionalConsequence(), newContribution.getFunctionalConsequence());
+            appendDiff(message, "Adult Viable", prevContribution.getAdultViable(), newContribution.getAdultViable());
+            appendDiff(message, "Maternal Zygocity Examined", prevContribution.getMaternalZygosityExamined(), newContribution.getMaternalZygosityExamined());
+            appendDiff(message, "Currently Available", prevContribution.getCurrentlyAvailable(), newContribution.getCurrentlyAvailable());
+            appendDiff(message, "Other Line Information", prevContribution.getOtherLineInformation(), newContribution.getOtherLineInformation());
+            message.append("</table>");
 
-        AbstractZfinMailSender.getInstance().sendHtmlMail(subject, message.toString(), new String[] {ZfinPropertiesEnum.CURATORS_AT_ZFIN.toString()}, null);
+            AbstractZfinMailSender.getInstance().sendHtmlMail(subject, message.toString(), new String[] {ZfinPropertiesEnum.CURATORS_AT_ZFIN.toString()}, null);
+        }
 
         return "redirect:" + feature.getZdbID();
     }
