@@ -71,18 +71,19 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     @UiHandler("reverseComplRefButton")
     void onClickComplRefButton(@SuppressWarnings("unused") ClickEvent event) {
 
-            seqReference.setText(reverseComplement(seqReference.getText()));
+            seqReference.setText(reverseComplement(seqReference.getText().toUpperCase()));
             
       
     }
     @UiHandler("reverseComplVarButton")
     void onClickComplSeqButton(@SuppressWarnings("unused") ClickEvent event) {
-        seqVariant.setText(reverseComplement(seqVariant.getText()));
+        seqVariant.setText(reverseComplement(seqVariant.getText().toUpperCase()));
 
     }
 
 
   private String reverseComplement( String sequence ){
+
       StringBuilder sequence1 = new StringBuilder();
 
       // append a string into StringBuilder input1
@@ -97,7 +98,7 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
 
 
       String complemented = "";
-      for (int i = 0; i < sequence.length(); i++) {
+      for (int i = 0; i < sequence1.length(); i++) {
           if (sequence1.charAt(i) == 'A') {
               complemented = complemented + "T";
           }

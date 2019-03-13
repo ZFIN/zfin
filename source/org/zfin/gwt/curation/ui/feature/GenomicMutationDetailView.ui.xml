@@ -53,7 +53,10 @@
                 <g:customCell>
                     <g:HTMLPanel visible="true">
                         <table>
-
+                            <tr ui:field="sequenceMessage">
+                                <td><i>Please enter all sequences in upper case letters</i>
+                                </td>
+                            </tr>
                             <tr ui:field="sequenceOfReferenceRow">
                                 <td>Sequence of  Reference</td>
                                 <td><zfin:StringTextBox ui:field="seqReference" /></td>
