@@ -22,7 +22,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/Reports
 SUBDIRS = ZGC Vega PATO Nomenclature AnnualStats
 
 
-GENERICS = Count-ZGC.pl Count-Vega.pl Count-phenotype.pl elsevier_report.pl reportPubsForGeneAndFeature.pl
+GENERICS = Count-Vega.pl Count-phenotype.pl elsevier_report.pl reportPubsForGeneAndFeature.pl
 STATICS  =  
 
 
