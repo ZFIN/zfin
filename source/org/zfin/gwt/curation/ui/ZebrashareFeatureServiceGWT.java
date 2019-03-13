@@ -6,7 +6,7 @@ import org.zfin.gwt.root.dto.FeatureDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeatureServiceGWT {
+public class ZebrashareFeatureServiceGWT {
 
     private static FeatureRPCServiceAsync service = FeatureRPCService.App.getInstance();
 
@@ -28,7 +28,7 @@ public class FeatureServiceGWT {
             return;
         }
         if (dtoList == null || ignoreCache) {
-            service.getFeaturesForPub(publicationID, new AsyncCallback<List<FeatureDTO>>() {
+            service.getZebrashareFeaturesForPub(publicationID, new AsyncCallback<List<FeatureDTO>>() {
                 @Override
                 public void onFailure(Throwable throwable) {
                     for (AsyncCallback<List<FeatureDTO>> callBack : callbackList)

@@ -51,6 +51,8 @@ import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.HibernateDisplayGroupRepository;
 import org.zfin.sequence.repository.HibernateSequenceRepository;
 import org.zfin.sequence.repository.SequenceRepository;
+import org.zfin.zebrashare.repository.HibernateZebrashareRepository;
+import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 /**
  * Please provide JavaDoc info!!!
@@ -81,6 +83,7 @@ public class RepositoryFactory {
     private static OntologyRepository ontologyRepository = new HibernateOntologyRepository();
     private static FishRepository fishRepository = new HibernateFishRepository();
     private static ConstructRepository constructRepository = new HibernateConstructRepository();
+    private static ZebrashareRepository zebrashareRepository;
     private static ControlledVocabularyRepository<DnaMutationTerm> dnaMutationTermRepository;
     private static ControlledVocabularyRepository<GeneLocalizationTerm> geneLocalizationTermRepository;
     private static ControlledVocabularyRepository<ProteinConsequence> proteinConsequenceTermRepository;
@@ -351,5 +354,16 @@ public class RepositoryFactory {
 
     public static void setConstructRepository(ConstructRepository repository) {
         constructRepository = repository;
+    }
+
+    public static ZebrashareRepository getZebrashareRepository() {
+        if (zebrashareRepository == null) {
+            zebrashareRepository = new HibernateZebrashareRepository();
+        }
+        return zebrashareRepository;
+    }
+
+    public static void setZebrashareRepository(ZebrashareRepository repository) {
+        zebrashareRepository = repository;
     }
 }

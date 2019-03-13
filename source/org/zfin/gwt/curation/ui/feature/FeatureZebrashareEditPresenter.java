@@ -1,25 +1,15 @@
 package org.zfin.gwt.curation.ui.feature;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
-import org.zfin.gwt.curation.event.CloneFishEvent;
-import org.zfin.gwt.curation.event.CurationEvent;
-import org.zfin.gwt.curation.event.EventType;
-import org.zfin.gwt.curation.ui.FeatureRPCService;
-import org.zfin.gwt.curation.ui.FeatureServiceGWT;
-import org.zfin.gwt.curation.ui.FishServiceGWT;
 import org.zfin.gwt.curation.ui.Presenter;
-import org.zfin.gwt.curation.ui.fish.FishModule;
-import org.zfin.gwt.curation.ui.fish.FishPresenter;
-import org.zfin.gwt.curation.ui.fish.FishView;
-import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.curation.ui.ZebrashareFeatureServiceGWT;
+import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.event.AjaxCallEventType;
-import org.zfin.gwt.root.ui.*;
+import org.zfin.gwt.root.ui.ErrorHandler;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.AppUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FeatureZebrashareEditPresenter implements Presenter {
 
@@ -46,9 +36,9 @@ public class FeatureZebrashareEditPresenter implements Presenter {
     public void loadValues() {
 
         // get Feature-Marker-Relationships
-        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_LIST_START);
-        FeatureServiceGWT.callServer(publicationID, new FeatureZebrashareEditPresenter.RetrieveFeatureListCallBack("Feature List",
-                null, AjaxCallEventType.GET_FEATURE_LIST_STOP));
+        AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_ZEBRASHARE_FEATURE_LIST_START);
+        ZebrashareFeatureServiceGWT.getFeatureList(publicationID, new FeatureZebrashareEditPresenter.RetrieveFeatureListCallBack("Feature List",
+                null, AjaxCallEventType.GET_ZEBRASHARE_FEATURE_LIST_STOP));
 
     }
 

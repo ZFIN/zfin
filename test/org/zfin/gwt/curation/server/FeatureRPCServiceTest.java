@@ -33,7 +33,6 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.util.ZfinStringUtils;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import java.util.*;
@@ -241,7 +240,7 @@ public class FeatureRPCServiceTest extends RemoteServiceServlet implements Featu
         return featureDTOs;
     }
 
-    public List<FeatureDTO> getFeaturesForZSharePub(String jrnlZdbId) {
+    public List<FeatureDTO> getZebrashareFeaturesForPub(String jrnlZdbId) {
 
         List<FeatureDTO> featureDTOs = new ArrayList<FeatureDTO>();
         List<Feature> features = zebrashareRepository.getZebraShareFeatureForPub("ZDB-JRNL-181119-2");

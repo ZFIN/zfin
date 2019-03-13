@@ -24,7 +24,7 @@
             <g:Label text="Edit Zebrashare Details" addStyleNames="bold" horizontalAlignment="left"/>
             <g:Label text=":&nbsp;" addStyleNames="bold"/>
             <zfin:ShowHideToggle widget="{featureZebrashareEditPanel}" ui:field="showHideToggle" show="true"/>
-            <g:Label ui:field="noneDefined" text="&nbsp;None defined" styleName="no-data-tag"/>
+            <g:Label ui:field="noneDefined" text="&nbsp;No ZebraShare features associated with this publication" styleName="no-data-tag"/>
         </g:HorizontalPanel>
         <g:VerticalPanel ui:field="featureZebrashareEditPanel" width="100%">
         <g:Grid ui:field='dataTable' cellSpacing='10'>

@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.server;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -22,7 +21,6 @@ import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.repository.MutantRepository;
@@ -57,7 +55,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     private static FeatureRepository featureRepository = getFeatureRepository();
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-    private static ZebrashareRepository zshareRepository ;
+    private static ZebrashareRepository zebrashareRepository = RepositoryFactory.getZebrashareRepository();
     private List<Organization> labsOfOrigin = null;
 
 
@@ -355,9 +353,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         return featureDTOs;
     }
 
-    public List<FeatureDTO> getFeaturesForZSharePub(String jrnlId) {
+    public List<FeatureDTO> getZebrashareFeaturesForPub(String pubID) {
         List<FeatureDTO> featureDTOs = new ArrayList<>();
-        List<Feature> features = zshareRepository.getZebraShareFeatureForPub(jrnlId);
+        List<Feature> features = zebrashareRepository.getZebraShareFeatureForPub(pubID);
         if (CollectionUtils.isNotEmpty(features)) {
             for (Feature f : features) {
                 featureDTOs.add(DTOConversionService.convertToFeatureDTO(f, false));

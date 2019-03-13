@@ -70,16 +70,19 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
         return (Publication) query.uniqueResult();
     }
 
-    public List<Feature> getZebraShareFeatureForPub(String jrnlZDB) {
+    public List<Feature> getZebraShareFeatureForPub(String pubID) {
         String hql = "" +
-                "select feature " +
+                "select distinct feature " +
                 "from Feature as feature " +
-                "inner join feature.publications as pubattrib " +
-                "inner join pubattrib.publication as pub " +
-                "inner join pub.journal as journal " +
-                "journal.zdbID = :jrnlZDB ";
+                "inner join feature.publications as zebraSharePubAttrib " +
+                "inner join zebraSharePubAttrib.publication as zebraSharePub " +
+                "inner join zebraSharePub.journal as zebraShareJournal " +
+                "inner join feature.publications as thisPubAttrib " +
+                "inner join thisPubAttrib.publication as thisPub " +
+                "where thisPub.zdbID = :pubID " +
+                "and zebraShareJournal.zdbID = 'ZDB-JRNL-181119-2' ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("jrnlZDB", "ZDB-JRNL-181119-2");
+        query.setParameter("pubID", pubID);
         return  query.list();
     }
 
