@@ -80,7 +80,7 @@ close WRONGISSN;
 system("/bin/cat <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader.txt >> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
 
 
-$cur_nlmids = $dbh->prepare("select jrnl_nlmid, jrnl_zdb_id, jrnl_abbrev from journal where jrnl_nlmid is not null;");
+$cur_nlmids = $dbh->prepare("select jrnl_nlmid, jrnl_zdb_id, jrnl_abbrev from journal where jrnl_nlmid is not null order by jrnl_zdb_id;");
 $cur_nlmids->execute();
 $cur_nlmids->bind_columns(\$nmlid, \$jid, \$abbrev);
 

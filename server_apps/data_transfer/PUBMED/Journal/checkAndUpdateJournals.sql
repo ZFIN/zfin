@@ -391,6 +391,6 @@ order by j1.jrnl_print_issn, j1.jrnl_name, j1.jrnl_abbrev;
 \copy (select jrnl_zdb_id, jrnl_name, jrnl_abbrev  from journal where jrnl_print_issn is null group by jrnl_name, jrnl_zdb_id, jrnl_abbrev order by jrnl_name, jrnl_zdb_id, jrnl_abbrev) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/journalsMissingIssnPrint.txt' ;
 
 
-
+commit work;
 --rollback work ;
 
