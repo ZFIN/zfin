@@ -3,6 +3,8 @@
 # This script check the existing journals stored at ZFIN against the all journal file (ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt) 
 # from NCBI, reporting problems, and update the journal data accordingly.
 
+use DBI;
+
 #set environment variables
 
 $dbname = "<!--|DB_NAME|-->";
@@ -10,6 +12,10 @@ $username = "";
 $password = "";
 
 print "$dbname\n\n";
+
+### open a handle on the db
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+    or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 #remove old report and log files
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/*.txt");
@@ -73,7 +79,37 @@ close WRONGISSN;
 
 system("/bin/cat <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbrWithNoHeader.txt >> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt");
 
-exit;
 
+$cur_nlmids = $dbh->prepare("select jrnl_nlmid, jrnl_zdb_id, jrnl_abbrev from journal where jrnl_nlmid is not null;");
+$cur_nlmids->execute();
+$cur_nlmids->bind_columns(\$nmlid, \$jid, \$abbrev);
+
+open (DUPLJOURNAL, ">dup_journal_with_same_nmlid") || die "Cannot open dup_journal_with_same_nmlid : $!\n";
+print DUPLJOURNAL "From|To|synonyms, delimited|other ISSNs I found\n";
+$ctJsWithNmlID = $ctDupl = 0;
+%nmlIDs = ();
+%featureTypes = ();
+while ($cur_nlmids->fetch()) {
+   if(!exists($nmlIDs{$nmlid})) {
+       $nmlIDs{$nmlid} = $jid;
+   } else {
+       $keptJid = $nmlIDs{$nmlid};
+       print DUPLJOURNAL "$jid|$keptJid|$abbrev||\n";
+       $ctDupl++;
+   }
+   $ctJsWithNmlID++;
+}
+
+close DUPLJOURNAL;
+
+print "total number of journals with nlm id: $ctJsWithNmlID\n";
+
+print "total number of duplicated journals with the same nlm id: $ctDupl\n";
+
+$cur_nlmids->finish();
+
+$dbh->disconnect();
+
+exit;
 
 
