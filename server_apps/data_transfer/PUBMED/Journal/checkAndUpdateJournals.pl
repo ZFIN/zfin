@@ -84,7 +84,7 @@ $cur_nlmids = $dbh->prepare("select jrnl_nlmid, jrnl_zdb_id, jrnl_abbrev from jo
 $cur_nlmids->execute();
 $cur_nlmids->bind_columns(\$nmlid, \$jid, \$abbrev);
 
-open (DUPLJOURNAL, ">dup_journal_with_same_nmlid") || die "Cannot open dup_journal_with_same_nmlid : $!\n";
+open (DUPLJOURNAL, ">dup_journal_with_same_nmlid.txt") || die "Cannot open dup_journal_with_same_nmlid.txt : $!\n";
 print DUPLJOURNAL "From|To|synonyms, delimited|other ISSNs I found\n";
 $ctJsWithNmlID = $ctDupl = 0;
 %nmlIDs = ();
