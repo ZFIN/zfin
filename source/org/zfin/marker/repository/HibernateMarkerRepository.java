@@ -8,7 +8,6 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.jdbc.Work;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.LongType;
@@ -21,8 +20,6 @@ import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
-import org.zfin.database.DbSystemUtil;
-import org.zfin.database.InformixUtil;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
@@ -48,7 +45,6 @@ import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.PaginationResultFactory;
@@ -57,9 +53,6 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.NumberAwareStringComparator;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -87,7 +80,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-   public SNP getSNPByID(String zdbID) {
+    public SNP getSNPByID(String zdbID) {
         Session session = currentSession();
 
         return (SNP) session.get(SNP.class, zdbID);
@@ -99,11 +92,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (ConstructCuration) session.get(ConstructCuration.class, zdbID);
     }
 
-    public AllianceGeneDesc getGeneDescByMkr(Marker marker){
+    public AllianceGeneDesc getGeneDescByMkr(Marker marker) {
         Session session = currentSession();
 
         String hql = "select  agd from AllianceGeneDesc agd " +
-                "      where agd.gene= :geneID " ;
+                "      where agd.gene= :geneID ";
 
 
         Query query = session.createQuery(hql);
