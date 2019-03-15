@@ -24,10 +24,10 @@ create temp table
 
 
 insert into tmp_gff_start_end (accnum,chrom, gene)
-select distinct gff_name, gff_seqname, ensm_ensdarg_id
- from gff3, ensdar_mapping
- where gff_name like 'ENSDART%'
-and gff_name = ensm_ensdart_id;
+select distinct gff_name, gff_seqname, enm_ensdarg_id
+ from gff3, ensdart_name_mapping
+ where gff_id like 'ENSDART%'
+and gff_id = enm_ensdart_stable_id;
 
 update tmp_gff_start_end
   set start = (select min(gff_start)
