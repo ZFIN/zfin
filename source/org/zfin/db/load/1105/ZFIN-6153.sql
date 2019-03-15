@@ -7,8 +7,8 @@ insert into featmkr (featzdb,genezdb,strand,feattype) select distinct fmrel_ftr_
 
 create temp table featgenomemd (fgmdfeat text,fmmdid text,fgmdstrand text,fgmdseqref text,fgmdseqvar text,pub text);
 
-insert into featgenomemd (fgmdfeat,fmmdid,fgmdstrand,fgmdseqref,fgmdseqvar,pub) select distinct featzdb,featzdb,strand,fdmd_deleted_sequence,'',recattrib_source_zdb_id from featmkr,feature_dna_mutation_detail,record_attribution where feattype='DELETION' and strand='+' and featzdb=fdmd_feature_zdb_id and fdmd_deleted_sequence is not null and fdmd_zdb_id=recattrib_data_zdb_id;
-insert into featgenomemd (fgmdfeat,fmmdid,fgmdstrand,fgmdseqref,fgmdseqvar,pub) select distinct featzdb,featzdb,strand,'',fdmd_inserted_sequence,recattrib_source_zdb_id from featmkr,feature_dna_mutation_detail,record_attribution where feattype='INSERTION' and strand='+'and featzdb=fdmd_feature_zdb_id and fdmd_inserted_sequence is not null and fdmd_zdb_id=recattrib_data_zdb_id ;
+insert into featgenomemd (fgmdfeat,fmmdid,fgmdstrand,fgmdseqref,fgmdseqvar,pub) select distinct featzdb,featzdb,strand,upper(fdmd_deleted_sequence),'',recattrib_source_zdb_id from featmkr,feature_dna_mutation_detail,record_attribution where feattype='DELETION' and strand='+' and featzdb=fdmd_feature_zdb_id and fdmd_deleted_sequence is not null and fdmd_zdb_id=recattrib_data_zdb_id;
+insert into featgenomemd (fgmdfeat,fmmdid,fgmdstrand,fgmdseqref,fgmdseqvar,pub) select distinct featzdb,featzdb,strand,'',upper(fdmd_inserted_sequence),recattrib_source_zdb_id from featmkr,feature_dna_mutation_detail,record_attribution where feattype='INSERTION' and strand='+'and featzdb=fdmd_feature_zdb_id and fdmd_inserted_sequence is not null and fdmd_zdb_id=recattrib_data_zdb_id ;
 
 insert into featgenomemd (fgmdfeat,fmmdid,fgmdstrand,fgmdseqref,fgmdseqvar,pub)
 select distinct featzdb,featzdb,strand,fdmd_deleted_sequence,fdmd_inserted_sequence,recattrib_source_zdb_id
@@ -17,10 +17,10 @@ where feattype='INDEL' and strand='+' and featzdb=fdmd_feature_zdb_id
 and (fdmd_deleted_sequence is not null or fdmd_inserted_sequence is not null)  and fdmd_zdb_id=recattrib_data_zdb_id ;
 
 
-insert into featgenomemd (fgmdfeat,fmmdid,fgmdstrand,fgmdseqref,fgmdseqvar,pub) select distinct featzdb,featzdb,strand,reverse(fdmd_deleted_sequence),'',recattrib_source_zdb_id  from featmkr,feature_dna_mutation_detail,record_attribution where feattype='DELETION' and strand='-' and featzdb=fdmd_feature_zdb_id and fdmd_deleted_sequence is not null and fdmd_zdb_id=recattrib_data_zdb_id;
-insert into featgenomemd (fgmdfeat,fmmdid,fgmdstrand,fgmdseqref,fgmdseqvar,pub) select distinct featzdb,featzdb,strand,'',reverse(fdmd_inserted_sequence),recattrib_source_zdb_id from featmkr,feature_dna_mutation_detail,record_attribution where feattype='INSERTION' and strand='-' and featzdb=fdmd_feature_zdb_id and fdmd_inserted_sequence is not null and fdmd_zdb_id=recattrib_data_zdb_id ;
+insert into featgenomemd (fgmdfeat,fmmdid,fgmdstrand,fgmdseqref,fgmdseqvar,pub) select distinct featzdb,featzdb,strand,reverse(upper(fdmd_deleted_sequence)),'',recattrib_source_zdb_id  from featmkr,feature_dna_mutation_detail,record_attribution where feattype='DELETION' and strand='-' and featzdb=fdmd_feature_zdb_id and fdmd_deleted_sequence is not null and fdmd_zdb_id=recattrib_data_zdb_id;
+insert into featgenomemd (fgmdfeat,fmmdid,fgmdstrand,fgmdseqref,fgmdseqvar,pub) select distinct featzdb,featzdb,strand,'',reverse(upper(fdmd_inserted_sequence)),recattrib_source_zdb_id from featmkr,feature_dna_mutation_detail,record_attribution where feattype='INSERTION' and strand='-' and featzdb=fdmd_feature_zdb_id and fdmd_inserted_sequence is not null and fdmd_zdb_id=recattrib_data_zdb_id ;
 insert into featgenomemd (fgmdfeat,fmmdid,fgmdstrand,fgmdseqref,fgmdseqvar,pub)
-select distinct featzdb,featzdb,strand,reverse(fdmd_deleted_sequence),reverse(fdmd_inserted_sequence),recattrib_source_zdb_id
+select distinct featzdb,featzdb,strand,reverse(upper(fdmd_deleted_sequence)),reverse(upper(fdmd_inserted_sequence)),recattrib_source_zdb_id
 from featmkr,feature_dna_mutation_detail,record_attribution
  where feattype='INDEL' and strand='-' and featzdb=fdmd_feature_zdb_id
 and (fdmd_deleted_sequence is not null or fdmd_inserted_sequence is not null) and fdmd_zdb_id=recattrib_data_zdb_id  ;
@@ -43,8 +43,8 @@ update featgenomemd set fgmdseqvar=replace(fgmdseqvar,'c','C') where fgmdstrand=
 update featgenomemd set fgmdseqref=replace(fgmdseqref,'t','T') where fgmdstrand='-';;
 update featgenomemd set fgmdseqref=replace(fgmdseqref,'c','C') where fgmdstrand='-';;
 
-update featgenomemd set fgmdseqref='N/A' where fgmdseqref is null;
-update featgenomemd set fgmdseqvar='N/A' where fgmdseqvar is null;
+update featgenomemd set fgmdseqref='' where fgmdseqref is null;
+update featgenomemd set fgmdseqvar='' where fgmdseqvar is null;
 
 
 
