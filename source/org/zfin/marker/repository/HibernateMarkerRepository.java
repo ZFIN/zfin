@@ -2033,7 +2033,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "join foreign_db_data_type fdbdt on fdbdt.fdbdt_pk_id = fdbc.fdbcont_fdbdt_id " +
                 "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
                 "left outer join record_attribution ra on ra.recattrib_data_zdb_id=dbl.dblink_zdb_id " +
-                "join publication pub on ra.recattrib_source_zdb_id=pub.zdb_id " +
+                "left outer join publication pub on ra.recattrib_source_zdb_id=pub.zdb_id " +
                 "where g.fdbcdg_name= :displayGroup " +
                 "and " +
                 "dbl.dblink_linked_recid= :markerZdbId ";
