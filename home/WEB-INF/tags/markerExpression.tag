@@ -6,14 +6,6 @@
 <%@ attribute name="markerExpression" type="org.zfin.expression.presentation.MarkerExpression" rtexprvalue="true"
               required="true" %>
 
-<script type="text/javascript">
-    function start_note(ref_page) {
-        top.zfinhelp = open("<%=ZfinProperties.getWebDriver()%>?MIval=aa-" + ref_page + ".apg", "notewindow", "scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
-    }
-
-</script>
-
-
 <!--todo: need to cound the # of expression results, should be greater than 0-->
 <%--N cases:--%>
 <%--1 - (lots of stuff available): gt 1  || (markerExpression.geoLinkSearching = false && gt 0)--%>
