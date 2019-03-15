@@ -236,6 +236,18 @@ project(':home:zf_info') {
     }
 }
 
+project(':home:ZFIN') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+        from(project.projectDir) {
+            ttNameMap.each { name, value ->
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            exclude '**/Makefile'
+        }
+        into targetroot + pName
+    }
+}
+
 project(':server_apps:sysexecs') {
     task "deployFiles"(type: ZfinTargetCopy) {
         from(project.projectDir) {
@@ -348,6 +360,7 @@ task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',
              'deployPostgresTriggers',
              ':home:zf_info:deployFiles',
+             ':home:ZFIN:deployFiles',
              ':server_apps:apache:deployFiles',
              ':server_apps:sysexecs:deployFiles',
              ':server_apps:DB_maintenance:deployFiles',
