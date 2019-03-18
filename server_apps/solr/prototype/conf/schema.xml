@@ -767,6 +767,7 @@
         <field name="is_wildtype" type="string" indexed="true" stored="true" />
         <field name="is_genotype_wildtype" type="boolean" indexed="true" stored="true" />
         <field name="is_monogenic" type="string" indexed="true" stored="true" />
+        <field name="is_zebrashare" type="string" indexed="true" stored="false" />
         <field name="has_orthology" type="string" indexed="true" stored="true" />
 
         <field name="attributed_publication" type="text" indexed="true" stored="true" multiValued="true"/>

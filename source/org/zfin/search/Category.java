@@ -69,7 +69,8 @@ public enum Category {
             LAB_OF_ORIGIN,
             CONSEQUENCE,
             INSTITUTION,
-            MUTAGEN
+            MUTAGEN,
+            IS_ZEBRASHARE
 
 //            SCREEN   <!--screen used to be here, removed as a result of case 11323-->
     ),

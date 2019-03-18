@@ -117,7 +117,8 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.MISEXPRESSED_GENE,
                         FieldName.PHENOTYPE_STATEMENT,
                         FieldName.SOURCE,
-                        FieldName.TYPE
+                        FieldName.TYPE,
+                        FieldName.IS_ZEBRASHARE
                 ],
                 (Category.CONSTRUCT)                 : [
                         FieldName.CODING_SEQUENCE,

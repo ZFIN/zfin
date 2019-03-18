@@ -90,6 +90,7 @@ public enum FieldName {
     IS_GENOTYPE_WILDTYPE("is_genotype_wildtype","Genotype"),
     IS_MONOGENIC("is_monogenic"),
     IS_WILDTYPE("is_wildtype"),
+    IS_ZEBRASHARE("is_zebrashare"),
     JOURNAL("journal"),
     JOURNAL_T("journal_t"),
     JOURNAL_NAME("journal_name"),
