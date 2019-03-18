@@ -139,12 +139,14 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     if (!loc.getChromosome().equals(chromosomeService.getChromosomeNumber()))
                                         continue;
                                     if (loc.getAssembly().equals("GRCz11")){
-                                        GenomeLocationDTO genomeDto = new GenomeLocationDTO(loc.getAssembly(), loc.getChromosome());
-                                        if (loc.getStart() != null)
-                                            genomeDto.setStartPosition(loc.getStart());
-                                        if (loc.getEnd() != null)
-                                            genomeDto.setEndPosition(loc.getEnd());
-                                        locationDTOList.add(genomeDto);
+                                        if (loc.getSource().toString().equals("ZFIN")) {
+                                            GenomeLocationDTO genomeDto = new GenomeLocationDTO(loc.getAssembly(), loc.getChromosome());
+                                            if (loc.getStart() != null)
+                                                genomeDto.setStartPosition(loc.getStart());
+                                            if (loc.getEnd() != null)
+                                                genomeDto.setEndPosition(loc.getEnd());
+                                            locationDTOList.add(genomeDto);
+                                        }
                                     }
                                 }
                                 dto.setGenomeLocations(locationDTOList);

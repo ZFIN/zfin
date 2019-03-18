@@ -202,6 +202,17 @@ delete from sequence_feature_chromosome_location_generated
  where sfclg_chromosome in ('AB','U','0')
  and sfclg_location_source = 'EnsemblStartEndLoader';
 
+update sequence_feature_chromosome_location_generated
+  set sfclg_assembly = 'GRCz11'
+where sfclg_assembly = 'GRCv10'
+and sfclg_location_source = 'ZfinGbrowseStartEndLoader';
+
+update sequence_feature_chromosome_location_generated
+  set sfclg_assembly = 'GRCz11'
+where sfclg_assembly = 'GRCv10'
+and sfclg_location_source = 'EnsemblStartEndLoader';
+
+
 commit work;
 -- commit or rollback is appended externally
 --rollback work;commit work;
