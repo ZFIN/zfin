@@ -145,6 +145,26 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 .collect(Collectors.toList());
     }
 
+
+    @SuppressWarnings("unchecked")
+    public List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID) {
+
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(FeatureMarkerRelationship.class);
+        criteria.setFetchMode("feature", FetchMode.JOIN);
+        criteria.setFetchMode("feature.featureProteinMutationDetail", FetchMode.JOIN);
+        criteria.setFetchMode("feature.featureDnaMutationDetail", FetchMode.JOIN);
+        criteria.createAlias("feature.publications", "pubAttributions");
+        criteria.add(Restrictions.eq("pubAttributions.publication.zdbID", publicationZdbID));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        List<FeatureMarkerRelationship> featureMarkerRelationships = criteria.list();
+
+        // order
+        return featureMarkerRelationships.stream()
+                .sorted((o1, o2) -> o1.getFeature().getAbbreviationOrder().compareTo(o2.getFeature().getAbbreviationOrder()))
+                .collect(Collectors.toList());
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public List<String> getRelationshipTypesForFeatureType(FeatureTypeEnum featureTypeEnum) {
@@ -1067,9 +1087,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public List<Marker> getConstructsByFeature(Feature feature) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct marker from  FeatureMarkerRelationship fmrel" +
+        String hql = "select distinct marker from FeatureMarkerRelationship fmrel" +
                 "     where fmrel.feature = :feature " +
-                " and fmrel.type in (:relation1, :relation2)  ";
+                " and fmrel.type in (:relation1, :relation2) ";
 
         Query query = session.createQuery(hql);
 
