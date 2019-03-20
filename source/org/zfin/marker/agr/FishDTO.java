@@ -1,10 +1,8 @@
 package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.zfin.mutant.Genotype;
 
 import java.util.List;
-import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
@@ -15,7 +13,7 @@ public class FishDTO extends ZfinDTO {
     private String nameText;
     private List<GenotypeComponentDTO> genotypeComponents;
     private List<String> sequenceTargetingReagents;
-    private Set<Genotype> backgrounds;
+    private List<String> backgroundIDs;
     private CrossReferenceDTO crossReference;
 
     public String getGenotypeID() {
@@ -26,12 +24,12 @@ public class FishDTO extends ZfinDTO {
         this.genotypeID = genotypeID;
     }
 
-    public Set<Genotype> getBackgrounds() {
-        return backgrounds;
+    public List<String> getBackgroundIDs() {
+        return backgroundIDs;
     }
 
-    public void setBackgrounds(Set<Genotype> backgrounds) {
-        this.backgrounds = backgrounds;
+    public void setBackgrounds(List<String> backgrounds) {
+        this.backgroundIDs = backgroundIDs;
     }
 
     public String getName() {

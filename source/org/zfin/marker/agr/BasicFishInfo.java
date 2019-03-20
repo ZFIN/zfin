@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.GenotypeFeature;
-import org.zfin.marker.agr.GenotypeComponentDTO;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
@@ -15,6 +14,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import org.zfin.mutant.Genotype;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -60,6 +61,14 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                             FishDTO dto = new FishDTO();
                             dto.setName(fish.getName());
                             dto.setGenotypeID("ZFIN:" + fish.getZdbID());
+                            Genotype genotype = fish.getGenotype();
+                            if (CollectionUtils.isNotEmpty(genotype.getAssociatedGenotypes())) {
+                                List<String> backgroundList = new ArrayList<>(genotype.getAssociatedGenotypes().size());
+                                for (Genotype geno : genotype.getAssociatedGenotypes()) {
+                                    backgroundList.add("ZFIN:" + geno.getZdbID());
+                                }
+                                dto.setBackgrounds(backgroundList);
+                            }
                             if (CollectionUtils.isNotEmpty(fish.getStrList())) {
                                 List<String> strList = new ArrayList<>(fish.getStrList().size());
                                 for (SequenceTargetingReagent str : fish.getStrList()) {
@@ -77,7 +86,6 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                                 }
                                 dto.setGenotypeComponents(genoComponents);
                             }
-
                             List<String> pages = new ArrayList<>();
                             pages.add("Fish");
                             CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", fish.getZdbID(), pages);
