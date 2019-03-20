@@ -10,6 +10,16 @@ public class Zygosity {
     private String abbreviation;
     private String definition;
     private String alleleDisplay;
+    private String genoOntologyID;
+
+    public String getGenoOntologyID() {
+        return genoOntologyID;
+    }
+
+    public void setGenoOntologyID(String genoOntologyID) {
+        this.genoOntologyID = genoOntologyID;
+    }
+
 
     public String getZdbID() {
         return zdbID;
