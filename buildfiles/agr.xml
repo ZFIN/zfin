@@ -7,10 +7,15 @@
         <antcall target="create-basic-wt-expression"/>
         <antcall target="create-allele"/>
         <antcall target="create-bgi"/>
+        <antcall target="create-fish"/>
     </target>
 
     <target name="create-bgi-test" >
         <antcall target="create-basic-gene-info-file-test"  />
+    </target>
+
+    <target name="create-fish-test" >
+        <antcall target="create-basic-fish-info-file-test"  />
     </target>
 
     <target name="create-disease-test" >
@@ -31,6 +36,10 @@
 
     <target name="create-bgi" >
         <antcall target="create-basic-gene-info-file"  />
+    </target>
+
+    <target name="create-fish" >
+        <antcall target="create-basic-fish-info-file"  />
     </target>
 
     <target name="create-allele" >
@@ -57,6 +66,16 @@
             <classpath refid="classpath"/>
         </java>
     </target>
+
+    <target name="create-basic-fish-info-file" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.BasicFishInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="6G">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
     <target name="create-basic-allele-info-file" depends=""
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
@@ -121,65 +140,5 @@
             <arg value="5"/>
         </java>
     </target>
-
-    <property name="version" value="1.0.4"/>
-    <property name="index" value="4"/>
-    <property name="daf-file" value="ZFIN_${version}_disease.json"/>
-    <property name="bgi-file" value="ZFIN_${version}_BGI.json"/>
-    <property name="feature-file" value="ZFIN_${version}_feature.json"/>
-    <property name="gff-file" value="ZFIN_${version}_gff3.gff3"/>
-    <property name="agr-file" value="ZFIN_${version}_${index}"/>
-
-    <target name="archive-agr" depends="">
-        <copy file="basic-gene-info-zfin.json" tofile="${bgi-file}"/>
-        <copy file="disease-info-zfin.json" tofile="${daf-file}"/>
-        <copy file="feature-info-zfin.json" tofile="${feature-file}"/>
-        <echo message="Create tar/gzip file of BGI"/>
-        <tar compression="gzip" destfile="${agr-file}.tar.gz" >
-            <tarfileset dir="${basedir}" >
-                <include name="${bgi-file}" />
-                <include name="${daf-file}" />
-                <include name="${feature-file}" />
-            </tarfileset>
-        </tar>
-    </target>
-
-    <target name="aws" depends="">
-        <echo message="Upload to AWS S3"/>
-        <exec executable="aws" failifexecutionfails="true">
-            <arg value="s3"/>
-            <arg value="cp"/>
-            <arg value="${agr-file}.tar.gz"/>
-            <arg value="s3://mod-datadumps/"/>
-        </exec>
-    </target>
-
-    <target name="aws-ls" depends="">
-        <echo message="List directory AWS S3"/>
-        <exec executable="aws" failifexecutionfails="true">
-            <arg value="s3"/>
-            <arg value="ls"/>
-            <arg value="s3://mod-datadumps/"/>
-        </exec>
-    </target>
-
-    <target name="aws-ls-data" depends="">
-        <echo message="List directory AWS S3"/>
-        <exec executable="aws" failifexecutionfails="true">
-            <arg value="s3"/>
-            <arg value="ls"/>
-            <arg value="s3://mod-datadumps/data/"/>
-        </exec>
-    </target>
-
-    <target name="aws-ls-ortho" depends="">
-        <echo message="List directory AWS S3"/>
-        <exec executable="aws" failifexecutionfails="true">
-            <arg value="s3"/>
-            <arg value="ls"/>
-            <arg value="s3://mod-datadumps/ORTHO/"/>
-        </exec>
-    </target>
-
 
 </project>

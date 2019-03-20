@@ -1805,6 +1805,22 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public List<Fish> getAllFish() {
+        Session session = HibernateUtil.currentSession();
+        Criteria fishCriteria = session.createCriteria(Fish.class);
+        fishCriteria.addOrder(Order.asc("name"));
+        return fishCriteria.list();
+    }
+
+    @Override
+    public List<Fish> getFishBackgrounds() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "";
+        Query query = session.createQuery(hql);
+        return (List<Fish>) query.list();
+    }
+
+    @Override
     public List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication) {
         Session session = HibernateUtil.currentSession();
         String hql = "from GenotypeFeature as gf WHERE ";

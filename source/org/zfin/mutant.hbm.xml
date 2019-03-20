@@ -339,6 +339,7 @@
         <property name="abbreviation" column="zyg_abbrev"/>
         <property name="definition" column="zyg_definition"/>
         <property name="alleleDisplay" column="zyg_allele_display"/>
+        <property name="genoOntologyID" column="zyg_geno_ont_id"/>
 
     </class>
 
