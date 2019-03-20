@@ -3677,6 +3677,16 @@
                     where="feature_zdb_id=feature.id"
             />
 
+            <entity name="feature_is_zebrashare"
+                    query="select 'true' as is_zebrashare, feature_zdb_id
+                           from feature
+                                join record_attribution on recattrib_data_zdb_id = feature_zdb_id
+                                join publication on recattrib_source_zdb_id = publication.zdb_id
+                           where pub_jrnl_zdb_id = 'ZDB-JRNL-181119-2' "
+                    cacheImpl="SortedMapBackedCache"
+                    where="feature_zdb_id=feature.id"
+            />
+
             <entity name="feature_affected_gene"
                     query="select mrkr_zdb_id as xref,
                              mrkr_abbrev as affected_gene,

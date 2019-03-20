@@ -45,6 +45,7 @@
     <tr>
         <td>
             <div class="summaryTitle">Produced by Genes:</div>
+            Please add this relationship on the gene page
             <div id="<%=StandardDivNames.geneDiv%>"></div>
         </td>
         <td colspan="1" valign="top">
