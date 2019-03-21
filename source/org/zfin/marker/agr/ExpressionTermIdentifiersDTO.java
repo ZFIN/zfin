@@ -1,9 +1,8 @@
 package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.util.List;
+
 import java.util.Set;
-import java.util.ArrayList;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExpressionTermIdentifiersDTO {
@@ -13,7 +12,7 @@ public class ExpressionTermIdentifiersDTO {
     private String anatomicalStructureTermId;
     private String anatomicalSubStructureTermId;
     private String anatomicalStructureQualifierTermId;
-    private Set<UberonSlimTermDTO> anatomcialStructureUberonSlimTermIds;
+    private Set<UberonSlimTermDTO> anatomicalStructureUberonSlimTermIds;
 
     public String getWhereExpressedStatement() {
         return whereExpressedStatement;
@@ -56,11 +55,11 @@ public class ExpressionTermIdentifiersDTO {
     }
 
     public Set<UberonSlimTermDTO> getAnatomcialStructureUberonSlimTermIds() {
-        return anatomcialStructureUberonSlimTermIds;
+        return anatomicalStructureUberonSlimTermIds;
     }
 
-    public void setAnatomcialStructureUberonSlimTermIds(Set<UberonSlimTermDTO> anatomcialStructureUberonSlimTermIds) {
-        this.anatomcialStructureUberonSlimTermIds = anatomcialStructureUberonSlimTermIds;
+    public void setAnatomcialStructureUberonSlimTermIds(Set<UberonSlimTermDTO> anatomicalStructureUberonSlimTermIds) {
+        this.anatomicalStructureUberonSlimTermIds = anatomicalStructureUberonSlimTermIds;
     }
 
     public ExpressionTermIdentifiersDTO(String whereExpressedStatement, String cellularComponentTermId,
@@ -71,7 +70,7 @@ public class ExpressionTermIdentifiersDTO {
         this.anatomicalStructureTermId = anatomicalStructureTermId;
         this.anatomicalStructureQualifierTermId = anatomicalStructureQualifierTermId;
         this.anatomicalSubStructureTermId = anatomicalSubStructureTermId;
-        this.anatomcialStructureUberonSlimTermIds = anatomcialStructureUberonSlimTermIds;
+        this.anatomicalStructureUberonSlimTermIds = anatomcialStructureUberonSlimTermIds;
 
     }
 }
