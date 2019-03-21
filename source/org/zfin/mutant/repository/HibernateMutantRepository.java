@@ -26,10 +26,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.agr.BasicPhenotypeDTO;
-import org.zfin.marker.agr.BasicExpressionDTO;
-import org.zfin.marker.agr.PhenotypeTermIdentifierDTO;
-import org.zfin.marker.agr.PublicationAgrDTO;
+import org.zfin.marker.agr.*;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -651,14 +648,25 @@ public class HibernateMutantRepository implements MutantRepository {
             BasicPhenotypeDTO basicPheno = new BasicPhenotypeDTO();
             basicPheno.setObjectId("ZFIN:"+basicPhenoObjects[0].toString());
             basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
+            PublicationAgrDTO pubDto = new PublicationAgrDTO();
 
             if (basicPhenoObjects[3] != null) {
                 Integer pubMedId = (Integer) basicPhenoObjects[3];
-                basicPheno.setEvidence(new PublicationAgrDTO(basicPhenoObjects[2].toString(), pubMedId));
+                pubDto.setPublicationId("PMID:"+pubMedId);
+                List<String> pubPages = new ArrayList<>();
+                pubPages.add("reference");
+                String pubZdbId = basicPhenoObjects[2].toString();
+                pubDto.setCrossReference(new CrossReferenceDTO("ZFIN", pubZdbId, pubPages));
+                basicPheno.setEvidence(pubDto);
             }
             else {
-                basicPheno.setEvidence(new PublicationAgrDTO(basicPhenoObjects[2].toString(), null));
+                String pubZdbId = basicPhenoObjects[2].toString();
+                if (pubZdbId != null) {
+                    pubDto.setPublicationId("ZFIN:" + pubZdbId);
+                }
             }
+
+            basicPheno.setEvidence(pubDto);
 
             PhenotypeTermIdentifierDTO termIdentifierE1aDTO = new PhenotypeTermIdentifierDTO();
             PhenotypeTermIdentifierDTO termIdentifierE1bDTO = new PhenotypeTermIdentifierDTO();

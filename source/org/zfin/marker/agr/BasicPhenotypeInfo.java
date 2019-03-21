@@ -54,7 +54,7 @@ public class BasicPhenotypeInfo extends AbstractScriptWrapper {
         List<String> pages = new ArrayList<>();
         pages.add("homepage");
         DataProviderDTO dp = new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages));
-	MetaDataDTO meta = new MetaDataDTO(new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages)));
+	    MetaDataDTO meta = new MetaDataDTO(new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages)));
         allPhenotypeDTO.setMetaData(meta);
         return allPhenotypeDTO;
     }

@@ -349,7 +349,20 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                             stageUberonDTO));
 
             basicXpat.setAssay(assay);
-            basicXpat.setEvidence(new PublicationAgrDTO(pubZdbId, pubMedId));
+            PublicationAgrDTO pubDto = new PublicationAgrDTO();
+            if (pubMedId != null){
+                pubDto.setPublicationId("PMID:"+pubMedId);
+                List<String> pubPages = new ArrayList<>();
+                pubPages.add("reference");
+                CrossReferenceDTO zfinPubXref = new CrossReferenceDTO("ZFIN", pubZdbId,pubPages);
+                pubDto.setCrossReference(zfinPubXref);
+            }
+            else {
+                if (pubZdbId != null){
+                    pubDto.setPublicationId("ZFIN:"+pubZdbId);
+                }
+            }
+            basicXpat.setEvidence(pubDto);
 
             List<String> annotationPages = new ArrayList<>();
             annotationPages.add("gene/expression/annotation/detail");

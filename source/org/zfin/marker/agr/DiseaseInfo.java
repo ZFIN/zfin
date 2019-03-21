@@ -99,7 +99,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             strDiseaseDto.setObjectRelation(relationship);
                             // evidence
                             strDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
-                            populateExperimentConditions(fishExperiment, strDiseaseDto);
+                            //populateExperimentConditions(fishExperiment, strDiseaseDto);
                             diseaseDTOList.add(strDiseaseDto);
 
                         } else {
@@ -112,7 +112,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                     RelationshipDTO alleleRelationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.ALELLE);
                                     FeatureDiseaseDto.setObjectRelation(alleleRelationship);
                                     FeatureDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
-                                    populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
+                                    //populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
                                     diseaseDTOList.add(FeatureDiseaseDto);
                                 }
                             });
@@ -121,28 +121,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                 });
             });
         });
-
-
-/*
- * might ceom from an external source fro AGR
-        List<OmimPhenotype> geneModels = getMutantRepository().getDiseaseModelsFromGenes(numberOrRecords);
-        geneModels.forEach((OmimPhenotype omimPhenotype) -> {
-            omimPhenotype.getExternalReferences().forEach(termReference -> {
-                DiseaseDTO dto = new DiseaseDTO();
-                dto.setObjectId(omimPhenotype.getOrtholog().getZebrafishGene().getZdbID());
-                dto.setObjectName(omimPhenotype.getOrtholog().getZebrafishGene().getAbbreviation());
-                RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_MARKER_OF, RelationshipDTO.GENE);
-                dto.setObjectRelation(relationship);
-                dto.setDataProvider(DataProvider.ZFIN);
-                dto.setDOid(termReference.getTerm().getOboID());
-                EvidenceDTO evidenceDTO = new EvidenceDTO("ISS");
-                evidenceDTO.setPublications(Collections.singletonList(new PublicationAgrDTO("ZDB-PUB-170210-12", "")));
-                dto.setEvidence(Collections.singletonList(evidenceDTO));
-                dto.setInferredGeneAssociation(Collections.singleton(omimPhenotype.getOrtholog().getZebrafishGene().getZdbID()));
-                diseaseDTOList.add(dto);
-            });
-        });
-*/
 
 
         AllDiseaseDTO allDiseaseDTO = new AllDiseaseDTO();
@@ -178,7 +156,18 @@ public class DiseaseInfo extends AbstractScriptWrapper {
     }
 
     public EvidenceDTO getEvidenceDTO(Publication publication, List<String> evidences) {
-        PublicationAgrDTO fixedPub = new PublicationAgrDTO(publication.getZdbID(), publication.getAccessionNumber());
+        PublicationAgrDTO fixedPub = new PublicationAgrDTO();
+        List<String> pubPages = new ArrayList<>();
+        pubPages.add("reference");
+        CrossReferenceDTO pubXref = new CrossReferenceDTO("ZFIN", publication.getZdbID(), pubPages);
+        if (publication.getAccessionNumber() != null) {
+            fixedPub.setPublicationId("PMID:"+publication.getAccessionNumber());
+            fixedPub.setCrossReference(pubXref);
+        }
+        else {
+            fixedPub.setPublicationId("ZFIN:"+publication.getZdbID());
+        }
+
         EvidenceDTO evDto = new EvidenceDTO(fixedPub);
         evDto.setEvidenceCodes(evidences);
         return evDto;
@@ -196,9 +185,9 @@ public class DiseaseInfo extends AbstractScriptWrapper {
     // Needs to be changed in the future.
     private String getEvidenceCodeString(DiseaseAnnotation diseaseAnnotations) {
         if (diseaseAnnotations.getEvidenceCode().equals("ZDB-TERM-170419-250"))
-            return "TAS";
+            return "ECO:0000304";
         if (diseaseAnnotations.getEvidenceCode().equals("ZDB-TERM-170419-251"))
-            return "IC";
+            return "ECO:0000305";
         return "";
     }
 

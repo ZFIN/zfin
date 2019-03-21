@@ -7,5 +7,6 @@
 
     <include file="source/org/zfin/db/load/1106/add_zyg_ont_id.sql"/>
     <include file="source/org/zfin/db/load/1106/fix_zyg_ont_id.sql"/>
+    <include file="source/org/zfin/db/load/1106/update_uberon_map.sql"/>
 
 </databaseChangeLog>

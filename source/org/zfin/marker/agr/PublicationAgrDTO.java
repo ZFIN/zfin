@@ -1,29 +1,33 @@
 package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.zfin.infrastructure.ActiveSource;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class PublicationAgrDTO {
-
     public static final String PMID = "PMID:";
-    private String modPublicationId;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String pubMedId;
 
-    public PublicationAgrDTO(String publicationModId, Integer pubMedId) {
-        if (ActiveSource.validateActiveData(publicationModId))
-            this.modPublicationId = ZfinDTO.ZFIN;
-        this.modPublicationId += publicationModId;
-        if (pubMedId != null)
-            this.pubMedId = PMID + pubMedId;
+    private String publicationId;
+    private CrossReferenceDTO crossReference;
+
+
+    public String getPublicationId() {
+        return publicationId;
     }
 
-    public String getModPublicationId() {
-        return modPublicationId;
+    public void setPublicationId(String publicationId) {
+        this.publicationId = publicationId;
     }
 
-    public String getPubMedId() {
-        return pubMedId;
+    public CrossReferenceDTO getCrossReference() {
+        return crossReference;
     }
+
+    public void setCrossReference(CrossReferenceDTO crossReference) {
+        this.crossReference = crossReference;
+    }
+
+
+
 
 }

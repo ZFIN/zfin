@@ -95,11 +95,6 @@ public class BasicSTRInfo extends AbstractScriptWrapper {
 
         AllSTRDTO allSTRDTO = new AllSTRDTO();
         allSTRDTO.setSTRs(allSTRDTOList);
-        String dataProvider = "ZFIN";
-        List<String> pages = new ArrayList<>();
-        pages.add("homepage");
-        MetaDataDTO meta = new MetaDataDTO(new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages)));
-        allSTRDTO.setMetaData(meta);
         return allSTRDTO;
     }
 }
