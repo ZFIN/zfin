@@ -24,8 +24,10 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     private long order;
     private boolean wildtype;
     private Set<FishAlias> aliases;
+    private Set<SecondaryFish> secondaryFishSet;
     private Set<FishSupplier> suppliers;
     private Set<FishExperiment> fishExperiments;
+
 
     private List<SequenceTargetingReagent> strList;
     private long fishFunctionalAffectedGeneCount;
@@ -34,6 +36,14 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         if (aliases == null || aliases.size() == 0)
             return null;
         return aliases;
+    }
+
+    public Set<SecondaryFish> getSecondaryFishSet() {
+        return secondaryFishSet;
+    }
+
+    public void setSecondaryFishSet(Set<SecondaryFish> secondaryFishSet) {
+        this.secondaryFishSet = secondaryFishSet;
     }
 
     public void setAliases(Set<FishAlias> aliases) {

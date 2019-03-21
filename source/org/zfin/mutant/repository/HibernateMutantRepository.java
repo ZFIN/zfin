@@ -1976,6 +1976,17 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public String getFishByWTGenotype(Genotype genotype) {
+        String hql = "select fish.zdbID from Fish as fish " +
+                "where fish.genotype = :genotype and " +
+                "fish.wildtype is true";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotype", genotype);
+        return query.uniqueResult().toString();
+    }
+
+
+    @Override
     public List<Fish> getFishByGenotypeNoExperiment(Genotype genotype) {
         String hql = "select fish from Fish as fish " +
                 "where fish.genotype = :genotype and " +

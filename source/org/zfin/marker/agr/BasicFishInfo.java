@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.SecondaryMarker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
@@ -12,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,12 +68,12 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                             if (CollectionUtils.isNotEmpty(genotype.getAssociatedGenotypes())) {
                                 List<String> backgroundList = new ArrayList<>(genotype.getAssociatedGenotypes().size());
                                 for (Genotype geno : genotype.getAssociatedGenotypes()) {
-                                    backgroundList.add("ZFIN:" + geno.getZdbID());
+                                    String backgroundFish = getMutantRepository().getFishByWTGenotype(geno);
+                                    backgroundList.add("ZFIN:" + backgroundFish);
                                 }
                                 dto.setBackgroundIDs(backgroundList);
                             }
-                            //TODO: add secondaryIDs
-                            //TODO: add taxonID
+                            dto.setTaxonId(dto.getTaxonId());
                             //TODO: convert background geno_id to fish_id
                             if (CollectionUtils.isNotEmpty(fish.getStrList())) {
                                 List<String> strList = new ArrayList<>(fish.getStrList().size());
@@ -103,6 +105,15 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                                     genoComponents.add(genofeatDTO);
                                 }
                                 dto.setGenotypeComponents(genoComponents);
+                            }
+                            Set<String> secondaryDTOs = new HashSet<>();
+                            if (CollectionUtils.isNotEmpty(fish.getSecondaryFishSet())) {
+                                for (SecondaryFish secFish : fish.getSecondaryFishSet()) {
+                                    secondaryDTOs.add(secFish.getOldID());
+                                }
+                            }
+                            if (CollectionUtils.isNotEmpty(secondaryDTOs)){
+                                dto.setSecondaryIds(secondaryDTOs);
                             }
                             List<String> pages = new ArrayList<>();
                             pages.add("Fish");

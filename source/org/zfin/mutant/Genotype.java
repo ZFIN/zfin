@@ -67,14 +67,25 @@ public class Genotype implements Comparable, EntityZdbID {
     private Set<DataNote> dataNotes;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "genotype")
     private Set<GenotypeSupplier> suppliers;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "genotype")
     private Set<GenotypeAlias> aliases;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "genotype")
+    private Set<SecondaryGenotype> secondaryGenotypeSet;
 
     @Column(name = "geno_complexity_order")
     private Integer complexity;
     @Transient
     private List<Publication> associatedPulications;
 
+    public Set<SecondaryGenotype> getSecondaryGenotypeSet() {
+        return secondaryGenotypeSet;
+    }
+
+    public void setSecondaryGenotypeSet(Set<SecondaryGenotype> secondaryGenotypeSet) {
+        this.secondaryGenotypeSet = secondaryGenotypeSet;
+    }
     public String getZdbID() {
         return zdbID;
     }
