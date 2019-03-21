@@ -36,7 +36,7 @@ ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properti
 //new HibernateSessionCreator()
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
-DOWNLOAD_URL = "http://reports.alliancegenome.org/gene-descriptions/2.0/ZFIN_gene_desc_2018-11-26.json"
+DOWNLOAD_URL = "http://reports.alliancegenome.org/gene-descriptions/ZFIN_gene_desc_latest.json"
 def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
 def out = new BufferedOutputStream(file)
 out << new URL(DOWNLOAD_URL).openStream()
