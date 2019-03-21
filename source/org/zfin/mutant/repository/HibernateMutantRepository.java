@@ -39,6 +39,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.STRMarkerSequence;
+import org.zfin.sequence.Sequence;
 
 import javax.persistence.Basic;
 import java.sql.CallableStatement;
@@ -1813,6 +1814,14 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public List<SequenceTargetingReagent> getAllSTRs(){
+        Session session = HibernateUtil.currentSession();
+        Criteria strCriteria = session.createCriteria(SequenceTargetingReagent.class);
+        strCriteria.addOrder(Order.asc("name"));
+        return strCriteria.list();
+    }
+
+    @Override
     public List<String> getFishAliases() {
         Session session = HibernateUtil.currentSession();
         Criteria fishCriteria = session.createCriteria(Fish.class);
@@ -1984,7 +1993,6 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("genotype", genotype);
         return query.uniqueResult().toString();
     }
-
 
     @Override
     public List<Fish> getFishByGenotypeNoExperiment(Genotype genotype) {

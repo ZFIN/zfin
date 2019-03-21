@@ -8,6 +8,7 @@
         <antcall target="create-allele"/>
         <antcall target="create-bgi"/>
         <antcall target="create-fish"/>
+        <antcall target="create-str"/>
     </target>
 
     <target name="create-bgi-test" >
@@ -16,6 +17,10 @@
 
     <target name="create-fish-test" >
         <antcall target="create-basic-fish-info-file-test"  />
+    </target>
+
+    <target name="create-str-test" >
+        <antcall target="create-basic-str-info-file-test"  />
     </target>
 
     <target name="create-disease-test" >
@@ -40,6 +45,10 @@
 
     <target name="create-fish" >
         <antcall target="create-basic-fish-info-file"  />
+    </target>
+
+    <target name="create-str" >
+        <antcall target="create-basic-str-info-file"  />
     </target>
 
     <target name="create-allele" >
@@ -71,6 +80,15 @@
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.agr.BasicFishInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="6G">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
+    <target name="create-basic-str-info-file" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.BasicSTRInfo" fork="yes" classpathref="extended.classpath"
               failonerror="true" maxmemory="6G">
             <classpath refid="classpath"/>
         </java>
