@@ -1813,6 +1813,13 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public List<String> getFishAliases() {
+        Session session = HibernateUtil.currentSession();
+        Criteria fishCriteria = session.createCriteria(Fish.class);
+        fishCriteria.addOrder(Order.asc("name"));
+        return fishCriteria.list();
+    }
+    @Override
     public List<Fish> getFishBackgrounds() {
         Session session = HibernateUtil.currentSession();
         String hql = "";

@@ -23,11 +23,23 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     private String handle;
     private long order;
     private boolean wildtype;
+    private Set<FishAlias> aliases;
     private Set<FishSupplier> suppliers;
     private Set<FishExperiment> fishExperiments;
 
     private List<SequenceTargetingReagent> strList;
     private long fishFunctionalAffectedGeneCount;
+
+    public Set<FishAlias> getAliases() {
+        if (aliases == null || aliases.size() == 0)
+            return null;
+        return aliases;
+    }
+
+    public void setAliases(Set<FishAlias> aliases) {
+        this.aliases = aliases;
+    }
+
 
     public long getFishFunctionalAffectedGeneCount() {
         return fishFunctionalAffectedGeneCount;

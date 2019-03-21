@@ -12,7 +12,7 @@ public class FishDTO extends ZfinDTO {
     private String name;
     private String nameText;
     private List<GenotypeComponentDTO> genotypeComponents;
-    private List<String> sequenceTargetingReagents;
+    private List<String> sequenceTargetingReagentIDs;
     private List<String> backgroundIDs;
     private CrossReferenceDTO crossReference;
 
@@ -28,7 +28,7 @@ public class FishDTO extends ZfinDTO {
         return backgroundIDs;
     }
 
-    public void setBackgrounds(List<String> backgrounds) {
+    public void setBackgroundIDs(List<String> backgroundIDs) {
         this.backgroundIDs = backgroundIDs;
     }
 
@@ -56,12 +56,12 @@ public class FishDTO extends ZfinDTO {
         this.genotypeComponents = genotypeComponents;
     }
 
-    public List<String> getSequenceTargetingReagents() {
-        return sequenceTargetingReagents;
+    public List<String> getSequenceTargetingReagentIDs() {
+        return sequenceTargetingReagentIDs;
     }
 
-    public void setSequenceTargetingReagents(List<String> sequenceTargetingReagents) {
-        this.sequenceTargetingReagents = sequenceTargetingReagents;
+    public void setSequenceTargetingReagentIDs(List<String> sequenceTargetingReagents) {
+        this.sequenceTargetingReagentIDs = sequenceTargetingReagents;
     }
 
     public CrossReferenceDTO getCrossReference() {

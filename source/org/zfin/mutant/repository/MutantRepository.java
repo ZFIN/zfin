@@ -457,6 +457,7 @@ public interface MutantRepository {
 
     List<Fish> getAllWildtypeFish();
     List<Fish> getAllFish();
+    List<String> getFishAliases();
     List<Fish> getFishBackgrounds();
 
     List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication);

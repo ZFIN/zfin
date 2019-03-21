@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.mutant.Fish;
-import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.marker.MarkerAlias;
+import org.zfin.mutant.*;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.FileOutputStream;
@@ -15,7 +14,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.zfin.mutant.Genotype;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -60,6 +58,9 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                         fish -> {
                             FishDTO dto = new FishDTO();
                             dto.setName(fish.getName());
+                            String nameText = fish.getName().replace("</sup>", ">");
+                            nameText = nameText.replace("<sup>", "<");
+                            dto.setNameText(nameText);
                             dto.setGenotypeID("ZFIN:" + fish.getZdbID());
                             Genotype genotype = fish.getGenotype();
                             if (CollectionUtils.isNotEmpty(genotype.getAssociatedGenotypes())) {
@@ -67,14 +68,31 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                                 for (Genotype geno : genotype.getAssociatedGenotypes()) {
                                     backgroundList.add("ZFIN:" + geno.getZdbID());
                                 }
-                                dto.setBackgrounds(backgroundList);
+                                dto.setBackgroundIDs(backgroundList);
                             }
+                            //TODO: add secondaryIDs
+                            //TODO: add taxonID
+                            //TODO: convert background geno_id to fish_id
                             if (CollectionUtils.isNotEmpty(fish.getStrList())) {
                                 List<String> strList = new ArrayList<>(fish.getStrList().size());
                                 for (SequenceTargetingReagent str : fish.getStrList()) {
                                     strList.add("ZFIN:" + str.getZdbID());
                                 }
-                                dto.setSequenceTargetingReagents(strList);
+                                dto.setSequenceTargetingReagentIDs(strList);
+                            }
+                            List<String> aliasList = new ArrayList<>();
+                            if (CollectionUtils.isNotEmpty(fish.getAliases())) {
+                                for (FishAlias alias : fish.getAliases()) {
+                                    aliasList.add(alias.getAlias());
+                                }
+                            }
+                            if (CollectionUtils.isNotEmpty(genotype.getAliases())) {
+                                for (GenotypeAlias alias : genotype.getAliases()) {
+                                    aliasList.add(alias.getAlias());
+                                }
+                            }
+                            if (CollectionUtils.isNotEmpty(aliasList)) {
+                                dto.setSynonyms(aliasList);
                             }
                             if (CollectionUtils.isNotEmpty(fish.getGenotype().getGenotypeFeatures())) {
                                 List<GenotypeComponentDTO> genoComponents = new ArrayList<>(fish.getGenotype().getGenotypeFeatures().size());
