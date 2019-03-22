@@ -12,7 +12,7 @@ import javax.persistence.*;
         "                                    WHEN 'GENEP' THEN 'Marker'" +
         "                                    WHEN 'ALT' THEN 'Featur'" +
         "                                    WHEN 'FISH' THEN 'Fish  '" +
-        "                                    WHEN 'GENOTYPE' THEN 'Genoty'" +
+        "                                    WHEN 'GENO' THEN 'Genoty'" +
         "                                    ELSE             'Marker'" +
         "                                 END")
 public class ReplacedData {
