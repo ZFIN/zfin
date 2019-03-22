@@ -8,6 +8,7 @@ Report the wrong print issn with our data before correcting them&#xd;
 Update other fields with NLM data based by the same print issn&#xd;
 Report possible duplicates with the same print issn but different titles&#xd;
 Report all journals missing issn print&#xd;
+Output a data file used as input file for journal merge
 </description>
   <keepDependencies>false</keepDependencies>
   <properties/>
