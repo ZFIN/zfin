@@ -1,13 +1,14 @@
 package org.zfin.mutant;
 
 import org.zfin.infrastructure.DataAlias;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-@DiscriminatorValue("Fish")
+@DiscriminatorValue("Fish  ")
 public class FishAlias extends DataAlias {
 
     @ManyToOne

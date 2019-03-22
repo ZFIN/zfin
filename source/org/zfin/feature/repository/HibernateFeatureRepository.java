@@ -590,6 +590,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @Override
     public List<FeatureLocation> getAllFeatureLocationsOnGRCz11() {
         Criteria featureLocationCriteria = HibernateUtil.currentSession().createCriteria(FeatureLocation.class);
+        featureLocationCriteria.add(Restrictions.eq("sfclAssembly", "GRCz11"));
         return featureLocationCriteria.list();
     }
 

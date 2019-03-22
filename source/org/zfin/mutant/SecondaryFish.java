@@ -3,7 +3,7 @@ import org.zfin.marker.ReplacedData;
 import javax.persistence.*;
 
 @Entity
-@DiscriminatorValue("Fish")
+@DiscriminatorValue("Fish  ")
 public class SecondaryFish extends ReplacedData {
 
     @ManyToOne

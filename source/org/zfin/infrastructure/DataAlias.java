@@ -22,6 +22,7 @@ import java.util.Set;
         "                                    WHEN 'TERM' THEN 'Term  '" +
         "                                    WHEN 'GENO' THEN 'Genoty'" +
         "                                    WHEN 'ALT'  THEN 'Featur'" +
+        "                                    WHEN 'FISH' THEN 'Fish  '" +
         "                                    ELSE             'Marker'" +
         "                                 END")
 public class DataAlias implements Comparable, EntityAttribution, Serializable, EntityZdbID {

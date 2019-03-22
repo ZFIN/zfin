@@ -40,7 +40,7 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
         String jsonInString = writer.writeValueAsString(allVariantDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.8_STR.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.8_variant.json"))) {
             out.print(jsonInString);
         }
     }
@@ -53,13 +53,26 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                 .map(
                         variant -> {
                             VariantDTO dto = new VariantDTO();
-                            dto.setAlleleId(variant.getFeature().getZdbID());
+                            String featureType = variant.getFeature().getType().toString();
+                            if (featureType == "POINT_MUTATION") {
+                                dto.setType("SO:1000008");
+                            }
+                            else if (featureType =="DELETION"){
+                                dto.setType("SO:0000159");
+                            }
+                            else if (featureType == "INSERTION"){
+                                dto.setType("SO:0000667");
+                            }
+                            else {
+                                System.out.println("invalid feature type");
+                            }
+                            dto.setAlleleId("ZFIN:" + variant.getFeature().getZdbID());
                             dto.setAssembly(variant.getSfclAssembly());
                             dto.setStart(variant.getSfclStart());
                             dto.setEnd(variant.getSfclEnd());
                             dto.setChromosome(variant.getSfclChromosome());
-                            String featureType = variant.getFeature().getType().toString();
                             return dto;
+
                         })
                 .collect(Collectors.toList());
 

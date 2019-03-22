@@ -10,7 +10,9 @@ import javax.persistence.*;
 @DiscriminatorFormula("CASE get_obj_type(zrepld_new_zdb_id)" +
         "                                    WHEN 'GENE' THEN 'Marker'" +
         "                                    WHEN 'GENEP' THEN 'Marker'" +
-        "                                    WHEN 'ALT' THEN 'Feature'" +
+        "                                    WHEN 'ALT' THEN 'Featur'" +
+        "                                    WHEN 'FISH' THEN 'Fish  '" +
+        "                                    WHEN 'GENOTYPE' THEN 'Genoty'" +
         "                                    ELSE             'Marker'" +
         "                                 END")
 public class ReplacedData {
