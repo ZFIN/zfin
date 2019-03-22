@@ -32,6 +32,7 @@ import org.zfin.mapping.FeatureLocation;
 import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.FeatureSource;
@@ -584,6 +585,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
         criteria.setMaxResults(1);
         FeatureGenomicMutationDetail fgmd = (FeatureGenomicMutationDetail) criteria.uniqueResult();
         return fgmd;
+    }
+
+    @Override
+    public List<FeatureLocation> getAllFeatureLocationsOnGRCz11() {
+        Criteria featureLocationCriteria = HibernateUtil.currentSession().createCriteria(FeatureLocation.class);
+        return featureLocationCriteria.list();
     }
 
     @Override

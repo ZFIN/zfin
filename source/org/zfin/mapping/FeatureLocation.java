@@ -1,13 +1,7 @@
 package org.zfin.mapping;
 
 import org.zfin.feature.Feature;
-import org.zfin.gbrowse.GBrowseTrack;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.publication.Publication;
-
-import java.io.Serializable;
 
 /**
  * Feature Location .
@@ -26,9 +20,6 @@ public class FeatureLocation  {
     private Integer sfclStart;
     private Integer sfclEnd;
     private String sfclChromosome;
-
-
-
     private String sfclAssembly;
     private GenericTerm sfclEvidence;
 
