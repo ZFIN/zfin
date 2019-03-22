@@ -8,8 +8,15 @@ public class STRDTO extends ZfinDTO {
 
     private String name;
     private List<String> targetGeneIds;
-    private CrossReferenceDTO crossReference;
+    private String soTermId;
 
+    public String getSoTermId() {
+        return soTermId;
+    }
+
+    public void setSoTermId(String soTermId) {
+        this.soTermId = soTermId;
+    }
 
     public String getName() {
         return name;
@@ -25,14 +32,6 @@ public class STRDTO extends ZfinDTO {
 
     public void setTargetGeneIds(List<String> targetGeneIds) {
         this.targetGeneIds = targetGeneIds;
-    }
-
-    public CrossReferenceDTO getCrossReference() {
-        return crossReference;
-    }
-
-    public void setCrossReference(CrossReferenceDTO crossReference) {
-        this.crossReference = crossReference;
     }
 
 

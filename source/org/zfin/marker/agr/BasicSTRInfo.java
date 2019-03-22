@@ -85,6 +85,16 @@ public class BasicSTRInfo extends AbstractScriptWrapper {
                                 dto.setSecondaryIds(secondaryDTOs);
                             }
                             dto.setTaxonId(dto.getTaxonId());
+                            if (str.getZdbID().startsWith("ZDB-MRPH")){
+                                dto.setSoTermId("SO:0000034");
+                            }
+                            else if (str.getZdbID().startsWith("ZDB-CRISPR")){
+                                dto.setSoTermId("SO:0001429");
+                            }
+                            else {
+                                dto.setSoTermId("SO:0000059");
+                            }
+
                             return dto;
                         })
                 .collect(Collectors.toList());
