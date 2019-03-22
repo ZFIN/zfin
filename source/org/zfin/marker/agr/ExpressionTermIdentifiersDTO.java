@@ -54,23 +54,23 @@ public class ExpressionTermIdentifiersDTO {
         this.anatomicalStructureQualifierTermId = anatomicalStructureQualifierTermId;
     }
 
-    public Set<UberonSlimTermDTO> getAnatomcialStructureUberonSlimTermIds() {
+    public Set<UberonSlimTermDTO> getAnatomicalStructureUberonSlimTermIds() {
         return anatomicalStructureUberonSlimTermIds;
     }
 
-    public void setAnatomcialStructureUberonSlimTermIds(Set<UberonSlimTermDTO> anatomicalStructureUberonSlimTermIds) {
+    public void setAnatomicalStructureUberonSlimTermIds(Set<UberonSlimTermDTO> anatomicalStructureUberonSlimTermIds) {
         this.anatomicalStructureUberonSlimTermIds = anatomicalStructureUberonSlimTermIds;
     }
 
     public ExpressionTermIdentifiersDTO(String whereExpressedStatement, String cellularComponentTermId,
                                         String anatomicalStructureTermId, String anatomicalSubStructureTermId,
-                                        String anatomicalStructureQualifierTermId, Set<UberonSlimTermDTO> anatomcialStructureUberonSlimTermIds) {
+                                        String anatomicalStructureQualifierTermId, Set<UberonSlimTermDTO> anatomicalStructureUberonSlimTermIds) {
         this.whereExpressedStatement = whereExpressedStatement;
         this.cellularComponentTermId = cellularComponentTermId;
         this.anatomicalStructureTermId = anatomicalStructureTermId;
         this.anatomicalStructureQualifierTermId = anatomicalStructureQualifierTermId;
         this.anatomicalSubStructureTermId = anatomicalSubStructureTermId;
-        this.anatomicalStructureUberonSlimTermIds = anatomcialStructureUberonSlimTermIds;
+        this.anatomicalStructureUberonSlimTermIds = anatomicalStructureUberonSlimTermIds;
 
     }
 }
