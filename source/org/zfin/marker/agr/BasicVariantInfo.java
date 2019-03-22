@@ -3,6 +3,8 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.zfin.mapping.FeatureGenomeLocation;
+import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
@@ -54,24 +56,27 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                         variant -> {
                             VariantDTO dto = new VariantDTO();
                             String featureType = variant.getFeature().getType().toString();
-                            if (featureType == "POINT_MUTATION") {
-                                dto.setType("SO:1000008");
+                            if (featureType.equals("POINT_MUTATION") || featureType.equals("INSERTION") || featureType.equals("DELETION")) {
+                                if (featureType == "POINT_MUTATION") {
+                                    dto.setType("SO:1000008");
+                                } else if (featureType == "DELETION") {
+                                    dto.setType("SO:0000159");
+                                } else if (featureType == "INSERTION") {
+                                    dto.setType("SO:0000667");
+                                } else {
+                                    System.out.println("invalid feature type");
+                                }
+//                                FeatureGenomicMutationDetail fgmd = getFeatureRepository().getFeatureGenomicDetail(variant.getFeature());
+//                                dto.setGenomicReferenceSequence(fgmd.getFgmdSeqRef());
+//                                dto.setGenomicVariantSequence(fgmd);
+//                                dto.setAlleleId("ZFIN:" + variant.getFeature().getZdbID());
+//                                dto.setAssembly(variant.getSfclAssembly());
+//                                dto.setStart(variant.getSfclStart());
+//                                dto.setEnd(variant.getSfclEnd());
+//                                dto.setChromosome(variant.getSfclChromosome());
                             }
-                            else if (featureType =="DELETION"){
-                                dto.setType("SO:0000159");
-                            }
-                            else if (featureType == "INSERTION"){
-                                dto.setType("SO:0000667");
-                            }
-                            else {
-                                System.out.println("invalid feature type");
-                            }
-                            dto.setAlleleId("ZFIN:" + variant.getFeature().getZdbID());
-                            dto.setAssembly(variant.getSfclAssembly());
-                            dto.setStart(variant.getSfclStart());
-                            dto.setEnd(variant.getSfclEnd());
-                            dto.setChromosome(variant.getSfclChromosome());
                             return dto;
+
 
                         })
                 .collect(Collectors.toList());

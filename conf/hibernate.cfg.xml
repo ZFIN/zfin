@@ -89,6 +89,8 @@
         <mapping class="org.zfin.feature.SecondaryFeature"/>
         <mapping class="org.zfin.feature.TranscriptConsequence"/>
         <mapping class="org.zfin.fish.WarehouseSummary"/>
+        <mapping class="org.zfin.mutant.FishAlias"/>
+        <mapping class="org.zfin.mutant.SecondaryFish"/>
         <mapping class="org.zfin.framework.presentation.AnatomyFact"/>
         <mapping class="org.zfin.infrastructure.ActiveData"/>
         <mapping class="org.zfin.infrastructure.ActiveSource"/>
@@ -113,9 +115,9 @@
         <mapping class="org.zfin.marker.presentation.HighQualityProbeAOStatistics"/>
         <mapping class="org.zfin.marker.ReplacedData"/>
         <mapping class="org.zfin.marker.SecondaryMarker"/>
+        <mapping class="org.zfin.mutant.SecondaryGenotype"/>
         <mapping class="org.zfin.mutant.FishStr"/>
         <mapping class="org.zfin.mutant.Genotype"/>
-        <mapping class="org.zfin.mutant.GenotypeAlias"/>
         <mapping class="org.zfin.mutant.GenotypeAlias"/>
         <mapping class="org.zfin.mutant.GenotypeExternalNote"/>
         <mapping class="org.zfin.mutant.GenotypeFigure"/>
