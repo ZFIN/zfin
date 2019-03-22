@@ -3,8 +3,7 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.zfin.feature.FeatureDnaMutationDetail;
-import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mapping.FeatureLocation;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.FileOutputStream;
@@ -12,9 +11,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 public class BasicVariantInfo extends AbstractScriptWrapper {
 
@@ -55,17 +54,11 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                         variant -> {
                             VariantDTO dto = new VariantDTO();
                             dto.setAlleleId(variant.getFeature().getZdbID());
-                            dto.setAssembly(variant.getAssembly());
-                            dto.setStart(variant.getStart());
-                            dto.setEnd(variant.getEnd());
-                            dto.setChromosome(variant.getChromosome());
-                            String featureType = variant.getFeature().getType();
-                            if (featureType ))
-                            dto.setType(variant.getFeature().get)
-                            List<String> pages = new ArrayList<>();
-                            pages.add("Feature");
-                            CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", variant.getZdbID(), pages);
-                            dto.setCrossReference(xref);
+                            dto.setAssembly(variant.getSfclAssembly());
+                            dto.setStart(variant.getSfclStart());
+                            dto.setEnd(variant.getSfclEnd());
+                            dto.setChromosome(variant.getSfclChromosome());
+                            String featureType = variant.getFeature().getType().toString();
                             return dto;
                         })
                 .collect(Collectors.toList());

@@ -9,8 +9,8 @@ public class VariantDTO {
     private String alleleId;
     private String assembly;
     private String chromosome;
-    private String start;
-    private String end;
+    private Integer start;
+    private Integer end;
     private String sequenceOfReferenceAccessionNumber;
     private String genomicReferenceSequence;
     private String genomicVariantSequence;
@@ -43,19 +43,19 @@ public class VariantDTO {
         this.chromosome = chromosome;
     }
 
-    public String getStart() {
+    public Integer getStart() {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setStart(Integer start) {
         this.start = start;
     }
 
-    public String getEnd() {
+    public Integer getEnd() {
         return end;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(Integer end) {
         this.end = end;
     }
 

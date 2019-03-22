@@ -85,10 +85,6 @@ public class BasicSTRInfo extends AbstractScriptWrapper {
                                 dto.setSecondaryIds(secondaryDTOs);
                             }
                             dto.setTaxonId(dto.getTaxonId());
-                            List<String> pages = new ArrayList<>();
-                            pages.add("STR");
-                            CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", str.getZdbID(), pages);
-                            dto.setCrossReference(xref);
                             return dto;
                         })
                 .collect(Collectors.toList());
