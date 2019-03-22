@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.marker.MarkerAlias;
-import org.zfin.marker.SecondaryMarker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 

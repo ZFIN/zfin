@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 
 
 @Entity
-@DiscriminatorValue("Genoty ")
+@DiscriminatorValue("Genoty")
 public class GenotypeAlias extends DataAlias {
 
     @ManyToOne
