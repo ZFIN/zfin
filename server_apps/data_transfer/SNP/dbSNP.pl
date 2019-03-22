@@ -328,7 +328,7 @@ print "\n ctElse: $ctElse\n\n";
 print "\n ctOutSmith: $ctOutSmith \t ctOutJohson: $ctOutJohson\t ctOutTalbot: $ctOutTalbot\n\n";
 
 if ($ctNew > 0) {
-  system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPs.sql > newSNPs.report.txt" ) and &emailError("failed to load snp_download table");
+  system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPs.sql > newSNPs.report.txt 2> loadDbSNPlog.txt" ) and &emailError("failed to load snp_download table");
   &createReport("has added $ctNew new records into snp_download table");
 }
 
@@ -448,12 +448,12 @@ print "\n ctNew2: $ctNew2 \t   ctRedn2: $ctRedn2 \t ctNew3: $ctNew3 \t   ctRedn3
 print "\n ctJohson = $ctJohson \t ctSmith = $ctSmith \t ctTalbot: $ctTalbot \n\n";
 
 if ($ctNew2 > 0) {
-  system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPAttrs.sql > newSNPattribution.report.txt" ) and &emailError("failed to load snp_download_attribution table");
+  system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPAttrs.sql > newSNPattribution.report.txt 2> loadDbSNPlog2.txt" ) and &emailError("failed to load snp_download_attribution table");
   &createReport("has added $ctNew2 new records into snp_download_attribution table");
 }
 
 if ($ctNew3 > 0) {
-  system( "psql -d <!--|DB_NAME|--> -a -f addTalbotSNPAttr.sql > talbotAttribution.report.txt" ) and &emailError("failed to insert record_attribution table");
+  system( "psql -d <!--|DB_NAME|--> -a -f addTalbotSNPAttr.sql > talbotAttribution.report.txt 2> loadDbSNPlog3.txt" ) and &emailError("failed to insert record_attribution table");
   &createReport("has added $ctNew3 new records into record_attribution table for Talbot SNPs");
 } 
 
@@ -492,4 +492,5 @@ sub createReport($)
   {
       print REPORT "$_[0]\n";
   }
+
 
