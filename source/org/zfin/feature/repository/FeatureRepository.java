@@ -88,7 +88,11 @@ public interface FeatureRepository {
     String getAALink(Feature feature);
     FeatureLocation getFeatureLocation(Feature feature);
     FeatureGenomicMutationDetail getFeatureGenomicDetail(Feature feature);
-    List<FeatureLocation> getAllFeatureLocationsOnGRCz11();
+    int getFeatureGenomicMutationDetailCount (Feature feature);
+
+    FeatureLocation getAllFeatureLocationsOnGRCz11(Feature feature);
+
+    List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails();
 
     List<Marker> getMarkersByFeature(Feature feature);
 

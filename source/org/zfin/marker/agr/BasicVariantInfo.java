@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.zfin.mapping.FeatureGenomeLocation;
+import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -48,38 +49,46 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
     }
 
     public AllVariantDTO getAllVariantInfo() {
-        List<FeatureLocation> allVariants = getFeatureRepository().getAllFeatureLocationsOnGRCz11();
+        List<FeatureGenomicMutationDetail> allVariants = getFeatureRepository().getAllFeatureGenomicMutationDetails();
+
         System.out.println(allVariants.size());
 
         List<VariantDTO> allVariantDTOList = allVariants.stream()
                 .map(
                         variant -> {
-                            VariantDTO dto = new VariantDTO();
-                            String featureType = variant.getFeature().getType().toString();
-                            if (featureType.equals("POINT_MUTATION") || featureType.equals("INSERTION") || featureType.equals("DELETION")) {
-                                if (featureType == "POINT_MUTATION") {
-                                    dto.setType("SO:1000008");
-                                } else if (featureType == "DELETION") {
-                                    dto.setType("SO:0000159");
-                                } else if (featureType == "INSERTION") {
-                                    dto.setType("SO:0000667");
-                                } else {
-                                    System.out.println("invalid feature type");
-                                }
-//                                FeatureGenomicMutationDetail fgmd = getFeatureRepository().getFeatureGenomicDetail(variant.getFeature());
-//                                dto.setGenomicReferenceSequence(fgmd.getFgmdSeqRef());
-//                                dto.setGenomicVariantSequence(fgmd);
-//                                dto.setAlleleId("ZFIN:" + variant.getFeature().getZdbID());
-//                                dto.setAssembly(variant.getSfclAssembly());
-//                                dto.setStart(variant.getSfclStart());
-//                                dto.setEnd(variant.getSfclEnd());
-//                                dto.setChromosome(variant.getSfclChromosome());
-                            }
-                            return dto;
+                                VariantDTO dto = new VariantDTO();
+                                Feature feature = variant.getFeature();
+                                FeatureLocation ftrLoc = getFeatureRepository().getAllFeatureLocationsOnGRCz11(feature);
 
+                                if (ftrLoc != null) {
+                                    String featureType = variant.getFeature().getType().toString();
+
+                                    if (featureType.equals("POINT_MUTATION") || featureType.equals("INSERTION") || featureType.equals("DELETION")) {
+                                        if (featureType == "POINT_MUTATION") {
+                                            dto.setType("SO:1000008");
+                                        } else if (featureType == "DELETION") {
+                                            dto.setType("SO:0000159");
+                                        } else if (featureType == "INSERTION") {
+                                            dto.setType("SO:0000667");
+                                        } else {
+                                            System.out.println("invalid feature type");
+                                        }
+                                        dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
+                                        dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
+                                        dto.setAlleleId("ZFIN:" + feature.getZdbID());
+                                        dto.setAssembly(ftrLoc.getSfclAssembly());
+                                        dto.setStart(ftrLoc.getSfclStart());
+                                        dto.setEnd(ftrLoc.getSfclEnd());
+                                        dto.setChromosome(ftrLoc.getSfclChromosome());
+                                    }
+                                }
+                            return dto;
+                                //TODO: filter out empty maps
+                            //TODO: add sequenceOfReferenceAccessionNumber
 
                         })
-                .collect(Collectors.toList());
+
+        .collect(Collectors.toList());
 
         AllVariantDTO allVariantDTO = new AllVariantDTO();
         allVariantDTO.setVariants(allVariantDTOList);

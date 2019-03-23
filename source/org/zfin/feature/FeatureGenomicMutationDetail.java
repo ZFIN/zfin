@@ -1,7 +1,10 @@
 package org.zfin.feature;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.zfin.mapping.FeatureLocation;
 import org.zfin.sequence.ReferenceDatabase;
+import java.util.*;
+
 
 import javax.persistence.*;
 
