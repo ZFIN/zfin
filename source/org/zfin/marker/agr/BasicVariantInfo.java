@@ -70,16 +70,20 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                     if (featureType.equals("POINT_MUTATION") || featureType.equals("INSERTION") || featureType.equals("DELETION")) {
                                         if (featureType == "POINT_MUTATION") {
                                             dto.setType("SO:1000008");
+                                            dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
+                                            dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
                                         } else if (featureType == "DELETION") {
                                             dto.setType("SO:0000159");
+                                            dto.setGenomicVariantSequence("N/A");
+                                            dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                         } else if (featureType == "INSERTION") {
                                             dto.setType("SO:0000667");
+                                            dto.setGenomicReferenceSequence("N/A");
+                                            dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
                                         } else {
                                             System.out.println("invalid feature type");
                                         }
                                         dto.setSequenceOfReferenceAccessionNumber(ftrLoc.getReferenceSequenceAccessionNumber());
-                                        dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
-                                        dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
                                         dto.setAlleleId("ZFIN:" + feature.getZdbID());
                                         dto.setAssembly(ftrLoc.getSfclAssembly());
                                         dto.setStart(ftrLoc.getSfclStart());
@@ -99,13 +103,12 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
         for (VariantDTO vDto : allVariantDTOList) {
             if (!(vDto == null)) {
                 if (!(vDto.getAlleleId() == null)) {
-	           if (vDto.getType() =="SO:1000008" || vDto.getType()=="SO:0000159") {
                     allVariantDTOListNoNulls.add(vDto);
                     //System.out.println(vDto.getAlleleId());
-  }
                 }
             }
         }
+	System.out.println(allVariantDTOListNoNulls.size());
         AllVariantDTO allVariantDTO = new AllVariantDTO();
         allVariantDTO.setVariants(allVariantDTOListNoNulls);
         String dataProvider = "ZFIN";
