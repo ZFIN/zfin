@@ -13,6 +13,7 @@
     <include file="source/org/zfin/db/load/1106/drop-uberon-update.sql"/>
     <include file="source/org/zfin/db/load/1106/update_assembly.sql"/>
     <include file="source/org/zfin/db/load/1106/drop_weird_mrph.sql"/>
+    <include file="source/org/zfin/db/load/1106/add_sfcl_accession_number.sql"/>
 
 
 </databaseChangeLog>
