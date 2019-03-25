@@ -7,7 +7,6 @@ import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.mapping.FeatureLocation;
-import org.zfin.marker.Variant;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
