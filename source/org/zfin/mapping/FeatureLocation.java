@@ -22,8 +22,15 @@ public class FeatureLocation  {
     private String sfclChromosome;
     private String sfclAssembly;
     private GenericTerm sfclEvidence;
+    private String referenceSequenceAccessionNumber;
 
+    public String getReferenceSequenceAccessionNumber() {
+        return referenceSequenceAccessionNumber;
+    }
 
+    public void setReferenceSequenceAccessionNumber(String referenceSequenceAccessionNumber) {
+        this.referenceSequenceAccessionNumber = referenceSequenceAccessionNumber;
+    }
 
     public String getZdbID() {
         return zdbID;

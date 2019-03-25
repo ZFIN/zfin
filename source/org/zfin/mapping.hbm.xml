@@ -191,6 +191,7 @@
         <property name="sfclEnd" column="sfcl_end_position" type="java.lang.Integer"/>
         <property name="sfclAssembly" column="sfcl_assembly" type="string"/>
         <many-to-one name="sfclEvidence" column="sfcl_evidence_code"/>
+        <property name="referenceSequenceAccessionNumber" column="sfcl_chromosome_reference_accession_number" type="string"/>
 
 
     </class>

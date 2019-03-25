@@ -7,7 +7,10 @@ import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.mapping.FeatureLocation;
+import org.zfin.marker.Variant;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.MarkerDBLink;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,6 +18,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Objects;
 
 import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 
@@ -73,6 +77,7 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                         } else {
                                             System.out.println("invalid feature type");
                                         }
+                                        dto.setSequenceOfReferenceAccessionNumber(ftrLoc.getReferenceSequenceAccessionNumber());
                                         dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                         dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
                                         dto.setAlleleId("ZFIN:" + feature.getZdbID());
@@ -84,14 +89,25 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                 }
                             return dto;
                                 //TODO: filter out empty maps
-                            //TODO: add sequenceOfReferenceAccessionNumber
 
-                        })
+                        }
+                        )
 
         .collect(Collectors.toList());
+        List<VariantDTO> allVariantDTOListNoNulls = new ArrayList<>();
 
+        for (VariantDTO vDto : allVariantDTOList) {
+            if (!(vDto == null)) {
+                if (!(vDto.getAlleleId() == null)) {
+	           if (vDto.getType() =="SO:1000008" || vDto.getType()=="SO:0000159") {
+                    allVariantDTOListNoNulls.add(vDto);
+                    //System.out.println(vDto.getAlleleId());
+  }
+                }
+            }
+        }
         AllVariantDTO allVariantDTO = new AllVariantDTO();
-        allVariantDTO.setVariants(allVariantDTOList);
+        allVariantDTO.setVariants(allVariantDTOListNoNulls);
         String dataProvider = "ZFIN";
         List<String> pages = new ArrayList<>();
         pages.add("homepage");
