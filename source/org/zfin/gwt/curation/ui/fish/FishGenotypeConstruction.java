@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.dto.ZygosityDTO;
 import org.zfin.gwt.root.ui.ShowHideToggle;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.StringListBox;
@@ -96,7 +97,7 @@ public class FishGenotypeConstruction extends Composite {
         genotypeConstructionToggle = new ShowHideWidget(showHideToggle, genotypeConstructionPanel, true);
     }
 
-    FishGenotypeConstructionPresenter presenter;
+    private FishGenotypeConstructionPresenter presenter;
 
     public void setPresenter(FishGenotypeConstructionPresenter presenter) {
         this.presenter = presenter;
@@ -125,17 +126,17 @@ public class FishGenotypeConstruction extends Composite {
 
     @UiHandler("buttonUUU")
     void onUUUButtonClick(@SuppressWarnings("unused") ClickEvent event) {
-        zygosityListBox.setSelectedIndex(3);
-        zygosityMaternalListBox.setSelectedIndex(3);
-        zygosityPaternalListBox.setSelectedIndex(3);
+        zygosityListBox.setIndexForText(unknownSymbol);
+        zygosityMaternalListBox.setIndexForText(unknownSymbol);
+        zygosityPaternalListBox.setIndexForText(unknownSymbol);
         resetError();
     }
 
     @UiHandler("button2UU")
     void on2UUButtonClick(@SuppressWarnings("unused") ClickEvent event) {
-        zygosityListBox.setSelectedIndex(0);
-        zygosityMaternalListBox.setSelectedIndex(3);
-        zygosityPaternalListBox.setSelectedIndex(3);
+        zygosityListBox.setIndexForText(homozygousSymbol);
+        zygosityMaternalListBox.setIndexForText(unknownSymbol);
+        zygosityPaternalListBox.setIndexForText(unknownSymbol);
         resetError();
     }
 
@@ -143,28 +144,31 @@ public class FishGenotypeConstruction extends Composite {
         getErrorLabel().setError("");
         setMessage("");
     }
+    private String homozygousSymbol = ZygosityDTO.Type.HOMOZYGOUS.getName();
+    private String heterozygousSymbol = ZygosityDTO.Type.HETEROZYGOUS.getName();
+    private String unknownSymbol = ZygosityDTO.Type.UNKNOWN.getName();
 
     @UiHandler("button211")
     void on211ButtonClick(@SuppressWarnings("unused") ClickEvent event) {
-        zygosityListBox.setSelectedIndex(0);
-        zygosityMaternalListBox.setSelectedIndex(1);
-        zygosityPaternalListBox.setSelectedIndex(1);
+        zygosityListBox.setIndexForText(homozygousSymbol);
+        zygosityMaternalListBox.setIndexForText(heterozygousSymbol);
+        zygosityPaternalListBox.setIndexForText(heterozygousSymbol);
         resetError();
     }
 
     @UiHandler("button1UU")
     void on1UUButtonClick(@SuppressWarnings("unused") ClickEvent event) {
-        zygosityListBox.setSelectedIndex(1);
-        zygosityMaternalListBox.setSelectedIndex(3);
-        zygosityPaternalListBox.setSelectedIndex(3);
+        zygosityListBox.setIndexForText(heterozygousSymbol);
+        zygosityMaternalListBox.setIndexForText(unknownSymbol);
+        zygosityPaternalListBox.setIndexForText(unknownSymbol);
         resetError();
     }
 
     @UiHandler("button22U")
     void on22UButtonClick(@SuppressWarnings("unused") ClickEvent event) {
-        zygosityListBox.setSelectedIndex(0);
-        zygosityMaternalListBox.setSelectedIndex(0);
-        zygosityPaternalListBox.setSelectedIndex(3);
+        zygosityListBox.setIndexForText(homozygousSymbol);
+        zygosityMaternalListBox.setIndexForText(homozygousSymbol);
+        zygosityPaternalListBox.setIndexForText(unknownSymbol);
         resetError();
     }
 
