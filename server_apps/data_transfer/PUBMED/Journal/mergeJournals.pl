@@ -46,6 +46,23 @@ $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $passwor
     or die "Cannot connect to database: $DBI::errstr\n";
 
 
+$cur_alias = $dbh->prepare("select salias_source_zdb_id, salias_alias from source_alias where salias_source_zdb_id like 'ZDB-JRNL-%';");
+$cur_alias->execute();
+$cur_alias->bind_columns(\$id, \$alias);
+
+$ctJournalAlias = 0;
+%journalAlias = ();
+while ($cur_alias->fetch()) {
+   $constarint = $id . $alias;
+   $journalAlias{$constarint} = 1;
+   $ctJournalAlias++;
+}
+
+print "total number of journal alias: $ctJournalAlias\n";
+
+$cur_alias->finish();
+
+
 $ct = 0;
 while(<JOURNALS>) {
   $ct++;
@@ -70,7 +87,11 @@ while(<JOURNALS>) {
      foreach $synonym (@synonyms) {
        $synonym =~ s/^\s+//;
        $synonym =~ s/\s+$//;  
-       print ALIASLIST "$toRetain|$synonym\n";
+       $unique = $toRetain . $synonym;
+       if (!exists($journalAlias{$unique})) {
+         print ALIASLIST "$toRetain|$synonym|\n";
+         $journalAlias{$unique} = 1;
+       }
      }
 
      undef @synonymes, @fields;
@@ -116,6 +137,5 @@ system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/m
 system("psql -d $dbname -a -f insertJournalAlias.sql") && die "inserting journal alias failed.";
 
 exit;
-
 
 
