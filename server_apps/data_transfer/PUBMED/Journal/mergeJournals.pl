@@ -53,14 +53,10 @@ while(<JOURNALS>) {
   chomp;
   $line = $_;
   if ($line) {
-    @fields = split(/\|/, $line);
-    $toDelete = $fields[0];
-    $toRetain = $fields[1];
-    @synonyms = split(/,/, $fields[2]);
-    if ($ct < 18) {
-       print "$line\n";
-       print "$toDelete\t$toRetain\t$synonyms[0]\t$synonyms[3]\n\n";
-     }
+     @fields = split(/\|/, $line);
+     $toDelete = $fields[0];
+     $toRetain = $fields[1];
+     @synonyms = split(/,/, $fields[2]);
 
      $cur = $dbh->prepare('update publication set pub_jrnl_zdb_id = ? where pub_jrnl_zdb_id = ?;');
      $cur->execute($toRetain, $toDelete);
@@ -68,13 +64,13 @@ while(<JOURNALS>) {
      $cur = $dbh->prepare('delete from zdb_active_source where zactvs_zdb_id = ?;');                                                                                                                                                            
      $cur->execute($toDelete);
 
-     $cur = $dbh->prepare('insert into withdrawn_data (wd_old_zdb_id, wd_new_zdb_id, wd_display_note) values (?, ?,  "journal merged");');
+     $cur = $dbh->prepare("insert into withdrawn_data (wd_old_zdb_id, wd_new_zdb_id, wd_display_note) values (?, ?,  'journal merged');");
      $cur->execute("$toDelete", "$toRetain");
 
      foreach $synonym (@synonyms) {
        $synonym =~ s/^\s+//;
        $synonym =~ s/\s+$//;  
-       print ALIASLIST "$toRetain|$synonym|\n";
+       print ALIASLIST "$toRetain|$synonym\n";
      }
 
      undef @synonymes, @fields;
@@ -117,7 +113,7 @@ print "\nct = $ct\n\n";
 #remove the used input file
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/mergeJournalInput");
 
-system("psql -d <!--|DB_NAME|--> -a -f <!--|DB_NAME|--> insertJournalAlias.sql") && die "inserting journal alias failed.";
+system("psql -d $dbname -a -f insertJournalAlias.sql") && die "inserting journal alias failed.";
 
 exit;
 
