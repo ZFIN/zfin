@@ -21,6 +21,7 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
@@ -284,10 +285,15 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     public boolean isGenedom() {
         return isInTypeGroup(TypeGroup.GENEDOM_AND_NTR);
-    };
+    }
+
+    ;
+
     public boolean isNontranscribed() {
         return isInTypeGroup(TypeGroup.NONTSCRBD_REGION);
-    };
+    }
+
+    ;
 
     public MarkerType getMarkerType() {
         if (markerType == null)
@@ -405,6 +411,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return null;
     }
 
+    public boolean isConstruct() {
+        return getType().getConstructs().contains(getType());
+    }
+
     public enum Type {
         ATB("ATB"),
         BAC("BAC"),
@@ -444,28 +454,27 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         NCRNAG("NCRNAG"),
         HISTBS("HISTBS"),
         PROTBS("PROTBS"),
-	NCCR("NCCR"),
-	BR("BR"),
-	BINDSITE("BINDSITE"),
-	LIGANDBS("LIGANDBS"),
-	TFBS("TFBS"),
-	EBS("EBS"),
-	NCBS("NCBS"),
-	EMR("EMR"),
-	HMR("HMR"),
-	MDNAB("MDNAB"),
-	RR("RR"),
-	TRR("TRR"),
-	TLNRR("TLNRR"),
-	PROMOTER("PROMOTER"),
-	ENHANCER("ENHANCER"),
-	LCR("LCR"),
-	NUCMO("NUCMO"),
-	DNAMO("DNAMO"),
-	RNAMO("RNAMO"),
+        NCCR("NCCR"),
+        BR("BR"),
+        BINDSITE("BINDSITE"),
+        LIGANDBS("LIGANDBS"),
+        TFBS("TFBS"),
+        EBS("EBS"),
+        NCBS("NCBS"),
+        EMR("EMR"),
+        HMR("HMR"),
+        MDNAB("MDNAB"),
+        RR("RR"),
+        TRR("TRR"),
+        TLNRR("TLNRR"),
+        PROMOTER("PROMOTER"),
+        ENHANCER("ENHANCER"),
+        LCR("LCR"),
+        NUCMO("NUCMO"),
+        DNAMO("DNAMO"),
+        RNAMO("RNAMO"),
         CPGISLAND("CPGISLAND"),
-        SRPRNAG("SRPRNAG")
-        ;
+        SRPRNAG("SRPRNAG");
 
         private final String value;
 
@@ -501,6 +510,11 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return false;
         }
 
+        public List<Type> getConstructs() {
+            return Arrays.stream(values())
+                    .filter(type -> type.value.contains("CONSTRCT"))
+                    .collect(Collectors.toList());
+        }
     }
 
     public enum TypeGroup {
@@ -515,7 +529,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         CLONE("CLONE"),
         CLONEDOM("CLONEDOM"),
         CONSTRUCT("CONSTRUCT"),
-	CRISPR("CRISPR"),
+        CRISPR("CRISPR"),
         EFG("EFG"),
         EST("EST"),
         FEATURE("FEATURE"),
@@ -535,10 +549,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         SEARCH_MKSEG("SEARCH_MKSEG"),
         SEARCH_SEG("SEARCH_SEG"),
         SMALLSEG("SMALLSEG"),
-	SMALLSEG_NO_ESTCDNA("SMALLSEG_NO_ESTCDNA"),
+        SMALLSEG_NO_ESTCDNA("SMALLSEG_NO_ESTCDNA"),
         SSLP("SSLP"),
         STS("STS"),
-	TALEN("TALEN"),
+        TALEN("TALEN"),
         TGCONSTRUCT("TGCONSTRUCT"),
         TRANSCRIPT("TRANSCRIPT"),
         DEFICIENCY_TLOC_MARK("DEFICIENCY_TLOC_MARK"),
@@ -556,43 +570,42 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         NCRNAG("NCRNAG"),
         HISTBS("HISTBS"),
         PROTBS("PROTBS"),
-	NCCR("NCCR"),
-	BR("BR"),
-	BINDSITE("BINDSITE"),
-	LIGANDBS("LIGANDBS"),
-	TFBS("TFBS"),
-	EBS("EBS"),
-	NCBS("NCBS"),
-	EMR("EMR"),
-	HMR("HMR"),
-	MDNAB("MDNAB"),
-	RR("RR"),
-	TRR("TRR"),
-	TLNRR("TLNRR"),
-	PROMOTER("PROMOTER"),
-	ENHANCER("ENHANCER"),
-	LCR("LCR"),
-	NUCMO("NUCMO"),
-	DNAMO("DNAMO"),
-	RNAMO("RNAMO"),
-    CPGISLAND("CPGISLAND"),
-    ENGINEERED_REGION("ENGINEERED_REGION"),
-    GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
-    NONTSCRBD_REGION("NONTSCRBD_REGION"),
-	GENEDOM_AND_NTR("GENEDOM_AND_NTR"),
-    CONSTRUCT_COMPONENTS("CONSTRUCT_COMPONENTS"),
-    SEARCHABLE_CDNA_EST("SEARCHABLE_CDNA_EST", "cDNA/EST"),
-    SEARCHABLE_GENOMIC_CLONE("SEARCHABLE_GENOMIC_CLONE", "Genomic Clone"),
-    SEARCHABLE_CONSTRUCT("SEARCHABLE_CONSTRUCT","Construct"),
-    SEARCHABLE_EFG("SEARCHABLE_EFG", "Foreign Gene"),
-    SEARCHABLE_MAPPING_MARKER("SEARCHABLE_MAPPING_MARKER", "Mapping Marker"),
-    SEARCHABLE_NON_PROTEIN_CODING_GENE("SEARCHABLE_NON_PROTEIN_CODING_GENE", "Non-Protein Coding Gene"),
-    SEARCHABLE_NON_TRANSCRIBED_REGION("SEARCHABLE_NTR", "Non-Transcribed Region"),   
-    SEARCHABLE_PROTEIN_CODING_GENE("SEARCHABLE_PROTEIN_CODING_GENE", "Protein Coding Gene"),
-    SEARCHABLE_STR("SEARCHABLE_STR","Sequence Targeting Reagent"),
-	SEARCHABLE_TRANSCRIPT("SEARCHABLE_TRANSCRIPT", "Transcript"),
-	RNAGENE("RNAGENE")
-        ;
+        NCCR("NCCR"),
+        BR("BR"),
+        BINDSITE("BINDSITE"),
+        LIGANDBS("LIGANDBS"),
+        TFBS("TFBS"),
+        EBS("EBS"),
+        NCBS("NCBS"),
+        EMR("EMR"),
+        HMR("HMR"),
+        MDNAB("MDNAB"),
+        RR("RR"),
+        TRR("TRR"),
+        TLNRR("TLNRR"),
+        PROMOTER("PROMOTER"),
+        ENHANCER("ENHANCER"),
+        LCR("LCR"),
+        NUCMO("NUCMO"),
+        DNAMO("DNAMO"),
+        RNAMO("RNAMO"),
+        CPGISLAND("CPGISLAND"),
+        ENGINEERED_REGION("ENGINEERED_REGION"),
+        GENEDOM_PROD_PROTEIN("GENEDOM_PROD_PROTEIN"),
+        NONTSCRBD_REGION("NONTSCRBD_REGION"),
+        GENEDOM_AND_NTR("GENEDOM_AND_NTR"),
+        CONSTRUCT_COMPONENTS("CONSTRUCT_COMPONENTS"),
+        SEARCHABLE_CDNA_EST("SEARCHABLE_CDNA_EST", "cDNA/EST"),
+        SEARCHABLE_GENOMIC_CLONE("SEARCHABLE_GENOMIC_CLONE", "Genomic Clone"),
+        SEARCHABLE_CONSTRUCT("SEARCHABLE_CONSTRUCT", "Construct"),
+        SEARCHABLE_EFG("SEARCHABLE_EFG", "Foreign Gene"),
+        SEARCHABLE_MAPPING_MARKER("SEARCHABLE_MAPPING_MARKER", "Mapping Marker"),
+        SEARCHABLE_NON_PROTEIN_CODING_GENE("SEARCHABLE_NON_PROTEIN_CODING_GENE", "Non-Protein Coding Gene"),
+        SEARCHABLE_NON_TRANSCRIBED_REGION("SEARCHABLE_NTR", "Non-Transcribed Region"),
+        SEARCHABLE_PROTEIN_CODING_GENE("SEARCHABLE_PROTEIN_CODING_GENE", "Protein Coding Gene"),
+        SEARCHABLE_STR("SEARCHABLE_STR", "Sequence Targeting Reagent"),
+        SEARCHABLE_TRANSCRIPT("SEARCHABLE_TRANSCRIPT", "Transcript"),
+        RNAGENE("RNAGENE");
 
         private final String value;
         private final String displayName;
@@ -601,6 +614,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             this.value = type;
             this.displayName = null;
         }
+
         private TypeGroup(String type, String displayName) {
             this.value = type;
             this.displayName = displayName;
@@ -609,7 +623,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         public String toString() {
             return this.value;
         }
-        public String getDisplayName() { return this.displayName; }
+
+        public String getDisplayName() {
+            return this.displayName;
+        }
 
         public static TypeGroup getType(String type) {
             for (TypeGroup t : values()) {

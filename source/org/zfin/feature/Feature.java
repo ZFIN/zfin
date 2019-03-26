@@ -1,8 +1,9 @@
 package org.zfin.feature;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.annotations.*;
-import org.hibernate.envers.Audited;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SortNatural;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
@@ -17,10 +18,7 @@ import org.zfin.profile.FeatureSource;
 import org.zfin.profile.FeatureSupplier;
 import org.zfin.sequence.FeatureDBLink;
 
-import javax.persistence.CascadeType;
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.*;
 
 /**
@@ -644,5 +642,15 @@ public class Feature implements EntityNotes, EntityZdbID {
                     featureMarkerRelationship.getMarker().equals(gene))
                 return true;
         return false;
+    }
+
+    public boolean isReadyForCuration() {
+        if (type.equals(FeatureTypeEnum.TRANSGENIC_INSERTION)) {
+            return featureMarkerRelations.stream()
+                    .filter(relationship -> relationship.getMarker().isConstruct())
+                    .findAny()
+                    .orElse(null) != null;
+        }
+        return true;
     }
 }

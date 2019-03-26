@@ -23,6 +23,7 @@ import org.zfin.publication.Publication;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -47,13 +48,12 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         List<Feature> featureList = getFeatureRepository().getFeaturesByPublication(publicationID);
         if (CollectionUtils.isEmpty(featureList))
             return null;
-        List<FeatureDTO> featureDTOList = new ArrayList<>(featureList.size());
-        for (Feature feature : featureList) {
-            // do not include features that do not have a feature_marker_relationship
-            if (CollectionUtils.isNotEmpty(feature.getFeatureMarkerRelations()))
-                featureDTOList.add(DTOConversionService.convertToFeatureDTO(feature, false));
-        }
-        return featureDTOList;
+        return featureList.stream()
+                // do not include features that do not have a feature_marker_relationship
+                .filter(feature -> CollectionUtils.isNotEmpty(feature.getFeatureMarkerRelations()))
+                .filter(Feature::isReadyForCuration)
+                .map(feature -> DTOConversionService.convertToFeatureDTO(feature, false))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -267,7 +267,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             genoDTO.setZdbID(genotype.getZdbID());
             genoDTO.setName(genotype.getName());
             fishDTO.setGenotypeDTO(genoDTO);
-            Fish newFish=createFish(publication, fishDTO, report);
+            Fish newFish = createFish(publication, fishDTO, report);
             HibernateUtil.flushAndCommitCurrentSession();
             getMutantRepository().updateFishAffectedGeneCount(newFish);
         } catch (ConstraintViolationException e) {
@@ -278,7 +278,11 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             throw new TermNotFoundException(message);
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
-            throw new TermNotFoundException(e.getMessage());
+            String message = e.getMessage();
+            if (e.getCause() != null) {
+                message = e.getCause().getMessage();
+            }
+            throw new TermNotFoundException(message);
         }
         report.setGenotypeDTO(DTOConversionService.convertToPureGenotypeDTOs(genotype));
         return report;
@@ -362,7 +366,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         return dtoList;
     }
 
-    protected Fish  createFish(Publication publication, FishDTO newFish, GenotypeCreationReportDTO report) throws TermNotFoundException {
+    protected Fish createFish(Publication publication, FishDTO newFish, GenotypeCreationReportDTO report) throws TermNotFoundException {
         Fish fish = DTOConversionService.convertToFishFromFishDTO(newFish);
 
         if (getMutantRepository().createFish(fish, publication)) {
