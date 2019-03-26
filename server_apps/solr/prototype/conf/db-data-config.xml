@@ -100,7 +100,9 @@
                            from data_alias
                            join marker on dalias_data_zdb_id = mrkr_zdb_id
                            join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
-                           and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG'))"
+                           join alias_group on aliasgrp_pk_id = dalias_group_id
+                           and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG'))
+                           and aliasgrp_name != 'sequence similarity'  "
                     where="dalias_data_zdb_id=gene.id"
                     cacheImpl="SortedMapBackedCache"
             />
