@@ -99,6 +99,7 @@ public class PublicationMetricsController {
                 }
             } else {
                 Calendar start = Calendar.getInstance();
+                SimpleDateFormat outputFormat = new SimpleDateFormat(formBean.getGroupBy().getFormat());
                 try {
                     start.setTime(inputFormat.parse(formBean.getFromDate()));
                 } catch (ParseException e) {
@@ -107,8 +108,16 @@ public class PublicationMetricsController {
                 }
 
                 List<MetricsByDateBean> resultList = publicationRepository.getMetricsByDate(start, end, formBean.getQueryType(), formBean.getGroupBy(), formBean.getGroupType());
-
-                SimpleDateFormat outputFormat = new SimpleDateFormat(formBean.getGroupBy().getFormat());
+                resultList.sort(Comparator.comparing(MetricsByDateBean::getDate));
+                if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.PET_DATE) {
+                    Map<String, Number> totals = resultList.stream().collect(Collectors.toMap(
+                            result -> outputFormat.format(result.getDate()),
+                            MetricsByDateBean::getCount,
+                            (a, b) -> a.intValue() + b.intValue(),
+                            LinkedHashMap::new
+                    ));
+                    resultTable.put("All", totals);
+                }
                 for (Object rowLabel : rowLabels) {
                     Map<String, Number> row = new LinkedHashMap<>();
                     Calendar calendar = (Calendar) start.clone();

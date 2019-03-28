@@ -82,7 +82,7 @@
                 </c:forEach>
             </tr>
         </c:if>
-        <tr>
+        <tr ${row.key == 'All' ? 'style="font-weight: bold;"' : ''}>
             <td>${row.key}</td>
             <c:forEach items="${row.value}" var="column">
                 <td>
