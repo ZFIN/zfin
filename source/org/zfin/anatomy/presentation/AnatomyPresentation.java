@@ -1,6 +1,8 @@
 package org.zfin.anatomy.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.zfin.infrastructure.DataAlias;
+import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.ontology.*;
 import org.zfin.util.ListFormatter;
 
@@ -60,7 +62,14 @@ public final class AnatomyPresentation {
         }
         ListFormatter list = new ListFormatter();
         for (TermAlias synonym : synonyms) {
-            list.addItem(synonym.getAlias());
+            if (!synonym.getAliasGroup().getName().equals(DataAliasGroup.Group.SECONDARY_ID.name())) {
+                list.addItem(synonym.getAlias());
+            }
+            if (!synonym.getAlias().contains("ZFA")){
+                list.addItem(synonym.getAlias());
+            }
+            list.addItem("AAAAA");
+
         }
         return list.getFormattedString();
     }
@@ -89,7 +98,11 @@ public final class AnatomyPresentation {
         }
         Set<TermAlias> synonyms = new TreeSet<TermAlias>(new AnatomySynonymSorting());
         for (TermAlias synonym : unsortedSynonyms) {
-            synonyms.add(synonym);
+            if (!synonym.getAlias().contains("ZFA")) {
+                synonyms.add(synonym);
+
+            }
+            
         }
         return synonyms;
     }
