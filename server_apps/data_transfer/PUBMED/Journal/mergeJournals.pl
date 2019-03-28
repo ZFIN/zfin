@@ -58,7 +58,7 @@ while ($cur_alias->fetch()) {
    $ctJournalAlias++;
 }
 
-print "total number of journal alias: $ctJournalAlias\n";
+print "total number of existing journal alias: $ctJournalAlias\n";
 
 $cur_alias->finish();
 
@@ -83,22 +83,21 @@ while(<JOURNALS>) {
 
      $cur = $dbh->prepare("insert into withdrawn_data (wd_old_zdb_id, wd_new_zdb_id, wd_display_note) values (?, ?,  'journal merged');");
      $cur->execute("$toDelete", "$toRetain");
+     $cur->finish();
 
      foreach $synonym (@synonyms) {
        $synonym =~ s/^\s+//;
        $synonym =~ s/\s+$//;  
        $unique = $toRetain . $synonym;
        if (!exists($journalAlias{$unique})) {
-         print ALIASLIST "$toRetain|$synonym|\n";
-         $journalAlias{$unique} = 1;
+           print ALIASLIST "$toRetain|$synonym\n";
+           $journalAlias{$unique} = 1;
        }
      }
 
      undef @synonymes, @fields;
   }
 }
-
-$cur->finish();
 
 $dbh->disconnect();
 
@@ -119,7 +118,7 @@ $numJournalsAfter = ZFINPerlModules->countData($sql);
 print "\nNumber of figures before merging journals: $numFiguresBefore;\n";
 print "Number of figures after merging journals: $numFiguresAfter;\n";
 print "Number of journals before merging journals: $numJournalsBefore;\n";
-print "Number of journals before merging journals: $numJournalsAfter;\n";
+print "Number of journals after merging journals: $numJournalsAfter;\n";
 
 print LOG "\nNumber of figures before merging journals: $numFiguresBefore;\n";
 print LOG "Number of figures after merging journals: $numFiguresAfter;\n";
@@ -137,5 +136,4 @@ system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/m
 system("psql -d $dbname -a -f insertJournalAlias.sql") && die "inserting journal alias failed.";
 
 exit;
-
 

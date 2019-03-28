@@ -11,7 +11,6 @@ copy temp_source_alias from '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBME
 create temp table tmp_ids as select get_id('SALIAS') as id, t_salias_source_zdb_id, t_salias_alias
  from temp_source_alias;
 
-
 insert into zdb_active_source
   select id from tmp_ids;
 
