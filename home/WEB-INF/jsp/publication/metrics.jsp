@@ -48,14 +48,14 @@
                         <div class="metrics-checkboxes">
                             <form:checkboxes path="statuses" items="${statuses}" itemLabel="display" />
                         </div>
-                        <div class="metrics-checkboxes">
-                            <span>
-                                <input id="all-closed" class="toggle-all" type="checkbox" checked="checked" data-toggle-prefix="CLOSED">
-                                <label for="all-closed">All Closed</label>
+                        <div style="margin-top: 0.5rem">
+                            <span style="margin-right: 0.5rem">
+                                <button role="button" class="toggle-all" data-toggle-prefix="CLOSED" data-toggle-val="true">Check all Closed</button>
+                                <button role="button" class="toggle-all" data-toggle-prefix="CLOSED" data-toggle-val="false">Uncheck all Closed</button>
                             </span>
                             <span>
-                                <input id="all-waiting" class="toggle-all" type="checkbox" checked="checked" data-toggle-prefix="WAITING">
-                                <label for="all-waiting">All Waiting</label>
+                                <button role="button" class="toggle-all" data-toggle-prefix="WAITING" data-toggle-val="true">Check all Waiting</button>
+                                <button role="button" class="toggle-all" data-toggle-prefix="WAITING" data-toggle-val="false">Uncheck all Waiting</button>
                             </span>
                         </div>
                     </div>
@@ -142,9 +142,10 @@
             });
         $('[value="PET_DATE"]').trigger('change');
 
-        $('.toggle-all').on('change', function () {
+        $('.toggle-all').on('click', function (e) {
+            e.preventDefault();
             var $this = $(this);
-            var val = $this.is(':checked');
+            var val = $this.data('toggle-val');
             var prefix = $this.data('toggle-prefix');
             $('[name="statuses"]')
                 .filter(function () { return this.value.startsWith(prefix) })
