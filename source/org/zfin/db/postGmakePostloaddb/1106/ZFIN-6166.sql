@@ -48,6 +48,14 @@ update record_attribution
  set recattrib_data_zdb_id = replace(recattrib_data_zdb_id, 'LINCRNAG','GENE')
  where recattrib_data_zdb_id = 'ZDB-LINCRNAG-060503-202';
 
+update sequence_feature_chromosome_location_generated
+   set sfclg_data_zdb_id = replace(sfclg_data_zdb_id, 'LINCRNAG','GENE')
+  where sfclg_data_zdb_id = 'ZDB-LINCRNAG-060503-202';
+  
+update expression_experiment
+ set xpatex_gene_zdb_id = replace(xpatex_gene_zdb_id, 'LINCRNAG','GENE')  
+  where xpatex_gene_zdb_id = 'ZDB-LINCRNAG-060503-202';
+
 update expression_experiment2
  set xpatex_gene_zdb_id = replace(xpatex_gene_zdb_id, 'LINCRNAG','GENE')
  where xpatex_gene_zdb_id = 'ZDB-LINCRNAG-060503-202';
@@ -181,6 +189,5 @@ update mutant_fast_search
 where mfs_mrkr_zdb_id  = 'ZDB-LINCRNAG-060503-202';
 
 set session_replication_role = 'origin';
-
 
 
