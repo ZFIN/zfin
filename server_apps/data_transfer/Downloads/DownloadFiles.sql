@@ -422,7 +422,7 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
    and exists (
         select 1 from expression_result
          where xpatres_xpatex_zdb_id = xpatex_zdb_id
- ) order by gene_zdb, xpat_zdb, probe_zdb;
+ ) order by gene_zdb_id, xpat_zdb_id, probe_zdb_id;
 
 delete from tmp_xpat_fish
  where exists (Select 'x' from clone
