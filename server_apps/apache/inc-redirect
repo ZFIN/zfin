@@ -174,7 +174,7 @@ RewriteCond %{QUERY_STRING}     ^record=JUMPTOGENE$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /action/marker/search [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOLAB$    [NC]
-RewriteRule ^/cgi-bin/ZFIN_jump /cgi-bin/webdriver?MIval=aa-labselect.apg [NC,R=301]
+RewriteRule ^/cgi-bin/ZFIN_jump /action/profile/lab/search [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOPERSON$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /cgi-bin/webdriver?MIval=aa-quickfindpers.apg [NC,R=301]
