@@ -15,12 +15,7 @@ update term_subset
                                 set termsub_term_zdb_id = 'ZDB-TERM-190222-5'
                               where termsub_term_zdb_id = 'ZDB-TERM-150506-1040';
 
-update db_link 
-                                set dblink_linked_recid = 'ZDB-TERM-190222-5'
-                              where dblink_linked_recid = 'ZDB-TERM-150506-1040';
-
-
-
+delete from  db_link  where dblink_linked_recid = 'ZDB-TERM-150506-1040';
 
 update record_attribution set recattrib_data_zdb_id = 'ZDB-TERM-190222-5' where recattrib_data_zdb_id = 'ZDB-TERM-150506-1040';
 
