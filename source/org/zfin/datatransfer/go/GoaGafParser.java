@@ -19,14 +19,6 @@ public class GoaGafParser extends FpInferenceGafParser {
             if (gafEntry.getCreatedBy().equals(GOC_CREATED_BY)) {
                 return false;
             }
-            if (gafEntry.getCreatedBy().equals(REF_GENOME_CREATED_BY)) {
-                logger.debug("Exclude PAINT reference that comes from GOA by created by: " + gafEntry.toString());
-                return false;
-            }
-            if (gafEntry.getPubmedId().equals(PaintGafParser.PAINT_DEFAULT_PUB)) {
-                logger.debug("Exclude PAINT reference that comes from GOA by Pub: " + gafEntry.toString());
-                return false;
-            }
         }
         return validGafEntry;
     }
