@@ -993,27 +993,32 @@
                     query="select dalias_alias as gene_previous_name,
                                   dalias_alias as gene_previous_name_ac,
                              c_contains_t.mrel_mrkr_1_zdb_id as marker_zdb_id
-                      from marker_relationship g_produces_t, marker_relationship c_contains_t, data_alias
+                      from marker_relationship g_produces_t, marker_relationship c_contains_t, data_alias, alias_group
                       where g_produces_t.mrel_type = 'gene produces transcript'
                         and c_contains_t.mrel_type = 'clone contains transcript'
                         and g_produces_t.mrel_mrkr_2_zdb_id = c_contains_t.mrel_mrkr_2_zdb_id 
                         and g_produces_t.mrel_mrkr_1_zdb_id = dalias_data_zdb_id
+		        and aliasgrp_pk_id = dalias_group_id
+        		and aliasgrp_name != 'sequence similarity'
                     UNION
                     select dalias_alias as gene_previous_name,
                            dalias_alias as gene_previous_name_ac,
                     mrel_mrkr_2_zdb_id as marker_zdb_id
-                                          from data_alias , marker_relationship
+                                          from data_alias , marker_relationship, alias_group
                                          where mrel_mrkr_1_zdb_id = dalias_data_zdb_id
                                           and mrel_type in ('gene produces transcript','gene encodes small segment','gene contains small segment')
-
+                       	and aliasgrp_pk_id = dalias_group_id
+                       	and aliasgrp_name != 'sequence similarity'
                     UNION
                     select
                     dalias_alias as gene_previous_name,
                     dalias_alias as gene_previous_name_ac,
                     mrel_mrkr_2_zdb_id as marker_zdb_id
-                                          from data_alias, marker_relationship
+                                          from data_alias, marker_relationship, alias_group
                                          where mrel_mrkr_2_zdb_id = dalias_data_zdb_id
-                                         and mrel_type in ('clone contains gene');"
+                                         and mrel_type in ('clone contains gene')
+		                        	and aliasgrp_pk_id = dalias_group_id
+                		        	and aliasgrp_name != 'sequence similarity' ;"
                     cacheImpl="SortedMapBackedCache"
                     where="marker_zdb_id=marker.id"
             />
