@@ -44,9 +44,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.zfin.marker.presentation.PreviousNameLight;
-import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.marker.MarkerAlias;
-import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
