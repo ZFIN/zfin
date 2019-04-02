@@ -43,6 +43,11 @@ import org.zfin.sequence.presentation.DBLinkPresentation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import org.zfin.marker.presentation.PreviousNameLight;
+import org.zfin.infrastructure.DataAliasGroup;
+import org.zfin.marker.MarkerAlias;
+import java.util.stream.Collectors;
+
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @Service
@@ -291,10 +296,10 @@ public class ResultService {
             } else if (gene.getType() == Marker.Type.TSCRIPT) {
                 result.addAttribute(TRANSCRIPT_NAME, MarkerPresentation.getAbbreviation(gene));
             }
-            if (gene.getAliases() != null && gene.getAliases().size() > 0) {
-                result.addAttribute(PREVIOUS_NAME, withCommas(gene.getAliases(), "alias"));
+            List<PreviousNameLight> previousNames =  RepositoryFactory.getMarkerRepository().getPreviousNamesLight(gene);
+            if (previousNames != null && previousNames.size() > 0) {
+                result.addAttribute(PREVIOUS_NAME, withCommas(previousNames, "alias"));
             }
-
             addLocationInfo(result, gene);
         }
 
