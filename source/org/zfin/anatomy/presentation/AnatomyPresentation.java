@@ -62,13 +62,10 @@ public final class AnatomyPresentation {
         }
         ListFormatter list = new ListFormatter();
         for (TermAlias synonym : synonyms) {
-            if (!synonym.getAliasGroup().getName().equals(DataAliasGroup.Group.SECONDARY_ID.name())) {
+
                 list.addItem(synonym.getAlias());
-            }
-            if (!synonym.getAlias().contains("ZFA")){
-                list.addItem(synonym.getAlias());
-            }
-            list.addItem("AAAAA");
+
+            
 
         }
         return list.getFormattedString();
