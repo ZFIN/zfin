@@ -644,7 +644,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         // remove the ZDB active data record with cascade.
 
         String hql = "delete from FeatureHistory  mh " +
-                " where mh.featureAlias = :zdbID ";
+                " where mh.featureAlias.zdbID = :zdbID ";
         Query query = currentSession().createQuery(hql);
         query.setString("zdbID", alias.getZdbID());
         query.executeUpdate();
