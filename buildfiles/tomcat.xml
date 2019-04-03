@@ -132,7 +132,7 @@
             </filterset>
         </copy>
         <!--        Copy the  context files-->
-        <copy file="${template-dir}/conf/Catalina/mutant/ROOT-postgres.xml" tofile="${domain-conf}/ROOT.xml"
+        <copy file="${template-dir}/conf/Catalina/mutant/ROOT.xml" tofile="${domain-conf}/ROOT.xml"
               overwrite="true">
             <filterset>
                 <filter token="TARGETROOT" value="${TARGETROOT}"/>
