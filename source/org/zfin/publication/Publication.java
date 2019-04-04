@@ -42,12 +42,21 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<PublicationDbXref> dbXrefs;
     private SortedSet<PublicationFile> files;
 
+    public boolean isCuratable() {
+        return isCuratable;
+    }
+
+    public void setCuratable(boolean curatable) {
+        isCuratable = curatable;
+    }
+
     private Set<CorrespondenceSentMessage> sentMessages;
     private Set<CorrespondenceReceivedMessage> receivedMessages;
     private Date lastCorrespondenceDate;
 
     private boolean deletable;
     private boolean canShowImages;
+    private boolean isCuratable;
 
     private boolean indexed;
     private GregorianCalendar indexedDate;

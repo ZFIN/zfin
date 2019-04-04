@@ -146,7 +146,7 @@ public class PublicationService {
     }
 
     public Boolean allowCuration(Publication publication) {
-        return publication.getType().isCurationAllowed();
+        return publication.isCuratable();
     }
 
     /* Rather than take a pub, this takes all of the separately generated counts
