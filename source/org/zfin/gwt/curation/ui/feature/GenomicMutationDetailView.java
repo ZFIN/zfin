@@ -3,9 +3,7 @@ package org.zfin.gwt.curation.ui.feature;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableRowElement;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -58,14 +56,23 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
 
 
     @UiHandler("seqReference")
-    void onChangeSeqReference(@SuppressWarnings("unused") KeyUpEvent event)  {
+    void onKeyDownseqRef(@SuppressWarnings("unused") KeyDownEvent event) {
+        if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER)
+
+            seqReference.setText(seqReference.getText().toUpperCase());
 
         handleChanges();
+
     }
-
+    
     @UiHandler("seqVariant")
-    void onChangeSeqVariant(@SuppressWarnings("unused") KeyUpEvent event) {
+    void onKeyDownseqVar(@SuppressWarnings("unused") KeyDownEvent event) {
+        if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER)
+
+            seqVariant.setText(seqVariant.getText().toUpperCase());
+
         handleChanges();
+
     }
 
     @UiHandler("reverseComplRefButton")
