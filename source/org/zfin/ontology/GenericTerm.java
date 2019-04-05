@@ -210,7 +210,14 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     }
 
     public TreeSet getSortedAliases() {
-        return new TreeSet<>(synonyms);
+
+        TreeSet<TermAlias> syn2=new TreeSet<>();
+        for (TermAlias ta: synonyms){
+            if (!ta.getAlias().contains("ZFA")){
+                syn2.add(ta);
+            }
+        }
+        return syn2;
     }
 
     public boolean isAliasesExist() {
