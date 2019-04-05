@@ -50,7 +50,7 @@
         <property name="accessionNumber" column="accession_no" lazy="true"/>
         <property name="doi" column="pub_doi" lazy="true"/>
         <property name="canShowImages" column="pub_can_show_images"/>
-        <property name="isCuratable" column="pub_is_curatable"/>
+        <property name="curatable" column="pub_is_curatable"/>
         <property name="indexed" column="pub_is_indexed"/>
         <property name="indexedDate" column="pub_indexed_date"/>
         <property name="acknowledgment" column="pub_acknowledgment"/>
