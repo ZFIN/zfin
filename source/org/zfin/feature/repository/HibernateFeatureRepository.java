@@ -579,7 +579,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         FeatureLocation ftrLocation = (FeatureLocation) criteria.uniqueResult();
         return ftrLocation;
     }
-    
+
 
     public FeatureGenomicMutationDetail getFeatureGenomicDetail(Feature feature) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureGenomicMutationDetail.class);
