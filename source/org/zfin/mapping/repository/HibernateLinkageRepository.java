@@ -260,7 +260,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
     @Override
     public List<FeatureGenomeLocation> getGenomeLocation(Feature feature) {
         Query query = HibernateUtil.currentSession().createQuery(
-                "from FeatureGenomeLocation where feature = :feature order by assembly desc");
+                "from FeatureGenomeLocation fgl where feature = :feature order by substring(fgl.assembly,4) desc");
         query.setParameter("feature", feature);
         return (List<FeatureGenomeLocation>) query.list();
     }
