@@ -15,5 +15,6 @@
     <include file="source/org/zfin/db/load/1106/drop_weird_mrph.sql"/>
     <include file="source/org/zfin/db/load/1106/add_sfcl_accession_number.sql"/>
     <include file="source/org/zfin/db/load/1106/add_publication_author_table.sql"/>
+    <include file="source/org/zfin/db/load/1106/alter_pub_pmcid.sql"/>
 
 </databaseChangeLog>

@@ -1,6 +1,7 @@
 begin work;
 
 create temp table tmp_pubs (
+  pmcid text,
   pmid integer,
   keywords text,
   title text,
@@ -26,6 +27,7 @@ where (authors = 'none' or authors is null)
       and numAuthors = '0';
 
 create temp table tmp_new_pubs (
+  pmc_id text,
   zdb_id text,
   pmid integer,
   keywords text,
@@ -46,6 +48,7 @@ create temp table tmp_new_pubs (
 );
 
 insert into tmp_new_pubs
+   pmcid,
   select get_id('PUB'),
     pmid,
     keywords,
@@ -153,6 +156,7 @@ where length(day) = 1;
 \copy (select zdb_id, pmid, title from tmp_new_pubs) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newPubSummary.txt' delimiter '|';
 
 insert into publication (
+  pub_pmc_id,
   zdb_id,
   authors,
   pub_date,
@@ -166,6 +170,7 @@ insert into publication (
   pub_jrnl_zdb_id,
   jtype)
   select
+    pmcid,
     zdb_id,
     authors,
     to_date(month||'/'||day||'/'||year,'MM/DD/YYYY'),
@@ -183,6 +188,7 @@ insert into publication (
         and not exists (Select 'x' from publication where accession_no = pmid);
 
 insert into publication (
+  pub_pmc_id,
   zdb_id,
   authors,
   title,
@@ -195,6 +201,7 @@ insert into publication (
   pub_jrnl_zdb_id,
   jtype)
   select
+    pmcid,
     zdb_id,
     authors,
     title,

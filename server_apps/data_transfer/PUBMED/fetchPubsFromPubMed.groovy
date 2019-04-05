@@ -26,6 +26,13 @@ def getTextWithMarkup(node) {
 def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
     row = []
     medlineCitation = pubmedArticle.MedlineCitation
+    pubMedData = pubmedArticle.PubmedData
+    pmcId = ""
+    if (pubMedData.ArticleList.ArticleId.@IdType == 'pmc' ) {
+        pmcId = pubMedData.ArticleList.ArticleId.text()
+
+    }
+    row.push(pmcId)
     pmid = medlineCitation.PMID.text()
     if (pmid == '28539358') {
         return
