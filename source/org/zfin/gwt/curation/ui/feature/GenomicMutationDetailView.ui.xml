@@ -54,7 +54,7 @@
                     <g:HTMLPanel visible="true">
                         <table>
                             <tr ui:field="sequenceMessage">
-                                <td><i>Please enter all sequences in upper case letters</i>
+                                <td><i>Please enter data from the + strand</i>
                                 </td>
                             </tr>
                             <tr ui:field="sequenceOfReferenceRow">
