@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance
 
 SUBDIRS = loadUp/ warehouse/ pheno/ extentMonitoring/ queryMonitoring/ gafLoad/ lib/ merge/
 
-GENERICS = scrubscan.pl unload_production.sh checkUnloadProduction.sh dumpServer.pl dumpLogsContinuous.pl fx_permission_check.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh checkVarcharOctetLength.pl orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh check_undefined_environment.pl reportLabAddressChanges.sh rotateInformixLog.sh set_unload_timestamp.sql movefiles.py
+GENERICS = scrubscan.pl unload_production.sh checkUnloadProduction.sh dumpLogsContinuous.pl fx_permission_check.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh checkVarcharOctetLength.pl orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh check_undefined_environment.pl reportLabAddressChanges.sh rotateInformixLog.sh set_unload_timestamp.sql movefiles.py
 
 STATICS = build.xml loadDb.sh makeDeveloperBlastDbs.sh regen.sh
 
@@ -42,9 +42,6 @@ runscrub : $(TARGETDIR)/scrubscan.pl
 
 runloadindex : $(TARGETDIR)/load_and_index_almost.pl
 	$(TARGETDIR)/load_and_index_almost.pl -i
-
-dumpserver : $(TARGETDIR)/dumpServer.pl
-	$(TARGETDIR)/dumpServer.pl
 
 dumplogscontinuous : $(TARGETDIR)/dumpLogsContinuous.pl
 	$(TARGETDIR)/dumpLogsContinuous.pl
