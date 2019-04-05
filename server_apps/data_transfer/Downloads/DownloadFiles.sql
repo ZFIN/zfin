@@ -434,7 +434,7 @@ update tmp_xpat_fish
 
  
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt'"
-\copy (select * from tmp_xpat_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt' with delimiter as '	' null as ''; 
+\copy (select * from tmp_xpat_fish order by gene_zdb_id,xpatex_zdb_id,probe_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt' with delimiter as '	' null as '';
 
 -- generate a file to map experiment id to environment condition description
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt'"
