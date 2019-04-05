@@ -42,12 +42,9 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<PublicationDbXref> dbXrefs;
     private SortedSet<PublicationFile> files;
 
-    public boolean isCuratable() {
-        return isCuratable;
-    }
 
     public void setCuratable(boolean curatable) {
-        isCuratable = curatable;
+        this.curatable = curatable;
     }
 
     private Set<CorrespondenceSentMessage> sentMessages;
@@ -56,7 +53,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     private boolean deletable;
     private boolean canShowImages;
-    private boolean isCuratable;
+
+    public boolean isCuratable() {
+        return curatable;
+    }
+
+    private boolean curatable;
 
     private boolean indexed;
     private GregorianCalendar indexedDate;

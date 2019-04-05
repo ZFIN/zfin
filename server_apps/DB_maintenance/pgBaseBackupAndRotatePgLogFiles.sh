@@ -35,15 +35,12 @@ mkdir $pth/$dirname
 # wal files so we can comfortably remove anything older than a day.
 
 cd /opt/postgres/postgres_wal/
-tar -cf archives.tar wal_archive
-gzip archives.tar
+
+tar -jcf archives.tar.gz wal_archive
 mv archives.tar.gz $pth/$dirname
 
 # take a filesystem backup as well, which does backup /opt/postgres/data
-
-tar -cf $pth/$dirname/$dirname.filesytem.tar -h /opt/postgres/data
-
-gzip $pth/$dirname/$dirname.filesytem.tar
+tar -jcf $pth/$dirname/$dirname.filesytem.tar.gz -h /opt/postgres/data
 
 # delete WAL log archive files older than 3 days (assumes the base backup and filesystem backups above, happen nightly)          
 cd /opt/postgres/postgres_wal/wal_archive/
