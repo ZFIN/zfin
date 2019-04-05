@@ -69,7 +69,7 @@
                                     <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                                  integerEntity="${imageCount}"
                                                  includeNumber="true"/></c:if></a>
-7                            <c:if test="${anatomyStatistics.numberOfTotalDistinctObjects > totalRecordCount }">
+                           <c:if test="${anatomyStatistics.numberOfTotalDistinctObjects > totalRecordCount }">
                                 (including children
                                 <c:choose>
                                     <c:when test="${substructureSearchLink ne null}">
