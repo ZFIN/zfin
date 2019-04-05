@@ -2,6 +2,7 @@ begin work;
 
 create temp table tmp_pubs (
   pmcid text,
+  mid text,
   pmid integer,
   keywords text,
   title text,
@@ -27,7 +28,8 @@ where (authors = 'none' or authors is null)
       and numAuthors = '0';
 
 create temp table tmp_new_pubs (
-  pmc_id text,
+  pmcid text,
+  mid text,
   zdb_id text,
   pmid integer,
   keywords text,
@@ -49,6 +51,7 @@ create temp table tmp_new_pubs (
 
 insert into tmp_new_pubs
    pmcid,
+   mid
   select get_id('PUB'),
     pmid,
     keywords,
@@ -157,6 +160,7 @@ where length(day) = 1;
 
 insert into publication (
   pub_pmc_id,
+  pub_manuscript_id,
   zdb_id,
   authors,
   pub_date,
@@ -171,6 +175,7 @@ insert into publication (
   jtype)
   select
     pmcid,
+    mid,
     zdb_id,
     authors,
     to_date(month||'/'||day||'/'||year,'MM/DD/YYYY'),
@@ -189,6 +194,7 @@ insert into publication (
 
 insert into publication (
   pub_pmc_id,
+  pub_manuscript_id,
   zdb_id,
   authors,
   title,
@@ -202,6 +208,7 @@ insert into publication (
   jtype)
   select
     pmcid,
+    mid,
     zdb_id,
     authors,
     title,

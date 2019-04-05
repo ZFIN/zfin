@@ -28,11 +28,17 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
     medlineCitation = pubmedArticle.MedlineCitation
     pubMedData = pubmedArticle.PubmedData
     pmcId = ""
+    mId = ""
     if (pubMedData.ArticleList.ArticleId.@IdType == 'pmc' ) {
         pmcId = pubMedData.ArticleList.ArticleId.text()
 
     }
+    if(pubMedData.ArticleList.ArticleId.@IdType == 'mid' ) {
+        mId = pubMedData.ArticleList.ArticleId.text()
+
+    }
     row.push(pmcId)
+    row.push(mId)
     pmid = medlineCitation.PMID.text()
     if (pmid == '28539358') {
         return
