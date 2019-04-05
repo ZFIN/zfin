@@ -54,7 +54,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private boolean deletable;
     private boolean canShowImages;
 
-    public boolean isCuratable() {
+    public boolean getCuratable() {
         return curatable;
     }
 
