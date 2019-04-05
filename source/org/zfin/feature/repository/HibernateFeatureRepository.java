@@ -579,15 +579,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         FeatureLocation ftrLocation = (FeatureLocation) criteria.uniqueResult();
         return ftrLocation;
     }
-
-
-    public int getFeatureGenomicMutationDetailCount(Feature feature) {
-        String sql = "   select count(fgmd_zdb_id) from feature_genomic_mutation_detail where fgmd_feature_zdb_id = :featureZdbID ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("featureZdbID", feature.getZdbID());
-        Object result = query.uniqueResult();
-        return Integer.parseInt(result.toString());
-    }
+    
 
     public FeatureGenomicMutationDetail getFeatureGenomicDetail(Feature feature) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureGenomicMutationDetail.class);
