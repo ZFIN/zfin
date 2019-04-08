@@ -76,7 +76,7 @@ public class TranscriptRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getTranscriptDBLinks() {
-        Transcript t = RepositoryFactory.getMarkerRepository().getTranscriptByName("pax6a-001");
+        Transcript t = RepositoryFactory.getMarkerRepository().getTranscriptByName("pax6a-205");
         assertNotNull(t);
         List<TranscriptDBLink> dblinks = RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(t, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
         assertEquals(1, dblinks.size());
