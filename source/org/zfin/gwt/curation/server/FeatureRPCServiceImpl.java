@@ -185,8 +185,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         if (StringUtils.isNotEmpty(featureDTO.getFgmdSeqRef())||(StringUtils.isNotEmpty(featureDTO.getFgmdSeqVar()))) {
 
-            fgmd.setFgmdSeqVar(featureDTO.getFgmdSeqVar());
-            fgmd.setFgmdSeqRef(featureDTO.getFgmdSeqRef());
+            fgmd.setFgmdSeqVar(featureDTO.getFgmdSeqVar().toUpperCase());
+            fgmd.setFgmdSeqRef(featureDTO.getFgmdSeqRef().toUpperCase());
             fgmd.setFgmdVarStrand("+");
             HibernateUtil.currentSession().save(fgmd);
             infrastructureRepository.insertPublicAttribution(fgmd.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
@@ -546,8 +546,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (StringUtils.isNotEmpty(featureDTO.getFgmdSeqRef())||(StringUtils.isNotEmpty(featureDTO.getFgmdSeqVar()))) {
                 FeatureGenomicMutationDetail fgmd = new FeatureGenomicMutationDetail();
                 fgmd.setFeature(feature);
-                fgmd.setFgmdSeqRef(featureDTO.getFgmdSeqRef());
-                fgmd.setFgmdSeqVar(featureDTO.getFgmdSeqVar());
+                fgmd.setFgmdSeqRef(featureDTO.getFgmdSeqRef().toUpperCase());
+                fgmd.setFgmdSeqVar(featureDTO.getFgmdSeqVar().toUpperCase());
                 fgmd.setFgmdVarStrand("+");
                 HibernateUtil.currentSession().save(fgmd);
                 PublicationAttribution pa1 = new PublicationAttribution();
