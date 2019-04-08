@@ -12,7 +12,7 @@
 <form:form method="GET" commandName="formBean">
     <table class="primary-entity-attributes metrics-table">
         <tr>
-            <th>Dates</th>
+            <th width="75px">Dates</th>
             <td>
                 <form:select path="queryType" items="${queryTypes}" itemLabel="display" />
                 <span class="control-group">
@@ -27,6 +27,22 @@
                     <form:select path="groupBy" items="${intervals}" itemLabel="display" />
                     <form:label path="groupBy">By</form:label>
                 </span>
+            </td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td>
+                <ul class="metrics-help pet-date">
+                    <li>Dates are publication PET dates</li>
+                    <li>Counts are number of publications <i>currently</i> in the listed state (i.e. curation status, location, indexed status)</li>
+                    <li>The "All" row displays the total number of publications with the given PET date, regarless of which states are shown</li>
+                </ul>
+                <ul class="metrics-help status-date">
+                    <li>Dates are the date a publication changed state (i.e. curation status, location, indexed status)</li>
+                    <li>Counts are number of publications which changed to the listed state on that date</li>
+                    <li>Because multiple state changes for a single publication can occur on the same day, month, or year, the same publication may be counted in multiple rows</li>
+                </ul>
             </td>
         </tr>
 
@@ -120,6 +136,7 @@
 
         $('[name="queryType"]')
             .on('change', function () {
+                $('.metrics-help').hide();
                 if (this.value === 'CUMULATIVE') {
                     $('[name="fromDate"]').attr("disabled", "disabled");
                     $('[name="groupBy"]').attr("disabled", "disabled");
@@ -130,11 +147,13 @@
                     $('[name="groupBy"]').removeAttr("disabled");
                     $('[value="ACTIVE"]').attr("disabled", "disabled");
                     $('[value="INDEXED"]').removeAttr("disabled");
+                    $('.metrics-help.status-date').show();
                 } else {
                     $('[name="fromDate"]').removeAttr("disabled");
                     $('[name="groupBy"]').removeAttr("disabled");
                     $('[value="ACTIVE"]').removeAttr("disabled");
                     $('[value="INDEXED"]').removeAttr("disabled");
+                    $('.metrics-help.pet-date').show();
                 }
                 if ($('[name="groupType"]').find(":selected").attr("disabled")) {
                     $('[name="groupType"]').val(null).trigger('change');

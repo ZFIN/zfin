@@ -73,8 +73,8 @@ public class PublicationMetricsFormBean implements Serializable {
 
     public enum GroupType {
         ACTIVE("Active"),
-        INDEXED("Indexed"),
-        STATUS("Status"),
+        INDEXED("Indexed Status"),
+        STATUS("Curation Status"),
         LOCATION("Location");
 
         private String display;
