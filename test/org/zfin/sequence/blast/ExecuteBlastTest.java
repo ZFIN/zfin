@@ -156,7 +156,7 @@ public class ExecuteBlastTest {
             HitViewBean hitViewBean = blastResultBean.getHits().get(0);
             assertEquals(1, hitViewBean.getHitNumber());
             assertEquals("OTTDART00000050917", hitViewBean.getAccessionNumber());
-            assertEquals("pax6a-001", hitViewBean.getHitMarker().getName());
+            assertEquals("pax6a-205", hitViewBean.getHitMarker().getName());
             assertEquals("pax6a", hitViewBean.getGenes().iterator().next().getAbbreviation());
             assertTrue(hitViewBean.isHasExpression());
             assertTrue(hitViewBean.isHasExpressionImages());
