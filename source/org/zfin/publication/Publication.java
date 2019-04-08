@@ -41,22 +41,13 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<PublicationNote> notes;
     private Set<PublicationDbXref> dbXrefs;
     private SortedSet<PublicationFile> files;
-
-
-    public void setCuratable(boolean curatable) {
-        this.curatable = curatable;
-    }
-
+    private Set<PublicationTrackingHistory> statusHistory;
     private Set<CorrespondenceSentMessage> sentMessages;
     private Set<CorrespondenceReceivedMessage> receivedMessages;
     private Date lastCorrespondenceDate;
 
     private boolean deletable;
     private boolean canShowImages;
-
-    public boolean getCuratable() {
-        return curatable;
-    }
 
     private boolean curatable;
 
@@ -291,6 +282,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.files = files;
     }
 
+    public Set<PublicationTrackingHistory> getStatusHistory() {
+        return statusHistory;
+    }
+
+    public void setStatusHistory(Set<PublicationTrackingHistory> statusHistory) {
+        this.statusHistory = statusHistory;
+    }
+
     public Set<CorrespondenceSentMessage> getSentMessages() {
         return sentMessages;
     }
@@ -414,6 +413,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setIndexed(boolean indexed) {
         this.indexed = indexed;
+    }
+
+    public boolean getCuratable() {
+        return curatable;
+    }
+
+    public void setCuratable(boolean curatable) {
+        this.curatable = curatable;
     }
 
     public boolean isCanShowImages() {

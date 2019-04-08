@@ -26,11 +26,15 @@ import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.Person;
 import org.zfin.publication.*;
+import org.zfin.publication.presentation.CumulativeStatisticsBean;
 import org.zfin.publication.presentation.DashboardPublicationList;
+import org.zfin.publication.presentation.MetricsByDateBean;
+import org.zfin.publication.presentation.PublicationMetricsFormBean;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedSet;
@@ -609,4 +613,12 @@ public interface PublicationRepository extends PaginationParameter {
     Long getDirectlyAttributed(Publication publication);
 
     PublicationAttribution createPublicationAttribution(Publication publication, Marker marker);
+
+    List<MetricsByDateBean> getMetricsByDate(Calendar start,
+                                             Calendar end,
+                                             PublicationMetricsFormBean.QueryType query,
+                                             PublicationMetricsFormBean.Interval groupInterval,
+                                             PublicationMetricsFormBean.GroupType groupType);
+
+    List<CumulativeStatisticsBean> getCumulativeMetrics(Calendar end, PublicationMetricsFormBean.GroupType groupType);
 }

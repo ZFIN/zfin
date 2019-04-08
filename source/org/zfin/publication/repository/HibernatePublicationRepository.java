@@ -8,6 +8,7 @@ import org.hibernate.criterion.*;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,7 @@ import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.*;
-import org.zfin.publication.presentation.DashboardPublicationList;
-import org.zfin.publication.presentation.PublicationService;
+import org.zfin.publication.presentation.*;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
@@ -2620,5 +2620,93 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             return pubAttr;
         HibernateUtil.currentSession().save(pa);
         return pa;
+    }
+
+    @Override
+    public List<MetricsByDateBean> getMetricsByDate(Calendar start,
+                                                    Calendar end,
+                                                    PublicationMetricsFormBean.QueryType query,
+                                                    PublicationMetricsFormBean.Interval groupInterval,
+                                                    PublicationMetricsFormBean.GroupType groupType) {
+        String groupExpression = "";
+        String dateExpression = "";
+        boolean currentStatusOnly = false;
+        switch (groupType) {
+            case ACTIVE:
+                groupExpression = "pub.status";
+                currentStatusOnly = true;
+                break;
+            case INDEXED:
+                groupExpression = "case when pub.pub_is_indexed = 't' then 'Indexed' else 'Unindexed' end";
+                dateExpression = "pub.pub_indexed_date";
+                currentStatusOnly = true;
+                break;
+            case STATUS:
+                groupExpression = "status.pts_status_display";
+                dateExpression = "history.pth_status_insert_date";
+                break;
+            case LOCATION:
+                groupExpression = "location.ptl_location_display";
+                dateExpression = "history.pth_status_insert_date";
+                break;
+        }
+        if (query == PublicationMetricsFormBean.QueryType.PET_DATE) {
+            dateExpression = "pub.pub_arrival_date";
+            currentStatusOnly = true;
+        }
+        String sql = String.format(
+                "select u.category as category, u.date as date, count(*) as count " +
+                        "from ( " +
+                        "  select distinct pub.zdb_id, %1$s as category, date_trunc('%2$s', %3$s) as date " +
+                        "  from publication pub " +
+                        "  left outer join pub_tracking_history history on pub.zdb_id = history.pth_pub_zdb_id " +
+                        "  left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id " +
+                        "  left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id " +
+                        "  where %3$s >= :start " +
+                        "  and %3$s < :end " +
+                        "  and pub.jtype = :type " +
+                        (currentStatusOnly ? "and history.pth_status_is_current = 't' " : "") +
+                        ") as u " +
+                        "group by u.category, u.date", groupExpression, groupInterval.toString(), dateExpression);
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("start", start)
+                .setParameter("end", end)
+                .setParameter("type", Publication.Type.JOURNAL.getDisplay())
+                .setResultTransformer(Transformers.aliasToBean(MetricsByDateBean.class))
+                .list();
+    }
+
+    @Override
+    public List<CumulativeStatisticsBean> getCumulativeMetrics(Calendar end, PublicationMetricsFormBean.GroupType groupType) {
+        String groupExpression = "";
+        switch (groupType) {
+            case STATUS:
+                groupExpression = "status.pts_status_display";
+                break;
+            case LOCATION:
+                groupExpression = "location.ptl_location_display";
+                break;
+        }
+        String sql = String.format(
+                "select " +
+                "  %1$s as category, " +
+                "  avg(history.pth_days_in_status) as average, " +
+                "  stddev(history.pth_days_in_status) as \"standardDeviation\", " +
+                "  min(history.pth_days_in_status) as minimum, " +
+                "  max(history.pth_days_in_status) as maximum " +
+                "from pub_tracking_history history " +
+                "inner join publication pub on pub.zdb_id = history.pth_pub_zdb_id " +
+                "left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id " +
+                "left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id " +
+                "where history.pth_status_is_current = 'f' " +
+                "and history.pth_days_in_status is not null " +
+                "and history.pth_status_insert_date < :end " +
+                "and pub.jtype = :type " +
+                "group by %1$s", groupExpression);
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("end", end)
+                .setParameter("type", Publication.Type.JOURNAL.getDisplay())
+                .setResultTransformer(Transformers.aliasToBean(CumulativeStatisticsBean.class))
+                .list();
     }
 }

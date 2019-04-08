@@ -1151,3 +1151,61 @@ input + label {
 .zebrashare-button h3 {
     margin: 0;
 }
+
+.metrics-checkboxes {
+    column-count: 3;
+    margin-top: 0.5rem;
+}
+
+.metrics-checkboxes > * {
+    display: block;
+}
+
+.metrics-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.metrics-table td {
+    padding-bottom: 1rem !important;
+}
+
+.metrics-table .control-group {
+    display: inline-block;
+    margin-left: 0.5rem;
+}
+
+.metrics-table .control-group label {
+    float: left;
+}
+
+.metrics-table input[type=text] {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.metrics-table *:disabled + label {
+    color: #cccccc;
+}
+
+.metrics-table input[type='radio'] + label {
+    margin-right: 15px;
+}
+
+.metrics-results {
+    white-space: nowrap;
+    border-collapse: collapse;
+}
+
+.metrics-results td {
+    border: 1px solid #dddddd;
+    padding: 2px;
+}
+
+.metrics-help {
+    padding-left: 1rem;
+    margin: 0px;
+    margin-top: -0.8rem;
+    font-size: 0.8rem;
+    color: gray;
+}
