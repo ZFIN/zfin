@@ -61,6 +61,7 @@ $ctUpdated = 0;
 $cur_update_pub = $dbh->prepare_cached("update publication set status = 'active' where accession_no = ?;");
 $cur_insert_update = $dbh->prepare_cached("insert into updates (submitter_id, rec_id,field_name,new_value,upd_when) select (select zdb_id from person where full_name = 'Pub Activation Script'), zdb_id,'status','active',now() from publication where accession_no = ?;");
 $cur_update_pmc_id =  $dbh->prepare_cached("update publication set pub_pmc_id = ? where accession_no = ?;");
+$cur_update_mid =  $dbh->prepare_cached("update publication set pub_mid = ? where accession_no = ?;");
 
 foreach $pubZDBid (sort keys %nonActivePubAccessions) {
     $pubmedId = $nonActivePubAccessions{$pubZDBid};
@@ -70,10 +71,12 @@ foreach $pubZDBid (sort keys %nonActivePubAccessions) {
       if ($content =~ m/<PublicationStatus>(\w+)<\/PublicationStatus>/) {
         $status = $1;
         if ($status eq "ppublish" || $status eq "epublish") {
-            print "at the ppublish step";
             if ($content =~ m/<ArticleId IdType=\"pmc\">(\w+)<\/ArticleId>/) {
                 $pmcId = $1;
-                print $pmcId;
+                $cur_update_pmc_id->execute($1,$pubmedId);
+            }
+            if ($content =~ m/<ArticleId IdType=\"mid\">(\w+)<\/ArticleId>/) {
+                $pmcId = $1;
                 $cur_update_pmc_id->execute($1,$pubmedId);
             }
           $cur_update_pub->execute($pubmedId);
