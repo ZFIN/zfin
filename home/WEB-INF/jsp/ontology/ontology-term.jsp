@@ -35,10 +35,10 @@
             <td id="term-synonyms">
                 <ul class="comma-separated" data-toggle="collapse" data-show="3">
                     <c:forEach items="${formBean.term.sortedAliases}" var="alias">
-                        <%--<c:if test="${not fn:containsIgnoreCase(alias.alias, 'ZFA')}">--%>
+
 
                         <li>${alias.alias}</li>
-                        <%--</c:if>--%>
+                        
                     </c:forEach>
                 </ul>
             </td>
