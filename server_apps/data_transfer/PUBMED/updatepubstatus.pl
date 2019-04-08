@@ -76,8 +76,8 @@ foreach $pubZDBid (sort keys %nonActivePubAccessions) {
                 $cur_update_pmc_id->execute($1,$pubmedId);
             }
             if ($content =~ m/<ArticleId IdType=\"mid\">(\w+)<\/ArticleId>/) {
-                $pmcId = $1;
-                $cur_update_pmc_id->execute($1,$pubmedId);
+                $mId = $1;
+                $cur_update_pmc_id->execute($1,$mId);
             }
           $cur_update_pub->execute($pubmedId);
           $cur_insert_update->execute($pubmedId);
