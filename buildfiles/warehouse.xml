@@ -59,7 +59,7 @@
 
    <target name="run-chromosomemart-unittests">
         <echo message="Run unit tests for chromosomemart"/>
-	<run-sql-query-tests sql-query-file="chromosome-integrity-tests.sql" directory="${warehouseDir}/chromosomeMart"/>
+	<run-sql-query-tests sql-query-file="chromosome-integrity-tests.sql" directory="${warehouseDir}/chromosomeMartPostgres"/>
     </target>
 
 
