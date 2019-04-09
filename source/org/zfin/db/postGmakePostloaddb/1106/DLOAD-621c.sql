@@ -177,7 +177,7 @@ insert into pre_extnote (
         extnote_notetype ,
         extnote_source_id
 )
-select distinct preftr_feature_zdb_id, preftr_feature_zdb_id,'This alleleid was mapped to ' || preftr_ensdarg_id|| ' by the ZMP Project','feature','ZDB-PUB-130425-4' from pre_feature where preftr_ensdarg_id!='';
+select distinct preftr_feature_zdb_id, preftr_feature_zdb_id,'This allele was mapped to ' || preftr_ensdarg_id|| ' by the ZMP Project','feature','ZDB-PUB-130425-4' from pre_feature where preftr_ensdarg_id!='';
 update pre_extnote set extnote_id=get_id('EXTNOTE');
 insert into zdb_active_data select extnote_id from pre_extnote;
 insert into external_note select * from pre_extnote;
