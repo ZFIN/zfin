@@ -93,6 +93,10 @@ task buildPostGmakeDatabase(type: GradleBuild) {
     tasks = ['liquibasePostBuild']
 }
 
+task reload(type: GradleBuild) {
+    tasks = ['loadDatabase', 'liquibasePreBuild', 'liquibasePostBuild']
+}
+
 sourceSets {
     main {
         java {

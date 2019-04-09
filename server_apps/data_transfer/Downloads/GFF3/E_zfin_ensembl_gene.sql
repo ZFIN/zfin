@@ -52,7 +52,7 @@ select distinct
    and eTdbl.dblink_linked_recid = vTdbl.dblink_linked_recid
    and eTdbl.dblink_acc_num = et.gff_id
    and substring(et.gff_source from 1 for 8) = 'Ensembl_'
-   and et.gff_feature in ('mRNA','transcript')
+   and substring(et.gff_id from 1 for 7) = 'ENSDART'
   group by 1,3,4,5,7,9,10
 ;
 

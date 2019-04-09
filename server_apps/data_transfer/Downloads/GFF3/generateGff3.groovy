@@ -2,11 +2,14 @@
 
 
 import groovy.sql.Sql
+import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
 import org.zfin.infrastructure.ant.RunSQLFiles
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
 import org.zfin.sequence.GenomeFeature
+
+import java.util.stream.Collectors
 
 Logger log = Logger.getLogger(getClass());
 
@@ -94,10 +97,10 @@ def generateGenesAndTranscripts() {
     Map<String,String> zfinToEnsemblIDMap = [:]
 
     db.eachRow(""" 
-    select enm_ensdart_stable_id, enm_tscript_zdb_id
-    from ensdart_name_mapping """) { row ->
-        ensemblToZfinIDMap[row.enm_ensdart_stable_id] = row.enm_tscript_zdb_id
-        zfinToEnsemblIDMap[row.enm_tscript_zdb_id] = row.enm_ensdart_stable_id
+    select tscript_ensdart_id, tscript_mrkr_zdb_id
+    from transcript where tscript_ensdart_id is not null """) { row ->
+        ensemblToZfinIDMap[row.tscript_ensdart_id] = row.tscript_mrkr_zdb_id
+        zfinToEnsemblIDMap[row.tscript_mrkr_zdb_id] = row.tscript_ensdart_id
     }
 
     db.eachRow("""
@@ -143,6 +146,9 @@ def generateGenesAndTranscripts() {
 
     }
 
+    File genesWithoutTranscriptsFile = new File("$gff3Dir/genes_without_transcripts.gff3")
+    genesWithoutTranscriptsFile.createNewFile()
+    def genesWithoutTranscriptsWriter = genesWithoutTranscriptsFile.newWriter()
 
     File zfinGenesFile = new File("$gff3Dir/zfin_genes.gff3")
     zfinGenesFile.createNewFile()
@@ -151,19 +157,34 @@ def generateGenesAndTranscripts() {
     printHeader("$gff3Dir/ensembl_contig.gff3", zfinGenesWriter)
 
     genes.each { GenomeFeature gene ->
-        zfinGenesWriter.println gene.toString()
-        ensemblFeatureMap[gene.getId()].each { GenomeFeature transcript ->
-            if (transcript.getId().startsWith("ZDB")) {
+
+        def zfinTranscripts = []
+        def otherTranscripts = []
+        ensemblFeatureMap[gene.getId()]?.each { transcript ->
+            if (StringUtils.startsWith(transcript.getId(), "ZDB")) {
+                zfinTranscripts.add(transcript)
+            } else {
+                otherTranscripts.add(transcript)
+            }
+        }
+
+        if (zfinTranscripts.size() > 0) {
+            zfinGenesWriter.println gene.toString()
+            zfinTranscripts.each { transcript ->
                 transcript.setSource("ZFIN")
                 zfinGenesWriter.println(transcript.toString())
                 ensemblFeatureMap[transcript.getId()].each { GenomeFeature region ->
                     region.setSource("ZFIN")
                     zfinGenesWriter.println(region)
                 }
-
             }
-
+        } else {
+            //capture the ZFIN genes which have no ZFIN transcripts
+            gene.setSource("ZFIN_genes_without_transcripts")
+            genesWithoutTranscriptsWriter.println(gene.toString())
         }
+
+        //todo: what do I do with transcrips of a gene with a ZDB_ID that only have an ENSDART ?
     }
 
     zfinGenesWriter.flush()
