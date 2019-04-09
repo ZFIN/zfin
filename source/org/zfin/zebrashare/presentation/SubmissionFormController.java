@@ -95,6 +95,7 @@ public class SubmissionFormController {
         publication.setType(Publication.Type.JOURNAL);
         publication.setEntryDate(new GregorianCalendar());
         publication.setPublicationDate(new GregorianCalendar());
+        publication.setCuratable(true);
         publicationRepository.addPublication(publication,
                 PublicationTrackingStatus.Name.WAITING_FOR_NOMENCLATURE,
                 null,
