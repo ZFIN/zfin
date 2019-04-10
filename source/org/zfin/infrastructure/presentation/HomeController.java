@@ -1,11 +1,14 @@
 package org.zfin.infrastructure.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.LockOptions;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
@@ -18,12 +21,13 @@ public class HomeController {
     @Autowired
     private ZebrashareRepository zebrashareRepository;
 
-    @RequestMapping(method= RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public String index(Model model) {
 
         Person person = ProfileService.getCurrentSecurityUser();
         if (person != null) {
-            person.getLabs();
+            Session.LockRequest lockRequest = HibernateUtil.currentSession().buildLockRequest(LockOptions.READ);
+            lockRequest.lock(person);
             model.addAttribute("user", person);
             model.addAttribute("userHasZebraShareSubmissions", CollectionUtils.isNotEmpty(
                     zebrashareRepository.getZebraSharePublicationsForPerson(person))
