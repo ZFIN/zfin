@@ -10,7 +10,7 @@ DBNAME = System.getenv("DBNAME")
 PUB_IDS_TO_CHECK = "pubsThatNeedPDFs.txt"
 
 Date date = new Date()
-def dateToCheck = date - 100
+def dateToCheck = date - 1000
 def idsToGrab
 String datePart = dateToCheck.format("yyyy-MM-dd")
 String timePart = dateToCheck.format("HH:mm:ss")
