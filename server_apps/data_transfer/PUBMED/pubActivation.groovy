@@ -7,7 +7,7 @@ ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properti
 DBNAME = System.getenv("DBNAME")
 PUB_IDS_TO_CHECK = "pubsToActivate.txt"
 ACTIVATED_PUBS = "activatedPubs.txt"
-def pmcPubs = new File ("pmcPubs.txt")
+def ALT_ID_PUBS = new File ("pmcPubs.txt")
 
 PubmedUtils.dbaccess DBNAME, """
   \\copy (
@@ -37,11 +37,11 @@ new File(ACTIVATED_PUBS).withWriter { output ->
                         article.PubmedData.ArticleIdList.ArticleId.each { articleId ->
                             if (articleId.@IdType == 'pmc') {
                                 pmcId = articleId
-                                pmcPubs.write([pubmedId, pmcId, "pmc"].join(",")+"\n")
+                                ALT_ID_PUBS.write([pubmedId, pmcId, "pmc"].join(",")+"\n")
                             }
                             if (articleId.@IdType == 'mid') {
                                 mId = articleId
-                                pmcPubs.write([pubmedId, mid, "mid"].join(",")+"\n")
+                                ALT_ID_PUBS.write([pubmedId, mId, "mid"].join(",")+"\n")
                             }
                         }
                     }
@@ -82,4 +82,4 @@ PubmedUtils.dbaccess DBNAME, """
 
 new File(PUB_IDS_TO_CHECK).delete()
 new File(ACTIVATED_PUBS).delete()
-//new File(PMC_PUBS).delete()
+new File(ALT_ID_PUBS).delete()
