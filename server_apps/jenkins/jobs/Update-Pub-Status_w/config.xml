@@ -18,7 +18,8 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED &amp;&amp; updatepubstatus.pl</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED
+./pubActivation.groovy $JOB_NAME</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
