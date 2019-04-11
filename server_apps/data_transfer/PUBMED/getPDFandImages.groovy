@@ -10,7 +10,7 @@ DBNAME = System.getenv("DBNAME")
 PUB_IDS_TO_CHECK = "pubsThatNeedPDFs.txt"
 
 Date date = new Date()
-def dateToCheck = date - 1000
+def dateToCheck = date - 1
 def idsToGrab
 String datePart = dateToCheck.format("yyyy-MM-dd")
 String timePart = dateToCheck.format("HH:mm:ss")
@@ -26,22 +26,28 @@ PubmedUtils.dbaccess DBNAME, """
                     WHERE pf_pub_zdb_id = zdb_id 
                     AND pf_file_type_id =1) )to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
-
-def processPMC = {GPathResult oa ->
-    row = []
+static processPMC(GPathResult oa, List idsToGrab) {
     println oa.responseDate
-
+    def counter = 0
     oa.records.record.each { rec ->
-        pmcId = rec.@id.text()
+        counter ++
+        def pmcId = rec.@id.text()
         if (pmcId == "PMC6361423") {
-            println "found PMC6361423"
+            println pmcId
         }
         if (pmcId in idsToGrab) {
             if (rec.link.@format.text() == 'tgz') {
-                pdfPath = rec.link.@href.text()
+                def pdfPath = rec.link.@href.text()
                 println pmcId + " " + pdfPath
             }
         }
+    }
+    println counter
+    def resumeToken = oa.records.resumption.link.@token.text()
+    println resumeToken
+    if (resumeToken != ""){
+        def moreRecords = PubmedUtils.getResumptionSet(oa.records.resumption.link.@token.text())
+        processPMC(moreRecords, idsToGrab)
     }
     //printer.printRecord(row.collect { col -> col.toString().replace('\n', '\\n') })
 }
@@ -57,5 +63,5 @@ new File(PUB_IDS_TO_CHECK).withReader { reader ->
 
 pmcRecords = PubmedUtils.getPDFandImagesTarball(datePart+"+"+timePart)
 
-processPMC(pmcRecords)
+processPMC(pmcRecords, idsToGrab)
 

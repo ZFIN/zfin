@@ -32,6 +32,21 @@ class PubmedUtils {
         new XmlSlurper().parse(connection.inputStream)
     }
 
+    static GPathResult getResumptionSet(token) {
+        def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
+        def query = "resumptionToken="+token
+        def connection = new URL(url).openConnection()
+        connection.setDoOutput(true)
+        connection.connect()
+        def writer = new OutputStreamWriter(connection.outputStream)
+        writer.write(query)
+        writer.flush()
+        writer.close()
+        connection.connect()
+        new XmlSlurper().parse(connection.inputStream)
+    }
+
+
     static GPathResult getFromPubmed(ids) {
         // pubmed doc says "if more than about 200 UIDs are to be provided, the request should be
         // made using the HTTP POST method" ... okay pubmed, you're such a good guy, we'll play
