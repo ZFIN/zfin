@@ -242,7 +242,7 @@
     ${abstractText}
 </zfin2:subsection>
 
-<zfin2:subsection title="ADDITIONAL INFORMATION" showNoData="true">
+<zfin2:subsection title="ADDITIONAL INFORMATION" showNoData="true" test="${not empty dataLinks}">
     <ul>
         <c:forEach items="${dataLinks}" var="link">
             <li>
