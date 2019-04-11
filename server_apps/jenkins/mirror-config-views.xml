@@ -8,6 +8,7 @@
         <comparator class="hudson.util.CaseInsensitiveComparator"/>
         <string>Check-Term-Stage-Range_d</string>
 	<string>Check-STR-Gene-Abbreviation_m</string>
+        <string>Check-Transcript-Gene-Abbreviation_m</string>
         <string>Elsevier-Reports_w</string>
         <string>Figure-Permission_m</string>
         <string>Lab-Address-Change_w</string>
