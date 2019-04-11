@@ -1,5 +1,6 @@
 package org.zfin.figure.presentation;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -102,6 +103,7 @@ public class FigureViewController {
         model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
         model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(publication));
+       // model.addAttribute("isZebrasharePub", figureViewService.isZebrasharePub(publication));
         //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
         List<Figure> figures = new ArrayList<>();
 
@@ -115,15 +117,23 @@ public class FigureViewController {
             List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
             model.addAttribute("probeSuppliers", suppliers);
         }
-        if (publication.isUnpublished()) {
-            if (StringUtils.isEmpty(probeZdbID)) {
-                return "redirect:/" + publication.getZdbID();
+        if (figureViewService.isZebrasharePub(publication)) {
+            if (publication.isUnpublished()) {
+                if (StringUtils.isEmpty(probeZdbID)) {
+                    {
+                        return "redirect:/" + publication.getZdbID();
+                    }
+                } else {
+                    figures.addAll(figureRepository.getFiguresForDirectSubmissionPublication(publication, probe));
+                }
             } else {
-                figures.addAll(figureRepository.getFiguresForDirectSubmissionPublication(publication, probe));
+                figures.addAll(publication.getFigures());
             }
-        } else {
+        }
+        else{
             figures.addAll(publication.getFigures());
         }
+
 
         Collections.sort(figures, ComparatorCreator.orderBy("orderingLabel", "zdbID"));
 
