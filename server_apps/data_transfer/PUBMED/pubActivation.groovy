@@ -64,6 +64,10 @@ PubmedUtils.dbaccess DBNAME, """
 
   \\copy tmp_activation FROM '$ACTIVATED_PUBS' null '' delimiter ',';
 
+  UPDATE publication
+    SET status = 'active' 
+    WHERE EXISTS (select 'x' from tmp_activation where pmid = accession_no);
+
   CREATE TEMP TABLE tmp_pmcid_update (pmid integer,
    altId text,
    idType text );
@@ -84,5 +88,4 @@ PubmedUtils.dbaccess DBNAME, """
 """
 
 new File(PUB_IDS_TO_CHECK).delete()
-//new File(ACTIVATED_PUBS).delete()
 PMC_ID_PUBS.delete()

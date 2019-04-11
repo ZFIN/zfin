@@ -22,7 +22,7 @@ GENERICS  = addMeshTermsToAllPubs.groovy \
             addGeoIdsToAllPubs.groovy \
             loadNewPubs.sql \
             updatePublicationDate.groovy \
-            pubActivation.groovy
+            pubActivation.groovy getPDFandImages.groovy
 STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy fetchPubsFromPubMed.groovy 
 
 # ---------------  Production Rules  ------------------------------------
