@@ -338,7 +338,19 @@ project(':server_apps:data_transfer') {
             ttNameMap.each { name, value ->
                 filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
             }
-            exclude '**/Makefile', '**/build.gradle', '**/SangerMutants/*'
+            exclude '**/Makefile', '**/build.gradle', '**/SangerMutants/*', '**/Ensembl'
+        }
+        into targetroot + pName
+    }
+}
+
+project(':server_apps:data_transfer:Ensembl') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+      from(project.projectDir) {
+            ttNameMap.each { name, value ->
+        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            include '**/*.sh', '**/*.sql', '**/*.groovy'
         }
         into targetroot + pName
     }
@@ -364,6 +376,7 @@ task make(type: GradleBuild) {
              ':server_apps:sysexecs:deployFiles',
              ':server_apps:DB_maintenance:deployFiles',
              ':server_apps:data_transfer:deployFiles',
+             ':server_apps:data_transfer:Ensembl:deployFiles',
              ':server_apps:Reports:deployFiles',
              'deployPackageFiles',
              ':cgi-bin:deployFiles'

@@ -190,6 +190,9 @@ def generateGenesAndTranscripts() {
     zfinGenesWriter.flush()
     zfinGenesWriter.close()
 
+    genesWithoutTranscriptsWriter.flush()
+    genesWithoutTranscriptsWriter.close()
+
     File ensemblTranscriptsFile = new File("$gff3Dir/additional_transcripts.gff3")
     ensemblTranscriptsFile.createNewFile()
     def ensemblTranscriptsWriter = ensemblTranscriptsFile.newWriter()

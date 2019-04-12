@@ -2,9 +2,9 @@ begin work;
 
 create temp table ens_zdb( ez_zdb text, ez_ens varchar(20)) ;
 
---! echo "ensdarG.unl -> load_ensdarG.sql"
+--! echo "ensdarG.csv -> load_ensdarG.sql"
 
-\copy ens_zdb from 'ensdarG.unl' with delimiter '|';
+\copy ens_zdb from 'ensdarg.csv' with delimiter ',';
 
 create index ez_zdb_idx on ens_zdb( ez_zdb );
 

@@ -87,6 +87,7 @@ db.execute(copySql)
 
 println "Finished running ensembl load SQL"
 
-
+println "Loading into sfclg"
+db.execute(new File("updateSequenceFeatureChromosomeLocation.sql").text)
 
 System.exit(0)
