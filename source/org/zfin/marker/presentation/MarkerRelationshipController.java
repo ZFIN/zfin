@@ -118,7 +118,7 @@ public class MarkerRelationshipController {
         if (!interacts) {
             for (int i = 0; i < nonDuplicateCloneRelashionships.size(); i++) {
                 MarkerRelationshipPresentation mrp = nonDuplicateCloneRelashionships.get(i);
-                System.out.println(interacts);
+
 
 
                 if (mrp.getRelationshipType().contains("interacts with")) {
@@ -130,9 +130,9 @@ public class MarkerRelationshipController {
             if (interacts) {
                 for (int i = 0; i < nonDuplicateCloneRelashionships.size(); i++) {
                     MarkerRelationshipPresentation mrp = nonDuplicateCloneRelashionships.get(i);
-                System.out.println(mrp.getRelationshipType());
+
                 if (!mrp.getRelationshipType().equals("interacts with")) {
-                    System.out.println("huh");
+
                     nonDuplicateCloneRelashionships.remove(i);
                     i--;
                 }

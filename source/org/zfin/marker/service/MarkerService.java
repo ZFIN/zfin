@@ -867,7 +867,7 @@ public class MarkerService {
             List<DiseaseAnnotationModel> diseaseAnnotationModels = RepositoryFactory.getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
             markerBean.setDiseaseModelDisplays(OntologyService.getDiseaseModelDisplay(diseaseAnnotationModels));
             markerBean.setAllianceGeneDesc(markerRepository.getGeneDescByMkr(marker));
-            System.out.println(markerRepository.getGeneDescByMkr(marker));
+
         }
 
         markerBean.setMarkerTypeDisplay(getMarkerTypeString(marker));
