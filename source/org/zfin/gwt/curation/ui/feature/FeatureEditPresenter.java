@@ -172,8 +172,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
             view.saveButton.setEnabled(true);
             col.addBoolean(true);
         }*/
-        System.out.println(view.genomicMutationDetailView.seqVariant.getText());
-        System.out.println(dto.getFgmdSeqVar());
+
+
         return col.arrivedValue();
     }
 
@@ -246,7 +246,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
 
     public void updateFeature() {
         FeatureDTO featureDTO = createDTOFromGUI();
-        System.out.println(featureDTO.getEvidence());
+
         // if a public note was added (they persist immediately) update this feature with it
         // so validation can happen correctly
         if (featureDTO.getPublicNoteList() == null || featureDTO.getPublicNoteList().size() == 0)

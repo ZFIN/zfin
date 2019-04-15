@@ -91,10 +91,10 @@ public class DTOMarkerService {
 
         Set<MarkerRelationship> markerRelationships2 = marker.getSecondMarkerRelationships();
 
-        System.out.println("# of related marker: " + markerRelationships2.size());
+
         List<MarkerDTO> relatedGenes = new ArrayList<MarkerDTO>();
         for (MarkerRelationship markerRelationship : markerRelationships2) {
-            System.out.println("# of related marker: " + markerRelationship.getFirstMarker().getAbbreviation());
+
                 relatedGenes.addAll(DTOConversionService.createLinks(DTOConversionService.convertToMarkerDTO(markerRelationship.getFirstMarker()), markerRelationship.getPublications()));
         }
 

@@ -520,7 +520,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 FeatureLocation fgl = new FeatureLocation();
                 fgl.setFeature(feature);
                 fgl.setSfclChromosome(featureDTO.getFeatureChromosome());
-                System.out.println(featureDTO.getFeatureAssembly());
+
                 fgl.setSfclAssembly(featureDTO.getFeatureAssembly());
                 fgl.setSfclStart(featureDTO.getFeatureStartLoc());
                 fgl.setSfclEnd(featureDTO.getFeatureEndLoc());

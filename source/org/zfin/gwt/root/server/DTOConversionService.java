@@ -779,7 +779,6 @@ public class DTOConversionService {
                 featureDTO.setFeatureChromosome(ftrLocation.getSfclChromosome());
                 featureDTO.setFeatureAssembly(ftrLocation.getSfclAssembly());
                 featureDTO.setAssembly(ftrLocation.getSfclAssembly());
-                System.out.println(ftrLocation.getSfclAssembly());
                 featureDTO.setFeatureStartLoc(ftrLocation.getSfclStart());
                 featureDTO.setFeatureEndLoc(ftrLocation.getSfclEnd());
                 featureDTO.setEvidence(FeatureService.getFeatureGenomeLocationEvidenceCode(ftrLocation.getSfclEvidence().getZdbID()));

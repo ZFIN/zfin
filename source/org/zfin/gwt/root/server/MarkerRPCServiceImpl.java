@@ -1043,7 +1043,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Marker firstMarker = markerRepository.getMarkerByID(markerDTO.getZdbID());
         Marker secondMarker = markerRepository.getMarkerByAbbreviation(markerDTO.getName());
         MarkerRelationship.Type type = MarkerRelationship.Type.getType(markerDTO.getMarkerRelationshipType());
-        System.out.println(markerDTO.getMarkerRelationshipType());
+
         if (true == markerDTO.isZdbIDThenAbbrev()) {
             MarkerService.deleteMarkerRelationshipAttribution(firstMarker, secondMarker, markerDTO.getPublicationZdbID());
         } else {
