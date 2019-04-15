@@ -1,20 +1,23 @@
 #!/bin/bash
-//private/apps/groovy/bin/groovy -cp "<!--|GROOVY_CLASSPATH|-->:." "$0" $@; exit $?
-import groovy.util.slurpersupport.GPathResult
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
+
 import org.zfin.properties.ZfinProperties
+import groovy.util.slurpersupport.GPathResult
+import java.util.zip.GZIPInputStream
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
 DBNAME = System.getenv("DBNAME")
-
 PUB_IDS_TO_CHECK = "pubsThatNeedPDFs.txt"
+PUBS_WITH_PDFS_TO_UPDATE = new File ("pdfAvailable.txt")
 
 Date date = new Date()
-def dateToCheck = date - 1
-def idsToGrab
+// go back 14 days to slurp up stragglers.
+def dateToCheck = date - 5
+def idsToGrab = [:]
 String datePart = dateToCheck.format("yyyy-MM-dd")
 String timePart = dateToCheck.format("HH:mm:ss")
-println datePart+"+"+timePart
+
 
 PubmedUtils.dbaccess DBNAME, """
   \\copy (
@@ -26,42 +29,82 @@ PubmedUtils.dbaccess DBNAME, """
                     WHERE pf_pub_zdb_id = zdb_id 
                     AND pf_file_type_id =1) )to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
-static processPMC(GPathResult oa, List idsToGrab) {
-    println oa.responseDate
-    def counter = 0
+
+def downloadPMCBundle(String url, String zdbId) {
+    //TODO: check if folder already exists, handle that
+    directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId").mkdir()
+
+    //TODO: add the Pdf file name to publciation_file
+    //TODO: parse output of full text to get the figure to image matchup
+    //TODO: get the figure captions.
+    //TODO:: make zdb-ids for figures, images
+    //TODO: match up images with new figures in img_file
+    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar.gz")
+    def out = new BufferedOutputStream(file)
+    out << new URL(url).openStream()
+    out.close()
+
+    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar.gz"
+    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar"
+    File unzippedFile = new File(unzipped_output)
+    if (!unzippedFile.exists()){
+        gunzip(gziped_bundle, unzipped_output)
+    }
+    //This command would take sort of a ridiculous amount of java/groovy to replicate.
+    // tar -xf filename.tar.gz --strip 1 extracts a .tar.gz archive with subdirectories, and flattens the hierarchy.
+    //unpackCommand = ["/bin/tar -xf " + "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar.gz" + " -- strip 1" ].execute()
+
+}
+
+def gunzip(String file_input, String file_output) {
+    FileInputStream fis = new FileInputStream(file_input)
+    FileOutputStream fos = new FileOutputStream(file_output)
+    GZIPInputStream gzis = new GZIPInputStream(fis)
+    byte[] buffer = new byte[1024]
+    int len = 0
+
+    while ((len = gzis.read(buffer)) > 0) {
+        fos.write(buffer, 0, len)
+    }
+    fos.close()
+    fis.close()
+    gzis.close()
+}
+
+
+def processPMC(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
     oa.records.record.each { rec ->
-        counter ++
         def pmcId = rec.@id.text()
-        if (pmcId == "PMC6361423") {
-            println pmcId
-        }
-        if (pmcId in idsToGrab) {
+        if (idsToGrab.containsKey(pmcId)) {
             if (rec.link.@format.text() == 'tgz') {
                 def pdfPath = rec.link.@href.text()
-                println pmcId + " " + pdfPath
+                PUBS_WITH_PDFS_TO_UPDATE.append(pdfPath+"\n")
+                def zdbId = idsToGrab.get(pmcId)
+                downloadPMCBundle(pdfPath, zdbId)
             }
         }
     }
-    println counter
     def resumeToken = oa.records.resumption.link.@token.text()
-    println resumeToken
     if (resumeToken != ""){
         def moreRecords = PubmedUtils.getResumptionSet(oa.records.resumption.link.@token.text())
-        processPMC(moreRecords, idsToGrab)
+        processPMC(moreRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
     }
-    //printer.printRecord(row.collect { col -> col.toString().replace('\n', '\\n') })
 }
 
 def pmcRecords
 
 new File(PUB_IDS_TO_CHECK).withReader { reader ->
     def lines = reader.iterator()
-    while (lines.hasNext()) {
-        idsToGrab = lines.collect { it.split(",")[0] }
+    lines.each { String line ->
+        row = line.split(',')
+        idsToGrab.put(row[0], row[1])
     }
 }
 
+
 pmcRecords = PubmedUtils.getPDFandImagesTarball(datePart+"+"+timePart)
 
-processPMC(pmcRecords, idsToGrab)
+processPMC(pmcRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
 
+//PUBS_WITH_PDFS_TO_UPDATE.delete()
+//PUB_IDS_TO_CHECK.delete()
