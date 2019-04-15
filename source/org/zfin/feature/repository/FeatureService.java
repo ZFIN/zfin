@@ -182,7 +182,7 @@ public class FeatureService {
 
     public static String getAALink(Feature feature) {
         String aaLink = RepositoryFactory.getFeatureRepository().getAALink(feature);
-        System.out.println(aaLink);
+
         if (aaLink == null) {
             return null;
         }
