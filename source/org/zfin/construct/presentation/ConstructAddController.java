@@ -159,7 +159,7 @@ public class ConstructAddController {
 
                 int lastComp = ConstructComponentService.getComponentCount(constructZdbID);
                 mr.addConstructComponent(numCassettes, lastComp, constructZdbID, ")", ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT, "construct wrapper component", ir.getCVZdbIDByTerm(")").getZdbID());
-System.out.println(constructZdbID);
+
                 //moving construct record to marker table
                 InformixUtil.runProcedure("regen_construct_marker", constructZdbID + "");
 
