@@ -51,7 +51,8 @@ def downloadPMCBundle(String url, String zdbId) {
     if (!unzippedFile.exists()){
         gunzip(gziped_bundle, unzipped_output)
     }
-    dbaccessProc = ('tar -xf "${System.getenv()[\'LOADUP_FULL_PATH\']}/$zdbId/$zdbId"+".tar"').execute()
+
+    dbaccessProc = ("tar -xf $unzipped_output").execute()
 
 }
 
