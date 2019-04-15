@@ -1,8 +1,9 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
-
-import org.zfin.properties.ZfinProperties
 import groovy.util.slurpersupport.GPathResult
+import org.zfin.properties.ZfinProperties
+
+
 import java.util.zip.GZIPInputStream
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
@@ -50,9 +51,11 @@ def downloadPMCBundle(String url, String zdbId) {
     if (!unzippedFile.exists()){
         gunzip(gziped_bundle, unzipped_output)
     }
-    //This command would take sort of a ridiculous amount of java/groovy to replicate.
-    // tar -xf filename.tar.gz --strip 1 extracts a .tar.gz archive with subdirectories, and flattens the hierarchy.
-    //unpackCommand = ["/bin/tar -xf " + "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar.gz" + " -- strip 1" ].execute()
+    dbaccessProc = ('tar -xf "${System.getenv()[\'LOADUP_FULL_PATH\']}/$zdbId/$zdbId"+".tar"').execute()
+
+}
+
+def tarxf(String file_input) {
 
 }
 
