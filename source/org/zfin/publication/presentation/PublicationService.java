@@ -88,7 +88,10 @@ public class PublicationService {
         if (publication.isUnpublished() && CollectionUtils.size(publication.getFigures()) > 100) {
             return false;
         }
-
+if (publication.getJournal().equals("ZDB-JRNL-181119-2"))
+{
+    return true;
+}
         //if there any non-GELI figures, return true
         for (Figure figure : publication.getFigures()) {
             if (!figure.isGeli()) {

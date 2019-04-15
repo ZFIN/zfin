@@ -22,8 +22,8 @@ GENERICS  = addMeshTermsToAllPubs.groovy \
             addGeoIdsToAllPubs.groovy \
             loadNewPubs.sql \
             updatePublicationDate.groovy \
-            updatepubstatus.pl
-STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy fetchPubsFromPubMed.groovy
+            pubActivation.groovy
+STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy fetchPubsFromPubMed.groovy 
 
 # ---------------  Production Rules  ------------------------------------
 

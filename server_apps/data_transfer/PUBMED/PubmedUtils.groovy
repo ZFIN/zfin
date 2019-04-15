@@ -66,6 +66,17 @@ class PubmedUtils {
         }
     }
 
+    static Boolean pubIsActive(GPathResult pubmedArticle) {
+        String pubStatus = pubmedArticle.PubmedData.PublicationStatus
+        if (pubStatus =='ppublish' || pubStatus == 'epublish'){
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+
     static Process dbaccess(String dbname, String sql) {
         sql = sql.replace("\n", "")
         sql = sql.replace("\\copy", "\n  \\copy")

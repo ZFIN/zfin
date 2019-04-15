@@ -32,6 +32,7 @@ new File(MESH_TO_LOAD).withWriter { output ->
             ids = lines.take(batchSize).collect { it.split("\\|")[0] }
             articleSet = PubmedUtils.getFromPubmed(ids)
             count += articleSet.PubmedArticle.size()
+            println("Sizeof article set: "+ count)
             articleSet.PubmedArticle.each { article ->
                 id = article.MedlineCitation.PMID
                 article.MedlineCitation.MeshHeadingList.MeshHeading.each { heading ->

@@ -28,6 +28,7 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
     medlineCitation = pubmedArticle.MedlineCitation
     pubMedData = pubmedArticle.PubmedData
     pmcId = ""
+
     mId = ""
     if (pubMedData.ArticleList.ArticleId.@IdType == 'pmc' ) {
         pmcId = pubMedData.ArticleList.ArticleId.text()
