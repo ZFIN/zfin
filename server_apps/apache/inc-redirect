@@ -226,6 +226,7 @@ RewriteRule ^/downloads/([\S]+[.][\S]+) /data-transfer/current/$1 [NC,L]
 RewriteRule ^/downloads/([\S]*) /action/unload/downloads/$1 [NC,L,PT]
 RewriteRule ^/downloads /action/unload/downloads/ [NC,L,PT]
 
+RewriteRule ^/zf_info/(.*).html /action/zf_info/$1.html [NC,L,PT]
 
 #Allow use of same cgi-bin/webdriver path on all dev sites,
 #this rule should be below anything else webdriver related,

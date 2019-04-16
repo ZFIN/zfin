@@ -57,11 +57,13 @@
     color: #066;
 }
 
-#social-icon {
-    height: 18px;
-    position: relative;
-    top: -1px;
+.social-icon,
+.social-icon:hover,
+.social-icon:active {
     vertical-align: middle;
+    color: #066;
+    font-size: 20px;
+    text-decoration: none;
 }
 
 #feedBox label {
