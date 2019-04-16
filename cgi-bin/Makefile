@@ -19,9 +19,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/$(TARGETCGIBIN)
 
-GENERICS = runSPL.cgi \
-	   searchwww.cgi send_request.perl \
-       internal_wzest.cgi merge_markers.pl
+GENERICS = \
+	   send_request.perl \
+       merge_markers.pl
 
 # ---------------  Production Rules  ------------------------------------
 

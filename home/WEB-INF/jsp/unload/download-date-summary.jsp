@@ -11,7 +11,7 @@
                     (${formBean.date})
                 </authz:authorize>
             </h2></td>
-        <td align="right"><a HREF="/warranty.html">Warranty Disclaimer and Copyright Notice</a>&nbsp;&nbsp;</td>
+        <td align="right"><a HREF="/zf_info/warranty.html">Warranty Disclaimer and Copyright Notice</a>&nbsp;&nbsp;</td>
     </tr>
 </table>
 

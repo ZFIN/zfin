@@ -1,36 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta http-equiv="Pragma" content="no-cache"/>
-    <meta http-equiv="Cache-Control" content="no-cache"/>
-    <meta http-equiv="Expires" content="0"/>
-    <title>
-        GWT Modules</title>
 
-    <link rel="stylesheet" type="text/css" href="/css/zfin.css">
-    <link rel="stylesheet" type="text/css" href="/css/header.css">
-    <link rel="stylesheet" type="text/css" href="/css/footer.css">
-    <link rel=stylesheet type="text/css" href="/css/searchresults.css">
-    <link rel=stylesheet type="text/css" href="/css/summary.css">
-    <link rel=stylesheet type="text/css" href="/css/Lookup.css">
-    <link rel=stylesheet type="text/css" href="/css/datapage.css">
-    <link rel=stylesheet type="text/css" href="/css/popup.css">
-    <link rel=stylesheet type="text/css" href="/css/tipsy.css">
-    <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
-    <link rel=stylesheet type="text/css" href="/css/typeahead.css">
-
-    <script src="/javascript/fontawesome-all.min.js"></script>
-    <script src="/javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
-    <script src="/javascript/header.js" type="text/javascript"></script>
-    <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
-    <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
-    <script type="text/javascript" src="/javascript/sorttable.js"></script>
-
-    <script src="/javascript/autocompletify.js"></script>
-    <script type="text/javascript" src="/javascript/typeahead.bundle.min.js"></script>
-
-</head>
 <script type="text/javascript" language="javascript"
         src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 <h1> Fish Tab</h1>

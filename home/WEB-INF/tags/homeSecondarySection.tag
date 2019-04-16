@@ -35,36 +35,6 @@
         </li>
 
         <li>
-            Regen
-            <a href="javascript:document.maps.submit();"><em>Maps</em></a>
-
-            <form name="fishsearch" action='/cgi-bin/runSPL.cgi'
-                  method="POST">
-
-                <input type=hidden
-                       name="run"
-                       value="regen_fishsearch">
-            </form>
-
-            <form name="maps" action='/cgi-bin/runSPL.cgi' method="GET">
-
-                <input type=hidden
-                       name="run"
-                       value="regen_maps">
-
-
-            </form>
-
-
-            <form name="ortholog" action='/cgi-bin/runSPL.cgi'
-                  method="POST">
-                <input type=hidden
-                       name="run"
-                       value="regen_oevdisp">
-            </form>
-        </li>
-        <li>
-
             Curate ZDB-PUB-<input name="pubID" id="pubID" size="15" autocomplete="on"/>
         </li>
     </ul>
