@@ -1,5 +1,6 @@
 import groovy.util.slurpersupport.GPathResult
-import java.time.LocalDate;
+import java.time.LocalDate
+import java.util.zip.GZIPInputStream;
 
 class PubmedUtils {
 
@@ -46,6 +47,20 @@ class PubmedUtils {
         new XmlSlurper().parse(connection.inputStream)
     }
 
+    static gunzip(String file_input, String file_output) {
+        FileInputStream fis = new FileInputStream(file_input)
+        FileOutputStream fos = new FileOutputStream(file_output)
+        GZIPInputStream gzis = new GZIPInputStream(fis)
+        byte[] buffer = new byte[1024]
+        int len = 0
+
+        while ((len = gzis.read(buffer)) > 0) {
+            fos.write(buffer, 0, len)
+        }
+        fos.close()
+        fis.close()
+        gzis.close()
+    }
 
     static GPathResult getFromPubmed(ids) {
         // pubmed doc says "if more than about 200 UIDs are to be provided, the request should be

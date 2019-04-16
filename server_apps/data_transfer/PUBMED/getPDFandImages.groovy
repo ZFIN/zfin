@@ -3,9 +3,6 @@
 import groovy.util.slurpersupport.GPathResult
 import org.zfin.properties.ZfinProperties
 
-
-import java.util.zip.GZIPInputStream
-
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
 DBNAME = System.getenv("DBNAME")
@@ -49,31 +46,15 @@ def downloadPMCBundle(String url, String zdbId) {
     def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar"
     File unzippedFile = new File(unzipped_output)
     if (!unzippedFile.exists()){
-        gunzip(gziped_bundle, unzipped_output)
+        PubmedUtils.gunzip(gziped_bundle, unzipped_output)
     }
 
-    dbaccessProc = ("tar -xf $unzipped_output").execute()
+
+    def cmd = "cd "+ "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
+    ["/bin/bash", "-c", cmd].execute()
 
 }
 
-def tarxf(String file_input) {
-
-}
-
-def gunzip(String file_input, String file_output) {
-    FileInputStream fis = new FileInputStream(file_input)
-    FileOutputStream fos = new FileOutputStream(file_output)
-    GZIPInputStream gzis = new GZIPInputStream(fis)
-    byte[] buffer = new byte[1024]
-    int len = 0
-
-    while ((len = gzis.read(buffer)) > 0) {
-        fos.write(buffer, 0, len)
-    }
-    fos.close()
-    fis.close()
-    gzis.close()
-}
 
 
 def processPMC(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
