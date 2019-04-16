@@ -8,6 +8,7 @@ ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properti
 DBNAME = System.getenv("DBNAME")
 PUB_IDS_TO_CHECK = "pubsThatNeedPDFs.txt"
 PUBS_WITH_PDFS_TO_UPDATE = new File ("pdfAvailable.txt")
+FIGS_TO_LOAD = new File ("figsToLoad.txt")
 
 Date date = new Date()
 // go back 14 days to slurp up stragglers.
@@ -74,10 +75,12 @@ def processPMCFileBundle(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_U
                 PUBS_WITH_PDFS_TO_UPDATE.append(pdfPath + "\n")
                 def zdbId = idsToGrab.get(pmcId)
                 downloadPMCBundle(pdfPath, zdbId)
-                def ft = new XmlSlurper().parse("https://www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:6428995&metadataPrefix=pmc")
-                println ft.responseDate
-                def fts = PubmedUtils.getFullText(pmcId.toString().substring(3))
-                println fts.responseDate
+                def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
+                println fullTxt.responseDate
+                fullTxt.metadata.body.fig.each { fig ->
+                    println fig.caption
+                }
+
             }
         }
     }
