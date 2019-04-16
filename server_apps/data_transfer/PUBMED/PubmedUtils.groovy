@@ -19,7 +19,12 @@ class PubmedUtils {
             'Dec': 12
     ]
 
-    static GPathResult getPDFandImagesTarball(date) {
+    static GPathResult getFullText(pmcId) {
+        def url = "https://www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:$pmcId&metadataPrefix=pmc_fm"
+        new XmlSlurper().parse(url)
+    }
+
+    static GPathResult getPDFandImagesTarballsByDate(date) {
         def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
         def query = "from="+date
         def connection = new URL(url).openConnection()

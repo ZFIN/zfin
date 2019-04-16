@@ -1,8 +1,8 @@
 #!/bin/bash
-//usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
-import groovy.util.slurpersupport.GPathResult
-import org.zfin.properties.ZfinProperties
 
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
+import org.zfin.properties.ZfinProperties
+import groovy.util.slurpersupport.GPathResult
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
 DBNAME = System.getenv("DBNAME")
@@ -11,7 +11,7 @@ PUBS_WITH_PDFS_TO_UPDATE = new File ("pdfAvailable.txt")
 
 Date date = new Date()
 // go back 14 days to slurp up stragglers.
-def dateToCheck = date - 5
+def dateToCheck = date - 1
 def idsToGrab = [:]
 String datePart = dateToCheck.format("yyyy-MM-dd")
 String timePart = dateToCheck.format("HH:mm:ss")
@@ -49,34 +49,44 @@ def downloadPMCBundle(String url, String zdbId) {
         PubmedUtils.gunzip(gziped_bundle, unzipped_output)
     }
 
-
     def cmd = "cd "+ "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
-    ["/bin/bash", "-c", cmd].execute()
+    ["/bin/bash", "-c", cmd].execute().waitFor()
 
 }
 
+def processPMCText(GPathResult pmcTextArticle) {
+    def record = pmcTextArticle.'OAI-PMH'.GetRecord.record
+    println record.responseDate
+    record.metadata.body.sec.fig.each { fig ->
+        def caption = fig.caption
+        println caption
+    }
+}
 
 
-def processPMC(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
+def processPMCFileBundle(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
     oa.records.record.each { rec ->
         def pmcId = rec.@id.text()
+
         if (idsToGrab.containsKey(pmcId)) {
             if (rec.link.@format.text() == 'tgz') {
                 def pdfPath = rec.link.@href.text()
-                PUBS_WITH_PDFS_TO_UPDATE.append(pdfPath+"\n")
+                PUBS_WITH_PDFS_TO_UPDATE.append(pdfPath + "\n")
                 def zdbId = idsToGrab.get(pmcId)
                 downloadPMCBundle(pdfPath, zdbId)
+                def ft = new XmlSlurper().parse("https://www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:6428995&metadataPrefix=pmc")
+                println ft.responseDate
+                def fts = PubmedUtils.getFullText(pmcId.toString().substring(3))
+                println fts.responseDate
             }
         }
     }
     def resumeToken = oa.records.resumption.link.@token.text()
-    if (resumeToken != ""){
+    if (resumeToken != "") {
         def moreRecords = PubmedUtils.getResumptionSet(oa.records.resumption.link.@token.text())
-        processPMC(moreRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
+        processPMCFileBundle(moreRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
     }
 }
-
-def pmcRecords
 
 new File(PUB_IDS_TO_CHECK).withReader { reader ->
     def lines = reader.iterator()
@@ -87,9 +97,10 @@ new File(PUB_IDS_TO_CHECK).withReader { reader ->
 }
 
 
-pmcRecords = PubmedUtils.getPDFandImagesTarball(datePart+"+"+timePart)
+def pmcFileBundleRecords
+pmcFileBundleRecords = PubmedUtils.getPDFandImagesTarballsByDate(datePart+"+"+timePart)
 
-processPMC(pmcRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
+processPMCFileBundle(pmcFileBundleRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
 
 //PUBS_WITH_PDFS_TO_UPDATE.delete()
 //PUB_IDS_TO_CHECK.delete()
