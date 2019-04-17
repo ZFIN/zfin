@@ -36,10 +36,6 @@ def downloadPMCBundle(String url, String zdbId) {
     directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId").mkdir()
 
     //TODO: add the Pdf file name to publciation_file
-    //TODO: parse output of full text to get the figure to image matchup
-    //TODO: get the figure captions.
-    //TODO:: make zdb-ids for figures, images
-    //TODO: match up images with new figures in img_file
     def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar.gz")
     def out = new BufferedOutputStream(file)
     out << new URL(url).openStream()
@@ -88,10 +84,11 @@ def processPMCFileBundle(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_U
                     def label = entireFigString =~ /<tag0:label>(.*?)<\/tag0:label>/
                     println "here's the label: " + label[0][1]
                     def caption = entireFigString =~ /<tag0:caption>(.*?)<\/tag0:caption>/
-                    println "here's the caption: " + caption[0][1].toString().replace("tag0: ","")
+                    println "here's the caption: " + caption[0][1].toString().replaceAll('tag0:','')
                     def imageName = entireFigString =~ /<tag0:graphic id='(.*?)' xlink:href='(.*?)'/
                     //<tag0:graphic id='d29e816' xlink:href='41375_2018_226_Fig1_HTML' xmlns:xlink='http://www.w3.org/1999/xlink'></tag0:graphic>
-                    println "here's the image name:" + imageName[0][2] +".jpg"
+                    println "here's the image name: " + imageName[0][2] +".jpg"
+                    FIGS_TO_LOAD.append([zdbId,pmcId,"${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/",label[0][1], caption[0][1].toString().replaceAll('tag0:',''), imageName[0][2] +".jpg"].join('|')+"\n")
 
                 }
 
