@@ -60,7 +60,7 @@ def downloadPMCFileBundle(String url, String zdbId) {
 
 }
 
-def processPMCText(GPathResult pmcTextArticle, String zdbId) {
+def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
     def art = pmcTextArticle.GetRecord.record.metadata.article
     def markedUpBody = new StreamingMarkupBuilder().bindNode(art.body).toString()
     def figMatches = markedUpBody =~ /<tag0:fig id=(.*?)>(.*?)<\/tag0:fig>/
@@ -91,7 +91,7 @@ def processPMCFileBundle(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_U
                 downloadPMCFileBundle(pdfPath, zdbId)
                 def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
                 println pmcId
-                processPMCText(fullTxt, zdbId)
+                processPMCText(fullTxt, zdbId, pmcId)
             }
         }
     }
