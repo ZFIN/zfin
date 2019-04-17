@@ -1,6 +1,7 @@
 import groovy.util.slurpersupport.GPathResult
+
 import java.time.LocalDate
-import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPInputStream
 
 class PubmedUtils {
 
@@ -20,9 +21,10 @@ class PubmedUtils {
     ]
 
     static GPathResult getFullText(pmcId) {
-        def url = "https://www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:$pmcId&metadataPrefix=pmc_fm"
+        def url = "https://www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:$pmcId&metadataPrefix=pmc"
         new XmlSlurper().parse(url)
     }
+
 
     static GPathResult getPDFandImagesTarballsByDate(date) {
         def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
