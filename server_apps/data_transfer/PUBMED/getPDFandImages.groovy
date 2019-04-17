@@ -88,7 +88,7 @@ def processPMCFileBundle(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_U
                     def label = entireFigString =~ /<tag0:label>(.*?)<\/tag0:label>/
                     println "here's the label: " + label[0][1]
                     def caption = entireFigString =~ /<tag0:caption>(.*?)<\/tag0:caption>/
-                    println "here's the caption: " + caption[0][1]
+                    println "here's the caption: " + caption[0][1].toString().replace("tag0: ","")
                     def imageName = entireFigString =~ /<tag0:graphic id='(.*?)' xlink:href='(.*?)'/
                     //<tag0:graphic id='d29e816' xlink:href='41375_2018_226_Fig1_HTML' xmlns:xlink='http://www.w3.org/1999/xlink'></tag0:graphic>
                     println "here's the image name:" + imageName[0][2] +".jpg"
