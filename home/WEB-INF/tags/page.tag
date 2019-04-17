@@ -25,13 +25,9 @@
     <link rel="stylesheet" href="/css/header.css">
     <link rel="stylesheet" href="/css/footer.css">
 
-    <script src="/javascript/jquery-1.11.1.min.js"></script>
-    <script src="/javascript/typeahead.bundle.min.js"></script>
+    <script src="/javascript/dist/vendor-common.bundle.js"></script>
     <script src="/javascript/autocompletify.js"></script>
     <script src="/javascript/header-menu.js"></script>
-    <script src="/javascript/jquery.modal.min.js"></script>
-    <script src="/javascript/jquery.tipsy.js"></script>
-    <script src="/javascript/sorttable.js"></script>
     <script src="/javascript/form-reset.js"></script>
     <script src="/javascript/popups.js"></script>
     <script src="/javascript/your-input-welcome.js"></script>
@@ -172,7 +168,6 @@
 
 <!-- scripts which do not need to block rendering -->
 <script src="/javascript/list-collapse.js"></script>
-<script src="/javascript/fontawesome-all.min.js"></script>
 
 </body>
 </html>
