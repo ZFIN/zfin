@@ -4,17 +4,23 @@ import groovy.util.slurpersupport.GPathResult
 
 import groovy.xml.StreamingMarkupBuilder
 import org.zfin.properties.ZfinProperties
+import org.zfin.properties.ZfinPropertiesEnum
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
 DBNAME = System.getenv("DBNAME")
-PUB_IDS_TO_CHECK = "pubsThatNeedPDFs.txt"
-PUBS_WITH_PDFS_TO_UPDATE = new File ("pdfAvailable.txt")
+PUB_IDS_TO_CHECK = "pdfsNeeded.txt"
+PUBS_WITH_PDFS_TO_UPDATE = new File ("pdfsAvailable.txt")
 FIGS_TO_LOAD = new File ("figsToLoad.txt")
+final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/PUBMED")
+
+WORKING_DIR.eachFileMatch(~/pdfs.*\.txt/) { it.delete() }
+WORKING_DIR.eachFileMatch(~/fig.*\.txt/) { it.delete() }
+WORKING_DIR.eachFileMatch(~/loadSQL.*\.txt/) { it.delete() }
 
 Date date = new Date()
 // go back 14 days to slurp up stragglers.
-def dateToCheck = date - 5
+def dateToCheck = date - 14
 def idsToGrab = [:]
 String datePart = dateToCheck.format("yyyy-MM-dd")
 String timePart = dateToCheck.format("HH:mm:ss")
@@ -116,5 +122,9 @@ pmcFileBundleRecords = PubmedUtils.getPDFandImagesTarballsByDate(datePart+"+"+ti
 
 processPMCFileBundle(pmcFileBundleRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
 
-//PUBS_WITH_PDFS_TO_UPDATE.delete()
-//PUB_IDS_TO_CHECK.delete()
+loadFigsAndImages = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
+        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/load_figs_and_images.sql " +
+        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
+loadFigsAndImages.waitFor()
+
+FIGS_TO_LOAD.delete()
