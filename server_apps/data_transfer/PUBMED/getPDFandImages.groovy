@@ -37,11 +37,12 @@ PubmedUtils.dbaccess DBNAME, """
                     AND pf_file_type_id =1) )to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
 
-def downloadPMCBundle(String url, String zdbId) {
-    //TODO: check if folder already exists, handle that
-    directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId").mkdir()
+def downloadPMCFileBundle(String url, String zdbId) {
+    def directory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId")
+    if (!directory.exists()) {
+        directory.mkdir()
+    }
 
-    //TODO: add the Pdf file name to publciation_file
     def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar.gz")
     def out = new BufferedOutputStream(file)
     out << new URL(url).openStream()
@@ -74,6 +75,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId) {
         def image = imageNameMatch[0][2] + ".jpg"
         FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image + ".jpg"].join('|') + "\n")
     }
+    //TODO: add the Pdf file name to publciation_file
 }
 
 
@@ -86,26 +88,10 @@ def processPMCFileBundle(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_U
                 def pdfPath = rec.link.@href.text()
                 PUBS_WITH_PDFS_TO_UPDATE.append(pdfPath + "\n")
                 def zdbId = idsToGrab.get(pmcId)
-                downloadPMCBundle(pdfPath, zdbId)
+                downloadPMCFileBundle(pdfPath, zdbId)
                 def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
-                processPMCText(fullTxt)
                 println pmcId
-                def art = fullTxt.GetRecord.record.metadata.article
-                def markedUpBody = new StreamingMarkupBuilder().bindNode(art.body).toString()
-                def figMatches = markedUpBody =~ /<tag0:fig id=(.*?)>(.*?)<\/tag0:fig>/
-                figMatches.each {
-                    def entireFigString = it[0]
-                    def label = entireFigString =~ /<tag0:label>(.*?)<\/tag0:label>/
-                    println "here's the label: " + label[0][1]
-                    def caption = entireFigString =~ /<tag0:caption>(.*?)<\/tag0:caption>/
-                    println "here's the caption: " + caption[0][1].toString().replaceAll('tag0:','')
-                    def imageName = entireFigString =~ /<tag0:graphic id='(.*?)' xlink:href='(.*?)'/
-                    //<tag0:graphic id='d29e816' xlink:href='41375_2018_226_Fig1_HTML' xmlns:xlink='http://www.w3.org/1999/xlink'></tag0:graphic>
-                    println "here's the image name: " + imageName[0][2] +".jpg"
-                    FIGS_TO_LOAD.append([zdbId,pmcId,"${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/",label[0][1], caption[0][1].toString().replaceAll('tag0:',''), imageName[0][2] +".jpg"].join('|')+"\n")
-
-                }
-
+                processPMCText(fullTxt, zdbId)
             }
         }
     }
