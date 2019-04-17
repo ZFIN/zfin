@@ -32,6 +32,11 @@ insert into tmp_figs_to_load_with_ids (pub_zdb_id,
          img_filename
     from tmp_figs_to_load;
 
+delete from tmp_figs_to_load_with_ids
+  where not exists (Select 'x' from publication
+                           where pub_can_show_images = 't'
+                           and zdb_id = pub_zdb_id);
+
 update tmp_figs_to_load_with_ids
   set fig_zdb_id = get_id('FIG');
 

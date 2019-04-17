@@ -59,12 +59,20 @@ def downloadPMCBundle(String url, String zdbId) {
 
 }
 
-def processPMCText(GPathResult pmcTextArticle) {
-    def record = pmcTextArticle.'OAI-PMH'.GetRecord.record
-    println record.responseDate
-    record.metadata.body.sec.fig.each { fig ->
-        def caption = fig.caption
-        println caption
+def processPMCText(GPathResult pmcTextArticle, String zdbId) {
+    def art = pmcTextArticle.GetRecord.record.metadata.article
+    def markedUpBody = new StreamingMarkupBuilder().bindNode(art.body).toString()
+    def figMatches = markedUpBody =~ /<tag0:fig id=(.*?)>(.*?)<\/tag0:fig>/
+    def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/"
+    figMatches.each {
+        def entireFigString = it[0]
+        def labelMatch = entireFigString =~ /<tag0:label>(.*?)<\/tag0:label>/
+        def label = labelMatch[0][1]
+        def captionMatch = entireFigString =~ /<tag0:caption>(.*?)<\/tag0:caption>/
+        def caption = captionMatch[0][1].toString().replaceAll('tag0:', '')
+        def imageNameMatch = entireFigString =~ /<tag0:graphic id='(.*?)' xlink:href='(.*?)'/
+        def image = imageNameMatch[0][2] + ".jpg"
+        FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image + ".jpg"].join('|') + "\n")
     }
 }
 
@@ -80,7 +88,7 @@ def processPMCFileBundle(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_U
                 def zdbId = idsToGrab.get(pmcId)
                 downloadPMCBundle(pdfPath, zdbId)
                 def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
-
+                processPMCText(fullTxt)
                 println pmcId
                 def art = fullTxt.GetRecord.record.metadata.article
                 def markedUpBody = new StreamingMarkupBuilder().bindNode(art.body).toString()
