@@ -41,17 +41,13 @@ PubmedUtils.psql DBNAME, """
 """
 
 def addSummaryPDF(String zdbId, String pmcId) {
-    def list = []
     def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/")
     dir.eachFileRecurse (FileType.FILES) { file ->
         if (file.name.endsWith('pdf')){
-            println file.path
-            println file.name
             ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, zdbId+"/"+file.name].join('|') + "\n")
         }
     }
 }
-
 
 def downloadPMCFileBundle(String url, String zdbId) {
     def directory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId")
@@ -82,13 +78,11 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
     def supplimentMatches = markedUpBody =~ /<tag0:supplementary-material content-type='(.*?)<\/tag0:supplementary-material>/
     if (supplimentMatches.size() > 0) {
         supplimentMatches.each {
-            def entireSupplementMatch = it[0]
             def filenameMatch = supplimentMatches =~ /<tag0:media xlink:href='(.*?)'/
             if (filenameMatch.size() > 0) {
                 def filename = filenameMatch[0][1]
                 PUB_FILES_TO_LOAD.append([zdbId, pmcId, zdbId+"/"+filename].join('|') + "\n")
             }
-
         }
     }
     addSummaryPDF(zdbId, pmcId)
