@@ -26,11 +26,7 @@
     <link rel="stylesheet" href="/css/footer.css">
 
     <script src="/javascript/dist/vendor-common.bundle.js"></script>
-    <script src="/javascript/autocompletify.js"></script>
-    <script src="/javascript/header-menu.js"></script>
-    <script src="/javascript/form-reset.js"></script>
-    <script src="/javascript/popups.js"></script>
-    <script src="/javascript/your-input-welcome.js"></script>
+    <script src="/javascript/dist/zfin-common.bundle.js"></script>
 
     <script>
         <c:choose>
@@ -47,7 +43,6 @@
 
         $(function () {
             processPopupLinks('body');
-            initYIW();
             $(".default-input").focus();
             $('#header-search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
             $('#header-search-query-input').bind("typeahead:select", function () {
@@ -165,9 +160,5 @@
         <small>ZFIN logo design by Kari Pape, <A HREF="http://www.uoregon.edu">University of Oregon</a></small>
     </div>
 </div>
-
-<!-- scripts which do not need to block rendering -->
-<script src="/javascript/list-collapse.js"></script>
-
 </body>
 </html>

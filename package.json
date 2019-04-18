@@ -6,6 +6,7 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "@songkick/replaceinfiles": "^1.1.4",
+    "exports-loader": "^0.7.0",
     "hashmark": "^5.0.0",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0"

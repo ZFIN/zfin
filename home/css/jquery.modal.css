@@ -15,6 +15,14 @@
   box-shadow: 0 0 10px #000;
   border:5px solid #066;
   overflow: visible;
+  top: 100px !important;
+  margin-top: 0 !important;
+  z-index: 101 !important;
+}
+
+.jquery-modal.blocker {
+  opacity: 0.6 !important;
+  z-index: 100 !important;
 }
 
 .jq-modal a.close-modal {

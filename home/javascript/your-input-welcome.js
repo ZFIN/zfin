@@ -1,4 +1,4 @@
-function initYIW() {
+$(function () {
     var $overlay = jQuery("#input-welcome-overlay"),
         $successMessage = jQuery("#input-welcome-success-message"),
         $errorMessage = jQuery("#input-welcome-error-message"),
@@ -85,4 +85,4 @@ function initYIW() {
         $formInputs.removeClass("invalid");
         $formInputs.attr("disabled", true);
     });
-}
+});

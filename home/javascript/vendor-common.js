@@ -4,5 +4,4 @@ require('jquery.tipsy');
 require('typeahead.js');
 window.Bloodhound = require('bloodhound-js');
 require('@fortawesome/fontawesome-free/js/all');
-require('bootstrap');
 require('sorttable');
