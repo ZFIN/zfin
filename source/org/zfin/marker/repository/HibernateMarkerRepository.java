@@ -3151,6 +3151,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
+    public List<Transcript> getAllTranscripts(){
+        Session session = HibernateUtil.currentSession();
+        Criteria transcriptCriteria = session.createCriteria(Transcript.class);
+        transcriptCriteria.addOrder(Order.asc("name"));
+        return transcriptCriteria.list();
+    }
+
+    @Override
     public Map<String, GenericTerm> getSoTermMapping() {
         String hql = "from ZfinSoTerm";
 

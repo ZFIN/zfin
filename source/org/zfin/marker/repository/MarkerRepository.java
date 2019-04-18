@@ -1,11 +1,15 @@
 package org.zfin.marker.repository;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.feature.Feature;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -495,6 +499,7 @@ public interface MarkerRepository {
     DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
 
     List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number);
+     List<Transcript> getAllTranscripts();
 
     Map<String,GenericTerm> getSoTermMapping();
 
