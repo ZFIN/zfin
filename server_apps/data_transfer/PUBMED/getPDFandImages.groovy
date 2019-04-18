@@ -5,6 +5,7 @@ import groovy.util.slurpersupport.GPathResult
 import groovy.xml.StreamingMarkupBuilder
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
+import groovy.io.FileType
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
@@ -21,13 +22,13 @@ WORKING_DIR.eachFileMatch(~/loadSQL.*\.txt/) { it.delete() }
 
 Date date = new Date()
 // go back 14 days to slurp up stragglers.
-def dateToCheck = date - 14
+def dateToCheck = date - 5
 def idsToGrab = [:]
 String datePart = dateToCheck.format("yyyy-MM-dd")
 String timePart = dateToCheck.format("HH:mm:ss")
 
 
-PubmedUtils.dbaccess DBNAME, """
+PubmedUtils.psql DBNAME, """
   \\copy (
   SELECT pub_pmc_id, zdb_id
   FROM publication
@@ -35,8 +36,19 @@ PubmedUtils.dbaccess DBNAME, """
      AND NOT EXISTS (SELECT 'x' 
                     FROM publication_file 
                     WHERE pf_pub_zdb_id = zdb_id 
-                    AND pf_file_type_id =1) )to '$PUB_IDS_TO_CHECK' delimiter ',';
+                    AND pf_file_type_id =1) ) to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
+
+def addSummaryPDF(String zdbId) {
+    def list = []
+    def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/")
+    dir.eachFileRecurse (FileType.FILES) { file ->
+        list << file
+        println file.path
+        println file.name
+    }
+}
+
 
 def downloadPMCFileBundle(String url, String zdbId) {
     def directory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId")
@@ -71,11 +83,12 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
             def filenameMatch = supplimentMatches =~ /<tag0:media xlink:href='(.*?)'/
             if (filenameMatch.size() > 0) {
                 def filename = filenameMatch[0][1]
-                PUB_FILES_TO_LOAD.append([zdbId, pmcId, filename].join('|') + "\n")
+                PUB_FILES_TO_LOAD.append([zdbId, pmcId, zdbId+"/"+filename].join('|') + "\n")
             }
 
         }
     }
+    addSummaryPDF(zdbId)
     def figMatches = markedUpBody =~ /<tag0:fig id=(.*?)>(.*?)<\/tag0:fig>/
     def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/"
     if (figMatches.size() >0) {
@@ -96,7 +109,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
             if (imageNameMatch.size()) {
                 image = imageNameMatch[0][2] + ".jpg"
             }
-            FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image + ".jpg"].join('|') + "\n")
+            FIGS_TO_LOAD.append([zdbId, pmcId, zdbId+"/"+imageFilePath, label, caption, image + ".jpg"].join('|') + "\n")
         }
     }
     //TODO: add the Pdf file name to publciation_file
