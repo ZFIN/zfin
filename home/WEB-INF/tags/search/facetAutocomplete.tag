@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
-<div ng-app="facetApp">
+<div ng-app="app">
 
     <div id="facet-list-controller" ng-controller="facetListController">
         <div ng-hide="facetValues">
@@ -16,8 +16,7 @@
                 <li style="clear:both" class="selectable-facet-value facet-value" ng-repeat="value in ( filteredValues = (facetValues | match:query) ) | paging:perPage:page">
                     <a class="facet-include" href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)"><i class="include-exclude-icon fa fa-plus-circle"></i></a>
                     <a class="facet-exclude" href="${baseUrlWithoutPage}fq=-{{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('exclude', value.name)"><i class="include-exclude-icon fa fa-minus-circle"></i></a>
-                    <%-- the bind html is so that genotype names will have their superscript, requires ngSanitize --%>
-                    <a href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)" ng-bind-html="value.value"></a>
+                    <a href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)" ng-bind-html="value.value | trustedHtml"></a>
                       <span style="padding-left: 1em;" class="pull-right">({{value.count}})</span>
                 </li>
             </ul>
@@ -116,7 +115,7 @@
             });
 
 
-    var facetApp = angular.module('facetApp', ['facetFilters', 'ngSanitize']);
+    var facetApp = angular.module('app', ['facetFilters']);
 
 
     facetApp.controller('facetListController', function ($scope, $http) {

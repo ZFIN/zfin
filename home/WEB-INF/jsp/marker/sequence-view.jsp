@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-<script src="/javascript/angular/angular-sanitize.js"></script>
 <script src="/javascript/editMarker.js"></script>
 <script src="/javascript/marker.service.js"></script>
 <script src="/javascript/sequence-information-edit.js"></script>

@@ -4,7 +4,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-<script src="/javascript/angular/angular-sanitize.js"></script>
 <script src="/javascript/trusted-html.filter.js"></script>
 
 <script src="/javascript/editMarker.js"></script>
