@@ -136,6 +136,15 @@
             <form:errors path="publication.canShowImages" cssClass="text-danger" />
         </div>
     </div>
+    <div class="form-group">
+        <label for="publication.curatable" class="col-sm-3 control-label">Is Curatable</label>
+        <div class="col-sm-8">
+            <div class="checkbox">
+                <label><form:checkbox path="publication.curatable"/></label>
+            </div>
+            <form:errors path="publication.curatable" cssClass="text-danger" />
+        </div>
+    </div>
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-8">
