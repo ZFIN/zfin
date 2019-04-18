@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CrossReferenceDTO {
+public class CrossReferenceTranscriptsDTO {
 
     private String id;
-    private List<String> pages;
+
 
     @JsonIgnore
     private String dataProvider;
 
-    public CrossReferenceDTO(String dataProvider, String localID, List<String> pages) {
+    public CrossReferenceTranscriptsDTO(String dataProvider, String localID) {
         this.dataProvider = dataProvider;
         if (dataProvider == localID) {
             this.id = dbNameMap.get(dataProvider);
@@ -24,7 +24,7 @@ public class CrossReferenceDTO {
         else {
             this.id = dbNameMap.get(dataProvider) + ":" + localID;
         }
-        this.pages = pages;
+
         if (!dbNameMap.keySet().contains(dataProvider))
             throw new RuntimeException("Could not find external DB " + dataProvider);
 
@@ -38,7 +38,7 @@ public class CrossReferenceDTO {
         return dataProvider;
     }
 
-    public List<String> getPages() { return pages; }
+
 
     static Map<String, String> dbNameMap = new HashMap<>();
 
