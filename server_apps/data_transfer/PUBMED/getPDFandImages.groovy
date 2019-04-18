@@ -12,6 +12,7 @@ DBNAME = System.getenv("DBNAME")
 PUB_IDS_TO_CHECK = "pdfsNeeded.txt"
 PUBS_WITH_PDFS_TO_UPDATE = new File ("pdfsAvailable.txt")
 FIGS_TO_LOAD = new File ("figsToLoad.txt")
+PUB_FILES_TO_LOAD = new File ("pdfsToLoad.txt")
 final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/PUBMED")
 
 WORKING_DIR.eachFileMatch(~/pdfs.*\.txt/) { it.delete() }
@@ -63,17 +64,40 @@ def downloadPMCFileBundle(String url, String zdbId) {
 def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
     def art = pmcTextArticle.GetRecord.record.metadata.article
     def markedUpBody = new StreamingMarkupBuilder().bindNode(art.body).toString()
+    def supplimentMatches = markedUpBody =~ /<tag0:supplementary-material content-type='(.*?)<\/tag0:supplementary-material>/
+    if (supplimentMatches.size() > 0) {
+        supplimentMatches.each {
+            def entireSupplementMatch = it[0]
+            def filenameMatch = supplimentMatches =~ /<tag0:media xlink:href='(.*?)'/
+            if (filenameMatch.size() > 0) {
+                def filename = filenameMatch[0][1]
+                PUB_FILES_TO_LOAD.append([zdbId, pmcId, filename].join('|') + "\n")
+            }
+
+        }
+    }
     def figMatches = markedUpBody =~ /<tag0:fig id=(.*?)>(.*?)<\/tag0:fig>/
     def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/"
-    figMatches.each {
-        def entireFigString = it[0]
-        def labelMatch = entireFigString =~ /<tag0:label>(.*?)<\/tag0:label>/
-        def label = labelMatch[0][1]
-        def captionMatch = entireFigString =~ /<tag0:caption>(.*?)<\/tag0:caption>/
-        def caption = captionMatch[0][1].toString().replaceAll('tag0:', '')
-        def imageNameMatch = entireFigString =~ /<tag0:graphic id='(.*?)' xlink:href='(.*?)'/
-        def image = imageNameMatch[0][2] + ".jpg"
-        FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image + ".jpg"].join('|') + "\n")
+    if (figMatches.size() >0) {
+        figMatches.each {
+            def entireFigString = it[0]
+            def labelMatch = entireFigString =~ /<tag0:label>(.*?)<\/tag0:label>/
+            def label
+            def caption
+            def image
+            if (labelMatch.size() >0 ) {
+                label = labelMatch[0][1]
+            }
+            def captionMatch = entireFigString =~ /<tag0:caption>(.*?)<\/tag0:caption>/
+            if (captionMatch.size() >0) {
+                caption = captionMatch[0][1].toString().replaceAll('tag0:', '')
+            }
+            def imageNameMatch = entireFigString =~ /<tag0:graphic id='(.*?)' xlink:href='(.*?)'/
+            if (imageNameMatch.size()) {
+                image = imageNameMatch[0][2] + ".jpg"
+            }
+            FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image + ".jpg"].join('|') + "\n")
+        }
     }
     //TODO: add the Pdf file name to publciation_file
 }
@@ -121,4 +145,8 @@ loadFigsAndImages = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 loadFigsAndImages.waitFor()
 
-FIGS_TO_LOAD.delete()
+loadPubFiles = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
+        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/load_pub_files.sql " +
+        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
+loadPubFiles.waitFor()
+
