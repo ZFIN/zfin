@@ -14,6 +14,7 @@ PUB_IDS_TO_CHECK = "pdfsNeeded.txt"
 PUBS_WITH_PDFS_TO_UPDATE = new File ("pdfsAvailable.txt")
 FIGS_TO_LOAD = new File ("figsToLoad.txt")
 PUB_FILES_TO_LOAD = new File ("pdfsToLoad.txt")
+ADD_BASIC_PDFS_TO_DB = new File ("pdfBasicFilesToLoad.txt")
 final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/PUBMED")
 
 WORKING_DIR.eachFileMatch(~/pdfs.*\.txt/) { it.delete() }
@@ -39,13 +40,15 @@ PubmedUtils.psql DBNAME, """
                     AND pf_file_type_id =1) ) to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
 
-def addSummaryPDF(String zdbId) {
+def addSummaryPDF(String zdbId, String pmcId) {
     def list = []
     def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/")
     dir.eachFileRecurse (FileType.FILES) { file ->
-        list << file
-        println file.path
-        println file.name
+        if (file.name.endsWith('pdf')){
+            println file.path
+            println file.name
+            ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, zdbId+"/"+file.name].join('|') + "\n")
+        }
     }
 }
 
@@ -88,7 +91,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
 
         }
     }
-    addSummaryPDF(zdbId)
+    addSummaryPDF(zdbId, pmcId)
     def figMatches = markedUpBody =~ /<tag0:fig id=(.*?)>(.*?)<\/tag0:fig>/
     def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/"
     if (figMatches.size() >0) {
@@ -163,3 +166,7 @@ loadPubFiles = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 loadPubFiles.waitFor()
 
+loadBasicPDFFiles = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
+        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/add_basic_pdfs.sql " +
+        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
+loadBasicPDFFiles.waitFor()
