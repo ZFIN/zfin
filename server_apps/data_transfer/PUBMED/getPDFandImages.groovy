@@ -90,7 +90,7 @@ def processPMCFileBundle(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_U
                 def zdbId = idsToGrab.get(pmcId)
                 downloadPMCFileBundle(pdfPath, zdbId)
                 def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
-                println pmcId
+                println pmcId +","+zdbId
                 processPMCText(fullTxt, zdbId, pmcId)
             }
         }
