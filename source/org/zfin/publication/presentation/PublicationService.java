@@ -220,6 +220,7 @@ if (publication.getJournal().equals("ZDB-JRNL-181119-2"))
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("abstractText", existingPub, formPub, true));
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("errataAndNotes", existingPub, formPub, true));
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("canShowImages", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("curatable", existingPub, formPub, true));
 
         return updates;
     }
