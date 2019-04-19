@@ -9,21 +9,22 @@ import groovy.io.FileType
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
+final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/PUBMED")
+WORKING_DIR.eachFileMatch(~/pdfs.*\.txt/) { it.delete() }
+WORKING_DIR.eachFileMatch(~/fig.*\.txt/) { it.delete() }
+WORKING_DIR.eachFileMatch(~/loadSQL.*\.txt/) { it.delete() }
+
 DBNAME = System.getenv("DBNAME")
 PUB_IDS_TO_CHECK = "pdfsNeeded.txt"
 PUBS_WITH_PDFS_TO_UPDATE = new File ("pdfsAvailable.txt")
 FIGS_TO_LOAD = new File ("figsToLoad.txt")
 PUB_FILES_TO_LOAD = new File ("pdfsToLoad.txt")
 ADD_BASIC_PDFS_TO_DB = new File ("pdfBasicFilesToLoad.txt")
-final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/PUBMED")
 
-WORKING_DIR.eachFileMatch(~/pdfs.*\.txt/) { it.delete() }
-WORKING_DIR.eachFileMatch(~/fig.*\.txt/) { it.delete() }
-WORKING_DIR.eachFileMatch(~/loadSQL.*\.txt/) { it.delete() }
 
 Date date = new Date()
-// go back 14 days to slurp up stragglers.
-def dateToCheck = date - 5
+// go back two weeks to slurp up stragglers.
+def dateToCheck = date - 14
 def idsToGrab = [:]
 String datePart = dateToCheck.format("yyyy-MM-dd")
 String timePart = dateToCheck.format("HH:mm:ss")
@@ -109,14 +110,12 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
             FIGS_TO_LOAD.append([zdbId, pmcId, zdbId+"/"+imageFilePath, label, caption, image + ".jpg"].join('|') + "\n")
         }
     }
-    //TODO: add the Pdf file name to publciation_file
 }
 
 
 def processPMCFileBundle(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
     oa.records.record.each { rec ->
         def pmcId = rec.@id.text()
-
         if (idsToGrab.containsKey(pmcId)) {
             if (rec.link.@format.text() == 'tgz') {
                 def pdfPath = rec.link.@href.text()
