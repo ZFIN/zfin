@@ -6,7 +6,7 @@ module.exports = {
     entry: {
         angular: './angular/index.js',
         'vendor-common': './vendor-common.js',
-        'zfin-common': './zfin-common.js',
+        'zfin-common': './zfin-common/index.js',
     },
     output: {
         path: path.resolve(process.env.TARGETROOT, 'home/javascript/dist'),

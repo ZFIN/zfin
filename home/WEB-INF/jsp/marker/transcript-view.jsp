@@ -68,8 +68,6 @@
 
     <%--"no siblings" gbrowse image --%>
     <c:if test="${(fn:length(relatedTranscriptDisplay.transcripts) == 1) && (!empty relatedTranscriptDisplay.gbrowseImage) }">
-
-        <script src="/javascript/gbrowse-image.js"></script>
         <div class="summary" id="single-transcript-gbrowse-section">
             <table class="summary solidblock">
                 <caption>GBrowse:</caption>
@@ -88,8 +86,6 @@
                 linkUrl: "${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
             });
         </script>
-
-
     </c:if>
 </c:forEach>
 

@@ -3,8 +3,6 @@
 <%@ attribute name="locations" required="true" type="java.util.Collection" %>
 <%@ attribute name="gbrowseImage" required="false" type="org.zfin.gbrowse.presentation.GBrowseImage" %>
 
-<script src="/javascript/gbrowse-image.js"></script>
-
 <style>
     .gbrowse-image {
         width: 800px;

@@ -97,7 +97,6 @@
 
 <script src="/css/bootstrap3/js/bootstrap.min.js"></script>
 <script src="/javascript/jquery.validate.min.js"></script>
-<script src="/javascript/multirow-table.js"></script>
 <script>
   $(function() {
 

@@ -3,10 +3,6 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<script src="/javascript/gbrowse-image.js"></script>
-
-<script src="/javascript/table-collapse.js"></script>
-
 <script>
     jQuery(function () {
         jQuery("#genotype").find(".summary").tableCollapse({label: "genotypes"});
@@ -175,7 +171,6 @@
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
 
-<script src="/javascript/table-collapse.js"></script>
 <script>
     jQuery(function () {
         jQuery('#expression').tableCollapse({label: 'expressed genes'});

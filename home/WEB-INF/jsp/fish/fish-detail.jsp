@@ -165,7 +165,6 @@
     </c:otherwise>
 </c:choose>
 
-<script src="/javascript/table-collapse.js"></script>
 <script>
    jQuery(function () {
        jQuery('#nonEfgExpression').tableCollapse({label: 'expressed genes'});

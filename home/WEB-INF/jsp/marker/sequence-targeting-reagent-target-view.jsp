@@ -2,8 +2,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentBean" scope="request"/>
 
-<script src="/javascript/gbrowse-image.js"></script>
-
 <div class="summaryTitle">Target Locations for <zfin:link entity="${formBean.marker}"/></div>
 
 <c:forEach items="${formBean.gbrowseImages}" var="image">

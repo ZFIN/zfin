@@ -63,7 +63,6 @@
         </zfin:alternating-tr>
     </c:forEach>
 
-    <script src="/javascript/gbrowse-image.js"></script>
     <script>
         jQuery(".gbrowse_hover").hover(
                 function () {

@@ -2,8 +2,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.AntibodyMarkerBean" scope="request"/>
 
-<script src="/javascript/table-collapse.js"></script>
-
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${formBean.editURL}"
                    deleteURL="${formBean.deleteURL}"

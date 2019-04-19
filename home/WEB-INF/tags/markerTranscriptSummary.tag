@@ -12,8 +12,6 @@
 <%@ attribute name="title" required="false" rtexprvalue="true" type="java.lang.String"
               description="optional title, overrides default" %>
 
-<script src="/javascript/gbrowse-image.js"></script>
-
 <script type="text/javascript">
     function showWithdrawnTranscripts(numWithdrawnTranscripts){
         showWithDrawnTranscriptsHyperLink = document.getElementById('withdrawnTranscriptsLink');

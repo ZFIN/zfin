@@ -2,7 +2,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.GenotypeBean" scope="request"/>
 
-<script src="/javascript/table-collapse.js"></script>
 <script type="text/javascript">
 
     function popup_url(url) {

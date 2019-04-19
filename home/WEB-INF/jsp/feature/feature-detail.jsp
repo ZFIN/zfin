@@ -4,8 +4,6 @@
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
 <meta name="feature-detail-page"/>
-<script src="/javascript/gbrowse-image.js"></script>
-<script src="/javascript/table-collapse.js"></script>
 
 <zfin2:dataManager zdbID="${formBean.feature.zdbID}"/>
 

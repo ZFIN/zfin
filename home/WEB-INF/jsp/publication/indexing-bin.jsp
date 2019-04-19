@@ -5,7 +5,6 @@
 <link rel="stylesheet" type="text/css" href="/css/faceted-search.css">
 
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
-<script src="/javascript/figure-gallery-resize.jquery.js"></script>
 
 <script src="/javascript/dist/angular.bundle.js"></script>
 

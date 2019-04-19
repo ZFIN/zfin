@@ -6,8 +6,6 @@
 <c:set var="editURL">/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}</c:set>
 <c:set var="deleteURL">none</c:set>
 
-<script src="/javascript/gbrowse-image.js"></script>
-
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"/>

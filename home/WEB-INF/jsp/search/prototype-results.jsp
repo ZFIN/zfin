@@ -17,8 +17,6 @@
 <c:set var="communityCategoryName" value="<%=Category.COMMUNITY.getName()%>"/>
 <c:set var="figureCategoryName" value="<%=Category.FIGURE.getName()%>"/>
 
-<script src="/javascript/figure-gallery-resize.jquery.js"></script>
-
 <script src="/javascript/dist/angular.bundle.js"></script>
 
 <script src="/javascript/imagesloaded.pkgd.min.js"></script>
