@@ -47,7 +47,7 @@
     <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"
                     soTerm="${formBean.zfinSoTerm}" userID="${formBean.user.zdbID}"/>
 
-    <zfin2:subsection
+    <zfin2:subsection test="${!empty formBean.allianceGeneDesc.gdDesc}" showNoData="true" noDataText="No data available"
             title="AUTOMATED DESCRIPTION <a class='popup-link info-popup-link' href='/action/marker/note/automated-gene-desc'></a>">
         <table>
             <tr>
