@@ -104,7 +104,7 @@ delete from tmp_terms where zfinid not in (select mrkr_zdb_id from marker);
 
 insert into gene_description (gd_gene_zdb_id,gd_description)
   select distinct zfinid,genedesc
-    from tmp_terms where zfinid not in (Select gd_gene_zdb_id from gene_description);
+    from tmp_terms where zfinid not in (Select gd_gene_zdb_id from gene_description) and genedesc !='null';
 
 update gene_description set gd_description=(select distinct genedesc from tmp_terms where gene_description.gd_gene_zdb_id=tmp_terms.zfinid);
     
