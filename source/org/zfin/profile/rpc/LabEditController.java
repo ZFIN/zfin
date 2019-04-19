@@ -11,7 +11,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.Lab;
 import org.zfin.profile.repository.ProfileRepository;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 
@@ -26,26 +25,6 @@ public class LabEditController {
 
     @Autowired
     private FeatureRepository featureRepository ;
-
-//    @Autowired
-//    public LabEditController(ProfileRepository profileRepository){
-//        this.profileRepository = profileRepository ;
-//        // TODO: need to make that autowired, as well
-//        this.featureRepository = RepositoryFactory.getFeatureRepository();
-//    }
-
-    @RequestMapping(value={"/devtool/test-ajax/{id}"},method = RequestMethod.GET)
-    public ModelAndView labTestEditPage(@PathVariable("id") String labZdbId){
-        Lab lab = profileRepository.getLabById(labZdbId) ;
-        ModelAndView modelAndView = new ModelAndView("profile/lab-edit-test.page");
-        modelAndView.addObject("lab",lab);
-        List<String> prefixes = featureRepository.getAllFeaturePrefixes() ;
-        modelAndView.addObject("prefixes",prefixes);
-        String prefix = featureRepository.getCurrentPrefixForLab(labZdbId) ;
-        modelAndView.addObject("prefix",prefix);
-        modelAndView.addObject(LookupStrings.DYNAMIC_TITLE,lab.getName());
-        return modelAndView;
-    }
 
     /**
      * Unused, just here as an example.  Make sure to remove jsp when this goes away.

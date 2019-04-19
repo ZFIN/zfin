@@ -28,7 +28,6 @@
 <link rel="stylesheet" type="text/css" href="/css/datepicker3.css">
 <script type="text/javascript" src="/javascript/bootstrap-datepicker.js"></script>
 
-<script src="/javascript/purl.js"></script>
 <script src="/javascript/jquery.validate.min.js"></script>
 
 <link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css">
