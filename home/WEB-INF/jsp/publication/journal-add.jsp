@@ -4,13 +4,6 @@
 <link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
 <link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
 
-<script src="/javascript/angular/angular.min.js"></script>
-<script>
-    ;(function() {
-        angular.module('app', []);
-    }());
-</script>
-
 
 <jsp:useBean id="formBean" class="org.zfin.publication.presentation.JournalAddBean" scope="request"/>
 

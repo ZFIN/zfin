@@ -5,20 +5,7 @@
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 <script type="text/javascript" src="/javascript/jquery.stickytabs.js"></script>
 
-<script src="/javascript/angular/angular.min.js"></script>
-<script src="/javascript/angular/paging.min.js"></script>
-<script src="/javascript/zfin-app.module.js"></script>
-<script src="/javascript/figure.service.js"></script>
-<script src="/javascript/trusted-html.filter.js"></script>
-<script src="/javascript/inline-edit-textarea.directive.js"></script>
-<script src="/javascript/figure-edit.directive.js"></script>
-<script src="/javascript/file-input.directive.js"></script>
-<script src="/javascript/figure-upload.directive.js"></script>
-<script src="/javascript/figure-update.directive.js"></script>
-<script src="/javascript/pub-file-edit.directive.js"></script>
-<script src="/javascript/pub-file-upload.directive.js"></script>
-<script src="/javascript/publication.service.js"></script>
-<script src="/javascript/zfinutils.service.js"></script>
+<script src="/javascript/dist/angular.bundle.js"></script>
 
 <c:set var="pubID">${publicationBean.publication.zdbID}</c:set>
 <c:set var="linkURL">/action/publication/${pubID}/link</c:set>

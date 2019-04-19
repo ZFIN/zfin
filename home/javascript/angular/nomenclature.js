@@ -1,6 +1,4 @@
-var editMarker = angular.module('app');
-
-editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$window', function ($http, $attrs, $scope, $window) {
+angular.module('app').controller('NomenclatureController', ['$http', '$attrs', '$scope', '$window', function ($http, $attrs, $scope, $window) {
     var nomenController = this;
 
     nomenController.nomenID;
@@ -330,13 +328,6 @@ editMarker.controller('NomenclatureController', ['$http', '$attrs', '$scope', '$
     };
 
 }]);
-
-
-editMarker.filter('unsafe', function ($sce) {
-    return function (val) {
-        return $sce.trustAsHtml(val);
-    };
-});
 
 $(document).ready(function () {
     $("#alias-modal").on('shown.bs.modal', function () {

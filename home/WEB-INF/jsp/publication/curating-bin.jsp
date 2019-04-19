@@ -7,18 +7,7 @@
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 <script src="/javascript/figure-gallery-resize.jquery.js"></script>
 
-<script src="/javascript/angular/angular.min.js"></script>
-<script src="/javascript/angular/paging.min.js"></script>
-<script src="/javascript/zfin-app.module.js"></script>
-
-<script src="/javascript/intertab-event.service.js"></script>
-<script src="/javascript/publication.service.js"></script>
-<script src="/javascript/zfinutils.service.js"></script>
-
-<script src="/javascript/timeago.filter.js"></script>
-<script src="/javascript/trusted-html.filter.js"></script>
-
-<script src="/javascript/curating-bin.directive.js"></script>
+<script src="/javascript/dist/angular.bundle.js"></script>
 
 <zfin2:pub-navigator pages="${page}" currentPage="${currentPage}"/>
 

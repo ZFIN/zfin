@@ -19,7 +19,8 @@
 
 <script src="/javascript/figure-gallery-resize.jquery.js"></script>
 
-<script src="/javascript/angular/angular.min.js"></script>
+<script src="/javascript/dist/angular.bundle.js"></script>
+
 <script src="/javascript/imagesloaded.pkgd.min.js"></script>
 <script src="/javascript/masonry.pkgd.min.js"></script>
 

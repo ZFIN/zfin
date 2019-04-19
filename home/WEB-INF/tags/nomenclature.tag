@@ -57,5 +57,5 @@
         <input size="20" name="publicationID" ng-model="control.publicationID"/>
         <button type="button" class="zfin-button approve" ng-click="control.addAttribution()">Add</button>
      </span>
-    <span ng-bind-html="control.errorMessage | unsafe" class="error"></span>
+    <span ng-bind-html="control.errorMessage | trustedHtml" class="error"></span>
 </div>

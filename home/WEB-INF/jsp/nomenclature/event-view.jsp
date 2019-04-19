@@ -12,9 +12,6 @@
     </tiles:insertTemplate>
 </div>
 
-<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-<script src="/javascript/nomenclature.js" type="text/javascript"></script>
-
 <zfin2:subsection title="Nomenclature"
                   showNoData="false" inlineTitle="true">
     Event for <zfin:link entity="${markerHistory.marker}"/>

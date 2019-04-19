@@ -1,12 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<script src="/javascript/angular/angular.min.js"></script>
-<script src="/javascript/angular/paging.min.js"></script>
-<script src="/javascript/zfin-app.module.js"></script>
-
-<script src="/javascript/figure.service.js"></script>
-<script src="/javascript/quick-figure.directive.js"></script>
+<script src="/javascript/dist/angular.bundle.js"></script>
 
 <link rel=stylesheet type="text/css" href="/css/bootstrap3/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css"/>

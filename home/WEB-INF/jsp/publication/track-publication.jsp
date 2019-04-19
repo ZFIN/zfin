@@ -6,24 +6,7 @@
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 <script type="text/javascript" src="/javascript/jquery.stickytabs.js"></script>
 
-<script src="/javascript/angular/angular.min.js"></script>
-<script src="/javascript/angular/paging.min.js"></script>
-<script src="/javascript/zfin-app.module.js"></script>
-
-<script src="/javascript/intertab-event.service.js"></script>
-<script src="/javascript/publication.service.js"></script>
-<script src="/javascript/zfinutils.service.js"></script>
-
-<script src="/javascript/trusted-html.filter.js"></script>
-
-<script src="/javascript/publication-author-notif.directive.js"></script>
-<script src="/javascript/publication-correspondence.directive.js"></script>
-<script src="/javascript/publication-indexed.directive.js"></script>
-<script src="/javascript/publication-notes.directive.js"></script>
-<script src="/javascript/publication-status.directive.js"></script>
-<script src="/javascript/publication-topics.directive.js"></script>
-<script src="/javascript/publication-tracker.directive.js"></script>
-<script src="/javascript/select-all-list.directive.js"></script>
+<script src="/javascript/dist/angular.bundle.js"></script>
 
 <c:set var="viewURL">/${publication.zdbID}</c:set>
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>

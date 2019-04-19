@@ -1,5 +1,5 @@
 ;(function () {
-    angular.module('app', [])
+    angular.module('app')
         .controller('sequenceInfoCtrl', ['$scope', '$http', '$sce', function ($scope, $http, $sce) {
             var seqInfoCtrl = this;
 

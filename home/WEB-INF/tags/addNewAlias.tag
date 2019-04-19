@@ -23,7 +23,7 @@
             </td>
         </tr>
     </table>
-    <span ng-bind-html="control.errorMessage | unsafe" class="error"></span>
+    <span ng-bind-html="control.errorMessage | trustedHtml" class="error"></span>
 </div>
 
 <div id="alias-attribution-modal" class="jq-modal curation">
@@ -47,12 +47,12 @@
             </td>
         </tr>
     </table>
-    <span ng-bind-html="control.errorMessage | unsafe" class="error"></span>
+    <span ng-bind-html="control.errorMessage | trustedHtml" class="error"></span>
 </div>
 
 <div id="delete-modal" class="jq-modal curation">
     <h3>
-        Delete Alias: <span ng-bind-html="control.newAlias | unsafe"></span>
+        Delete Alias: <span ng-bind-html="control.newAlias | trustedHtml"></span>
 
         <p/>
     </h3>

@@ -44,7 +44,7 @@
         </tr>
     </table>
     <p class="text-danger" ng-show="mkrreln.errorMessage">{{mkrreln.errorMessage}}</p>
-    <!--<span ng-bind-html="mkrreln.errorMessage | unsafe" class="error"></span>-->
+    <!--<span ng-bind-html="mkrreln.errorMessage | trustedHtml" class="error"></span>-->
 </div>
 
 <!--<div class="row">
@@ -55,7 +55,7 @@
                 <td class="data-label">
                     <a style="font-weight: bold;" target="_blank" ng-href="{{mkrreln.markerId}}"><i>{{mkrreln.markerAbbrev}}</i></a> {{relationship.name}} </td>
                <td>
-                    {{relationship.relationshipType}} [{{relationship.markerType}}]{{mkrreln.relationship.attributionZdbIDs.length}}  <span ng-bind-html="relationship.linkWithAttributionAndOrderThis | unsafe"></span>{{relationship.abbrev}}
+                    {{relationship.relationshipType}} [{{relationship.markerType}}]{{mkrreln.relationship.attributionZdbIDs.length}}  <span ng-bind-html="relationship.linkWithAttributionAndOrderThis | trustedHtml"></span>{{relationship.abbrev}}
                     <span  ng-if="relationship.relationshipType!='Contained in'"
                             ng-show="mkrreln.edit" style="cursor: pointer;"
                             ng-click="mkrreln.openEditAttribution(relationship, $index)"><i class="far fa-edit" aria-hidden="true" style="color: red"
@@ -100,7 +100,7 @@
             </td>
         </tr>
     </table>
-    <span ng-bind-html="mkrreln.errorMessage | unsafe" class="error"></span>
+    <span ng-bind-html="mkrreln.errorMessage | trustedHtml" class="error"></span>
 </div>
 
 <div id="delete-relationship-modal" class="jq-modal curation">
@@ -112,7 +112,7 @@
     <table class="table table-condensed">
         <tr>
             <td>
-                <a style="font-weight: bold;" target="_blank" ng-href="{{mkrreln.markerId}}"><i>{{mkrreln.markerAbbrev}}</i></a>  {{mkrreln.otherLink.relationshipType}} [{{mkrreln.otherLink.markerType}}] <span ng-bind-html="mkrreln.otherLink.link | unsafe"></span>{{relationship.abbrev}}
+                <a style="font-weight: bold;" target="_blank" ng-href="{{mkrreln.markerId}}"><i>{{mkrreln.markerAbbrev}}</i></a>  {{mkrreln.otherLink.relationshipType}} [{{mkrreln.otherLink.markerType}}] <span ng-bind-html="mkrreln.otherLink.link | trustedHtml"></span>{{relationship.abbrev}}
             </td>
         </tr>
         <tr ng-repeat="pub in mkrreln.otherLink.attributionZdbIDs">

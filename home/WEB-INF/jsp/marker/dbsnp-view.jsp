@@ -3,8 +3,6 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.MarkerBean" scope="request"/>
 
 <div style="float: right">

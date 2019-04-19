@@ -5,11 +5,7 @@
 <link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css">
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
-<script src="/javascript/angular/angular.min.js"></script>
-<script src="/javascript/angular/paging.min.js"></script>
-<script src="/javascript/zfin-app.module.js"></script>
-<script src="/javascript/zfinutils.service.js"></script>
-<script src="/javascript/author-linking.js"></script>
+<script src="/javascript/dist/angular.bundle.js"></script>
 
 <c:set var="publication" value="${publicationBean.publication}" scope="page"/>
 <c:set var="viewURL">/${publication.zdbID}</c:set>

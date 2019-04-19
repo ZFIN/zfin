@@ -13,9 +13,7 @@
     </tiles:insertTemplate>
 </div>
 
-<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-<script src="/javascript/editMarker.js"></script>
-<script src="/javascript/nomenclature.js" type="text/javascript"></script>
+<script src="/javascript/dist/angular.bundle.js"></script>
 
 <div ng-app="app" ng-controller="EditController as eControl">
     <script>

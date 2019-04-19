@@ -2,10 +2,9 @@
 
 <script type="text/javascript" language="javascript"
         src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
-<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-<script src="/javascript/editMarker.js"></script>
-<script src="/javascript/sequence-information-edit.js"></script>
 <link rel="stylesheet" type="text/css" href="/css/Marker.css">
+
+<script src="/javascript/dist/angular.bundle.js"></script>
 
 <script type="text/javascript">
     var MarkerProperties= {

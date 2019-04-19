@@ -8,26 +8,7 @@
 
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
-<script src="/javascript/angular/angular.min.js"></script>
-<script src="/javascript/angular/paging.min.js"></script>
-<script src="/javascript/zfin-app.module.js"></script>
-<script src="/javascript/field-error.service.js"></script>
-<script src="/javascript/str.service.js"></script>
-<script src="/javascript/marker.service.js"></script>
-
-<script src="/javascript/trusted-html.filter.js"></script>
-
-<script src="/javascript/autocompletify.directive.js"></script>
-<script src="/javascript/pub-lookup.directive.js"></script>
-<script src="/javascript/bootstrap-modal.directive.js"></script>
-<script src="/javascript/reference-editor.directive.js"></script>
-<script src="/javascript/marker-suppliers.directive.js"></script>
-<script src="/javascript/str-details.directive.js"></script>
-<script src="/javascript/str-sequence.directive.js"></script>
-<script src="/javascript/marker-aliases.directive.js"></script>
-<script src="/javascript/marker-relationships.directive.js"></script>
-<script src="/javascript/marker-notes.directive.js"></script>
-<script src="/javascript/marker-links.directive.js"></script>
+<script src="/javascript/dist/angular.bundle.js"></script>
 
 <c:set var="viewURL">/${str.zdbID}</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${str.zdbID}</c:set>

@@ -1,11 +1,6 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<script src="/javascript/angular/angular.min.js" type="text/javascript"></script>
-<script src="/javascript/editMarker.js"></script>
-<script src="/javascript/marker.service.js"></script>
-<script src="/javascript/sequence-information-edit.js"></script>
-
 <c:set var="editURL">/action/marker/sequence/edit/${formBean.marker.zdbID}</c:set>
 <c:set var="deleteURL">none</c:set>
 <zfin2:dataManager

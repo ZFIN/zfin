@@ -4,14 +4,14 @@
 </th>
 
 <td>
-    <span ng-bind-html="pn.publicNote.noteData | unsafe" class="keep-breaks"></span>
+    <span ng-bind-html="pn.publicNote.noteData | trustedHtml" class="keep-breaks"></span>
     <span ng-show="pn.edit && pn.publicNote.noteData" style="cursor: pointer;"
           ng-click="pn.openEditNote()">
                        <i class="far fa-edit red" aria-hidden="true" title="Edit the note"></i></span>
     <span ng-show="pn.edit && pn.publicNote.noteData" style="cursor: pointer;"
           ng-click="pn.openDeleteNote()">
                        <i class="fas fa-trash red" aria-hidden="true" title="Delete the curator note"></i></span>
-    <span ng-bind-html="pn.errorMessage | unsafe" class="error"></span>
+    <span ng-bind-html="pn.errorMessage | trustedHtml" class="error"></span>
 
     <div id="new-public-note-modal" class="jq-modal curation">
         <h3>
@@ -30,7 +30,7 @@
                 </td>
             </tr>
         </table>
-        <span ng-bind-html="pn.errorMessage | unsafe" class="error"></span>
+        <span ng-bind-html="pn.errorMessage | trustedHtml" class="error"></span>
     </div>
     <div id="edit-public-note-modal" class="jq-modal curation">
         <h3>
@@ -49,7 +49,7 @@
                 </td>
             </tr>
         </table>
-        <span ng-bind-html="pn.errorMessage | unsafe" class="error"></span>
+        <span ng-bind-html="pn.errorMessage | trustedHtml" class="error"></span>
     </div>
     <div id="delete-public-note-modal" class="jq-modal curation">
         <h3>
@@ -72,6 +72,6 @@
                 </td>
             </tr>
         </table>
-        <span ng-bind-html="pn.errorMessage | unsafe" class="error"></span>
+        <span ng-bind-html="pn.errorMessage | trustedHtml" class="error"></span>
     </div>
 </td>

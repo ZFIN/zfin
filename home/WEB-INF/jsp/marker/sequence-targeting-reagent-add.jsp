@@ -4,13 +4,7 @@
 <link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
 <link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
 
-<script src="/javascript/angular/angular.min.js"></script>
-<script>
-    ;(function() {
-        angular.module('app', []);
-    }());
-</script>
-<script src="/javascript/str-sequence.directive.js"></script>
+<script src="/javascript/dist/angular.bundle.js"></script>
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentAddBean" scope="request"/>
 

@@ -39,8 +39,8 @@
             </td>
         </tr>
     </table>
-    <span ng-bind-html="om.errorRef | unsafe" class="error"></span>
-    <span ng-bind-html="om.errorMessage | unsafe" class="error" ng-show="om.errorRef === ''"></span>
+    <span ng-bind-html="om.errorRef | trustedHtml" class="error"></span>
+    <span ng-bind-html="om.errorMessage | trustedHtml" class="error" ng-show="om.errorRef === ''"></span>
 </div>
 <div id="delete-other-marker-link-modal" class="jq-modal curation">
     <h3>
@@ -70,7 +70,7 @@
             </td>
         </tr>
     </table>
-    <span ng-bind-html="om.errorMessage | unsafe" class="error"></span>
+    <span ng-bind-html="om.errorMessage | trustedHtml" class="error"></span>
 </div>
 <div id="other-marker-attribution-modal" class="jq-modal curation">
     <h3>
@@ -93,7 +93,7 @@
             </td>
         </tr>
     </table>
-    <span ng-bind-html="om.errorMessage | unsafe" class="error"></span>
+    <span ng-bind-html="om.errorMessage | trustedHtml" class="error"></span>
 </div>
 
 
