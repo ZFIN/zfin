@@ -100,10 +100,24 @@ $(document).ready(function () {
         });
 
 
-    })
+    });
 
-    $('#submitConstruct').on('click', validateAndSubmit);
-    $('#resetConstruct').on('click', resetFields);
+    $('#constructAddContainer').on('click', '#submitConstruct', function (event) {
+        event.preventDefault();
+        validateAndSubmit();
+    });
+    $('#constructAddContainer').on('click', '#resetConstruct', function (event) {
+        event.preventDefault();
+        resetFields();
+    });
+    $('#constructAddContainer').on('click', '.cloneMe', function (event) {
+        event.preventDefault();
+        cloneMe(this);
+    });
+    $('#constructAddContainer').on('click', '.deleteMe', function (event) {
+        event.preventDefault();
+        deleteMe(this);
+    });
 });
 
 /* This function is for adding Promoters to the first cassette.
@@ -152,16 +166,6 @@ $(document).on("click", "button[id^='delCoding']", function (event) {
     deleteComponent(divToAttachTo, this.id, "Coding", buttonClassName);
     makeName();
 
-});
-
-$('#constructadd').on('click', '.cloneMe', function (event) {
-    event.preventDefault();
-    cloneMe(this);
-});
-
-$('#constructadd').on('click', '.deleteMe', function (event) {
-    event.preventDefault();
-    deleteMe(this);
 });
 
 

@@ -8,41 +8,19 @@
 
 <jsp:useBean id="formBean" class="org.zfin.construct.presentation.ConstructUpdateBean" scope="request"/>
 
-
-
-
-
-
-
-
-
 <%--<link rel=stylesheet type="text/css" href="/css/tabEdit.css">--%>
 <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui-1.10.4.custom.css"/>
 <script type="text/javascript" src="/javascript/jquery-ui-1.10.4.custom.js"></script>
-<script src="/javascript/constructUpdate.js" type="text/javascript"></script>
 <link media="all" type="text/css" href="/css/constructUpdate.css" rel="stylesheet">
-
-
-
-
-
-
-
-
 
 <form:form commandName="formBean" id="thisform" style="background-color:#EEEEEE;">
 
 
 <table>
-
-
-
-
-
    <tr> <td><b>Construct:</b>
      <td>
-         <form:select path="constructEdit" onchange="getConstructDetails(this.value)">
+         <form:select path="constructEdit">
 
          <option value="">--</option>
            <form:options items="${formBean.constructsInPub}" itemLabel="name" itemValue="zdbID"/>
@@ -60,7 +38,7 @@
     <tr><td></td>
 
                <td><input  id="constructEditAlias" name="constructEditAlias" autocomplete="off" value="" type="text" size=50/>
-               &nbsp;&nbsp;<input type="button" value="Add" id="addNewAlias"  onClick=addAlias(); /></td><tr>
+               &nbsp;&nbsp;<input type="button" value="Add" id="addNewAlias" /></td><tr>
 
 <tr>
 
@@ -70,14 +48,14 @@
                <tr><td></td>
 
                    <td><input  id="constructEditSequence" name="constructEditSequence" autocomplete="off" value="" type="text" size=50/>
-                       &nbsp;&nbsp; <input type="button" value="Add" id="addNewSequence"  onClick=addSequence(); /></td><tr>
+                       &nbsp;&nbsp; <input type="button" value="Add" id="addNewSequence" /></td><tr>
 
                <tr>
 <td><b>Public Note</b>:</td><td>
 
     <textarea id="constructEditComments" name="constructEditComments" value="" rows="3" cols="50" ></textarea>&nbsp;&nbsp;
 
-            <input type="button" value="Save" id="updatePublicNotes"  onClick=updatePNotes(); />
+            <input type="button" value="Save" id="updatePublicNotes"  />
 </td>
                </tr>
 
@@ -89,7 +67,7 @@
                <td>&nbsp;<div id="constructEditNotes">
 
            </tr></div>
-               <tr><td></td><td><textarea id="curatorEditNotes" name="curatorEditNotes" value="" rows="3" cols="50" ></textarea> &nbsp;&nbsp; <input type="button" value="Add" id="addConstructEditNotes"  onClick=addNotes(); /></td><tr>
+               <tr><td></td><td><textarea id="curatorEditNotes" name="curatorEditNotes" value="" rows="3" cols="50" ></textarea> &nbsp;&nbsp; <input type="button" value="Add" id="addConstructEditNotes" /></td><tr>
 </tr>
 </table>
 <div id="constructSynonym"> </div>
@@ -99,36 +77,3 @@
 
 
 </form:form>
-<script type="text/javascript">
-    function updatePNotes() {
-
-        var constructUpdateComments = jQuery("#constructEditComments").val();
-
-        var constructID = jQuery('#constructEdit').val();
-         if (constructUpdateComments==""){
-             constructUpdateComments="null"
-         }
-
-       
-
-        jQuery.ajax({
-            url: "/action/construct/update-comments/" + constructID
-            + "/constructEditComments/" + constructUpdateComments,
-            type: 'POST',
-            //data: param,
-            success: function (response) {
-
-                getConstructDetails(constructID);
-
-
-            },
-            error: function (data) {
-                alert('There was a problem with your request: ' + data);
-            }
-
-        });
-
-
-    }
-
-    </script>

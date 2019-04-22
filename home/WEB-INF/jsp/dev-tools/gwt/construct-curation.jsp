@@ -12,8 +12,9 @@
 <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui-1.10.4.custom.css"/>
 <script type="text/javascript" src="/javascript/jquery-ui-1.10.4.custom.js"></script>
-<script src="/javascript/constructAdd.js" type="text/javascript"></script>
 <link media="all" type="text/css" href="/css/constructAdd.css" rel="stylesheet">
+
+<script src="/javascript/dist/curation.bundle.js"></script>
 
 <form:form commandName="formBean" id="constructadd" style="background-color:#EEEEEE;">
 
@@ -60,9 +61,9 @@
   <div id="cassette1" class="clonable">
     <fieldset>
 <span class="tab">
-<a class="cloneMe" title="Add" onclick="cloneMe(this); return false;" href="#">Add cassette
+<a class="cloneMe" title="Add" href="#">Add cassette
 </a>
-<a class="deleteMe" title="Delete" onclick="deleteMe(this); return false;" href="#">Remove cassette </a>
+<a class="deleteMe" title="Delete" href="#">Remove cassette </a>
 </span>
 
       <b>
@@ -90,8 +91,8 @@
       <form:hidden name="constructStoredName" path="constructStoredName"/>
 
       <form:hidden name="constructName" path="constructName"/>
-    <input type="button" value="DONE" id="submitConstruct" onClick=validateAndSubmit(); />
-    &nbsp;&nbsp;   <input type="button" value="CANCEL" id="resetConstruct" onClick=resetFields(); />
+    <input type="button" value="DONE" id="submitConstruct" />
+    &nbsp;&nbsp;   <input type="button" value="CANCEL" id="resetConstruct" />
 
   <div class="error" id="add-construct-error" style="display: none;"></div>
 

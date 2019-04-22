@@ -7,6 +7,8 @@
 <link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css"/>
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
+<script src="/javascript/dist/curation.bundle.js"></script>
+
 <c:if test="${hasCorrespondence}">
     <c:set var="correspondenceURL">/action/publication/${publication.zdbID}/track#correspondence</c:set>
 </c:if>
@@ -211,7 +213,7 @@
             } else {
               selectedOption = selectionBox.val();
             }
-            updateTermInfoBox(selectedTerm, selectedOption, tabName);
+            window.updateTermInfoBox(selectedTerm, selectedOption, tabName);
           }
         }
       };

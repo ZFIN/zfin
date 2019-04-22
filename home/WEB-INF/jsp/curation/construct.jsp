@@ -5,7 +5,7 @@
             <a onclick="showCreateConstructSection()" id="showConstructAdd" style="text-decoration:underline">Show</a>
             <a style="display: none;" onclick="hideCreateConstructSection()" id="hideConstructAdd">Hide</a>
 
-            <div id="constructadd" style="display: none;"></div>
+            <div id="constructAddContainer" style="display: none;"></div>
         </td>
     </tr>
     <tr>
@@ -14,7 +14,7 @@
             <a onclick="showEditConstructSection()" id="showConstructEdit" style="text-decoration:underline">Show</a>
             <a style="display: none;" onclick="hideEditConstructSection()" id="hideConstructEdit">Hide</a>
 
-            <div id="constructedit" style="display: none;"></div>
+            <div id="constructEditContainer" style="display: none;"></div>
         </td>
     </tr>
     <tr>
@@ -26,29 +26,29 @@
 </table>
 
 <script type="text/javascript">
-    jQuery('#constructadd').load('/action/construct/construct-add?constructPublicationZdbID=${publication.zdbID}');
-    jQuery('#constructedit').load('/action/construct/construct-update?constructPublicationZdbID=${publication.zdbID}');
+    jQuery('#constructAddContainer').load('/action/construct/construct-add?constructPublicationZdbID=${publication.zdbID}');
+    jQuery('#constructEditContainer').load('/action/construct/construct-update?constructPublicationZdbID=${publication.zdbID}');
     function showCreateConstructSection() {
         storeSession('$ZDB_ident', '${publication.zdbID}', 'featcur_featcreation', 'show', '/action/curation/${publication.zdbID}');
-        jQuery('#constructadd').show();
+        jQuery('#constructAddContainer').show();
         jQuery('#showConstructAdd').hide();
         jQuery('#hideConstructAdd').show();
     }
     function hideCreateConstructSection() {
         storeSession('$ZDB_ident', '${publication.zdbID}', 'featcur_featcreation', 'hide', '/action/curation/${publication.zdbID}');
-        jQuery('#constructadd').hide();
+        jQuery('#constructAddContainer').hide();
         jQuery('#showConstructAdd').show();
         jQuery('#hideConstructAdd').hide();
     }
     function showEditConstructSection() {
         storeSession('$ZDB_ident', '${publication.zdbID}', 'featcur_featediting', 'show', '/action/curation/${publication.zdbID}');
-        jQuery('#constructedit').show();
+        jQuery('#constructEditContainer').show();
         jQuery('#showConstructEdit').hide();
         jQuery('#hideConstructEdit').show();
     }
     function hideEditConstructSection() {
         storeSession('$ZDB_ident', '${publication.zdbID}', 'featcur_featediting', 'hide', '/action/curation/${publication.zdbID}');
-        jQuery('#constructedit').hide();
+        jQuery('#constructEditContainer').hide();
         jQuery('#showConstructEdit').show();
         jQuery('#hideConstructEdit').hide();
     }

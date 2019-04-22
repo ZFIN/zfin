@@ -8,7 +8,7 @@
 //    Hide second and third cassette sections of form at load time
 
 $(function () {
-    $('#addNewAlias').on('click', function addAlias() {
+    $('#constructEditContainer').on('click', '#addNewAlias', function addAlias() {
         var param = jQuery("form").serialize();
         var pubID = jQuery('#constructPublicationZdbID').val();
         var constructID = jQuery('#constructEdit').val();
@@ -35,7 +35,7 @@ $(function () {
         });
     });
 
-    $('#addNewSequence').on('click', function addSequence() {
+    $('#constructEditContainer').on('click', '#addNewSequence', function addSequence() {
         var param = jQuery("form").serialize();
         var pubID = jQuery('#constructPublicationZdbID').val();
         var constructID = jQuery('#constructEdit').val();
@@ -62,7 +62,7 @@ $(function () {
         });
     });
 
-    $('#updatePublicNotes').on('click', function updatePNotes() {
+    $('#constructEditContainer').on('click', '#updatePublicNotes', function updatePNotes() {
 
         var constructUpdateComments = jQuery("#constructEditComments").val();
 
@@ -91,7 +91,7 @@ $(function () {
         });
     });
 
-    $('#addConstructEditNotes').on('click', function addNotes() {
+    $('#constructEditContainer').on('click', '#addConstructEditNotes', function addNotes() {
         var notes = jQuery("#curatorEditNotes").val();
         var constructID = jQuery('#constructEdit').val();
         var pubID = jQuery('#constructPublicationZdbID').val();
@@ -116,7 +116,7 @@ $(function () {
         });
     });
 
-    $('#constructEdit').on('change', function () {
+    $('#constructEditContainer').on('change', '#constructEdit', function () {
         getConstructDetails(this.value);
     });
 });

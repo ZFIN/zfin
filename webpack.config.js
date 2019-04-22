@@ -5,6 +5,7 @@ module.exports = {
     context: path.resolve(__dirname, 'home/javascript'),
     entry: {
         angular: './angular/index.js',
+        curation: './curation/index.js',
         'vendor-common': './vendor-common.js',
         'zfin-common': './zfin-common/index.js',
     },
