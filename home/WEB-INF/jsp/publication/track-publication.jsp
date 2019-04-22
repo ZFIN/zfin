@@ -4,7 +4,6 @@
 <link rel="stylesheet" type="text/css" href="/css/bootstrap3/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css">
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
-<script type="text/javascript" src="/javascript/jquery.stickytabs.js"></script>
 
 <script src="/javascript/dist/angular.bundle.js"></script>
 

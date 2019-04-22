@@ -31,6 +31,8 @@
     "bootstrap": "3.3.2",
     "jquery": "1.11.1",
     "jquery-modal": "0.5.9",
+    "jquery-stickytabs": "^1.2.4",
+    "jquery-validation": "^1.19.0",
     "jquery.tipsy": "1.0.3",
     "sorttable": "1.0.2",
     "typeahead.js": "0.11.1"
