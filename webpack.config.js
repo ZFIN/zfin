@@ -7,6 +7,7 @@ module.exports = {
         angular: './angular/index.js',
         curation: './curation/index.js',
         profiles: './profiles/index.js',
+        search: './search/index.js',
         'vendor-common': './vendor-common.js',
         'zfin-common': './zfin-common/index.js',
     },

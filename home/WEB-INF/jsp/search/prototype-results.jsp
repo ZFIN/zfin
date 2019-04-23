@@ -18,9 +18,7 @@
 <c:set var="figureCategoryName" value="<%=Category.FIGURE.getName()%>"/>
 
 <script src="/javascript/dist/angular.bundle.js"></script>
-
-<script src="/javascript/imagesloaded.pkgd.min.js"></script>
-<script src="/javascript/masonry.pkgd.min.js"></script>
+<script src="/javascript/dist/search.bundle.js"></script>
 
 <link rel="stylesheet" type="text/css" href="/css/bootstrap3/css/bootstrap.css">
 <script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
