@@ -15,3 +15,5 @@ require('./gbrowse-image');
 require('./tabbify');
 require('./table-collapse');
 require('./multirow-table');
+
+window.ImageBox = require('exports-loader?ImageBox!./imagebox');

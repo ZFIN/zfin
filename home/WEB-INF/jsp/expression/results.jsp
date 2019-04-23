@@ -2,7 +2,6 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <link rel="stylesheet" type="text/css" href="/css/figure_gallery.css">
-<script type="text/javascript" src="/javascript/imagebox.js"></script>
 
 <style>
   #xpresimg_control_box {
