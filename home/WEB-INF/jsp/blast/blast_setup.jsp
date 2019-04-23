@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<script type="text/javascript" src="/javascript/blast.js"></script>
 
 <c:if test="${!empty error}">
     Error happened
@@ -49,7 +48,7 @@
             <tr>
                 <TD> <a href="/zf_info/blast_info.html">Program</a>:
                 <td>
-                    <form:select path="program" items="${programs}" itemLabel="label" itemValue="value" onchange="setOption();"/>
+                    <form:select path="program" items="${programs}" itemLabel="label" itemValue="value" cssClass="update-blast-option" />
                     <form:errors path="program" cssClass="error"/>
                 </td>
                 <td width="10%">
@@ -122,7 +121,7 @@
                 <%--blastx, tblastx would be requiring protein query prameter) However, it is fine for now to mix use--%>
                 <%--these two concepts. I will come back to it after the emergence fix.--%>
                 <%--<?/MICOMMENT>--%>
-            <form:checkbox path="shortAndNearlyExact" id="SHORT" onclick="setOption()"/><label for="SHORT">&nbsp; Search for short, nearly exact matches</label>
+            <form:checkbox path="shortAndNearlyExact" id="SHORT" cssClass="update-blast-option"/><label for="SHORT">&nbsp; Search for short, nearly exact matches</label>
             <p>
                 Expect:
                     <form:input path="expectValue" size="8"/>
@@ -164,7 +163,3 @@
         </fieldset>
     </form:form>
 </div>
-
-<script type="text/javascript">
-    setOption();
-</script>

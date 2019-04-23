@@ -54,32 +54,6 @@ function setOption () {
     }
 }
 
-function validateSequence() {
-
-    var input_seq = document.getElementById("querySequence").value;
-    var seq_length = input_seq.length;
-
-    // check for any leading 8-bit character
-    if (input_seq.charCodeAt(0) > 127 || input_seq.charCodeAt(0) < 1) {
-        alert("non-ASCII character is detected at the beginning of the input sequence. ");
-        return false;
-    }
-
-    //check for any trailing 8-bit character
-    if (input_seq.charCodeAt(seq_length-1) > 127 || input_seq.charCodeAt(seq_length-1) < 1) {
-        alert("non-ASCII character is detected at the end of the input sequence.");
-        return false;
-    }
-
-    return true;
-}
-
-//   function setFocus() {
-//	<?MIVAR COND=$(XST,$SEQ_ID)>
-//	  document.formBean.SEQ_ID.focus();
-//	<?/MIVAR>
-//   }
-
 function setInfo (form_select) {
     var abbrev = form_select.options[form_select.selectedIndex].value
     document.getElementById('databaseInfoDiv').innerHTML = '<img src="/images/ajax-loader.gif"/>';
@@ -92,3 +66,8 @@ function setInfo (form_select) {
 
     setOption();
 }
+
+$(function () {
+    $('.update-blast-option').on('change', setOption);
+    $('.update-database-info').on('change', function () { setInfo(this); });
+});

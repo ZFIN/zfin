@@ -2,8 +2,6 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<script type="text/javascript" src="/javascript/blast.js"></script>
-
 <form:form commandName="formBean" action="${formBean.action}">
     <B>Choose program and database:</B>
     <TABLE>
@@ -41,7 +39,7 @@
         &nbsp;&nbsp;&nbsp;
         To &nbsp;
         <input TYPE="text" NAME="QUERY_TO" VALUE="" SIZE="15"> <br>
-        <input TYPE=checkbox name="SHORT" onclick="setOption()">&nbsp; Search for short, nearly exact matches
+        <input TYPE=checkbox name="SHORT" class='update-blast-option'>&nbsp; Search for short, nearly exact matches
 
     <p>
         Sequence ID:

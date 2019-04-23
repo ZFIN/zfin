@@ -1,4 +1,5 @@
 require('./autocompletify');
+require('./blast');
 
 const headerMenu = require('exports-loader?hdrGetCookie,hdrSetCookie!./header-menu');
 window.hdrGetCookie = headerMenu.hdrGetCookie;
