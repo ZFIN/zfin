@@ -10,8 +10,6 @@
 <%@ attribute name="prefixes" type="java.util.Collection" required="true" %>
 
 
-<script src="/javascript/profile-edit.js"></script>
-
 <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 
 
@@ -148,28 +146,19 @@
             <form class="edit-box" onsubmit="return false;">
                 ${empty members ? '<div class="no-member-error" style="color: red;">Please add at least one person to this company.</div>' : '' }
 
-
+                <input type="hidden" id="orgZdbID" value="${lab.zdbID}"/>
                 <input class="members-first-field" id="addMemberBox" type="text"/>
-                <select id="addMemberPosition"
-                        onchange=" personToAddPosition = this.options[this.selectedIndex].value; "
-                        >
+                <select id="addMemberPosition">
                     <option value='none'>-- Select Position --</option>
                     <c:forEach var="position" items="${positions}">
                         <option value="${position.id}">${position.name}</option>
                     </c:forEach>
                 </select>
-                <input id="addMemberButton" value="Add Member" type="button"
-                       onclick="addMember( personToAddZdbID,'${lab.zdbID}' , personToAddPosition, jQuery('#addMemberBox').val()); "/>
+                <input id="addMemberButton" value="Add Member" type="button" />
                 <br>
                 <div class="error" id="add-member-error" style="display: none;"></div>
                 <div id=memberList></div>
 
-<%--
-                <input type="button" value="Refresh" onclick="
-                        jQuery('#memberList').html('') ;
-                        listMembers('${lab.zdbID}');
-                        ">
---%>
             <authz:authorize access="hasRole('root')">
                <div style="text-align: right"><a href="/action/profile/person/create?organization=${lab.zdbID}">add new person</a></div>
             </authz:authorize>
@@ -186,9 +175,7 @@
                         <option value="${position.id}">${position.name}</option>
                     </c:forEach>
                 </select>
-                <input type="button" value="Change Position" onclick="changePosition(jQuery('#change-position-members option:selected').val(),
-                                                '${lab.zdbID}',
-                                                jQuery('#change-position-positions option:selected').val()); "/>
+                <input id="change-position-button" type="button" value="Change Position" />
 
             </form:form>
         </div>
@@ -201,17 +188,6 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-
-        $('#addMemberBox').autocompletify('/action/profile/find-member?term=%QUERY');
-        $('#addMemberBox').bind('typeahead:select', function(obj, datum, name) {
-            personToAddZdbID = datum.id;
-        });
-
-        listMembers('${lab.zdbID}');
-    });
-
     $('.tabs a').tabbify('.panes > div');
-
 </script>
 

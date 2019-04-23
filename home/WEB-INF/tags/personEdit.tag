@@ -11,7 +11,6 @@
 
 
 <script src="/javascript/passwordmeter.js"></script>
-<script src="/javascript/profile-edit.js"></script>
 
 <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 
@@ -222,11 +221,6 @@
 
                 <input type="button" id="generate-password-button" value="generate password"/>
                 <span class="fill-with-generated-password"></span>
-                <script>
-                    jQuery('#generate-password-button').click(function () {
-                        generatePassword('fill-with-generated-password');
-                    });
-                </script>
 
                 <div>Password Strength: <strong><span id="passwordVerdict"></span></strong></div>
                 <br>

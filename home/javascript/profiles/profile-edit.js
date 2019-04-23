@@ -10,19 +10,23 @@ var listMembers = function(labZdbID) {
                 jQuery('#change-position-members').empty();
                 jQuery('#change-position-members').append(jQuery('<option></option>').attr("selected","true").attr("value", "none").text("-- Select Member --"));
                 jQuery('#change-position-members').val('none').attr('selected',true);
-                for (person in data) {
-                    jQuery('#memberList').append("<div>"
-                        + "<img id='member-delete-button-" + data[person].zdbID + "' class='clickable' src='/images/delete-button.png' "
-                        + "  title='Remove person from lab.' onclick=removeMember('" + data[person].zdbID + "','"+labZdbID+"');> "
-                        + "<a href='/action/profile/view/"+data[person].zdbID+"'>"+data[person].name+"</a>"
-                        + " "
-                        + data[person].positionString
-                        + "</div>");
-                    var option = jQuery('<option></option>').attr("value", data[person].zdbID).text(data[person].name);
-                    jQuery('#contact-person').append(jQuery('<option></option>').attr("value", data[person].zdbID).text(data[person].name));
-                    jQuery('#change-position-members').append(jQuery('<option></option>').attr("value", data[person].zdbID).text(data[person].name));
+                $.each(data, function (idx, person) {
+                    var deleteIcon = $("<img id='member-delete-button-" + person.zdbID + "' class='clickable' src='/images/delete-button.png' title='Remove person from lab.'>")
+                        .on('click', function () {
+                            removeMember(person.zdbID, labZdbID);
+                        });
+                    $("<div>")
+                        .append(deleteIcon)
+                        .append(' ')
+                        .append("<a href='/action/profile/view/" + person.zdbID + "'>" + person.name + "</a> " +
+                            person.positionString +
+                            "</div>")
+                        .appendTo(jQuery('#memberList'));
+                    var option = jQuery('<option></option>').attr("value", person.zdbID).text(person.name);
+                    jQuery('#contact-person').append(jQuery('<option></option>').attr("value", person.zdbID).text(person.name));
+                    jQuery('#change-position-members').append(jQuery('<option></option>').attr("value", person.zdbID).text(person.name));
 
-                }
+                });
                 jQuery('#contact-person').val(contactPerson).attr('selected',true);
             },
             error: function(data) {
@@ -68,7 +72,7 @@ var removeMember = function(personZdbID, organizationZdbID) {
 };
 
 var addMember = function(personZdbID, organizationZdbID, position, name) {
-    if (position === null) {
+    if (position === null || position === 'none') {
         alert('Please select a position.');
         return true;
     }
@@ -120,8 +124,29 @@ var generatePassword = function(destinationClass) {
         }
     );
 
-}
+};
 
 var personToAddZdbID;
 var personToAddPosition = null;
 
+
+$(document).ready(function () {
+    var orgId = $('#orgZdbID').val();
+    $('#addMemberBox')
+        .autocompletify('/action/profile/find-member?term=%QUERY')
+        .bind('typeahead:select', function(obj, datum, name) {
+            personToAddZdbID = datum.id;
+        });
+    if ($('#memberList').length !== 0) {
+        listMembers(orgId);
+    }
+    $('#addMemberButton').on('click', function () {
+        addMember( personToAddZdbID, orgId , $('#addMemberPosition').val(), $('#addMemberBox').val());
+    });
+    $('#change-position-button').on('click', function () {
+        changePosition($('#change-position-members option:selected').val(),
+            orgId,
+            $('#change-position-positions option:selected').val());
+    });
+    $('#generate-password-button').click( function() { generatePassword('fill-with-generated-password'); });
+});

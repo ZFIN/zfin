@@ -5,7 +5,7 @@
 
 
 <script type="text/javascript" src="/javascript/passwordmeter.js"></script>
-<script src="/javascript/profile-edit.js"></script>
+<script src="/javascript/dist/profiles.bundle.js"></script>
 
 <form:form method="post" commandName="<%=LookupStrings.FORM_BEAN%>"
            action="/action/profile/person/create" enctype="multipart/form-data"
@@ -31,9 +31,6 @@
                     <zfin2:errors errorResult="${errors}" path="pass1"/>
                     <br>
                     <input type="button" id="generate-password-button" value="generate password"/>
-                    <script>
-                        jQuery('#generate-password-button').click( function() { generatePassword('fill-with-generated-password'); });
-                    </script>
 
                    <div> Password Strength:<strong><span id="passwordVerdict"></span></strong></div>
                     <br>
