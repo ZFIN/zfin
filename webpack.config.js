@@ -7,6 +7,7 @@ module.exports = {
         angular: './angular/index.js',
         bootstrap: './bootstrap.js',
         curation: './curation/index.js',
+        'jquery-ui': './jquery-ui/index.js',
         profiles: './profiles/index.js',
         search: './search/index.js',
         'vendor-common': './vendor-common.js',
@@ -27,7 +28,7 @@ module.exports = {
                 ],
             },
             {
-                test: /\.(woff2?|ttf|eot|svg)$/,
+                test: /\.(woff2?|ttf|eot|svg|gif|png)$/,
                 use: {
                     loader: 'url-loader',
                     options: {

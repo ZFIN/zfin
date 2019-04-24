@@ -45,7 +45,6 @@ $(document).ready(function () {
      the autocomplete is on markers attributed to the pub. It also contains foreign species and other constrolled vocabularies*/
 
     autocompleteSource = '/action/construct/find-constructMarkers';
-    var pubId = $('#constructPublicationZdbID').val();
 
     $(document).on("focus keyup", "input", function (event) {
 
@@ -56,7 +55,7 @@ $(document).ready(function () {
                     dataType: "json",
                     data: {
                         term: request.term,
-                        pub: pubId
+                        pub: $('#constructPublicationZdbID').val()
 
                     },
                     success: function (data) {

@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<script src="/javascript/jquery-ui-1.10.4.custom.js"></script>
-<link rel=stylesheet type="text/css" href="/css/jquery-ui-1.10.4.custom.css">
+<link rel="stylesheet" href="/javascript/dist/jquery-ui.bundle.css">
+<script src="/javascript/dist/jquery-ui.bundle.js"></script>
 
 <authz:authorize access="hasRole('root')">
 

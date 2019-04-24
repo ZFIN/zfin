@@ -10,8 +10,8 @@
 <p/>
 
 <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
-<link rel="stylesheet" type="text/css" href="/css/jquery-ui-1.10.4.custom.css"/>
-<script type="text/javascript" src="/javascript/jquery-ui-1.10.4.custom.js"></script>
+<link rel="stylesheet" href="/javascript/dist/jquery-ui.bundle.css">
+<script src="/javascript/dist/jquery-ui.bundle.js"></script>
 <link media="all" type="text/css" href="/css/constructAdd.css" rel="stylesheet">
 
 <script src="/javascript/dist/curation.bundle.js"></script>

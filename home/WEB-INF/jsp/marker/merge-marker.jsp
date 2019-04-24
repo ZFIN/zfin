@@ -1,10 +1,10 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
-<link rel="stylesheet" type="text/css" href="/css/jquery-ui-1.10.4.custom.css"/>
+<link rel="stylesheet" href="/javascript/dist/jquery-ui.bundle.css">
 
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
-<script type="text/javascript" src="/javascript/jquery-ui-1.10.4.custom.js"></script>
+<script src="/javascript/dist/jquery-ui.bundle.js"></script>
 
 <authz:authorize access="hasRole('root')">
 
