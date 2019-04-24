@@ -5,12 +5,12 @@ module.exports = {
     context: path.resolve(__dirname, 'home/javascript'),
     entry: {
         angular: './angular/index.js',
-        bootstrap: './bootstrap.js',
+        bootstrap: './bootstrap/index.js',
         curation: './curation/index.js',
         'jquery-ui': './jquery-ui/index.js',
         profiles: './profiles/index.js',
         search: './search/index.js',
-        'vendor-common': './vendor-common.js',
+        'vendor-common': './vendor-common/index.js',
         'zfin-common': './zfin-common/index.js',
     },
     output: {
