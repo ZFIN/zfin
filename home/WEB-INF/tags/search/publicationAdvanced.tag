@@ -32,11 +32,13 @@
         <div class="control-group">
             <label class="control-label">PET Date from</label>
             <div class="controls">
-                <input id="pub-advanced-start-date" name="start-date" placeholder="YYYY-MM-DD" class="input datepicker" style="width: 120px;" type="text"/>
+                <input id="pub-advanced-start-date" name="start-date" placeholder="YYYY-MM-DD" class="input datepicker"
+                       style="width: 120px;" type="text" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" />
             </div>
             <label class="control-label" for="pub-advanced-end-date">To</label>
             <div class="controls">
-                <input id="pub-advanced-end-date" name="end-date" placeholder="YYYY-MM-DD" class="input datepicker" style="width: 120px;" type="text"/>
+                <input id="pub-advanced-end-date" name="end-date" placeholder="YYYY-MM-DD" class="input datepicker"
+                       style="width: 120px;" type="text" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd"/>
             </div>
         </div>
 

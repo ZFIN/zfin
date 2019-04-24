@@ -1,8 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
-<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
+<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
 
 <c:set var="NOMEN_COORDINATOR" value="<%= ZfinPropertiesEnum.NOMEN_COORDINATOR.value()%>" />
 

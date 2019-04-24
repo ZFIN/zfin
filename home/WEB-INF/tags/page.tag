@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="/css/tipsy.css">
     <link rel="stylesheet" href="/css/jquery.modal.css">
     <link rel="stylesheet" href="/css/typeahead.css">
-    <link rel="stylesheet" href="/css/datepicker3.css">
     <link rel="stylesheet" href="/css/zfin.css">
     <link rel="stylesheet" href="/css/header.css">
     <link rel="stylesheet" href="/css/footer.css">

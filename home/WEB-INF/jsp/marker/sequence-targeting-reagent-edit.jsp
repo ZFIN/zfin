@@ -3,11 +3,9 @@
 
 <jsp:useBean id="str" class="org.zfin.mutant.SequenceTargetingReagent" scope="request"/>
 
-<link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
-<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
+<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
 
-<script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
-
+<script src="/javascript/dist/bootstrap.bundle.js"></script>
 <script src="/javascript/dist/angular.bundle.js"></script>
 
 <c:set var="viewURL">/${str.zdbID}</c:set>

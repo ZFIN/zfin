@@ -95,8 +95,6 @@
     </form:form>
 </div>
 
-<script src="/css/bootstrap3/js/bootstrap.min.js"></script>
-
 <script>
   $(function() {
 

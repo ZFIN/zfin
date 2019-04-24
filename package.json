@@ -6,8 +6,13 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "@songkick/replaceinfiles": "^1.1.4",
+    "css-loader": "^2.1.1",
     "exports-loader": "^0.7.0",
+    "file-loader": "^3.0.1",
     "hashmark": "^5.0.0",
+    "mini-css-extract-plugin": "^0.6.0",
+    "style-loader": "^0.23.1",
+    "url-loader": "^1.1.2",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0"
   },
@@ -29,6 +34,7 @@
     "angular-paging": "2.2.2",
     "bloodhound-js": "1.2.3",
     "bootstrap": "3.3.2",
+    "bootstrap-datepicker": "^1.8.0",
     "imagesloaded": "4.1.0",
     "jquery": "1.11.1",
     "jquery-bridget": "2.0.1",

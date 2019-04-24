@@ -2,8 +2,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.zebrashare.presentation.LineEditBean" scope="request"/>
 
-<link rel="stylesheet" type="text/css" href="/css/bootstrap3/css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="/css/zfin-bootstrap-overrides.css">
+<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
 
 <div class="container-fluid">
     <c:if test="${!empty publication}">

@@ -17,16 +17,12 @@
 <c:set var="communityCategoryName" value="<%=Category.COMMUNITY.getName()%>"/>
 <c:set var="figureCategoryName" value="<%=Category.FIGURE.getName()%>"/>
 
+<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
+
 <script src="/javascript/dist/angular.bundle.js"></script>
 <script src="/javascript/dist/search.bundle.js"></script>
+<script src="/javascript/dist/bootstrap.bundle.js"></script>
 
-<link rel="stylesheet" type="text/css" href="/css/bootstrap3/css/bootstrap.css">
-<script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
-
-<link rel="stylesheet" type="text/css" href="/css/datepicker3.css">
-<script type="text/javascript" src="/javascript/bootstrap-datepicker.js"></script>
-
-<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css">
 <link rel="stylesheet" type="text/css" href="/css/faceted-search.css">
 
 <style>
@@ -108,13 +104,6 @@
             <input type="hidden" name="baseUrlWithoutPage" id="base-url-without-page" value="${baseUrlWithoutPage}"/>
             <input type="hidden" name="defaultAction" id="default-action" value="/prototype"/>
         </form>
-
-        <script>
-
-
-            $('.datepicker').datepicker({format: 'yyyy-mm-dd', autoclose: true});
-                
-        </script>
 
     </div>
 
@@ -364,8 +353,6 @@
     <div class="modal-dialog"></div>
 </div>
 
-
-<script src="/javascript/trusted-html.filter.js"></script>
 <script>
 
 function submitAdvancedQuery(fields) {

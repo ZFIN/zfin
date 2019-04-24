@@ -1,8 +1,7 @@
 <jsp:useBean id="submission" scope="request" type="org.zfin.nomenclature.LineNameSubmission"/>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" href="/css/bootstrap3/css/bootstrap.css"/>
-<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css"/>
+<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
 
 <zfin2:nomenclatureSubmit headerText="Submit a Proposed Mutant/Transgenic Line Name">
     <jsp:attribute name="keepPrivateOption">

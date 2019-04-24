@@ -1,10 +1,11 @@
 const path = require('path');
-const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     context: path.resolve(__dirname, 'home/javascript'),
     entry: {
         angular: './angular/index.js',
+        bootstrap: './bootstrap.js',
         curation: './curation/index.js',
         profiles: './profiles/index.js',
         search: './search/index.js',
@@ -16,4 +17,29 @@ module.exports = {
         filename: '[name].bundle.js',
         publicPath: 'javascript/dist'
     },
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                ],
+            },
+            {
+                test: /\.(woff2?|ttf|eot|svg)$/,
+                use: {
+                    loader: 'url-loader',
+                    options: {
+                        limit: 8192
+                    }
+                }
+            },
+        ],
+    },
+    plugins: [
+        new MiniCssExtractPlugin({
+            filename: '[name].bundle.css',
+        }),
+    ],
 };

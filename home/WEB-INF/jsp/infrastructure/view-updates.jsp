@@ -1,8 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<link rel="stylesheet" type="text/css" href="/css/bootstrap3/css/bootstrap.css">
-<link rel="stylesheet" href="/css/zfin-bootstrap-overrides.css">
+<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
 
 <div class="container-fluid">
     <h3 class="page-header">Updates for ${zdbID}</h3>

@@ -654,7 +654,6 @@
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
                     <include name="css/*.css"/>
-                    <include name="css/bootstrap3/**"/>
                     <include name="WEB-INF/**"/>
                     <include name="javascript/**"/>
                     <exclude name="css/images/**"/>

@@ -7,9 +7,6 @@
     <div class="alert alert-danger">${error}</div>
 </c:if>
 
-<link rel=stylesheet type="text/css" href="/css/datepicker3.css">
-<script src="/javascript/bootstrap-datepicker.js"></script>
-
 <form:form method="POST" commandName="publicationBean" cssClass="form-horizontal">
     <div class="form-group">
         <label for="publication.title" class="col-sm-3 control-label">Title</label>
