@@ -5,12 +5,7 @@
 
 <%--<%@ attribute name="isThisseProbe" type="java.lang.Boolean" rtexprvalue="true" required="true" %>--%>
 <%--<%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>--%>
-<authz:authorize access="hasRole('root')">
-    <script src="/javascript/nomenclature.js" type="text/javascript"></script>
-    <script>
-        markerID = '${cloneBean.marker.zdbID}';
-    </script>
-</authz:authorize>
+
 <table class="primary-entity-attributes">
     <tr>
         <th><span class="name-label">${cloneBean.clone.markerType.displayName}&nbsp;Name: </span></th>
