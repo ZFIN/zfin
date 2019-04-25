@@ -12,17 +12,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>${title}</title>
 
-    <link rel="stylesheet" href="/css/searchresults.css">
-    <link rel="stylesheet" href="/css/summary.css">
-    <link rel="stylesheet" href="/css/Lookup.css">
-    <link rel="stylesheet" href="/css/datapage.css">
-    <link rel="stylesheet" href="/css/popup.css">
-    <link rel="stylesheet" href="/css/tipsy.css">
-    <link rel="stylesheet" href="/css/jquery.modal.css">
-    <link rel="stylesheet" href="/css/typeahead.css">
-    <link rel="stylesheet" href="/css/zfin.css">
-    <link rel="stylesheet" href="/css/header.css">
-    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/javascript/dist/style.bundle.css">
 
     <script src="/javascript/dist/vendor-common.bundle.js"></script>
     <script src="/javascript/dist/zfin-common.bundle.js"></script>

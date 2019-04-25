@@ -1,4 +1,3 @@
-<link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
 <%@ page import="org.zfin.gwt.root.ui.AbstractGoViewTable" %>
 <%@ page import="org.zfin.gwt.marker.ui.GoMarkerEditController" %>
@@ -7,10 +6,6 @@
 
 <%--Adds the GOEditController.--%>
 
-
-<link rel="stylesheet" type="text/css" href="/css/zfin.css"/>
-<link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
-<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <script language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
 <table cellpadding="10">

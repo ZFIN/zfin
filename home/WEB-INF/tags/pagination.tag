@@ -7,7 +7,6 @@ The form bean has to extend PaginationBean to make this work.
 
 <%@attribute name="paginationBean" type="org.zfin.framework.presentation.PaginationBean" %>
 
-<link rel="stylesheet" type="text/css" href="/css/pagination.css"/>
 <center>
     <c:if test="${paginationBean.paginationNeeded}">
         <div class="pagination">

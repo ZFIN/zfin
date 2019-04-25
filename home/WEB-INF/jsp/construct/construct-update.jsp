@@ -8,11 +8,8 @@
 
 <jsp:useBean id="formBean" class="org.zfin.construct.presentation.ConstructUpdateBean" scope="request"/>
 
-<%--<link rel=stylesheet type="text/css" href="/css/tabEdit.css">--%>
-<link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui-1.10.4.custom.css"/>
 <script type="text/javascript" src="/javascript/jquery-ui-1.10.4.custom.js"></script>
-<link media="all" type="text/css" href="/css/constructUpdate.css" rel="stylesheet">
 
 <form:form commandName="formBean" id="thisform" style="background-color:#EEEEEE;">
 

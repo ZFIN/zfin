@@ -3,8 +3,6 @@
 
 <zfin2:errors errorResult="${errors}"/>
 
-
-<script type="text/javascript" src="/javascript/passwordmeter.js"></script>
 <script src="/javascript/dist/profiles.bundle.js"></script>
 
 <form:form method="post" commandName="<%=LookupStrings.FORM_BEAN%>"

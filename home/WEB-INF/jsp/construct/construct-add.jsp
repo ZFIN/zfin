@@ -3,11 +3,8 @@
 
 <jsp:useBean id="formBean" class="org.zfin.construct.presentation.ConstructAddBean" scope="request"/>
 
-
-<link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 <link rel="stylesheet" href="/javascript/dist/jquery-ui.bundle.css">
 <script src="/javascript/dist/jquery-ui.bundle.js"></script>
-<link media="all" type="text/css" href="/css/constructAdd.css" rel="stylesheet">
 
 <form:form commandName="formBean" id="constructadd" style="background-color:#EEEEEE;">
 
@@ -56,7 +53,7 @@
 
     <%--Area for cassettes--%>
     <div id="cassette1" class="clonable">
-        <fieldset>
+        <div class="cassette-inner">
      <span class="tab">
      <a class="cloneMe" title="Add" href="#">Add cassette
      </a>
@@ -80,7 +77,7 @@
                 <button id="addCoding1" class="1">+</button>
                 <button id="delCoding1" class="1">-</button>
             </div>
-        </fieldset>
+        </div>
     </div>
 
     <p>

@@ -18,7 +18,6 @@
     }
 </script>
 
-<link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
 <script language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
 <%--define the lookups up here--%>

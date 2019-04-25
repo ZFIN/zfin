@@ -5,7 +5,6 @@
                                     imageEditDiv: "ZDB-IMAGE-091217-4_edit_box" ,
                                     imageStageEditDiv: "ZDB-IMAGE-091217-4_stage_box"} ;
           </script>
-          <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
           <script language="javascript"
                   src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 

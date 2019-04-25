@@ -3,8 +3,10 @@
 
 <link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
 <script src="/javascript/dist/bootstrap.bundle.js"></script>
-<link rel="stylesheet" type="text/css" href="/css/zdbhome.css?v=1090">
 
+<style>
+    #quicksearchBox { display: none; }
+</style>
 
 <script>
     hdrSetCookie("tabCookie","Motto","","/");

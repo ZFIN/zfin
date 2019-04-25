@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<link rel="stylesheet" type="text/css" href="/css/pagination.css"/>
 
 <zfin2:listAllFromOrganization/>
 

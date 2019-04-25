@@ -4,8 +4,6 @@
 
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="/css/zfin.css">
-
     <%-- override some of zfin.css since this will come up in an iframe --%>
     <style type="text/css">
 

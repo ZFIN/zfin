@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%--<%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core' %>--%>
 <%--<%@ taglib prefix="zfin"    uri="/WEB-INF/tld/zfin-tags.tld"%>--%>
-<!--<link rel="stylesheet" type="text/css" href="/css/zfin.css">-->
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 

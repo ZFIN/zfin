@@ -1,8 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<link rel="stylesheet" type="text/css" href="/css/figure_gallery.css">
-
 <style>
   #xpresimg_control_box {
     margin-top: 20px;

@@ -10,6 +10,7 @@ module.exports = {
         'jquery-ui': './jquery-ui/index.js',
         profiles: './profiles/index.js',
         search: './search/index.js',
+        style: './style/index.js',
         'vendor-common': './vendor-common/index.js',
         'zfin-common': './zfin-common/index.js',
     },

@@ -23,8 +23,6 @@
 <script src="/javascript/dist/search.bundle.js"></script>
 <script src="/javascript/dist/bootstrap.bundle.js"></script>
 
-<link rel="stylesheet" type="text/css" href="/css/faceted-search.css">
-
 <style>
     /* remove parts of the header that we don't need */
     #quicksearchBox {

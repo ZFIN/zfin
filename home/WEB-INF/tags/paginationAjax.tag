@@ -7,8 +7,6 @@ The form bean has to extend PaginationBean to make this work.
 <%@attribute name="paginationBean" type="org.zfin.framework.presentation.PaginationBean" %>
 <%@attribute name="submitMethod" type="java.lang.String" %>
 
-<link rel="stylesheet" type="text/css" href="/css/pagination.css"/>
-
 <script type="text/javascript">
     /*<![CDATA[*/
     jQuery("document").ready(function () {

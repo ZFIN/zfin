@@ -10,9 +10,6 @@
     }
 </style>
 
-<link rel="stylesheet" type="text/css" href="/css/faceted-search.css">
-
-
 <c:if test="${!empty criteria.typesFound && empty criteria.displayType}">
     <div class="marker-search-type-choice row">
 

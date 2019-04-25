@@ -72,7 +72,6 @@
                     imageConstructEditDiv: "imageConstructBox"} ;
 
             </script>
-            <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
             <script language="javascript"
                     src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
             <b>Anatomy</b><div id="imageTermBox"></div>

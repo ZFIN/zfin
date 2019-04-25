@@ -125,12 +125,10 @@
     font-size: 16px;
 }
 
-.search-form-input {
+.form-control.search-form-input {
     margin-left: 5px;
     width: 400px;
 }
-
-#quicksearchBox { display: none; }
 
 #header-extras {
     position: absolute;

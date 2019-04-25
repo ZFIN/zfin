@@ -9,10 +9,6 @@
 <%--list of String--%>
 <%@ attribute name="prefixes" type="java.util.Collection" required="true" %>
 
-
-<link rel=stylesheet type="text/css" href="/css/tabEdit.css">
-
-
 <div id='labEdit'>
     <ul class="tabs">
         <li>

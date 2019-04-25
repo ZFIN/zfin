@@ -9,27 +9,8 @@
     height: 30px;
 }
 
-.container {
-    float: left;
-    position: relative;
-    display: inline-block;
-}
-
-.container2 {
-    float: left;
-
-}
-
-.hidden {
-    display: none;
-}
-
 .ui-icon-trash {
     background-position: -176px -96px;
-}
-
-.emptyContainer {
-    display: inline-block;
 }
 
 .tabs li {

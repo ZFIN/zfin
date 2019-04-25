@@ -38,17 +38,6 @@ table.publicationlookup > tbody > tr > td {
     text-align: center;
 }
 
-a:active,
-a:visited,
-a:link{
-    text-decoration: none;
-    color: blue;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
 .notePopup {
     background-color: gray;
     width: 320px;

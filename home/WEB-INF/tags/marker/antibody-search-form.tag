@@ -79,7 +79,6 @@
                     }
                 </script>
 
-                <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
                 <script language="javascript"
                         src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js" type=""></script>
 

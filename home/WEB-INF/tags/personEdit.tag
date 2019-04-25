@@ -9,12 +9,6 @@
 <%@ attribute name="countryList" type="java.util.HashMap" required="false" %>
 <%@ attribute name="selected" type="java.lang.String" required="false" %>
 
-
-<script src="/javascript/passwordmeter.js"></script>
-
-<link rel=stylesheet type="text/css" href="/css/tabEdit.css">
-
-
 <div id='personEdit'>
     <ul class="tabs">
         <li>

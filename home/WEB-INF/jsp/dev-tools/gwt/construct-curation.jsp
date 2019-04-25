@@ -9,10 +9,8 @@
 </div>
 <p/>
 
-<link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 <link rel="stylesheet" href="/javascript/dist/jquery-ui.bundle.css">
 <script src="/javascript/dist/jquery-ui.bundle.js"></script>
-<link media="all" type="text/css" href="/css/constructAdd.css" rel="stylesheet">
 
 <script src="/javascript/dist/curation.bundle.js"></script>
 

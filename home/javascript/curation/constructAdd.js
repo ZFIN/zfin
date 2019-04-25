@@ -186,7 +186,7 @@ function cloneMe(a) {
     }
     var original = a.parentNode;
 
-    while (original.nodeName.toLowerCase() != 'fieldset') {
+    while (!original.classList.contains('cassette-inner')) {
         original = original.parentNode;
     }
     var duplicate = original.cloneNode(true);
@@ -234,7 +234,7 @@ function cloneMe(a) {
 
     }
 
-    duplicate.className = 'duplicate';
+    duplicate.classList.add('duplicate');
 
 
     insertAfter(duplicate, original, counter);
@@ -318,7 +318,7 @@ function insertAfter(newElement, targetElement, numCassette) {
 function deleteMe(a) {
 
     var duplicate = a.parentNode;
-    while (duplicate.nodeName.toLowerCase() != 'fieldset') {
+    while (!duplicate.classList.contains('cassette-inner')) {
         duplicate = duplicate.parentNode;
     }
     duplicate.parentNode.removeChild(duplicate);

@@ -2,7 +2,6 @@
 
 <script type="text/javascript" language="javascript"
         src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
-<link rel="stylesheet" type="text/css" href="/css/Marker.css">
 
 <script src="/javascript/dist/angular.bundle.js"></script>
 

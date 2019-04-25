@@ -4,8 +4,6 @@ This include expects the Pagination bean in request scope with the name <formBea
 -->
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" type="text/css" href="/css/pagination.css"/>
-
 <center><c:if test="${formBean.paginationNeeded}">
     <div class="pagination">
         <table>

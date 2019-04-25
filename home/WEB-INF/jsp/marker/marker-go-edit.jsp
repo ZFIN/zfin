@@ -14,17 +14,13 @@
 
     <hr><!--------------------  the second half is display section --------------------------------->
 
-    <?MIVAR>
     <script type="text/javascript">
         var MarkerProperties= {
             state: "go-evidence-display",
             zdbID : "${marker.zdbID}"
         }
     </script>
-    <?/MIVAR>
 
-    <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
     <script language="javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
     <table cellpadding="10">

@@ -15,7 +15,6 @@
         margin-bottom: 0.5em;
     }
 </style>
-<link rel="stylesheet" type="text/css" href="/css/Lookup.css" />
 
 <div class="titlebar">
     <h1>${title}</h1>

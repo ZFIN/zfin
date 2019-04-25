@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
-<link rel="stylesheet" type="text/css" href="/css/faceted-search.css">
 
 <script src="/javascript/dist/bootstrap.bundle.js"></script>
 <script src="/javascript/dist/angular.bundle.js"></script>

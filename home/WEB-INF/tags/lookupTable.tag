@@ -15,7 +15,6 @@
 <%@attribute name="hiddenName" type="java.lang.String" required="true" %>
 <%@attribute name="hiddenId" type="java.lang.String" required="true" %>
 
-<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 
 <form:hidden path="${hiddenName}"/>

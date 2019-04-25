@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+
 <script type="text/javascript" src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
 <script type="text/javascript">
