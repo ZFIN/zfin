@@ -8,5 +8,7 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1107/CUR-902.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1107/ZFIN-6211.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/ZFIN-6245.sql" />
+
 
 </databaseChangeLog>
