@@ -3,9 +3,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.construct.presentation.ConstructAddBean" scope="request"/>
 
-<link rel="stylesheet" href="/javascript/dist/jquery-ui.bundle.css">
-<script src="/javascript/dist/jquery-ui.bundle.js"></script>
-
 <form:form commandName="formBean" id="constructadd" style="background-color:#EEEEEE;">
 
 
