@@ -224,6 +224,15 @@ foreach $abbrev (sort keys %featureAbbrevs) {
      } else {
         print FEATUREDATAREPORT " \t";
      }
+     if(exists($featureMutagees{$id})) {
+        print FEATUREDATAREPORT "$featureMutagees{$id}\t";
+     } else {
+        print FEATUREDATAREPORT " \t";
+     }
+  }
+  if(exists($featureAbbrevsNoLab{$abbrev})) {
+     print FEATUREDATAREPORT " \t";
+  } else {
      if(exists($featureSrcs{$id})) {
         $srcID = $featureSrcs{$id};
         if(exists($srcs{$srcID})) {
@@ -231,15 +240,6 @@ foreach $abbrev (sort keys %featureAbbrevs) {
         } else {
            print FEATUREDATAREPORT " \t";
         }
-     } else {
-        print FEATUREDATAREPORT " \t";
-     } 
-  }
-  if(exists($featureAbbrevsNoLab{$abbrev})) {
-     print FEATUREDATAREPORT " \t";
-  } else {
-     if(exists($featureSrcs{$id})) {
-        print FEATUREDATAREPORT "$featureMutagees{$abbrev}\t";
      } else {
         print FEATUREDATAREPORT " \t";
      }  
@@ -267,4 +267,5 @@ close FEATUREDATAREPORT;
 print "ctRows = $ctRows\n";
 
 exit;
+
 
