@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,5 +41,5 @@ public class DisplayBlastSequenceController {
         return "display-blast-sequence.page";
     }
 
-    private Logger logger = Logger.getLogger(DisplayBlastSequenceController.class);
+    private Logger logger = LogManager.getLogger(DisplayBlastSequenceController.class);
 }

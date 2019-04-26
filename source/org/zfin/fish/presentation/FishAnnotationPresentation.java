@@ -3,7 +3,7 @@ package org.zfin.fish.presentation;
 import org.zfin.fish.FishAnnotation;
 import org.zfin.framework.presentation.EntityPresentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.marker.Marker;
 
 /**
@@ -16,7 +16,7 @@ public class FishAnnotationPresentation extends EntityPresentation {
     private static final String uri = "/action/fish/fish-detail/";
     private static final String popupUri = "fish/fish-detail-popup/";
 
-    private static Logger logger = Logger.getLogger(FishAnnotationPresentation.class);
+    private static Logger logger = LogManager.getLogger(FishAnnotationPresentation.class);
     /**
      * Generates a Go stage link using the go id
      *

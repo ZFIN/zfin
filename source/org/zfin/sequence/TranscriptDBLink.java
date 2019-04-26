@@ -1,6 +1,6 @@
 package org.zfin.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.marker.Transcript;
 
 import java.io.Serializable;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class TranscriptDBLink extends DBLink implements Comparable<TranscriptDBLink>, Serializable {
 
 
-    Logger logger = Logger.getLogger(TranscriptDBLink.class);
+    Logger logger = LogManager.getLogger(TranscriptDBLink.class);
 
     private Transcript transcript;
 

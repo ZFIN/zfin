@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
@@ -35,7 +35,7 @@ public class GroupByDisplayTag extends TagSupport {
     private String groupByBean;
     // the collection object
     private List groupBeanCollection;
-    private static final Logger LOG = Logger.getLogger(GroupByDisplayTag.class);
+    private static final Logger LOG = LogManager.getLogger(GroupByDisplayTag.class);
 
 
     public int doStartTag() throws JspException {

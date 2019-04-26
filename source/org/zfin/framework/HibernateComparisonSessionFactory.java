@@ -1,7 +1,7 @@
 package org.zfin.framework;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -20,7 +20,7 @@ import java.net.URLDecoder;
  */
 public class HibernateComparisonSessionFactory implements FactoryBean {
 
-    private static final Logger LOG = RootLogger.getLogger(HibernateComparisonSessionFactory.class);
+    private static final Logger LOG = LogManager.getLogger(HibernateComparisonSessionFactory.class);
 
     private static String FILE_SEP = System.getProperty("file.separator");
 

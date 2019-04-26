@@ -1,6 +1,6 @@
 package org.zfin.mutant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.sequence.STRMarkerSequence;
@@ -16,7 +16,7 @@ public class SequenceTargetingReagent extends Marker {
 
     private List<Marker> targetGenes;
     private STRMarkerSequence sequence;
-    private static Logger logger = Logger.getLogger(SequenceTargetingReagent.class);
+    private static Logger logger = LogManager.getLogger(SequenceTargetingReagent.class);
 
     /**
      * The target genes are calculated from the relationship property.

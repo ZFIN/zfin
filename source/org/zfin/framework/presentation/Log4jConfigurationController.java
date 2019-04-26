@@ -1,16 +1,19 @@
 package org.zfin.framework.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.ServletException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Controller class to adjust existing logger levels or
@@ -29,17 +32,23 @@ public class Log4jConfigurationController {
             createLogger(form);
         }
 
-        Enumeration enumLoggers = LogManager.getCurrentLoggers();
-        List<Logger> allLoggers = new ArrayList<>();
-        CollectionUtils.addAll(allLoggers, enumLoggers);
-        Collections.sort(allLoggers, new Log4jComparator());
+        LoggerContext logContext = (LoggerContext) LogManager
+                .getContext(false);
+        Map<String, LoggerConfig> map = logContext.getConfiguration()
+                .getLoggers();
+        List<LoggerConfig> allLoggers = map.entrySet().stream()
+                .map(Map.Entry::getValue)
+                .sorted(new Log4jComparator())
+                .collect(Collectors.toList());
+
         form.setAllLoggers(allLoggers);
-        Enumeration allAppenders = Logger.getRootLogger().getAllAppenders();
-        List<Appender> appenders = new ArrayList<>(5);
-        while( allAppenders.hasMoreElements()){
-            appenders.add((Appender) allAppenders.nextElement());
-        }
-        form.setAppenders(appenders);
+
+        Set<Appender> appenderSet = allLoggers.stream()
+                .map(loggerConfig -> loggerConfig.getAppenders().values())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+
+        form.setAppenders(new ArrayList<>(appenderSet));
         return "log4j-configuration.page";
     }
 
@@ -48,7 +57,7 @@ public class Log4jConfigurationController {
         String loggerLevel = form.getNewLoggerLevel();
         Level newLevel = Level.toLevel(loggerLevel, null);
         Logger logger = LogManager.getLogger(loggerName);
-        logger.setLevel(newLevel);
+        Configurator.setLevel(logger.getName(), newLevel);
     }
 
     private void adjustLoggers(Log4JConfigurationFormBean form) {
@@ -62,7 +71,7 @@ public class Log4jConfigurationController {
                 throw new RuntimeException("Logger Name '" + name + "' not found");
             } else {
                 Level newLevel = Level.toLevel(level, null);
-                logger.setLevel(newLevel);
+                Configurator.setLevel(logger.getName(), newLevel);
             }
         }
 
@@ -72,9 +81,9 @@ public class Log4jConfigurationController {
     /**
      * Sort loggers by their name.
      */
-    static class Log4jComparator implements Comparator<Logger> {
+    static class Log4jComparator implements Comparator<LoggerConfig> {
 
-        public int compare(Logger log1, Logger log2) {
+        public int compare(LoggerConfig log1, LoggerConfig log2) {
             return log1.getName().compareTo(log2.getName());
         }
     }

@@ -1,7 +1,7 @@
 package org.zfin.sequence.reno.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -38,7 +38,7 @@ import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
  */
 public abstract class AbstractCandidateController {
 
-    private static Logger LOG = Logger.getLogger(AbstractCandidateController.class);
+    private static Logger LOG = LogManager.getLogger(AbstractCandidateController.class);
     protected MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     protected OrthologyRepository or = getOrthologyRepository();
     protected InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();

@@ -2,7 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,7 +48,7 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 @RequestMapping("/marker")
 public class GeneViewController {
 
-    private Logger logger = Logger.getLogger(GeneViewController.class);
+    private Logger logger = LogManager.getLogger(GeneViewController.class);
     private LinkDisplayOtherComparator linkDisplayOtherComparator = new LinkDisplayOtherComparator();
 
     @Autowired

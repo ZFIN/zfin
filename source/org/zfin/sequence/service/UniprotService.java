@@ -5,7 +5,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ReferenceDatabase;
@@ -18,7 +18,7 @@ import java.io.IOException;
 //@Service
 public class UniprotService {
 
-    private Logger logger = Logger.getLogger(UniprotService.class) ;
+    private Logger logger = LogManager.getLogger(UniprotService.class) ;
 
     //    @Autowired
     private SequenceService sequenceService = new SequenceService();

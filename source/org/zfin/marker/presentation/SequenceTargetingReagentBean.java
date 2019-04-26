@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResultTermComparator;
@@ -24,7 +24,7 @@ import java.util.*;
  */
 public class SequenceTargetingReagentBean extends MarkerBean{
 
-    private Logger logger = Logger.getLogger(SequenceTargetingReagentBean.class);
+    private Logger logger = LogManager.getLogger(SequenceTargetingReagentBean.class);
 
     private Set<Marker> targetGenes ;
     private List<STRMarkerSequence> sequences;

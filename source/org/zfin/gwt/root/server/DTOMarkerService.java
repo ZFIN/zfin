@@ -1,7 +1,7 @@
 package org.zfin.gwt.root.server;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.gwt.root.dto.*;
@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class DTOMarkerService {
 
-    private static Logger logger = Logger.getLogger(DTOMarkerService.class);
+    private static Logger logger = LogManager.getLogger(DTOMarkerService.class);
 
 
     public static void insertMarkerUpdate(Marker marker, String fieldname, String oldValue, String newValue) {

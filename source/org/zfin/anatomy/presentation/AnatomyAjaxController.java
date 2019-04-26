@@ -1,6 +1,6 @@
 package org.zfin.anatomy.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,7 +51,7 @@ public class AnatomyAjaxController {
     private OntologyRepository ontologyRepository;
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
-    private static final Logger LOG = Logger.getLogger(AnatomyAjaxController.class);
+    private static final Logger LOG = LogManager.getLogger(AnatomyAjaxController.class);
 
     @ModelAttribute("formBean")
     public AnatomySearchBean getDefaultFormBean() {

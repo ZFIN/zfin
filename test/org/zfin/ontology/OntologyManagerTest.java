@@ -1,6 +1,6 @@
 package org.zfin.ontology;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -21,7 +21,7 @@ import static org.zfin.ontology.Ontology.*;
 @SuppressWarnings({"FeatureEnvy"})
 public class OntologyManagerTest extends AbstractOntologyTest {
 
-    private static final Logger logger = Logger.getLogger(OntologyManagerTest.class);
+    private static final Logger logger = LogManager.getLogger(OntologyManagerTest.class);
     protected static final String QUALITY_TERM_DECREASED_AGE = "PATO:0001765";
     protected static final String QUALITY_TERM_DECREASED_RATE = "PATO:0000911";
 

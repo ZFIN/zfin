@@ -1,7 +1,7 @@
 package org.zfin.util;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.*;
@@ -24,7 +24,7 @@ public final class FileUtil {
     // folder for data transfer files, including serialized files.
     public static final String DATA_TRANSFER = "data-transfer";
 
-    public static final Logger LOG = Logger.getLogger(FileUtil.class);
+    public static final Logger LOG = LogManager.getLogger(FileUtil.class);
     private static final String WEB_INF = "WEB-INF";
 
     /**

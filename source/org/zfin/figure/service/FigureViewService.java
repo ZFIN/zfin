@@ -1,7 +1,7 @@
 package org.zfin.figure.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class FigureViewService {
 
-    static Logger LOG = Logger.getLogger(FigureViewService.class);
+    static Logger LOG = LogManager.getLogger(FigureViewService.class);
 
     @Autowired
     private PhenotypeRepository phenotypeRepository;

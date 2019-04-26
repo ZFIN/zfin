@@ -3,7 +3,7 @@
  */
 package org.zfin.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -18,7 +18,7 @@ import java.util.Set;
 
 public abstract class DBLink implements EntityAttribution, EntityZdbID {
 
-    private final static Logger logger = Logger.getLogger(DBLink.class);
+    private final static Logger logger = LogManager.getLogger(DBLink.class);
 
     private String zdbID;
     private String accessionNumber;

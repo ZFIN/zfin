@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -12,7 +12,7 @@ import org.zfin.util.ZfinStringUtils;
 
 public class StrDetailsValidator implements Validator {
 
-    private static Logger log = Logger.getLogger(StrDetailsValidator.class);
+    private static Logger log = LogManager.getLogger(StrDetailsValidator.class);
 
     private static final MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
 

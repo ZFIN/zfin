@@ -1,7 +1,7 @@
 package org.zfin.feature.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,7 +38,7 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(FeatureRepositoryTest.class);
+    private Logger logger = LogManager.getLogger(FeatureRepositoryTest.class);
 
     private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
 

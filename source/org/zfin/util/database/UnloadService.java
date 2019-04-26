@@ -1,7 +1,7 @@
 package org.zfin.util.database;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.document.Document;
@@ -29,7 +29,7 @@ public class UnloadService {
     private TreeMap<String, Map<String, Integer>> dateTableMap;
     private List<TableSummary> tableSummaryList = new ArrayList<TableSummary>();
 
-    private static Logger LOG = Logger.getLogger(UnloadService.class);
+    private static Logger LOG = LogManager.getLogger(UnloadService.class);
 
     // Used from Controller
     public UnloadService() {

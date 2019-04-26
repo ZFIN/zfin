@@ -1,6 +1,6 @@
 package org.zfin.sequence.reno.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.zfin.marker.Marker;
@@ -18,7 +18,7 @@ import java.util.Set;
  */
 public abstract class AbstractRunCandidateValidator implements Validator {
 
-    private static Logger logger = Logger.getLogger(AbstractRunCandidateValidator.class);
+    private static Logger logger = LogManager.getLogger(AbstractRunCandidateValidator.class);
 
     public boolean supports(Class clazz) {
         return clazz.equals(CandidateBean.class);

@@ -1,6 +1,6 @@
 package org.zfin.sequence.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.sequence.DBLink;
@@ -12,7 +12,7 @@ import org.zfin.sequence.TranscriptDBLink;
  */
 public class DBLinkPresentation extends EntityPresentation {
 
-    private static Logger logger = Logger.getLogger(DBLinkPresentation.class);
+    private static Logger logger = LogManager.getLogger(DBLinkPresentation.class);
 
     /**
      * Generates an Accession link

@@ -2,7 +2,7 @@ package org.zfin.marker.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -62,7 +62,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 @Repository
 public class HibernateMarkerRepository implements MarkerRepository {
 
-    private static Logger logger = Logger.getLogger(HibernateMarkerRepository.class);
+    private static Logger logger = LogManager.getLogger(HibernateMarkerRepository.class);
     private final static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private final static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
 

@@ -1,6 +1,6 @@
 package org.zfin.framework.mail;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.zfin.properties.ZfinProperties;
@@ -20,7 +20,7 @@ import java.util.Date;
  */
 public class IntegratedJavaMailSender extends AbstractZfinMailSender {
 
-    private static Logger logger = Logger.getLogger(IntegratedJavaMailSender.class);
+    private static Logger logger = LogManager.getLogger(IntegratedJavaMailSender.class);
 
     private final String DEFAULT_MAILHOST = "localhost";
     private JavaMailSender mailSender = new JavaMailSenderImpl();

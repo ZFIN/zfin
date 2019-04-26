@@ -2,8 +2,10 @@ package org.zfin.datatransfer.doi;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.zfin.datatransfer.webservice.Citexplore;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.publication.Publication;
@@ -25,7 +27,7 @@ public class DOIProcessor {
     private int maxToProcess = ALL;
     private int maxAttempts = 50;
     private PublicationRepository publicationRepository = new HibernatePublicationRepository();
-    private Logger logger = Logger.getLogger(DOIProcessor.class);
+    private Logger logger = LogManager.getLogger(DOIProcessor.class);
 
     private boolean doisUpdated = false;
 
@@ -58,7 +60,7 @@ public class DOIProcessor {
      * @return List<Publication> Returns list of publications without a DOI.
      */
     private List<Publication> getPubmedIdsWithNoDOIs() {
-        logger.setLevel(Level.INFO);
+        Configurator.setLevel(LogManager.getLogger(DOIProcessor.class).getName(), Level.INFO);
         List<Publication> publicationList = publicationRepository.getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts, maxToProcess);
         return publicationList;
     }
@@ -80,7 +82,7 @@ public class DOIProcessor {
             publicationList = wsdlConnect.getDoisForPubmedID(publicationList);
             for (Publication publication : publicationList) {
                 String accession = null;
-                if(publication.getAccessionNumber() != null)
+                if (publication.getAccessionNumber() != null)
                     accession = publication.getAccessionNumber().toString();
                 updated.add(Arrays.asList(publication.getZdbID(), accession, publication.getDoi()));
             }

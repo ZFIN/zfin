@@ -1,7 +1,7 @@
 package org.zfin.sequence.reno.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -22,7 +22,7 @@ import java.util.Set;
  */
 public class RedundancyCandidateValidator extends AbstractRunCandidateValidator {
 
-    private static final Logger LOG = Logger.getLogger(RedundancyCandidateValidator.class);
+    private static final Logger LOG = LogManager.getLogger(RedundancyCandidateValidator.class);
     private RenoRepository rr = RepositoryFactory.getRenoRepository();
     private MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private PublicationRepository pr = RepositoryFactory.getPublicationRepository();

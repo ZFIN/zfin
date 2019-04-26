@@ -1,7 +1,7 @@
 package org.zfin.fish.presentation;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -36,7 +36,7 @@ public class FishExpressionController {
     }
 
 
-    private static Logger LOG = Logger.getLogger(FishExpressionController.class);
+    private static Logger LOG = LogManager.getLogger(FishExpressionController.class);
 
     /**
      * Search submission handling.

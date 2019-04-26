@@ -3,8 +3,8 @@ package org.zfin.ontology.datatransfer;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+
 import org.obo.dataadapter.OBOParseException;
 
 import java.io.FileOutputStream;
@@ -26,7 +26,7 @@ import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.*;
  */
 public class DownloadOntology extends AbstractScriptWrapper {
 
-    private static final Logger LOG = RootLogger.getLogger(DownloadOntology.class);
+    private static final Logger LOG = LogManager.getLogger(DownloadOntology.class);
 
     public static final Option oboFileName = OptionBuilder.withArgName("localOboFileName").hasArg().withDescription("the obo file name").create("localOboFileName");
 

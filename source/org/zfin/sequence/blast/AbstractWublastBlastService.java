@@ -4,7 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.biojava.bio.BioException;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractWublastBlastService implements BlastService {
 
-    private final static Logger logger = Logger.getLogger(AbstractWublastBlastService.class);
+    private final static Logger logger = LogManager.getLogger(AbstractWublastBlastService.class);
 
     public final static String BAD_QUERY_SEARCH = "There are no valid contexts in the requested search.";
 

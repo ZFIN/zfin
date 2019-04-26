@@ -1,8 +1,8 @@
 package org.zfin.framework;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+
 import org.hibernate.InvalidMappingException;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 public class HibernateSessionCreator {
 
-    public static final Logger LOG = RootLogger.getLogger(HibernateSessionCreator.class);
+    public static final Logger LOG = LogManager.getLogger(HibernateSessionCreator.class);
 
     private boolean showSql = false;
     private boolean autocommit = false;

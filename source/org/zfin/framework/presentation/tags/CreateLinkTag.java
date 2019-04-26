@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
 import org.zfin.expression.*;
@@ -74,7 +74,7 @@ import java.util.Collection;
  */
 public class CreateLinkTag extends BodyTagSupport {
 
-    private final Logger logger = Logger.getLogger(CreateLinkTag.class);
+    private final Logger logger = LogManager.getLogger(CreateLinkTag.class);
 
     private Object entity;
     private String name;

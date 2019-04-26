@@ -1,7 +1,7 @@
 package org.zfin.gwt.marker.server;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.Species;
@@ -36,7 +36,7 @@ public class TranscriptRPCServiceImpl extends ZfinRemoteServiceServlet implement
     private transient MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private transient InfrastructureRepository infrastructureRepository
             = RepositoryFactory.getInfrastructureRepository();
-    private transient Logger logger = Logger.getLogger(TranscriptRPCServiceImpl.class);
+    private transient Logger logger = LogManager.getLogger(TranscriptRPCServiceImpl.class);
 
     private transient List<ReferenceDatabaseDTO> transcriptEditAddableNucleotideSequenceReferenceDatabases;
     private transient List<ReferenceDatabaseDTO> transcriptEditAddableProteinReferenceDatabases;

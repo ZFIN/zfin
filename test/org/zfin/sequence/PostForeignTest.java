@@ -1,6 +1,6 @@
 package org.zfin.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 public class PostForeignTest {
 
-    private final Logger logger = Logger.getLogger(PostForeignTest.class) ;
+    private final Logger logger = LogManager.getLogger(PostForeignTest.class) ;
 
     private final static String SEARCH_TEXT = "ABCD" ;
 

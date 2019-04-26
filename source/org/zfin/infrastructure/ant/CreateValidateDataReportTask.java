@@ -2,7 +2,7 @@ package org.zfin.infrastructure.ant;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateUtil;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class CreateValidateDataReportTask extends AbstractValidateDataReportTask {
 
-    private final Logger LOG = Logger.getLogger(CreateValidateDataReportTask.class);
+    private final Logger LOG = LogManager.getLogger(CreateValidateDataReportTask.class);
 
     protected boolean useDynamicQuery;
     private DatabaseService service = new DatabaseService();

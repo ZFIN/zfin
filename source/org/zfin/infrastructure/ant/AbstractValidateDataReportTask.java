@@ -3,7 +3,7 @@ package org.zfin.infrastructure.ant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.gwt.root.util.StringUtils;
@@ -24,7 +24,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String HEADER_COLUMNS = "headerColumns";
-    protected static final Logger LOG = Logger.getLogger(AbstractValidateDataReportTask.class);
+    protected static final Logger LOG = LogManager.getLogger(AbstractValidateDataReportTask.class);
     public static final String TEMPLATE = ".template";
 
     protected String instance;

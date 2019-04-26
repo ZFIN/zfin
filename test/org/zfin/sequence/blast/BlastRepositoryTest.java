@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  */
 public class BlastRepositoryTest extends AbstractDatabaseTest {
 
-    private final static Logger logger = Logger.getLogger(BlastRepositoryTest.class);
+    private final static Logger logger = LogManager.getLogger(BlastRepositoryTest.class);
     private final BlastRepository blastRepository = RepositoryFactory.getBlastRepository();
 
 

@@ -2,7 +2,7 @@ package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.regression.SimpleRegression;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  */
 public class BlastHeuristicsEvaluator {
 
-    private static final Logger logger = Logger.getLogger(BlastHeuristicsEvaluator.class) ;
+    private static final Logger logger = LogManager.getLogger(BlastHeuristicsEvaluator.class) ;
 
     private static List<String> accessionList = new ArrayList<String>() ;
     // maps the accessions to their sequence

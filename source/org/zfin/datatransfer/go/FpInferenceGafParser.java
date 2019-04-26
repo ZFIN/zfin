@@ -3,7 +3,7 @@ package org.zfin.datatransfer.go;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @Primary
 public class FpInferenceGafParser {
 
-    protected Logger logger = Logger.getLogger(FpInferenceGafParser.class);
+    protected Logger logger = LogManager.getLogger(FpInferenceGafParser.class);
 
     public static final String GOREF_PREFIX = "GO_REF:";
     protected static final String ZFIN_CREATED_BY = "ZFIN";

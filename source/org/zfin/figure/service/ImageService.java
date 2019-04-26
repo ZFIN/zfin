@@ -4,7 +4,7 @@ package org.zfin.figure.service;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.web.multipart.MultipartFile;
 import org.zfin.expression.Figure;
@@ -24,7 +24,7 @@ import java.util.GregorianCalendar;
 
 public class ImageService {
 
-    public static Logger log = Logger.getLogger(ImageService.class);
+    public static Logger log = LogManager.getLogger(ImageService.class);
 
     private final static File IMAGE_LOADUP_DIR = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.IMAGE_LOAD.toString());
     private final static String THUMB = "_thumb";

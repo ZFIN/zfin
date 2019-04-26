@@ -1,6 +1,6 @@
 package org.zfin.framework.mail;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.biojava.bio.AnnotationType;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -10,7 +10,7 @@ import org.zfin.properties.ZfinPropertiesEnum;
  */
 public abstract class AbstractZfinMailSender implements MailSender {
 
-    private static final Logger LOG = Logger.getLogger(AnnotationType.Abstract.class);
+    private static final Logger LOG = LogManager.getLogger(AnnotationType.Abstract.class);
 
     public boolean sendMail(String subject, String message, String[] recipients) {
         return sendMail(subject, message, true, ZfinProperties.getValidationOtherEmailAddresses()[0], recipients);

@@ -1,7 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -48,7 +48,7 @@ public class MarkerRelationshipController {
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
-    private static Logger logger = Logger.getLogger(MarkerRelationshipController.class);
+    private static Logger logger = LogManager.getLogger(MarkerRelationshipController.class);
     @InitBinder("markerRelationshipBean")
     public void initRelationshipBinder(WebDataBinder binder) {
         binder.setValidator(new MarkerRelationshipBeanValidator());

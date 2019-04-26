@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.sequence.blast.*;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class DatabasePresentationBean implements Comparable<DatabasePresentationBean> {
 
-    private final static Logger logger = Logger.getLogger(DatabasePresentationBean.class);
+    private final static Logger logger = LogManager.getLogger(DatabasePresentationBean.class);
 
     private Database database;
     private int indent = 0;

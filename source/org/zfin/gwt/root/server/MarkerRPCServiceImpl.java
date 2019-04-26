@@ -2,7 +2,7 @@ package org.zfin.gwt.root.server;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -56,7 +56,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     private transient MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private transient ConstructRepository constructRepository = RepositoryFactory.getConstructRepository();
     private transient InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-    private transient Logger logger = Logger.getLogger(MarkerRPCServiceImpl.class);
+    private transient Logger logger = LogManager.getLogger(MarkerRPCServiceImpl.class);
 
     private List<String> suppliers = null;
 

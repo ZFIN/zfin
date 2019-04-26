@@ -1,6 +1,6 @@
 package org.zfin.sequence.reno.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.After;
@@ -37,7 +37,7 @@ public class NomenclatureCandidateControllerTest {
 
     private final RenoTestData renoTestData = new RenoTestData();
 
-    private static final Logger logger = Logger.getLogger(NomenclatureCandidateControllerTest.class);
+    private static final Logger logger = LogManager.getLogger(NomenclatureCandidateControllerTest.class);
     private static RenoRepository renoRepository = RepositoryFactory.getRenoRepository();
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 

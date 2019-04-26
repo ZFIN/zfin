@@ -4,7 +4,8 @@ import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import net.sourceforge.jwebunit.junit.WebTestCase;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.runners.Parameterized;
@@ -65,7 +66,7 @@ public class AbstractSmokeTest extends WebTestCase {
     }
 
     @Before
-    public void setUp() throws Exception{
+    public void setUp() throws Exception {
         if (isInitialized)
             return;
         TestConfiguration.configure();
@@ -77,12 +78,12 @@ public class AbstractSmokeTest extends WebTestCase {
             nonSecureUrlDomain += ":" + ZfinPropertiesEnum.NON_SECUREPORT;
             secureUrlDomain += ":" + ZfinPropertiesEnum.SECUREPORT;
         }
-            initDatabase();
+        initDatabase();
         //setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
         isInitialized = true;
     }
 
-    private static final Logger LOG = Logger.getLogger(AbstractSmokeTest.class);
+    private static final Logger LOG = LogManager.getLogger(AbstractSmokeTest.class);
 
     @Override
     protected void tearDown() throws Exception {

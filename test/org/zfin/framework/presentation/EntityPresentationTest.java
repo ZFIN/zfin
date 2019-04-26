@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class EntityPresentationTest {
 
-    private Logger logger = Logger.getLogger(EntityPresentationTest.class) ;
+    private Logger logger = LogManager.getLogger(EntityPresentationTest.class) ;
 
     @Before
     public void setup(){

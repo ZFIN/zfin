@@ -1,6 +1,6 @@
 package org.zfin.wiki.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.zfin.TestConfiguration;
 import org.zfin.antibody.Antibody;
@@ -21,7 +21,7 @@ import java.util.Map;
  **/
 public class WikiScriptRunner {
 
-    private final static Logger logger = Logger.getLogger(WikiScriptRunner.class);
+    private final static Logger logger = LogManager.getLogger(WikiScriptRunner.class);
 
 
     static  {

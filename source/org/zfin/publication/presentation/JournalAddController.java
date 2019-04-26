@@ -1,7 +1,7 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ import java.util.Map;
 @RequestMapping("/publication")
 public class JournalAddController {
 
-    private static Logger LOG = Logger.getLogger(JournalAddController.class);
+    private static Logger LOG = LogManager.getLogger(JournalAddController.class);
 
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();

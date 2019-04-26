@@ -8,7 +8,7 @@
 
     <context-param>
         <param-name>log4jConfigLocation</param-name>
-        <param-value>/WEB-INF/log4j.xml</param-value>
+        <param-value>/WEB-INF/log4j2.xml</param-value>
     </context-param>
 
     <!-- all spring-related configuration files go in here. -->
@@ -19,10 +19,6 @@
             /WEB-INF/spring/security.xml
         </param-value>
     </context-param>
-
-    <listener>
-        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-    </listener>
 
     <!--this forces it to use the default security bean in security.xml springSecurityFilterChain-->
     <filter>

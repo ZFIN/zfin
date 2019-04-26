@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,7 +30,7 @@ public class XMLBlastViewController {
     private long pauseTimeBetweenTriesMs = 5000; // 5 seconds
     private JAXBContext jc = null;
 
-    private Logger logger = Logger.getLogger(XMLBlastViewController.class);
+    private Logger logger = LogManager.getLogger(XMLBlastViewController.class);
 
     public XMLBlastViewController() {
         try {

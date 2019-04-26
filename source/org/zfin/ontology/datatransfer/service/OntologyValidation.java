@@ -1,7 +1,7 @@
 package org.zfin.ontology.datatransfer.service;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.obo.dataadapter.AbstractParseEngine;
 import org.obo.dataadapter.DefaultOBOParser;
 import org.obo.dataadapter.OBOParseEngine;
@@ -74,7 +74,7 @@ public class OntologyValidation extends AbstractScriptWrapper {
     }
 
     public static void main(String[] arguments) {
-        LOG = Logger.getLogger(OntologyValidation.class);
+        LOG = LogManager.getLogger(OntologyValidation.class);
         LOG.info("Start Ontology Loader class: " + (new Date()).toString());
         CommandLine commandLine = parseArguments(arguments, "load <>");
 //        initializeLogger(commandLine.getOptionValue(log4jFileOption.getOpt()));

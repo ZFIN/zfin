@@ -2,7 +2,7 @@ package org.zfin.nomenclature.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
@@ -33,7 +33,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 @RequestMapping("/nomenclature")
 public class NomenclatureSubmissionController {
 
-    private static final Logger LOG = Logger.getLogger(NomenclatureSubmissionController.class);
+    private static final Logger LOG = LogManager.getLogger(NomenclatureSubmissionController.class);
 
     @RequestMapping(value = "/history/{zdbID}")
     public String getHistoryView(@PathVariable("zdbID") String zdbID,

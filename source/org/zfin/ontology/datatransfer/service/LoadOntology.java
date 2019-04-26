@@ -5,8 +5,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.obo.dataadapter.AbstractParseEngine;
 import org.obo.dataadapter.DefaultOBOParser;
 import org.obo.dataadapter.OBOParseEngine;
@@ -135,8 +137,8 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     }
 
     public static void main(String[] arguments) {
-        LOG = Logger.getLogger(LoadOntology.class);
-        LOG.setLevel(Level.INFO);
+        LOG = LogManager.getLogger(LoadOntology.class);
+        Configurator.setLevel(LogManager.getLogger().getName(), Level.INFO);
         LOG.info("Start Ontology Loader class: " + (new Date()).toString());
         CommandLine commandLine = parseArguments(arguments, "load <>");
         initializeLogger(commandLine.getOptionValue(log4jFileOption.getOpt()));

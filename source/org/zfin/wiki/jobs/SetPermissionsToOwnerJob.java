@@ -1,6 +1,6 @@
 package org.zfin.wiki.jobs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.wiki.service.WikiWebService;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class SetPermissionsToOwnerJob extends AbstractValidateDataReportTask {
 
-    private static final Logger logger = Logger.getLogger(SetPermissionsToOwnerJob.class);
+    private static final Logger logger = LogManager.getLogger(SetPermissionsToOwnerJob.class);
 
     public SetPermissionsToOwnerJob(String jobName, String propertyPath, String baseDir) {
         super(jobName, propertyPath, baseDir);

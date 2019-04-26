@@ -4,7 +4,7 @@ package org.zfin.gwt.root.server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
@@ -59,7 +59,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class DTOConversionService {
 
-    private static Logger logger = Logger.getLogger(DTOConversionService.class);
+    private static Logger logger = LogManager.getLogger(DTOConversionService.class);
 //    private static SynonymSorting synonymSorting = new SynonymSorting();
 
     public static String escapeString(String uncleansedCharacter) {

@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.io.BufferedWriter;
@@ -12,7 +12,7 @@ import java.io.FileWriter;
  */
 public class SMPBlastQueryThread extends AbstractQueryThread {
 
-    private final static Logger logger = Logger.getLogger(SMPBlastQueryThread.class);
+    private final static Logger logger = LogManager.getLogger(SMPBlastQueryThread.class);
 
     private BlastService blastService ;
 

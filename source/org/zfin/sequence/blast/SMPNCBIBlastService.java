@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class SMPNCBIBlastService extends WebHostWublastBlastService {
 
-    private static final Logger logger = Logger.getLogger(SMPNCBIBlastService.class);
+    private static final Logger logger = LogManager.getLogger(SMPNCBIBlastService.class);
 
     private static final String NCBI_BINARY_PATH = "/usr/local/ncbi/blast/bin" ;
 

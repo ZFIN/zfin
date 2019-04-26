@@ -1,6 +1,6 @@
 package org.zfin.repository;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,7 +17,7 @@ import org.zfin.security.MockAuthenticationManager;
  */
 public class SessionCreator {
 
-    private static Logger logger = Logger.getLogger(SessionCreator.class);
+    private static Logger logger = LogManager.getLogger(SessionCreator.class);
 
     private static final String LOGIN = "login";
     private static boolean isInstantiated = false;

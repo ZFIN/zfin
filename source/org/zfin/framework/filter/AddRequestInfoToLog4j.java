@@ -1,13 +1,10 @@
 package org.zfin.framework.filter;
 
-import org.apache.log4j.MDC;
-import org.zfin.profile.Person;
+import org.apache.logging.log4j.ThreadContext;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Add Request info to log4j MDC (mapped diagnostic context).
@@ -22,17 +19,15 @@ public class AddRequestInfoToLog4j implements Filter {
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
         try {
             HttpServletRequest request = (HttpServletRequest) req;
-            Map<String, String> logMap = new HashMap<String, String>(10);
-            logMap.put("uri", request.getRequestURI());
-            logMap.put("queryString", request.getQueryString());
-            logMap.put("sessionID", request.getSession().getId());
-            logMap.put("method", request.getMethod());
-            logMap.put("url", request.getRequestURL().toString());
-            logMap.put("user-agent", request.getHeader("user-agent"));
-            logMap.put("referrer", request.getHeader("referrer"));
-            logMap.put("cookie", request.getHeader("cookie"));
             // add map to mapped diagnostic context so it gets picked up by the JSONEventLayout
-            MDC.put(REQUEST_MAP, logMap);
+            ThreadContext.put("uri", request.getRequestURI());
+            ThreadContext.put("queryString", request.getQueryString());
+            ThreadContext.put("sessionID", request.getSession().getId());
+            ThreadContext.put("method", request.getMethod());
+            ThreadContext.put("url", request.getRequestURL().toString());
+            ThreadContext.put("user-agent", request.getHeader("user-agent"));
+            ThreadContext.put("referrer", request.getHeader("referrer"));
+            ThreadContext.put("cookie", request.getHeader("cookie"));
         } catch (Exception e) {
             e.printStackTrace();
             // ignore error to make sure request does not fail..

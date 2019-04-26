@@ -1,6 +1,6 @@
 package org.zfin.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -27,7 +27,7 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 public class SequenceRepositoryTest extends AbstractDatabaseTest {
 
-    private final static Logger logger = Logger.getLogger(SequenceRepositoryTest.class);
+    private final static Logger logger = LogManager.getLogger(SequenceRepositoryTest.class);
     private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
 

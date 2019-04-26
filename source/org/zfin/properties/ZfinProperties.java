@@ -1,7 +1,7 @@
 package org.zfin.properties;
 
 import freemarker.template.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.gwt.root.ui.HandlesErrorCallBack;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.properties.ant.LoadPropertiesTask;
@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public final class ZfinProperties {
 
-    private static final Logger logger = Logger.getLogger(ZfinProperties.class);
+    private static final Logger logger = LogManager.getLogger(ZfinProperties.class);
     private static LoadPropertiesTask loadPropertiesTask = new LoadPropertiesTask();
     private static Configuration freeMarkerConfiguration;
 

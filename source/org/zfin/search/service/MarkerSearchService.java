@@ -2,7 +2,8 @@ package org.zfin.search.service;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -35,7 +36,8 @@ public class MarkerSearchService {
     @Autowired
     ExpressionService expressionService;
 
-    private static Logger logger = Logger.getLogger(MarkerSearchService.class);
+
+    private static Logger logger = LogManager.getLogger();
 
     public static String BEGINS_WITH = "Begins With";
     public static String CONTAINS = "Contains";

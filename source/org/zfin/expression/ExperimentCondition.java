@@ -1,6 +1,6 @@
 package org.zfin.expression;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
@@ -48,7 +48,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     @JoinColumn(name = "expcond_chebi_term_zdb_id")
     private GenericTerm chebiTerm;
 
-    private static Logger logger = Logger.getLogger(ExperimentCondition.class);
+    private static Logger logger = LogManager.getLogger(ExperimentCondition.class);
 
     public String getZdbID() {
         return zdbID;

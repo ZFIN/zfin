@@ -2,7 +2,7 @@
 package org.zfin.marker;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.feature.FeatureMarkerRelationship;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityID {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
-    private static Logger LOG = Logger.getLogger(Marker.class);
+    private static Logger LOG = LogManager.getLogger(Marker.class);
 
     /*private String zdbID;
     private String name;*/

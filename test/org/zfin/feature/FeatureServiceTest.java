@@ -1,6 +1,6 @@
 package org.zfin.feature;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.feature.repository.FeatureRepository;
@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class FeatureServiceTest extends AbstractDatabaseTest {
 
-    static Logger logger = Logger.getLogger(FeatureServiceTest.class);
+    static Logger logger = LogManager.getLogger(FeatureServiceTest.class);
     FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
 
     @Test

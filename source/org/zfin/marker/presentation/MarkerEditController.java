@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
@@ -32,7 +32,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class MarkerEditController {
 
     public static final String BR = "<br/>";
-    private static Logger logger = Logger.getLogger(MarkerEditController.class);
+    private static Logger logger = LogManager.getLogger(MarkerEditController.class);
 
     @RequestMapping("/marker-edit")
     public String getMarkerEdit(Model model

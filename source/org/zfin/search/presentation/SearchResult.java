@@ -1,6 +1,6 @@
 package org.zfin.search.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
@@ -85,7 +85,7 @@ public class SearchResult implements ProvidesLink {
 
 
 
-    private Logger logger = Logger.getLogger(SearchResult.class);
+    private Logger logger = LogManager.getLogger(SearchResult.class);
 
     public String getLink() {
         String cssClass = "";

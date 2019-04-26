@@ -1,6 +1,6 @@
 package org.zfin.datatransfer.microarray ;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.Collection;
@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class MicroarrayBean {
 
-    private Logger logger = Logger.getLogger(MicroarrayBean.class) ;
+    private Logger logger = LogManager.getLogger(MicroarrayBean.class) ;
 
     //    private List<String> messages = new ArrayList<String>() ;
     //    private Collection<String> notFoundAccessions ;

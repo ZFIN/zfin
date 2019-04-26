@@ -2,7 +2,7 @@ package org.zfin.expression.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/expression")
 public class ExpressionSearchController {
 
-    private static Logger logger = Logger.getLogger(ExpressionSearchController.class);
+    private static Logger logger = LogManager.getLogger(ExpressionSearchController.class);
 
     private static final String BASE_URL = "/action/expression/results?";
     public static final int DEFAULT_PAGE_SIZE = 25;

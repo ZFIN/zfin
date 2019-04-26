@@ -4,8 +4,9 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
@@ -180,9 +181,9 @@ public class LoadMissingUnitProt extends AbstractValidateDataReportTask {
 
     private static void initLogging() {
         initLog4J();
-        Logger.getLogger(DatabaseService.class).setLevel(Level.INFO);
-        Logger.getLogger(AbstractScriptWrapper.class).setLevel(Level.INFO);
-        Logger.getLogger(LoadMissingUnitProt.class).setLevel(Level.INFO);
+        Configurator.setLevel(LogManager.getLogger(DatabaseService.class).getName(), Level.INFO);
+        Configurator.setLevel(LogManager.getLogger(AbstractScriptWrapper.class).getName(), Level.INFO);
+        Configurator.setLevel(LogManager.getLogger(LoadMissingUnitProt.class).getName(), Level.INFO);
     }
 }
 

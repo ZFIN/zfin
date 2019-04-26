@@ -2,7 +2,7 @@ package org.zfin.sequence.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -30,7 +30,7 @@ import java.util.*;
 @Repository
 public class HibernateSequenceRepository implements SequenceRepository {
 
-    private final Logger logger = Logger.getLogger(HibernateSequenceRepository.class);
+    private final Logger logger = LogManager.getLogger(HibernateSequenceRepository.class);
 
     public ForeignDB getForeignDBByName(ForeignDB.AvailableName dbName) {
         Session session = HibernateUtil.currentSession();

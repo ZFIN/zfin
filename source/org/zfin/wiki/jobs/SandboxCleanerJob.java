@@ -1,6 +1,6 @@
 package org.zfin.wiki.jobs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.wiki.WikiLoginException;
@@ -14,7 +14,7 @@ import java.io.FileNotFoundException;
  */
 public class SandboxCleanerJob extends AbstractValidateDataReportTask {
 
-    private static final Logger logger = Logger.getLogger(SandboxCleanerJob.class);
+    private static final Logger logger = LogManager.getLogger(SandboxCleanerJob.class);
 
     public SandboxCleanerJob(String jobName, String propertyFilePath, String jobDirectoryString) {
         super(jobName, propertyFilePath, jobDirectoryString);

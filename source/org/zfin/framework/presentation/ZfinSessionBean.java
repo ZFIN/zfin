@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -18,7 +18,7 @@ public class ZfinSessionBean {
     private HashMap requestAttributes;
     private HashMap sessionAttributes;
 
-    private static Logger LOG = Logger.getLogger(ZfinSessionBean.class);
+    private static Logger LOG = LogManager.getLogger(ZfinSessionBean.class);
 
     public HashMap getRequestAttributes() {
         if (requestAttributes != null)

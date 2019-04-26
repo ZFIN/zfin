@@ -1,7 +1,7 @@
 package org.zfin.anatomy.repository;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -30,7 +30,7 @@ import java.util.List;
 @Repository
 public class HibernateAnatomyRepository implements AnatomyRepository {
 
-    private static Logger LOG = Logger.getLogger(HibernateAnatomyRepository.class);
+    private static Logger LOG = LogManager.getLogger(HibernateAnatomyRepository.class);
 
     // Cached variables
     // The stages do not change very often, only through an import

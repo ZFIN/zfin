@@ -1,6 +1,6 @@
 package org.zfin.infrastructure.ant;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinProperties;
@@ -11,7 +11,7 @@ import java.io.File;
  */
 public class RunSQLFiles extends AbstractValidateDataReportTask {
 
-    private final Logger LOG = Logger.getLogger(RunSQLFiles.class);
+    private final Logger LOG = LogManager.getLogger(RunSQLFiles.class);
 
     protected boolean useDynamicQuery;
     private DatabaseService service = new DatabaseService();

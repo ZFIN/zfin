@@ -1,6 +1,6 @@
 package org.zfin.profile.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -32,7 +32,7 @@ import java.util.List;
 @RequestMapping(value = "/profile")
 public class CompanyController {
 
-    private Logger logger = Logger.getLogger(CompanyController.class);
+    private Logger logger = LogManager.getLogger(CompanyController.class);
 
     @Autowired
     private ProfileRepository profileRepository;

@@ -1,7 +1,7 @@
 package org.zfin.feature.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
@@ -58,7 +58,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
-    private Logger logger = Logger.getLogger(HibernateFeatureRepository.class);
+    private Logger logger = LogManager.getLogger(HibernateFeatureRepository.class);
 
     public Feature getFeatureByID(String zdbID) {
         return (Feature) HibernateUtil.currentSession().get(Feature.class, zdbID);

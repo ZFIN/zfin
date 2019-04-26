@@ -1,7 +1,7 @@
 package org.zfin.gwt.marker.server;
 
 import org.apache.commons.lang.WordUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.anatomy.DevelopmentStage;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements ImageRPCService {
 
-    private transient Logger logger = Logger.getLogger(ImageRPCServiceImpl.class);
+    private transient Logger logger = LogManager.getLogger(ImageRPCServiceImpl.class);
     private transient PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private transient AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
     private transient OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();

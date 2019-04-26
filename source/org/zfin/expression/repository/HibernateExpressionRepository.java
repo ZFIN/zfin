@@ -4,7 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
@@ -64,7 +64,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 @Repository
 public class HibernateExpressionRepository implements ExpressionRepository {
 
-    private Logger logger = Logger.getLogger(HibernateExpressionRepository.class);
+    private Logger logger = LogManager.getLogger(HibernateExpressionRepository.class);
 
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();

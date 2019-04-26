@@ -1,6 +1,6 @@
 package org.zfin.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 public class DisplayGroupRepositoryTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(DisplayGroupRepositoryTest.class);
+    private Logger logger = LogManager.getLogger(DisplayGroupRepositoryTest.class);
 
     @Test
     public void testDisplayGroupMapping() {

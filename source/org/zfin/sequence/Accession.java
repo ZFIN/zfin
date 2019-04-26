@@ -4,7 +4,7 @@
 package org.zfin.sequence;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public class Accession implements Comparable, Serializable {
 
-    private Logger logger = Logger.getLogger(Accession.class);
+    private Logger logger = LogManager.getLogger(Accession.class);
 
     private Long ID;
     private String number;

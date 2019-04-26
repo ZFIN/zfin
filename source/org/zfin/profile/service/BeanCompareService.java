@@ -2,7 +2,7 @@ package org.zfin.profile.service;
 
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +15,7 @@ import java.util.Objects;
 @Service
 public class BeanCompareService {
 
-    private Logger logger = Logger.getLogger(BeanCompareService.class);
+    private Logger logger = LogManager.getLogger(BeanCompareService.class);
 
     public BeanFieldUpdate compareBeanField(String field, Object oldObject, Object newObject) throws Exception {
         return compareBeanField(field, oldObject, newObject, false);

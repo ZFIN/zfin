@@ -1,7 +1,7 @@
 package org.zfin.infrastructure.presentation;
 
 import org.apache.commons.lang.WordUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +26,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 @RequestMapping("/infrastructure")
 public class ControlledVocabularyAddController {
 
-    private static Logger LOG = Logger.getLogger(ControlledVocabularyAddController.class);
+    private static Logger LOG = LogManager.getLogger(ControlledVocabularyAddController.class);
 
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
 

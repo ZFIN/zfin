@@ -1,7 +1,7 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.zfin.framework.presentation.InvalidWebRequestException;
@@ -24,7 +24,7 @@ public class PublicationValidator {
     @Autowired
     private PublicationRepository publicationRepository;
 
-    private static Logger LOG = Logger.getLogger(PublicationValidator.class);
+    private static Logger LOG = LogManager.getLogger(PublicationValidator.class);
     private static final String ZDB_PUB = "ZDB-PUB-";
     private static final String ZDB_ID_TIME_STAMP_PATTERN = "\\d{6}-\\d+";
 

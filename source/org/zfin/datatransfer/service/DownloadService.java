@@ -4,7 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -22,7 +22,7 @@ import java.util.zip.GZIPInputStream;
 @Service
 public class DownloadService {
 
-    private Logger logger = Logger.getLogger(DownloadService.class);
+    private Logger logger = LogManager.getLogger(DownloadService.class);
 
     protected final String ANONYMOUS_USERNAME = "anonymous";
     protected final String ANONYMOUS_PASSWORD = "zfinadmn@zfin.org";

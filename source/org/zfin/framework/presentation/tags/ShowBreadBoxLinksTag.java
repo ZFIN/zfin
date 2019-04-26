@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.zfin.search.service.SolrService;
@@ -18,7 +18,7 @@ public class ShowBreadBoxLinksTag extends TagSupport {
     private SolrQuery query;
     private String baseUrl;
 
-    private Logger logger = Logger.getLogger(ShowBreadBoxLinksTag.class);
+    private Logger logger = LogManager.getLogger(ShowBreadBoxLinksTag.class);
 
     private String createBreadBoxSection()  {
         QueryResponse response = getQueryResponse();

@@ -1,6 +1,6 @@
 package org.zfin.ontology.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ZfinEntity;
@@ -21,7 +21,7 @@ public class TermPresentation extends EntityPresentation {
     private static final String postComposedPopupUri = "ontology/post-composed-term-detail-popup?";
     public static final String GO_URI = "http://www.ebi.ac.uk/QuickGO/GTerm?id=";
 
-    private final static Logger logger = Logger.getLogger(TermPresentation.class);
+    private final static Logger logger = LogManager.getLogger(TermPresentation.class);
 
 
     /**

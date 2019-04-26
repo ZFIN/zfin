@@ -1,6 +1,6 @@
 package org.zfin.datatransfer.doi;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.util.ReportGenerator;
 
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class UpdateDOIJob extends AbstractValidateDataReportTask {
 
-    private static Logger logger = Logger.getLogger(UpdateDOIJob.class);
+    private static Logger logger = LogManager.getLogger(UpdateDOIJob.class);
 
     private int maxToProcess;
     private int maxAttempts;

@@ -1,6 +1,6 @@
 package org.zfin.gwt;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.feature.Feature;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class GwtConversionTest extends AbstractDatabaseTest {
 
-    private static Logger logger = Logger.getLogger(GwtConversionTest.class);
+    private static Logger logger = LogManager.getLogger(GwtConversionTest.class);
     private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
 

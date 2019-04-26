@@ -1,10 +1,8 @@
 package org.zfin.ontology.datatransfer;
 
 import org.apache.commons.cli.*;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 import org.zfin.framework.HibernateSessionCreator;
@@ -83,14 +81,14 @@ public class AbstractScriptWrapper {
         File logFile = new File(log4jFilename);
         if (!logFile.exists())
             return;
-        DOMConfigurator.configure(log4jFilename);
+        //DOMConfigurator.configure(log4jFilename);
     }
 
-    protected static final Logger LOG = Logger.getLogger(AbstractScriptWrapper.class);
+    protected static final Logger LOG = LogManager.getLogger(AbstractScriptWrapper.class);
     public static final String NEWLINE = System.getProperty("line.separator");
 
     protected static void setLoggerToInfoLevel(Logger logger) {
-        logger.setLevel(Level.INFO);
+       /// logger.setLevel(Level.INFO);
     }
 
     /**
@@ -98,9 +96,11 @@ public class AbstractScriptWrapper {
      * neat. Works best for short-lived script executions.
      */
     protected static void initLog4J() {
+/*
         Logger rootLogger = RootLogger.getRootLogger();
         rootLogger.setLevel(Level.INFO);
         rootLogger.removeAppender("console");
+*/
     }
 
 

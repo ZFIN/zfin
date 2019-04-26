@@ -1,10 +1,10 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 public class ProteinInternalAccessionGenerator extends AbstractInternalAccessionGenerator {
 
-    private static final Logger logger = Logger.getLogger(ProteinInternalAccessionGenerator.class);
+    private static final Logger logger = LogManager.getLogger(ProteinInternalAccessionGenerator.class);
 
     private static ProteinInternalAccessionGenerator instance ;
 

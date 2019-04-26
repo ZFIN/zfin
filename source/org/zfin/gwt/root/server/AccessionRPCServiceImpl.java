@@ -1,14 +1,14 @@
 package org.zfin.gwt.root.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.gwt.root.ui.AccessionRPCService;
 import org.zfin.sequence.ReferenceDatabase;
 
 public class AccessionRPCServiceImpl extends RemoteServiceServlet implements AccessionRPCService {
 
-    private transient Logger logger = Logger.getLogger(AccessionRPCServiceImpl.class);
+    private transient Logger logger = LogManager.getLogger(AccessionRPCServiceImpl.class);
 
     @Override
     public String isValidAccession(String accessionNumber, String type) {

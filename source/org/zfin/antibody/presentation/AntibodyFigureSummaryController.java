@@ -1,7 +1,7 @@
 package org.zfin.antibody.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -43,7 +43,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 @RequestMapping("/antibody")
 public class AntibodyFigureSummaryController {
 
-    private static final Logger LOG = Logger.getLogger(AntibodyFigureSummaryController.class);
+    private static final Logger LOG = LogManager.getLogger(AntibodyFigureSummaryController.class);
 
     @Autowired
     private OntologyRepository ontologyRepository;

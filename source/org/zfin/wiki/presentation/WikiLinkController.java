@@ -1,6 +1,6 @@
 package org.zfin.wiki.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +16,7 @@ import org.zfin.wiki.service.AntibodyWikiWebService;
 @RequestMapping(value = "/wiki")
 public class WikiLinkController {
 
-    private Logger logger = Logger.getLogger(WikiLinkController.class);
+    private Logger logger = LogManager.getLogger(WikiLinkController.class);
 
     @RequestMapping(value = "/wikiLink/{zdbID}")
     protected String getWikiLink(@PathVariable String zdbID, Model model) throws Exception {

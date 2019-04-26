@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration>
+    <Appenders>
+        <RollingFile name="rollingFileAppender" fileName="${env:CATALINA_BASE}/logs/catalina.out"
+                     filePattern="${env:CATALINA_BASE}/logs/catalina.out.%i.log" filePermissions="rw-r--r--">
+            <PatternLayout pattern="%d [%t] %-5p %c{2} - %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="5 KB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <!--
+                <File name="fileAppender" fileName="${env:CATALINA_BASE}/logs/catalina.out" append="false">
+                    <PatternLayout pattern="%d [%t] %-5p %c{2} - %m%n"/>
+                </File>
+        -->
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%level - %m%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.hibernate.SQL" level="warn"/>
+        <Logger name="org.hibernate.type" level="warn"/>
+        <Logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="error"/>
+        <Logger name="org.zfin" level="warn"/>
+        <Logger name="org.zfin.ontology.OntologySerializationService" level="info"/>
+        <Root level="warn">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="rollingFileAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

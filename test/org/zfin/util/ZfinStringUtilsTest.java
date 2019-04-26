@@ -1,6 +1,6 @@
 package org.zfin.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.*;
  */
 public class ZfinStringUtilsTest {
 
-    public static final Logger logger = Logger.getLogger(ZfinStringUtils.class);
+    public static final Logger logger = LogManager.getLogger(ZfinStringUtils.class);
 
     @Rule
     public ExpectedException exception = ExpectedException.none();

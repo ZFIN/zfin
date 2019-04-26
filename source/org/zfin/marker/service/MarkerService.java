@@ -2,7 +2,7 @@ package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
@@ -52,7 +52,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 @Service
 public class MarkerService {
 
-    private static Logger logger = Logger.getLogger(MarkerService.class);
+    private static Logger logger = LogManager.getLogger(MarkerService.class);
     private static MarkerRepository markerRepository = getMarkerRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();

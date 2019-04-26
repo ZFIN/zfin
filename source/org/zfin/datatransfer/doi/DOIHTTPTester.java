@@ -1,6 +1,6 @@
 package org.zfin.datatransfer.doi;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.datatransfer.webservice.Citexplore;
 import org.zfin.publication.Publication;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class DOIHTTPTester {
 
 
-    private Logger logger = Logger.getLogger(DOIHTTPTester.class);
+    private Logger logger = LogManager.getLogger(DOIHTTPTester.class);
 
     public List<Publication> testDOIList(List<Publication> publications) {
 

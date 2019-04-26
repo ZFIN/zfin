@@ -1,7 +1,7 @@
 package org.zfin.mapping;
 
 import com.google.gson.Gson;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.marker.Marker;
 import org.zfin.marker.service.MarkerService;
@@ -17,7 +17,7 @@ public class EnsemblDataService implements GenomeBrowserDataService {
 
     private static final String server = "http://beta.rest.ensembl.org";
 
-    private Logger LOG = Logger.getLogger(EnsemblDataService.class);
+    private Logger LOG = LogManager.getLogger(EnsemblDataService.class);
 
     public static void main(String[] args) throws Exception {
         String ext = "/assembly/info/homo_sapiens?";

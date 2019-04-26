@@ -1,6 +1,6 @@
 package org.zfin.util.database;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.database.presentation.Table;
 
@@ -18,7 +18,7 @@ import java.util.*;
 @Service
 public class UnloadIndexingService {
 
-    private static Logger LOG = Logger.getLogger(UnloadIndexingService.class);
+    private static Logger LOG = LogManager.getLogger(UnloadIndexingService.class);
 
     private String unloadDirectory = "/research/zunloads/databases/production";
     private List<Table> tableNames;

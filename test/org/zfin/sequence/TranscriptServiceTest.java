@@ -1,6 +1,6 @@
 package org.zfin.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.Marker;
@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 public class TranscriptServiceTest extends AbstractDatabaseTest {
 
-    private final static Logger logger = Logger.getLogger(SequenceRepositoryTest.class) ;
+    private final static Logger logger = LogManager.getLogger(SequenceRepositoryTest.class) ;
 
     @Test
     public void relatedTranscriptDisplayTest() {

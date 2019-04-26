@@ -1,6 +1,6 @@
 package org.zfin.ontology.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -38,7 +38,7 @@ import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
  */
 public class OntologyService {
 
-    private final static Logger logger = Logger.getLogger(OntologyService.class);
+    private final static Logger logger = LogManager.getLogger(OntologyService.class);
 
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private static MarkerRepository mR = RepositoryFactory.getMarkerRepository();

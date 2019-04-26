@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 import org.junit.Before;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class BlastDownloadsTest extends AbstractDatabaseTest{
 
-    private Logger logger = Logger.getLogger(BlastDownloadsTest.class);
+    private Logger logger = LogManager.getLogger(BlastDownloadsTest.class);
 
     @Before
     public void setUp() {

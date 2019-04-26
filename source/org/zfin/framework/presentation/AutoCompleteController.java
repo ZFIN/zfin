@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping(value = "/autocomplete")
 public class AutoCompleteController {
 
-    private static Logger LOG = Logger.getLogger(AutoCompleteController.class);
+    private static Logger LOG = LogManager.getLogger(AutoCompleteController.class);
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
 
     @RequestMapping("/gene-family")

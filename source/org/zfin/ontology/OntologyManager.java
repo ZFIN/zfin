@@ -1,7 +1,7 @@
 package org.zfin.ontology;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
@@ -51,7 +51,7 @@ public class OntologyManager {
     private Map<OntologyDTO, OntologyLoadingEntity> loadingData = new TreeMap<>(new OntologyNameComparator());
     // sole singleton instance
     private static OntologyManager ontologyManager = null;
-    transient private static final Logger logger = Logger.getLogger(OntologyManager.class);
+    transient private static final Logger logger = LogManager.getLogger(OntologyManager.class);
 
     private static final double MILLISECONDS_PER_SECOND = 1000.0;
 

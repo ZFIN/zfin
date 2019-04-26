@@ -3,7 +3,7 @@ package org.zfin.fish.repository;
 import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.Group;
@@ -51,7 +51,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class FishService {
 
-    private static Logger logger = Logger.getLogger(FishService.class);
+    private static Logger logger = LogManager.getLogger(FishService.class);
 
     public static FishSearchResult getFish(FishSearchCriteria criteria) {
 

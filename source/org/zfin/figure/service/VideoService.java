@@ -3,7 +3,7 @@ package org.zfin.figure.service;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.Image;
 import org.zfin.expression.Video;
 import org.zfin.framework.HibernateUtil;
@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class VideoService {
 
-    public static Logger log = Logger.getLogger(VideoService.class);
+    public static Logger log = LogManager.getLogger(VideoService.class);
 
     /*
       A video is hung off of it's still image, so the still image needs to exist first

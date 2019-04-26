@@ -3,7 +3,7 @@ package org.zfin.gwt.curation.server;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -47,7 +47,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 
 public class FeatureRPCServiceImpl extends RemoteServiceServlet implements FeatureRPCService {
 
-    private transient Logger logger = Logger.getLogger(FeatureRPCServiceImpl.class);
+    private transient Logger logger = LogManager.getLogger(FeatureRPCServiceImpl.class);
     private final MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private final PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
     private final SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();

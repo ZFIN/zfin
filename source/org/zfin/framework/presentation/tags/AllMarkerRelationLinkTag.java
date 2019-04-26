@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation.tags;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class AllMarkerRelationLinkTag extends BodyTagSupport {
 
-    transient Logger logger = Logger.getLogger(AllMarkerRelationLinkTag.class);
+    transient Logger logger = LogManager.getLogger(AllMarkerRelationLinkTag.class);
 
     private Accession accession;
     private boolean showParent;

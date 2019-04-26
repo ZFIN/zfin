@@ -1,7 +1,7 @@
 package org.zfin.sequence.reno;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.Species;
 import org.zfin.marker.Marker;
@@ -46,7 +46,7 @@ public class RunCandidate {
     @Column(name = "runcan_occurrence_order")
     private int occurrenceOrder;
     @Transient
-    private static final Logger LOG = Logger.getLogger(RunCandidate.class);
+    private static final Logger LOG = LogManager.getLogger(RunCandidate.class);
 
     /**
      * Is this record locked?

@@ -2,7 +2,8 @@ package org.zfin.database;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.*;
+import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.zfin.database.presentation.*;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DbScriptFileParser;
@@ -294,13 +295,6 @@ public class DatabaseService {
         return statement;
     }
 
-    public void setConsoleAppender() {
-        ConsoleAppender ca = new ConsoleAppender();
-        ca.setWriter(new OutputStreamWriter(System.out));
-        ca.setLayout(new PatternLayout("%r %-5p: %m%n"));
-        Logger.getRootLogger().addAppender(ca);
-    }
-
     public Map<String, List<List<String>>> getResultMap() {
         return resultMap;
     }
@@ -511,10 +505,11 @@ public class DatabaseService {
     }
 
     public void setLoggerLevelInfo() {
-        LOG.setLevel(Level.INFO);
+        Configurator.setLevel(LogManager.getLogger().getName(), Level.INFO);
     }
 
     public void setLoggerFile(File file) {
+/*
         FileAppender appender;
         try {
             String logFilePattern = "%r %-5p %m%n";
@@ -525,6 +520,7 @@ public class DatabaseService {
             return;
         }
         LOG.getRootLogger().addAppender(appender);
+*/
     }
 
     private boolean debugMode = true;
@@ -556,6 +552,6 @@ public class DatabaseService {
         }
     }
 
-    private final Logger LOG = Logger.getLogger(DatabaseService.class);
+    private final Logger LOG = LogManager.getLogger(DatabaseService.class);
 
 }

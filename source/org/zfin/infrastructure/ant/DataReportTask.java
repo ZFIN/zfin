@@ -4,7 +4,9 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.zfin.framework.HibernateUtil;
 
 import java.io.File;
@@ -57,7 +59,7 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     private void initLogger() {
         clearReportDirectory();
         setLoggerFile();
-        LOG.getRootLogger().setLevel(Level.WARN);
+        Configurator.setLevel(LogManager.getRootLogger().getName(), Level.WARN);
     }
 
     @Override
@@ -106,7 +108,7 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     }
 
     public static void main(String[] args) {
-        LOG.getRootLogger().setLevel(Level.INFO);
+///        LOG.getRootLogger().setLevel(Level.INFO);
         CommandLine commandLine = parseArguments(args, "???");
         String taskClassName = commandLine.getOptionValue(taskClassNameOpt.getOpt());
         String jobName = commandLine.getOptionValue(jobNameOpt.getOpt());

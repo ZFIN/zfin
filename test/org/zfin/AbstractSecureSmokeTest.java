@@ -4,7 +4,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
@@ -23,7 +23,7 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
 
     protected Person person;
     protected String password = "veryeasypass";
-    private final Logger logger = Logger.getLogger(AbstractSecureSmokeTest.class);
+    private final Logger logger = LogManager.getLogger(AbstractSecureSmokeTest.class);
 
     public AbstractSecureSmokeTest(WebClient webClient) {
         super(webClient);

@@ -1,6 +1,6 @@
 package org.zfin.ontology.repository;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -27,7 +27,7 @@ import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
  */
 public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
-    private final static Logger logger = Logger.getLogger(OntologyRepositoryTest.class);
+    private final static Logger logger = LogManager.getLogger(OntologyRepositoryTest.class);
 
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 

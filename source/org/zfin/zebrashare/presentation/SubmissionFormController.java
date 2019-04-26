@@ -1,6 +1,6 @@
 package org.zfin.zebrashare.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,7 +45,7 @@ public class SubmissionFormController {
     @Autowired
     private ZebrashareRepository zebrashareRepository;
 
-    private static final Logger LOG = Logger.getLogger(SubmissionFormController.class);
+    private static final Logger LOG = LogManager.getLogger(SubmissionFormController.class);
 
     @ModelAttribute("labOptions")
     private Collection<Lab> getLabOptions() {

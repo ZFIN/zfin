@@ -2,7 +2,7 @@ package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
@@ -363,6 +363,6 @@ public class XMLBlastController {
         BlastQueryThreadCollection.getInstance().addJobAndStart(blastSingleTicketQueryThread);
     }
 
-    private static Logger logger = Logger.getLogger(XMLBlastController.class);
+    private static Logger logger = LogManager.getLogger(XMLBlastController.class);
 
 }

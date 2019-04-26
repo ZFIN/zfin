@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.service.MarkerService;
@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class GeneEncodedRelationLinkTag extends BodyTagSupport {
 
-    transient Logger logger = Logger.getLogger(GeneEncodedRelationLinkTag.class);
+    transient Logger logger = LogManager.getLogger(GeneEncodedRelationLinkTag.class);
 
     private Accession accession;
     private boolean showParenthesis;

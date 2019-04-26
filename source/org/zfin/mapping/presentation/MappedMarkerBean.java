@@ -1,13 +1,13 @@
 package org.zfin.mapping.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.marker.Marker;
 
 import java.util.List;
 
 public class MappedMarkerBean {
 
-    private Logger logger = Logger.getLogger(MappedMarkerBean.class);
+    private Logger logger = LogManager.getLogger(MappedMarkerBean.class);
 
     private boolean hasMappedMarkers = false;
     private Marker marker;

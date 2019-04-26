@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.sequence.blast.*;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class BlastPresentationService {
 
-    private final static Logger logger = Logger.getLogger(BlastPresentationService.class);
+    private final static Logger logger = LogManager.getLogger(BlastPresentationService.class);
 
     /**
      * This method processes the databases so that they appear in the correct order with the correct indent.

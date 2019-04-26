@@ -1,7 +1,7 @@
 package org.zfin.framework;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.ontology.OntologyDataManager;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.properties.ZfinProperties;
@@ -32,7 +32,7 @@ import java.util.Date;
  */
 public class OntologyManagerServlet extends HttpServlet {
 
-    private static final Logger LOG = Logger.getLogger(OntologyManagerServlet.class);
+    private static final Logger LOG = LogManager.getLogger(OntologyManagerServlet.class);
 
     /**
      * Initialize this servlet.

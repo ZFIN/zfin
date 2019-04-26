@@ -2,7 +2,7 @@ package org.zfin.marker;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.expression.ExpressionExperiment;
@@ -28,7 +28,7 @@ import java.util.Set;
  */
 public class MergeService {
 
-    private static Logger logger = Logger.getLogger(MergeService.class);
+    private static Logger logger = LogManager.getLogger(MergeService.class);
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 

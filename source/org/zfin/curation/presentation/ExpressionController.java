@@ -1,8 +1,8 @@
 package org.zfin.curation.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -47,7 +47,7 @@ public class ExpressionController implements ExpressionCurationService {
     private CurationController curationController;
 
 
-    private final static Logger LOG = RootLogger.getLogger(ExpressionController.class);
+    private final static Logger LOG = LogManager.getLogger();
 
 
     /**

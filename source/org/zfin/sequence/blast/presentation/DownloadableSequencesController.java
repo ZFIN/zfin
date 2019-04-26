@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class DownloadableSequencesController {
 
-    private final Logger logger = Logger.getLogger(DownloadableSequencesController.class);
+    private final Logger logger = LogManager.getLogger(DownloadableSequencesController.class);
 
     @RequestMapping("/blast/blast-files")
     protected String showBlastDefinitions(HttpServletResponse response,

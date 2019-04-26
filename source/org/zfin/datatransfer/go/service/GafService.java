@@ -3,7 +3,7 @@ package org.zfin.datatransfer.go.service;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.Species;
 import org.zfin.datatransfer.go.*;
 import org.zfin.gwt.root.dto.GoDefaultPublication;
@@ -49,7 +49,7 @@ import static org.zfin.repository.RepositoryFactory.getMarkerGoTermEvidenceRepos
 //@Service
 public class GafService {
 
-    protected Logger logger = Logger.getLogger(GafService.class);
+    protected Logger logger = LogManager.getLogger(GafService.class);
     protected static final String PUBMED_PREFIX = "PMID:";
 
     protected SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();

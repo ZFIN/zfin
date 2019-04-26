@@ -1,7 +1,7 @@
 package org.zfin.gwt.curation.server;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -32,7 +32,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileStructuresRPC {
 
-    private static final Logger LOG = RootLogger.getLogger(StructureRPCImpl.class);
+    private static final Logger LOG = LogManager.getLogger(StructureRPCImpl.class);
 
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 

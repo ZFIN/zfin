@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.sequence.blast.BlastDatabaseException;
 import org.zfin.sequence.blast.Database;
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class BlastPresentationServiceTest {
 
-    private final static Logger logger = Logger.getLogger(BlastPresentationServiceTest.class) ;
+    private final static Logger logger = LogManager.getLogger(BlastPresentationServiceTest.class) ;
 
     @Test
     public void parentOnlyOrdering() throws BlastDatabaseException {

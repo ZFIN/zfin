@@ -2,7 +2,7 @@ package org.zfin.sequence.reno.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerFamilyName;
@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class NomenclatureCandidateValidator extends AbstractRunCandidateValidator {
 
-    private static final Logger LOG = Logger.getLogger(NomenclatureCandidateValidator.class);
+    private static final Logger LOG = LogManager.getLogger(NomenclatureCandidateValidator.class);
     private RenoRepository rr = RepositoryFactory.getRenoRepository();
     private MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private PublicationRepository pr = RepositoryFactory.getPublicationRepository();

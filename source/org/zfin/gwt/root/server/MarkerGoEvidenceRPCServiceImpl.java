@@ -2,7 +2,7 @@ package org.zfin.gwt.root.server;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.Species;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
@@ -46,7 +46,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
     private transient MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private transient MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository = RepositoryFactory.getMarkerGoTermEvidenceRepository();
     private transient InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-    private final static transient Logger logger = Logger.getLogger(MarkerGoEvidenceRPCServiceImpl.class);
+    private final static transient Logger logger = LogManager.getLogger(MarkerGoEvidenceRPCServiceImpl.class);
     private transient UniprotService uniprotService = new UniprotService();
 
     private transient GafOrganization zfinGafOrganization;

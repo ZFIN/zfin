@@ -1,7 +1,7 @@
 package org.zfin.util.downloads;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.database.UnloadInfo;
 
 import java.io.File;
@@ -17,7 +17,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
  */
 public abstract class ArchiveService {
 
-    private static Logger LOG = Logger.getLogger(ArchiveService.class);
+    private static Logger LOG = LogManager.getLogger(ArchiveService.class);
     public static final String DATE_PREFIX = "yyyy.MM.dd";
 
     // store the date the cache was last updated

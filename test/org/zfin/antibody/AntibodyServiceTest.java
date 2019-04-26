@@ -1,6 +1,6 @@
 package org.zfin.antibody;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
@@ -34,7 +34,7 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
  */
 public class AntibodyServiceTest extends AbstractDatabaseTest {
 
-    private static final Logger logger = Logger.getLogger(AntibodyServiceTest.class);
+    private static final Logger logger = LogManager.getLogger(AntibodyServiceTest.class);
 
 
     @Test

@@ -1,6 +1,6 @@
 package org.zfin.infrastructure;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 
@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class EnumValidationTest extends AbstractDatabaseTest {
 
 
-    private static Logger logger = Logger.getLogger(EnumValidationTest.class);
+    private static Logger logger = LogManager.getLogger(EnumValidationTest.class);
 
     private EnumValidationService enumValidationService = new EnumValidationService();
 

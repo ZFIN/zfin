@@ -2,7 +2,7 @@ package org.zfin.publication.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
@@ -43,7 +43,7 @@ public class PublicationService {
 
     public static final String SESSION_PUBLICATIONS = "SessionPublications";
 
-    private static final Logger LOG = Logger.getLogger(PublicationService.class);
+    private static final Logger LOG = LogManager.getLogger(PublicationService.class);
 
     private static String generateKey(String key) {
         String user = getUserName();

@@ -1,6 +1,6 @@
 package org.zfin.marker;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 @WebAppConfiguration
 public class MarkerServiceTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(MarkerServiceTest.class);
+    private Logger logger = LogManager.getLogger(MarkerServiceTest.class);
 
     @Test
     public void getRelatedMarkerDisplayTest() {

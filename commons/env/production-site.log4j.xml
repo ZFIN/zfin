@@ -16,7 +16,7 @@
 
     <appender name="json" class="org.apache.log4j.RollingFileAppender">
         <param name="File" value="${catalina.base}/logs/catalina.json"/>
-        <layout class="org.zfin.util.ZfinJsonEventLayout"/>
+        <layout class="net.logstash.log4j.JSONEventLayout"/>
     </appender>
 
 

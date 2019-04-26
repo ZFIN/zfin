@@ -2,7 +2,7 @@ package org.zfin.profile.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -33,7 +33,7 @@ public class ProfileService {
 
     public static final String SALT = "dedicated to George Streisinger";
 
-    private Logger logger = Logger.getLogger(ProfileService.class);
+    private Logger logger = LogManager.getLogger(ProfileService.class);
     private Md5PasswordEncoder encoder = new Md5PasswordEncoder();
 
     @Autowired

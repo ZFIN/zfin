@@ -1,6 +1,6 @@
 package org.zfin.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.marker.Marker;
 
 import java.io.Serializable;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Serializable {
 
 
-    Logger logger = Logger.getLogger(MarkerDBLink.class);
+    Logger logger = LogManager.getLogger(MarkerDBLink.class);
 
     private Marker marker;
 //    private Accession referencingAccession ;

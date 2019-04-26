@@ -4,7 +4,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 
@@ -18,7 +18,7 @@ public class ReportGenerator {
 
     public enum Format { HTML, TXT }
 
-    private final static Logger log = Logger.getLogger(ReportGenerator.class);
+    private final static Logger log = LogManager.getLogger(ReportGenerator.class);
 
     private final static String REPORT_TITLE = "reportTitle";
     private final static String TIME_STAMP = "timeStamp";

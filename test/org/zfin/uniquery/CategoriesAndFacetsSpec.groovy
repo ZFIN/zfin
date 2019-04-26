@@ -1,6 +1,8 @@
 package org.zfin.uniquery
 
-import org.apache.log4j.Logger
+
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.apache.solr.client.solrj.SolrClient
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.response.FacetField
@@ -17,7 +19,7 @@ import spock.lang.Unroll
 
 class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
 
-    public static Logger logger = Logger.getLogger(CategoriesAndFacetsSpec.class)
+    public static Logger logger = LogManager.getLogger(CategoriesAndFacetsSpec.class)
 
     @Autowired
     SolrService solrService

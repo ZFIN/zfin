@@ -3,7 +3,7 @@ package org.zfin.sequence.blast;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.gwt.marker.ui.SequenceValidator;
 import org.zfin.properties.ZfinProperties;
@@ -20,7 +20,7 @@ import java.util.Set;
 
 public abstract class WebHostWublastBlastService extends AbstractWublastBlastService {
 
-    private static final Logger logger = Logger.getLogger(WebHostWublastBlastService.class);
+    private static final Logger logger = LogManager.getLogger(WebHostWublastBlastService.class);
 
     @Override
     public List<String> getPrefixCommands() {

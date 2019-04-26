@@ -1,7 +1,7 @@
 package org.zfin.infrastructure.ant;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.io.File;
@@ -25,7 +25,7 @@ public class ReportConfiguration {
     private String reportName;
     private boolean useDefaultReportTemplate = true;
 
-    protected static final Logger LOG = Logger.getLogger(ReportConfiguration.class);
+    protected static final Logger LOG = LogManager.getLogger(ReportConfiguration.class);
 
 
     public ReportConfiguration(String jobName, File templateDirectory, File reportDirectory, String reportName) {

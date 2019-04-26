@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
@@ -24,7 +24,7 @@ import java.util.*;
  */
 public class HibernateBlastRepository implements BlastRepository {
 
-    public static Logger logger = Logger.getLogger(HibernateBlastRepository.class);
+    public static Logger logger = LogManager.getLogger(HibernateBlastRepository.class);
 
     public Database getDatabase(Database.AvailableAbbrev blastDatabaseAvailableAbbrev) {
         Session session = HibernateUtil.currentSession();

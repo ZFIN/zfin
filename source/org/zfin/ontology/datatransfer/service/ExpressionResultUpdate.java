@@ -1,8 +1,10 @@
 package org.zfin.ontology.datatransfer.service;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.service.ExpressionService;
@@ -14,7 +16,10 @@ import org.zfin.ontology.datatransfer.CronJobUtil;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.util.*;
+import org.zfin.util.DateUtil;
+import org.zfin.util.ExpressionResultSplitStatement;
+import org.zfin.util.TermFigureStageRange;
+import org.zfin.util.TermStageSplitStatement;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +29,6 @@ import java.util.List;
 
 import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.*;
 import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 
@@ -65,8 +69,8 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
     private static String updateFile;
 
     public static void main(String[] arguments) {
-        LOG = Logger.getLogger(ExpressionResultUpdate.class);
-        LOG.setLevel(Level.INFO);
+        LOG = LogManager.getLogger(ExpressionResultUpdate.class);
+        Configurator.setLevel(LogManager.getLogger().getName(), Level.INFO);
         LOG.info("Start Expression-Result Update: " + (new Date()).toString());
         CommandLine commandLine = parseArguments(arguments, "load <>");
 //        initializeLogger(commandLine.getOptionValue(log4jFileOption.getOpt()));

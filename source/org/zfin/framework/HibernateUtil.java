@@ -1,6 +1,6 @@
 package org.zfin.framework;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
@@ -26,7 +26,7 @@ import java.sql.SQLException;
  */
 public class HibernateUtil {
 
-    private static Logger log = Logger.getLogger(HibernateUtil.class);
+    private static Logger log = LogManager.getLogger(HibernateUtil.class);
 
     private static SessionFactory sessionFactory;
 

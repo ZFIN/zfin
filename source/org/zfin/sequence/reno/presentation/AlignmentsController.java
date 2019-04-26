@@ -1,6 +1,6 @@
 package org.zfin.sequence.reno.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,7 +17,7 @@ import org.zfin.sequence.reno.RunCandidate;
 @RequestMapping(value = "/reno")
 public class AlignmentsController {
 
-    private static Logger logger = Logger.getLogger(AlignmentsController.class);
+    private static Logger logger = LogManager.getLogger(AlignmentsController.class);
 
     public AlignmentsController() {
         // set here because test-classes choke without it

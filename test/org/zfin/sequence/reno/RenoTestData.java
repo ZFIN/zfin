@@ -1,6 +1,7 @@
 package org.zfin.sequence.reno;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.zfin.Species;
 import org.zfin.marker.Marker;
@@ -23,7 +24,7 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  */
 public class RenoTestData {
 
-    private final Logger logger = Logger.getLogger(RenoTestData.class);
+    private final Logger logger = LogManager.getLogger(RenoTestData.class);
     private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();

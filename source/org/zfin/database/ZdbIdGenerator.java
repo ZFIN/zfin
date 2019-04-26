@@ -1,6 +1,6 @@
 package org.zfin.database;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.Session;
@@ -41,7 +41,7 @@ import java.util.Set;
  */
 public class ZdbIdGenerator implements IdentifierGenerator, Configurable {
 
-    private static final Logger LOG = Logger.getLogger(ZdbIdGenerator.class);
+    private static final Logger LOG = LogManager.getLogger(ZdbIdGenerator.class);
     private String objectType;
     private boolean insertActiveData = false;
     private boolean insertActiveSource = false;

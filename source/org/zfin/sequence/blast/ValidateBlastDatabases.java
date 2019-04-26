@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.infrastructure.ant.ReportConfiguration;
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ValidateBlastDatabases extends AbstractValidateDataReportTask {
 
-    private static Logger logger = Logger.getLogger(ValidateBlastDatabases.class);
+    private static Logger logger = LogManager.getLogger(ValidateBlastDatabases.class);
 
     public ValidateBlastDatabases(String jobName, String propertyPath, String baseDir) {
         super(jobName, propertyPath, baseDir);

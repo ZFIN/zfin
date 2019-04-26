@@ -1,6 +1,6 @@
 package org.zfin.feature.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequestMapping(value = "/genotype")
 public class GenotypeDetailController {
 
-    private static final Logger LOG = Logger.getLogger(GenotypeDetailController.class);
+    private static final Logger LOG = LogManager.getLogger(GenotypeDetailController.class);
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
 
     @RequestMapping(value = {"/genotype-detail-popup"})

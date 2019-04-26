@@ -1,6 +1,6 @@
 package org.zfin.infrastructure;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class SerializationTests {
 
-    private final Logger logger = Logger.getLogger(SerializationTests.class);
+    private final Logger logger = LogManager.getLogger(SerializationTests.class);
 
     private OntologyTokenizer tokenizer = new OntologyTokenizer();
 

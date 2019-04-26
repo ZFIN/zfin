@@ -2,7 +2,7 @@ package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.sequence.blast.BlastQueryThreadCollection;
 import org.zfin.sequence.blast.BlastThreadService;
 import org.zfin.sequence.blast.Database;
@@ -23,7 +23,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
     private List<Database> actualDatabaseTargets;
     private List<XMLBlastBean> otherQueries;
 
-    private Logger logger = Logger.getLogger(XMLBlastBean.class) ;
+    private Logger logger = LogManager.getLogger(XMLBlastBean.class) ;
 
 
     public static enum QueryTypes {

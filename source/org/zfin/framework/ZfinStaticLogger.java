@@ -1,13 +1,11 @@
 package org.zfin.framework;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.RollingFileAppender;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.FileUtil;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -19,7 +17,7 @@ public class ZfinStaticLogger {
      */
     protected static ArrayList messages = new ArrayList();
 
-    private static final Logger logger = Logger.getLogger(ZfinStaticLogger.class);
+    private static final Logger logger = LogManager.getLogger(ZfinStaticLogger.class);
 
     static {
 
@@ -27,6 +25,7 @@ public class ZfinStaticLogger {
         //TODO: make this access more generic
         // independent of the servlet container.
         String absoluteFilePath = getFullLogFileName(logFileName);
+/*
         RollingFileAppender appender = null;
         try {
             String logFilePattern = ZfinPropertiesEnum.LOG_FILE_PATTERN.value();
@@ -38,6 +37,7 @@ public class ZfinStaticLogger {
             e.printStackTrace();
         }
         logger.addAppender(appender);
+*/
     }
 
     /**

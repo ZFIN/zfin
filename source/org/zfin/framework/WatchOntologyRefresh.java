@@ -1,6 +1,6 @@
 package org.zfin.framework;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 
@@ -17,7 +17,7 @@ public class WatchOntologyRefresh {
     private final Map<WatchKey, Path> keys;
     private boolean trace = false;
 
-    private static final Logger LOG = Logger.getLogger(WatchOntologyRefresh.class);
+    private static final Logger LOG = LogManager.getLogger(WatchOntologyRefresh.class);
 
     @SuppressWarnings("unchecked")
     static <T> WatchEvent<T> cast(WatchEvent<?> event) {

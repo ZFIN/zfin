@@ -1,6 +1,6 @@
 package org.zfin.gwt.curation.server;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -28,7 +28,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implements CurationPhenotypeRPC {
 
-    private static final Logger logger = Logger.getLogger(CurationPhenotypeRPCImpl.class);
+    private static final Logger logger = LogManager.getLogger(CurationPhenotypeRPCImpl.class);
 
     public List<ExpressionPhenotypeExperimentDTO> getPhenotypeFromExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID) {
         List<ExpressionResult2> expressionResultList = getExpressionRepository().getPhenotypeFromExpressionsByFigureFish(experimentFilter.getPublicationID(),

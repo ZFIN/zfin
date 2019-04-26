@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -53,7 +53,7 @@ public class DisplayGroupController {
         return "dev-tools/display-groups.page";
     }
 
-    private Logger logger = Logger.getLogger(DisplayGroupController.class);
+    private Logger logger = LogManager.getLogger(DisplayGroupController.class);
 
     private void handleCommand(DisplayGroupBean formBean) {
         DisplayGroup displayGroup = (DisplayGroup) HibernateUtil.currentSession().get(DisplayGroup.class, formBean.getDisplayGroupToEditID());

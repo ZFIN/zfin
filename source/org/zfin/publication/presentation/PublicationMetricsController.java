@@ -1,6 +1,6 @@
 package org.zfin.publication.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/publication")
 public class PublicationMetricsController {
 
-    private final static Logger LOG = Logger.getLogger(PublicationMetricsController.class);
+    private final static Logger LOG = LogManager.getLogger(PublicationMetricsController.class);
 
     @Autowired
     private PublicationRepository publicationRepository;

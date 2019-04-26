@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 /**
  * A heuristic factory for testing blast.
@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  */
 public class ProductionBlastHeuristicFactory extends BlastHeuristicFactory {
 
-    private final Logger logger = Logger.getLogger(ProductionBlastHeuristicFactory.class);
+    private final Logger logger = LogManager.getLogger(ProductionBlastHeuristicFactory.class);
 
 
     private int maxSegs = 10;  // the maximum # of segments we can create

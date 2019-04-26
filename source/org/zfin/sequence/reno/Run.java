@@ -1,6 +1,6 @@
 package org.zfin.sequence.reno;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.publication.Publication;
 
@@ -20,7 +20,7 @@ import java.util.Set;
 public abstract class Run {
 
     @Transient
-    Logger logger = Logger.getLogger(Run.class);
+    Logger logger = LogManager.getLogger(Run.class);
 
     public enum Type {
 

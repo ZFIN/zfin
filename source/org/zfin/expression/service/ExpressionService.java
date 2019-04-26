@@ -1,7 +1,7 @@
 package org.zfin.expression.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
@@ -42,7 +42,7 @@ public class ExpressionService {
 
     public static final String MICROARRAY_PUB = "ZDB-PUB-071218-1";
 
-    private static Logger logger = Logger.getLogger(ExpressionService.class);
+    private static Logger logger = LogManager.getLogger(ExpressionService.class);
 
     private static ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();

@@ -20,7 +20,7 @@ public class ZfinDispatcher implements Dispatcher {
     public Request send(Method method, RequestBuilder builder) throws RequestException {
 /*
         if(GWT.isClient()  ){
-            Logger logger = Logger.getLogger( ZfinDispatcher.class.getName() );
+            Logger logger = LogManager.getLogger( ZfinDispatcher.class.getName() );
             logger.severe("Sending http request: " + builder.getHTTPMethod() + " "
                     + builder.getUrl() + " ,timeout:"
                     + builder.getTimeoutMillis());

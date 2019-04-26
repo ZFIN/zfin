@@ -1,6 +1,6 @@
 package org.zfin.ontology;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -18,7 +18,7 @@ public abstract class AbstractOntologyTest {
 
 //    protected final static Ontology ontology = Ontology.ANATOMY;
     protected static OntologyManager ontologyManager ;
-    private static final Logger logger = Logger.getLogger(AbstractOntologyTest.class);
+    private static final Logger logger = LogManager.getLogger(AbstractOntologyTest.class);
     private static String oldTempDirectory ;
     public static String testTempDirectory = "test/ontologies";
     protected final static String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

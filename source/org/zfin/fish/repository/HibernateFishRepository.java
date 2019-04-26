@@ -1,6 +1,6 @@
 package org.zfin.fish.repository;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -21,7 +21,7 @@ import java.util.Set;
 @Repository
 public class HibernateFishRepository implements FishRepository {
 
-    private static Logger logger = Logger.getLogger(HibernateFishRepository.class);
+    private static Logger logger = LogManager.getLogger(HibernateFishRepository.class);
 
     public Set<ZfinFigureEntity> getAllFigures(String fishZdbID) {
         String sql = "select phenox_fig_zdb_id,\n" +

@@ -1,7 +1,7 @@
 package org.zfin.wiki.jobs;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.infrastructure.ant.ReportConfiguration;
 import org.zfin.wiki.*;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateDataReportTask {
 
-    private static final Logger logger = Logger.getLogger(ValidatePermissionsForZebrafishBookJob.class);
+    private static final Logger logger = LogManager.getLogger(ValidatePermissionsForZebrafishBookJob.class);
 
     public ValidatePermissionsForZebrafishBookJob(String jobName, String propertyFilePath, String jobDirectoryString) {
         super(jobName, propertyFilePath, jobDirectoryString);

@@ -1,7 +1,7 @@
 package org.zfin.construct.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.zfin.marker.Marker;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ConstructAddValidator implements Validator {
 
-    private static Logger logger = Logger.getLogger(ConstructAddValidator.class);
+    private static Logger logger = LogManager.getLogger(ConstructAddValidator.class);
 
     public boolean supports(Class aClass) {
         return ConstructAddBean.class.equals(aClass);

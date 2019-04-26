@@ -1,6 +1,6 @@
 package org.zfin.framework.filter;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.ZfinStaticLogger;
 
 import javax.servlet.*;
@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 public class HtmlCleanupFilter implements Filter {
 
-    private static final Logger LOG = Logger.getLogger(HtmlCleanupFilter.class);
+    private static final Logger LOG = LogManager.getLogger(HtmlCleanupFilter.class);
 
     public void init(FilterConfig filterConfig) throws ServletException {
 

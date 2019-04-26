@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
@@ -19,7 +19,7 @@ import java.io.StringReader;
 @Component
 public class XMLBlastValidator implements Validator {
 
-    private static Logger logger = Logger.getLogger(XMLBlastValidator.class);
+    private static Logger logger = LogManager.getLogger(XMLBlastValidator.class);
 
     private int querySequenceLimit = 50000;
 

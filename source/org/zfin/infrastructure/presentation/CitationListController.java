@@ -1,6 +1,6 @@
 package org.zfin.infrastructure.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +28,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 @RequestMapping("/infrastructure")
 public class CitationListController {
 
-    private Logger logger = Logger.getLogger(CitationListController.class);
+    private Logger logger = LogManager.getLogger(CitationListController.class);
 
     @RequestMapping(value = "data-citation-list/{zdbID}")
     public String featureMarkerelationCitationList(Model model, @PathVariable String zdbID) {

@@ -2,8 +2,8 @@ package org.zfin.curation.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +19,6 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -33,7 +32,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 @RequestMapping("/curation")
 public class ExperimentController implements ExperimentCurationService {
 
-    private final static Logger LOG = RootLogger.getLogger(ExperimentController.class);
+    private final static Logger LOG = LogManager.getRootLogger();
 
 
     @Override

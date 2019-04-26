@@ -1,7 +1,7 @@
 package org.zfin.curation.presentation;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,7 +45,7 @@ public class CurationController implements CurationService {
     @Autowired
     private PublicationRepository publicationRepository;
 
-    private final static Logger LOG = RootLogger.getLogger(CurationController.class);
+    private final static Logger LOG = LogManager.getRootLogger();
 
     @RequestMapping(value = "/{publicationID}/antibodies", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody

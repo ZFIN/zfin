@@ -1,7 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +26,7 @@ import java.util.Set;
 @Controller
 public class DeleteMarkerController {
 
-    private Logger logger = Logger.getLogger(DeleteMarkerController.class);
+    private Logger logger = LogManager.getLogger(DeleteMarkerController.class);
 
     @RequestMapping(value ="/delete")
     public String deleteMarker(

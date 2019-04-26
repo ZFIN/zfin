@@ -1,7 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.framework.presentation.EntityPresentation;
@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class MarkerPresentation extends EntityPresentation {
 
-    private static final Logger logger = Logger.getLogger(MarkerPresentation.class);
+    private static final Logger logger = LogManager.getLogger(MarkerPresentation.class);
     public static final String MARKER_NAME = "markerName";
 
     /**

@@ -1,7 +1,7 @@
 package org.zfin.datatransfer.microarray;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
@@ -18,7 +18,7 @@ public class MicroarrayWebserviceJob extends AbstractValidateDataReportTask {
 
     public static final String MICROARRAY_PUB = "ZDB-PUB-071218-1";
 
-    private static Logger logger = Logger.getLogger(MicroarrayWebserviceJob.class);
+    private static Logger logger = LogManager.getLogger(MicroarrayWebserviceJob.class);
 
     private static final ExpressionService expressionService = new ExpressionService();
 

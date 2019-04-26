@@ -1,7 +1,7 @@
 package org.zfin.ontology.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -22,7 +22,7 @@ import java.util.TreeSet;
  */
 public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvidenceRepository {
 
-    protected Logger logger = Logger.getLogger(HibernateMarkerGoTermEvidenceRepository.class);
+    protected Logger logger = LogManager.getLogger(HibernateMarkerGoTermEvidenceRepository.class);
 
     @Override
     @SuppressWarnings("unchecked")

@@ -1,6 +1,6 @@
 package org.zfin.zebrashare.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,7 +38,7 @@ public class LineEditController {
     @Autowired
     private ZebrashareRepository zebrashareRepository;
 
-    private final static Logger LOG = Logger.getLogger(LineEditController.class);
+    private final static Logger LOG = LogManager.getLogger(LineEditController.class);
 
     @ModelAttribute("functionalConsequenceList")
     public List<FeatureCommunityContribution.FunctionalConsequence> getFunctionalConsequenceList() {

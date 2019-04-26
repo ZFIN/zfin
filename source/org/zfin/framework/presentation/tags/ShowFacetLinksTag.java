@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation.tags;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -27,7 +27,7 @@ public class ShowFacetLinksTag extends TagSupport {
     private SolrQuery query;
     private String baseUrl;
 
-    private Logger logger = Logger.getLogger(ShowFacetLinksTag.class);
+    private Logger logger = LogManager.getLogger(ShowFacetLinksTag.class);
 
 
     private String createFacetSection() {

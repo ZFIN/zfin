@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.profile.presentation.SourcePresentation;
 import org.zfin.properties.ZfinProperties;
@@ -10,7 +10,7 @@ import org.zfin.properties.ZfinProperties;
  */
 public class OrganizationLink implements ProvidesLink {
 
-    private Logger logger = Logger.getLogger(OrganizationLink.class);
+    private Logger logger = LogManager.getLogger(OrganizationLink.class);
 
     private String supplierZdbId;
     private String sourceUrl;

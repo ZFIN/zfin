@@ -1,6 +1,6 @@
 package org.zfin.mutant.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.framework.presentation.EntityPresentation;
@@ -18,7 +18,7 @@ import org.zfin.mutant.FishExperiment;
  */
 public class FishExperimentPresentation extends EntityPresentation {
 
-    private static Logger logger = Logger.getLogger(FishExperimentPresentation.class);
+    private static Logger logger = LogManager.getLogger(FishExperimentPresentation.class);
 
     public static String getLink(FishExperiment fishExperiment, boolean suppressPopupLink, boolean suppressMoDetails) {
             return FishPresentation.getLink(fishExperiment.getFish(), suppressPopupLink) + "   "

@@ -1,14 +1,17 @@
 package org.zfin.search.service
 
-import org.apache.log4j.Logger
+
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
 
 class SearchSuggestionServiceSpec extends ZfinIntegrationSpec {
 
-    public static Logger logger = Logger.getLogger(SearchSuggestionServiceSpec.class)
+    public static Logger logger = LogManager.getLogger(SearchSuggestionServiceSpec.class)
 
-    @Autowired SearchSuggestionService searchSuggestionService
+    @Autowired
+    SearchSuggestionService searchSuggestionService
 
 /*    @Shared SolrClient client
     @Shared SolrQuery query
@@ -32,9 +35,9 @@ class SearchSuggestionServiceSpec extends ZfinIntegrationSpec {
         result.contains(suggestion)
 
         where:
-        queryString             | suggestion
-        "osteogenesis"          | "ossification"
-        "krox20"                | "egr2b"
+        queryString    | suggestion
+        "osteogenesis" | "ossification"
+        "krox20"       | "egr2b"
 
     }
 

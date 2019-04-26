@@ -5,7 +5,8 @@ package org.zfin.infrastructure.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -29,7 +30,6 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerHistory;
-import org.zfin.marker.MarkerType;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
@@ -42,7 +42,6 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
-import org.zfin.util.ZfinStringUtils;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -54,7 +53,7 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 @Repository
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
 
-    private static Logger logger = Logger.getLogger(HibernateInfrastructureRepository.class);
+    private static Logger logger = LogManager.getLogger(HibernateInfrastructureRepository.class);
 
 
     public void insertActiveData(String zdbID) {
@@ -808,45 +807,45 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public int getGoRecordAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                        "select count(*)" +
-                        " from record_attribution, marker_go_term_evidence " +
-                        "      where recattrib_data_zdb_id = mrkrgoev_zdb_id " +
-                        "      and mrkrgoev_mrkr_zdb_id = :zdbID" +
-                        "      and recattrib_source_zdb_id = :pubZdbID  " +
-                        "")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+                "select count(*)" +
+                " from record_attribution, marker_go_term_evidence " +
+                "      where recattrib_data_zdb_id = mrkrgoev_zdb_id " +
+                "      and mrkrgoev_mrkr_zdb_id = :zdbID" +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
     public int getDBLinkAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                        "select count(*)" +
-                        " from record_attribution, db_link " +
-                        "      where recattrib_data_zdb_id = dblink_zdb_id " +
-                        "      and dblink_linked_recid = :zdbID" +
-                        "      and recattrib_source_zdb_id = :pubZdbID  " +
-                        "")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+                "select count(*)" +
+                " from record_attribution, db_link " +
+                "      where recattrib_data_zdb_id = dblink_zdb_id " +
+                "      and dblink_linked_recid = :zdbID" +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
     public int getDBLinkAssociatedToGeneAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                        "select count(*)" +
-                        " from record_attribution, db_link, marker_relationship " +
-                        "      where recattrib_data_zdb_id = dblink_zdb_id " +
-                        "      and dblink_linked_recid = mrel_mrkr_2_zdb_id" +
-                        "      and mrel_mrkr_1_zdb_id = :zdbID" +
-                        "     and mrel_type = 'gene encodes small segment' " +
-                        "      and recattrib_source_zdb_id = :pubZdbID  " +
-                        "")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+                "select count(*)" +
+                " from record_attribution, db_link, marker_relationship " +
+                "      where recattrib_data_zdb_id = dblink_zdb_id " +
+                "      and dblink_linked_recid = mrel_mrkr_2_zdb_id" +
+                "      and mrel_mrkr_1_zdb_id = :zdbID" +
+                "     and mrel_type = 'gene encodes small segment' " +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
@@ -860,15 +859,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      */
     public int getFirstMarkerRelationshipAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                        "select count(*)" +
-                        " from record_attribution, marker_relationship " +
-                        "      where recattrib_data_zdb_id = mrel_mrkr_1_zdb_id " +
-                        "      and mrel_mrkr_2_zdb_id = :zdbID" +
-                        "      and recattrib_source_zdb_id = :pubZdbID  " +
-                        "")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+                "select count(*)" +
+                " from record_attribution, marker_relationship " +
+                "      where recattrib_data_zdb_id = mrel_mrkr_1_zdb_id " +
+                "      and mrel_mrkr_2_zdb_id = :zdbID" +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
@@ -881,56 +880,56 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      */
     public int getSecondMarkerRelationshipAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                        "select count(*)" +
-                        " from record_attribution, marker_relationship " +
-                        "      where recattrib_data_zdb_id = mrel_mrkr_2_zdb_id " +
-                        "      and mrel_mrkr_1_zdb_id = :zdbID" +
-                        "      and recattrib_source_zdb_id = :pubZdbID  " +
-                        "")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+                "select count(*)" +
+                " from record_attribution, marker_relationship " +
+                "      where recattrib_data_zdb_id = mrel_mrkr_2_zdb_id " +
+                "      and mrel_mrkr_1_zdb_id = :zdbID" +
+                "      and recattrib_source_zdb_id = :pubZdbID  " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
     public int getExpressionExperimentMarkerAttributions(Marker m, String pubZdbID) {
         if (m.isInTypeGroup(Marker.TypeGroup.ATB)) {
             return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                            "select count(*)" +
-                            " from record_attribution ra , expression_experiment ee " +
-                            " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
-                            " and ee.xpatex_atb_zdb_id = :zdbID " +
-                            " and ee.xpatex_source_zdb_id = :pubZdbID " +
-                            "")
-                            .setString("zdbID", m.getZdbID())
-                            .setString("pubZdbID", pubZdbID)
-                            .uniqueResult().toString()
+                    "select count(*)" +
+                    " from record_attribution ra , expression_experiment ee " +
+                    " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
+                    " and ee.xpatex_atb_zdb_id = :zdbID " +
+                    " and ee.xpatex_source_zdb_id = :pubZdbID " +
+                    "")
+                    .setString("zdbID", m.getZdbID())
+                    .setString("pubZdbID", pubZdbID)
+                    .uniqueResult().toString()
             );
         }
         // assume its a gene
         else if (m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                            "select count(*)" +
-                            " from record_attribution ra , expression_experiment ee " +
-                            " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
-                            " and ee.xpatex_gene_zdb_id = :zdbID " +
-                            " and ee.xpatex_source_zdb_id = :pubZdbID " +
-                            "")
-                            .setString("zdbID", m.getZdbID())
-                            .setString("pubZdbID", pubZdbID)
-                            .uniqueResult().toString()
+                    "select count(*)" +
+                    " from record_attribution ra , expression_experiment ee " +
+                    " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
+                    " and ee.xpatex_gene_zdb_id = :zdbID " +
+                    " and ee.xpatex_source_zdb_id = :pubZdbID " +
+                    "")
+                    .setString("zdbID", m.getZdbID())
+                    .setString("pubZdbID", pubZdbID)
+                    .uniqueResult().toString()
             );
         } else if (m.isInTypeGroup(Marker.TypeGroup.CDNA_AND_EST)) {
             return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                            "select count(*)" +
-                            " from record_attribution ra , expression_experiment ee " +
-                            " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
-                            " and ee.xpatex_probe_feature_zdb_id = :zdbID " +
-                            " and ee.xpatex_source_zdb_id = :pubZdbID " +
-                            "")
-                            .setString("zdbID", m.getZdbID())
-                            .setString("pubZdbID", pubZdbID)
-                            .uniqueResult().toString()
+                    "select count(*)" +
+                    " from record_attribution ra , expression_experiment ee " +
+                    " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
+                    " and ee.xpatex_probe_feature_zdb_id = :zdbID " +
+                    " and ee.xpatex_source_zdb_id = :pubZdbID " +
+                    "")
+                    .setString("zdbID", m.getZdbID())
+                    .setString("pubZdbID", pubZdbID)
+                    .uniqueResult().toString()
             );
         } else {
             return 0;
@@ -939,31 +938,31 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int getSequenceTargetingReagentEnvironmentAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                        "  select count(*)  " +
-                        " from record_attribution ra, fish_str str " +
-                        " where ra.recattrib_data_zdb_id = str.fishstr_fish_zdb_id " +
-                        " and str.fishstr_str_zdb_id = :zdbID " +
-                        " and  ra.recattrib_source_zdb_id = :pubZdbID " +
-                        "")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+                "  select count(*)  " +
+                " from record_attribution ra, fish_str str " +
+                " where ra.recattrib_data_zdb_id = str.fishstr_fish_zdb_id " +
+                " and str.fishstr_str_zdb_id = :zdbID " +
+                " and  ra.recattrib_source_zdb_id = :pubZdbID " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
 
     public int getGenotypeExperimentRecordAttributions(String genotypeID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                        "  select count(*)  " +
-                        " from record_attribution ra, fish_experiment ge, fish fish  " +
-                        " where ra.recattrib_data_zdb_id = ge.genox_exp_zdb_id " +
-                        " and ge.genox_fish_zdb_id = fish_zdb_id " +
-                        " and fish.fish_genotype_zdb_id = :genotypeID " +
-                        " and  ra.recattrib_source_zdb_id = :pubZdbID " +
-                        "")
-                        .setString("genotypeID", genotypeID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+                "  select count(*)  " +
+                " from record_attribution ra, fish_experiment ge, fish fish  " +
+                " where ra.recattrib_data_zdb_id = ge.genox_exp_zdb_id " +
+                " and ge.genox_fish_zdb_id = fish_zdb_id " +
+                " and fish.fish_genotype_zdb_id = :genotypeID " +
+                " and  ra.recattrib_source_zdb_id = :pubZdbID " +
+                "")
+                .setString("genotypeID", genotypeID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
@@ -1038,7 +1037,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public int executeJdbcStatement(final DatabaseJdbcStatement jdbcStatement) {
         final Session session = currentSession();
-        return session.doReturningWork(new ReturningWork<Integer>(){
+        return session.doReturningWork(new ReturningWork<Integer>() {
             @Override
             public Integer execute(Connection connection) throws SQLException {
                 Statement statement = null;
@@ -1165,7 +1164,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public void executeJdbcQuery(final String query) {
         long start = System.currentTimeMillis();
         final Session session = currentSession();
-        session.doWork(new Work(){
+        session.doWork(new Work() {
             @Override
             public void execute(Connection connection) throws SQLException {
                 ResultSet rs = null;
@@ -1196,7 +1195,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     private void runBatchJDBCStatementIndividually(final DatabaseJdbcStatement jdbcStatement, final List<List<String>> data, final int start, final int end) {
         final Session session = currentSession();
-        session.doWork(new Work(){
+        session.doWork(new Work() {
             @Override
             public void execute(Connection connection) throws SQLException {
                 PreparedStatement statement = null;
@@ -1543,7 +1542,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public List<String> retrieveMetaData(final String table) {
         Session session = currentSession();
-        return session.doReturningWork(new ReturningWork<List<String>>(){
+        return session.doReturningWork(new ReturningWork<List<String>>() {
             @Override
             public List<String> execute(Connection connection) throws SQLException {
                 PreparedStatement statement = null;
@@ -1587,7 +1586,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public List<Column> retrieveColumnMetaData(final Table table) {
         final String tableName = table.getTableName();
         Session session = currentSession();
-        return session.doReturningWork(new ReturningWork<List<Column>>(){
+        return session.doReturningWork(new ReturningWork<List<Column>>() {
             @Override
             public List<Column> execute(Connection connection) throws SQLException {
                 PreparedStatement statement = null;
@@ -1640,16 +1639,16 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int getGenotypeExpressionExperimentRecordAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
-                        "  select count(*)  " +
-                        " from record_attribution ra, fish_experiment ge, expression_experiment ee, fish f " +
-                        " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
-                        " and ee.xpatex_genox_zdb_id = ge.genox_zdb_id " +
-                        " and ge.genox_fish_zdb_id = :zdbID " +
-                        " and  ra.recattrib_source_zdb_id = :pubZdbID " +
-                        "")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+                "  select count(*)  " +
+                " from record_attribution ra, fish_experiment ge, expression_experiment ee, fish f " +
+                " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
+                " and ee.xpatex_genox_zdb_id = ge.genox_zdb_id " +
+                " and ge.genox_fish_zdb_id = :zdbID " +
+                " and  ra.recattrib_source_zdb_id = :pubZdbID " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 

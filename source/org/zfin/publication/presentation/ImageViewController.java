@@ -1,6 +1,6 @@
 package org.zfin.publication.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,7 +36,7 @@ import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 @RequestMapping("/image")
 public class ImageViewController {
 
-    private static Logger LOG = Logger.getLogger(ImageViewController.class);
+    private static Logger LOG = LogManager.getLogger(ImageViewController.class);
 
     @Autowired
     private FigureViewService figureViewService;

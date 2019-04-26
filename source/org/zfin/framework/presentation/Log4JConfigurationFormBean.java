@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.Map;
 /**
  * Form bean being used whenever a property file is being viewed.
  */
-public class Log4JConfigurationFormBean  {
+public class Log4JConfigurationFormBean {
 
-    private List<Logger> allLoggers;
+    private List<LoggerConfig> allLoggers;
     private String LoggerLevel;
     private boolean showAllLevels;
     private String type;
@@ -22,11 +22,11 @@ public class Log4JConfigurationFormBean  {
     private String[] loggerName;
     private List<Appender> appenders;
 
-    public List<Logger> getAllLoggers() {
+    public List<LoggerConfig> getAllLoggers() {
         return allLoggers;
     }
 
-    public void setAllLoggers(List<Logger> allLoggers) {
+    public void setAllLoggers(List<LoggerConfig> allLoggers) {
         this.allLoggers = allLoggers;
     }
 
@@ -94,8 +94,8 @@ public class Log4JConfigurationFormBean  {
         return type != null && type.equals("create");
     }
 
-    public Map<String,String> getLoggerValues() {
-        Map<String,String> entries = new LinkedHashMap<String, String>();
+    public Map<String, String> getLoggerValues() {
+        Map<String, String> entries = new LinkedHashMap<String, String>();
         entries.put("DEBUG", "DEBUG");
         entries.put("INFO", "INFO");
         entries.put("WARN", "WARN");

@@ -1,7 +1,7 @@
 package org.zfin.datatransfer.webservice;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class NCBIEfetch {
 
-    private final static Logger logger = Logger.getLogger(NCBIEfetch.class);
+    private final static Logger logger = LogManager.getLogger(NCBIEfetch.class);
 
     private final static String DOT = ".";
     private final static String UNDERSCORE = "_";

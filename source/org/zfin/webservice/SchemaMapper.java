@@ -1,6 +1,6 @@
 package org.zfin.webservice;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;
@@ -18,7 +18,7 @@ public class SchemaMapper {
 
     private static final ObjectFactory objectFactory = new ObjectFactory();
 
-    private static final Logger logger = Logger.getLogger(SchemaMapper.class);
+    private static final Logger logger = LogManager.getLogger(SchemaMapper.class);
 
     private static ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
 

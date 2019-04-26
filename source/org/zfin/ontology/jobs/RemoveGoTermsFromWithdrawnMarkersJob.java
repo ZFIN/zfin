@@ -2,7 +2,7 @@ package org.zfin.ontology.jobs;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class RemoveGoTermsFromWithdrawnMarkersJob extends AbstractValidateDataReportTask {
 
-    private static final Logger logger = Logger.getLogger(RemoveGoTermsFromWithdrawnMarkersJob.class);
+    private static final Logger logger = LogManager.getLogger(RemoveGoTermsFromWithdrawnMarkersJob.class);
 
     public RemoveGoTermsFromWithdrawnMarkersJob(String jobName, String propertyDirectory, String baseDir) {
         super(jobName, propertyDirectory, baseDir);

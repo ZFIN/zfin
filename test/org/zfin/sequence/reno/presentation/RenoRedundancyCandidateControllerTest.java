@@ -1,6 +1,7 @@
 package org.zfin.sequence.reno.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
     private final RenoTestData renoTestData = new RenoTestData();
 
-    private static Logger logger = Logger.getLogger(RenoRedundancyCandidateControllerTest.class);
+    private static Logger logger = LogManager.getLogger(RenoRedundancyCandidateControllerTest.class);
     private static RenoRepository renoRepository = RepositoryFactory.getRenoRepository();
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();

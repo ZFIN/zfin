@@ -1,7 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/marker")
 public class GeneAddController {
 
-    private static Logger LOG = Logger.getLogger(GeneAddController.class);
+    private static Logger LOG = LogManager.getLogger(GeneAddController.class);
 
     @Autowired
     private MarkerRepository markerRepository;

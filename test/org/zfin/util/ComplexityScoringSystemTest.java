@@ -1,6 +1,6 @@
 package org.zfin.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class ComplexityScoringSystemTest {
 
-    private static Logger logger = Logger.getLogger(ComplexityScoringSystemTest.class);
+    private static Logger logger = LogManager.getLogger(ComplexityScoringSystemTest.class);
     //private static int[] scores = {1, 2, 4, 8, 13, 21, 31, 45, 66, 81, 97, 123, 148};
     //private static int[] scores = {1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37};
     // score value of first element

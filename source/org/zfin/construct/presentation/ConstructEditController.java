@@ -1,7 +1,7 @@
 package org.zfin.construct.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import java.util.List;
 @RequestMapping("/construct")
 public class ConstructEditController {
 
-    private static Logger LOG = Logger.getLogger(ConstructEditController.class);
+    private static Logger LOG = LogManager.getLogger(ConstructEditController.class);
 
     @Autowired
     private MarkerRepository mr;
@@ -48,7 +48,7 @@ public class ConstructEditController {
     private SequenceRepository sr;
 
 
-    private static Logger logger = Logger.getLogger(ConstructEditController.class);
+    private static Logger logger = LogManager.getLogger(ConstructEditController.class);
 
     private ConstructAddValidator validator = new ConstructAddValidator();
 

@@ -2,7 +2,7 @@ package org.zfin.httpunittest;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -23,7 +23,7 @@ public class MarkerViewSmokeTest extends AbstractSmokeTest {
         super(webClient);
     }
 
-    private static final Logger LOG = Logger.getLogger(MarkerViewSmokeTest.class);
+    private static final Logger LOG = LogManager.getLogger(MarkerViewSmokeTest.class);
 
     static HashMap<String, String> markerTypes = new HashMap<>();
 

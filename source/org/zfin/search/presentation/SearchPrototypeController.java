@@ -5,7 +5,7 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -59,7 +59,7 @@ public class SearchPrototypeController {
     @Autowired
     private ZdbIDService zdbIDService;
 
-    public Logger logger = Logger.getLogger(SearchPrototypeController.class);
+    public Logger logger = LogManager.getLogger(SearchPrototypeController.class);
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {

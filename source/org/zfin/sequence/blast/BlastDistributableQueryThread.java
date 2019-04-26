@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 import org.zfin.sequence.blast.results.BlastOutput;
@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class BlastDistributableQueryThread extends AbstractQueryThread implements BlastThreadCollection {
 
-    private final static Logger logger = Logger.getLogger(BlastDistributableQueryThread.class);
+    private final static Logger logger = LogManager.getLogger(BlastDistributableQueryThread.class);
 
     private Collection<BlastQueryJob> blastSlices = new ConcurrentLinkedQueue<BlastQueryJob>();
     private BlastHeuristicCollection blastHeuristicCollection;

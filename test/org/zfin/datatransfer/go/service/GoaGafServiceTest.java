@@ -1,6 +1,6 @@
 package org.zfin.datatransfer.go.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  */
 public class GoaGafServiceTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(GoaGafServiceTest.class);
+    private Logger logger = LogManager.getLogger(GoaGafServiceTest.class);
     private GafService gafService = new GafService(GafOrganization.OrganizationEnum.GOA);
     private FpInferenceGafParser gafParser = new GoaGafParser();
 

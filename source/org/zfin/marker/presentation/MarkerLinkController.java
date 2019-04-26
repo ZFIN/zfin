@@ -1,7 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -36,7 +36,7 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 @RequestMapping("/marker")
 public class MarkerLinkController {
 
-    private static Logger LOG = Logger.getLogger(MarkerLinkController.class);
+    private static Logger LOG = LogManager.getLogger(MarkerLinkController.class);
 
     @Autowired
     private MarkerRepository markerRepository;

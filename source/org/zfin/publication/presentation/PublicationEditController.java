@@ -1,7 +1,7 @@
 package org.zfin.publication.presentation;
 
 import org.apache.http.HttpStatus;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -47,7 +47,7 @@ public class PublicationEditController {
     @Autowired
     private PublicationService publicationService;
 
-    private static Logger logger = Logger.getLogger(PublicationEditController.class);
+    private static Logger logger = LogManager.getLogger(PublicationEditController.class);
 
 
     @InitBinder

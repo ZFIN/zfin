@@ -1,6 +1,6 @@
 package org.zfin.sequence.reno;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 
 public class RenoMultiRunTest extends AbstractDatabaseTest {
 
-    private final Logger logger = Logger.getLogger(RenoMultiRunTest.class);
+    private final Logger logger = LogManager.getLogger(RenoMultiRunTest.class);
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
 

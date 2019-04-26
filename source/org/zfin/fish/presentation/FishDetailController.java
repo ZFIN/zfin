@@ -5,7 +5,7 @@ import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -44,7 +44,7 @@ import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 @RequestMapping(value = "/fish")
 public class FishDetailController {
 
-    private static final Logger LOG = Logger.getLogger(FishDetailController.class);
+    private static final Logger LOG = LogManager.getLogger(FishDetailController.class);
 
     @RequestMapping(value = "/fish-detail/{zdbID}")
     protected String showCuratedFish(@PathVariable String zdbID, Model model) {

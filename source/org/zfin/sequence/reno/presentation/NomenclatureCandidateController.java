@@ -1,7 +1,7 @@
 package org.zfin.sequence.reno.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,7 +32,7 @@ import java.util.Set;
 @RequestMapping(value = "/reno")
 public class NomenclatureCandidateController extends AbstractCandidateController {
 
-    private static final Logger logger = Logger.getLogger(NomenclatureCandidateController.class);
+    private static final Logger logger = LogManager.getLogger(NomenclatureCandidateController.class);
     private Validator validator = new NomenclatureCandidateValidator();
 
     @RequestMapping(value = "/nomenclature-candidate-view/{zdbID}", method = RequestMethod.GET)

@@ -1,6 +1,6 @@
 package org.zfin.expression.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.MarkerExpression;
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
  */
 public class ExpressionServiceTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(ExpressionServiceTest.class);
+    private Logger logger = LogManager.getLogger(ExpressionServiceTest.class);
 
     private ExpressionService expressionService = new ExpressionService();
 

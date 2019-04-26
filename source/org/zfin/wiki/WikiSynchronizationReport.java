@@ -1,8 +1,8 @@
 package org.zfin.wiki;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class WikiSynchronizationReport {
     private final List<String> nochangedPages = new ArrayList<>();
 
     private boolean verbose = false;
-    public static final Logger LOG = RootLogger.getLogger(WikiSynchronizationReport.class);
+    public static final Logger LOG = LogManager.getLogger(WikiSynchronizationReport.class);
 
     public WikiSynchronizationReport(boolean verbose) {
         this.verbose = verbose;

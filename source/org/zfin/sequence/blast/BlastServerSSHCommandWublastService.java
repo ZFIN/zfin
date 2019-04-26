@@ -2,7 +2,7 @@ package org.zfin.sequence.blast;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public final class BlastServerSSHCommandWublastService extends BlastServerSGEWublastService {
 
-    private static final Logger logger = Logger.getLogger(BlastServerSSHCommandWublastService.class);
+    private static final Logger logger = LogManager.getLogger(BlastServerSSHCommandWublastService.class);
 
 
     private static BlastServerSSHCommandWublastService instance;

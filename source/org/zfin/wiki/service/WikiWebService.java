@@ -1,7 +1,8 @@
 package org.zfin.wiki.service;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.wiki.*;
@@ -28,7 +29,7 @@ public class WikiWebService {
     protected String wikiHost = ZfinPropertiesEnum.WIKI_HOST.value();
     protected String domainName = ZfinPropertiesEnum.DOMAIN_NAME.value();
 
-    public static final Logger logger = Logger.getLogger(WikiWebService.class);
+    public static final Logger logger = LogManager.getLogger(WikiWebService.class);
 
     private final static String SANDBOX_DEFAULT_CONTENT =
             "<p>This is the home of the SandBox space.</p>\n" +

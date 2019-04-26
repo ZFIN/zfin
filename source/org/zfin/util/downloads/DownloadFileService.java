@@ -1,6 +1,6 @@
 package org.zfin.util.downloads;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.database.UnloadInfo;
 import org.zfin.properties.ZfinProperties;
@@ -33,7 +33,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 @Service
 public class DownloadFileService extends ArchiveService {
 
-    private static Logger LOG = Logger.getLogger(DownloadFileService.class);
+    private static Logger LOG = LogManager.getLogger(DownloadFileService.class);
 
     // store the date the cache was last updated
     // every time a download request comes in we check the current date against this value.

@@ -3,12 +3,14 @@ package org.zfin.util.database;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
-import org.apache.log4j.*;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.hibernate.Session;
 import org.nocrala.tools.texttablefmt.Table;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateComparisonSessionFactory;
-import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -27,7 +29,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
  */
 public class CompareDatabases extends AbstractScriptWrapper {
 
-    private static Logger LOG;
+    private static Logger LOG = LogManager.getLogger();
 
     public static final Option databaseNameOption = OptionBuilder.withArgName("databaseNameOption").hasArg().withDescription("the name of the comparison comparisonDatabase ").create("databaseName");
     public static final Option tableNameOption = OptionBuilder.withArgName("tableNameOption").hasArg().withDescription("the table names to be checked").create("tableNames");
@@ -50,10 +52,10 @@ public class CompareDatabases extends AbstractScriptWrapper {
 
     public static void main(String[] arguments) {
 //        Logger.getRootLogger().setLevel(Level.ERROR);
-        LOG = Logger.getLogger("compare");
-        LOG.setLevel(Level.INFO);
+        LOG = LogManager.getLogger("compare");
+        Configurator.setLevel(LogManager.getLogger().getName(), Level.INFO);
 /*
-        Logger.getLogger("org.hibernate").setLevel(Level.ERROR);
+        LogManager.getLogger("org.hibernate").setLevel(Level.ERROR);
         Appender appender = new ConsoleAppender(new SimpleLayout());
         LOG.addAppender(appender);
 */
@@ -128,7 +130,7 @@ public class CompareDatabases extends AbstractScriptWrapper {
         LOG.info(NEWLINE + output.render());
 
     }
-    
+
     private int compareResults(List<List<String>> leftResults, List<List<String>> rightResults) {
         List<String> leftRecords = getConcatenatedStringList(leftResults);
         List<String> rightRecords = getConcatenatedStringList(rightResults);

@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.Map;
 public class WebHostDatabaseStatisticsCache extends AbstractDatabaseStatisticsCache {
 
     private static DatabaseStatisticsCache localDatabaseSizeCache;
-    private final static Logger logger = Logger.getLogger(WebHostDatabaseStatisticsCache.class);
+    private final static Logger logger = LogManager.getLogger(WebHostDatabaseStatisticsCache.class);
     private boolean isCached = false;
 
     public static DatabaseStatisticsCache getInstance() {

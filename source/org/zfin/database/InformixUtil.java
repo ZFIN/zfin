@@ -1,6 +1,6 @@
 package org.zfin.database;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.LoggingUtil;
@@ -16,7 +16,7 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  */
 public class InformixUtil {
 
-    private static Logger LOG = Logger.getLogger(InformixUtil.class);
+    private static Logger LOG = LogManager.getLogger(InformixUtil.class);
     public static final String PIPE = "|";
 
     /**

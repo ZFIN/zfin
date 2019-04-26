@@ -4,7 +4,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import net.sourceforge.jwebunit.junit.WebTestCase;
 import net.sourceforge.jwebunit.util.TestingEngineRegistry;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 /**
@@ -43,7 +43,7 @@ public class AbstractUnitSmokeTest extends WebTestCase {
         setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
     }
 
-    private static final Logger LOG = Logger.getLogger(AbstractUnitSmokeTest.class);
+    private static final Logger LOG = LogManager.getLogger(AbstractUnitSmokeTest.class);
 
     @Override
     protected void tearDown() throws Exception {

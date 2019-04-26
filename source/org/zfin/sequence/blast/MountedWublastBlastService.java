@@ -2,7 +2,7 @@ package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public final class MountedWublastBlastService extends WebHostWublastBlastService {
 
-    private static final Logger logger = Logger.getLogger(MountedWublastBlastService.class);
+    private static final Logger logger = LogManager.getLogger(MountedWublastBlastService.class);
 
     private static MountedWublastBlastService instance;
 

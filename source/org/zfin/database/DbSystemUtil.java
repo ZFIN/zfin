@@ -1,6 +1,6 @@
 package org.zfin.database;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.Table;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public class DbSystemUtil {
 
     private static final CellStyle rightAlign = new CellStyle(CellStyle.HorizontalAlign.right);
-    private static final Logger LOG = Logger.getLogger("database locking");
+    private static final Logger LOG = LogManager.getLogger("database locking");
 
     /**
      * Log info about locks in the database.

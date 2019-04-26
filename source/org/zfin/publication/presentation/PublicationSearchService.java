@@ -1,7 +1,7 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import static org.zfin.search.service.SolrQueryFacade.addTo;
 @Service
 public class PublicationSearchService {
 
-    private final static Logger LOG = Logger.getLogger(PublicationSearchService.class);
+    private final static Logger LOG = LogManager.getLogger(PublicationSearchService.class);
 
     @Autowired
     private PublicationRepository publicationRepository;

@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.marker.Marker;
@@ -16,7 +16,7 @@ public class MarkerPresentationTest {
 
     private Marker marker;
 
-    private Logger logger = Logger.getLogger(MarkerPresentationTest.class);
+    private Logger logger = LogManager.getLogger(MarkerPresentationTest.class);
 
     @Before
     public void setUp() {

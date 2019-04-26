@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,7 +20,7 @@ import org.zfin.repository.RepositoryFactory;
 @RequestMapping("/marker")
 public class CloneAddController {
 
-    private static Logger logger = Logger.getLogger(CloneAddController.class);
+    private static Logger logger = LogManager.getLogger(CloneAddController.class);
 
     private CloneAddValidator validator = new CloneAddValidator();
 

@@ -1,6 +1,6 @@
 package org.zfin.expression.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 public class MarkerExpression {
 
@@ -12,7 +12,7 @@ public class MarkerExpression {
     private String geoGeneSymbol ;
     private boolean geoLinkSearching = true ;
 
-    private Logger logger = Logger.getLogger(MarkerExpression.class) ;
+    private Logger logger = LogManager.getLogger(MarkerExpression.class) ;
 
     public int getTotalCountForStuff() {
         return (directlySubmittedExpression == null ? 0 : directlySubmittedExpression.getMarkerExpressionInstances().size())

@@ -16,7 +16,7 @@ public class TermDBLink  extends DBLink implements Comparable<TermDBLink>, Seria
 
 
 
-        // Logger logger = Logger.getLogger(TermDBLink.class);
+        // Logger logger = LogManager.getLogger(TermDBLink.class);
 
         private GenericTerm term;
 

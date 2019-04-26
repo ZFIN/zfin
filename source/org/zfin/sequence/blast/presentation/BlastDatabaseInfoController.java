@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ import java.util.List;
 @Controller
 public class BlastDatabaseInfoController {
 
-    private static Logger logger = Logger.getLogger(BlastDatabaseInfoController.class);
+    private static Logger logger = LogManager.getLogger(BlastDatabaseInfoController.class);
 
     @RequestMapping("/blast/blast-definitions")
     protected String showBlastDefinitions(@RequestParam(required = false) String accession,

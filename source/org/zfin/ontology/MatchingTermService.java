@@ -1,7 +1,7 @@
 package org.zfin.ontology;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
@@ -15,7 +15,7 @@ import java.util.*;
 public class MatchingTermService {
 
     public static final int MAXIMUM_NUMBER_OF_MATCHES = 25;
-    private Logger logger = Logger.getLogger(MatchingTermService.class);
+    private Logger logger = LogManager.getLogger(MatchingTermService.class);
 
     private int maximumNumberOfMatches = MAXIMUM_NUMBER_OF_MATCHES;
     private OntologyTokenizer tokenizer = new OntologyTokenizer();

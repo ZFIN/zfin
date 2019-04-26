@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +23,7 @@ import java.util.Map;
 @RequestMapping("/marker")
 public class TranscriptAddController {
 
-    private static Logger logger = Logger.getLogger(TranscriptAddController.class);
+    private static Logger logger = LogManager.getLogger(TranscriptAddController.class);
 
     public static final String LOOKUP_TRANSCRIPT_TYPES = "transcriptTypes";
 

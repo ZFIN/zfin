@@ -1,6 +1,6 @@
 package org.zfin.infrastructure;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
@@ -16,7 +16,7 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
  * Service Class for Attribution, updates etc.
  */
 public class InfrastructureService {
-    private static Logger logger = Logger.getLogger(InfrastructureService.class);
+    private static Logger logger = LogManager.getLogger(InfrastructureService.class);
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     /**

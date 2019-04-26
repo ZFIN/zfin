@@ -1,7 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,7 +32,7 @@ import javax.validation.Valid;
 @RequestMapping("/marker")
 public class EngineeredRegionAddController {
 
-    private static Logger LOG = Logger.getLogger(EngineeredRegionAddController.class);
+    private static Logger LOG = LogManager.getLogger(EngineeredRegionAddController.class);
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();

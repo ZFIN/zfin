@@ -1,6 +1,6 @@
 package org.zfin.ontology.jobs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.gwt.root.dto.EapQualityTermDTO;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.infrastructure.ant.ReportConfiguration;
@@ -17,7 +17,7 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
  */
 public class CheckEapPatoTermsJob extends AbstractValidateDataReportTask {
 
-    private static final Logger logger = Logger.getLogger(CheckEapPatoTermsJob.class);
+    private static final Logger logger = LogManager.getLogger(CheckEapPatoTermsJob.class);
 
     public CheckEapPatoTermsJob(String jobName, String propertyFilePath, String dataDirectoryString) {
         super(jobName, propertyFilePath, dataDirectoryString);

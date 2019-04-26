@@ -1,6 +1,6 @@
 package org.zfin.ontology;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MatchingTermServiceTest {
 
-    private final Logger logger = Logger.getLogger(MatchingTermServiceTest.class);
+    private final Logger logger = LogManager.getLogger(MatchingTermServiceTest.class);
 
     private static final String MELANOBLAST = "melanoblast";
     private static final String MELANOCYTE = "melanocyte";

@@ -2,7 +2,7 @@ package org.zfin.figure.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Controller
 public class FigureEditController {
 
-    public static final Logger LOG = Logger.getLogger(FigureEditController.class);
+    public static final Logger LOG = LogManager.getLogger(FigureEditController.class);
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;

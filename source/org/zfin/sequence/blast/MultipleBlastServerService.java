@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class MultipleBlastServerService {
 
-    private final static Logger logger = Logger.getLogger(MultipleBlastServerService.class);
+    private final static Logger logger = LogManager.getLogger(MultipleBlastServerService.class);
 
     public static List<Sequence> getSequencesForAccessionAndReferenceDBs(String accession, ReferenceDatabase... referenceDatabases) {
         return getSequencesForAccessionAndReferenceDBs(accession, true, referenceDatabases);

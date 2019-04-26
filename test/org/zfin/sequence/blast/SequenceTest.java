@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.framework.presentation.tags.DeflineTag;
 import org.zfin.gwt.marker.ui.SequenceValidator;
@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 
 public class SequenceTest {
 
-    private Logger logger = Logger.getLogger(SequenceTest.class);
+    private Logger logger = LogManager.getLogger(SequenceTest.class);
 
     private String testString1 = "lcl|ZFINPROT0000000077|ZDB-TSCRIPT-081112-10003 publishedProtein ottdart00000025400 transcript   13 aa";
     private String testString3 = "lcl|ENSDART00000066225|gene:ENSDARG00000045045 cdna:known chromosome:ZFISH7:25:15179762:15200474:1 ";

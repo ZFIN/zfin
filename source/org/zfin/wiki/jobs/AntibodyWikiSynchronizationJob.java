@@ -1,7 +1,7 @@
 package org.zfin.wiki.jobs;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.infrastructure.ant.ReportConfiguration;
 import org.zfin.util.ReportGenerator;
@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTask {
 
-    private static final Logger logger = Logger.getLogger(AntibodyWikiSynchronizationJob.class);
+    private static final Logger logger = LogManager.getLogger(AntibodyWikiSynchronizationJob.class);
 
     public AntibodyWikiSynchronizationJob(String jobName, String propertyFilePath, String dataDirectoryString) {
         super(jobName, propertyFilePath, dataDirectoryString);

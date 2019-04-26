@@ -1,6 +1,6 @@
 package org.zfin.properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 
@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ExportAllInstancesTask extends Task {
 
-    private final Logger logger = Logger.getLogger(ExportAllInstancesTask.class) ;
+    private final Logger logger = LogManager.getLogger(ExportAllInstancesTask.class) ;
 
     private final static String COMMENT = "#" ;
     private final static String INSTANCE = "INSTANCE" ;

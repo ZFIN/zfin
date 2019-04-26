@@ -1,6 +1,6 @@
 package org.zfin.ontology;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class OntologyPerformanceTest extends AbstractOntologyTest {
 
-    private final static Logger logger = Logger.getLogger(OntologyPerformanceTest.class);
+    private final static Logger logger = LogManager.getLogger(OntologyPerformanceTest.class);
     private final Pattern numberPattern = Pattern.compile("\\p{Digit}");
 
     @Override

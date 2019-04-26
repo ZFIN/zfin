@@ -1,7 +1,7 @@
 package org.zfin.fish.presentation;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,7 +34,7 @@ public class FishPhenotypeController {
     }
 
 
-    private static Logger LOG = Logger.getLogger(FishPhenotypeController.class);
+    private static Logger LOG = LogManager.getLogger(FishPhenotypeController.class);
 
     @RequestMapping(value = "/phenotype-summary", method = RequestMethod.GET)
     protected String showPhenotypeSummary(@RequestParam(value = "fishID", required = true) String fishID,

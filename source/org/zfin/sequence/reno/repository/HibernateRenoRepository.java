@@ -3,9 +3,9 @@
  */
 package org.zfin.sequence.reno.repository;
 
-//import org.apache.log4j.Logger;
+//import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -27,7 +27,7 @@ import java.util.List;
 @Repository
 public class HibernateRenoRepository implements RenoRepository {
 
-    private static final Logger LOG = Logger.getLogger(HibernateRenoRepository.class);
+    private static final Logger LOG = LogManager.getLogger(HibernateRenoRepository.class);
 
 
     public List<RedundancyRun> getRedundancyRuns() {

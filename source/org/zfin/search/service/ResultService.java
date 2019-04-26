@@ -6,7 +6,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.TransformerUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.antibody.Antibody;
@@ -50,7 +50,7 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 @Service
 public class ResultService {
 
-    public static Logger logger = Logger.getLogger(ResultService.class);
+    public static Logger logger = LogManager.getLogger(ResultService.class);
 
     @Autowired
     MutationDetailsConversionService mutationDetailsConversionService;

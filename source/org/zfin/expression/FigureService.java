@@ -1,6 +1,6 @@
 package org.zfin.expression;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.figure.presentation.FigurePresentationBean;
@@ -20,7 +20,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
  * Utility methods for the Figure class
  */
 public class FigureService {
-    static Logger LOG = Logger.getLogger(FigureService.class);
+    static Logger LOG = LogManager.getLogger(FigureService.class);
     private static ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
 
 

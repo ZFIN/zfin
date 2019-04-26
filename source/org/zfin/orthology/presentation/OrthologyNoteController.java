@@ -1,6 +1,6 @@
 package org.zfin.orthology.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ import org.zfin.repository.RepositoryFactory;
 public class OrthologyNoteController {
 
     private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-    private static Logger LOG = Logger.getLogger(OrthologyNoteController.class);
+    private static Logger LOG = LogManager.getLogger(OrthologyNoteController.class);
 
     @ResponseBody
     @RequestMapping(value = "/gene/{geneID}/orthology-note", method = RequestMethod.GET)

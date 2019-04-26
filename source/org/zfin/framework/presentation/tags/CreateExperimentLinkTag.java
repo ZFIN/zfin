@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation.tags;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.presentation.ExperimentPresentation;
 
@@ -12,7 +12,7 @@ import javax.servlet.jsp.tagext.Tag;
 import java.io.IOException;
 
 public class CreateExperimentLinkTag extends BodyTagSupport{
-    private final Logger logger = Logger.getLogger(CreateExperimentLinkTag.class);
+    private final Logger logger = LogManager.getLogger(CreateExperimentLinkTag.class);
 
     private Experiment experiment;
 

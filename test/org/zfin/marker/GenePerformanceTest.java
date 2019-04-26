@@ -4,7 +4,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.AbstractUnitSmokeTest;
 
 import java.io.File;
@@ -19,7 +19,7 @@ import java.util.List;
 public class GenePerformanceTest extends AbstractUnitSmokeTest {
 
     private WebClient webClient = new WebClient(BrowserVersion.FIREFOX_17);
-    private Logger logger = Logger.getLogger(GenePerformanceTest.class) ;
+    private Logger logger = LogManager.getLogger(GenePerformanceTest.class) ;
     private List<String> avgGenes;
     private List<String> worstGenesOld;
     private List<String> worstGenesNew;

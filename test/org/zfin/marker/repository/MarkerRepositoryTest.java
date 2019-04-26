@@ -2,7 +2,7 @@ package org.zfin.marker.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.InvokerTransformer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
@@ -49,7 +49,7 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 @SuppressWarnings({"FeatureEnvy"})
 public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(MarkerRepositoryTest.class);
+    private Logger logger = LogManager.getLogger(MarkerRepositoryTest.class);
     private static MarkerRepository markerRepository = getMarkerRepository();
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();

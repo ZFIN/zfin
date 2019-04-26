@@ -1,7 +1,7 @@
 package org.zfin.construct.repository;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -33,7 +33,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 @Repository
 public class HibernateConstructRepository implements ConstructRepository {
 
-    private static Logger logger = Logger.getLogger(org.zfin.construct.repository.HibernateConstructRepository.class);
+    private static Logger logger = LogManager.getLogger(org.zfin.construct.repository.HibernateConstructRepository.class);
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
 
     private ZfinEntity getZfinEntity(String zdbID, String name) {

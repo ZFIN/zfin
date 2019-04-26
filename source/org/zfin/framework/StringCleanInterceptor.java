@@ -1,7 +1,7 @@
 package org.zfin.framework;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 
@@ -16,7 +16,7 @@ import java.lang.reflect.Modifier;
  * http://jagadesh4java.blogspot.com/2009/10/hibernate-interceptors.html
  */
 public class StringCleanInterceptor extends EmptyInterceptor {
-    public static Logger logger = Logger.getLogger(StringCleanInterceptor.class);
+    public static Logger logger = LogManager.getLogger(StringCleanInterceptor.class);
 
     public boolean onSave(Object entity, Serializable id, Object[] state,
                           String[] propertyNames, Type[] types) {

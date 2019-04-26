@@ -1,7 +1,7 @@
 package org.zfin.infrastructure.presentation;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,7 +17,7 @@ import org.zfin.properties.ZfinPropertiesEnum;
 @Controller
 public class UserCommentController {
 
-    private static final Logger log = Logger.getLogger(UserCommentController.class);
+    private static final Logger log = LogManager.getLogger(UserCommentController.class);
 
     private static final String ADMIN_EMAIL_TEMPLATE = "" +
             "USER INPUT:\n" +

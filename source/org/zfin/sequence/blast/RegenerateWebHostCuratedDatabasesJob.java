@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.util.ReportGenerator;
@@ -11,7 +11,7 @@ import java.io.File;
  */
 public class RegenerateWebHostCuratedDatabasesJob extends AbstractValidateDataReportTask {
 
-    private static Logger logger = Logger.getLogger(RegenerateWebHostCuratedDatabasesJob.class);
+    private static Logger logger = LogManager.getLogger(RegenerateWebHostCuratedDatabasesJob.class);
 
     public RegenerateWebHostCuratedDatabasesJob(String jobName, String propertyFile, String baseDir) {
         super(jobName, propertyFile, baseDir);

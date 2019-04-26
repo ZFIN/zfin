@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/marker")
 public class SnpViewController {
 
-    private Logger logger = Logger.getLogger(SnpViewController.class);
+    private Logger logger = LogManager.getLogger(SnpViewController.class);
     private String snpBlastUrl;
     private String ncbiBlastUrl;
 

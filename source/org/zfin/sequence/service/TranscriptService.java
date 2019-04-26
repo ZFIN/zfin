@@ -1,6 +1,6 @@
 package org.zfin.sequence.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gbrowse.GBrowseTrack;
@@ -23,7 +23,7 @@ import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
 public class TranscriptService {
 
-    private final static Logger logger = Logger.getLogger(TranscriptService.class);
+    private final static Logger logger = LogManager.getLogger(TranscriptService.class);
 
     public static Transcript convertMarkerToTranscript(Marker marker) {
         return RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(marker.getZdbID());

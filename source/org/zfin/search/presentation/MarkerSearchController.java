@@ -1,6 +1,6 @@
 package org.zfin.search.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -27,7 +27,7 @@ public class MarkerSearchController {
     @Autowired
     private MarkerSearchService markerSearchService;
 
-    private static Logger logger = Logger.getLogger(MarkerSearchController.class);
+    private static Logger logger = LogManager.getLogger(MarkerSearchController.class);
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {

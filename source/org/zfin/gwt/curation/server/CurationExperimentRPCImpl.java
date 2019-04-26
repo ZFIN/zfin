@@ -2,8 +2,8 @@ package org.zfin.gwt.curation.server;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.RootLogger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -58,7 +58,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implements CurationExperimentRPC {
 
-    private final static Logger LOG = RootLogger.getLogger(CurationExperimentRPCImpl.class);
+    private final static Logger LOG = LogManager.getLogger(CurationExperimentRPCImpl.class);
 
     private static PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
     private static ExpressionRepository expRepository = RepositoryFactory.getExpressionRepository();

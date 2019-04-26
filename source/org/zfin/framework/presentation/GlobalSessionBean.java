@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.zfin.security.presentation.PrincipalViewBean;
@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class GlobalSessionBean {
 
-    private static Logger logger = Logger.getLogger(GlobalSessionBean.class);
+    private static Logger logger = LogManager.getLogger(GlobalSessionBean.class);
 
     private SessionRegistry sessionRegistry;
     private HttpSession currentSession;

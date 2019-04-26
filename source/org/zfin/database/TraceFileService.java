@@ -1,7 +1,7 @@
 package org.zfin.database;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.FileUtil;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class TraceFileService {
 
-    private final Logger LOG = Logger.getLogger(TraceFileService.class);
+    private final Logger LOG = LogManager.getLogger(TraceFileService.class);
 
     private FileWriter traceFileWriter;
 

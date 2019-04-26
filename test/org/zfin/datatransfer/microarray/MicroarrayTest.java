@@ -1,7 +1,7 @@
 package org.zfin.datatransfer.microarray;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
  */
 public class MicroarrayTest {
 
-    private Logger logger = Logger.getLogger(MicroarrayTest.class) ;
+    private Logger logger = LogManager.getLogger(MicroarrayTest.class) ;
 
     // get reference DBs
     MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository() ;

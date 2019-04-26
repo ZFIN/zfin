@@ -1,6 +1,6 @@
 package org.zfin.marker;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  */
 public class MergeMarkerDBTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(MergeMarkerDBTest.class);
+    private Logger logger = LogManager.getLogger(MergeMarkerDBTest.class);
 
     @Before
     public void setUp() {

@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import javax.xml.bind.JAXBContext;
@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public abstract class AbstractQueryThread implements BlastQueryJob {
 
-    private final static Logger logger = Logger.getLogger(AbstractQueryThread.class);
+    private final static Logger logger = LogManager.getLogger(AbstractQueryThread.class);
 
     protected boolean finished = false;
     protected boolean running = false;

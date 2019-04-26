@@ -1,6 +1,6 @@
 package org.zfin.gwt.marker.server;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyType;
@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements AntibodyRPCService {
 
-    private transient Logger logger = Logger.getLogger(AntibodyRPCServiceImpl.class);
+    private transient Logger logger = LogManager.getLogger(AntibodyRPCServiceImpl.class);
     private final MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private final AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
 

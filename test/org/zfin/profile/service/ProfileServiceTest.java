@@ -1,6 +1,6 @@
 package org.zfin.profile.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  */
 public class ProfileServiceTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(ProfileServiceTest.class);
+    private Logger logger = LogManager.getLogger(ProfileServiceTest.class);
 
     private ProfileService profileService = new ProfileService();
     private ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();

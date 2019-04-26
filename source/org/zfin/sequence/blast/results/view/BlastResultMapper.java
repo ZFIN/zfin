@@ -2,7 +2,7 @@ package org.zfin.sequence.blast.results.view;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.mapping.GenomeLocation;
@@ -49,7 +49,7 @@ import java.util.*;
  */
 public class BlastResultMapper {
 
-    private static final Logger logger = Logger.getLogger(BlastResultMapper.class);
+    private static final Logger logger = LogManager.getLogger(BlastResultMapper.class);
     private static DatabaseNameComparator databaseNameComparator = new DatabaseNameComparator();
 
     public static BlastResultBean createBlastResultBean(BlastOutput blastOutput) {

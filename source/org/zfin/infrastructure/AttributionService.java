@@ -1,7 +1,7 @@
 package org.zfin.infrastructure;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public class AttributionService {
-    static Logger logger = Logger.getLogger(AttributionService.class);
+    static Logger logger = LogManager.getLogger(AttributionService.class);
 
     /**
      * Does this piece of data have a journal publication as one of it's attributions?

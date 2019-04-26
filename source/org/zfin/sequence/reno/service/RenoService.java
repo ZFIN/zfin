@@ -2,7 +2,7 @@ package org.zfin.sequence.reno.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
@@ -35,7 +35,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 @Service
 public class RenoService {
 
-    private final Logger logger = Logger.getLogger(RenoService.class);
+    private final Logger logger = LogManager.getLogger(RenoService.class);
 
     private Map<Marker, Set<LinkageGroup>> cachedLinkageGroupMap = new HashMap<Marker, Set<LinkageGroup>>();
 

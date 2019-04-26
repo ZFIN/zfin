@@ -3,7 +3,7 @@ package org.zfin.framework;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  */
 public class ExecProcessTest {
 
-    private Logger logger = Logger.getLogger(ExecProcessTest.class) ;
+    private Logger logger = LogManager.getLogger(ExecProcessTest.class) ;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();

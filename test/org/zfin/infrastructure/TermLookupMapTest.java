@@ -1,6 +1,6 @@
 package org.zfin.infrastructure;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  */
 public class TermLookupMapTest {
 
-    private final static Logger logger = Logger.getLogger(TermLookupMapTest.class) ;
+    private final static Logger logger = LogManager.getLogger(TermLookupMapTest.class) ;
 
     private final static String key1 = "key1" ;
     private final static Object a = new String("key1value") ;

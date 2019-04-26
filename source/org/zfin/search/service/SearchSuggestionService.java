@@ -1,6 +1,6 @@
 package org.zfin.search.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class SearchSuggestionService {
 
-    public static Logger logger = Logger.getLogger(SearchSuggestionService.class);
+    public static Logger logger = LogManager.getLogger(SearchSuggestionService.class);
 
     public List<String> getSuggestions(String queryString) {
         //todo: add a spellcheck layer here?

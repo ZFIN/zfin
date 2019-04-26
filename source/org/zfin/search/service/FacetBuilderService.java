@@ -3,7 +3,7 @@ package org.zfin.search.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.PivotField;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -23,7 +23,7 @@ import static org.zfin.search.FieldName.*;
 
 public class FacetBuilderService {
 
-    public static Logger logger = Logger.getLogger(FacetBuilderService.class);
+    public static Logger logger = LogManager.getLogger(FacetBuilderService.class);
 
     public static String PHENOTYPE_FACET_QUERY = "phenotype_statement:[* TO *]";
 

@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast.results.view;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.sequence.blast.BlastQueryJob;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.Hit;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class BlastOutputMerger {
 
-    private final static Logger logger = Logger.getLogger(BlastOutputMerger.class);
+    private final static Logger logger = LogManager.getLogger(BlastOutputMerger.class);
 
     public static BlastOutput mergeBlastOutput(Collection<BlastQueryJob> blastSlices) {
 

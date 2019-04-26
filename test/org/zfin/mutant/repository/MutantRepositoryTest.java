@@ -1,7 +1,7 @@
 package org.zfin.mutant.repository;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -32,7 +32,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 
 public class MutantRepositoryTest {
 
-    private static final Logger LOG = Logger.getLogger(MutantRepositoryTest.class);
+    private static final Logger LOG = LogManager.getLogger(MutantRepositoryTest.class);
     private final static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
 
     static {

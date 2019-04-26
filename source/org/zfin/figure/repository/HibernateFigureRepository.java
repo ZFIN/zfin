@@ -1,7 +1,7 @@
 package org.zfin.figure.repository;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Criteria;
@@ -30,7 +30,7 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 
 @Repository
 public class HibernateFigureRepository implements FigureRepository {
-    private static Logger logger = Logger.getLogger(HibernateFigureRepository.class);
+    private static Logger logger = LogManager.getLogger(HibernateFigureRepository.class);
 
     public Figure getFigure(String zdbID) {
         Session session = HibernateUtil.currentSession();

@@ -1,7 +1,7 @@
 package org.zfin.gbrowse;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.feature.Feature;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -16,7 +16,7 @@ import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 
 public class GBrowseService {
 
-    private final static Logger logger = Logger.getLogger(GBrowseService.class);
+    private final static Logger logger = LogManager.getLogger(GBrowseService.class);
 
     public static GBrowseTrack[] getGBrowseTracks(Marker marker) {
         GeneTrackDisplayMarker displayMarker = GeneTrackDisplayMarker.getInstance(marker.getType());

@@ -1,6 +1,6 @@
 package org.zfin.sequence.reno.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.zfin.publication.presentation.PublicationValidator;
@@ -11,7 +11,7 @@ import org.zfin.sequence.reno.repository.RenoRepository;
 
 public class RunBeanValidator implements Validator {
 
-    private static final Logger LOG = Logger.getLogger(RunBeanValidator.class);
+    private static final Logger LOG = LogManager.getLogger(RunBeanValidator.class);
     private RenoRepository rr = RepositoryFactory.getRenoRepository();
 
     public boolean supports(Class clazz) {

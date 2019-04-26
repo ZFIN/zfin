@@ -1,6 +1,6 @@
 package org.zfin.util.database;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.Token;
@@ -30,7 +30,7 @@ public class LuceneQueryService {
         BooleanQuery.setMaxClauseCount(200000);
     }
 
-    private static Logger LOG = Logger.getLogger(LuceneQueryService.class);
+    private static Logger LOG = LogManager.getLogger(LuceneQueryService.class);
 
     public LuceneQueryService(String indexDirectory) {
         this.indexDirectory = indexDirectory;

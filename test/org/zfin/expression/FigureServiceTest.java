@@ -1,6 +1,6 @@
 package org.zfin.expression;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.*;
  */
 public class FigureServiceTest extends AbstractDatabaseTest {
 
-    static Logger logger = Logger.getLogger(FigureServiceTest.class);
+    static Logger logger = LogManager.getLogger(FigureServiceTest.class);
 
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();

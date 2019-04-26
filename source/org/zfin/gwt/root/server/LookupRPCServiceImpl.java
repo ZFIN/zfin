@@ -3,7 +3,7 @@ package org.zfin.gwt.root.server;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.antibody.Antibody;
 import org.zfin.feature.Feature;
 import org.zfin.gwt.root.dto.AttributionType;
@@ -38,7 +38,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
  */
 public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements LookupRPCService {
 
-    private static final Logger logger = Logger.getLogger(LookupRPCServiceImpl.class);
+    private static final Logger logger = LogManager.getLogger(LookupRPCServiceImpl.class);
     private static final String QUERY_PREFIX = ":";
     private transient PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private transient Highlighter highlighter = new Highlighter();

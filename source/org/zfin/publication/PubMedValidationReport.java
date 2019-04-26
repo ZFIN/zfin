@@ -2,8 +2,10 @@ package org.zfin.publication;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -25,7 +27,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     private static Integer numberOfPublicationsToScan;
     private static Map<Integer, Publication> publicationMap;
-    private static final Logger LOG = Logger.getLogger(PubMedValidationReport.class);
+    private static final Logger LOG = LogManager.getLogger(PubMedValidationReport.class);
     private static List<String> errorList = new ArrayList<>();
     private static List<List<String>> pubMedIdNotFoundList = new ArrayList<>();
     private static List<List<String>> pubInfoMismatchList = new ArrayList<>();
@@ -59,7 +61,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     protected static void initializeLog4J() {
         initLog4J();
-        LOG.setLevel(Level.INFO);
+        Configurator.setLevel(LogManager.getLogger().getName(), Level.INFO);
     }
 
     @Override

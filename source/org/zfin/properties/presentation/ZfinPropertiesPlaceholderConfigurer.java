@@ -1,6 +1,6 @@
 package org.zfin.properties.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -16,7 +16,7 @@ import java.util.Properties;
  */
 public class ZfinPropertiesPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
 
-    private Logger logger = Logger.getLogger(ZfinPropertiesPlaceholderConfigurer.class) ;
+    private Logger logger = LogManager.getLogger(ZfinPropertiesPlaceholderConfigurer.class) ;
     private String webRoot ;
 
     @Override

@@ -1,6 +1,6 @@
 package org.zfin.ontology;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
 
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public class OntologyTokenizer {
 
-    private Logger logger = Logger.getLogger(OntologyTokenizer.class);
+    private Logger logger = LogManager.getLogger(OntologyTokenizer.class);
 
 
     //    private final int DEFAULT_MIN_TOKEN_SIZE = 3 ;

@@ -1,6 +1,9 @@
 package org.zfin;
 
-import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.ConfigurationSource;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +19,8 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.security.MockAuthenticationManager;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * This class sets up a test environment:
@@ -25,8 +30,14 @@ public class TestConfiguration {
 
     public static void configure() {
         // setup log file
-        File file = new File("test", "log4j.xml");
-        DOMConfigurator.configure(file.getAbsolutePath());
+        File file = new File("test", "log4j2.xml");
+        ConfigurationSource source = null;
+        try {
+            source = new ConfigurationSource(new FileInputStream(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Configurator.initialize(null, source);
 
         // set tomcat temp directory
         ZfinProperties.init();

@@ -2,7 +2,7 @@ package org.zfin.datatransfer.microarray;
 
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.zfin.Species;
@@ -31,7 +31,7 @@ import java.util.*;
  */
 public final class MicroarrayProcessor {
 
-    final Logger logger = Logger.getLogger(MicroarrayProcessor.class);
+    final Logger logger = LogManager.getLogger(MicroarrayProcessor.class);
 
     private boolean listNotFound = false;
 

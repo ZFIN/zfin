@@ -1,6 +1,6 @@
 package org.zfin.gwt.root.server;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.CuratorSessionDTO;
@@ -21,7 +21,7 @@ import java.util.List;
 @SuppressWarnings({"GwtServiceNotRegistered"})
 public class SessionSaveServiceImpl extends ZfinRemoteServiceServlet implements SessionSaveService {
 
-    private Logger log = Logger.getLogger(SessionSaveServiceImpl.class);
+    private Logger log = LogManager.getLogger(SessionSaveServiceImpl.class);
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
     private static final String STAGE_SELECTOR_MODE = "StageSelectorMode";
 

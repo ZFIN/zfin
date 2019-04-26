@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.zfin.sequence.SNPMarkerSequence;
@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class SnpMarkerBean extends MarkerBean {
 
-    private Logger logger = Logger.getLogger(SnpMarkerBean.class);
+    private Logger logger = LogManager.getLogger(SnpMarkerBean.class);
 
     private String variant;
     private SNPMarkerSequence sequence;

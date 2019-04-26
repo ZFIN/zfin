@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 
 import java.util.Collection;
@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadFactory;
  */
 public class BlastQueryThreadCollection implements BlastThreadCollection {
 
-    private final static Logger logger = Logger.getLogger(BlastQueryThreadCollection.class);
+    private final static Logger logger = LogManager.getLogger(BlastQueryThreadCollection.class);
     private static BlastQueryThreadCollection instance = null;
 
     protected Collection<BlastQueryJob> jobCollection = new ConcurrentLinkedQueue<BlastQueryJob>();

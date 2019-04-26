@@ -1,6 +1,6 @@
 package org.zfin.ontology;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  */
 public class OntologyTokenizationTest {
 
-    private Logger logger = Logger.getLogger(OntologyTokenizationTest.class) ;
+    private Logger logger = LogManager.getLogger(OntologyTokenizationTest.class) ;
     private OntologyTokenizer tokenizer = new OntologyTokenizer() ;
 
     @Test

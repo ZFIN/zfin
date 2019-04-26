@@ -1,6 +1,6 @@
 package org.zfin.webservice;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
  */
 public class MarkerRestSmokeTest extends AbstractDatabaseTest{
 
-    private Logger logger = Logger.getLogger(MarkerRestSmokeTest.class) ;
+    private Logger logger = LogManager.getLogger(MarkerRestSmokeTest.class) ;
 
     private String BASE_URL ;
     private String FULL_JUMP_URL = ZfinPropertiesEnum.NON_SECURE_HTTP.toString()+ZfinPropertiesEnum.DOMAIN_NAME.toString() + "/";

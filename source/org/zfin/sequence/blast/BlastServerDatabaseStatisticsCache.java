@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public class BlastServerDatabaseStatisticsCache extends AbstractDatabaseStatisticsCache {
 
     private static BlastServerDatabaseStatisticsCache blastServerDatabaseSizeCache;
-    private final static Logger logger = Logger.getLogger(BlastServerDatabaseStatisticsCache.class);
+    private final static Logger logger = LogManager.getLogger(BlastServerDatabaseStatisticsCache.class);
     private boolean isCached = false;
 
 

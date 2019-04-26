@@ -1,6 +1,6 @@
 package org.zfin.infrastructure.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +18,7 @@ import java.util.*;
 @RequestMapping("/infrastructure")
 public class AnnualStatsController {
 
-    private Logger logger = Logger.getLogger(AnnualStatsController.class);
+    private Logger logger = LogManager.getLogger(AnnualStatsController.class);
 
     @RequestMapping(value = "/annual-stats-view")
     public String getAnnualStats(Model model) throws Exception {

@@ -1,6 +1,6 @@
 package org.zfin.framework.mail;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinProperties;
 
 import java.io.BufferedReader;
@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 public class MailXMailSender extends AbstractZfinMailSender {
-    static Logger logger = Logger.getLogger(MailXMailSender.class);
+    static Logger logger = LogManager.getLogger(MailXMailSender.class);
 
 
     public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,

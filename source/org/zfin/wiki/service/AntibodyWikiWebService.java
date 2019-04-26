@@ -3,7 +3,7 @@ package org.zfin.wiki.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
@@ -30,7 +30,7 @@ import static org.zfin.properties.ZfinProperties.isPushToWiki;
  */
 public class AntibodyWikiWebService extends WikiWebService {
 
-    public static final Logger logger = Logger.getLogger(AntibodyWikiWebService.class);
+    public static final Logger logger = LogManager.getLogger(AntibodyWikiWebService.class);
 
     // Antibody Homepage page ID
     private final long PARENT_PAGE_ID = 131090;

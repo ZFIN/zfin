@@ -1,7 +1,7 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 
@@ -10,7 +10,7 @@ import org.zfin.wiki.service.AntibodyWikiWebService;
  */
 public abstract class EntityPresentation {
 
-    private static final Logger logger = Logger.getLogger(EntityPresentation.class);
+    private static final Logger logger = LogManager.getLogger(EntityPresentation.class);
     protected static final String NONGENEDOMMARKER = "nongenedommarker";
     protected static final String WITHDRAWN_PREFIX = "&nbsp;<img src='/images/warning-noborder.gif' title='Withdrawn' alt='Withdrawn' width='20' height='20'";
     public static final String WITHDRAWN = WITHDRAWN_PREFIX + " align='top' />";

@@ -1,6 +1,6 @@
 package org.zfin.datatransfer.go;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 /**
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GoaGafParser extends FpInferenceGafParser {
 
-    private Logger logger = Logger.getLogger(GoaGafParser.class);
+    private Logger logger = LogManager.getLogger(GoaGafParser.class);
 
     protected static final String REF_GENOME_CREATED_BY = "RefGenome";
 

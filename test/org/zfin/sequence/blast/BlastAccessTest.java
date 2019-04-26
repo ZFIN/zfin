@@ -1,7 +1,7 @@
 package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.After;
@@ -29,7 +29,7 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  */
 public class BlastAccessTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(BlastAccessTest.class);
+    private Logger logger = LogManager.getLogger(BlastAccessTest.class);
 
     @After
     public void closeSession() {

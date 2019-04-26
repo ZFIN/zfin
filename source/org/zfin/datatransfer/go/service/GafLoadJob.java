@@ -3,7 +3,7 @@ package org.zfin.datatransfer.go.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -58,7 +58,7 @@ import java.util.concurrent.Executors;
 @Component
 public class GafLoadJob extends AbstractValidateDataReportTask {
 
-    private static Logger logger = Logger.getLogger(GafLoadJob.class);
+    private static Logger logger = LogManager.getLogger(GafLoadJob.class);
 
     @Autowired
     protected DownloadService downloadService;

@@ -1,6 +1,6 @@
 package org.zfin.sequence.reno;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Test;
@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  */
 public class AlignmentsControllerTest extends AbstractDatabaseTest {
 
-    private static Logger logger = Logger.getLogger(AlignmentsControllerTest.class);
+    private static Logger logger = LogManager.getLogger(AlignmentsControllerTest.class);
     private static RenoRepository renoRepository = RepositoryFactory.getRenoRepository();
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();

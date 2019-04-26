@@ -1,6 +1,6 @@
 package org.zfin.sequence;
 
-//import org.apache.log4j.Logger;
+//import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 import org.zfin.feature.Feature;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class FeatureDBLink extends DBLink implements Comparable<FeatureDBLink>, Serializable {
 
 
-   // Logger logger = Logger.getLogger(FeatureDBLink.class);
+   // Logger logger = LogManager.getLogger(FeatureDBLink.class);
 
     private Feature feature;
 //    private Accession referencingAccession ;

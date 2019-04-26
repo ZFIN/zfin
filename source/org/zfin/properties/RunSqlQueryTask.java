@@ -1,7 +1,7 @@
 package org.zfin.properties;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class RunSqlQueryTask extends AbstractScriptWrapper {
 
-    private static final Logger LOG = Logger.getLogger(RunSqlQueryTask.class);
+    private static final Logger LOG = LogManager.getLogger(RunSqlQueryTask.class);
 
     private String instance;
     private String sqlFileName;

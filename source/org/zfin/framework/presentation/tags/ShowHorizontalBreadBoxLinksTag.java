@@ -4,7 +4,7 @@ package org.zfin.framework.presentation.tags;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.zfin.search.FacetQueryEnum;
@@ -26,7 +26,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
     private SolrQuery query;
     private String baseUrl;
 
-    private Logger logger = Logger.getLogger(ShowHorizontalBreadBoxLinksTag.class);
+    private Logger logger = LogManager.getLogger(ShowHorizontalBreadBoxLinksTag.class);
 
     private String createBreadBoxSection() {
         QueryResponse response = getQueryResponse();

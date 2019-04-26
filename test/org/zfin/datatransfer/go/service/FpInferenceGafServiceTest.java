@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.go.service;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -9,16 +10,11 @@ import org.zfin.datatransfer.go.GafEntry;
 import org.zfin.datatransfer.go.GafJobData;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.datatransfer.service.DownloadService;
-import org.zfin.mutant.MarkerGoTermAnnotationExtn;
-import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
 import org.zfin.mutant.MarkerGoTermEvidence;
-import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
 import java.net.URL;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,14 +24,14 @@ import static org.junit.Assert.assertTrue;
  */
 public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
 
-    private Logger logger = Logger.getLogger(FpInferenceGafServiceTest.class);
+    private Logger logger = LogManager.getLogger(FpInferenceGafServiceTest.class);
     private GafService gafService = new GafService(GafOrganization.OrganizationEnum.FP_INFERENCES);
     private FpInferenceGafParser gafParser = new FpInferenceGafParser();
 
     // this is a pub with no go evidence annotations and is closed, so none will be added
     private final String DEFAULT_TEST_ACCESSION = "PMID:10630700"; // "ZDB-PUB-000118-16"
 
-    private final String FP_INFERENCE_DIRECTORY = "test/gaf/fp_inference/" ;
+    private final String FP_INFERENCE_DIRECTORY = "test/gaf/fp_inference/";
 
 
     /**
@@ -51,7 +47,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void testEMBL() throws Exception {
-        File file = new File(FP_INFERENCE_DIRECTORY +"gene_association.zfin_test2");
+        File file = new File(FP_INFERENCE_DIRECTORY + "gene_association.zfin_test2");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(1, gafEntries.size());
         makeTestPub(gafEntries);
@@ -74,7 +70,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void fpInferenceBadInference1() throws Exception {
-        File file = new File(FP_INFERENCE_DIRECTORY +"gene_association.zfin_test3");
+        File file = new File(FP_INFERENCE_DIRECTORY + "gene_association.zfin_test3");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(1, gafEntries.size());
 //        makeTestPub(gafEntries);
@@ -120,12 +116,9 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
         }*/
 
 
-
-
-
     @Test
     public void fpInferenceObsoleteGoTerm() throws Exception {
-        File file = new File(FP_INFERENCE_DIRECTORY +"GOcol8test.gaf");
+        File file = new File(FP_INFERENCE_DIRECTORY + "GOcol8test.gaf");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
         assertEquals(2, gafEntries.size());
         GafJobData gafJobData = new GafJobData();
@@ -143,6 +136,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
 
     /**
      * Just tests a normal load
+     *
      * @throws Exception
      */
     @Test
@@ -168,15 +162,15 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
         assertEquals(0, gafJobData.getRemovedEntries().size());
 
 
-        int count = 0 ;
-        for(MarkerGoTermEvidence markerGoTermEvidence : gafJobData.getNewEntries()){
-            if(count==5){
-                assertEquals("UniProtKB:P01344",markerGoTermEvidence.getInferredFrom().iterator().next().getInferredFrom());
+        int count = 0;
+        for (MarkerGoTermEvidence markerGoTermEvidence : gafJobData.getNewEntries()) {
+            if (count == 5) {
+                assertEquals("UniProtKB:P01344", markerGoTermEvidence.getInferredFrom().iterator().next().getInferredFrom());
             }
-            if(count==13){
-                assertEquals("ZFIN:ZDB-GENE-000201-18",markerGoTermEvidence.getInferredFrom().iterator().next().getInferredFrom());
+            if (count == 13) {
+                assertEquals("ZFIN:ZDB-GENE-000201-18", markerGoTermEvidence.getInferredFrom().iterator().next().getInferredFrom());
             }
-            ++count ;
+            ++count;
         }
 
     }

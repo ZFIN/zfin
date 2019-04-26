@@ -1,7 +1,8 @@
 package org.zfin.framework.filter;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.Table;
 import org.springframework.security.core.Authentication;
@@ -15,10 +16,6 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.ZfinSMTPAppender;
-import org.zfin.util.log4j.Log4jService;
-import org.zfin.util.servlet.RequestBean;
-import org.zfin.util.servlet.ServletService;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +29,7 @@ import java.util.List;
  */
 public class UpdatesCheckFilter implements Filter {
 
-    private static Logger logger = Logger.getLogger(UpdatesCheckFilter.class);
+    private static Logger logger = LogManager.getLogger(UpdatesCheckFilter.class);
     private static Boolean readOnlyMode = null;
     private static final String REDIRECT_URL = "/action/login";
     private List<LogoutHandler> logoutHandlers;
@@ -85,16 +82,6 @@ public class UpdatesCheckFilter implements Filter {
             } catch (Exception ee) {
                 logger.warn(ee);
             }
-//            callSmtpAppender((HttpServletRequest) request, locks);
-        }
-    }
-
-    private void callSmtpAppender(HttpServletRequest request, List<TableLock> locks) {
-        ZfinSMTPAppender smtpAppender = Log4jService.getSmtpAppender();
-        if (smtpAppender != null) {
-            RequestBean bean = ServletService.getRequestBean(request);
-            bean.setLocks(locks);
-            smtpAppender.sendEmailOfEvents(bean);
         }
     }
 

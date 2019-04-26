@@ -1,7 +1,7 @@
 package org.zfin.uniquery;
 
 import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 abstract public class AbstractEntityIdList implements EntityIdList {
 
-    protected static Logger LOG = Logger.getLogger(AbstractEntityIdList.class);
+    protected static Logger LOG = LogManager.getLogger(AbstractEntityIdList.class);
     protected CompositeConfiguration entityUrlMapping;
 
 

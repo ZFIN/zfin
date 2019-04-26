@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class BlastNonDBTest {
 
-    private final Logger logger = Logger.getLogger(BlastNonDBTest.class) ;
+    private final Logger logger = LogManager.getLogger(BlastNonDBTest.class) ;
 
     private MountedWublastBlastService service = MountedWublastBlastService.getInstance() ;
 

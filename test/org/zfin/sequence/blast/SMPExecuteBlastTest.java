@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -28,7 +28,7 @@ import static org.junit.Assert.fail;
  */
 public class SMPExecuteBlastTest {
 
-    private final Logger logger = Logger.getLogger(SMPExecuteBlastTest.class) ;
+    private final Logger logger = LogManager.getLogger(SMPExecuteBlastTest.class) ;
 
 
     static {

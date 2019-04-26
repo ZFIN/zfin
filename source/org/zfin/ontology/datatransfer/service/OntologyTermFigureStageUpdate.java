@@ -1,7 +1,7 @@
 package org.zfin.ontology.datatransfer.service;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.service.ExpressionService;
@@ -60,7 +60,7 @@ public class OntologyTermFigureStageUpdate extends AbstractScriptWrapper {
     private static String updateFile;
 
     public static void main(String[] arguments) {
-        LOG = Logger.getLogger(OntologyTermFigureStageUpdate.class);
+        LOG = LogManager.getLogger(OntologyTermFigureStageUpdate.class);
         LOG.info("Start Term-Stage Update: " + (new Date()).toString());
         CommandLine commandLine = parseArguments(arguments, "load <>");
 //        initializeLogger(commandLine.getOptionValue(log4jFileOption.getOpt()));

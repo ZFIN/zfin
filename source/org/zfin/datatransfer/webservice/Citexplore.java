@@ -3,8 +3,10 @@ package org.zfin.datatransfer.webservice;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.publication.Publication;
 
@@ -22,7 +24,7 @@ public class Citexplore {
     public final static String DOI_URL = "http://dx.doi.org";
     public final static String EPMC_SEARCH = "https://www.ebi.ac.uk/europepmc/webservices/rest/search";
 
-    private Logger logger = Logger.getLogger(Citexplore.class);
+    private Logger logger = LogManager.getLogger(Citexplore.class);
 
     /**
      * Iterates through the Publication list and updates the DOI, if it exists, from the Europe PMC REST service.
@@ -31,7 +33,7 @@ public class Citexplore {
      * @return List<Publication>
      */
     public List<Publication> getDoisForPubmedID(List<Publication> publicationList) {
-        logger.setLevel(Level.INFO);
+        Configurator.setLevel(LogManager.getLogger(Citexplore.class).getName(), Level.INFO);
         try {
             int counter = 0;
             boolean hasDOI;

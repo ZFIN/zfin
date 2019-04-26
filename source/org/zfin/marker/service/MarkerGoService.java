@@ -1,7 +1,7 @@
 package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.gwt.root.util.StringUtils;
@@ -26,7 +26,7 @@ import java.util.List;
 @Service
 public class MarkerGoService {
 
-    public static Logger log = Logger.getLogger(MarkerGoService.class);
+    public static Logger log = LogManager.getLogger(MarkerGoService.class);
 
     public List<MarkerGoViewTableRow> getMarkerGoViewTableRows(Marker marker) {
         List<MarkerGoViewTableRow> rows = new ArrayList<>();

@@ -1,6 +1,6 @@
 package org.zfin.util.downloads;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -15,7 +15,7 @@ public class WatchDownloadRefresh {
     private final Map<WatchKey, Path> keys;
     private boolean trace = false;
 
-    private static final Logger LOG = Logger.getLogger(WatchDownloadRefresh.class);
+    private static final Logger LOG = LogManager.getLogger(WatchDownloadRefresh.class);
 
     @SuppressWarnings("unchecked")
     static <T> WatchEvent<T> cast(WatchEvent<?> event) {

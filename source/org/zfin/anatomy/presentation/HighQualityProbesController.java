@@ -1,6 +1,6 @@
 package org.zfin.anatomy.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/ontology")
 public class HighQualityProbesController {
 
-    private static Logger LOG = Logger.getLogger(HighQualityProbesController.class);
+    private static Logger LOG = LogManager.getLogger(HighQualityProbesController.class);
 
     @Autowired
     private HttpServletRequest request;

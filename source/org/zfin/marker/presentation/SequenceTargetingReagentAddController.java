@@ -1,7 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,7 +41,7 @@ import java.util.Map;
 @RequestMapping("/marker")
 public class SequenceTargetingReagentAddController {
 
-    private static Logger LOG = Logger.getLogger(SequenceTargetingReagentAddController.class);
+    private static Logger LOG = LogManager.getLogger(SequenceTargetingReagentAddController.class);
 
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();

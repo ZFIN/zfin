@@ -1,6 +1,6 @@
 package org.zfin.expression.repository;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Assert;
@@ -43,7 +43,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
-    private static Logger log = Logger.getLogger(ExpressionRepositoryTest.class);
+    private static Logger log = LogManager.getLogger(ExpressionRepositoryTest.class);
 
     private ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
 

@@ -1,7 +1,7 @@
 package org.zfin.infrastructure;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -43,7 +43,7 @@ public class EnumValidationService {
     protected static String DOMAIN_NAME = "DOMAIN_NAME";
     private final static String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    private static final Logger logger = Logger.getLogger(EnumValidationService.class);
+    private static final Logger logger = LogManager.getLogger(EnumValidationService.class);
 
     private StringBuilder report;
     private boolean reportError;

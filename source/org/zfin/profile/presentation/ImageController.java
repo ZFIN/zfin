@@ -1,7 +1,7 @@
 package org.zfin.profile.presentation;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,7 +44,7 @@ public class ImageController {
     private static final File IMAGE_LOADUP_DIR = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.IMAGE_LOAD.toString());
     private static final String PROFILE_IMAGE_DIR = "profile";
 
-    private Logger logger = Logger.getLogger(ImageController.class);
+    private Logger logger = LogManager.getLogger(ImageController.class);
 
     @Autowired
     private ProfileRepository profileRepository;

@@ -2,7 +2,7 @@ package org.zfin.framework;
 
 import freemarker.template.utility.StringUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
@@ -34,7 +34,7 @@ public class ZfinSimpleTokenizer implements Iterator<String> {
     private static final String REPLACEMENT_STRING = "\\\\$0";
     private static final List<String> charactersToRemove = Arrays.asList("-", ":", "\\(", "\\)", "\\[", "\\]", "\\.");
 
-    private static Logger logger = Logger.getLogger(ZfinSimpleTokenizer.class);
+    private static Logger logger = LogManager.getLogger(ZfinSimpleTokenizer.class);
 
     public ZfinSimpleTokenizer(String text) {
         this.text = text;

@@ -1,6 +1,6 @@
 package org.zfin.sequence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
  * This class tests setting AccessionLink
  */
 public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
-    private static final Logger logger = Logger.getLogger(MapAccessionDbLinkTest.class);
+    private static final Logger logger = LogManager.getLogger(MapAccessionDbLinkTest.class);
     private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();

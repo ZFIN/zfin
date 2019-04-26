@@ -1,6 +1,6 @@
 package org.zfin.ontology;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  */
 public class OntologySerializationTest extends AbstractDatabaseTest {
 
-    private final static Logger logger = Logger.getLogger(OntologySerializationTest.class);
+    private final static Logger logger = LogManager.getLogger(OntologySerializationTest.class);
 
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 

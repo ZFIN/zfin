@@ -1,6 +1,6 @@
 package org.zfin.ontology.presentation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.presentation.ExpressionStatementPresentation;
@@ -12,7 +12,7 @@ import org.zfin.publication.CurationPresentation;
  */
 public class ExpressionResultPresentation extends ExpressionStatementPresentation {
 
-    private static final Logger logger = Logger.getLogger(ExpressionResultPresentation.class);
+    private static final Logger logger = LogManager.getLogger(ExpressionResultPresentation.class);
 
     /**
      * Create hyperlink to term detail page.

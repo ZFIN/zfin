@@ -1,7 +1,7 @@
 package org.zfin.properties;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -16,7 +16,7 @@ import javax.servlet.ServletContextListener;
  */
 public class ZfinPropertiesLoadListener implements ServletContextListener {
 
-    private static final Logger logger = Logger.getLogger(ZfinPropertiesLoadListener.class);
+    private static final Logger logger = LogManager.getLogger(ZfinPropertiesLoadListener.class);
 
     private static String webRoot = null ;
     private static ServletContext servletContext = null ;

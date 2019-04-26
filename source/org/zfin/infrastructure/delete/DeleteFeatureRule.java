@@ -1,7 +1,7 @@
 package org.zfin.infrastructure.delete;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.feature.Feature;
 import org.zfin.profile.FeatureSupplier;
 import org.zfin.profile.Organization;
@@ -71,5 +71,5 @@ public class DeleteFeatureRule extends AbstractDeleteEntityRule implements Delet
         return null;
     }
 
-    Logger logger = Logger.getLogger(DeleteFeatureRule.class);
+    Logger logger = LogManager.getLogger(DeleteFeatureRule.class);
 }
