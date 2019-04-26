@@ -21,10 +21,7 @@
         <fileset dir="${web.lib}">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${env.SOURCEROOT}/lib/Java">
-            <include name="*jdbc*.jar"/>
-            <include name="postgres*.jar"/>
-        </fileset>
+        
     </path>
     <taskdef name="loadProperties"
              classname="org.zfin.properties.ant.LoadPropertiesTask"
