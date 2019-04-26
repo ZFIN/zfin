@@ -3,7 +3,7 @@
 
 <zfin2:errors errorResult="${errors}"/>
 
-<script src="/javascript/dist/profiles.bundle.js"></script>
+<script src="${zfn:getAssetPath("profiles.js")}"></script>
 
 
 <div align="center">

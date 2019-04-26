@@ -2,7 +2,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<script src="/javascript/dist/angular.bundle.js"></script>
+<script src="${zfn:getAssetPath("angular.js")}"></script>
 
 <div ng-app="app" ng-controller="EditController as eControl">
 

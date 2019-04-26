@@ -2,7 +2,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.zebrashare.presentation.LineEditBean" scope="request"/>
 
-<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
+<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
 <div class="container-fluid">
     <c:if test="${!empty publication}">

@@ -17,11 +17,11 @@
 <c:set var="communityCategoryName" value="<%=Category.COMMUNITY.getName()%>"/>
 <c:set var="figureCategoryName" value="<%=Category.FIGURE.getName()%>"/>
 
-<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
+<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
-<script src="/javascript/dist/angular.bundle.js"></script>
-<script src="/javascript/dist/search.bundle.js"></script>
-<script src="/javascript/dist/bootstrap.bundle.js"></script>
+<script src="${zfn:getAssetPath("angular.js")}"></script>
+<script src="${zfn:getAssetPath("search.js")}"></script>
+<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
 <style>
     /* remove parts of the header that we don't need */

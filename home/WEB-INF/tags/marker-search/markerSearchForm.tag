@@ -2,9 +2,9 @@
 
 <%@attribute name="criteria" type="org.zfin.search.presentation.MarkerSearchCriteria" required="true" %>
 
-<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
+<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
-<script src="/javascript/dist/bootstrap.bundle.js"></script>
+<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
 <div class="search-form-top-bar">
     <div class="search-form-title" style="display: inline-block;">

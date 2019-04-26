@@ -9,10 +9,10 @@
 </div>
 <p/>
 
-<link rel="stylesheet" href="/javascript/dist/jquery-ui.bundle.css">
-<script src="/javascript/dist/jquery-ui.bundle.js"></script>
+<link rel="stylesheet" href="${zfn:getAssetPath("jquery-ui.css")}">
+<script src="${zfn:getAssetPath("jquery-ui.js")}"></script>
 
-<script src="/javascript/dist/curation.bundle.js"></script>
+<script src="${zfn:getAssetPath("curation.js")}"></script>
 
 <form:form commandName="formBean" id="constructadd" style="background-color:#EEEEEE;">
 

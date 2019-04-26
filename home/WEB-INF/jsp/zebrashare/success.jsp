@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
+<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
 <div class="container-fluid">
     <h1>Thanks For Your Submission</h1>

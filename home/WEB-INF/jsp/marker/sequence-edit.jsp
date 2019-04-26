@@ -3,7 +3,7 @@
 <script type="text/javascript" language="javascript"
         src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
-<script src="/javascript/dist/angular.bundle.js"></script>
+<script src="${zfn:getAssetPath("angular.js")}"></script>
 
 <script type="text/javascript">
     var MarkerProperties= {

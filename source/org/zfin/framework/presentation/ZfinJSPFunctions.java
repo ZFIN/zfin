@@ -1,5 +1,6 @@
 package org.zfin.framework.presentation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContext;
@@ -22,12 +23,13 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.profile.Person;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.DateUtil;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -393,6 +395,18 @@ public class ZfinJSPFunctions {
 
     public static AuditLogItem getLastUpdate(String entityID) {
         return RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(entityID);
+    }
+
+    public static String getAssetPath(String name) {
+        ObjectMapper mapper = new ObjectMapper();
+        InputStream stream = ZfinJSPFunctions.class.getResourceAsStream("../../../../../../asset-manifest.json");
+        try {
+            Map manifest = mapper.readValue(stream, Map.class);
+            return String.valueOf(manifest.get(name));
+        } catch (IOException e) {
+            return "";
+        }
+
     }
 
 }

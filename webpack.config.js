@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 module.exports = {
     context: path.resolve(__dirname, 'home/javascript'),
@@ -15,9 +16,9 @@ module.exports = {
         'zfin-common': './zfin-common/index.js',
     },
     output: {
-        path: path.resolve(process.env.TARGETROOT, 'home/javascript/dist'),
-        filename: '[name].bundle.js',
-        publicPath: 'javascript/dist'
+        path: path.resolve(process.env.TARGETROOT, 'home/dist'),
+        filename: '[name].bundle.[contenthash].js',
+        publicPath: '/dist/'
     },
     module: {
         rules: [
@@ -41,7 +42,11 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: '[name].bundle.css',
+            filename: '[name].bundle.[contenthash].css',
+        }),
+        new WebpackAssetsManifest({
+            output: '../asset-manifest.json',
+            publicPath: true,
         }),
     ],
 };

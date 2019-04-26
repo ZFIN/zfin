@@ -3,7 +3,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<script src="/javascript/dist/angular.bundle.js"></script>
+<script src="${zfn:getAssetPath("angular.js")}"></script>
 
 <authz:authorize access="hasRole('root')">
     <div ng-app="app" ng-controller="EditController as eControl" ng-init="init('${gene.name}','${gene.abbreviation}')">

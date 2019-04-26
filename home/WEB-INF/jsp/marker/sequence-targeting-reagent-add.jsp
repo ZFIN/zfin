@@ -1,9 +1,9 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
+<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
-<script src="/javascript/dist/angular.bundle.js"></script>
+<script src="${zfn:getAssetPath("angular.js")}"></script>
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentAddBean" scope="request"/>
 

@@ -12,10 +12,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>${title}</title>
 
-    <link rel="stylesheet" href="/javascript/dist/style.bundle.css">
+    <link rel="stylesheet" href="${zfn:getAssetPath("style.css")}">
 
-    <script src="/javascript/dist/vendor-common.bundle.js"></script>
-    <script src="/javascript/dist/zfin-common.bundle.js"></script>
+    <script src="${zfn:getAssetPath("vendor-common.js")}"></script>
+    <script src="${zfn:getAssetPath("zfin-common.js")}"></script>
 
     <script>
         <c:choose>

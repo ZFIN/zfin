@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" href="/javascript/dist/jquery-ui.bundle.css">
-<script src="/javascript/dist/jquery-ui.bundle.js"></script>
+<link rel="stylesheet" href="${zfn:getAssetPath("jquery-ui.css")}">
+<script src="${zfn:getAssetPath("jquery-ui.js")}"></script>
 
 <authz:authorize access="hasRole('root')">
 

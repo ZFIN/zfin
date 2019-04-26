@@ -338,4 +338,10 @@
         <function-signature>java.lang.String getWebdriverRoot()</function-signature>
     </function>
 
+    <function>
+        <name>getAssetPath</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getAssetPath(java.lang.String)</function-signature>
+    </function>
+
 </taglib>

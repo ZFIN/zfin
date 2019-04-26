@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
+<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
 <div class="container-fluid">
     <h3 class="page-header">Updates for ${zdbID}</h3>

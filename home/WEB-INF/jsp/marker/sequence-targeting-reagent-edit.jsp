@@ -3,10 +3,10 @@
 
 <jsp:useBean id="str" class="org.zfin.mutant.SequenceTargetingReagent" scope="request"/>
 
-<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
+<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
-<script src="/javascript/dist/bootstrap.bundle.js"></script>
-<script src="/javascript/dist/angular.bundle.js"></script>
+<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
+<script src="${zfn:getAssetPath("angular.js")}"></script>
 
 <c:set var="viewURL">/${str.zdbID}</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${str.zdbID}</c:set>

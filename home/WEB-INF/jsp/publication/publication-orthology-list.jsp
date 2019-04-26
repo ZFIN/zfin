@@ -1,7 +1,7 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<script src="/javascript/dist/angular.bundle.js"></script>
+<script src="${zfn:getAssetPath("angular.js")}"></script>
 
 <table class="primary-entity-attributes">
     <tr>

@@ -1,10 +1,10 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" href="/javascript/dist/bootstrap.bundle.css">
+<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
-<script src="/javascript/dist/bootstrap.bundle.js"></script>
-<script src="/javascript/dist/angular.bundle.js"></script>
+<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
+<script src="${zfn:getAssetPath("angular.js")}"></script>
 
 <c:set var="viewURL">/${publication.zdbID}</c:set>
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
