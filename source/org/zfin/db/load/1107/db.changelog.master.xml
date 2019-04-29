@@ -6,5 +6,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/load/1107/CUR-900.sql"/>
+    <include file="source/org/zfin/db/load/1107/PUB-509.sql"/>
 
 </databaseChangeLog>
