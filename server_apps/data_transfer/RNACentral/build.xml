@@ -6,7 +6,7 @@
     <property name="web.dir" value="${root.dir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
-    <property name="lib" value="${root.dir}/lib/Java"/>
+    <!--<property name="lib" value="${root.dir}/lib/Java"/>-->
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
     <property name="jvm.args" value="-Xverify:none"/>
