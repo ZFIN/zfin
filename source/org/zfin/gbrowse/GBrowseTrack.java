@@ -5,7 +5,7 @@ package org.zfin.gbrowse;
  */
 public enum GBrowseTrack {
     GENES("genes"),
-    TRANSCRIPTS("mRNA"),
+    TRANSCRIPTS("transcript"),
     CLONE("clone"),
     GENES_VEGA("genesVega"),
     ENSEMBL_MRNA("Ensembl_mRNA"),

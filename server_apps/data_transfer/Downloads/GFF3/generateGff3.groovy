@@ -25,12 +25,11 @@ RunSQLFiles runScriptFiles = new RunSQLFiles("Generate-GFF3", propertiesFile, ".
 runScriptFiles.initializeLogger("./log4j.xml")
 runScriptFiles.initDatabaseWithoutSysmaster()
 runScriptFiles.setQueryFiles(
-        "zfin_tginsertion_gff3.sql",
-        "zfin_zmp_gff3.sql",
         "E_zfin_ensembl_gene.sql",
         "E_expression_gff3.sql",
         "E_phenotype_gff3.sql",
-        "E_antibody_gff3.sql"
+        "E_antibody_gff3.sql",
+        "unload_mutants.sql"
 )
 runScriptFiles.execute()
 
