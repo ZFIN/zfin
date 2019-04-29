@@ -799,26 +799,29 @@
         <delete dir="org"/>
     </target>
 
+    <macrodef name="npmBuild">
+        <attribute name="mode" default="development"/>
+        <sequential>
+            <exec dir="${TARGETROOT}" executable="npm" failonerror="true">
+                <env key="NODE_ENV" value="@{mode}"/>
+                <arg value="run"/>
+                <arg value="build"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
     <target name="npmInstall">
-        <exec dir="${TARGETROOT}" executable="npm">
+        <exec dir="${TARGETROOT}" executable="npm" failonerror="true">
             <arg value="install"/>
         </exec>
     </target>
 
     <target name="npmBuildProd">
-        <exec dir="${TARGETROOT}" executable="npm">
-            <env key="NODE_ENV" value="production"/>
-            <arg value="run"/>
-            <arg value="build"/>
-        </exec>
+        <npmBuild mode="production"/>
     </target>
 
     <target name="npmBuildDev">
-        <exec dir="${TARGETROOT}" executable="npm">
-            <env key="NODE_ENV" value="development"/>
-            <arg value="run"/>
-            <arg value="build"/>
-        </exec>
+        <npmBuild/>
     </target>
 
 </project>
