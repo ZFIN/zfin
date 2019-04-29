@@ -10,10 +10,7 @@ import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.mapping.FeatureGenomeLocation;
-import org.zfin.mapping.GenomeLocation;
-import org.zfin.mapping.MarkerGenomeLocation;
-import org.zfin.mapping.VariantSequence;
+import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -250,6 +247,7 @@ public class FeatureService {
     public static GBrowseImage getGbrowseImage(Feature feature) {
         Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
         List<FeatureGenomeLocation> locations = getFeatureGenomeLocationsInGbrowse(feature);
+        Collections.sort(locations, new GenomeVersionComparator<>());
         if (CollectionUtils.isEmpty(locations)) {
             return null;
         }

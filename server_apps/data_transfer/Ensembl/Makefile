@@ -7,6 +7,8 @@ all:
 	gradle -p $(SOURCEROOT) :server_apps:data_transfer:Ensembl:deployFiles
 
 
+TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Ensembl
+
 # ---------------  Misc Targets  ----------------------------------------
 
 # Run the download script.
@@ -15,38 +17,33 @@ all:
 
 #     1 to 1 gene mapping from ensdarG to ZDB-GENE
 
-$(TARGETDIR)/ensdarg.csv: $(TARGETDIR)/fetchEnsdarg.groovy $(TARGETDIR)/fetch_ensdarg.sh
+$(TARGETDIR)/ensdarg.csv:
 	cd $(TARGETDIR) && fetch_ensdarg.sh
 
-load_ensdarG: $(TARGETDIR)/load_ensdarG.sql \
- $(TARGETDIR)/rollback.sql $(TARGETDIR)/ensdarg.csv
+load_ensdarG_rollback:
 	cd $(TARGETDIR) && cat $< rollback.sql | ${PGBINDIR}/psql -e ${DBNAME}
 
-load_ensdarG_commit: $(TARGETDIR)/load_ensdarG.sql \
- $(TARGETDIR)/commit.sql $(TARGETDIR)/ensdarg.csv
+load_ensdarG: 
 	cd $(TARGETDIR)/ && cat $< commit.sql | ${PGBINDIR}/psql -e ${DBNAME}
 
 # 		fetch  Ensembl GTF and convert to gff3
-run_gff: $(TARGETDIR)/fetchEnsemblGff3.groovy
+run_gff: 
 	cd $(TARGETDIR) && fetchEnsemblGff3.groovy
-
-notify_stale: $(TARGETDIR)/notifyStaleIds.sh
 
 run_sanger_mutant_data: $(TARGETDIR)/fetch_sangerMutantInfo.sh
 
 # 		fetch and convert Ensembl AGP to gff3
-run_agp: $(TARGETDIR)/fetch_ensembl_agp.sh $(TARGETDIR)/agp_to_gff3.awk \
- $(TARGETDIR)/agp_to_gff3_trim.awk $(TARGETDIR)/clone_gff3_w_alias.awk
+run_agp: 
 	cd $(TARGETDIR) && fetch_ensembl_agp.sh
 
 
 run:        load_ensdarG run_gff run_agp
 
-run_commit: load_ensdarG_commit run_gff run_agp notify_stale
+run_rollback: load_ensdarG_rollback run_gff run_agp
 
 run_gff3:  run_gff run_agp
 
-run_ensembl_load: load_ensdarG_commit notify_stale
+run_ensembl_load: load_ensdarG_commit 
 
 run_ensembl_load_rollback:  load_ensdarG
 

@@ -13,6 +13,10 @@ import java.io.Serializable;
  */
 public class GenomeLocation implements Serializable, Comparable<GenomeLocation> {
 
+    public static String GRCZ11 = "GRCz11";
+    public static String GRCZ10 = "GRCz10";
+    public static String ZV9 = "Zv9";
+
     protected long ID;
     protected Integer start;
     protected Integer end;
