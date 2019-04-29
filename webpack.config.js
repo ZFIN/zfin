@@ -1,9 +1,14 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 
-module.exports = {
+const isProd = process.env.NODE_ENV === 'production';
+
+const config = {
     context: path.resolve(__dirname, 'home/javascript'),
+    devtool: isProd ? false : 'cheap-module-eval-source-map',
     entry: {
         angular: './angular/index.js',
         bootstrap: './bootstrap/index.js',
@@ -50,3 +55,12 @@ module.exports = {
         }),
     ],
 };
+
+if (isProd) {
+    config.mode = 'production';
+    config.optimization = {
+        minimizer: [new TerserPlugin(), new OptimizeCssAssetsPlugin()],
+    };
+}
+
+module.exports = config;

@@ -322,13 +322,15 @@ task deployPerlFiles(type: Copy) {
     }
 }
 
-task deployPackageFiles(type: Copy, dependsOn: deployPerlFiles) {
+task deployPackageFiles() {
     description 'Deploy package.json into TARGETROOT'
     group 'ZFIN Deployment'
-    String packageFile = 'package.json'
+    def packageFiles = ['package.json', 'package-lock.json', 'webpack.config.js']
     doLast {
-        from(packageFile)
-        into(targetroot)
+        copy {
+            from(packageFiles)
+            into(targetroot)
+        }
     }
 }
 

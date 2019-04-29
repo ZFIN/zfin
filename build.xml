@@ -591,7 +591,7 @@
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,instrument,restart,deploy-solr,npmInstall,versionAssets"/>
+            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,instrument,restart,deploy-solr,npmInstall,npmBuildProd"/>
 
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
@@ -697,6 +697,7 @@
     <target name="dirtydeploy" depends="compile,instrument"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
         <copyWebApp from="${web.dir}" to="${home.target}"/>
+        <antcall target="npmBuildDev"/>
         <antcall target="deploy-solr"/>
     </target>
 
@@ -804,8 +805,17 @@
         </exec>
     </target>
 
-    <target name="versionAssets">
+    <target name="npmBuildProd">
         <exec dir="${TARGETROOT}" executable="npm">
+            <env key="NODE_ENV" value="production"/>
+            <arg value="run"/>
+            <arg value="build"/>
+        </exec>
+    </target>
+
+    <target name="npmBuildDev">
+        <exec dir="${TARGETROOT}" executable="npm">
+            <env key="NODE_ENV" value="development"/>
             <arg value="run"/>
             <arg value="build"/>
         </exec>
