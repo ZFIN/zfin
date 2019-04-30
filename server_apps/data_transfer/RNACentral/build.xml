@@ -31,13 +31,13 @@
     <path id="extended.classpath">
         <path refid="classpath"/>
         <!-- This class needs to come first to ensure that unit test methods are executed in the order they appear in the source file -->
-        <fileset dir="${lib}">
+       <!-- <fileset dir="${lib}">
             <include name="junit-orderOfExecution.jar"/>
         </fileset>
         <fileset dir="${lib}">
             <include name="*.jar"/>
             <include name="*.zip"/>
-        </fileset>
+        </fileset>-->
 
     </path>
     <target name="create-transcript-info-file"
