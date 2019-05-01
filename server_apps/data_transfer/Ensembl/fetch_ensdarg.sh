@@ -20,25 +20,15 @@ echo "Using Ensembl release: $cur"
 # load the file from Ensembl mysql into the local database
 # rollback if not called with the (first) argument "commit"
 
-if ($1 == "commit") then
-	echo "*** COMMITING load_ensdarg.sql into <!--|DB_NAME|--> ***"
-	cat load_ensdarg.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
-	# Log what is being used as the most current release
-	if (! -f fetch_ensembl.log) then
-		touch fetch_ensembl.log
-	endif
-	echo "Using Ensembl release: $cur   `date`" >> fetch_ensembl.log
-	cat updateMarkerChromosomeLocation.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
-	echo "Updated marker_chromosome_location" >> fetch_ensembl.log
-
-else
-	echo ""
-	echo "*** Just Testing load_ensdarg.sql into <!--|DB_NAME|--> .***  "
-	echo "To load use:  gmake run_commit"
-	echo ""
-	cat load_ensdarg.sql rollback.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
-	cat updateMarkerChromosomeLocation.sql rollback.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
-	echo "Updated marker_chromosome_location" >> fetch_ensembl.log
+echo "*** COMMITING load_ensdarg.sql into <!--|DB_NAME|--> ***"
+cat load_ensdarG.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
+# Log what is being used as the most current release
+if (! -f fetch_ensembl.log) then
+	touch fetch_ensembl.log
+endif
+echo "Using Ensembl release: $cur   `date`" >> fetch_ensembl.log
+cat updateMarkerChromosomeLocation.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
+echo "Updated marker_chromosome_location" >> fetch_ensembl.log
 
 endif
 

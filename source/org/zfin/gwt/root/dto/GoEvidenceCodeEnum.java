@@ -20,6 +20,8 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
         switch (this) {
             case NAS: // has no inferences
                 return new InferenceCategory[]{};
+            case IBA:
+                return new InferenceCategory[]{InferenceCategory.PANTHER};
             case IC:
                 return new InferenceCategory[]{InferenceCategory.GO};
             case IDA:
