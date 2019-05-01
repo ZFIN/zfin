@@ -5,7 +5,7 @@ This include expects the Pagination bean in request scope with the name <formBea
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <center><c:if test="${formBean.paginationNeeded}">
-    <div class="pagination">
+    <div class="zf-pagination">
         <table>
             <tr>
                 <td align="center" valign="top">
