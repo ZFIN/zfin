@@ -4,10 +4,11 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-<script src="${zfn:getAssetPath("angular.js")}"></script>
 
 <zfin2:pub-navigator pages="${page}" currentPage="${currentPage}"/>
 
-<div class="container-fluid" ng-app="app">
-    <div pub-dashboard user-id="${currentUser.zdbID}"></div>
+<div class="container-fluid">
+    <div class="__react-root" id="PubDashboard"></div>
 </div>
+
+<script src="${zfn:getAssetPath("react.js")}"></script>
