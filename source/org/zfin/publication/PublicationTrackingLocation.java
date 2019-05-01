@@ -13,7 +13,8 @@ public class PublicationTrackingLocation {
 
     public enum Role {
         CURATOR,
-        INDEXER
+        INDEXER,
+        STUDENT,
     }
 
     public enum Name {
