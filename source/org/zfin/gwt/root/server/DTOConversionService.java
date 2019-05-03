@@ -655,6 +655,12 @@ public class DTOConversionService {
             detail.setFeature(feature);
             feature.setFeatureProteinMutationDetail(detail);
         }
+        FeatureGenomeMutationDetailChangeDTO fgmdChangeDTO = featureDTO.getFgmdChangeDTO();
+        if (fgmdChangeDTO != null) {
+            FeatureGenomicMutationDetail detail = convertToFeatureGenomicMutationDetail(null, fgmdChangeDTO);
+            detail.setFeature(feature);
+            feature.setFeatureGenomicMutationDetail(detail);
+        }
         if (CollectionUtils.isNotEmpty(featureDTO.getTranscriptChangeDTOSet())) {
             for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
                 FeatureTranscriptMutationDetail detail = new FeatureTranscriptMutationDetail();
@@ -706,6 +712,17 @@ public class DTOConversionService {
         detail.setExonNumber(dto.getExonNumber());
         detail.setIntronNumber(dto.getIntronNumber());
         detail.setTranscriptConsequence(getTranscriptTermRepository().getControlledVocabularyTerm(dto.getConsequenceOboID()));
+
+        return detail;
+    }
+    public static FeatureGenomicMutationDetail convertToFeatureGenomicMutationDetail(FeatureGenomicMutationDetail detail, FeatureGenomeMutationDetailChangeDTO dto) {
+        if (detail == null) {
+            detail = new FeatureGenomicMutationDetail();
+        }
+        detail.setFgmdSeqRef(dto.getFgmdSeqRef());
+        detail.setFgmdSeqVar(dto.getFgmdSeqVar());
+        detail.setFgmdVarStrand("+");
+
 
         return detail;
     }
@@ -783,12 +800,12 @@ public class DTOConversionService {
                 featureDTO.setFeatureEndLoc(ftrLocation.getSfclEnd());
                 featureDTO.setEvidence(FeatureService.getFeatureGenomeLocationEvidenceCode(ftrLocation.getSfclEvidence().getZdbID()));
             }
-                FeatureGenomicMutationDetail fgmd=RepositoryFactory.getFeatureRepository().getFeatureGenomicDetail(feature);
+                /*FeatureGenomicMutationDetail fgmd=RepositoryFactory.getFeatureRepository().getFeatureGenomicDetail(feature);
                 if (fgmd!=null)
                 {
                     featureDTO.setFgmdSeqVar(fgmd.getFgmdSeqVar());
                     featureDTO.setFgmdSeqRef(fgmd.getFgmdSeqRef());
-                }
+                }*/
 
 
 
@@ -838,6 +855,7 @@ public class DTOConversionService {
             }
             featureDTO.setProteinChangeDTO(convertToMutationDetailProteinDTO(feature.getFeatureProteinMutationDetail()));
             featureDTO.setDnaChangeDTO(convertToMutationDetailDnaDTO(feature.getFeatureDnaMutationDetail()));
+            featureDTO.setFgmdChangeDTO(convertToFeatureGenomicMutationDetailDTO(feature.getFeatureGenomicMutationDetail()));
             if (CollectionUtils.isNotEmpty(feature.getFeatureTranscriptMutationDetailSet())) {
                 Set<MutationDetailTranscriptChangeDTO> set = new HashSet<>(3);
                 for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
@@ -885,6 +903,20 @@ public class DTOConversionService {
         dto.setExonNumber(detail.getExonNumber());
         dto.setIntronNumber(detail.getIntronNumber());
         dto.setSequenceReferenceAccessionNumber(detail.getDnaSequenceReferenceAccessionNumber());
+        return dto;
+    }
+
+    private static FeatureGenomeMutationDetailChangeDTO convertToFeatureGenomicMutationDetailDTO(FeatureGenomicMutationDetail detail) {
+        if (detail == null) {
+            return null;
+        }
+        FeatureGenomeMutationDetailChangeDTO dto = new FeatureGenomeMutationDetailChangeDTO();
+        dto.setZdbID(detail.getZdbID());
+
+
+        dto.setFgmdSeqVar(detail.getFgmdSeqVar());
+        dto.setFgmdSeqRef(detail.getFgmdSeqRef());
+
         return dto;
     }
 
@@ -2114,4 +2146,24 @@ public class DTOConversionService {
         return detail;
 
     }
+
+    public static FeatureGenomicMutationDetail updateFeatureGenomicMutationDetailWithDTO(FeatureGenomicMutationDetail detail, FeatureGenomeMutationDetailChangeDTO fgmdChangeDTO) {
+        if (detail == null) {
+            detail = new FeatureGenomicMutationDetail();
+        }
+        FeatureGenomicMutationDetail changes = convertToFeatureGenomicMutationDetail(detail, fgmdChangeDTO);
+
+
+            detail.setFgmdSeqVar(changes.getFgmdSeqVar());
+
+
+            detail.setFgmdSeqRef(changes.getFgmdSeqRef());
+
+        detail.setFgmdVarStrand("+");
+
+
+        return detail;
+
+    }
+
 }

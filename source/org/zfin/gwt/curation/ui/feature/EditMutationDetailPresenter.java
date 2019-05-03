@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.user.client.Window;
 import org.zfin.gwt.curation.event.DirtyValueEvent;
+import org.zfin.gwt.root.dto.FeatureGenomeMutationDetailChangeDTO;
 import org.zfin.gwt.root.dto.MutationDetailDnaChangeDTO;
 import org.zfin.gwt.root.dto.MutationDetailProteinChangeDTO;
 import org.zfin.gwt.root.dto.MutationDetailTranscriptChangeDTO;
@@ -36,15 +37,17 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
 
         BooleanCollector col = new BooleanCollector(true);
         GenomicMutationDetailView genMutView=view.genomicMutationDetailView;
-        if (dto == null) {
+        FeatureGenomeMutationDetailChangeDTO fgmdChangeDTO=dto.getFgmdChangeDTO();
+        if (fgmdChangeDTO == null) {
             for (IsDirtyWidget widget : genMutView.getValueFields())
                 col.addBoolean(widget.isDirty(null));
 
         } else {
 
-            col.addBoolean(genMutView.seqVariant.isDirty(dto.getFgmdSeqVar()));
-            col.addBoolean(genMutView.seqReference.isDirty(dto.getFgmdSeqRef()));
+            col.addBoolean(genMutView.seqVariant.isDirty(fgmdChangeDTO.getFgmdSeqVar()));
+            col.addBoolean(genMutView.seqReference.isDirty(fgmdChangeDTO.getFgmdSeqRef()));
         }
+
         MutationDetailDNAView mutationDetailDnaView = view.mutationDetailDnaView;
         MutationDetailDnaChangeDTO dnaChangeDTO = dto.getDnaChangeDTO();
 

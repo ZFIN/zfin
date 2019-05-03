@@ -72,11 +72,20 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
 
     protected Integer featureEndLoc;
 
+    public FeatureGenomeMutationDetailChangeDTO getFgmdChangeDTO() {
+        return fgmdChangeDTO;
+    }
+
+    public void setFgmdChangeDTO(FeatureGenomeMutationDetailChangeDTO fgmdChangeDTO) {
+        this.fgmdChangeDTO = fgmdChangeDTO;
+    }
+
     protected List<String> featureSequences;
     protected String displayNameForGenotypeBase;
     protected String displayNameForGenotypeSuperior;
     protected MutationDetailDnaChangeDTO dnaChangeDTO;
     protected MutationDetailProteinChangeDTO proteinChangeDTO;
+    protected FeatureGenomeMutationDetailChangeDTO fgmdChangeDTO;
     protected Set<MutationDetailTranscriptChangeDTO> transcriptChangeDTOSet;
 
     public String getFeatureSequence() {
