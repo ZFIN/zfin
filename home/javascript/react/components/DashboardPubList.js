@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import TimeAgo from 'react-timeago'
-
-const formatter = (value, unit) => `${value} ${unit}${value !== 1 ? 's': ''}`;
+import RelativeDate from "./RelativeDate";
 
 class DashboardPubList extends React.Component {
     render() {
@@ -48,8 +46,8 @@ class DashboardPubList extends React.Component {
                                         <td>
                                             <p><b dangerouslySetInnerHTML={{__html: pub.title}} /></p>
                                         </td>
-                                        <td><TimeAgo date={pub.status.updateDate} formatter={formatter} /></td>
-                                        {hasCorrespondenceColumn && <td><TimeAgo date={pub.lastCorrespondenceDate} formatter={formatter} /></td>}
+                                        <td><RelativeDate date={pub.status.updateDate} /></td>
+                                        {hasCorrespondenceColumn && <td><RelativeDate date={pub.lastCorrespondenceDate} /></td>}
                                         <td>{pub.status.status.name}</td>
                                         <td>{pub.status.owner.name}</td>
                                         <td>

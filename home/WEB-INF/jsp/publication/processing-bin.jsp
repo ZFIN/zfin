@@ -7,4 +7,12 @@
 <zfin2:pub-navigator pages="${page}" currentPage="${currentPage}"/>
 
 <div class="container-fluid">
+    <div class="__react-root"
+         id="ProcessingBin"
+         data-current-status="${currentStatus.id}"
+         data-next-status="${nextStatus.id}"
+         data-user-id="${currentUser.zdbID}">
+    </div>
 </div>
+
+<script src="${zfn:getAssetPath("react.js")}"></script>

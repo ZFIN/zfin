@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getCurators, getStatuses } from "../api/publication";
+import RefreshButton from "./RefreshButton";
 
 class DashboardFilterBar extends React.Component {
     constructor(props) {
@@ -80,13 +81,12 @@ class DashboardFilterBar extends React.Component {
     render() {
         const { curators, orders, statuses, selectedCurator, selectedOrder, selectedStatus } = this.state;
         const { loading } = this.props;
-        const selectStyle = {margin: '0 5px'};
         return (
             <div className="row filter-bar">
                 <div className="col-sm-12">
                     <form className="form-inline">
                         Pubs assigned to
-                        <select className="form-control" onChange={(event) => this.updateCurator(event)} style={selectStyle} value={selectedCurator}>
+                        <select className="form-control" onChange={(event) => this.updateCurator(event)} value={selectedCurator}>
                             {curators.map(curator => (
                                 <option disabled={curator.disabled} key={curator.zdbID} value={curator.zdbID}>
                                     {curator.name}
@@ -95,7 +95,7 @@ class DashboardFilterBar extends React.Component {
                         </select>
 
                         with status
-                        <select className="form-control" onChange={(event) => this.updateStatus(event)} style={selectStyle} value={selectedStatus}>
+                        <select className="form-control" onChange={(event) => this.updateStatus(event)} value={selectedStatus}>
                             <option value=''>Any</option>
                             {statuses.map(status => (
                                 <option key={status.id} value={status.id}>
@@ -105,7 +105,7 @@ class DashboardFilterBar extends React.Component {
                         </select>
 
                         by
-                        <select className="form-control" onChange={(event) => this.updateOrder(event)} style={selectStyle} value={selectedOrder}>
+                        <select className="form-control" onChange={(event) => this.updateOrder(event)} value={selectedOrder}>
                             {orders.map(order => (
                                 <option key={order.value} value={order.value}>
                                     {order.display}
@@ -113,15 +113,7 @@ class DashboardFilterBar extends React.Component {
                             ))}
                         </select>
 
-                        <button
-                            title="Refresh query"
-                            className="btn btn-link pub-dashboard-reload"
-                            disabled={loading}
-                            type="button"
-                            onClick={() => this.fireChangeCallback()}
-                        >
-                            <span className={`fa-animation-container ${loading ? 'fa-spin' : ''}`}><i className="fas fa-sync" /></span>
-                        </button>
+                        <RefreshButton loading={loading} onClick={() => this.fireChangeCallback()} />
                     </form>
                 </div>
             </div>

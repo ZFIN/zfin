@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import DashboardFilterBar from "../components/DashboardFilterBar";
 
 import { searchPubStatus } from "../api/publication";
@@ -53,7 +54,7 @@ class PubDashboard extends React.Component {
         const { loading, page, results } = this.state;
         return (
             <div className="pub-dashboard">
-                <DashboardFilterBar currentUserId="ZDB-PERS-140612-1" loading={loading} onChange={this.handleFilterChange}/>
+                <DashboardFilterBar currentUserId={this.props.userId} loading={loading} onChange={this.handleFilterChange}/>
 
                 {loading && <div className="text-center text-muted">
                     <i className="fas fa-spinner fa-spin" /> Loading...
@@ -77,5 +78,9 @@ class PubDashboard extends React.Component {
         );
     }
 }
+
+PubDashboard.propTypes = {
+    userId: PropTypes.string,
+};
 
 export default PubDashboard;
