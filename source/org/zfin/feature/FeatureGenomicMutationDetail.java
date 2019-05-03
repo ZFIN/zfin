@@ -88,4 +88,46 @@ public class FeatureGenomicMutationDetail implements Cloneable {
     public void setFgmdPaddedBase(String fgmdPaddedBase) {
         this.fgmdPaddedBase = fgmdPaddedBase;
     }
+
+
+    public FeatureGenomicMutationDetail clone() {
+        try {
+            FeatureGenomicMutationDetail detail = (FeatureGenomicMutationDetail) super.clone();
+
+            return detail;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FeatureGenomicMutationDetail that = (FeatureGenomicMutationDetail) o;
+
+        if (fgmdSeqRef != null ? !fgmdSeqRef.equals(that.fgmdSeqRef) : that.fgmdSeqRef != null)
+            return false;
+        if (fgmdSeqVar != null ? !fgmdSeqVar.equals(that.fgmdSeqVar) : that.fgmdSeqVar != null)
+            return false;
+        if (fgmdSequenceReferenceAccessionNumber != null ? !fgmdSequenceReferenceAccessionNumber.equals(that.fgmdSequenceReferenceAccessionNumber) : that.fgmdSequenceReferenceAccessionNumber != null)
+            return false;
+        if (fgmdPaddedBase != null ? !fgmdPaddedBase.equals(that.fgmdPaddedBase) : that.fgmdPaddedBase != null)
+            return false;
+        return (fgmdVarStrand != null ? !fgmdVarStrand.equals(that.fgmdVarStrand) : that.fgmdVarStrand != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fgmdSeqRef != null ? fgmdSeqRef.hashCode() : 0;
+        result = 31 * result + (fgmdSeqVar != null ? fgmdSeqVar.hashCode() : 0);
+        result = 31 * result + (fgmdSequenceReferenceAccessionNumber != null ? fgmdSequenceReferenceAccessionNumber.hashCode() : 0);
+        result = 31 * result + (fgmdPaddedBase != null ? fgmdPaddedBase.hashCode() : 0);
+        result = 31 * result + (fgmdVarStrand != null ? fgmdVarStrand.hashCode() : 0);
+
+        return result;
+    }
+    
 }
