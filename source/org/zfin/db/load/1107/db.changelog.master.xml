@@ -7,5 +7,5 @@
 
     <include file="source/org/zfin/db/load/1107/CUR-900.sql"/>
     <include file="source/org/zfin/db/load/1107/PUB-509.sql"/>
-
+    <include file="source/org/zfin/db/load/1107/alter_fgmd.sql"/>
 </databaseChangeLog>
