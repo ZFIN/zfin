@@ -50,9 +50,25 @@ create temp table tmp_new_pubs (
 );
 
 insert into tmp_new_pubs
-   pmcid,
-   mid
-  select get_id('PUB'),
+   (pmcid,
+   mid,zdb_id ,
+  pmid ,
+  keywords ,
+  title ,
+  pages ,
+  abstract ,
+  authors ,
+  year ,
+  month ,
+  day ,
+  issn,
+  volume ,
+  issue ,
+  journaltitle ,
+  iso ,
+  status ,
+  journal_zdb_id)
+  select pmcid,mid,get_id('PUB'),
     pmid,
     keywords,
     title,
@@ -160,7 +176,7 @@ where length(day) = 1;
 
 insert into publication (
   pub_pmc_id,
-  pub_manuscript_id,
+  pub_mid,
   zdb_id,
   authors,
   pub_date,
@@ -194,7 +210,7 @@ insert into publication (
 
 insert into publication (
   pub_pmc_id,
-  pub_manuscript_id,
+  pub_mid,
   zdb_id,
   authors,
   title,
