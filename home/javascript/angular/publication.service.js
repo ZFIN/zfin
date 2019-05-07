@@ -169,7 +169,7 @@
 
         function statusNeedsOwner(status) {
             var type = zf.get(status, 'type');
-            return type === 'INDEXING' || type === 'CURATING' || type === 'WAIT';
+            return type === 'INDEXING' || type === 'CURATING' || type === 'WAIT' || type === 'PROCESSING' || type === 'MANUAL_PDF';
         }
 
         function statusNeedsLocation(status) {

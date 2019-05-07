@@ -239,8 +239,8 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.mutationDetailProteinView.populateFields(dto.getProteinChangeDTO());
         view.mutationDetailDnaView.populateFields(dto.getDnaChangeDTO());
         mutationDetailPresenter.setDtoSet(dto.getTranscriptChangeDTOSet());
-        view.genomicMutationDetailView.seqVariant.setValue(dto.getFgmdSeqVar());
-        view.genomicMutationDetailView.seqReference.setValue(dto.getFgmdSeqRef());
+        view.genomicMutationDetailView.populateFields(dto.getFgmdChangeDTO());
+
     }
 
 

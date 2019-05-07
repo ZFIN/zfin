@@ -124,6 +124,10 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Set<FeatureDnaMutationDetail> featureDnaMutationDetailSet;
 
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private Set<FeatureGenomicMutationDetail> featureGenomicMutationDetailSet;
+
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = false)
     private Set<SecondaryFeature> secondaryFeatureSet;
 
@@ -383,9 +387,31 @@ public class Feature implements EntityNotes, EntityZdbID {
     public Set<FeatureDnaMutationDetail> getFeatureDnaMutationDetailSet() {
         return featureDnaMutationDetailSet;
     }
-
     public void setFeatureDnaMutationDetailSet(Set<FeatureDnaMutationDetail> featureDnaMutationDetailSet) {
         this.featureDnaMutationDetailSet = featureDnaMutationDetailSet;
+    }
+
+
+    public FeatureGenomicMutationDetail getFeatureGenomicMutationDetail() {
+        if (CollectionUtils.isEmpty(featureGenomicMutationDetailSet))
+            return null;
+        return featureGenomicMutationDetailSet.stream().findAny().get();
+    }
+
+    public void setFeatureGenomicMutationDetail(FeatureGenomicMutationDetail FeatureGenomicMutationDetail) {
+        if (featureGenomicMutationDetailSet == null)
+            featureGenomicMutationDetailSet = new HashSet<>();
+        featureGenomicMutationDetailSet.clear();
+        featureGenomicMutationDetailSet.addAll(Collections.singleton(FeatureGenomicMutationDetail));
+    }
+
+    public Set<FeatureGenomicMutationDetail> getFeatureGenomicMutationDetailSet() {
+        return featureGenomicMutationDetailSet;
+    }
+
+
+    public void setFeatureGenomicMutationDetailSet(Set<FeatureGenomicMutationDetail> FeatureGenomicMutationDetailSet) {
+        this.featureGenomicMutationDetailSet = FeatureGenomicMutationDetailSet;
     }
 
     public Genotype getSingleRelatedGenotype() {

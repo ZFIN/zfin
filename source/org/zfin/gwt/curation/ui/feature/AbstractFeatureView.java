@@ -160,6 +160,11 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         handleChanges();
     }
 
+    @UiHandler("featureChromosome")
+    void onChangeChromosome(@SuppressWarnings("unused") ChangeEvent event) {
+        handleChanges();
+    }
+
     @UiHandler("featureEvidenceCode")
     void onChangeEvidenceCode(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
@@ -172,14 +177,43 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     }
 
     @UiHandler("featureStartLoc")
-    void onChangeStartLocation(@SuppressWarnings("unused") KeyUpEvent event) {
+    void onChangeStartLocation(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
     }
 
     @UiHandler("featureEndLoc")
-    void onChangeEndLocation(@SuppressWarnings("unused") KeyUpEvent event) {
+    void onChangeEndLocation(@SuppressWarnings("unused") ChangeEvent event) {
         handleChanges();
     }
+
+
+
+
+    @UiHandler("featureEvidenceCode")
+    void onKeyUpEvidenceCode(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+
+    @UiHandler("featureAssembly")
+    void onKeyUpAssembly(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    /*@UiHandler("featureStartLoc")
+    void onKeyUpStartLocation(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
+    @UiHandler("featureEndLoc")
+    void onKeyUpEndLocation(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }*/
+
+
+
+
+
 
     protected void handleChanges() {
         clearErrors();

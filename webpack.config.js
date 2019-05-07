@@ -9,6 +9,7 @@ const isProd = process.env.NODE_ENV === 'production';
 const config = {
     context: path.resolve(__dirname, 'home/javascript'),
     devtool: isProd ? false : 'cheap-module-eval-source-map',
+    mode: 'development',
     entry: {
         angular: './angular/index.js',
         bootstrap: './bootstrap/index.js',
@@ -17,6 +18,7 @@ const config = {
         profiles: './profiles/index.js',
         search: './search/index.js',
         style: './style/index.js',
+        react: './react/index.js',
         'vendor-common': './vendor-common/index.js',
         'zfin-common': './zfin-common/index.js',
     },
@@ -27,6 +29,11 @@ const config = {
     },
     module: {
         rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: ['babel-loader'],
+            },
             {
                 test: /\.css$/,
                 use: [

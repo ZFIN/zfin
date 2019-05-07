@@ -12,7 +12,7 @@
 
 <c:if test="${formBean.totalRecords>0}">
 
-    <div style="float: right; margin-top: 2px; width: auto !important;" class="pagination ">
+    <div style="float: right; margin-top: 2px; width: auto !important;" class="zf-pagination ">
         <b>${formBean.totalRecords}&nbsp;${formBean.totalRecords == 1 ? 'lab' : 'labs'} found </b> &nbsp;
         <zfin2:maxRecords count="10" searchBean="${formBean}" searchType="lab"/>
         <zfin2:maxRecords count="25" searchBean="${formBean}" searchType="lab"/>

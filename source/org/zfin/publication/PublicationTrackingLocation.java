@@ -13,10 +13,14 @@ public class PublicationTrackingLocation {
 
     public enum Role {
         CURATOR,
-        INDEXER
+        INDEXER,
+        STUDENT,
     }
 
     public enum Name {
+        X_1("1x"),
+        X_2("2x"),
+        LOTS("lots"),
         BIN_1("Bin 1"),
         BIN_2("Bin 2"),
         PHENOTYPE("New Phenotype"),

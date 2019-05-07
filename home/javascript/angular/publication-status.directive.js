@@ -107,7 +107,7 @@
 
         function handleStatusChange() {
             var type = vm.current.status.type;
-            if (type === 'CURATING' || type === 'INDEXING') {
+            if (type === 'CURATING' || type === 'INDEXING' || type === 'PROCESSING') {
                 vm.current.owner = vm.curator;
             } else {
                 vm.current.owner = vm.original.owner;
