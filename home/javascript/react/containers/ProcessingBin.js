@@ -59,7 +59,7 @@ class ProcessingBin extends React.Component {
         };
         updateStatus(status, true)
             .then(() => this.setPubState(index, 'claimed', true))
-            .fail(xhr => xhr.responseJSON && this.setPubState(index, 'claimError', xhr.responseJSON.message))
+            .fail(error => error.responseJSON && this.setPubState(index, 'claimError', error.responseJSON.message))
             .always(() => this.setPubState(index, 'saving', false));
     }
 
