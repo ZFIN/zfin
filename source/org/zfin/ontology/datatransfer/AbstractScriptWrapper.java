@@ -9,7 +9,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.properties.ZfinProperties;
 
 import java.io.File;
@@ -46,19 +45,7 @@ public class AbstractScriptWrapper {
         if (sessionFactory == null) {
             new HibernateSessionCreator();
         }
-        SessionFactory sessionSysmasterFactory = SysmasterHibernateUtil.getSessionFactory();
-        if (sessionSysmasterFactory == null) {
-            new HibernateSessionCreator("sysmaster");
-        }
     }
-
-    protected void initDatabaseWithoutSysmaster() {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        if (sessionFactory == null) {
-            new HibernateSessionCreator();
-        }
-    }
-
 
     protected static void initSpringConfiguration() {
         LocalSessionFactoryBean bean = new LocalSessionFactoryBean();
