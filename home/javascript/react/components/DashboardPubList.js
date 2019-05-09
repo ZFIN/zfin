@@ -39,7 +39,7 @@ const DashboardPubList = ({ pubs, statusCounts }) => {
                             {pubs.map(pub => (
                                 <tr key={pub.zdbId}>
                                     <td>
-                                        <a href={`/${pub.zdbId}`} target="_blank">{pub.zdbId}</a>
+                                        <a href={`/${pub.zdbId}`} target="_blank" rel="noopener noreferrer">{pub.zdbId}</a>
                                     </td>
                                     <td>
                                         <p><b dangerouslySetInnerHTML={{__html: pub.title}} /></p>
@@ -54,10 +54,10 @@ const DashboardPubList = ({ pubs, statusCounts }) => {
                                                 <i className="fas fa-ellipsis-v" />
                                             </button>
                                             <ul className="dropdown-menu dropdown-menu-right">
-                                                {hasCurateAction && <li><a href={`/action/curation/${pub.zdbId}`} target="_blank">Curate</a></li>}
-                                                <li><a href={`/action/publication/${pub.zdbId}/track`} target="_blank">Track</a></li>
-                                                <li><a href={`/action/publication/${pub.zdbId}/link`} target="_blank">Link</a></li>
-                                                <li><a href={`/action/publication/${pub.zdbId}/edit`} target="_blank">Edit</a></li>
+                                                {hasCurateAction && <li><a href={`/action/curation/${pub.zdbId}`} target="_blank" rel="noopener noreferrer">Curate</a></li>}
+                                                <li><a href={`/action/publication/${pub.zdbId}/track`} target="_blank" rel="noopener noreferrer">Track</a></li>
+                                                <li><a href={`/action/publication/${pub.zdbId}/link`} target="_blank" rel="noopener noreferrer">Link</a></li>
+                                                <li><a href={`/action/publication/${pub.zdbId}/edit`} target="_blank" rel="noopener noreferrer">Edit</a></li>
                                             </ul>
                                         </div>
                                     </td>

@@ -40,14 +40,14 @@ const ProcessingBinList = ({ loading, pubs, onClaimPub }) => {
                         </button>
                         {pub.claimError && <p className='text-danger'>{pub.claimError}</p>}
                     </td>
-                    <td><a href={`/${pub.zdbId}`} target="_blank">{pub.zdbId}</a></td>
+                    <td><a href={`/${pub.zdbId}`} target="_blank" rel="noopener noreferrer">{pub.zdbId}</a></td>
                     <td>
                         <p><b dangerouslySetInnerHTML={{__html: pub.title}} /></p>
                         <p>{pub.citation}</p>
                     </td>
                     <td><RelativeDate date={pub.status.updateDate} /></td>
                     <td>
-                        {pub.pdfPath && <a href={`/PDFLoadUp/${pub.pdfPath}`} target='_blank'><i className="far fa-file-pdf"/></a>}
+                        {pub.pdfPath && <a href={`/PDFLoadUp/${pub.pdfPath}`} target='_blank' rel="noopener noreferrer"><i className="far fa-file-pdf"/></a>}
                     </td>
                 </tr>
             ))}

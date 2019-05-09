@@ -15,8 +15,8 @@ const SelectBox = ({options, value, onSelect, showAny}) => {
 };
 
 SelectBox.propTypes = {
-    statuses: PropTypes.array,
-    selectedId: PropTypes.string,
+    options: PropTypes.array,
+    value: PropTypes.string,
     onSelect: PropTypes.func,
     showAny: PropTypes.bool,
 };

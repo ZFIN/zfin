@@ -823,6 +823,13 @@
         <npmBuild/>
     </target>
 
+    <target name="npmLint">
+        <exec dir="${TARGETROOT}" executable="npm" failonerror="true">
+            <arg value="run"/>
+            <arg value="lint"/>
+        </exec>
+    </target>
+
 </project>
 
 
