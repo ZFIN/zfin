@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+<changeSet author="pm" id="DLOAD-627c">
+<loadData file="source/org/zfin/db/load/1107/dload.csv"
+tableName="newfeaturedata" encoding="UTF-8">
+  <column name="alleleid" type="String"/>
+  <column name="accid" type="String"/>
+</loadData>
+
+</changeSet>
+</databaseChangeLog>
