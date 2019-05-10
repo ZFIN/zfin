@@ -57,7 +57,7 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                 .map(
                         fish -> {
                             FishDTO dto = new FishDTO();
-                            dto.setName(fish.getName());
+                            dto.setName(fish.getDisplayName());
                             String nameText = fish.getDisplayName().replace("</sup>", ">");
                             nameText = nameText.replace("<sup>", "<");
                             dto.setNameText(nameText);
@@ -72,7 +72,6 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                                 dto.setBackgroundIDs(backgroundList);
                             }
                             dto.setTaxonId(dto.getTaxonId());
-                            //TODO: convert background geno_id to fish_id
                             if (CollectionUtils.isNotEmpty(fish.getStrList())) {
                                 List<String> strList = new ArrayList<>(fish.getStrList().size());
                                 for (SequenceTargetingReagent str : fish.getStrList()) {
