@@ -84,15 +84,15 @@
         </div>
         <div id="hdr-navlinks">
             <div id="hdr-zirclinks" style="display: none;" class="hdr-linkbar">
-                <a href="http://zebrafish.org/">ZIRC Home</a>
-                <strong>Request: </strong> <a href="/zirc/fish/lineAll.php">Fish</a>
-                <a href="/zirc/est/estAll.php">ESTs/cDNAs</a>
-                <a href="/zirc/abs/absAll.php">Antibodies</a>
-                <a href="/zirc/orders/buyBookQ.php?item=Book&amp;id=book&amp;detail=The%20Zebrafish%20Book"><span style="font-style:italic;">ZF Book</span></a>
-                <a href="/zirc/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture">Paramecia</a>
-                <a href="/zirc/documents/fees.php">Prices</a>
-                <a href="/zirc/documents/payment.php">Payment Help</a>
-                <a href="/zirc/health/index.php">Health Services</a>
+                <a href="https://zebrafish.org/">ZIRC Home</a>
+                <strong>Request: </strong> <a href="https://zebrafish.org/fish/lineAll.php">Fish</a>
+                <a href="https://zebrafish.org/est/estAll.php">ESTs/cDNAs</a>
+                <a href="https://zebrafish.org/abs/absAll.php">Antibodies</a>
+                <a href="https://zebrafish.org/orders/buyBookQ.php?item=Book&amp;id=book&amp;detail=The%20Zebrafish%20Book"><span style="font-style:italic;">ZF Book</span></a>
+                <a href="https://zebrafish.org/orders/buyParaQ.php?item=Paramecia&amp;id=para&amp;detail=Paramecia%20Starter%20Culture">Paramecia</a>
+                <a href="https://zebrafish.org/documents/fees.php">Prices</a>
+                <a href="https://zebrafish.org/documents/payment.php">Payment Help</a>
+                <a href="https://zebrafish.org/health/index.php">Health Services</a>
             </div>
             <div id="hdr-zfinlinks" class="hdr-linkbar">
                 <a href="/">Home</a>
