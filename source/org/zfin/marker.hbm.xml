@@ -373,6 +373,7 @@
         <property name="order" column="tscriptt_order" not-null="true"/>
         <property name="definition" column="tscriptt_definition" not-null="false"/>
         <property name="indented" column="tscriptt_indent" type="boolean" not-null="true"/>
+        <property name="soID" column="tscriptt_so_id" />
     </class>
 
     <class name="org.zfin.marker.TranscriptStatus" table="transcript_status">

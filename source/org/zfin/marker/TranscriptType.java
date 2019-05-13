@@ -11,9 +11,18 @@ public class TranscriptType {
     private String order;
     private String definition;
     private boolean isIndented;
+    private String soID;
 
     public Long getId() {
         return id;
+    }
+
+    public String getSoID() {
+        return soID;
+    }
+
+    public void setSoID(String soID) {
+        this.soID = soID;
     }
 
     public void setId(Long id) {

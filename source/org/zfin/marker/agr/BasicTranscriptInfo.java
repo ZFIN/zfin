@@ -5,13 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.zfin.gwt.root.dto.MarkerDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mapping.ChromosomeService;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerAlias;
-import org.zfin.marker.SecondaryMarker;
-import org.zfin.marker.Transcript;
+import org.zfin.marker.*;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -66,7 +65,7 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
     }
 
     public AllTranscriptDTO getAllTranscriptInfo() {
-        List<Transcript> allTranscripts = getMarkerRepository().getAllTranscripts();
+        List<Transcript> allTranscripts = getMarkerRepository().getAllNonCodingTranscripts();
         System.out.println(allTranscripts.size());
 
         List<TranscriptDTO> allTranscriptDTOList = allTranscripts.stream()
@@ -78,7 +77,7 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
                             dto.setPrimaryId(transcript.getZdbID());
                             //dto.setGeneLiteratureUrl("http://zfin.org/action/marker/citation-list/"+transcript.getZdbID());
 
-                                dto.setSoTermId("SO:0000673");
+                                dto.setSoTermId(transcript.getTranscriptType().getSoID());
 
                             if (CollectionUtils.isNotEmpty(transcript.getAliases())) {
                                 List<String> aliasList = new ArrayList<>(transcript.getAliases().size());
@@ -87,10 +86,10 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
                                 }
                                 dto.setSynonyms(aliasList);
                             }
-                            if (CollectionUtils.isNotEmpty(transcript.getAllRelatedMarker())) {
-                                List<GeneDTO> genes = new ArrayList<>(transcript.getAllRelatedMarker().size());
+                            if (CollectionUtils.isNotEmpty(transcript.getSecondMarkerRelationships())) {
+                                List<GeneDTO> genes = new ArrayList<>(getMarkerRepository().getGenesforTranscript(transcript).size());
 
-                                for (Marker relatedGenes : transcript.getAllRelatedMarker()) {
+                                for (Marker relatedGenes : getMarkerRepository().getGenesforTranscript(transcript)) {
                                     GeneDTO geneDTO = new GeneDTO();
                                     geneDTO.setPrimaryId(relatedGenes.getZdbID());
                                     geneDTO.setSymbol(relatedGenes.getAbbreviation());
