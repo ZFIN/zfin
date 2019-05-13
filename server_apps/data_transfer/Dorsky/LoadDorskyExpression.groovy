@@ -24,7 +24,6 @@ def env = System.getenv()
 
 AbstractScriptWrapper abstractScriptWrapper = new AbstractScriptWrapper()
 abstractScriptWrapper.initProperties("${env['TARGETROOT']}/home/WEB-INF/zfin.properties")
-()
 abstractScriptWrapper.initializeLogger("./log4j.xml")
 
 Session session = HibernateUtil.currentSession()

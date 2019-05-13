@@ -23,7 +23,6 @@ println 'Start generating GFF3 download files...'
 def propertiesFile = "$targetRoot/home/WEB-INF/zfin.properties"
 RunSQLFiles runScriptFiles = new RunSQLFiles("Generate-GFF3", propertiesFile, ".")
 runScriptFiles.initializeLogger("./log4j.xml")
-()
 runScriptFiles.setQueryFiles(
         "E_zfin_ensembl_gene.sql",
         "E_expression_gff3.sql",
