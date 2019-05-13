@@ -34,8 +34,8 @@ runScriptFiles.setQueryFiles(
 runScriptFiles.execute()
 
 
-def contigFile = new File('/research/zprodmore/gff3/ensembl_contig.gff3')
-def destination = new File(downloadDir + "ensembl_contig.gff3")
+def contigFile = new File('/research/zprodmore/gff3/zfin_genes_header.gff3')
+def destination = new File(downloadDir + "zfin_genes_header.gff3")
 //.text method writes the entire content of the file, contigFile, to the new destination.
 destination.write(contigFile.text)
 
@@ -153,7 +153,7 @@ def generateGenesAndTranscripts() {
     zfinGenesFile.createNewFile()
     def zfinGenesWriter = zfinGenesFile.newWriter()
 
-    printHeader("$gff3Dir/ensembl_contig.gff3", zfinGenesWriter)
+    printHeader("$gff3Dir/zfin_genes_header.gff3", zfinGenesWriter)
 
     genes.each { GenomeFeature gene ->
 
@@ -218,20 +218,10 @@ def generateGenesAndTranscripts() {
 }
 
 def printHeader(String contigs, BufferedWriter out) {
-    out.println("# Genome build: GRCz11")
-    out.println "##gff-version\t3"
-
-    def chromosomes = (1..25).collect { it.toString() }
-    chromosomes.add("MT")
-
     new File(contigs).eachLine { line ->
-        if (!line.startsWith("##gff-version")) {
-            def fields = line.split("\\t")
-            if (fields.size() == 4 && chromosomes.contains(fields[1])) {
-                out.println line
-            }
-        }
+        out.println line
     }
+
 
 }
 

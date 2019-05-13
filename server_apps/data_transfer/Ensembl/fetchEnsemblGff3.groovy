@@ -18,6 +18,7 @@ String destination = ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/data_
 String downloadsDir = ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/data_transfer/Downloads"
 String dataCachePath = "/research/zprodmore/gff3"
 
+
 String hostname = "ftp.ensembl.org"
 String path = "/pub/current_gff3/danio_rerio/"
 String fileName
@@ -38,7 +39,7 @@ new FTPClient().with {
     disconnect()
 }
 
-String ftpCommand = "/bin/wget ftp://$hostname$path$fileName"
+String ftpCommand = "/bin/wget -N ftp://$hostname$path$fileName"
 println "attempting " + ftpCommand
 def proc = ftpCommand.execute()
 def b = new StringBuffer()
@@ -51,10 +52,16 @@ println proc.text
 println b.toString()
 fileName = fileName.take(fileName.lastIndexOf('.'))
 
+File gffHeaderFile = new File(dataCachePath + "/" + "zfin_genes_header.gff3")
+gffHeaderFile.createNewFile()
+def gffHeaderWriter = gffHeaderFile.newWriter()
+
 List<GenomeFeature> features = []
 
 new File(fileName).eachLine { line ->
-    if (!line.startsWith("#")) {
+    if (line.startsWith("#")) {
+        if (!line.endsWith("#")) { gffHeaderWriter.println(line) }
+    } else {
         GenomeFeature feature = new GenomeFeature(line)
         //prepend Ensembl_ onto source
         feature.setSource("Ensembl_" + feature.getSource())
@@ -67,6 +74,8 @@ new File(fileName).eachLine { line ->
     }
 }
 
+gffHeaderWriter.flush()
+gffHeaderWriter.close()
 
 //this seems like a slow way to write a file
 String unloadFileName = "drerio_ensembl.${build}.${version}.unl"
