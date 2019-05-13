@@ -430,6 +430,7 @@ public interface MarkerRepository {
     List<MarkerRelationshipPresentation> getWeakReferenceMarker(String zdbID, MarkerRelationship.Type type1, MarkerRelationship.Type type2, String resultType);
 
     List<Marker> getCodingSequence(Marker construct);
+    List<Marker> getGenesforTranscript(Marker tscript);
 
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 
@@ -499,7 +500,7 @@ public interface MarkerRepository {
     DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
 
     List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number);
-     List<Transcript> getAllTranscripts();
+     List<Transcript> getAllNonCodingTranscripts();
 
     Map<String,GenericTerm> getSoTermMapping();
 

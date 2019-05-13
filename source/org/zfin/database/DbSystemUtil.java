@@ -3,7 +3,6 @@ package org.zfin.database;
 import org.apache.log4j.Logger;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.Table;
-import org.zfin.database.repository.SysmasterRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +35,7 @@ public class DbSystemUtil {
      */
     public static String getLockInfo() {
         try {
-            List<DatabaseLock> locks = SysmasterRepository.getLocks();
+            List<DatabaseLock> locks = null;
             if (locks == null)
                 return "No Locks";
 

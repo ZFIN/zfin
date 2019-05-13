@@ -1,3 +1,5 @@
+/* eslint-disable react/no-render-return-value */
+/* eslint-disable no-console */
 import React from 'react';
 import ReactDOM from 'react-dom';
 

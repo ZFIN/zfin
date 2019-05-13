@@ -1,12 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
-import ProcessingFilterBar from "../components/ProcessingFilterBar";
 import {searchPubStatus, updateStatus} from "../api/publication";
 import ProcessingBinList from "../components/ProcessingBinList";
 import Pagination from "../components/Pagination";
+import FilterBar from "../components/FilterBar";
+import SelectBox from "../components/SelectBox";
+import RefreshButton from "../components/RefreshButton";
 
 const PUBS_PER_PAGE = 50;
+const SORT_OPTIONS = [
+    {
+        value: 'date',
+        display: 'Time in bin (oldest)'
+    },
+    {
+        value: '-date',
+        display: 'Time in bin (newest)'
+    },
+];
 
 class ProcessingBin extends React.Component {
     constructor(props) {
@@ -15,11 +27,23 @@ class ProcessingBin extends React.Component {
             page: 1,
             loading: false,
             results: {},
-            sort: '',
+            sort: SORT_OPTIONS[0].value,
         };
-        this.handleFilterChange = this.handleFilterChange.bind(this);
+        this.handleSortChange = this.handleSortChange.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.updatePubStatus = this.updatePubStatus.bind(this);
+        this.fetchPubs = this.fetchPubs.bind(this);
+    }
+
+    componentDidMount() {
+        this.fetchPubs();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { sort, page } = this.state;
+        if (sort !== prevState.sort || page !== prevState.page) {
+            this.fetchPubs();
+        }
     }
 
     fetchPubs() {
@@ -27,7 +51,7 @@ class ProcessingBin extends React.Component {
         const { sort, page } = this.state;
         const params = {
             status: currentStatus,
-            sort: sort,
+            sort,
             count: PUBS_PER_PAGE,
             offset: (page - 1) * PUBS_PER_PAGE
         };
@@ -59,30 +83,33 @@ class ProcessingBin extends React.Component {
         };
         updateStatus(status, true)
             .then(() => this.setPubState(index, 'claimed', true))
-            .fail(xhr => xhr.responseJSON && this.setPubState(index, 'claimError', xhr.responseJSON.message))
+            .fail(error => error.responseJSON && this.setPubState(index, 'claimError', error.responseJSON.message))
             .always(() => this.setPubState(index, 'saving', false));
     }
 
-    handleFilterChange(sort) {
-        this.setState({sort}, () => this.fetchPubs());
+    handleSortChange(sort) {
+        this.setState({sort});
     }
 
     handlePageChange(page) {
-        this.setState({page}, () => this.fetchPubs());
+        this.setState({page});
     }
 
     render() {
-        const { loading, page, results } = this.state;
+        const { loading, page, sort, results } = this.state;
         return (
             <div className="pub-dashboard">
-                <ProcessingFilterBar loading={loading}
-                                     onChange={this.handleFilterChange}
-                                     pubCount={results.totalCount}
-                />
+                <FilterBar>
+                    <b>{loading ? '▒' : results.totalCount}</b> Pubs ready for processing by
+                    <SelectBox options={SORT_OPTIONS} value={sort} onSelect={this.handleSortChange} />
+                    <RefreshButton loading={loading} onClick={this.fetchPubs} />
+                </FilterBar>
+
                 <ProcessingBinList loading={loading}
                                    onClaimPub={this.updatePubStatus}
                                    pubs={results.publications}
                 />
+
                 <div className='center'>
                     <Pagination onChange={this.handlePageChange}
                                 page={page}

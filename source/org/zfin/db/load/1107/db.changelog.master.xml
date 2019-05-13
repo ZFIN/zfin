@@ -9,4 +9,9 @@
     <include file="source/org/zfin/db/load/1107/PUB-509.sql"/>
     <include file="source/org/zfin/db/load/1107/alter_fgmd.sql"/>
     <include file="source/org/zfin/db/load/1107/alter_transcript_type.sql"/>
+    <include file="source/org/zfin/db/load/1107/dload-627c-sql.sql"/>
+    <include file="source/org/zfin/db/load/1107/dload-627c.xml"/>
+
+
+
 </databaseChangeLog>
