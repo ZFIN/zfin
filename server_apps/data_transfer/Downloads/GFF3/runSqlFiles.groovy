@@ -11,6 +11,7 @@ println 'Start re-generating GBrowse tracks'
 def propertiesFile = "${env['TARGETROOT']}/home/WEB-INF/zfin.properties"
 RunSQLFiles runScriptFiles = new RunSQLFiles("Generate-GFF3", propertiesFile, ".")
 runScriptFiles.initializeLogger("./log4j.xml")
+runScriptFiles.initDatabase()
 runScriptFiles.setQueryFiles(args)
 runScriptFiles.execute()
 
