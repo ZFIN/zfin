@@ -2317,7 +2317,24 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 .list()
                 ;
     }
+    public List<Marker> getGenesforTranscript(Marker tscript) {
 
+        List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
+
+        String hql = " select m from MarkerRelationship mr1,  Marker m " +
+                " where mr1.firstMarker.zdbID=m.zdbID " +
+                " and mr1.secondMarker.zdbID = :markerZdbID " +
+                " and mr1.type = :markerRelationshipType1 " +
+                " ";
+
+
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("markerZdbID", tscript.getZdbID())
+                .setParameter("markerRelationshipType1", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT)
+
+                .list()
+                ;
+    }
 
     public List<Marker> getCodingSequence(Marker gene) {
 
@@ -3180,7 +3197,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    
+
     public List<Transcript> getAllTranscripts(){
         Session session = HibernateUtil.currentSession();
         Criteria transcriptCriteria = session.createCriteria(Transcript.class);
