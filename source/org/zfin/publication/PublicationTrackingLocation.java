@@ -18,9 +18,9 @@ public class PublicationTrackingLocation {
     }
 
     public enum Name {
-        X_1("1x"),
-        X_2("2x"),
-        LOTS("lots"),
+        X_1("Write 1x"),
+        X_2("Write 2x"),
+        LOTS("Write lots"),
         BIN_1("Bin 1"),
         BIN_2("Bin 2"),
         PHENOTYPE("New Phenotype"),
