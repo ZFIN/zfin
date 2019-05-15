@@ -1,15 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
-import {searchPubStatus, updateStatus} from "../api/publication";
+import {getLocations, searchPubStatus, updateStatus} from "../api/publication";
+
 import Pagination from "../components/Pagination";
 import FilterBar from "../components/FilterBar";
 import SelectBox from "../components/SelectBox";
 import RefreshButton from "../components/RefreshButton";
-import LoadingCount from "../components/LoadingCount";
-import PubClaimButton from "../components/PubClaimButton";
+import LoadingCount from "../components/LoadingCount"
 import BinPubList from "../components/BinPubList";
 import RelativeDate from "../components/RelativeDate";
+import PubPDFLink from "../components/PubPDFLink";
+import PubClaimButton from "../components/PubClaimButton";
 
 const PUBS_PER_PAGE = 50;
 const SORT_OPTIONS = [
@@ -21,39 +23,57 @@ const SORT_OPTIONS = [
         value: '-date',
         display: 'Time in bin (newest)'
     },
+    {
+        value: 'pub.entryDate',
+        display: 'Entry date (oldest)'
+    },
+    {
+        value: '-pub.entryDate',
+        display: 'Entry date (newest)'
+    }
 ];
 
-class ProcessingBin extends React.Component {
+class IndexingBin extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             page: 1,
             loading: false,
+            priorities: [],
+            priority: '',
             results: {},
             sort: SORT_OPTIONS[0].value,
         };
-        this.handleSortChange = this.handleSortChange.bind(this);
+        this.handlePriorityChange = this.handlePriorityChange.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
-        this.updatePubStatus = this.updatePubStatus.bind(this);
+        this.handleSortChange = this.handleSortChange.bind(this);
         this.fetchPubs = this.fetchPubs.bind(this);
+        this.updatePubStatus = this.updatePubStatus.bind(this);
     }
 
     componentDidMount() {
-        this.fetchPubs();
+        getLocations().then(locations => {
+            const priorities = locations.filter(location => location.role === 'INDEXER');
+            this.setState({
+                priorities,
+                priority: priorities[0].id
+            });
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { sort, page } = this.state;
-        if (sort !== prevState.sort || page !== prevState.page) {
+        const { sort, page, priority } = this.state;
+        if (sort !== prevState.sort || page !== prevState.page || priority !== prevState.priority) {
             this.fetchPubs();
         }
     }
 
     fetchPubs() {
         const { currentStatus } = this.props;
-        const { sort, page } = this.state;
+        const { sort, page, priority } = this.state;
         const params = {
             status: currentStatus,
+            location: priority,
             sort,
             count: PUBS_PER_PAGE,
             offset: (page - 1) * PUBS_PER_PAGE
@@ -90,6 +110,18 @@ class ProcessingBin extends React.Component {
             .always(() => this.setPubState(index, 'saving', false));
     }
 
+    updatePubLocation(pub, index, location) {
+        this.setPubState(index, 'saving', true);
+        const status = this.state.results.publications.slice(index, index + 1)[0].status;
+        status.location = { id: location };
+        updateStatus(status)
+            .always(() => this.setPubState(index, 'saving', false));
+    }
+
+    handlePriorityChange(priority) {
+        this.setState({priority});
+    }
+
     handleSortChange(sort) {
         this.setState({sort});
     }
@@ -99,8 +131,24 @@ class ProcessingBin extends React.Component {
     }
 
     render() {
-        const { loading, page, sort, results } = this.state;
+        const { loading, page, priorities, priority, sort, results } = this.state;
+        const priorityOptions = priorities.map(priority => ({
+            value: priority.id,
+            display: priority.name,
+        }));
+        priorityOptions.push({value: 0, display: 'Not Set'});
+
         const tableColumns = [
+            {
+                label: 'Priority',
+                width: '70px',
+                content: (pub, index) => (
+                    <SelectBox options={priorityOptions}
+                               value={pub.status.location ? pub.status.location.id : 0}
+                               onSelect={location => this.updatePubLocation(pub, index, location)}
+                    />
+                )
+            },
             {
                 label: '',
                 width: '115px',
@@ -115,8 +163,8 @@ class ProcessingBin extends React.Component {
                 label: 'Details',
                 content: pub => (
                     <div>
-                        <p><b dangerouslySetInnerHTML={{__html: pub.title}} /></p>
-                        <p>{pub.citation}</p>
+                        <p><b dangerouslySetInnerHTML={{__html: pub.title}}/></p>
+                        <p dangerouslySetInnerHTML={{__html: pub.abstractText}}/>
                     </div>
                 ),
             },
@@ -124,12 +172,20 @@ class ProcessingBin extends React.Component {
                 label: 'Time in Bin',
                 width: '100px',
                 content: pub => <RelativeDate date={pub.status.updateDate} />,
+            },
+            {
+                label: 'PDF',
+                width: '50px',
+                content: pub => <PubPDFLink publication={pub} />,
             }
         ];
+
         return (
             <div className="pub-dashboard">
                 <FilterBar>
-                    <b><LoadingCount count={results.totalCount} loading={loading}/></b> Pubs ready for processing by
+                    <b><LoadingCount count={results.totalCount} loading={loading}/></b> Pubs with priority
+                    <SelectBox options={priorityOptions} value={priority} onSelect={this.handlePriorityChange}/>
+                    by
                     <SelectBox options={SORT_OPTIONS} value={sort} onSelect={this.handleSortChange} />
                     <RefreshButton loading={loading} onClick={this.fetchPubs} />
                 </FilterBar>
@@ -148,10 +204,10 @@ class ProcessingBin extends React.Component {
     }
 }
 
-ProcessingBin.propTypes = {
+IndexingBin.propTypes = {
     currentStatus: PropTypes.string,
     nextStatus: PropTypes.string,
     userId: PropTypes.string,
 };
 
-export default ProcessingBin;
+export default IndexingBin;

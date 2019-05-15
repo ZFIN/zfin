@@ -8,6 +8,10 @@ export const getCurators = () => {
     return get('/action/publication/curators');
 };
 
+export const getLocations = () => {
+    return get('/action/publication/locations');
+};
+
 export const searchPubStatus = (params) => {
     return get('/action/publication/search-status', params);
 };
