@@ -17,6 +17,5 @@ insert into pubmed_publication_author(ppa_pubmed_id, ppa_publication_zdb_id, ppa
   select pubmedid, zdbid, lastname, middlename, firstname
     from names;
 
---commit work;
-rollback work;
+commit work;
 

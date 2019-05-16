@@ -18,12 +18,12 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; complete_auther_names.pl</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED &amp;&amp; complete_auther_names.pl</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/authors</artifacts>
+      <artifacts>server_apps/data_transfer/PUBMED/authors</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
