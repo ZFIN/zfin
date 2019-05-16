@@ -3,14 +3,16 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-<script src="${zfn:getAssetPath("angular.js")}"></script>
 
 <zfin2:pub-navigator pages="${page}" currentPage="${currentPage}"/>
 
-<div class="container-fluid" ng-app="app">
-    <div curating-bin
-         user-id="${currentUser.zdbID}"
-         current-status="${currentStatus.id}"
-         next-status="${nextStatus.id}">
+<div class="container-fluid">
+    <div class="__react-root"
+         id="CuratingBin"
+         data-current-status="${currentStatus.id}"
+         data-next-status="${nextStatus.id}"
+         data-user-id="${currentUser.zdbID}">
     </div>
 </div>
+
+<script src="${zfn:getAssetPath("react.js")}"></script>

@@ -2,16 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import {getLocations, searchPubStatus, updateStatus} from "../api/publication";
-
 import Pagination from "../components/Pagination";
 import FilterBar from "../components/FilterBar";
 import SelectBox from "../components/SelectBox";
 import RefreshButton from "../components/RefreshButton";
-import LoadingCount from "../components/LoadingCount"
+import LoadingCount from "../components/LoadingCount";
+import PubClaimButton from "../components/PubClaimButton";
 import BinPubList from "../components/BinPubList";
 import RelativeDate from "../components/RelativeDate";
 import PubPDFLink from "../components/PubPDFLink";
-import PubClaimButton from "../components/PubClaimButton";
+import FigureGalleryModal from "../components/FigureGalleryModal";
 
 const PUBS_PER_PAGE = 50;
 const SORT_OPTIONS = [
@@ -33,47 +33,49 @@ const SORT_OPTIONS = [
     }
 ];
 
-class IndexingBin extends React.Component {
+class CuratingBin extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             page: 1,
             loading: false,
-            priorities: [],
-            priority: '',
+            locations: [],
+            location: '',
+            modalImageSet: [],
+            modalImageIdx: 0,
             results: {},
             sort: SORT_OPTIONS[0].value,
         };
-        this.handlePriorityChange = this.handlePriorityChange.bind(this);
-        this.handlePageChange = this.handlePageChange.bind(this);
         this.handleSortChange = this.handleSortChange.bind(this);
-        this.fetchPubs = this.fetchPubs.bind(this);
+        this.handlePageChange = this.handlePageChange.bind(this);
+        this.handleLocationChange = this.handleLocationChange.bind(this);
         this.updatePubStatus = this.updatePubStatus.bind(this);
+        this.fetchPubs = this.fetchPubs.bind(this);
     }
 
     componentDidMount() {
-        getLocations().then(locations => {
-            const priorities = locations.filter(location => location.role === 'INDEXER');
+        getLocations().then(allLocations => {
+            const locations = allLocations.filter(location => location.role === 'CURATOR');
             this.setState({
-                priorities,
-                priority: priorities[0].id
+                locations,
+                location: locations[0].id
             });
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { sort, page, priority } = this.state;
-        if (sort !== prevState.sort || page !== prevState.page || priority !== prevState.priority) {
+        const { location, sort, page } = this.state;
+        if (sort !== prevState.sort || page !== prevState.page || location !== prevState.location) {
             this.fetchPubs();
         }
     }
 
     fetchPubs() {
         const { currentStatus } = this.props;
-        const { sort, page, priority } = this.state;
+        const { location, sort, page } = this.state;
         const params = {
             status: currentStatus,
-            location: priority,
+            location,
             sort,
             count: PUBS_PER_PAGE,
             offset: (page - 1) * PUBS_PER_PAGE
@@ -110,18 +112,6 @@ class IndexingBin extends React.Component {
             .always(() => this.setPubState(index, 'saving', false));
     }
 
-    updatePubLocation(pub, index, location) {
-        this.setPubState(index, 'saving', true);
-        const status = this.state.results.publications.slice(index, index + 1)[0].status;
-        status.location = { id: location };
-        updateStatus(status)
-            .always(() => this.setPubState(index, 'saving', false));
-    }
-
-    handlePriorityChange(priority) {
-        this.setState({priority});
-    }
-
     handleSortChange(sort) {
         this.setState({sort});
     }
@@ -130,29 +120,29 @@ class IndexingBin extends React.Component {
         this.setState({page});
     }
 
-    render() {
-        const { loading, page, priorities, priority, sort, results } = this.state;
-        const priorityOptions = priorities.map(priority => ({
-            value: priority.id,
-            display: priority.name,
-        }));
-        priorityOptions.push({value: 0, display: 'Not Set'});
+    handleLocationChange(location) {
+        this.setState({location});
+    }
 
+    handleModalOpen(modalImageSet, modalImageIdx) {
+        this.setState({modalImageSet, modalImageIdx});
+    }
+
+    handleModalClose() {
+        this.setState({modalImageSet: [], modalImageIdx: 0});
+    }
+
+    render() {
+        const { loading, location, locations, modalImageIdx, modalImageSet, page, sort, results } = this.state;
+        const locationOptions = locations.map(location => ({
+            value: location.id,
+            display: location.name,
+        }));
         const tableColumns = [
-            {
-                label: 'Priority',
-                width: '70px',
-                content: (pub, index) => (
-                    <SelectBox options={priorityOptions}
-                               value={pub.status.location ? pub.status.location.id : 0}
-                               onSelect={location => this.updatePubLocation(pub, index, location)}
-                    />
-                )
-            },
             {
                 label: '',
                 width: '115px',
-                content: (pub, index) => <PubClaimButton publication={pub} onClaimPub={() => this.updatePubStatus(pub, index)} />,
+                content: (pub, index) => <PubClaimButton publication={pub} onClaimPub={() => this.updatePubStatus(pub, index)} />
             },
             {
                 label: 'ZDB-ID',
@@ -163,8 +153,17 @@ class IndexingBin extends React.Component {
                 label: 'Details',
                 content: pub => (
                     <div>
-                        <p><b dangerouslySetInnerHTML={{__html: pub.title}}/></p>
-                        <p dangerouslySetInnerHTML={{__html: pub.abstractText}}/>
+                        <p><b dangerouslySetInnerHTML={{__html: pub.title}} /></p>
+                        <p>{pub.citation}</p>
+                        <p>{pub.authors}</p>
+                        <p dangerouslySetInnerHTML={{__html: pub.abstractText}} />
+                        <p>
+                            {pub.images.map((image, index) => (
+                                <span key={image.mediumPath}>
+                                    <img src={image.mediumPath} onClick={() => this.handleModalOpen(pub.images, index)} />
+                                </span>
+                            ))}
+                        </p>
                     </div>
                 ),
             },
@@ -179,35 +178,43 @@ class IndexingBin extends React.Component {
                 content: pub => <PubPDFLink publication={pub} />,
             }
         ];
-
         return (
-            <div className="pub-dashboard">
-                <FilterBar>
-                    <b><LoadingCount count={results.totalCount} loading={loading}/></b> Pubs with priority
-                    <SelectBox options={priorityOptions} value={priority} onSelect={this.handlePriorityChange}/>
-                    by
-                    <SelectBox options={SORT_OPTIONS} value={sort} onSelect={this.handleSortChange} />
-                    <RefreshButton loading={loading} onClick={this.fetchPubs} />
-                </FilterBar>
+            <React.Fragment>
+                <div className="pub-dashboard">
+                    <FilterBar>
+                        <b><LoadingCount count={results.totalCount} loading={loading}/></b> Pubs in
+                        <SelectBox options={locationOptions} value={location} onSelect={this.handleLocationChange} />
+                        by
+                        <SelectBox options={SORT_OPTIONS} value={sort} onSelect={this.handleSortChange} />
+                        <RefreshButton loading={loading} onClick={this.fetchPubs} />
+                    </FilterBar>
 
-                <BinPubList columns={tableColumns} loading={loading} pubs={results.publications} />
+                    <BinPubList columns={tableColumns} loading={loading} pubs={results.publications} />
 
-                <div className='center'>
-                    <Pagination onChange={this.handlePageChange}
-                                page={page}
-                                perPageSize={PUBS_PER_PAGE}
-                                total={results.totalCount}
-                    />
+                    <div className='center'>
+                        <Pagination onChange={this.handlePageChange}
+                                    page={page}
+                                    perPageSize={PUBS_PER_PAGE}
+                                    total={results.totalCount}
+                        />
+                    </div>
                 </div>
-            </div>
+
+                <FigureGalleryModal
+                    image={modalImageSet[modalImageIdx]}
+                    onClose={this.handleModalClose.bind(this)}
+                    onPrev={modalImageIdx === 0 ? undefined : () => this.setState({modalImageIdx: modalImageIdx - 1})}
+                    onNext={modalImageIdx === modalImageSet.length - 1 ? undefined : () => this.setState({modalImageIdx: modalImageIdx + 1})}
+                />
+            </React.Fragment>
         );
     }
 }
 
-IndexingBin.propTypes = {
+CuratingBin.propTypes = {
     currentStatus: PropTypes.string,
     nextStatus: PropTypes.string,
     userId: PropTypes.string,
 };
 
-export default IndexingBin;
+export default CuratingBin;

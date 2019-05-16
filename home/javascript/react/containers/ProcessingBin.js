@@ -104,7 +104,7 @@ class ProcessingBin extends React.Component {
             {
                 label: '',
                 width: '115px',
-                content: (pub, index) => <PubClaimButton index={index} publication={pub} onClaimPub={this.updatePubStatus} />
+                content: (pub, index) => <PubClaimButton publication={pub} onClaimPub={() => this.updatePubStatus(pub, index)} />,
             },
             {
                 label: 'ZDB-ID',
