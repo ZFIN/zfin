@@ -27,5 +27,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627conseq_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627conseq.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627conseq.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/PUB-500.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/ZFIN-6158b.sql" />
 
 </databaseChangeLog>
