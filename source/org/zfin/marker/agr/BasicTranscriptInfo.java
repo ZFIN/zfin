@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.zfin.infrastructure.ant.AbstractValidateDataReportTask.getPropertyFileFromWebroot;
+import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.webrootDirectory;
 import static org.zfin.repository.RepositoryFactory.*;
 
 public class BasicTranscriptInfo extends AbstractScriptWrapper {
@@ -42,11 +44,16 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
 
     public static void main(String[] args) throws IOException {
         int number = 0;
+/*
         if (args.length > 0) {
             number = Integer.valueOf(args[0]);
         }
+*/
+        String webrootDir = args[0];
+        String propertyFileName = getPropertyFileFromWebroot(webrootDir);
+
         BasicTranscriptInfo basicTranscriptInfo = new BasicTranscriptInfo(number);
-        basicTranscriptInfo.init();
+        basicTranscriptInfo.initAll(propertyFileName);
         File initFile=new File(ZfinPropertiesEnum.SOURCEROOT+"/"+"rnaCentral.json");
         File destFile=new File(ZfinPropertiesEnum.FTP_ROOT+"/RNACentral/rnaCentral.json");
         FileUtils.copyFile(initFile,destFile);
