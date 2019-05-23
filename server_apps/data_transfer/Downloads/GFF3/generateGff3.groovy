@@ -114,6 +114,34 @@ def generateGenesAndTranscripts() {
         ensemblToZfinNameMap[row.tscript_ensdart_id, row.mrkr_abbrev]
     }
 
+    Map<String,List<String>> aliasMap = [:]
+    db.eachRow("""select dalias_data_zdb_id, dalias_alias from data_alias join db_link on dblink_linked_recid = dalias_data_zdb_id where dblink_acc_num like 'ENSDARG%'""") { row ->
+        String id = row.dalias_data_zdb_id
+        String alias = row.dalias_alias
+
+        if (aliasMap[id]) {
+            aliasMap[id].add(alias)
+        } else {
+            aliasMap[id] = [alias]
+        }
+    }
+
+    db.eachRow(""" select zeg_gene_zdb_id, dblink_acc_num
+                   from zfin_ensembl_gene
+                        join db_link on dblink_linked_recid = zeg_gene_zdb_id
+                   where dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-38','ZDB-FDBCONT-040412-39','ZDB-FDBCONT-040412-14','ZDB-FDBCONT-131021-1','ZDB-FDBCONT-061018-1'); """) { row ->
+        String id = row.zeg_gene_zdb_id
+        String alias = row.dblink_acc_num
+
+        if (aliasMap[id]) {
+            aliasMap[id].add(alias)
+        } else {
+            aliasMap[id] = [alias]
+        }
+    }
+
+
+
     Map <String,List<GenomeFeature>> ensemblFeatureMap = [:]
     db.eachRow("""
         select 
@@ -165,6 +193,10 @@ def generateGenesAndTranscripts() {
             } else {
                 otherTranscripts.add(transcript)
             }
+        }
+
+        if (aliasMap[gene.getId()]) {
+            gene.addAttribute("Alias",aliasMap[gene.getId()].join(","))
         }
 
         if (zfinTranscripts.size() > 0) {
