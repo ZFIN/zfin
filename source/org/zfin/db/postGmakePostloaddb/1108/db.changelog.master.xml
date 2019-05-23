@@ -6,10 +6,11 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 
-    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-529.sql" />
+<!--    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-529.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-530.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-531.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-532.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-532.sql" />-->
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-544.sql" />
     
 
 </databaseChangeLog>
