@@ -177,20 +177,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             HibernateUtil.currentSession().save(fgl);
             infrastructureRepository.insertPublicAttribution(fgl.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
         }
+        else{
 
-        FeatureGenomicMutationDetail fgmd = featureRepository.getFeatureGenomicDetail(feature);
-        if (fgmd == null) {
-            fgmd = new FeatureGenomicMutationDetail();
-            fgmd.setFeature(feature);
+            infrastructureRepository.deleteActiveDataByZdbID(fgl.getZdbID());
         }
-        if (StringUtils.isNotEmpty(featureDTO.getFgmdSeqRef())||(StringUtils.isNotEmpty(featureDTO.getFgmdSeqVar()))) {
 
-            fgmd.setFgmdSeqVar(featureDTO.getFgmdSeqVar().toUpperCase());
-            fgmd.setFgmdSeqRef(featureDTO.getFgmdSeqRef().toUpperCase());
-            fgmd.setFgmdVarStrand("+");
-            HibernateUtil.currentSession().save(fgmd);
-            infrastructureRepository.insertPublicAttribution(fgmd.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
-        }
+
 
         
 
@@ -270,6 +262,34 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
         }
+
+        FeatureGenomicMutationDetail fgmd = feature.getFeatureGenomicMutationDetail();
+        if (featureDTO.getFgmdChangeDTO() != null) {
+
+            if (fgmd == null) {
+                fgmd = new FeatureGenomicMutationDetail();
+                fgmd.setFeature(feature);
+                feature.setFeatureGenomicMutationDetail(fgmd);
+            }
+            FeatureGenomicMutationDetail oldDetail = fgmd.clone();
+
+            DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
+            if (fgmd.getZdbID() == null) {
+                HibernateUtil.currentSession().save(fgmd);
+            }
+            if (!fgmd.equals(oldDetail)) {
+                infrastructureRepository.insertMutationDetailAttribution(fgmd.getZdbID(), featureDTO.getPublicationZdbID());
+            }
+        } else {
+            // remove existing record
+            if (fgmd != null) {
+                featureRepository.deleteFeatureGenomicMutationDetail(fgmd);
+                //          infrastructureRepository.deleteMutationDetailAttribution(proteinDetail.getZdbID(), featureDTO.getPublicationZdbID());
+            }
+
+        }
+
+
         Set<FeatureTranscriptMutationDetail> addTranscriptAttribution = new HashSet<>();
         if (featureDTO.getTranscriptChangeDTOSet() != null) {
             Set<FeatureTranscriptMutationDetail> detailSet = feature.getFeatureTranscriptMutationDetailSet();
@@ -543,7 +563,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
 
-            if (StringUtils.isNotEmpty(featureDTO.getFgmdSeqRef())||(StringUtils.isNotEmpty(featureDTO.getFgmdSeqVar()))) {
+            /*if (StringUtils.isNotEmpty(featureDTO.getFgmdSeqRef())||(StringUtils.isNotEmpty(featureDTO.getFgmdSeqVar()))) {
                 FeatureGenomicMutationDetail fgmd = new FeatureGenomicMutationDetail();
                 fgmd.setFeature(feature);
                 fgmd.setFgmdSeqRef(featureDTO.getFgmdSeqRef().toUpperCase());
@@ -558,7 +578,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 Set<PublicationAttribution> pubattr1 = new HashSet<>();
                 pubattr1.add(pa1);
                 currentSession().save(pa1);
-            }
+            }*/
 
 
 

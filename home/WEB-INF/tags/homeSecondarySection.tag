@@ -9,7 +9,9 @@
             View
             <a href="/action/publication/dashboard"><em>my open pubs</em></a>,
             <a href="action/publication/curating-bin"><em>curation bins</em></a>,
-            <a href="action/publication/indexing-bin"><em>indexing bin</em></a>
+            <a href="action/publication/indexing-bin"><em>indexing bin</em></a>,
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="action/publication/processing-bin"><em>processing bin</em></a>
         </li>
         <li>
             Add

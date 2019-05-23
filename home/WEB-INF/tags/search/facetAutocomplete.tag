@@ -45,7 +45,7 @@
 
 <script>
 
-    angular.module('facetFilters', [])
+    angular.module('app')
             .filter('match', function() {
 
                 //important!  the input to a filter is the entire list, not one record at a time
@@ -112,63 +112,57 @@
                     return input.slice(offset, offset + pageSize);
                 }
 
+            })
+            .controller('facetListController', function ($scope, $http) {
+
+                //This let's me use Math.ceil
+                $scope.Math = window.Math;
+
+                $scope.page = 1;
+                $scope.pageSize = 10;
+
+                $scope.fetchValues = function(category, field, title) {
+
+                    //clear the query, probably not meaningful for the new values
+                    $scope.query = "";
+                    $scope.page = 1;
+                    $scope.pageSize = 10;
+                    $scope.facetValues = null;
+                    $scope.title = title;
+                    $scope.field = field;
+                    $scope.category = category;
+
+        //            $scope.url = '/action/quicksearch/facet-autocomplete?fq=category%3A%22' + category + '%22&category=' + category + '&field=' + field + '&term=&limit=-1&sort=index';
+                    $scope.url = '/action/quicksearch/facet-autocomplete?' + jQuery('#query-string').val() + '&field=' + field + '&term=&limit=-1&sort=index';
+
+                    $http.get($scope.url).success(function(data) {
+                        $scope.facetValues = data;
+
+                    });
+                };
+
+                $scope.nextPage = function() {
+                    var nextPage = parseInt($scope.page) + 1;
+
+        //            console.log('maxPage: ' + $scope.maxPage + ", nextPage:" + nextPage);
+
+        //            $scope.maxPage = $scope.filteredValues.length / $scope.perPage;
+                    if (nextPage <= parseInt(Math.ceil($scope.filteredValues.length/$scope.perPage),10)) {
+                        $scope.page = nextPage;
+                    }
+
+                };
+
+                $scope.prevPage = function() {
+                    var prevPage = parseInt($scope.page) - 1;
+                    if (prevPage > 0) {
+                        $scope.page = prevPage;
+                    }
+                };
+
+                $scope.sendGAEvent = function(action, value) {
+                    ga('send', 'event', $scope.category + ' : ' + $scope.title + ' Facet', action, value);
+                };
             });
-
-
-    var facetApp = angular.module('app', ['facetFilters']);
-
-
-    facetApp.controller('facetListController', function ($scope, $http) {
-
-        //This let's me use Math.ceil
-        $scope.Math = window.Math;
-
-        $scope.page = 1;
-        $scope.pageSize = 10;
-
-        $scope.fetchValues = function(category, field, title) {
-
-            //clear the query, probably not meaningful for the new values
-            $scope.query = "";
-            $scope.page = 1;
-            $scope.pageSize = 10;
-            $scope.facetValues = null;
-            $scope.title = title;
-            $scope.field = field;
-            $scope.category = category;
-
-//            $scope.url = '/action/quicksearch/facet-autocomplete?fq=category%3A%22' + category + '%22&category=' + category + '&field=' + field + '&term=&limit=-1&sort=index';
-            $scope.url = '/action/quicksearch/facet-autocomplete?' + jQuery('#query-string').val() + '&field=' + field + '&term=&limit=-1&sort=index';
-
-            $http.get($scope.url).success(function(data) {
-                $scope.facetValues = data;
-
-            });
-        };
-
-        $scope.nextPage = function() {
-            var nextPage = parseInt($scope.page) + 1;
-
-//            console.log('maxPage: ' + $scope.maxPage + ", nextPage:" + nextPage);
-
-//            $scope.maxPage = $scope.filteredValues.length / $scope.perPage;
-            if (nextPage <= parseInt(Math.ceil($scope.filteredValues.length/$scope.perPage),10)) {
-                $scope.page = nextPage;
-            }
-
-        };
-
-        $scope.prevPage = function() {
-            var prevPage = parseInt($scope.page) - 1;
-            if (prevPage > 0) {
-                $scope.page = prevPage;
-            }
-        };
-
-        $scope.sendGAEvent = function(action, value) {
-            ga('send', 'event', $scope.category + ' : ' + $scope.title + ' Facet', action, value);
-        };
-
-    });
 
 </script>

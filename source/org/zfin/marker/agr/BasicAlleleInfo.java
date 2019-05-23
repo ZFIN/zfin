@@ -100,3 +100,4 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
         return allAlleleDTO;
     }
 }
+

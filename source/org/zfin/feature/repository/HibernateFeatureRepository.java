@@ -1162,6 +1162,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
         if (feature.getFeatureProteinMutationDetail() != null) {
             savePublicationAttribution(publication, feature.getFeatureProteinMutationDetail().getZdbID());
         }
+        if (feature.getFeatureGenomicMutationDetail() != null) {
+            savePublicationAttribution(publication, feature.getFeatureGenomicMutationDetail().getZdbID());
+        }
         // create attributions for mutation details: Protein
         if (feature.getFeatureDnaMutationDetail() != null) {
             savePublicationAttribution(publication, feature.getFeatureDnaMutationDetail().getZdbID());
@@ -1227,7 +1230,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
         //I changed this to delete this record entirely from zdb active data so as to remove lingering record attributions as well.
         infrastructureRepository.deleteActiveDataByZdbID(detail.getZdbID());
     }
-
+    public void deleteFeatureGenomicMutationDetail(FeatureGenomicMutationDetail detail) {
+        //I changed this to delete this record entirely from zdb active data so as to remove lingering record attributions as well.
+        infrastructureRepository.deleteActiveDataByZdbID(detail.getZdbID());
+    }
     @Override
     public Long getFeaturesForLabCount(String zdbID) {
         String hql = " select count(*) from Feature f join f.sources s " +

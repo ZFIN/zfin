@@ -63,6 +63,7 @@ videoFiles = new HashSet()
 Sql.withInstance(db) { Sql sql ->
     sql.eachRow("SELECT img_image, img_image_with_annotation, img_thumbnail FROM image") { row ->
         imageFiles.add(imageFullPath + row.img_image)
+
         imageFiles.add(mediumFullPath + row.img_image)
         if (row.img_image_with_annotation) {
             imageFiles.add(imageFullPath + row.img_image_with_annotation)
@@ -93,9 +94,9 @@ Sql.withInstance(db) { Sql sql ->
     }
 }
 
-processDirectory(imageLoadUpDir, 'removedImageFiles.txt') { !imageFiles.contains(it) }
-processDirectory(pdfLoadUpDir, 'removedPdfFiles.txt') { !pubFiles.contains(it) }
-processDirectory(videoLoadUpDir, 'removedVideoFiles.txt') { !videoFiles.contains(it) }
+//processDirectory(imageLoadUpDir, 'removedImageFiles.txt') { !imageFiles.contains(it) }
+//processDirectory(pdfLoadUpDir, 'removedPdfFiles.txt') { !pubFiles.contains(it) }
+//processDirectory(videoLoadUpDir, 'removedVideoFiles.txt') { !videoFiles.contains(it) }
 
 cmd = "${ZfinPropertiesEnum.ROOT_PATH}/server_apps/DB_maintenance/loadUp/rsync.pl"
 println(cmd)

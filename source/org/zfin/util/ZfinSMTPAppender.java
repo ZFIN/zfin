@@ -9,8 +9,6 @@ import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.net.SMTPAppender;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
-import org.zfin.database.DatabaseLock;
-import org.zfin.database.repository.SysmasterRepository;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.util.log4j.ZfinHtmlLayout;

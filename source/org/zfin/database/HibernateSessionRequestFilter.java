@@ -4,9 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.Table;
-import org.zfin.database.repository.SysmasterRepository;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.util.ZfinSMTPAppender;
@@ -60,14 +58,12 @@ public class HibernateSessionRequestFilter implements Filter {
                 message.append(getDebugMessage(gwtRequestString));
             }
             LOG.error(message, e);
-            List<DatabaseLock> dbLocks = SysmasterRepository.getLocks();
-            locks = DbSystemUtil.getLockSummary(dbLocks);
+            //locks = DbSystemUtil.getLockSummary(dbLocks);
         } finally {
             // ensure that the Hibernate session is closed, meaning, the threadLocal object is detached from
             // the current threadLocal
             HibernateUtil.closeSession();
-            SysmasterHibernateUtil.closeSession();
-            callSmtpAppender((HttpServletRequest) request, locks);
+            //callSmtpAppender((HttpServletRequest) request, locks);
         }
     }
 

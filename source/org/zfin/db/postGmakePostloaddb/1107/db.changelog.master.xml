@@ -9,6 +9,25 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1107/CUR-902.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1107/ZFIN-6211.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1107/ZFIN-6245.sql" />
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/update-pub-statuses.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-623a_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-623a.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-623a.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627c.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627chr_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627chr.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627chr.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627flanking.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627mutdets_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627mutdets.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627mutdets.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627conseq_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627conseq.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/DLOAD-627conseq.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/PUB-500.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1107/ZFIN-6158b.sql" />
 
 </databaseChangeLog>

@@ -893,13 +893,17 @@ ul.comma-separated {
     margin-bottom: 20px;
 }
 
+.pub-dashboard > .filter-bar select {
+    margin: 0 5px;
+}
+
 .pub-dashboard .table td {
     vertical-align: text-top;
 }
 
 .pub-dashboard img {
     max-height: 100px;
-    margin: 4px 0;
+    margin: 4px 4px 0 0;
     border: 1px solid black;
     cursor: pointer;
 }

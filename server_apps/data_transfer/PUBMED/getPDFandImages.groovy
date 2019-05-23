@@ -20,11 +20,11 @@ PUBS_WITH_PDFS_TO_UPDATE = new File ("pdfsAvailable.txt")
 FIGS_TO_LOAD = new File ("figsToLoad.txt")
 PUB_FILES_TO_LOAD = new File ("pdfsToLoad.txt")
 ADD_BASIC_PDFS_TO_DB = new File ("pdfBasicFilesToLoad.txt")
-
+PUBS_TO_GIVE_PERMISSIONS = new File ("pubsToGivePermission.txt")
 
 Date date = new Date()
 // go back two weeks to slurp up stragglers.
-def dateToCheck = date - 14
+def dateToCheck = date - 60
 def idsToGrab = [:]
 String datePart = dateToCheck.format("yyyy-MM-dd")
 String timePart = dateToCheck.format("HH:mm:ss")
@@ -74,8 +74,14 @@ def downloadPMCFileBundle(String url, String zdbId) {
 }
 
 def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
-    def art = pmcTextArticle.GetRecord.record.metadata.article
-    def markedUpBody = new StreamingMarkupBuilder().bindNode(art.body).toString()
+    def article = pmcTextArticle.GetRecord.record.metadata.article
+    def header = pmcTextArticle.GetRecord.record.header
+    header.setSpec.each { setspec ->
+       if (setspec == 'npgopen' || setspec == 'pmc-open'){
+            PUBS_TO_GIVE_PERMISSIONS.append(zdbId+"\n")
+        }
+    }
+    def markedUpBody = new StreamingMarkupBuilder().bindNode(article.body).toString()
     def supplimentMatches = markedUpBody =~ /<tag0:supplementary-material content-type='(.*?)<\/tag0:supplementary-material>/
     if (supplimentMatches.size() > 0) {
         supplimentMatches.each {
@@ -86,7 +92,9 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
             }
         }
     }
+
     addSummaryPDF(zdbId, pmcId)
+
     def figMatches = markedUpBody =~ /<tag0:fig id=(.*?)>(.*?)<\/tag0:fig>/
     def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/"
     if (figMatches.size() >0) {
@@ -148,6 +156,11 @@ def pmcFileBundleRecords
 pmcFileBundleRecords = PubmedUtils.getPDFandImagesTarballsByDate(datePart+"+"+timePart)
 
 processPMCFileBundle(pmcFileBundleRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
+
+givePubsPermissions = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
+        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/give_pubs_permissions.sql " +
+        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
+givePubsPermissions.waitFor()
 
 loadFigsAndImages = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
         "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/load_figs_and_images.sql " +

@@ -17,6 +17,7 @@ import org.zfin.publication.repository.PublicationRepository;
 public class PublicationDashboardController {
 
     public enum Page {
+        PROCESSING_BIN("Processing Bin", "publication/processing-bin.page", "/action/publication/processing-bin"),
         INDEXING_BIN("Indexing Bin", "publication/indexing-bin.page", "/action/publication/indexing-bin"),
         CURATING_BIN("Curation Bins", "publication/curating-bin.page", "/action/publication/curating-bin"),
         DASHBOARD("My Dashboard", "publication/dashboard.page", "/action/publication/dashboard");
@@ -58,6 +59,14 @@ public class PublicationDashboardController {
     @ModelAttribute("pages")
     public Page[] getDashboardPages() {
         return Page.values();
+    }
+
+    @RequestMapping("/processing-bin")
+    public String showReadyForProcessingBin(Model model) {
+        return showBin(model,
+                publicationRepository.getPublicationStatusByName(PublicationTrackingStatus.Name.READY_FOR_PROCESSING),
+                publicationRepository.getPublicationStatusByName(PublicationTrackingStatus.Name.PROCESSING),
+                Page.PROCESSING_BIN);
     }
 
     @RequestMapping("/curating-bin")

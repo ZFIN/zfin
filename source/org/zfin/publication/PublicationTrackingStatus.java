@@ -11,6 +11,9 @@ public class PublicationTrackingStatus {
 
     public enum Type {
         NEW,
+        READY_FOR_PROCESSING,
+        PROCESSING,
+        MANUAL_PDF,
         READY_FOR_INDEXING,
         INDEXING,
         READY_FOR_CURATION,
@@ -21,6 +24,9 @@ public class PublicationTrackingStatus {
 
     public enum Name {
         NEW("New"),
+        READY_FOR_PROCESSING("Ready for Processing"),
+        PROCESSING("Processing"),
+        MANUAL_PDF("Manual PDF Acquisition Needed"),
         READY_FOR_INDEXING("Ready for Indexing"),
         INDEXING("Indexing"),
         READY_FOR_CURATION("Ready for Curation"),
@@ -30,6 +36,8 @@ public class PublicationTrackingStatus {
         WAITING_FOR_AUTHOR("Waiting for Author"),
         WAITING_FOR_ORTHOLOGY("Waiting for Ontology"),
         WAITING_FOR_NOMENCLATURE("Waiting for Nomenclature"),
+        WAITING_FOR_ACTIVATION("Waiting for Activation"),
+        WAITING_FOR_PDF("Waiting for PDF"),
         CLOSED_CURATED("Closed, Curated"),
         CLOSED_ARCHIVED("Closed, Archived"),
         CLOSED_NO_DATA("Closed, No data"),

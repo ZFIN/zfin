@@ -6,9 +6,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.database.PostgresSession;
-import org.zfin.database.SysSession;
 import org.zfin.database.repository.PostgresRepository;
-import org.zfin.database.repository.SysmasterRepository;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -56,8 +54,7 @@ public class SysmasterController {
                                          DatabaseFormBean formBean,
                                  @PathVariable("ID") String idString) {
         int id = Integer.valueOf(idString);
-        SysSession session = SysmasterRepository.getSessionDetail(id);
-        model.addAttribute("session", session);
+        //model.addAttribute("session", session);
         return "dev-tools/database/view-session.page";
     }
 

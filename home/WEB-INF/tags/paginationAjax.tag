@@ -55,7 +55,7 @@ The form bean has to extend PaginationBean to make this work.
 
 <center>
     <c:if test="${paginationBean.paginationNeeded}">
-        <div class="pagination">
+        <div class="zf-pagination">
             <table>
                 <tr>
                     <td align="center" valign="top">

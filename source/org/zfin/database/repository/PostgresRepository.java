@@ -1,18 +1,15 @@
 package org.zfin.database.repository;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.zfin.database.DatabaseLock;
 import org.zfin.database.PostgresSession;
 import org.zfin.database.SysOpenDb;
 import org.zfin.database.SysSession;
 import org.zfin.database.presentation.DatabaseFormBean;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.util.ArrayList;
@@ -25,14 +22,6 @@ import java.util.TimeZone;
  * about the locks, sessions and other meta data.
  */
 public class PostgresRepository {
-
-    public static List<DatabaseLock> getLocks() {
-        Session session = SysmasterHibernateUtil.getSession();
-        Query query = session.createQuery("select lock from DatabaseLock lock " +
-                "where lock.dbsName = :dbName");
-        query.setString("dbName", ZfinPropertiesEnum.DB_NAME.toString());
-        return query.list();
-    }
 
     public static List<PostgresSession> getSystemDatabases(DatabaseFormBean formBean) {
         Session session = HibernateUtil.currentSession();
@@ -94,10 +83,4 @@ public class PostgresRepository {
         return criteria.list();
     }
 
-    public static SysSession getSessionDetail(int id) {
-        Session session = SysmasterHibernateUtil.getSession();
-        SysSession sysSession = (SysSession) session.get(SysSession.class, id);
-
-        return sysSession;
-    }
 }

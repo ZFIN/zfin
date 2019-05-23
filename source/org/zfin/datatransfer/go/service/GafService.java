@@ -576,7 +576,7 @@ public class GafService {
 
     protected MarkerDBLink getDBLink(GafEntry gafEntry) throws GafValidationError {
         String proteinID = gafEntry.getGeneProductFormID();
-        System.out.println(proteinID);
+
 
         ReferenceDatabase refDB = sequenceRepository.getReferenceDatabase(
                 ForeignDB.AvailableName.UNIPROTKB,
@@ -584,7 +584,7 @@ public class GafService {
                 ForeignDBDataType.SuperType.SEQUENCE,
                 Species.Type.ZEBRAFISH);
         int colonIndex = proteinID.indexOf(":");
-        System.out.println(proteinID.substring(colonIndex + 1, proteinID.length()));
+
         List<MarkerDBLink> proteinDBLinkList = sequenceRepository.getMarkerDBLinksForAccession(proteinID.substring(colonIndex + 1, proteinID.length()), refDB);
 
         if (proteinDBLinkList.size() == 0) {

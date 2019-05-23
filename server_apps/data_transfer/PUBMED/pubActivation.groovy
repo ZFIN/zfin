@@ -5,6 +5,11 @@ import org.zfin.properties.ZfinProperties
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
 DBNAME = System.getenv("DBNAME")
+
+def scriptPath = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/PUBMED/complete_auther_names.pl"
+def command = "perl -w $scriptPath"
+println command.execute().text
+
 PUB_IDS_TO_CHECK = "pubsToActivate.txt"
 ACTIVATED_PUBS = "listOfActivatedPubs.txt"
 new File(ACTIVATED_PUBS).delete()

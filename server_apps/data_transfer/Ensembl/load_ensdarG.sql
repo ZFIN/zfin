@@ -113,7 +113,7 @@ and dblink_acc_num like 'ENSDARG%'
 
 --!echo "unloading ENSDARGs that have changed but can not be updated because they are associated with Sanger Load Pub";
 
-\copy (select id, dblink_acc_num, dblink_linked_recid from tmp_drop, record_Attribution, db_link where recattrib_data_zdb_id = id and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1','ZDB-PUB-130211-1','ZDB-PUB-130725-1','ZDB-PUB-130425-4', 'ZDB-PUB-100504-26', 'ZDB-PUB-100504-23', 'ZDB-PUB-100504-24','ZDB-PUB-070315-1','ZDB-PUB-130211-1','ZDB-PUB-120207-1','ZDB-PUB-130213-1') and dblink_zdb_id = id and not exists (Select 'x' from ensdar_mapping where ensm_ensdarg_id = dblink_acc_num)) to 'changedSangerEnsdargs.txt';
+\copy (select id, dblink_acc_num, dblink_linked_recid from tmp_drop, record_Attribution, db_link where recattrib_data_zdb_id = id and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1','ZDB-PUB-130211-1','ZDB-PUB-130725-1','ZDB-PUB-130425-4', 'ZDB-PUB-100504-26', 'ZDB-PUB-100504-23', 'ZDB-PUB-100504-24','ZDB-PUB-070315-1','ZDB-PUB-130211-1','ZDB-PUB-120207-1','ZDB-PUB-130213-1','ZDB-PUB-190221-12') and dblink_zdb_id = id and not exists (Select 'x' from ensdar_mapping where ensm_ensdarg_id = dblink_acc_num)) to 'changedSangerEnsdargs.txt';
 
 --!echo "delete from tmp_drop"
 
