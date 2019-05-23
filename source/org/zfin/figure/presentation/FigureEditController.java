@@ -16,6 +16,7 @@ import org.zfin.expression.Image;
 import org.zfin.figure.service.ImageService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.infrastructure.WithdrawnZdbID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
@@ -112,6 +113,9 @@ public class FigureEditController {
         }
 
         Transaction tx = HibernateUtil.createTransaction();
+        WithdrawnZdbID withZDB = new WithdrawnZdbID();
+        withZDB.setWdoldZdbID(figure.getZdbID());
+        withZDB.setWdnewZdbID(figure.getPublication().getZdbID());
         infrastructureRepository.deleteActiveDataByZdbID(figure.getZdbID());
         infrastructureRepository.insertUpdatesTable(pub, "figure", "deleted", null, zdbID);
         tx.commit();
@@ -147,11 +151,14 @@ public class FigureEditController {
 
     @ResponseBody
     @RequestMapping(value = "/image/{zdbID}", method = RequestMethod.DELETE)
-    public String deleteImage(@PathVariable String zdbID) {
+    public String  deleteImage(@PathVariable String zdbID) {
         Image image = publicationRepository.getImageById(zdbID);
         Publication pub = image.getFigure().getPublication();
 
         Transaction tx = HibernateUtil.createTransaction();
+        WithdrawnZdbID withZDB = new WithdrawnZdbID();
+        withZDB.setWdoldZdbID(image.getZdbID());
+        withZDB.setWdnewZdbID(image.getFigure().getPublication().getZdbID());
         HibernateUtil.currentSession().delete(image);
         infrastructureRepository.insertUpdatesTable(pub, "img_zdb_id", "deleted", null, zdbID);
         tx.commit();
