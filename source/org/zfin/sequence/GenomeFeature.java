@@ -115,13 +115,7 @@ public class GenomeFeature {
 
         return attributes.entrySet().stream()
                 .map(entry -> {
-                    String out = null;
-                    try {
-                        out = entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    return out;
+                    return entry.getKey() + "=" + entry.getValue();                   
                 })
                 .collect(Collectors.joining(";"));
 
