@@ -94,7 +94,7 @@ select distinct jrnl_zdb_id, jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn
 from journal, tmp_pubs
 where lower(journaltitle) = jrnl_name_lower
       or lower(iso) = jrnl_abbreV_lower
-      or jrnl_print_issn = issn or jrnl_online_issn=issn
+      or jrnl_print_issn = issn
 ;
 
 create temp table tmp_first_journal_to_match as 
@@ -115,8 +115,8 @@ update tmp_new_pubs
 set journal_zdb_id = (select id from tmp_first_journal_to_match
 where issn is not null
       and jrnl_print_issn is not null
-      and (issn = jrnl_print_issn or issn=jrnl_online_issn)
-where journal_zdb_id is null;
+      and issn = jrnl_print_issn
+and journal_zdb_id is null);
 
 create temp table tmp_new_journals as 
 select distinct journaltitle, iso, issn from tmp_new_pubs
