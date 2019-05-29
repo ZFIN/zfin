@@ -14,6 +14,14 @@ if (-e "GCF_000002035.6_GRCz11_feature_table.txt") {
   &doSystemCommand("/bin/rm -f GCF_000002035.6_GRCz11_feature_table.txt");
 }
 
+if (-e "updateList") {
+  &doSystemCommand("/bin/rm -f updateList");
+}
+
+if (-e "addList") {
+  &doSystemCommand("/bin/rm -f addList");
+}
+
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/Danio_rerio/all_assembly_versions/GCF_000002035.6_GRCz11/GCF_000002035.6_GRCz11_feature_table.txt.gz");
 &doSystemCommand("/local/bin/gunzip GCF_000002035.6_GRCz11_feature_table.txt.gz");
 
@@ -34,6 +42,7 @@ foreach $line (@lines) {
   if ($line) {
     @fields = split(/\t/, $line);
     $feature = $fields[0];
+    $assmblUnit = $fields[3];
     $chromosome = $fields[5];
     $start = $fields[7];
     $start =~ s/^\s+//;
@@ -41,7 +50,7 @@ foreach $line (@lines) {
     $end =~ s/\s+$//; 
     $symbol = $fields[14];
     $ID = $fields[15];
-    if ($feature eq "gene" && $start && $end && $start ne "" && $end ne "" && $start =~ /^\d+$/ && $end =~ /^\d+$/) { 
+    if ($feature eq "gene" && $assmblUnit eq 'Primary Assembly' && $start && $end && $start ne "" && $end ne "" && $start =~ /^\d+$/ && $end =~ /^\d+$/) {
       $ctGenes++;
       $chrsGeneIDs{$ID} = $chromosome;
       $startsGeneIDs{$ID} = $start;
@@ -89,17 +98,55 @@ print "\nNumber of existing records = $ctExisting\n";
 
 $cur->finish();
 
-open (LIST, ">updateList") || die "Cannot open updateList : $!\n";
+open (UPDATELIST, ">updateList") || die "Cannot open updateList : $!\n";
 
 foreach $accNum (keys %zdbGeneIDs) {
   if (exists($chrsGeneIDs{$accNum}) && exists($startsGeneIDs{$accNum}) && exists($endsGeneIDs{$accNum}) && ($chrsAccs{$accNum} ne $chrsGeneIDs{$accNum} || $startsAccs{$accNum} != $startsGeneIDs{$accNum} || $endsAccs{$accNum} != $endsGeneIDs{$accNum})) {
-     print LIST "$zdbGeneIDs{$accNum}|$accNum|$chrsAccs{$accNum}|$chrsGeneIDs{$accNum}|$startsAccs{$accNum}|$startsGeneIDs{$accNum}|$endsAccs{$accNum}|$endsGeneIDs{$accNum}\n"; 
+     print UPDATELIST "$zdbGeneIDs{$accNum}|$accNum|$chrsGeneIDs{$accNum}|$startsGeneIDs{$accNum}|$endsGeneIDs{$accNum}\n"; 
   }       
 }
 
-close LIST;
+close UPDATELIST;
+
+$sqlMissingCor = "select dblink_linked_recid, dblink_acc_num 
+                    from db_link, foreign_db_contains 
+                   where dblink_fdbcont_zdb_id = fdbcont_zdb_id 
+                     and fdbcont_fdb_db_id = 10
+                     and not exists(select 1 from sequence_feature_chromosome_location_generated 
+                                     where sfclg_data_zdb_id = dblink_linked_recid 
+                                       and sfclg_location_source = 'NCBIStartEndLoader' 
+                                       and sfclg_fdb_db_id = 10);";           
+           
+$curMissingCor = $handle->prepare($sqlMissingCor);
+
+$curMissingCor->execute;
+
+$curMissingCor->bind_columns(\$zdbID,\$ncbiID);
+
+%zdbIDsMissingCor = ();
+$ctMissing = 0;
+while ($curMissingCor->fetch) {
+  $zdbIDsMissingCor{$ncbiID} = $zdbID;
+  $ctMissing++;
+}
+
+print "\nNumber of genes missing coordinate records = $ctMissing\n";
+
+$curMissingCor->finish();
+
 
 $handle->disconnect();
+
+open (ADDLIST, ">addList") || die "Cannot open addList : $!\n";
+
+foreach $zdbID (keys %zdbIDsMissingCor) {
+  $ncbiID = $zdbIDsMissingCor{$zdbID};
+  if (exists($chrsGeneIDs{$ncbiID}) && exists($startsGeneIDs{$ncbiID}) && exists($endsGeneIDs{$ncbiID})) {
+     print ADDLIST "$zdbID|$ncbiID|$chrsGeneIDs{$ncbiID}|$startsGeneIDs{$ncbiID}|$endsGeneIDs{$ncbiID}\n"; 
+  }       
+}
+
+close ADDLIST;
 
 &doSystemCommand("psql -d <!--|DB_NAME|--> -a -f NCBIStartEnd.sql");
 
