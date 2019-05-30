@@ -264,6 +264,6 @@ update omim_phenotype set omimp_human_gene_id = (
                     and exists(select 1 from human_gene_detail
                                 where hgd_gene_id = omim_id));
 
-rollback work;
+--rollback work;
 
---commit work;
+commit work;
