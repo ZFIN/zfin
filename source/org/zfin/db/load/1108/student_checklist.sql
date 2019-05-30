@@ -16,7 +16,7 @@ create table publication_processing_checklist (ppc_pk_id serial8 not null primar
 ;
 
 create unique index ppc_primary_key_index
- on publication_processing_checklist (ppc_pub_zdb_id, ppc_task);
+ on publication_processing_checklist (ppc_pub_zdb_id, ppc_task_id);
 
 create index ppc_person_fk_index 
   on publication_processing_checklist (ppc_person_zdb_id);
