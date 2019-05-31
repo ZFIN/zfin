@@ -42,7 +42,7 @@ PubmedUtils.psql DBNAME, """
 """
 
 def addSummaryPDF(String zdbId, String pmcId) {
-    def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/")
+    def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/")
     dir.eachFileRecurse (FileType.FILES) { file ->
         if (file.name.endsWith('pdf')){
             ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, zdbId+"/"+file.name].join('|') + "\n")
@@ -51,24 +51,24 @@ def addSummaryPDF(String zdbId, String pmcId) {
 }
 
 def downloadPMCFileBundle(String url, String zdbId) {
-    def directory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId")
+    def directory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId")
     if (!directory.exists()) {
         directory.mkdir()
     }
 
-    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar.gz")
+    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/$zdbId"+".tar.gz")
     def out = new BufferedOutputStream(file)
     out << new URL(url).openStream()
     out.close()
 
-    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar.gz"
-    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/$zdbId"+".tar"
+    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/$zdbId"+".tar.gz"
+    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/$zdbId"+".tar"
     File unzippedFile = new File(unzipped_output)
     if (!unzippedFile.exists()){
         PubmedUtils.gunzip(gziped_bundle, unzipped_output)
     }
 
-    def cmd = "cd "+ "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
+    def cmd = "cd "+ "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
     ["/bin/bash", "-c", cmd].execute().waitFor()
 
 }
@@ -96,7 +96,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
     addSummaryPDF(zdbId, pmcId)
 
     def figMatches = markedUpBody =~ /<tag0:fig id=(.*?)>(.*?)<\/tag0:fig>/
-    def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/$zdbId/"
+    def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/"
     if (figMatches.size() >0) {
         figMatches.each {
             def entireFigString = it[0]
