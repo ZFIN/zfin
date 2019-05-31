@@ -56,7 +56,8 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
 
         basicTranscriptInfo.initAll(propertyFileName);
 
-        File initFile=new File(ZfinPropertiesEnum.TARGETROOT+"/"+"rnaCentral.json");
+        basicTranscriptInfo.init();
+        File initFile=new File(ZfinPropertiesEnum.TARGETROOT+"/"+"server_apps/data_transfer"+"/"+"rnaCentral.json");
 
         File destFile=new File(ZfinPropertiesEnum.FTP_ROOT+"/RNACentral/rnaCentral.json");
         FileUtils.copyFile(initFile,destFile);
