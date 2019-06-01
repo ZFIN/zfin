@@ -6,5 +6,5 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/load/1108/student_checklist.sql"/>
-
+    <include file="source/org/zfin/db/load/1108/ZFIN-6265.sql"/>
 </databaseChangeLog>
