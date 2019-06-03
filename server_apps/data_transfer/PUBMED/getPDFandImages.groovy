@@ -1,11 +1,13 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
 import groovy.util.slurpersupport.GPathResult
-
 import groovy.xml.StreamingMarkupBuilder
+import org.apache.commons.io.FilenameUtils
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
 import groovy.io.FileType
+
+import javax.activation.MimetypesFileTypeMap
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
@@ -70,6 +72,27 @@ def downloadPMCFileBundle(String url, String zdbId) {
 
     def cmd = "cd "+ "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
     ["/bin/bash", "-c", cmd].execute().waitFor()
+
+    //TODO: test this
+    def imageDir = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/"
+    imageDir.eachFileRecurse (FileType.FILES) { imageFile ->
+        String mimetype = new MimetypesFileTypeMap().getContentType(imageFile)
+        String type = mimetype.split("/")[0]
+        if (type.equals('image')) {
+            def filenameWithoutExtension = FilenameUtils.removeExtension(imageFile)
+            def filenameExtension = FilenameUtils.getExtension(imageFile)
+
+            def makeThumbnail = "cd " + "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/ " + "&& /local/bin/convert -thumbnail 1000x64 "
+            +imageFile + "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/" + filenameWithoutExtension + "_thumb" + filenameExtension
+            ["/bin/bash", "-c", makeThumbnail].execute().waitFor()
+
+            def makeMedium = "cd " + "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/ " + "&& /local/bin/convert -thumbnail 500x550 "
+            +imageFile + "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/" + filenameWithoutExtension + "_medium" + filenameExtension
+            ["/bin/bash", "-c", makeThumbnail].execute().waitFor()
+
+        }
+
+    }
 
 }
 
