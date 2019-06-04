@@ -90,7 +90,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService = new GafService(organizationEnum);
             // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
-            File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
+           File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                     , new URL(downloadUrl)
                     , false);
 
@@ -110,7 +110,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             }
 
             // 2. parse file
-//            File downloadedFile = new File(ZfinPropertiesEnum.SOURCEROOT+"/"+GAF_TEST_DIRECTORY +"testGAF.txt");
+
 
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
             gafParser.postProcessing(gafEntries);
