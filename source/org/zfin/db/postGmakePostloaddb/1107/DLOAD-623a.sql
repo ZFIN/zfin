@@ -1,12 +1,25 @@
 --liquibase formatted sql
 --changeset pm:DLOAD-623a
 drop table if exists pre_db_link;
+
+drop table if exists tscriptens1;
 update tscriptens set ensdartid=substring(ensdartid,0,position('.' in ensdartid));
 delete from tscriptens where ensdartid ='';
 
 delete from tscriptens where exists (select 'x' from transcript where tscriptid=tscript_mrkr_zdb_id and trim(ensdartid)=trim(tscript_ensdart_id));
 delete from tscriptens where exists (select 'x' from transcript where tscriptid=tscript_mrkr_zdb_id and trim(tscript_ensdart_id)is not null);
-update transcript set tscript_ensdart_id=(select distinct ensdartid from tscriptens where trim(tscriptid)=trim(tscript_mrkr_zdb_id) and tscript_ensdart_id is null limit 1) where not exists  (select 'x' from tscriptens where tscriptid=tscript_mrkr_zdb_id and trim(ensdartid)=trim(tscript_ensdart_id));
+
+create  table tscriptens1 (tscriptid1 text, ottdartid1 text, ensdartid1 text);
+
+insert into tscriptens1 (tscriptid1 , ottdartid1 , ensdartid1)  select distinct * from tscriptens;
+
+update transcript
+set tscript_ensdart_id=(select distinct ensdartid1 from tscriptens1 where trim(tscriptid1)=trim(tscript_mrkr_zdb_id) and tscript_ensdart_id is null limit 1)
+from tscriptens1
+where tscript_ensdart_id is null
+and trim(tscriptid1)=trim(tscript_mrkr_zdb_id);
+
+
 
 create table pre_db_link (
 
@@ -21,8 +34,8 @@ insert into pre_db_link (
         predblink_acc_num,
         predblink_acc_num_display,
         predblink_fdbcont_zdb_id)
-  select distinct tscriptid, ensdartid, ensdartid, fdbcont_zdb_id
-    from tscriptens, foreign_db, foreign_db_contains
+  select distinct tscriptid1, ensdartid1, ensdartid1, fdbcont_zdb_id
+    from tscriptens1, foreign_db, foreign_db_contains
    where fdbcont_fdb_db_id = fdb_db_pk_id
      and fdb_db_name = 'Ensembl_Trans' ;
 
