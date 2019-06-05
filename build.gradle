@@ -358,6 +358,18 @@ project(':server_apps:data_transfer:Ensembl') {
     }
 }
 
+project(':server_apps:data_transfer:PUBMED') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+      from(project.projectDir) {
+            ttNameMap.each { name, value ->
+        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
+        }
+        into targetroot + pName
+    }
+}
+
 project(':server_apps:data_transfer:Downloads:GFF3') {
     task "deployFiles"(type: ZfinTargetCopy) {
       from(project.projectDir) {
@@ -390,7 +402,8 @@ task make(type: GradleBuild) {
              ':server_apps:sysexecs:deployFiles',
              ':server_apps:DB_maintenance:deployFiles',
              ':server_apps:data_transfer:deployFiles',
-             ':server_apps:data_transfer:Ensembl:deployFiles',          
+             ':server_apps:data_transfer:Ensembl:deployFiles', 
+             ':server_apps:data_transfer:PUBMED:deployFiles',          
              ':server_apps:Reports:deployFiles',
              'deployPackageFiles',
              ':cgi-bin:deployFiles'

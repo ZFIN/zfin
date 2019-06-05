@@ -1,14 +1,8 @@
 #!/private/bin/perl -wT
 $ENV{PATH} = "/local/apps/netpbm/bin:/bin";
-$ARGV[0] =~  m/([A-Za-z\d\-\_\$\+\=\~\.\,\ \/]+)/;
 my $fullImageFile = $1;
-$ARGV[1] =~  m/([A-Za-z\d\-\_\$\+\=\~\.\,\ \/]+)/;
 my $thumbnailFile = $1;
-
-# image files will be in a subdirectory called "medium/" and
-# have the same name as the full sized image
-my $mediumImageFile = $fullImageFile;
-$mediumImageFile =~ s/ZDB-IMAGE/medium\/ZDB-IMAGE/;
+my $mediumImageFile = $1;
 
 #the 1000px is a maximum that no sensible thumbnail should achieve
 system("/local/bin/convert -thumbnail 1000x64 $fullImageFile $thumbnailFile");
