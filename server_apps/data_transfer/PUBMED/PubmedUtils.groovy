@@ -20,15 +20,15 @@ class PubmedUtils {
             'Dec': 12
     ]
 
+
     static GPathResult getFullText(pmcId) {
         def url = "https://www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:$pmcId&metadataPrefix=pmc"
         new XmlSlurper().parse(url)
     }
 
-
-    static GPathResult getPDFandImagesTarballsByDate(date) {
+    static GPathResult getPdfMetaDataRecord(pmcId){
         def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
-        def query = "from="+date
+        def query = "id="+pmcId
         def connection = new URL(url).openConnection()
         connection.setDoOutput(true)
         connection.connect()
@@ -40,19 +40,34 @@ class PubmedUtils {
         new XmlSlurper().parse(connection.inputStream)
     }
 
-    static GPathResult getResumptionSet(token) {
-        def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
-        def query = "resumptionToken="+token
-        def connection = new URL(url).openConnection()
-        connection.setDoOutput(true)
-        connection.connect()
-        def writer = new OutputStreamWriter(connection.outputStream)
-        writer.write(query)
-        writer.flush()
-        writer.close()
-        connection.connect()
-        new XmlSlurper().parse(connection.inputStream)
-    }
+//
+//    static GPathResult getPDFandImagesTarballsByDate(date) {
+//        def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
+//        def query = "from="+date
+//        def connection = new URL(url).openConnection()
+//        connection.setDoOutput(true)
+//        connection.connect()
+//        def writer = new OutputStreamWriter(connection.outputStream)
+//        writer.write(query)
+//        writer.flush()
+//        writer.close()
+//        connection.connect()
+//        new XmlSlurper().parse(connection.inputStream)
+//    }
+//
+//    static GPathResult getResumptionSet(token) {
+//        def url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi"
+//        def query = "resumptionToken="+token
+//        def connection = new URL(url).openConnection()
+//        connection.setDoOutput(true)
+//        connection.connect()
+//        def writer = new OutputStreamWriter(connection.outputStream)
+//        writer.write(query)
+//        writer.flush()
+//        writer.close()
+//        connection.connect()
+//        new XmlSlurper().parse(connection.inputStream)
+//    }
 
     static gunzip(String file_input, String file_output) {
         FileInputStream fis = new FileInputStream(file_input)

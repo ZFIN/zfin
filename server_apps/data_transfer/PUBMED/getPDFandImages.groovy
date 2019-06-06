@@ -14,7 +14,7 @@ import groovy.time.*
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
 final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/PUBMED")
-WORKING_DIR.eachFileMatch(~/pdfs.*\.txt/) { it.delete() }
+WORKING_DIR.eachFileMatch(~/.*\.txt/) { it.delete() }
 WORKING_DIR.eachFileMatch(~/fig.*\.txt/) { it.delete() }
 WORKING_DIR.eachFileMatch(~/loadSQL.*\.txt/) { it.delete() }
 
@@ -157,28 +157,23 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
     }
 }
 
+def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
 
-def processPMCFileBundle(GPathResult oa, Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
-    oa.records.record.each { rec ->
-        def pmcId = rec.@id.text()
-        if (idsToGrab.containsKey(pmcId)) {
+    for (id in idsToGrab) {
+        def zdbId = id.value
+        def pmcId = id.key
+        PubmedUtils.getPdfMetaDataRecord(pmcId).records.record.each { rec ->
             if (rec.link.@format.text() == 'tgz') {
+
                 def pdfPath = rec.link.@href.text()
                 PUBS_WITH_PDFS_TO_UPDATE.append(pdfPath + "\n")
-                def zdbId = idsToGrab.get(pmcId)
                 downloadPMCFileBundle(pdfPath, zdbId)
                 def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
-                println pmcId +","+zdbId
+                println pmcId + "," + zdbId
                 processPMCText(fullTxt, zdbId, pmcId)
             }
         }
     }
-    def resumeToken = oa.records.resumption.link.@token.text()
-    if (resumeToken != "") {
-        def moreRecords = PubmedUtils.getResumptionSet(oa.records.resumption.link.@token.text())
-        processPMCFileBundle(moreRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
-    }
-
 }
 
 new File(PUB_IDS_TO_CHECK).withReader { reader ->
@@ -190,13 +185,9 @@ new File(PUB_IDS_TO_CHECK).withReader { reader ->
 
 }
 
+fetchBundlesForExistingPubs(idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
 
-def pmcFileBundleRecords
-
-
-pmcFileBundleRecords = PubmedUtils.getPDFandImagesTarballsByDate(datePart+"+"+timePart)
-
-processPMCFileBundle(pmcFileBundleRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
+//processPMCFileBundle(pmcFileBundleRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
 
 givePubsPermissions = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
         "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/give_pubs_permissions.sql " +
