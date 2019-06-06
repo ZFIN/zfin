@@ -16,4 +16,15 @@ all:
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
 
+SUBDIRS   = LinkOut Journal
+GENERICS  = addMeshTermsToAllPubs.groovy \
+            addGeoIdsToAllPubs.groovy \
+            loadNewPubs.sql \
+            updatePublicationDate.groovy \
+            pubActivation.groovy 
+STATICS  =  PubmedUtils.groovy loadMeshTerms.groovy fetchPubsFromPubMed.groovy getPDFandImages.groovy load_figs_and_images.sql load_pub_files.sql add_basic_pdfs.sql give_pubs_permissions.sql
+
+# ---------------  Production Rules  ------------------------------------
+
+# use default rules for directories without app pages in them
 

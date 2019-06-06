@@ -131,6 +131,7 @@ public class GafService {
 
                 // for each gene, create an entry
                 for (Marker gene : genes) {
+                    System.out.println(gene);
                     MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
 
                     if (annotationToAdd == null) {
@@ -359,17 +360,21 @@ public class GafService {
     protected void handleInferences(GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
             throws GafValidationError {
         String inferenceEntry = gafEntry.getInferences();
+        System.out.println(inferenceEntry);
         if (StringUtils.isNotEmpty(inferenceEntry)) {
             GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(markerGoTermEvidence.getEvidenceCode().getCode());
             String publicationZdbId = markerGoTermEvidence.getSource().getZdbID();
             Set<InferenceGroupMember> inferredFrom = new HashSet<>();
             Set<String> inferenceSet = new HashSet<>();
             inferenceSet.addAll(Arrays.asList(inferenceEntry.split("\\|")));
+            System.out.println(inferenceSet.size());
             if (!GoEvidenceValidator.isValidCardinality(goEvidenceCodeEnum, inferenceSet)) {
                 throw new GafValidationError(GoEvidenceValidator.generateErrorString(goEvidenceCodeEnum, publicationZdbId), gafEntry);
             }
 
             for (String inference : inferenceSet) {
+
+
                 if (goEvidenceCodeEnum == GoEvidenceCodeEnum.IGI) {
                     if (InferenceCategory.UNIPROTKB.isType(inference)) {
                         List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(
@@ -388,14 +393,17 @@ public class GafService {
                 }
 
                 if (!GoEvidenceValidator.isInferenceValid(inference, goEvidenceCodeEnum, publicationZdbId)) {
-                    throw new GafValidationError("Invalid inference code[" + inference + "] " +
+                    logger.debug("Invalid inference code[" + inference + "] " +
                             " for code " + goEvidenceCodeEnum.name() +
                             " and pub " + publicationZdbId + " "
-                            , gafEntry);
+                            );
+
                 }
-                InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
-                inferenceGroupMember.setInferredFrom(inference);
-                inferredFrom.add(inferenceGroupMember);
+                else {
+                    InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
+                    inferenceGroupMember.setInferredFrom(inference);
+                    inferredFrom.add(inferenceGroupMember);
+                }
             }
             markerGoTermEvidence.setInferredFrom(inferredFrom);
 

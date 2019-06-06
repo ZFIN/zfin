@@ -137,7 +137,7 @@
         <label for="publication.curatable" class="col-sm-3 control-label">Is Curatable</label>
         <div class="col-sm-8">
             <div class="checkbox">
-                <label><form:checkbox path="publication.curatable"/></label>
+                <label><form:checkbox path="publication.curatable" checked="checked"/></label>
             </div>
             <form:errors path="publication.curatable" cssClass="text-danger" />
         </div>
