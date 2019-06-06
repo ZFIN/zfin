@@ -11,6 +11,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-531.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-532.sql" />-->
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-544.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6273.sql" />
     
 
 </databaseChangeLog>
