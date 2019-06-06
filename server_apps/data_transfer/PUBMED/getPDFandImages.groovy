@@ -29,7 +29,7 @@ PUBS_TO_GIVE_PERMISSIONS = new File ("pubsToGivePermission.txt")
 
 Date date = new Date()
 // go back two weeks to slurp up stragglers.
-def dateToCheck = date - 5
+def dateToCheck = date - 70
 def idsToGrab = [:]
 String datePart = dateToCheck.format("yyyy-MM-dd")
 String timePart = dateToCheck.format("HH:mm:ss")
@@ -54,9 +54,7 @@ def addSummaryPDF(String zdbId, String pmcId) {
             ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, zdbId+"/"+file.name].join('|') + "\n")
         }
     }
-    def timeStop = new Date()
-    TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
-    println ("addSummaryPDF duration:" +  duration)
+
 }
 
 def downloadPMCFileBundle(String url, String zdbId) {
@@ -69,8 +67,12 @@ def downloadPMCFileBundle(String url, String zdbId) {
 
     def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/$zdbId"+".tar.gz")
     def out = new BufferedOutputStream(file)
+
     out << new URL(url).openStream()
     out.close()
+    def timeStop = new Date()
+    TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
+    println ("download to filesystem duration:" +  duration)
 
     def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/$zdbId"+".tar.gz"
     def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/$zdbId"+".tar"
@@ -79,12 +81,13 @@ def downloadPMCFileBundle(String url, String zdbId) {
         PubmedUtils.gunzip(gziped_bundle, unzipped_output)
     }
 
+    def timeStart2 = new Date()
     def cmd = "cd "+ "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
     ["/bin/bash", "-c", cmd].execute().waitFor()
 
-    def timeStop = new Date()
-    TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
-    println ("downloadPMCFileBundle duration:" +  duration)
+    def timeStop2 = new Date()
+    TimeDuration duration2 = TimeCategory.minus(timeStop2, timeStart2)
+    println ("extract file duration:" +  duration2)
 }
 
 def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
