@@ -36,11 +36,22 @@
                      curateURL="${curateURL}"/>
 
     <div class="row">
-    <div class="col-xs-12">
-
-      <zfin-figure:publicationInfo publication="${publication}" showThisseInSituLink="false" showErrataAndNotes="false"/>
-      <h2>Linking ${publication.zdbID}</h2>
+        <div class="col-xs-12">
+            <zfin-figure:publicationInfo publication="${publication}" showThisseInSituLink="false" showErrataAndNotes="false"/>
+        </div>
     </div>
+    <div class="row">
+        <div class="col-xs-8">
+            <h2>Linking ${publication.zdbID}</h2>
+        </div>
+        <div class="col-xs-4">
+            <div class="__react-root"
+                 id="ProcessorApproval"
+                 data-pub-id="${publication.zdbID}"
+                 data-task="LINK_AUTHORS"
+            >
+            </div>
+        </div>
     </div>
 
 
@@ -103,3 +114,5 @@
         </div>
     </div>
 </div>
+
+<script src="${zfn:getAssetPath("react.js")}"></script>

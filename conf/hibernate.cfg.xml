@@ -145,9 +145,11 @@
         <mapping class="org.zfin.publication.CorrespondenceReceivedMessage"/>
         <mapping class="org.zfin.publication.CorrespondenceRecipient"/>
         <mapping class="org.zfin.publication.CorrespondenceSentMessage"/>
+        <mapping class="org.zfin.publication.ProcessingChecklistTask"/>
         <mapping class="org.zfin.publication.PublicationDbXref"/>
         <mapping class="org.zfin.publication.PublicationFile"/>
         <mapping class="org.zfin.publication.PublicationFileType"/>
+        <mapping class="org.zfin.publication.PublicationProcessingChecklistEntry"/>
         <mapping class="org.zfin.publication.PublicationTrackingHistory"/>
         <mapping class="org.zfin.publication.PublicationTrackingLocation"/>
         <mapping class="org.zfin.publication.PublicationTrackingStatus"/>

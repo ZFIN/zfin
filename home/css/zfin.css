@@ -908,6 +908,29 @@ ul.comma-separated {
     cursor: pointer;
 }
 
+.pub-dashboard .processing-tasks {
+    margin: 0 0 10px 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+.pub-dashboard .processing-tasks a {
+    display: flex;
+    align-items: center;
+    color: #444444;
+}
+
+.pub-dashboard .processing-tasks a.complete {
+    color: #78a980;
+    text-decoration: line-through;
+}
+
+.pub-dashboard .processing-tasks a.disabled {
+    color: #bababa;
+}
+
 button.pub-dashboard-reload {
     color: #666666;
 }

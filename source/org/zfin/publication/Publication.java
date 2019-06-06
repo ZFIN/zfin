@@ -45,6 +45,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<CorrespondenceSentMessage> sentMessages;
     private Set<CorrespondenceReceivedMessage> receivedMessages;
     private Date lastCorrespondenceDate;
+    private Set<PublicationProcessingChecklistEntry> processingChecklistEntries;
 
     private boolean deletable;
     private boolean canShowImages;
@@ -320,6 +321,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     public void setZebrashareEditors(Set<ZebrashareEditor> zebrashareEditors) {
         this.zebrashareEditors = zebrashareEditors;
+    }
+
+    public Set<PublicationProcessingChecklistEntry> getProcessingChecklistEntries() {
+        return processingChecklistEntries;
+    }
+
+    public void setProcessingChecklistEntries(Set<PublicationProcessingChecklistEntry> processingChecklistEntries) {
+        this.processingChecklistEntries = processingChecklistEntries;
     }
 
     public String getCitation() {

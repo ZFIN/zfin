@@ -16,6 +16,8 @@ public class DashboardPublicationBean {
     private String pdfPath;
     private CurationStatusDTO status;
     private Date lastCorrespondenceDate;
+    private List<ProcessingTaskBean> processingTasks;
+    private boolean canShowImages;
 
     public String getZdbId() {
         return zdbId;
@@ -87,5 +89,21 @@ public class DashboardPublicationBean {
 
     public void setLastCorrespondenceDate(Date lastCorrespondenceDate) {
         this.lastCorrespondenceDate = lastCorrespondenceDate;
+    }
+
+    public List<ProcessingTaskBean> getProcessingTasks() {
+        return processingTasks;
+    }
+
+    public void setProcessingTasks(List<ProcessingTaskBean> processingTasks) {
+        this.processingTasks = processingTasks;
+    }
+
+    public boolean getCanShowImages() {
+        return canShowImages;
+    }
+
+    public void setCanShowImages(boolean canShowImages) {
+        this.canShowImages = canShowImages;
     }
 }

@@ -16,6 +16,7 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardImageBean;
 import org.zfin.publication.presentation.DashboardPublicationBean;
+import org.zfin.publication.presentation.ProcessingTaskBean;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -167,6 +168,19 @@ public class CurationDTOConversionService {
         return dto;
     }
 
+    public ProcessingTaskBean toProcessingTaskBean(PublicationProcessingChecklistEntry entry) {
+        if (entry == null) {
+            return null;
+        }
+
+        ProcessingTaskBean bean = new ProcessingTaskBean();
+        bean.setId(entry.getId());
+        bean.setTask(entry.getTask().getTask());
+        bean.setPerson(toPersonDTO(entry.getPerson()));
+        bean.setDate(entry.getDate());
+        return bean;
+    }
+
     public DashboardPublicationBean toDashboardPublicationBean(PublicationTrackingHistory status) {
         if (status == null) {
             return null;
@@ -194,6 +208,12 @@ public class CurationDTOConversionService {
         }
         images.sort((o1, o2) -> ObjectUtils.compare(o1.getLabel(), o2.getLabel()));
         bean.setImages(images);
+        bean.setProcessingTasks(publication.getProcessingChecklistEntries()
+                .stream()
+                .map(this::toProcessingTaskBean)
+                .collect(Collectors.toList())
+        );
+        bean.setCanShowImages(publication.isCanShowImages());
         return bean;
     }
 

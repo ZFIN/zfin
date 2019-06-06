@@ -16,6 +16,7 @@ import org.zfin.marker.*;
 import org.zfin.mutant.Genotype;
 import org.zfin.orthology.EvidenceCode;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.publication.ProcessingChecklistTask;
 import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.sequence.DisplayGroup;
@@ -399,6 +400,13 @@ public class EnumValidationService {
             }
         }
         checkEnumValuesPresentInDatabaseString(names, enums);
+    }
+
+    @ServiceTest
+    public void validateProcessingTasks() {
+        String sql = "select pct_task from processing_checklist_task";
+        List taskList = HibernateUtil.currentSession().createSQLQuery(sql).list();
+        checkEnumValuesPresentInDatabaseString(taskList, ProcessingChecklistTask.Task.values());
     }
 
     public void checkEnumValuesPresentInDatabaseString(List<String> databaseList, Enum[] enumValues) {

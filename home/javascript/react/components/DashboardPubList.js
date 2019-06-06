@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import RelativeDate from "./RelativeDate";
+import ProcessingTaskList from "./ProcessingTaskList";
 
 const DashboardPubList = ({ pubs, statusCounts }) => {
     if (!pubs || !pubs.length) {
@@ -43,6 +44,7 @@ const DashboardPubList = ({ pubs, statusCounts }) => {
                                     </td>
                                     <td>
                                         <p><b dangerouslySetInnerHTML={{__html: pub.title}} /></p>
+                                        {status === 'Processing' && <ProcessingTaskList pub={pub} />}
                                     </td>
                                     <td><RelativeDate date={pub.status.updateDate} /></td>
                                     {hasCorrespondenceColumn && <td><RelativeDate date={pub.lastCorrespondenceDate} /></td>}

@@ -2709,4 +2709,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .setResultTransformer(Transformers.aliasToBean(CumulativeStatisticsBean.class))
                 .list();
     }
+
+    @Override
+    public ProcessingChecklistTask getProcessingChecklistTask(ProcessingChecklistTask.Task task) {
+        return (ProcessingChecklistTask) HibernateUtil.currentSession()
+                .createCriteria(ProcessingChecklistTask.class)
+                .add(Restrictions.eq("task", task))
+                .uniqueResult();
+    }
+
+    @Override
+    public PublicationProcessingChecklistEntry getProcessingChecklistEntry(long id) {
+        return (PublicationProcessingChecklistEntry) HibernateUtil.currentSession()
+                .get(PublicationProcessingChecklistEntry.class, id);
+    }
 }

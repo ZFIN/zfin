@@ -621,4 +621,9 @@ public interface PublicationRepository extends PaginationParameter {
                                              PublicationMetricsFormBean.GroupType groupType);
 
     List<CumulativeStatisticsBean> getCumulativeMetrics(Calendar end, PublicationMetricsFormBean.GroupType groupType);
+
+    ProcessingChecklistTask getProcessingChecklistTask(ProcessingChecklistTask.Task task);
+
+    PublicationProcessingChecklistEntry getProcessingChecklistEntry(long id);
+
 }

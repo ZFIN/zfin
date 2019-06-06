@@ -41,9 +41,21 @@
         </div>
         <div role="tabpanel" class="tab-pane" id="files">
             <div pub-file-edit pub-id="${pubID}"></div>
+            <div class="__react-root"
+                 id="ProcessorApproval"
+                 data-pub-id="${pubID}"
+                 data-task="ADD_PDF"
+            >
+            </div>
         </div>
         <div role="tabpanel" class="tab-pane figure-edit-panel" id="figures">
             <div figure-edit pub-id="${pubID}"></div>
+            <div class="__react-root"
+                 id="ProcessorApproval"
+                 data-pub-id="${pubID}"
+                 data-task="ADD_FIGURES"
+            >
+            </div>
         </div>
     </div>
 
@@ -53,3 +65,4 @@
     $('#fig-edit-tabs').stickyTabs();
 </script>
 
+<script src="${zfn:getAssetPath("react.js")}"></script>
