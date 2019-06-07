@@ -26,6 +26,13 @@ PUB_FILES_TO_LOAD = new File ("pdfsToLoad.txt")
 ADD_BASIC_PDFS_TO_DB = new File ("pdfBasicFilesToLoad.txt")
 PUBS_TO_GIVE_PERMISSIONS = new File ("pubsToGivePermission.txt")
 
+
+
+Date date = new Date()
+// go back two weeks to slurp up stragglers.
+
+def dateToCheck = date - 70
+
 def idsToGrab = [:]
 
 PubmedUtils.psql DBNAME, """
