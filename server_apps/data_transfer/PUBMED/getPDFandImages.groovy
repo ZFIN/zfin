@@ -26,14 +26,7 @@ PUB_FILES_TO_LOAD = new File ("pdfsToLoad.txt")
 ADD_BASIC_PDFS_TO_DB = new File ("pdfBasicFilesToLoad.txt")
 PUBS_TO_GIVE_PERMISSIONS = new File ("pubsToGivePermission.txt")
 
-
-Date date = new Date()
-// go back two weeks to slurp up stragglers.
-def dateToCheck = date - 70
 def idsToGrab = [:]
-String datePart = dateToCheck.format("yyyy-MM-dd")
-String timePart = dateToCheck.format("HH:mm:ss")
-
 
 PubmedUtils.psql DBNAME, """
   \\copy (
@@ -186,8 +179,6 @@ new File(PUB_IDS_TO_CHECK).withReader { reader ->
 }
 
 fetchBundlesForExistingPubs(idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
-
-//processPMCFileBundle(pmcFileBundleRecords, idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
 
 givePubsPermissions = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
         "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/give_pubs_permissions.sql " +
