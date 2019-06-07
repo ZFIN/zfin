@@ -88,6 +88,12 @@ PubmedUtils.dbaccess DBNAME, """
     SET pub_mid = (SELECT distinct altId from tmp_pmcid_update where idType = 'mid' and pmid = accession_no)
     WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE accession_no = pmid)
     and pub_mid is null ;   
+    
+   INSERT INTO pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_set_by)
+       SELECT zdb_id, pts_pk_id, 'ZDB-PERS-170918-1'
+          from tmp_activation, publication, pub_tracking_status
+           where accession_no = pmid
+            and pts_status = 'READY_FOR_PROCESSING');
 
   COMMIT WORK;
 """

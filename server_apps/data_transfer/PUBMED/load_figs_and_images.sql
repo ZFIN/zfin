@@ -76,8 +76,8 @@ select img_zdb_id,
        'not specified',
        'not specified',
        'ZDB-PERS-030612-1',
-       pub_zdb_id||img_filename,
-       pub_zdb_id||img_filename
+       pub_zdb_id||'/'||img_filename,
+       pub_zdb_id||'/'||img_filename
    from tmp_figs_to_load_with_ids;
 
 
