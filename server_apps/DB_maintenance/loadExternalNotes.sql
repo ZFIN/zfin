@@ -26,6 +26,5 @@ insert into external_note(extnote_zdb_id, extnote_data_zdb_id, extnote_note, ext
 
 drop table publicNotes;
 
-
-rollback work;
+commit work;
 
