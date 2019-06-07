@@ -4,6 +4,7 @@ import psycopg2
 import os
 import glob
 from shutil import copy
+import re
 
 hostname = 'localhost'
 database = 'swrdb'
@@ -13,14 +14,31 @@ def do_query(conn):
     cur = conn.cursor()
 
     cur.execute("SELECT distinct img_zdb_id, fig_source_zdb_id "
-                "     FROM figure, image WHERE fig_zdb_id = img_fig_zdb_id"
-                "     AND fig_source_zdb_id like 'ZDB-PUB-19%'")
+                "     FROM figure, image WHERE fig_zdb_id = img_fig_zdb_id")
 
     for img_id, fig_source_id in cur.fetchall():
-        fullPathPDFDir = "/tmp/"+fig_source_id
+
+        m = re.match("^(ZDB-PUB-)(\d{2})(\d{2})(\d{2})(-\d+)$", fig_source_id)
+        if m:
+            year = m.group(2)
+            month = m.group(3)
+            day = m.group(4)
+
+            if year.startswith('9'):
+                year = "19" + year
+            else:
+                year = "20" + year
+
+        fullPathPDFDir = os.environ['LOADUP_FULL_PATH']+fig_source_id
         if os.path.isdir(fullPathPDFDir):
             print fullPathPDFDir
-            pattern = "/research/zcentral/loadUp/imageLoadUp/"+img_id+"*"
+            pattern = "/research/zcentral/loadUp/imageLoadUp/" + img_id + "*"
+
+            for imgFile in glob.glob(pattern):
+                 print imgFile
+                 copy(imgFile, fullPathPDFDir)
+
+            pattern = "/research/zcentral/loadUp/imageLoadUp/medium" + img_id + "*"
 
             for imgFile in glob.glob(pattern):
                  print imgFile
@@ -30,6 +48,12 @@ def do_query(conn):
             print "cant file dir: " + fullPathPDFDir
             os.mkdir(fullPathPDFDir)
             pattern = '/research/zcentral/loadUp/imageLoadUp/' + img_id + '*'
+
+            for imgFile in glob.glob(pattern):
+                 print imgFile
+                 copy(imgFile, fullPathPDFDir)
+
+            pattern = "/research/zcentral/loadUp/imageLoadUp/medium" + img_id + "*"
 
             for imgFile in glob.glob(pattern):
                  print imgFile
