@@ -1,3 +1,9 @@
+defaultTasks 'make'
+
+task make(type: GradleBuild) {
+    tasks = ['deployDirectoryToTargetroot']
+}
+
 task deployDirectoryToTargetroot(type: Copy) {
     doLast {
         def dataDirectory = ''
@@ -5,7 +11,6 @@ task deployDirectoryToTargetroot(type: Copy) {
         println "Copying files from directory: " + dataDirectory
         from(dataDirectory) {
             ttNameMap.each { name, value ->
-                //println name +" "+value
                 filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
             }
             exclude '**/Makefile', '**/build.gradle'

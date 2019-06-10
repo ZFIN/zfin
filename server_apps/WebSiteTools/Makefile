@@ -23,7 +23,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/WebSiteTools
 GENERICS = signsoflife.sh \
            gen-jobs-rss.r gen-meetings-rss.r gen-news-rss.r
 
-STATICS = makemirror.csh domainlookup.pl rss-util.r
+STATICS = domainlookup.pl rss-util.r
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -35,9 +35,6 @@ include $(TOP)/make.default.rules
 # ---------------  Misc Targets  ----------------------------------------
 
 # Run the script that updates the mirror.zfin.org web site.
-
-runmakemirror: $(TARGETDIR)/makemirror.csh
-	$(TARGETDIR)/makemirror.csh
 
 runsignsoflife : $(TARGETDIR)/signsoflife.sh
 	$(TARGETDIR)/signsoflife.sh

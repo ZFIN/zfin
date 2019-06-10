@@ -27,9 +27,6 @@ SUBDIRS = apache cron data_transfer sysexecs WebSiteTools \
 GENERICS = ZFINPerlModules.pm
 STATICS = build.xml
 
-MIRROR_SUBDIRS = WebSiteTools
-
-
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -38,20 +35,3 @@ MIRROR_SUBDIRS = WebSiteTools
 include $(TOP)/make.default.rules
 
 # ---------------  Misc Targets  ----------------------------------------
-
-mirror: $(TARGETDIR) $(MIRROR_SUBDIRS)
-
-# Note that the cron directory is not affected by the start or stop
-# targets.  To start or stop cron you must go into the cron directory
-# and start or stop it there (something which should only be done for
-# the informix user, by the way).
-#
-# Since the javaserver went away, the stop and start targets don't do 
-# anything.  Hang onto them anyway just in case.
-
-start stop :
-	echo 'start and stop targets no longer do anything in server_apps directory.
-
-postloaddb :
-	$(MAKE) -C sysexecs clobber
-	$(MAKE) -C sysexecs 
