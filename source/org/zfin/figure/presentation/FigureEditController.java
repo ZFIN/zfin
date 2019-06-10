@@ -116,6 +116,7 @@ public class FigureEditController {
         WithdrawnZdbID withZDB = new WithdrawnZdbID();
         withZDB.setWdoldZdbID(figure.getZdbID());
         withZDB.setWdnewZdbID(figure.getPublication().getZdbID());
+        HibernateUtil.currentSession().save(withZDB);
         infrastructureRepository.deleteActiveDataByZdbID(figure.getZdbID());
         infrastructureRepository.insertUpdatesTable(pub, "figure", "deleted", null, zdbID);
         tx.commit();
@@ -159,6 +160,7 @@ public class FigureEditController {
         WithdrawnZdbID withZDB = new WithdrawnZdbID();
         withZDB.setWdoldZdbID(image.getZdbID());
         withZDB.setWdnewZdbID(image.getFigure().getPublication().getZdbID());
+        HibernateUtil.currentSession().save(withZDB);
         HibernateUtil.currentSession().delete(image);
         infrastructureRepository.insertUpdatesTable(pub, "img_zdb_id", "deleted", null, zdbID);
         tx.commit();
