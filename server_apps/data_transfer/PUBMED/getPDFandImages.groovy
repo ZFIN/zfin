@@ -112,19 +112,19 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
     if (tagMatch.size() == 1) {
         def tag = tagMatch[0][1]
         println(tag)
-//        def supplimentPattern = "<${tag}:supplementary-material content-type=(.*?)</${tag}:supplementary-material>"
-//        def supplimentMatches = markedUpBody =~ /${supplimentPattern}/
-//        if (supplimentMatches.size() > 0) {
-//            supplimentMatches.each {
-//                println (supplimentMatches[0][1])
-//                def filenamePattern = "<${tag}:media xlink:href='(.*?)'"
-//                def filenameMatch = supplimentMatches =~ /${filenamePattern}/
-//                if (filenameMatch.size() > 0) {
-//                    filename = filenameMatch[0][1]
-//                    PUB_FILES_TO_LOAD.append([zdbId, pmcId, zdbId + "/" + filename].join('|') + "\n")
-//                }
-//            }
-//        }
+        def supplimentPattern = "<${tag}:supplementary-material content-type=(.*?)</${tag}:supplementary-material>"
+        def supplimentMatches = markedUpBody =~ /${supplimentPattern}/
+        if (supplimentMatches.size() > 0) {
+            supplimentMatches.each {
+                println (supplimentMatches[0][1])
+                def filenamePattern = "<${tag}:media xlink:href='(.*?)'"
+                def filenameMatch = supplimentMatches =~ /${filenamePattern}/
+                if (filenameMatch.size() > 0) {
+                    filename = filenameMatch[0][1]
+                    PUB_FILES_TO_LOAD.append([zdbId, pmcId, zdbId + "/" + filename].join('|') + "\n")
+                }
+            }
+        }
 
         addSummaryPDF(zdbId, pmcId, pubYear)
         def figPattern = "<${tag}:fig(.*?)>(.*?)</${tag}:fig>"
