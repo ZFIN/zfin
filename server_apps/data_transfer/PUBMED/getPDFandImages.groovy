@@ -57,14 +57,18 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
 }
 
-def downloadPMCFileBundle(String url, String zdbId) {
+def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
     def timeStart = new Date()
-    def directory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId")
+    def yearDirectory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/")
+    def directory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId")
+    if (!yearDirectory.exists()){
+        yearDirectory.mkdir()
+    }
     if (!directory.exists()) {
         directory.mkdir()
     }
 
-    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/$zdbId"+".tar.gz")
+    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId"+".tar.gz")
     def out = new BufferedOutputStream(file)
 
     out << new URL(url).openStream()
@@ -73,15 +77,15 @@ def downloadPMCFileBundle(String url, String zdbId) {
     TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
     println ("download to filesystem duration:" +  duration)
 
-    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/$zdbId"+".tar.gz"
-    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/$zdbId"+".tar"
+    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId"+".tar.gz"
+    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId"+".tar"
     File unzippedFile = new File(unzipped_output)
     if (!unzippedFile.exists()){
         PubmedUtils.gunzip(gziped_bundle, unzipped_output)
     }
 
     def timeStart2 = new Date()
-    def cmd = "cd "+ "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
+    def cmd = "cd "+ "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
     ["/bin/bash", "-c", cmd].execute().waitFor()
 
     def timeStop2 = new Date()
@@ -165,21 +169,19 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
         def pubYear
         if (pubYearMatch.size() > 0) {
             pubYear = pubYearMatch[0][2]
-            if (pubYear.toString().startsWith(9)){
+            if (pubYear.toString().startsWith("9")){
                 pubYear = "19" + pubYear
             }
             else {
                 pubYear = "20" + pubYear
             }
-
-            println(pubYear)
         }
         PubmedUtils.getPdfMetaDataRecord(pmcId).records.record.each { rec ->
             if (rec.link.@format.text() == 'tgz') {
 
                 def pdfPath = rec.link.@href.text()
                 PUBS_WITH_PDFS_TO_UPDATE.append(pdfPath + "\n")
-                downloadPMCFileBundle(pdfPath, zdbId)
+                downloadPMCFileBundle(pdfPath, zdbId, pubYear)
                 def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
                 println pmcId + "," + zdbId
                 processPMCText(fullTxt, zdbId, pmcId, pubYear)
