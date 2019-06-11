@@ -165,6 +165,13 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
         def pubYear
         if (pubYearMatch.size() > 0) {
             pubYear = pubYearMatch[0][2]
+            if (pubYear.toString().startsWith(9)){
+                pubYear = "19" + pubYear
+            }
+            else {
+                pubYear = "20" + pubYear
+            }
+
             println(pubYear)
         }
         PubmedUtils.getPdfMetaDataRecord(pmcId).records.record.each { rec ->
