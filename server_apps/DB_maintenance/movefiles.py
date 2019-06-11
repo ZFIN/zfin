@@ -21,43 +21,43 @@ def do_query(conn):
         m = re.match("^(ZDB-PUB-)(\d{2})(\d{2})(\d{2})(-\d+)$", fig_source_id)
         if m:
             year = m.group(2)
-            month = m.group(3)
-            day = m.group(4)
-
             if year.startswith('9'):
                 year = "19" + year
             else:
                 year = "20" + year
 
-        fullPathPDFDir = os.environ['LOADUP_FULL_PATH']+fig_source_id
+        yearDir = os.environ['LOADUP_FULL_PATH']+year+"/"
+        fullPathPDFDir = os.environ['LOADUP_FULL_PATH']+year+"/"+fig_source_id
         if os.path.isdir(fullPathPDFDir):
             print fullPathPDFDir
-            pattern = "/research/zcentral/loadUp/imageLoadUp/" + img_id + "*"
-
-            for imgFile in glob.glob(pattern):
-                 print imgFile
-                 copy(imgFile, fullPathPDFDir)
-
-            pattern = "/research/zcentral/loadUp/imageLoadUp/medium" + img_id + "*"
-
-            for imgFile in glob.glob(pattern):
-                 print imgFile
-                 copy(imgFile, fullPathPDFDir)
+            moveImages(fullPathPDFDir, img_id)
 
         else:
             print "cant file dir: " + fullPathPDFDir
-            os.mkdir(fullPathPDFDir)
-            pattern = '/research/zcentral/loadUp/imageLoadUp/' + img_id + '*'
+            if os.path.isdir(yearDir):
+                os.mkdir(fullPathPDFDir)
+                moveImages(fullPathPDFDir, img_id)
 
-            for imgFile in glob.glob(pattern):
-                 print imgFile
-                 copy(imgFile, fullPathPDFDir)
+            else:
+                os.mkidr(yearDir)
+                os.mkdir(fullPathPDFDir)
+                moveImages(fullPathPDFDir, img_id)
 
-            pattern = "/research/zcentral/loadUp/imageLoadUp/medium" + img_id + "*"
 
-            for imgFile in glob.glob(pattern):
-                 print imgFile
-                 copy(imgFile, fullPathPDFDir)
+def moveImages(fullPathPDFDir, img_id):
+
+    pattern = '/research/zcentral/loadUp/imageLoadUp/' + img_id + '*'
+
+    for imgFile in glob.glob(pattern):
+        print imgFile
+        copy(imgFile, fullPathPDFDir)
+
+    pattern = "/research/zcentral/loadUp/imageLoadUp/medium" + img_id + "*"
+
+    for imgFile in glob.glob(pattern):
+        print imgFile
+        copy(imgFile, fullPathPDFDir)
+
 
 myConnection = psycopg2.connect(host=hostname, dbname=database)
 do_query(myConnection)
