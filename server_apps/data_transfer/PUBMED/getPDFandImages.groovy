@@ -164,7 +164,8 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
         def pubYearMatch = zdbId =~ /^(ZDB-PUB-)(\d{2})(\d{2})(\d{2})(-\d+)$/
         def pubYear
         if (pubYearMatch.size() > 0) {
-            pubYear = pubYearMatch[0][1]
+            pubYear = pubYearMatch[0][2]
+            println(pubYear)
         }
         PubmedUtils.getPdfMetaDataRecord(pmcId).records.record.each { rec ->
             if (rec.link.@format.text() == 'tgz') {
