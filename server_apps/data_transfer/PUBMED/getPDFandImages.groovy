@@ -42,7 +42,12 @@ PubmedUtils.psql DBNAME, """
      AND NOT EXISTS (SELECT 'x' 
                     FROM publication_file 
                     WHERE pf_pub_zdb_id = zdb_id 
-                    AND pf_file_type_id =1) ) to '$PUB_IDS_TO_CHECK' delimiter ',';
+                    AND pf_file_type_id =1)   
+     AND NOT EXISTS (SELECT 'x' 
+                        FROM pub_tracking_history, pub_tracking_status
+                        WHERE pth_pub_zdb_id = zdb_id
+                        and pth_status_id = pts_pk_id
+                        AND pts_status = 'CLOSED')) to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
 
 def addSummaryPDF(String zdbId, String pmcId, pubYear) {
@@ -106,6 +111,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
     def tagMatch = markedUpBody =~ /<([^\/]*?):body/
     if (tagMatch.size() == 1) {
         def tag = tagMatch[0][1]
+        println(tag)
 //        def supplimentPattern = "<${tag}:supplementary-material content-type=(.*?)</${tag}:supplementary-material>"
 //        def supplimentMatches = markedUpBody =~ /${supplimentPattern}/
 //        if (supplimentMatches.size() > 0) {
@@ -145,6 +151,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 if (captionMatch.size() > 0) {
                     captionMatch.each {
                         caption = it[1]
+                        caption = caption.replace(tag,'')
                     }
                 }
                 def imagePattern = "<${tag}:graphic(.*?)xlink:href='(.*?)'"
@@ -152,8 +159,10 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 if (imageNameMatch.size() > 0) {
                     imageNameMatch.each {
                         image = it[2] + ".jpg"
+                        println(label + " " + image)
                     }
                 }
+
                 FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image].join('|') + "\n")
             }
         }
