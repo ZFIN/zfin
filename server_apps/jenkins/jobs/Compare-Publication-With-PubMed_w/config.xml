@@ -44,14 +44,14 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
           <allowMissing>false</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
         </htmlpublisher.HtmlPublisherTarget>
-        <htmlpublisher.HtmlPublisherTarget>
+        <!--<htmlpublisher.HtmlPublisherTarget>
           <reportName>Pub Mismatch Info Report</reportName>
           <reportDir>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w</reportDir>
           <reportFiles>Compare-Publication-With-PubMed_w.faulty-Pub-Info.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>false</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
-        </htmlpublisher.HtmlPublisherTarget>
+        </htmlpublisher.HtmlPublisherTarget>-->
       </reportTargets>
     </htmlpublisher.HtmlPublisher>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
