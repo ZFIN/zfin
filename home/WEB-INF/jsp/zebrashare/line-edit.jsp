@@ -43,7 +43,7 @@
             <form:label path="adultViable" cssClass="col-sm-3 control-label">Adult Viable</form:label>
             <div class="col-sm-3">
                 <form:select path="adultViable" cssClass="form-control">
-                    <form:option value="" />
+                    <form:option value="">Unknown</form:option>
                     <form:option value="true">Yes</form:option>
                     <form:option value="false">No</form:option>
                 </form:select>
@@ -54,7 +54,7 @@
             <form:label path="maternalZygosityExamined" cssClass="col-sm-3 control-label">Maternal Zygocity Examined</form:label>
             <div class="col-sm-3">
                 <form:select path="maternalZygosityExamined" cssClass="form-control">
-                    <form:option value="" />
+                    <form:option value="">Unknown</form:option>
                     <form:option value="true">Yes</form:option>
                     <form:option value="false">No</form:option>
                 </form:select>
@@ -65,6 +65,7 @@
             <form:label path="currentlyAvailable" cssClass="col-sm-3 control-label">Currently Available</form:label>
             <div class="col-sm-3">
                 <form:select path="currentlyAvailable" cssClass="form-control">
+                    <form:option value="">Unknown</form:option>
                     <form:option value="true">Yes</form:option>
                     <form:option value="false">No</form:option>
                 </form:select>
