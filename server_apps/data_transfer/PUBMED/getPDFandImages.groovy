@@ -31,7 +31,6 @@ PUBS_TO_GIVE_PERMISSIONS = new File ("pubsToGivePermission.txt")
 Date date = new Date()
 // go back two weeks to slurp up stragglers.
 
-def dateToCheck = date - 70
 
 def idsToGrab = [:]
 
@@ -46,19 +45,19 @@ PubmedUtils.psql DBNAME, """
                     AND pf_file_type_id =1) ) to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
 
-def addSummaryPDF(String zdbId, String pmcId) {
+def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
-    def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/")
+    def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/")
+
     dir.eachFileRecurse (FileType.FILES) { file ->
         if (file.name.endsWith('pdf')){
-            ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, zdbId+"/"+file.name].join('|') + "\n")
+            ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear+"/"+zdbId+"/"+file.name].join('|') + "\n")
         }
     }
 
 }
 
 def downloadPMCFileBundle(String url, String zdbId) {
-
     def timeStart = new Date()
     def directory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId")
     if (!directory.exists()) {
@@ -90,7 +89,7 @@ def downloadPMCFileBundle(String url, String zdbId) {
     println ("extract file duration:" +  duration2)
 }
 
-def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
+def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, String pubYear) {
     def article = pmcTextArticle.GetRecord.record.metadata.article
     def header = pmcTextArticle.GetRecord.record.header
     header.setSpec.each { setspec ->
@@ -117,11 +116,11 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId) {
 //            }
 //        }
 
-        addSummaryPDF(zdbId, pmcId)
+        addSummaryPDF(zdbId, pmcId, pubYear)
         def figPattern = "<${tag}:fig(.*?)>(.*?)</${tag}:fig>"
         def figMatches = markedUpBody =~ /${figPattern}/
 
-        def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$zdbId/"
+        def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/"
 
         if (figMatches.size() > 0) {
             println("matched figures")
@@ -162,6 +161,11 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
     for (id in idsToGrab) {
         def zdbId = id.value
         def pmcId = id.key
+        def pubYearMatch = zdbId =~ /^(ZDB-PUB-)(\d{2})(\d{2})(\d{2})(-\d+)$/
+        def pubYear
+        if (pubYearMatch.size() > 0) {
+            pubYear = pubYearMatch[0][1]
+        }
         PubmedUtils.getPdfMetaDataRecord(pmcId).records.record.each { rec ->
             if (rec.link.@format.text() == 'tgz') {
 
@@ -170,7 +174,7 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
                 downloadPMCFileBundle(pdfPath, zdbId)
                 def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
                 println pmcId + "," + zdbId
-                processPMCText(fullTxt, zdbId, pmcId)
+                processPMCText(fullTxt, zdbId, pmcId, pubYear)
             }
         }
     }
