@@ -16,6 +16,8 @@
         </span>
     </c:if>
 
+    <a href="/action/zebrashare/dashboard">View Your Zebrashare Submissions</a>
+
     <h1>${feature.name}</h1>
 
     <c:if test="${!empty error}">
