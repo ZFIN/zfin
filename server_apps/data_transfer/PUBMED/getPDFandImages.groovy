@@ -111,16 +111,16 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
     def tagMatch = markedUpBody =~ /<([^\/]*?):body/
     if (tagMatch.size() == 1) {
         def tag = tagMatch[0][1]
-        println(tag)
         def supplimentPattern = "<${tag}:supplementary-material content-type=(.*?)</${tag}:supplementary-material>"
         def supplimentMatches = markedUpBody =~ /${supplimentPattern}/
         if (supplimentMatches.size() > 0) {
+            println (supplimentMatches.size())
             supplimentMatches.each {
-                println (supplimentMatches[0][1])
                 def filenamePattern = "<${tag}:media xlink:href='(.*?)'"
                 def filenameMatch = supplimentMatches =~ /${filenamePattern}/
                 if (filenameMatch.size() > 0) {
-                    filename = filenameMatch[0][1]
+                    def filename = filenameMatch[0][1]
+                    println (filename)
                     PUB_FILES_TO_LOAD.append([zdbId, pmcId, zdbId + "/" + filename].join('|') + "\n")
                 }
             }
@@ -133,7 +133,6 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
         def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/"
 
         if (figMatches.size() > 0) {
-            println("matched figures")
             figMatches.each {
                 def entireFigString = it[0]
                 def label
@@ -152,6 +151,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                     captionMatch.each {
                         caption = it[1]
                         caption = caption.replace(tag,'')
+                        caption = caption.replaceAll("\\s{2,}", " ")
                     }
                 }
                 def imagePattern = "<${tag}:graphic(.*?)xlink:href='(.*?)'"
