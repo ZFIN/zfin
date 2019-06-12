@@ -39,7 +39,7 @@ def do_query(conn):
                 moveImages(fullPathPDFDir, img_id)
 
             else:
-                os.mkidr(yearDir)
+                os.mkdir(yearDir)
                 os.mkdir(fullPathPDFDir)
                 moveImages(fullPathPDFDir, img_id)
 
