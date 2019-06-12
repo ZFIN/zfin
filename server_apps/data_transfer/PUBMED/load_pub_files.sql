@@ -9,7 +9,8 @@ create temp table tmp_files_to_load (pub_zdb_id text,
 update publication_file 
  set pf_file_type_id = 3
 where exists (select 'x' from tmp_files_to_load
-                     where pf_pub_zdb_id = pub_zdb_id);
+                     where pf_pub_zdb_id = pub_zdb_id
+                     and pf_file_name = filename);
 
 --rollback work ;
 
