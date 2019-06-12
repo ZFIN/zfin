@@ -103,14 +103,6 @@
             <param-name>property-file-directory</param-name>
             <param-value>WEB-INF</param-value>
         </init-param>
-        <init-param>
-            <param-name>log4j-init-file</param-name>
-            <param-value>log4j.xml</param-value>
-        </init-param>
-        <init-param>
-            <param-name>log4j-init-file-directory</param-name>
-            <param-value>WEB-INF</param-value>
-        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <!-- Standard Action Servlet Mapping -->

@@ -133,7 +133,7 @@
             </filterset>
         </copy>
         <copy file="${conf.dir}/hibernate-gbrowse.cfg.xml" todir="${classbin.dir}"/>
-        <copy file="${commons.dir}/${LOG4J_FILE}" tofile="${web-inf.dir}/log4j.xml" failonerror="false">
+        <copy file="${commons.dir}/${LOG4J_FILE}" tofile="${web-inf.dir}/log4j2.xml" failonerror="false">
             <filterset>
                 <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>
             </filterset>
