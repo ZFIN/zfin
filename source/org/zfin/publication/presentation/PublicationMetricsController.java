@@ -110,12 +110,18 @@ public class PublicationMetricsController {
                 List<MetricsByDateBean> resultList = publicationRepository.getMetricsByDate(start, end, formBean.getQueryType(), formBean.getGroupBy(), formBean.getGroupType());
                 resultList.sort(Comparator.comparing(MetricsByDateBean::getDate));
                 if (formBean.getQueryType() == PublicationMetricsFormBean.QueryType.PET_DATE) {
-                    Map<String, Number> totals = resultList.stream().collect(Collectors.toMap(
-                            result -> outputFormat.format(result.getDate()),
-                            MetricsByDateBean::getCount,
-                            (a, b) -> a.intValue() + b.intValue(),
-                            LinkedHashMap::new
-                    ));
+                    Map<String, Number> totals = new LinkedHashMap<>();
+                    Calendar calendar = (Calendar) start.clone();
+                    while (calendar.before(end)) {
+                        int total = 0;
+                        for (MetricsByDateBean result : resultList) {
+                            if (result.getDate().getTime() == calendar.getTimeInMillis()) {
+                                total += result.getCount().intValue();
+                            }
+                        }
+                        totals.put(outputFormat.format(calendar.getTime()), total);
+                        calendar.add(formBean.getGroupBy().getField(), 1);
+                    }
                     resultTable.put("All", totals);
                 }
                 for (Object rowLabel : rowLabels) {
