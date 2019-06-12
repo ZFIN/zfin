@@ -7,7 +7,7 @@ create temp table tmp_figs_to_load (pub_zdb_id text,
        fig_caption text,
        img_filename text);
 
-\copy tmp_figs_to_load from  'figsToLoad.txt' with delimiter '||' ;
+\copy tmp_figs_to_load from 'figsToLoad.txt' DELIMITER '|' ;
 
 create temp table tmp_figs_to_load_with_ids (pub_zdb_id text,
        pmc_id text,
@@ -43,6 +43,8 @@ update tmp_figs_to_load_with_ids
 update tmp_figs_to_load_with_ids
   set img_zdb_id = get_id('IMAGE');
 
+update tmp_figs_to_load_with_ids
+ set fig_caption = replace (fig_caption, '&&&&&', '|');
 
 insert into zdb_active_data (zactvd_zdb_id)
   select fig_zdb_id from tmp_figs_to_load_with_ids;
@@ -76,8 +78,8 @@ select img_zdb_id,
        'not specified',
        'not specified',
        'ZDB-PERS-030612-1',
-       pub_zdb_id||'/'||img_filename,
-       pub_zdb_id||'/'||img_filename
+       img_filename,
+       img_filename
    from tmp_figs_to_load_with_ids;
 
 

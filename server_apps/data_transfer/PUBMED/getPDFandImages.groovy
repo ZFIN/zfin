@@ -47,7 +47,8 @@ PubmedUtils.psql DBNAME, """
                         FROM pub_tracking_history, pub_tracking_status
                         WHERE pth_pub_zdb_id = zdb_id
                         and pth_status_id = pts_pk_id
-                        AND pts_status = 'CLOSED')) to '$PUB_IDS_TO_CHECK' delimiter ',';
+                        AND pts_status = 'CLOSED')
+     ) to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
 
 def addSummaryPDF(String zdbId, String pmcId, pubYear) {
@@ -152,6 +153,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                         caption = it[1]
                         caption = caption.replace(tag+":",'')
                         caption = caption.replaceAll("\\s{2,}", " ")
+                        caption = caption.replace("|", "&&&&&")
                     }
                 }
                 def imagePattern = "<${tag}:graphic(.*?)xlink:href='(.*?)'"
@@ -163,7 +165,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                     }
                 }
 
-                FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image].join('||') + "\n")
+                FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image].join('|') + "\n")
             }
         }
     }
