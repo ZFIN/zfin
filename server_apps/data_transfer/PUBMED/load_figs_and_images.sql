@@ -7,7 +7,7 @@ create temp table tmp_figs_to_load (pub_zdb_id text,
        fig_caption text,
        img_filename text);
 
-\copy tmp_figs_to_load from  'figsToLoad.txt' with delimiter '|' ;
+\copy tmp_figs_to_load from  'figsToLoad.txt' with delimiter '||' ;
 
 create temp table tmp_figs_to_load_with_ids (pub_zdb_id text,
        pmc_id text,

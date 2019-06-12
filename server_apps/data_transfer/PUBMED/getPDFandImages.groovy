@@ -150,7 +150,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 if (captionMatch.size() > 0) {
                     captionMatch.each {
                         caption = it[1]
-                        caption = caption.replace(tag,'')
+                        caption = caption.replace(tag+":",'')
                         caption = caption.replaceAll("\\s{2,}", " ")
                     }
                 }
@@ -163,7 +163,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                     }
                 }
 
-                FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image].join('|') + "\n")
+                FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image].join('||') + "\n")
             }
         }
     }
