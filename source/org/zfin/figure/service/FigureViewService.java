@@ -444,7 +444,7 @@ fishList.stream().distinct().collect(Collectors.toList());;
     }
     public boolean isZebrasharePub(Publication publication) {
 
-        return publication.getJournal().equals("ZDB-JRNL-181119-2");
+        return publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2");
     }
     /**
      * This logic was taken from the app page. For these 3 pubs, we show an extra link.
