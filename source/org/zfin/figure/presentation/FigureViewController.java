@@ -131,7 +131,18 @@ public class FigureViewController {
             }
         }
         else{
-            figures.addAll(publication.getFigures());
+            if (publication.isUnpublished()) {
+                if (StringUtils.isEmpty(probeZdbID)) {
+                    {
+                        return "redirect:/" + publication.getZdbID();
+                    }
+                } else {
+                    figures.addAll(figureRepository.getFiguresForDirectSubmissionPublication(publication, probe));
+                }
+            } else {
+                figures.addAll(publication.getFigures());
+            }
+
         }
 
 
