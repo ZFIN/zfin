@@ -142,7 +142,6 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                                 videoCaption = videoCaption.replace("|", "&&&&&")
                             }
                         }
-                        println (videoLabel + " " + videoCaption)
 
                         FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, videoLabel, videoCaption, pubYear + "/" + zdbId + "/" +filename].join('|') + "\n")
                     } else {
