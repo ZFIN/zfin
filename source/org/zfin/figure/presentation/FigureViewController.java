@@ -119,10 +119,9 @@ public class FigureViewController {
         }
         if (figureViewService.isZebrasharePub(publication)) {
 
-                figures.addAll(publication.getFigures());
+            figures.addAll(publication.getFigures());
 
         }
-
         else{
             if (publication.isUnpublished()) {
                 if (StringUtils.isEmpty(probeZdbID)) {
