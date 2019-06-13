@@ -20,11 +20,11 @@ WORKING_DIR.eachFileMatch(~/loadSQL.*\.txt/) { it.delete() }
 
 DBNAME = System.getenv("DBNAME")
 PUB_IDS_TO_CHECK = "pdfsNeeded.txt"
-PUBS_WITH_PDFS_TO_UPDATE = new File ("pdfsAvailable.txt")
-FIGS_TO_LOAD = new File ("figsToLoad.txt")
-PUB_FILES_TO_LOAD = new File ("pdfsToLoad.txt")
-ADD_BASIC_PDFS_TO_DB = new File ("pdfBasicFilesToLoad.txt")
-PUBS_TO_GIVE_PERMISSIONS = new File ("pubsToGivePermission.txt")
+PUBS_WITH_PDFS_TO_UPDATE = new File("pdfsAvailable.txt")
+FIGS_TO_LOAD = new File("figsToLoad.txt")
+PUB_FILES_TO_LOAD = new File("pdfsToLoad.txt")
+ADD_BASIC_PDFS_TO_DB = new File("pdfBasicFilesToLoad.txt")
+PUBS_TO_GIVE_PERMISSIONS = new File("pubsToGivePermission.txt")
 
 Date date = new Date()
 // go back two weeks to slurp up stragglers.
@@ -53,9 +53,9 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
     def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/")
 
-    dir.eachFileRecurse (FileType.FILES) { file ->
-        if (file.name.endsWith('pdf')){
-            ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear+"/"+zdbId+"/"+file.name].join('|') + "\n")
+    dir.eachFileRecurse(FileType.FILES) { file ->
+        if (file.name.endsWith('pdf')) {
+            ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + file.name].join('|') + "\n")
         }
     }
 
@@ -63,38 +63,38 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
 def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
     def timeStart = new Date()
-    def yearDirectory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/")
-    def directory = new File ("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId")
-    if (!yearDirectory.exists()){
+    def yearDirectory = new File("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/")
+    def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId")
+    if (!yearDirectory.exists()) {
         yearDirectory.mkdir()
     }
     if (!directory.exists()) {
         directory.mkdir()
     }
 
-    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId"+".tar.gz")
+    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId" + ".tar.gz")
     def out = new BufferedOutputStream(file)
 
     out << new URL(url).openStream()
     out.close()
     def timeStop = new Date()
     TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
-    println ("download to filesystem duration:" +  duration)
+    println("download to filesystem duration:" + duration)
 
-    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId"+".tar.gz"
-    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId"+".tar"
+    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId" + ".tar.gz"
+    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId" + ".tar"
     File unzippedFile = new File(unzipped_output)
-    if (!unzippedFile.exists()){
+    if (!unzippedFile.exists()) {
         PubmedUtils.gunzip(gziped_bundle, unzipped_output)
     }
 
     def timeStart2 = new Date()
-    def cmd = "cd "+ "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
+    def cmd = "cd " + "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
     ["/bin/bash", "-c", cmd].execute().waitFor()
 
     def timeStop2 = new Date()
     TimeDuration duration2 = TimeCategory.minus(timeStop2, timeStart2)
-    println ("extract file duration:" +  duration2)
+    println("extract file duration:" + duration2)
 }
 
 def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, String pubYear) {
@@ -128,8 +128,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                             videoLabelMatches.each {
                                 videoLabel = it[1]
                             }
-                        }
-                        else {
+                        } else {
                             videoLabel = filename
                         }
                         def videoCaptionPattern = "<${tag}:caption>(.*?)</${tag}:caption>"
@@ -137,13 +136,13 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                         if (videoCaptionMatch.size() > 0) {
                             videoCaptionMatch.each {
                                 videoCaption = it[1]
-                                videoCaption = videoCaption.replace(tag+":",'')
+                                videoCaption = videoCaption.replace(tag + ":", '')
                                 videoCaption = videoCaption.replaceAll("\\s{2,}", " ")
                                 videoCaption = videoCaption.replace("|", "&&&&&")
                             }
                         }
 
-                        FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, videoLabel, videoCaption, pubYear + "/" + zdbId + "/" +filename].join('|') + "\n")
+                        FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, videoLabel, videoCaption, pubYear + "/" + zdbId + "/" + filename].join('|') + "\n")
                     } else {
                         PUB_FILES_TO_LOAD.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename].join('|') + "\n")
                     }
@@ -174,7 +173,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 if (captionMatch.size() > 0) {
                     captionMatch.each {
                         caption = it[1]
-                        caption = caption.replace(tag+":",'')
+                        caption = caption.replace(tag + ":", '')
                         caption = caption.replaceAll("\\s{2,}", " ")
                         caption = caption.replace("|", "&&&&&")
                     }
@@ -202,10 +201,9 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
         def pubYear
         if (pubYearMatch.size() > 0) {
             pubYear = pubYearMatch[0][2]
-            if (pubYear.toString().startsWith("9")){
+            if (pubYear.toString().startsWith("9")) {
                 pubYear = "19" + pubYear
-            }
-            else {
+            } else {
                 pubYear = "20" + pubYear
             }
         }
