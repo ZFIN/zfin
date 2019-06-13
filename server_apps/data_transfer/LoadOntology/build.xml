@@ -39,6 +39,7 @@
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
     <property name="jvm.args" value="-Xverify:none"/>
+    <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=log4j2.xml"/>
     <property name="jvm.mem" value="-Xmx4g"/>
     <property name="run-directory" value="./obo-files"/>
 
@@ -329,6 +330,7 @@
                 <arg value="-forceLoad"/>
                 <arg value="${forceLoad}"/>
                 <jvmarg value="${jvm.args}"/>
+                <jvmarg value="${jvm.arg.log4j}"/>
             </java>
         </sequential>
     </macrodef>
@@ -361,6 +363,7 @@
             <arg value="-forceLoad"/>
             <arg value="${forceLoad}"/>
             <jvmarg value="${jvm.args}"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
         </java>
 
     </target>
@@ -377,6 +380,7 @@
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
             <jvmarg value="${jvm.args}"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
 
@@ -390,6 +394,7 @@
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
             <jvmarg value="${jvm.args}"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
 
@@ -402,6 +407,7 @@
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
             <jvmarg value="${jvm.args}"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
         </java>
 
     </target>
@@ -417,6 +423,7 @@
                 <arg value="${basedir}"/>
                 <arg value="${basedir}/../../../home/"/>
                 <jvmarg value="${jvm.args}"/>
+                <jvmarg value="${jvm.arg.log4j}"/>
             </java>
         </sequential>
     </macrodef>
