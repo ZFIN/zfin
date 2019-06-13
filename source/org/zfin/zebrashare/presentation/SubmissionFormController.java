@@ -92,7 +92,7 @@ public class SubmissionFormController {
         publication.setAuthors(formBean.getAuthors());
         publication.setAbstractText(formBean.getAbstractText());
         publication.setJournal(publicationRepository.getJournalByID("ZDB-JRNL-181119-2"));
-        publication.setType(Publication.Type.JOURNAL);
+        publication.setType(Publication.Type.UNPUBLISHED);
         publication.setEntryDate(new GregorianCalendar());
         publication.setPublicationDate(new GregorianCalendar());
         publication.setCuratable(true);
