@@ -25,8 +25,6 @@ FIGS_TO_LOAD = new File ("figsToLoad.txt")
 PUB_FILES_TO_LOAD = new File ("pdfsToLoad.txt")
 ADD_BASIC_PDFS_TO_DB = new File ("pdfBasicFilesToLoad.txt")
 PUBS_TO_GIVE_PERMISSIONS = new File ("pubsToGivePermission.txt")
-MOVIES_TO_LOAD = new File ("moviesToLoad.txt")
-
 
 Date date = new Date()
 // go back two weeks to slurp up stragglers.
@@ -108,21 +106,45 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
         }
     }
     def markedUpBody = new StreamingMarkupBuilder().bindNode(article.body).toString()
-
+    def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/"
     def tagMatch = markedUpBody =~ /<([^\/]*?):body/
     if (tagMatch.size() == 1) {
         def tag = tagMatch[0][1]
         def supplimentPattern = "<${tag}:supplementary-material content-type=(.*?)</${tag}:supplementary-material>"
         def supplimentMatches = markedUpBody =~ /${supplimentPattern}/
         if (supplimentMatches.size() > 0) {
-            println (supplimentMatches.size())
             supplimentMatches.each {
+                def supplement = it
                 def filenamePattern = "<${tag}:media xlink:href='(.*?)'"
                 def filenameMatch = supplimentMatches =~ /${filenamePattern}/
                 if (filenameMatch.size() > 0) {
                     def filename = filenameMatch[0][1]
-                    if (filename.endsWith(".avi") || filename.endsWith(".mp4") || filename.endsWith(".mov") || filename.endsWith(".wmv")){
-                        MOVIES_TO_LOAD.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename].join('|') + "\n")
+                    if (filename.endsWith(".avi") || filename.endsWith(".mp4") || filename.endsWith(".mov") || filename.endsWith(".wmv")) {
+                        def videoLabel
+                        def videoCaption
+                        def videoLabelPattern = "<${tag}:label>(.*?)</${tag}:label>"
+                        def videoLabelMatches = supplement =~ /${videoLabelPattern}/
+                        if (videoLabelMatches.size() > 0) {
+                            videoLabelMatches.each {
+                                videoLabel = it[1]
+                            }
+                        }
+                        else {
+                            videoLabel = filename
+                        }
+                        def videoCaptionPattern = "<${tag}:caption>(.*?)</${tag}:caption>"
+                        def videoCaptionMatch = it =~ /${videoCaptionPattern}/
+                        if (videoCaptionMatch.size() > 0) {
+                            videoCaptionMatch.each {
+                                videoCaption = it[1]
+                                videoCaption = videoCaption.replace(tag+":",'')
+                                videoCaption = videoCaption.replaceAll("\\s{2,}", " ")
+                                videoCaption = videoCaption.replace("|", "&&&&&")
+                            }
+                        }
+                        println (videoLabel + " " + videoCaption)
+
+                        FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, videoLabel, videoCaption, pubYear + "/" + zdbId + "/" +filename].join('|') + "\n")
                     } else {
                         PUB_FILES_TO_LOAD.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename].join('|') + "\n")
                     }
@@ -134,7 +156,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
         def figPattern = "<${tag}:fig(.*?)>(.*?)</${tag}:fig>"
         def figMatches = markedUpBody =~ /${figPattern}/
 
-        def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/"
+
 
         if (figMatches.size() > 0) {
             figMatches.each {
@@ -164,11 +186,10 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 if (imageNameMatch.size() > 0) {
                     imageNameMatch.each {
                         image = it[2] + ".jpg"
-                        println(label + " " + image)
                     }
                 }
 
-                FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, image].join('|') + "\n")
+                FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, pubYear + "/" + zdbId + "/" + image].join('|') + "\n")
             }
         }
     }
@@ -220,22 +241,17 @@ givePubsPermissions = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql "
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 givePubsPermissions.waitFor()
 
+loadBasicPDFFiles = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
+        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/add_basic_pdfs.sql " +
+        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
+loadBasicPDFFiles.waitFor()
+
 loadFigsAndImages = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
         "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/load_figs_and_images.sql " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 loadFigsAndImages.waitFor()
 
-loadFigsAndMovies = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
-        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/load_figs_and_movies.sql " +
-        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
-loadFigsAndMovies.waitFor()
-
 loadPubFiles = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
         "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/load_pub_files.sql " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 loadPubFiles.waitFor()
-
-loadBasicPDFFiles = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
-        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/add_basic_pdfs.sql " +
-        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
-loadBasicPDFFiles.waitFor()

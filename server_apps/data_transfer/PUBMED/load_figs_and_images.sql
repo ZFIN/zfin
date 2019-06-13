@@ -82,7 +82,8 @@ select img_zdb_id,
        img_filename
    from tmp_figs_to_load_with_ids;
 
-
+update image
+ set img_is_video_still = 't' where img_image like '%.avi' or img_image like '%.mov' or img_image like '%.wmv' or img_image like '%.mp4';  
 
 commit work;
 
