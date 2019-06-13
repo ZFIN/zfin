@@ -152,10 +152,9 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
         }
 
         addSummaryPDF(zdbId, pmcId, pubYear)
+
         def figPattern = "<${tag}:fig(.*?)>(.*?)</${tag}:fig>"
         def figMatches = markedUpBody =~ /${figPattern}/
-
-
 
         if (figMatches.size() > 0) {
             figMatches.each {
