@@ -118,17 +118,9 @@ public class FigureViewController {
             model.addAttribute("probeSuppliers", suppliers);
         }
         if (figureViewService.isZebrasharePub(publication)) {
-            if (publication.isUnpublished()) {
-                if (StringUtils.isEmpty(probeZdbID)) {
-                    {
-                        return "redirect:/" + publication.getZdbID();
-                    }
-                } else {
-                    figures.addAll(figureRepository.getFiguresForDirectSubmissionPublication(publication, probe));
-                }
-            } else {
+
                 figures.addAll(publication.getFigures());
-            }
+           
         }
         else{
             if (publication.isUnpublished()) {
