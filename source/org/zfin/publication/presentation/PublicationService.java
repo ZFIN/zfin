@@ -88,7 +88,7 @@ public class PublicationService {
         if (publication.isUnpublished() && CollectionUtils.size(publication.getFigures()) > 100) {
             return false;
         }
-if (publication.getJournal().equals("ZDB-JRNL-181119-2"))
+if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
 {
     return true;
 }
