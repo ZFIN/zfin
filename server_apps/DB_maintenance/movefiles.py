@@ -17,8 +17,7 @@ def do_query(conn):
     cur = conn.cursor()
 
     cur.execute("SELECT distinct img_zdb_id, fig_source_zdb_id "
-                "     FROM figure, image WHERE fig_zdb_id = img_fig_zdb_id"
-                "     AND fig_zdb_id like 'ZDB-FIG-19%'")
+                "     FROM figure, image WHERE fig_zdb_id = img_fig_zdb_id")
 
     for img_id, fig_source_id in cur.fetchall():
 

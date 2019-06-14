@@ -40,12 +40,7 @@ PubmedUtils.psql DBNAME, """
      AND NOT EXISTS (SELECT 'x' 
                     FROM publication_file 
                     WHERE pf_pub_zdb_id = zdb_id 
-                    AND pf_file_type_id =1)   
-     AND NOT EXISTS (SELECT 'x' 
-                        FROM pub_tracking_history, pub_tracking_status
-                        WHERE pth_pub_zdb_id = zdb_id
-                        and pth_status_id = pts_pk_id
-                        AND pts_status = 'CLOSED')
+                    AND pf_file_type_id =1) 
      ) to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
 
