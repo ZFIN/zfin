@@ -16,10 +16,11 @@ def do_query(conn):
 
     cur = conn.cursor()
 
-    cur.execute("SELECT distinct img_zdb_id, fig_source_zdb_id "
-                "     FROM figure, image WHERE fig_zdb_id = img_fig_zdb_id")
+    cur.execute("SELECT distinct img_zdb_id, fig_source_zdb_id, img_image "
+                "     FROM figure, image WHERE fig_zdb_id = img_fig_zdb_id"
+                "     ORDER BY fig_source_zdb_id")
 
-    for img_id, fig_source_id in cur.fetchall():
+    for img_id, fig_source_id, img_name in cur.fetchall():
 
         m = re.match("^(ZDB-PUB-)(\d{2})(\d{2})(\d{2})(-\d+)$", fig_source_id)
         if m:
@@ -34,24 +35,24 @@ def do_query(conn):
 
         if os.path.isdir(fullPathPDFDir) and not os.path.exists(fullPathPDFDir+"/"+img_id):
             print fullPathPDFDir
-            moveImages(fullPathPDFDir, img_id)
+            moveImages(fullPathPDFDir, img_id, img_name)
             file.write(img_id+"|"+fullPathPDFDir+img_id)
 
         else:
             print "cant find file dir: " + fullPathPDFDir
             if os.path.isdir(yearDir):
                 os.mkdir(fullPathPDFDir)
-                moveImages(fullPathPDFDir, img_id)
+                moveImages(fullPathPDFDir, img_id, img_name)
                 file.write(img_id + "|" + fullPathPDFDir + img_id)
 
             else:
                 os.mkdir(yearDir)
                 os.mkdir(fullPathPDFDir)
-                moveImages(fullPathPDFDir, img_id)
+                moveImages(fullPathPDFDir, img_id, img_name)
                 file.write(img_id + "|" + fullPathPDFDir + img_id)
 
 
-def moveImages(fullPathPDFDir, img_id):
+def moveImages(fullPathPDFDir, img_id, img_name):
 
     pattern = '/research/zcentral/loadUp/imageLoadUp/' + img_id + '*'
 
@@ -61,9 +62,178 @@ def moveImages(fullPathPDFDir, img_id):
 
     pattern = "/research/zcentral/loadUp/imageLoadUp/medium" + img_id + "*"
 
-    for imgFile in glob.glob(pattern):
-        print imgFile
-        copy(imgFile, fullPathPDFDir)
+    for imgFile in glob.glob(pattern):        
+        imgName = img_name.replace(".", "_medium.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        print (imgName)
+        copy(imgFile, fullPathPDFDir+imgName)
 
 
 myConnection = psycopg2.connect(host=hostname, dbname=database)
