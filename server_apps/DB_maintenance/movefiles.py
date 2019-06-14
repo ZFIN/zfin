@@ -9,6 +9,9 @@ import codecs
 
 hostname = 'localhost'
 database = os.environ.get('DBNAME')
+if os.path.exists("updateImagePaths.txt"):
+    print "removing file"
+    os.remove("updateImagePaths.txt")
 file = codecs.open("updateImagePaths.txt", "w")
 
 
@@ -18,7 +21,7 @@ def do_query(conn):
 
     cur.execute("SELECT distinct img_zdb_id, fig_source_zdb_id, img_image "
                 "     FROM figure, image WHERE fig_zdb_id = img_fig_zdb_id"
-                "     ORDER BY fig_source_zdb_id")
+                "     ORDER BY img_zdb_id")
 
     for img_id, fig_source_id, img_name in cur.fetchall():
 
@@ -34,7 +37,6 @@ def do_query(conn):
         fullPathPDFDir = os.environ['LOADUP_FULL_PATH']+"/pubs/"+year+"/"+fig_source_id
 
         if os.path.isdir(fullPathPDFDir) and not os.path.exists(fullPathPDFDir+"/"+img_id):
-            print fullPathPDFDir
             moveImages(fullPathPDFDir, img_id, img_name)
             file.write(img_id+"|"+fullPathPDFDir+img_id)
 
@@ -43,13 +45,13 @@ def do_query(conn):
             if os.path.isdir(yearDir):
                 os.mkdir(fullPathPDFDir)
                 moveImages(fullPathPDFDir, img_id, img_name)
-                file.write(img_id + "|" + fullPathPDFDir + img_id)
+                file.write(img_id + "|" + fullPathPDFDir + "/" + img_id +"\n")
 
             else:
                 os.mkdir(yearDir)
                 os.mkdir(fullPathPDFDir)
                 moveImages(fullPathPDFDir, img_id, img_name)
-                file.write(img_id + "|" + fullPathPDFDir + img_id)
+                file.write(img_id + "|" + fullPathPDFDir + "/" +img_id+"\n")
 
 
 def moveImages(fullPathPDFDir, img_id, img_name):
@@ -57,184 +59,18 @@ def moveImages(fullPathPDFDir, img_id, img_name):
     pattern = '/research/zcentral/loadUp/imageLoadUp/' + img_id + '*'
 
     for imgFile in glob.glob(pattern):
-        print imgFile
+        print(fullPathPDFDir)
         copy(imgFile, fullPathPDFDir)
 
-    pattern = "/research/zcentral/loadUp/imageLoadUp/medium" + img_id + "*"
+    pattern = '/research/zcentral/loadUp/imageLoadUp/medium/' + img_id + '*'
 
     for imgFile in glob.glob(pattern):        
-        imgName = img_name.replace(".", "_medium.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-        print (imgName)
-        copy(imgFile, fullPathPDFDir+imgName)
-
+        imgName = imgFile.replace(".", "_medium.")
+        fileNameSplit = imgName.split('/')
+        imgFileName = fileNameSplit[-1]
+        copy(imgFile, fullPathPDFDir+"/"+imgFileName)
+        print fullPathPDFDir+"/"+imgFileName
+        file.write(img_id + "|" + fullPathPDFDir + "/" + imgName + "\n")
 
 myConnection = psycopg2.connect(host=hostname, dbname=database)
 do_query(myConnection)

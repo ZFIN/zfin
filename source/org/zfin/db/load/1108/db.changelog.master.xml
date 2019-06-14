@@ -8,5 +8,6 @@
     <include file="source/org/zfin/db/load/1108/student_checklist.sql"/>
     <include file="source/org/zfin/db/load/1108/ZFIN-6265.sql"/>
     <include file="source/org/zfin/db/load/1108/fcc_currently_available_nullable.sql"/>
+    <include file="source/org/zfin/db/load/1108/add_medium_image_column.sql"/>
 
 </databaseChangeLog>
