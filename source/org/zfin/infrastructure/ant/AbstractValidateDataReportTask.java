@@ -3,7 +3,8 @@ package org.zfin.infrastructure.ant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.gwt.root.util.StringUtils;
@@ -202,7 +203,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     }
 
     protected void setLoggerFile() {
-        service.setLoggerLevelInfo();
+        //service.setLoggerLevelInfo(LogManager.getLogger().getName());
         File logFile = FileUtils.getFile(dataDirectory, jobName, jobName + ".log");
         if (logFile.exists()) {
             if (!logFile.delete()) {
@@ -253,7 +254,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     public void setQueryFiles(String... queryFileNames) {
         queryFiles = new ArrayList<>(queryFileNames.length);
-        for(String fileName: queryFileNames){
+        for (String fileName : queryFileNames) {
             queryFiles.add(new File(dataDirectory, fileName));
         }
     }
