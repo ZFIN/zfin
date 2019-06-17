@@ -28,7 +28,7 @@
                    enableLookups="false" disableUploadTimeout="true"
                    SSLEnabled="true" scheme="https" secure="true"
                    clientAuth="false" sslProtocol="TLS" compression="on"
-                   keystoreFile="/private/apps/tomcat/conf/keystore"
+                   keystoreFile="/opt/apache/apache-tomcat/conf/keystore"
                    URIEncoding="UTF-8"/>
 
 

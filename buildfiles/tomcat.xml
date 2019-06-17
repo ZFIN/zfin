@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="tomcat" basedir=".">
     <!-- todo: the location of the commons tree should probably come from the env -->
-    <property name="tomcat-script-mutant" value="/private/ZfinLinks/Commons/bin/tomcat.sh"/>
+    <property name="tomcat-script-mutant" value="/opt/zfin/bin/tomcat.sh"/>
 
     <property name="tomcat-script-informix-zfishweb-start" value="sudo"/>
     <property name="tomcat-script-informix-zfishweb-stop" value="sudo"/>

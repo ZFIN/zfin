@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+#!/opt/zfin/bin/perl -w
 #-----------------------------------------------------------------------
 # Subroutines used to pull ATB information from ZIRC.
 #

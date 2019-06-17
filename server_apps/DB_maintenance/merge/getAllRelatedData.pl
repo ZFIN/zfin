@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 
 ## getAllRelatedData.pl
 ## getAllRelatedData.pl ZDB_ID

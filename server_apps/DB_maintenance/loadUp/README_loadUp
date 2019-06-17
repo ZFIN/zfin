@@ -50,13 +50,13 @@ define the following generic tags to access these directories:
 for the development machine.tt (with zfin.org on development machine)
 
 <!--|IMAGE_LOAD|-->		/development machineImageLoadUp/imageLoadUp
-<!--|LOADUP_FULL_PATH|-->	/private/ZfinLinks/loadUp/development machineLoadUp
+<!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp/development machineLoadUp
 <!--|PDF_LOAD|-->		/development machinePDFLoadUp/PDFLoadUp
 
 for the helix.tt, these tags are:
 
 <!--|IMAGE_LOAD|-->		/imageLoadUp
-<!--|LOADUP_FULL_PATH|-->	/private/ZfinLinks/loadUp
+<!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp
 <!--|PDF_LOAD|-->		/PDFLoadUp
 
 ***IMPORTANT***

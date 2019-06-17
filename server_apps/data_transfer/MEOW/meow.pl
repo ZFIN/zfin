@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+#!/opt/zfin/bin/perl 
 #  Script to create files for MEOW database
 #  output files are written to <!--|FTP_ROOT|-->/pub/transfer/MEOW/
 ##$ENV{"DBDATE"}="Y4MD-";

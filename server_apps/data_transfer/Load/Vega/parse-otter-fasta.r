@@ -1,4 +1,4 @@
-#!/private/bin/rebol -sq
+#!/opt/zfin/bin/rebol -sq
 rebol [
 
 example: {rebol -sq parse-otter-fasta.r transcripts_for_tom.fa genes_for_tom.txt}

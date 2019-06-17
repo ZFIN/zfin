@@ -1,4 +1,4 @@
-#!/private/bin/perl -wT
+#!/opt/zfin/bin/perl -wT
 #------------------------------------------------------------------------
 #
 # Script to get stats of a file stored in an image.

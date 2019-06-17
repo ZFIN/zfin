@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 
 # set environment variables
 
@@ -85,7 +85,7 @@ $pipe_newline = "|\n" ;
 
 &initiateVar ();
 
-system("/private/ZfinLinks/Commons/bin/reline $fileName");
+system("/opt/zfin/bin/reline $fileName");
 system("./parseHeader.pl $fileName");
 
 print "starting term parsing\n";

@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 
 # reportOrthoNameChanges.pl
 # The script then parses data in the above files and store related data in a series of data structures and then compare data stored at ZFIN to decide what

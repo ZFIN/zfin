@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+#!/opt/zfin/bin/perl -w
 #-----------------------------------------------------------------------
 # Script to pull information from ZIRC and EZRC.
 #

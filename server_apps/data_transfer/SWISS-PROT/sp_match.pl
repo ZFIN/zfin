@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+#!/opt/zfin/bin/perl 
 #
 # this script reads the SwissProt accession list from
 # a curator and match out the detailed records from problemfile

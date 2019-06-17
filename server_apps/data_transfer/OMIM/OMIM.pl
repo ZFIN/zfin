@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 
 # OMIM.pl
 # parses OMIM data on mim2gene.txt and genemap files

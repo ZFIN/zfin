@@ -1,4 +1,4 @@
-#! /private/bin/rebol -sqw
+#! /opt/zfin/bin/rebol -sqw
 rebol []
 
 ;;; the page the rss feed is for

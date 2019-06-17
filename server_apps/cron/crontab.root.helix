@@ -7,4 +7,4 @@
 23 * * * * /usr/lib/sendmail -q
 # webrotate has to run as root
 00 0 1 * * /research/zprod/www_homes/zfin.org/server_apps/WebSiteTools/webrotate.pl
-0  1 * * * /private/bin/daily
+0  1 * * * /opt/zfin/bin/daily

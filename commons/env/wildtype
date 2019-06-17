@@ -35,7 +35,7 @@ if (! $?PREINFORMIXPATH) then
 endif
 
 # now that commons exists on helix, include it as well.
-setenv PATH ${INFORMIXDIR}/bin:/private/ZfinLinks/Commons/bin:${PREINFORMIXPATH}
+setenv PATH ${INFORMIXDIR}/bin:/opt/zfin/bin:${PREINFORMIXPATH}
 if ($?PREINFORMIX_LD_PATH) then
     setenv LD_LIBRARY_PATH ${PREINFORMIX_LD_PATH}:${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
 else

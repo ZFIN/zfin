@@ -1,7 +1,7 @@
 #!/bin/tcsh
 
 setenv LD_LIBRARY_PATH ${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
-setenv PATH <!--|INFORMIX_DIR|-->/bin:/private/ZfinLinks/Commons/bin:$PATH
+setenv PATH <!--|INFORMIX_DIR|-->/bin:/opt/zfin/bin:$PATH
 setenv ENVIRONMENT <!--|ENVIRONMENT|-->
 
 set pth=/research/zunloads/databases/<!--|DB_NAME|-->

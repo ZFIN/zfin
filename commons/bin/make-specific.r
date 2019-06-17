@@ -1,4 +1,4 @@
-#! /private/bin/rebol -sqw
+#! /opt/zfin/bin/rebol -sqw
 ;;;
 rebol[Title: "make specific"
     Date: [2005-Aug-02 2009-Apr-24 2010-Mar-31]

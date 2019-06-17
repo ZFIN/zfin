@@ -1,4 +1,4 @@
-#! /private/bin/perl -w 
+#! /opt/zfin/bin/perl -w 
 
 use Getopt::Long qw(:config bundling);
 use DBI;

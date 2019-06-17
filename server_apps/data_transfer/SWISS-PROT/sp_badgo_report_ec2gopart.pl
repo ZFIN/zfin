@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+#!/opt/zfin/bin/perl 
 
 #
 # sp_badgo_report_ec2gopart.pl

@@ -1,4 +1,4 @@
-#! /private/bin/perl -w
+#! /opt/zfin/bin/perl -w
 #
 # pub_check_and_addback_volpg.pl
 #

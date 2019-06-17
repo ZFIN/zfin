@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+#!/opt/zfin/bin/perl -w
 #
 # The script gets GenBank daily update flat file, parses it,
 # and updates the acc information in accession_bank and db_link.

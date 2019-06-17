@@ -5,7 +5,7 @@
 /local/bin/curl -slo cur_ens_db.txt ftp://ftp.ensembl.org/pub/current_mysql/
 
 # strip/convert non-unix line endings
-/private/ZfinLinks/Commons/bin/reline cur_ens_db.txt
+/opt/zfin/bin/reline cur_ens_db.txt
 
 # pick the most recent release
 set cur=`/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`
@@ -15,7 +15,7 @@ echo "Using Ensembl release: $cur"
 
 # send a query to the current database returning 1:1 ensdargs and zdbids
 
-/private/apps/groovy/bin/groovy fetchEnsdarg.groovy >! ensdarg.csv;
+/opt/misc/groovy/bin/groovy fetchEnsdarg.groovy >! ensdarg.csv;
 
 # load the file from Ensembl mysql into the local database
 # rollback if not called with the (first) argument "commit"

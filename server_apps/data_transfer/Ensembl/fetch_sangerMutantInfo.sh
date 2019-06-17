@@ -6,7 +6,7 @@
 /local/bin/curl -slo cur_ens_db.txt ftp://ftp.ensembl.org/pub/current_mysql/
 
 # strip/convert non-unix line endings
-/private/ZfinLinks/Commons/bin/reline cur_ens_db.txt
+/opt/zfin/bin/reline cur_ens_db.txt
 
 # pick the most recent release
 set cur=`/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`

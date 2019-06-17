@@ -40,7 +40,7 @@
 
     <target name="unload-A-instance">
         <echo message="Unloading A-Instance: ${aInstance} to ${WAREHOUSE_DUMP_DIR}"/>
-        <exec executable="/private/ZfinLinks/Commons/bin/unloaddb.pl"
+        <exec executable="/opt/zfin/bin/unloaddb.pl"
               failifexecutionfails="true"
               outputproperty="bInstance" output="b-instance.txt">
             <arg value="${aInstance}"/>

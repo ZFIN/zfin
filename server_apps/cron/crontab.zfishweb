@@ -40,12 +40,12 @@
 #
 #Blast cleanup scripts
 #  Every day at 1:30 am clean out fasta files older than one day.
-30 01 * * * /bin/find /research/zprodmore/blastdb/ -name "*.fa" -mtime +1 -exec rm -f {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt; /bin/find /private/etc/tomcat/zfin.org/temp/ -name "*.xml" -mtime +7 -exec rm -f {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt
+30 01 * * * /bin/find /research/zprodmore/blastdb/ -name "*.fa" -mtime +1 -exec rm -f {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt; /bin/find /opt/zfin/catalina_bases/zfin.org/temp/ -name "*.xml" -mtime +7 -exec rm -f {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt
 #  Every day at 1.55 am clean out accession files older than 3 days.
-55 01 * * * /bin/find /private/etc/tomcat/zfin.org/temp/ -name "accession*.txt" -mtime +3 -exec rm -f {} \; >> /private/etc/tomcat/zfin.org/temp/clean-accessions-error.txt
+55 01 * * * /bin/find /opt/zfin/catalina_bases/zfin.org/temp/ -name "accession*.txt" -mtime +3 -exec rm -f {} \; >> /opt/zfin/catalina_bases/zfin.org/temp/clean-accessions-error.txt
 #  Every Tuesday at 2.05 am clean out microarray reports older than 80 days.
-05 02 * * 4 /bin/find /private/etc/tomcat/zfin.org/temp/ -name "microarry*.txt" -mtime +80 -exec rm -f {} \; >> /private/etc/tomcat/zfin.org/temp/clean-microarray-error.txt
+05 02 * * 4 /bin/find /opt/zfin/catalina_bases/zfin.org/temp/ -name "microarry*.txt" -mtime +80 -exec rm -f {} \; >> /opt/zfin/catalina_bases/zfin.org/temp/clean-microarray-error.txt
 #  Every Tuesday at 2.05 am clean out microarray reports older than 80 days.
-05 02 * * 4 /bin/find /private/etc/tomcat/zfin.org/temp/ -name "blast*.xml" -mtime +80 -exec rm -f {} \; >> /private/etc/tomcat/zfin.org/temp/clean-microarray-error.txt
+05 02 * * 4 /bin/find /opt/zfin/catalina_bases/zfin.org/temp/ -name "blast*.xml" -mtime +80 -exec rm -f {} \; >> /opt/zfin/catalina_bases/zfin.org/temp/clean-microarray-error.txt
 # Every day at 6:00 pm, rsync loadUp to zygotix
 0 18 * * * /research/zprod/www_homes/zfin.org/server_apps/DB_maintenance/loadUp/rsync.pl

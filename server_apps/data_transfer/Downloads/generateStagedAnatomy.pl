@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+#!/opt/zfin/bin/perl -w
 #
 # This script queries anatomy_display table mainly to generate
 # staged anatomy terms with relationship structure. The output 

@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 
 # updateZebrafishGeneNames.pl
 # It parses the input file, geneNamesToUpdate (got from Ken and uploaded and stored on archive), 

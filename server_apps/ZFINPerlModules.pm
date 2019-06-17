@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/zfin/bin/perl
 package ZFINPerlModules;
 
 use strict;

@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 
 # FILE: zfishbook.pl
 # load data provided by zfishbook 

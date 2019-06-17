@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 # mergeJournals.pl
 # copy the input file from  /research/zarchive/load_files/Journal/
 # and perform journal-merging actions

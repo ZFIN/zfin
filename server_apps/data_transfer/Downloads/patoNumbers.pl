@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+#!/opt/zfin/bin/perl -w
 #  patoNumbers.pl
 #-----------------------------------------------------------------------
 # The script is called from the general script to create data files for public download.

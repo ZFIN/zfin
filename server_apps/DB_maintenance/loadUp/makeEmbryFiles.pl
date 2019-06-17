@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+#!/opt/zfin/bin/perl -w
 
 # FILE: rysnc.pl
 # DESCRIPTION: This file syncs production and development image/pdf
