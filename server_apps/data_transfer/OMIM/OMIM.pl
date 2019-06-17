@@ -80,9 +80,9 @@ open (LOG, ">log1.log") || die "Cannot open log1.log : $!\n";
 print LOG "\nDownloading OMIM files ... \n\n";
 
 system("/local/bin/wget http://omim.org/static/omim/data/mim2gene.txt");
-system("/local/bin/wget http://data.omim.org/downloads/qsxhqVTCT4m3YpTl1MnXiw/genemap.txt");
+system("/local/bin/wget https://data.omim.org/downloads/TsbrMAQ1T76RqganEcUayA/genemap2.txt");
 
-if (!-e "genemap.txt" || !-e "mim2gene.txt") {
+if (!-e "genemap2.txt" || !-e "mim2gene.txt") {
    print "One or more required file(s) not exisiting/downloaded. Exit.\n";
    exit -1;
 }
@@ -257,7 +257,7 @@ print "\ntotal number of OMIM phenotype names stored at ZFIN: $ctOMIMphenotypeNa
 
 print LOG "total number of OMIM phenotype names stored at ZFIN: $ctOMIMphenotypeNamesAtZFIN";
 
-open (GENEMAP, "genemap.txt") || die "Cannot open genemap.txt : $!\n";
+open (GENEMAP, "genemap2.txt") || die "Cannot open genemap2.txt : $!\n";
 
 open (OMIM, ">pre_load_input_omim.txt") || die "Cannot open pre_load_input_omim.txt : $!\n";
 
@@ -285,8 +285,8 @@ $ctHumanGenePhenoPossibleOrth = 0;
 %humanGeneMimNumPhenoNoOrth = ();
 %humanGeneMimNumPhenoPossibleOrth = ();
 
-# Sort  Month   Day     Year    Cyto Location   Gene Symbols    Confidence      Gene Name       MIM Number      Mapping Method  Comments        Phenotypes      Mouse Gene Symbol
-#1.35    10      25      12      1p36.32 PEX10, NALD, PBD6A, PBD6B       C       Peroxisome biogenesis factor 10 602859  REc             Peroxisome biogenesis disorder 6A (Zellweger), 614870 (3); Peroxisome biogenesis disorder 6B, 614871 (3)
+# Chromosome    Genomic Position Start  Genomic Position End    Cyto Location   Computed Cyto Location  Mim Number      Gene Symbols    Gene Name       Approved Symbol Entrez Gene ID  Ensembl Gene ID Comments        Phenotypes      Mouse Gene Symbol/ID
+# chr1    2404801 2412573 1p36.32 1p36.32 602859  PEX10, NALD, PBD6A, PBD6B       Peroxisome biogenesis factor 10 PEX10   5192    ENSG00000157911         Peroxisome biogenesis disorder 6A (Zellweger), 614870 (3), Autosomal recessive; Peroxisome biogenesis disorder 6B, 614871 (3), Autosomal
 foreach $line (@lines) {
    $ctTotalOnGenmap++;
    next if $ctTotalOnGenmap < 5;
@@ -302,7 +302,7 @@ foreach $line (@lines) {
    $humanGeneName = $fields[7];
 
    ### not all filed[8] numbers are OMIM numbers for gene; many for phenotype
-   $mimNumGene = $fields[8];
+   $mimNumGene = $fields[5];
 
 
    ### only process those with Gene OMIM numbers having HGNC symbols
@@ -344,7 +344,7 @@ foreach $line (@lines) {
      }
      $cur_gene->finish();
 
-     $phenotypesIn3Fileds = $fields[11];
+     $phenotypesIn3Fileds = $fields[12];
 
      if ($phenotypesIn3Fileds ne "") {
        $ctNotEmptyPheno++;
@@ -362,9 +362,9 @@ foreach $line (@lines) {
 
          ### assuming all OMIM numbers for phenotype are 6 digits, which is the fact as have been confirmed
          ### but there are phenotypes (disorders) lacking OMIM number
-         if ($phenotype =~ m/\s+([0-9]{6})\s+\([0-9]\)$/) {
+         if ($phenotype =~ m/\s+([0-9]{6})\s+\([0-9]\)/) {
              $phenotypeOMIMnum = $1;
-             @disordrTextPlus = split(/\s+([0-9]){6}\s+\([0-9]\)$/, $phenotype);
+             @disordrTextPlus = split(/\s+([0-9]){6}\s+\([0-9]\)/, $phenotype);
              $disorder = $disordrTextPlus[0];
              $disorder =~ s/,$//;
              $disorder =~ s/^\s+//;
