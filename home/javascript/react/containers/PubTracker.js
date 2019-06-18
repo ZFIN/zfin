@@ -1,8 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {getCurators, getLocations, getStatus, getStatuses, updateStatus, getNotes, getTopics, validate} from "../api/publication";
+import {
+    getCurators,
+    getLocations,
+    getStatus,
+    getStatuses,
+    updateStatus,
+    getNotes,
+    getTopics,
+    validate,
+    getIndexed,
+    updateIndexed
+} from "../api/publication";
 import PubTrackerPanel from "../components/PubTrackerPanel";
 import PubTrackerStatus from "../components/PubTrackerStatus";
+import PubTrackerIndexed from "../components/PubTrackerIndexed";
 
 class PubTracker extends React.Component {
     constructor(props) {
@@ -10,8 +22,10 @@ class PubTracker extends React.Component {
         this.state = {
             notes: [],
             topics: [],
-            status: undefined,
+            status: null,
             statusLoading: false,
+            indexed: null,
+            indexedLoading: false,
             statuses: [],
             locations: [],
             curators: [],
@@ -20,6 +34,7 @@ class PubTracker extends React.Component {
         this.handleStatusSave = this.handleStatusSave.bind(this);
         this.handleCloseValidate = this.handleCloseValidate.bind(this);
         this.handleValidationCancel = this.handleValidationCancel.bind(this);
+        this.handleIndexedToggle = this.handleIndexedToggle.bind(this);
     }
 
     componentDidMount() {
@@ -28,6 +43,7 @@ class PubTracker extends React.Component {
         getLocations().then(locations => this.setState({locations}));
         getCurators().then(curators => this.setState({curators}));
         getStatus(pubId).then(status => this.setState({status}));
+        getIndexed(pubId).then(indexed => this.setState({indexed}));
         getNotes(pubId).then(notes => this.setState({notes}));
         getTopics(pubId).then(topics => this.setState({topics}));
     }
@@ -39,6 +55,7 @@ class PubTracker extends React.Component {
             statusLoading: false,
             validationWarnings: [],
         }));
+        // if closing, refetch topics
     }
 
     handleCloseValidate() {
@@ -61,9 +78,17 @@ class PubTracker extends React.Component {
         });
     }
 
+    handleIndexedToggle(indexed) {
+        this.setState({indexedLoading: true});
+        updateIndexed(this.props.pubId, indexed).then(indexed => this.setState({
+            indexed,
+            indexedLoading: false
+        }));
+    }
+
     render() {
         const { pubId, userId } = this.props;
-        const { curators, locations, status, statusLoading, statuses, validationWarnings } = this.state;
+        const { curators, indexed, indexedLoading, locations, status, statusLoading, statuses, validationWarnings } = this.state;
 
         const statusHeader = [
             'Status',
@@ -101,7 +126,11 @@ class PubTracker extends React.Component {
                         <div className="col-xs-5">
                             <div className="row">
                                 <div className="col-xs-offset-1" style={{marginTop: '7px'}}>
-                                    !! INDEXED !!
+                                    <PubTrackerIndexed
+                                        indexed={indexed}
+                                        onToggle={this.handleIndexedToggle}
+                                        saving={indexedLoading}
+                                    />
                                 </div>
                             </div>
                         </div>

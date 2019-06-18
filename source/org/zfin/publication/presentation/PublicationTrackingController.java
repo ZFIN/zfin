@@ -253,7 +253,7 @@ public class PublicationTrackingController {
         Transaction tx = session.beginTransaction();
         publication.setIndexed(dto.isIndexed());
         publication.setIndexedDate(new GregorianCalendar());
-        publication.setIndexedBy(profileRepository.getPerson(dto.getIndexer().getZdbID()));
+        publication.setIndexedBy(ProfileService.getCurrentSecurityUser());
         session.save(publication);
         tx.commit();
 

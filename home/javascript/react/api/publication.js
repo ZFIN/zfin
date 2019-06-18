@@ -37,6 +37,14 @@ export const deleteChecklistEntry = (entryId) => {
     return http.delete(`/action/publication/checklist/${entryId}`);
 };
 
+export const getIndexed = (pubId) => {
+    return http.get('/action/publication/' + pubId + '/indexed');
+};
+
+export const updateIndexed = (pubId, indexed) => {
+    return http.post('/action/publication/' + pubId + '/indexed', indexed);
+};
+
 export const getNotes = (pubId) => {
     return http.get(`/action/publication/${pubId}/notes`);
 };
