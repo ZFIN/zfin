@@ -16,9 +16,13 @@ export const searchPubStatus = (params) => {
     return http.get('/action/publication/search-status', params);
 };
 
-export const updateStatus = (status, checkOwner) => {
+export const getStatus = (pubId) => {
+    return http.get(`/action/publication/${pubId}/status`);
+};
+
+export const updateStatus = (pubId, status, checkOwner) => {
     const endpoint = '/status' + (checkOwner ? '?checkOwner=true' : '');
-    return http.post('/action/publication/' + status.pubZdbID + endpoint, status);
+    return http.post('/action/publication/' + pubId + endpoint, status);
 };
 
 export const getChecklist = (pubId) => {
@@ -31,4 +35,16 @@ export const addChecklistEntry = (pubId, task) => {
 
 export const deleteChecklistEntry = (entryId) => {
     return http.delete(`/action/publication/checklist/${entryId}`);
+};
+
+export const getNotes = (pubId) => {
+    return http.get(`/action/publication/${pubId}/notes`);
+};
+
+export const getTopics = (pubId) => {
+    return http.get(`/action/publication/${pubId}/topics`);
+};
+
+export const validate = (pubId) => {
+    return http.post(`/action/publication/${pubId}/validate`, {});
 };

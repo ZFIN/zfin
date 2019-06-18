@@ -37,12 +37,11 @@
 
     <div class="tab-content">
       <div role="tabpanel" class="tab-pane active" id="status">
-        <div publication-tracker
-             pub-id="${publication.zdbID}"
-             curator-id="${loggedInUser.zdbID}"
-             curator-first="${loggedInUser.firstName}"
-             curator-last="${loggedInUser.lastName}"
-             curator-email="${loggedInUser.email}">
+        <div class="__react-root"
+             id="PubTracker"
+             data-pub-id="${publication.zdbID}"
+             data-user-id="${loggedInUser.zdbID}"
+        >
         </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="correspondence">
@@ -56,3 +55,5 @@
 <script>
   $('#pub-track-tabs').stickyTabs();
 </script>
+
+<script src="${zfn:getAssetPath("react.js")}"></script>

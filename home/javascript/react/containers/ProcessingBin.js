@@ -79,12 +79,11 @@ class ProcessingBin extends React.Component {
         const { nextStatus, userId } = this.props;
         this.setPubState(index, 'saving', true);
         const status = {
-            pubZdbID: pub.zdbId,
             status: { id: nextStatus },
             location: null,
             owner: { zdbID: userId }
         };
-        updateStatus(status, true)
+        updateStatus(pub.zdbId, status, true)
             .then(() => this.setPubState(index, 'claimed', true))
             .fail(error => error.responseJSON && this.setPubState(index, 'claimError', error.responseJSON.message))
             .always(() => this.setPubState(index, 'saving', false));
