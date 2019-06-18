@@ -160,6 +160,7 @@ public class AntibodyBox extends AbstractDataBox<AntibodyDTO> {
         antibodyDTO.setLightChain(lightChainListBox.getSelected());
         antibodyDTO.setType(typeListBox.getSelected());
 
+
         // do not assing
         return antibodyDTO;
     }

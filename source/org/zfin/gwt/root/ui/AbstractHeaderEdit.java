@@ -42,12 +42,14 @@ public abstract class AbstractHeaderEdit<T extends RelatedEntityDTO> extends Abs
     public void working() {
         super.working();
         nameBox.setEnabled(false);
+
     }
 
     @Override
     public void notWorking() {
         super.notWorking();
         nameBox.setEnabled(true);
+
     }
 
     @Override

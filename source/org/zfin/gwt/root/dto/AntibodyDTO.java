@@ -14,6 +14,15 @@ public class AntibodyDTO extends MarkerDTO {
     String lightChain ;
     String type ;
     List<NoteDTO> externalNotes ;
+     String registryID;
+
+    public String getRegistryID() {
+        return registryID;
+    }
+
+    public void setRegistryID(String registryID) {
+        this.registryID = registryID;
+    }
 
     public AntibodyDTO copyFrom(MarkerDTO otherMarkerDTO){
         setName(otherMarkerDTO.getName());
