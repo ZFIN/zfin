@@ -11,12 +11,18 @@ import {
     getTopics,
     validate,
     getIndexed,
-    updateIndexed, updateTopic, addTopic
+    updateIndexed,
+    updateTopic,
+    addTopic,
+    addNote,
+    updateNote,
+    deleteNote
 } from "../api/publication";
 import PubTrackerPanel from "../components/PubTrackerPanel";
 import PubTrackerStatus from "../components/PubTrackerStatus";
 import PubTrackerIndexed from "../components/PubTrackerIndexed";
 import PubTrackerTopics from "../components/PubTrackerTopics";
+import PubTrackerNotes from "../components/PubTrackerNotes";
 
 class PubTracker extends React.Component {
     constructor(props) {
@@ -38,6 +44,9 @@ class PubTracker extends React.Component {
         this.handleValidationCancel = this.handleValidationCancel.bind(this);
         this.handleIndexedToggle = this.handleIndexedToggle.bind(this);
         this.handleTopicSave = this.handleTopicSave.bind(this);
+        this.handleAddNote = this.handleAddNote.bind(this);
+        this.handleEditNote = this.handleEditNote.bind(this);
+        this.handleDeleteNote = this.handleDeleteNote.bind(this);
     }
 
     componentDidMount() {
@@ -109,9 +118,35 @@ class PubTracker extends React.Component {
         });
     }
 
+    handleAddNote(note) {
+        return addNote(this.props.pubId, note).then(note => this.setState({
+            notes: update(this.state.notes, {$unshift: [note]})
+        }));
+    }
+
+    handleEditNote(note) {
+        const { notes } = this.state;
+        const idx = notes.findIndex(other => other.zdbID === note.zdbID);
+        return updateNote(note.zdbID, note).then(note => {
+            this.setState({
+                notes: update(notes, {[idx]: {$set: note}})
+            });
+        });
+    }
+
+    handleDeleteNote(note) {
+        const { notes } = this.state;
+        const idx = notes.findIndex(other => other.zdbID === note.zdbID);
+        return deleteNote(note.zdbID).then(() => {
+            this.setState({
+                notes: update(notes, {$splice: [[idx, 1]]})
+            });
+        });
+    }
+
     render() {
         const { pubId, userId } = this.props;
-        const { curators, indexed, indexedLoading, locations, status, statusLoading, statuses, topics, validationWarnings } = this.state;
+        const { curators, indexed, indexedLoading, locations, notes, status, statusLoading, statuses, topics, validationWarnings } = this.state;
 
         const statusHeader = [
             'Status',
@@ -168,7 +203,12 @@ class PubTracker extends React.Component {
                 </PubTrackerPanel>
 
                 <PubTrackerPanel title='Notes'>
-                    !! NOTES !!
+                    <PubTrackerNotes
+                        notes={notes}
+                        onAddNote={this.handleAddNote}
+                        onDeleteNote={this.handleDeleteNote}
+                        onEditNote={this.handleEditNote}
+                    />
                 </PubTrackerPanel>
 
                 <PubTrackerPanel title='Contact Authors'>
