@@ -15,6 +15,9 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.AntibodyMarkerService;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,7 @@ public class AntibodyViewController {
 
     @Autowired
     private MarkerRepository markerRepository;
+    private SequenceRepository sequenceRepository;
 
     @Autowired
     private MarkerService markerService;
@@ -63,6 +67,8 @@ public class AntibodyViewController {
 
         // set source
         antibodyBean.setSuppliers(markerRepository.getSuppliersForMarker(antibody.getZdbID()));
+
+        antibodyBean.setAbRegistryID(markerRepository.getABRegID(antibody.getZdbID()));
 
 //      CITATIONS
         antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));

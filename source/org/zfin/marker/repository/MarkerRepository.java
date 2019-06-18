@@ -366,6 +366,7 @@ public interface MarkerRepository {
     List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker construct, boolean b, MarkerRelationship.Type... types);
 
     MarkerDBLink getMarkerDBLink(String linkId);
+    String getABRegID(String zdbID);
 
     List<LinkDisplay> getMarkerLinkDisplay(String dbLinkId);
 
