@@ -65,6 +65,14 @@
 </tr>
 <tr>
     <th>
+        Antibody Registry ID:
+    </th>
+    <td>
+       <a href=http://antibodyregistry.org/search.php?q=${antibodyBean.abRegistryID}>${antibodyBean.abRegistryID}</a>
+    </td>
+</tr>
+<tr>
+    <th>
         Source:
     </th>
     <td>
