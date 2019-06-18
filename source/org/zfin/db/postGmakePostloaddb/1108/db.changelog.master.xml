@@ -15,5 +15,12 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-502.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-512.sql" />   
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6281.sql" />
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6234a.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6234_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6234.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6234.sql" />
+
+
  
 </databaseChangeLog>
