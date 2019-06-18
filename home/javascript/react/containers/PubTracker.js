@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import update from 'immutability-helper';
 import {
     getCurators,
     getLocations,
@@ -10,11 +11,12 @@ import {
     getTopics,
     validate,
     getIndexed,
-    updateIndexed
+    updateIndexed, updateTopic, addTopic
 } from "../api/publication";
 import PubTrackerPanel from "../components/PubTrackerPanel";
 import PubTrackerStatus from "../components/PubTrackerStatus";
 import PubTrackerIndexed from "../components/PubTrackerIndexed";
+import PubTrackerTopics from "../components/PubTrackerTopics";
 
 class PubTracker extends React.Component {
     constructor(props) {
@@ -35,6 +37,7 @@ class PubTracker extends React.Component {
         this.handleCloseValidate = this.handleCloseValidate.bind(this);
         this.handleValidationCancel = this.handleValidationCancel.bind(this);
         this.handleIndexedToggle = this.handleIndexedToggle.bind(this);
+        this.handleTopicSave = this.handleTopicSave.bind(this);
     }
 
     componentDidMount() {
@@ -49,16 +52,21 @@ class PubTracker extends React.Component {
     }
 
     handleStatusSave(status) {
+        const {pubId} = this.props;
         this.setState({statusLoading: true});
-        updateStatus(this.props.pubId, status).then(status => this.setState({
-            status,
-            statusLoading: false,
-            validationWarnings: [],
-        }));
-        // if closing, refetch topics
+        updateStatus(pubId, status).then(status => {
+            this.setState({
+                status,
+                statusLoading: false,
+                validationWarnings: [],
+            });
+            if (status.status.type === 'CLOSED') {
+                getTopics(pubId).then(topics => this.setState({topics}));
+            }
+        });
     }
 
-    handleCloseValidate() {
+    handleCloseValidate(status) {
         this.setState({statusLoading: true});
         validate(this.props.pubId).then(validation => {
             if (validation.warnings.length > 0) {
@@ -67,7 +75,7 @@ class PubTracker extends React.Component {
                     statusLoading: false,
                 });
             } else {
-                this.handleStatusSave()
+                this.handleStatusSave(status)
             }
         })
     }
@@ -86,9 +94,24 @@ class PubTracker extends React.Component {
         }));
     }
 
+    handleTopicSave(topic) {
+        let request;
+        if (topic.zdbID) {
+            request = updateTopic(topic.zdbID, topic);
+        } else {
+            request = addTopic(this.props.pubId, topic);
+        }
+        request.then(topic => {
+            const idx = this.state.topics.findIndex(other => other.topic === topic.topic);
+            this.setState({
+                topics: update(this.state.topics, {[idx]: {$set: topic}})
+            });
+        });
+    }
+
     render() {
         const { pubId, userId } = this.props;
-        const { curators, indexed, indexedLoading, locations, status, statusLoading, statuses, validationWarnings } = this.state;
+        const { curators, indexed, indexedLoading, locations, status, statusLoading, statuses, topics, validationWarnings } = this.state;
 
         const statusHeader = [
             'Status',
@@ -138,7 +161,10 @@ class PubTracker extends React.Component {
                 </PubTrackerPanel>
 
                 <PubTrackerPanel title='Topics'>
-                    !! TOPICS !!
+                    <PubTrackerTopics
+                        onTopicSave={this.handleTopicSave}
+                        topics={topics}
+                    />
                 </PubTrackerPanel>
 
                 <PubTrackerPanel title='Notes'>

@@ -53,6 +53,14 @@ export const getTopics = (pubId) => {
     return http.get(`/action/publication/${pubId}/topics`);
 };
 
+export const addTopic = (pubId, topic) => {
+    return http.post('/action/publication/' + pubId + '/topics', topic);
+};
+
+export const updateTopic = (topicId, topic) => {
+    return http.post('/action/publication/topics/' + topicId, topic);
+};
+
 export const validate = (pubId) => {
     return http.post(`/action/publication/${pubId}/validate`, {});
 };
