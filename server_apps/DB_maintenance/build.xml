@@ -41,6 +41,9 @@
             <include name="*.jar"/>
             <include name="*.zip"/>
         </fileset>
+        <fileset dir="${env.SOURCEROOT}/lib/Java">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <target name="init">
