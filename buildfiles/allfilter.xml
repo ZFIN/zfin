@@ -196,6 +196,5 @@
 <filter token="WIKI_USER" value="${WIKI_USER}"/>
 <filter token="ZDBHOME_BACKGROUND" value="${ZDBHOME_BACKGROUND}"/>
 <filter token="ZFIN_ADMIN" value="${ZFIN_ADMIN}"/>
-<filter token="ZFIN_COOKIE" value="${ZFIN_COOKIE}"/>
 </filterset>
 </project>

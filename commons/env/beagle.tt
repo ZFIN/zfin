@@ -84,7 +84,6 @@
 <!--|WEB_ADMIN_EMAIL|-->	informix\@zfin.org
 <!--|WIKI_HOST|-->	wiki.zfin.org
 <!--|ZFIN_ADMIN|-->	informix\@zfin.org
-<!--|ZFIN_COOKIE|-->	st4mwtR
 # ----------------  SANITY CHECKS  -------------
 
 # The last two tags are special in makespecific.  They are used to detect 
