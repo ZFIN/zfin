@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.exec.ExecProcess;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -19,6 +18,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -94,8 +96,10 @@ public class DatabaseInfoController {
 
     @RequestMapping("/deployed-version")
     public String viewDeployedVersion(Model model) throws ServletException, IOException, InterruptedException {
-        model.addAttribute("commit", ExecProcess.exec("git rev-parse HEAD"));
-        model.addAttribute("branch", ExecProcess.exec("git rev-parse --abbrev-ref HEAD"));
+        File file = new File("git-info.txt");
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        model.addAttribute("commit", reader.readLine());
+        model.addAttribute("branch", reader.readLine());
         model.addAttribute("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
         return "deployed-version";
     }
@@ -198,7 +202,7 @@ public class DatabaseInfoController {
 
     private DatabaseMetaData getMetaData() {
         final Session session = HibernateUtil.currentSession();
-        return session.doReturningWork(new ReturningWork<DatabaseMetaData>(){
+        return session.doReturningWork(new ReturningWork<DatabaseMetaData>() {
             @Override
             public DatabaseMetaData execute(Connection connection) throws SQLException {
                 DatabaseMetaData meta = null;
@@ -221,12 +225,11 @@ public class DatabaseInfoController {
         ComboPooledDataSource pds = (ComboPooledDataSource) ictx.lookup("java:comp/env/jdbc/zfin");
 
         DBConnectionPoolBean bean = new DBConnectionPoolBean(pds.getNumConnectionsDefaultUser(),
-                                                             pds.getNumBusyConnectionsDefaultUser(),
-                                                             pds.getNumIdleConnectionsDefaultUser());
+                pds.getNumBusyConnectionsDefaultUser(),
+                pds.getNumIdleConnectionsDefaultUser());
 
         return bean;
     }
-
 
 
     class ThreadInfoSorting implements Comparator<ThreadInfo> {
