@@ -421,6 +421,7 @@ task make(type: GradleBuild) {
              ':server_apps:data_transfer:PUBMED:deployFiles',          
              ':server_apps:Reports:deployFiles',
              'deployPackageFiles',
+             'deployGitInfoFile',
              ':cgi-bin:deployFiles'
     ]
 }
