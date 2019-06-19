@@ -1,11 +1,11 @@
 --liquibase formatted sql
---changeset pm:PUB-529
+--changeset pm:PUB-536
 
 select distinct pth_pub_zdb_id as pubid
 into tmp_pub
 from pub_tracking_history, publication,record_attribution,journal
 where pth_pub_zdb_id=zdb_id
-and pth_status_id=1
+and pth_status_id=4
 and jtype='Journal'
 and pub_jrnl_zdb_id=jrnl_zdb_id
 and jrnl_abbrev not like '%Tox%'
