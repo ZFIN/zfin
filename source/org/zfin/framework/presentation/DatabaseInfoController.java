@@ -19,9 +19,9 @@ import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -95,9 +95,10 @@ public class DatabaseInfoController {
     }
 
     @RequestMapping("/deployed-version")
-    public String viewDeployedVersion(Model model) throws ServletException, IOException, InterruptedException {
-        File file = new File("git-info.txt");
-        BufferedReader reader = new BufferedReader(new FileReader(file));
+    public String viewDeployedVersion(Model model) throws IOException {
+        Class clazz = DatabaseInfoController.class;
+        InputStream inputStream = clazz.getResourceAsStream("/git-info.txt");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         model.addAttribute("commit", reader.readLine());
         model.addAttribute("branch", reader.readLine());
         model.addAttribute("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
