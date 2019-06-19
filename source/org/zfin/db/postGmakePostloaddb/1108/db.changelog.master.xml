@@ -13,6 +13,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-544.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6273.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-502.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-512.sql" />   
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-512.sql" /> 
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/update_image_and_pdf_paths.sql"/>
  
 </databaseChangeLog>

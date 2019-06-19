@@ -44,7 +44,7 @@ new File(ACTIVATED_PUBS).withWriter { output ->
                 pubmedId = article.MedlineCitation.PMID
                 status = article.PubmedData.PublicationStatus
                 if (status == 'ppublish' || status == 'epublish') {
-                    output.writeLine([pubmedId, status].join(","))
+                    output.writeLine([pubmedId, zdbId].join(","))
                     if (article.PubmedData.ArticleIdList.ArticleId.size() > 0) {
                         article.PubmedData.ArticleIdList.ArticleId.each { articleId ->
                             if (articleId.@IdType == 'pmc') {
@@ -98,7 +98,6 @@ PubmedUtils.dbaccess DBNAME, """
     WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE accession_no = pmid)
     and pub_mid is null ;   
     
-Updated upstream
    INSERT INTO pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_set_by)
        SELECT zdb_id, pts_pk_id, 'ZDB-PERS-170918-1'
           from tmp_activation, publication, pub_tracking_status

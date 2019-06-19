@@ -37,13 +37,13 @@
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
-<!--|IMAGE_LOAD|-->	/imageLoadUp
+<!--|IMAGE_LOAD|-->	/pubs/
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	wukong
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	xshao\@zfin.org
-<!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
+<!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp/pubs
 <!--|LOCUS_REGISTRATION_EMAIL|-->	xshao\@zfin.org
 <!--|MACHINE_NAME|-->	iris
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
@@ -54,7 +54,7 @@
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PARTNER_SOURCEROOT|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	xshao\@zfin.org
-<!--|PDF_LOAD|-->	/PDFLoadUp
+<!--|PDF_LOAD|-->	/
 <!--|PGBINDIR|-->	/opt/postgres/postgresql/bin
 <!--|PGDATA|-->	/opt/postgres/data
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	xshao\@zfin.org

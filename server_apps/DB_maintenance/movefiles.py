@@ -21,7 +21,9 @@ def do_query(conn):
 
     cur.execute("SELECT distinct img_zdb_id, fig_source_zdb_id, img_image "
                 "     FROM figure, image WHERE fig_zdb_id = img_fig_zdb_id"
-                "     ORDER BY img_zdb_id")
+                " and img_zdb_id like 'ZDB-IMAGE-19%'"
+                "     ORDER BY fig_source_zdb_id"
+                )
 
     for img_id, fig_source_id, img_name in cur.fetchall():
 
@@ -37,29 +39,29 @@ def do_query(conn):
         fullPathPDFDir = os.environ['LOADUP_FULL_PATH']+"/pubs/"+year+"/"+fig_source_id
 
         if os.path.isdir(fullPathPDFDir) and not os.path.exists(fullPathPDFDir+"/"+img_id):
-            moveImages(fullPathPDFDir, img_id, img_name)
+            moveImages(fullPathPDFDir, img_id)
             file.write(img_id+"|"+fullPathPDFDir+img_id)
 
         else:
             print "cant find file dir: " + fullPathPDFDir
             if os.path.isdir(yearDir):
                 os.mkdir(fullPathPDFDir)
-                moveImages(fullPathPDFDir, img_id, img_name)
+                moveImages(fullPathPDFDir, img_id)
                 file.write(img_id + "|" + fullPathPDFDir + "/" + img_id +"\n")
 
             else:
                 os.mkdir(yearDir)
                 os.mkdir(fullPathPDFDir)
-                moveImages(fullPathPDFDir, img_id, img_name)
+                moveImages(fullPathPDFDir, img_id)
                 file.write(img_id + "|" + fullPathPDFDir + "/" +img_id+"\n")
 
 
-def moveImages(fullPathPDFDir, img_id, img_name):
+def moveImages(fullPathPDFDir, img_id):
 
     pattern = '/research/zcentral/loadUp/imageLoadUp/' + img_id + '*'
 
     for imgFile in glob.glob(pattern):
-        print(fullPathPDFDir)
+        print(imgFile)
         copy(imgFile, fullPathPDFDir)
 
     pattern = '/research/zcentral/loadUp/imageLoadUp/medium/' + img_id + '*'
