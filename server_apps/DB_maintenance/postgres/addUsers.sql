@@ -1,10 +1,16 @@
-create user staylor with superuser;
-create user ryanm with superuser;
-create user pkalita with superuser;
-create user pm with superuser;
-create user kschaper with superuser;
-create user cmpich with superuser;
-create user xshao with superuser;
-create user informix with superuser;
-create user zfishweb with superuser;
-create user zfinner with superuser;
+CREATE OR REPLACE FUNCTION add_users() RETURNS void AS $$
+DECLARE
+  userlist text[] := ARRAY['staylor','ryanm','pkalita','pm','kschaper','cmpich','xshao','informix','zfishweb','zfinner'];
+  username text;
+BEGIN
+  FOREACH username IN ARRAY userlist
+  LOOP
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = username) THEN
+      EXECUTE format('CREATE user %s WITH superuser', username);
+    END IF;
+  END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+
+SELECT add_users();
+DROP FUNCTION IF EXISTS add_users();

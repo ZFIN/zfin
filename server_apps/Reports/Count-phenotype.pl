@@ -1,4 +1,4 @@
-#! /private/bin/perl -w
+#! /opt/zfin/bin/perl -w
 #
 # This monthly-run script queries the statistics on
 # ZFIN nomenclature and expression pattern related

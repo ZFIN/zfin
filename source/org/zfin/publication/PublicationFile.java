@@ -1,5 +1,7 @@
 package org.zfin.publication;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import javax.persistence.*;
 
 @Entity
@@ -71,6 +73,6 @@ public class PublicationFile implements Comparable<PublicationFile> {
         if (typeCompare != 0) {
             return typeCompare;
         }
-        return originalFileName.compareTo(o.getOriginalFileName());
+        return ObjectUtils.compare(originalFileName, o.getOriginalFileName());
     }
 }

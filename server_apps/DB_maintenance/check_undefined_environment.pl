@@ -1,4 +1,4 @@
-#! /private/bin/perl -w
+#! /opt/zfin/bin/perl -w
 #
 # check_undefined_environment.pl
 #

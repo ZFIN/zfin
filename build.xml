@@ -123,16 +123,11 @@
     <!-- ====================================================================== -->
 
     <target name="prepare" depends="hibernate-available" description="Prepares directories for compilation">
-        <property name="DIALECT" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
-        <echo>Dialect Class: ${DIALECT}</echo>
         <mkdir dir="${classbin.dir}"/>
         <mkdir dir="${classbin.dir}/resources"/>
-        <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}">
-            <filterset>
-                <filter token="DIALECT" value="${DIALECT}"/>
-            </filterset>
-        </copy>
+        <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
         <copy file="${conf.dir}/hibernate-gbrowse.cfg.xml" todir="${classbin.dir}"/>
+        <copy file="${conf.dir}/mchange-log.properties" todir="${classbin.dir}"/>
         <copy file="${commons.dir}/${LOG4J_FILE}" tofile="${web-inf.dir}/log4j2.xml" failonerror="false">
             <filterset>
                 <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>

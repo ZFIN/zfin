@@ -37,7 +37,7 @@
 <!--|INTERNAL_BLAST_PATH|-->	/research/zblastfiles/zmore/dev_blastdb/Current
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	informix\@zfin.org
-<!--|LOADUP_FULL_PATH|-->	/private/ZfinLinks/loadUp
+<!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@zfin.org
 <!--|MACHINE_NAME|-->	zygotix
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
@@ -78,7 +78,6 @@
 <!--|WEB_ADMIN_EMAIL|-->	informix\@zfin.org
 <!--|WIKI_HOST|-->	wiki.zfin.org
 <!--|ZFIN_ADMIN|-->	informix\@zfin.org
-<!--|ZFIN_COOKIE|-->	st4mwtR
 # ----------------  SANITY CHECKS  -------------
 
 # The last two tags are special in makespecific.  They are used to detect 

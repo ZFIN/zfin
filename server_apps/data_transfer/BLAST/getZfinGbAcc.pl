@@ -1,4 +1,4 @@
-#!/private/bin/perl -W
+#!/opt/zfin/bin/perl -W
 #
 # This script generates ZFIN GenBank accession and 
 # GenBank RNA accession lists for Genomix. Since it is

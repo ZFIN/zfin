@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 
 ## generateSQLsForMergingRecords.pl
 ## generateSQLsForMergingRecords.pl ZDB_ID1 ZDB_ID2

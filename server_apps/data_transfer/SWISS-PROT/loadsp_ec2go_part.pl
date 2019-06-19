@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+#!/opt/zfin/bin/perl 
 
 #
 # loadsp_ec2gopart.pl

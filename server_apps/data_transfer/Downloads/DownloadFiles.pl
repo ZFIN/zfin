@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+#!/opt/zfin/bin/perl -w
 #-----------------------------------------------------------------------
 # Runs script to create data files for public download.
 #
@@ -49,7 +49,7 @@ use DBI;
 # set environment variables
 
 $ENV{"DBDATE"}="Y4MD-";
-$ENV{"JAVA_HOME"}="/private/apps/java";
+$ENV{"JAVA_HOME"}="/usr/lib/jvm/java-openjdk";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
 
@@ -518,4 +518,4 @@ system("cp <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 
 system("<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dumper.sh") and die "error running dumper.sh";
 
-system("/private/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
+system("/opt/zfin/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");

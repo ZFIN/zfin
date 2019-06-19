@@ -202,7 +202,6 @@ WIKI_PUSH_TO_WIKI,
 WIKI_USER,
 ZDBHOME_BACKGROUND,
 ZFIN_ADMIN,
-ZFIN_COOKIE,
 ;
 private String value;
 private ZfinPropertiesEnum(String value){this.value=value;}

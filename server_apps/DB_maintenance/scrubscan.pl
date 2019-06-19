@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+#!/opt/zfin/bin/perl -w
 #------------------------------------------------------------------------
 #
 # Script to scan all occurrences of char and varchar columns in all tables 

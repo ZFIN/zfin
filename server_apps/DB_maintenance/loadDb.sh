@@ -15,7 +15,7 @@ source $4
 cd $2
 set dumpToUse = `/bin/ls -1t | head -1` 
 
-/private/ZfinLinks/Commons/bin/loaddb.pl $1 $dumpToUse
+/opt/zfin/bin/loaddb.pl $1 $dumpToUse
 
 cd $3
 

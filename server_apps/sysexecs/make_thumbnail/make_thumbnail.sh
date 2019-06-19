@@ -1,4 +1,4 @@
-#!/private/bin/perl -wT
+#!/opt/zfin/bin/perl -wT
 $ENV{PATH} = "/local/apps/netpbm/bin:/bin";
 my $fullImageFile = $1;
 my $thumbnailFile = $1;

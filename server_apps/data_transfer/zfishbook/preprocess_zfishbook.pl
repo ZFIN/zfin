@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 
 # FILE: preprocess_zfishbook.pl
 

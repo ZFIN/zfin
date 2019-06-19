@@ -157,7 +157,7 @@ endif
 
 # --- Java
 
-JAVAHOME  = /private/apps/java
+JAVAHOME  = /usr/lib/jvm/java-openjdk
 JAVAC      = $(JAVAHOME)/bin/javac
 
 
@@ -170,7 +170,7 @@ JAVACFLAGS = -source 1.4 -target 1.4
 
 # --- Tomcat related
 
-CONTEXT_DIR = /private/apps/tomcat/conf/Catalina/$(DOMAIN_NAME)
+CONTEXT_DIR = /opt/apache/apache-tomcat/conf/Catalina/$(DOMAIN_NAME)
 
 SET_CONTEXT_DESCRIPTOR = ${COMMONS_BIN}/setContextDescriptor.pl
 

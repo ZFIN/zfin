@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 
 # FILE: addNewClonesJSmith.pl
 # one time use script

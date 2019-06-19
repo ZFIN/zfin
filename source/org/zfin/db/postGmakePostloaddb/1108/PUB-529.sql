@@ -12,6 +12,7 @@ and jrnl_abbrev not like '%Tox%'
 and pub_date between '0012-07-24' and '2005-12-31'
 and zdb_id=recattrib_source_zdb_id
 and recattrib_data_zdb_id not like 'ZDB-FIG%';
+
 update pub_tracking_history
 set pth_status_id=11
 from tmp_pub

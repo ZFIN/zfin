@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 
 ## generatePostMergeSQLs.pl
 ## generatePostMergeSQLs.pl ZDB_ID1 ZDB_ID2

@@ -24,7 +24,15 @@ public class AntibodyMarkerBean extends MarkerBean {
     private int numberOfPublications ;
     private int numberOfDistinctComposedTerms ;
     private List<MarkerRelationshipPresentation> antigenGenes;
+    private String abRegistryID;
 
+    public String getAbRegistryID() {
+        return abRegistryID;
+    }
+
+    public void setAbRegistryID(String abRegistryID) {
+        this.abRegistryID = abRegistryID;
+    }
 
     public ExpressionSummaryCriteria getExpressionSummaryCriteria() {
         return expressionSummaryCriteria;

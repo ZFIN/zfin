@@ -38,7 +38,7 @@ date;
 cd <!--|SOURCEROOT|-->
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
-/private/bin/ant run-phenotypemart-unittests >&! reports/tests/phenotypeMartUnitTests.txt
+/opt/zfin/bin/ant run-phenotypemart-unittests >&! reports/tests/phenotypeMartUnitTests.txt
 cp reports/tests/phenotypeMartUnitTests.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/.
 
 if ($? != 0) then

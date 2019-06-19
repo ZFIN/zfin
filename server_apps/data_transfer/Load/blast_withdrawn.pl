@@ -1,4 +1,4 @@
-#!/private/bin/perl -T
+#!/opt/zfin/bin/perl -T
 ##
 ##  fetch the list of db_link that point to vega_withdrawn
 ##  blast each acc_num against the vega_withdrawn database 

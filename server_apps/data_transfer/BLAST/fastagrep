@@ -1,4 +1,4 @@
-#! /private/bin/perl 
+#! /opt/zfin/bin/perl 
 
 
 # FASTA grep tool by Tim Booth - tbooth@ceh.ac.uk, http://nebc.nerc.ac.uk

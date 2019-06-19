@@ -1,6 +1,7 @@
 package org.zfin.gwt.marker.server;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.eclipse.jdt.internal.compiler.ast.Reference;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyType;
@@ -21,6 +22,8 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.*;
+import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
     private transient Logger logger = LogManager.getLogger(AntibodyRPCServiceImpl.class);
     private final MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private final AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
+    private final SequenceRepository sr=RepositoryFactory.getSequenceRepository();
 
 
     @Override
@@ -47,6 +51,7 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
         antibodyDTO.setHeavyChain(antibody.getHeavyChainIsotype());
         antibodyDTO.setLightChain(antibody.getLightChainIsotype());
         antibodyDTO.setType(antibody.getClonalType());
+        antibodyDTO.setRegistryID(markerRepository.getABRegID(antibody.getZdbID()));
 
 
         antibodyDTO.setSuppliers(MarkerService.getSuppliers(antibody));
@@ -175,11 +180,40 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
             antibody.setName(dto.getName());
 
             InfrastructureService.insertUpdate(antibody, "Antibody Name", oldName, antibody.getName());
+            HibernateUtil.currentSession().update(antibody);
+            updateAntibodyWiki(antibody);
+
+        }
+        if (markerRepository.getABRegID(antibody.getZdbID())!=null){
+            ReferenceDatabase refDB = sr.getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
+            MarkerDBLink mdb = markerRepository.getDBLink(antibody, markerRepository.getABRegID(antibody.getZdbID()), refDB);
+
+            if (dto.getRegistryID()!="") {
+
+
+
+               mdb.setAccessionNumber(dto.getRegistryID());
+
+               HibernateUtil.currentSession().save(mdb);
+           }
+            else{
+                HibernateUtil.currentSession().delete(mdb);
+            }
+        }
+        else{
+                ReferenceDatabase refDB = sr.getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
+                MarkerDBLink mdb = new MarkerDBLink();
+                mdb.setMarker(antibody);
+                mdb.setAccessionNumber(dto.getRegistryID());
+                mdb.setReferenceDatabase(refDB);
+                HibernateUtil.currentSession().save(mdb);
+            }
+
+            HibernateUtil.flushAndCommitCurrentSession();
         }
 
-        HibernateUtil.currentSession().update(antibody);
-        HibernateUtil.flushAndCommitCurrentSession();
 
-        updateAntibodyWiki(antibody);
+       // HibernateUtil.flushAndCommitCurrentSession();
+
+
     }
-}

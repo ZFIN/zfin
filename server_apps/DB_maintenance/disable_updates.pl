@@ -1,4 +1,4 @@
-#!/private/bin/perl -T
+#!/opt/zfin/bin/perl -T
 
 use DBI;
 use MIME::Lite;

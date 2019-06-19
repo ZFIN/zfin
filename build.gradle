@@ -334,6 +334,21 @@ task deployPackageFiles() {
     }
 }
 
+task deployGitInfoFile() {
+    description 'Deploy git-info.txt file into TARGETROOT'
+    group 'ZFIN Deployment'
+    def packageFiles = 'git-info.txt'
+    doLast {
+        exec {
+            commandLine 'bash', './generate-git-info.sh'
+        }
+        copy {
+            from(packageFiles)
+            into(targetroot+"/home/WEB-INF/classes")
+        }
+    }
+}
+
 project(':server_apps:data_transfer') {
     task "deployFiles"(type: ZfinTargetCopy) {
         from(project.projectDir) {
@@ -406,6 +421,7 @@ task make(type: GradleBuild) {
              ':server_apps:data_transfer:PUBMED:deployFiles',          
              ':server_apps:Reports:deployFiles',
              'deployPackageFiles',
+             'deployGitInfoFile',
              ':cgi-bin:deployFiles'
     ]
 }

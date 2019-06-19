@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/opt/zfin/bin/perl
 #
 # check gene_association file
 #

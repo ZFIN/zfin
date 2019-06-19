@@ -297,7 +297,7 @@ $(DEST)/vega_zfin.nt:  $(DEST)/vega_transcript.nt
 # tricky because this needs to be done as informix, setuid could help
 push_local_blast: $(DEST)/vega_transcript.nt
 	@echo "\n*******************   AS INFORMIX   ************************\n"
-	@echo "/private/bin/push_local_blastdb.sh $<"
+	@echo "/opt/zfin/bin/push_local_blastdb.sh $<"
 	@echo "\n************************************************************\n"
 
 clean_push_local_blast:
@@ -399,7 +399,7 @@ ottdarT_length.unl:	$(DEST)/vega_transcript.nt
 # from vega_reno_gene.nt
 
 query_ottdarT.unl: $(DEST)/vega_reno_gene.nt
-	grep "^>" $< |cut -f2 -d\| | /private/bin/tailpipe >  $@
+	grep "^>" $< |cut -f2 -d\| | /opt/zfin/bin/tailpipe >  $@
 	cp -f $@ $(DEST)/$@
 
 load_novel_transcript.log:
@@ -448,7 +448,7 @@ existing_withdrawn.fa:  $(BLASTFILES)/vega_withdrawn.fa
 	grep -c "^>" $@
 
 fresh_withdrawn.fa: $(DEST)/withdrawn.ottdarT  $(PREV)/vega_transcript.nt
-	/private/bin/fastagrep -f $+ > $@
+	/opt/zfin/bin/fastagrep -f $+ > $@
 	grep -c "^>" $@
 
 all_withdrawn.fa: existing_withdrawn.fa fresh_withdrawn.fa
@@ -462,12 +462,12 @@ select_withdrawn.lst: select_withdrawn.txt
 	cut -f1 $< > $@
 
 vega_withdrawn.fa: select_withdrawn.lst all_withdrawn.fa
-	/private/bin/fastagrep -f $+ > $@
+	/opt/zfin/bin/fastagrep -f $+ > $@
 	grep -c "^>" $@
 
 withdrawn_transcripts: vega_withdrawn.fa
 	@echo "\n*******************   AS INFORMIX   ************************\n"
-	@echo "/private/bin/push_local_blastdb.sh $<"
+	@echo "/opt/zfin/bin/push_local_blastdb.sh $<"
 	@echo "\n************************************************************\n"
 
 # ...should depend on blast database actually being in place

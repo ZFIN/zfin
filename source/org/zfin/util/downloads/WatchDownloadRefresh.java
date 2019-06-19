@@ -1,6 +1,7 @@
 package org.zfin.util.downloads;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -13,7 +14,6 @@ public class WatchDownloadRefresh {
 
     private final WatchService watcher;
     private final Map<WatchKey, Path> keys;
-    private boolean trace = false;
 
     private static final Logger LOG = LogManager.getLogger(WatchDownloadRefresh.class);
 
@@ -27,11 +27,9 @@ public class WatchDownloadRefresh {
      */
     private void register(Path dir) throws IOException {
         WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
-        if (trace) {
-            Path prev = keys.get(key);
-            if (prev == null) {
-                LOG.info("Registering Ontology Reload Directory: " + dir);
-            }
+        Path prev = keys.get(key);
+        if (prev == null) {
+            LOG.info("Registering Download Files Reload Directory: " + dir);
         }
         keys.put(key, dir);
     }
@@ -46,9 +44,6 @@ public class WatchDownloadRefresh {
         this.keys = new HashMap<>();
         this.downloadFileService = downloadFileService;
         register(dir);
-
-        // enable trace after initial registration
-        this.trace = true;
     }
 
     /**
@@ -84,7 +79,7 @@ public class WatchDownloadRefresh {
                 if (kind == ENTRY_CREATE) {
                     child.toFile().delete();
                     downloadFileService.updateCache();
-                    LOG.info("New file in reload-status found. Re-loading download cache");
+                    System.out.println("New file in reload-status found. Re-loading download cache");
                 }
             }
 

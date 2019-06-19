@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 #  This script creates a file that ZFIN sends to Stanford. The file is tab
 #  delimited with 2 columns, each gene that has a GO annotations and its corresponding UniProt#  ID.
 #  We must send the file via email to GO after running the script. A reminder

@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 #
 #
 #  This script creates a file that ZFIN sends to Stanford. The file is tab

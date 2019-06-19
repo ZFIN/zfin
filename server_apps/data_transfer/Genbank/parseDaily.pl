@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 #
 # The script reads GenBank daily update flat file, translate it 
 # into sets of fasta files, including gb set, mRNA set, DNA set,

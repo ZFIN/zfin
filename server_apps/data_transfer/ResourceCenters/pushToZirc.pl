@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+#!/opt/zfin/bin/perl 
 #  Script to create files for ZIRC to load
 #  output files are written to <!--|ROOT_PATH|-->/home/data_transfer/ZIRC/
 

@@ -1,4 +1,4 @@
-#!/private/bin/perl -w
+#!/opt/zfin/bin/perl -w
 #-----------------------------------------------------------------------
 # Runs script to create a page of markers that is linkable.  
 #

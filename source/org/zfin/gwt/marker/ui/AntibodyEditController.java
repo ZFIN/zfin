@@ -90,7 +90,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
                     antibodyViewClickLabel.setError(error);
                     antibodyBox.setError(error);
                 } else if (antibodyHeaderEdit.isDirty()) {
-                    String error = "Antibody has unsaved name change.";
+                    String error = "Antibody has unsaved name or registryID  change.";
                     antibodyViewClickLabel.setError(error);
                     antibodyHeaderEdit.setError(error);
                 } else if (markerNoteBox.isDirty() || markerNoteBox.hasDirtyNotes()) {

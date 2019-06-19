@@ -1,6 +1,7 @@
 package org.zfin.util.downloads;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.database.UnloadInfo;
 import org.zfin.properties.ZfinProperties;
@@ -54,6 +55,7 @@ public class DownloadFileService extends ArchiveService {
         // run a task within a separate thread of this thread pool
         executor.submit(() -> {
             Path dir = ZfinProperties.getDownloadReloadStatusDirectory();
+            System.out.println("Watching directory for download re-load: " + dir.toString());
             File file = dir.toFile();
             if (!file.exists())
                 file.mkdir();
@@ -62,7 +64,7 @@ public class DownloadFileService extends ArchiveService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Download re-fresh thread started: "+Thread.currentThread().getName());
+            System.out.println("Download re-fresh thread started: " + Thread.currentThread().getName());
         });
 
     }

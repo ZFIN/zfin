@@ -1,4 +1,4 @@
-#! /private/bin/rebol -sqw
+#! /opt/zfin/bin/rebol -sqw
 rebol [
 	date: 22-Apr-2008
 	author: "Tom Conlin"

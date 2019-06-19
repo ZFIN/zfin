@@ -8,17 +8,16 @@ import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.AntibodyDTO;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
-import org.zfin.gwt.root.ui.AbstractHeaderEdit;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.StandardDivNames;
+import org.zfin.gwt.root.ui.*;
 
 /**
  */
 public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
 
     // GUI name/type elements
-    private final HTMLTable table = new Grid(2, 2);
+    private final HTMLTable table = new Grid(3, 2);
+    protected final StringTextBox registryIDBox = new StringTextBox();
+
 
     public AntibodyHeaderEdit() {
         super();
@@ -41,6 +40,7 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
     protected void revertGUI() {
         zdbIDHTML.setHTML("<div class=\"attributionDefaultPub\">" + dto.getZdbID() + "</font>");
         nameBox.setText(dto.getName());
+        registryIDBox.setText(dto.getRegistryID());
         DeferredCommand.addCommand(new CompareCommand());
     }
 
@@ -51,6 +51,8 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
         table.setWidget(0, 1, zdbIDHTML);
         table.setText(1, 0, "Marker Name:");
         table.setWidget(1, 1, nameBox);
+        table.setText(2, 0, "Antibody Registry ID:");
+        table.setWidget(2, 1, registryIDBox);
         panel.add(table);
         panel.setStyleName("gwt-editbox");
 
@@ -77,6 +79,7 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
             final AntibodyDTO antibodyDTO = new AntibodyDTO();
             antibodyDTO.setZdbID(this.dto.getZdbID());
             antibodyDTO.setName(nameBox.getText());
+         //   antibodyDTO.setRegistryID(registryIDBox.getText());
 
             if (false == nameValidator.validate(nameBox.getText(), this)) return;
 
@@ -103,9 +106,12 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
         }
     }
 
-    public boolean isDirty() {
-        // check names
-        return nameBox.isDirty(dto.getName());
-    }
 
-}
+        public boolean isDirty() {
+            boolean isDirty = false;
+            isDirty = nameBox.isDirty(dto.getName()) || isDirty;
+            isDirty = registryIDBox.isDirty(dto.getRegistryID()) || isDirty;
+
+            return isDirty;
+        }    }
+

@@ -54,6 +54,7 @@
         <fileset dir="${env.SOURCEROOT}/lib/Java">
             <include name="*jdbc*.jar"/>
             <include name="postgres*.jar"/>
+            <include name="slf4*.jar"/>
         </fileset>
     </path>
 

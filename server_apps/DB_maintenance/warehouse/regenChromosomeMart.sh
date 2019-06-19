@@ -38,7 +38,7 @@ echo "done with runchromosomemart on <!--|DB_NAME|--> ";
 cd <!--|SOURCEROOT|-->
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
-/private/bin/ant run-chromosomemart-unittests >&! reports/tests/chromosomeMartUnitTestsPostgres.txt
+/opt/zfin/bin/ant run-chromosomemart-unittests >&! reports/tests/chromosomeMartUnitTestsPostgres.txt
 cp reports/tests/chromosomeMartUnitTestsPostgres.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/chromosomeMartPostgres/.
 
 if ($? != 0) then

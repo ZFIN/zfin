@@ -1,4 +1,4 @@
-#!/private/bin/perl
+#!/opt/zfin/bin/perl
 # checkAndUpdateJournals.pl
 # This script check the existing journals stored at ZFIN against the all journal file (ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt) 
 # from NCBI, reporting problems, and update the journal data accordingly.

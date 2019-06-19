@@ -1,0 +1,18 @@
+--liquibase formatted sql
+--changeset pm:PUB-554
+
+select distinct pth_pub_zdb_id as pubid
+into tmp_pub
+from pub_tracking_history, publication
+where pth_pub_zdb_id=zdb_id
+and pth_status_id=4
+and pth_location_id is null
+and jtype='Journal'
+and pub_date between between '0012-07-24' and '2005-12-31'
+and zdb_id  in (select recattrib_source_zdb_id from record_attribution)
+
+
+update pub_tracking_status
+set pth_status_id=11
+from tmp_pub
+where pth_pub_zdb_id=pubid;

@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+#!/opt/zfin/bin/perl 
 # -wT # changed tec 01-18-01
 #
 # submit_problem.cgi

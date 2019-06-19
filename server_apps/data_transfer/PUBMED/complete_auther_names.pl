@@ -1,4 +1,4 @@
-#! /private/bin/perl -w
+#! /opt/zfin/bin/perl -w
 # complete_auther_names.pl
 # load pubmed_publication_author with auther data from pubmed
 

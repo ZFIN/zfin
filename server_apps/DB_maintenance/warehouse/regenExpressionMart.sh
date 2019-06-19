@@ -38,7 +38,7 @@ echo "done with runexpressionmart on <!--|DB_NAME|-->";
 cd <!--|SOURCEROOT|-->
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
-/private/bin/ant run-expressionmart-unittests >&! reports/tests/expressionMartUnitTests.txt
+/opt/zfin/bin/ant run-expressionmart-unittests >&! reports/tests/expressionMartUnitTests.txt
 cp reports/tests/expressionMartUnitTests.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/expressionMart/.
 
 if ($? != 0) then

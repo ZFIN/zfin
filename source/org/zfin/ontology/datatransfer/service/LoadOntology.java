@@ -284,6 +284,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             row.add(pheno.getTermTwo().getEnd().getName());
             rows.add(row);
         }
+        LOG.warn(rows);
         emailStageReport(title, parentStage, childStage, subject, rows);
     }
 
@@ -298,6 +299,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             row.add(pheno.getTermTwo().getStart().getName());
             rows.add(row);
         }
+        LOG.warn(rows);
         emailStageReport(title, parentStage, childStage, subject, rows);
     }
 
