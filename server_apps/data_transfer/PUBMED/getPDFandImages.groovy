@@ -46,7 +46,7 @@ PubmedUtils.psql DBNAME, """
 
 def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
-    def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/")
+    def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/")
 
     dir.eachFileRecurse(FileType.FILES) { file ->
         if (file.name.endsWith('pdf')) {
@@ -58,8 +58,8 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
 def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
     def timeStart = new Date()
-    def yearDirectory = new File("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/")
-    def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId")
+    def yearDirectory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/")
+    def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId")
     if (!yearDirectory.exists()) {
         yearDirectory.mkdir()
     }
@@ -67,7 +67,7 @@ def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
         directory.mkdir()
     }
 
-    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId" + ".tar.gz")
+    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz")
     def out = new BufferedOutputStream(file)
 
     out << new URL(url).openStream()
@@ -76,15 +76,15 @@ def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
     TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
     println("download to filesystem duration:" + duration)
 
-    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId" + ".tar.gz"
-    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/$zdbId" + ".tar"
+    def gziped_bundle = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz"
+    def unzipped_output = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar"
     File unzippedFile = new File(unzipped_output)
     if (!unzippedFile.exists()) {
         PubmedUtils.gunzip(gziped_bundle, unzipped_output)
     }
 
     def timeStart2 = new Date()
-    def cmd = "cd " + "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
+    def cmd = "cd " + "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/ " + "&& /bin/tar -xf *.tar --strip 1"
     ["/bin/bash", "-c", cmd].execute().waitFor()
 
     def timeStop2 = new Date()
@@ -101,7 +101,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
         }
     }
     def markedUpBody = new StreamingMarkupBuilder().bindNode(article.body).toString()
-    def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/pubs/$pubYear/$zdbId/"
+    def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/"
     def tagMatch = markedUpBody =~ /<([^\/]*?):body/
     if (tagMatch.size() == 1) {
         def tag = tagMatch[0][1]
