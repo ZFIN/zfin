@@ -1,15 +1,8 @@
 load:
 	gradle loaddb
-	gradle buildDatabase
-	gradle make
-	gradle buildPostGmakeDatabase
-	gradle deployPostgresFunctions
-	gradle dropTriggers
-	gradle dropFunctions
-	gradle deployPostgresFunctions
-	gradle deployPostgresTriggers
+	gradle postloaddb
 
-rebuild:
+deploy:
 	gradle make
-	ant deploy-without-tests
+	ant deploy-without-tests deploy-solr restart-solr deploy-jobs 
 
