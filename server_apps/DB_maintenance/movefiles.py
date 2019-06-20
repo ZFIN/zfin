@@ -21,7 +21,6 @@ def do_query(conn):
 
     cur.execute("SELECT distinct img_zdb_id, fig_source_zdb_id, img_image "
                 "     FROM figure, image WHERE fig_zdb_id = img_fig_zdb_id"
-                " and img_zdb_id like 'ZDB-IMAGE-19%'"
                 "     ORDER BY fig_source_zdb_id"
                 )
 
@@ -40,20 +39,20 @@ def do_query(conn):
 
         if os.path.isdir(fullPathPDFDir) and not os.path.exists(fullPathPDFDir+"/"+img_id):
             moveImages(fullPathPDFDir, img_id)
-            file.write(img_id+"|"+fullPathPDFDir+img_id)
+            
 
         else:
             print "cant find file dir: " + fullPathPDFDir
             if os.path.isdir(yearDir):
                 os.mkdir(fullPathPDFDir)
                 moveImages(fullPathPDFDir, img_id)
-                file.write(img_id + "|" + fullPathPDFDir + "/" + img_id +"\n")
+                
 
             else:
                 os.mkdir(yearDir)
                 os.mkdir(fullPathPDFDir)
                 moveImages(fullPathPDFDir, img_id)
-                file.write(img_id + "|" + fullPathPDFDir + "/" +img_id+"\n")
+                
 
 
 def moveImages(fullPathPDFDir, img_id):
