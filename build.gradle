@@ -426,6 +426,33 @@ task make(type: GradleBuild) {
     ]
 }
 
+task getLatestSolrIndex() {
+    doLast {
+        println 'Upgrade Solr index to the latest production one...'
+        println "latest index: " + "find ./* -type d -prune -exec ls -d ".execute().text
+
+        def folder = "/research/zunloads/solr/zfindb";
+        def baseDir = new File(folder);
+        def files = baseDir.listFiles();
+        Arrays.sort(files, new Comparator<File>(){
+            public int compare(File f1, File f2)
+            {
+                return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+            } });
+        def latestIndex = files[0]
+        println latestIndex
+        def sout = new StringBuilder(), serr = new StringBuilder()
+        def procString = "ant restore-solr-core -DRESTORE_FROM=" + latestIndex.getAbsolutePath()
+        def proc = procString.execute()
+        def b = new StringBuffer()
+        proc.consumeProcessErrorStream(b)
+
+        println proc.text
+        println b.toString()
+        
+    }
+}
+
 task createSchemaSpy() {
     doLast {
         println 'Creating ER diagram for ' + ttNameMap.get('DB_NAME') + ' ...'
