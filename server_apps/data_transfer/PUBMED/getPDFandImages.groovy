@@ -199,9 +199,6 @@ def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear
     medium = "/bin/convert -thumbnail 500x550 " + fullFile + mediumFile
     medium.toString().execute()
 
-
-
-
 }
 
 def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
