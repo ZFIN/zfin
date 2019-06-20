@@ -32,20 +32,25 @@ public class Image implements Serializable {
     private String form;
     private String preparation;
     private Person owner;
-
-
-
+    private String medium;
     private String externalName;
     private String comments;
-
     private Set<Video> videos;
-
     private ImageStage imageStage;
-
     private GregorianCalendar insertedDate;
     private GregorianCalendar updatedDate;
     private Person insertedBy;
     private Person updatedBy;
+
+    public String getMedium() {
+        return medium;
+    }
+
+    public void setMedium(String medium) {
+        this.medium = medium;
+    }
+
+
 
 
     public Figure getFigure() {

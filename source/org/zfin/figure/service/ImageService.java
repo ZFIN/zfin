@@ -28,6 +28,7 @@ public class ImageService {
 
     private final static File IMAGE_LOADUP_DIR = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.IMAGE_LOAD.toString());
     private final static String THUMB = "_thumb";
+    private final static String MEDIUM = "_medium";
 
     public static Image processImage(Figure figure, MultipartFile file, Person owner) throws IOException {
         return processImage(figure, owner, false, file.getOriginalFilename(), file.getInputStream());
@@ -54,6 +55,7 @@ public class ImageService {
         image.setOwner(owner);
         image.setImageFilename("tmpvalue");
         image.setThumbnail("tmpvalue");
+        image.setMedium("tmpvalue");
         image.setVideoStill(isVideoStill);
         image.setInsertedDate(new GregorianCalendar());
         image.setInsertedBy(owner);
@@ -71,6 +73,7 @@ public class ImageService {
         String destinationBasename = image.getZdbID();
         String destinationFilename = destinationBasename + FilenameUtils.EXTENSION_SEPARATOR + extension;
         String thumbnailFilename = destinationBasename + THUMB + FilenameUtils.EXTENSION_SEPARATOR + extension;
+        String mediumFilename = destinationBasename + MEDIUM + FilenameUtils.EXTENSION_SEPARATOR + extension;
         File destinationFile = new File(IMAGE_LOADUP_DIR, destinationFilename);
         File thumbnailFile = new File(IMAGE_LOADUP_DIR, thumbnailFilename);
 
@@ -79,6 +82,7 @@ public class ImageService {
 
         image.setImageFilename(destinationFilename);
         image.setThumbnail(thumbnailFilename);
+        image.setMedium(mediumFilename);
         HibernateUtil.currentSession().save(image);
 
         RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(figure.getPublication(), "img_zdb_id",

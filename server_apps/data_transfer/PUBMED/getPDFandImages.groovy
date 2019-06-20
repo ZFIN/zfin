@@ -1,15 +1,15 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
+
 import groovy.io.FileType
-
-
+import groovy.time.TimeCategory
+import groovy.time.TimeDuration
 import groovy.util.slurpersupport.GPathResult
 import groovy.xml.StreamingMarkupBuilder
+
+import org.apache.commons.io.FilenameUtils
 import org.zfin.properties.ZfinProperties
 import org.zfin.properties.ZfinPropertiesEnum
-
-import groovy.time.*
-
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
@@ -25,9 +25,6 @@ FIGS_TO_LOAD = new File("figsToLoad.txt")
 PUB_FILES_TO_LOAD = new File("pdfsToLoad.txt")
 ADD_BASIC_PDFS_TO_DB = new File("pdfBasicFilesToLoad.txt")
 PUBS_TO_GIVE_PERMISSIONS = new File("pubsToGivePermission.txt")
-
-Date date = new Date()
-// go back two weeks to slurp up stragglers.
 
 
 def idsToGrab = [:]
@@ -180,11 +177,31 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                         image = it[2] + ".jpg"
                     }
                 }
-
+                makeThumbnailAndMediumImage(image, image.replace(".jpg", ""), zdbId, pubYear)
                 FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, pubYear + "/" + zdbId + "/" + image].join('|') + "\n")
             }
         }
     }
+}
+
+def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear) {
+
+    String extension = FilenameUtils.getExtension(fileName)
+
+    String thumbnailFilename = fileNameNoExtension + "_thumb" + FilenameUtils.EXTENSION_SEPARATOR + extension
+    String mediumFileName = fileNameNoExtension + "_medium" + FilenameUtils.EXTENSION_SEPARATOR + extension
+    File thumbnailFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", thumbnailFilename)
+    File mediumFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", mediumFileName)
+    File fullFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", fileName)
+
+    thumb = "/bin/convert -thumbnail 1000x64 " + fullFile + thumbnailFile
+    thumb.toString().execute()
+    medium = "/bin/convert -thumbnail 500x550 " + fullFile + mediumFile
+    medium.toString().execute()
+
+
+
+
 }
 
 def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
