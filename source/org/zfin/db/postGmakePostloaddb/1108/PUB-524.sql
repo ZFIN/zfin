@@ -1,6 +1,8 @@
 --liquibase formatted sql
 --changeset pm:PUB-524
 
+drop table if exists tmp_pub;
+
 select distinct pth_pub_zdb_id as pubid
 into tmp_pub
 from pub_tracking_history, publication
