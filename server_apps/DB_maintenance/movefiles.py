@@ -34,8 +34,8 @@ def do_query(conn):
             else:
                 year = "20" + year
 
-        yearDir = os.environ['LOADUP_FULL_PATH']+"/pubs/"+year+"/"
-        fullPathPDFDir = os.environ['LOADUP_FULL_PATH']+"/pubs/"+year+"/"+fig_source_id
+        yearDir = os.environ['LOADUP_FULL_PATH']+year+"/"
+        fullPathPDFDir = os.environ['LOADUP_FULL_PATH']+year+"/"+fig_source_id
 
         if os.path.isdir(fullPathPDFDir) and not os.path.exists(fullPathPDFDir+"/"+img_id):
             moveImages(fullPathPDFDir, img_id)
