@@ -23,8 +23,8 @@ public class ZfinPropertiesTest extends AbstractZfinPropertiesTest{
         assertEquals("Link Color", "#9980", ZfinPropertiesEnum.LINKBAR_COLOR.value());
         assertEquals("Email Address", "test@zfin.org", ZfinProperties.splitValues(ZfinPropertiesEnum.ZFIN_ADMIN)[0]);
         assertEquals("FTP Path", "${TARGETROOT_PREFIX}/ftp/test/${INSTANCE}", ZfinPropertiesEnum.FTP_ROOT.value());
-        assertEquals("Image Load Path", "/pubs", ZfinPropertiesEnum.IMAGE_LOAD.value());
-        assertEquals("Load Up Path", "/research/zcentral/loadUp", ZfinPropertiesEnum.LOADUP_FULL_PATH.value());
+        assertEquals("Image Load Path", "/pubs/", ZfinPropertiesEnum.IMAGE_LOAD.value());
+        assertEquals("Load Up Path", "/research/zcentral/loadUp/pubs", ZfinPropertiesEnum.LOADUP_FULL_PATH.value());
         assertEquals("PDF Path", "/pdf/", ZfinPropertiesEnum.PDF_PATH.value());
         assertEquals("test@zfin.org",ZfinPropertiesEnum.MICROARRAY_EMAIL.value());
     }
