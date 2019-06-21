@@ -626,4 +626,5 @@ public interface PublicationRepository extends PaginationParameter {
 
     PublicationProcessingChecklistEntry getProcessingChecklistEntry(long id);
 
+    List<PubmedPublicationAuthor> getPubmedPublicationAuthorsByPublication(Publication publication);
 }

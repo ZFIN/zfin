@@ -258,23 +258,33 @@ if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
     public List<Person> getAuthorSuggestions(String authorString) {
         List<Person> suggestions = new ArrayList<>();
 
+        ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
+
+        suggestions.addAll(profileRepository.getPeopleByFullName(authorString));
+
         String lastName = null;
         String firstInitial = null;
 
-        try {
+        if (authorString.contains(",")) {
             lastName = authorString.split(",")[0];
             firstInitial = authorString.split(",")[1].substring(1, 2);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            //if it couldn't split on a comma, don't even try to suggest anything
-            return suggestions;
+            
+            for (Person person : profileRepository.getPersonByLastNameEqualsAndFirstNameStartsWith(lastName.trim(), firstInitial)) {
+                if (!suggestions.contains(person)) {
+                    suggestions.add(person);
+                }
+            }
+
+            for (Person person : profileRepository.getPersonByLastNameStartsWithAndFirstNameStartsWith(lastName.trim(), firstInitial)) {
+                if (!suggestions.contains(person)) {
+                    suggestions.add(person);
+                }
+            }
+        }  else {
+            lastName = authorString;         
         }
 
-
-        ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
-
-        suggestions.addAll(profileRepository.getPersonByLastNameEqualsAndFirstNameStartsWith(lastName, firstInitial));
-
-        for (Person person : profileRepository.getPersonByLastNameStartsWithAndFirstNameStartsWith(lastName.trim(), firstInitial)) {
+        for (Person person : profileRepository.getPersonByLastNameEquals(lastName.trim())) {
             if (!suggestions.contains(person)) {
                 suggestions.add(person);
             }
@@ -285,8 +295,7 @@ if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
                 suggestions.add(person);
             }
         }
-
-
+        
         return suggestions;
     }
 
@@ -454,6 +463,16 @@ if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
         }
 
         return links;
+    }
+
+    public List<String> getAuthorStringList(List<PubmedPublicationAuthor> authors) {
+        List<String> strings = new ArrayList<>();
+
+        for (PubmedPublicationAuthor author : authors) {
+            strings.add(author.getLastName().trim() + ", " + author.getFirstName().trim());
+        }
+
+        return strings;
     }
 
 }

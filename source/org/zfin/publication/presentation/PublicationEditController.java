@@ -23,6 +23,7 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PubmedPublicationAuthor;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -206,7 +207,8 @@ public class PublicationEditController {
             bean.setAccessionNumber(publication.getAccessionNumber().toString());
         }
         model.addAttribute("publicationBean", bean);
-        model.addAttribute("authorStrings", publicationService.splitAuthorListString(publication.getAuthors()));
+        List<PubmedPublicationAuthor> authors = RepositoryFactory.getPublicationRepository().getPubmedPublicationAuthorsByPublication(publication);
+        model.addAttribute("authorStrings", publicationService.getAuthorStringList(authors));   
         model.addAttribute("allowCuration", publicationService.allowCuration(publication));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Link Authors: " + publication.getTitle());
@@ -235,8 +237,8 @@ public class PublicationEditController {
             return null;
         }
 
-
-        return publicationService.splitAuthorListString(publication.getAuthors());
+        List<PubmedPublicationAuthor> authors = RepositoryFactory.getPublicationRepository().getPubmedPublicationAuthorsByPublication(publication);
+        return publicationService.getAuthorStringList(authors);
     }
 
     @RequestMapping(value = "/{zdbID}/registered-authors")
