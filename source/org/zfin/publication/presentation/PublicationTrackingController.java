@@ -2,7 +2,8 @@ package org.zfin.publication.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,6 +182,10 @@ public class PublicationTrackingController {
         SortedSet<PersonDTO> curatorDTOs = profileRepository.getCurators().stream()
                 .map(converter::toPersonDTO)
                 .collect(Collectors.toCollection(TreeSet::new));
+        SortedSet<PersonDTO> studentsDTOs = profileRepository.getStudents().stream()
+                .map(converter::toPersonDTO)
+                .collect(Collectors.toCollection(TreeSet::new));
+        curatorDTOs.addAll(studentsDTOs);
         // Add currently logged in user to allow developers to act like curators on their own sites
         curatorDTOs.add(converter.toPersonDTO(ProfileService.getCurrentSecurityUser()));
         return curatorDTOs;
