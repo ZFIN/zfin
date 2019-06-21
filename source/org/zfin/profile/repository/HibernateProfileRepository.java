@@ -1016,6 +1016,14 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .list();
     }
 
+    public List<Person> getStudents() {
+        return HibernateUtil.currentSession()
+                .createCriteria(Person.class)
+                .add(Restrictions.eq("accountInfo.student", true))
+                .addOrder(Order.asc("fullName"))
+                .list();
+    }
+
     @Override
     public List<Person> getPersonByLastNameEquals(String lastName) {
         return HibernateUtil.currentSession().createCriteria(Person.class)
@@ -1023,5 +1031,5 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .addOrder(Order.asc("lastName"))
                 .addOrder(Order.asc("firstName"))
                 .list();
-
+    }
 }

@@ -2725,12 +2725,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
-    public PublicationProcessingChecklistEntry getProcessingChecklistEntry(long id) {
-        return (PublicationProcessingChecklistEntry) HibernateUtil.currentSession()
-                .get(PublicationProcessingChecklistEntry.class, id);
-    }
-
-    @Override
     public List<PubmedPublicationAuthor> getPubmedPublicationAuthorsByPublication(Publication publication) {
         return HibernateUtil.currentSession()
                 .createCriteria(PubmedPublicationAuthor.class)

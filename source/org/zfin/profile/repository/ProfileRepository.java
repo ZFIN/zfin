@@ -226,5 +226,7 @@ public interface ProfileRepository {
 
     List<Person> getCurators();
 
+    List<Person> getStudents();
+
     List<Person> getPersonByLastNameEquals(String lastName);
 }

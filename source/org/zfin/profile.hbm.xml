@@ -72,6 +72,7 @@
                 <property name="previousLoginDate" column="previous_login"/>
                 <property name="accountCreationDate" column="create_date" not-null="true"/>
                 <property name="curator" column="is_curator" not-null="true"/>
+                <property name="student" column="is_student"/>
             </component>
         </join>
 

@@ -30,6 +30,7 @@ public class AccountInfo implements Serializable {
     // Hibernate uses field access to set this variable
     private String zdbID;
     private boolean curator;
+    private boolean student;
 
     public String getLogin() {
         return login;
@@ -129,6 +130,14 @@ public class AccountInfo implements Serializable {
 
     public void setCurator(boolean curator) {
         this.curator = curator;
+    }
+
+    public boolean isStudent() {
+        return student;
+    }
+
+    public void setStudent(boolean student) {
+        this.student = student;
     }
 
     @Override
