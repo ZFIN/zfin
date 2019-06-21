@@ -30,8 +30,15 @@
                         <zfin:link entity="${member.linkage.reference}"/>
                     </td>
                     <td>
-                        <zfin2:toggleTextLength text=" ${member.linkage.comments}" idName="${zfn:generateRandomDomID()}"
-                                                shortLength="80"/>
+                        <c:choose>
+                        <c:when test='${member.linkage.comments.contains("<")}'>
+                            ${member.linkage.comments}
+                        </c:when>
+                            <c:otherwise>
+                                <zfin2:toggleTextLength text=" ${member.linkage.comments}" idName="${zfn:generateRandomDomID()}"
+                                                        shortLength="80"/>
+                            </c:otherwise>
+                        </c:choose>
                     </td>
                     <authz:authorize access="hasRole('root')">
                         <td><a href="/action/mapping/linkage/${member.linkage.zdbID}">${member.linkage.zdbID}</a></td>
