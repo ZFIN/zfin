@@ -132,6 +132,19 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 parseLabelCaptionImage(entireFigString, zdbId, pmcId, imageFilePath, pubYear, tag)
             }
         }
+        else {
+            def floatsGroup = new StreamingMarkupBuilder().bindNode(article["floats-group"]).toString()
+            def fgFigPattern = "<${tag}:fig(.*?)>(.*?)</${tag}:fig>"
+            def fgFigMatches = floatsGroup =~ /${fgFigPattern}/
+            println("floatsGroup images")
+
+            if (fgFigMatches.size() > 0) {
+                fgFigMatches.each {
+                    def entireFigString = it[0]
+                    parseLabelCaptionImage(entireFigString, zdbId, pmcId, imageFilePath, pubYear, tag)
+                }
+            }
+        }
         //TODO: handle floats_group
 
         addSummaryPDF(zdbId, pmcId, pubYear)
