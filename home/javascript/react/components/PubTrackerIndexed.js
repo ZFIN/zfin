@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import LoadingSpinner from "./LoadingSpinner";
 
 const PubTrackerIndexed = ({error, indexed, onToggle, saving}) => {
     const handleToggle = event => onToggle({
@@ -18,7 +19,7 @@ const PubTrackerIndexed = ({error, indexed, onToggle, saving}) => {
                     {indexed.indexed && <div>by {indexed.indexer.name} on {new Date(indexed.indexedDate).toLocaleDateString()}</div>}
                 </div>
             }
-            {saving && <span><i className="fas fa-spinner fa-spin" /></span>}
+            <LoadingSpinner loading={saving} />
         </form>
     );
 };

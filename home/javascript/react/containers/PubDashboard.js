@@ -9,6 +9,7 @@ import CuratorSelectBox from "../components/CuratorSelectBox";
 import StatusSelectBox from "../components/StatusSelectBox";
 import SelectBox from "../components/SelectBox";
 import RefreshButton from "../components/RefreshButton";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const PUBS_PER_PAGE = 50;
 const SORT_OPTIONS = [
@@ -114,7 +115,7 @@ class PubDashboard extends React.Component {
                 </FilterBar>
 
                 {loading && <div className="text-center text-muted">
-                    <i className="fas fa-spinner fa-spin" /> Loading...
+                    <LoadingSpinner /> Loading...
                 </div>}
 
                 {!loading && results.totalCount === 0 && <div className="text-center text-muted">

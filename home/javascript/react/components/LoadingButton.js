@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import LoadingSpinner from "./LoadingSpinner";
 
 const LoadingButton = ({children, loading, ...rest}) => {
     return (
         <button disabled={loading} {...rest}>
-            { loading ? (<span><i className="fas fa-spinner fa-spin" /></span>) : children }
+            <LoadingSpinner loading={loading} />
+            { !loading && children }
         </button>
     );
 };

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import ObjectSelectBox from "./ObjectSelectBox";
+import LoadingButton from "./LoadingButton";
 
 const getId = (obj) => obj && obj.id;
 const getZdbId = (obj) => obj && obj.zdbID;
@@ -215,10 +216,11 @@ class PubTrackerStatus extends Component {
                             Reset
                         </button>
 
-                        <button type="button" className="btn btn-primary" disabled={loading || !this.readyToSave()}
-                                onClick={status.type === 'CLOSED' ? this.handleValidate : this.handleSave}>
-                            {loading ? (<span><i className="fas fa-spinner fa-spin"/></span>) : 'Save'}
-                        </button>
+                        <LoadingButton loading={loading}type="button" className="btn btn-primary"
+                                       disabled={loading || !this.readyToSave()}
+                                       onClick={status.type === 'CLOSED' ? this.handleValidate : this.handleSave}>
+                            Save
+                        </LoadingButton>
 
                         {saved && <span className="text-success"><i className="fas fa-check"/> Saved</span>}
                     </div>
@@ -239,9 +241,9 @@ class PubTrackerStatus extends Component {
                     </ul>
                     <p className='horizontal-buttons'>
                         <button type='button' className="btn btn-default" disabled={loading} onClick={this.handleValidateCancel}>Cancel</button>
-                        <button type='button' className="btn btn-warning" disabled={loading} onClick={this.handleSave}>
-                            {loading ? (<span><i className="fas fa-spinner fa-spin"/></span>) : 'Yes, close it'}
-                        </button>
+                        <LoadingButton loading={loading} type='button' className="btn btn-warning" disabled={loading} onClick={this.handleSave}>
+                            Yes, close it
+                        </LoadingButton>
                     </p>
                 </div>
                 }
