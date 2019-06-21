@@ -30,4 +30,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6234.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6234.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-553.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZARC-2247.sql" />
 </databaseChangeLog>

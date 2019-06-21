@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION linkage_after()
   RETURNS trigger AS
 $BODY$
 BEGIN
-  PERFORM p_insert_into_record_attribution_tablezdbids(NEW.lnkg_zdb_id);
+  PERFORM p_insert_into_record_attribution_tablezdbids(NEW.lnkg_zdb_id, NEW.lnkg_source_zdb_id);
   RETURN NULL;
 END;
 $BODY$ LANGUAGE plpgsql;
