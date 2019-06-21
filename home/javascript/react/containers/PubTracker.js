@@ -171,7 +171,7 @@ class PubTracker extends React.Component {
     }
 
     render() {
-        const { pubId, userId } = this.props;
+        const { pubId, userId, userName, userEmail } = this.props;
         const {
             curatedEntities,
             curators,
@@ -253,6 +253,8 @@ class PubTracker extends React.Component {
 
                 <PubTrackerPanel title='Contact Authors'>
                     <PubTrackerAuthorNotification
+                        curatorName={userName}
+                        curatorEmail={userEmail}
                         pub={pubDetails}
                         curatedEntities={curatedEntities}
                         loading={notificationLoading}
@@ -268,6 +270,8 @@ class PubTracker extends React.Component {
 PubTracker.propTypes = {
     pubId: PropTypes.string,
     userId: PropTypes.string,
+    userName: PropTypes.string,
+    userEmail: PropTypes.string,
 };
 
 export default PubTracker;

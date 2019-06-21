@@ -131,7 +131,7 @@ class PubTrackerAuthorNotification extends Component {
     }
 
     render() {
-        const { curatedEntities, loading, pub } = this.props;
+        const { curatorName, curatorEmail, curatedEntities, loading, pub } = this.props;
         const {
             additionalRecipients,
             customNote,
@@ -224,9 +224,9 @@ class PubTrackerAuthorNotification extends Component {
                                 have corrections, comments, or additional data that you would like to submit to ZFIN,
                                 please contact me.</p>
                             <p>Thank you,</p>
-                            <p>Patrick Kalita<br />
+                            <p>{curatorName}<br />
                                 Scientific Curation Group<br />
-                                pkalita@zfin.org</p>
+                                {curatorEmail}</p>
                             <p>Zebrafish Information Network<br />
                                 5291 University of Oregon<br />
                                 Eugene, Oregon, USA 97403-5291</p>
@@ -257,6 +257,8 @@ class PubTrackerAuthorNotification extends Component {
 }
 
 PubTrackerAuthorNotification.propTypes = {
+    curatorName: PropTypes.string,
+    curatorEmail: PropTypes.string,
     pub: PropTypes.object,
     loading: PropTypes.bool,
     curatedEntities: PropTypes.array,

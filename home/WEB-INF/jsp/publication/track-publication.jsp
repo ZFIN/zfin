@@ -41,6 +41,8 @@
              id="PubTracker"
              data-pub-id="${publication.zdbID}"
              data-user-id="${loggedInUser.zdbID}"
+             data-user-name="${loggedInUser.display}"
+             data-user-email="${loggedInUser.email}"
         >
         </div>
       </div>
