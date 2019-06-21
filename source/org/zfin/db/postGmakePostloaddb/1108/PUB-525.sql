@@ -12,7 +12,7 @@ and pub_date between '2010-01-01' and '2016-12-31'
 and zdb_id not in (select recattrib_source_zdb_id from record_attribution)
 and zdb_id  in (select pf_pub_Zdb_id from publication_file);
 
-update pub_tracking_status
+update pub_tracking_history
 set pth_status_id=2
 from tmp_pub
 where pth_pub_zdb_id=pubid;

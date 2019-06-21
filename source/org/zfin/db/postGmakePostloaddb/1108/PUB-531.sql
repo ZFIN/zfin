@@ -9,7 +9,7 @@ where pth_pub_zdb_id=zdb_id
 and pth_status_id=1
 and jtype='Journal'
 and pub_date between '0012-07-24' and '2009-12-31'
-and zdb_id not in (select recattrib_source_zdb_id from record_attribution)
+and zdb_id not in (select recattrib_source_zdb_id from record_attribution);
 
 update pub_tracking_history
 set pth_status_id=13
