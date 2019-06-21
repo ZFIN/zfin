@@ -175,10 +175,12 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 if (imageNameMatch.size() > 0) {
                     imageNameMatch.each {
                         image = it[2] + ".jpg"
+                        println (image)
+                        makeThumbnailAndMediumImage(image, image.replace(".jpg", ""), zdbId, pubYear)
+                        FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, pubYear + "/" + zdbId + "/" + image].join('|') + "\n")
                     }
                 }
-                makeThumbnailAndMediumImage(image, image.replace(".jpg", ""), zdbId, pubYear)
-                FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, pubYear + "/" + zdbId + "/" + image].join('|') + "\n")
+
             }
         }
     }
@@ -195,7 +197,9 @@ def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear
     File fullFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", fileName)
 
     thumb = "/bin/convert -thumbnail 1000x64 " + fullFile + thumbnailFile
-    thumb.toString().execute()
+    thumb.execute()
+    println (fullFile)
+    println (thumbnailFile)
     medium = "/bin/convert -thumbnail 500x550 " + fullFile + mediumFile
     medium.toString().execute()
 
