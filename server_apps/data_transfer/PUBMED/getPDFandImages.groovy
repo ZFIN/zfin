@@ -196,12 +196,10 @@ def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear
     File mediumFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", mediumFileName)
     File fullFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", fileName)
 
-    thumb = "/bin/convert -thumbnail 1000x64 " + fullFile + thumbnailFile
-    thumb.execute()
+    "/bin/convert -thumbnail 1000x64 ${fullFile} ${thumbnailFile}".execute()
     println (fullFile)
     println (thumbnailFile)
-    medium = "/bin/convert -thumbnail 500x550 " + fullFile + mediumFile
-    medium.toString().execute()
+    medium = "/bin/convert -thumbnail 500x550 ${fullFile} ${thumbnailFile}".execute()
 
 }
 
