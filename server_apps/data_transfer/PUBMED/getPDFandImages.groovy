@@ -100,6 +100,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
     def markedUpBody = new StreamingMarkupBuilder().bindNode(article.body).toString()
     def imageFilePath = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/"
     def tagMatch = markedUpBody =~ /<([^\/]*?):body/
+
     if (tagMatch.size() == 1) {
         def tag = tagMatch[0][1]
         def supplimentPattern = "<${tag}:supplementary-material content-type=(.*?)</${tag}:supplementary-material>"
@@ -107,84 +108,72 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
         if (supplimentMatches.size() > 0) {
             supplimentMatches.each {
                 def supplement = it
+                if (pmcId == 'PMC:4679720') {
+                    println(it)
+                }
                 def filenamePattern = "<${tag}:media xlink:href='(.*?)'"
                 def filenameMatch = supplimentMatches =~ /${filenamePattern}/
                 if (filenameMatch.size() > 0) {
                     def filename = filenameMatch[0][1]
                     if (filename.endsWith(".avi") || filename.endsWith(".mp4") || filename.endsWith(".mov") || filename.endsWith(".wmv")) {
-                        def videoLabel
-                        def videoCaption
-                        def videoLabelPattern = "<${tag}:label>(.*?)</${tag}:label>"
-                        def videoLabelMatches = supplement =~ /${videoLabelPattern}/
-                        if (videoLabelMatches.size() > 0) {
-                            videoLabelMatches.each {
-                                videoLabel = it[1]
-                            }
-                        } else {
-                            videoLabel = filename
-                        }
-                        def videoCaptionPattern = "<${tag}:caption>(.*?)</${tag}:caption>"
-                        def videoCaptionMatch = it =~ /${videoCaptionPattern}/
-                        if (videoCaptionMatch.size() > 0) {
-                            videoCaptionMatch.each {
-                                videoCaption = it[1]
-                                videoCaption = videoCaption.replace(tag + ":", '')
-                                videoCaption = videoCaption.replaceAll("\\s{2,}", " ")
-                                videoCaption = videoCaption.replace("|", "&&&&&")
-                            }
-                        }
-
-                        FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, videoLabel, videoCaption, pubYear + "/" + zdbId + "/" + filename].join('|') + "\n")
+                        parseLabelCaptionImage(supplement,zdbId,pmcId,imageFilePath,pubYear, tag)
                     } else {
                         PUB_FILES_TO_LOAD.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename].join('|') + "\n")
                     }
                 }
             }
         }
-
-        addSummaryPDF(zdbId, pmcId, pubYear)
-
         def figPattern = "<${tag}:fig(.*?)>(.*?)</${tag}:fig>"
         def figMatches = markedUpBody =~ /${figPattern}/
 
         if (figMatches.size() > 0) {
             figMatches.each {
                 def entireFigString = it[0]
-                def label
-                def caption
-                def image
-                def labelPattern = "<${tag}:label>(.*?)</${tag}:label>"
-                def labelMatch = entireFigString =~ /${labelPattern}/
-                if (labelMatch.size() > 0) {
-                    labelMatch.each {
-                        label = it[1]
-                    }
-                }
-                def captionPattern = "<${tag}:caption>(.*?)</${tag}:caption>"
-                def captionMatch = entireFigString =~ /${captionPattern}/
-                if (captionMatch.size() > 0) {
-                    captionMatch.each {
-                        caption = it[1]
-                        caption = caption.replace(tag + ":", '')
-                        caption = caption.replaceAll("\\s{2,}", " ")
-                        caption = caption.replace("|", "&&&&&")
-                    }
-                }
-                def imagePattern = "<${tag}:graphic(.*?)xlink:href='(.*?)'"
-                def imageNameMatch = entireFigString =~ /${imagePattern}/
-                if (imageNameMatch.size() > 0) {
-                    imageNameMatch.each {
-                        image = it[2] + ".jpg"
-                        println (image)
-                        makeThumbnailAndMediumImage(image, image.replace(".jpg", ""), zdbId, pubYear)
-                        FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, pubYear + "/" + zdbId + "/" + image].join('|') + "\n")
-                    }
-                }
-
+                parseLabelCaptionImage(entireFigString, zdbId, pmcId, imageFilePath, pubYear, tag)
             }
+        }
+        //TODO: handle floats_group
+
+        addSummaryPDF(zdbId, pmcId, pubYear)
+    }
+}
+
+def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYear, tag) {
+
+    def entireFigString = groupMatchString
+    def label
+    def caption
+    def image
+    def labelPattern = "<${tag}:label>(.*?)</${tag}:label>"
+    def labelMatch = entireFigString =~ /${labelPattern}/
+    if (labelMatch.size() > 0) {
+        labelMatch.each {
+            label = it[1]
+        }
+    }
+    def captionPattern = "<${tag}:caption>(.*?)</${tag}:caption>"
+    def captionMatch = entireFigString =~ /${captionPattern}/
+    if (captionMatch.size() > 0) {
+        captionMatch.each {
+            caption = it[1]
+            caption = caption.replace(tag + ":", '')
+            caption = caption.replaceAll("\\s{2,}", " ")
+            caption = caption.replace("|", "&&&&&")
+        }
+    }
+    def imagePattern = "<${tag}:graphic(.*?)xlink:href='(.*?)'"
+    def imageNameMatch = entireFigString =~ /${imagePattern}/
+
+    if (imageNameMatch.size() > 0) {
+        imageNameMatch.each {
+            image = it[2] + ".jpg"
+            println (image)
+            makeThumbnailAndMediumImage(image, image.replace(".jpg", ""), zdbId, pubYear)
+            FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, pubYear + "/" + zdbId + "/" + image].join('|') + "\n")
         }
     }
 }
+
 
 def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear) {
 
