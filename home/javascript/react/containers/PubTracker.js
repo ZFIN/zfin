@@ -2,32 +2,39 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import {
+    addNote,
+    addTopic,
+    deleteNote,
+    getCuratedEntities,
     getCurators,
+    getDetails,
+    getIndexed,
     getLocations,
+    getNotes,
     getStatus,
     getStatuses,
-    updateStatus,
-    getNotes,
     getTopics,
-    validate,
-    getIndexed,
+    sendAuthorNotification,
     updateIndexed,
-    updateTopic,
-    addTopic,
-    addNote,
     updateNote,
-    deleteNote
+    updateStatus,
+    updateTopic,
+    validate,
 } from "../api/publication";
 import PubTrackerPanel from "../components/PubTrackerPanel";
 import PubTrackerStatus from "../components/PubTrackerStatus";
 import PubTrackerIndexed from "../components/PubTrackerIndexed";
 import PubTrackerTopics from "../components/PubTrackerTopics";
 import PubTrackerNotes from "../components/PubTrackerNotes";
+import PubTrackerAuthorNotification from "../components/PubTrackerAuthorNotification";
 
 class PubTracker extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            curatedEntities: [],
+            notificationLoading: false,
+            pubDetails: null,
             notes: [],
             topics: [],
             status: null,
@@ -47,6 +54,8 @@ class PubTracker extends React.Component {
         this.handleAddNote = this.handleAddNote.bind(this);
         this.handleEditNote = this.handleEditNote.bind(this);
         this.handleDeleteNote = this.handleDeleteNote.bind(this);
+        this.handleNotificationEdit = this.handleNotificationEdit.bind(this);
+        this.handleNotificationSend = this.handleNotificationSend.bind(this);
     }
 
     componentDidMount() {
@@ -54,6 +63,7 @@ class PubTracker extends React.Component {
         getStatuses().then(statuses => this.setState({statuses}));
         getLocations().then(locations => this.setState({locations}));
         getCurators().then(curators => this.setState({curators}));
+        getDetails(pubId).then(pubDetails => this.setState({pubDetails}));
         getStatus(pubId).then(status => this.setState({status}));
         getIndexed(pubId).then(indexed => this.setState({indexed}));
         getNotes(pubId).then(notes => this.setState({notes}));
@@ -144,9 +154,39 @@ class PubTracker extends React.Component {
         });
     }
 
+    handleNotificationEdit() {
+        this.setState({notificationLoading: true});
+        return getCuratedEntities(this.props.pubId)
+            .then((curatedEntities) => this.setState({
+                curatedEntities,
+                notificationLoading: false,
+            }));
+    }
+
+    handleNotificationSend(notification, note) {
+        this.setState({notificationLoading: true});
+        return sendAuthorNotification(this.props.pubId, notification)
+            .then(() => this.handleAddNote(note))
+            .always(() => this.setState({notificationLoading: false}));
+    }
+
     render() {
         const { pubId, userId } = this.props;
-        const { curators, indexed, indexedLoading, locations, notes, status, statusLoading, statuses, topics, validationWarnings } = this.state;
+        const {
+            curatedEntities,
+            curators,
+            indexed,
+            indexedLoading,
+            locations,
+            notes,
+            notificationLoading,
+            pubDetails,
+            status,
+            statuses,
+            statusLoading,
+            topics,
+            validationWarnings
+        } = this.state;
 
         const statusHeader = [
             'Status',
@@ -212,7 +252,13 @@ class PubTracker extends React.Component {
                 </PubTrackerPanel>
 
                 <PubTrackerPanel title='Contact Authors'>
-                    !! AUTHOR NOTIF !!
+                    <PubTrackerAuthorNotification
+                        pub={pubDetails}
+                        curatedEntities={curatedEntities}
+                        loading={notificationLoading}
+                        onEditNotification={this.handleNotificationEdit}
+                        onSendNotification={this.handleNotificationSend}
+                    />
                 </PubTrackerPanel>
             </div>
         )

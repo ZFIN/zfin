@@ -492,20 +492,23 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "{id}/notification", method = RequestMethod.POST, produces = "text/plain")
-    public String sendNotificationLetter(@PathVariable String id,
-                                         @RequestBody NotificationLetter letter,
-                                         HttpServletResponse response) {
+    @RequestMapping(value = "{id}/notification", method = RequestMethod.POST)
+    public Map<String, Boolean> sendNotificationLetter(@PathVariable String id,
+                                                    @RequestBody NotificationLetter letter,
+                                                    HttpServletResponse response) {
+        Map<String, Boolean> responseBody = new HashMap<>();
+        responseBody.put("sent", false);
+
         Person sender = ProfileService.getCurrentSecurityUser();
         if (sender == null || !sender.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString())) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return "Unauthorized";
+            return responseBody;
         }
 
         MailSender mailer = AbstractZfinMailSender.getInstance();
         if (mailer == null) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return "No mail sender";
+            return responseBody;
         }
 
         // don't send to the real recipients unless we're on production
@@ -529,10 +532,11 @@ public class PublicationTrackingController {
 
         if (!sent) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return "Not sent";
+            return responseBody;
         }
 
-        return "OK";
+        responseBody.put("sent", true);
+        return responseBody;
     }
 
 }

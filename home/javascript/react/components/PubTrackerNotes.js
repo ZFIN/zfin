@@ -26,7 +26,7 @@ class PubTrackerNotes extends Component {
         const { notes, onDeleteNote, onEditNote } = this.props;
         const { newNote } = this.state;
         return (
-            <div className="panel-body">
+            <div>
                 <form role="form">
                     <div className="form-group">
                         <label>New Note</label>

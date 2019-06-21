@@ -76,3 +76,16 @@ export const updateTopic = (topicId, topic) => {
 export const validate = (pubId) => {
     return http.post(`/action/publication/${pubId}/validate`, {});
 };
+
+export const getDetails = (pubId) => {
+    return http.get(`/action/publication/${pubId}/details`);
+};
+
+export const getCuratedEntities = (pubId) => {
+    return http.get(`/action/publication/${pubId}/curatedEntities`);
+};
+
+export const sendAuthorNotification = (pubId, notification) => {
+    return http.post(`/action/publication/${pubId}/notification`, notification);
+};
+
