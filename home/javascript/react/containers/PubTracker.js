@@ -21,6 +21,8 @@ import {
     updateTopic,
     validate,
 } from "../api/publication";
+import intertab from '../utils/intertab';
+
 import PubTrackerPanel from "../components/PubTrackerPanel";
 import PubTrackerStatus from "../components/PubTrackerStatus";
 import PubTrackerIndexed from "../components/PubTrackerIndexed";
@@ -79,6 +81,7 @@ class PubTracker extends React.Component {
                 statusLoading: false,
                 validationWarnings: [],
             });
+            intertab.fireEvent(intertab.EVENTS.PUB_STATUS);
             if (status.status.type === 'CLOSED') {
                 getTopics(pubId).then(topics => this.setState({topics}));
             }

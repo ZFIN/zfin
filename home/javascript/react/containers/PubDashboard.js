@@ -10,6 +10,7 @@ import StatusSelectBox from "../components/StatusSelectBox";
 import SelectBox from "../components/SelectBox";
 import RefreshButton from "../components/RefreshButton";
 import LoadingSpinner from "../components/LoadingSpinner";
+import intertab from "../utils/intertab";
 
 const PUBS_PER_PAGE = 50;
 const SORT_OPTIONS = [
@@ -52,6 +53,7 @@ class PubDashboard extends React.Component {
     }
 
     componentDidMount() {
+        intertab.addListener(intertab.EVENTS.PUB_STATUS, () => this.fetchPubs());
         getCurators().then(curators => this.setState({curators}));
         getStatuses().then(statuses => this.setState({statuses}));
         this.fetchPubs();

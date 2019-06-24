@@ -12,6 +12,7 @@ import BinPubList from "../components/BinPubList";
 import RelativeDate from "../components/RelativeDate";
 import PubPDFLink from "../components/PubPDFLink";
 import PubClaimButton from "../components/PubClaimButton";
+import intertab from "../utils/intertab";
 
 const PUBS_PER_PAGE = 50;
 const SORT_OPTIONS = [
@@ -52,6 +53,7 @@ class IndexingBin extends React.Component {
     }
 
     componentDidMount() {
+        intertab.addListener(intertab.EVENTS.PUB_STATUS, () => this.fetchPubs());
         getLocations().then(locations => {
             const priorities = locations.filter(location => location.role === 'INDEXER');
             this.setState({
