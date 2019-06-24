@@ -5,13 +5,11 @@ require('./zfin-app.module');
 
 require('./field-error.service');
 require('./figure.service');
-require('./intertab-event.service');
 require('./marker.service');
 require('./publication.service');
 require('./str.service');
 require('./zfinutils.service');
 
-require('./timeago.filter');
 require('./trusted-html.filter');
 
 require('./autocompletify.directive');
