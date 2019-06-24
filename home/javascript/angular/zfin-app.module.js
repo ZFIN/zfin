@@ -1,3 +1,3 @@
 ;(function() {
-    angular.module('app', ['bw.paging']);
+    angular.module('app', []);
 }());

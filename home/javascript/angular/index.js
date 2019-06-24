@@ -1,5 +1,4 @@
 require('angular');
-require('angular-paging');
 
 require('./zfin-app.module');
 

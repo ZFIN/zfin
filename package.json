@@ -35,7 +35,6 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.8.1",
     "angular": "1.5.8",
-    "angular-paging": "2.2.2",
     "bloodhound-js": "1.2.3",
     "bootstrap": "3.3.2",
     "bootstrap-datepicker": "^1.8.0",
