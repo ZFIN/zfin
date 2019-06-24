@@ -8,6 +8,7 @@ into tmp_pub
 from pub_tracking_history, publication
 where pth_pub_zdb_id=zdb_id
 and pth_status_id=1
+and pth_status_is_current='t'
 and jtype='Journal'
 and pub_date between '2010-01-01' and '2016-12-31'
 and zdb_id not in (select recattrib_source_zdb_id from record_attribution)
