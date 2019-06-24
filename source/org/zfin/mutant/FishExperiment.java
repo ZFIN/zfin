@@ -104,9 +104,13 @@ public class FishExperiment implements Comparable<FishExperiment> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+        if (!getClass().isAssignableFrom(o.getClass()) ||
+                o.getClass().isAssignableFrom(getClass())) {
+            return false;
+        }
         FishExperiment that = (FishExperiment) o;
-        return Objects.equals(experiment, that.getExperiment()) &&
-                Objects.equals(fish, that.getFish());
+        return Objects.equals(this.getExperiment(), that.getExperiment()) &&
+                Objects.equals(this.getFish(), that.getFish());
     }
 
     @Override
