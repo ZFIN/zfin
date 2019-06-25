@@ -5,7 +5,9 @@ create temp table tmp_figs_to_load (pub_zdb_id text,
        file_path_directory text, 
        fig_label text,
        fig_caption text,
-       img_filename text);
+       img_filename text,
+       img_thumbnail text,
+       img_medium text);
 
 \copy tmp_figs_to_load from 'figsToLoad.txt' DELIMITER '|' ;
 
@@ -16,20 +18,26 @@ create temp table tmp_figs_to_load_with_ids (pub_zdb_id text,
        fig_caption text,
        fig_zdb_id text,
        img_zdb_id text,
-       img_filename text);
+       img_filename text,
+       img_thumbnail text, 
+       img_medium text);
 
 insert into tmp_figs_to_load_with_ids (pub_zdb_id,      
                                        pmc_id,
                                        file_path_directory,
                                        fig_label,
                                        fig_caption,
-                                       img_filename)
+                                       img_filename,
+                                       img_thumbnail,
+                                       img_medium)
   select pub_zdb_id,
          pmc_id,
          file_path_directory,
          fig_label,
          fig_caption,
-         img_filename
+         img_filename,
+         img_thumbnail,
+         img_medium
     from tmp_figs_to_load;
 
 delete from tmp_figs_to_load_with_ids
@@ -67,10 +75,11 @@ insert into image (img_zdb_id,
                    img_preparation, 
                    img_owner_zdb_id,
                    img_image,
-                   img_thumbnail)
+                   img_thumbnail,
+                   img_medium)
 select img_zdb_id, 
        fig_zdb_id, 
-       img_filename,
+       fig_label,
        '-1',
        '-1',
        'not specified',
@@ -79,11 +88,13 @@ select img_zdb_id,
        'not specified',
        'ZDB-PERS-030612-1',
        img_filename,
-       img_filename
+       img_thumbnail,
+       img_medium
    from tmp_figs_to_load_with_ids;
 
 update image
  set img_is_video_still = 't' where img_image like '%.avi' or img_image like '%.mov' or img_image like '%.wmv' or img_image like '%.mp4';  
+
 
 commit work;
 

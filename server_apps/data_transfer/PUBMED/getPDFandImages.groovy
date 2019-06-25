@@ -46,7 +46,7 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
     def dir = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/")
 
     dir.eachFileRecurse(FileType.FILES) { file ->
-        if (file.name.endsWith('pdf')) {
+        if (file.name.endsWith('.pdf')) {
             ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + file.name].join('|') + "\n")
         }
     }
@@ -102,7 +102,9 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
     def tagMatch = markedUpBody =~ /<([^\/]*?):body/
 
     if (tagMatch.size() == 1) {
-        def tag = tagMatch[0][1]
+
+        def tag = tagMatch[0][1]  // extract the XML namespace tag pattern for use in extracting supplements, figures, images downstream.
+
         def supplimentPattern = "<${tag}:supplementary-material content-type=(.*?)</${tag}:supplementary-material>"
         def supplimentMatches = markedUpBody =~ /${supplimentPattern}/
         if (supplimentMatches.size() > 0) {
@@ -123,6 +125,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 }
             }
         }
+        // extract figures one by one from the grouping 'fig' tags
         def figPattern = "<${tag}:fig(.*?)>(.*?)</${tag}:fig>"
         def figMatches = markedUpBody =~ /${figPattern}/
 
@@ -132,7 +135,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 parseLabelCaptionImage(entireFigString, zdbId, pmcId, imageFilePath, pubYear, tag)
             }
         }
-        else {
+        else { // means the publisher pulls its figures into one section of the XML under the tag 'floats-group'
             def floatsGroup = new StreamingMarkupBuilder().bindNode(article["floats-group"]).toString()
             def fgFigPattern = "<${tag}:fig(.*?)>(.*?)</${tag}:fig>"
             def fgFigMatches = floatsGroup =~ /${fgFigPattern}/
@@ -145,8 +148,6 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                 }
             }
         }
-        //TODO: handle floats_group
-
         addSummaryPDF(zdbId, pmcId, pubYear)
     }
 }
@@ -182,7 +183,13 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
             image = it[2] + ".jpg"
             println (image)
             makeThumbnailAndMediumImage(image, image.replace(".jpg", ""), zdbId, pubYear)
-            FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, pubYear + "/" + zdbId + "/" + image].join('|') + "\n")
+            String extension = FilenameUtils.getExtension(image)
+            String fileNameNoExtension = image.replace(".jpg", "")
+            String thumbnailFilename = fileNameNoExtension + "_thumb" + FilenameUtils.EXTENSION_SEPARATOR + extension
+            String mediumFileName = fileNameNoExtension + "_medium" + FilenameUtils.EXTENSION_SEPARATOR + extension
+            FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, pubYear + "/" + zdbId + "/" + image,
+                                 pubYear + "/" + zdbId + "/" + thumbnailFilename,
+                                 pubYear + "/" + zdbId + "/" + mediumFileName].join('|') + "\n")
         }
     }
 }
@@ -198,8 +205,8 @@ def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear
     File mediumFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", mediumFileName)
     File fullFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", fileName)
 
+    // make thumbnail and medium images in the same directory as their parent images.
     "/bin/convert -thumbnail 1000x64 ${fullFile} ${thumbnailFile}".execute()
-
     "/bin/convert -thumbnail 500x550 ${fullFile} ${mediumFile}".execute()
 
 }
