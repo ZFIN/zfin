@@ -1,24 +1,19 @@
 require('angular');
-require('angular-paging');
 
 require('./zfin-app.module');
 
 require('./field-error.service');
 require('./figure.service');
-require('./intertab-event.service');
 require('./marker.service');
 require('./publication.service');
 require('./str.service');
 require('./zfinutils.service');
 
-require('./timeago.filter');
 require('./trusted-html.filter');
 
 require('./autocompletify.directive');
 require('./bootstrap-modal.directive');
-require('./curating-bin.directive');
 require('./curator-notes.directive');
-require('./indexing-bin.directive');
 require('./inline-edit-textarea.directive');
 require('./figure-edit.directive');
 require('./figure-update.directive');
@@ -31,18 +26,11 @@ require('./marker-notes.directive');
 require('./marker-relationships.directive');
 require('./marker-suppliers.directive');
 require('./other-markers.directive');
-require('./pub-dashboard.directive');
 require('./pub-file-edit.directive');
 require('./pub-file-upload.directive');
 require('./pub-lookup.directive');
 require('./public-note.directive');
-require('./publication-author-notif.directive');
 require('./publication-correspondence.directive');
-require('./publication-indexed.directive');
-require('./publication-notes.directive');
-require('./publication-status.directive');
-require('./publication-topics.directive');
-require('./publication-tracker.directive');
 require('./quick-figure.directive');
 require('./reference-editor.directive');
 require('./select-all-list.directive');

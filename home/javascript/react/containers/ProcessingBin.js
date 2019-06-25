@@ -10,6 +10,7 @@ import LoadingCount from "../components/LoadingCount";
 import PubClaimButton from "../components/PubClaimButton";
 import BinPubList from "../components/BinPubList";
 import RelativeDate from "../components/RelativeDate";
+import intertab from "../utils/intertab";
 
 const PUBS_PER_PAGE = 50;
 const SORT_OPTIONS = [
@@ -39,6 +40,7 @@ class ProcessingBin extends React.Component {
     }
 
     componentDidMount() {
+        intertab.addListener(intertab.EVENTS.PUB_STATUS, () => this.fetchPubs());
         this.fetchPubs();
     }
 
@@ -79,12 +81,11 @@ class ProcessingBin extends React.Component {
         const { nextStatus, userId } = this.props;
         this.setPubState(index, 'saving', true);
         const status = {
-            pubZdbID: pub.zdbId,
             status: { id: nextStatus },
             location: null,
             owner: { zdbID: userId }
         };
-        updateStatus(status, true)
+        updateStatus(pub.zdbId, status, true)
             .then(() => this.setPubState(index, 'claimed', true))
             .fail(error => error.responseJSON && this.setPubState(index, 'claimError', error.responseJSON.message))
             .always(() => this.setPubState(index, 'saving', false));

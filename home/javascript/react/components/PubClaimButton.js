@@ -1,17 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import LoadingButton from "./LoadingButton";
 
 const PubClaimButton = ({publication, onClaimPub}) => {
     return (
         <React.Fragment>
-            <button className={`btn ${publication.claimed ? 'btn-success' : 'btn-default'}`}
-                    disabled={publication.saving}
-                    onClick={onClaimPub}
+            <LoadingButton
+                loading={publication.saving || false}
+                className={`btn ${publication.claimed ? 'btn-success' : 'btn-default'}`}
+                disabled={publication.saving}
+                onClick={onClaimPub}
             >
-                {publication.saving && <span><i className="fas fa-spinner fa-spin"/></span>}
-                {!publication.saving && publication.claimed && <span><i className="fas fa-check"/> Claimed</span>}
-                {!publication.saving && !publication.claimed && <span>Claim</span>}
-            </button>
+                {publication.claimed && <span><i className="fas fa-check"/> Claimed</span>}
+                {!publication.claimed && <span>Claim</span>}
+            </LoadingButton>
             {publication.claimError && <p className='text-danger'>{publication.claimError}</p>}
         </React.Fragment>
     );

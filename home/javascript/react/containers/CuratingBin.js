@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import {getLocations, searchPubStatus, updateStatus} from "../api/publication";
+import intertab from '../utils/intertab';
+
 import Pagination from "../components/Pagination";
 import FilterBar from "../components/FilterBar";
 import SelectBox from "../components/SelectBox";
@@ -54,6 +56,7 @@ class CuratingBin extends React.Component {
     }
 
     componentDidMount() {
+        intertab.addListener(intertab.EVENTS.PUB_STATUS, () => this.fetchPubs());
         getLocations().then(allLocations => {
             const locations = allLocations.filter(location => location.role === 'CURATOR');
             this.setState({
@@ -101,12 +104,11 @@ class CuratingBin extends React.Component {
         const { nextStatus, userId } = this.props;
         this.setPubState(index, 'saving', true);
         const status = {
-            pubZdbID: pub.zdbId,
             status: { id: nextStatus },
             location: null,
             owner: { zdbID: userId }
         };
-        updateStatus(status, true)
+        updateStatus(pub.zdbId, status, true)
             .then(() => this.setPubState(index, 'claimed', true))
             .fail(error => error.responseJSON && this.setPubState(index, 'claimError', error.responseJSON.message))
             .always(() => this.setPubState(index, 'saving', false));

@@ -1236,3 +1236,7 @@ input + label {
     font-size: 0.8rem;
     color: gray;
 }
+
+.horizontal-buttons > * {
+    margin-right: 5px;
+}

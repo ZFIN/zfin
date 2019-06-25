@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import RelativeDate from "./RelativeDate";
-import SelectBox from "./SelectBox";
+import LoadingSpinner from "./LoadingSpinner";
 
 const BinPubList = ({ loading, pubs, columns }) => {
     return (
@@ -22,7 +21,7 @@ const BinPubList = ({ loading, pubs, columns }) => {
             </table>
             {loading &&
                 <div className="text-muted text-center">
-                    <i className="fas fa-spinner fa-spin" /> Loading...
+                    <LoadingSpinner /> Loading...
                 </div>
             }
             {!loading && pubs && pubs.length === 0 &&

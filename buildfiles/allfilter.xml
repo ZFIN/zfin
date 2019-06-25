@@ -90,7 +90,6 @@
 <filter token="INSTANCE" value="${INSTANCE}"/>
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
 <filter token="JAVA_HOME" value="${JAVA_HOME}"/>
-<filter token="JAVA_OPTS" value="${JAVA_OPTS}"/>
 <filter token="JDBC_DRIVER" value="${JDBC_DRIVER}"/>
 <filter token="JDBC_URL" value="${JDBC_URL}"/>
 <filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>

@@ -151,10 +151,18 @@ end
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies2.txt'"
 create view antibodies as
 select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
-	atb_immun_organism, atb_host_organism, szm_term_ont_id
+	atb_immun_organism, atb_host_organism, szm_term_ont_id,'' as atb_reg_id
   from marker, antibody, so_zfin_mapping
  where mrkr_zdb_id = atb_zdb_id
  and szm_object_type = mrkr_type
+ union
+select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
+	atb_immun_organism, atb_host_organism, szm_term_ont_id,dblink_acc_num as atb_reg_id
+  from marker, antibody, so_zfin_mapping, db_link
+ where mrkr_zdb_id = atb_zdb_id
+ and szm_object_type = mrkr_type
+ and dblink_linked_recid=atb_zdb_id
+ and dblink_acc_num  like '%AB%'
  order by 1;
 \copy (select * from antibodies) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies2.txt' with delimiter as '	' null as '';
 drop view antibodies;

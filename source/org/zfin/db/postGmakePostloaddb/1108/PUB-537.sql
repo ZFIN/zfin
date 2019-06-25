@@ -9,6 +9,7 @@ where pth_pub_zdb_id=zdb_id
 and pub_jrnl_zdb_id=jrnl_zdb_id
 and pub_is_indexed='t'
 and pth_status_id=4
+and pth_status_is_current='t'
 and pth_location_id is null
 and jtype='Journal'
 and jrnl_abbrev not  like '%Tox%'
