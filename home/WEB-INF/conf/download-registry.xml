@@ -60,9 +60,19 @@
             <Query>
                 <![CDATA[
                 select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
-                atb_immun_organism, atb_host_organism, szm_term_ont_id 
-                from marker, antibody
-                where mrkr_zdb_id = atb_zdb_id
+                atb_immun_organism, atb_host_organism, szm_term_ont_id, '' as atb_reg_id
+  from marker, antibody, so_zfin_mapping
+ where mrkr_zdb_id = atb_zdb_id
+ and szm_object_type = mrkr_type
+ union
+select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
+	atb_immun_organism, atb_host_organism, szm_term_ont_id,dblink_acc_num as atb_reg_id
+  from marker, antibody, so_zfin_mapping, db_link
+ where mrkr_zdb_id = atb_zdb_id
+ and szm_object_type = mrkr_type
+ and dblink_linked_recid=atb_zdb_id
+ and dblink_acc_num  like '%AB%'
+
                 order by 1
               ]]>
             </Query>
@@ -75,6 +85,7 @@
             <Column id="7">Host Organism</Column>
             <Column id="8">Source</Column>
             <Column id="9">SO ID</Column>
+            <Column id="10">AB Registry ID</Column>
         </Download>
         <Download orderIndex="5">
             <Name>
