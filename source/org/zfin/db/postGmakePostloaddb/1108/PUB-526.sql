@@ -15,7 +15,7 @@ and jrnl_abbrev  not like '%Tox%'
 and pub_date between '2010-01-01' and '2016-12-31'
 and zdb_id not in (select recattrib_source_zdb_id from record_attribution where recattrib_data_zdb_id like 'ZDB-XPAT%')
 and pth_pub_zdb_id not in (Select pt_pub_zdb_id from pheno_term)
-and zdb_id  in (select pf_pub_Zdb_id from publication_file);
+and zdb_id  in (select pf_pub_Zdb_id from publication_file)
 group by pth_pub_zdb_id
 having count(pth_pub_zdb_id)=1;
 
