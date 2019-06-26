@@ -96,7 +96,7 @@ select distinct jrnl_zdb_id, jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn
 from journal, tmp_pubs
 where lower(journaltitle) = jrnl_name_lower
       or lower(iso) = jrnl_abbreV_lower
-      or jrnl_print_issn = issn or jrnl_online_iss=issn
+      or jrnl_print_issn = issn or jrnl_online_issn = issn
 ;
 
 create temp table tmp_first_journal_to_match as 
@@ -255,12 +255,21 @@ insert into pub_tracking_history (pth_pub_zdb_id,
                                   pth_status_id,
                                   pth_status_set_by)
   select zdb_id,
-    (select pts_pk_id from pub_tracking_status where pts_status= 'NEW'),
+    (select pts_pk_id from pub_tracking_status where pts_status= 'READY_FOR_PROCESSING'),
     (select zdb_id from person where full_name = 'Pub Acquisition Script')
   from tmp_new_pubs
   where exists (Select 'x' from publication
-  where tmp_new_pubs.zdb_id = publication.zdb_id);
+  where tmp_new_pubs.zdb_id = publication.zdb_id and status = 'active');
 
+insert into pub_tracking_history (pth_pub_zdb_id,
+                                  pth_status_id,
+                                  pth_status_set_by)
+  select zdb_id,
+    (select pts_pk_id from pub_tracking_status where pts_status= 'WAIT' and pts_status_display = 'Waiting for Activation'),
+    (select zdb_id from person where full_name = 'Pub Acquisition Script')
+  from tmp_new_pubs
+  where exists (Select 'x' from publication
+  where tmp_new_pubs.zdb_id = publication.zdb_id and status is distinct from 'active');
 
 create temp table tmp_mesh (
   pmid integer,
