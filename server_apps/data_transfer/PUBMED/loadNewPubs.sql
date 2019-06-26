@@ -92,7 +92,7 @@ insert into tmp_new_pubs
   where accession_no = pmid::int);
 
 create temp table tmp_journal_matches as 
-select distinct jrnl_zdb_id, jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn
+select distinct jrnl_zdb_id, jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn,jrnl_online_issn
 from journal, tmp_pubs
 where lower(journaltitle) = jrnl_name_lower
       or lower(iso) = jrnl_abbreV_lower
@@ -100,7 +100,7 @@ where lower(journaltitle) = jrnl_name_lower
 ;
 
 create temp table tmp_first_journal_to_match as 
-select min(jrnl_zdb_id) as id, jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn
+select min(jrnl_zdb_id) as id, jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn,jrnl_online_issn
 from tmp_journal_matches
 group by jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn;
 
