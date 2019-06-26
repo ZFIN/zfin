@@ -7,7 +7,7 @@ const stringToFunction = (getter) => {
 
 const ObjectSelectBox = ({getDisplay, getValue, options, onChange, value, ...rest}) => {
     getDisplay = stringToFunction(getDisplay);
-    const valueOrEmptyString = (value) => value ? stringToFunction(getValue)(value) : '';
+    const valueOrEmptyString = (value) => (value && stringToFunction(getValue)(value)) || '';
 
     const handleChange = (event) => {
         const selectedOption = options.find(option => valueOrEmptyString(option).toString() === event.target.value);

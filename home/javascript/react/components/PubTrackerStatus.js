@@ -45,9 +45,9 @@ class PubTrackerStatus extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            status: null,
-            location: null,
-            owner: null,
+            status: {},
+            location: {},
+            owner: {},
             saved: false,
         };
         this.populateState = this.populateState.bind(this);
@@ -140,10 +140,11 @@ class PubTrackerStatus extends Component {
         const ownerChanged = getZdbId(defaultOwner) !== getZdbId(owner);
         const locationRequired = statusRequiresLocation(status);
         const ownerRequired = statusRequiresOwner(status);
+        const statusSelected = getId(status);
         const locationSelected = getId(location);
         const ownerSelected = getZdbId(owner);
 
-        return (
+        return statusSelected && (
             (statusChanged && !locationRequired && !ownerRequired) ||
             (statusChanged && !locationRequired && ownerSelected) ||
             (statusChanged && !ownerRequired && locationSelected) ||
@@ -160,12 +161,14 @@ class PubTrackerStatus extends Component {
     }
 
     render() {
-        const { curators, statuses, locations, loading, warnings } = this.props;
+        const { curators, defaultStatus, statuses, locations, loading, warnings } = this.props;
         const { status, location, owner, saved } = this.state;
 
-        if (!status) {
-            return null;
+        const statusOptions = [];
+        if (!getId(defaultStatus)) {
+            statusOptions.push({id: '', name: ''});
         }
+        statusOptions.push(...statuses);
 
         const locationOptions = [];
         if (statusHasLocation(status)) {
@@ -183,7 +186,7 @@ class PubTrackerStatus extends Component {
                 <div className="form-group">
                     <label className="col-sm-3 control-label">Status</label>
                     <div className="col-sm-8">
-                        <ObjectSelectBox className='form-control' getDisplay="name" getValue="id" options={statuses}
+                        <ObjectSelectBox className='form-control' getDisplay="name" getValue="id" options={statusOptions}
                                          value={status} onChange={status => this.setState({status})} />
                     </div>
                 </div>
@@ -266,6 +269,12 @@ PubTrackerStatus.propTypes = {
     statuses: PropTypes.array,
     userId: PropTypes.string,
     warnings: PropTypes.array,
+};
+
+PubTrackerStatus.defaultProps = {
+    defaultStatus: {},
+    defaultLocation: {},
+    defaultOwner: {},
 };
 
 export default PubTrackerStatus;

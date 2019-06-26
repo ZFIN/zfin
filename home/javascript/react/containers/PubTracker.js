@@ -39,7 +39,7 @@ class PubTracker extends React.Component {
             pubDetails: null,
             notes: [],
             topics: [],
-            status: null,
+            status: {},
             statusLoading: false,
             indexed: null,
             indexedLoading: false,
@@ -207,7 +207,7 @@ class PubTracker extends React.Component {
                 <PubTrackerPanel title={statusHeader}>
                     <div className="row clearfix">
                         <div className="col-xs-6" style={{borderRight: '1px solid #dddddd'}}>
-                            {status && curators.length > 0 && statuses.length > 0 && locations.length > 0 &&
+                            {curators.length > 0 && statuses.length > 0 && locations.length > 0 &&
                             <PubTrackerStatus
                                 curators={curators}
                                 defaultLocation={status.location}
