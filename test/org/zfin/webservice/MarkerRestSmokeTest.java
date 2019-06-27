@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
  */
 public class MarkerRestSmokeTest extends AbstractDatabaseTest{
 
+    public static final String SRY_BOX_TRANSCRIPTION_FACTOR_3 = "SRY-box transcription factor 3";
     private Logger logger = LogManager.getLogger(MarkerRestSmokeTest.class) ;
 
     private String BASE_URL ;
@@ -46,7 +47,7 @@ public class MarkerRestSmokeTest extends AbstractDatabaseTest{
         Marker m = new Marker() ;
         m.setZdbID("ZDB-GENE-980526-333");
         m.setAbbreviation("sox3");
-        m.setName("SRY (sex determining region Y)-box 3");
+        m.setName(SRY_BOX_TRANSCRIPTION_FACTOR_3);
         try {
             Gene returnObject = (Gene) WebserviceXmlMarshaller.unmarshal(returnValue,Gene.class) ;
             assertEquals(returnObject.getZdbId(),m.getZdbID());
@@ -63,7 +64,7 @@ public class MarkerRestSmokeTest extends AbstractDatabaseTest{
         Marker m = new Marker() ;
         m.setZdbID("ZDB-GENE-980526-333");
         m.setAbbreviation("sox3");
-        m.setName("SRY (sex determining region Y)-box 3");
+        m.setName(SRY_BOX_TRANSCRIPTION_FACTOR_3);
         Gene returnObject = restTemplate.getForObject(url,Gene.class) ;
         assertEquals(returnObject.getZdbId(),m.getZdbID());
         assertEquals(returnObject.getAbbreviation(),m.getAbbreviation());
@@ -78,7 +79,7 @@ public class MarkerRestSmokeTest extends AbstractDatabaseTest{
         Marker m = new Marker() ;
         m.setZdbID("ZDB-GENE-980526-333");
         m.setAbbreviation("sox3");
-        m.setName("SRY (sex determining region Y)-box 3");
+        m.setName(SRY_BOX_TRANSCRIPTION_FACTOR_3);
         Gene returnObject = restTemplate.getForObject(url,Gene.class) ;
         assertEquals(returnObject.getZdbId(),m.getZdbID());
         assertEquals(returnObject.getAbbreviation(),m.getAbbreviation());
