@@ -24,12 +24,10 @@ public class AntibodyDTO extends MarkerDTO {
         this.registryID = registryID;
     }
 
-    public AntibodyDTO copyFrom(MarkerDTO otherMarkerDTO){
-        setName(otherMarkerDTO.getName());
-        return this ;
-    }
+
 
     public AntibodyDTO copyFrom(AntibodyDTO otherCloneDTO){
+        registryID=otherCloneDTO.getRegistryID();
         setName(otherCloneDTO.getName());
         return this ;
     }

@@ -62,6 +62,7 @@ public abstract class AbstractHeaderEdit<T extends RelatedEntityDTO> extends Abs
         });
 
 
+
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 sendUpdates();
