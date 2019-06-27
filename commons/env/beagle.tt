@@ -50,7 +50,7 @@
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	informix\@zfin.org
-<!--|PDF_LOAD|-->	/
+<!--|PDF_LOAD|-->	
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	informix\@zfin.org
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/beagle
 <!--|SECURE_HTTP|-->	https://

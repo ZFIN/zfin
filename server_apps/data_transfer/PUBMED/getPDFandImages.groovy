@@ -47,7 +47,7 @@ def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
     dir.eachFileRecurse(FileType.FILES) { file ->
         if (file.name.endsWith('.pdf')) {
-            ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + file.name].join('|') + "\n")
+            ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + file.name, file.name].join('|') + "\n")
         }
     }
 
@@ -120,7 +120,7 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                     if (filename.endsWith(".avi") || filename.endsWith(".mp4") || filename.endsWith(".mov") || filename.endsWith(".wmv")) {
                         parseLabelCaptionImage(supplement,zdbId,pmcId,imageFilePath,pubYear, tag)
                     } else {
-                        PUB_FILES_TO_LOAD.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename].join('|') + "\n")
+                        PUB_FILES_TO_LOAD.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename, filename].join('|') + "\n")
                     }
                 }
             }
