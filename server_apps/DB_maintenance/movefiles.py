@@ -9,11 +9,6 @@ import codecs
 
 hostname = 'localhost'
 database = os.environ.get('DBNAME')
-if os.path.exists("updateImagePaths.txt"):
-    print "removing file"
-    os.remove("updateImagePaths.txt")
-file = codecs.open("updateImagePaths.txt", "w")
-
 
 def do_query(conn):
 
@@ -40,20 +35,16 @@ def do_query(conn):
         if os.path.isdir(fullPathPDFDir) and not os.path.exists(fullPathPDFDir+"/"+img_id):
             moveImages(fullPathPDFDir, img_id)
             
-
         else:
             print "cant find file dir: " + fullPathPDFDir
             if os.path.isdir(yearDir):
                 os.mkdir(fullPathPDFDir)
                 moveImages(fullPathPDFDir, img_id)
                 
-
             else:
                 os.mkdir(yearDir)
                 os.mkdir(fullPathPDFDir)
                 moveImages(fullPathPDFDir, img_id)
-                
-
 
 def moveImages(fullPathPDFDir, img_id):
 
@@ -71,7 +62,6 @@ def moveImages(fullPathPDFDir, img_id):
         imgFileName = fileNameSplit[-1]
         copy(imgFile, fullPathPDFDir+"/"+imgFileName)
         print fullPathPDFDir+"/"+imgFileName
-        file.write(img_id + "|" + fullPathPDFDir + "/" + imgName + "\n")
 
 myConnection = psycopg2.connect(host=hostname, dbname=database)
 do_query(myConnection)

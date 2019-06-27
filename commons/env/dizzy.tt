@@ -37,7 +37,7 @@
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
-<!--|IMAGE_LOAD|-->	/pubs/
+<!--|IMAGE_LOAD|-->	
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	dizzy
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
@@ -54,7 +54,7 @@
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PARTNER_SOURCEROOT|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	pkalita\@zfin.org
-<!--|PDF_LOAD|-->	
+<!--|PDF_LOAD|-->	PDFLoadUp/
 <!--|PGBINDIR|-->	/opt/postgres/postgresql/bin
 <!--|PGDATA|-->	/opt/postgres/data
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	pkalita\@zfin.org

@@ -2,7 +2,8 @@ begin work ;
 
 create temp table tmp_files_to_load (pub_zdb_id text,
        pmc_id text,
-       filename text);
+       filename text,
+       filename_no_path text);
 
 \copy tmp_files_to_load from  'pdfsToLoad.txt' with delimiter '|' ;
 

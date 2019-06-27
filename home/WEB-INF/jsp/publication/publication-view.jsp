@@ -138,6 +138,7 @@
             <th>Files:</th>
             <td>
                 <c:forEach items="${publication.files}" var="file" varStatus="loop">
+                    ${file.fileName}
                     <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${file.fileName}">
                             ${file.type.name.toString() eq 'Original Article' ? 'Original Article' : file.originalFileName}
                     </a>${loop.last ? " &mdash; " : ", "}
