@@ -1,11 +1,14 @@
 package org.zfin.gwt.marker.ui;
 
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.AntibodyDTO;
+import org.zfin.gwt.root.dto.TranscriptDTO;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.*;
@@ -29,6 +32,12 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
 
     protected void addInternalListeners(final HandlesError handlesError) {
         super.addInternalListeners(handlesError);
+        registryIDBox.addKeyPressHandler(new KeyPressHandler() {
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                DeferredCommand.addCommand(new CompareCommand());
+            }
+        });
 
         addChangeListener(new RelatedEntityChangeListener<AntibodyDTO>() {
             @Override
@@ -75,12 +84,12 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
     protected void sendUpdates() {
         // on success
         // set choices appropriates
-        if (isDirty()) {
+
             final AntibodyDTO antibodyDTO = new AntibodyDTO();
             antibodyDTO.setZdbID(this.dto.getZdbID());
             antibodyDTO.setName(nameBox.getText());
-         //   antibodyDTO.setRegistryID(registryIDBox.getText());
-
+         antibodyDTO.setRegistryID(registryIDBox.getText());
+        if (isDirty()) {
             if (false == nameValidator.validate(nameBox.getText(), this)) return;
 
             if (false == antibodyDTO.getName().equals(dto.getName())) {
@@ -102,10 +111,10 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
                             notWorking();
                             fireChangeEvent(new RelatedEntityEvent<AntibodyDTO>(antibodyDTO, dto.getName()));
                         }
+
                     });
         }
     }
-
 
         public boolean isDirty() {
             boolean isDirty = false;
@@ -113,5 +122,19 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
             isDirty = registryIDBox.isDirty(dto.getRegistryID()) || isDirty;
 
             return isDirty;
-        }    }
+        }
+
+    public void working() {
+        super.working();    //To change body of overridden methods use File | Settings | File Templates.
+        registryIDBox.setEnabled(false);
+
+    }
+
+    @Override
+    public void notWorking() {
+        super.notWorking();    //To change body of overridden methods use File | Settings | File Templates.
+        registryIDBox.setEnabled(true);
+
+    }
+}
 

@@ -81,6 +81,14 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
 
     protected void addListeners() {
         super.addListeners();
+        antibodyHeaderEdit.addChangeListener(new RelatedEntityChangeListener<AntibodyDTO>() {
+            public void dataChanged(RelatedEntityEvent<AntibodyDTO> changeEvent) {
+                if (false == changeEvent.getDTO().getName().equals(dto.getName())) {
+                    if (null == previousNamesBox.validateNewRelatedEntity(changeEvent.getDTO().getName())) {
+                        previousNamesBox.addRelatedEntity(dto.getName(), publicationZdbID);
+                    }
+                }
+                dto.copyFrom(changeEvent.getDTO());
 
         antibodyViewClickLabel.addViewClickedListeners(new ViewClickedListener() {
             @Override
@@ -113,14 +121,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
         });
 
 //        antibodyHeaderEdit.setPreviousNamesBox(previousNamesBox);
-        antibodyHeaderEdit.addChangeListener(new RelatedEntityChangeListener<AntibodyDTO>() {
-            public void dataChanged(RelatedEntityEvent<AntibodyDTO> changeEvent) {
-                if (false == changeEvent.getDTO().getName().equals(dto.getName())) {
-                    if (null == previousNamesBox.validateNewRelatedEntity(changeEvent.getDTO().getName())) {
-                        previousNamesBox.addRelatedEntity(dto.getName(), publicationZdbID);
-                    }
-                }
-                dto.copyFrom(changeEvent.getDTO());
+
             }
         });
 
