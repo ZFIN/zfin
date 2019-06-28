@@ -36,25 +36,25 @@ create index pub_zdb_id_index on tmp_new_img_name (pub_zdb_id);
 
 
 update image 
-  set img_image = (select '/'||year_string||'/'||pub_zdb_id||'/'||img_image 
+  set img_image = (select year_string||'/'||pub_zdb_id||'/'||img_image 
                     from tmp_new_img_name where tmp_neW_img_name.img_zdb_id = image.img_zdb_id)
   where img_fig_zdb_id is not null
  and img_is_video_still = 'f';
 
 update image 
-  set img_thumbnail = (select '/'||year_string||'/'||pub_zdb_id||'/'||img_thumbnail
+  set img_thumbnail = (select year_string||'/'||pub_zdb_id||'/'||img_thumbnail
                     from tmp_new_img_name where tmp_neW_img_name.img_zdb_id = image.img_zdb_id)
   where img_fig_zdb_id is not null
  and img_is_video_still = 'f';
 
 update image 
-  set img_medium = (select '/'||year_string||'/'||pub_zdb_id||'/'||replace(img_thumbnail, 'thumb','medium')
+  set img_medium = (select year_string||'/'||pub_zdb_id||'/'||replace(img_thumbnail, 'thumb','medium')
                     from tmp_new_img_name where tmp_neW_img_name.img_zdb_id = image.img_zdb_id)
   where img_fig_zdb_id is not null
  and img_is_video_still = 'f';
 
 update publication_file
-  set pf_file_name = (select '/'||year_string||'/'||pub_zdb_id||'/'||pub_zdb_id||'.pdf' from tmp_new_pub_loc where pub_zdb_id = pf_pub_zdb_id)
+  set pf_file_name = (select year_string||'/'||pub_zdb_id||'/'||pub_zdb_id||'.pdf' from tmp_new_pub_loc where pub_zdb_id = pf_pub_zdb_id)
  where pf_file_name is not null;
 
 select img_image from image  where img_zdb_id like 'ZDB-IMAGE-19%' limit 5;

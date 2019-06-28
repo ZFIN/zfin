@@ -34,7 +34,7 @@
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
-<!--|IMAGE_LOAD|-->	
+<!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	beagle
 <!--|INTERNAL_BLAST_PATH|-->	/research/zblastfiles/zmore/dev_blastdb/Current
@@ -50,7 +50,7 @@
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PATO_EMAIL_CURATOR|-->	informix\@zfin.org
-<!--|PDF_LOAD|-->	PDFLoadUp/
+<!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	informix\@zfin.org
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/beagle
 <!--|SECURE_HTTP|-->	https://

@@ -3,9 +3,6 @@ package org.zfin.properties;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.text.DateFormat;
-import java.util.Date;
-
 import static org.junit.Assert.*;
 /**
  * Test if the property file can be read.
@@ -23,7 +20,7 @@ public class ZfinPropertiesTest extends AbstractZfinPropertiesTest{
         assertEquals("Link Color", "#9980", ZfinPropertiesEnum.LINKBAR_COLOR.value());
         assertEquals("Email Address", "test@zfin.org", ZfinProperties.splitValues(ZfinPropertiesEnum.ZFIN_ADMIN)[0]);
         assertEquals("FTP Path", "${TARGETROOT_PREFIX}/ftp/test/${INSTANCE}", ZfinPropertiesEnum.FTP_ROOT.value());
-        assertEquals("Image Load Path", "/pubs/", ZfinPropertiesEnum.IMAGE_LOAD.value());
+        assertEquals("Image Load Path", "/imageLoadUp", ZfinPropertiesEnum.IMAGE_LOAD.value());
         assertEquals("Load Up Path", "/research/zcentral/loadUp/pubs", ZfinPropertiesEnum.LOADUP_FULL_PATH.value());
         assertEquals("PDF Path", "/pdf/", ZfinPropertiesEnum.PDF_PATH.value());
         assertEquals("test@zfin.org",ZfinPropertiesEnum.MICROARRAY_EMAIL.value());

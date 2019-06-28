@@ -285,7 +285,7 @@ public class Image implements Serializable {
     }
 
     public String getMediumUrl() {
-        return "/imageLoadUp/medium/" + getDisplayedImageFilename();
+        return "/imageLoadUp/" + getMedium();
     }
 
     public String getThumbnailUrl() {

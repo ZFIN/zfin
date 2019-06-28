@@ -12,7 +12,7 @@ public class ImageViewBean {
     public String getMediumImageURL() {
         if (image == null) return null;
 
-        StringBuffer imageURL = new StringBuffer("/imageLoadUp/medium/");
+        StringBuffer imageURL = new StringBuffer("/imageLoadUp/");
 
         if (image.getImageWithAnnotationsFilename() != null)
             return imageURL.append(image.getImageWithAnnotationsFilename()).toString();

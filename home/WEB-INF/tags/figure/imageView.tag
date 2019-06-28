@@ -32,7 +32,7 @@
 
             <c:choose>
                     <c:when test="${image.videoStill}">
-                        <video controls ${autoplay} loop height="500" poster="/imageLoadUp/medium/${image.imageFilename}">
+                        <video controls ${autoplay} loop height="500" poster="/imageLoadUp/${image.imageFilename}">
                             <c:forEach var="video" items="${image.videos}">
                                 <source src="/videoLoadUp/${video.videoFilename}"/>
                             </c:forEach>

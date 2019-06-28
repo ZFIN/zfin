@@ -30,7 +30,7 @@
             <c:forEach var="image" items="${figure.images}">
                 <c:choose>
                     <c:when test="${image.videoStill}">
-                        <video controls ${autoplay} loop height="500" poster="/imageLoadUp/medium/${image.imageFilename}">
+                        <video controls ${autoplay} loop height="500" poster="/imageLoadUp/${image.imageFilename}">
                             <c:forEach var="video" items="${image.videos}">
                                 <source src="/videoLoadUp/${video.videoFilename}"/>
                             </c:forEach>
@@ -47,7 +47,7 @@
                                     <c:set var="filename" value="${image.imageFilename}"/>
                                 </c:otherwise>
                             </c:choose>
-                            <img class="figure-image medium" src="/imageLoadUp/medium/${filename}"/>
+                            <img class="figure-image medium" src="/imageLoadUp/${filename}"/>
 
                         </zfin:link>
                     </c:otherwise>
