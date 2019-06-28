@@ -115,6 +115,6 @@ public class FishExperiment implements Comparable<FishExperiment> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(experiment, fish);
+        return Objects.hash(this.getExperiment(), this.getFish());
     }
 }

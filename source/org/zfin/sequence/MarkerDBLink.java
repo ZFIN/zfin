@@ -28,14 +28,11 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
 //                return true ;
 //            }
 
-            if (dbLink.getMarker().getZdbID().equals(dbLink.getMarker().getZdbID())
+            return getMarker().getZdbID().equals(dbLink.getMarker().getZdbID())
                     &&
-                    dbLink.getAccessionNumber().equals(dbLink.getAccessionNumber())
+                    getAccessionNumber().equals(dbLink.getAccessionNumber())
                     &&
-                    dbLink.getReferenceDatabase().equals(dbLink.getReferenceDatabase())
-                    ) {
-                return true;
-            }
+                    getReferenceDatabase().equals(dbLink.getReferenceDatabase());
         }
         return false;
     }
