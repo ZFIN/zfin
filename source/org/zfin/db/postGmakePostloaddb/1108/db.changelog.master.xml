@@ -37,5 +37,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-556.sql" />
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/CUR-912.sql" />
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-527.sql" />
 </databaseChangeLog>
