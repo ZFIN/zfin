@@ -15,12 +15,5 @@ and pub_date between '0012-07-24' and '2005-12-31'
 and zdb_id=recattrib_source_zdb_id
 and recattrib_data_zdb_id not like 'ZDB-FIG%';
 
-update pub_tracking_history
-set pth_status_id=4
-from tmp_pub
-where pth_pub_zdb_id=pubid;
-
-update pub_tracking_history
-set pth_location_id=6
-from tmp_pub
-where pth_pub_zdb_id=pubid;
+insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by,pth_location_id)
+select pubid, 4, 'ZDB-PERS-030520-2',6 from tmp_pub;
