@@ -131,7 +131,7 @@ public class GafService {
 
                 // for each gene, create an entry
                 for (Marker gene : genes) {
-                    System.out.println(gene);
+                    
                     MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
 
                     if (annotationToAdd == null) {
