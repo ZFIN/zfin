@@ -24,5 +24,5 @@ and pth_pub_zdb_id not in (Select pt_pub_zdb_id from pheno_term);
 
 
 insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by,pth_location_id)
-select pubid, 4, 'ZDB-PERS-030520-2',6 from tmp_pub;
+select pubzdb, 4, 'ZDB-PERS-030520-2',6 from tmp_pub;
 
