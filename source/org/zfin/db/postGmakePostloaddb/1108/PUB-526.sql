@@ -23,5 +23,5 @@ and zdb_id not in (select recattrib_source_zdb_id from record_attribution where 
 and pth_pub_zdb_id not in (Select pt_pub_zdb_id from pheno_term);
 
 insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by,pth_claimed_by)
-select pubid, 6, 'ZDB-PERS-030520-2','ZDB-PERS-100329-1' from tmp_pub;
+select pubzdb, 6, 'ZDB-PERS-030520-2','ZDB-PERS-100329-1' from tmp_pub;
 
