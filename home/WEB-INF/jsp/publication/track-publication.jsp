@@ -3,9 +3,6 @@
 
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
-<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-<script src="${zfn:getAssetPath("angular.js")}"></script>
-
 <c:set var="viewURL">/${publication.zdbID}</c:set>
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
 <c:set var="linkURL">/action/publication/${publication.zdbID}/link</c:set>
@@ -29,33 +26,15 @@
     <c:if test="${!empty publication.fileName}"> <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="far fa-file-pdf"></i></a></c:if>
   </p>
 
-  <div>
-    <ul id="pub-track-tabs" class="nav nav-tabs nav-justified nav-padded" role="tablist">
-      <li role="presentation" class="active"><a href="#status" aria-controls="status" role="tab" data-toggle="tab">Status</a></li>
-      <li role="presentation"><a href="#correspondence" aria-controls="correspondence" role="tab" data-toggle="tab">Correspondence</a></li>
-    </ul>
-
-    <div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="status">
-        <div class="__react-root"
-             id="PubTracker"
-             data-pub-id="${publication.zdbID}"
-             data-user-id="${loggedInUser.zdbID}"
-             data-user-name="${loggedInUser.display}"
-             data-user-email="${loggedInUser.email}"
-        >
-        </div>
-      </div>
-      <div role="tabpanel" class="tab-pane" id="correspondence">
-        <div publication-correspondence pub-id="${publication.zdbID}" curator-id="${loggedInUser.zdbID}" curator-email="${loggedInUser.email}"></div>
-      </div>
-    </div>
+  <div class="__react-root"
+       id="PubTracker"
+       data-pub-id="${publication.zdbID}"
+       data-user-id="${loggedInUser.zdbID}"
+       data-user-name="${loggedInUser.display}"
+       data-user-email="${loggedInUser.email}"
+  >
   </div>
 
 </div>
-
-<script>
-  $('#pub-track-tabs').stickyTabs();
-</script>
 
 <script src="${zfn:getAssetPath("react.js")}"></script>
