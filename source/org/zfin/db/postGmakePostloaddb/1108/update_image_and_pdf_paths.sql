@@ -39,10 +39,6 @@ update image
   where img_fig_zdb_id is not null
  and img_is_video_still = 'f';
 
-update publication_file
-  set pf_file_name = (select year_string||'/'||pub_zdb_id||'/'||pub_zdb_id||'.pdf' from tmp_new_pub_loc where pub_zdb_id = pf_pub_zdb_id)
- where pf_file_name is not null;
-
 select img_image from image  where img_zdb_id like 'ZDB-IMAGE-19%' limit 5;
 
 select pf_file_name from publication_file limit 5;
