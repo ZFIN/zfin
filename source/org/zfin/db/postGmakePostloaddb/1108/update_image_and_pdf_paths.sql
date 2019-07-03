@@ -7,20 +7,6 @@ create temp table tmp_new_img_name (img_zdb_id text,
        year_string text)
 ;
 
-create temp table tmp_new_pub_loc (pub_zdb_id text,
-       year_string text);
-
-insert into tmp_new_pub_loc (pub_zdb_id, year_string)
-  select zdb_id,
-         case when zdb_id like 'ZDB-PUB-9%' 
-          then '19'||substring(zdb_id, 9,2) 
-          else '20'||substring(zdb_id, 9,2) 
-          end
-   from publication
- where exists (select 'x' from publication_file
-                      where pf_pub_zdb_id = zdb_id 
-                      );
-
 insert into tmp_new_img_name (img_zdb_id, pub_zdb_id, year_string)
  select img_zdb_id, 
         fig_source_zdb_id, 
