@@ -36,6 +36,7 @@ class PubCorrespondence extends React.Component {
         this.handleRecordReply = this.handleRecordReply.bind(this);
         this.handleSendReply = this.handleSendReply.bind(this);
         this.handleDeleteCorrespondence = this.handleDeleteCorrespondence.bind(this);
+        this.handleTemplateSelect = this.handleTemplateSelect.bind(this);
     }
 
     componentDidMount() {
@@ -72,6 +73,17 @@ class PubCorrespondence extends React.Component {
 
     handleEmailUpdate(email) {
         this.setState({email});
+    }
+
+    handleTemplateSelect(subject, body) {
+        const { pubDetails, userName } = this.props;
+        this.setState(state => ({
+            email: {
+                ...state.email,
+                subject: subject,
+                message: body(pubDetails.citation, userName)
+            }
+        }));
     }
 
     handleEmailCancel() {
@@ -171,7 +183,7 @@ class PubCorrespondence extends React.Component {
     }
 
     render() {
-        const { authors } = this.props;
+        const { pubDetails } = this.props;
         const { correspondences, email, successMessage, errorMessage } = this.state;
 
         return (
@@ -184,12 +196,13 @@ class PubCorrespondence extends React.Component {
                 </div>
 
                 <PubCorrespondenceEmailForm
-                    authors={authors}
+                    authors={pubDetails.registeredAuthors}
                     email={email}
                     loading={false}
                     onCancel={this.handleEmailCancel}
                     onUpdate={this.handleEmailUpdate}
                     onComplete={this.handleEmailComplete}
+                    onTemplateSelect={this.handleTemplateSelect}
                 />
 
                 <Alert color='success' dismissable onDismiss={this.clearSuccessMessage}>
@@ -213,10 +226,11 @@ class PubCorrespondence extends React.Component {
 }
 
 PubCorrespondence.propTypes = {
-    authors: PropTypes.array,
+    pubDetails: PropTypes.object,
     pubId: PropTypes.string,
-    userId: PropTypes.string,
     userEmail: PropTypes.string,
+    userId: PropTypes.string,
+    userName: PropTypes.string,
 };
 
 export default PubCorrespondence;

@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import AuthorEmailCheckboxList from "./AuthorEmailCheckboxList";
 import LoadingButton from "./LoadingButton";
+import PubCorrespondenceTemplateSelector from "./PubCorrespondenceTemplateSelector";
 
-const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onComplete, loading}) => {
+const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onComplete, onTemplateSelect, loading}) => {
     if (!email) {
         return null;
     }
@@ -86,6 +87,9 @@ const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onCompl
                 <div className="col-sm-6">
                     <input className="form-control" value={email.subject} onChange={handleSubjectChange} />
                 </div>
+                <div className='col-sm-4'>
+                    <PubCorrespondenceTemplateSelector onSelect={onTemplateSelect} />
+                </div>
             </div>
 
             <div className="form-group">
@@ -113,6 +117,7 @@ PubCorrespondenceEmailForm.propTypes = {
     onCancel: PropTypes.func,
     onUpdate: PropTypes.func,
     onComplete: PropTypes.func,
+    onTemplateSelect: PropTypes.func,
     loading: PropTypes.bool,
 };
 

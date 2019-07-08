@@ -30,20 +30,21 @@ class PubTracker extends React.Component {
             <Tabs>
                 <Tab label='Status'>
                     <PubTrackerStatusTab
-                        pubId={pubId}
                         pubDetails={pubDetails}
+                        pubId={pubId}
+                        userEmail={userEmail}
                         userId={userId}
                         userName={userName}
-                        userEmail={userEmail}
                     />
                 </Tab>
 
                 <Tab label='Correspondence'>
                     <PubCorrespondence
-                        authors={pubDetails.registeredAuthors}
+                        pubDetails={pubDetails}
                         pubId={pubId}
                         userEmail={userEmail}
                         userId={userId}
+                        userName={userName}
                     />
                 </Tab>
             </Tabs>
