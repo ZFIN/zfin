@@ -8,7 +8,7 @@ const PubCorrespondenceList = ({correspondences, onResend, onRecordReply, onSend
     }
 
     if (!correspondences.length) {
-        return <div className="text-muted text-center">No correspondences yet</div>;
+        return <div className="text-muted text-center"><hr />No correspondences yet</div>;
     }
 
     const preventDefault = (next) => {
