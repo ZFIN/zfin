@@ -310,7 +310,7 @@ if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
     }
 
     public PublicationFile processPublicationFile(Publication publication, String fileName, PublicationFileType fileType, InputStream fileData) throws IOException {
-        File fileRoot = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.PDF_LOAD.toString());
+        File fileRoot = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString());
 
         String pubYear = Integer.toString(publication.getEntryDate().get(Calendar.YEAR));
         File yearDirectory = new File(fileRoot, pubYear);
@@ -321,7 +321,15 @@ if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
             }
         }
 
-        String storedFileName = publication.getZdbID();
+        File publicationDirectory = new File(fileRoot, pubYear+ "/"+publication.getZdbID());
+        if (!publicationDirectory.exists()) {
+            boolean success = publicationDirectory.mkdirs();
+            if (!success) {
+                throw new IOException("Unable to create directory: " + publicationDirectory.getAbsolutePath());
+            }
+        }
+
+        String storedFileName = publication.getZdbID()+"/"+publication.getZdbID();
         if (fileType.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
             storedFileName += ".pdf";
         } else {
