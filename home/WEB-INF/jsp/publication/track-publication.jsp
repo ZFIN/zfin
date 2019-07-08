@@ -2,6 +2,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
+<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
 <c:set var="viewURL">/${publication.zdbID}</c:set>
 <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>

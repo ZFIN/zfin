@@ -19,12 +19,15 @@ const CheckboxList = ({getItemDisplay, getItemKey, items, value, onChange}) => {
     return (
         <div>
             {items && items.map(item => (
-                <div key={getItemKey(item)}>
-                    <input
-                        type="checkbox"
-                        checked={value && value.indexOf(getItemKey(item)) >= 0}
-                        onChange={e => handleChange(e.target.checked, item)}
-                    /> {getItemDisplay(item)}
+                <div key={getItemKey(item)} className='checkbox'>
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={value && value.indexOf(getItemKey(item)) >= 0}
+                            onChange={e => handleChange(e.target.checked, item)}
+                        />
+                        {getItemDisplay(item)}
+                    </label>
                 </div>
             ))}
         </div>

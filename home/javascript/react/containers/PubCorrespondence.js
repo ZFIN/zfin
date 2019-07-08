@@ -1,0 +1,222 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import PubCorrespondenceEmailForm from "../components/PubCorrespondenceEmailForm";
+import Alert from '../components/Alert';
+import {splitEmailRecipientListString} from "../utils/publications";
+import {addCorrespondence, deleteCorrespondence, getCorrespondences} from "../api/publication";
+import PubCorrespondenceList from "../components/PubCorrespondenceList";
+
+const prependSubject = (subject) => {
+    if (subject.toLowerCase().substr(0, 3) !== 're:') {
+        subject = 'Re: ' + subject;
+    }
+    return subject;
+};
+
+class PubCorrespondence extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            correspondences: [],
+            email: null,
+            loading: false,
+            successMessage: '',
+            errorMessage: '',
+        };
+
+        this.openOutgoingForm = this.openOutgoingForm.bind(this);
+        this.openIncomingForm = this.openIncomingForm.bind(this);
+        this.handleEmailUpdate = this.handleEmailUpdate.bind(this);
+        this.handleEmailCancel = this.handleEmailCancel.bind(this);
+        this.handleEmailComplete = this.handleEmailComplete.bind(this);
+        this.clearSuccessMessage = this.clearSuccessMessage.bind(this);
+        this.clearErrorMessage = this.clearErrorMessage.bind(this);
+        this.handleResend = this.handleResend.bind(this);
+        this.handleRecordReply = this.handleRecordReply.bind(this);
+        this.handleSendReply = this.handleSendReply.bind(this);
+        this.handleDeleteCorrespondence = this.handleDeleteCorrespondence.bind(this);
+    }
+
+    componentDidMount() {
+        getCorrespondences(this.props.pubId).then(correspondences => this.setState({correspondences}));
+    }
+
+    openOutgoingForm() {
+        const { userId, userEmail } = this.props;
+        this.setState({
+            email: {
+                outgoing: true,
+                additionalTo: '',
+                to: [],
+                from: {zdbID: userId, email: userEmail},
+                subject: '',
+                message: '',
+            }
+        });
+    }
+
+    openIncomingForm() {
+        const { userId, userEmail } = this.props;
+        this.setState({
+            email: {
+                outgoing: false,
+                additionalTo: '',
+                to: [{zdbID: userId, email: userEmail}],
+                from: {email: ''},
+                subject: '',
+                message: '',
+            }
+        });
+    }
+
+    handleEmailUpdate(email) {
+        this.setState({email});
+    }
+
+    handleEmailCancel() {
+        this.setState({email: null});
+    }
+
+    addCorrespondence(correspondence) {
+        this.setState({ loading: true });
+        addCorrespondence(this.props.pubId, correspondence)
+            .then(correspondence => this.setState(state => ({
+                correspondences: [
+                    correspondence,
+                    ...state.correspondences
+                ],
+                email: null,
+                successMessage: correspondence.outgoing ? 'Email successfully sent.' : 'Reply saved.',
+                errorMessage: '',
+            })))
+            .fail(() => this.setState({
+                successMessage: '',
+                errorMessage: correspondence.outgoing ? 'Error sending email.' : 'Error saving reply.',
+            }))
+            .always(() => this.setState({
+                loading: false,
+            }));
+    }
+
+    handleEmailComplete() {
+        const { email } = this.state;
+        const combinedRecipients = email.to.concat(
+            splitEmailRecipientListString(email.additionalTo).map(email => ({ email }))
+        );
+        this.addCorrespondence({
+            ...email,
+            to: combinedRecipients,
+        });
+    }
+
+    handleResend(correspondence) {
+        if (correspondence.to.length === 0) {
+            return;
+        }
+        this.addCorrespondence({
+            ...correspondence,
+            resend: true,
+        });
+    }
+
+    handleRecordReply(correspondence) {
+        const { userId, userEmail } = this.props;
+        this.setState({
+            email: {
+                outgoing: false,
+                additionalTo: '',
+                to: [{zdbID: userId, email: userEmail}],
+                from: {email: correspondence.to.map(t => t.email).join(', ')},
+                subject: prependSubject(correspondence.subject),
+                message: ''
+            }
+        });
+    }
+
+    handleSendReply(correspondence) {
+        const { userId, userEmail } = this.props;
+        this.setState({
+            email: {
+                reply: true,
+                outgoing: true,
+                to: [],
+                additionalTo: correspondence.from.email,
+                from: {zdbID: userId, email: userEmail},
+                subject: prependSubject(correspondence.subject),
+                message: ''
+            }
+        });
+    }
+
+    handleDeleteCorrespondence(correspondence) {
+        deleteCorrespondence(correspondence.id, correspondence.outgoing)
+            .then(() => this.setState(state => ({
+                correspondences: state.correspondences.filter(c => c.id !== correspondence.id),
+                successMessage: 'Message deleted.',
+                errorMessage: '',
+            })))
+            .fail(() => ({
+                successMessage: '',
+                errorMessage: 'Error deleting message.',
+            }));
+    }
+
+    clearSuccessMessage() {
+        this.setState({ successMessage: '' });
+    }
+
+    clearErrorMessage() {
+        this.setState({ errorMessage: '' });
+    }
+
+    render() {
+        const { authors } = this.props;
+        const { correspondences, email, successMessage, errorMessage } = this.state;
+
+        return (
+            <div>
+                <div className="row bottom-buffer">
+                    <div className="col-sm-12 horizontal-buttons">
+                        <button className="btn btn-default" onClick={this.openOutgoingForm}>Send Email</button>
+                        <button className="btn btn-default" onClick={this.openIncomingForm}>Record Reply</button>
+                    </div>
+                </div>
+
+                <PubCorrespondenceEmailForm
+                    authors={authors}
+                    email={email}
+                    loading={false}
+                    onCancel={this.handleEmailCancel}
+                    onUpdate={this.handleEmailUpdate}
+                    onComplete={this.handleEmailComplete}
+                />
+
+                <Alert color='success' dismissable onDismiss={this.clearSuccessMessage}>
+                    {successMessage}
+                </Alert>
+
+                <Alert color='danger' dismissable onDismiss={this.clearErrorMessage}>
+                    {errorMessage}
+                </Alert>
+
+                <PubCorrespondenceList
+                    correspondences={correspondences}
+                    onResend={this.handleResend}
+                    onRecordReply={this.handleRecordReply}
+                    onSendReply={this.handleSendReply}
+                    onDelete={this.handleDeleteCorrespondence}
+                />
+            </div>
+        );
+    }
+}
+
+PubCorrespondence.propTypes = {
+    authors: PropTypes.array,
+    pubId: PropTypes.string,
+    userId: PropTypes.string,
+    userEmail: PropTypes.string,
+};
+
+export default PubCorrespondence;

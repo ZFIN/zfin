@@ -1,17 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import CheckboxList from "./CheckboxList";
 import LoadingButton from "./LoadingButton";
-
-const iterateAuthorEmails = (authors, callback) => {
-    authors.forEach(author => {
-        author.email && author.email.split(/[\s;,]+/).forEach(email => {
-            if (!email) { return; }
-            callback(email, author);
-        });
-    });
-};
+import {buildRecipientList, splitEmailRecipientListString} from "../utils/publications";
+import AuthorEmailCheckboxList from "./AuthorEmailCheckboxList";
 
 class PubTrackerAuthorNotification extends Component {
     constructor(props) {
@@ -47,9 +39,7 @@ class PubTrackerAuthorNotification extends Component {
     addRegisteredAuthorsToRecipientList() {
         const { pub } = this.props;
         if (pub) {
-            const registeredRecipients = [];
-            iterateAuthorEmails(pub.registeredAuthors, email => registeredRecipients.push(email));
-            this.setState({ registeredRecipients });
+            this.setState({ registeredRecipients: buildRecipientList(pub.registeredAuthors) });
         }
     }
 
@@ -69,7 +59,8 @@ class PubTrackerAuthorNotification extends Component {
     getRecipientList() {
         const { registeredRecipients, additionalRecipients } = this.state;
         return registeredRecipients
-            .concat(additionalRecipients.split(/[,\s]+/));
+            .map(r => r.email)
+            .concat(splitEmailRecipientListString(additionalRecipients));
     }
 
     previewNotification() {
@@ -87,7 +78,6 @@ class PubTrackerAuthorNotification extends Component {
     }
 
     sendNotification() {
-        const { pub } = this.props;
         const { registeredRecipients, additionalRecipients } = this.state;
 
         const notification = {
@@ -95,14 +85,10 @@ class PubTrackerAuthorNotification extends Component {
             recipients: this.getRecipientList(),
         };
 
-        const recipients = [];
-        iterateAuthorEmails(pub.registeredAuthors, (email, author) => {
-            if (registeredRecipients.indexOf(email) >= 0) {
-                recipients.push(`${author.display} (${email})`)
-            }
-        });
-        recipients.push(...additionalRecipients.split(/[,\s]+/));
-        const note = { text: `Notified authors: ${recipients.join(', ')}` }
+        const recipients = registeredRecipients
+            .map(r => `${r.name} (${r.email})`)
+            .concat(splitEmailRecipientListString(additionalRecipients));
+        const note = { text: `Notified authors: ${recipients.join(', ')}` };
 
         this.props.onSendNotification(notification, note)
             .then(() => this.setState({
@@ -147,25 +133,15 @@ class PubTrackerAuthorNotification extends Component {
             return null;
         }
 
-        const registeredAuthorOptions = [];
-        iterateAuthorEmails(pub.registeredAuthors, (email, author) => (
-            registeredAuthorOptions.push({
-                name: author.display,
-                email: email,
-            })
-        ));
-
         return (
             <div>
                 { !editing && !previewing &&
                     <div>
                         <div className="form-group">
                             <label>Registered Authors</label>
-                            <CheckboxList
+                            <AuthorEmailCheckboxList
                                 value={registeredRecipients}
-                                items={registeredAuthorOptions}
-                                getItemKey={i => i.email}
-                                getItemDisplay={i => `${i.name} (${i.email})`}
+                                authors={pub.registeredAuthors}
                                 onChange={registeredRecipients => this.setState({registeredRecipients})}
                             />
                         </div>

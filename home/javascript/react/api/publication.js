@@ -89,3 +89,15 @@ export const sendAuthorNotification = (pubId, notification) => {
     return http.post(`/action/publication/${pubId}/notification`, notification);
 };
 
+export const addCorrespondence = (pubId, correspondence) => {
+    return http.post(`/action/publication/${pubId}/correspondences`, correspondence);
+};
+
+export const getCorrespondences = (pubId) => {
+    return http.get(`/action/publication/${pubId}/correspondences`);
+};
+
+export const deleteCorrespondence = (correspondenceId, outgoing) => {
+    return http.delete(`/action/publication/correspondences/${correspondenceId}?outgoing=${outgoing}`);
+};
+

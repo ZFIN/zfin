@@ -4,7 +4,7 @@ import LoadingSpinner from "./LoadingSpinner";
 
 const LoadingButton = ({children, loading, ...rest}) => {
     return (
-        <button disabled={loading} {...rest}>
+        <button type='button' disabled={loading} {...rest}>
             <LoadingSpinner loading={loading} />
             { !loading && children }
         </button>

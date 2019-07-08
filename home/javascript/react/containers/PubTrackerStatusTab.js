@@ -36,7 +36,6 @@ class PubTrackerStatusTab extends React.Component {
         this.state = {
             curatedEntities: [],
             notificationLoading: false,
-            pubDetails: null,
             notes: [],
             topics: [],
             status: {},
@@ -65,7 +64,6 @@ class PubTrackerStatusTab extends React.Component {
         getStatuses().then(statuses => this.setState({statuses}));
         getLocations().then(locations => this.setState({locations}));
         getCurators().then(curators => this.setState({curators}));
-        getDetails(pubId).then(pubDetails => this.setState({pubDetails}));
         getStatus(pubId).then(status => this.setState({status}));
         getIndexed(pubId).then(indexed => this.setState({indexed}));
         getNotes(pubId).then(notes => this.setState({notes}));
@@ -174,7 +172,7 @@ class PubTrackerStatusTab extends React.Component {
     }
 
     render() {
-        const { pubId, userId, userName, userEmail } = this.props;
+        const { pubDetails, pubId, userId, userName, userEmail } = this.props;
         const {
             curatedEntities,
             curators,
@@ -183,7 +181,6 @@ class PubTrackerStatusTab extends React.Component {
             locations,
             notes,
             notificationLoading,
-            pubDetails,
             status,
             statuses,
             statusLoading,
@@ -271,6 +268,7 @@ class PubTrackerStatusTab extends React.Component {
 }
 
 PubTrackerStatusTab.propTypes = {
+    pubDetails: PropTypes.object,
     pubId: PropTypes.string,
     userId: PropTypes.string,
     userName: PropTypes.string,
