@@ -146,7 +146,7 @@ public class SubmissionFormController {
             HibernateUtil.currentSession().save(figure);
 
             try {
-                Image image = ImageService.processImage(figure, imageFile, ProfileService.getCurrentSecurityUser());
+                Image image = ImageService.processImage(figure, imageFile, ProfileService.getCurrentSecurityUser(), publication.getZdbID());
                 image.setExternalName(imageFile.getOriginalFilename());
                 HibernateUtil.currentSession().save(image);
             } catch (IOException e) {

@@ -88,7 +88,7 @@ public class FigureEditController {
 
         for (MultipartFile file : files) {
             try {
-                ImageService.processImage(newFigure, file, ProfileService.getCurrentSecurityUser());
+                ImageService.processImage(newFigure, file, ProfileService.getCurrentSecurityUser(), newFigure.getPublication().getZdbID());
             } catch (IOException e) {
                 LOG.error("Error processing image", e);
                 throw new InvalidWebRequestException("Error processing image");
@@ -180,7 +180,7 @@ public class FigureEditController {
 
         Transaction tx = HibernateUtil.createTransaction();
         try {
-            image = ImageService.processImage(figure, file, ProfileService.getCurrentSecurityUser());
+            image = ImageService.processImage(figure, file, ProfileService.getCurrentSecurityUser(), figure.getPublication().getZdbID());
         } catch (IOException e) {
             LOG.error("Error processing image", e);
             throw new InvalidWebRequestException("Error processing image");
