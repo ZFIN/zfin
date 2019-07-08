@@ -23,6 +23,8 @@ const AuthorEmailCheckboxList = ({authors, value, onChange}) => {
 
 AuthorEmailCheckboxList.propTypes = {
     authors: PropTypes.array,
+    onChange: PropTypes.func,
+    value: PropTypes.array,
 };
 
 export default AuthorEmailCheckboxList;

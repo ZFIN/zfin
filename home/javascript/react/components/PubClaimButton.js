@@ -21,7 +21,7 @@ const PubClaimButton = ({publication, onClaimPub}) => {
 
 PubClaimButton.propTypes = {
     publication: PropTypes.object.isRequired,
-    onPubClaim: PropTypes.func,
+    onClaimPub: PropTypes.func,
 };
 
 export default PubClaimButton;

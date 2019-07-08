@@ -28,7 +28,7 @@ class PubEditableNote extends Component {
         const { onDeleteNote, note } = this.props;
         event.preventDefault();
         onDeleteNote(note);
-    };
+    }
 
     handleNoteChange(event) {
         this.setState({

@@ -100,8 +100,7 @@ class PubTrackerAuthorNotification extends Component {
                 customNote: '',
                 additionalRecipients: '',
             }))
-            .fail((error) => {
-                console.error(error);
+            .fail(() => {
                 this.setState({
                     sendSuccess: false,
                     sendError: true,

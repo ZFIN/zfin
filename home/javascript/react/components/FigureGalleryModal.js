@@ -15,7 +15,7 @@ class FigureGalleryModal extends Component {
             });
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate() {
         if (this.props.image) {
             $(this.modalRef.current).modal('show');
         }
@@ -50,7 +50,7 @@ class FigureGalleryModal extends Component {
                             </a>}
                         </div>
                     </div>
-                </div>}
+                </div>
             </div>
         );
     }

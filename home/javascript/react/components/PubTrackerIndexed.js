@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import LoadingSpinner from "./LoadingSpinner";
 
-const PubTrackerIndexed = ({error, indexed, onToggle, saving}) => {
+const PubTrackerIndexed = ({indexed, onToggle, saving}) => {
     const handleToggle = event => onToggle({
         indexed: event.target.checked,
     });

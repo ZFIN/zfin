@@ -7,7 +7,6 @@ import {
     deleteNote,
     getCuratedEntities,
     getCurators,
-    getDetails,
     getIndexed,
     getLocations,
     getNotes,
@@ -192,7 +191,7 @@ class PubTrackerStatusTab extends React.Component {
             'Status',
             <span className="pull-right" key='history'>
                 <small>
-                    <a href={`/action/publication/${pubId}/status-history`} target="_blank">
+                    <a href={`/action/publication/${pubId}/status-history`} target="_blank" rel="noopener noreferrer">
                         History <i className="fas fa-external-link-alt" />
                     </a>
                 </small>
