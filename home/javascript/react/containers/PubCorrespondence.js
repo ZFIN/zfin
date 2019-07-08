@@ -5,6 +5,7 @@ import Alert from '../components/Alert';
 import {splitEmailRecipientListString} from "../utils/publications";
 import {addCorrespondence, deleteCorrespondence, getCorrespondences} from "../api/publication";
 import PubCorrespondenceList from "../components/PubCorrespondenceList";
+import intertab from "../utils/intertab";
 
 const prependSubject = (subject) => {
     if (subject.toLowerCase().substr(0, 3) !== 're:') {
@@ -102,6 +103,7 @@ class PubCorrespondence extends React.Component {
                 successMessage: correspondence.outgoing ? 'Email successfully sent.' : 'Reply saved.',
                 errorMessage: '',
             })))
+            .then(() => intertab.fireEvent(intertab.EVENTS.PUB_STATUS))
             .fail(() => this.setState({
                 successMessage: '',
                 errorMessage: correspondence.outgoing ? 'Error sending email.' : 'Error saving reply.',

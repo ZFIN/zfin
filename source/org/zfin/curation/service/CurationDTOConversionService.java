@@ -196,6 +196,7 @@ public class CurationDTOConversionService {
         bean.setStatus(toCurationStatusDTO(status));
         bean.setPdfPath(publication.getFileName());
         bean.setLastCorrespondenceDate(publication.getLastCorrespondenceDate());
+        bean.setNumberOfCorrespondences(publication.getSentMessages().size() + publication.getReceivedMessages().size());
         List<DashboardImageBean> images = new ArrayList<>();
         for (Figure figure : publication.getFigures()) {
             for (Image image : figure.getImages()) {

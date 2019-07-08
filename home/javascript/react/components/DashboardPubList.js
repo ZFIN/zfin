@@ -19,7 +19,8 @@ const DashboardPubList = ({ pubs, statusCounts }) => {
     return (
         <React.Fragment>
             {Object.entries(pubMap).map(([status, pubs]) => {
-                const hasCorrespondenceColumn = status === 'Waiting for Author';
+                const hasCorrespondenceColumn = status === 'Waiting for Author' || status === 'Manual PDF Acquisition Needed';
+                const hasPriorityColumn = status === 'Manual PDF Acquisition Needed';
                 const hasCurateAction = status !== 'Processing' && status !== 'Manual PDF Acquisition Needed';
                 return (
                     <div key={status}>
@@ -31,7 +32,9 @@ const DashboardPubList = ({ pubs, statusCounts }) => {
                                 <th>Title</th>
                                 <th width="100px">Last Status Change</th>
                                 {hasCorrespondenceColumn && <th width="130px">Last Correspondence</th>}
+                                {hasCorrespondenceColumn && <th width="130px"># Correspondences</th>}
                                 <th width="150px">Status</th>
+                                {hasPriorityColumn && <th width="80px">Priority</th>}
                                 <th width="100px">Owner</th>
                                 <th width="40px" />
                             </tr>
@@ -48,7 +51,9 @@ const DashboardPubList = ({ pubs, statusCounts }) => {
                                     </td>
                                     <td><RelativeDate date={pub.status.updateDate} /></td>
                                     {hasCorrespondenceColumn && <td><RelativeDate date={pub.lastCorrespondenceDate} /></td>}
+                                    {hasCorrespondenceColumn && <td>{pub.numberOfCorrespondences}</td>}
                                     <td>{pub.status.status.name}</td>
+                                    {hasPriorityColumn && <td>{pub.status.location.name}</td>}
                                     <td>{pub.status.owner.name}</td>
                                     <td>
                                         <div className="dropdown">

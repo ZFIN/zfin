@@ -16,6 +16,7 @@ public class DashboardPublicationBean {
     private String pdfPath;
     private CurationStatusDTO status;
     private Date lastCorrespondenceDate;
+    private int numberOfCorrespondences;
     private List<ProcessingTaskBean> processingTasks;
     private boolean canShowImages;
 
@@ -89,6 +90,14 @@ public class DashboardPublicationBean {
 
     public void setLastCorrespondenceDate(Date lastCorrespondenceDate) {
         this.lastCorrespondenceDate = lastCorrespondenceDate;
+    }
+
+    public int getNumberOfCorrespondences() {
+        return numberOfCorrespondences;
+    }
+
+    public void setNumberOfCorrespondences(int numberOfCorrespondences) {
+        this.numberOfCorrespondences = numberOfCorrespondences;
     }
 
     public List<ProcessingTaskBean> getProcessingTasks() {
