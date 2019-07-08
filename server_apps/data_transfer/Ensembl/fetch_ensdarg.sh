@@ -27,7 +27,7 @@ if (! -f fetch_ensembl.log) then
 	touch fetch_ensembl.log
 endif
 echo "Using Ensembl release: $cur   `date`" >> fetch_ensembl.log
-cat updateMarkerChromosomeLocation.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
+cat updateSequenceFeatureChromosomeLocation.sql commit.sql | ${PGBINDIR}/psql <!--|DB_NAME|-->
 echo "Updated marker_chromosome_location" >> fetch_ensembl.log
 
 endif

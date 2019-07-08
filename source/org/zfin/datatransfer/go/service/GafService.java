@@ -3,7 +3,8 @@ package org.zfin.datatransfer.go.service;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.Species;
 import org.zfin.datatransfer.go.*;
 import org.zfin.gwt.root.dto.GoDefaultPublication;
@@ -131,7 +132,8 @@ public class GafService {
 
                 // for each gene, create an entry
                 for (Marker gene : genes) {
-                    
+                    System.out.println(gene);
+
                     MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
 
                     if (annotationToAdd == null) {
@@ -360,12 +362,14 @@ public class GafService {
     protected void handleInferences(GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
             throws GafValidationError {
         String inferenceEntry = gafEntry.getInferences();
+        System.out.println(inferenceEntry);
         if (StringUtils.isNotEmpty(inferenceEntry)) {
             GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(markerGoTermEvidence.getEvidenceCode().getCode());
             String publicationZdbId = markerGoTermEvidence.getSource().getZdbID();
             Set<InferenceGroupMember> inferredFrom = new HashSet<>();
             Set<String> inferenceSet = new HashSet<>();
             inferenceSet.addAll(Arrays.asList(inferenceEntry.split("\\|")));
+            System.out.println(inferenceSet.size());
             if (!GoEvidenceValidator.isValidCardinality(goEvidenceCodeEnum, inferenceSet)) {
                 throw new GafValidationError(GoEvidenceValidator.generateErrorString(goEvidenceCodeEnum, publicationZdbId), gafEntry);
             }
