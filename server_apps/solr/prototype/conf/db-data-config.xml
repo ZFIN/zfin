@@ -4497,18 +4497,20 @@ and child.term_ontology = 'disease_ontology';
             <entity name="pub_images"
                     query="select
                                case
-                                 when sup.img_image_with_annotation is not null
-                                         then sup.img_image_with_annotation
-                                 else sup.img_image end as image,
-                               sup.img_thumbnail as thumbnail,
-                               sup.img_zdb_id,
+                                 when img_image_with_annotation is not null
+                                         then img_image_with_annotation
+                                 else img_image end as image,
+                               img_thumbnail as thumbnail,
+                               img_zdb_id,
                                'true' as has_image,
-                               sub.fig_source_zdb_id as pub_zdb_id
-                        from (select fig_zdb_id, img_zdb_id, fig_source_zdb_id, count(img_zdb_id)
-                              from image join figure on img_fig_zdb_id = fig_zdb_id
-                              group by fig_zdb_id, img_zdb_id, fig_source_zdb_id
-                              having count(img_zdb_id) &lt; 100) as sub
-                              join image sup on sup.img_zdb_id = sub.img_zdb_id;"
+                               fig_source_zdb_id as pub_zdb_id
+                            from image
+                                 join figure on img_fig_zdb_id = fig_zdb_id
+                            where fig_source_zdb_id in (
+                              select publication.zdb_id
+                              from publication
+                              where (select count(fig_zdb_id) from figure where publication.zdb_id = fig_source_zdb_id ) &lt; 100
+                            );"
                     cacheImpl="SortedMapBackedCache"
                     where="pub_zdb_id=publication.id"
             />
