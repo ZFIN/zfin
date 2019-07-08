@@ -113,7 +113,7 @@ public class ImageService {
         Runtime rtm = Runtime.getRuntime();
         rtt.exec(makeThumbnail);
         rtm.exec(makeMedium);
-        
+
         return image;
     }
 }

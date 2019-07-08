@@ -115,6 +115,10 @@
             <column name="img_thumbnail" not-null="true"/>
         </property>
 
+        <property name="medium">
+            <column name="img_medium" not-null="true"/>
+        </property>
+
         <property name="videoStill" column="img_is_video_still" type="java.lang.Boolean" not-null="true"/>
 
         <set name="videos" lazy="true" inverse="true">
