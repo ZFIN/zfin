@@ -1,6 +1,7 @@
 package org.zfin.search.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
@@ -14,86 +15,60 @@ import java.util.List;
 import java.util.Map;
 
 /*
-* This should match the fl parameter set as default in solrconfig
-* */
+ * This should match the fl parameter set as default in solrconfig
+ * */
 public class SearchResult implements ProvidesLink {
 
     //fields mapped to the Solr index
-    @Field
-    String id;
-    @Field
-    String name;
-    @Field("full_name")
-    String fullName;
-    @Field("category")
-    List<String> categories;
-    @Field
-    String type;
-
-
-
-    @Field
-
-    String url;
-    @Field
-    String screen;
-    @Field("image")
-    List<String> images;
-    @Field("thumbnail")
-    List<String> thumbnails;
-    @Field("img_zdb_id")
-    List<String> imageZdbIds;
-    @Field("profile_image")
-    String profileImage;
-    @Field
-    Float score;
-    @Field
-    Date date;
-    @Field("attribution_count")
-    Integer attributionCount;
-
-    @Field("has_orthology")
-    String hasOrthology;
+    private @Field String id;
+    private @Field String name;
+    private @Field("full_name") String fullName;
+    private @Field("category") List<String> categories;
+    private @Field String type;
+    private @Field String url;
+    private @Field String screen;
+    private @Field("image") List<String> images;
+    private @Field("thumbnail") List<String> thumbnails;
+    private @Field("img_zdb_id") List<String> imageZdbIds;
+    private @Field("profile_image") String profileImage;
+    private @Field Float score;
+    private @Field Date date;
+    private @Field("attribution_count") Integer attributionCount;
+    private @Field("has_orthology") String hasOrthology;
 
     //these two are used to join to ExpressionDetailsGenerated without using the oft-regenerating primary key
-    @Field("xpat_zdb_id")
-    String xpatZdbId;
-    @Field("fig_zdb_id")
-    String figZdbId;
-    @Field
-    String pgcmid;
+    private @Field("xpat_zdb_id") String xpatZdbId;
+    private @Field("fig_zdb_id") String figZdbId;
 
+    private @Field String pgcmid;
+    private @Field("[explain]") String explain;
+    private @Field("is_curatable") boolean curatable;
 
-    @Field("[explain]")
-    String explain;
-
-    Object entity;
-    Figure figure;
+    private Object entity;
+    private Figure figure;
 
     //fields that need to be injected after
-    String matchingText;
+    private String matchingText;
 
     /* this is only used when the search result is an autocomplete response */
-    String autocompleteLabel;
+    private String autocompleteLabel;
 
-    String displayedID;
-    List<String> relatedLinks;
-    Map attributes;
+    private String displayedID;
+    private List<String> relatedLinks;
+    private Map attributes;
 
     //maybe this belongs directly on the fish?
     private List<FeatureGene> featureGenes;
-
-
 
     private Logger logger = LogManager.getLogger(SearchResult.class);
 
     public String getLink() {
         String cssClass = "";
-        if (id.startsWith("GENE")||id.contains("RNAG"))
+        if (id.startsWith("GENE") || id.contains("RNAG"))
             cssClass = " class = \"genedom\" ";
         if (id.contains("CONSTRCT"))
             cssClass = " class = \"genedom\" ";
-        return "<a " + cssClass + " href=\"" + url + "\">" +  name +  "</a>";
+        return "<a " + cssClass + " href=\"" + url + "\">" + name + "</a>";
     }
 
     public String getPgcmid() {
@@ -103,6 +78,7 @@ public class SearchResult implements ProvidesLink {
     public void setPgcmid(String pgcmid) {
         this.pgcmid = pgcmid;
     }
+
     public String getLinkWithAttribution() {
         return getLink();
     }
@@ -268,13 +244,21 @@ public class SearchResult implements ProvidesLink {
         this.screen = screen;
     }
 
-    public String getXpatZdbId() { return xpatZdbId; }
+    public String getXpatZdbId() {
+        return xpatZdbId;
+    }
 
-    public void setXpatZdbId(String xpatZdbId) { this.xpatZdbId = xpatZdbId; }
+    public void setXpatZdbId(String xpatZdbId) {
+        this.xpatZdbId = xpatZdbId;
+    }
 
-    public String getFigZdbId() { return figZdbId; }
+    public String getFigZdbId() {
+        return figZdbId;
+    }
 
-    public void setFigZdbId(String figZdbId) { this.figZdbId = figZdbId; }
+    public void setFigZdbId(String figZdbId) {
+        this.figZdbId = figZdbId;
+    }
 
     public String getExplain() {
         return explain;
@@ -282,6 +266,14 @@ public class SearchResult implements ProvidesLink {
 
     public void setExplain(String explain) {
         this.explain = explain;
+    }
+
+    public boolean isCuratable() {
+        return curatable;
+    }
+
+    public void setCuratable(boolean curatable) {
+        this.curatable = curatable;
     }
 
     public void addAttribute(String label, String value) {
@@ -306,13 +298,21 @@ public class SearchResult implements ProvidesLink {
         this.hasOrthology = hasOrthology;
     }
 
-    public Object getEntity() { return entity; }
+    public Object getEntity() {
+        return entity;
+    }
 
-    public void setEntity(Object entity) { this.entity = entity; }
+    public void setEntity(Object entity) {
+        this.entity = entity;
+    }
 
-    public Figure getFigure() { return figure; }
+    public Figure getFigure() {
+        return figure;
+    }
 
-    public void setFigure(Figure figure) { this.figure = figure; }
+    public void setFigure(Figure figure) {
+        this.figure = figure;
+    }
 
     /* just grab an arbitrary first one for now.. */
     public String getThumbnail() {
@@ -328,9 +328,11 @@ public class SearchResult implements ProvidesLink {
     }
 
     public String getCategory() {
-        if (categories == null || categories.size() == 0) { return null; }
-        else if (categories.size() == 1) { return categories.get(0); }
-        else if (categories.size() == 2 && categories.contains(Category.REPORTER_LINE.getName())) {
+        if (categories == null || categories.size() == 0) {
+            return null;
+        } else if (categories.size() == 1) {
+            return categories.get(0);
+        } else if (categories.size() == 2 && categories.contains(Category.REPORTER_LINE.getName())) {
             return Category.REPORTER_LINE.getName();
         } else {
             return categories.get(0);

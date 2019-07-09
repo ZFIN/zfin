@@ -125,17 +125,18 @@
         </c:choose>
     </div>
 
-    <authz:authorize access="hasRole('root')">
-        <jsp:invoke fragment="curatorContent"/>
-    </authz:authorize>
-
     <div class="result-matching-text search-result-snippet">
+
         <c:if test="${!empty result.matchingText}">
             <div class="snippet-title">
                 Matching Text:
             </div>
         </c:if>
         ${result.matchingText}
+
+        <authz:authorize access="hasRole('root')">
+            <jsp:invoke fragment="curatorContent"/>
+        </authz:authorize>
     </div>
 
     <c:if test="${not empty result.explain}">
@@ -151,7 +152,7 @@ ${result.explain}
     </c:if>
 
 
-        <div style="clear:both;">&nbsp;</div>
+    <div style="clear:both;">&nbsp;</div>
 
 
 </div>

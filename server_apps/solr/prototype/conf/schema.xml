@@ -645,6 +645,7 @@
         <field name="registered_author" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="author_string" type="simplified-international-text" indexed="true"/>"
         <field name="author_year" type="simplified-international-text" indexed="true"/>"
+        <field name="is_curatable" type="boolean" indexed="true" stored="true" default="false"/>
 
         <field name="phenotype_statement" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="pgcmid" type="keyword" indexed="true" stored="true"  />

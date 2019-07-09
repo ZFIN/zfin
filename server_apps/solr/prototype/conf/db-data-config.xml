@@ -4490,7 +4490,8 @@ and child.term_ontology = 'disease_ontology';
                                   when status = 'inactive' then 'Inactive'
                                   else status end as publication_status,
                              keywords as keyword,
-                             authors as author_string
+                             authors as author_string,
+                             pub_is_curatable as is_curatable
                              from publication"
         >
 

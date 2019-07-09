@@ -117,12 +117,15 @@ table.search-result-entity-attributes td {
     vertical-align: top;
 }
 
-.btn-pub-actions {
-    visibility: hidden;
+.pub-actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: none;
 }
 
-.search-result:hover .btn-pub-actions {
-    visibility: visible;
+.search-result:hover .pub-actions {
+    display: block;
 }
 
 .boxy-search-result .collapsible-attribute {
@@ -199,6 +202,7 @@ span.search-result-highlight {
 
 div.search-result-snippet {
     font-size: .7em;
+    position: relative;
 }
 
 table.search-result-snippet {

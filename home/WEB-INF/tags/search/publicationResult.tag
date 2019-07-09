@@ -6,11 +6,13 @@
     <jsp:attribute name="metadata">${result.category}</jsp:attribute>
     <jsp:attribute name="curatorContent">
         <c:set var="pubLinkExtras">&anon1=zdb_id&anon1text=${result.id}</c:set>
-        <div class="pub-actions pull-right">
-            <a class="btn btn-mini btn-primary btn-pub-actions" href="/action/curation/${result.id}">Curate</a>
-            <a class="btn btn-mini btn-default btn-pub-actions" href="/action/publication/${result.id}/track">Track</a>
-            <a class="btn btn-mini btn-default btn-pub-actions" href="/action/publication/${result.id}/link">Link</a>
-            <a class="btn btn-mini btn-default btn-pub-actions" href="/action/publication/${result.id}/edit">Edit</a>
+        <div class="pub-actions">
+            <c:if test="${result.curatable}">
+                <a class="btn btn-primary" href="/action/curation/${result.id}" role="button">Curate</a>
+            </c:if>
+            <a class="btn btn-default" href="/action/publication/${result.id}/track" role="button">Track</a>
+            <a class="btn btn-default" href="/action/publication/${result.id}/link" role="button">Link</a>
+            <a class="btn btn-default" href="/action/publication/${result.id}/edit" role="button">Edit</a>
         </div>
     </jsp:attribute>
     <jsp:body>
