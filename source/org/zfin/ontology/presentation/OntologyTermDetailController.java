@@ -137,6 +137,12 @@ public class OntologyTermDetailController {
         // check if TERM id
         if (ActiveData.isValidActiveData(termID, ActiveData.Type.TERM)) {
             term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
+            if (term == null) {
+                String replacedId = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(termID);
+                if (replacedId != null) {
+                    term = RepositoryFactory.getInfrastructureRepository().getTermByID(replacedId);
+                }
+            }
         } else {
             // check if it is an OBO ID
             if (Ontology.isOboID(termID))
