@@ -26,8 +26,8 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
     def setupSpec() {
         tempDir.newFolder(ZfinPropertiesEnum.IMAGE_LOAD.toString(), "medium")
         originalLoadup = ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()
-        ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(tempDir.getRoot().absolutePath)
-        imageLoadUp = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.IMAGE_LOAD.toString())
+        //ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(tempDir.getRoot().absolutePath)
+        imageLoadUp = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString())
     }
 
     //these run before & after each test
@@ -46,25 +46,24 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(originalLoadup)
     }
 
-    def "when a new image is created, it should have a zdb_id, zdbID should be part of filename"() {
-        when: "a new image is created"
-        Image image = ImageService.processImage(figure,  "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED)
-
-        then: "it should have a zdbID generated for it"
-        image.zdbID
-
-        and: "the file should be named correctly"
-        image.imageFilename.contains(image.zdbID)
-        image.imageFilename.startsWith("ZDB-IMAGE")
-    }
-
 
     def "Regular sized, thumbnail & medium sized files should exist in loadUp"() {
         when: "a new image is created"
-        Image image = ImageService.processImage(figure, "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED)
+        def zdbId = "ZDB-PUB-110609-15"
+        def pubYearMatch = zdbId =~ /^(ZDB-PUB-)(\d{2})(\d{2})(\d{2})(-\d+)$/
+        def pubYear
+        if (pubYearMatch.size() > 0) {
+            pubYear = pubYearMatch[0][2]
+            if (pubYear.toString().startsWith("9")) {
+                pubYear = "19" + pubYear
+            } else {
+                pubYear = "20" + pubYear
+            }
+        }
+        Image image = ImageService.processImage(figure, "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED, zdbId)
         File imageFile = new File(imageLoadUp, image.imageFilename)
         File thumbnailFile = new File(imageLoadUp, image.thumbnail)
-        File mediumFile = new File(new File(imageLoadUp.toString(), "medium"), image.imageFilename)
+        File mediumFile = new File(imageLoadUp, image.medium)
 
         then: "the main, thumbnail, and medium images exist in the imageLoadUp directory"
         imageFile.exists()
@@ -75,7 +74,8 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "The figure and image are properly associated"() {
         when: "a new image is created"
-        Image image = ImageService.processImage(figure, "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED)
+        def zdbId = "ZDB-PUB-110609-15"
+        Image image = ImageService.processImage(figure, "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED, zdbId)
 
         then: "it should be associated with the figure and vice-versa"
         image.figure == figure
@@ -85,7 +85,8 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     def "Image should have placeholder dimensions when piped through processImage"() {
         when: "a new image is created"
-        Image image = ImageService.processImage(figure,  "test/resources/${width}x${height}.jpg", false,Image.NOT_SPECIFIED)
+        def zdbId = "ZDB-PUB-110609-15"
+        Image image = ImageService.processImage(figure,  "test/resources/${width}x${height}.jpg", false,Image.NOT_SPECIFIED, zdbId)
 
         then: "main image has correct dimensions"
         image.width == -1
