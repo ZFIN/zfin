@@ -368,13 +368,13 @@ function submitAdvancedQuery(fields) {
         if (fields[i].type == 'string') {
             var value = $('#' + fields[i].id).val();
             if (value) {
-                query = query + "&fq=" + fields[i].field + ":(" + value + ")";
+                query = query + "&fq=" + encodeURIComponent(fields[i].field + ":(" + value + ")");
             }
         } else if (fields[i].type == 'date') {
             var start = $('#' + fields[i].startId).val();
             var end = $('#' + fields[i].endId).val();
             if (start != "" && end != "") {
-                query = query + "&fq=" + fields[i].field + ':[' + start + 'T00:00:00Z' + ' TO ' + end + 'T00:00:00Z' + ']';
+                query = query + "&fq=" + encodeURIComponent(fields[i].field + ':[' + start + 'T00:00:00Z' + ' TO ' + end + 'T00:00:00Z' + ']');
             }
         }
     }
