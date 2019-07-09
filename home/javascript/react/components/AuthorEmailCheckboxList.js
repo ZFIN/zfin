@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CheckboxList from "./CheckboxList";
-import {buildRecipientList} from "../utils/publications";
+import {buildRecipientList} from "../utils/publication";
 
 const AuthorEmailCheckboxList = ({authors, value, onChange}) => {
     const items = buildRecipientList(authors);

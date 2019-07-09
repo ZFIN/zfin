@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import PubCorrespondenceEmailForm from "../components/PubCorrespondenceEmailForm";
 import Alert from '../components/Alert';
-import {splitEmailRecipientListString} from "../utils/publications";
+import {splitEmailRecipientListString} from "../utils/publication";
 import {addCorrespondence, deleteCorrespondence, getCorrespondences} from "../api/publication";
 import PubCorrespondenceList from "../components/PubCorrespondenceList";
 import intertab from "../utils/intertab";
