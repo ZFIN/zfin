@@ -1,7 +1,7 @@
 --liquibase formatted sql
 --changeset pm:PUB-529
 
-begin work;
+
 drop table if exists tmp_pub;
 drop table if exists tmp_pub1;
 
@@ -21,10 +21,10 @@ and jrnl_abbrev not like '%Tox%'
 and pub_arrival_date between '1996-10-14' and '2005-12-31'
 and zdb_id=recattrib_source_zdb_id order by pubzdb;
 
-\copy (select * from tmp_pub1) to 'pub529.csv';
+
 
 insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by)
 select pubzdb, 11, 'ZDB-PERS-030520-2' from tmp_pub1;
 
-rollback work;
+
 
