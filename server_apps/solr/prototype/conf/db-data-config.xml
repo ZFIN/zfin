@@ -5028,7 +5028,7 @@ and child.term_ontology = 'disease_ontology';
                                    expression_pattern_figure,
                                    term
                               where xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                                and xpatres_superterm_zdb_id = term_zdb_id
+                                and (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
                                    and term_ontology='zebrafish_anatomy'
 
                            union

@@ -682,17 +682,20 @@ public class AntibodyService {
         criteria.setAntibody(antibody);
 
         //values used when called from the antibody page
-        PostComposedEntity entity = new PostComposedEntity();
-        entity.setSuperterm(superterm);
-        criteria.setEntity(entity);
-        if (subterm != null)
+        if (subterm != null) {
+            PostComposedEntity entity = new PostComposedEntity();
+            entity.setSuperterm(superterm);
+            criteria.setEntity(entity);
             entity.setSubterm(subterm);
+        } else {
+            // assume we should be looking into super and sub term column
+            criteria.setSingleTermEitherPosition(superterm);
+        }
 
         if (startStage != null)
             criteria.setStart(startStage);
         if (endStage != null)
             criteria.setEnd(endStage);
-        criteria.setSingleTermEitherPosition(superterm);
         criteria.setWithImagesOnly(withImgOnly);
 
         //set the "assumed values"

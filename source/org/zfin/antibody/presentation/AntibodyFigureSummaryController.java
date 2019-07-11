@@ -57,9 +57,9 @@ public class AntibodyFigureSummaryController {
     }
 
     @RequestMapping("/antibody-figure-summary")
-    protected String showForm(@RequestParam(value = "superTermID", required = true) String supertermID,
+    protected String showForm(@RequestParam(value = "superTermID") String supertermID,
                               @RequestParam(value = "subTermID", required = false) String subtermID,
-                              @RequestParam(value = "antibodyID", required = true) String antibodyID,
+                              @RequestParam(value = "antibodyID") String antibodyID,
                               @RequestParam(value = "startStageID", required = false) String startStageID,
                               @RequestParam(value = "endStageID", required = false) String endStageID,
                               @RequestParam(value = "figuresWithImg", required = false, defaultValue = "false") Boolean figuresWithImg,
