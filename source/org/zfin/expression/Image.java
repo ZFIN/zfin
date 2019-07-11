@@ -41,6 +41,16 @@ public class Image implements Serializable {
     private GregorianCalendar updatedDate;
     private Person insertedBy;
     private Person updatedBy;
+    private String imageWithAnnotationMediumFilename;
+
+    public String getImageWithAnnotationMediumFilename() {
+        return imageWithAnnotationMediumFilename;
+    }
+
+    public void setImageWithAnnotationMediumFilename(String imageWithAnnotationMediumFilename) {
+        this.imageWithAnnotationMediumFilename = imageWithAnnotationMediumFilename;
+    }
+
 
     public String getMedium() {
         return medium;
