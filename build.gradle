@@ -398,15 +398,7 @@ project(':server_apps:data_transfer:Downloads:GFF3') {
 }
 
 
-task postloaddb(type: GradleBuild) {
-    tasks = ['liquibasePreBuild',
-             'dropTriggers',
-             'dropFunctions',
-             'deployPostgresFunctions',
-             'deployPostgresTriggers',
-             'liquibasePostBuild'
-    ]
-}
+
 
 task make(type: GradleBuild) {
     tasks = ['deployPostgresFunctions',

@@ -2,6 +2,8 @@ package org.zfin.feature.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.Species;
 import org.zfin.feature.*;
@@ -28,6 +30,8 @@ import static org.zfin.sequence.ForeignDBDataType.DataType;
 
 @Service
 public class FeatureService {
+
+    private static Logger logger = LogManager.getLogger(FeatureService.class);
 
     public static Set<FeatureMarkerRelationship> getSortedMarkerRelationships(Feature feature) {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
@@ -94,7 +98,7 @@ public class FeatureService {
         CollectionUtils.filter(locations, new Predicate() {
             @Override
             public boolean evaluate(Object o) {
-                return (o instanceof FeatureGenomeLocation) && ((FeatureGenomeLocation) o).getGbrowseTrack() != null;
+                return (o instanceof FeatureGenomeLocation);
             }
         });
         return locations;
@@ -282,7 +286,9 @@ public class FeatureService {
         } else {
             imageBuilder.landmark(featureLocation).withPadding(10000);
         }
-        imageBuilder.tracks(GBrowseTrack.GENES, featureLocation.getGbrowseTrack(), GBrowseTrack.TRANSCRIPTS);
+        //currently only ZMP features on previous builds need anything other than the ZFIN_FEATURES track
+        GBrowseTrack featureTrack = featureLocation.getGbrowseTrack() == null ? GBrowseTrack.ZFIN_FEATURES : featureLocation.getGbrowseTrack();
+        imageBuilder.tracks(GBrowseTrack.GENES, featureTrack, GBrowseTrack.TRANSCRIPTS);
 
         return imageBuilder.build();
     }

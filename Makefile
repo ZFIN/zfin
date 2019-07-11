@@ -1,6 +1,16 @@
-load:
+loaddb:
 	gradle loaddb
-	gradle postloaddb
+
+postloaddb:
+	gradle buildDatabase
+	gradle update
+	gradle dropTriggers
+	gradle dropFunctions
+	gradle deployPostgresFunctions
+	gradle deployPostgresTriggers
+	gradle buildPostGmakeDatabase
+
+load: loaddb postloaddb
 
 deploy:
 	gradle make

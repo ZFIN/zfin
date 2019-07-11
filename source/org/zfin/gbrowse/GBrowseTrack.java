@@ -17,6 +17,7 @@ public enum GBrowseTrack {
     CNE("CNE"),
     COMPLETE_CLONES("fullclone"),
     ALLZMP("allzmp"),
+    ZFIN_FEATURES("mutants"),
     ZMP("zmp");
 
     GBrowseTrack(String trackName) {
