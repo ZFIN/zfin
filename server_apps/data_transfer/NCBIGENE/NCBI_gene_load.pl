@@ -55,6 +55,7 @@ system("/bin/rm -f toLoad.unl");
 system("/bin/rm -f length.unl");
 system("/bin/rm -f noLength.unl");
 system("/bin/rm -f seq.fasta");
+system("/bin/rm -f *.gz");
 
 system("/bin/rm -f zf_gene_info");
 system("/bin/rm -f gene2vega");
