@@ -95,6 +95,10 @@ select img_zdb_id,
 update image
  set img_is_video_still = 't' where img_image like '%.avi' or img_image like '%.mov' or img_image like '%.wmv' or img_image like '%.mp4';  
 
+insert into video (video_path_to_file, video_image_still_zdb_id)
+  select img_zdb_id, file_path_directory
+    from tmp_figs_to_load_with_ids
+     where img_filename like '%.avi' or img_image like '%.mov' or img_image like '%.wmv' or img_image like '%.mp4';
 
 commit work;
 

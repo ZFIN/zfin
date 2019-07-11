@@ -26,7 +26,6 @@ PUB_FILES_TO_LOAD = new File("pdfsToLoad.txt")
 ADD_BASIC_PDFS_TO_DB = new File("pdfBasicFilesToLoad.txt")
 PUBS_TO_GIVE_PERMISSIONS = new File("pubsToGivePermission.txt")
 
-
 def idsToGrab = [:]
 
 PubmedUtils.psql DBNAME, """
@@ -119,6 +118,8 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
                     def filename = filenameMatch[0][1]
                     if (filename.endsWith(".avi") || filename.endsWith(".mp4") || filename.endsWith(".mov") || filename.endsWith(".wmv")) {
                         parseLabelCaptionImage(supplement,zdbId,pmcId,imageFilePath,pubYear, tag)
+                        println("videos")
+                        println(filename)
                     } else {
                         PUB_FILES_TO_LOAD.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + filename, filename].join('|') + "\n")
                     }
@@ -187,7 +188,7 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
             String fileNameNoExtension = image.replace(".jpg", "")
             String thumbnailFilename = fileNameNoExtension + "_thumb" + FilenameUtils.EXTENSION_SEPARATOR + extension
             String mediumFileName = fileNameNoExtension + "_medium" + FilenameUtils.EXTENSION_SEPARATOR + extension
-            FIGS_TO_LOAD.append([zdbId, pmcId, imageFilePath, label, caption, pubYear + "/" + zdbId + "/" + image,
+            FIGS_TO_LOAD.append([zdbId, pmcId, image, label, caption, pubYear + "/" + zdbId + "/" + image,
                                  pubYear + "/" + zdbId + "/" + thumbnailFilename,
                                  pubYear + "/" + zdbId + "/" + mediumFileName].join('|') + "\n")
         }
