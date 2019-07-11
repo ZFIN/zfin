@@ -47,6 +47,9 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     @ManyToOne
     @JoinColumn(name = "expcond_chebi_term_zdb_id")
     private GenericTerm chebiTerm;
+    @ManyToOne
+    @JoinColumn(name = "expcond_spatial_term_zdb_id")
+    private GenericTerm spatialTerm;
 
     private static Logger logger = LogManager.getLogger(ExperimentCondition.class);
 
@@ -122,6 +125,14 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
 
     public void setTaxaonymTerm(GenericTerm taxaonymTerm) {
         this.taxaonymTerm = taxaonymTerm;
+    }
+
+    public GenericTerm getSpatialTerm() {
+        return spatialTerm;
+    }
+
+    public void setSpatialTerm(GenericTerm spatialTerm) {
+        this.spatialTerm = spatialTerm;
     }
 
     @Override

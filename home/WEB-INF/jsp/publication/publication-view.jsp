@@ -1,5 +1,4 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <script type="text/javascript">
@@ -64,7 +63,9 @@
     <tr>
         <th>Source:</th>
         <td>
-            ${publication.journal.name}<c:if test="${!empty publication.volume}">&nbsp;</c:if>${publication.volume}:
+            ${publication.journal.name}
+            <c:if test="${!empty publication.volume}">&nbsp;</c:if>
+        ${publication.volume}:
             ${publication.pages} (${publication.type.display})
 
             <span style="padding-left: 1em;">
@@ -148,9 +149,9 @@
         <tr>
             <th>Curation Status:</th>
             <td>
-                ${curationStatusDisplay}
+                    ${curationStatusDisplay}
                 <c:if test="${publication.indexed}"><br>Indexed,
-                    <fmt:formatDate value="${publication.indexedDate.time}" pattern="MM/dd/yy" />
+                    <fmt:formatDate value="${publication.indexedDate.time}" pattern="MM/dd/yy"/>
                 </c:if>
             </td>
         </tr>
@@ -251,7 +252,8 @@
             </li>
         </c:forEach>
         <authz:authorize access="hasRole('root')">
-            <li><a href="/action/publication/${publication.zdbID}/directly-attributed">Directly Attributed Data (${numDirectlyAttributed})</a>
+            <li><a href="/action/publication/${publication.zdbID}/directly-attributed">Directly Attributed Data
+                (${numDirectlyAttributed})</a>
             </li>
         </authz:authorize>
     </ul>

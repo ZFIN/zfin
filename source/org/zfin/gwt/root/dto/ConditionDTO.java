@@ -10,6 +10,7 @@ public class ConditionDTO extends RelatedEntityDTO {
     public TermDTO aoTerm;
     public TermDTO goCCTerm;
     public TermDTO taxonTerm;
+    public TermDTO spatialTerm;
     public String environmentZdbID;
 
     public TermDTO getAoTerm() {
@@ -58,6 +59,14 @@ public class ConditionDTO extends RelatedEntityDTO {
 
     public void setEnvironmentZdbID(String environmentZdbID) {
         this.environmentZdbID = environmentZdbID;
+    }
+
+    public TermDTO getSpatialTerm() {
+        return spatialTerm;
+    }
+
+    public void setSpatialTerm(TermDTO spatialTerm) {
+        this.spatialTerm = spatialTerm;
     }
 
     @Override
@@ -114,6 +123,8 @@ public class ConditionDTO extends RelatedEntityDTO {
             name += " : " + taxonTerm.getName();
         if (chebiTerm != null)
             name += " : " + chebiTerm.getName();
+        if (spatialTerm != null)
+            name += " : " + spatialTerm.getName();
         return name;
     }
 }

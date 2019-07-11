@@ -2,7 +2,8 @@ package org.zfin.publication.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
@@ -88,10 +89,9 @@ public class PublicationService {
         if (publication.isUnpublished() && CollectionUtils.size(publication.getFigures()) > 100) {
             return false;
         }
-if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
-{
-    return true;
-}
+        if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2")) {
+            return true;
+        }
         //if there any non-GELI figures, return true
         for (Figure figure : publication.getFigures()) {
             if (!figure.isGeli()) {
@@ -268,7 +268,7 @@ if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
         if (authorString.contains(",")) {
             lastName = authorString.split(",")[0];
             firstInitial = authorString.split(",")[1].substring(1, 2);
-            
+
             for (Person person : profileRepository.getPersonByLastNameEqualsAndFirstNameStartsWith(lastName.trim(), firstInitial)) {
                 if (!suggestions.contains(person)) {
                     suggestions.add(person);
@@ -280,8 +280,8 @@ if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
                     suggestions.add(person);
                 }
             }
-        }  else {
-            lastName = authorString;         
+        } else {
+            lastName = authorString;
         }
 
         for (Person person : profileRepository.getPersonByLastNameEquals(lastName.trim())) {
@@ -295,7 +295,7 @@ if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
                 suggestions.add(person);
             }
         }
-        
+
         return suggestions;
     }
 
@@ -321,7 +321,7 @@ if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
             }
         }
 
-        File publicationDirectory = new File(fileRoot, pubYear+ "/"+publication.getZdbID());
+        File publicationDirectory = new File(fileRoot, pubYear + "/" + publication.getZdbID());
         if (!publicationDirectory.exists()) {
             boolean success = publicationDirectory.mkdirs();
             if (!success) {
@@ -329,7 +329,7 @@ if (publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2"))
             }
         }
 
-        String storedFileName = publication.getZdbID()+"/"+publication.getZdbID();
+        String storedFileName = publication.getZdbID() + "/" + publication.getZdbID();
         if (fileType.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
             storedFileName += ".pdf";
         } else {

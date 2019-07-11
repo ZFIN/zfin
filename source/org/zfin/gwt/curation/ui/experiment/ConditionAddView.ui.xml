@@ -86,6 +86,11 @@
                                                         entityPart="ENTITY_SUBTERM"
                                                         termInfoTable="{termInfoBox}"
                                                         tabName="experiment"/>
+                                        <zfin:TermEntry ui:field="spatialTermEntry"
+                                                        listOFOntologies="spatial"
+                                                        entityPart="ENTITY_SUBTERM"
+                                                        termInfoTable="{termInfoBox}"
+                                                        tabName="experiment"/>
                                         <zfin:TermEntry ui:field="taxonTermEntry"
                                                         listOFOntologies="zeco_taxonomy"
                                                         entityPart="ENTITY_SUBTERM"

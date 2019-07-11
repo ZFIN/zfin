@@ -53,6 +53,8 @@ public class ConditionAddView extends AbstractViewComposite {
     @UiField
     TermEntry aoTermEntry;
     @UiField
+    TermEntry spatialTermEntry;
+    @UiField
     TermEntry taxonTermEntry;
     @UiField
     Button copyExperimentConditionButton;

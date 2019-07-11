@@ -81,7 +81,7 @@ public class ConditionAddPresenter implements HandlesError {
 
     public void populateData() {
         int elementIndex = 0;
-String onlyCondition="";
+        String onlyCondition = "";
         copyConditionsCheckBoxList.clear();
         if (dtoList.isEmpty()) {
             view.emptyDataTable();
@@ -110,15 +110,14 @@ String onlyCondition="";
                 view.addCopyCheckBox(checkBox, elementIndex);
                 DeleteImage deleteImage = new DeleteImage("Delete Experiment Condition " + conditionDTO.getZdbID());
                 lastCondition = conditionDTO;
-                if (dto.isUsed()&&dto.conditionDTOList.size()==1&&dto.conditionDTOList.contains(lastCondition)){
-                 
-                     onlyCondition="true";
+                if (dto.isUsed() && dto.conditionDTOList.size() == 1 && dto.conditionDTOList.contains(lastCondition)) {
+
+                    onlyCondition = "true";
+                } else {
+                    onlyCondition = "false";
                 }
-                else{
-                     onlyCondition="false";
-                }
-                deleteImage.addClickHandler(new DeleteConditionClickHandler(conditionDTO, this,onlyCondition));
-                view.addDeleteButton(deleteImage, elementIndex,dto,lastCondition);
+                deleteImage.addClickHandler(new DeleteConditionClickHandler(conditionDTO, this, onlyCondition));
+                view.addDeleteButton(deleteImage, elementIndex, dto, lastCondition);
                 elementIndex++;
 //                lastCondition = conditionDTO;
             }
@@ -190,13 +189,13 @@ String onlyCondition="";
     public static List<Boolean> getVisibilityMatrixOfDependentOntologies(String zecoTermID) {
         if (ontologyDependencyMap == null) {
             ontologyDependencyMap = new HashMap<>();
-            ontologyDependencyMap.put("", Arrays.asList(false, false, false, false));
-            ontologyDependencyMap.put("ZECO:0000111", Arrays.asList(true, false, false, false));
-            ontologyDependencyMap.put("ZECO:0000239", Arrays.asList(true, false, false, false));
-            ontologyDependencyMap.put("ZECO:0000143", Arrays.asList(false, true, false, false));
-            ontologyDependencyMap.put("ZECO:0000229", Arrays.asList(false, true, true, false));
-            ontologyDependencyMap.put("ZECO:0000176", Arrays.asList(false, true, true, false));
-            ontologyDependencyMap.put("ZECO:0000105", Arrays.asList(false, false, false, true));
+            ontologyDependencyMap.put("", Arrays.asList(false, false, false, false, false));
+            ontologyDependencyMap.put("ZECO:0000111", Arrays.asList(true, false, false, false, false));
+            ontologyDependencyMap.put("ZECO:0000239", Arrays.asList(true, false, false, false, false));
+            ontologyDependencyMap.put("ZECO:0000143", Arrays.asList(false, true, false, false, false));
+            ontologyDependencyMap.put("ZECO:0000229", Arrays.asList(false, true, true, false, true));
+            ontologyDependencyMap.put("ZECO:0000176", Arrays.asList(false, true, true, false, false));
+            ontologyDependencyMap.put("ZECO:0000105", Arrays.asList(false, false, false, true, false));
         }
         if (ontologyDependencyMap.get(zecoTermID) == null)
             zecoTermID = "";
@@ -204,7 +203,7 @@ String onlyCondition="";
     }
 
     private List<TermEntry> getListOfTermEntries() {
-        return Arrays.asList(view.chebiTermEntry, view.aoTermEntry, view.goCcTermEntry, view.taxonTermEntry);
+        return Arrays.asList(view.chebiTermEntry, view.aoTermEntry, view.goCcTermEntry, view.taxonTermEntry, view.spatialTermEntry);
     }
 
     public void onTermSelectEvent(SelectAutoCompleteEvent event) {
@@ -321,6 +320,7 @@ String onlyCondition="";
         dto.setGoCCTerm(view.goCcTermEntry.getTermTextBox().getSelectedTerm());
         dto.setTaxonTerm(view.taxonTermEntry.getTermTextBox().getSelectedTerm());
         dto.setChebiTerm(view.chebiTermEntry.getTermTextBox().getSelectedTerm());
+        dto.setSpatialTerm(view.spatialTermEntry.getTermTextBox().getSelectedTerm());
         return dto;
     }
 
@@ -337,24 +337,23 @@ String onlyCondition="";
         private ConditionDTO conditionDTO;
         private ConditionAddPresenter presenter;
         private String onlyCond;
-        private String message="";
+        private String message = "";
 
 
-        public DeleteConditionClickHandler(ConditionDTO conditionDTO, ConditionAddPresenter presenter,String onlyCond) {
+        public DeleteConditionClickHandler(ConditionDTO conditionDTO, ConditionAddPresenter presenter, String onlyCond) {
             this.conditionDTO = conditionDTO;
             this.presenter = presenter;
-            this.onlyCond=onlyCond;
+            this.onlyCond = onlyCond;
         }
 
         @Override
         public void onClick(ClickEvent clickEvent) {
 
-if (onlyCond=="true"){
-     message="Last condition for this experiment. Are you sure you want to delete this condition";
-}
-else {
-    message = "Are you sure you want to delete this condition?";
-}
+            if (onlyCond == "true") {
+                message = "Last condition for this experiment. Are you sure you want to delete this condition";
+            } else {
+                message = "Are you sure you want to delete this condition?";
+            }
             if (!Window.confirm(message))
                 return;
             view.loadingImage.setVisible(true);
