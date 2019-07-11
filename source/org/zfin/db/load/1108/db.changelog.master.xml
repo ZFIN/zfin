@@ -10,6 +10,7 @@
     <include file="source/org/zfin/db/load/1108/fcc_currently_available_nullable.sql"/>
     <include file="source/org/zfin/db/load/1108/add_medium_image_column.sql"/>
     <include file="source/org/zfin/db/load/1108/update_image_and_pdf_paths.sql"/>
-<include file="source/org/zfin/db/load/1108/update_image_and_pdf_paths.sql"/>
-
+<include file="source/org/zfin/db/load/1108/update_image_with_annotation_path.sql"/>
+<include file="source/org/zfin/db/load/1108/add_medium_img_with_annotation.sql"/>
+<include file="source/org/zfin/db/load/1108/update_image_with_annotation_medium_path.sql"/>
 </databaseChangeLog>
