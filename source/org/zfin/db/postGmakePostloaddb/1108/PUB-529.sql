@@ -27,4 +27,3 @@ insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_b
 select pubzdb, 11, 'ZDB-PERS-030520-2' from tmp_pub1;
 
 
-
