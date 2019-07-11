@@ -1,16 +1,15 @@
-
 begin work ;
 
-create temp table tmp_figs_to_load (pub_zdb_id text,
+create temp table tmp_movies_to_load (pub_zdb_id text,
        pmc_id text,
        file_path_directory text, 
        fig_label text,
        fig_caption text,
        img_filename text);
 
-\copy tmp_figs_to_load from 'figsToLoad.txt' DELIMITER '|' ;
+\copy tmp_figs_to_load from 'videosToLoad.txt' DELIMITER '|' ;
 
-create temp table tmp_figs_to_load_with_ids (pub_zdb_id text,
+create temp table tmp_videos_to_load_with_ids (pub_zdb_id text,
        pmc_id text,
        file_path_directory text, 
        fig_label text,
