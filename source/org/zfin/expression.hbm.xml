@@ -87,6 +87,10 @@
             <column name="img_image_with_annotation"/>
         </property>
 
+        <property name="imageWithAnnotationMediumFilename">
+            <column name="img_image_with_annotation_medium"/>
+        </property>
+
         <property name="height">
             <column name="img_height" not-null="true"/>
         </property>
