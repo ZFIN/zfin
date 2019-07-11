@@ -51,7 +51,7 @@ public class Image implements Serializable {
         this.imageWithAnnotationMediumFilename = imageWithAnnotationMediumFilename;
     }
 
-    
+
     public String getMedium() {
         return medium;
     }

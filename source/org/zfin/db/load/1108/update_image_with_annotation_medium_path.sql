@@ -23,4 +23,4 @@ update image
   set img_image_with_annotation_medium = (select year_string||'/'||pub_zdb_id||'/'||img_image_with_annotation_medium
                     from tmp_new_img_name_b where tmp_neW_img_name_b.img_zdb_id = image.img_zdb_id)
   where img_fig_zdb_id is not null
- and img_is_video_still = 'f';
+;
