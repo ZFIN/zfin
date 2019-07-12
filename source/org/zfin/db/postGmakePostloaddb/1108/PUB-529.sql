@@ -25,5 +25,3 @@ and zdb_id=recattrib_source_zdb_id order by pubzdb;
 
 insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by)
 select pubzdb, 11, 'ZDB-PERS-030520-2' from tmp_pub1;
-
-
