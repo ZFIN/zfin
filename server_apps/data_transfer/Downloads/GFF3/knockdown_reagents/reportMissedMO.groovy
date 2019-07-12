@@ -47,6 +47,8 @@ def ids = new File(logfile)
         .collect { it =~ /zdb_id=([^;]+);/ }
         .findAll { it }
         .collect { [it.group(1)] }
+        // fish out the MOs only
+        .findAll { it.get(0).contains('MRPHLNO') }
         .unique()
 ids.removeAll(ignoreList)
 
