@@ -250,6 +250,7 @@ public class ConditionAddPresenter implements HandlesError {
         view.goCcTermEntry.reset();
         view.taxonTermEntry.reset();
         view.chebiTermEntry.reset();
+        view.spatialTermEntry.reset();
         view.clearError();
         setVisibility("");
         view.createExperimentConditionButton.setEnabled(false);
