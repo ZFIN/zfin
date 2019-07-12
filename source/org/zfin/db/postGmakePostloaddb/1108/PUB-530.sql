@@ -43,10 +43,10 @@ having count(pth_pub_zdb_id)=1;
 
 select distinct pubzdb
 into tmp_pub3
-from tmp_pub,tmp_pub2,pub_tracking_history
-where pubzdb=figsource
-and pubzdb=pth_pub_zdb_id
-and pth_status_id=1;
+from tmp_pub,tmp_pub2
+where pubzdb=figsource;
+
+
 
 
 insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by)
