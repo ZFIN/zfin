@@ -45,7 +45,7 @@ out.close()
 def proc1 = "rm -rf geneDesc.csv".execute()
 proc1
     print "Loading local JSON file ... "
-    json = new JsonSlurper().parse(new FileReader("ZFIN_gene_desc_2018-11-26.json"))
+    json = new JsonSlurper().parse(new FileReader("ZFIN_gene_desc_latest.json"))
 def geneids=new ArrayList<String>()
 def outCSV=new File('geneDesc.csv')
 json.data.each {
