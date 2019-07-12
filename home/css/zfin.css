@@ -484,6 +484,11 @@ label.curation-form-label {
     font-family: Monaco, "Courier New", monospace;
 }
 
+.figure-image {
+    max-width: 100%;
+    max-height: 100%;
+}
+
 .figure-image-and-caption {
     background-color: #eee;
     padding: 1em;
