@@ -7,13 +7,14 @@
 
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-544.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-524.sql" />
+    <!--<include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-524.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-525.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-554.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-526.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-534.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-529.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-532.sql" />
+     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-527.sql" />-->
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6273.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-502.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-512.sql" />   
@@ -27,8 +28,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/CUR-911.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-556.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/CUR-912.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-531.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-530.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-527.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1108/CUR-914.sql" />
+
+
 </databaseChangeLog>
