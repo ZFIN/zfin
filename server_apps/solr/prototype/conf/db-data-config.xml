@@ -5029,8 +5029,6 @@ and child.term_ontology = 'disease_ontology';
                                    term
                               where xpatfig_xpatres_zdb_id = xpatres_zdb_id
                                 and (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
-                                   and term_ontology='zebrafish_anatomy'
-
                            union
                            select
                                      term_ont_id as xref, term_name as expression_anatomy_direct,
@@ -5039,8 +5037,7 @@ and child.term_ontology = 'disease_ontology';
                                    expression_pattern_figure,
                                    term
                               where xpatfig_xpatres_zdb_id = xpatres_zdb_id
-                                and xpatres_subterm_zdb_id = term_zdb_id
-                                   and term_ontology='zebrafish_anatomy'"
+                                and xpatres_subterm_zdb_id = term_zdb_id"
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
             />
@@ -5055,7 +5052,6 @@ and child.term_ontology = 'disease_ontology';
                              where xpatfig_xpatres_zdb_id = xpatres_zdb_id
                                and xpatres_superterm_zdb_id = alltermcon_contained_zdb_id
                                and alltermcon_container_zdb_id = term_zdb_id
-                                  and term_ontology='zebrafish_anatomy'
                           union
                           select
                                     term_ont_id as xref, term_name as expression_anatomy_parent,
@@ -5066,8 +5062,7 @@ and child.term_ontology = 'disease_ontology';
                                   all_term_contains
                              where xpatfig_xpatres_zdb_id = xpatres_zdb_id
                                and xpatres_subterm_zdb_id = alltermcon_contained_zdb_id
-                               and alltermcon_container_zdb_id = term_zdb_id
-                                  and term_ontology='zebrafish_anatomy'"
+                               and alltermcon_container_zdb_id = term_zdb_id"
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
             />
