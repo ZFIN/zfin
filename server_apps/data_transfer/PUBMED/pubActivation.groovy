@@ -31,6 +31,7 @@ PubmedUtils.dbaccess DBNAME, """
 
 def batchSize = 2000
 count = 0
+toActivateCount = 0
 def ids= []
 def idsToUpdate = [:]
 println("Fetching pubs from PubMed")
@@ -44,6 +45,7 @@ new File(ACTIVATED_PUBS).withWriter { output ->
             ids.add(row[0])
         }
         def articleSet = PubmedUtils.getFromPubmed(ids)
+        toActivateCount += articleSet.PubmedArticle.size()
         articleSet.PubmedArticle.each { article ->
             def pubmedId = article.MedlineCitation.PMID
             def zdbId = idsToUpdate["$pubmedId"]
@@ -69,7 +71,8 @@ new File(ACTIVATED_PUBS).withWriter { output ->
                 }
             }
         }
-        println("Activated $count pubs")
+        println("ctInactivePubs = $toActivateCount")
+        println("ctUpdated = $count")
     }
 }
 
