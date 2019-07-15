@@ -21,7 +21,7 @@ and pth_pub_zdb_id=zdb_id
 and pth_status_id=1
 and jtype='Journal'
 and pub_jrnl_zdb_id=jrnl_zdb_id
-and pub_arrival_date between '2010-01-01'' and ''2016-12-31'
+and pub_arrival_date between '2010-01-01' and '2016-12-31'
 and exists(select 1 from record_attribution
                where pubzdb = recattrib_source_zdb_id)
    and not exists(select 1 from record_attribution
@@ -63,4 +63,4 @@ insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_b
   select pubzdb, 6, 'ZDB-PERS-050706-1', 'ZDB-PERS-030612-1'
     from tmp_pub1;
 
-drop table tmp_pub_527;
+--drop table tmp_pub_527;
