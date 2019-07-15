@@ -15,6 +15,7 @@ import org.zfin.framework.ComparatorCreator;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
 import org.zfin.marker.presentation.OrganizationLink;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -44,8 +45,14 @@ public class FigureViewController {
         Figure figure = figureRepository.getFigure(zdbID);
 
         if (figure == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getWithdrawnZdbID(zdbID);
+            if (replacedZdbID != null) {
+
+                return "redirect:/" + replacedZdbID;
+            } else {
+                model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                return LookupStrings.RECORD_NOT_FOUND_PAGE;
+            }
         }
 
         model.addAttribute("figure", figure);
