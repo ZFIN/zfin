@@ -5,14 +5,14 @@ import org.zfin.properties.ZfinProperties
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 
 DBNAME = System.getenv("DBNAME")
-
-def scriptPath = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/PUBMED/complete_auther_names.pl"
-def command = "perl -w $scriptPath"
-println command.execute().text
-
-def scriptPath2 = "${System.getenv()['TARGETROOT']}/server_apps/DB_maintenance/pub_check_and_addback_volpg.pl"
-def command2 = "perl -w $scriptPath2"
-println command2.execute().text
+//
+//def scriptPath = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/PUBMED/complete_auther_names.pl"
+//def command = "perl -w $scriptPath"
+//println command.execute().text
+//
+//def scriptPath2 = "${System.getenv()['TARGETROOT']}/server_apps/DB_maintenance/pub_check_and_addback_volpg.pl"
+//def command2 = "perl -w $scriptPath2"
+//println command2.execute().text
 
 
 PUB_IDS_TO_CHECK = "pubsToActivate.txt"
@@ -29,42 +29,47 @@ PubmedUtils.dbaccess DBNAME, """
   and status != 'active' ) to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
 
-batchSize = 2000
+def batchSize = 2000
 count = 0
+def ids= []
+def idsToUpdate = [:]
 println("Fetching pubs from PubMed")
 
 new File(ACTIVATED_PUBS).withWriter { output ->
     new File(PUB_IDS_TO_CHECK).withReader { reader ->
         def lines = reader.iterator()
-        while (lines.hasNext()) {
-            ids = lines.take(batchSize).collect { it.split(",")[0] }
-            articleSet = PubmedUtils.getFromPubmed(ids)
-            count += articleSet.PubmedArticle.size()
-            articleSet.PubmedArticle.each { article ->
-                pubmedId = article.MedlineCitation.PMID
-                status = article.PubmedData.PublicationStatus
-                if (status == 'ppublish' || status == 'epublish') {
-                    output.writeLine([pubmedId, zdbId].join(","))
-                    if (article.PubmedData.ArticleIdList.ArticleId.size() > 0) {
-                        article.PubmedData.ArticleIdList.ArticleId.each { articleId ->
-                            if (articleId.@IdType == 'pmc') {
-                                pmcId = articleId
-                                PMC_ID_PUBS.append([pubmedId, pmcId, "pmc"].join(",")+"\n")
-                            }
-                            if (articleId.@IdType == 'mid') {
-                                mId = articleId
-                                PMC_ID_PUBS.append([pubmedId, mId, "mid"].join(",")+"\n")
-                            }
-                            if (articleId.@IdType == 'doi') {
-                                mId = articleId
-                                PMC_ID_PUBS.append([pubmedId, doi, "doi"].join(",")+"\n")
-                            }
+        lines.each { String line ->
+            def row = line.split(',')
+            idsToUpdate.put(row[0], row[1])
+            ids.add(row[0])
+        }
+        def articleSet = PubmedUtils.getFromPubmed(ids)
+        articleSet.PubmedArticle.each { article ->
+            def pubmedId = article.MedlineCitation.PMID
+            def zdbId = idsToUpdate["$pubmedId"]
+            def status = article.PubmedData.PublicationStatus
+            if (status == 'ppublish' || status == 'epublish') {
+                count++
+                output.writeLine([zdbId, pubmedId].join(","))
+                if (article.PubmedData.ArticleIdList.ArticleId.size() > 0) {
+                    article.PubmedData.ArticleIdList.ArticleId.each { articleId ->
+                        if (articleId.@IdType == 'pmc') {
+                            def pmcId = articleId
+                            PMC_ID_PUBS.append([zdbId, pmcId, "pmc"].join(",") + "\n")
+                        }
+                        if (articleId.@IdType == 'mid') {
+                            def mId = articleId
+                            PMC_ID_PUBS.append([zdbId, mId, "mid"].join(",") + "\n")
+                        }
+                        if (articleId.@IdType == 'doi') {
+                            def doi = articleId
+                            PMC_ID_PUBS.append([zdbId, doi, "doi"].join(",") + "\n")
                         }
                     }
                 }
             }
-            println("Fetched $count pubs")
         }
+        println("Activated $count pubs")
     }
 }
 
@@ -72,8 +77,8 @@ PubmedUtils.dbaccess DBNAME, """
  BEGIN WORK;
 
   CREATE TEMP TABLE tmp_activation (
-    pmid integer,
-    status text
+    zdbId text,
+    pmid integer
   );
 
   \\copy tmp_activation FROM '$ACTIVATED_PUBS' null '' delimiter ',';
@@ -82,31 +87,32 @@ PubmedUtils.dbaccess DBNAME, """
     SET status = 'active' 
     WHERE EXISTS (select 'x' from tmp_activation where pmid = accession_no);
 
-  CREATE TEMP TABLE tmp_pmcid_update (pmid integer,
+  CREATE TEMP TABLE tmp_pmcid_update (
+    zdbId text,  
    altId text,
    idType text );
    
    \\copy tmp_pmcid_update FROM '$PMC_ID_PUBS' null '' delimiter ',';
 
   UPDATE publication
-    SET pub_pmc_id = (SELECT distinct altId from tmp_pmcid_update where idType = 'pmc' and pmid = accession_no)
-    WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE accession_no = pmid)
+    SET pub_pmc_id = (SELECT distinct altId from tmp_pmcid_update where idType = 'pmc' and zdbId = zdb_id)
+    WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE zdbId = zdb_id)
     and pub_pmc_id is null ;
     
    UPDATE publication
-    SET pub_mid = (SELECT distinct altId from tmp_pmcid_update where idType = 'mid' and pmid = accession_no)
-    WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE accession_no = pmid)
+    SET pub_mid = (SELECT distinct altId from tmp_pmcid_update where idType = 'mid' and zdbId = zdb_id)
+    WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE zdbId = zdb_id)
     and pub_mid is null ;   
     
    INSERT INTO pub_tracking_history (pth_pub_zdb_id, pth_status_id, pth_status_set_by)
        SELECT zdb_id, pts_pk_id, 'ZDB-PERS-170918-1'
           from tmp_activation, publication, pub_tracking_status
            where accession_no = pmid
-            and pts_status = 'READY_FOR_PROCESSING');
+            and pts_status = 'READY_FOR_PROCESSING';
 
     UPDATE publication
-    SET pub_doi = (SELECT distinct altId from tmp_pmcid_update where idType = 'doi' and pmid = accession_no)
-    WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE accession_no = pmid)
+    SET pub_doi = (SELECT distinct altId from tmp_pmcid_update where idType = 'doi' and zdbId = zdb_id)
+    WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE zdbId = zdb_id)
     and pub_doi is null ; 
     
 
