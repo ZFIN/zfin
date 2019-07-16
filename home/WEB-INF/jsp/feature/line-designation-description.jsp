@@ -6,7 +6,7 @@ institutional line designation.  Historically, line designations were
 assigned to labs, but the proliferation of labs producing fish has
 resulted in a change to assigning the designations on an institutional
 basis. All labs producing fish lines at the same institution should seek to share a single institutional line designation.</p>
-Contact the <a href="mailto:asinger@zfin.org">Nomenclature Coordinator</a> to be assigned an new line designation.  Line designations are assigned using these guidelines:
+Contact the <a href="mailto:nomenclature_coordinators@zfin.org">Nomenclature Coordinator</a> to be assigned an new line designation.  Line designations are assigned using these guidelines:
 <ul>
     <li>A 2-letter designation is preferred, but is not always possible.  In that case a 3-letter designation must be chosen.</li>
     <li>The designation must not conflict with any zebrafish, human or mouse gene or phenotypic designations.</li>
@@ -39,4 +39,4 @@ Contact the <a href="mailto:asinger@zfin.org">Nomenclature Coordinator</a> to be
  Recessive alleles from Children's Hospital, Boston - <i>dly<sup>cz3321</sup></i>,  <i>egy<sup>cz5</sup></i><br>
  Recessive allele from University of Pennsylvania, with appended letters - <i>bbp<sup>p58cd</sup></i></p>
 
-<p>For more information, you can refer to the <a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Conventions#ZFINZebrafishNomenclatureGuidelines-3.1">Zebrafish   Nomenclature Guidelines</a>. To request a new letter designation for your laboratory,   please contact <a href="mailto:zfinadmn@zfin.org">ZFIN</a>.</p>
+<p>For more information, you can refer to the <a href="https://wiki.zfin.org/display/general/ZFIN+Zebrafish+Nomenclature+Conventions#ZFINZebrafishNomenclatureGuidelines-3.1">Zebrafish   Nomenclature Guidelines</a>. </p>
