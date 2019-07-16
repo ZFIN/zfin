@@ -83,9 +83,9 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="5">Light Chain</Column>
             <Column id="6">Immunogen Organism</Column>
             <Column id="7">Host Organism</Column>
-            <Column id="8">Source</Column>
-            <Column id="9">SO ID</Column>
-            <Column id="10">AB Registry ID</Column>
+            <Column id="8">SO ID</Column>
+            <Column id="9">AB Registry ID</Column>
+            <Column id="10">Source</Column>
         </Download>
         <Download orderIndex="5">
             <Name>

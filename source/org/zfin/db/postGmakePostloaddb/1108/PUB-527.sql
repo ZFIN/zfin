@@ -10,7 +10,9 @@ select distinct zdb_id
                where pth_pub_zdb_id = zdb_id
                  and pth_status_id = 1)
    and jtype='Journal'
-   and pub_date between '2010-01-01' and '2016-12-31'
+   and pub_arrival_date between '2010-01-01' and '2016-12-31'
+   and exists(select 1 from record_attribution 
+               where zdb_id = recattrib_source_zdb_id)
    and not exists(select 1 from record_attribution 
                    where zdb_id = recattrib_source_zdb_id 
                      and recattrib_data_zdb_id like 'ZDB-XPAT%')
