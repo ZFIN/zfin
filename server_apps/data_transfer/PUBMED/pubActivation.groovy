@@ -9,14 +9,14 @@ final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_
 WORKING_DIR.eachFileMatch(~/.*\.txt/) { it.delete() }
 DBNAME = System.getenv("DBNAME")
 
-//
-//def scriptPath = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/PUBMED/complete_auther_names.pl"
-//def command = "perl -w $scriptPath"
-//println command.execute().text
-//
-//def scriptPath2 = "${System.getenv()['TARGETROOT']}/server_apps/DB_maintenance/pub_check_and_addback_volpg.pl"
-//def command2 = "perl -w $scriptPath2"
-//println command2.execute().text
+
+def scriptPath = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/PUBMED/complete_auther_names.pl"
+def command = "perl -w $scriptPath"
+println command.execute().text
+
+def scriptPath2 = "${System.getenv()['TARGETROOT']}/server_apps/DB_maintenance/pub_check_and_addback_volpg.pl"
+def command2 = "perl -w $scriptPath2"
+println command2.execute().text
 
 PUB_IDS_TO_CHECK = "pubsThatNeedActivation.txt"
 PUBS_TO_ACTIVATE = new File("pubsToActivate.txt")
