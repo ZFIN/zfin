@@ -60,7 +60,6 @@ articleSet.PubmedArticle.each { article ->
         count++
         REPORT_ACTIVATED_PUBS.append([zdbId, pubmedId].join("   ")+"\n")
         PUBS_TO_ACTIVATE.append([zdbId, pubmedId].join(",")+"\n")
-        println(article.PubmedData.ArticleIdList)
         article.PubmedData.ArticleIdList.ArticleId.each { articleId ->
             if (articleId.@IdType == 'pubmed') {
                 def pmcId = articleId
