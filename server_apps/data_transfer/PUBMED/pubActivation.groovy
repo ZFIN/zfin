@@ -65,17 +65,14 @@ articleSet.PubmedArticle.each { article ->
             if (articleId.@IdType == 'pubmed') {
                 def pmcId = articleId
                 PMC_ID_PUBS.append(zdbId + ',' + pmcId + ',' + 'pmc' + '\n')
-                println("pmcId: " +pmcId)
             }
             if (articleId.@IdType == 'mid') {
                 def mId = articleId
                 PMC_ID_PUBS.append(zdbId + ',' + mId  + ',' + 'mId' +  '\n')
-                println(mId)
             }
             if (articleId.@IdType == 'doi') {
                 def doi = articleId
                 PMC_ID_PUBS.append(zdbId + ',' + doi  + ',' + 'doi' +  '\n')
-                println(doi)
             }
         }
     }
