@@ -193,6 +193,7 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
 
 
                mdb.setAccessionNumber(dto.getRegistryID());
+               mdb.setAccessionNumberDisplay(dto.getRegistryID());
 
                HibernateUtil.currentSession().save(mdb);
            }
@@ -205,6 +206,7 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
                 MarkerDBLink mdb = new MarkerDBLink();
                 mdb.setMarker(antibody);
                 mdb.setAccessionNumber(dto.getRegistryID());
+                mdb.setAccessionNumberDisplay(dto.getRegistryID());
                 mdb.setReferenceDatabase(refDB);
                 HibernateUtil.currentSession().save(mdb);
             }
