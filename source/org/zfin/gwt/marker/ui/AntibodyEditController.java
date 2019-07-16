@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.marker.event.DirectAttributionAddsRelatedEntityListener;
 import org.zfin.gwt.marker.event.MarkerLoadEvent;
 import org.zfin.gwt.marker.event.MarkerLoadListener;
@@ -89,8 +90,10 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
                     }
                 }
                 dto.copyFrom(changeEvent.getDTO());
-
+            }
+        });
         antibodyViewClickLabel.addViewClickedListeners(new ViewClickedListener() {
+
             @Override
             public void finishedView() {
                 if (antibodyBox.isDirty()) {
@@ -114,6 +117,8 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
                     antibodyViewClickLabel.setError(error);
                     relatedGenesBox.setError(error);
                 } else {
+                 //   Window.alert("antibody");
+                    System.out.println("click Antibody");
                     antibodyViewClickLabel.continueToViewTranscript();
                 }
 
@@ -122,8 +127,8 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
 
 //        antibodyHeaderEdit.setPreviousNamesBox(previousNamesBox);
 
-            }
-        });
+
+
 
 
         // direct attribution listeners
