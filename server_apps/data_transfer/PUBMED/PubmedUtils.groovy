@@ -176,7 +176,7 @@ class PubmedUtils {
         proc.waitFor()
         proc.getErrorStream().eachLine { println(it) }
         if (proc.exitValue()) {
-            throw new RuntimeException("dbaccess call failed")
+            throw new RuntimeException("psql call failed")
         }
         proc
     }
