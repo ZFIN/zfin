@@ -50,22 +50,12 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
     def "Regular sized, thumbnail & medium sized files should exist in loadUp"() {
         when: "a new image is created"
         def zdbId = "ZDB-PUB-110609-15"
-        def pubYearMatch = zdbId =~ /^(ZDB-PUB-)(\d{2})(\d{2})(\d{2})(-\d+)$/
-        def pubYear
-        if (pubYearMatch.size() > 0) {
-            pubYear = pubYearMatch[0][2]
-            if (pubYear.toString().startsWith("9")) {
-                pubYear = "19" + pubYear
-            } else {
-                pubYear = "20" + pubYear
-            }
-        }
         Image image = ImageService.processImage(figure, "test/resources/540x1130.jpg", false,Image.NOT_SPECIFIED, zdbId)
         File imageFile = new File(imageLoadUp, image.imageFilename)
         File thumbnailFile = new File(imageLoadUp, image.thumbnail)
         File mediumFile = new File(imageLoadUp, image.medium)
 
-        then: "the main, thumbnail, and medium images exist in the imageLoadUp directory"
+        then: "${imageFile}"
         imageFile.exists()
         thumbnailFile.exists()
         mediumFile.exists()
