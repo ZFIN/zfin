@@ -123,7 +123,7 @@ PubmedUtils.dbaccess DBNAME, """
             
    INSERT INTO updates (submitter_id, rec_id,field_name,new_value,upd_when) 
         SELECT (select zdb_id from person where full_name = 'Pub Activation Script'), zdbId,'status','active',now() 
-        from tmp_activation where accession_no = pmid;
+        from tmp_activation, publication where accession_no = pmid;
 
     UPDATE publication
     SET pub_doi = (SELECT distinct altId from tmp_pmcid_update where idType = 'doi' and zdbId = zdb_id)
