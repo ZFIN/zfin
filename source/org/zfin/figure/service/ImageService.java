@@ -91,8 +91,7 @@ public class ImageService {
         String mediumFilename = destinationBasename + MEDIUM + FilenameUtils.EXTENSION_SEPARATOR + extension;
         File destinationFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), destinationFilename);
         File thumbnailFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString() , thumbnailFilename);
-        String mediumFileName = image.getZdbID() + "_medium" + FilenameUtils.EXTENSION_SEPARATOR + extension;
-        File mediumFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), mediumFileName);
+        File mediumFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), mediumFilename);
 
         // we used to attempt to set the image's width and height properties here using ImageIO.read(), but it
         // choked on images with a CMYK color space (common for published images), so we omit that now.
@@ -107,12 +106,15 @@ public class ImageService {
 
         Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-        String makeThumbnail = "/bin/convert -thumbnail 1000x64 " + destinationFile + " " + thumbnailFile;
-        String makeMedium = "/bin/convert -thumbnail 500x550 " + destinationFile + " " + mediumFile;
-        Runtime rtt = Runtime.getRuntime();
-        Runtime rtm = Runtime.getRuntime();
-        rtt.exec(makeThumbnail);
-        rtm.exec(makeMedium);
+        try {
+            String makeMedium = "/bin/convert -thumbnail 1000x64 " + destinationFile + " " + mediumFile;
+            Runtime.getRuntime().exec(makeMedium);
+            String makeThumbnail = "/bin/convert -thumbnail 500x550 " + destinationFile + " " + thumbnailFile;
+            Runtime.getRuntime().exec(makeThumbnail);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return image;
     }
