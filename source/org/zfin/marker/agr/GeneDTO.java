@@ -2,19 +2,24 @@ package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.List;
-import java.util.Set;
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GeneDTO extends ZfinDTO {
 
     private String symbol;
     private String name;
     private String soTermId;
+    private BasicGeneticEntityDTO basicGeneticEntityDTO;
     private static final String geneLiteratureUrlPrefix = "http://zfin.org/action/marker/citation-list/";
-    private List<CrossReferenceDTO> crossReferences;
-    private Set<GenomeLocationDTO> genomeLocations;
     private String geneLiteratureUrl;
+
+
+    public BasicGeneticEntityDTO getBasicGeneticEntityDTO() {
+        return basicGeneticEntityDTO;
+    }
+
+    public void setBasicGeneticEntityDTO(BasicGeneticEntityDTO basicGeneticEntityDTO) {
+        this.basicGeneticEntityDTO = basicGeneticEntityDTO;
+    }
 
     public String getGeneLiteratureUrl() {
         return geneLiteratureUrl;
@@ -24,7 +29,13 @@ public class GeneDTO extends ZfinDTO {
         this.geneLiteratureUrl = geneLiteratureUrl;
     }
 
+    public String getSoTermId() {
+        return soTermId;
+    }
 
+    public void setSoTermId(String soTermId) {
+        this.soTermId = soTermId;
+    }
 
     public String getSymbol() {
         return symbol;
@@ -43,34 +54,4 @@ public class GeneDTO extends ZfinDTO {
     }
 
 
-    public String getSoTermId() {
-        return soTermId;
-    }
-
-    public void setSoTermId(String soTermId) {
-        this.soTermId = soTermId;
-    }
-
-    public List<CrossReferenceDTO> getCrossReferences() {
-        return crossReferences;
-    }
-
-    public void setCrossReferences(List<CrossReferenceDTO> crossReferences) {
-        this.crossReferences = crossReferences;
-    }
-
-    public Set<GenomeLocationDTO> getGenomeLocations() {
-        return genomeLocations;
-    }
-
-    public void setGenomeLocations(Set<GenomeLocationDTO> genomeLocations) {
-        this.genomeLocations = genomeLocations;
-    }
-
-    //public String getGeneLiteratureUrl() {
-    //    String returnString = geneLiteratureUrlPrefix;
-    //    if (primaryId.startsWith(ZFIN))
-    //        returnString += primaryId.replace(ZFIN, "");
-    //    return returnString;
-    //}
 }
