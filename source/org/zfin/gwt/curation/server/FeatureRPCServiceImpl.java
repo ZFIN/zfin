@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.zerog.ia.platform.Sys;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
@@ -272,14 +273,16 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 feature.setFeatureGenomicMutationDetail(fgmd);
             }
             FeatureGenomicMutationDetail oldDetail = fgmd.clone();
+            
 
             DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
             if (fgmd.getZdbID() == null) {
                 HibernateUtil.currentSession().save(fgmd);
             }
-            if (!fgmd.equals(oldDetail)) {
+            /*if (!fgmd.equals(oldDetail)) {
+                System.out.println(oldDetail.getFgmdSeqRef());
                 infrastructureRepository.insertMutationDetailAttribution(fgmd.getZdbID(), featureDTO.getPublicationZdbID());
-            }
+            }*/
         } else {
             // remove existing record
             if (fgmd != null) {
