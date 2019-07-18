@@ -1,8 +1,14 @@
 --liquibase formatted sql
 --changeset pm:DLOAD-619
 
+insert into zdb_replaced_data (zrepld_new_zdb_id, zrepld_old_zdb_id)
+ values('ZDB-NCCR-181109-1','ZDB-CNE-150506-1');
 
 
+insert into withdrawn_data (wd_new_zdb_id, wd_old_zdb_id)
+values('ZDB-NCCR-181109-1','ZDB-CNE-150506-1');
+
+delete from zdb_active_data where zactvd_zdb_id='ZDB-CNE-150506-1';
 
 update tmpcne set nccrid=get_id('NCCR');
 
