@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Please add a description</description>
+    <description>Report all features that have a feature-marker-relationship of type 'contains phenotypic sequence feature'
+    with a construct</description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
@@ -41,6 +42,7 @@
                     <reportFiles>Check-Feature-Construct-Phenotype_w.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
+                    <wrapperName>htmlpublisher-wrapper.html</wrapperName>
                 </htmlpublisher.HtmlPublisherTarget>
             </reportTargets>
         </htmlpublisher.HtmlPublisher>
@@ -52,7 +54,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Feature-Construct-Phenotype_w/Check-Feature-Construct-Phenotype_w.html&quot;}
+                            ${SCRIPT,template="report-and-error-log.template"}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
@@ -72,7 +74,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Feature-Construct-Phenotype_w/Check-Feature-Construct-Phenotype_w.html&quot;}
+                            ${SCRIPT,template="report-and-error-log.template"}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
