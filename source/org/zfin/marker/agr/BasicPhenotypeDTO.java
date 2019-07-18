@@ -16,6 +16,15 @@ public class BasicPhenotypeDTO  {
     private PublicationAgrDTO evidence;
     private List<PhenotypeTermIdentifierDTO> phenotypeTermIdentifiers;
     private String phenotypeStatement;
+    private List<String> primaryGeneticEntityIDs;
+
+    public List<String> getPrimaryGeneticEntityIDs() {
+        return primaryGeneticEntityIDs;
+    }
+
+    public void setPrimaryGeneticEntityIDs(List<String> primaryGeneticEntityIDs) {
+        this.primaryGeneticEntityIDs = primaryGeneticEntityIDs;
+    }
 
     @JsonSerialize(using = JsonDateSerializer.class)
     private GregorianCalendar dateAssigned = new GregorianCalendar();

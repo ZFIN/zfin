@@ -64,9 +64,10 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                 .map(
                         gene -> {
                             GeneDTO dto = new GeneDTO();
+                            BasicGeneticEntityDTO bgeDto = new BasicGeneticEntityDTO();
                             dto.setName(gene.name);
                             dto.setSymbol(gene.getAbbreviation());
-                            dto.setPrimaryId(gene.getZdbID());
+                            bgeDto.setPrimaryId(gene.getZdbID());
                             //dto.setGeneLiteratureUrl("http://zfin.org/action/marker/citation-list/"+gene.getZdbID());
                             if ( gene.getSoTerm().getOboID().toString() == "SO:0000704") {
                                 dto.setSoTermId("SO:0001217");
@@ -79,7 +80,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                 for (MarkerAlias alias : gene.getAliases()) {
                                     aliasList.add(alias.getAlias());
                                 }
-                                dto.setSynonyms(aliasList);
+                                bgeDto.setSynonyms(aliasList);
                             }
                             List<String> dblinkPages = new ArrayList<>();
                             List<CrossReferenceDTO> dbLinkList = new ArrayList<>(gene.getDbLinks().size()+1);
@@ -130,7 +131,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                 dbLinkList.add(modRefDto);
                             }
 
-                            dto.setCrossReferences(dbLinkList);
+                            bgeDto.setCrossReferences(dbLinkList);
                             // get genomic data
                             List<MarkerGenomeLocation> locations = getLinkageRepository().getGenomeLocation(gene);
                             Set<GenomeLocationDTO> locationDTOList = new HashSet<>();
@@ -151,16 +152,16 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                         }
                                     }
                                 }
-                                dto.setGenomeLocations(locationDTOList);
+                                bgeDto.setGenomeLocations(locationDTOList);
                             }
                             if (CollectionUtils.isNotEmpty(gene.getSecondaryMarkerSet())) {
                                 Set<String> secondaryDTOs = new HashSet<>();
                                 for (SecondaryMarker secMarker : gene.getSecondaryMarkerSet()) {
                                     secondaryDTOs.add(secMarker.getOldID());
                                 }
-                                dto.setSecondaryIds(secondaryDTOs);
+                                bgeDto.setSecondaryIds(secondaryDTOs);
                             }
-
+                            dto.setBasicGeneticEntityDTO(bgeDto);
                             return dto;
                         })
                 .collect(Collectors.toList());
