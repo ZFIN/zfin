@@ -23,6 +23,17 @@ public class DiseaseDTO {
     private EvidenceDTO evidence;
     private Set<ExperimentalConditionDTO> experimentalConditions;
     private RelationshipDTO objectRelation;
+    private List<String> primaryGeneticEntityIDs;
+
+    public List<String> getPrimaryGeneticEntityIDs() {
+        return primaryGeneticEntityIDs;
+    }
+
+    public void setPrimaryGeneticEntityIDs(List<String> primaryGeneticEntityIDs) {
+        this.primaryGeneticEntityIDs = primaryGeneticEntityIDs;
+    }
+
+
 
     public String getDoid() {
         return doid;

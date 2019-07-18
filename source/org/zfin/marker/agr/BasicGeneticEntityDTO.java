@@ -11,7 +11,6 @@ public class BasicGeneticEntityDTO extends ZfinDTO {
     private List<CrossReferenceDTO> crossReferences;
     private Set<GenomeLocationDTO> genomeLocations;
 
-
     public List<CrossReferenceDTO> getCrossReferences() {
         return crossReferences;
     }
