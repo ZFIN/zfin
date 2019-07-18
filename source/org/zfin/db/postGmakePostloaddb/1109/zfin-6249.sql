@@ -221,5 +221,8 @@ update mutant_fast_search
   set mfs_mrkr_zdb_id = replace(mfs_mrkr_zdb_id , 'LINCRNAG', 'GENE')
 where mfs_mrkr_zdb_id in ('ZDB-LINCRNAG-130530-538', 'ZDB-LINCRNAG-070615-1', 'ZDB-LINCRNAG-070912-336', 'ZDB-LINCRNAG-131121-265', 'ZDB-LINCRNAG-110419-3', 'ZDB-LINCRNAG-060421-7397');
 
+update sequence_feature_chromosome_location_generated
+   set sfclg_data_zdb_id = replace(mfs_mrkr_zdb_id , 'LINCRNAG', 'GENE')
+ where sfclg_data_zdb_id in ('ZDB-LINCRNAG-130530-538', 'ZDB-LINCRNAG-070615-1', 'ZDB-LINCRNAG-070912-336', 'ZDB-LINCRNAG-131121-265', 'ZDB-LINCRNAG-110419-3', 'ZDB-LINCRNAG-060421-7397');
 
 set session_replication_role = 'origin';
