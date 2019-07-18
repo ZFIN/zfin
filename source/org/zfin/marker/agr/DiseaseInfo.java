@@ -70,6 +70,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             // loop over each FishExperiment
             fishExperimentSet.forEach((FishExperiment fishExperiment) -> {
                 Genotype genotype = fishExperiment.getFish().getGenotype();
+                Fish fish = fishExperiment.getFish();
                 // group the diseaseAnnotation by disease
                 // so publications and evidence codes are grouped together
                 Map<GenericTerm, Set<DiseaseAnnotation>> termMap = fishExperiment.getDiseaseAnnotationModels()
@@ -97,9 +98,13 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             DiseaseDTO strDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
                             RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
                             strDiseaseDto.setObjectRelation(relationship);
+                            //strDiseaseDto.setPrimaryGeneticEntityIDs();
                             // evidence
                             strDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
                             //populateExperimentConditions(fishExperiment, strDiseaseDto);
+                            List<String> geneticEntityIds = new ArrayList<>();
+                            geneticEntityIds.add(fish.getZdbID());
+                            strDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
                             diseaseDTOList.add(strDiseaseDto);
 
                         } else {
@@ -110,12 +115,20 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                 if (feature.isSingleAlleleOfMarker(gene)) {
                                     DiseaseDTO FeatureDiseaseDto = getBaseDiseaseDTO(feature.getZdbID(), feature.getAbbreviation(), disease);
                                     RelationshipDTO alleleRelationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.ALELLE);
+                                    List<String> geneticEntityIds = new ArrayList<>();
+                                    geneticEntityIds.add(fish.getZdbID());
+                                    FeatureDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
                                     FeatureDiseaseDto.setObjectRelation(alleleRelationship);
                                     FeatureDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
                                     //populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
                                     diseaseDTOList.add(FeatureDiseaseDto);
                                 }
                             });
+                            DiseaseDTO fishDiseaseDto = getBaseDiseaseDTO(fish.getZdbID(), fish.getName(), disease);
+                            RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.AFFECTED_GENOMIC_MODEL);
+                            fishDiseaseDto.setObjectRelation(fishRelationship);
+                            fishDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
+                            diseaseDTOList.add(fishDiseaseDto);
                         }
                     });
                 });
