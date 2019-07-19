@@ -161,7 +161,7 @@ public class FigureEditController {
         withZDB.setWdoldZdbID(image.getZdbID());
         withZDB.setWdnewZdbID(image.getFigure().getPublication().getZdbID());
         HibernateUtil.currentSession().save(withZDB);
-        HibernateUtil.currentSession().delete(image);
+        infrastructureRepository.deleteActiveDataByZdbID(image.getZdbID());
         infrastructureRepository.insertUpdatesTable(pub, "img_zdb_id", "deleted", null, zdbID);
         tx.commit();
 
