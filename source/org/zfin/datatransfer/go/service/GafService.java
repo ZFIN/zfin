@@ -132,7 +132,7 @@ public class GafService {
 
                 // for each gene, create an entry
                 for (Marker gene : genes) {
-                    System.out.println(gene);
+
 
                     MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
 
@@ -283,6 +283,7 @@ public class GafService {
     public MarkerGoTermEvidence generateAnnotation(GafEntry gafEntry, Marker gene, GafOrganization gafOrganization)
             throws GafValidationError {
         // lookup GO annotation
+       // System.out.println(gafEntry.getInferences());
         GenericTerm goTerm = getGoTerm(gafEntry);
 
         // find pubmed ID
@@ -362,14 +363,14 @@ public class GafService {
     protected void handleInferences(GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
             throws GafValidationError {
         String inferenceEntry = gafEntry.getInferences();
-        System.out.println(inferenceEntry);
+        //System.out.println(inferenceEntry);
         if (StringUtils.isNotEmpty(inferenceEntry)) {
             GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(markerGoTermEvidence.getEvidenceCode().getCode());
             String publicationZdbId = markerGoTermEvidence.getSource().getZdbID();
             Set<InferenceGroupMember> inferredFrom = new HashSet<>();
             Set<String> inferenceSet = new HashSet<>();
             inferenceSet.addAll(Arrays.asList(inferenceEntry.split("\\|")));
-            System.out.println(inferenceSet.size());
+            //System.out.println(inferenceSet.size());
             if (!GoEvidenceValidator.isValidCardinality(goEvidenceCodeEnum, inferenceSet)) {
                 throw new GafValidationError(GoEvidenceValidator.generateErrorString(goEvidenceCodeEnum, publicationZdbId), gafEntry);
             }
@@ -710,6 +711,7 @@ public class GafService {
      * @param gafEntries entries to be modified
      */
     public void replaceMergedZDBIds(List<GafEntry> gafEntries) {
+        String[] withFieldPieces;
         Map<String, String> oldNewZDBIds = getReplacedDataMapFromEntities(ActiveData.Type.GENE, ActiveData.Type.MRPHLNO);
         for (GafEntry gafEntry : gafEntries) {
 
@@ -725,13 +727,18 @@ public class GafService {
             // InterPro:IPR000536|InterPro:IPR001628|InterPro:IPR008946
             if (gafEntry.getInferences() == null)
                 continue;
-
-            String[] withFieldPieces = gafEntry.getInferences().split("\\|");
+          if (gafEntry.getInferences().contains("|")) {
+               withFieldPieces = gafEntry.getInferences().split("\\|");
+          }
+          else{
+              withFieldPieces = gafEntry.getInferences().split("\\,");
+          }
 
             StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i <= withFieldPieces.length - 1; i++) {
                 String currentWithField = withFieldPieces[i];
+
                 if (StringUtils.startsWith(currentWithField, "ZFIN:")) {
                     String[] withFieldsZFIN = currentWithField.split(":");
                     String withFieldZDBId = withFieldsZFIN[1];
