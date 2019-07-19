@@ -9,6 +9,7 @@ import org.zfin.properties.ZfinPropertiesEnum
 
 def PUB_FILE = "publications.uid"
 def INFO_FILE = "providerinfo.xml"
+def EPMC_PROFILE_FILE = "epmc_profile.xml"
 def RESOURCES_FILE = "resources.xml"
 
 // get pubmed ids for pubs that have some curated data
@@ -83,6 +84,25 @@ client.changeWorkingDirectory("holdings") || fail("unable to change directories"
 // upload files
 upload(PUB_FILE)
 upload(INFO_FILE)
+upload(RESOURCES_FILE)
+
+client.logout()
+client.disconnect()
+
+
+
+// connect to Europe PubMed Central External Links Service
+client.connect("labslink.ebi.ac.uk")
+if (!FTPReply.isPositiveCompletion(client.getReplyCode())) {
+    fail("unable to connect to Europe PMC FTP server")
+}
+client.enterLocalPassiveMode()
+client.login("elinks", "8VhrURVH") || fail("unable to login to Europe PMC FTP server")
+client.changeWorkingDirectory("0u2afbya") || fail("unable to change directories")
+
+// upload files
+upload(PUB_FILE)
+upload(EPMC_PROFILE_FILE)
 upload(RESOURCES_FILE)
 
 client.logout()
