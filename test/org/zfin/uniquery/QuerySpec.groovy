@@ -121,6 +121,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PUBLICATION.name                | "abstract:\"motor control requires circuits\""                                   | "n/a"
         Category.PUBLICATION.name                | "thesis id:ZDB-PUB-150918-21"                                                    | "13042"
         Category.CONSTRUCT.name                  | "4xnr"                                                                           | "11810"
+        Category.COMMUNITY.name                  | "Howe (fka Jekosch), Kerstin id:ZDB-PERS-001130-2"                               | "SRCH-1127"
         Category.COMMUNITY.name                  | "nuss id:ZDB-PERS-960805-412"                                                    | "11216"
         Category.COMMUNITY.name                  | "Nüss id:ZDB-PERS-960805-412"                                                    | "11216"
         Category.PUBLICATION.name                | "Nüss* id:ZDB-PUB-970602-19"                                                     | "11216"
