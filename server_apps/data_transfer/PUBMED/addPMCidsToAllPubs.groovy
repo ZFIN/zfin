@@ -16,7 +16,7 @@ PubmedUtils.dbaccess DBNAME, """
   SELECT accession_no, zdb_id
   FROM publication
   WHERE accession_no IS NOT NULL
-  and pub_pmc_id is null ) to '$PUB_PMCIDS_TO_CHECK' delimiter ',';
+  and (pub_pmc_id is null or pub_pmc_id = '') ) to '$PUB_PMCIDS_TO_CHECK' delimiter ',';
 """
 
 batchSize = 2000
