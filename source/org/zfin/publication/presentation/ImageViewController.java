@@ -19,6 +19,7 @@ import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 
 import javax.servlet.http.HttpServletResponse;
@@ -54,7 +55,14 @@ public class ImageViewController {
 
         Image image = publicationRepository.getImageById(zdbID);
         if (image == null) {
-            return null;
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getWithdrawnZdbID(zdbID);
+            if (replacedZdbID != null) {
+
+                return "redirect:/" + replacedZdbID;
+            } else {
+                model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                return LookupStrings.RECORD_NOT_FOUND_PAGE;
+            }
         }
 
 
