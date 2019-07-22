@@ -47,7 +47,7 @@ def do_query(conn):
 
 
 def movepdfs(fullPathPDFDir, pf_pub_zdb_id, yearDirectory):
-    pattern = '/research/zcentral/loadUp/PDFLoadUp/' + yearDirectory + '/' + pf_pub_zdb_id + '*'
+    pattern = '/opt/zfin/loadUp/PDFLoadUp/' + yearDirectory + '/' + pf_pub_zdb_id + '*'
 
     for pubFile in glob.glob(pattern):
         print(pubFile)
