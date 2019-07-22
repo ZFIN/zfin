@@ -138,6 +138,13 @@ public class FigureViewController {
                 figures.addAll(publication.getFigures());
             }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+=======
+>>>>>>> release-1107
+>>>>>>> release-1108
         }
 
 
