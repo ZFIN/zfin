@@ -125,11 +125,8 @@ public class FigureViewController {
             model.addAttribute("probeSuppliers", suppliers);
         }
         if (figureViewService.isZebrasharePub(publication)) {
-            
-            figures.addAll(publication.getFigures());
-
+                figures.addAll(publication.getFigures());
         }
-
         else{
             if (publication.isUnpublished()) {
                 if (StringUtils.isEmpty(probeZdbID)) {
@@ -143,7 +140,10 @@ public class FigureViewController {
                 figures.addAll(publication.getFigures());
             }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> release-1107
         }
 
 
