@@ -13,11 +13,11 @@ delete from zdb_active_data where zactvd_zdb_id='ZDB-CNE-150506-1';
 update tmpcne set nccrid=get_id('NCCR');
 
 insert into zdb_replaced_data (zrepld_new_zdb_id, zrepld_old_zdb_id)
- select cneid,nccrid from tmpcne;
+ select nccrid,cneid from tmpcne;
 
  
 insert into withdrawn_data (wd_new_zdb_id, wd_old_zdb_id)
-select cneid,nccrid from tmpcne;
+select nccrid,cneid from tmpcne;
 
 insert into zdb_active_data (zactvd_zdb_id)
 select nccrid from tmpcne;
