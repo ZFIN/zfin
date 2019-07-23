@@ -9,9 +9,12 @@
             seqInfoCtrl.errorDb = "";
             seqInfoCtrl.errorAcc = "";
             seqInfoCtrl.errorRef = "";
+            seqInfoCtrl.errorLength = "";
             seqInfoCtrl.newAccession = '';
             seqInfoCtrl.newReference = '';
+            seqInfoCtrl.newLength = '';
             seqInfoCtrl.accessionEdit = '';
+            seqInfoCtrl.lengthInfo = '';
             seqInfoCtrl.referenceEdit = '';
             seqInfoCtrl.seqenceInfo = null;
 
@@ -65,7 +68,7 @@
 
             seqInfoCtrl.addSequenceInfo = function() {
                 if (validated(1)) {
-                    addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.newAccession.toUpperCase(), seqInfoCtrl.newReference, null)
+                    addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.newAccession.toUpperCase(), seqInfoCtrl.newReference, seqInfoCtrl.newLength)
                         .then(function (link) {
                             getSequences();
                             if (!seqInfoCtrl.errorRef) {

@@ -1,7 +1,9 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -131,8 +133,8 @@ public class MarkerLinkController {
             throw new InvalidWebRequestException("Invalid marker DBLink", errors);
         }
 
-        if(link == null) {
-            if (newLink.getLength() != null) {
+        if (link == null) {
+            if (StringUtils.isNotEmpty(newLink.getLength())) {
                 int len = Integer.parseInt(newLink.getLength());
                 link = markerRepository.addDBLinkWithLenth(marker, accessionNo, refDB, pubId, len);
             } else {
