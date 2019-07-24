@@ -257,6 +257,8 @@ public class FeatureService {
         }
         FeatureGenomeLocation featureLocation = locations.get(0);
 
+        if (featureLocation.getStart() == null || featureLocation.getEnd() == null) { return null; }
+
         // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
         // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
         // some appropriate amount of padding.

@@ -11,16 +11,17 @@ values('ZDB-NCCR-181109-1','ZDB-CNE-150506-1');
 delete from zdb_active_data where zactvd_zdb_id='ZDB-CNE-150506-1';
 
 update tmpcne set nccrid=get_id('NCCR');
+insert into zdb_active_data (zactvd_zdb_id)
+select nccrid from tmpcne;
 
 insert into zdb_replaced_data (zrepld_new_zdb_id, zrepld_old_zdb_id)
- select cneid,nccrid from tmpcne;
+ select nccrid,cneid from tmpcne;
 
  
 insert into withdrawn_data (wd_new_zdb_id, wd_old_zdb_id)
-select cneid,nccrid from tmpcne;
+select nccrid,cneid from tmpcne;
 
-insert into zdb_active_data (zactvd_zdb_id)
-select nccrid from tmpcne;
+
 
 insert into marker(mrkr_zdb_id,mrkr_abbrev,mrkr_name,mrkr_type,mrkr_owner,mrkr_name_order,mrkr_abbrev_order)
  select nccrid,nccrabbrev,nccrname||'NCCR','NCCR','ZDB-PERS-981201-7',nccrname||'NCCR',nccrabbrev

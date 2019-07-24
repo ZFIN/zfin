@@ -13,6 +13,7 @@ public class QueryManipulationService {
         query = processNcbiAccession(query);
         query = processConstructDash(query);
         query = processZfinPrefix(query);
+        query = processParenComma(query);
 
         return query;
     }
@@ -42,5 +43,13 @@ public class QueryManipulationService {
 
     //Case INF-2933
     public String processZfinPrefix(String query) { return query.replaceAll("ZFIN:", ""); }
+
+    //Case SRCH-1127 '),' in person names need to be escaped
+    public String processParenComma(String query) {
+        if (query.contains("),")) {
+            return query.replaceAll("\\(","\\\\(").replaceAll("\\)","\\\\)");
+        }
+        return query;
+    }
 
 }
