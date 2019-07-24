@@ -140,11 +140,11 @@
                     <td><span class="error">{{si.errorDb}}</span></td>
                 </tr>
                 <tr>
-                    <td>Length:&nbsp;<input placeholder="{{si.lengthEdit}}" ng-model="si.lengthEdit" ng-keyup="si.errorLength = ''" /></td>
+                    <td>Accession:&nbsp;<input placeholder="{{si.accessionEdit}}" ng-model="si.accessionEdit" ng-keyup="si.errorAcc = ''" /></td>
                     <td><span class="error">{{si.errorAcc}}</span></td>
                 </tr>
                 <tr>
-                    <td>Accession:&nbsp;<input placeholder="{{si.accessionEdit}}" ng-model="si.accessionEdit" ng-keyup="si.errorAcc = ''" /></td>
+                    <td>Length:&nbsp;<input placeholder="{{si.lengthEdit}}" ng-model="si.lengthEdit" ng-keyup="si.errorLength = ''" /></td>
                     <td><span class="error">{{si.errorAcc}}</span></td>
                 </tr>
                 <tr>
