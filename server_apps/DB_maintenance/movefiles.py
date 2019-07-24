@@ -48,13 +48,13 @@ def do_query(conn):
 
 def moveImages(fullPathPDFDir, img_id):
 
-    pattern = '/research/zcentral/loadUp/imageLoadUp/' + img_id + '*'
+    pattern = '/opt/zfin/loadUp/imageLoadUp/' + img_id + '*'
 
     for imgFile in glob.glob(pattern):
         print(imgFile)
         copy(imgFile, fullPathPDFDir)
 
-    pattern = '/research/zcentral/loadUp/imageLoadUp/medium/' + img_id + '*'
+    pattern = '/opt/zfin/loadUp/imageLoadUp/medium/' + img_id + '*'
 
     for imgFile in glob.glob(pattern):        
         imgName = imgFile.replace(".", "_medium.")

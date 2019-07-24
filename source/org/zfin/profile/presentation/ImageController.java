@@ -41,7 +41,7 @@ public class ImageController {
     // make images fit into this size of square.
     public static final int MAX_IMAGES_SQUARE_SIZE_PIXELS = 500;
 
-    private static final File IMAGE_LOADUP_DIR = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.IMAGE_LOAD.toString());
+    private static final File IMAGE_LOADUP_DIR = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString());
     private static final String PROFILE_IMAGE_DIR = "profile";
 
     private Logger logger = LogManager.getLogger(ImageController.class);
