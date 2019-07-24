@@ -14,7 +14,7 @@
             seqInfoCtrl.newReference = '';
             seqInfoCtrl.newLength = '';
             seqInfoCtrl.accessionEdit = '';
-            seqInfoCtrl.lengthInfo = '';
+            seqInfoCtrl.lengthEdit = '';
             seqInfoCtrl.referenceEdit = '';
             seqInfoCtrl.seqenceInfo = null;
 
@@ -142,7 +142,7 @@
                             seqInfoCtrl.errorAcc = error.data.message;
                         })
                         .finally(function () {
-                        addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.accessionEdit.toUpperCase(), seqInfoCtrl.references[0].zdbID, len)
+                        addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.accessionEdit.toUpperCase(), seqInfoCtrl.references[0].zdbID, seqInfoCtrl.lengthEdit)
                             .then(function (link) {
                                 seqInfoCtrl.seqenceInfo = link;
                                 var referenceIds = [];
@@ -187,6 +187,7 @@
             seqInfoCtrl.openUpdateSequenceInfo = function(obj) {
                 seqInfoCtrl.seqenceInfo = obj;
                 seqInfoCtrl.accessionEdit = obj.accession;
+                seqInfoCtrl.lengthEdit = obj.length;
                 seqInfoCtrl.newDatabase = obj.referenceDatabaseZdbID;
                 openModalPopup('update-sequence-information-modal');
             };
@@ -253,6 +254,7 @@
                 seqInfoCtrl.newDatabase = '';
                 seqInfoCtrl.newAccession = '';
                 seqInfoCtrl.accessionEdit = '';
+                seqInfoCtrl.lengthEdit = '';
                 seqInfoCtrl.newReference = '';
                 seqInfoCtrl.referenceEdit = '';
                 seqInfoCtrl.seqenceInfo = null;
