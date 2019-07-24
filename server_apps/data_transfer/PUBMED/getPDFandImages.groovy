@@ -210,17 +210,24 @@ def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear
     // make thumbnail and medium images in the same directory as their parent images.
 
     def sout = new StringBuilder(), serr = new StringBuilder()
-    println("starting thumbs")
     def proc = "/bin/convert -thumbnail 1000x64 ${fullFile} ${thumbnailFile}".execute()
     proc.waitForProcessOutput(sout, serr)
     if (sout || serr ) {
         println "out> $sout err> $serr"
+        if (serr) {
+            println (serr + "exists")
+            System.exit(0)
+        }
     }
 
     def procMedium ="/bin/convert -thumbnail 500x550 ${fullFile} ${mediumFile}".execute()
     procMedium.waitForProcessOutput(sout, serr)
     if (sout || serr ) {
         println "out> $sout err> $serr"
+        if (serr) {
+            println (serr + "exists")
+            System.exit(0)
+        }
     }
 
 }
