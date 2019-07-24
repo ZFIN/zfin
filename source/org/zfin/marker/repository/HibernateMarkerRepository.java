@@ -3206,9 +3206,11 @@ public String getABRegID(String zdbID){
         // max number of records.
         if (number < 1)
             hql += "left join fetch marker.dbLinks ";
-        hql += "where marker.markerType.name in (:names) ";
+        hql += "where marker.markerType.name in (:names) " +
+        "   and mrkr_abbrev not like :withdrawn " ;
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("names", type.getTypeStrings());
+        query.setString("withdrawn", Marker.WITHDRAWN + "%");
         if (number > 0) {
             query.setFirstResult(0);
             query.setMaxResults(number);
