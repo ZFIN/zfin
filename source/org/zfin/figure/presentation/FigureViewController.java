@@ -1,6 +1,5 @@
 package org.zfin.figure.presentation;
 
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,7 +14,6 @@ import org.zfin.framework.ComparatorCreator;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
 import org.zfin.marker.presentation.OrganizationLink;
-import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
