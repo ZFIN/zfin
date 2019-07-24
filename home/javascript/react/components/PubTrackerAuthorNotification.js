@@ -6,7 +6,7 @@ import LoadingButton from "./LoadingButton";
 
 const iterateAuthorEmails = (authors, callback) => {
     authors.forEach(author => {
-        author.email && author.email.split(/[\s;,]+/).forEach(email => {
+        author.email && author.email.split(/[\s;,]+/).filter(v => !!v).forEach(email => {
             if (!email) { return; }
             callback(email, author);
         });
@@ -69,7 +69,7 @@ class PubTrackerAuthorNotification extends Component {
     getRecipientList() {
         const { registeredRecipients, additionalRecipients } = this.state;
         return registeredRecipients
-            .concat(additionalRecipients.split(/[,\s]+/));
+            .concat(additionalRecipients.split(/[\s;,]+/).filter(v => !!v));
     }
 
     previewNotification() {
@@ -101,7 +101,7 @@ class PubTrackerAuthorNotification extends Component {
                 recipients.push(`${author.display} (${email})`)
             }
         });
-        recipients.push(...additionalRecipients.split(/[,\s]+/));
+        recipients.push(...additionalRecipients.split(/[\s;,]+/).filter(v => !!v));
         const note = { text: `Notified authors: ${recipients.join(', ')}` }
 
         this.props.onSendNotification(notification, note)
