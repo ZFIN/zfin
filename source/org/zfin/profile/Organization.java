@@ -39,9 +39,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
 //            message = "Must be of the format (user)@(domain).(domain)")
     private String email;
 
-    @Size(max = 150, message = "Must be less than 150 characters.")
-//    @Pattern(regexp = "^https?://[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?(:?[0-9]++)?$",
-//            message = "Must be of the format http[s]://(domain).(domain)(:port optional)")
+    @Size(max = 2000, message = "Must be less than 2000 characters.")
     private String url;
     private Person owner;
 
