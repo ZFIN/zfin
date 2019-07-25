@@ -243,7 +243,11 @@ public class PublicationEditController {
         }
 
         List<PubmedPublicationAuthor> authors = RepositoryFactory.getPublicationRepository().getPubmedPublicationAuthorsByPublication(publication);
-        return publicationService.getAuthorStringList(authors);
+        if (authors != null && !authors.isEmpty()) {
+            return publicationService.getAuthorStringList(authors);
+        } else {
+            return publicationService.splitAuthorListString(publication.getAuthors());
+        }
     }
 
     @RequestMapping(value = "/{zdbID}/registered-authors")
