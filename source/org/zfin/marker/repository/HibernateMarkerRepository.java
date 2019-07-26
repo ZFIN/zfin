@@ -2028,16 +2028,18 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = HibernateUtil.currentSession();
         return (MarkerDBLink) session.get(MarkerDBLink.class, linkId);
     }
-public String getABRegID(String zdbID){
-    Session session = HibernateUtil.currentSession();
-    String sql = "select dblink_acc_num as num " +
-            "  from db_link " +
-            " where dblink_linked_recid = :zdbID" +
-            "   and dblink_acc_num like 'AB%' ";
-    Query query = session.createSQLQuery(sql);
-    query.setParameter("zdbID", zdbID);
-    return (String) query.uniqueResult();
-}
+
+
+    public String getABRegID(String zdbID){
+        Session session = HibernateUtil.currentSession();
+        String sql = "select dblink_acc_num as num " +
+                "  from db_link " +
+                " where dblink_linked_recid = :zdbID" +
+                "   and dblink_acc_num like 'AB%' order by dblink_zdb_id desc limit 1";
+        Query query = session.createSQLQuery(sql);
+        query.setParameter("zdbID", zdbID);
+        return (String) query.uniqueResult();
+    }
 
     public String getAALink(Feature feature) {
         Session session = HibernateUtil.currentSession();
