@@ -98,12 +98,11 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             DiseaseDTO strDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
                             RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
                             strDiseaseDto.setObjectRelation(relationship);
-                            //strDiseaseDto.setPrimaryGeneticEntityIDs();
-                            // evidence
-                            strDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
-                            //populateExperimentConditions(fishExperiment, strDiseaseDto);
                             List<String> geneticEntityIds = new ArrayList<>();
                             geneticEntityIds.add(fish.getZdbID());
+                            strDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
+                            // evidence
+                            strDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
                             strDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
                             diseaseDTOList.add(strDiseaseDto);
 
