@@ -36,7 +36,8 @@ PubmedUtils.psql DBNAME, """
      AND NOT EXISTS (SELECT 'x' 
                     FROM publication_file 
                     WHERE pf_pub_zdb_id = zdb_id 
-                    AND pf_file_type_id =1) 
+                    AND pf_file_type_id =1)
+     AND NOT EXISTS (select 'x' from figure where fig_source_zdb_id = zdb_id) 
      ) to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
 
@@ -156,9 +157,9 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
 def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYear, tag) {
 
     def entireFigString = groupMatchString
-    def label
-    def caption
-    def image
+    def label = ''
+    def caption = ''
+    def image = ''
     def labelPattern = "<${tag}:label>(.*?)</${tag}:label>"
     def labelMatch = entireFigString =~ /${labelPattern}/
     if (labelMatch.size() > 0) {
