@@ -144,6 +144,10 @@
                     <td><span class="error">{{si.errorAcc}}</span></td>
                 </tr>
                 <tr>
+                    <td>Length:&nbsp;<input placeholder="{{si.lengthEdit}}" ng-model="si.lengthEdit" ng-keyup="si.errorLength = ''" /></td>
+                    <td><span class="error">{{si.errorAcc}}</span></td>
+                </tr>
+                <tr>
                     <td colspan="2" nowrap>
                         <button class="zfin-button cancel" ng-click="si.close()">Cancel</button>
                         <button class="zfin-button approve" ng-click="si.updateSequenceInfo()">Update</button>

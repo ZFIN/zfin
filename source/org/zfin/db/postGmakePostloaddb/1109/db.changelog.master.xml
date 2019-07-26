@@ -34,5 +34,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/PLC-343.sql" />
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/zfin-6019.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1109/ZFIN-6306.sql" />
 
 </databaseChangeLog>

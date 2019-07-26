@@ -208,7 +208,12 @@ public class PublicationEditController {
         }
         model.addAttribute("publicationBean", bean);
         List<PubmedPublicationAuthor> authors = RepositoryFactory.getPublicationRepository().getPubmedPublicationAuthorsByPublication(publication);
-        model.addAttribute("authorStrings", publicationService.getAuthorStringList(authors));   
+
+        if (authors != null && !authors.isEmpty()) {
+            model.addAttribute("authorStrings", publicationService.getAuthorStringList(authors));
+        } else {
+            model.addAttribute("authorStrings", publicationService.splitAuthorListString(publication.getAuthors()));
+        }
         model.addAttribute("allowCuration", publicationService.allowCuration(publication));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Link Authors: " + publication.getTitle());
@@ -238,7 +243,11 @@ public class PublicationEditController {
         }
 
         List<PubmedPublicationAuthor> authors = RepositoryFactory.getPublicationRepository().getPubmedPublicationAuthorsByPublication(publication);
-        return publicationService.getAuthorStringList(authors);
+        if (authors != null && !authors.isEmpty()) {
+            return publicationService.getAuthorStringList(authors);
+        } else {
+            return publicationService.splitAuthorListString(publication.getAuthors());
+        }
     }
 
     @RequestMapping(value = "/{zdbID}/registered-authors")
