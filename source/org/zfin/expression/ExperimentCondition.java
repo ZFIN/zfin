@@ -1,15 +1,14 @@
 package org.zfin.expression;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Entity class that maps to experiment table.
@@ -47,9 +46,6 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     @ManyToOne
     @JoinColumn(name = "expcond_chebi_term_zdb_id")
     private GenericTerm chebiTerm;
-    @ManyToOne
-    @JoinColumn(name = "expcond_spatial_term_zdb_id")
-    private GenericTerm spatialTerm;
 
     private static Logger logger = LogManager.getLogger(ExperimentCondition.class);
 
@@ -125,14 +121,6 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
 
     public void setTaxaonymTerm(GenericTerm taxaonymTerm) {
         this.taxaonymTerm = taxaonymTerm;
-    }
-
-    public GenericTerm getSpatialTerm() {
-        return spatialTerm;
-    }
-
-    public void setSpatialTerm(GenericTerm spatialTerm) {
-        this.spatialTerm = spatialTerm;
     }
 
     @Override

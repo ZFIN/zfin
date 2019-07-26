@@ -106,10 +106,6 @@ public class ExperimentController implements ExperimentCurationService {
                 GenericTerm term = DTOConversionService.convertToTerm(conditionDTO.chebiTerm);
                 condition.setChebiTerm(term);
             }
-            if (conditionDTO.spatialTerm != null) {
-                GenericTerm term = DTOConversionService.convertToTerm(conditionDTO.spatialTerm);
-                condition.setSpatialTerm(term);
-            }
             experiment.addExperimentCondition(condition);
             getExpressionRepository().saveExperimentCondition(condition);
             HibernateUtil.flushAndCommitCurrentSession();

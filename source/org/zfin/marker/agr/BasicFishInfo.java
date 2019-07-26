@@ -58,9 +58,6 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                         fish -> {
                             FishDTO dto = new FishDTO();
                             dto.setName(fish.getDisplayName());
-                            String nameText = fish.getDisplayName().replace("</sup>", ">");
-                            nameText = nameText.replace("<sup>", "<");
-                            dto.setNameText(nameText);
                             dto.setGenotypeID("ZFIN:" + fish.getZdbID());
                             Genotype genotype = fish.getGenotype();
                             if (CollectionUtils.isNotEmpty(genotype.getAssociatedGenotypes())) {

@@ -10,7 +10,6 @@ public class FishDTO extends ZfinDTO {
 
     private String genotypeID;
     private String name;
-    private String nameText;
     private List<GenotypeComponentDTO> genotypeComponents;
     private List<String> sequenceTargetingReagentIDs;
     private List<String> backgroundIDs;
@@ -40,13 +39,6 @@ public class FishDTO extends ZfinDTO {
         this.name = name;
     }
 
-    public String getNameText() {
-        return nameText;
-    }
-
-    public void setNameText(String nameText) {
-        this.nameText = nameText;
-    }
 
     public List<GenotypeComponentDTO> getGenotypeComponents() {
         return genotypeComponents;

@@ -4,7 +4,8 @@ package org.zfin.gwt.root.server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
@@ -18,7 +19,6 @@ import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.util.NullpointerException;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityZdbID;
@@ -1323,7 +1323,6 @@ public class DTOConversionService {
                 dto.setGoCCTerm(DTOConversionService.convertToTermDTO(condition.getGoCCTerm()));
                 dto.setTaxonTerm(DTOConversionService.convertToTermDTO(condition.getTaxaonymTerm()));
                 dto.setChebiTerm(DTOConversionService.convertToTermDTO(condition.getChebiTerm()));
-                dto.setSpatialTerm(DTOConversionService.convertToTermDTO(condition.getSpatialTerm()));
                 list.add(dto);
             }
             environment.setConditionDTOList(list);

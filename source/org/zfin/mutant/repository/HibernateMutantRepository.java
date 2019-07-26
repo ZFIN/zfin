@@ -635,13 +635,31 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                        left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
                 "                        where get_obj_type(mfs_mrkr_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
 
+        final String fishQueryString = "select distinct mfs_mrkr_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
+                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, " +
+                "                e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id" +
+                "                        from mutant_fast_search" +
+                "                        join phenotype_source_generated on pg_genox_zdb_id = mfs_genox_zdb_id" +
+                "                        join phenotype_observation_generated on psg_pg_id = pg_id" +
+                "                        join figure on pg_fig_zdb_id = fig_zdb_id" +
+                "                        join publication on fig_source_zdb_id = zdb_id " +
+                "                        join term as e1a on e1a.term_zdb_id = psg_e1a_zdb_id" +
+                "                        join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
+                "                        left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
+                "                        left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
+                "                        left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
+                "                        where get_obj_type(mfs_mrkr_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
+
         final Query alleleQuery = HibernateUtil.currentSession().createSQLQuery(alleleQueryString);
         final Query geneQuery = HibernateUtil.currentSession().createSQLQuery(geneQueryString);
+        final Query fishQuery = HibernateUtil.currentSession().createSQLQuery(fishQueryString);
 
         List<Object[]> alleles = alleleQuery.list();
         List<Object[]> genes = geneQuery.list();
+        List<Object[]> fishes = fishQuery.list();
         List<Object[]> phenos = genes;
         phenos.addAll(alleles);
+        phenos.addAll(fishes);
 
         List<BasicPhenotypeDTO> basicPhenos = new ArrayList<BasicPhenotypeDTO>();
         for (Object[] basicPhenoObjects : phenos) {
