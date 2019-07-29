@@ -2,7 +2,7 @@
 <zfin2:page title="ZFIN Embyonic Developmental Stages">
 <div><table align="center" bgcolor="#ffcccc" width="50%"> <tr><td class="small"> This material is from the 4th edition of The Zebrafish Book.  The 5th edition is available <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">in print</a> and within the <a href="https://wiki.zfin.org/display/prot/ZFIN+Protocol+Wiki">ZFIN Protocol Wiki</a>.  </td></tr> <table>
 <center>
-<h2><a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PUB-961014-576">Stages of Embryonic Development of the Zebrafish</a></h2>
+<h2><a href="/ZDB-PUB-961014-576">Stages of Embryonic Development of the Zebrafish</a></h2>
 <b>CHARLES B. KIMMEL, WILLIAM W. BALLARD*, SETH R. KIMMEL,  BONNIE ULLMANN, AND THOMAS F. SCHILLING</b><i></i><p>
 Institute of Neuroscience, University of Oregon, Eugene, OR 97403; *Department of Biology, Dartmouth College, Hanover, NH 03755</p><p>
 Developmental Dynamics 203:253-310 (1995).  
