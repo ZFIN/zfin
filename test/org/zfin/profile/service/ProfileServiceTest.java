@@ -111,6 +111,7 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
     public void createLab() {
         Lab lab = new Lab();
         lab.setName("Bob Jones School of Intelligent Design");
+        lab.setUrl("http://aol.com");
         lab = profileService.createLab(lab);
         assertNotNull(lab);
         assertEquals("Bob Jones School of Intelligent Design", lab.getName());
@@ -122,6 +123,7 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
     public void createCompany() {
         Company company = new Company();
         company.setName("Bob Jones Company of Intelligent Design");
+        company.setUrl("http://aol.com");
         company = profileService.createCompany(company);
         assertNotNull(company);
         assertEquals("Bob Jones Company of Intelligent Design", company.getName());
@@ -137,6 +139,7 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
         person.setPass2("password");
         person.setFirstName("Bob");
         person.setLastName("Jones");
+        person.setUrl("Http://aol.com");
         person = profileService.createPerson(person);
         assertNotNull(person);
         assertEquals("Jones-B.", person.getShortName());

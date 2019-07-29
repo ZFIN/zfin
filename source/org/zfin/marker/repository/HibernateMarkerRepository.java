@@ -2,7 +2,8 @@ package org.zfin.marker.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -10,7 +11,6 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
-import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
@@ -57,7 +57,8 @@ import org.zfin.util.NumberAwareStringComparator;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
 @Repository
@@ -2028,16 +2029,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = HibernateUtil.currentSession();
         return (MarkerDBLink) session.get(MarkerDBLink.class, linkId);
     }
-public String getABRegID(String zdbID){
-    Session session = HibernateUtil.currentSession();
-    String sql = "select dblink_acc_num as num " +
-            "  from db_link " +
-            " where dblink_linked_recid = :zdbID" +
-            "   and dblink_acc_num like 'AB%' ";
-    Query query = session.createSQLQuery(sql);
-    query.setParameter("zdbID", zdbID);
-    return (String) query.uniqueResult();
-}
+
+    public String getABRegID(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        String sql = "select dblink_acc_num as num " +
+                "  from db_link " +
+                " where dblink_linked_recid = :zdbID" +
+                "   and dblink_acc_num like 'AB%' ";
+        Query query = session.createSQLQuery(sql);
+        query.setParameter("zdbID", zdbID);
+        return (String) query.uniqueResult();
+    }
 
     public String getAALink(Feature feature) {
         Session session = HibernateUtil.currentSession();
@@ -2336,6 +2338,7 @@ public String getABRegID(String zdbID){
                 .list()
                 ;
     }
+
     public List<Marker> getGenesforTranscript(Marker tscript) {
 
         List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
@@ -3219,7 +3222,7 @@ public String getABRegID(String zdbID){
     }
 
 
-    public List<Transcript> getAllTranscripts(){
+    public List<Transcript> getAllTranscripts() {
         Session session = HibernateUtil.currentSession();
         Criteria transcriptCriteria = session.createCriteria(Transcript.class);
         transcriptCriteria.addOrder(Order.asc("name"));
@@ -3228,12 +3231,13 @@ public String getABRegID(String zdbID){
 
     @Override
     public Map<String, GenericTerm> getSoTermMapping() {
-        String hql = "from ZfinSoTerm";
+        String hql = "select so from ZfinSoTerm so " +
+                "left join fetch so.soTerm";
 
         List<ZfinSoTerm> terms = HibernateUtil.currentSession().createQuery(hql).list();
         Map<String, GenericTerm> map = new HashMap<>(terms.size());
         for (ZfinSoTerm term : terms) {
-            map.put(term.getEntityName(), getOntologyRepository().getTermByOboID(term.getOboID()));
+            map.put(term.getEntityName(), term.getSoTerm());
         }
         return map;
     }

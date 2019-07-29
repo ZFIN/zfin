@@ -1,9 +1,7 @@
 package org.zfin.ontology;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.*;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
 import org.zfin.sequence.DBLink;
@@ -11,6 +9,9 @@ import org.zfin.sequence.FeatureDBLink;
 import org.zfin.util.NumberAwareStringComparator;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.*;
 
 /**
@@ -117,9 +118,8 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     protected DevelopmentStage start;
     */
 
-    @OneToOne(mappedBy = "term", fetch = FetchType.LAZY)
-    @NotFound(action= NotFoundAction.IGNORE)
-    protected TermStage termStage;
+    @OneToMany(mappedBy = "term", fetch = FetchType.LAZY)
+    protected List<TermStage> termStage;
     // attribute that is populated lazily
     // transient modifier because we do not want to serialize the whole relationship tree
     // (would lead to a StackOverflowError)
@@ -403,14 +403,14 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     public DevelopmentStage getStart() {
         if (termStage == null)
             return null;
-        return termStage.getStart();
+        return termStage.get(0).getStart();
     }
 
     @Override
     public DevelopmentStage getEnd() {
         if (termStage == null)
             return null;
-        return termStage.getEnd();
+        return termStage.get(0).getEnd();
 
     }
 

@@ -1631,13 +1631,9 @@ public class HibernateMutantRepository implements MutantRepository {
 
         List<GenotypeFigure> genotypeFigures = (List<GenotypeFigure>) query.list();
 
-        List<GenotypeFigure> notNormalGenotypeFigures = new ArrayList<>();
-
-        for (GenotypeFigure genoFig : genotypeFigures) {
-            if (genoFig.getPhenotypeStatement().isNotNormal())
-                notNormalGenotypeFigures.add(genoFig);
-        }
-
+        List<GenotypeFigure> notNormalGenotypeFigures = genotypeFigures.stream()
+                .filter(genotypeFigure -> genotypeFigure.getPhenotypeStatement().isNotNormal())
+                .collect(Collectors.toList());
         return notNormalGenotypeFigures;
     }
 

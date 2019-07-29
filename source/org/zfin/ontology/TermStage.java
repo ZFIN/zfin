@@ -12,10 +12,10 @@ public class TermStage implements Serializable {
     @Id
     @Column(name = "ts_term_zdb_id")
     private String id;
-    @OneToOne
-    @JoinColumn(name = "ts_term_zdb_id")
+    @ManyToOne
+    @JoinColumn(name = "ts_term_zdb_id", insertable = false, updatable = false)
     private GenericTerm term;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ts_start_stg_zdb_id")
     private DevelopmentStage start;
     @OneToOne

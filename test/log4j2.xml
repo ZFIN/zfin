@@ -9,7 +9,7 @@
 
     <Loggers>
         <Logger name="org.hibernate" level="error"/>
-        <Logger name="org.hibernate.SQL" level="warn"/>
+        <Logger name="org.hibernate.SQL" level="debug"/>
         <Logger name="org.hibernate.type" level="warn"/>
         <Logger name="org.hibernate.impl.SessionImpl" level="warn"/>
         <Logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="error"/>

@@ -1,7 +1,7 @@
 package org.zfin;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,13 +31,8 @@ public class TestConfiguration {
     public static void configure() {
         // setup log file
         File file = new File("test", "log4j2.xml");
-        ConfigurationSource source = null;
-        try {
-            source = new ConfigurationSource(new FileInputStream(file));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Configurator.initialize(null, source);
+        LoggerContext context = (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
+        context.setConfigLocation(file.toURI());
 
         // set tomcat temp directory
         ZfinProperties.init();
