@@ -76,7 +76,7 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
     }
 
     public AllTranscriptDTO getAllTranscriptInfo() {
-        List<Transcript> allTranscripts = getMarkerRepository().getAllNonCodingTranscripts();
+        List<Transcript> allTranscripts = getMarkerRepository().getTranscriptsForNonCodingGenes();
         System.out.println(allTranscripts.size());
 
         List<TranscriptDTO> allTranscriptDTOList = allTranscripts.stream()

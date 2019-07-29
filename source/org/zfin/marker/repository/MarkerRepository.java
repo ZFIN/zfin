@@ -502,6 +502,7 @@ public interface MarkerRepository {
 
     List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number);
      List<Transcript> getAllNonCodingTranscripts();
+    List<Transcript> getTranscriptsForNonCodingGenes();
 
     Map<String,GenericTerm> getSoTermMapping();
 

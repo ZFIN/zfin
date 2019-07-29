@@ -356,6 +356,26 @@ public class HibernateMarkerRepository implements MarkerRepository {
         });*/
         return markerRelationships;
     }
+    public List<Transcript> getTranscriptsForNonCodingGenes() {
+
+        List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
+        List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.RNAGENE);
+
+        String hql = " select mr1.secondMarker from MarkerRelationship mr1,  Marker m " +
+                " where mr1.firstMarker.zdbID=m.zdbID " +
+                " and mr1.firstMarker.markerType in (:markerType) " +
+                " and mr1.type = :markerRelationshipType1 " +
+                " ";
+
+
+        return HibernateUtil.currentSession().createQuery(hql)
+
+                .setParameter("markerRelationshipType1", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT)
+                .setParameterList("markerType", markerTypes)
+
+                .list()
+                ;
+    }
 
     public List<Transcript> getAllNonCodingTranscripts() {
         List<TranscriptType.Type> typeList = new ArrayList<TranscriptType.Type>();
