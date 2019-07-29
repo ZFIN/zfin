@@ -1,7 +1,8 @@
 package org.zfin.expression.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
@@ -80,7 +81,7 @@ public class ExpressionService {
                     RecordAttribution.SourceType.STANDARD) != null
                     &&
                     thissePublications.contains(expressionExperiment.getPublication().getZdbID())
-                    ) {
+            ) {
                 return true;
             }
         }
@@ -283,7 +284,7 @@ public class ExpressionService {
         MarkerExpression markerExpression = new MarkerExpression();
         if (clone.getMarkerType().getType() != Marker.Type.CDNA
                 && clone.getMarkerType().getType() != Marker.Type.EST
-                ) {
+        ) {
             logger.error("should not be trying to get rna clone expression for marker: \n" + clone);
             return markerExpression;
         }
@@ -581,8 +582,8 @@ public class ExpressionService {
 
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
-            System.out.println(expressedGene.getAbbreviation());
             if (expressedGene != null) {
+                logger.info(expressedGene.getAbbreviation());
                 FishExperiment fishox = xpResult.getExpressionExperiment().getFishExperiment();
                 Experiment exp = fishox.getExperiment();
 
@@ -595,7 +596,7 @@ public class ExpressionService {
                 if (showCondition && exp.isChemical()) {
                     key += "chemical";
                 }
-                if (CollectionUtils.isEmpty(xpResult.getFigures())){
+                if (CollectionUtils.isEmpty(xpResult.getFigures())) {
                     return null;
                 }
 
