@@ -31,6 +31,19 @@ public enum InferenceCategory {
     UNIRULE("UniRule"),
     ENSEMBL("Ensembl"),
     PANTHER("PANTHER",false),
+    MGI("MGI"),
+    RGD("RGD"),
+    WB("WB"),
+    FB("FB"),
+    SGD("SGD"),
+    TAIR("TAIR"),
+    CGD("CGD"),
+    EMBL("EMBL"),
+    ECOGENE("EcoGene"),
+    POMBASE("PomBase"),
+    XENBASE("XenBase"),
+    DICTYBASE("dictyBase"),
+    PROTEIN_ID("protein_id")
     ;
 
     private final String prefix;
