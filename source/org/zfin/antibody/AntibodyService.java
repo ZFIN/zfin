@@ -19,6 +19,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
 import org.zfin.util.MatchingService;
 
@@ -52,6 +53,12 @@ public class AntibodyService {
      *
      * @return ist of distinct and sorted AO terms.
      */
+
+    public String getRegistryID(){
+        Marker abMrkr=RepositoryFactory.getMarkerRepository().getMarkerByID(antibody.getZdbID());
+        return RepositoryFactory.getMarkerRepository().getABRegID(abMrkr.zdbID);
+
+    }
     public List<Term> getDistinctAnatomyTerms() {
         List<Term> distinctAoTerms = new ArrayList<>();
         Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
@@ -308,7 +315,7 @@ public class AntibodyService {
         }
     }
 
-    protected void addMatchOnAntibody() {
+    protected void     addMatchOnAntibody() {
 
         if (StringUtils.isEmpty(antibodySearchCriteria.getName())) {
             return;
