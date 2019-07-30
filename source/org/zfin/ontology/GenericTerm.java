@@ -1,17 +1,12 @@
 package org.zfin.ontology;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
-import org.zfin.sequence.DBLink;
-import org.zfin.sequence.FeatureDBLink;
 import org.zfin.util.NumberAwareStringComparator;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.*;
 
 /**
@@ -76,7 +71,6 @@ public class GenericTerm implements Term<GenericTermRelationship> {
 
     @OneToMany(mappedBy = "term")
     private Set<TermDefinitionReference> definitionReferences;
-
 
 
     @OneToMany(mappedBy = "term")
@@ -211,9 +205,9 @@ public class GenericTerm implements Term<GenericTermRelationship> {
 
     public TreeSet getSortedAliases() {
 
-        TreeSet<TermAlias> syn2=new TreeSet<>();
-        for (TermAlias ta: synonyms){
-            if (!ta.getAlias().contains("ZFA")){
+        TreeSet<TermAlias> syn2 = new TreeSet<>();
+        for (TermAlias ta : synonyms) {
+            if (!ta.getAlias().contains("ZFA")) {
                 syn2.add(ta);
             }
         }
@@ -401,14 +395,14 @@ public class GenericTerm implements Term<GenericTermRelationship> {
 
     @Override
     public DevelopmentStage getStart() {
-        if (termStage == null)
+        if (CollectionUtils.isEmpty(termStage))
             return null;
         return termStage.get(0).getStart();
     }
 
     @Override
     public DevelopmentStage getEnd() {
-        if (termStage == null)
+        if (CollectionUtils.isEmpty(termStage))
             return null;
         return termStage.get(0).getEnd();
 
@@ -523,7 +517,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
         return childSet;
     }
 
-    public String getEntityType(){
+    public String getEntityType() {
         return "Term";
     }
 
