@@ -3343,7 +3343,7 @@
 
             <entity name="atb_accession"
                     query="select fdb_db_name || ':' || dblink_acc_num as related_accession,
-                                     dblink_linked_recid as feature_zdb_id
+                                     dblink_linked_recid as atb_zdb_id
                              from db_link, foreign_db_contains, foreign_db
                              where dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                and fdbcont_fdb_db_id = fdb_db_pk_id
