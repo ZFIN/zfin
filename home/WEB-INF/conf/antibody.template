@@ -22,6 +22,10 @@
 <td><p> {text-data:OtherInfo}{text-data}</p></td>
 </tr>
 <tr>
+<th><p> Antibody Registry ID. </p></th>
+<td><p> {text-data:ABRegID}{text-data}</p></td>
+</tr>
+<tr>
 <th><p> Does it work on zebrafish? </p></th>
 <td><p> {list-data:WorksOnZebrafish}{list-option}yes{list-option}{list-option}no{list-option}{list-data} </p></td>
 </tr>
