@@ -133,11 +133,12 @@ public class GafService {
                 // for each gene, create an entry
                 for (Marker gene : genes) {
                     MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
-
+                    System.out.println(annotationToAdd.getZdbID());
                     if (annotationToAdd == null) {
                         throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
                     }
                     if (gafJobData.getNewEntries().contains(annotationToAdd)) {
+
                         throw new GafValidationError("A duplicate entry is being added:" +
                                 FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
                                 FileUtil.LINE_SEPARATOR + gafEntry);
@@ -361,7 +362,7 @@ public class GafService {
     protected void handleInferences(GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
             throws GafValidationError {
         String inferenceEntry = gafEntry.getInferences();
-        //System.out.println(inferenceEntry);
+
         if (StringUtils.isNotEmpty(inferenceEntry)) {
             GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(markerGoTermEvidence.getEvidenceCode().getCode());
             String publicationZdbId = markerGoTermEvidence.getSource().getZdbID();
@@ -404,7 +405,7 @@ public class GafService {
                     InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
                     inferenceGroupMember.setInferredFrom(inference);
                     inferredFrom.add(inferenceGroupMember);
-                }
+                 }
             }
             markerGoTermEvidence.setInferredFrom(inferredFrom);
 
