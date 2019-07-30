@@ -12,7 +12,7 @@ public class RelationshipDTO {
     public static final String IS_MARKER_OF = "is_marker_of";
     public static final String ALELLE = "allele";
     public static final String GENE = "gene";
-    public static final String AFFECTED_GENOMIC_MODEL = "affected genomic model";
+    public static final String FISH = "fish";
 
     private String associationType;
     private String objectType;

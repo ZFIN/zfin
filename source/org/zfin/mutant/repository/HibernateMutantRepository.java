@@ -651,12 +651,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
                 "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
                 "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
-                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
-                "                  where get_obj_type(fmrel1.fmrel_ftr_zdb_id) = 'ALT'" +
-                "                  and fmrel1.fmrel_type = 'is allele of' and not exists" +
-                "                               (select 'x' from feature_marker_relationship fmrel2" +
-                "                                     where fmrel1.fmrel_zdb_id != fmrel2.fmrel_zdb_id and fmrel1.fmrel_ftr_zdb_id = fmrel2.fmrel_ftr_zdb_id" +
-                "                                     and fmrel2.fmrel_type != 'created by')";
+                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" ;
 
         final Query alleleQuery = HibernateUtil.currentSession().createSQLQuery(alleleQueryString);
         final Query geneQuery = HibernateUtil.currentSession().createSQLQuery(geneQueryString);

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BasicGeneticEntityDTO extends ZfinDTO {
+public class BasicGeneticEntity extends ZfinDTO {
 
     private List<CrossReferenceDTO> crossReferences;
     private Set<GenomeLocationDTO> genomeLocations;

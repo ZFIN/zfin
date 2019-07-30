@@ -62,19 +62,24 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                 if (ftrLoc != null) {
                                     String featureType = variant.getFeature().getType().toString();
 
-                                    if (featureType.equals("POINT_MUTATION") || featureType.equals("INSERTION") || featureType.equals("DELETION")) {
+                                    if (featureType.equals("POINT_MUTATION")
+                                            ){
                                         if (featureType == "POINT_MUTATION") {
                                             dto.setType("SO:1000008");
                                             dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                             dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
-                                        } else if (featureType == "DELETION") {
-                                            dto.setType("SO:0000159");
-                                            dto.setGenomicVariantSequence("N/A");
-                                            dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
-                                        } else if (featureType == "INSERTION") {
-                                            dto.setType("SO:0000667");
-                                            dto.setGenomicReferenceSequence("N/A");
-                                            dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
+//                                        } else if (featureType == "DELETION") {
+//                                            dto.setType("SO:0000159");
+//                                            dto.setGenomicVariantSequence("N/A");
+//                                            dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
+//                                        } else if (featureType == "INSERTION") {
+//                                            dto.setType("SO:0000667");
+//                                            dto.setGenomicReferenceSequence("N/A");
+//                                            dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
+//                                        } else if (featureType == "INDEL") {
+//                                            dto.setType("SO:1000032");
+//                                            dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
+//                                            dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
                                         } else {
                                             System.out.println("invalid feature type");
                                         }

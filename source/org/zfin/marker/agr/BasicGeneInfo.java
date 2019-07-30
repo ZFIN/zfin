@@ -64,7 +64,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                 .map(
                         gene -> {
                             GeneDTO dto = new GeneDTO();
-                            BasicGeneticEntityDTO bgeDto = new BasicGeneticEntityDTO();
+                            BasicGeneticEntity bgeDto = new BasicGeneticEntity();
                             dto.setName(gene.name);
                             dto.setSymbol(gene.getAbbreviation());
                             bgeDto.setPrimaryId(gene.getZdbID());
@@ -161,7 +161,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                 }
                                 bgeDto.setSecondaryIds(secondaryDTOs);
                             }
-                            dto.setBasicGeneticEntityDTO(bgeDto);
+                            dto.setBasicGeneticEntity(bgeDto);
                             return dto;
                         })
                 .collect(Collectors.toList());

@@ -5,33 +5,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
-import org.zfin.mapping.ChromosomeService;
-import org.zfin.mapping.GenomeLocation;
-import org.zfin.mapping.MarkerGenomeLocation;
-import org.zfin.marker.*;
-import org.zfin.mutant.GenotypeFeature;
+import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerAlias;
+import org.zfin.marker.Transcript;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.TranscriptDBLink;
-import org.zfin.util.FileUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.zfin.infrastructure.ant.AbstractValidateDataReportTask.getPropertyFileFromWebroot;
-import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.webrootDirectory;
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 public class BasicTranscriptInfo extends AbstractScriptWrapper {
 
@@ -44,11 +35,7 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
 
     public static void main(String[] args) throws IOException {
         int number = 0;
-/*
-        if (args.length > 0) {
-            number = Integer.valueOf(args[0]);
-        }
-*/
+
         String webrootDir = args[0];
         String propertyFileName = getPropertyFileFromWebroot(webrootDir);
 
@@ -86,9 +73,8 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
                             dto.setName(transcript.name);
                             dto.setSymbol(transcript.getAbbreviation());
                             dto.setPrimaryId(transcript.getZdbID());
-                            //dto.setGeneLiteratureUrl("http://zfin.org/action/marker/citation-list/"+transcript.getZdbID());
 
-                                dto.setSoTermId(transcript.getTranscriptType().getSoID());
+                            dto.setSoTermId(transcript.getTranscriptType().getSoID());
 
                             if (CollectionUtils.isNotEmpty(transcript.getAliases())) {
                                 List<String> aliasList = new ArrayList<>(transcript.getAliases().size());
@@ -98,10 +84,10 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
                                 dto.setSynonyms(aliasList);
                             }
                             if (CollectionUtils.isNotEmpty(transcript.getSecondMarkerRelationships())) {
-                                List<GeneDTO> genes = new ArrayList<>(getMarkerRepository().getGenesforTranscript(transcript).size());
+                                List<GeneTscriptDTO> genes = new ArrayList<>(getMarkerRepository().getGenesforTranscript(transcript).size());
 
                                 for (Marker relatedGenes : getMarkerRepository().getGenesforTranscript(transcript)) {
-                                    GeneDTO geneDTO = new GeneDTO();
+                                    GeneTscriptDTO geneDTO = new GeneTscriptDTO();
                                     geneDTO.setPrimaryId(relatedGenes.getZdbID());
                                     geneDTO.setSymbol(relatedGenes.getAbbreviation());
                                     geneDTO.setName(relatedGenes.getName());
@@ -112,36 +98,11 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
                                         }
                                         geneDTO.setSynonyms(aliasList);
                                     }
-                                    /*List<MarkerGenomeLocation> locations = getLinkageRepository().getGenomeLocation(relatedGenes);
-                                    Set<GenomeLocationDTO> locationDTOList = new HashSet<>();
-                                    ChromosomeService<MarkerGenomeLocation> chromosomeService = new ChromosomeService<>(locations);
-                                    if (locations != null && chromosomeService.isTrustedValue()) {
-                                        for (MarkerGenomeLocation loc : locations) {
-                                            // ignore records that do not equal the official chromosome number
-                                            if (!loc.getChromosome().equals(chromosomeService.getChromosomeNumber()))
-                                                continue;
-                                            if (loc.getAssembly().equals("GRCz11")){
-                                                if (loc.getSource().toString().equals("ZFIN")) {
-                                                    GenomeLocationDTO genomeDto = new GenomeLocationDTO(loc.getAssembly(), loc.getChromosome());
-                                                    if (loc.getStart() != null)
-                                                        genomeDto.setStartPosition(loc.getStart());
-                                                    if (loc.getEnd() != null)
-                                                        genomeDto.setEndPosition(loc.getEnd());
-                                                    locationDTOList.add(genomeDto);
-                                                }
-                                            }
-                                        }
-                                        geneDTO.setGenomeLocations(locationDTOList);
-                                    }*/
-
-                                    
                                     genes.add(geneDTO);
                                 }
                                 dto.setGenes(genes);
-
                             }
-
-                            List<CrossReferenceTranscriptsDTO> dbLinkList = new ArrayList<>(transcript.getTranscriptDBLinks().size()+1);
+                            List<CrossReferenceTranscriptsDTO> dbLinkList = new ArrayList<>(transcript.getTranscriptDBLinks().size() + 1);
 
                             if (CollectionUtils.isNotEmpty(transcript.getTranscriptDBLinks())) {
 
@@ -159,34 +120,7 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
                                     dbLinkList.add(xRefDto);
                                 }
                             }
-                            //TODO: make enum out of the pages attribute, and generate it in a service/method.
-
-
                             dto.setCrossReferences(dbLinkList);
-                            // get genomic data
-                            /*List<MarkerGenomeLocation> locations = getLinkageRepository().getGenomeLocation(transcript);
-                            Set<GenomeLocationDTO> locationDTOList = new HashSet<>();
-                            ChromosomeService<MarkerGenomeLocation> chromosomeService = new ChromosomeService<>(locations);
-                            if (locations != null && chromosomeService.isTrustedValue()) {
-                                for (MarkerGenomeLocation loc : locations) {
-                                    // ignore records that do not equal the official chromosome number
-                                    if (!loc.getChromosome().equals(chromosomeService.getChromosomeNumber()))
-                                        continue;
-                                    if (loc.getAssembly().equals("GRCz11")){
-                                        if (loc.getSource().toString().equals("ZFIN")) {
-                                            GenomeLocationDTO genomeDto = new GenomeLocationDTO(loc.getAssembly(), loc.getChromosome());
-                                            if (loc.getStart() != null)
-                                                genomeDto.setStartPosition(loc.getStart());
-                                            if (loc.getEnd() != null)
-                                                genomeDto.setEndPosition(loc.getEnd());
-                                            locationDTOList.add(genomeDto);
-                                        }
-                                    }
-                                }
-                                dto.setGenomeLocations(locationDTOList);
-                            }*/
-
-
                             return dto;
                         })
                 .collect(Collectors.toList());

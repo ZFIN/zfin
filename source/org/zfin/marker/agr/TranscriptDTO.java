@@ -3,7 +3,6 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
-import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TranscriptDTO extends ZfinDTO {
@@ -13,15 +12,15 @@ public class TranscriptDTO extends ZfinDTO {
     private String soTermId;
 
     private List<CrossReferenceTranscriptsDTO> crossReferences;
-    private List<GeneDTO> genes;
+    private List<GeneTscriptDTO> genes;
 
 
 
-    public List<GeneDTO> getGenes() {
+    public List<GeneTscriptDTO> getGenes() {
         return genes;
     }
 
-    public void setGenes(List<GeneDTO> genes) {
+    public void setGenes(List<GeneTscriptDTO> genes) {
         this.genes = genes;
     }
 

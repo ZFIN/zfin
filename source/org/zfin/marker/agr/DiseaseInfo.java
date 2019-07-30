@@ -124,7 +124,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                 }
                             });
                             DiseaseDTO fishDiseaseDto = getBaseDiseaseDTO(fish.getZdbID(), fish.getName(), disease);
-                            RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.AFFECTED_GENOMIC_MODEL);
+                            RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
                             fishDiseaseDto.setObjectRelation(fishRelationship);
                             fishDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
                             diseaseDTOList.add(fishDiseaseDto);
