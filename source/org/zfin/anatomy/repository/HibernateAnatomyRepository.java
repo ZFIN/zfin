@@ -186,12 +186,15 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
     public List<GenericTerm> getTermsDevelopingFromWithOverlap(String termID, double startHours, double endHours) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "from GenericTermRelationship termRelationship where " +
+        String hql = "select termRelationship from GenericTermRelationship termRelationship " +
+                "     JOIN termRelationship.termTwo.termStage termStage " +
+                "     where " +
                 "          termRelationship.termOne.zdbID = :termID AND" +
                 "          termRelationship.type = :type AND " +
-                "          ((termRelationship.termTwo.termStage.start.hoursStart > :start AND termRelationship.termTwo.termStage.start.hoursStart < :end)" +
-                "        OR (termRelationship.termTwo.termStage.end.hoursEnd > :start AND termRelationship.termTwo.termStage.end.hoursEnd < :end) " +
-                "        OR (termRelationship.termTwo.termStage.start.hoursStart < :start AND termRelationship.termTwo.termStage.end.hoursEnd > :end))" +
+                "          termRelationship.type = :type AND " +
+                "          ((termStage.start.hoursStart > :start AND termStage.start.hoursStart < :end)" +
+                "        OR (termStage.end.hoursEnd > :start AND termStage.end.hoursEnd < :end) " +
+                "        OR (termStage.start.hoursStart < :start AND termStage.end.hoursEnd > :end))" +
                 "        order by termRelationship.termTwo.termNameOrder ";
         Query query = session.createQuery(hql);
         query.setParameter("termID", termID);
