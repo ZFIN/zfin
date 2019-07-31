@@ -1,0 +1,63 @@
+header {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 128, 128, 0.15);
+    border-bottom: 4px solid rgb(0, 128, 128);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+    height: 75px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+header * {
+    box-sizing: border-box;
+}
+
+header > .logo {
+    height: 100%;
+    padding: 5px 0;
+    margin-right: 10px;
+    background: transparent;
+}
+
+header > .logo img {
+    max-height: 100%;
+    max-width: 100%;
+    font-size: 16px;
+    line-height: normal;
+}
+
+main {
+    flex: 1 0 auto;
+    margin-bottom: 20px;
+}
+
+footer {
+    flex-shrink: 0;
+    background: rgba(0, 128, 128);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.uber-banner {
+    background: #740C56;
+    padding: 0.7em;
+    margin-bottom: 0.25em;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5);
+    font-size: 14.4px;
+    line-height: normal;
+}
+
+.uber-banner a {
+    color: white;
+    text-decoration: underline;
+}
+
+.uber-banner a:hover {
+    color: white;
+}
