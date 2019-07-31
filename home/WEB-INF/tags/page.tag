@@ -63,6 +63,13 @@
         <li>Genomics</li>
         <li>Help</li>
     </ul>
+
+    <div class="right">
+        <div class="search">
+            <input placeholder="Search">
+        </div>
+        <a href="/action/login">Login</a>
+    </div>
 </header>
 
 <main>

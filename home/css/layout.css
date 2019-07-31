@@ -10,10 +10,21 @@ header {
     box-sizing: border-box;
     flex-shrink: 0;
     font-size: 16px;
+    line-height: 1.42857143;
 }
 
 header * {
     box-sizing: border-box;
+}
+
+header a {
+    color: rgb(0, 128, 128);
+    text-decoration: none;
+}
+
+header input {
+    font: inherit;
+    line-height: inherit;
 }
 
 header > .logo {
@@ -21,6 +32,7 @@ header > .logo {
     padding: 8px 0;
     margin-right: 10px;
     background: transparent;
+    flex-shrink: 0;
 }
 
 header > .logo img {
@@ -65,6 +77,16 @@ header > .menu > li::after {
     position: absolute;
     bottom: 5px;
     font-size: 1.3em;
+}
+
+header > .right {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+header > .right .search {
+    padding: 10px;
 }
 
 main {
