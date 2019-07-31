@@ -23,14 +23,7 @@
 <script src="${zfn:getAssetPath("search.js")}"></script>
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
-<script>
-    hdrSetCookie("tabCookie","Motto","","/");
-</script>
-
-
 <div class="container-fluid">
-
-
     <div class="row">
         <div class="search-box col-md-offset-1 col-md-11">
             <form id="query-form" class="form-inline" method="get" action="/search">

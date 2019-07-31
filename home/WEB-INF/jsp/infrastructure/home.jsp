@@ -4,12 +4,7 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
-<script>
-    hdrSetCookie("tabCookie","Motto","","/");
-</script>
-
 <div id="zdbhome-container">
-
     <table id="zdbhome-container-inner">
         <tr>
             <td colspan="2" id="zdbhome-search">

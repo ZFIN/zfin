@@ -42,10 +42,6 @@
             //     $('#header-query-form').submit();
             // });
         });
-
-        // if (hdrGetCookie("tabCookie") === "Motto") {
-        //     hdrSetCookie("tabCookie", "Research", "", "/");
-        // }
     </script>
 </head>
 <body>
