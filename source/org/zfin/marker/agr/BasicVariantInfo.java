@@ -3,13 +3,10 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.MarkerDBLink;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,7 +14,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Objects;
 
 import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 
