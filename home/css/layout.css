@@ -18,9 +18,9 @@ header * {
     box-sizing: border-box;
 }
 
-header a,
-header a:hover,
-header a:active {
+header > a,
+header > a:hover,
+header > a:active {
     color: rgb(0, 128, 128);
     text-decoration: none;
 }
@@ -45,9 +45,6 @@ header > .logo img {
 
 header > .menu {
     display: flex;
-    list-style: none;
-    padding: 0;
-    margin: 0;
     height: 100%;
 }
 
@@ -61,8 +58,6 @@ header > .menu > li {
     justify-content: center;
     align-items: center;
     height: 100%;
-    cursor: pointer;
-    font-weight: 700;
     position: relative;
 }
 
@@ -80,6 +75,44 @@ header > .menu > li::after {
     position: absolute;
     bottom: 5px;
     font-size: 1.3em;
+}
+
+header > .menu .title {
+    font-weight: 700;
+}
+
+header > .menu .dropdown {
+    visibility: hidden;
+    position: absolute;
+    display: flex;
+    background: rgb(0, 128, 128);
+    color: white;
+    padding: 20px;
+    z-index: 10;
+    font-size: 0.9em;
+}
+
+header > .menu .column-header {
+    font-size: 0.95em;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+header > .menu .dropdown ul {
+    margin-bottom: 20px;
+}
+
+header > .menu .column {
+    padding: 0 10px;
+    min-width: 150px;
+}
+
+header > .menu .dropdown a,
+header > .menu .dropdown a:hover,
+header > .menu .dropdown a:active {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
 }
 
 header > .right {

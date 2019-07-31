@@ -47,6 +47,7 @@
     "jquery-validation": "1.19.0",
     "jquery.tipsy": "1.0.3",
     "masonry-layout": "4.0.0",
+    "popper.js": "1.15.0",
     "prop-types": "15.7.2",
     "react": "16.8.6",
     "react-dom": "16.8.6",
