@@ -209,7 +209,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             aliasStringBuilder.append(userFriendlyAntibodyName);
             aliasStringBuilder.append(" ");
         }
-        content = content.replace("{text-data:chekOtherInfo}{text-data}", getEncodedString(aliasStringBuilder.toString()));
+        content = content.replace("{text-data:OtherInfo}{text-data}", getEncodedString(aliasStringBuilder.toString()));
         content = content.replace("{text-data:ABRegID}{text-data}", (antibodyService.getRegistryID()!= null ? antibodyService.getRegistryID() : ""));
 
 
