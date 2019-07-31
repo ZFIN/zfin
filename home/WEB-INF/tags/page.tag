@@ -68,7 +68,14 @@
         <div class="search">
             <input placeholder="Search">
         </div>
-        <a href="/action/login">Login</a>
+        <c:choose>
+            <c:when test="${!empty currentUser}">
+                ${currentUser.display}
+            </c:when>
+            <c:otherwise>
+                <a href="/action/login">Login</a>
+            </c:otherwise>
+        </c:choose>
     </div>
 </header>
 

@@ -100,25 +100,4 @@ $(function() {
     $(".header-tab.general").click(showGeneralLinks);
     $(".header-tab.zirc").click(showZIRCLinks);
     hdrSetTabs();
-
-    var login = $('#hdr-login-link');
-    var logout = $('#hdr-logout-link');
-    jQuery.ajax({
-        url: "/action/login-status",
-        success: function (data) {
-            if (data) {
-                if (data.root) {
-                    $('#hdr-gmc-search').attr('href', '/action/marker/search');
-                }
-                login.hide();
-                logout.show();
-            } else {
-                login.show();
-                logout.hide();
-            }
-        },
-        error: function () {
-            console.log("could not validate login status");
-        }
-    });
 });

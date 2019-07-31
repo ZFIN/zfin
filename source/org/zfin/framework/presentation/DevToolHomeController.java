@@ -11,9 +11,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.filter.UpdatesCheckFilter;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.presentation.JSONStatusResponse;
-import org.zfin.profile.AccountInfo;
-import org.zfin.profile.Person;
-import org.zfin.profile.service.ProfileService;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
@@ -53,14 +50,5 @@ public class DevToolHomeController {
         }
         return new ResponseEntity<>(new JSONStatusResponse("OK", ""), HttpStatus.OK);
     }
-
-    @RequestMapping(value = "login-status")
-    @ResponseBody
-    public AccountInfo checkLoginStatus() throws Exception {
-        Person person = ProfileService.getCurrentSecurityUser();
-        return person == null ? null : person.getAccountInfo();
-    }
-
-
 
 }
