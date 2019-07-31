@@ -4,38 +4,20 @@
 
 body {
     font-family: arial, sans-serif;
-    background: @SITE_BACKGROUND@;
+    background: white; /*@SITE_BACKGROUND@;*/
 }
 
-div.allcontent {
-    margin: 0;
+header {
+    display: flex;
+}
+
+main {
+    margin: 0 0 20px 0;
 }
 
 a,
 a:hover {
     color: blue
-}
-
-#hdr-banner {
-    line-height: normal;
-    font-size: 16px;
-}
-
-#footer {
-    line-height: normal;
-    font-size: 12.8px;
-    margin: 0 0 8px;
-}
-
-.header-tab {
-    box-sizing: content-box;
-    line-height: normal;
-}
-
-.hdr-linkbar {
-    box-sizing: content-box;
-    height: 15px;
-    line-height: normal;
 }
 
 .table tbody > tr > td {
@@ -109,4 +91,10 @@ a:hover {
 
 .nav.nav-padded {
     margin-bottom: 30px;
+}
+
+/* override the jqueryUI default */
+.ui-corner-all  {
+    font-size: .9em !important;
+    background: #fff;
 }

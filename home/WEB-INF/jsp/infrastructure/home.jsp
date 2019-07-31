@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
-<style>
-    #quicksearchBox { display: none; }
-</style>
-
 <script>
     hdrSetCookie("tabCookie","Motto","","/");
 </script>

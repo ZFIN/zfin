@@ -5,10 +5,11 @@ header {
     border-bottom: 4px solid rgb(0, 128, 128);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;
-    height: 75px;
+    height: 80px;
     padding: 0 10px;
     box-sizing: border-box;
     flex-shrink: 0;
+    font-size: 16px;
 }
 
 header * {
@@ -17,7 +18,7 @@ header * {
 
 header > .logo {
     height: 100%;
-    padding: 5px 0;
+    padding: 8px 0;
     margin-right: 10px;
     background: transparent;
 }
@@ -25,13 +26,51 @@ header > .logo {
 header > .logo img {
     max-height: 100%;
     max-width: 100%;
-    font-size: 16px;
-    line-height: normal;
+}
+
+header > .menu {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+header > .menu > li {
+    display: flex;
+    flex-direction: column;
+    color: rgb(0, 128, 128);
+    padding: 0 15px;
+    border: 0 solid rgba(255, 255, 255, 0.85);
+    border-left-width: 1px;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    cursor: pointer;
+    font-weight: 700;
+    position: relative;
+}
+
+header > .menu > li:last-of-type {
+    border-right-width: 1px;
+}
+
+header > .menu > li:hover {
+    color: white;
+    background: rgb(0, 128, 128);
+}
+
+header > .menu > li::after {
+    content: '⌄';
+    position: absolute;
+    bottom: 5px;
+    font-size: 1.3em;
 }
 
 main {
     flex: 1 0 auto;
-    margin-bottom: 20px;
+    margin: 0 5px 20px 5px;
+    background: white;
 }
 
 footer {

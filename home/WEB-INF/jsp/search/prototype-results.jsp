@@ -23,13 +23,6 @@
 <script src="${zfn:getAssetPath("search.js")}"></script>
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
-<style>
-    /* remove parts of the header that we don't need */
-    #quicksearchBox {
-        display: none
-    }
-</style>
-
 <script>
     hdrSetCookie("tabCookie","Motto","","/");
 </script>
