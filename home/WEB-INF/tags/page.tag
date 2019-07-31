@@ -53,7 +53,7 @@
     </div>
 
     <ul class="menu list-unstyled">
-        <li>
+        <li class="reference">
             <span class="title">Research</span>
             <div class="dropdown">
                 <ul class="list-unstyled">
@@ -68,7 +68,7 @@
                 </ul>
             </div>
         </li>
-        <li>
+        <li class="reference">
             <span class="title">Community</span>
             <div class="dropdown">
                 <div class="column">
@@ -101,7 +101,7 @@
         <li>
             <span class="title">Education</span>
         </li>
-        <li>
+        <li class="reference">
             <span class="title">Genomics</span>
             <div class="dropdown">
                 <div class="column">
@@ -142,7 +142,17 @@
         </div>
         <c:choose>
             <c:when test="${!empty currentUser}">
-                ${currentUser.display}
+                <div class="reference">
+                    <span class="title">${currentUser.display}</span>
+                    <div class="dropdown">
+                        <div class="column">
+                            <ul class="list-unstyled">
+                                <li><a href="/${currentUser.zdbID}">View Profile</a></li>
+                                <li><a href="/action/logout">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </c:when>
             <c:otherwise>
                 <a href="/action/login">Login</a>

@@ -1,7 +1,7 @@
 import Popper from 'popper.js';
 
 $(() => {
-    document.querySelectorAll('header > .menu > li').forEach(menu => {
+    document.querySelectorAll('header .reference').forEach(menu => {
         const dropdown = menu.querySelector('.dropdown');
         if (!dropdown) {
             return;

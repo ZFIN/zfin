@@ -18,9 +18,9 @@ header * {
     box-sizing: border-box;
 }
 
-header > a,
-header > a:hover,
-header > a:active {
+header a,
+header a:hover,
+header a:active {
     color: rgb(0, 128, 128);
     text-decoration: none;
 }
@@ -70,7 +70,15 @@ header > .menu > li:hover {
     background: rgb(0, 128, 128);
 }
 
-header > .menu > li::after {
+header .reference {
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header .reference::after {
     content: '⌄';
     position: absolute;
     bottom: 5px;
@@ -81,7 +89,7 @@ header > .menu .title {
     font-weight: 700;
 }
 
-header > .menu .dropdown {
+header .dropdown {
     visibility: hidden;
     position: absolute;
     display: flex;
@@ -92,33 +100,34 @@ header > .menu .dropdown {
     font-size: 0.9em;
 }
 
-header > .menu .column-header {
+header .dropdown ul {
+    margin-bottom: 20px;
+}
+
+header .dropdown a,
+header .dropdown a:hover,
+header .dropdown a:active {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+}
+
+header .dropdown .column {
+    padding: 0 10px;
+    min-width: 150px;
+}
+
+header .dropdown .column-header {
     font-size: 0.95em;
     color: white;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-header > .menu .dropdown ul {
-    margin-bottom: 20px;
-}
-
-header > .menu .column {
-    padding: 0 10px;
-    min-width: 150px;
-}
-
-header > .menu .dropdown a,
-header > .menu .dropdown a:hover,
-header > .menu .dropdown a:active {
-    color: rgba(255, 255, 255, 0.9);
-    text-decoration: none;
-}
-
 header > .right {
     display: flex;
     align-items: center;
     margin-left: auto;
+    height: 100%;
 }
 
 header > .right .search {
