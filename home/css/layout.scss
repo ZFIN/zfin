@@ -1,0 +1,210 @@
+$primary: rgb(0, 128, 128);
+$root: rgb(128, 0, 0);
+$base: rgb(51, 51, 51);
+
+$primary-bg: mix(white, $primary, 85%);
+$root-bg: mix(white, $root, 85%);
+
+header {
+    display: flex;
+    align-items: center;
+    background: $primary-bg; //rgba($primary, 0.15);
+    border-bottom: 4px solid $primary;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+    height: 80px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    font-size: 16px;
+    line-height: 1.42857143;
+    color: $base;
+    width: 100vw;
+
+    * {
+        box-sizing: border-box;
+    }
+
+    a, a:hover, a:active {
+        color: $primary;
+        text-decoration: none;
+    }
+
+    input {
+        font: inherit;
+        line-height: inherit;
+        color: $base;
+
+        &[type="submit"] {
+            visibility: hidden;
+            position: fixed;
+        }
+    }
+
+    > .logo {
+        height: 100%;
+        padding: 8px 0;
+        margin-right: 10px;
+        background: transparent;
+        flex-shrink: 0;
+
+        img {
+            max-height: 100%;
+            max-width: 100%;
+        }
+    }
+
+    > .menu {
+        display: flex;
+        height: 100%;
+
+        > li {
+            display: flex;
+            flex-direction: column;
+            color: $primary;
+            padding: 0 15px;
+            border: 0 solid rgba(255, 255, 255, 0.85);
+            border-left-width: 1px;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            position: relative;
+
+            &:last-of-type {
+                border-right-width: 1px;
+            }
+
+            &:hover {
+                color: white;
+                background: $primary;
+            }
+
+            &.root-only {
+                background: $root-bg;
+                color: $root;
+
+                &:hover {
+                    color: white;
+                    background: $root;
+                }
+            }
+        }
+
+        .title {
+            font-weight: 700;
+        }
+    }
+
+    .reference {
+        height: 100%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &::after {
+            content: '⌄';
+            position: absolute;
+            bottom: 5px;
+            font-size: 1.3em;
+        }
+    }
+
+    .dropdown {
+        visibility: hidden;
+        position: absolute;
+        display: flex;
+        background: $primary;
+        color: white;
+        padding: 20px;
+        z-index: 101;
+        font-size: 0.9em;
+
+        ul {
+            margin-bottom: 20px;
+        }
+
+        a, a:hover, a:active {
+            color: $primary-bg;
+            text-decoration: none;
+        }
+
+        .column {
+            padding: 0 10px;
+            min-width: 150px;
+        }
+
+        .column-header {
+            font-size: 0.95em;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    }
+
+    .root-only {
+        .dropdown {
+            background: $root;
+
+            a, a:hover, a:active {
+                color: $root-bg;
+                text-decoration: none;
+            }
+        }
+    }
+
+    > .right {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        height: 100%;
+    }
+
+    .search {
+        padding: 10px;
+
+        input {
+            width: 200px;
+        }
+    }
+
+    .jump-to-pub {
+        input {
+            width: 100px;
+        }
+    }
+}
+
+main {
+    flex: 1 0 auto;
+    margin: 0 5px 20px 5px;
+    background: white;
+}
+
+footer {
+    flex-shrink: 0;
+    background: $primary;
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.uber-banner {
+    background: #740C56;
+    padding: 0.7em;
+    margin-bottom: 0.25em;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5);
+    font-size: 14.4px;
+    line-height: normal;
+}
+
+.uber-banner a {
+    color: white;
+    text-decoration: underline;
+}
+
+.uber-banner a:hover {
+    color: white;
+}

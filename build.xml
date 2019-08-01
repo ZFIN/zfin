@@ -650,6 +650,7 @@
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
                     <include name="css/*.css"/>
+                    <include name="css/*.scss"/>
                     <include name="WEB-INF/**"/>
                     <include name="javascript/**"/>
                     <exclude name="css/images/**"/>

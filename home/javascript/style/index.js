@@ -10,7 +10,7 @@ require('../../css/popup.css');
 require('../../css/modal.css');
 require('../../css/typeahead.css');
 require('../../css/zfin.css');
-require('../../css/layout.css');
+require('../../css/layout.scss');
 require('../../css/faceted-search.css');
 require('../../css/figure_gallery.css');
 require('../../css/pagination.css');
