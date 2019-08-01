@@ -213,7 +213,7 @@ public class ResultService {
             result.addAttribute(STATUS, "<span class='red'>Obsolete</span>");
         }
         if (CollectionUtils.isNotEmpty(term.getAliases())) {
-            result.addAttribute(SYNONYMS, withCommas(term.getAliases(), "alias"));
+            result.addAttribute(SYNONYMS, withCommas(term.getSortedAliases(), "alias"));
         }
         if (StringUtils.isNotEmpty(term.getDefinition())) {
             result.addAttribute(DEFINITION, term.getDefinition());
