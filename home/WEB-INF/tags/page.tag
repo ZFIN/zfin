@@ -130,6 +130,73 @@
         <li>
             <span class="title">Help</span>
         </li>
+        <authz:authorize access="hasRole('root')">
+            <li class="reference root-only">
+                <span class="title">Curation</span>
+                <div class="dropdown">
+                    <div class="column">
+                        <span class="column-header">Publications</span>
+                        <ul class="list-unstyled">
+                            <li><a href="/action/publication/dashboard">My Dashboard</a></li>
+                            <li><a href="/action/publication/curating-bin">Curation Bins</a></li>
+                            <li><a href="/action/publication/indexing-bin">Indexing Bin</a></li>
+                            <li><a href="/action/publication/processing-bin">Processing Bin</a></li>
+                        </ul>
+
+                        <span class="column-header">Curate</span>
+                        <ul class="list-unstyled">
+                            <li>
+                                <form class="jump-to-pub">
+                                    <input type="submit">
+                                    ZDB-PUB-<input type="text">
+                                </form>
+                            </li>
+                            <li><a href="/action/reno/run-list">ReNo Pipeline</a></li>
+                        </ul>
+
+                        <span class="column-header">Distribution List</span>
+                        <ul class="list-unstyled">
+                            <li><a href="/action/profile/distribution-list">Full</a></li>
+                            <li><a href="/action/profile/distribution-list?subset=usa">USA only</a></li>
+                            <li><a href="/action/profile/distribution-list?subset=pi">PI only</a></li>
+                        </ul>
+
+                        <span class="column-header">Development</span>
+                        <ul class="list-unstyled">
+                            <li><a href="/action/devtool/home">Developer Tools</a></li>
+                            <li><a href="/action/devtool/deployed-version">Deployed Version</a></li>
+                            <li><a href="/jobs">Jenkins Jobs</a></li>
+                            <li><a href="/solr">Solr Admin</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="column">
+                        <span class="column-header">Add</span>
+                        <ul class="list-unstyled">
+                            <li><a href="/action/marker/gene-add?type=GENE">gene</a></li>
+                            <li><a href="/action/marker/nonTranscribedRegion-add">NTR</a></li>
+                            <li><a href="/action/marker/gene-add?type=GENEP">pseudogene</a></li>
+                            <li><a href="/action/marker/gene-add?type=EFG">foreign gene</a></li>
+                            <li><a href="/action/marker/clone-add">clone</a></li>
+                            <li><a href="/action/antibody/add">antibody</a></li>
+                            <li><a href="/action/marker/transcript-add">transcript</a></li>
+                            <li><a href="/action/marker/engineeredRegion-add">engineered region</a></li>
+                            <li><a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=MRPHLNO">morpholino</a></li>
+                            <li><a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=TALEN">TALEN</a></li>
+                            <li><a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=CRISPR">CRISPR</a></li>
+                        </ul>
+                        <ul class="list-unstyled">
+                            <li><a href="/action/profile/person/create">person</a></li>
+                            <li><a href="/action/profile/lab/create">lab</a></li>
+                            <li><a href="/action/profile/company/create">company</a></li>
+                            <li><a href="/action/publication/new#">pub</a></li>
+                            <li><a href="/action/publication/journal-add">journal</a></li>
+                            <li><a href="/action/feature/alleleDesig-add-form">line designation</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+        </authz:authorize>
     </ul>
 
     <div class="right">

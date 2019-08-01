@@ -8,6 +8,7 @@ $(() => {
         }
         new Popper(menu, dropdown, {
             placement: 'bottom-start',
+            positionFixed: true,
             modifiers: {
                 offset: {
                     offset: 1,
@@ -18,10 +19,19 @@ $(() => {
         menu.addEventListener('mouseout', () => dropdown.style.visibility = 'hidden');
     });
 
-    $('header input[type="text"]')
+    $('header .search input[type="text"]')
         .autocompletify('/action/quicksearch/autocomplete?q=%QUERY')
         .on('typeahead:select', function () {
             $(this).closest('form').submit();
         });
+
+    $('header .jump-to-pub').on('submit', function (e) {
+        e.preventDefault();
+        let zdbId = $(this).find('input[type="text"]').val();
+        if (zdbId.indexOf('ZDB-PUB-') !== 0) {
+            zdbId = 'ZDB-PUB-' + zdbId;
+        }
+        window.location.href = '/action/curation/' + zdbId;
+    });
 });
 
