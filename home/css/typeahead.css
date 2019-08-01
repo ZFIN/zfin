@@ -1,18 +1,19 @@
-/* this is a fix for the input box getting pushed down some of the time */
-input.tt-input {
-    vertical-align: middle !important;
+.tt-hint,
+.tt-input {
+    border: 1px solid #cccccc;
+    padding: 2px;
 }
 
 .tt-hint {
-    opacity: .5 !important;
+    color: #999999;
 }
 
 .tt-menu {
-    padding: 8px 0;
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
+    border-top: 0;
     box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    width: 100%;
 }
 
 .tt-suggestion,

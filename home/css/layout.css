@@ -28,6 +28,12 @@ header a:active {
 header input {
     font: inherit;
     line-height: inherit;
+    width: 200px;
+}
+
+header input[type="submit"] {
+    visibility: hidden;
+    position: fixed;
 }
 
 header > .logo {

@@ -37,10 +37,6 @@
         $(function () {
             processPopupLinks('body');
             $(".default-input").focus();
-            // $('#header-search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
-            // $('#header-search-query-input').bind("typeahead:select", function () {
-            //     $('#header-query-form').submit();
-            // });
         });
     </script>
 </head>
@@ -138,7 +134,10 @@
 
     <div class="right">
         <div class="search">
-            <input placeholder="Search">
+            <form method="GET" action="/search">
+                <input type="submit">
+                <input placeholder="Search" name="q" autocomplete="off" type="text">
+            </form>
         </div>
         <c:choose>
             <c:when test="${!empty currentUser}">

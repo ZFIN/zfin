@@ -17,5 +17,11 @@ $(() => {
         menu.addEventListener('mouseover', () => dropdown.style.visibility = 'unset');
         menu.addEventListener('mouseout', () => dropdown.style.visibility = 'hidden');
     });
+
+    $('header input[type="text"]')
+        .autocompletify('/action/quicksearch/autocomplete?q=%QUERY')
+        .on('typeahead:select', function () {
+            $(this).closest('form').submit();
+        });
 });
 
