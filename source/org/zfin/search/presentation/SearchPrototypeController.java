@@ -535,10 +535,13 @@ public class SearchPrototypeController {
                 label.append(result.getMatchingText());
                 label.append("]");
             }
+
             entry.setId(result.getId());
             entry.setLabel(label.toString());
             entry.setValue(result.getName());
             entry.setName(result.getFullName());
+            entry.setUrl(result.getUrl());
+            entry.setCategory(result.getCategory());
 
             values.add(entry);
         }

@@ -20,6 +20,7 @@ header {
     line-height: 1.42857143;
     color: $base;
     width: 100vw;
+    z-index: 10;
 
     * {
         box-sizing: border-box;

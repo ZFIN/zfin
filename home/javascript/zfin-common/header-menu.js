@@ -19,12 +19,6 @@ $(() => {
         menu.addEventListener('mouseout', () => dropdown.style.visibility = 'hidden');
     });
 
-    $('header .search input[type="text"]')
-        .autocompletify('/action/quicksearch/autocomplete?q=%QUERY')
-        .on('typeahead:select', function () {
-            $(this).closest('form').submit();
-        });
-
     $('header .jump-to-pub').on('submit', function (e) {
         e.preventDefault();
         let zdbId = $(this).find('input[type="text"]').val();
@@ -33,5 +27,28 @@ $(() => {
         }
         window.location.href = '/action/curation/' + zdbId;
     });
+
+    $('.fs-autocomplete')
+        .find('input[type="text"]')
+            .autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {
+                templates: {
+                    suggestion: function (item) {
+                        return (`
+                          <a href="${item.url}">
+                            <span>${item.label}</span>
+                            <span class="category">${item.category}</span>
+                          </a>
+                        `);
+                    },
+                    footer: function ({query}) {
+                        return (`
+                          <a href="/search?q=${query}" class="tt-search-link">
+                            All results for ${query}
+                            <span>&rarr;</span>
+                          </a>
+                        `);
+                    },
+                },
+            });
 });
 

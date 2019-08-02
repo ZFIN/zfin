@@ -4,10 +4,12 @@ import java.io.Serializable;
 
 public class LookupEntry implements Serializable {
 
-    protected String id;
-    protected String name ;
-    protected String label;
-    protected String value;
+    private String id;
+    private String name ;
+    private String label;
+    private String value;
+    private String url;
+    private String category;
 
     public LookupEntry() {  }
 
@@ -46,5 +48,21 @@ public class LookupEntry implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

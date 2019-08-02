@@ -160,7 +160,7 @@
 
     <div class="right">
         <div class="search">
-            <form method="GET" action="/search">
+            <form class="fs-autocomplete" method="GET" action="/search">
                 <input type="submit">
                 <input placeholder="Search" name="q" autocomplete="off" type="text">
             </form>

@@ -4,43 +4,38 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
-<div id="zdbhome-container">
-    <table id="zdbhome-container-inner">
-        <tr>
-            <td colspan="2" id="zdbhome-search">
-                <div class="center">
-                    <form method="GET" action="/search" name="search" accept-charset="utf-8" id="query-form">
-                        <label for="search-query-input">Search ZFIN</label>
-                        <input class="search-form-input input form-control"
-                               placeholder="bmp2a, hindbrain development disrupted, pax morpholino"
-                               name="q" id="search-query-input" autocomplete="off" type="text"/>
-                        <div class="btn-group">
-                            <button type="submit" class="btn btn-primary btn-zfin btn-search">Go</button>
-                        </div>
-                        <a href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
-                            <i class="fas fa-question-circle fa-lg"></i>
-                        </a>
-
-                    </form>
-                    <script>
-                        jQuery(document).ready(function() {
-                            jQuery('#search-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {directLink: true});
-                        });
-                        $('#search-query-input').bind("typeahead:select", function() {
-                            $('#query-form').submit();
-                        });
-                    </script>
+<div class="search-container">
+    <div class="search-inner">
+        <form class="fs-autocomplete" action="/search" method="get">
+            <label>Search expert curated zebrafish data</label>
+            <div class="input-group input-group-lg">
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Any <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Any</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Gene / Transcript</a></li>
+                        <li><a href="#">Expression</a></li>
+                        <li><a href="#">Phenotype</a></li>
+                        <li><a href="#">Human Disease</a></li>
+                        <li><a href="#">Fish</a></li>
+                        <li><a href="#">Reporter Line</a></li>
+                        <li><a href="#">Mutation / Tg</a></li>
+                        <li><a href="#">Construct</a></li>
+                        <li><a href="#">Sequence Targeting Reagent</a></li>
+                        <li><a href="#">Antibody</a></li>
+                        <li><a href="#">Marker / Clone</a></li>
+                        <li><a href="#">Figure</a></li>
+                        <li><a href="#">Anatomy / GO</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Publication</a></li>
+                    </ul>
                 </div>
-            </td>
-        </tr>
-        <tr>
-            <td id="zdbhome-primary" nowrap>
-                <zfin2:homePrimarySection/>
-            </td>
-            <td id="zdbhome-sidebar">
-                <zfin2:homeSecondarySection/>
-            </td>
-        </tr>
-    </table>
+                <input type="text" class="form-control" name="q">
+                <span class="input-group-btn">
+                    <button class="btn btn-zfin" type="submit">Search</button>
+                </span>
+            </div>
+        </form>
+    </div>
 </div>
-

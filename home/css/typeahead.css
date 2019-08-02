@@ -4,10 +4,6 @@
     padding: 2px;
 }
 
-.tt-hint {
-    color: #999999;
-}
-
 .tt-menu {
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.2);
@@ -17,17 +13,34 @@
 }
 
 .tt-suggestion,
-.tt-no-results {
+.tt-no-results,
+.tt-search-link {
     font-size: 14px;
-    padding: 6px 6px;
-    margin: 0;
-    text-align: left;
+    border-bottom: 1px solid #cccccc;
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: inherit;
+}
+
+.tt-suggestion .category {
+    color: #808080;
 }
 
 .tt-suggestion.tt-cursor,
-.tt-suggestion:hover {
-    color: #fff;
-    background-color: #0097cf;
+.tt-suggestion:hover,
+.tt-search-link:hover {
+    background-color: #eeeeee;
+    color: inherit;
+    text-decoration: none;
+}
+
+.tt-search-link {
+    background: #cccccc;
+    font-weight: bold;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .tt-no-results {
@@ -41,4 +54,22 @@
 .tt-suggestion p {
     margin: 0;
     text-align: left;
+}
+
+/**
+Fix the size of the inputs when placed in a large input group
+*/
+.input-group.input-group-lg .twitter-typeahead .tt-input,
+.input-group.input-group-lg .twitter-typeahead .tt-hint {
+    height: 46px;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.33;
+}
+.twitter-typeahead {
+    width: 100%;
+    float: left;
+}
+.twitter-typeahead .tt-hint {
+    color: #999999;
 }

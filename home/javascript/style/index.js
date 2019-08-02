@@ -15,4 +15,4 @@ require('../../css/faceted-search.css');
 require('../../css/figure_gallery.css');
 require('../../css/pagination.css');
 require('../../css/tabEdit.css');
-require('../../css/zdbhome.css');
+require('../../css/zdbhome.scss');
