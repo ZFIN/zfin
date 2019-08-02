@@ -16,21 +16,9 @@
                     <ul class="dropdown-menu">
                         <li><a href="#">Any</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="#">Gene / Transcript</a></li>
-                        <li><a href="#">Expression</a></li>
-                        <li><a href="#">Phenotype</a></li>
-                        <li><a href="#">Human Disease</a></li>
-                        <li><a href="#">Fish</a></li>
-                        <li><a href="#">Reporter Line</a></li>
-                        <li><a href="#">Mutation / Tg</a></li>
-                        <li><a href="#">Construct</a></li>
-                        <li><a href="#">Sequence Targeting Reagent</a></li>
-                        <li><a href="#">Antibody</a></li>
-                        <li><a href="#">Marker / Clone</a></li>
-                        <li><a href="#">Figure</a></li>
-                        <li><a href="#">Anatomy / GO</a></li>
-                        <li><a href="#">Community</a></li>
-                        <li><a href="#">Publication</a></li>
+                        <c:forEach items="${searchCategories}" var="category">
+                            <li><a href="#">${category}</a></li>
+                        </c:forEach>
                     </ul>
                 </div>
                 <input type="hidden" name="category">

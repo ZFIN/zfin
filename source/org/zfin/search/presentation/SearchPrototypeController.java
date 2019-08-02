@@ -5,7 +5,8 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -24,7 +25,6 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
-import org.zfin.search.FacetCategoryComparator;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.*;
 import org.zfin.util.URLCreator;
@@ -363,20 +363,9 @@ public class SearchPrototypeController {
         galleryModeUrlCreator.removeNameValuePair("galleryMode");
         model.addAttribute("baseUrlWithoutGalleryMode", galleryModeUrlCreator.getFullURLPlusSeparator());
 
-        List<String> categories = new ArrayList<>();
-        categories.addAll(org.zfin.search.Category.getFacetMap().keySet());
-        categories.remove(Category.STR_RELATIONSHIP.getName());
-
-        Collections.sort(categories, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return FacetCategoryComparator.compareString(o1, o2);
-            }
-        });
-
         model.addAttribute("galleryMode", galleryMode);
         model.addAttribute("category", category);
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", Category.getCategoryDisplayList());
         model.addAttribute("numFound", numFound);
         model.addAttribute("numImages", numImages);
         model.addAttribute("results", results);

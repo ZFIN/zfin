@@ -12,6 +12,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.search.Category;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 @Controller
@@ -34,6 +35,7 @@ public class HomeController {
             );
         }
 
+        model.addAttribute("searchCategories", Category.getCategoryDisplayList());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "The Zebrafish Information Network");
 
         return "infrastructure/home.page";
