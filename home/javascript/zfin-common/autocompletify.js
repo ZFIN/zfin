@@ -29,7 +29,7 @@
         suggestion: getSuggestionTemplate(this.directLink)
       },
       limit: 5,
-      directLink: false
+      directLink: false,
     };
 
     if (options && (!options.templates || !options.templates.suggestion) && options.directLink) {
@@ -46,6 +46,7 @@
       remote: {
         url: url,
         wildcard: '%QUERY',
+        prepare: options.prepare,
       },
     });
 

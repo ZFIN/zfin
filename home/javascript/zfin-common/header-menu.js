@@ -28,8 +28,15 @@ $(() => {
         window.location.href = '/action/curation/' + zdbId;
     });
 
-    $('.fs-autocomplete')
-        .find('input[type="text"]')
+    $('.fs-autocomplete').each(function () {
+        const autocomplete = $(this);
+        autocomplete.find('.category-dropdown a').on('click', function (e) {
+            e.preventDefault();
+            const category = $(this).text();
+            autocomplete.find('.category-label').text(category);
+            autocomplete.find('input[name="category"]').val(category === 'Any' ? '' : category);
+        });
+        autocomplete.find('input[type="text"]')
             .autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {
                 templates: {
                     suggestion: function (item) {
@@ -49,6 +56,15 @@ $(() => {
                         `);
                     },
                 },
+                prepare: function (query, settings) {
+                    settings.url = settings.url.replace('%QUERY', query);
+                    const category = autocomplete.find('input[name="category"]').val();
+                    if (category) {
+                        settings.url += '&category=' + category;
+                    }
+                    return settings;
+                }
             });
+    });
 });
 
