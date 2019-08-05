@@ -161,8 +161,10 @@
     <div class="right">
         <div class="search">
             <form class="fs-autocomplete" method="GET" action="/search">
-                <input type="submit">
                 <input placeholder="Search" name="q" autocomplete="off" type="text">
+                <button type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
             </form>
         </div>
         <c:choose>

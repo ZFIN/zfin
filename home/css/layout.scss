@@ -35,6 +35,9 @@ header {
         font: inherit;
         line-height: inherit;
         color: $base;
+        padding: 10px 30px 10px 10px;
+        border: none;
+        border-radius: 3px;
 
         &[type="submit"] {
             visibility: hidden;
@@ -58,6 +61,7 @@ header {
     > .menu {
         display: flex;
         height: 100%;
+        flex-shrink: 0;
 
         > li {
             display: flex;
@@ -157,15 +161,38 @@ header {
     > .right {
         display: flex;
         align-items: center;
-        margin-left: auto;
         height: 100%;
+        flex-grow: 1;
+        justify-content: flex-end;
     }
 
     .search {
         padding: 10px;
+        
+        form {
+            position: relative;
+        }
 
         input {
             width: 200px;
+
+            @media (min-width: 1170px) {
+                width: 400px;
+            }
+        }
+
+        button {
+            border: 0;
+            background: none;
+            color: #999999;
+            padding: 0;
+            margin: 0;
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
         }
     }
 
