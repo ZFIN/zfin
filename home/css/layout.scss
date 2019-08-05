@@ -31,18 +31,10 @@ header {
         text-decoration: none;
     }
 
-    input {
+    input, button {
         font: inherit;
         line-height: inherit;
         color: $base;
-        padding: 10px 30px 10px 10px;
-        border: none;
-        border-radius: 3px;
-
-        &[type="submit"] {
-            visibility: hidden;
-            position: fixed;
-        }
     }
 
     > .logo {
@@ -174,6 +166,9 @@ header {
         }
 
         input {
+            padding: 10px 30px 10px 10px;
+            border: none;
+            border-radius: 3px;
             width: 200px;
 
             @media (min-width: 1170px) {

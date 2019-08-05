@@ -31,7 +31,8 @@
 }
 
 .tt-search-link {
-    background: #cccccc;
+    background: rgb(0, 128, 128);
+    color: white;
     font-weight: bold;
     flex-direction: row;
     justify-content: space-between;
