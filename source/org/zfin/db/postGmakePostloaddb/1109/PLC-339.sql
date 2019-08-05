@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset xshao:PUB-527
+--changeset xshao:PLC-339
 
 update int_person_pub 
                                 set source_id = 'ZDB-PERS-090406-8'
