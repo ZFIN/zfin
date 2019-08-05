@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 public class LookupEntry implements Serializable {
 
-    private String id;
-    private String name ;
-    private String label;
-    private String value;
+    protected String id;
+    protected String name ;
+    protected String label;
+    protected String value;
     private String url;
     private String category;
 
