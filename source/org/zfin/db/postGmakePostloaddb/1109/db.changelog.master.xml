@@ -36,5 +36,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/zfin-6019.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/ZFIN-6306.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/alter_transcript_types.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1109/PLC-339.sql" />
 
 </databaseChangeLog>
