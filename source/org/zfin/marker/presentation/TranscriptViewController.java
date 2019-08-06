@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
+import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
@@ -108,6 +110,15 @@ public class TranscriptViewController {
         // setting supporting sequences
         SequenceInfo sequenceInfo = TranscriptService.getSupportingSequenceInfo(transcript);
         transcriptBean.setSequenceInfo(sequenceInfo);
+        List<Transcript> tscript = RepositoryFactory.getMarkerRepository().getTranscriptsForNonCodingGenes();
+        for (Transcript ttcript:tscript){
+
+            if (transcript.zdbID.equals(ttcript.zdbID)){
+                System.out.println("rnacentarl");
+                transcriptBean.setRnaCentralLink("yes");
+            }
+        }
+
 
         //get the "other transcript.name pages" dblink set
         // should be handled by default "other" in MarkerService.createDefaultView
