@@ -73,19 +73,9 @@ header {
                 border-right-width: 1px;
             }
 
-            &:hover {
-                color: white;
-                background: $primary;
-            }
-
             &.root-only {
                 background: $root-bg;
                 color: $root;
-
-                &:hover {
-                    color: white;
-                    background: $root;
-                }
             }
         }
 
@@ -100,6 +90,18 @@ header {
         display: flex;
         justify-content: center;
         align-items: center;
+
+        &:hover {
+            color: white;
+            background: $primary;
+        }
+
+        &.root-only {
+            &:hover {
+                color: white;
+                background: $root;
+            }
+        }
 
         &::after {
             content: '\f078';

@@ -167,9 +167,9 @@
                 </button>
             </form>
         </div>
-        <c:choose>
-            <c:when test="${!empty currentUser}">
-                <ul class="menu list-unstyled">
+        <ul class="menu list-unstyled">
+            <c:choose>
+                <c:when test="${!empty currentUser}">
                     <li class="reference no-border">
                         <span class="title"><i class="fas fa-fw fa-user"></i></span>
                         <div class="dropdown left">
@@ -182,11 +182,13 @@
                             </div>
                         </div>
                     </li>
-                </ul>
-            </c:when>
-            <c:otherwise>
-                <a href="/action/login">Login</a>
-            </c:otherwise>
-        </c:choose>
+                </c:when>
+                <c:otherwise>
+                    <li class="no-border">
+                        <a href="/action/login">Login</a>
+                    </li>
+                </c:otherwise>
+            </c:choose>
+        </ul>
     </div>
 </header>
