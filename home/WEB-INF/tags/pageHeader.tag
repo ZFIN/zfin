@@ -106,8 +106,8 @@
                         <ul class="list-unstyled">
                             <li>
                                 <form class="jump-to-pub">
-                                    <input type="submit">
-                                    ZDB-PUB-<input type="text">
+                                    <input type="submit" style="display: none;">
+                                    <span class="nowrap">ZDB-PUB-<input type="text"></span>
                                 </form>
                             </li>
                             <li><a href="/action/reno/run-list">ReNo Pipeline</a></li>
