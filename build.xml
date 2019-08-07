@@ -655,7 +655,6 @@
                     <include name="javascript/**"/>
                     <exclude name="css/images/**"/>
                     <exclude name="javascript/phenogrid/**"/>
-                    <exclude name="fonts/**"/>
                     <exclude name="images/**"/>
                     <exclude name="templates/**"/>
                     <exclude name="**/*.jar"/>
@@ -672,7 +671,6 @@
                     <include name="javascript/phenogrid/**"/>
                     <include name="images/**"/>
                     <include name="css/images/**"/>
-                    <include name="fonts/**"/>
                     <include name="templates/**"/>
                     <include name="WEB-INF/**/*.jar"/>
                     <include name="WEB-INF/**/*.zip"/>
@@ -681,6 +679,10 @@
                     <include name="slides/**"/>
                     <exclude name="**/*.svn"/>
                 </fileset>
+            </copy>
+
+            <copy todir="@{to}/fonts">
+                <fileset dir="node_modules/@fortawesome/fontawesome-free/webfonts"/>
             </copy>
         </sequential>
     </macrodef>

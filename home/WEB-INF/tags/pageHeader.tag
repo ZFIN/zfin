@@ -169,17 +169,20 @@
         </div>
         <c:choose>
             <c:when test="${!empty currentUser}">
-                <div class="reference">
-                    <span class="title">${currentUser.display}</span>
-                    <div class="dropdown">
-                        <div class="column">
-                            <ul class="list-unstyled">
-                                <li><a href="/${currentUser.zdbID}">View Profile</a></li>
-                                <li><a href="/action/logout">Logout</a></li>
-                            </ul>
+                <ul class="menu list-unstyled">
+                    <li class="reference no-border">
+                        <span class="title"><i class="fas fa-fw fa-user"></i></span>
+                        <div class="dropdown left">
+                            <div class="column">
+                                <span class="column-header">${currentUser.display}</span>
+                                <ul class="list-unstyled">
+                                    <li><a href="/${currentUser.zdbID}">View Profile</a></li>
+                                    <li><a href="/action/logout">Logout</a></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </c:when>
             <c:otherwise>
                 <a href="/action/login">Login</a>

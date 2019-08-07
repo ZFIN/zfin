@@ -7,8 +7,7 @@ $(() => {
             return;
         }
         new Popper(menu, dropdown, {
-            placement: 'bottom-start',
-            positionFixed: true,
+            placement: dropdown.classList.contains('left') ? 'bottom-end' : 'bottom-start',
             modifiers: {
                 offset: {
                     offset: 1,
