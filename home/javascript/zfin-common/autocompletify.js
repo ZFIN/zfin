@@ -52,11 +52,42 @@
 
     hound.initialize();
 
-    this.typeahead(null, {
+    let source = hound;
+    let minLength = 1;
+    if (options.storageKey) {
+      minLength = 0;
+      source = function (q, sync, async) {
+        // when there is no query return the suggestions from the store,
+        // otherwise do a remote request with the query term
+        if (q === '') {
+          sync(JSON.parse(localStorage.getItem(options.storageKey)));
+        } else {
+          hound.search(q, sync, async);
+        }
+      };
+      this.on('typeahead:select', function (evt, suggestion) {
+        // get what's already stored or an empty array
+        const stored = JSON.parse(localStorage.getItem(options.storageKey)) || [];
+        // if the selected suggestion was already in the store, remove the old one
+        const deduped = stored.filter(item => item.id !== suggestion.id);
+        // put the suggestion at the front of the list
+        deduped.unshift(suggestion);
+        // if we have more than enough, remove the last
+        if (deduped.length > options.limit) {
+          deduped.pop();
+        }
+        // push the list back into the store
+        localStorage.setItem(options.storageKey, JSON.stringify(deduped));
+      });
+    }
+
+    this.typeahead({
+      minLength: minLength,
+    }, {
       name: 'search',
       displayKey: 'value',
       templates: options.templates,
-      source: hound,
+      source: source,
       limit: options.limit,
     });
 

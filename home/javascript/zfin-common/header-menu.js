@@ -48,6 +48,9 @@ $(() => {
                         `);
                     },
                     footer: function ({query}) {
+                        if (!query) {
+                            return '';
+                        }
                         return (`
                           <a href="/search?q=${query}" class="tt-search-link">
                             All results for ${query}
@@ -63,7 +66,8 @@ $(() => {
                         settings.url += '&category=' + category;
                     }
                     return settings;
-                }
+                },
+                storageKey: 'fs-autocomplete-defaults',
             });
     });
 });
