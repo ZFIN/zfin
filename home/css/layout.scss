@@ -102,10 +102,12 @@ header {
         align-items: center;
 
         &::after {
-            content: '⌄';
+            content: '\f078';
+            font-family: "Font Awesome 5 Free";
             position: absolute;
-            bottom: 5px;
-            font-size: 1.3em;
+            bottom: 8px;
+            font-size: 0.75em;
+            font-weight: 900;
         }
     }
 
