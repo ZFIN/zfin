@@ -7,6 +7,7 @@ $root-bg: mix(white, $root, 85%);
 
 header {
     display: flex;
+    position: relative;
     align-items: center;
     background: $primary-bg; //rgba($primary, 0.15);
     border-bottom: 4px solid $primary;
@@ -49,19 +50,23 @@ header {
     }
 
     .menu {
-        display: flex;
-        height: 100%;
+        position: absolute;
+        display: none;
         flex-shrink: 0;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: $primary-bg;
 
         > li {
             display: flex;
             flex-direction: column;
             color: $primary;
-            padding: 0 15px;
+            padding: 10px 15px;
             border: 0 solid rgba(255, 255, 255, 0.85);
             border-left-width: 1px;
             justify-content: center;
-            align-items: center;
             height: 100%;
             position: relative;
 
@@ -82,6 +87,13 @@ header {
         .title {
             font-weight: 700;
         }
+
+        @media (min-width: 992px) {
+            position: static;
+            height: 100%;
+            flex-direction: row;
+            display: flex !important;
+        }
     }
 
     .reference {
@@ -89,7 +101,6 @@ header {
         position: relative;
         display: flex;
         justify-content: center;
-        align-items: center;
 
         &:hover {
             color: white;
@@ -107,9 +118,19 @@ header {
             content: '\f078';
             font-family: "Font Awesome 5 Free";
             position: absolute;
-            bottom: 8px;
+            bottom: auto;
+            right: 15px;
             font-size: 0.75em;
             font-weight: 900;
+        }
+
+        @media (min-width: 992px) {
+            align-items: center;
+
+            &::after {
+                bottom: 8px;
+                right: auto;
+            }
         }
     }
 
@@ -167,6 +188,8 @@ header {
 
     .search {
         padding: 10px;
+        flex-grow: 1;
+        max-width: 500px;
         
         form {
             position: relative;
@@ -176,11 +199,12 @@ header {
             padding: 10px 30px 10px 10px;
             border: none;
             border-radius: 3px;
-            width: 200px;
+            width: 100%;
+            display: block;
+        }
 
-            @media (min-width: 1170px) {
-                width: 400px;
-            }
+        .twitter-typeahead {
+            width: 100%;
         }
 
         button {
@@ -203,6 +227,12 @@ header {
             width: 100px;
         }
     }
+
+    .mobile-menu {
+        font-size: 1.5em;
+        padding: 10px;
+        display: block;
+    }
 }
 
 main {
@@ -217,6 +247,12 @@ footer {
     color: white;
     padding: 30px;
     text-align: center;
+}
+
+.mobile-only {
+    @media (min-width: 992px) {
+        display: none;
+    }
 }
 
 .uber-banner {

@@ -1,6 +1,12 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <header>
+    <div class="mobile-only">
+        <a href="#" class="mobile-menu">
+            <i class="fas fa-bars"></i>
+        </a>
+    </div>
+
     <div class="logo">
         <a href="/">
             <img src="/images/zfinlogo_lg.gif">

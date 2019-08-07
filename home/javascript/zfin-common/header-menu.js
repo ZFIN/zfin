@@ -18,6 +18,11 @@ $(() => {
         menu.addEventListener('mouseout', () => dropdown.style.visibility = 'hidden');
     });
 
+    $('.mobile-menu').on('click', function (e) {
+        e.preventDefault();
+        $('header > .menu').slideToggle({start: function () {$(this).css({display: 'flex'})}});
+    });
+
     $('header .jump-to-pub').on('submit', function (e) {
         e.preventDefault();
         let zdbId = $(this).find('input[type="text"]').val();
