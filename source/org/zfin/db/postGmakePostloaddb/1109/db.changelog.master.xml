@@ -41,4 +41,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/abRegistry_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/abRegistry.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/abRegistry.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1109/CUR-919.sql" />
 </databaseChangeLog>
