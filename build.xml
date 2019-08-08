@@ -680,10 +680,6 @@
                     <exclude name="**/*.svn"/>
                 </fileset>
             </copy>
-
-            <copy todir="@{to}/fonts">
-                <fileset dir="node_modules/@fortawesome/fontawesome-free/webfonts"/>
-            </copy>
         </sequential>
     </macrodef>
 
