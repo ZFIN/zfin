@@ -97,7 +97,7 @@
     <zfin2:transcriptTargets transcriptTargets="${formBean.transcriptTargets}"/>
 </c:if>
 <br>
-<c:if test="${formBean.rnaCentralLink eq 'yes'}">--%>
+<c:if test="${formBean.rnaCentralLink eq 'yes'}">
     <a href=""><b>RNACentral</b></a>
 </c:if>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
