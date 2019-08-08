@@ -30,3 +30,96 @@
         </form>
     </div>
 </div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-lg-push-6">
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="#" class="home-card">
+                        <div class="icon">G</div>
+                        <div class="main">
+                            <div class="title">Genes/Markers</div>
+                            <div class="description">Lorem ipsum dolor sit</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" class="home-card">
+                        <div class="icon">E</div>
+                        <div class="main">
+                            <div class="title">Expression</div>
+                            <div class="description">Nam ac odio</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" class="home-card">
+                        <div class="icon">M</div>
+                        <div class="main">
+                            <div class="title">Mutants/Tg</div>
+                            <div class="description">Pellentesque at felis non</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" class="home-card">
+                        <div class="icon">A</div>
+                        <div class="main">
+                            <div class="title">Antibodies</div>
+                            <div class="description">Curabitur ullamcorper</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" class="home-card">
+                        <div class="icon">O</div>
+                        <div class="main">
+                            <div class="title">Anatomy/GO/Disease</div>
+                            <div class="description">Pellentesque at risus id</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" class="home-card">
+                        <div class="icon">B</div>
+                        <div class="main">
+                            <div class="title">BLAST</div>
+                            <div class="description">Praesent facilisis nibh interdum</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" class="home-card">
+                        <div class="icon">P</div>
+                        <div class="main">
+                            <div class="title">Publications</div>
+                            <div class="description">Cras vitae lorem ut eros</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" class="home-card">
+                        <div class="icon">S</div>
+                        <div class="main">
+                            <div class="title">Submit Data</div>
+                            <div class="description">Sed tempus diam</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" class="home-card">
+                        <div class="icon">Z</div>
+                        <div class="main">
+                            <div class="title">ZIRC</div>
+                            <div class="description">Praesent cursus dui vitae mi vestibulum</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-lg-pull-6">
+            <img src="http://placehold.it/1200x800" style="max-width: 100%">
+        </div>
+    </div>
+</div>
