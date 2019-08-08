@@ -679,12 +679,15 @@ public class ProfileService {
     }
 
     public String processUrl(String url) {
-        // if no URI scheme is present default to http
-        if (StringUtils.isNotEmpty(url) && !url.matches("\\w+:.*")) {
-            url = "http://" + url;
+        if (StringUtils.isNotEmpty(url)) {
+            // if no URI scheme is present default to http
+            if (!url.matches("\\w+:.*")) {
+                url = "http://" + url;
+            }
+
+            // sanitization to prevent basic XSS
+            url = url.replaceAll("[^-A-Za-z0-9+&@#/%?=~_|!:,.;()]", "");
         }
-        // sanitization to prevent basic XSS
-        url = url.replaceAll("[^-A-Za-z0-9+&@#/%?=~_|!:,.;()]", "");
         return url;
     }
 
