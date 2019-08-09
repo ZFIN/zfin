@@ -18,6 +18,11 @@
     <script src="${zfn:getAssetPath("zfin-common.js")}"></script>
 
     <script>
+        window.onload = function () {
+          var timeToday = new Date();
+          document.getElementById("copyrightEndingYear").innerHTML = timeToday.getFullYear();
+        }
+
         <c:choose>
         <c:when test="${ZfinPropertiesEnum.GOOGLE_ANALYTICS_ID.value() != '0'}">
         !function(z,b,r,f,i,s,h){z.GoogleAnalyticsObject=i,z[i]=z[i]||function(){(z[i].q=z[i].q||[]).push(arguments)},z[i].l=+new Date,s=b.createElement(r),h=b.getElementsByTagName(r)[0],s.src=f,h.parentNode.insertBefore(s,h)}(this,document,"script","//www.google-analytics.com/analytics.js","ga");
@@ -145,7 +150,7 @@
     <div id="footercredits" class="center">
         <span id="footer-generous-support">Development of the Zebrafish Database is generously supported by the National Human Genome Research Institute (HG004838, and HG004834) of the National Institutes of Health. <br></span>
         <a href="/zf_info/warranty.html">Disclaimer, limitations, copyright &copy; </a> <a href="http://www.uoregon.edu">
-        University of Oregon</a>, 1994-2019,<a href="http://www.ci.eugene.or.us"> Eugene</a>, Oregon. <br>
+        University of Oregon</a>, 1994-<span id="copyrightEndingYear"></span>,<a href="http://www.ci.eugene.or.us"> Eugene</a>, Oregon. <br>
         <small>ZFIN logo design by Kari Pape, <A HREF="http://www.uoregon.edu">University of Oregon</a></small>
     </div>
 </div>
