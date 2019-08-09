@@ -41,18 +41,5 @@
             Need an account? Forgot your password? Contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>.
         </div>
     </div>
-
-    <script>
-        $(function () {
-            document.login.username.focus();
-            var elements = document.getElementsByTagName("a");
-            for (var i = 0; i < elements.length; i++) {
-                var link = elements[i];
-                if (link.href != null) {
-                    link.href = link.href.replace("https", "http");
-                }
-            }
-        });
-    </script>
 </div>
 
