@@ -1,3 +1,5 @@
+@import 'theme';
+
 .ui-menu-item {
     font-size: small;
 }
@@ -45,19 +47,19 @@ a:hover {
 
 .btn-zfin {
     color: #FFFFFF;
-    background-color: #066;
-    border-color: #066;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-}
+    background-color: $primary;
+    border-color: $primary-border;
 
-.btn-zfin:hover,
-.btn-zfin:focus,
-.btn-zfin:active,
-.btn-zfin.active,
-.btn-zfin.disabled,
-.btn-zfin[disabled] {
-    color: #FFFFFF;
-    background-color: #004444;
+    &:hover,
+    &:focus,
+    &:active,
+    &.active,
+    &.disabled,
+    &[disabled] {
+        color: #FFFFFF;
+        background-color: darken($primary, 10%);
+        border-color: darken($primary-border, 12%);
+    }
 }
 
 .form-control-fixed-width-sm {

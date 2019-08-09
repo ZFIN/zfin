@@ -17,3 +17,4 @@ require('../../css/figure_gallery.css');
 require('../../css/pagination.css');
 require('../../css/tabEdit.css');
 require('../../css/zdbhome.scss');
+require('../../css/login.scss');

@@ -191,7 +191,7 @@
                 </c:when>
                 <c:otherwise>
                     <li class="no-border">
-                        <a href="/action/login">Login</a>
+                        <a href="/action/login">Sign In</a>
                     </li>
                 </c:otherwise>
             </c:choose>

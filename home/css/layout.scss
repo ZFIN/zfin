@@ -1,15 +1,15 @@
-$primary: rgb(0, 128, 128);
+@import 'theme';
+
 $root: rgb(128, 0, 0);
 $base: rgb(51, 51, 51);
 
-$primary-bg: mix(white, $primary, 85%);
 $root-bg: mix(white, $root, 85%);
 
 header {
     display: flex;
     position: relative;
     align-items: center;
-    background: $primary-bg; //rgba($primary, 0.15);
+    background: $primary-bg;
     border-bottom: 4px solid $primary;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;

@@ -804,12 +804,6 @@ a + .inline-upload {
     color: #9A9A9A;
 }
 
-.login-box {
-    border-radius: 5px;
-    background: #e0e7e0;
-    padding: 2em;
-}
-
 .list-box-selected {
     background: khaki;
 }
