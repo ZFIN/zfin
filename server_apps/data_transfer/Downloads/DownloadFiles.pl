@@ -182,6 +182,9 @@ while ($cur->fetch()) {
 
 close MOWITHPUBS;
 
+## generate a feature data file for CZRC
+system("./CZRCfeature.pl") and die "there was an error in CZRCfeature.pl";
+
 ## generate a file with antibodies and associated expression experiment
 ## ZFIN-5654
 $sql = "
