@@ -1,26 +1,30 @@
 import Popper from 'popper.js';
 
 $(() => {
+    const poppers = [];
     document.querySelectorAll('header .reference').forEach(menu => {
         const dropdown = menu.querySelector('.dropdown');
         if (!dropdown) {
             return;
         }
-        new Popper(menu, dropdown, {
+        poppers.push(new Popper(menu, dropdown, {
             placement: dropdown.classList.contains('left') ? 'bottom-end' : 'bottom-start',
             modifiers: {
                 offset: {
                     offset: 1,
                 }
             }
-        });
+        }));
         menu.addEventListener('mouseover', () => dropdown.style.visibility = 'unset');
         menu.addEventListener('mouseout', () => dropdown.style.visibility = 'hidden');
     });
 
     $('.mobile-menu').on('click', function (e) {
         e.preventDefault();
-        $('header > .menu').slideToggle({start: function () {$(this).css({display: 'flex'})}});
+        $('header > .menu').slideToggle({
+            start: function () { $(this).css({display: 'flex'}) },
+            done: function () { poppers.forEach(popper => popper.scheduleUpdate()) },
+        });
     });
 
     $('header .jump-to-pub').on('submit', function (e) {

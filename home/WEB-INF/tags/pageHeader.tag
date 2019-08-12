@@ -13,7 +13,7 @@
         </a>
     </div>
 
-    <ul class="menu list-unstyled">
+    <ul class="menu menu-collapse list-unstyled">
         <li class="reference">
             <span class="title">Research</span>
             <div class="dropdown">

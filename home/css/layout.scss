@@ -5,6 +5,9 @@ $base: rgb(51, 51, 51);
 
 $root-bg: mix(white, $root, 85%);
 
+$break-lg: 1200px;
+$break-md: 992px;
+
 header {
     display: flex;
     position: relative;
@@ -50,14 +53,44 @@ header {
     }
 
     .menu {
-        position: absolute;
-        display: none;
         flex-shrink: 0;
-        top: 100%;
-        left: 0;
-        right: 0;
         flex-direction: column;
         background: $primary-bg;
+        height: 100%;
+
+        &.menu-collapse {
+            position: absolute;
+            display: none;
+            top: 100%;
+            left: 0;
+            right: 0;
+            height: auto;
+
+            .reference {
+                align-items: start;
+
+                &::after {
+                    bottom: auto;
+                    right: 15px;
+                }
+            }
+
+            @media (min-width: $break-md) {
+                position: static;
+                height: 100%;
+                flex-direction: row;
+                display: flex !important;
+
+                .reference {
+                    align-items: center;
+
+                    &::after {
+                        bottom: 8px;
+                        right: auto;
+                    }
+                }
+            }
+        }
 
         > li {
             display: flex;
@@ -87,13 +120,6 @@ header {
         .title {
             font-weight: 700;
         }
-
-        @media (min-width: 992px) {
-            position: static;
-            height: 100%;
-            flex-direction: row;
-            display: flex !important;
-        }
     }
 
     .reference {
@@ -101,6 +127,7 @@ header {
         position: relative;
         display: flex;
         justify-content: center;
+        align-items: center;
 
         &:hover {
             color: white;
@@ -118,19 +145,10 @@ header {
             content: '\f078';
             font-family: "Font Awesome 5 Free";
             position: absolute;
-            bottom: auto;
-            right: 15px;
             font-size: 0.75em;
             font-weight: 900;
-        }
-
-        @media (min-width: 992px) {
-            align-items: center;
-
-            &::after {
-                bottom: 8px;
-                right: auto;
-            }
+            bottom: 8px;
+            right: auto;
         }
     }
 
@@ -164,6 +182,10 @@ header {
             font-weight: bold;
             margin-bottom: 10px;
             white-space: nowrap;
+        }
+
+        @media (min-width: $break-md) {
+            right: auto;
         }
     }
 
@@ -250,7 +272,7 @@ footer {
 }
 
 .mobile-only {
-    @media (min-width: 992px) {
+    @media (min-width: $break-md) {
         display: none;
     }
 }
