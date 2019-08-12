@@ -16,7 +16,7 @@
         </span>
     </c:if>
 
-    <a href="/action/zebrashare/dashboard">View Your Zebrashare Submissions</a>
+    <a href="/action/zebrashare/dashboard">View Your ZebraShare Submissions</a>
 
     <h1>${feature.name}</h1>
 

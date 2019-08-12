@@ -3349,7 +3349,7 @@
                                and fdbcont_fdb_db_id = fdb_db_pk_id
                                and substring(dblink_linked_recid from 1 for 8) = 'ZDB-ATB-'"
                     cacheImpl="SortedMapBackedCache"
-                    where="mrkr_zdb_id=antibody.id"
+                    where="dblink_linked_recid=antibody.id"
             />
 
             <entity name="antibody_attribution"

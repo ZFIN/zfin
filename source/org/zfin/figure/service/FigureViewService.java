@@ -152,7 +152,7 @@ public class FigureViewService {
             Marker marker = ee.getGene();
 
             if ((marker != null)
-                    && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG))
+                    && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG)||(marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR)))
                     && !genes.contains(marker)) {
                 genes.add(ee.getGene());
             }

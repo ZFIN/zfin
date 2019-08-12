@@ -21,7 +21,7 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
             case NAS: // has no inferences
                 return new InferenceCategory[]{};
             case IBA:
-                return new InferenceCategory[]{InferenceCategory.PANTHER, InferenceCategory.CGD,InferenceCategory.DICTYBASE,InferenceCategory.ECOGENE,InferenceCategory.FB,InferenceCategory.MGI,InferenceCategory.POMBASE,InferenceCategory.RGD,InferenceCategory.SGD,InferenceCategory.TAIR};
+                return new InferenceCategory[]{InferenceCategory.PANTHER, InferenceCategory.CGD,InferenceCategory.DICTYBASE,InferenceCategory.ECOGENE,InferenceCategory.FB,InferenceCategory.MGI,InferenceCategory.POMBASE,InferenceCategory.RGD,InferenceCategory.SGD,InferenceCategory.TAIR,InferenceCategory.UNIPROTKB,InferenceCategory.WB};
             case IC:
                 return new InferenceCategory[]{InferenceCategory.GO};
             case IDA:

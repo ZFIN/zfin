@@ -133,7 +133,7 @@ public class GafService {
                 // for each gene, create an entry
                 for (Marker gene : genes) {
                     MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
-                    System.out.println(annotationToAdd.getZdbID());
+                   // System.out.println(annotationToAdd.getZdbID());
                     if (annotationToAdd == null) {
                         throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
                     }
@@ -395,6 +395,7 @@ public class GafService {
                 }
 
                 if (!GoEvidenceValidator.isInferenceValid(inference, goEvidenceCodeEnum, publicationZdbId)) {
+
                     logger.debug("Invalid inference code[" + inference + "] " +
                             " for code " + goEvidenceCodeEnum.name() +
                             " and pub " + publicationZdbId + " "
@@ -402,6 +403,7 @@ public class GafService {
 
                 }
                 else {
+
                     InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
                     inferenceGroupMember.setInferredFrom(inference);
                     inferredFrom.add(inferenceGroupMember);
