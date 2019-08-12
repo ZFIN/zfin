@@ -19,4 +19,4 @@ and pth_pub_zdb_id not in (select recattrib_source_zdb_id from record_attributio
 
 
 insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by)
-select pubzdb, 12, 'ZDB-PERS-030520-2' from tmp_pub;
+select pubid, 12, 'ZDB-PERS-030520-2' from tmp_pub;
