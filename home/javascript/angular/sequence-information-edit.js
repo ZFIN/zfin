@@ -252,6 +252,7 @@
                 seqInfoCtrl.errorAcc = '';
                 seqInfoCtrl.errorRef = '';
                 seqInfoCtrl.newDatabase = '';
+                seqInfoCtrl.newLength = '';
                 seqInfoCtrl.newAccession = '';
                 seqInfoCtrl.accessionEdit = '';
                 seqInfoCtrl.lengthEdit = '';
@@ -280,6 +281,12 @@
                     return false;
                 } else if (checkRef && !seqInfoCtrl.newReference) {
                     seqInfoCtrl.errorRef = 'Reference cannot be empty.';
+                    return false;
+                } else if (checkRef && isNaN(seqInfoCtrl.newLength)) {
+                    seqInfoCtrl.errorLength = 'Invalid number';
+                    return false;
+                } else if (isNaN(seqInfoCtrl.lengthEdit)) {
+                    seqInfoCtrl.errorLength = 'Invalid number';
                     return false;
                 } else if ( isGenBank() &&
                     !seqInfoCtrl.newAccession.charAt(0).match(/[a-z]/i) ) {

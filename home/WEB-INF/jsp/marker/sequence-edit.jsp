@@ -145,7 +145,7 @@
                 </tr>
                 <tr>
                     <td>Length:&nbsp;<input placeholder="{{si.lengthEdit}}" ng-model="si.lengthEdit" ng-keyup="si.errorLength = ''" /></td>
-                    <td><span class="error">{{si.errorAcc}}</span></td>
+                    <td><span class="error">{{si.errorLength}}</span></td>
                 </tr>
                 <tr>
                     <td colspan="2" nowrap>
