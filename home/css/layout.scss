@@ -22,7 +22,6 @@ header {
     font-size: 16px;
     line-height: 1.42857143;
     color: $base;
-    width: 100vw;
     z-index: 10;
 
     * {
@@ -105,10 +104,12 @@ header {
 
             &.no-border {
                 border-width: 0 !important;
+                margin: 0 !important;
             }
 
             &:last-of-type {
                 border-right-width: 1px;
+                margin-right: 10px;
             }
 
             &.root-only {
@@ -209,7 +210,6 @@ header {
     }
 
     .search {
-        padding: 10px;
         flex-grow: 1;
         max-width: 500px;
         
