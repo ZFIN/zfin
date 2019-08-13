@@ -25,7 +25,7 @@
 
 # --backup-dir=/tmp --suffix=uploadbkup --delete 
 
-#system("/local/bin/rsync -vua <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
+system("/local/bin/rsync -auv <!--|LOADUP_FULL_PATH|-->/ /research/zcentral/loadUp/pubs/");
 
 #system("/local/bin/rsync -vua <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|-->/ /research/zcentral/loadUp/videoLoadUp/");
 
