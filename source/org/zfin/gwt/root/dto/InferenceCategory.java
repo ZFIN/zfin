@@ -32,7 +32,7 @@ public enum InferenceCategory {
     ENSEMBL("Ensembl"),
     PANTHER("PANTHER",false),
     MGI("MGI"),
-    RGD("RGD"),
+//    RGD("RGD"),
     WB("WB"),
     FB("FB"),
     SGD("SGD"),
