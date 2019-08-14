@@ -139,29 +139,18 @@
                 <div class="col-md-3 col-lg-6">
                     <div class="home-section">
                         <div class="heading">News & Meeting Announcements</div>
-                        <ul>
-                            <li>Ut maximus mi a tincidunt pellentesque.</li>
-                            <li>Nulla nec massa maximus odio fringilla dapibus quis sed magna.</li>
-                            <li>Sed vestibulum nunc vitae finibus ultrices.</li>
-                            <li>Nam laoreet elit ut diam consequat tempor.</li>
-                            <li>Nunc semper dui quis arcu fermentum ultricies.</li>
-                        </ul>
+                        <div class="__react-root" id="NewsAndMeetingsFeed"></div>
                     </div>
                 </div>
                 <div class="col-md-3 col-lg-6">
                     <div class="home-section">
                         <div class="heading">Zebrafish-Related Job Announcements</div>
-                        <ul>
-                            <li>Vestibulum vel augue vitae arcu rutrum porttitor at a neque.</li>
-                            <li>Cras suscipit tortor quis augue aliquet, quis eleifend massa ornare.</li>
-                            <li>Etiam tempor orci vel sodales sollicitudin.</li>
-                            <li>Quisque vel urna eu orci rutrum congue.</li>
-                            <li>Sed viverra libero elementum malesuada laoreet.</li>
-                            <li>Sed porttitor libero et maximus cursus.</li>
-                        </ul>
+                        <div class="__react-root" id="JobsFeed"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script src="${zfn:getAssetPath("react.js")}"></script>
