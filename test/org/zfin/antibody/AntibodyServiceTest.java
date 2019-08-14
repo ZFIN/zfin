@@ -1,6 +1,7 @@
 package org.zfin.antibody;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
@@ -10,8 +11,8 @@ import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
+import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
@@ -23,8 +24,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
@@ -488,17 +489,14 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         antibodyService.createFigureSummary(criteria);
 
         List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
-        List<Figure> figures = new ArrayList<>();
-        Set<ExpressionStatement> statements = new HashSet<>();
-
 
         for (FigureSummaryDisplay figureSummary : figureSummaryList) {
-            figures.add(figureSummary.getFigure());
-            statements.addAll(figureSummary.getExpressionStatementList());
-
             //all figures returned should have slow muscle cell
+            String expressionStatement = figureSummary.getExpressionStatementList().stream()
+                    .map(ExpressionStatement::getDisplayName)
+                    .collect(Collectors.joining(","));
             assertTrue(figureSummary.getPublication().getShortAuthorList() + " " + figureSummary.getFigure().getLabel()
-                    + " should have " + slowMuscleCellStatement.getEntity().getSuperterm().getTermName(), figureSummary.getExpressionStatementList().contains(slowMuscleCellStatement));
+                    + " should have " + slowMuscleCellStatement.getEntity().getSuperterm().getTermName(), expressionStatement.contains(slowMuscleCellStatement.getDisplayName()));
         }
 
 
