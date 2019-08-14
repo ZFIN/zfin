@@ -252,7 +252,7 @@ class PubmedUtils {
         private String queryKey
         private int count
         private int start = 0
-        private final int max = 500
+        private final int max = 200
 
         ArticleIterator(String webEnv, String queryKey, int count) {
             this.webEnv = webEnv

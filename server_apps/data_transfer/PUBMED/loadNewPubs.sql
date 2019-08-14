@@ -18,7 +18,8 @@ create temp table tmp_pubs (
   issue text,
   journaltitle text,
   iso text,
-  status text);
+  status text,
+  pubType text);
 
 \copy tmp_pubs from '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log';
 \copy (select zdb_id from tmp_pubs,publication where accession_no = pmid) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/pubAlreadyinZFIN.txt' delimiter '|';
@@ -46,7 +47,8 @@ create temp table tmp_new_pubs (
   journaltitle text,
   iso text,
   status text,
-  journal_zdb_id text
+  journal_zdb_id text,
+  pubType text
 );
 
 
@@ -69,7 +71,7 @@ insert into tmp_new_pubs
   journaltitle ,
   iso ,
   status ,
-  journal_zdb_id)
+  journal_zdb_id, pubType)
   select pmcid,mid,get_id('PUB'),
     pmid,
     keywords,
@@ -86,7 +88,8 @@ insert into tmp_new_pubs
     journaltitle,
     iso,
     status,
-    journaltitle
+    journaltitle,
+    pubType
   from tmp_pubs
   where not exists (select 'x' from publication
   where accession_no = pmid::int);
@@ -166,6 +169,10 @@ update tmp_new_pubs
 set status = 'Epub ahead of print'
 where status = 'aheadofprint';
 
+update tmp_new_pubs
+ set pubtype = 'Review'
+ where pubtype = 'review'
+
 insert into zdb_active_source
   select zdb_id from tmp_new_pubs;
 
@@ -210,7 +217,7 @@ insert into publication (
     volume,
     pages,
     journal_zdb_id,
-    'Journal'
+    case when pubtype = 'Review' then 'Review' else 'Journal' END
   from tmp_new_pubs
   where year is not null
         and not exists (Select 'x' from publication where accession_no = pmid);
@@ -243,7 +250,7 @@ insert into publication (
     volume,
     pages,
     journal_zdb_id,
-    'Journal'
+    case when pubtype = 'Review' then 'Review' else 'Journal' END
   from tmp_new_pubs
   where year is null
         and not exists (Select 'x' from publication where accession_no = pmid);
