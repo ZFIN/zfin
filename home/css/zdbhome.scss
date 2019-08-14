@@ -3,7 +3,7 @@
     margin-bottom: 60px;
     background: url(/imageLoadUp/2001/ZDB-PUB-010810-1/ZDB-IMAGE-030521-746.jpg) center;
     background-size: cover;
-    padding: 60px 0;
+    padding: 90px 0;
     border-bottom: 1px solid #cccccc;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 
@@ -57,6 +57,77 @@
 
     .description {
         color: #666666;
+    }
+}
+
+.home-section {
+    margin-bottom: 30px;
+
+    .heading {
+        font-size: 20px;
+        color: teal;
+        font-weight: bold;
+        border-bottom: 3px solid teal;
+        margin-bottom: 10px;
+        padding-bottom: 2px;
+    }
+}
+
+#home-carousel {
+
+    .carousel-controls {
+        padding: 5px;
+        text-align: center;
+
+        a {
+            color: #7f7f7f;
+        }
+    }
+
+    .carousel-indicators {
+        position: static;
+        display: inline-block;
+        margin: 0 30px;
+        width: auto;
+
+        li {
+            border-color: #7f7f7f;
+
+            &.active {
+                background-color: #7f7f7f;
+            }
+        }
+    }
+
+    .item {
+        height: 400px;
+        background-size: contain;
+        background-position: center;
+        background-color: white;
+        background-repeat: no-repeat;
+    }
+
+    .carousel-caption {
+        left: 0;
+        right: 0;
+        border: 0;
+        bottom: 0;
+        padding: 5px;
+        text-align: left;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .figure-caption {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        * {
+            display: inline;
+            margin: 0;
+            padding: 0;
+            font-size: inherit;
+        }
     }
 }
 

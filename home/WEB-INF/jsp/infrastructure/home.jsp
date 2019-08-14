@@ -116,10 +116,52 @@
                         </div>
                     </a>
                 </div>
+                <div class="col-md-6">
+                    <a href="#" class="home-card">
+                        <div class="icon">T</div>
+                        <div class="main">
+                            <div class="title">The Zebrafish Book</div>
+                            <div class="description">Dui vitae mi diam</div>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
         <div class="col-lg-6 col-lg-pull-6">
-            <img src="http://placehold.it/1200x800" style="max-width: 100%">
+            <div class="row">
+                <div class="col-sm-12 col-md-6 col-lg-12">
+                    <div class="home-section">
+                        <div class="heading">Recently Curated Figures</div>
+                        <zfin2:imageCarousel id="home-carousel" images="${carouselImages}" captions="${sanitizedCaptions}" />
+                    </div>
+
+                </div>
+                <div class="col-md-3 col-lg-6">
+                    <div class="home-section">
+                        <div class="heading">News & Meeting Announcements</div>
+                        <ul>
+                            <li>Ut maximus mi a tincidunt pellentesque.</li>
+                            <li>Nulla nec massa maximus odio fringilla dapibus quis sed magna.</li>
+                            <li>Sed vestibulum nunc vitae finibus ultrices.</li>
+                            <li>Nam laoreet elit ut diam consequat tempor.</li>
+                            <li>Nunc semper dui quis arcu fermentum ultricies.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 col-lg-6">
+                    <div class="home-section">
+                        <div class="heading">Zebrafish-Related Job Announcements</div>
+                        <ul>
+                            <li>Vestibulum vel augue vitae arcu rutrum porttitor at a neque.</li>
+                            <li>Cras suscipit tortor quis augue aliquet, quis eleifend massa ornare.</li>
+                            <li>Etiam tempor orci vel sodales sollicitudin.</li>
+                            <li>Quisque vel urna eu orci rutrum congue.</li>
+                            <li>Sed viverra libero elementum malesuada laoreet.</li>
+                            <li>Sed porttitor libero et maximus cursus.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
