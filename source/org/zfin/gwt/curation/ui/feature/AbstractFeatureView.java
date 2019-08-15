@@ -127,7 +127,14 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
 
     @UiHandler("labDesignationBox")
     void onChangeLabOfDesignation(@SuppressWarnings("unused") ChangeEvent event) {
+        final String labDesigSelected=labDesignationBox.getSelectedText();
+        if (labDesigSelected.equals("zf")){
+            presenter.onLabDesigChange();
+        }
+
         handleChanges();
+
+
     }
 
     @UiHandler("mutageeBox")
