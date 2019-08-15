@@ -1710,7 +1710,7 @@ delete from tmp_wtxpat
 
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt' with delimiter as '	' null as '';'
 create view saAlleles as
-select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||coalesce(jrnl_name,'') ||' '|| ' ' || coalesce(pub_volume,'') ||' '|| coalesce(pub_pages,''), feature_abbrev
 from feature, record_attribution, publication, journal
 where recattrib_data_zdb_id=feature_zdb_id
 and feature_abbrev like 'sa%'
