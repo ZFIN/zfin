@@ -35,21 +35,52 @@ public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
         this.omimNumber = omimNumber;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof DiseaseDisplay) {
+            DiseaseDisplay anotherDiseaseDisplay = (DiseaseDisplay) o;
+            if (anotherDiseaseDisplay == null) {
+                return false;
+            }
+            if (anotherDiseaseDisplay.getDiseaseTerm() == null) {
+                return anotherDiseaseDisplay.getOmimTerm().equals(this.omimTerm) && anotherDiseaseDisplay.getOmimNumber().equals(this.omimNumber);
+            }
+            if (anotherDiseaseDisplay.getDiseaseTerm().getZdbID().equals(this.diseaseTerm.getZdbID())
+                    && anotherDiseaseDisplay.getOmimTerm().equals(this.omimTerm) && anotherDiseaseDisplay.getOmimNumber().equals(this.omimNumber)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        if (diseaseTerm == null) {
+            result = 0;
+        } else {
+            result = diseaseTerm.getZdbID().hashCode();
+        }
+        result = 31 * result + omimTerm.hashCode();
+        result = 31 * result + omimNumber.hashCode();
+        return result;
+    }
+
     public int compareTo(DiseaseDisplay o) {
+        OmimPhenotype omimPhenotype = new OmimPhenotype();
+        omimPhenotype.setOmimNum(omimNumber);
+        omimPhenotype.setName(omimTerm);
+        OmimPhenotype anotherOmimPhenotype = new OmimPhenotype();
+        anotherOmimPhenotype.setOmimNum(o.getOmimNumber());
+        anotherOmimPhenotype.setName(o.getOmimTerm());
         if (o.getDiseaseTerm() == null && diseaseTerm == null) {
-            return -1;
+            return omimPhenotype.compareTo(anotherOmimPhenotype);
         } else if (diseaseTerm == null) {
             return 1;
         } else if (o.getDiseaseTerm() == null) {
             return -1;
         } else {
             if (diseaseTerm.compareTo(o.getDiseaseTerm()) == 0) {
-                OmimPhenotype omimPhenotype = new OmimPhenotype();
-                omimPhenotype.setOmimNum(omimNumber);
-                omimPhenotype.setName(omimTerm);
-                OmimPhenotype anotherOmimPhenotype = new OmimPhenotype();
-                anotherOmimPhenotype.setOmimNum(o.getOmimNumber());
-                anotherOmimPhenotype.setName(o.getOmimTerm());
                 return omimPhenotype.compareTo(anotherOmimPhenotype);
             }
             return diseaseTerm.compareTo(o.getDiseaseTerm());

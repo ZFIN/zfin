@@ -92,8 +92,8 @@ public class MarkerService {
         SequenceInfo sequenceInfo = new SequenceInfo();
 
         sequenceInfo.setDbLinks(RepositoryFactory.getSequenceRepository()
-                .getDBLinksForMarkerAndDisplayGroup(marker
-                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
+                        .getDBLinksForMarkerAndDisplayGroup(marker
+                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
         );
 
         List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
@@ -109,10 +109,10 @@ public class MarkerService {
 
         Set<RelatedMarkerDBLinkDisplay> markerDBLinks = new TreeSet<>();
         markerDBLinks.addAll(RepositoryFactory.getSequenceRepository()
-                .getDBLinksForSecondRelatedMarker(marker
-                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                )
+                        .getDBLinksForSecondRelatedMarker(marker
+                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                        )
         );
 
         markerDBLinks.addAll(getTranscriptReferences(marker));
@@ -161,10 +161,10 @@ public class MarkerService {
                         MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
                 );
         relatedLinks.addAll(RepositoryFactory.getSequenceRepository()
-                .getDBLinksForSecondRelatedMarker(marker
-                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                )
+                        .getDBLinksForSecondRelatedMarker(marker
+                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                        )
         );
         relatedLinks.addAll(getTranscriptReferences(marker));
         for (RelatedMarkerDBLinkDisplay relatedLink : relatedLinks) {
@@ -864,9 +864,10 @@ public class MarkerService {
             if (omimPhenotypes == null || omimPhenotypes.size() == 0) {
                 markerBean.setDiseaseDisplays(null);
             } else {
-                SortedSet<DiseaseDisplay> diseaseDisplays = getDiseaseDisplays(omimPhenotypes);
+                Set<DiseaseDisplay> diseaseDisplays = getDiseaseDisplays(omimPhenotypes);
                 List<DiseaseDisplay> diseaseDisplaysList = new ArrayList<>(diseaseDisplays.size());
                 diseaseDisplaysList.addAll(diseaseDisplays);
+                Collections.sort(diseaseDisplaysList);
                 markerBean.setDiseaseDisplays(diseaseDisplaysList);
             }
             List<DiseaseAnnotationModel> diseaseAnnotationModels = RepositoryFactory.getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
@@ -962,14 +963,14 @@ public class MarkerService {
         return getMutantRepository().getGenotypeFiguresBySTR(str);
     }
 
-    public static SortedSet<DiseaseDisplay> getDiseaseDisplays(List<OmimPhenotype> omimPhenotypes) {
+    public static Set<DiseaseDisplay> getDiseaseDisplays(List<OmimPhenotype> omimPhenotypes) {
 
         if (omimPhenotypes == null || omimPhenotypes.size() == 0) {
             return null;
         }
 
         DiseaseDisplay diseaseDisplay;
-        SortedSet<DiseaseDisplay> diseaseDisplays = new TreeSet<>();
+        Set<DiseaseDisplay> diseaseDisplays = new HashSet<>();
         for (OmimPhenotype omimPhenotype : omimPhenotypes) {
             Set<TermExternalReference> termExternalReferences = omimPhenotype.getExternalReferences();
             if (termExternalReferences != null && termExternalReferences.size() > 0) {
