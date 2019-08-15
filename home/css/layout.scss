@@ -20,7 +20,7 @@ header {
     box-sizing: border-box;
     flex-shrink: 0;
     font-size: 16px;
-    line-height: 1.42857143;
+    line-height: 1.15;
     color: $base;
     z-index: 10;
 
@@ -97,24 +97,26 @@ header {
             color: $primary;
             padding: 10px 15px;
             border: 0 solid rgba(255, 255, 255, 0.85);
-            border-left-width: 1px;
             justify-content: center;
             height: 100%;
-            position: relative;
 
             &.no-border {
                 border-width: 0 !important;
                 margin: 0 !important;
             }
 
-            &:last-of-type {
-                border-right-width: 1px;
-                margin-right: 10px;
-            }
-
             &.root-only {
                 background: $root-bg;
                 color: $root;
+            }
+
+            @media (min-width: $break-md) {
+                border-left-width: 1px;
+
+                &:last-of-type {
+                    border-right-width: 1px;
+                    margin-right: 10px;
+                }
             }
         }
 
@@ -125,7 +127,6 @@ header {
 
     .reference {
         height: 100%;
-        position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -155,16 +156,23 @@ header {
 
     .dropdown {
         visibility: hidden;
-        position: absolute;
+        position: fixed;
+        left: 0;
         display: flex;
         background: $primary;
         color: white;
         padding: 20px;
         z-index: 101;
         font-size: 0.9em;
+        flex-wrap: wrap;
+        box-shadow: 0 4px 4px rgba(0,0,0,0.2);
 
         ul {
             margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
         }
 
         a, a:hover, a:active {
@@ -174,19 +182,18 @@ header {
 
         .column {
             padding: 0 10px;
-            min-width: 150px;
+            width: 200px;
         }
 
         .column-header {
             font-size: 0.95em;
             color: white;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
             white-space: nowrap;
-        }
-
-        @media (min-width: $break-md) {
-            right: auto;
+            border-bottom: 1px solid white;
+            display: block;
         }
     }
 

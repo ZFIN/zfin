@@ -17,60 +17,65 @@
         <li class="reference">
             <span class="title">Research</span>
             <div class="dropdown">
-                <ul class="list-unstyled">
-                    <li><a href="/action/marker/search">Genes/Clones</a></li>
-                    <li><a href="/action/expression/search">Expression</a></li>
-                    <li><a href="/action/fish/search">Mutants/Tg</a></li>
-                    <li><a href="/action/antibody/search">Antibodies</a></li>
-                    <li><a href="/action/blast/blast">BLAST</a></li>
-                    <li><a href="/action/gbrowse">GBrowse</a></li>
-                    <li><a href="/action/ontology/search">Anatomy/GO/Disease</a></li>
-                    <li><a href="/action/publication/search">Publications</a></li>
-                </ul>
-            </div>
-        </li>
-        <li class="reference">
-            <span class="title">Community</span>
-            <div class="dropdown">
-                <div class="column">
-                    <span class="column-header">Announcements</span>
-                    <ul class="list-unstyled">
-                        <li><a href="https://@WIKI_HOST@/display/jobs/Zebrafish-Related+Job+Announcements">Jobs</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/meetings">Meetings</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/news">News</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Newsgroup+Information">Newsgroups</a></li>
-                    </ul>
-                </div>
                 <div class="column">
                     <span class="column-header">Search</span>
                     <ul class="list-unstyled">
-                        <li><a href="/action/profile/person/search">People</a></li>
-                        <li><a href="/action/profile/lab/search">Labs</a></li>
-                        <li><a href="/action/profile/company/search">Companies</a></li>
+                        <li><a href="/action/marker/search">Genes / Clones</a></li>
+                        <li><a href="/action/expression/search">Expression</a></li>
+                        <li><a href="/action/fish/search">Mutants / Tg</a></li>
+                        <li><a href="/action/antibody/search">Antibodies</a></li>
+                        <li><a href="/action/ontology/search">Anatomy / GO / Human Disease</a></li>
+                        <li><a href="/action/publication/search">Publications</a></li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <span class="column-header">Data Mining</span>
+                    <ul class="list-unstyled">
+                        <li><a href="/downloads">Downloads</a></li>
+                        <li><a href="/schemaSpy/index.html">Data Model</a></li>
+                        <li><a href="http://www.zebrafishmine.org">ZebrafishMine</a></li>
+                        <li><a href="http://www.ensembl.org/biomart">BioMart</a></li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+
+        <li class="reference">
+            <span class="title">Resources</span>
+            <div class="dropdown">
+                <div class="column">
+                    <span class="column-header">General</span>
+                    <ul class="list-unstyled">
+                        <li><a href="/zf_info/zfbook/zfbk.html">The Zebrafish Book</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/prot">Protocol Wiki</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/AB">Antibody Wiki</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/Anatomy+Atlases+and+Resources">Anatomy Atlases</a></li>
+                        <li><a href="/zf_info/news/education.html">Resources for Students and Educators</a></li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <span class="column-header">Zebrafish Programs</span>
+                    <ul class="list-unstyled">
+                        <li><a href="http://www.zf-health.org/">ZF-Health</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs#husbandry">Husbandry Resources</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs">More...</a></li>
                     </ul>
                 </div>
                 <div class="column">
                     <span class="column-header">Resource Centers</span>
                     <ul class="list-unstyled">
-                        <li><a href="http://zebrafish.org">ZIRC</a></li>
-                        <li><a href="http://zfish.cn/">CZRC</a></li>
-                        <li><a href="http://www.ezrc.kit.edu/">EZRC</a></li>
+                        <li><a href="http://zebrafish.org">Zebrafish International Resource Center (ZIRC)</a></li>
+                        <li><a href="http://www.zfish.cn/">China Zebrafish Resource Center (CZRC)</a></li>
+                        <li><a href="https://www.ezrc.kit.edu/">European Zebrafish Resource Center (EZRC)</a></li>
                     </ul>
                 </div>
             </div>
         </li>
-        <li>
-            <span class="title">Education</span>
-        </li>
+
         <li class="reference">
             <span class="title">Genomics</span>
             <div class="dropdown">
                 <div class="column">
-                    <span class="column-header">Data Mining</span>
-                    <ul class="list-unstyled">
-                        <li><a href="http://www.zebrafishmine.org">ZebrafishMine</a></li>
-                        <li><a href="http://www.ensembl.org/biomart">BioMart</a></li>
-                    </ul>
                     <span class="column-header">BLAST</span>
                     <ul class="list-unstyled">
                         <li><a href="/action/blast/blast">ZFIN</a></li>
@@ -90,11 +95,80 @@
                         <li><a href="http://genome.igib.res.in/">FishMap</a></li>
                     </ul>
                 </div>
+                <div class="column">
+                    <span class="column-header">Resources</span>
+                    <ul class="list-unstyled">
+                        <li><a href="https://@WIKI_HOST@/display/general/Genomic+Resources+for+Zebrafish">Zebrafish Genomics</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/Other+Databases">Other Genome Databases</a></li>
+                    </ul>
+                </div>
             </div>
         </li>
-        <li>
-            <span class="title">Help</span>
+
+        <li class="reference">
+            <span class="title">Community</span>
+            <div class="dropdown">
+                <div class="column">
+                    <span class="column-header">Announcements</span>
+                    <ul class="list-unstyled">
+                        <li><a href="https://@WIKI_HOST@/display/news">News</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/meetings">Meetings</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/jobs/Zebrafish-Related+Job+Announcements">Jobs</a></li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <span class="column-header">Search</span>
+                    <ul class="list-unstyled">
+                        <li><a href="/action/profile/person/search">People</a></li>
+                        <li><a href="/action/profile/lab/search">Labs</a></li>
+                        <li><a href="/action/profile/company/search">Companies</a></li>
+                    </ul>
+                </div>
+            </div>
         </li>
+
+        <li class="reference">
+            <span class="title">Support</span>
+            <div class="dropdown">
+                <div class="column">
+                    <span class="column-header">Nomenclature</span>
+                    <ul class="list-unstyled">
+                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Zebrafish+Nomenclature+Conventions">Nomenclature Conventions</a></li>
+                        <li><a href="/action/feature/line-designations">Line Designations</a></li>
+                        <li><a href="/action/nomenclature/gene-name">Submit a Proposed Gene Name</a></li>
+                        <li><a href="/action/nomenclature/line-name">Submit a Proposed Mutant/Tg Line Name</a></li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <span class="column-header">Publications</span>
+                    <ul class="list-unstyled">
+                        <li><a href="/zf_info/author_guidelines.html">Guidelines for Authors</a></li>
+                        <li><a href="/action/zebrashare">Zebrashare</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+db+information">Citing ZFIN</a></li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <span class="column-header">Using ZFIN</span>
+                    <ul class="list-unstyled">
+                        <li><a href="/ZFIN/misc_html/tips.html">Help & Tips</a></li>
+                        <li><a href="/zf_info/glossary.html">Glossary</a></li>
+                        <li><a href="http://@WIKI_HOST@/display/general/ZFIN+Single+Box+Search+Help">Single Box Search Help</a></li>
+                        <li><a href="#">Submit Data</a></li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <span class="column-header">About Us</span>
+                    <ul class="list-unstyled">
+                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+db+information">About ZFIN</a></li>
+                        <li><a href="/action/infrastructure/annual-stats-view">Statistics</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Contact+Information">Contact Information</a></li>
+                        <li><a href="/zf_info/news/committees.html">Committees</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/jobs/ZFIN+Jobs">Jobs at ZFIN</a></li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+
         <authz:authorize access="hasRole('root')">
             <li class="reference root-only">
                 <span class="title">Curation</span>
@@ -118,6 +192,35 @@
                             </li>
                             <li><a href="/action/reno/run-list">ReNo Pipeline</a></li>
                         </ul>
+                    </div>
+
+                    <div class="column">
+                        <span class="column-header">Add</span>
+                        <ul class="list-unstyled">
+                            <li><a href="/action/marker/gene-add?type=GENE">Gene</a></li>
+                            <li><a href="/action/marker/nonTranscribedRegion-add">NTR</a></li>
+                            <li><a href="/action/marker/gene-add?type=GENEP">Pseudogene</a></li>
+                            <li><a href="/action/marker/gene-add?type=EFG">Foreign Gene</a></li>
+                            <li><a href="/action/marker/clone-add">Clone</a></li>
+                            <li><a href="/action/antibody/add">Antibody</a></li>
+                            <li><a href="/action/marker/transcript-add">Transcript</a></li>
+                            <li><a href="/action/marker/engineeredRegion-add">Engineered Region</a></li>
+                            <li><a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=MRPHLNO">Morpholino</a></li>
+                            <li><a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=TALEN">TALEN</a></li>
+                            <li><a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=CRISPR">CRISPR</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="column">
+                        <span class="column-header">Add</span>
+                        <ul class="list-unstyled">
+                            <li><a href="/action/profile/person/create">Person</a></li>
+                            <li><a href="/action/profile/lab/create">Lab</a></li>
+                            <li><a href="/action/profile/company/create">Company</a></li>
+                            <li><a href="/action/publication/new#">Pub</a></li>
+                            <li><a href="/action/publication/journal-add">Journal</a></li>
+                            <li><a href="/action/feature/alleleDesig-add-form">Line Designation</a></li>
+                        </ul>
 
                         <span class="column-header">Distribution List</span>
                         <ul class="list-unstyled">
@@ -125,38 +228,15 @@
                             <li><a href="/action/profile/distribution-list?subset=usa">USA only</a></li>
                             <li><a href="/action/profile/distribution-list?subset=pi">PI only</a></li>
                         </ul>
+                    </div>
 
+                    <div class="column">
                         <span class="column-header">Development</span>
                         <ul class="list-unstyled">
                             <li><a href="/action/devtool/home">Developer Tools</a></li>
                             <li><a href="/action/devtool/deployed-version">Deployed Version</a></li>
                             <li><a href="/jobs">Jenkins Jobs</a></li>
                             <li><a href="/solr">Solr Admin</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="column">
-                        <span class="column-header">Add</span>
-                        <ul class="list-unstyled">
-                            <li><a href="/action/marker/gene-add?type=GENE">gene</a></li>
-                            <li><a href="/action/marker/nonTranscribedRegion-add">NTR</a></li>
-                            <li><a href="/action/marker/gene-add?type=GENEP">pseudogene</a></li>
-                            <li><a href="/action/marker/gene-add?type=EFG">foreign gene</a></li>
-                            <li><a href="/action/marker/clone-add">clone</a></li>
-                            <li><a href="/action/antibody/add">antibody</a></li>
-                            <li><a href="/action/marker/transcript-add">transcript</a></li>
-                            <li><a href="/action/marker/engineeredRegion-add">engineered region</a></li>
-                            <li><a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=MRPHLNO">morpholino</a></li>
-                            <li><a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=TALEN">TALEN</a></li>
-                            <li><a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=CRISPR">CRISPR</a></li>
-                        </ul>
-                        <ul class="list-unstyled">
-                            <li><a href="/action/profile/person/create">person</a></li>
-                            <li><a href="/action/profile/lab/create">lab</a></li>
-                            <li><a href="/action/profile/company/create">company</a></li>
-                            <li><a href="/action/publication/new#">pub</a></li>
-                            <li><a href="/action/publication/journal-add">journal</a></li>
-                            <li><a href="/action/feature/alleleDesig-add-form">line designation</a></li>
                         </ul>
                     </div>
                 </div>

@@ -9,10 +9,17 @@ $(() => {
         }
         poppers.push(new Popper(menu, dropdown, {
             placement: dropdown.classList.contains('left') ? 'bottom-end' : 'bottom-start',
+            positionFixed: true,
             modifiers: {
                 offset: {
                     offset: 1,
-                }
+                },
+                preventOverflow: {
+                    padding: 0,
+                },
+                flip: {
+                    enabled: false,
+                },
             }
         }));
         menu.addEventListener('mouseover', () => dropdown.style.visibility = 'unset');
