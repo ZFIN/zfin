@@ -3,7 +3,7 @@
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
         xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
-        >
+>
 
     <g:VerticalPanel spacing="10" title="Expression Experiment Zone" width="100%">
         <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
@@ -17,7 +17,7 @@
             <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes-hover">
                 <g:row styleName="table-header">
                     <g:customCell>
-                        <g:Label text=""/>
+                        <g:CheckBox ui:field="allExperimentsCheck"/>
                     </g:customCell>
                     <g:customCell>
                         <g:Label text="Gene" styleName="bold" horizontalAlignment="left"/>
@@ -64,7 +64,8 @@
                         <zfin:StringListBox ui:field="genbankList"/>
                     </g:customCell>
                     <g:customCell>
-                        <g:Button ui:field="updateButton" text="Update" enabled="false" addStyleNames="btn btn-primary"/>
+                        <g:Button ui:field="updateButton" text="Update" enabled="false"
+                                  addStyleNames="btn btn-primary"/>
                     </g:customCell>
                 </g:row>
             </g:Grid>

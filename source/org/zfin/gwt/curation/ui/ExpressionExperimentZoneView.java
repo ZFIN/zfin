@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
@@ -46,6 +47,8 @@ public class ExpressionExperimentZoneView extends Composite {
 
     // construction zone
     @UiField
+    CheckBox allExperimentsCheck;
+    @UiField
     Button addButton;
     @UiField
     StringListBox geneList;
@@ -79,6 +82,11 @@ public class ExpressionExperimentZoneView extends Composite {
     @UiHandler("addButton")
     void onAddModel(@SuppressWarnings("unused") ClickEvent event) {
         presenter.addExpressionExperiment();
+    }
+
+    @UiHandler("allExperimentsCheck")
+    void onCheckAllExperiments(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.checkAllExperiments();
     }
 
     @UiHandler("updateButton")
