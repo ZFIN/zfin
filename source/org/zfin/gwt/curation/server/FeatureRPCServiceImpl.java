@@ -504,6 +504,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         return DTOConversionService.convertToFeaturePrefixDTO(featureRepository.getLabPrefixes(labName));
     }
 
+    public String getNextZFLineNum(){
+        String nextLineNum=featureRepository.getNextZFLineNum();
+        return nextLineNum;
+    }
+
     public FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException {
 
         DTOConversionService.escapeFeatureDTO(featureDTO);
