@@ -13,6 +13,8 @@ public interface FeatureRPCServiceAsync {
 
     void getPrefix(String name, AsyncCallback<List<FeaturePrefixDTO>> async);
 
+    void getNextZFLineNum(AsyncCallback<String> async);
+
     void createFeature(FeatureDTO featureDTO, AsyncCallback<FeatureDTO> async);
 
     void editFeatureDTO(FeatureDTO featureDTO, AsyncCallback<FeatureDTO> async);
