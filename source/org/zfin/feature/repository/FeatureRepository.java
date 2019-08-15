@@ -60,6 +60,7 @@ public interface FeatureRepository {
     String getPrefixById(int labPrefixID);
 
     List<FeaturePrefix> getLabPrefixes(String labName);
+    String getNextZFLineNum();
 
     List<FeaturePrefix> getLabPrefixes(String labName, boolean assignIfEmpty);
 
