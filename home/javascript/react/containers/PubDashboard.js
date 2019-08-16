@@ -60,14 +60,14 @@ class PubDashboard extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { owner, status, sort, page } = this.state;
+        const {owner, status, sort, page} = this.state;
         if (owner !== prevState.owner || status !== prevState.status || sort !== prevState.sort || page !== prevState.page) {
             this.fetchPubs();
         }
     }
 
     fetchPubs() {
-        const { owner, sort, status, page } = this.state;
+        const {owner, sort, status, page} = this.state;
         const params = {
             owner,
             status,
@@ -87,13 +87,11 @@ class PubDashboard extends React.Component {
     }
 
     handleOwnerChange(owner) {
-        this.setState({owner});
-        this.state.page = 1;
+        this.setState({owner, page: 1});
     }
 
     handleStatusChange(status) {
-        this.setState({status});
-        this.state.page = 1;
+        this.setState({status, page: 1});
     }
 
     handleSortChange(sort) {
@@ -105,29 +103,30 @@ class PubDashboard extends React.Component {
     }
 
     render() {
-        const { curators, statuses, loading, page, owner, sort, status, results } = this.state;
+        const {curators, statuses, loading, page, owner, sort, status, results} = this.state;
         return (
             <div className="pub-dashboard">
                 <FilterBar>
                     Pubs assigned to
-                    <CuratorSelectBox curators={curators} selectedId={owner} userId={this.props.userId} onSelect={this.handleOwnerChange} />
+                    <CuratorSelectBox curators={curators} selectedId={owner} userId={this.props.userId}
+                                      onSelect={this.handleOwnerChange}/>
                     with status
-                    <StatusSelectBox statuses={statuses} selectedId={status} onSelect={this.handleStatusChange} />
+                    <StatusSelectBox statuses={statuses} selectedId={status} onSelect={this.handleStatusChange}/>
                     by
-                    <SelectBox options={SORT_OPTIONS} value={sort} onSelect={this.handleSortChange} />
-                    <RefreshButton loading={loading} onClick={this.fetchPubs} />
+                    <SelectBox options={SORT_OPTIONS} value={sort} onSelect={this.handleSortChange}/>
+                    <RefreshButton loading={loading} onClick={this.fetchPubs}/>
                 </FilterBar>
 
                 {loading && <div className="text-center text-muted">
-                    <LoadingSpinner /> Loading...
+                    <LoadingSpinner/> Loading...
                 </div>}
 
                 {!loading && results.totalCount === 0 && <div className="text-center text-muted">
                     No pubs match query
                 </div>}
 
-                <DashboardPubList pubs={results.publications} statusCounts={results.statusCounts} />
-                
+                <DashboardPubList pubs={results.publications} statusCounts={results.statusCounts}/>
+
                 <div className="center">
                     <Pagination
                         onChange={this.handlePageChange}

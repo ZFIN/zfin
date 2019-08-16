@@ -15,7 +15,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/BLAST
 
-GENERICS =  getEnsemblTscripts.sql  getZfinGbAcc.pl runZfinEnsemblTscripts.sh
+GENERICS =  getEnsemblTscripts.sql runZfinEnsemblTscripts.sh
 STATICS = 
 
 # ---------------  Production Rules  ------------------------------------
