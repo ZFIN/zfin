@@ -150,7 +150,7 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Using ZFIN</span>
                     <ul>
-                        <li><a href="/ZFIN/misc_html/tips.html">Help & Tips</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Tips">Help & Tips</a></li>
                         <li><a href="/zf_info/glossary.html">Glossary</a></li>
                         <li><a href="http://@WIKI_HOST@/display/general/ZFIN+Single+Box+Search+Help">Single Box Search Help</a></li>
                         <li><a href="#">Submit Data</a></li>
