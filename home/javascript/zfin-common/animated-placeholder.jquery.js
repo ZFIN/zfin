@@ -9,7 +9,7 @@
                 position: 'absolute',
                 left: 0,
                 top: 0,
-                zIndex: $input.css('z-index') + 1,
+                zIndex: (parseInt($input.css('z-index'), 10) || 1) + 1,
                 height: $input.height(),
                 padding: $input.css('padding'),
                 fontSize: $input.css('font-size'),
