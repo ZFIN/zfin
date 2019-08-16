@@ -17,9 +17,9 @@
         <li class="reference">
             <span class="title">Research</span>
             <div class="dropdown">
-                <div class="column">
-                    <span class="column-header">Search</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">Search</span>
+                    <ul>
                         <li><a href="/action/marker/search">Genes / Clones</a></li>
                         <li><a href="/action/expression/search">Expression</a></li>
                         <li><a href="/action/fish/search">Mutants / Tg</a></li>
@@ -28,9 +28,9 @@
                         <li><a href="/action/publication/search">Publications</a></li>
                     </ul>
                 </div>
-                <div class="column">
-                    <span class="column-header">Data Mining</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">Data Mining</span>
+                    <ul>
                         <li><a href="/downloads">Downloads</a></li>
                         <li><a href="/schemaSpy/index.html">Data Model</a></li>
                         <li><a href="http://www.zebrafishmine.org">ZebrafishMine</a></li>
@@ -43,9 +43,9 @@
         <li class="reference">
             <span class="title">Resources</span>
             <div class="dropdown">
-                <div class="column">
-                    <span class="column-header">General</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">General</span>
+                    <ul>
                         <li><a href="/zf_info/zfbook/zfbk.html">The Zebrafish Book</a></li>
                         <li><a href="https://@WIKI_HOST@/display/prot">Protocol Wiki</a></li>
                         <li><a href="https://@WIKI_HOST@/display/AB">Antibody Wiki</a></li>
@@ -53,17 +53,17 @@
                         <li><a href="/zf_info/news/education.html">Resources for Students and Educators</a></li>
                     </ul>
                 </div>
-                <div class="column">
-                    <span class="column-header">Zebrafish Programs</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">Zebrafish Programs</span>
+                    <ul>
                         <li><a href="http://www.zf-health.org/">ZF-Health</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs#husbandry">Husbandry Resources</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs">More...</a></li>
                     </ul>
                 </div>
-                <div class="column">
-                    <span class="column-header">Resource Centers</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">Resource Centers</span>
+                    <ul>
                         <li><a href="http://zebrafish.org">Zebrafish International Resource Center (ZIRC)</a></li>
                         <li><a href="http://www.zfish.cn/">China Zebrafish Resource Center (CZRC)</a></li>
                         <li><a href="https://www.ezrc.kit.edu/">European Zebrafish Resource Center (EZRC)</a></li>
@@ -75,17 +75,17 @@
         <li class="reference">
             <span class="title">Genomics</span>
             <div class="dropdown">
-                <div class="column">
-                    <span class="column-header">BLAST</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">BLAST</span>
+                    <ul>
                         <li><a href="/action/blast/blast">ZFIN</a></li>
                         <li><a href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</a></li>
                         <li><a href="http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&BLAST_SPEC=OGP__7955__9557">NCBI</a></li>
                     </ul>
                 </div>
-                <div class="column">
-                    <span class="column-header">Genome Browsers</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">Genome Browsers</span>
+                    <ul>
                         <li><a href="@GBROWSE_PATH_FROM_ROOT@">ZFIN</a></li>
                         <li><a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a></li>
                         <li><a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a></li>
@@ -95,9 +95,9 @@
                         <li><a href="http://genome.igib.res.in/">FishMap</a></li>
                     </ul>
                 </div>
-                <div class="column">
-                    <span class="column-header">Resources</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">Resources</span>
+                    <ul>
                         <li><a href="https://@WIKI_HOST@/display/general/Genomic+Resources+for+Zebrafish">Zebrafish Genomics</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/Other+Databases">Other Genome Databases</a></li>
                     </ul>
@@ -108,17 +108,17 @@
         <li class="reference">
             <span class="title">Community</span>
             <div class="dropdown">
-                <div class="column">
-                    <span class="column-header">Announcements</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">Announcements</span>
+                    <ul>
                         <li><a href="https://@WIKI_HOST@/display/news">News</a></li>
                         <li><a href="https://@WIKI_HOST@/display/meetings">Meetings</a></li>
                         <li><a href="https://@WIKI_HOST@/display/jobs/Zebrafish-Related+Job+Announcements">Jobs</a></li>
                     </ul>
                 </div>
-                <div class="column">
-                    <span class="column-header">Search</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">Search</span>
+                    <ul>
                         <li><a href="/action/profile/person/search">People</a></li>
                         <li><a href="/action/profile/lab/search">Labs</a></li>
                         <li><a href="/action/profile/company/search">Companies</a></li>
@@ -130,8 +130,8 @@
         <li class="reference">
             <span class="title">Support</span>
             <div class="dropdown">
-                <div class="column">
-                    <span class="column-header">Nomenclature</span>
+                <div class="nav-column">
+                    <span class="nav-column-header">Nomenclature</span>
                     <ul class="list-unstyled">
                         <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Zebrafish+Nomenclature+Conventions">Nomenclature Conventions</a></li>
                         <li><a href="/action/feature/line-designations">Line Designations</a></li>
@@ -139,26 +139,26 @@
                         <li><a href="/action/nomenclature/line-name">Submit a Proposed Mutant/Tg Line Name</a></li>
                     </ul>
                 </div>
-                <div class="column">
-                    <span class="column-header">Publications</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">Publications</span>
+                    <ul>
                         <li><a href="/zf_info/author_guidelines.html">Guidelines for Authors</a></li>
                         <li><a href="/action/zebrashare">Zebrashare</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/ZFIN+db+information">Citing ZFIN</a></li>
                     </ul>
                 </div>
-                <div class="column">
-                    <span class="column-header">Using ZFIN</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">Using ZFIN</span>
+                    <ul>
                         <li><a href="/ZFIN/misc_html/tips.html">Help & Tips</a></li>
                         <li><a href="/zf_info/glossary.html">Glossary</a></li>
                         <li><a href="http://@WIKI_HOST@/display/general/ZFIN+Single+Box+Search+Help">Single Box Search Help</a></li>
                         <li><a href="#">Submit Data</a></li>
                     </ul>
                 </div>
-                <div class="column">
-                    <span class="column-header">About Us</span>
-                    <ul class="list-unstyled">
+                <div class="nav-column">
+                    <span class="nav-column-header">About Us</span>
+                    <ul>
                         <li><a href="https://@WIKI_HOST@/display/general/ZFIN+db+information">About ZFIN</a></li>
                         <li><a href="/action/infrastructure/annual-stats-view">Statistics</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Contact+Information">Contact Information</a></li>
@@ -173,16 +173,16 @@
             <li class="reference root-only">
                 <span class="title">Curation</span>
                 <div class="dropdown">
-                    <div class="column">
-                        <span class="column-header">Publications</span>
-                        <ul class="list-unstyled">
+                    <div class="nav-column">
+                        <span class="nav-column-header">Publications</span>
+                        <ul>
                             <li><a href="/action/publication/dashboard">My Dashboard</a></li>
                             <li><a href="/action/publication/curating-bin">Curation Bins</a></li>
                             <li><a href="/action/publication/indexing-bin">Indexing Bin</a></li>
                             <li><a href="/action/publication/processing-bin">Processing Bin</a></li>
                         </ul>
 
-                        <span class="column-header">Curate</span>
+                        <span class="nav-column-header">Curate</span>
                         <ul class="list-unstyled">
                             <li>
                                 <form class="jump-to-pub">
@@ -194,9 +194,9 @@
                         </ul>
                     </div>
 
-                    <div class="column">
-                        <span class="column-header">Add</span>
-                        <ul class="list-unstyled">
+                    <div class="nav-column">
+                        <span class="nav-column-header">Add</span>
+                        <ul>
                             <li><a href="/action/marker/gene-add?type=GENE">Gene</a></li>
                             <li><a href="/action/marker/nonTranscribedRegion-add">NTR</a></li>
                             <li><a href="/action/marker/gene-add?type=GENEP">Pseudogene</a></li>
@@ -211,9 +211,9 @@
                         </ul>
                     </div>
 
-                    <div class="column">
-                        <span class="column-header">Add</span>
-                        <ul class="list-unstyled">
+                    <div class="nav-column">
+                        <span class="nav-column-header">Add</span>
+                        <ul>
                             <li><a href="/action/profile/person/create">Person</a></li>
                             <li><a href="/action/profile/lab/create">Lab</a></li>
                             <li><a href="/action/profile/company/create">Company</a></li>
@@ -222,17 +222,17 @@
                             <li><a href="/action/feature/alleleDesig-add-form">Line Designation</a></li>
                         </ul>
 
-                        <span class="column-header">Distribution List</span>
-                        <ul class="list-unstyled">
+                        <span class="nav-column-header">Distribution List</span>
+                        <ul>
                             <li><a href="/action/profile/distribution-list">Full</a></li>
                             <li><a href="/action/profile/distribution-list?subset=usa">USA only</a></li>
                             <li><a href="/action/profile/distribution-list?subset=pi">PI only</a></li>
                         </ul>
                     </div>
 
-                    <div class="column">
-                        <span class="column-header">Development</span>
-                        <ul class="list-unstyled">
+                    <div class="nav-column">
+                        <span class="nav-column-header">Development</span>
+                        <ul>
                             <li><a href="/action/devtool/home">Developer Tools</a></li>
                             <li><a href="/action/devtool/deployed-version">Deployed Version</a></li>
                             <li><a href="/jobs">Jenkins Jobs</a></li>
@@ -259,8 +259,8 @@
                     <li class="reference no-border">
                         <span class="title"><i class="fas fa-fw fa-user"></i></span>
                         <div class="dropdown left">
-                            <div class="column">
-                                <span class="column-header">${currentUser.display}</span>
+                            <div class="nav-column">
+                                <span class="nav-column-header">${currentUser.display}</span>
                                 <ul class="list-unstyled">
                                     <li><a href="/${currentUser.zdbID}">View Profile</a></li>
                                     <li><a href="/action/logout">Logout</a></li>
