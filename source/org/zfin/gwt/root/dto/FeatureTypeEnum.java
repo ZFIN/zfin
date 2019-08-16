@@ -15,7 +15,8 @@ public enum FeatureTypeEnum implements IsSerializable{
     DEFICIENCY("Deficiency"),
     COMPLEX_SUBSTITUTION("Complex"),
     SEQUENCE_VARIANT("Unknown"),
-    UNSPECIFIED("Unspecified")
+    UNSPECIFIED("Unspecified"),
+    MNV("MNV")
     ;
 
 

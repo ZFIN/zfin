@@ -660,6 +660,9 @@ public class DTOConversionService {
             FeatureGenomicMutationDetail detail = convertToFeatureGenomicMutationDetail(null, fgmdChangeDTO);
             detail.setFeature(feature);
             feature.setFeatureGenomicMutationDetail(detail);
+            if (feature.getFeatureGenomicMutationDetail().getFgmdSeqVar().length()==feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length()){
+                feature.setType(FeatureTypeEnum.MNV);
+            };
         }
         if (CollectionUtils.isNotEmpty(featureDTO.getTranscriptChangeDTOSet())) {
             for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
