@@ -88,10 +88,12 @@ class PubDashboard extends React.Component {
 
     handleOwnerChange(owner) {
         this.setState({owner});
+        this.state.page = 1;
     }
 
     handleStatusChange(status) {
         this.setState({status});
+        this.state.page = 1;
     }
 
     handleSortChange(sort) {
