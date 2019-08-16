@@ -1,3 +1,4 @@
+require('./animated-placeholder.jquery');
 require('./autocompletify');
 require('./blast');
 require('./header-menu');

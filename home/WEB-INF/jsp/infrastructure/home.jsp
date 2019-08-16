@@ -22,7 +22,7 @@
                     </ul>
                 </div>
                 <input type="hidden" name="category">
-                <input type="text" class="form-control" name="q" autocomplete="off">
+                <input type="text" class="form-control" name="q" autocomplete="off" data-placeholders="bmp2a|hindbrain development disrupted|pax morpholino">
                 <span class="input-group-btn">
                     <button class="btn btn-zfin" type="submit">Search</button>
                 </span>

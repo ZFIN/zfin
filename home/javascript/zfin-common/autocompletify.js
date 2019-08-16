@@ -91,6 +91,11 @@
       limit: options.limit,
     });
 
+    const placeholders = this.data('placeholders');
+    if (placeholders) {
+      this.animatedPlaceholder(placeholders.split('|'));
+    }
+
     return this;
   };
 })(jQuery);
