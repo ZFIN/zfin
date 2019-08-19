@@ -81,6 +81,7 @@
                         <li><a href="/action/blast/blast">ZFIN</a></li>
                         <li><a href="http://www.ensembl.org/Danio_rerio/blastview" class="external">Ensembl</a></li>
                         <li><a href="http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&BLAST_SPEC=OGP__7955__9557" class="external">NCBI</a></li>
+                        <li><a href="https://genome.ucsc.edu/cgi-bin/hgBlat?command=start" class="external">UCSC</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">
