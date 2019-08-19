@@ -1,3 +1,6 @@
 $primary: rgb(0, 128, 128);
 $primary-bg: mix(white, $primary, 85%);
 $primary-border: darken($primary, 5%);
+
+$break-lg: 1200px;
+$break-md: 992px;

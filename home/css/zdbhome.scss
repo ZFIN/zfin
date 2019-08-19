@@ -1,3 +1,5 @@
+@import "theme";
+
 .search-container {
     margin-top: -10px;
     margin-bottom: 60px;
@@ -21,7 +23,6 @@
 }
 
 .home-card {
-    height: 120px;
     margin-bottom: 30px;
     display: flex;
     border-radius: 3px;
@@ -33,7 +34,7 @@
     color: black;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transition: all 200ms;
+    transition: transform 200ms, box-shadow 200ms;
 
     &::after {
         content: '\f054';
@@ -64,6 +65,14 @@
     .description {
         font-style: italic;
         color: rgba(0,0,0,0.7);
+    }
+
+    @media (min-width: $break-md) {
+        height: 90px;
+    }
+
+    @media (min-width: $break-lg) {
+        height: 120px;
     }
 }
 
