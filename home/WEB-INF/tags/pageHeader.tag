@@ -33,8 +33,8 @@
                     <ul>
                         <li><a href="/downloads">Downloads</a></li>
                         <li><a href="/schemaSpy/index.html">Data Model</a></li>
-                        <li><a href="http://www.zebrafishmine.org">ZebrafishMine</a></li>
-                        <li><a href="http://www.ensembl.org/biomart">BioMart</a></li>
+                        <li><a href="http://www.zebrafishmine.org" class="external">ZebrafishMine</a></li>
+                        <li><a href="http://www.ensembl.org/biomart" class="external">BioMart</a></li>
                     </ul>
                 </div>
             </div>
@@ -56,7 +56,7 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Zebrafish Programs</span>
                     <ul>
-                        <li><a href="http://www.zf-health.org/">ZF-Health</a></li>
+                        <li><a href="http://www.zf-health.org/" class="external">ZF-Health</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs#husbandry">Husbandry Resources</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs">More...</a></li>
                     </ul>
@@ -64,9 +64,9 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Resource Centers</span>
                     <ul>
-                        <li><a href="http://zebrafish.org">Zebrafish International Resource Center (ZIRC)</a></li>
-                        <li><a href="http://www.zfish.cn/">China Zebrafish Resource Center (CZRC)</a></li>
-                        <li><a href="https://www.ezrc.kit.edu/">European Zebrafish Resource Center (EZRC)</a></li>
+                        <li><a href="http://zebrafish.org" class="external">Zebrafish International Resource Center (ZIRC)</a></li>
+                        <li><a href="http://www.zfish.cn/" class="external">China Zebrafish Resource Center (CZRC)</a></li>
+                        <li><a href="https://www.ezrc.kit.edu/" class="external">European Zebrafish Resource Center (EZRC)</a></li>
                     </ul>
                 </div>
             </div>
@@ -79,20 +79,20 @@
                     <span class="nav-column-header">BLAST</span>
                     <ul>
                         <li><a href="/action/blast/blast">ZFIN</a></li>
-                        <li><a href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</a></li>
-                        <li><a href="http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&BLAST_SPEC=OGP__7955__9557">NCBI</a></li>
+                        <li><a href="http://www.ensembl.org/Danio_rerio/blastview" class="external">Ensembl</a></li>
+                        <li><a href="http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&BLAST_SPEC=OGP__7955__9557" class="external">NCBI</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">
                     <span class="nav-column-header">Genome Browsers</span>
                     <ul>
                         <li><a href="@GBROWSE_PATH_FROM_ROOT@">ZFIN</a></li>
-                        <li><a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a></li>
-                        <li><a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a></li>
-                        <li><a href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/">GRC</a></li>
-                        <li><a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a></li>
-                        <li><a href="https://www.ncbi.nlm.nih.gov/genome/gdv/?org=danio-rerio">NCBI</a></li>
-                        <li><a href="http://genome.igib.res.in/">FishMap</a></li>
+                        <li><a href="http://www.ensembl.org/Danio_rerio/" class="external">Ensembl</a></li>
+                        <li><a href="http://vega.sanger.ac.uk/Danio_rerio/" class="external">Vega</a></li>
+                        <li><a href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/" class="external">GRC</a></li>
+                        <li><a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0" class="external">UCSC</a></li>
+                        <li><a href="https://www.ncbi.nlm.nih.gov/genome/gdv/?org=danio-rerio" class="external">NCBI</a></li>
+                        <li><a href="http://genome.igib.res.in/" class="external">FishMap</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">

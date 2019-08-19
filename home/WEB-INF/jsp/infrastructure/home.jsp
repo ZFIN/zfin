@@ -84,8 +84,8 @@
                     </a>
                 </div>
                 <div class="col-md-6">
-                    <a href="https://zebrafish.org" class="home-card">
-                        <div class="title">ZIRC</div>
+                    <a href="https://zebrafish.org" class="home-card" target="_blank" rel="noopener noreferrer">
+                        <div class="title external">ZIRC</div>
                         <div class="description">Browse or request products and research services (Fish lines, ESTs…)</div>
                     </a>
                 </div>

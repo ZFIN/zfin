@@ -266,9 +266,19 @@ a.small-new-link:hover {
     font-size: 75%;
 }
 
-a.external {
-    background: transparent url(/images/external.png) no-repeat scroll right center;
-    padding-right: 13px;
+.external::after {
+    content: '\f35d';
+    display: inline-block;
+    font-family: "Font Awesome 5 Free";
+    font-size: 0.75em;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 900;
+    margin-left: 0.3em;
+    text-rendering: auto;
+    vertical-align: baseline;
+    position: relative;
+    bottom: 0.15em;
 }
 
 img.blast-key {
