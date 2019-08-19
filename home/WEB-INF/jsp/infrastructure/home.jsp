@@ -36,93 +36,63 @@
         <div class="col-lg-6 col-lg-push-6">
             <div class="row">
                 <div class="col-md-6">
-                    <a href="#" class="home-card">
-                        <div class="icon">G</div>
-                        <div class="main">
-                            <div class="title">Genes/Markers</div>
-                            <div class="description">Lorem ipsum dolor sit</div>
-                        </div>
+                    <a href="/action/marker/search" class="home-card">
+                        <div class="title">Genes</div>
+                        <div class="description">Search for genes, transcripts, clones, and other markers</div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="/action/expression/search" class="home-card">
+                        <div class="title">Expression</div>
+                        <div class="description">Search for gene expression data, and annotated images</div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="/action/fish/search" class="home-card">
+                        <div class="title">Mutants/Tg</div>
+                        <div class="description">Search for mutants, knockdowns, transgenics, and affected phenotypes</div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="/action/antibody/search" class="home-card">
+                        <div class="title">Antibodies</div>
+                        <div class="description">Search for antibodies by gene, labeled anatomy, and other attributes</div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="/action/ontology/search" class="home-card">
+                        <div class="title">Ontologies</div>
+                        <div class="description">Search Zebrafish Anatomy, Gene, and Human Disease Ontologies</div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="/action/blast/blast" class="home-card">
+                        <div class="title">BLAST</div>
+                        <div class="description">Align nucleotide and protein sequences with zebrafish datasets</div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="/action/publication/search" class="home-card">
+                        <div class="title">Publications</div>
+                        <div class="description">Search for zebrafish research publications and scientific literature</div>
                     </a>
                 </div>
                 <div class="col-md-6">
                     <a href="#" class="home-card">
-                        <div class="icon">E</div>
-                        <div class="main">
-                            <div class="title">Expression</div>
-                            <div class="description">Nam ac odio</div>
-                        </div>
+                        <div class="title">Submit Data</div>
+                        <div class="description">Guidelines and forms to submit data to ZFIN</div>
                     </a>
                 </div>
                 <div class="col-md-6">
-                    <a href="#" class="home-card">
-                        <div class="icon">M</div>
-                        <div class="main">
-                            <div class="title">Mutants/Tg</div>
-                            <div class="description">Pellentesque at felis non</div>
-                        </div>
+                    <a href="https://zebrafish.org" class="home-card">
+                        <div class="title">ZIRC</div>
+                        <div class="description">Browse or request products and research services (Fish lines, ESTs…)</div>
                     </a>
                 </div>
                 <div class="col-md-6">
-                    <a href="#" class="home-card">
-                        <div class="icon">A</div>
-                        <div class="main">
-                            <div class="title">Antibodies</div>
-                            <div class="description">Curabitur ullamcorper</div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="#" class="home-card">
-                        <div class="icon">O</div>
-                        <div class="main">
-                            <div class="title">Anatomy/GO/Disease</div>
-                            <div class="description">Pellentesque at risus id</div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="#" class="home-card">
-                        <div class="icon">B</div>
-                        <div class="main">
-                            <div class="title">BLAST</div>
-                            <div class="description">Praesent facilisis nibh interdum</div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="#" class="home-card">
-                        <div class="icon">P</div>
-                        <div class="main">
-                            <div class="title">Publications</div>
-                            <div class="description">Cras vitae lorem ut eros</div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="#" class="home-card">
-                        <div class="icon">S</div>
-                        <div class="main">
-                            <div class="title">Submit Data</div>
-                            <div class="description">Sed tempus diam</div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="#" class="home-card">
-                        <div class="icon">Z</div>
-                        <div class="main">
-                            <div class="title">ZIRC</div>
-                            <div class="description">Praesent cursus dui vitae mi vestibulum</div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="#" class="home-card">
-                        <div class="icon">T</div>
-                        <div class="main">
-                            <div class="title">The Zebrafish Book</div>
-                            <div class="description">Dui vitae mi diam</div>
-                        </div>
+                    <a href="/zf_info/zfbook/zfbk.html" class="home-card">
+                        <div class="title">The Zebrafish Book</div>
+                        <div class="description">A guide for the laboratory use of zebrafish</div>
                     </a>
                 </div>
             </div>

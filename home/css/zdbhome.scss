@@ -21,42 +21,49 @@
 }
 
 .home-card {
-    height: 70px;
+    height: 120px;
     margin-bottom: 30px;
     display: flex;
-    border-radius: 5px;
-    color: #333333;
-    background: #eeeeee;
-    align-items: center;
+    border-radius: 3px;
+    background: #f4f0ec;
+    flex-direction: column;
+    padding: 10px 30px 10px 10px;
+    position: relative;
+    justify-content: center;
+    color: black;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: all 200ms;
 
-    &:hover {
+    &::after {
+        content: '\f054';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 30px;
+        color: rgba(0,0,0,0.7);
+    }
+
+    &:hover, &:active {
         color: inherit;
         text-decoration: none;
     }
 
-    .icon {
-        background: teal;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px 0 0 5px;
-        flex-shrink: 0;
-        width: 70px;
-        height: 100%;
-        font-size: 35px;
+    &:hover {
+        transform: translateY(-3px) scale(1.03);
+        box-shadow: 0 6px 10px rgba(0,0,0,0.2);
     }
-
-    .main {
-        margin: 5px 10px;
-    }
-
+    
     .title {
-        font-size: 16px;
+        font-size: 20px;
     }
 
     .description {
-        color: #666666;
+        font-style: italic;
+        color: rgba(0,0,0,0.7);
     }
 }
 
