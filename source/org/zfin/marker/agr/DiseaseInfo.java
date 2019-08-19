@@ -47,7 +47,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(allDiseaseDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.8_disease.daf.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.9_disease.daf.json"))) {
             out.print(jsonInString);
         }
     }
@@ -98,12 +98,11 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             DiseaseDTO strDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
                             RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
                             strDiseaseDto.setObjectRelation(relationship);
-                            //strDiseaseDto.setPrimaryGeneticEntityIDs();
-                            // evidence
-                            strDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
-                            //populateExperimentConditions(fishExperiment, strDiseaseDto);
                             List<String> geneticEntityIds = new ArrayList<>();
                             geneticEntityIds.add(fish.getZdbID());
+                            strDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
+                            // evidence
+                            strDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
                             strDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
                             diseaseDTOList.add(strDiseaseDto);
 
@@ -125,7 +124,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                 }
                             });
                             DiseaseDTO fishDiseaseDto = getBaseDiseaseDTO(fish.getZdbID(), fish.getName(), disease);
-                            RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.AFFECTED_GENOMIC_MODEL);
+                            RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
                             fishDiseaseDto.setObjectRelation(fishRelationship);
                             fishDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
                             diseaseDTOList.add(fishDiseaseDto);

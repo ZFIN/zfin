@@ -8,28 +8,27 @@ import java.util.List;
 
 public class FishDTO extends ZfinDTO {
 
-    private String genotypeID;
+    private String primaryID;
     private String name;
-    private String nameText;
-    private List<GenotypeComponentDTO> genotypeComponents;
+    private List<AffectedGenomicModelComponentDTO> affectedGenomicModelComponents;
     private List<String> sequenceTargetingReagentIDs;
-    private List<String> backgroundIDs;
+    private List<String> parentalPopulationIDs;
     private CrossReferenceDTO crossReference;
 
-    public String getGenotypeID() {
-        return genotypeID;
+    public String getPrimaryID() {
+        return primaryID;
     }
 
-    public void setGenotypeID(String genotypeID) {
-        this.genotypeID = genotypeID;
+    public void setPrimaryID(String genotypeID) {
+        this.primaryID = genotypeID;
     }
 
-    public List<String> getBackgroundIDs() {
-        return backgroundIDs;
+    public List<String> getParentalPopulationIDs() {
+        return parentalPopulationIDs;
     }
 
-    public void setBackgroundIDs(List<String> backgroundIDs) {
-        this.backgroundIDs = backgroundIDs;
+    public void setParentalPopulationIDs(List<String> backgroundIDs) {
+        this.parentalPopulationIDs = backgroundIDs;
     }
 
     public String getName() {
@@ -40,20 +39,13 @@ public class FishDTO extends ZfinDTO {
         this.name = name;
     }
 
-    public String getNameText() {
-        return nameText;
+
+    public List<AffectedGenomicModelComponentDTO> getAffectedGenomicModelComponents() {
+        return affectedGenomicModelComponents;
     }
 
-    public void setNameText(String nameText) {
-        this.nameText = nameText;
-    }
-
-    public List<GenotypeComponentDTO> getGenotypeComponents() {
-        return genotypeComponents;
-    }
-
-    public void setGenotypeComponents(List<GenotypeComponentDTO> genotypeComponents) {
-        this.genotypeComponents = genotypeComponents;
+    public void setAffectedGenomicModelComponents(List<AffectedGenomicModelComponentDTO> genotypeComponents) {
+        this.affectedGenomicModelComponents = genotypeComponents;
     }
 
     public List<String> getSequenceTargetingReagentIDs() {

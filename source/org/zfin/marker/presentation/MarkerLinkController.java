@@ -1,10 +1,13 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
@@ -27,7 +30,10 @@ import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
@@ -131,9 +137,16 @@ public class MarkerLinkController {
             throw new InvalidWebRequestException("Invalid marker DBLink", errors);
         }
 
-        if(link == null) {
-            if (newLink.getLength() != null) {
-                int len = Integer.parseInt(newLink.getLength());
+        if (link == null) {
+            final String length = newLink.getLength();
+            if (StringUtils.isNotEmpty(length)) {
+                int len = 0;
+                try {
+                    len = Integer.parseInt(length);
+                } catch (NumberFormatException e) {
+                    errors.addError(new FieldError("length", length, "Invalid Length number"));
+                    throw new InvalidWebRequestException("Invalid length number", errors);
+                }
                 link = markerRepository.addDBLinkWithLenth(marker, accessionNo, refDB, pubId, len);
             } else {
                 link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);

@@ -2,7 +2,8 @@ package org.zfin.profile.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -678,20 +679,16 @@ public class ProfileService {
     }
 
     public String processUrl(String url) {
+        if (StringUtils.isNotEmpty(url)) {
+            // if no URI scheme is present default to http
+            if (!url.matches("\\w+:.*")) {
+                url = "http://" + url;
+            }
 
-        logger.debug("processing url, before: " + url);
-        String newUrl;
-
-        //if the url is set and doesn't start with http://, magically make it happen, just like browsers do
-        if (!StringUtils.isEmpty(url) && !url.startsWith("http://")) {
-            newUrl = "http://" + url;
-        } else {
-            newUrl = url;
+            // sanitization to prevent basic XSS
+            url = url.replaceAll("[^-A-Za-z0-9+&@#/%?=~_|!:,.;()]", "");
         }
-
-        logger.debug("processing url, after: " + newUrl);
-
-        return newUrl;
+        return url;
     }
 
     public static boolean isRootUser() {

@@ -53,7 +53,7 @@ const DashboardPubList = ({ pubs, statusCounts }) => {
                                     {hasCorrespondenceColumn && <td><RelativeDate date={pub.lastCorrespondenceDate} /></td>}
                                     {hasCorrespondenceColumn && <td>{pub.numberOfCorrespondences}</td>}
                                     <td>{pub.status.status.name}</td>
-                                    {hasPriorityColumn && <td>{pub.status.location.name}</td>}
+                                    {hasPriorityColumn && <td>{pub.status.location ? pub.status.location.name : 'Not Set'}</td>}
                                     <td>{pub.status.owner.name}</td>
                                     <td>
                                         <div className="dropdown">

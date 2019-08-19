@@ -1879,6 +1879,36 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
 
         <Download orderIndex="1">
             <Name>
+                Genomic Feature Data for CZRC
+            </Name>
+            <Category>
+                Genomic Feature Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>CZRCfeature</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Genomic Feature ID</Column>
+            <Column id="2">Genomic Feature Name</Column>
+            <Column id="3">Affected Gene</Column>
+            <Column id="4">Affected Gene ID</Column>
+            <Column id="5">Synonyms</Column>
+            <Column id="6">Genomic Feature Type</Column>
+            <Column id="7">Protocol</Column>
+            <Column id="8">Notes</Column>
+            <Column id="9">Lab of Origin</Column>
+            <Column id="10">Lab ID</Column>
+            <Column id="11">Location</Column>
+            <Column id="12">Construct Name</Column>
+            <Column id="13">Construct ID</Column>
+            <Column id="14">Downloaded Time</Column>
+        </Download>
+
+        <Download orderIndex="1">
+            <Name>
                 Transgenic Insertions
             </Name>
             <Category>
@@ -2748,3 +2778,4 @@ order by 2, 4, 5, 7;
         </Category>
     </DownloadCategories>
 </ns2:downloadFileRegistry>
+

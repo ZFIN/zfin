@@ -36,7 +36,8 @@ PubmedUtils.psql DBNAME, """
      AND NOT EXISTS (SELECT 'x' 
                     FROM publication_file 
                     WHERE pf_pub_zdb_id = zdb_id 
-                    AND pf_file_type_id =1) 
+                    AND pf_file_type_id =1)
+     AND NOT EXISTS (select 'x' from figure where fig_source_zdb_id = zdb_id) 
      ) to '$PUB_IDS_TO_CHECK' delimiter ',';
 """
 
@@ -156,9 +157,9 @@ def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, Strin
 def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYear, tag) {
 
     def entireFigString = groupMatchString
-    def label
-    def caption
-    def image
+    def label = ''
+    def caption = ''
+    def image = ''
     def labelPattern = "<${tag}:label>(.*?)</${tag}:label>"
     def labelMatch = entireFigString =~ /${labelPattern}/
     if (labelMatch.size() > 0) {
@@ -182,7 +183,6 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
     if (imageNameMatch.size() > 0) {
         imageNameMatch.each {
             image = it[2] + ".jpg"
-
             println (image)
             makeThumbnailAndMediumImage(image, image.replace(".jpg", ""), zdbId, pubYear)
             String extension = FilenameUtils.getExtension(image)
@@ -208,27 +208,8 @@ def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear
     File fullFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()+"/"+pubYear+"/"+pubZdbId+"/", fileName)
 
     // make thumbnail and medium images in the same directory as their parent images.
-
-    def sout = new StringBuilder(), serr = new StringBuilder()
-    def proc = "/bin/convert -thumbnail 1000x64 ${fullFile} ${thumbnailFile}".execute()
-    proc.waitForProcessOutput(sout, serr)
-    if (sout || serr ) {
-        println "out> $sout err> $serr"
-        if (serr) {
-            println (serr + "exists")
-            System.exit(0)
-        }
-    }
-
-    def procMedium ="/bin/convert -thumbnail 500x550 ${fullFile} ${mediumFile}".execute()
-    procMedium.waitForProcessOutput(sout, serr)
-    if (sout || serr ) {
-        println "out> $sout err> $serr"
-        if (serr) {
-            println (serr + "exists")
-            System.exit(0)
-        }
-    }
+    "/bin/convert -thumbnail 1000x64 ${fullFile} ${thumbnailFile}".execute()
+    "/bin/convert -thumbnail 500x550 ${fullFile} ${mediumFile}".execute()
 
 }
 

@@ -241,7 +241,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
 
         if (geneProductFormID != null && geneProductFormID != that.geneProductFormID) return false;
 
-        if (inferredFrom != null ? !this.containsAllInferences(that) : that.inferredFrom != null) return false;
+
         return true;
     }
 

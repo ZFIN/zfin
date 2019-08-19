@@ -474,6 +474,13 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     }
 
     @Test
+    public void getPhenotypeDataForSTR() {
+        SequenceTargetingReagent reagent = getMarkerRepository().getSequenceTargetingReagent("ZDB-MRPHLNO-090316-1");
+        List<GenotypeFigure> reagents = getMutantRepository().getGenotypeFiguresBySTR(reagent);
+        assertNotNull(reagents);
+    }
+
+    @Test
     public void getAllPhenotypeStatementsForSTR() {
         //SequenceTargetingReagent reagent = getMarkerRepository().getSequenceTargetingReagent("ZDB-MRPHLNO-070126-7 ");
         SequenceTargetingReagent reagent = getMarkerRepository().getSequenceTargetingReagent("ZDB-TALEN-160126-1");

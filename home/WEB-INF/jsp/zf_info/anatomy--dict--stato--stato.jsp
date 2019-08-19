@@ -13,9 +13,9 @@
 <p><!-- SYN --> <!-- SYN-HDR --><b>Synonyms: </b><!-- /SYN-HDR --> <!-- SYN-DATA -->VIIIth 
   nerve ganglion, octaval ganglion 
 </p><p><b>Figures:</b> <br>
-<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-16"><img height="39" src="icon16.jpg" width="113"> 
+<a href="/ZDB-IMAGE-001220-16"><img height="39" src="icon16.jpg" width="113"> 
   neurogenesis sections<br>
-</a><a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-IMAGE-001220-17"><img height="55" src="icon17.jpg" width="113"> 
+</a><a href="/ZDB-IMAGE-001220-17"><img height="55" src="icon17.jpg" width="113"> 
   timelapse </a><!-- DESC-HDR --></p>
 <p><b>Description: </b><!-- /DESC-HDR --> <!-- DESC-DATA -->The sensory ganglion 
   of the ear. Neuroblasts delaminate from the otic epithelium between 22h and 

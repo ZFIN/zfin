@@ -3,22 +3,22 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GeneDTO extends ZfinDTO {
+public class GeneDTO {
 
     private String symbol;
     private String name;
     private String soTermId;
-    private BasicGeneticEntityDTO basicGeneticEntityDTO;
+    private BasicGeneticEntity basicGeneticEntity;
     private static final String geneLiteratureUrlPrefix = "http://zfin.org/action/marker/citation-list/";
     private String geneLiteratureUrl;
 
 
-    public BasicGeneticEntityDTO getBasicGeneticEntityDTO() {
-        return basicGeneticEntityDTO;
+    public BasicGeneticEntity getBasicGeneticEntity() {
+        return basicGeneticEntity;
     }
 
-    public void setBasicGeneticEntityDTO(BasicGeneticEntityDTO basicGeneticEntityDTO) {
-        this.basicGeneticEntityDTO = basicGeneticEntityDTO;
+    public void setBasicGeneticEntity(BasicGeneticEntity basicGeneticEntity) {
+        this.basicGeneticEntity = basicGeneticEntity;
     }
 
     public String getGeneLiteratureUrl() {

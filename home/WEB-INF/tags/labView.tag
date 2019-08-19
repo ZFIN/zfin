@@ -53,7 +53,7 @@
                 </tr>
                 <tr>
                     <th>URL:</th>
-                    <td><a href="${lab.url}">${lab.url}</a></td>
+                    <td><zfin2:uriDisplay uri="${lab.url}" /></td>
                 </tr>
 
                 <tr>

@@ -13,7 +13,7 @@ const STATUS_LOCATIONS = {
         label: 'Priority',
     },
     MANUAL_PDF: {
-        required: true,
+        required: false,
         role: 'STUDENT',
         label: 'Priority',
     },

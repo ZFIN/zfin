@@ -440,13 +440,5 @@
     </class>
 
 
-    <class name="ZfinSoTerm" table="so_zfin_mapping">
-        <id name="ID">
-            <column name="szm_pk_id"/>
-        </id>
-        <property name="entityName" column="szm_object_type"/>
-        <property name="oboID" column="szm_term_ont_id"/>
-        <property name="termName" column="szm_term_name"/>
-    </class>
 </hibernate-mapping>
 

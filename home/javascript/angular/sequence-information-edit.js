@@ -9,9 +9,12 @@
             seqInfoCtrl.errorDb = "";
             seqInfoCtrl.errorAcc = "";
             seqInfoCtrl.errorRef = "";
+            seqInfoCtrl.errorLength = "";
             seqInfoCtrl.newAccession = '';
             seqInfoCtrl.newReference = '';
+            seqInfoCtrl.newLength = '';
             seqInfoCtrl.accessionEdit = '';
+            seqInfoCtrl.lengthEdit = '';
             seqInfoCtrl.referenceEdit = '';
             seqInfoCtrl.seqenceInfo = null;
 
@@ -65,7 +68,7 @@
 
             seqInfoCtrl.addSequenceInfo = function() {
                 if (validated(1)) {
-                    addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.newAccession.toUpperCase(), seqInfoCtrl.newReference, null)
+                    addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.newAccession.toUpperCase(), seqInfoCtrl.newReference, seqInfoCtrl.newLength)
                         .then(function (link) {
                             getSequences();
                             if (!seqInfoCtrl.errorRef) {
@@ -139,7 +142,7 @@
                             seqInfoCtrl.errorAcc = error.data.message;
                         })
                         .finally(function () {
-                        addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.accessionEdit.toUpperCase(), seqInfoCtrl.references[0].zdbID, len)
+                        addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.accessionEdit.toUpperCase(), seqInfoCtrl.references[0].zdbID, seqInfoCtrl.lengthEdit)
                             .then(function (link) {
                                 seqInfoCtrl.seqenceInfo = link;
                                 var referenceIds = [];
@@ -184,6 +187,7 @@
             seqInfoCtrl.openUpdateSequenceInfo = function(obj) {
                 seqInfoCtrl.seqenceInfo = obj;
                 seqInfoCtrl.accessionEdit = obj.accession;
+                seqInfoCtrl.lengthEdit = obj.length;
                 seqInfoCtrl.newDatabase = obj.referenceDatabaseZdbID;
                 openModalPopup('update-sequence-information-modal');
             };
@@ -248,8 +252,10 @@
                 seqInfoCtrl.errorAcc = '';
                 seqInfoCtrl.errorRef = '';
                 seqInfoCtrl.newDatabase = '';
+                seqInfoCtrl.newLength = '';
                 seqInfoCtrl.newAccession = '';
                 seqInfoCtrl.accessionEdit = '';
+                seqInfoCtrl.lengthEdit = '';
                 seqInfoCtrl.newReference = '';
                 seqInfoCtrl.referenceEdit = '';
                 seqInfoCtrl.seqenceInfo = null;
@@ -275,6 +281,12 @@
                     return false;
                 } else if (checkRef && !seqInfoCtrl.newReference) {
                     seqInfoCtrl.errorRef = 'Reference cannot be empty.';
+                    return false;
+                } else if (checkRef && isNaN(seqInfoCtrl.newLength)) {
+                    seqInfoCtrl.errorLength = 'Invalid number';
+                    return false;
+                } else if (isNaN(seqInfoCtrl.lengthEdit)) {
+                    seqInfoCtrl.errorLength = 'Invalid number';
                     return false;
                 } else if ( isGenBank() &&
                     !seqInfoCtrl.newAccession.charAt(0).match(/[a-z]/i) ) {

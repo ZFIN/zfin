@@ -44,7 +44,7 @@ public class BasicFishInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
         String jsonInString = writer.writeValueAsString(allFishDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.8_Genotype.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.9_AGM.json"))) {
             out.print(jsonInString);
         }
     }
@@ -58,10 +58,7 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                         fish -> {
                             FishDTO dto = new FishDTO();
                             dto.setName(fish.getDisplayName());
-                            String nameText = fish.getDisplayName().replace("</sup>", ">");
-                            nameText = nameText.replace("<sup>", "<");
-                            dto.setNameText(nameText);
-                            dto.setGenotypeID("ZFIN:" + fish.getZdbID());
+                            dto.setPrimaryID("ZFIN:" + fish.getZdbID());
                             Genotype genotype = fish.getGenotype();
                             if (CollectionUtils.isNotEmpty(genotype.getAssociatedGenotypes())) {
                                 List<String> backgroundList = new ArrayList<>(genotype.getAssociatedGenotypes().size());
@@ -69,7 +66,7 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                                     String backgroundFish = getMutantRepository().getFishByWTGenotype(geno);
                                     backgroundList.add("ZFIN:" + backgroundFish);
                                 }
-                                dto.setBackgroundIDs(backgroundList);
+                                dto.setParentalPopulationIDs(backgroundList);
                             }
                             dto.setTaxonId(dto.getTaxonId());
                             if (CollectionUtils.isNotEmpty(fish.getStrList())) {
@@ -94,14 +91,14 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                                 dto.setSynonyms(aliasList);
                             }
                             if (CollectionUtils.isNotEmpty(fish.getGenotype().getGenotypeFeatures())) {
-                                List<GenotypeComponentDTO> genoComponents = new ArrayList<>(fish.getGenotype().getGenotypeFeatures().size());
+                                List<AffectedGenomicModelComponentDTO> genoComponents = new ArrayList<>(fish.getGenotype().getGenotypeFeatures().size());
                                 for (GenotypeFeature genofeat : fish.getGenotype().getGenotypeFeatures()) {
-                                    GenotypeComponentDTO genofeatDTO = new GenotypeComponentDTO();
+                                    AffectedGenomicModelComponentDTO genofeatDTO = new AffectedGenomicModelComponentDTO();
                                     genofeatDTO.setAlleleID("ZFIN:"+genofeat.getFeature().getZdbID());
                                     genofeatDTO.setZygosity(genofeat.getZygosity().getGenoOntologyID());
                                     genoComponents.add(genofeatDTO);
                                 }
-                                dto.setGenotypeComponents(genoComponents);
+                                dto.setAffectedGenomicModelComponents(genoComponents);
                             }
                             Set<String> secondaryDTOs = new HashSet<>();
                             if (CollectionUtils.isNotEmpty(fish.getSecondaryFishSet())) {

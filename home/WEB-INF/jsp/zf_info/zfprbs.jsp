@@ -27,7 +27,7 @@ email: <a href="mailto:fish_requests@zfin.org">fish_requests@zfin.org</a></p>
 <hr>
 <p> <b>BAC libraries:</b>
 </p><p>Two BAC libraries are currently available that have been constructed from 
-  <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-FISH-990623-3">Tu strain</a> DNA, 
+  <a href="/ZDB-FISH-990623-3">Tu strain</a> DNA,
   the same DNA currently be used for the <a href="http://www.sanger.ac.uk/Projects/D_rerio/">Sanger 
   Center genome sequencing project</a>. 
 </p><ul>
@@ -47,18 +47,18 @@ email: <a href="mailto:fish_requests@zfin.org">fish_requests@zfin.org</a></p>
     by probe hybridization. Each hybridization membrane 
     represents over 18,000 distinct zebrafish BAC clones, 
     stamped in duplicate. Library construction was supported 
-    by sub-contracts from a grant awarded to <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PERS-971205-2">Robert 
+    by sub-contracts from a grant awarded to <a href="/cgi-bin/ZFIN_jump?record=ZDB-PERS-971205-2">Robert 
     Geisler</a> at The Max-Planck-Institut f&#252;r Entwicklungsbiologie, 
     T&#252;bingen. For more information check: <a href="http://www.chori.org/bacpac/home.htm">http://www.chori.org/bacpac/home.htm</a></li>
 <br>
 <br>
 <li><b>Daniokey<a name="Daniokey"></a> BAC library:</b> 
-    The Daniokey BAC library, created by the <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PERS-980903-2">Ronald 
+    The Daniokey BAC library, created by the <a href="/cgi-bin/ZFIN_jump?record=ZDB-PERS-980903-2">Ronald 
     Plasterk</a> Laboratory and Keygene N.V., is available 
     via the <a href="http://www.rzpd.de/">RZPD</a> in 
     Berlin. The library is available as glycerol stocks, 
     filters, and PCR pools. It, too, was constructed 
-    from <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-FISH-990623-3">Tu 
+    from <a href="/cgi-bin/ZFIN_jump?record=ZDB-FISH-990623-3">Tu 
     strain</a> genomic DNA. A partial HindIII digest 
     resulted in 104,064 BAC clones with an average insert 
     size of ~175 kb. The library provides approximately 
@@ -73,10 +73,10 @@ email: <a href="mailto:fish_requests@zfin.org">fish_requests@zfin.org</a></p>
 <p><b>PAC library:</b>
 </p><ul>
 <li> <b>BUSM1<a name="BUSM1"></a> PAC library</b>. The <a href="http://vmresearch.org/amemiya/cta/ZF-PACS.pdf">BUSM1 
-    PAC library</a> was constructed by <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-PERS-960805-28">Chris 
+    PAC library</a> was constructed by <a href="/cgi-bin/ZFIN_jump?record=ZDB-PERS-960805-28">Chris 
     Amemiya</a> while he was at Boston University School of Medicine. The library 
     was constructed using MboI partial digests of high molecular weight DNA from 
-    blood cells of ~ 200 individuals (<a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-FISH-960809-7">AB 
+    blood cells of ~ 200 individuals (<a href="/cgi-bin/ZFIN_jump?record=ZDB-FISH-960809-7">AB 
     strain</a>) ligated to the BamHI sites of pCYPAC6 (GenBank AF133437). The 
     library is archived in 271 384-well dishes. High-density filters and PCR-screenable 
     pools for this library are available from the <a href="http://www.rzpd.de/">RZPD</a>. In 
@@ -93,7 +93,7 @@ email: <a href="mailto:fish_requests@zfin.org">fish_requests@zfin.org</a></p>
 <li>
     The <a href="http://www.resgen.com/products/ZFISHYAC.php3">Zebrafish YAC 
     Library</a>, constructed by the Massachusetts General Hospital in collaboration 
-    with the MIT Center for Genome Research, is available from <a href="/@CGI_BIN_DIR_NAME@/ZFIN_jump?record=ZDB-COMPANY-980622-14">Research 
+    with the MIT Center for Genome Research, is available from <a href="/cgi-bin/ZFIN_jump?record=ZDB-COMPANY-980622-14">Research 
     Genetics</a>. The average insert size for the library is 480 kb. With approximately 
     19,000 clones, the library represents five zebrafish genome equivalents. Inserts 
     were cloned into the EcoRI site of the pRML1 and pRML2 vector arms. J57D was 

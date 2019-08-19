@@ -75,20 +75,24 @@
             </h3>
             <table class="table table-condensed">
                 <tr>
-                    <td>Database:&nbsp;&nbsp;<select class="form-control"  ng-model="si.newDatabase" ng-change="si.errorDb=''"
+                    <td>Database:</td><td><select class="form-control"  ng-model="si.newDatabase" ng-change="si.errorDb=''"
                                                      ng-options="database.zdbID as database.label for database in si.databases"></select></td>
                     <td><span class="error">{{si.errorDb}}</span></td>
                 </tr>
                 <tr>
-                    <td>Accession:&nbsp;<input ng-model="si.newAccession" ng-keyup="si.errorAcc = ''" /></td>
+                    <td>Accession:</td><td><input ng-model="si.newAccession" ng-keyup="si.errorAcc = ''" /></td>
                     <td><span class="error">{{si.errorAcc}}</span></td>
                 </tr>
                 <tr>
-                    <td>Reference:&nbsp;<input ng-model="si.newReference" ng-keyup="si.errorRef = ''; si.errorMessage = ''" /></td>
+                    <td>Length:</td><td><input ng-model="si.newLength" ng-keyup="si.errorLength = ''" /></td>
+                    <td><span class="error">{{si.errorLength}}</span></td>
+                </tr>
+                <tr>
+                    <td>Reference:</td><td><input ng-model="si.newReference" ng-keyup="si.errorRef = ''; si.errorMessage = ''" /></td>
                     <td><span class="error">{{si.errorRef}}</span></td>
                 </tr>
                 <tr>
-                    <td colspan="2" nowrap>
+                    <td colspan="3" nowrap>
                         <button class="zfin-button cancel" ng-click="si.close()">Cancel</button>
                         <button class="zfin-button approve" ng-click="si.addSequenceInfo()">Add</button>
                     </td>
@@ -138,6 +142,10 @@
                 <tr>
                     <td>Accession:&nbsp;<input placeholder="{{si.accessionEdit}}" ng-model="si.accessionEdit" ng-keyup="si.errorAcc = ''" /></td>
                     <td><span class="error">{{si.errorAcc}}</span></td>
+                </tr>
+                <tr>
+                    <td>Length:&nbsp;<input placeholder="{{si.lengthEdit}}" ng-model="si.lengthEdit" ng-keyup="si.errorLength = ''" /></td>
+                    <td><span class="error">{{si.errorLength}}</span></td>
                 </tr>
                 <tr>
                     <td colspan="2" nowrap>

@@ -103,7 +103,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
+                "select distinct fishox.fish, fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
                         "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
                         "WHERE phenox.fishExperiment = fishox " +
                         "AND phenoeq.phenotypeExperiment = phenox " +
@@ -599,7 +599,7 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects(){
         final String alleleQueryString = "select distinct fmrel1.fmrel_ftr_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
-                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id" +
+                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, fish_zdb_id" +
                 "                from feature_marker_relationship fmrel1" +
                 "                join genotype_feature on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
                 "                join fish on genofeat_geno_zdb_id = fish_genotype_zdb_id" +
@@ -622,9 +622,10 @@ public class HibernateMutantRepository implements MutantRepository {
 
         final String geneQueryString = "select distinct mfs_mrkr_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
                 "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, " +
-                "                e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id" +
+                "                e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, genox_fish_zdb_id" +
                 "                        from mutant_fast_search" +
                 "                        join phenotype_source_generated on pg_genox_zdb_id = mfs_genox_zdb_id" +
+                "                        join fish_experiment on mfs_genox_zdb_id = genox_zdb_id" +
                 "                        join phenotype_observation_generated on psg_pg_id = pg_id" +
                 "                        join figure on pg_fig_zdb_id = fig_zdb_id" +
                 "                        join publication on fig_source_zdb_id = zdb_id " +
@@ -635,17 +636,48 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                        left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
                 "                        where get_obj_type(mfs_mrkr_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
 
+        final String fishQueryString = "select distinct fish.fish_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
+                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id" +
+                "                from feature_marker_relationship fmrel1" +
+                "                join genotype_feature on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
+                "                join fish on genofeat_geno_zdb_id = fish_genotype_zdb_id" +
+                "                join fish_experiment on fish_zdb_id = genox_fish_zdb_id" +
+                "                join mutant_fast_search on mfs_genox_zdb_id = genox_zdb_id" +
+                "                join phenotype_source_generated on pg_genox_zdb_id = genox_zdb_id" +
+                "                join phenotype_observation_generated on psg_pg_id = pg_id" +
+                "                join figure on fig_zdb_id = pg_fig_zdb_id" +
+                "                join publication on fig_source_zdb_id = zdb_id" +
+                "                join term as e1a on psg_e1a_zdb_id = e1a.term_zdb_id" +
+                "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
+                "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
+                "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
+                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" ;
+
         final Query alleleQuery = HibernateUtil.currentSession().createSQLQuery(alleleQueryString);
         final Query geneQuery = HibernateUtil.currentSession().createSQLQuery(geneQueryString);
+        final Query fishQuery = HibernateUtil.currentSession().createSQLQuery(fishQueryString);
 
         List<Object[]> alleles = alleleQuery.list();
         List<Object[]> genes = geneQuery.list();
+        List<Object[]> fishes = fishQuery.list();
         List<Object[]> phenos = genes;
         phenos.addAll(alleles);
+        phenos.addAll(fishes);
+
 
         List<BasicPhenotypeDTO> basicPhenos = new ArrayList<BasicPhenotypeDTO>();
         for (Object[] basicPhenoObjects : phenos) {
+            List<String> primaryGeneticEntityIDs = new ArrayList<>();
             BasicPhenotypeDTO basicPheno = new BasicPhenotypeDTO();
+
+            if (basicPhenoObjects[0].toString().startsWith("ZDB-ALT") || basicPhenoObjects[0].toString().startsWith("ZDB-GENE")){
+                if (basicPhenoObjects[9] != null) {
+                    //System.out.println(basicPhenoObjects[0].toString());
+                    //System.out.println(basicPhenoObjects[9]);
+                    primaryGeneticEntityIDs.add(basicPhenoObjects[9].toString());
+                    basicPheno.setPrimaryGeneticEntityIDs(primaryGeneticEntityIDs);
+                }
+            }
             basicPheno.setObjectId("ZFIN:"+basicPhenoObjects[0].toString());
             basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
             PublicationAgrDTO pubDto = new PublicationAgrDTO();
@@ -1594,13 +1626,9 @@ public class HibernateMutantRepository implements MutantRepository {
 
         List<GenotypeFigure> genotypeFigures = (List<GenotypeFigure>) query.list();
 
-        List<GenotypeFigure> notNormalGenotypeFigures = new ArrayList<>();
-
-        for (GenotypeFigure genoFig : genotypeFigures) {
-            if (genoFig.getPhenotypeStatement().isNotNormal())
-                notNormalGenotypeFigures.add(genoFig);
-        }
-
+        List<GenotypeFigure> notNormalGenotypeFigures = genotypeFigures.stream()
+                .filter(genotypeFigure -> genotypeFigure.getPhenotypeStatement().isNotNormal())
+                .collect(Collectors.toList());
         return notNormalGenotypeFigures;
     }
 

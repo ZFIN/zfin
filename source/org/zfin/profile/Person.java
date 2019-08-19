@@ -67,7 +67,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     private String address;
     private String country;
 
-    @Size(max = 150, message = "Must not be empty and less than 150 characters.")
+    @Size(max = 2000, message = "Must be less than 2000 characters.")
     private String url;
 
     @Size(max = 12000, message = "Must be less than 12000 characters.")

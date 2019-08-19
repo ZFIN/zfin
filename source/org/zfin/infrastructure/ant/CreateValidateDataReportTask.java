@@ -2,11 +2,11 @@ package org.zfin.infrastructure.ant;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateUtil;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.File;
 import java.util.List;
@@ -27,7 +27,6 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
 
     public int execute() {
         Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.INFO);
-
         LOG.info("Job Name: " + jobName);
         LOG.info("Running SQLQueryTask on instance: " + instance);
         if (useDynamicQuery) {

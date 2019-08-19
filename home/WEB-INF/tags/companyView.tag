@@ -44,7 +44,7 @@
                 </tr>
                 <tr>
                     <th>URL:</th>
-                    <td><a href="${company.url}">${company.url}</a></td>
+                    <td><zfin2:uriDisplay uri="${company.url}" /></td>
                 </tr>
                 <tr>
                     <th>Address:</th>

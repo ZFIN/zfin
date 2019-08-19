@@ -48,5 +48,9 @@ public class CreatePersonValidator implements Validator{
         if(StringUtils.isEmpty(person.getLastName())){
             errors.rejectValue("lastName","","Must specify a last name.");
         }
+
+        if(profileRepository.emailExists(person.getEmail())){
+            errors.reject("", "A User with that email already exists.");
+        }
     }
 }

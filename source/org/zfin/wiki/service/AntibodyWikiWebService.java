@@ -12,6 +12,7 @@ import org.zfin.antibody.presentation.AntibodyPresentation;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
+import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.presentation.SourcePresentation;
@@ -209,6 +210,8 @@ public class AntibodyWikiWebService extends WikiWebService {
             aliasStringBuilder.append(" ");
         }
         content = content.replace("{text-data:OtherInfo}{text-data}", getEncodedString(aliasStringBuilder.toString()));
+        content = content.replace("{text-data:ABRegID}{text-data}", (antibodyService.getRegistryID()!= null ? antibodyService.getRegistryID() : ""));
+
 
         // always works on zebrafish
         content = content.replace("{list-data:WorksOnZebrafish}{list-option}yes{list-option}{list-option}no{list-option}{list-data}", "yes");

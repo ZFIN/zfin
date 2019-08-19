@@ -1032,4 +1032,13 @@ public class HibernateProfileRepository implements ProfileRepository {
                 .addOrder(Order.asc("firstName"))
                 .list();
     }
+
+    @Override
+    public boolean emailExists(String email) {
+        Session session = HibernateUtil.currentSession();
+        Criteria crit = session.createCriteria(Person.class);
+        crit.add(Restrictions.eq("email", email));
+        List<Person> persons = crit.list();
+        return persons.size() >= 1;
+    }
 }

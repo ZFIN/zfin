@@ -2,12 +2,8 @@ package org.zfin.ontology;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
-import org.zfin.sequence.DBLink;
-import org.zfin.sequence.FeatureDBLink;
 import org.zfin.util.NumberAwareStringComparator;
 
 import javax.persistence.*;
@@ -77,7 +73,6 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     private Set<TermDefinitionReference> definitionReferences;
 
 
-
     @OneToMany(mappedBy = "term")
     private Set<TermExternalReference> externalReferences;
     @OneToMany(mappedBy = "termOne")
@@ -117,9 +112,8 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     protected DevelopmentStage start;
     */
 
-    @OneToOne(mappedBy = "term", fetch = FetchType.LAZY)
-    @NotFound(action= NotFoundAction.IGNORE)
-    protected TermStage termStage;
+    @OneToMany(mappedBy = "term", fetch = FetchType.LAZY)
+    protected List<TermStage> termStage;
     // attribute that is populated lazily
     // transient modifier because we do not want to serialize the whole relationship tree
     // (would lead to a StackOverflowError)
@@ -211,9 +205,9 @@ public class GenericTerm implements Term<GenericTermRelationship> {
 
     public TreeSet getSortedAliases() {
 
-        TreeSet<TermAlias> syn2=new TreeSet<>();
-        for (TermAlias ta: synonyms){
-            if (!ta.getAlias().contains("ZFA")){
+        TreeSet<TermAlias> syn2 = new TreeSet<>();
+        for (TermAlias ta : synonyms) {
+            if (!ta.getAlias().contains("ZFA")) {
                 syn2.add(ta);
             }
         }
@@ -401,16 +395,16 @@ public class GenericTerm implements Term<GenericTermRelationship> {
 
     @Override
     public DevelopmentStage getStart() {
-        if (termStage == null)
+        if (CollectionUtils.isEmpty(termStage))
             return null;
-        return termStage.getStart();
+        return termStage.get(0).getStart();
     }
 
     @Override
     public DevelopmentStage getEnd() {
-        if (termStage == null)
+        if (CollectionUtils.isEmpty(termStage))
             return null;
-        return termStage.getEnd();
+        return termStage.get(0).getEnd();
 
     }
 
@@ -523,7 +517,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
         return childSet;
     }
 
-    public String getEntityType(){
+    public String getEntityType() {
         return "Term";
     }
 

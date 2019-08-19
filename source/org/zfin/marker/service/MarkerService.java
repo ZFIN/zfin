@@ -744,7 +744,12 @@ public class MarkerService {
         MutantOnMarkerBean mutantOnMarkerBean = new MutantOnMarkerBean();
         mutantOnMarkerBean.setGenotypeList(getMarkerRepository().getMutantsAndTgsByGene(gene.getZdbID()));
         mutantOnMarkerBean.setFeatures(getMutantRepository().getAllelesForMarker(gene.getZdbID(), "is allele of"));
-        mutantOnMarkerBean.setKnockdownReagents(getMarkerRepository().getRelatedMarkerDisplayForTypes(gene, false, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
+        if (!gene.isNontranscribed()) {
+            mutantOnMarkerBean.setKnockdownReagents(getMarkerRepository().getRelatedMarkerDisplayForTypes(gene, false, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
+        }
+        else{
+            mutantOnMarkerBean.setKnockdownReagents(getMarkerRepository().getRelatedMarkerDisplayForTypes(gene, false, MarkerRelationship.Type.CRISPR_TARGETS_REGION));
+        }
 
         return mutantOnMarkerBean;
     }
@@ -1010,6 +1015,7 @@ public class MarkerService {
             }
 
             String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+
             logger.debug("trying to find a replaced zdbID for: " + zdbID);
             if (replacedZdbID != null) {
                 logger.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
+import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.SecondaryMarker;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -16,8 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.zfin.marker.Marker;
-
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -47,7 +46,7 @@ public class BasicSTRInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
         String jsonInString = writer.writeValueAsString(allSTRDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.8_STR.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.9_STR.json"))) {
             out.print(jsonInString);
         }
     }

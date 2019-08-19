@@ -14,15 +14,9 @@ and pth_location_id is null
 and jtype='Journal'
 and jrnl_abbrev not  like '%Tox%'
 and pub_date  between '0012-07-24' and '2005-12-31'
-and zdb_id  in (select recattrib_source_zdb_id from record_attribution);
+and pth_pub_zdb_id not in (select recattrib_source_zdb_id from record_attribution);
 
 
-update pub_tracking_history
-set pth_status_id=6
-from tmp_pub
-where pth_pub_zdb_id=pubid;
 
-update pub_tracking_history
-set pth_claimed_by='ZDB-PERS-030612-1'
-from tmp_pub
-where pth_pub_zdb_id=pubid;
+insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by)
+select pubid, 12, 'ZDB-PERS-030520-2' from tmp_pub;
