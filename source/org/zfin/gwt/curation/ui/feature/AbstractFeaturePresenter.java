@@ -107,6 +107,22 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
     public void addHandlesErrorListener(HandlesError handlesError) {
         GWT.log("Hello");
     }
+public void onLabDesigChange() {
+    FeatureRPCService.App.getInstance().getNextZFLineNum(
+            new FeatureEditCallBack<String>("Failed to return line number for feature  ", this) {
+                @Override
+                public void onSuccess(String result) {
+                    view.lineNumberBox.setText(result);
+                    handleDirty();
+                    clearError();
+                }
+            }
+
+    );
+}
+
+
+
 
     public void onLabOfOriginChange(String labOfOriginSelected) {
         onLabOfOriginChange(labOfOriginSelected, null);

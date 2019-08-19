@@ -279,6 +279,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (fgmd.getZdbID() == null) {
                 HibernateUtil.currentSession().save(fgmd);
             }
+            if (fgmd.getFgmdSeqRef().length()==fgmd.getFgmdSeqVar().length()){
+                feature.setType(FeatureTypeEnum.MNV);
+            }
             /*if (!fgmd.equals(oldDetail)) {
                 System.out.println(oldDetail.getFgmdSeqRef());
                 infrastructureRepository.insertMutationDetailAttribution(fgmd.getZdbID(), featureDTO.getPublicationZdbID());
@@ -502,6 +505,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     public List<FeaturePrefixDTO> getPrefix(String labName) {
         return DTOConversionService.convertToFeaturePrefixDTO(featureRepository.getLabPrefixes(labName));
+    }
+
+    public String getNextZFLineNum(){
+        String nextLineNum=featureRepository.getNextZFLineNum();
+        return nextLineNum;
     }
 
     public FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException {

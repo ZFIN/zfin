@@ -234,7 +234,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         Category.DISEASE                    | ["Gene", "Disease Model"]
         Category.FISH                       | ["Affected Genomic Region", "Is Model Of", "Expression Anatomy", "Phenotype", "Sequence Targeting Reagent (STR)", "Construct", "Mutation / Tg", "Background", "Source"]
         Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage", "Source"]
-        Category.MUTANT                     | ["Type", "Affected Genomic Region", "Phenotype", "Consequence", "Mutagen", "Source", "Lab of Origin", "Institution", "Is Zebrashare"]
+        Category.MUTANT                     | ["Type", "Affected Genomic Region", "Phenotype", "Consequence", "Mutagen", "Source", "Lab of Origin", "Institution", "Is ZebraShare"]
         Category.CONSTRUCT                  | ["Type", "Regulatory Region", "Coding Sequence", "Inserted In Gene", "Expressed In", "Reporter Color", "Engineered Region"]
         Category.SEQUENCE_TARGETING_REAGENT | ["Type", "Target"]
         Category.ANTIBODY                   | ["Type", "Antigen Gene", "Labeled Structure", "Assay", "Source", "Host Organism"]

@@ -155,6 +155,7 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
   from marker, antibody, so_zfin_mapping
  where mrkr_zdb_id = atb_zdb_id
  and szm_object_type = mrkr_type
+ and atb_zdb_id not in (Select dblink_linked_recid from db_link where dblink_linked_recid like 'ZDB-ATB%')
  union
 select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
 	atb_immun_organism, atb_host_organism, szm_term_ont_id,dblink_acc_num as atb_reg_id
@@ -1709,7 +1710,7 @@ delete from tmp_wtxpat
 
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt' with delimiter as '	' null as '';'
 create view saAlleles as
-select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||coalesce(jrnl_name,'') ||' '|| ' ' || coalesce(pub_volume,'') ||' '|| coalesce(pub_pages,''), feature_abbrev
 from feature, record_attribution, publication, journal
 where recattrib_data_zdb_id=feature_zdb_id
 and feature_abbrev like 'sa%'

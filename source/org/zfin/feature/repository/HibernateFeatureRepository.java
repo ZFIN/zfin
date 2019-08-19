@@ -430,7 +430,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Collections.sort(organizations, new Comparator<Organization>() {
             @Override
             public int compare(Organization o1, Organization o2) {
-                return o1.getName().compareTo(o2.getName());
+                return o1.getName().compareToIgnoreCase(o2.getName());
             }
         });
         return organizations;
@@ -440,6 +440,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public List<FeaturePrefix> getLabPrefixes(String labName) {
         return getLabPrefixes(labName, true);
     }
+
+    public String getNextZFLineNum(){
+        String sql = "select max(cast(coalesce(feature_line_number,'0') as integer)) + 1 from feature where feature_lab_prefix_id = 194 and feature_line_number like '2%'";
+         Query query=HibernateUtil.currentSession().createSQLQuery(sql);
+        return  query.uniqueResult().toString();
+
+    }
+
 
 
     public List<FeaturePrefix> getLabPrefixes(String labName, boolean assignIfEmpty) {

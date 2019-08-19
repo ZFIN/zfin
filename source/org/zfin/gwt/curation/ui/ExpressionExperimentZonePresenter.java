@@ -481,6 +481,13 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     }
 
 
+    public void setAllExperiments() {
+        selectedExperiments.addAll(experimentList);
+        populateDataTable();
+        showSelectedExperimentsOnly = false;
+    }
+
+
     public void selectAntibody(ExpressionExperimentDTO selectedExperiment) {
         AppUtils.fireAjaxCall(ExpressionModule.getModuleInfo(), AjaxCallEventType.GET_ANTIBODY_LIST_START);
         REST.withCallback(new AntibodySelectionListAsyncCallback(selectedExperiment.getAntibodyMarker().getZdbID()))
@@ -552,6 +559,18 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     public void unselectAllExperiments() {
         selectedExperiments.clear();
         view.showToggleLinks(false);
+    }
+
+    public void checkAllExperiments() {
+        // check all
+        if (view.allExperimentsCheck.getValue()) {
+            setAllExperiments();
+        } // uncheck
+        else {
+            selectedExperiments.clear();
+            populateDataTable();
+        }
+
     }
 
 

@@ -13,6 +13,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.profile.*;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanFieldUpdate;
@@ -33,6 +34,9 @@ public class PersonController {
 
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
 
     @Autowired
     private ProfileService profileService;
@@ -278,6 +282,10 @@ public class PersonController {
     @RequestMapping(value = "/person/view/{zdbID}", method = RequestMethod.GET)
     public String viewPerson(@PathVariable String zdbID, Model model) {
         Person person = profileRepository.getPerson(zdbID);
+        if (person == null) {
+            String replacedZdbID = infrastructureRepository.getWithdrawnZdbID(zdbID);
+            person = profileRepository.getPerson(replacedZdbID);
+        }
         if (person == null || (person.isHidden() && !profileService.isCurrentSecurityUserRoot())) {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;

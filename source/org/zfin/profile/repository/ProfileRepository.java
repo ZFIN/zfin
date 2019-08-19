@@ -229,4 +229,6 @@ public interface ProfileRepository {
     List<Person> getStudents();
 
     List<Person> getPersonByLastNameEquals(String lastName);
+
+    boolean emailExists(String email);
 }

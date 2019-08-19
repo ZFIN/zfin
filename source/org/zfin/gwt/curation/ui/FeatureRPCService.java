@@ -37,6 +37,8 @@ public interface FeatureRPCService extends RemoteService {
 
     List<FeaturePrefixDTO> getPrefix(String name);
 
+    String getNextZFLineNum();
+
     FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException;
 
     FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException;

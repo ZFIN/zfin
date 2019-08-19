@@ -97,6 +97,12 @@ public class GPIFile extends AbstractScriptWrapper {
                         if (Objects.equals(dbName, "Gene")) {
                             dbName = "NCBIGene";
                         }
+                        if (Objects.equals(dbName, "Alliance")) {
+                            dbName = "ZFIN";
+                        }
+                        if (dbName.contains("miR")) {
+                            dbName = "ZFIN";
+                        }
                         geneRow.append(dbName).append(":").append(dblink.getAccessionNumber());
                         geneRow.append("|");
                     }

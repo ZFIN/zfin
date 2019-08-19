@@ -39,7 +39,9 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         featureTypeBox.clear();
         featureTypeBox.addNull();
         for (FeatureTypeEnum featureTypeEnum : FeatureTypeEnum.values()) {
-            featureTypeBox.addItem(featureTypeEnum.getDisplay(), featureTypeEnum.name());
+            if (!featureTypeEnum.getDisplay().equals("MNV")) {
+                featureTypeBox.addItem(featureTypeEnum.getDisplay(), featureTypeEnum.name());
+            }
         }
         featureSuffixBox.addEnumValues(TransgenicSuffix.values());
         mutageeBox.addEnumValues(Mutagee.values());

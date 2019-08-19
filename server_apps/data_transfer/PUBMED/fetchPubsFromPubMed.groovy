@@ -90,6 +90,7 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
     row.push(journal.Title.text())
     row.push(journal.ISOAbbreviation.text())
 
+
     medlineCitation.MeshHeadingList.MeshHeading.each { meshHeading ->
         descriptor = meshHeading.DescriptorName
         descriptorId = descriptor.@UI.text()
@@ -103,6 +104,13 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
     }
 
     row.push(pubmedArticle.PubmedData.PublicationStatus.text())
+    def isReview = ''
+    article.PublicationTypeList.PublicationType.each { pubtype ->
+        if (pubtype == 'Review'){
+            isReview = 'review'
+        }
+    }
+    row.push(isReview)
     
     printer.printRecord(row.collect { col -> col.toString().replace('\n', '\\n') })
 }

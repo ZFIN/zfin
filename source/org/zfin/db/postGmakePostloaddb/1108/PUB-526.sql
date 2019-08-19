@@ -13,7 +13,7 @@ where pth_pub_zdb_id = pf_pub_zdb_id)
 group by pth_pub_zdb_id
 having count(pth_pub_zdb_id)=1;
 
-select pubzdb
+select distinct pubzdb
 into tmp_pub1
 from tmp_pub,pub_tracking_history, publication,journal,record_attribution
 where pubzdb=pth_pub_zdb_id
@@ -30,6 +30,6 @@ and pth_pub_zdb_id not in (Select pt_pub_zdb_id from pheno_term);
 
 
 insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by,pth_claimed_by)
-select pubzdb, 6, 'ZDB-PERS-030520-2','ZDB-PERS-100329-1' from tmp_pub1;
+select distinct pubzdb, 6, 'ZDB-PERS-030520-2','ZDB-PERS-100329-1' from tmp_pub1;
 
 

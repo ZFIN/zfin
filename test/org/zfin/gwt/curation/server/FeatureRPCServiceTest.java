@@ -752,5 +752,9 @@ public class FeatureRPCServiceTest extends RemoteServiceServlet implements Featu
             return referenceDatabase != null ? referenceDatabase.getForeignDB().getDbName().toString() : null;
         }
     }
+    @Override
+    public String getNextZFLineNum() {
+        return featureRepository.getNextZFLineNum();
+    }
 
 }

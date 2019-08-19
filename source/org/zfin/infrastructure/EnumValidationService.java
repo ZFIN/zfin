@@ -375,6 +375,7 @@ public class EnumValidationService {
         checkEnumVersusDatabaseCollection(typeList, Isotype.LightChain.values());
     }
 
+    @Ignore
     @ServiceTest
     public void validateInferenceCategory() {
         String hql = "select f.dbName from ForeignDB f";
