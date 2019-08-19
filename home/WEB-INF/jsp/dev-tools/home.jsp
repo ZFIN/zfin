@@ -166,6 +166,13 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="col-md-1">
+                    </td>
+                    <td class="col-md-2">
+                        <a href="/action/devtool/home-carousel-items">Home Carousel Items</a>
+                    </td>
+                </tr>
+                <tr>
                     <th class="col-md-1">
                         <b>Database Configuration</b>
                     </td>
