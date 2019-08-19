@@ -19,7 +19,7 @@
 
     <div class="carousel-controls">
         <a href="#${id}" role="button" data-slide="prev">
-            <i class="fas fa-lg fa-caret-left"></i>
+            <i class="fas fa-chevron-left"></i>
             <span class="sr-only">Previous</span>
         </a>
 
@@ -30,7 +30,7 @@
         </ol>
 
         <a href="#${id}" role="button" data-slide="next">
-            <i class="fas fa-lg fa-caret-right"></i>
+            <i class="fas fa-chevron-right"></i>
             <span class="sr-only">Next</span>
         </a>
     </div>
