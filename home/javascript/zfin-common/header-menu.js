@@ -83,6 +83,9 @@ $(() => {
                     return settings;
                 },
                 storageKey: 'fs-autocomplete-defaults',
+            })
+            .on('typeahead:select', function (evt, suggestion) {
+                ga('send', 'event', 'FS autocomplete', 'Go to page', `${suggestion.value} [${suggestion.category}]`);
             });
     });
 });
