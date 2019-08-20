@@ -110,12 +110,14 @@
                     <div class="home-section">
                         <div class="heading">News & Meeting Announcements</div>
                         <div class="__react-root" id="NewsAndMeetingsFeed"></div>
+                        <a href="https://@WIKI_HOST@/display/news">More...</a>
                     </div>
                 </div>
                 <div class="col-md-3 col-lg-6">
                     <div class="home-section">
                         <div class="heading">Zebrafish-Related Job Announcements</div>
                         <div class="__react-root" id="JobsFeed"></div>
+                        <a href="https://@WIKI_HOST@/display/jobs/Zebrafish-Related+Job+Announcements">More...</a>
                     </div>
                 </div>
             </div>
