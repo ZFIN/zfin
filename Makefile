@@ -1,3 +1,7 @@
+deploy:
+	gradle make
+	ant deploy-without-tests deploy-solr restart-solr deploy-jobs
+
 loaddb:
 	gradle loaddb
 
@@ -12,7 +16,4 @@ postloaddb:
 
 load: loaddb postloaddb
 
-deploy:
-	gradle make
-	ant deploy-without-tests deploy-solr restart-solr deploy-jobs 
 
