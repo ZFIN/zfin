@@ -96,7 +96,7 @@
             <a href="http://www.uoregon.edu/"><img src="/images/UOSignature-WHT.png"></a>
             <a href="http://www.alliancegenome.org/"><img src="/images/AllianceLogoWhite.png"></a>
         </div>
-        <div class="nav-column">
+        <div class="nav-column text-right nowrap">
             <div>&copy; 1994&ndash;${copyrightYear} University of Oregon</div>
             <a href="/zf_info/warranty.html">Terms of Use</a>
         </div>
