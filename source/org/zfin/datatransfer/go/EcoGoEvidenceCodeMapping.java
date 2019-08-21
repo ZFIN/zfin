@@ -18,7 +18,7 @@ public class EcoGoEvidenceCodeMapping  {
     @Column (name = "egm_pk_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "egm_evidence_code")
+    @Column(name = "egm_go_evidence_code")
     protected String evidenceCode;
     @ManyToOne()
     @JoinColumn(name = "egm_term_zdb_id")
