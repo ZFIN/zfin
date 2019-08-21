@@ -1,7 +1,7 @@
 package org.zfin.ontology.repository;
 
-import org.zfin.ontology.HumanGeneDetail;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.datatransfer.go.EcoGoEvidenceCodeMapping;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -174,6 +174,7 @@ public interface OntologyRepository {
 
     Map<String, TermDTO> getTermDTOsFromOntology(Ontology ontology);
 
+    EcoGoEvidenceCodeMapping getEcoEvidenceCode(String goEvidenceCode);
     Collection<TermDTO> getTermDTOsFromOntologyNoRelation(Ontology stage);
 
     Set<String> getAllChildZdbIDs(String rootZdbID);

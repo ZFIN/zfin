@@ -6,6 +6,8 @@ import org.zfin.properties.ZfinPropertiesEnum
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 DOWNLOAD_URL = "https://raw.githubusercontent.com/evidenceontology/evidenceontology/master/gaf-eco-mapping.txt"
+final WORKING_DIR = new File("${ZfinPropertiesEnum.TARGETROOT}/server_apps/data_transfer/eco_go_mapping")
+
 
 def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
 def out = new BufferedOutputStream(file)
