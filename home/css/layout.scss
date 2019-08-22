@@ -1,8 +1,6 @@
 @import 'theme';
 
 $root: rgb(128, 0, 0);
-$base: rgb(51, 51, 51);
-
 $root-bg: mix(white, $root, 85%);
 
 body {
@@ -10,19 +8,19 @@ body {
 }
 
 header {
+    @include shadow;
     display: flex;
     position: relative;
     align-items: center;
-    background: $primary-bg;
+    background: $primary-light;
     border-bottom: 4px solid $primary;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;
     height: 80px;
     box-sizing: border-box;
     flex-shrink: 0;
     font-size: 16px;
     line-height: 1.15;
-    color: $base;
+    color: $grey-dark;
     z-index: 10;
 
     * {
@@ -37,7 +35,7 @@ header {
     input, button {
         font: inherit;
         line-height: inherit;
-        color: $base;
+        color: $grey-dark;
     }
 
     > .logo {
@@ -55,7 +53,7 @@ header {
     .menu {
         flex-shrink: 0;
         flex-direction: column;
-        background: $primary-bg;
+        background: $primary-light;
         height: 100%;
 
         &.menu-collapse {
@@ -156,6 +154,7 @@ header {
     }
 
     .dropdown {
+        @include elevated-shadow;
         visibility: hidden;
         position: fixed;
         left: 0;
@@ -166,7 +165,6 @@ header {
         z-index: 101;
         font-size: 0.9em;
         flex-wrap: wrap;
-        box-shadow: 0 4px 4px rgba(0,0,0,0.2);
 
         .nav-column {
             padding: 0 10px;
@@ -327,7 +325,7 @@ footer {
     }
 
     a, a:hover, a:active {
-        color: $primary-bg;
+        color: $primary-light;
         text-decoration: none;
     }
 }

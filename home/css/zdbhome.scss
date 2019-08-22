@@ -1,17 +1,16 @@
 @import "theme";
 
-body {
+body.grey-bg {
     background: $grey-light !important;
 }
 
 .search-container {
+    @include elevated-shadow;
     margin-top: -10px;
     margin-bottom: 60px;
     background: url(/images/search-background.png) 50% 90%;
     background-size: cover;
     padding: 90px 0;
-    border-bottom: 1px solid #cccccc;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 
     label {
         font-size: 18px;
@@ -27,10 +26,10 @@ body {
 }
 
 .section {
+    @include shadow;
     margin-bottom: 30px;
     background: white;
     border-radius: 3px;
-    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
     padding: 15px;
     display: flex;
     flex-direction: column;
@@ -60,8 +59,8 @@ body {
         }
 
         &:hover {
+            @include elevated-shadow;
             transform: translateY(-3px);
-            box-shadow: 0 5px 5px -3px rgba(0,0,0,0.2), 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12);
         }
 
         .title {

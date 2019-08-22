@@ -48,7 +48,7 @@ a:hover {
 .btn-zfin {
     color: #FFFFFF;
     background-color: $primary;
-    border-color: $primary-border;
+    border-color: $primary-dark;
 
     &:hover,
     &:focus,
@@ -58,7 +58,7 @@ a:hover {
     &[disabled] {
         color: #FFFFFF;
         background-color: darken($primary, 10%);
-        border-color: darken($primary-border, 12%);
+        border-color: darken($primary-dark, 12%);
     }
 }
 
