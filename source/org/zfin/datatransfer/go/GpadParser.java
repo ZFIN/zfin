@@ -5,7 +5,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Component;
 import org.zfin.repository.RepositoryFactory;
-
+import org.zfin.ontology.GenericTerm;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -85,13 +85,15 @@ public class GpadParser extends FpInferenceGafParser {
 
         gafEntries.forEach(gafEntry -> {
             // replace ECO ID by GO Evidence Code (3-letter codes)
-            EcoGoEvidenceCodeMapping ecoCodeMap = RepositoryFactory.getOntologyRepository().getEcoEvidenceCode(gafEntry.getEvidenceCode());
-            String ecoCode = ecoCodeMap.getEcoTerm().getOboID();
-          if (ecoCode == null) {
+            GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(gafEntry.getEvidenceCode());
+            EcoGoEvidenceCodeMapping ecoCodeMap = RepositoryFactory.getOntologyRepository().getEcoEvidenceCode(term);
+            String evCode = ecoCodeMap.getEvidenceCode();
+
+          if (evCode == null) {
               logger.error("invalid eco code" + gafEntry.getEvidenceCode());
           }
           else {
-              gafEntry.setEvidenceCode(ecoCode);
+              gafEntry.setEvidenceCode(evCode);
           }
 
             // fixed set of qualifiers

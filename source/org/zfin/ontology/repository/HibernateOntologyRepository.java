@@ -52,10 +52,10 @@ public class HibernateOntologyRepository implements OntologyRepository {
     }
 
     @Override
-    public EcoGoEvidenceCodeMapping getEcoEvidenceCode(String goEvidenceCode) {
+    public EcoGoEvidenceCodeMapping getEcoEvidenceCode(GenericTerm term) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(EcoGoEvidenceCodeMapping.class);
-        criteria.add(Restrictions.eq("evidenceCode", goEvidenceCode));
+        criteria.add(Restrictions.eq("ecoTerm", term));
         EcoGoEvidenceCodeMapping ecoMapTerm = (EcoGoEvidenceCodeMapping) criteria.uniqueResult();
         return ecoMapTerm;
     }

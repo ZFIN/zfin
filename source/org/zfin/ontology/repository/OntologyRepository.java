@@ -174,7 +174,8 @@ public interface OntologyRepository {
 
     Map<String, TermDTO> getTermDTOsFromOntology(Ontology ontology);
 
-    EcoGoEvidenceCodeMapping getEcoEvidenceCode(String goEvidenceCode);
+    EcoGoEvidenceCodeMapping getEcoEvidenceCode(GenericTerm term);
+
     Collection<TermDTO> getTermDTOsFromOntologyNoRelation(Ontology stage);
 
     Set<String> getAllChildZdbIDs(String rootZdbID);
