@@ -1,8 +1,5 @@
 package org.zfin.infrastructure.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.LockOptions;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,10 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.figure.repository.FigureRepository;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.profile.Person;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.search.Category;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
@@ -37,18 +31,9 @@ public class HomeController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String index(Model model) {
-
-        Person person = ProfileService.getCurrentSecurityUser();
-        if (person != null) {
-            Session.LockRequest lockRequest = HibernateUtil.currentSession().buildLockRequest(LockOptions.READ);
-            lockRequest.lock(person);
-            model.addAttribute("user", person);
-            model.addAttribute("userHasZebraShareSubmissions", CollectionUtils.isNotEmpty(
-                    zebrashareRepository.getZebraSharePublicationsForPerson(person))
-            );
-        }
-
         List<Image> recentlyCuratedImages = figureRepository.getRecentlyCuratedImages();
+
+        // shuffling with this seed causes the carousel image set to change only once a day
         long seed = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toEpochSecond();
         Collections.shuffle(recentlyCuratedImages, new Random(seed));
         List<Image> carouselImages = recentlyCuratedImages.subList(0, 10);
