@@ -1,5 +1,9 @@
 @import "theme";
 
+body {
+    background: $grey-light !important;
+}
+
 .search-container {
     margin-top: -10px;
     margin-bottom: 60px;
@@ -22,62 +26,62 @@
     padding: 0 15px;
 }
 
-.home-card {
+.section {
     margin-bottom: 30px;
-    display: flex;
+    background: white;
     border-radius: 3px;
-    background: #f4f0ec;
+    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    padding: 15px;
+    display: flex;
     flex-direction: column;
-    padding: 10px 30px 10px 10px;
-    position: relative;
-    justify-content: center;
-    color: black;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transition: transform 200ms, box-shadow 200ms;
 
-    &::after {
-        content: '\f054';
-        font-family: 'Font Awesome 5 Free';
-        font-weight: 900;
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 30px;
-        color: rgba(0,0,0,0.7);
-    }
-
-    &:hover, &:active {
-        color: inherit;
+    &.primary-link {
+        padding-right: 35px;
+        position: relative;
+        color: $grey-dark;
+        transition: transform 200ms, box-shadow 200ms;
         text-decoration: none;
-    }
 
-    &:hover {
-        transform: translateY(-3px) scale(1.03);
-        box-shadow: 0 6px 10px rgba(0,0,0,0.2);
-    }
-    
-    .title {
-        font-size: 20px;
-    }
+        &::after {
+            content: '\f054';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 30px;
+            color: $primary;
+        }
 
-    .description {
-        font-style: italic;
-        color: rgba(0,0,0,0.7);
-    }
+        &:hover, &:active {
+            color: $grey-dark;
+            text-decoration: none;
+        }
 
-    @media (min-width: $break-md) {
-        height: 90px;
-    }
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 5px -3px rgba(0,0,0,0.2), 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12);
+        }
 
-    @media (min-width: $break-lg) {
-        height: 120px;
-    }
-}
+        .title {
+            font-size: 20px;
+            color: $primary;
+            margin-bottom: 5px;
+        }
 
-.home-section {
-    margin-bottom: 30px;
+        .description {
+            font-style: italic;
+        }
+
+        @media (min-width: $break-md) {
+            height: 105px;
+        }
+
+        @media (min-width: $break-lg) {
+            height: 125px;
+        }
+    }
 
     .heading {
         font-size: 20px;
