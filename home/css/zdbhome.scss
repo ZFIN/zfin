@@ -38,7 +38,7 @@ body {
     &.primary-link {
         padding-right: 35px;
         position: relative;
-        color: $grey-dark;
+        color: $grey;
         transition: transform 200ms, box-shadow 200ms;
         text-decoration: none;
 
@@ -55,7 +55,7 @@ body {
         }
 
         &:hover, &:active {
-            color: $grey-dark;
+            color: $grey;
             text-decoration: none;
         }
 
@@ -68,10 +68,6 @@ body {
             font-size: 20px;
             color: $primary;
             margin-bottom: 5px;
-        }
-
-        .description {
-            font-style: italic;
         }
 
         @media (min-width: $break-md) {
