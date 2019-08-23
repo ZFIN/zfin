@@ -87,10 +87,25 @@ body.grey-bg {
     }
 }
 
+.carousel-section {
+    height: 500px;
+
+    @media (min-width: $break-lg) {
+        height: 745px;
+    }
+}
+
 #home-carousel {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .carousel-inner {
+        flex-grow: 1;
+    }
 
     .carousel-controls {
-        padding: 5px;
+        padding: 15px;
         text-align: center;
 
         a {
@@ -115,7 +130,7 @@ body.grey-bg {
     }
 
     .item {
-        height: 400px;
+        height: 100%;
         background-size: contain;
         background-position: center;
         background-color: white;
