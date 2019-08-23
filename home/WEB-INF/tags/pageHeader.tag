@@ -136,6 +136,7 @@
                     <ul class="list-unstyled">
                         <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Zebrafish+Nomenclature+Conventions">Nomenclature Conventions</a></li>
                         <li><a href="/action/feature/line-designations">Line Designations</a></li>
+                        <li><a href="/action/feature/wildtype-list">Wild-Type Lines</a></li>
                         <li><a href="/action/nomenclature/gene-name">Submit a Proposed Gene Name</a></li>
                         <li><a href="/action/nomenclature/line-name">Submit a Proposed Mutant/Tg Line Name</a></li>
                     </ul>
