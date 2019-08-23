@@ -95,6 +95,12 @@ body.grey-bg {
     }
 }
 
+.wiki-list-controls {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
 #home-carousel {
     display: flex;
     flex-direction: column;

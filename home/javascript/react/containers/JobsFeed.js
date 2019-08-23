@@ -2,21 +2,11 @@ import React from 'react';
 import {getBlogPosts} from "../api/wiki";
 import WikiBlogPostList from "../components/WikiBlogPostList";
 
-class JobsFeed extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            posts: [],
-        };
-    }
-
-    componentDidMount() {
-        getBlogPosts('jobs').then(response => this.setState({posts: response.results}));
-    }
-
-    render() {
-        return <WikiBlogPostList posts={this.state.posts} />
-    }
+function JobsFeed() {
+    return <WikiBlogPostList
+        onInit={() => getBlogPosts('jobs', { query: 'created >= now("-120d")'})}
+        showAll='/display/jobs/Zebrafish-Related+Job+Announcements'
+    />
 }
 
 export default JobsFeed;
