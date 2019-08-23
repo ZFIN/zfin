@@ -941,7 +941,7 @@ button.pub-dashboard-reload {
 
 nav.pub-navigator {
     background: #f0f0f0;
-    margin-top: -4px; /* snugs it up to the main nav */
+    margin-top: -10px; /* snugs it up to the main nav */
     margin-bottom: 0;
     color: #222222;
     border: none;
