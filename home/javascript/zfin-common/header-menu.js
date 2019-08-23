@@ -45,13 +45,15 @@ $(() => {
 
     $('.fs-autocomplete').each(function () {
         const autocomplete = $(this);
+        const $input = autocomplete.find('input[type="text"]');
         autocomplete.find('.category-dropdown a').on('click', function (e) {
             e.preventDefault();
             const category = $(this).text();
             autocomplete.find('.category-label').text(category);
             autocomplete.find('input[name="category"]').val(category === 'Any' ? '' : category);
+            $input.animatedPlaceholder('pause');
         });
-        autocomplete.find('input[type="text"]')
+        $input
             .autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {
                 templates: {
                     suggestion: function (item) {

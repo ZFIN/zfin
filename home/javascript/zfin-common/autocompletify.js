@@ -93,7 +93,7 @@
 
     const placeholders = this.data('placeholders');
     if (placeholders) {
-      this.animatedPlaceholder(placeholders.split('|'));
+      this.animatedPlaceholder({ values: placeholders.split('|') });
     }
 
     return this;
