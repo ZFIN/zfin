@@ -3,7 +3,9 @@
 <%@ tag pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
-<%@ attribute name="title" %>
+
+<%@ attribute name="title" rtexprvalue="true" required="true" type="java.lang.String" %>
+<%@ attribute name="bodyClass" rtexprvalue="true" required="false" type="java.lang.String" %>
 
 <html lang="en">
 <!-- Server: @INSTANCE@ -->
@@ -42,7 +44,7 @@
         });
     </script>
 </head>
-<body>
+<body class="${bodyClass}">
 <zfin2:pageHeader />
 <main>
     <jsp:doBody/>
