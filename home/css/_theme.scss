@@ -1,5 +1,5 @@
 $primary: rgb(0, 128, 128);
-$primary-light: mix(white, $primary, 90%);
+$primary-light: scale-color(mix(white, $primary, 90%), $saturation: -50%);
 $primary-dark: darken($primary, 5%);
 
 $grey: #757575;
