@@ -1,7 +1,11 @@
 @import "theme";
 
-body.grey-bg {
+body.home {
     background: $grey-light !important;
+
+    header .search {
+        display: none;
+    }
 }
 
 .search-container {

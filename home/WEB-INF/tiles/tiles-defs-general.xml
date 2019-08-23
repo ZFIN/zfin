@@ -158,7 +158,7 @@
     </definition>
 
     <definition name="infrastructure/home.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="grey-bg" />
+        <put-attribute name="bodyClass" value="home" />
         <put-attribute name="body" value="/WEB-INF/jsp/infrastructure/home.jsp" />
     </definition>
 
