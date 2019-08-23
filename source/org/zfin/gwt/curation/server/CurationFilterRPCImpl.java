@@ -22,6 +22,7 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.marker.MarkerTypeGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,8 +185,9 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
                 throw e;
             }
         }
+        MarkerTypeGroup genedomTypeGroup = RepositoryFactory.getMarkerRepository().getMarkerTypeGroupByName(Marker.TypeGroup.GENEDOM.name());
         // save gene info in session
-        if (type == ActiveData.Type.GENE) {
+        if (genedomTypeGroup.getTypeStrings().contains(type.name()) || type == ActiveData.Type.EFG) {
             String uniqueKey = createSessionVariableName(publicationID, FX_GENE_FILTER);
             // if zdbID is null then this will unset the attribute
             getServletContext().setAttribute(uniqueKey, zdbID);
