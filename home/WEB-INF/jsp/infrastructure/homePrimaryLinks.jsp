@@ -52,7 +52,7 @@
     <div class="col-md-6">
         <a href="https://zebrafish.org" class="section primary-link" target="_blank" rel="noopener noreferrer">
             <div class="title external">ZIRC</div>
-            <div class="description">Browse or request products and research services (Fish lines, ESTs…)</div>
+            <div class="description">Browse or request products and services from the Zebrafish International Resource Center</div>
         </a>
     </div>
     <div class="col-md-6">
