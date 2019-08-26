@@ -2,6 +2,8 @@
 --changeset pm:PUB-600
 
 
+drop table if exists tmp_pub;
+drop table if exists tmp_pub1;
 
 
 select pth_pub_zdb_id as pubzdb into tmp_pub from pub_tracking_history
