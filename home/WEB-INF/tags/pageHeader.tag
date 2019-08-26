@@ -155,7 +155,7 @@
                         <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Tips">Help & Tips</a></li>
                         <li><a href="/zf_info/glossary.html">Glossary</a></li>
                         <li><a href="http://@WIKI_HOST@/display/general/ZFIN+Single+Box+Search+Help">Single Box Search Help</a></li>
-                        <li><a href="#">Submit Data</a></li>
+                        <li><a href="/action/submit-data">Submit Data</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">

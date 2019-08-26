@@ -51,4 +51,10 @@ public class HomeController {
         return "infrastructure/home.page";
     }
 
+    @RequestMapping(path = "/submit-data")
+    public String submitDataLandingPage(Model model) {
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Ways to Submit Data");
+        return "infrastructure/submit-data-landing-page.page";
+    }
+
 }

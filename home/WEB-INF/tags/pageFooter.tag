@@ -49,7 +49,7 @@
                 <div class="nav-column-header">Data</div>
                 <ul>
                     <li><a href="/downloads">Downloads</a></li>
-                    <li><a href="#">Submit Data</a></li>
+                    <li><a href="/action/submit-data">Submit Data</a></li>
                 </ul>
 
                 <div class="nav-column-header">Resources</div>

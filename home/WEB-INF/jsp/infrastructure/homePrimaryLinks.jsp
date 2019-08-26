@@ -44,7 +44,7 @@
         </a>
     </div>
     <div class="col-md-6">
-        <a href="#" class="section primary-link">
+        <a href="/action/submit-data" class="section primary-link">
             <div class="title">Submit Data</div>
             <div class="description">Guidelines and forms to submit data to ZFIN</div>
         </a>
