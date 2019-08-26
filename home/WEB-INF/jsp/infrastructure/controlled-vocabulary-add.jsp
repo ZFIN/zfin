@@ -18,21 +18,21 @@
         <div class="form-group">
             <form:label path="termName" class="col-sm-2 control-label">Term Name</form:label>
             <div class="col-sm-1">
-                <form:input path="termName" class="form-control"/>
+                <form:input path="termName" class="form-control" placeholder="Hsa."/>
                 <form:errors path="termName" class="error"/>
             </div>
         </div>
         <div class="form-group">
             <form:label path="foreignSpecies" class="col-sm-2 control-label">Foreign Species</form:label>
             <div class="col-sm-2">
-                <form:input path="foreignSpecies" class="form-control"/>
+                <form:input path="foreignSpecies" class="form-control" placeholder="Human"/>
                 <form:errors path="foreignSpecies" class="error"/>
             </div>
         </div>
         <div class="form-group">
             <form:label path="nameDefinition" class="col-sm-2 control-label">Name Definition</form:label>
             <div class="col-sm-2">
-                <form:input path="nameDefinition" class="form-control"/>
+                <form:input path="nameDefinition" class="form-control" placeholder="Homo sapiens"/>
                 <form:errors path="nameDefinition" class="error"/>
             </div>
         </div>
