@@ -64,7 +64,7 @@ public class AntibodyCreateController {
     private @Autowired
     HttpServletRequest request;
 
-    @InitBinder
+    @InitBinder("formBean")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new CreateAntibodyFormBeanValidator());
     }

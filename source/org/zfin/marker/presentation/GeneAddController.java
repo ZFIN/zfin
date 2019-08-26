@@ -43,7 +43,7 @@ public class GeneAddController {
     @Autowired
     MarkerSolrService markerSolrService;
 
-    @InitBinder
+    @InitBinder("formBean")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new GeneAddFormBeanValidator());
     }
