@@ -23,6 +23,6 @@ group by pub_id,cur_curator_zdb_id having count(cur_curator_zdb_id)>4;
 
 
 insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by,pth_status_is_current )
-select distinct pubzdb, 11, cur_curator_zdb_id,'t' from tmp_pub1;
+select distinct pub_id, 11, cur_curator_zdb_id,'t' from tmp_pub1;
 
 
