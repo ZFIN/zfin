@@ -2,7 +2,6 @@
 
 <!--|AO_EMAIL_CURATOR|-->	pm\@zfin.org
 <!--|AO_EMAIL_ERR|-->	pm\@zfin.org
-<!--|BACKGROUND_COLOR|-->	#FFFFCC
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|CLIENT_LOCALE|-->	en_US.utf8
@@ -34,14 +33,10 @@
 <!--|GO_EMAIL_ERR|-->	pm\@zfin.org
 <!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/kirby/home/WEB-INF/lib*:/research/zusers/pm/Projects/releases/1095Release/ZFIN_WWW//lib/Java/*:/opt/zfin/www_homes/kirby/home/WEB-INF/classes:/opt/apache/apache-tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
-<!--|HEADER_COLOR|-->	#99CCCC
-<!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
-<!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	kirby
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
-<!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	pm\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp/pubs
 <!--|LOCUS_REGISTRATION_EMAIL|-->	pm\@zfin.org
@@ -61,8 +56,6 @@
 <!--|ROOT_PATH|-->	/opt/zfin/www_homes/kirby
 <!--|SECURE_HTTP|-->	https://
 <!--|SHARED_DOMAIN_NAME|-->	false
-<!--|SIDEBAR_COLOR|-->	#CCCCCC
-<!--|SITE_BACKGROUND|-->	#FFFFCC
 <!--|SOURCEROOT|-->	/research/zusers/pm/Projects/releases/1095Release/ZFIN_WWW/
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	young.zfin.org

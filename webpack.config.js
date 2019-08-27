@@ -39,7 +39,12 @@ const config = {
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader',
-                    'sass-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            data: '$primary: ' + (process.env.PRIMARY_COLOR || 'null') + ';',
+                        }
+                    },
                 ],
             },
             {

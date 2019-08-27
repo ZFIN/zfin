@@ -1,4 +1,4 @@
-$primary: rgb(0, 128, 128);
+$primary: #008080 !default; // can be overridden by variable injected by webpack
 $primary-light: scale-color(mix(white, $primary, 90%), $saturation: -50%);
 $primary-dark: darken($primary, 5%);
 

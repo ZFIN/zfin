@@ -7,13 +7,12 @@ body {
     height: 100%;
 }
 
-/* TODO: figure out how to use different colors on dev sites again */
 body {
     font-family: arial, sans-serif;
     min-width: 600px;
     margin: 0;
     padding: 0;
-    background: white; /*@SITE_BACKGROUND@;*/
+    background: white;
     display: flex;
     flex-direction: column;
 }

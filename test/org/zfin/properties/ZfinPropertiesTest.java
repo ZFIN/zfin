@@ -14,10 +14,6 @@ public class ZfinPropertiesTest extends AbstractZfinPropertiesTest{
      */
     @Test
     public void props() {
-        Assert.assertEquals("Background Color", "#2244", ZfinPropertiesEnum.BACKGROUND_COLOR.value());
-        Assert.assertEquals("Highlight Color", "#4437", ZfinPropertiesEnum.HIGHLIGHT_COLOR.value());
-        assertEquals("Highlighter Color", "#7743", ZfinPropertiesEnum.HIGHLIGHTER_COLOR.value());
-        assertEquals("Link Color", "#9980", ZfinPropertiesEnum.LINKBAR_COLOR.value());
         assertEquals("Email Address", "test@zfin.org", ZfinProperties.splitValues(ZfinPropertiesEnum.ZFIN_ADMIN)[0]);
         assertEquals("FTP Path", "${TARGETROOT_PREFIX}/ftp/test/${INSTANCE}", ZfinPropertiesEnum.FTP_ROOT.value());
         assertEquals("Image Load Path", "/imageLoadUp", ZfinPropertiesEnum.IMAGE_LOAD.value());
