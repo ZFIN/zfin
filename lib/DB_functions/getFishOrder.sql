@@ -14,8 +14,8 @@ declare workingZyg  zygocity.zyg_name%TYPE;
 begin
 
 --find the functional number of affected genes.
-raise notice 'fishid: %', vFishId;
-raise notice 'geno: %', vGenoId;
+--raise notice 'fishid: %', vFishId;
+--raise notice 'geno: %', vGenoId;
 for workingMrkr in
 	--get the allele-ish genes
 	select  fmrel_mrkr_zdb_id
@@ -86,16 +86,16 @@ for workingMrkr in
 	     then
 		 numAffectedGene := numAffectedGene + 1;
 		 fishOrder := fishOrder + 100100;
-		 raise notice 'existingMarkerNotEqualWorkingMarker: %', fishOrder;
+		-- raise notice 'existingMarkerNotEqualWorkingMarker: %', fishOrder;
 	     end if;
 	   
 	   end if; 
 
 	   
 end loop ;
-raise notice 'endLoop: %', fishOrder;
-raise notice 'existingMrkr: %', existingMrkr;
-raise notice 'workingMrkr: %', workingMrkr;
+--raise notice 'endLoop: %', fishOrder;
+--raise notice 'existingMrkr: %', existingMrkr;
+--raise notice 'workingMrkr: %', workingMrkr;
 
  genoIsWT = (select geno_is_wildtype from genotype, fish
     	       	       where fish_genotype_zdb_id = geno_Zdb_id
@@ -115,7 +115,7 @@ if (genoIsWT = 't')
      fishOrder := fishOrder::bigint + 25;
 end if;
 
-raise notice 'genoWT: %', fishOrder;
+--raise notice 'genoWT: %', fishOrder;
 
 --more than 1 affected gene means fish is complex.
 if (numAffectedGene > 1)
@@ -155,15 +155,15 @@ else
 	         fishOrder := fishOrder::bigint + 10000500000;
               else
 		 fishOrder = fishOrder::bigint;
-		 raise notice 'fishOrder: %', fishOrder;
+--		 raise notice 'fishOrder: %', fishOrder;
 	      end if;
 	 
         end if;
-	 raise notice 'features=1: %', fishOrder;
+--	 raise notice 'features=1: %', fishOrder;
 end if;
 
-raise notice 'end: %', fishOrder;
-raise notice 'end: %', numAffectedGene;
+--raise notice 'end: %', fishOrder;
+--raise notice 'end: %', numAffectedGene;
 
 --return fishOrder, numAffectedGene;
 numAffectedGeneOut=numAffectedGene;
@@ -172,3 +172,4 @@ end;
 
 
 $func$ LANGUAGE plpgsql ;
+
