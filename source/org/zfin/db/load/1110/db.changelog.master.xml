@@ -6,5 +6,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/load/1110/ZFIN-6301.sql"/>
+    <include file="source/org/zfin/db/load/1110/add_eco_go_mapping.sql"/>
 
 </databaseChangeLog>

@@ -25,7 +25,7 @@ BEGIN
 
  getFishOrder(NEW.fish_zdb_id,NEW.fish_genotype_zdb_id)
  INTO NEW.fish_order,NEW.fish_functional_affected_gene_count;
- raise notice 'end: %', NEW.fish_functional_affected_gene_count;
+-- raise notice 'end: %', NEW.fish_functional_affected_gene_count;
 
 -- get_genbank_dblink_length_type
      RETURN NEW;

@@ -32,6 +32,10 @@
             <b>Alias:</b>
             <div id="<%=StandardDivNames.previousNameDiv%>"></div>
             <br>
+            <br>
+            <b>Antibody Registry:</b>
+            <div id="<%=StandardDivNames.abRegistryDiv%>"></div>
+            <br>
         </td>
         <td valign="top">
             <div id="<%=StandardDivNames.publicationLookupDiv%>"></div>

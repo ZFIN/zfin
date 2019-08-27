@@ -89,6 +89,40 @@ def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
     println("extract file duration:" + duration2)
 }
 
+def downloadNonOpenAccessPDF (String pmcId, String zdbId, String pubYear) {
+
+    def timeStart = new Date()
+    def yearDirectory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/")
+    def directory = new File("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId")
+
+    def code = new URL("https://www.ncbi.nlm.nih.gov/pmc/articles/" + pmcId + "/pdf/").openConnection().with {
+        requestMethod = 'HEAD'
+        addRequestProperty("user-agent", "Zebrafish Information Network (ZFIN)")
+        connect()
+        responseCode
+    }
+
+    if (code.equals(200)) {
+        if (!yearDirectory.exists()) {
+            yearDirectory.mkdir()
+        }
+        if (!directory.exists()) {
+            directory.mkdir()
+        }
+        def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" +".pdf")
+        def out = new BufferedOutputStream(file)
+
+        URLConnection connection = new URL("https://www.ncbi.nlm.nih.gov/pmc/articles/" + pmcId + "/pdf/").openConnection()
+        connection.setRequestProperty("user-agent", "Zebrafish Information Network (ZFIN)")
+        out << connection.getInputStream()
+        out.close()
+        def timeStop = new Date()
+        TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
+        println("Non open access download to filesystem duration:" + duration)
+        ADD_BASIC_PDFS_TO_DB.append([zdbId, pmcId, pubYear + "/" + zdbId + "/" + zdbId + ".pdf", zdbId + ".pdf"].join('|') + "\n")
+    }
+}
+
 def processPMCText(GPathResult pmcTextArticle, String zdbId, String pmcId, String pubYear) {
     def article = pmcTextArticle.GetRecord.record.metadata.article
     def header = pmcTextArticle.GetRecord.record.header
@@ -236,7 +270,13 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
                 downloadPMCFileBundle(pdfPath, zdbId, pubYear)
                 def fullTxt = PubmedUtils.getFullText(pmcId.toString().substring(3))
                 println pmcId + "," + zdbId
+                println (pdfPath)
                 processPMCText(fullTxt, zdbId, pmcId, pubYear)
+            }
+
+            else {
+                println "found a PDF to try and download manually " + pmcId + "," + zdbId
+                downloadNonOpenAccessPDF(pmcId, zdbId, pubYear)
             }
         }
     }

@@ -22,6 +22,7 @@ my $password = "";
 
 print "Content-type: text/HTML\n\n<HTML>\n\n";
 
+
 ### open a handle on the db
 my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
     or die "\n\nCannot connect to PostgreSQL database: $DBI::errstr\n\n";
@@ -38,6 +39,86 @@ if ($recordToBeMergedInto =~ m/^ZDB\-([A-Z]+)\-\d{6}\-\d+$/) {
     $type2 = $1;
 } else {
     die "Not a valid ZDB ID for the record to be merged into\n";
+}
+
+
+my $markerAbbrevToBeDeleted;
+my $markerNameToBeDeleted;
+my $markerAbbrevMergedInto;
+my $markerNameMergedInto;
+my $daliasID;
+my $nomenID;
+
+## get marker abbreviations and names for the marker to be deleted; also, get the new dalias ID
+my $sqlGetMarkerInfoForToBeDeleted = "select mrkr_abbrev, mrkr_name, get_id('DALIAS') as daliasid from marker where mrkr_zdb_id = '$recordToBeDeleted';";
+my $curGetMarkerInfoForToBeDeleted = $dbh->prepare_cached($sqlGetMarkerInfoForToBeDeleted);
+$curGetMarkerInfoForToBeDeleted->execute();            
+$curGetMarkerInfoForToBeDeleted->bind_columns(\$markerAbbrevToBeDeleted, \$markerNameToBeDeleted, \$daliasID);
+while ($curGetMarkerInfoForToBeDeleted->fetch()) {}
+$curGetMarkerInfoForToBeDeleted->finish();
+
+## get marker abbreviations and names for the marker to be merged into; also, get the new nomen ID
+my $sqlGetMarkerInfoForMergedInto = "select mrkr_abbrev, mrkr_name, get_id('NOMEN') as nomenid from marker where mrkr_zdb_id = '$recordToBeMergedInto';";
+my $curGetMarkerInfoForMergedInto = $dbh->prepare_cached($sqlGetMarkerInfoForMergedInto);
+$curGetMarkerInfoForMergedInto->execute();            
+$curGetMarkerInfoForMergedInto->bind_columns(\$markerAbbrevMergedInto, \$markerNameMergedInto, \$nomenID);
+my $unspecifiedAllele1Gene2;
+while ($curGetMarkerInfoForMergedInto->fetch()) {
+  ## this will be used in later code block for FB case 10333
+  $unspecifiedAllele1Gene2 = $markerAbbrevMergedInto . '_unspecified';
+}
+$curGetMarkerInfoForMergedInto->finish();
+
+if ($type1 ne 'ATB') {
+
+### ZFIN-6309, update genotype display names and fish names when merging genes
+
+my $sqlGetGenotypeDisplayName = "select geno_zdb_id, geno_display_name from feature_marker_relationship, genotype_feature, genotype where fmrel_mrkr_zdb_id  = ? and fmrel_ftr_zdb_id= genofeat_feature_zdb_id and genofeat_geno_zdb_id = geno_zdb_id;";
+my $curGetGenotypeDisplayName = $dbh->prepare($sqlGetGenotypeDisplayName);
+
+my $sqlUpdtateGenotypeDislayName = "update genotype set geno_display_name = ? where geno_zdb_id = ?;";
+my $curUpdtateGenotypeDislayName = $dbh->prepare($sqlUpdtateGenotypeDislayName);
+
+$curGetGenotypeDisplayName->execute($recordToBeDeleted);
+
+my $genotypeId;
+my $genotypeDisplayName;
+my $newDisplayName;
+$curGetGenotypeDisplayName->bind_columns(\$genotypeId,\$genotypeDisplayName);
+
+while ($curGetGenotypeDisplayName->fetch()) {
+  if (index($genotypeDisplayName, $markerAbbrevToBeDeleted) != -1)   {
+    $newDisplayName = $genotypeDisplayName =~ s/$markerAbbrevToBeDeleted/$markerAbbrevMergedInto/gr;
+    $curUpdtateGenotypeDislayName->execute($newDisplayName,$genotypeId);
+  }
+}
+
+$curGetGenotypeDisplayName->finish();
+$curUpdtateGenotypeDislayName->finish();
+
+my $sqlGetFishName = "select fish_zdb_id, fish_name from feature_marker_relationship, genotype_feature, fish where fmrel_mrkr_zdb_id  = ? and fmrel_ftr_zdb_id= genofeat_feature_zdb_id and genofeat_geno_zdb_id = fish_genotype_zdb_id;";
+my $curGetFishName = $dbh->prepare($sqlGetFishName);
+
+my $sqlUpdtateFishName = "update fish set fish_name = ? where fish_zdb_id = ?;";
+my $curUpdateFishName = $dbh->prepare($sqlUpdtateFishName);
+
+$curGetFishName->execute($recordToBeDeleted);
+
+my $fishId;
+my $fishName;
+my $newFishName;
+$curGetFishName->bind_columns(\$fishId,\$fishName);
+
+while ($curGetFishName->fetch()) {
+  if (index($fishName, $markerAbbrevToBeDeleted) != -1)   {
+    $newFishName = $fishName =~ s/$markerAbbrevToBeDeleted/$markerAbbrevMergedInto/gr;
+    $curUpdateFishName->execute($newFishName,$fishId);
+  }
+}
+
+$curGetFishName->finish();
+$curUpdateFishName->finish();
+
 }
 
 my $tableName;
@@ -103,32 +184,6 @@ my $curUpdateRecordAttribution = $dbh->prepare($sqlUpdateRecordAttribution);
 $curUpdateRecordAttribution->execute();
 $curUpdateRecordAttribution->finish();
 
-my $markerAbbrevToBeDeleted;
-my $markerNameToBeDeleted;
-my $markerAbbrevMergedInto;
-my $markerNameMergedInto;
-my $daliasID;
-my $nomenID;
-
-## get marker abbreviations and names for the marker to be deleted; also, get the new dalias ID
-my $sqlGetMarkerInfoForToBeDeleted = "select mrkr_abbrev, mrkr_name, get_id('DALIAS') as daliasid from marker where mrkr_zdb_id = '$recordToBeDeleted';";
-my $curGetMarkerInfoForToBeDeleted = $dbh->prepare_cached($sqlGetMarkerInfoForToBeDeleted);
-$curGetMarkerInfoForToBeDeleted->execute();            
-$curGetMarkerInfoForToBeDeleted->bind_columns(\$markerAbbrevToBeDeleted, \$markerNameToBeDeleted, \$daliasID);
-while ($curGetMarkerInfoForToBeDeleted->fetch()) {}
-$curGetMarkerInfoForToBeDeleted->finish();
-
-## get marker abbreviations and names for the marker to be merged into; also, get the new nomen ID
-my $sqlGetMarkerInfoForMergedInto = "select mrkr_abbrev, mrkr_name, get_id('NOMEN') as nomenid from marker where mrkr_zdb_id = '$recordToBeMergedInto';";
-my $curGetMarkerInfoForMergedInto = $dbh->prepare_cached($sqlGetMarkerInfoForMergedInto);
-$curGetMarkerInfoForMergedInto->execute();            
-$curGetMarkerInfoForMergedInto->bind_columns(\$markerAbbrevMergedInto, \$markerNameMergedInto, \$nomenID);
-my $unspecifiedAllele1Gene2;
-while ($curGetMarkerInfoForMergedInto->fetch()) {
-  ## this will be used in later code block for FB case 10333
-  $unspecifiedAllele1Gene2 = $markerAbbrevMergedInto . '_unspecified';
-}
-$curGetMarkerInfoForMergedInto->finish();
 
 ## add new data_alias record
 my $sqlInsertZdbActiveData = "insert into zdb_active_data values('$daliasID');";
@@ -423,49 +478,8 @@ if ($thereIsUnspecifiedAlleleWithGeneRetained == 0 && $thereIsUnspecifiedAlleleW
 
 }
 
-### FB case 13983, update genotype display names and fish names when merging genes
-
-my $sqlGetGenotypeDisplayName = "select geno_zdb_id, geno_display_name from feature_marker_relationship, genotype_feature, genotype where fmrel_mrkr_zdb_id  = ? and fmrel_ftr_zdb_id= genofeat_feature_zdb_id and genofeat_geno_zdb_id = geno_zdb_id;";
-my $curGetGenotypeDisplayName = $dbh->prepare_cached($sqlGetGenotypeDisplayName);
-
-my $sqlUpdtateGenotypeDislayName = "update genotype set geno_display_name = ? where geno_zdb_id = ?;";
-my $curUpdtateGenotypeDislayName = $dbh->prepare_cached($sqlUpdtateGenotypeDislayName);
-
-$curGetGenotypeDisplayName->execute($recordToBeDeleted);
-
-my $genotypeId;
-my $genotypeDisplayName;
-$curGetGenotypeDisplayName->bind_columns(\$genotypeId,\$genotypeDisplayName);
-
-while ($curGetGenotypeDisplayName->fetch()) {
-   $genotypeDisplayName =~ s/$markerAbbrevToBeDeleted/$markerAbbrevMergedInto/;
-   $curUpdtateGenotypeDislayName->execute($genotypeDisplayName,$genotypeId);
-}
-
-$curGetGenotypeDisplayName->finish();
-$curUpdtateGenotypeDislayName->finish();
-
-my $sqlGetFishName = "select fish_zdb_id, fish_name from feature_marker_relationship, genotype_feature, fish where fmrel_mrkr_zdb_id  = ? and fmrel_ftr_zdb_id= genofeat_feature_zdb_id and genofeat_geno_zdb_id = fish_genotype_zdb_id;";
-my $curGetFishName = $dbh->prepare_cached($sqlGetFishName);
-
-my $sqlUpdtateFishName = "update fish set fish_name = ? where fish_zdb_id = ?;";
-my $curUpdateFishName = $dbh->prepare_cached($sqlUpdtateFishName);
-
-$curGetFishName->execute($recordToBeDeleted);
-
-my $fishId;
-my $fishName;
-$curGetFishName->bind_columns(\$fishId,\$fishName);
-
-while ($curGetFishName->fetch()) {
-   $fishName =~ s/$markerAbbrevToBeDeleted/$markerAbbrevMergedInto/;
-   $curUpdateFishName->execute($fishName,$fishId);
-}
-
-$curGetFishName->finish();
-$curUpdateFishName->finish();
-
 } ## end of if (type1 ne 'ATB')
+
 
 ### MRDL-121
 ### get the public notes and concatenate them 
@@ -1134,6 +1148,8 @@ sub cleanupRecordAttributionTable {
                 
   } # end of if ($ctRecordAttributionForMergedInto > 0)
 } # end of cleanupRecordAttributionTable function
+
+
 
 
 

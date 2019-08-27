@@ -2,7 +2,8 @@ package org.zfin.marker.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.InvokerTransformer;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
@@ -38,7 +39,6 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -80,6 +80,12 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertFalse("pax2a doesn't have type BAC", pax2a.getMarkerType().getType() == Marker.Type.BAC);
         assertTrue("pax2a is in the type group GENEDOM", pax2a.isInTypeGroup(Marker.TypeGroup.GENEDOM));
         assertFalse("pax2a is not in the type group BAC", pax2a.isInTypeGroup(Marker.TypeGroup.BAC));
+    }
+
+    @Test
+    public void testMarkerTypeGroup() {
+        MarkerTypeGroup group = markerRepository.getMarkerTypeGroupByName(Marker.TypeGroup.GENEDOM.name());
+        assertTrue("genedome has more than 5 types associated", group.getTypeStrings().size() > 5);
     }
 
 
@@ -708,7 +714,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
         linkDisplayList = markerRepository.getMarkerDBLinksFast(m, DisplayGroup.GroupName.SUMMARY_PAGE);
         assertNotNull(linkDisplayList);
-        assertThat( linkDisplayList.size(), greaterThan(1));
+        assertThat(linkDisplayList.size(), greaterThan(1));
     }
 
     @Test

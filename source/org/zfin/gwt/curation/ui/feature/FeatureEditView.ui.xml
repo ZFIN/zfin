@@ -128,11 +128,11 @@
                         <zfin:StringListBox ui:field="featureAssembly"/>
                         <g:Label text="Start Location" />
 
-                        <zfin:NumberTextBox ui:field="featureStartLoc" visibleLength="7"/>
+                        <zfin:NumberTextBox ui:field="featureStartLoc" visibleLength="13"/>
 
                         <g:Label text="End Location"/>
 
-                        <zfin:NumberTextBox ui:field="featureEndLoc" visibleLength="7"/>
+                        <zfin:NumberTextBox ui:field="featureEndLoc" visibleLength="13"/>
                         <g:Label text="EvidenceCode"/>
                         <zfin:StringListBox ui:field="featureEvidenceCode"/>
 

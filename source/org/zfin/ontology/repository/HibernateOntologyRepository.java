@@ -9,6 +9,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.RelationshipSorting;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
+import org.zfin.datatransfer.go.EcoGoEvidenceCodeMapping;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -50,6 +51,14 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return (List<GenericTerm>) criteria.list();
     }
 
+    @Override
+    public EcoGoEvidenceCodeMapping getEcoEvidenceCode(GenericTerm term) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(EcoGoEvidenceCodeMapping.class);
+        criteria.add(Restrictions.eq("ecoTerm", term));
+        EcoGoEvidenceCodeMapping ecoMapTerm = (EcoGoEvidenceCodeMapping) criteria.uniqueResult();
+        return ecoMapTerm;
+    }
     @Override
     public Map<String, TermDTO> getTermDTOsFromOntology(Ontology ontology) {
         String sql = " " +
