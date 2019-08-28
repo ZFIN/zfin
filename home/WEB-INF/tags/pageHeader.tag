@@ -182,6 +182,7 @@
                             <li><a href="/action/publication/curating-bin">Curation Bins</a></li>
                             <li><a href="/action/publication/indexing-bin">Indexing Bin</a></li>
                             <li><a href="/action/publication/processing-bin">Processing Bin</a></li>
+                            <li><a href="/action/publication/metrics">Metrics</a></li>
                         </ul>
 
                         <span class="nav-column-header">Curate</span>
