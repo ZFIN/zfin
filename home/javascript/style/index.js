@@ -9,7 +9,7 @@ require('../../css/Marker.css');
 require('../../css/datapage.css');
 require('../../css/popup.css');
 require('../../css/modal.css');
-require('../../css/typeahead.css');
+require('../../css/typeahead.scss');
 require('../../css/zfin.css');
 require('../../css/layout.scss');
 require('../../css/faceted-search.css');

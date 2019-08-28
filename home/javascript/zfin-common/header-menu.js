@@ -53,28 +53,28 @@ $(() => {
             autocomplete.find('input[name="category"]').val(category === 'Any' ? '' : category);
             $input.animatedPlaceholder('pause');
         });
+        const allResultsLink = ({query}) => {
+            if (!query) {
+                return '';
+            }
+            return (`
+              <a href="/search?q=${query}" class="tt-search-link">
+                All results for ${query}
+                <span>&rarr;</span>
+              </a>
+            `);
+        };
         $input
             .autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {
                 templates: {
-                    suggestion: function (item) {
-                        return (`
-                          <a href="${item.url}">
+                    suggestion: item => (`
+                        <a href="${item.url}">
                             <span>${item.label}</span>
-                            <span class="category">${item.category}</span>
-                          </a>
-                        `);
-                    },
-                    footer: function ({query}) {
-                        if (!query) {
-                            return '';
-                        }
-                        return (`
-                          <a href="/search?q=${query}" class="tt-search-link">
-                            All results for ${query}
-                            <span>&rarr;</span>
-                          </a>
-                        `);
-                    },
+                            <span class="details">${item.category}</span>
+                        </a>
+                    `),
+                    footer: allResultsLink,
+                    empty: allResultsLink,
                 },
                 prepare: function (query, settings) {
                     settings.url = settings.url.replace('%QUERY', query);

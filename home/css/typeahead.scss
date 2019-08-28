@@ -1,8 +1,10 @@
+@import "theme";
+
 .tt-menu {
-    background-color: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    @include elevated-shadow;
+    background-color: white;
+    border: 1px solid $border-color;
     border-top: 0;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
     width: 100%;
 }
 
@@ -10,7 +12,7 @@
 .tt-no-results,
 .tt-search-link {
     font-size: 14px;
-    border-bottom: 1px solid #cccccc;
+    border-bottom: 1px solid $border-color;
     padding: 10px 16px;
     display: flex;
     flex-direction: column;
@@ -18,20 +20,20 @@
     color: inherit;
 }
 
-.tt-suggestion .category {
-    color: #808080;
+.tt-suggestion .details {
+    color: $grey;
 }
 
 .tt-suggestion.tt-cursor,
 .tt-suggestion:hover,
 .tt-search-link:hover {
-    background-color: #eeeeee;
+    background-color: $grey-light;
     color: inherit;
     text-decoration: none;
 }
 
 .tt-search-link {
-    background: rgb(0, 128, 128);
+    background: $primary;
     color: white;
     font-weight: bold;
     flex-direction: row;
@@ -42,13 +44,13 @@
     text-align: center;
 }
 
-.tt-suggestion:hover .text-muted {
-    color: #a0c8de;
-}
-
 .tt-suggestion p {
     margin: 0;
     text-align: left;
+}
+
+.tt-input {
+    vertical-align: middle !important;
 }
 
 /**

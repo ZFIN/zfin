@@ -20,7 +20,7 @@
             'href="/' + item.id + '"><i class="fas fa-arrow-circle-right"></i></a>';
         }
 
-        return '<p><span class="autocomplete-suggestion-text">' + item.label + '</span>' + directLink + '</p>';
+        return '<div><span class="autocomplete-suggestion-text">' + item.label + '</span>' + directLink + '</div>';
       };
     };
 

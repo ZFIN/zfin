@@ -5568,79 +5568,6 @@ and child.term_ontology = 'disease_ontology';
             <field column="biography" stripHTML="true" />
         </entity>
 
-        <!--  These are 'autocomplete only' results, which will be filtered out of the main query by default -->
-
-        <entity name="phenotype_statement"
-                query="select distinct 'psg-' || psg_id as id,
-                        psg_short_name as name,
-                        psg_short_name as full_name,
-                        'Autocomplete' as category,
-                        'Phenotype Statement' as type
-                        from phenotype_observation_generated;"
-        >
-
-            <entity name="phenotype_statement_alias_statements"
-                    query="select dalias_alias || ' ' || entity1a.term_name as alias,
-                                 'psg-' || psg_id as psg_id
-                            from phenotype_observation_generated ps, data_alias, term entity1a, term quality
-                            where dalias_data_zdb_id = psg_quality_zdb_id
-      	      	      	     and entity1a.term_zdb_id = psg_e1a_zdb_id
-                             and quality.term_zdb_id = psg_quality_zdb_id
-                             and ps.psg_tag = 'abnormal'
-                             and psg_e1b_zdb_id is null
-                             and psg_e2a_zdb_id is null
-                             and psg_e2b_zdb_id is null
-                            UNION
-                            select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as alias,
-                            'psg-' || psg_id as psg_id
-                            from phenotype_observation_generated ps, data_alias quality_alias,
-                                 data_alias entity_alias, term entity1a, term quality
-                            where quality_alias.dalias_data_zdb_id = psg_quality_zdb_id
-            		         and entity_alias.dalias_data_zdB_id = psg_e1a_zdb_id
-       	                     and entity1a.term_zdb_id = psg_e1a_zdb_id
-                             and quality.term_zdb_id = psg_quality_zdb_id
-                             and ps.psg_tag = 'abnormal'
-                             and psg_e1b_zdb_id is null
-                             and psg_e2a_zdb_id is null
-                             and psg_e2b_zdb_id is null;"
-                    where="psg_id=phenotype_statement.id"
-                    cacheImpl="SortedMapBackedCache"
-            />
-
-        </entity>
-
-        <entity name="omim_disease"
-                query="select distinct
-                               strip_omim(omimp_name) as name,
-                               strip_omim(omimp_name) as full_name,
-                               strip_omim(omimp_name) as id,
-                               'Autocomplete' as category,
-                               'OMIM Disease' as type
-                        from omim_phenotype where strip_omim(omimp_name) not in (Select term_name from term where term_ontology = 'disease_ontology')"
-        />
-
-        <entity name="autocomple_terms"
-                query="select term_ont_id as id,
-                             term_zdb_id as internal_id,
-                             term_name as name,
-                             term_name as full_name,
-                             'Autocomplete' as category,
-                             'Quality' as type,
-                             term_is_obsolete as obsolete,
-                             term_definition as definition
-                      from term
-                      where term_ontology in ('quality','zebrafish_experimental_conditions_ontology','zeco_taxonomy');"
-        >
-
-            <entity name="term_aliases"
-                    query="select dalias_alias alias, dalias_data_zdb_id
-                             from data_alias
-                             where substring(dalias_data_zdb_id from 1 for 8) = 'ZDB-TERM'"
-                    where="dalias_data_zdb_id=term.internal_id"
-                    cacheImpl="SortedMapBackedCache"
-            />
-
-        </entity>
 
         <entity name="journal"
                 query="select
@@ -5681,45 +5608,6 @@ and child.term_ontology = 'disease_ontology';
             />
 
         </entity>
-
-        <entity name="condition"
-                query="select distinct
-                         case
-                              when cdt_name = 'Ethinylestradiol (CAS: 57-63-6)' then 'Ethinylestradiol'
-                              when cdt_name = 'TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin) (CAS: 1746-01-6)' then 'TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin)'
-                              when cdt_name = 'DEAB (CAS:93148-15-3)' then 'DEAB'
-                              when cdt_name = 'Cadmium chloride (CAS: 10108-64-2)' then 'Cadmium chloride'
-                              when cdt_name = 'all-trans retinoic acid (CAS: 302-79-4)' then 'all-trans retinoic acid'
-                              when cdt_name = 'ENU (CAS: 759-73-9)' then 'ENU'
-                              when cdt_name = '3-methyladenine (CAS: 5142-23-4)' then '3-methyladenine'
-                              when cdt_name = 'Acridine orange (CAS: 65-61-2)' then 'Acridine orange'
-                              when cdt_name = '17beta-estradiol (CAS: 50-28-2)' then '17beta-estradiol'
-                              when cdt_name = 'cyclopamine (CAS: 4449-51-8)' then 'cyclopamine'
-                              when cdt_name = 'SU5416 (CAS:194413-58-6)' then 'SU5416'
-                              when cdt_name = 'Rapamycin (CAS: 53123-88-9)' then 'Rapamycin'
-                              when cdt_group in ('physical','chemical','physiological') then cdt_name
-                              else cdt_group || ':' || cdt_name end as name,
-                              case
-                              when cdt_name = 'Ethinylestradiol (CAS: 57-63-6)' then 'Ethinylestradiol'
-                              when cdt_name = 'TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin) (CAS: 1746-01-6)' then 'TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin)'
-                              when cdt_name = 'DEAB (CAS:93148-15-3)' then 'DEAB'
-                              when cdt_name = 'Cadmium chloride (CAS: 10108-64-2)' then 'Cadmium chloride'
-                              when cdt_name = 'all-trans retinoic acid (CAS: 302-79-4)' then 'all-trans retinoic acid'
-                              when cdt_name = 'ENU (CAS: 759-73-9)' then 'ENU'
-                              when cdt_name = '3-methyladenine (CAS: 5142-23-4)' then '3-methyladenine'
-                              when cdt_name = 'Acridine orange (CAS: 65-61-2)' then 'Acridine orange'
-                              when cdt_name = '17beta-estradiol (CAS: 50-28-2)' then '17beta-estradiol'
-                              when cdt_name = 'cyclopamine (CAS: 4449-51-8)' then 'cyclopamine'
-                              when cdt_name = 'SU5416 (CAS:194413-58-6)' then 'SU5416'
-                              when cdt_name = 'Rapamycin (CAS: 53123-88-9)' then 'Rapamycin'
-                              when cdt_group in ('physical','chemical','physiological') then cdt_name
-                              else cdt_group || ':' || cdt_name end as full_name,
-                              cdt_group || cdt_name as id,
-                         'Autocomplete' as category,
-                         'Condition' as type
-                    from condition_data_type
-                    where cdt_group || ':' || cdt_name not in ('chemical:other','morpholino:morpholino','TALEN:TALEN');"
-        />
 
         <!-- this fills the STR categories on marker search, but is excluded from site search -->
         <entity name="str_relationship"
