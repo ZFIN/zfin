@@ -265,7 +265,24 @@
                             <div class="nav-column">
                                 <span class="nav-column-header">${currentUser.display}</span>
                                 <ul class="list-unstyled">
-                                    <li><a href="/${currentUser.zdbID}">View Profile</a></li>
+                                    <li><a href="/${currentUser.zdbID}">Your Profile</a></li>
+                                    <c:choose>
+                                        <c:when test="${fn:length(currentUser.labs) == 1}">
+                                            <c:forEach items="${currentUser.labs}" var="lab">
+                                                <!-- ${lab} -->
+                                                <!-- ${lab.toString()} -->
+                                                <li><a href="/${lab.zdbID}">Your Lab</a></li>
+                                            </c:forEach>
+                                        </c:when>
+                                        <c:when test="${fn:length(currentUser.labs) > 1}">
+                                            <c:forEach items="${currentUser.labs}" var="lab">
+                                                <li><a href="/${lab.zdbID}">${lab.name}</a></li>
+                                            </c:forEach>
+                                        </c:when>
+                                    </c:choose>
+                                    <c:if test="${currentUserHasZebraShareSubmissions}">
+                                        <li><a href="/action/zebrashare/dashboard">Your ZebraShare Submissions</a></li>
+                                    </c:if>
                                     <li><a href="/action/logout">Logout</a></li>
                                 </ul>
                             </div>
