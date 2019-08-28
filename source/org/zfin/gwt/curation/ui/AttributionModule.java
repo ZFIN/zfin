@@ -178,6 +178,9 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
             @Override
             public void onClick(ClickEvent event) {
                 clearMessage();
+                clearError();
+                featureLookupComposite.clearError();
+                markerLookupComposite.clearError();
             }
         });
 
@@ -327,6 +330,8 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private void resetInput() {
         markerLookupComposite.setText("");
         featureLookupComposite.setText("");
+        clearMessage();
+        clearError();
     }
 
     @Override
