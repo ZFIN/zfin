@@ -85,7 +85,7 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@zfin.org
 <!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/crick/blastdb
-<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/devBlastRegeneration
+<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/blastRegeneration
 <!--|WEBHOST_FASTA_FILE_PATH|-->	/research/zblastfiles/dev_files
 <!--|WEB_ADMIN_EMAIL|-->	informix\@zfin.org
 <!--|WIKI_HOST|-->	devwiki.zfin.org
