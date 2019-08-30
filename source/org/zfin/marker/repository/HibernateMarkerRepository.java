@@ -2661,33 +2661,6 @@ public String getABRegID(String zdbID){
                 ;
     }
 
-    @Override
-    public List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString) {
-
-        List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
-        String hql = " select targetGene from Marker targetGene " +
-                "where " +
-                "lower(targetGene.abbreviation) like :lookupString " +
-                "and targetGene.markerType in (:markerType)  " +
-                "order by targetGene.abbreviation  ";
-
-        return HibernateUtil.currentSession().createQuery(hql)
-                .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
-                .setParameterList("markerType", markerTypes)
-                .setResultTransformer(new BasicTransformerAdapter() {
-                    @Override
-                    public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
-                        Marker targetGene = (Marker) tuple[0];
-                        TargetGeneLookupEntry targetGeneSuggestionList = new TargetGeneLookupEntry();
-                        targetGeneSuggestionList.setId(targetGene.getZdbID());
-                        targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
-                        targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
-                        return targetGeneSuggestionList;
-                    }
-                })
-                .list()
-                ;
-    }
 
     public List<String> getMarkerTypesforRelationship(String relType) {
         Session session = currentSession();
@@ -2894,25 +2867,26 @@ public String getABRegID(String zdbID){
     }
 
     @Override
-    public List<TargetGeneLookupEntry> getGenesForMerge(String lookupString) {
-        String hql = " select gene from Marker gene " +
+    public List<TargetGeneLookupEntry> getGeneSuggestionList(String lookupString) {
+        List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
+        String hql = " select targetGene from Marker targetGene " +
                 "where " +
-                "lower(gene.abbreviation) like :lookupString " +
-                "and gene.markerType.name in (:type1 , :type2) " +
+                "lower(targetGene.abbreviation) like :lookupString " +
+                "and targetGene.markerType in (:markerType)  " +
                 "order by targetGene.abbreviation  ";
+
         return HibernateUtil.currentSession().createQuery(hql)
                 .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
-                .setString("type1", "GENE")
-                .setString("type2", "GENEP")
+                .setParameterList("markerType", markerTypes)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
-                        Marker geneMergedInto = (Marker) tuple[0];
-                        TargetGeneLookupEntry geneSuggestionList = new TargetGeneLookupEntry();
-                        geneSuggestionList.setId(geneMergedInto.getZdbID());
-                        geneSuggestionList.setLabel(geneMergedInto.getAbbreviation());
-                        geneSuggestionList.setValue(geneMergedInto.getAbbreviation());
-                        return geneSuggestionList;
+                        Marker targetGene = (Marker) tuple[0];
+                        TargetGeneLookupEntry targetGeneSuggestionList = new TargetGeneLookupEntry();
+                        targetGeneSuggestionList.setId(targetGene.getZdbID());
+                        targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
+                        targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
+                        return targetGeneSuggestionList;
                     }
                 })
                 .list()

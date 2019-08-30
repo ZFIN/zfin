@@ -435,7 +435,6 @@ public interface MarkerRepository {
 
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 
-    List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
     List<TargetGeneLookupEntry> getRelationshipTargetsForString(String lookupString);
     List<String> getMarkerTypesforRelationship(String relType);
     List<LookupEntry> getConstructComponentsForString(String lookupString, String pubZdbId);
@@ -479,7 +478,7 @@ public interface MarkerRepository {
      */
     String getAccessionNumber(Marker marker, Database.AvailableAbbrev database);
 
-    List<TargetGeneLookupEntry> getGenesForMerge(String lookupString);
+    List<TargetGeneLookupEntry> getGeneSuggestionList(String lookupString);
 
     List<TranscriptPresentation> getTranscriptsForGeneId(String geneZdbId);
 
