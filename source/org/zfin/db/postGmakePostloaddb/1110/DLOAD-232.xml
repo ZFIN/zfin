@@ -10,7 +10,7 @@
         <loadData file="source/org/zfin/db/postGmakePostloaddb/1110/DLOAD-232.csv"
                   tableName="dblink" encoding="UTF-8">
 
-            <column name="id" type="String"/>
+            <column name="dblinkID" type="String"/>
 
         </loadData>
 

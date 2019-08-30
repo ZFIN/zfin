@@ -2,4 +2,4 @@
 --changeset xshao:DLOAD-232_pre
 
 drop table if exists dblink;
-create table dblink (id text);
+create table dblink (dblinkID text);
