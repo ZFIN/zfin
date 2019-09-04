@@ -58,7 +58,6 @@ import org.zfin.publication.PublicationTest;
 import org.zfin.search.service.SolrQueryFacadeSpec;
 import org.zfin.search.service.SolrServiceSpec;
 import org.zfin.security.Md5PasswordEncoderTest;
-import org.zfin.sequence.blast.BlastNonDBTest;
 import org.zfin.sequence.blast.SequenceTest;
 import org.zfin.sequence.blast.presentation.BlastPresentationServiceTest;
 import org.zfin.sequence.reno.presentation.RunCandidatePresentationTest;
@@ -79,7 +78,7 @@ import org.zfin.util.*;
         AntibodySearchCriteriaTest.class,
         ApgPaginationBeanTest.class,
         BeanCompareServiceTest.class,
-        BlastNonDBTest.class,
+        //BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
         CurationExperimentTest.class,
         DatabaseServiceTest.class,
