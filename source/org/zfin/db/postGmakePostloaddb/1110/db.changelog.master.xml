@@ -16,11 +16,15 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1110/PUB-606.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1110/PUB-607.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1110/ZFIN-6309.sql"/>
+
   <!--  <include file="source/org/zfin/db/postGmakePostloaddb/1110/DLOAD-232_pre.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1110/DLOAD-232.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1110/DLOAD-232.sql"/>-->
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/DLOAD-639_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/DLOAD-639.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1109/DLOAD-639.sql" />
+
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1110/ZFIN-6329.sql"/>
 
 </databaseChangeLog>
