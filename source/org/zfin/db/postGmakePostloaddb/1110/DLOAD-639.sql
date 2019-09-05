@@ -2,7 +2,7 @@
 --changeset pm:DLOAD-639
 update tscriptens set ensdartid=substring(ensdartid,0,position('.' in ensdartid));
 delete from tscriptens where ensdartid ='';
-update tscriptens set tscriptid=(select distinct mrkr_zdb_id from marker where trim(tscriptid)=mrkr_abbrev);
+--update tscriptens set tscriptid=(select distinct mrkr_zdb_id from marker where trim(tscriptid)=mrkr_abbrev);
 
 delete from tscriptens where exists (select 'x' from transcript where tscriptid=tscript_mrkr_zdb_id and trim(ensdartid)=trim(tscript_ensdart_id));
 delete from tscriptens where exists (select 'x' from transcript where tscriptid=tscript_mrkr_zdb_id and trim(tscript_ensdart_id)is not null);
