@@ -1,3 +1,5 @@
+require('./polyfills');
+
 require('./animated-placeholder.jquery');
 require('./autocompletify');
 require('./blast');
