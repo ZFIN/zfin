@@ -62,6 +62,7 @@ public class FeatureValidationService {
             case POINT_MUTATION:
             case DELETION:
             case INDEL:
+            case MNV:
             case SEQUENCE_VARIANT:
             case INSERTION:
                 return StringUtils.isNotEmpty(dtoFromGUI.getLabPrefix()) &&
