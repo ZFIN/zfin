@@ -117,4 +117,19 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        int result = 0;
+        if (Long.valueOf(id) != null) {
+            result = (int) id;
+        }
+        result = 51 * result + name.hashCode();
+        if (omimNum != null) {
+            result = 31 * result + omimNum.hashCode();
+        }
+        if (ortholog != null)
+            result = 31 * result + ortholog.getZdbID().hashCode();
+        return result;
+    }
 }
