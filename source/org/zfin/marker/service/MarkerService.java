@@ -977,15 +977,13 @@ public class MarkerService {
                 for (TermExternalReference termExternalReference : termExternalReferences) {
                     diseaseDisplay = new DiseaseDisplay();
                     diseaseDisplay.setDiseaseTerm(termExternalReference.getTerm());
-                    diseaseDisplay.setOmimTerm(omimPhenotype.getName());
-                    diseaseDisplay.setOmimNumber(omimPhenotype.getOmimNum());
+                    diseaseDisplay.setOmimPhenotype(omimPhenotype);
                     diseaseDisplays.add(diseaseDisplay);
                 }
             } else {
                 diseaseDisplay = new DiseaseDisplay();
                 diseaseDisplay.setDiseaseTerm(null);
-                diseaseDisplay.setOmimTerm(omimPhenotype.getName());
-                diseaseDisplay.setOmimNumber(omimPhenotype.getOmimNum());
+                diseaseDisplay.setOmimPhenotype(omimPhenotype);
                 diseaseDisplays.add(diseaseDisplay);
             }
         }

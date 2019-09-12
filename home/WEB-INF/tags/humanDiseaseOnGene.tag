@@ -23,8 +23,8 @@
                         <c:if test="${!empty row.diseaseTerm}"><zfin:link entity="${row.diseaseTerm}" longVersion="true"/></c:if>
                     </zfin:groupByDisplay>
                 </td>
-                <td>${row.omimTerm}</td>
-                <td style="text-align: center"><c:if test="${!empty row.omimNumber}"><a href="http://omim.org/entry/${row.omimNumber}">${row.omimNumber}</a></c:if></td>
+                <td>${row.omimPhenotype.name}</td>
+                <td style="text-align: center"><c:if test="${!empty row.omimPhenotype.omimNum}"><a href="http://omim.org/entry/${row.omimPhenotype.omimNum}">${row.omimPhenotype.omimNum}</a></c:if></td>
             </zfin:alternating-tr>
         </c:forEach>
     </table>

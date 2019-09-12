@@ -96,4 +96,25 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
     public void setHumanGeneMimNumber(String humanGeneMimNumber) {
         this.humanGeneMimNumber = humanGeneMimNumber;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof OmimPhenotype) {
+            OmimPhenotype anotherOmimPhenotype = (OmimPhenotype) o;
+            if (anotherOmimPhenotype == null) {
+                return false;
+            }
+
+            if(Long.valueOf(anotherOmimPhenotype.getId()) != null && Long.valueOf(id) != null && anotherOmimPhenotype.getId() == id) {
+                return true;
+            }
+
+            if (anotherOmimPhenotype.getName() != null && anotherOmimPhenotype.getOmimNum() != null) {
+                if (anotherOmimPhenotype.getName().equals(this.name) && anotherOmimPhenotype.getOmimNum().equals(this.omimNum)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

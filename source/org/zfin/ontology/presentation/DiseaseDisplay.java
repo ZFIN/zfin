@@ -5,8 +5,7 @@ import org.zfin.ontology.Term;
 
 public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
     private Term diseaseTerm;
-    private String omimTerm;
-    private String omimNumber;
+    private OmimPhenotype omimPhenotype;
 
     public DiseaseDisplay() {
     }
@@ -19,20 +18,12 @@ public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
         this.diseaseTerm = diseaseTerm;
     }
 
-    public String getOmimTerm() {
-        return omimTerm;
+    public OmimPhenotype getOmimPhenotype() {
+        return omimPhenotype;
     }
 
-    public void setOmimTerm(String omimTerm) {
-        this.omimTerm = omimTerm;
-    }
-
-    public String getOmimNumber() {
-        return omimNumber;
-    }
-
-    public void setOmimNumber(String omimNumber) {
-        this.omimNumber = omimNumber;
+    public void setOmimPhenotype(OmimPhenotype omimPhenotype) {
+        this.omimPhenotype = omimPhenotype;
     }
 
     @Override
@@ -43,10 +34,10 @@ public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
                 return false;
             }
             if (anotherDiseaseDisplay.getDiseaseTerm() == null) {
-                return anotherDiseaseDisplay.getOmimTerm().equals(this.omimTerm) && anotherDiseaseDisplay.getOmimNumber().equals(this.omimNumber);
+                return anotherDiseaseDisplay.getOmimPhenotype().equals(this.omimPhenotype);
             }
             if (anotherDiseaseDisplay.getDiseaseTerm().getZdbID().equals(this.diseaseTerm.getZdbID())
-                    && anotherDiseaseDisplay.getOmimTerm().equals(this.omimTerm) && anotherDiseaseDisplay.getOmimNumber().equals(this.omimNumber)) {
+                    && anotherDiseaseDisplay.getOmimPhenotype().equals(this.omimPhenotype)) {
                 return true;
             }
         }
@@ -61,18 +52,15 @@ public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
         } else {
             result = diseaseTerm.getZdbID().hashCode();
         }
-        result = 31 * result + omimTerm.hashCode();
-        result = 31 * result + omimNumber.hashCode();
+        result = 31 * result + omimPhenotype.getName().hashCode();
+        result = 31 * result + omimPhenotype.getOmimNum().hashCode();
         return result;
     }
 
     public int compareTo(DiseaseDisplay o) {
-        OmimPhenotype omimPhenotype = new OmimPhenotype();
-        omimPhenotype.setOmimNum(omimNumber);
-        omimPhenotype.setName(omimTerm);
         OmimPhenotype anotherOmimPhenotype = new OmimPhenotype();
-        anotherOmimPhenotype.setOmimNum(o.getOmimNumber());
-        anotherOmimPhenotype.setName(o.getOmimTerm());
+        anotherOmimPhenotype.setOmimNum(o.getOmimPhenotype().getOmimNum());
+        anotherOmimPhenotype.setName(o.getOmimPhenotype().getName());
         if (o.getDiseaseTerm() == null && diseaseTerm == null) {
             return omimPhenotype.compareTo(anotherOmimPhenotype);
         } else if (diseaseTerm == null) {
@@ -86,4 +74,5 @@ public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
             return diseaseTerm.compareTo(o.getDiseaseTerm());
         }
     }
+
 }
