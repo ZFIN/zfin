@@ -1,12 +1,23 @@
 --liquibase formatted sql
 --changeset pm:DLOAD-639
-update tscriptens set ensdartid=substring(ensdartid,0,position('.' in ensdartid));
-delete from tscriptens where ensdartid ='';
---update tscriptens set tscriptid=(select distinct mrkr_zdb_id from marker where trim(tscriptid)=mrkr_abbrev);
+update tmp_ottens set ensdartid = nullif(ensdartid, '');
+update tmp_ottens set comments = nullif(comments, '');
 
-delete from tscriptens where exists (select 'x' from transcript where tscriptid=tscript_mrkr_zdb_id and trim(ensdartid)=trim(tscript_ensdart_id));
-delete from tscriptens where exists (select 'x' from transcript where tscriptid=tscript_mrkr_zdb_id and trim(tscript_ensdart_id)is not null);
-update transcript set tscript_ensdart_id=(select distinct ensdartid from tscriptens where trim(tscriptid)=trim(tscript_mrkr_zdb_id) and tscript_ensdart_id is null limit 1) where not exists  (select 'x' from tscriptens where tscriptid=tscript_mrkr_zdb_id and trim(ensdartid)=trim(tscript_ensdart_id));
+update tmp_ottens set ensdartid=substring(ensdartid,0,position('.' in ensdartid)) where ensdartid like '%.%';
+delete from tmp_ottens where exists (select 'x' from transcript where tscriptid=tscript_mrkr_zdb_id and trim(ensdartid)=trim(tscript_ensdart_id));
+
+
+update transcript
+set tscript_ensdart_id=(select distinct ensdartid from tmp_ottens where trim(tscriptid)=trim(tscript_mrkr_zdb_id) and tscript_ensdart_id is null limit 1)
+from tmp_ottens
+where tscript_ensdart_id is null
+and trim(tscriptid)=trim(tscript_mrkr_zdb_id);
+
+update transcript
+set tscript_status_id=1
+from tmp_ottens
+where tscript_ensdart_id is null
+and trim(tscriptid)=trim(tscript_mrkr_zdb_id) and comments is not null and ensdartid is null;
 
 create table pre_db_link (
 
@@ -22,9 +33,9 @@ insert into pre_db_link (
         predblink_acc_num_display,
         predblink_fdbcont_zdb_id)
   select distinct tscriptid, ensdartid, ensdartid, fdbcont_zdb_id
-    from tscriptens, foreign_db, foreign_db_contains
+    from tmp_ottens, foreign_db, foreign_db_contains
    where fdbcont_fdb_db_id = fdb_db_pk_id
-     and fdb_db_name = 'Ensembl_Trans' ;
+     and fdb_db_name = 'Ensembl_Trans' and ensdartid is not null;
 
 alter table pre_db_link add predblink_dblink_zdb_id varchar(50);
 
@@ -35,7 +46,7 @@ insert into zdb_active_data select predblink_dblink_zdb_id from pre_db_link;
 
 insert into db_link (dblink_linked_recid,dblink_acc_num, dblink_zdb_id ,dblink_acc_num_display,dblink_fdbcont_zdb_id)
   select predblink_data_zdb_id, predblink_acc_num, predblink_dblink_zdb_id, predblink_acc_num_display, predblink_fdbcont_zdb_id
-    from pre_db_link;
+    from pre_db_link where predblink_data_zdb_id not in (select dblink_linked_recid from db_link where dblink_acc_num like 'ENSDART%');
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
   select predblink_dblink_zdb_id,'ZDB-PUB-190221-12' from pre_db_link;
