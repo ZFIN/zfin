@@ -1,4 +1,4 @@
-unload to pis_per_country
+unload to total_rows_returned_for_per_country_count
 select count(*), person_country 
   from person 
   where exists (select 'x' from int_person_lab 
@@ -7,7 +7,7 @@ select count(*), person_country
  and person_country is not null
  group by person_country order by count(*) desc;
 
-unload to count_pis_without_country
+unload to total_rows_returned_for_count_of_pis_without_country
 select count(*)
   from person 
   where exists (select 'x' from int_person_lab 
@@ -15,7 +15,7 @@ select count(*)
                            and source_id = zdb_id) 
  and person_country is null;
 
-unload to count_pis_with_country
+unload to total_rows_returned_for_count_pis_with_country
 select count(*)
   from person 
   where exists (select 'x' from int_person_lab 
