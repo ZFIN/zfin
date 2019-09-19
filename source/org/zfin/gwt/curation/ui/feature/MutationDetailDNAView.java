@@ -260,6 +260,9 @@ public class MutationDetailDNAView extends AbstractViewComposite {
             case INDEL:
                 showPlusMinusBP();
                 break;
+            case MNV:
+                showPlusMinusBP();
+                break;
             case TRANSGENIC_INSERTION:
                 showTgFields();
                 break;

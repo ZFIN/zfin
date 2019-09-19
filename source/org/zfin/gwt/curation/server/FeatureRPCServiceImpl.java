@@ -279,8 +279,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (fgmd.getZdbID() == null) {
                 HibernateUtil.currentSession().save(fgmd);
             }
-            if (fgmd.getFgmdSeqRef().length()==fgmd.getFgmdSeqVar().length()){
-                feature.setType(FeatureTypeEnum.MNV);
+            if (fgmd.getFgmdSeqRef().length()==fgmd.getFgmdSeqVar().length())
+            {
+                if (fgmd.getFgmdSeqRef().length()>1) {
+                    feature.setType(FeatureTypeEnum.MNV);
+                }
             }
             /*if (!fgmd.equals(oldDetail)) {
                 System.out.println(oldDetail.getFgmdSeqRef());

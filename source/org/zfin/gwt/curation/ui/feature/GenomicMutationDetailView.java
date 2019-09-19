@@ -161,6 +161,9 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
             case INDEL:
                 showBoth();
                 break;
+            case MNV:
+                showBoth();
+                break;
         }
     }
 
