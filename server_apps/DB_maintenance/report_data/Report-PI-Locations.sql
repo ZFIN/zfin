@@ -14,3 +14,11 @@ select count(*)
                            where position_id in (2,7)
                            and source_id = zdb_id) 
  and person_country is null;
+
+unload to count_pis_with_country
+select count(*)
+  from person 
+  where exists (select 'x' from int_person_lab 
+                           where position_id in (2,7)
+                           and source_id = zdb_id) 
+ and person_country is not null;
