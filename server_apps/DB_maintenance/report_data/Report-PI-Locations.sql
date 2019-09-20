@@ -7,18 +7,12 @@ select count(*), person_country
  and person_country is not null
  group by person_country order by count(*) desc;
 
-unload to total_rows_returned_for_count_of_pis_without_country
-select count(*)
-  from person 
-  where exists (select 'x' from int_person_lab 
+unload to percentage_with_country
+select 
+  sum(case when person_country is not null then 1 else 0 end)/count(*)::decimal*100
+  as pct_with_country
+ from person
+ where exists (select 'x' from int_person_lab 
                            where position_id in (2,7)
-                           and source_id = zdb_id) 
- and person_country is null;
-
-unload to total_rows_returned_for_count_pis_with_country
-select count(*)
-  from person 
-  where exists (select 'x' from int_person_lab 
-                           where position_id in (2,7)
-                           and source_id = zdb_id) 
- and person_country is not null;
+                           and source_id = zdb_id);
+   
