@@ -3556,7 +3556,11 @@
 			     where dalias_data_zdb_id = fmrel_mrkr_zdb_id
 			     and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature')
                    union
-               select ft_feature_abbrev alias, ft_feature_zdb_id data_id from feature_tracking
+               select ft_feature_abbrev alias, wd_new_zdb_id data_id from feature_tracking, withdrawn_data
+                  where ft_feature_zdb_id = wd_old_zdb_id
+                union
+               select ft_feature_abbrev alias, zrepld_new_zdb_id data_id from feature_tracking, zdb_replaced_data
+                  where ft_feature_zdb_id = zrepld_old_zdb_id
                     "
                     where="data_id=feature.id"
                     cacheImpl="SortedMapBackedCache"
