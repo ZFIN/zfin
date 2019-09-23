@@ -4787,7 +4787,19 @@ and child.term_ontology = 'disease_ontology';
                     query="select recattrib_source_zdb_id as pub_zdb_id,
                           feature_abbrev as sequence_alteration, feature_zdb_id as xref
                              from feature, record_attribution
-                            where recattrib_data_zdb_id = feature_zdb_id;"
+                            where recattrib_data_zdb_id = feature_zdb_id
+                            union
+                            select wd_new_zdb_id as pub_zdb_id,
+                            ft_feature_abbrev as sequence_alteration, ft_feature_zdb_id as xref
+                              from feature_tracking, withdrawn_data
+                              where ft_feature_zdb_id = wd_old_zdb_id
+                              and wd_new_zdb_id like 'ZDB-PUB%'
+                            union
+                            select zrepld_new_zdb_id as pub_zdb_id,
+                            ft_feature_abbrev as sequence_alteration, ft_feature_zdb_id as xref
+                              from feature_tracking, zdb_replaced_data
+                              where ft_feature_zdb_id = zrepld_old_zdb_id
+                              and zrepld_new_zdb_id like 'ZDB-PUB%';"
                     cacheImpl="SortedMapBackedCache"
                     where="pub_zdb_id=publication.id"
             />
