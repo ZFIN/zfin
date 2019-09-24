@@ -26,12 +26,6 @@
         </a>
     </div>
     <div class="col-md-6">
-        <a href="/action/ontology/search" class="section primary-link">
-            <div class="title">Ontologies</div>
-            <div class="description">Search Zebrafish Anatomy, Gene, and Human Disease Ontologies</div>
-        </a>
-    </div>
-    <div class="col-md-6">
         <a href="/action/blast/blast" class="section primary-link">
             <div class="title">BLAST</div>
             <div class="description">Align nucleotide and protein sequences with zebrafish datasets</div>
@@ -50,15 +44,21 @@
         </a>
     </div>
     <div class="col-md-6">
+        <a href="/zf_info/zfbook/zfbk.html" class="section primary-link">
+            <div class="title">The Zebrafish Book</div>
+            <div class="description">A guide for the laboratory use of zebrafish</div>
+        </a>
+    </div>
+    <div class="col-md-6">
         <a href="https://zebrafish.org" class="section primary-link" target="_blank" rel="noopener noreferrer">
             <div class="title external">ZIRC</div>
             <div class="description">Browse or request products and services from the Zebrafish International Resource Center</div>
         </a>
     </div>
     <div class="col-md-6">
-        <a href="/zf_info/zfbook/zfbk.html" class="section primary-link">
-            <div class="title">The Zebrafish Book</div>
-            <div class="description">A guide for the laboratory use of zebrafish</div>
+        <a href="https://www.alliancegenome.org" class="section primary-link" target="_blank" rel="noopener noreferrer">
+            <div class="title external">Alliance of Genome Resources</div>
+            <div class="description">Explore genetic/genomic data from multiple model organisms</div>
         </a>
     </div>
 </div>
