@@ -3,8 +3,11 @@
 <%@ attribute name="id" type="java.lang.String" required="true" %>
 <%@ attribute name="images" type="java.util.List" required="true" %>
 <%@ attribute name="captions" type="java.util.List" %>
+<%@ attribute name="interval" type="java.lang.String" %>
 
-<div id="${id}" class="carousel slide" data-ride="carousel" data-interval="10000">
+<c:set var="interval" value="${(empty interval) ? '5000' : interval}" />
+
+<div id="${id}" class="carousel slide" data-ride="carousel" data-interval="${interval}">
 
     <div class="carousel-inner" role="listbox">
         <c:forEach items="${images}" var="image" varStatus="status">

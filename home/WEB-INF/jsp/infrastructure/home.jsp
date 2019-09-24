@@ -18,7 +18,7 @@
         <div class="col-lg-6 col-lg-pull-6">
             <div class="section carousel-section">
                 <div class="heading">Recently Curated Figures</div>
-                <zfin2:imageCarousel id="home-carousel" images="${carouselImages}" captions="${sanitizedCaptions}" />
+                <zfin2:imageCarousel id="home-carousel" images="${carouselImages}" captions="${sanitizedCaptions}" interval="20000"/>
             </div>
         </div>
     </div>

@@ -18,7 +18,7 @@
         play() {
             this.pause();
             this._placeholder.css('visibility', 'visible');
-            this._intervalId = setInterval(this._next.bind(this), 5000);
+            this._intervalId = setInterval(this._next.bind(this), 8000);
         }
 
         pause() {
