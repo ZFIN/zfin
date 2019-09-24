@@ -3,6 +3,10 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
+<div class="full-name">
+    The Zebrafish Information Network
+</div>
+
 <%@ include file="homeSearch.jsp" %>
 
 <div class="container">

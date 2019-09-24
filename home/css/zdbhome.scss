@@ -3,14 +3,26 @@
 body.home {
     background: $grey-light !important;
 
-    header .search {
-        display: none;
+    header {
+        box-shadow: none;
+
+        & .search {
+            display: none;
+        }
     }
+}
+
+.full-name {
+    background: $primary;
+    margin-top: -10px;
+    z-index: 120;
+    color: white;
+    padding: 0 10px 4px 10px;
+    font-size: 12.8px;
 }
 
 .search-container {
     @include elevated-shadow;
-    margin-top: -10px;
     margin-bottom: 60px;
     background: url(/images/search-background.png) 50% 90%;
     background-size: cover;
