@@ -96,9 +96,11 @@
             <a href="http://www.uoregon.edu/"><img src="/images/UOSignature-WHT.png"></a>
             <a href="http://www.alliancegenome.org/"><img src="/images/AllianceLogoWhite.png"></a>
         </div>
-        <div class="nav-column text-right nowrap">
-            <div>&copy; 1994&ndash;${copyrightYear} University of Oregon</div>
-            <a href="/zf_info/warranty.html">Terms of Use</a>
+        <div class="nav-column right-align">
+            <div class="nowrap">&copy; 1994&ndash;${copyrightYear} University of Oregon</div>
+            <div><a href="/zf_info/warranty.html">Terms of Use</a></div>
+            <div><small>ZFIN logo designed by Kari Pape</small></div>
+            <div style="max-width: 450px"><small>Home page banner reprinted from Hearing Research, 341, Monroe, J.D. et al., Hearing sensitivity differs between zebrafish lines used in auditory research, 220-231, Copyright (2016) with permission from Elsevier</small></div>
         </div>
     </div>
 </footer>

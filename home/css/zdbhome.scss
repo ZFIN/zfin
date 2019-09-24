@@ -15,11 +15,24 @@ body.home {
     background: url(/images/search-background.png) 50% 90%;
     background-size: cover;
     padding: 90px 0;
+    position: relative;
 
     label {
         font-size: 18px;
         font-weight: 400;
         color: white;
+    }
+
+    .citation {
+        position: absolute;
+        right: 3px;
+        bottom: 3px;
+        color: rgba(255, 255, 255, 0.6);
+
+        &:hover,
+        &:active {
+            color: rgba(255, 255, 255, 0.6);
+        }
     }
 }
 

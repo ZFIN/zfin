@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <div class="search-container">
+    <a class="citation" href="/ZDB-FIG-161201-23">Fig. 1 of Monroe et al., 2016</a>
     <div class="search-inner">
         <form class="fs-autocomplete" action="/search" method="get">
             <label>Search expert curated zebrafish data</label>
