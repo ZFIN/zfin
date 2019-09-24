@@ -9,7 +9,7 @@
 
     <div class="logo">
         <a href="/">
-            <img src="/images/zfinlogo_lg.gif">
+            <img alt="The Zebrafish Information Network" src="/images/zfinlogo_lg.gif" title="The Zebrafish Information Network">
         </a>
     </div>
 
