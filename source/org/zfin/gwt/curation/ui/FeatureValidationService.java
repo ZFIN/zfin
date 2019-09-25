@@ -177,6 +177,7 @@ public class FeatureValidationService {
                 break;
             case INVERSION:
             case INDEL:
+            case MNV:
             case TRANSLOC:
             case DEFICIENCY:
             case COMPLEX_SUBSTITUTION:

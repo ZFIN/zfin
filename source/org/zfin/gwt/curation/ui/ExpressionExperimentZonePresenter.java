@@ -559,6 +559,7 @@ public class ExpressionExperimentZonePresenter implements Presenter {
     public void unselectAllExperiments() {
         selectedExperiments.clear();
         view.showToggleLinks(false);
+        view.allExperimentsCheck.setValue(false);
     }
 
     public void checkAllExperiments() {

@@ -466,6 +466,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         DELETION,
         INSERTION,
         INDEL,
+        MNV,
         TRANSGENIC_INSERTION,
         SEQUENCE_VARIANT;
 
