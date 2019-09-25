@@ -59,7 +59,7 @@ public class RegionAddController {
         LinkedHashMap<String, String> allTypes = new LinkedHashMap<>(markerTypes.size());
         for (MarkerType markerType : markerTypes) {
             ZfinSoTerm soTerm = getMarkerRepository().getSoIdByMarkerType(markerType.getType().name());
-            allTypes.put(soTerm.getOboID() + "|" + markerType.getType().name(), markerType.getDisplayName());
+            allTypes.put(soTerm.getSoTerm().getOboID() + "|" + markerType.getType().name(), markerType.getDisplayName());
         }
 
 
