@@ -123,7 +123,7 @@
                 <a href="/zf_info/news/education.html" title="Educational websites for students and educators">Education</A>
                 <a href="/zf_info/zfbook/zfbk.html" title="Browse The Zebrafish Book"><em>ZF Book</em></A>
                 <a href="https://@WIKI_HOST@/display/general/ZFIN+Contact+Information" title="ZFIN contact information">Contact</A>
-                <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="About ZFIN and citing ZFIN resources in publications">About</A>
+                <a href="https://wiki.zfin.org/display/general/ZFIN+Database+Information" title="About ZFIN and citing ZFIN resources in publications">About</A>
             </div>
             <div id="hdr-motto" style="display:none;" class="hdr-linkbar">
                 The Zebrafish Information Network
@@ -141,10 +141,10 @@
         <a href="/zf_info/glossary.html"
            title="Terms useful in understanding zebrafish development, anatomy, genetics and bioinformatics">Glossary</a>
         <a href="/zf_info/news/committees.html" title="Committees and working groups">Committees</a>
-        <a href="https://wiki.zfin.org/display/general/ZFIN+db+information"
+        <a href="https://wiki.zfin.org/display/general/ZFIN+Database+Information"
            title="Citing ZFIN resources in publications">Citing ZFIN</a>
         <a href="https://wiki.zfin.org/display/general/ZFIN+Contact+Information" title="ZFIN contact information">Contact</a>
-        <a href="https://wiki.zfin.org/display/general/ZFIN+db+information" title="About ZFIN">About</a>
+        <a href="https://wiki.zfin.org/display/general/ZFIN+Database+Information" title="About ZFIN">About</a>
         <a href="https://wiki.zfin.org/display/jobs/ZFIN+Jobs" title="Jobs at ZFIN">ZFIN Jobs</a>
     </div>
     <div id="footercredits" class="center">
