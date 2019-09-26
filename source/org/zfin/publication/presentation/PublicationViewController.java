@@ -27,6 +27,7 @@ import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.orthology.Ortholog;
@@ -203,6 +204,29 @@ public class PublicationViewController {
         model.addAttribute("publication", publication);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Mutations and Transgenics"));
         return "feature/feature-per-publication.page";
+    }
+
+    @RequestMapping("/publication/{pubID}/genotype-list")
+    public String showGenotypeList(@PathVariable String pubID,
+                                  @ModelAttribute("formBean") GeneBean geneBean,
+                                  Model model,
+                                  HttpServletResponse response) {
+        logger.info("zdbID: " + pubID);
+
+        Publication publication = getPublication(pubID);
+
+        if (publication == null) {
+
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        List<Genotype> genotypeList = publicationRepository.getGenotypesInPublication(publication.getZdbID());
+
+        model.addAttribute("genotypeList", genotypeList);
+        model.addAttribute("publication", publication);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Genotypes"));
+        return "feature/genotype-per-publication.page";
     }
 
     @RequestMapping("/publication/{pubID}/fish-list")
