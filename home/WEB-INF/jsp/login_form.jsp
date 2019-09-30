@@ -33,6 +33,7 @@
             <input type="password" size="12" name="password" id="password">
             &nbsp;&nbsp; <input type="submit" name="action" value="login"/>
         </form>
+        <div><a href="/action/profile/forgot-password">Forgot password?</a></div>
     </div>
 
     <script>

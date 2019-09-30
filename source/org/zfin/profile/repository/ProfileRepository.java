@@ -125,6 +125,9 @@ public interface ProfileRepository {
      */
     void setCuratorSession(String publicationID, CuratorSession.Attribute attributeName, String zdbID);
 
+
+    Person getPersonByEmail(String email);
+
     /**
      * Retrieve a person record by login name.
      *
