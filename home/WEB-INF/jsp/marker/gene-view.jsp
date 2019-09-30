@@ -29,20 +29,9 @@
     </div>
 
     <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"
-                    soTerm="${formBean.zfinSoTerm}" userID="${formBean.user.zdbID}"/>
+                    soTerm="${formBean.zfinSoTerm}" geneDesc="${formBean.allianceGeneDesc}" userID="${formBean.user.zdbID}"/>
 
-    <zfin2:subsection test="${!empty formBean.allianceGeneDesc.gdDesc}" showNoData="true" noDataText="No data available"
-            title="AUTOMATED DESCRIPTION <a class='popup-link info-popup-link' href='/action/marker/note/automated-gene-desc'></a>">
-        <table>
-            <tr>
 
-                <td>
-                    <zfin2:toggleTextLength text="${formBean.allianceGeneDesc.gdDesc}"
-                                            idName="${zfn:generateRandomDomID()}" shortLength="200"/>
-                </td>
-            </tr>
-        </table>
-    </zfin2:subsection>
 
     <zfin2:uninformativeGeneName name="${formBean.marker.abbreviation}"
                                  fromChimericClone="${formBean.hasChimericClone}"/>
@@ -138,7 +127,7 @@
 
 
     <%--other GENE/Marker Pages--%>
-    <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
+
 
     <%--ORTHOLOGY--%>
     <zfin2:orthology marker="${formBean.marker}" showTitle="true"/>
