@@ -29,173 +29,133 @@ if (!options) {
     System.exit(1)
 }
 
-ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
-new HibernateSessionCreator()
-
-DOWNLOAD_URL = "https://www.addgene.org/download/2cae1f5eb19075da8ba8de3ac954e4d5/plasmids/"
-
-Session session = HibernateUtil.currentSession()
-tx = session.beginTransaction()
 
 
-addgeneDb = RepositoryFactory.sequenceRepository.getReferenceDatabase(
+
+
+
+/*addgeneDb = RepositoryFactory.sequenceRepository.getReferenceDatabase(
         ForeignDB.AvailableName.ADDGENE,
         ForeignDBDataType.DataType.OTHER,
         ForeignDBDataType.SuperType.SUMMARY_PAGE,
         Species.Type.ZEBRAFISH)
-entrezGeneDb = session.get(ReferenceDatabase.class, 'ZDB-FDBCONT-040412-1')
+entrezGeneDb = session.get(ReferenceDatabase.class, 'ZDB-FDBCONT-040412-1')*/
 
 
-if (options.localData) {
-    print "Loading local JSON file ... "
-    json = new JsonSlurper().parse(new FileReader("addgene-plasmids.json"))
-} else {
-    print "Downloading JSON file from $DOWNLOAD_URL ... "
-    // download, gunzip, and parse json from addgene
-    DOWNLOAD_URL
-            .toURL()
-            .newInputStream(requestProperties: ['User-Agent': 'ZFINbot/1.0'])
-            .withStream { rawInputStream ->
-        rawInputStream.mark(100)
-        try {
-            gzipInputStream = new GZIPInputStream(rawInputStream)
-            gzipInputStream.withReader { gzipReader ->
-                json = new JsonSlurper().parse(gzipReader)
-            }
-            gzipInputStream.close()
-        } catch (ZipException e) {
-            // possibly not in GZIP format?
-            rawInputStream.reset()
-            rawInputStream.withReader { reader ->
-                json = new JsonSlurper().parse(reader)
-            }
-        } catch (IOException e) {
-            println "Error downloading or unzipping Addgene JSON file. Please verify download works manually."
-            e.printStackTrace()
-            System.exit(1)
-        }
+
+ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
+DOWNLOAD_URL = "https://www.addgene.org/download/2cae1f5eb19075da8ba8de3ac954e4d5/plasmids/"
+def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
+def out = new BufferedOutputStream(file)
+out << new URL(DOWNLOAD_URL).openStream()
+out.close()
+
+def proc1 = "rm -rf addgeneDesc.csv".execute()
+proc1
+print "Loading local JSON file ... "
+
+
+    json = new JsonSlurper().parse(new FileReader("plasmids"))
+
+    def geneids=new ArrayList<String>()
+    def outCSV=new File('addgeneDesc.csv')
+    json.plasmids.each {
+        aGene ->
+
+            def gene=new String(aGene.id+'@'+ aGene.name.replaceAll("(?:\\n|\\r|@)", "")+'@'+ aGene.inserts.entrez_gene.id+'\n')
+            geneids.add(gene)
+
+
     }
-}
-println "done"
-
-
-print "Extracting IDs from JSON file ... "
-entrezIdsFromAddgene = json.plasmids.collectMany { plasmid ->
-    plasmid.inserts.collectMany { insert ->
-        insert.entrez_gene.collect { gene -> gene.id as String }
-    }
-} as Set
-println "done"
-
-
-println "Deleting db links for Entrez IDs no longer supported by Addgene "
-hql = """from MarkerDBLink dbl
-         where dbl.referenceDatabase = :refDb
-         and dbl.accessionNumber not in (:accNums)"""
-query = session.createQuery(hql)
-query.setParameter("refDb", addgeneDb)
-query.setParameterList("accNums", entrezIdsFromAddgene)
-linksToDelete = query.list()
-linksToDelete.each { link ->
-    println "  $link.zdbID"
-    session.delete(link)
-}
-
-
-println "Adding new Addgene db links "
-hql = """from MarkerDBLink
-         where referenceDatabase = :entrezGeneDb
-         and accessionNumber in (:accNums)
-         and dataZdbID not in (
-             select dataZdbID
-             from MarkerDBLink
-             where referenceDatabase = :addgeneDb
-         )"""
-query = session.createQuery(hql)
-query.setParameter("addgeneDb", addgeneDb)
-query.setParameter("entrezGeneDb", entrezGeneDb)
-query.setParameterList("accNums", entrezIdsFromAddgene)
-newLinks = query.list()
-
-hql = """from MarkerDBLink
-         where referenceDatabase = :entrezGeneDb
-         and accessionNumber in (:accNums)
-         and dataZdbID not in (
-             select dataZdbID
-             from MarkerDBLink
-             where referenceDatabase = :addgeneDb
-         )"""
-query = session.createQuery(hql)
-query.setParameter("addgeneDb", addgeneDb)
-query.setParameter("entrezGeneDb", entrezGeneDb)
-query.setParameterList("accNums", entrezIdsFromAddgene)
-addedLinks = query.list().collect { entrezLink ->
-    addgeneLink = new MarkerDBLink()
-    addgeneLink.with {
-        marker = entrezLink.marker
-        accessionNumber = entrezLink.accessionNumber
-        accessionNumberDisplay = entrezLink.accessionNumberDisplay
-        linkInfo = String.format("Uncurated: addgene load for %tF", new Date())
-        referenceDatabase = addgeneDb
-    }
-    session.save(addgeneLink)
-    println "  $addgeneLink.zdbID"
-    addgeneLink
-    println "Adding new attributions test "
-    recAttr = new RecordAttribution()
-    recAttr.with {
-        dataZdbID = addgeneLink.zdbID
-        sourceZdbID = "ZDB-PUB-160316-6"
-        sourceType = RecordAttribution.SourceType.STANDARD
-    }
-    session.save(recAttr)
-    recAttr
-}
-println "getting db links for IDs  "
-hql = """from MarkerDBLink dbl
-         where referenceDatabase = :addgeneDb"""
-
-query = session.createQuery(hql)
-query.setParameter("addgeneDb", addgeneDb)
-
-linksAdded = query.list()
-linksAdded.each { link ->
-    println "  $link.zdbID"
-
-}
-
-if (options.report) {
-    // one more query that only matters if we're doing a report
-    hql = """select count(*)
-             from MarkerDBLink
-             where referenceDatabase = :addgeneDb"""
-    query = session.createQuery(hql)
-    query.setParameter("addgeneDb", addgeneDb)
-    count = query.uniqueResult()
-
-    print "Generating report ... "
-    ReportGenerator rg = new ReportGenerator();
-    rg.setReportTitle("Report for $options.jobName")
-    rg.includeTimestamp();
-    rg.addIntroParagraph("With this load there are now $count Addgene links in total.")
-    rg.addDataTable("${linksToDelete.size()} Links Removed", ["Gene", "Accession Number"], linksToDelete.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
-    rg.addDataTable("${newLinks.size()} Links Added", ["Gene", "Accession Number"], newLinks.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
-    new File("addgene-report.html").withWriter { writer ->
-        rg.write(writer, ReportGenerator.Format.HTML)
-    }
+    geneids.each
+            {aGene ->outCSV.append aGene}
     println "done"
+
+static Process dbaccess(String dbname, String sql) {
+    sql = sql.replace("\n", "")
+    sql = sql.replace("\\copy", "\n  \\copy")
+    println sql
+
+    def proc
+    proc = "psql -d $dbname -a".execute()
+    proc.getOutputStream().with {
+        write(sql.bytes)
+        close()
+    }
+    proc.waitFor()
+    proc.getErrorStream().eachLine { println(it) }
+    if (proc.exitValue()) {
+        throw new RuntimeException("dbaccess call failed")
+    }
+    proc
+}
+
+static Process psql(String dbname, String sql) {
+    return dbaccess(dbname, sql)
 }
 
 
-if (options.commit) {
-    print "Committing changes ... "
-    tx.commit()
-} else {
-    print "Rolling back changes ... "
-    tx.rollback()
-}
-session.close()
 println "done"
 
+
+dbname = System.getenv("DBNAME")
+println("Loading terms into $dbname")
+PRE_FILE = "preaddgene.unl"
+POST_FILE = "postaddgene.unl"
+
+psql dbname, """
+drop table tmp_addgene;
+\\COPY (SELECT dblink_linked_recid,dblink_acc_num
+    FROM db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-141007-1') TO $PRE_FILE;
+CREATE   TABLE tmp_addgene(
+    addgeneid text,
+    addgenename text,
+    zfingene text
+      ) ;
+
+\\COPY tmp_addgene FROM 'addgeneDesc.csv' delimiter '@' ;
+
+update tmp_addgene set zfingene=replace(zfingene,'[[','');
+update tmp_addgene set zfingene=replace(zfingene,']]','');
+
+
+delete from tmp_addgene where zfingene='';
+delete from tmp_addgene where zfingene like '%[%';
+delete from tmp_addgene where zfingene like '%]%';
+
+delete from tmp_addgene where trim(zfingene) not in (select trim(dblink_acc_num) from db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-040412-1');
+delete from tmp_addgene where trim(addgeneid) in (select trim(dblink_acc_num) from db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-141007-1');
+
+alter table tmp_addgene add column dblinkid text;
+update tmp_addgene set dblinkid=get_id('DBLINK');
+update tmp_addgene set zfingene=(select dblink_linked_recid from db_link where zfingene=dblink_acc_num and dblink_fdbcont_Zdb_id='ZDB-FDBCONT-040412-1');
+insert into zdb_active_data (zactvd_zdb_id) select dblinkid from tmp_addgene;
+insert into db_link (dblink_zdb_id,dblink_acc_num,dblink_acc_num_display,dblink_fdbcont_zdb_id,dblink_linked_recid) select dblinkid,addgeneid,addgenename,'ZDB-FDBCONT-141007-1',zfingene from tmp_addgene;
+\\COPY (SELECT dblink_linked_recid,dblink_acc_num
+    FROM db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-141007-1') TO $POST_FILE;
+
+
+
+    
+"""
+println ("done with script")
+
+
+if (args) {
+    // means we're (probably) running from Jenkins, so make a report.
+    preLines = new File(PRE_FILE).readLines()
+    postLines = new File(POST_FILE).readLines()
+
+    added = postLines - preLines
+    removed = preLines - postLines
+
+    new ReportGenerator().with {
+        setReportTitle("Report for ${args[0]}")
+        includeTimestamp()
+        addDataTable("${added.size()} terms added", ["ID", "Term"], added.collect { it.split("\\|") as List })
+        addDataTable("${removed.size()} terms removed", ["ID", "Term"], removed.collect { it.split("\\|") as List })
+        writeFiles(new File("."), "loadAddGeneReport")
+    }
+}
 System.exit(0)
 
