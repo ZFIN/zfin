@@ -107,7 +107,7 @@
         <table class="summary">
             <c:forEach var="link" items="${formBean.plasmidDBLinks}" varStatus="loop">
                 <tr>
-                    <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
+                    <td><a href="${link.link}">${link.referenceDatabaseName}:${link.accNumDisplay}</a></td>
                 </tr>
             </c:forEach>
         </table>
