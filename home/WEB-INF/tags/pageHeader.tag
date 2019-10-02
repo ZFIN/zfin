@@ -93,7 +93,6 @@
                         <li><a href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/" class="external">GRC</a></li>
                         <li><a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0" class="external">UCSC</a></li>
                         <li><a href="https://www.ncbi.nlm.nih.gov/genome/gdv/?org=danio-rerio" class="external">NCBI</a></li>
-                        <li><a href="http://genome.igib.res.in/" class="external">FishMap</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">
