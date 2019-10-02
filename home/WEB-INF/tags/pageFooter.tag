@@ -83,8 +83,8 @@
                     <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Tips">Help & Tips</a></li>
                     <li><a href="/zf_info/glossary.html">Glossary</a></li>
                     <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Single+Box+Search+Help">Single Box Search</a></li>
-                    <li><a href="https://@WIKI_HOST@/display/general/ZFIN+db+information">About ZFIN</a></li>
-                    <li><a href="https://@WIKI_HOST@/display/general/ZFIN+db+information">Citing ZFIN</a></li>
+                    <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">About ZFIN</a></li>
+                    <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">Citing ZFIN</a></li>
                     <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Contact+Information">Contact Information</a></li>
                 </ul>
             </div>

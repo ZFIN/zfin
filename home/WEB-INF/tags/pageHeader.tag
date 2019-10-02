@@ -146,7 +146,7 @@
                     <ul>
                         <li><a href="/zf_info/author_guidelines.html">Guidelines for Authors</a></li>
                         <li><a href="/action/zebrashare">Zebrashare</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+db+information">Citing ZFIN</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">Citing ZFIN</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">
@@ -162,7 +162,7 @@
                 <div class="nav-column">
                     <span class="nav-column-header">About Us</span>
                     <ul>
-                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+db+information">About ZFIN</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">About ZFIN</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Contact+Information">Contact Information</a></li>
                         <li><a href="/action/infrastructure/annual-stats-view">Statistics</a></li>
                         <li><a href="/zf_info/news/committees.html">Committees</a></li>
