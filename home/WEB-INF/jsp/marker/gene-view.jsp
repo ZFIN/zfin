@@ -69,8 +69,6 @@
     <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}"
                                    title="TRANSCRIPTS" showAllTranscripts="true"/>
 
-    <zfin2:geneProductsDescription geneBean="${formBean}"/>
-
 
     <zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links">
         <c:if test="${!empty formBean.pathwayDBLinks}">

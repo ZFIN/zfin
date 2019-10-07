@@ -13,6 +13,7 @@ public class SequencePageInfoBean {
     private Collection<DBLink> dbLinks;
     private TreeMap<String, TreeSet<MarkerDBLink>> relatedMarkerDBLinks = new TreeMap<>();
     private Marker marker;
+    private List<GeneProductsBean> geneProductsBean;
 
 
     public void addDBLinks(Collection<DBLink> links) {
@@ -66,4 +67,11 @@ public class SequencePageInfoBean {
     }
 
 
+    public List<GeneProductsBean> getGeneProductsBean() {
+        return geneProductsBean;
+    }
+
+    public void setGeneProductsBean(List<GeneProductsBean> geneProductsBean) {
+        this.geneProductsBean = geneProductsBean;
+    }
 }

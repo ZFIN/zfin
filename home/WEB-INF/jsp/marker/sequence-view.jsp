@@ -22,6 +22,7 @@
 <%--SEQUENCE INFORMATION--%>
 <zfin2:markerSequenceInformationFull marker="${formBean.marker}"
                                      dbLinks="${formBean.dbLinkList}"
+                                     geneProducts="${formBean.geneProductsBean}"
                                      title="${fn:toUpperCase('Sequence Information')}" />
 
 

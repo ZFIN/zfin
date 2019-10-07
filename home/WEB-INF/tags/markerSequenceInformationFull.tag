@@ -3,6 +3,7 @@
 
 <%@ attribute name="marker" type="org.zfin.marker.Marker" rtexprvalue="true" required="true" %>
 <%@ attribute name="dbLinks" type="java.util.List" rtexprvalue="true" required="true" %>
+<%@ attribute name="geneProducts" type="java.util.ArrayList" rtexprvalue="true" required="true" %>
 
 <%-- optionally allow the title to be set --%>
 <%@ attribute name="title" type="java.lang.String" required="false"%>
@@ -33,29 +34,32 @@
                 <c:set var="groupIndex" value="${groupIndex + 1}"/>
             </c:if>
             <c:if test="${not fn:containsIgnoreCase(dblink.accessionNumber, 'ENSDARP')}">
-            <tr>
-                <zfin:alternating-tr loopName="loop"
-                                     groupBeanCollection="${dbLinks}"
-                                     groupByBean="referenceDatabase.foreignDBDataType.dataType">
-                    <td>
-                        <zfin:groupByDisplay loopName="loop" groupBeanCollection="${dbLinks}"
-                                             groupByBean="referenceDatabase.foreignDBDataType.dataType">
-                            ${dblink.referenceDatabase.foreignDBDataType.dataType.toString()}
-                        </zfin:groupByDisplay>
-                    </td>
-                    <td>
-                        <zfin:link entity="${dblink}"/>
-                        <zfin:attribution entity="${dblink}"/>
-                    </td>
-                    <td style="text-align: right">
-                        <c:if test="${!empty dblink.length}"> ${dblink.length} ${dblink.units} </c:if>
-                    </td>
-                    <td  style="text-align: center">
-                        <zfin2:externalAccessionBlastDropDown dbLink="${dblink}"/>
-                    </td>
-                </zfin:alternating-tr>
-            </tr>
-            <c:set var="lastType" value="${dblink.referenceDatabase.foreignDBDataType.dataType}"/>
+                <tr>
+                    <zfin:alternating-tr loopName="loop"
+                                         groupBeanCollection="${dbLinks}"
+                                         groupByBean="referenceDatabase.foreignDBDataType.dataType">
+                        <td>
+                            <zfin:groupByDisplay loopName="loop" groupBeanCollection="${dbLinks}"
+                                                 groupByBean="referenceDatabase.foreignDBDataType.dataType">
+                                ${dblink.referenceDatabase.foreignDBDataType.dataType.toString()}
+                                <c:if test="${dblink.referenceDatabase.foreignDBDataType.dataType.toString() eq 'Polypeptide' && fn:length(geneProducts) > 0}">
+                                    <a class="popup-link data-popup-link" href="/action/marker/gene-product-description/${marker.zdbID}"></a><br/>
+                                </c:if>
+                            </zfin:groupByDisplay>
+                        </td>
+                        <td>
+                            <zfin:link entity="${dblink}"/>
+                            <zfin:attribution entity="${dblink}"/>
+                        </td>
+                        <td style="text-align: right">
+                            <c:if test="${!empty dblink.length}"> ${dblink.length} ${dblink.units} </c:if>
+                        </td>
+                        <td  style="text-align: center">
+                            <zfin2:externalAccessionBlastDropDown dbLink="${dblink}"/>
+                        </td>
+                    </zfin:alternating-tr>
+                </tr>
+                <c:set var="lastType" value="${dblink.referenceDatabase.foreignDBDataType.dataType}"/>
             </c:if>
         </c:forEach>
     </table>

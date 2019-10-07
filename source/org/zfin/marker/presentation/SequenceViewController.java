@@ -51,6 +51,7 @@ public class SequenceViewController {
         //setting supporting sequences
         SequencePageInfoBean sequenceInfo = MarkerService.getSequenceInfoFull(marker);
         sequenceInfo.setMarker(marker);
+        sequenceInfo.setGeneProductsBean(markerRepository.getGeneProducts(marker.getZdbID()));
 
         AuditLogItem lastUpdated = RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID);
 
