@@ -121,7 +121,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                     DiseaseDTO FeatureDiseaseDto = getBaseDiseaseDTO(feature.getZdbID(), feature.getAbbreviation(), disease);
                                     RelationshipDTO alleleRelationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.ALELLE);
                                     List<String> geneticEntityIds = new ArrayList<>();
-                                    geneticEntityIds.add(fish.getZdbID());
+                                    geneticEntityIds.add("ZFIN:"+fish.getZdbID());
                                     FeatureDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
                                     FeatureDiseaseDto.setObjectRelation(alleleRelationship);
                                     FeatureDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
