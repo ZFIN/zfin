@@ -19,7 +19,7 @@
                     </ul>
                 </div>
                 <input type="hidden" name="category">
-                <input type="text" class="form-control" name="q" autocomplete="off" data-placeholders="bmp2a|hindbrain development disrupted|pax morpholino">
+                <input type="text" class="form-control" name="q" autocomplete="off" data-placeholders="bmp2a|heart contraction abnormal|tp53 antibody">
                 <span class="input-group-btn">
                     <button class="btn btn-zfin" type="submit">Search</button>
                 </span>
