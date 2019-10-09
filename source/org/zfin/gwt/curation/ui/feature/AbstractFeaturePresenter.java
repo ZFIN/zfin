@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui.feature;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.curation.ui.FeatureValidationService;
 import org.zfin.gwt.root.dto.FeatureDTO;
@@ -12,6 +13,7 @@ import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
 import org.zfin.gwt.root.util.AppUtils;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 
@@ -107,25 +109,34 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
     public void addHandlesErrorListener(HandlesError handlesError) {
         GWT.log("Hello");
     }
-public void onLabDesigChange() {
-    FeatureRPCService.App.getInstance().getNextZFLineNum(
-            new FeatureEditCallBack<String>("Failed to return line number for feature  ", this) {
-                @Override
-                public void onSuccess(String result) {
-                    view.lineNumberBox.setText(result);
-                    handleDirty();
-                    clearError();
-                }
-            }
 
-    );
-}
+    public void onLabDesigChange() {
+       
 
+        if (view.labDesignationBox.getSelected().equals(ZF_PREFIX)) {
+            FeatureRPCService.App.getInstance().getNextZFLineNum(
+                    new FeatureEditCallBack<String>("Failed to return line number for feature  ", this) {
+                        @Override
+                        public void onSuccess(String result) {
+                            view.lineNumberBox.setText(result);
+                            handleDirty();
+                            clearError();
+                        }
+                    }
+
+            );
+        }
+        else{
+
+            view.lineNumberBox.setText("");
+        }
+    }
 
 
 
     public void onLabOfOriginChange(String labOfOriginSelected) {
         onLabOfOriginChange(labOfOriginSelected, null);
+
     }
 
     public void onLabOfOriginChange(String labOfOriginSelected, final String labPrefix) {
@@ -156,12 +167,14 @@ public void onLabDesigChange() {
 
                             view.labDesignationBox.addItem(ZF_PREFIX);
                         }
+
                         if (labPrefix != null)
 
                             view.labDesignationBox.setIndexForValue(dto.getLabPrefix());
                         handleDirty();
                         clearError();
                         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_STOP);
+                        onLabDesigChange();
                     }
 
                     @Override
