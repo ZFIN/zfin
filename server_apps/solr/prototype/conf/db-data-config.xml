@@ -121,7 +121,13 @@
                     query="select ortho_other_species_symbol as ortholog_other_species_symbol,
                            ortho_other_species_name as ortholog_other_species_name,
                            ortho_zebrafish_gene_zdb_id as gene_zdb_id
-                           from ortholog"
+                           from ortholog
+                          union
+                            select noa_alias as ortholog_other_species_symbol,
+                           ortho_other_species_name as ortholog_other_species_name,
+                           ortho_zebrafish_gene_zdb_id as gene_zdb_id
+                          from ortholog, ncbi_ortholog_alias
+                            where ortho_other_species_ncbi_gene_id = noa_ncbi_gene_id"
                     where="gene_zdb_id=gene.id"
                     cacheImpl="SortedMapBackedCache"
             />
