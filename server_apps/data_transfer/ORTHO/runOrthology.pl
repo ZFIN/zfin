@@ -11,10 +11,12 @@ $dbname = "<!--|DB_NAME|-->";
 require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/reportOrthoNameChanges.pl");
 require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/parseOrthoFile.pl");
 require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/downloadFiles.pl");
+require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/parseHumanData.pl");
 
 &downloadFiles;
 &parseOrthoFiles;
 &reportOrthoNameChanges;
+&parseHuman;
 
 print "finished parsing and reporting, do updates.\n";
 $cmd = "psql -d <!--|DB_NAME|--> -a -f loadAndUpdateNCBIOrthologs.sql";

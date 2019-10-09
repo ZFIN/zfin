@@ -1,7 +1,11 @@
 #!/opt/zfin/bin/perl
 
 #set environment variables
+use DBI;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
+sub parseHuman(){
 system("rm -f updateHumanOrthologyLog1");
 system("rm -f updateHumanOrthologyLog2");
 system("rm -f Homo_sapiens.gene_info.gz");
@@ -79,11 +83,9 @@ close (HUMAN);
 close (PARSEDHUMAN);
 
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> update_human_ortho_loc.sql >updateHumanOrthologyLog1 2> updateHumanOrthologyLog2");
+#system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> update_human_ortho_loc.sql >updateHumanOrthologyLog1 2> updateHumanOrthologyLog2");
 
+return();
 
-print "\nHuman part tested........ctMissingMIM = $ctMissingMIM...........\n";
-
-exit;
-
-
+}
+1;
