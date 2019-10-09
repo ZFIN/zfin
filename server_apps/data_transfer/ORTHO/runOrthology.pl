@@ -21,3 +21,8 @@ $cmd = "psql -d <!--|DB_NAME|--> -a -f loadAndUpdateNCBIOrthologs.sql";
 ;
 
 &doSystemCommand($cmd);
+
+$cmd = "psql -d <!--|DB_NAME|--> -a -f loadHumanSynonyms.sql";
+;
+
+&doSystemCommand($cmd);

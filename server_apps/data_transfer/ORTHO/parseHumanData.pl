@@ -19,6 +19,8 @@ open (HUMAN, "Homo_sapiens.gene_info") ||  die "Cannot open Homo_sapiens.gene_in
 
 open (PARSEDHUMAN,  ">hum_chr_loc_sym_mim.tab") || die "Can't open: hum_chr_loc_sym_mim.tab $!\n";
 
+open (HUMANSYNONYMS,  ">human_gene_synonyms.txt") || die "Can't open: human_gene_synonyms.txt $!\n";
+
 
 while (<HUMAN>) {
  chomp;
@@ -37,6 +39,7 @@ while (<HUMAN>) {
 
  ## Symbol_from_nomenclature_authority
  $symbol = $fieldsHuman[10]; 
+ $synonyms = $fieldsHuman[4];
  $dbXrefs = $fieldsHuman[5];
  
  ### assumption: MIM numbers are always 6 digits
@@ -47,11 +50,27 @@ while (<HUMAN>) {
      ### print "\n$geneId\t$Chr\t$loc\t$symbol\t$dbXrefs\n";
      $mim = " ";
  }
- 
- ###print "\n$geneId\t$Chr\t$loc\t$symbol\t$mim\n" if $ctHumanLines < 10;
- 
- print PARSEDHUMAN "$geneId\t$Chr\t$loc\t$symbol\t$mim\n";
- 
+
+ $pipe = "|";
+if ($synonyms =~ /\Q$pipe\E/) {
+
+   my @synonyms = split(/\|/, $synonyms);
+   
+   foreach my $syn (@synonyms) { 
+       if ($syn != '-') {
+           print HUMANSYNONYMS "$geneId,$syn\n"; 
+       }
+   }
+}
+ else {
+     if ($syn != '-') {
+         print HUMANSYNONYMS "$geneId,$synonyms\n";
+     }
+ } 
+
+print PARSEDHUMAN "$geneId\t$Chr\t$loc\t$symbol\t$mim\n";
+
+
  undef @fieldsHuman;
  
 }
