@@ -25,8 +25,8 @@ ${sender}`
     label: 'Indexing Question',
         subject: 'Requesting additional information on your recent article',
     body: (citation, sender) => `Dear Professor,
-Congratulations on your recent article. At ZFIN we are happy to include your newly published information in the database. 
-In order to facilitate this process, it would be very helpful if you would provide some additional information about this article.
+    
+Congratulations on your recent article. At ZFIN we are happy to include your newly published information in the database. In order to facilitate this process, it would be very helpful if you would provide some additional information about this article.
 
 ${citation}
 
