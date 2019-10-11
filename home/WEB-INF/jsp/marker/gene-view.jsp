@@ -66,7 +66,7 @@
         <zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>
     </c:if>
     <%--Transcripts--%>
-    <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}"
+    <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}" locations="${formBean.locations}"
                                    title="TRANSCRIPTS" showAllTranscripts="true"/>
 
 

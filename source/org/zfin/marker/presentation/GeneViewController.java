@@ -16,6 +16,8 @@ import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.mapping.MarkerGenomeLocation;
+import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerRelationship;
@@ -41,7 +43,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
+import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @Controller
@@ -116,8 +121,34 @@ public class GeneViewController {
         // Protein Products (Protein Families, Domains, and Sites)
         geneBean.setProteinProductDBLinkDisplay(SequenceService.getProteinProducts(gene));
 
-        // (Transcripts)
+        // Transcripts
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
+        List<MarkerGenomeLocation> genomeMarkerLocationList = getLinkageRepository().getGenomeLocation(gene);
+        TreeSet locations = new TreeSet<>();
+        for (MarkerGenomeLocation genomeMarkerLocation : genomeMarkerLocationList) {
+            BrowserLink location = new BrowserLink();
+            if (genomeMarkerLocation.getSource().getDisplayName().equals("ZFIN Gbrowse")) {
+               location.setUrl(genomeMarkerLocation.getUrl());
+                location.setName("ZFIN");
+                location.setOrder(0);
+            } else if (genomeMarkerLocation.getSource().getDisplayName().equals("Ensembl")) {
+                location.setUrl(genomeMarkerLocation.getUrl());
+                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                location.setOrder(1);
+            } else if (genomeMarkerLocation.getSource().getDisplayName().equals("NCBI Map Viewer")) {
+                location.setUrl(genomeMarkerLocation.getUrl());
+                location.setName("NCBI");
+                location.setOrder(2);
+            } else if (genomeMarkerLocation.getSource().getDisplayName().equals("UCSC")) {
+                location.setUrl(genomeMarkerLocation.getUrl());
+                location.setName(genomeMarkerLocation.getSource().getDisplayName());
+                location.setOrder(3);
+            } else {
+                continue;
+            }
+            locations.add(location);
+        }
+        geneBean.setLocations(locations);
 
         // gene products
         geneBean.setGeneProductsBean(markerRepository.getGeneProducts(gene.getZdbID()));
