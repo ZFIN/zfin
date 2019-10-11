@@ -51,11 +51,11 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
             if (doDefaultSubjectHeader) {
                 subject = prependSubject(subject);
             }
-            mimeMessage.setSubject(subject);
+            mimeMessage.setSubject(subject, "UTF-8");
 
             MimeBodyPart messageBody = new MimeBodyPart();
             if (useHtml) {
-                messageBody.setContent(message, "text/html");
+                messageBody.setContent(message, "text/html; charset=UTF-8");
             } else {
                 messageBody.setText(message);
             }
