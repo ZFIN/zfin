@@ -157,13 +157,13 @@
                 "/action/quicksearch/autocomplete?q=%QUERY&category=Journal&rows=10000", {
                     templates: {
                         suggestion: function (item) {
-                            return '<div><p class="journal-abbrev">' + item.value + '</p>' +
-                                    '<p class="journal-name text-muted">' + item.name + '</p></div>';
+                            return '<div><div class="journal-abbrev">' + item.value + '</div>' +
+                                    '<div class="journal-name details">' + item.name + '</div></div>';
                         },
-                        empty: "<p class=\"tt-no-results text-danger\">" +
+                        empty: "<div class=\"tt-no-results text-danger\">" +
                                 "Oof. I couldn't find any journals like that.<br>" +
                                 "Perhaps a new one needs to be added." +
-                                "</p>"
+                                "</div>"
                     },
                     limit: 10000
                 });

@@ -1,0 +1,201 @@
+@import "theme";
+
+body.home {
+    background: $grey-light !important;
+
+    header {
+        box-shadow: none;
+
+        & .search {
+            display: none;
+        }
+    }
+}
+
+.full-name {
+    background: $primary;
+    margin-top: -10px;
+    z-index: 120;
+    color: white;
+    padding: 0 10px 4px 10px;
+    font-size: 12.8px;
+}
+
+.search-container {
+    @include elevated-shadow;
+    margin-bottom: 60px;
+    background: url(/images/search-background.png) 50% 90%;
+    background-size: cover;
+    padding: 90px 0;
+    position: relative;
+
+    label {
+        font-size: 18px;
+        font-weight: 400;
+        color: white;
+    }
+
+    .citation {
+        position: absolute;
+        right: 3px;
+        bottom: 3px;
+        color: rgba(255, 255, 255, 0.6);
+
+        &:hover,
+        &:active {
+            color: rgba(255, 255, 255, 0.6);
+        }
+    }
+}
+
+.search-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.section {
+    @include shadow;
+    margin-bottom: 30px;
+    background: white;
+    border-radius: 3px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+
+    &.primary-link {
+        padding-right: 35px;
+        position: relative;
+        color: $grey;
+        transition: transform 200ms, box-shadow 200ms;
+        text-decoration: none;
+
+        &::after {
+            content: '\f054';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 30px;
+            color: $primary;
+        }
+
+        &:hover, &:active {
+            color: $grey;
+            text-decoration: none;
+        }
+
+        &:hover {
+            @include elevated-shadow;
+            transform: translateY(-3px);
+        }
+
+        .title {
+            font-size: 20px;
+            color: $primary;
+            margin-bottom: 5px;
+        }
+
+        @media (min-width: $break-md) {
+            height: 105px;
+        }
+
+        @media (min-width: $break-lg) {
+            height: 125px;
+        }
+    }
+
+    .heading {
+        font-size: 20px;
+        color: $primary;
+        border-bottom: 2px solid $primary;
+        margin-bottom: 10px;
+        padding-bottom: 2px;
+    }
+}
+
+.carousel-section {
+    height: 500px;
+
+    @media (min-width: $break-lg) {
+        height: 745px;
+    }
+}
+
+.wiki-list-controls {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+#home-carousel {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .carousel-inner {
+        flex-grow: 1;
+    }
+
+    .carousel-controls {
+        padding: 15px;
+        text-align: center;
+
+        a {
+            color: #7f7f7f;
+        }
+    }
+
+    .carousel-indicators {
+        position: static;
+        display: inline-block;
+        margin: 0 30px;
+        width: auto;
+        vertical-align: middle;
+
+        li {
+            border-color: #7f7f7f;
+
+            &.active {
+                background-color: #7f7f7f;
+            }
+        }
+    }
+
+    .item {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-size: contain;
+        background-position: center;
+        background-color: white;
+        background-repeat: no-repeat;
+    }
+
+    .carousel-caption {
+        left: 0;
+        right: 0;
+        border: 0;
+        bottom: 0;
+        padding: 5px;
+        text-align: left;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .figure-caption {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        * {
+            display: inline;
+            margin: 0;
+            padding: 0;
+            font-size: inherit;
+        }
+    }
+}

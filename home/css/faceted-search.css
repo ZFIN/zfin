@@ -153,17 +153,12 @@ table.search-result-entity-attributes td {
 
 .search-result-related-links {
     font-size: .75em;
-    text-indent: -15px;
     margin-top: .5em;
 }
 
-.search-result-related-links img.modal-icon {
-    position: relative;
-    top: -1px;
-}
-
 .search-result-related-links ul {
-    margin-bottom: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .search-result-related-links ul li {
@@ -301,7 +296,6 @@ div.breadbox {
 }
 
 div.search-box {
-    white-space: nowrap;
     margin-top: 1em;
     margin-bottom: 1em;
 }
@@ -373,14 +367,6 @@ body.modal-open {
 
 .advanced-text-input {
     width: 600px;
-}
-
-.carousel-control {
-    top: 0px !important;
-    font-size: 60px !important;
-    font-weight: bold !important;
-    background-image: none !important;
-    color: black !important;
 }
 
 /***** Facet Layout *****/

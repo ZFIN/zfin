@@ -1,6 +1,7 @@
 package org.zfin.publication.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.repository.ProfileRepository;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.repository.PublicationRepository;
 
@@ -88,7 +88,6 @@ public class PublicationDashboardController {
     private String showBin(Model model, PublicationTrackingStatus current, PublicationTrackingStatus next, Page page) {
         model.addAttribute("currentStatus", current);
         model.addAttribute("nextStatus", next);
-        model.addAttribute("currentUser", ProfileService.getCurrentSecurityUser());
         model.addAttribute("currentPage", page);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, page.title);
         return page.view;
@@ -96,7 +95,6 @@ public class PublicationDashboardController {
 
     @RequestMapping("/dashboard")
     public String showUserDashboad(Model model) {
-        model.addAttribute("currentUser", ProfileService.getCurrentSecurityUser());
         model.addAttribute("currentPage", Page.DASHBOARD);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Page.DASHBOARD.title);
         return Page.DASHBOARD.view;

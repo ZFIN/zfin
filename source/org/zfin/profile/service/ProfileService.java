@@ -90,8 +90,7 @@ public class ProfileService {
 
         // for debugging.  Allows using an in-line spring authentication-manager.
         if (principal instanceof User) {
-            User user =
-                    (User) principal;
+            User user = (User) principal;
             Person person = new Person();
             person.setShortName(user.getUsername());
             return person;

@@ -12,7 +12,9 @@ body {
     min-width: 600px;
     margin: 0;
     padding: 0;
-    background: @SITE_BACKGROUND@;
+    background: white;
+    display: flex;
+    flex-direction: column;
 }
 
 hr {
@@ -20,14 +22,6 @@ hr {
     border: 0;
     height: 1px;
     width: 80%;
-}
-
-.allcontent {
-    margin-left: 5px;
-    margin-right: 5px;
-    padding-top: 4px;
-    padding-bottom: 1em;
-    background: white;
 }
 
 .staticcontent {
@@ -271,9 +265,19 @@ a.small-new-link:hover {
     font-size: 75%;
 }
 
-a.external {
-    background: transparent url(/images/external.png) no-repeat scroll right center;
-    padding-right: 13px;
+.external::after {
+    content: '\f35d';
+    display: inline-block;
+    font-family: "Font Awesome 5 Free";
+    font-size: 0.75em;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 900;
+    margin-left: 0.3em;
+    text-rendering: auto;
+    vertical-align: baseline;
+    position: relative;
+    bottom: 0.15em;
 }
 
 img.blast-key {
@@ -654,7 +658,7 @@ video {
 }
 
 .scrollable-dropdown-menu .tt-menu {
-    max-height: 250px;
+    max-height: 270px;
     overflow-y: auto;
 }
 
@@ -809,12 +813,6 @@ a + .inline-upload {
     color: #9A9A9A;
 }
 
-.login-box {
-    border-radius: 5px;
-    background: #e0e7e0;
-    padding: 2em;
-}
-
 .list-box-selected {
     background: khaki;
 }
@@ -942,7 +940,7 @@ button.pub-dashboard-reload {
 
 nav.pub-navigator {
     background: #f0f0f0;
-    margin-top: -4px; /* snugs it up to the main nav */
+    margin-top: -10px; /* snugs it up to the main nav */
     margin-bottom: 0;
     color: #222222;
     border: none;

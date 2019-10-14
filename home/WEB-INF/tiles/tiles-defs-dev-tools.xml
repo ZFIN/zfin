@@ -255,6 +255,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/ontology_reports.jsp"/>
     </definition>
 
+    <definition name="home-carousel-items" extends="dev_layout">
+        <put-attribute name="staticTiles" value="Home Carousel Items" />
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/home-carousel-items.jsp" />
+    </definition>
+
     <definition name="no-error.page" template="/WEB-INF/jsp/dev-tools/no-error-page.jsp"/>
 
     <definition name="unload/*.page" extends="main_layout">

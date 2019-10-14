@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<div class="allcontent" style="text-align: center;">
+<div style="text-align: center;">
     <c:choose>
         <c:when test="${empty zdbID}">
             <b>Record not found.</b>

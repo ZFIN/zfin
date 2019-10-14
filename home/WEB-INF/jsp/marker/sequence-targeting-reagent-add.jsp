@@ -50,7 +50,9 @@
         <div class="form-group">
             <form:label path="targetGeneSymbol" class="col-sm-2 control-label">Target Gene</form:label>
             <div class="col-sm-4">
-                <form:input path="targetGeneSymbol" class="form-control"/>
+                <div class="scrollable-dropdown-menu">
+                    <form:input path="targetGeneSymbol" class="form-control"/>
+                </div>
                 <form:errors path="targetGeneSymbol" cssClass="error"/>
             </div>
         </div>

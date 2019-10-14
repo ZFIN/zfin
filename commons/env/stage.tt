@@ -2,7 +2,6 @@
 
 <!--|AO_EMAIL_CURATOR|-->	yvonne\@uoneuro.uoregon.edu van_slyke\@uoneuro.uoregon.edu
 <!--|AO_EMAIL_ERR|-->	informix\@zfin.org
-<!--|BACKGROUND_COLOR|-->	#FFFFFF
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/stage/blastdb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|CLIENT_LOCALE|-->	en_US.utf8
@@ -34,14 +33,10 @@
 <!--|GO_EMAIL_ERR|-->	smoxon\@zfin.org xshao\@zfin.org dhowe\@zfin.org
 <!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/zfin.org/home/WEB-INF/lib*:/opt/zfin/source_roots/stage/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/zfin.org/home/WEB-INF/classes:/opt/apache/apache-tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
-<!--|HEADER_COLOR|-->	#99CCCC
-<!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
-<!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	stage
 <!--|INTERNAL_BLAST_PATH|-->	/research/stage/blastdb/Current
-<!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	zfinadmn\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp/pubs
 <!--|LOCUS_REGISTRATION_EMAIL|-->	locusreg\@zfin.org
@@ -61,8 +56,6 @@
 <!--|ROOT_PATH|-->	/opt/zfin/www_homes/zfin.org
 <!--|SECURE_HTTP|-->	https://
 <!--|SHARED_DOMAIN_NAME|-->	false
-<!--|SIDEBAR_COLOR|-->	#CCCCCC
-<!--|SITE_BACKGROUND|-->	#FFFFFF
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/stage/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	stage.zfin.org

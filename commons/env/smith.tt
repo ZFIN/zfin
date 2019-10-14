@@ -2,7 +2,6 @@
 
 <!--|AO_EMAIL_CURATOR|-->	informix\@zfin.org
 <!--|AO_EMAIL_ERR|-->	informix\@zfin.org
-<!--|BACKGROUND_COLOR|-->	#FFFFFF
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/common/blastdb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|COUNT_PATO_ERR|-->	informix\@zfin.org
@@ -31,14 +30,10 @@
 <!--|GO_EMAIL_CURATOR|-->	informix\@zfin.org
 <!--|GO_EMAIL_ERR|-->	informix\@zfin.org
 <!--|HAS_PARTNER|-->	true
-<!--|HEADER_COLOR|-->	#99CCCC
-<!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
-<!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	smith
 <!--|INTERNAL_BLAST_PATH|-->	/research/zblastfiles/zmore/dev_blastdb/Current
-<!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	informix\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@zfin.org
@@ -56,8 +51,6 @@
 <!--|ROOT_PATH|-->	/research/zcentral/www_homes/smith
 <!--|SECURE_HTTP|-->	https://
 <!--|SHARED_DOMAIN_NAME|-->	istest.zfin.org
-<!--|SIDEBAR_COLOR|-->	#CCCCCC
-<!--|SITE_BACKGROUND|-->	#FFFFFF
 <!--|SOURCEROOT|-->	/research/zusers/smith/ZFIN_WWW_trunk
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.zfin.org

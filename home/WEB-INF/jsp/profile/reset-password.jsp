@@ -3,16 +3,22 @@
 
 <script src="${zfn:getAssetPath("profiles.js")}"></script>
 
-<div style="width: 30em; margin: 3em auto; padding-top: 1em;">
-    <div class="login-box">
-
-        <c:choose>
-            <c:when test="${allowReset}">
+<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
 
-                <c:set var='secure' value="<%=ZfinPropertiesEnum.SECURE_HTTP.toString()%>"/>
-                <c:set var='domain' value="<%=ZfinPropertiesEnum.DOMAIN_NAME.toString()%>"/>
-                <c:set var='secureServer' value="${secure}${domain}"/>
+
+
+    <c:choose>
+        <c:when test="${allowReset}">
+
+
+            <c:set var='secure' value="<%=ZfinPropertiesEnum.SECURE_HTTP.toString()%>"/>
+            <c:set var='domain' value="<%=ZfinPropertiesEnum.DOMAIN_NAME.toString()%>"/>
+            <c:set var='secureServer' value="${secure}${domain}"/>
+
+            <div class="login-container">
+
+                <h1>Reset Password</h1>
 
                 <form method="post"
                       action="${secureServer}/action/profile/password-reset/${zdbId}">
@@ -21,7 +27,7 @@
                     <input type="hidden" name="zdbId" value="${zdbId}"/>
 
                     <c:if test="${message}">
-                        <div>${message}</div>
+                        <div class="alert alert-secondary">${message}</div>
                     </c:if>
 
                     <div>
@@ -47,20 +53,23 @@
                         <%--</div>--%>
                 </form>
 
-            </c:when>
-            <c:when test="${resetSuccessful}">
+            </div>
+
+
+        </c:when>
+        <c:when test="${resetSuccessful}">
+            <div class="alert alert-primary">
                 Password successfully reset, <a href="/action/login">login here</a>
-            </c:when>
+            </div>
+        </c:when>
 
-            <c:otherwise>
-
+        <c:otherwise>
+            <div class="alert alert-danger">
                 Sorry, something went wrong
+            </div>
+        </c:otherwise>
+    </c:choose>
 
-            </c:otherwise>
-        </c:choose>
-
-    </div>
-</div>
 
 
 

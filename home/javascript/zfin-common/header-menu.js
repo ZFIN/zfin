@@ -1,124 +1,96 @@
+import Popper from 'popper.js';
 
-function hdrSetTabs() {
-
-    tabCookie = hdrGetCookie("tabCookie");
-
-    if (tabCookie === "Motto") {
-        showMotto();
-    }
-    if (!tabCookie || tabCookie === "Research") {
-        showZFINLinks();
-    }
-    if (tabCookie === "Products") {
-        showZIRCLinks();
-    }
-    if (tabCookie === "General") {
-        showGeneralLinks();
-    }
-}
-
-function hdrSetCookie(name,value,expires,path,domain,secure) {
-    document.cookie = name + "=" +escape(value) +
-            ( (expires) ? ";expires=" + expires.toGMTString() : "") +
-            ( (path) ? ";path=" + path : "") +
-            ( (domain) ? ";domain=" + domain : "") +
-            ( (secure) ? ";secure" : "");
-}
-
-
-function hdrGetCookie(name) {
-    var allcookies = document.cookie;
-    if (allcookies == "") return false;
-    var start = allcookies.indexOf(name + '=');
-    if (start == -1) return false;
-    start += name.length + 1;
-    var end = allcookies.indexOf(';', start);
-    if (end == -1) end = allcookies.length;
-    return allcookies.substring(start, end);
-}
-
-function hdrDeleteCookie(name, path, domain) {
-    var today = new Date();
-    var expired = new Date(today.getTime() - 28 * 24 * 60 * 60 * 1000); // less 28 days
-    if (hdrGetCookie(name)) {
-        document.cookie = name + "=" +
-            ((path) ? "; path=" + path : "") +
-            ((domain) ? "; domain=" + domain : "") +
-            "; expires=Thu, 01-Jan-70 00:00:01 GMT";
-    }
-}
-
-function deselectTabs() {
-    $('.header-tab').removeClass('selected');
-}
-
-function showZFINLinks() {
-    hdrSetCookie("tabCookie","Research","","/");
-
-    deselectTabs();
-    $('.header-tab.research').addClass('selected');
-
-    $("#hdr-zirclinks").hide();
-    $("#hdr-generallinks").hide();
-    $("#hdr-motto").hide();
-    $("#hdr-zfinlinks").show();
-}
-
-function showGeneralLinks() {
-    hdrSetCookie("tabCookie","General","","/");
-
-    deselectTabs();
-    $('.header-tab.general').addClass('selected');
-
-    $("#hdr-zfinlinks").hide();
-    $("#hdr-zirclinks").hide();
-    $("#hdr-motto").hide();
-    $("#hdr-generallinks").show();
-}
-
-function showZIRCLinks() {
-    hdrSetCookie("tabCookie","Products","","/");
-
-    deselectTabs();
-    $('.header-tab.zirc').addClass('selected');
-
-    $("#hdr-zfinlinks").hide();
-    $("#hdr-generallinks").hide();
-    $("#hdr-motto").hide();
-    $("#hdr-zirclinks").show();
-}
-
-function showMotto() {
-    $("#hdr-zfinlinks").hide();
-    $("#hdr-zirclinks").hide();
-    $("#hdr-generallinks").hide();
-    $("#hdr-motto").show();
-}
-
-$(function() {
-    $(".header-tab.research").click(showZFINLinks);
-    $(".header-tab.general").click(showGeneralLinks);
-    $(".header-tab.zirc").click(showZIRCLinks);
-    hdrSetTabs();
-
-    var login = $('#hdr-login-link');
-    var logout = $('#hdr-logout-link');
-    jQuery.ajax({
-        url: "/action/login-status",
-        success: function (data) {
-            if (data) {
-                if (data.root) {
-                    $('#hdr-gmc-search').attr('href', '/action/marker/search');
-                }
-                login.hide();
-                logout.show();
-            } else {
-                login.show();
-                logout.hide();
-            }
-        },
-        error: function () {
-            console.log("could not validate login status");
+$(() => {
+    const poppers = [];
+    $('header .reference').each(function () {
+        const menu = this;
+        const dropdown = menu.querySelector('.dropdown');
+        if (!dropdown) {
+            return;
         }
+        poppers.push(new Popper(menu, dropdown, {
+            placement: dropdown.classList.contains('left') ? 'bottom-end' : 'bottom-start',
+            positionFixed: true,
+            modifiers: {
+                offset: {
+                    offset: 1,
+                },
+                preventOverflow: {
+                    padding: 0,
+                },
+                flip: {
+                    enabled: false,
+                },
+            }
+        }));
+        $(menu)
+            .on('mouseover', () => dropdown.style.visibility = 'visible')
+            .on('mouseout', () => dropdown.style.visibility = 'hidden');
+    });
+
+    $('.mobile-menu').on('click', function (e) {
+        e.preventDefault();
+        $('header > .menu').slideToggle({
+            start: function () { $(this).css({display: 'flex'}) },
+            done: function () { poppers.forEach(popper => popper.scheduleUpdate()) },
+        });
+    });
+
+    $('header .jump-to-pub').on('submit', function (e) {
+        e.preventDefault();
+        let zdbId = $(this).find('input[type="text"]').val();
+        if (zdbId.indexOf('ZDB-PUB-') !== 0) {
+            zdbId = 'ZDB-PUB-' + zdbId;
+        }
+        window.location.href = '/action/curation/' + zdbId;
+    });
+
+    $('.fs-autocomplete').each(function () {
+        const autocomplete = $(this);
+        const $input = autocomplete.find('input[type="text"]');
+        autocomplete.find('.category-dropdown a').on('click', function (e) {
+            e.preventDefault();
+            const category = $(this).text();
+            autocomplete.find('.category-label').text(category);
+            autocomplete.find('input[name="category"]').val(category === 'Any' ? '' : category);
+            $input.animatedPlaceholder('pause');
+        });
+        const allResultsLink = ({query}) => {
+            if (!query) {
+                return '';
+            }
+            return (`
+              <a href="/search?q=${query}" class="tt-search-link">
+                All results for ${query}
+                <span>&rarr;</span>
+              </a>
+            `);
+        };
+        $input
+            .autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {
+                templates: {
+                    suggestion: item => (`
+                        <a href="${item.url}">
+                            <span>${item.label}</span>
+                            <span class="details">${item.category}</span>
+                        </a>
+                    `),
+                    footer: allResultsLink,
+                    empty: allResultsLink,
+                },
+                prepare: function (query, settings) {
+                    settings.url = settings.url.replace('%QUERY', query);
+                    const category = autocomplete.find('input[name="category"]').val();
+                    if (category) {
+                        settings.url += '&category=' + category;
+                    }
+                    return settings;
+                },
+                storageKey: 'fs-autocomplete-defaults',
+            })
+            .on('typeahead:select', function (evt, suggestion) {
+                ga('send', 'event', 'FS autocomplete', 'Go to page', `${suggestion.value} [${suggestion.category}]`);
+            });
     });
 });
+

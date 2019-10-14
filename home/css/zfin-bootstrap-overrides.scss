@@ -1,41 +1,25 @@
+@import 'theme';
+
 .ui-menu-item {
     font-size: small;
 }
 
 body {
     font-family: arial, sans-serif;
-    background: @SITE_BACKGROUND@;
+    background: white;
 }
 
-div.allcontent {
-    margin: 0;
+header {
+    display: flex;
+}
+
+main {
+    margin: 0 0 20px 0;
 }
 
 a,
 a:hover {
     color: blue
-}
-
-#hdr-banner {
-    line-height: normal;
-    font-size: 16px;
-}
-
-#footer {
-    line-height: normal;
-    font-size: 12.8px;
-    margin: 0 0 8px;
-}
-
-.header-tab {
-    box-sizing: content-box;
-    line-height: normal;
-}
-
-.hdr-linkbar {
-    box-sizing: content-box;
-    height: 15px;
-    line-height: normal;
 }
 
 .table tbody > tr > td {
@@ -63,19 +47,19 @@ a:hover {
 
 .btn-zfin {
     color: #FFFFFF;
-    background-color: #066;
-    border-color: #066;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-}
+    background-color: $primary;
+    border-color: $primary-dark;
 
-.btn-zfin:hover,
-.btn-zfin:focus,
-.btn-zfin:active,
-.btn-zfin.active,
-.btn-zfin.disabled,
-.btn-zfin[disabled] {
-    color: #FFFFFF;
-    background-color: #004444;
+    &:hover,
+    &:focus,
+    &:active,
+    &.active,
+    &.disabled,
+    &[disabled] {
+        color: #FFFFFF;
+        background-color: darken($primary, 10%);
+        border-color: darken($primary-dark, 12%);
+    }
 }
 
 .form-control-fixed-width-sm {
@@ -109,4 +93,10 @@ a:hover {
 
 .nav.nav-padded {
     margin-bottom: 30px;
+}
+
+/* override the jqueryUI default */
+.ui-corner-all  {
+    font-size: .9em !important;
+    background: #fff;
 }

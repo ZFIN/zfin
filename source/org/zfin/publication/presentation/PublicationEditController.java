@@ -77,7 +77,10 @@ public class PublicationEditController {
                 return (journal == null) ? "" : journal.getAbbreviation();
             }
         });
+    }
 
+    @InitBinder("publicationBean")
+    public void initPublicationBinder(WebDataBinder binder) {
         binder.setValidator(new PublicationFormValidator());
     }
 
