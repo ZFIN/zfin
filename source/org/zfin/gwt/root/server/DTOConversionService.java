@@ -646,8 +646,17 @@ public class DTOConversionService {
         MutationDetailDnaChangeDTO dnaChangeDTO = featureDTO.getDnaChangeDTO();
         if (dnaChangeDTO != null) {
             FeatureDnaMutationDetail detail = convertToDnaMutationDetail(null, dnaChangeDTO);
+
             detail.setFeature(feature);
             feature.setFeatureDnaMutationDetail(detail);
+            if (feature.getFeatureDnaMutationDetail().getNumberAddedBasePair() == feature.getFeatureDnaMutationDetail().getNumberRemovedBasePair()) {
+                if (feature.getFeatureDnaMutationDetail().getNumberAddedBasePair() > 1) {
+
+                    feature.setType(FeatureTypeEnum.MNV);
+
+                }
+            }
+            ;
         }
         MutationDetailProteinChangeDTO proteinChangeDTO = featureDTO.getProteinChangeDTO();
         if (proteinChangeDTO != null) {

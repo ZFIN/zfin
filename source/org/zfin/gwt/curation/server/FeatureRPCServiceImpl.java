@@ -219,6 +219,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
             }
             DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
+            if (detail.getNumberRemovedBasePair() == detail.getNumberAddedBasePair())
+            {
+                if (detail.getNumberRemovedBasePair()>1) {
+                    feature.setType(FeatureTypeEnum.MNV);
+                }
+            }
             if (!detail.equals(oldDetail)) {
                 infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
             }
