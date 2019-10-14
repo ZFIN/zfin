@@ -50,7 +50,7 @@ create temporary table tmp_go (mv_zdb_id text,
 			 mv_created_by text,
 			 id2 text,
 			 mv_annoextn text,
-			 gene_type text,geneproduct_id text,doi_id text);
+			 gene_type text,geneproduct_id text,doi_id text,goref_id text);
 
 
 insert into tmp_go (mv_zdb_id,
@@ -68,12 +68,12 @@ insert into tmp_go (mv_zdb_id,
        mv_created_by,
        mv_annoextn,
        gene_type,
-       geneproduct_id,doi_id
+       geneproduct_id,doi_id,goref_id
 )
 select mrkrgoev_zdb_id,
 				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(substring(term_ontology from 1 for 1)), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid,pub_doi
+				upper(substring(term_ontology from 1 for 1)), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid,pub_doi,pub_goref_id
 			   from marker_go_term_evidence
 			   join marker on mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
 			   join term on mrkrgoev_term_zdb_id = term_zdb_id

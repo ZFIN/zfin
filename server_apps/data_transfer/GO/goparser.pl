@@ -80,6 +80,7 @@ while ($line = <INDEXFILE>) {
       $relation=$fields[14];
       $proteinid=$fields[16];
       $pubdoi=$fields[17];
+      $pubgoref=$fields[18];
 
 
 
@@ -168,7 +169,8 @@ sub goPub()
     $zfinid='ZFIN:';
     $pub = $pmid.$accession if (length($accession)!=0 && ($accession ne 'none'));
     $pub = $doiid.$pubdoi if (length($accession)==0 && (length($pubdoi)!=0));
-    $pub = $zfinid.$pub if (length($accession)==0) && (length($pubdoi)==0);
+    $pub = $doiid.$pubgoref if (length($accession)==0 && (length($pubgoref)!=0));
+    $pub = $zfinid.$pub if (length($accession)==0) && (length($pubdoi)==0  && (length($pubgoref)==0);
     return $pub;
   }
 sub goMod()
