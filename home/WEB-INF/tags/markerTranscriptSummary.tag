@@ -81,10 +81,10 @@
 
                         <tr class=${loop.index%2==0 ? "even" : "odd"}>
                             <td width="18%"> <%-- only show if different from the last row--%>
-                                <zfin:groupByDisplay loopName="loop" groupBeanCollection="${relatedTranscriptDisplay.nonWithdrawnList}" groupByBean="marker.transcriptType.display">
-                             <span title="${nonWithdrawnTranscript.marker.transcriptType.definition}">
-                                     ${nonWithdrawnTranscript.marker.transcriptType.display}</span>
-                                </zfin:groupByDisplay>
+                                <c:if test="${nonWithdrawnTranscript.marker.transcriptType.display ne lastType}">
+                                    <span title="${nonWithdrawnTranscript.marker.transcriptType.definition}">${nonWithdrawnTranscript.marker.transcriptType.display}</span>
+                                </c:if>
+                                <c:set var="lastType" value="${nonWithdrawnTranscript.marker.transcriptType.display}"/>
                             </td>
                             <td width="22%">
                                 <c:choose>

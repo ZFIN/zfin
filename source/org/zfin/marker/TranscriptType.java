@@ -3,7 +3,7 @@ package org.zfin.marker;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TranscriptType {
+public class TranscriptType implements Comparable<TranscriptType> {
 
     private Long id;
     private Type type;
@@ -67,6 +67,11 @@ public class TranscriptType {
 
     public void setIndented(boolean indented) {
         isIndented = indented;
+    }
+
+    @Override
+    public int compareTo(TranscriptType o) {
+        return this.display.compareTo(o.getDisplay());
     }
 
     public enum Type {
