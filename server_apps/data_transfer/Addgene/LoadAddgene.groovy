@@ -104,16 +104,17 @@ PRE_FILE = "preaddgene.unl"
 POST_FILE = "postaddgene.unl"
 
 psql dbname, """
-drop table tmp_addgene;
+drop table if exists tmp_addgene;
 \\COPY (SELECT dblink_linked_recid,dblink_acc_num
     FROM db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-141007-1') TO $PRE_FILE;
+
 CREATE   TABLE tmp_addgene(
     addgeneid text,
     addgenename text,
     zfingene text
       ) ;
 
-\\COPY tmp_addgene FROM 'addgeneDesc.csv' delimiter '@' ;
+    \\copy tmp_addgene FROM 'addgeneDesc.csv' delimiter '@' ;
 
 update tmp_addgene set zfingene=replace(zfingene,'[[','');
 update tmp_addgene set zfingene=replace(zfingene,']]','');
@@ -131,7 +132,7 @@ update tmp_addgene set dblinkid=get_id('DBLINK');
 update tmp_addgene set zfingene=(select dblink_linked_recid from db_link where zfingene=dblink_acc_num and dblink_fdbcont_Zdb_id='ZDB-FDBCONT-040412-1');
 insert into zdb_active_data (zactvd_zdb_id) select dblinkid from tmp_addgene;
 insert into db_link (dblink_zdb_id,dblink_acc_num,dblink_acc_num_display,dblink_fdbcont_zdb_id,dblink_linked_recid) select dblinkid,addgeneid,addgenename,'ZDB-FDBCONT-141007-1',zfingene from tmp_addgene;
-\\COPY (SELECT dblink_linked_recid,dblink_acc_num
+\\copy (SELECT dblink_linked_recid,dblink_acc_num
     FROM db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-141007-1') TO $POST_FILE;
 
 
