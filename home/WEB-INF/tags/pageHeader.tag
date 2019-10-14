@@ -33,7 +33,7 @@
                     <ul>
                         <li><a href="/downloads">Downloads</a></li>
                         <li><a href="/schemaSpy/index.html">Data Model</a></li>
-                        <li><a href="http://www.zebrafishmine.org" class="external">ZebrafishMine</a></li>
+                        <li><a href="http://www.zebrafishmine.org" class="external" target="_blank" rel="noopener noreferrer">ZebrafishMine</a></li>
                         <li><a href="http://www.ensembl.org/biomart" class="external">BioMart</a></li>
                     </ul>
                 </div>
