@@ -8,7 +8,6 @@
     <include file="source/org/zfin/db/load/1110/ZFIN-6301.sql"/>
     <include file="source/org/zfin/db/load/1110/add_eco_go_mapping.sql"/>
     <include file="source/org/zfin/db/load/1110/ZFIN-6190.sql"/>
-
-    <include file="source/org/zfin/db/load/1110/add_goref_pub.sql"/>
+    <include file="source/org/zfin/db/load/1110/add_goref_id.sql"/>
 
 </databaseChangeLog>
