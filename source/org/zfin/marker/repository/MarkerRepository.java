@@ -515,4 +515,5 @@ public interface MarkerRepository {
 
     List<AntibodyLookupEntry> getAntibodyForString(String lookupString, String type);
 
+    Set<Antibody> getAntibodies(Set<String> antibodyIds);
 }

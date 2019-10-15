@@ -2,7 +2,8 @@ package org.zfin.marker.presentation;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,6 +46,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
@@ -80,7 +82,7 @@ public class GeneViewController {
         logger.info("zdbID: " + zdbID);
 
         if (!markerService.isOfTypeGene(zdbID)) {
-          return "redirect:/" + zdbID;
+            return "redirect:/" + zdbID;
         }
 
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
@@ -128,7 +130,7 @@ public class GeneViewController {
         for (MarkerGenomeLocation genomeMarkerLocation : genomeMarkerLocationList) {
             BrowserLink location = new BrowserLink();
             if (genomeMarkerLocation.getSource().getDisplayName().equals("ZFIN Gbrowse")) {
-               location.setUrl(genomeMarkerLocation.getUrl());
+                location.setUrl(genomeMarkerLocation.getUrl());
                 location.setName("ZFIN");
                 location.setOrder(0);
             } else if (genomeMarkerLocation.getSource().getDisplayName().equals("Ensembl")) {
@@ -159,9 +161,27 @@ public class GeneViewController {
         }
 
         // (Antibodies)
-        geneBean.setRelatedAntibodies(markerRepository.getRelatedMarkerDisplayForTypes(
-                gene, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
-        if (gene.getType()== Marker.Type.GENE) {
+        List<MarkerRelationshipPresentation> antibodyRelationships = markerRepository.getRelatedMarkerDisplayForTypes(
+                gene, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
+
+        Set<String> antibodyIds = antibodyRelationships.stream()
+                .map(MarkerRelationshipPresentation::getZdbId)
+                .collect(Collectors.toSet());
+
+
+        geneBean.setAntibodies(markerRepository.getAntibodies(antibodyIds));
+
+        List<AntibodyMarkerBean> beans = markerRepository.getAntibodies(antibodyIds).stream()
+                .map(antibody -> {
+                    AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
+                    antibodyBean.setAntibody(antibody);
+                    antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
+                    return antibodyBean;
+                })
+                .collect(Collectors.toList());
+        geneBean.setAntibodyBeans(beans);
+
+        if (gene.getType() == Marker.Type.GENE) {
             geneBean.setRelatedInteractions(markerRepository.getRelatedMarkerDisplayForTypes(
                     gene, false, MarkerRelationship.Type.RNAGENE_INTERACTS_WITH_GENE, MarkerRelationship.Type.NTR_INTERACTS_WITH_GENE));
         }
@@ -206,7 +226,7 @@ public class GeneViewController {
         return "marker/phenotype-summary.page";
     }
 
-    @RequestMapping(value = { "/{geneID}/expression", "/gene/view/{geneID}/expression" })
+    @RequestMapping(value = {"/{geneID}/expression", "/gene/view/{geneID}/expression"})
     public String getExpression(Model model, @PathVariable String geneID) {
         Marker marker = getMarkerRepository().getMarkerByID(geneID);
         if (marker == null) {
@@ -220,7 +240,7 @@ public class GeneViewController {
         return "forward:" + searchLink;
     }
 
-    @RequestMapping(value = { "/{geneID}/wt-expression", "/gene/view/{geneID}/wt-expression" })
+    @RequestMapping(value = {"/{geneID}/wt-expression", "/gene/view/{geneID}/wt-expression"})
     public String getWildtypeExpression(Model model, @PathVariable String geneID) {
         Marker marker = getMarkerRepository().getMarkerByID(geneID);
         if (marker == null) {

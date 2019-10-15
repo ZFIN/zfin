@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.zfin.antibody.Antibody;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.framework.presentation.PaginationBean;
@@ -34,12 +35,13 @@ public class MarkerBean extends PaginationBean {
     private List<LinkDisplay> otherMarkerPages;
     private RelatedTranscriptDisplay relatedTranscriptDisplay;
     private OrthologyPresentationBean orthologyPresentationBean;
-    private Set<Marker> antibodies ; // TODO: replace with presentation object?
+    private Set<Antibody> antibodies ;
     private Set<Marker> constructs ; // TODO: replace with presentation object?
     private MutantOnMarkerBean mutantOnMarkerBeans ; // TODO: replace with presentation object?
     private PhenotypeOnMarkerBean phenotypeOnMarkerBeans; // TODO: replace with presentation object?
     private GeneOntologyOnMarkerBean geneOntologyOnMarkerBeans ; // TODO: replace with presentation object?
     private boolean hasMarkerHistory;
+    private List<AntibodyMarkerBean> antibodyBeans;
 
     public AllianceGeneDesc getAllianceGeneDesc() {
         return allianceGeneDesc;
@@ -188,11 +190,11 @@ public class MarkerBean extends PaginationBean {
         this.relatedTranscriptDisplay = relatedTranscriptDisplay;
     }
 
-    public Set<Marker> getAntibodies() {
+    public Set<Antibody> getAntibodies() {
         return antibodies;
     }
 
-    public void setAntibodies(Set<Marker> antibodies) {
+    public void setAntibodies(Set<Antibody> antibodies) {
         this.antibodies = antibodies;
     }
 
@@ -290,5 +292,13 @@ public class MarkerBean extends PaginationBean {
 
     public void setDiseaseModelDisplays(Collection<DiseaseModelDisplay> diseaseModelDisplays) {
         this.diseaseModelDisplays = diseaseModelDisplays;
+    }
+
+    public void setAntibodyBeans(List<AntibodyMarkerBean> antibodyBeans) {
+        this.antibodyBeans = antibodyBeans;
+    }
+
+    public List<AntibodyMarkerBean> getAntibodyBeans() {
+        return antibodyBeans;
     }
 }

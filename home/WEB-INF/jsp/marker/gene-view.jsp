@@ -92,11 +92,8 @@
 
     </zfin2:subsection>
 
-    <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
-        <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}"
-                                                  marker="${formBean.marker}"
-                                                  title="ANTIBODIES" maxNumber="5"/>
-    </c:if>
+    <%--Antibodies--%>
+    <zfin2:antibodySummary antibodyBeans="${formBean.antibodyBeans}"/>
 
 
     <%--Plasmid Links--%>

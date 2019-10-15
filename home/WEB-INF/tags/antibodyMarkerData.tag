@@ -49,8 +49,7 @@
         Assays:
     </th>
     <td>
-        <%--<c:forEach var="assay" items="${antibodyStat.distinctAssayNames}" varStatus="loop">--%>
-        <c:forEach var="assay" items="${antibodyBean.distinctAssayNames}" varStatus="loop">
+        <c:forEach var="assay" items="${antibody.distinctAssayNames}" varStatus="loop">
             ${assay}${!loop.last ? ", " : ""}
         </c:forEach>
     </td>
