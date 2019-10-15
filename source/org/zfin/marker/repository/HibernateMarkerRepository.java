@@ -356,6 +356,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         });*/
         return markerRelationships;
     }
+
     public List<Transcript> getTranscriptsForNonCodingGenes() {
 
         List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
@@ -2044,7 +2045,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
             }
 
-            return new ArrayList<LinkDisplay>(linkMap.values());
+            return new ArrayList<>(linkMap.values());
         }
     }
 
@@ -2053,16 +2054,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (MarkerDBLink) session.get(MarkerDBLink.class, linkId);
     }
 
-public String getABRegID(String zdbID){
-    Session session = HibernateUtil.currentSession();
-    String sql = "select dblink_acc_num as num " +
-            "  from db_link " +
-            " where dblink_linked_recid = :zdbID" +
-            "   and dblink_acc_num like 'AB%' order by dblink_zdb_id desc limit 1";
-    Query query = session.createSQLQuery(sql);
-    query.setParameter("zdbID", zdbID);
-    return (String) query.uniqueResult();
-}
+    public String getABRegID(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        String sql = "select dblink_acc_num as num " +
+                "  from db_link " +
+                " where dblink_linked_recid = :zdbID" +
+                "   and dblink_acc_num like 'AB%' order by dblink_zdb_id desc limit 1";
+        Query query = session.createSQLQuery(sql);
+        query.setParameter("zdbID", zdbID);
+        return (String) query.uniqueResult();
+    }
 
     public String getAALink(Feature feature) {
         Session session = HibernateUtil.currentSession();
@@ -3207,7 +3208,7 @@ public String getABRegID(String zdbID){
         if (number < 1)
             hql += "left join fetch marker.dbLinks ";
         hql += "where marker.markerType.name in (:names) " +
-        "   and mrkr_abbrev not like :withdrawn " ;
+                "   and mrkr_abbrev not like :withdrawn ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("names", type.getTypeStrings());
         query.setString("withdrawn", Marker.WITHDRAWN + "%");
@@ -3336,6 +3337,17 @@ public String getABRegID(String zdbID){
                 })
                 .list()
                 ;
+    }
+
+    @Override
+    public Set<Antibody> getAntibodies(Set<String> antibodyIds) {
+
+        String hql = " select ab from Antibody ab " +
+                "where ab.zdbID in (:IDs) " +
+                "order by ab.abbreviation  ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("IDs", antibodyIds);
+        return new HashSet<>((List<Antibody>) query.list());
     }
 
 }
