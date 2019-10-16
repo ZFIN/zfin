@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.logging.log4j.LogManager;
@@ -164,22 +165,21 @@ public class GeneViewController {
         List<MarkerRelationshipPresentation> antibodyRelationships = markerRepository.getRelatedMarkerDisplayForTypes(
                 gene, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
 
-        Set<String> antibodyIds = antibodyRelationships.stream()
-                .map(MarkerRelationshipPresentation::getZdbId)
-                .collect(Collectors.toSet());
-
-
-        geneBean.setAntibodies(markerRepository.getAntibodies(antibodyIds));
-
-        List<AntibodyMarkerBean> beans = markerRepository.getAntibodies(antibodyIds).stream()
-                .map(antibody -> {
-                    AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
-                    antibodyBean.setAntibody(antibody);
-                    antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
-                    return antibodyBean;
-                })
-                .collect(Collectors.toList());
-        geneBean.setAntibodyBeans(beans);
+        if (CollectionUtils.isNotEmpty(antibodyRelationships)) {
+            Set<String> antibodyIds = antibodyRelationships.stream()
+                    .map(MarkerRelationshipPresentation::getZdbId)
+                    .collect(Collectors.toSet());
+            geneBean.setAntibodies(markerRepository.getAntibodies(antibodyIds));
+            List<AntibodyMarkerBean> beans = markerRepository.getAntibodies(antibodyIds).stream()
+                    .map(antibody -> {
+                        AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
+                        antibodyBean.setAntibody(antibody);
+                        antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
+                        return antibodyBean;
+                    })
+                    .collect(Collectors.toList());
+            geneBean.setAntibodyBeans(beans);
+        }
 
         if (gene.getType() == Marker.Type.GENE) {
             geneBean.setRelatedInteractions(markerRepository.getRelatedMarkerDisplayForTypes(
