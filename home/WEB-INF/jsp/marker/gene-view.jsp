@@ -11,6 +11,7 @@
     <c:set var="markerID">${formBean.marker.zdbID}</c:set>
     <c:set var="deleteURL">/action/infrastructure/deleteRecord/${markerID}</c:set>
     <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${markerID}</c:set>
+    <c:set var="editURL">/action/marker/gene/edit/${markerID}</c:set>
     <script>
         if (opener != null)
             opener.fireCreateMarkerEvent();
@@ -19,8 +20,8 @@
     <zfin2:dataManager zdbID="${markerID}"
                        deleteURL="none"
                        mergeURL="${mergeURL}"
-                       editMarker="true"/>
-
+                       editURL="${editURL}"
+    />
 
     <div style="float: right">
         <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
