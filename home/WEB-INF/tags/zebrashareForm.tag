@@ -121,7 +121,7 @@
             </div>
 
             <div id="selectedFiles" >
-                </span></div>
+                </div>
         </div>
     </div>
 
