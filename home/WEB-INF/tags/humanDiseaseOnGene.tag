@@ -28,7 +28,7 @@
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${diseases}" groupByBean="diseaseTerm">
                         <c:if test="${!empty row.diseaseTerm}">
                             <a href="http://www.alliancegenome.org/disease/${row.diseaseTerm.oboID}"><img src="/images/ALLIANCE-logo-nobackground_foundingmember.png"
-                                                                                                    title="Alliance" alt="Alliance" border="0" align="top" class="scale"/></a>
+                                                                                                    title="Alliance" alt="Alliance" border="0" align="center" style="width:100%;max-width:50px"/></a>
                         </c:if>
                     </zfin:groupByDisplay>
                 </td>
