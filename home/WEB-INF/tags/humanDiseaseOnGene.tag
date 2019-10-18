@@ -12,15 +12,24 @@
 
     <table class="summary rowstripes marker-go-table">
         <tr>
-            <th width="35%">Disease Ontology Term</th>
-            <th width="35%">OMIM Term</th>
-            <th width="30%" style="text-align: center">OMIM Phenotype ID</th>
+            <th width="25%">Disease Ontology Term</th>
+            <th width="20%">Alliance Multi-Species Data</th>
+            <th width="25%">OMIM Term</th>
+            <th width="20%" style="text-align: center">OMIM Phenotype ID</th>
         </tr>
         <c:forEach var="row" items="${diseases}" varStatus="loop">
             <zfin:alternating-tr loopName="loop" groupBeanCollection="${diseases}" groupByBean="diseaseTerm" newGroup="true">
                 <td>
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${diseases}" groupByBean="diseaseTerm">
                         <c:if test="${!empty row.diseaseTerm}"><zfin:link entity="${row.diseaseTerm}" longVersion="true"/></c:if>
+                    </zfin:groupByDisplay>
+                </td>
+                <td>
+                    <zfin:groupByDisplay loopName="loop" groupBeanCollection="${diseases}" groupByBean="diseaseTerm">
+                        <c:if test="${!empty row.diseaseTerm}">
+                            <a href="http://www.alliancegenome.org/disease/${row.diseaseTerm.oboID}"><img src="/images/ALLIANCE-logo-nobackground_foundingmember.png"
+                                                                                                    title="Alliance" alt="Alliance" border="0" align="top" class="scale"/></a>
+                        </c:if>
                     </zfin:groupByDisplay>
                 </td>
                 <td>${row.omimPhenotype.name}</td>
