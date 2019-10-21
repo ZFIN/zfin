@@ -69,7 +69,7 @@ while ($line = <INDEXFILE>) {
       $mrkrname=$fields[3];
       $qualifier=goQlf($fields[9]);
       $goid=$fields[4];
-      $pubid=goPub($fields[5],$fields[6],$fields[17]);
+      $pubid=goPub($fields[5],$fields[6],$fields[17],,$fields[18]);
       $evidence=$fields[7];
       $inf=goInf($fields[8]);
       push(@inf_array, $inf);
@@ -164,12 +164,13 @@ sub goPub()
     $accession = $_[1];
     $pub =$_[0];
     $pubdoi=$_[2];
+    $pubgoref=$_[3];
     $pmid='PMID:';
     $doiid='DOI:';
     $zfinid='ZFIN:';
     $pub = $pmid.$accession if (length($accession)!=0 && ($accession ne 'none'));
     $pub = $doiid.$pubdoi if (length($accession)==0 && (length($pubdoi)!=0));
-    $pub = $doiid.$pubgoref if (length($accession)==0 && (length($pubgoref)!=0));
+    $pub = $pubgoref if (length($accession)==0 && length($pubdoi)==0 && length($pubgoref)!=0);
     $pub = $zfinid.$pub if (length($accession)==0 && length($pubdoi)==0  && length($pubgoref)==0);
     return $pub;
   }
