@@ -4496,7 +4496,8 @@ and child.term_ontology = 'disease_ontology';
                              jtype as publication_type,
                              pub_abstract as abstract,
                              pub_jrnl_zdb_id as xref,
-                             'PMID:' || accession_no as related_accession,
+                             'PMID:' || accession_no as pubmedid,
+                             'PMCID:' || pub_pmc_id as pubpmcid,
                              case when pub_is_indexed = 't' then 'Indexed'
                                   else 'Not Indexed' end as indexing_status,
                              case when status = 'active' then 'Active'
@@ -4507,6 +4508,8 @@ and child.term_ontology = 'disease_ontology';
                              pub_is_curatable as is_curatable
                              from publication"
         >
+            <field column="pubmedid" name="related_accession" />
+            <field column="pubpmcid" name="related_accession" />
 
             <entity name="pub_images"
                     query="select
@@ -5515,7 +5518,8 @@ and child.term_ontology = 'disease_ontology';
                               image as profile_image,
                               pers_bio as biography,
                               address as postal_address,
-                              email as email_address
+                              email as email_address,
+                              orcid_id as related_accession
                        from person
                        where pers_is_hidden = 'f'"
         >
