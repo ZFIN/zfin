@@ -125,11 +125,10 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                     }
 
             );
-        }
-        else{
+        } /*else{
 
             view.lineNumberBox.setText("");
-        }
+        }*/
     }
 
 
