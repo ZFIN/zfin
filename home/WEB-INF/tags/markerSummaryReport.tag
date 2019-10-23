@@ -8,7 +8,7 @@
 <c:if test="${empty title}">
 
     <c:set var="title">
-        Resources:
+        Genome Resources:
     </c:set>
     <c:if test="${marker.markerType.displayName.contains('Construct')}">
         <c:set var="title">
