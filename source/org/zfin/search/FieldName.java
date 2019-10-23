@@ -239,13 +239,10 @@ public enum FieldName {
     }
 
     public static FieldName getAffectedFieldName(Ontology ontology) {
-        for (FieldName fNname : values()) {
-            if (fNname.getName().startsWith("affected_" + ontology.getDbOntologyName())) {
+        for (FieldName fNname : values())
+            if (fNname.getName().startsWith("affected_" + ontology.getDbOntologyName()) ||
+                    fNname.getName().startsWith("affected_anatomy"))
                 return fNname;
-            } else if (ontology.isAnatomy(ontology) && fNname.getName().startsWith("affected_anatomy")) {
-                return fNname;
-            }
-        }
         return null;
     }
 }
