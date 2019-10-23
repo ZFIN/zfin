@@ -9,15 +9,21 @@ create temporary table tmp_go_annot (mev_zdb_id text,anno_group_id bigint,annoex
 
 
 insert into tmp_go_annot (mev_zdb_id,anno_group_id,annoextn)
-select distinct mrkrgoev_zdb_id, mgtaeg_annotation_extension_group_id, term_name||'('||mgtae_term_text||')'
-from marker_go_term_evidence, marker_go_term_annotation_extension_group, marker_go_term_annotation_extension,term
-where mrkrgoev_zdb_id= mgtaeg_mrkrgoev_zdb_id and mgtae_relationship_term_zdb_id=term_zdb_id and mgtae_extension_group_id=mgtaeg_annotation_extension_group_id ;
+select distinct mrkrgoev_zdb_id, 
+                mgtaeg_annotation_extension_group_id, 
+                term_name||'('||mgtae_term_text||')'
+  from marker_go_term_evidence, 
+       marker_go_term_annotation_extension_group, 
+       marker_go_term_annotation_extension,
+       term
+  where mrkrgoev_zdb_id= mgtaeg_mrkrgoev_zdb_id 
+      and mgtae_relationship_term_zdb_id=term_zdb_id 
+      and mgtae_extension_group_id=mgtaeg_annotation_extension_group_id ;
 
 create temporary table tmp_go_identifiers (goid text, goid2 bigint,goid3 text);
 
 insert into tmp_go_identifiers(goid, goid2, goid3)
-select mev_zdb_id,anno_group_id
-, STRING_AGG(annoextn,',')
+select mev_zdb_id,anno_group_id, STRING_AGG(annoextn,',')
 from tmp_go_annot
 group by mev_zdb_id,anno_group_id
 order by 1;
@@ -25,8 +31,11 @@ order by 1;
 create temporary table tmp_go_identifiers_pipes (goidtmp text, goid3tmp text);
 insert into tmp_go_identifiers_pipes (goidtmp)
  select distinct goid from tmp_go_identifiers;
+
 update tmp_go_identifiers_pipes
-set goid3tmp=(select STRING_AGG(goid3,'|') from tmp_go_identifiers where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp);
+  set goid3tmp=(select STRING_AGG(distinct goid3,'|') 
+                  from tmp_go_identifiers 
+                  where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp);
 
 create temporary table tmp_go_proteinid (mgev_zdb_id text,proteinid text);
 
@@ -73,7 +82,8 @@ insert into tmp_go (mv_zdb_id,
 select mrkrgoev_zdb_id,
 				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(substring(term_ontology from 1 for 1)), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid,pub_doi,pub_goref_id
+				upper(substring(term_ontology from 1 for 1)), mrkrgoev_date_modified, 
+                                mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid,pub_doi,pub_goref_id
 			   from marker_go_term_evidence
 			   join marker on mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
 			   join term on mrkrgoev_term_zdb_id = term_zdb_id
