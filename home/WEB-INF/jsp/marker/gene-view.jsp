@@ -109,9 +109,10 @@
         </table>
     </zfin2:subsection>
 
-
     <%--Constructs--%>
-    <zfin2:constructsWithSequences formBean="${formBean}"/>
+    <div id="constructs">
+        <zfin2:constructsSummary gene="${formBean.marker}" constructBeans="${formBean.constructBeans}" />
+    </div>
 
     <%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
 
@@ -137,6 +138,7 @@
     jQuery(function () {
         jQuery("#mutant-info").find(".alleles").tableCollapse({label: "alleles"});
         jQuery("#disease").find(".marker-go-table").tableCollapse({label: "records"});
+        jQuery("#constructs").find(".marker-go-table").tableCollapse({label: "constructs"});
     });
 </script>
 

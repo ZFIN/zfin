@@ -18,6 +18,8 @@ import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.ControlledVocab;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Marker;
@@ -38,6 +40,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.sequence.service.TranscriptService;
+import org.zfin.feature.repository.FeatureRepository;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
@@ -46,7 +49,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -68,6 +73,13 @@ public class GeneViewController {
 
     @Autowired
     private MarkerRepository markerRepository;
+
+
+    @Autowired
+    private FeatureRepository featureRepository;
+
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
 
     @Autowired
     private EfgViewController efgViewController;
@@ -159,7 +171,50 @@ public class GeneViewController {
 
         // (CONSTRUCTS)
         if (efgViewController != null) {
-            efgViewController.populateConstructList(geneBean, gene);
+            ControlledVocab zebrafish = new ControlledVocab();
+            zebrafish.setCvTermName("Dre.");
+            zebrafish.setCvForeignSpecies("zebrafish");
+            zebrafish.setCvNameDefinition("Danio rerio");
+            Set<MarkerRelationship.Type> types = new HashSet<>();
+            types.add(MarkerRelationship.Type.PROMOTER_OF);
+            types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
+            types.add(MarkerRelationship.Type.CONTAINS_REGION);
+            Set<Marker> relatedMarkers = new TreeSet<>();
+            relatedMarkers = MarkerService.getRelatedMarker(gene, types);
+            geneBean.setNumberOfConstructs(relatedMarkers.size());
+            List<ConstructBean> constructBeans = new ArrayList<>();
+            for (Marker mrkr : relatedMarkers) {
+                ConstructBean constructBean  = new ConstructBean();
+                constructBean.setMarker(mrkr);
+                List<MarkerRelationshipPresentation> mrkrRels = new ArrayList<>();
+                mrkrRels.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
+                        mrkr, true
+                        , MarkerRelationship.Type.PROMOTER_OF
+                        , MarkerRelationship.Type.CODING_SEQUENCE_OF
+                        , MarkerRelationship.Type.CONTAINS_REGION
+                ));
+
+                List<Marker> regulatoryRegions = new ArrayList<>();
+                List<Marker> codingSequences = new ArrayList<>();
+                for (MarkerRelationshipPresentation markerRelationshipPresentation : mrkrRels) {
+                    if (markerRelationshipPresentation.getRelationshipType().equals("Has Promoter")) {
+                        regulatoryRegions.add(markerRepository.getMarkerByID(markerRelationshipPresentation.getZdbId()));
+                    } else if (markerRelationshipPresentation.getRelationshipType().equals("Has Coding Sequence")) {
+                        codingSequences.add(markerRepository.getMarkerByID(markerRelationshipPresentation.getZdbId()));
+                    }
+                }
+                constructBean.setRegulatoryRegions(regulatoryRegions);
+                constructBean.setCodingSequences(codingSequences);
+                constructBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(mrkr.getZdbID()));
+                constructBean.setNumberOfTransgeniclines(featureRepository.getNumberOfFeaturesForConstruct(mrkr));
+                List<ControlledVocab> species = infrastructureRepository.getControlledVocabsForSpeciesByConstruct(mrkr);
+                species.add(zebrafish);
+                List<ControlledVocab> sortedSpecies = species.stream().sorted((e1, e2) -> e1.getCvNameDefinition().compareTo(e2.getCvNameDefinition())).collect(Collectors.toList());;
+                constructBean.setSpecies(sortedSpecies);
+                constructBeans.add(constructBean);
+            }
+
+            geneBean.setConstructBeans(constructBeans);
         }
 
         // (Antibodies)

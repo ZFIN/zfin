@@ -42,6 +42,7 @@ public class MarkerBean extends PaginationBean {
     private GeneOntologyOnMarkerBean geneOntologyOnMarkerBeans ; // TODO: replace with presentation object?
     private boolean hasMarkerHistory;
     private List<AntibodyMarkerBean> antibodyBeans;
+    private List<ConstructBean> constructBeans;
 
     public AllianceGeneDesc getAllianceGeneDesc() {
         return allianceGeneDesc;
@@ -300,5 +301,13 @@ public class MarkerBean extends PaginationBean {
 
     public List<AntibodyMarkerBean> getAntibodyBeans() {
         return antibodyBeans;
+    }
+
+    public List<ConstructBean> getConstructBeans() {
+        return constructBeans;
+    }
+
+    public void setConstructBeans(List<ConstructBean> constructBeans) {
+        this.constructBeans = constructBeans;
     }
 }
