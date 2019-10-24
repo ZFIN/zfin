@@ -135,10 +135,11 @@
 </div>
 
 <script>
-    jQuery(function () {
-        jQuery("#mutant-info").find(".alleles").tableCollapse({label: "alleles"});
-        jQuery("#disease").find(".marker-go-table").tableCollapse({label: "records"});
-        jQuery("#constructs").find(".marker-go-table").tableCollapse({label: "constructs"});
+    $(function () {
+        $("#mutant-info").find(".alleles").tableCollapse({label: "alleles"});
+        $("#mutant-info").find(".strs").tableCollapse({label: "reagents"});
+        $("#disease").find(".marker-go-table").tableCollapse({label: "records"});
+        $("#constructs").find(".marker-go-table").tableCollapse({label: "constructs"});
     });
 </script>
 

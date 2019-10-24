@@ -84,8 +84,10 @@
     </c:if>
 
     <c:if test="${!empty mutantsOnMarkerBean.knockdownReagents}">
-        <b>Sequence Targeting Reagents</b>
-        <zfin2:sequenceTargetingReagentsInGene sequenceTargetingReagentBeans="${mutantsOnMarkerBean.knockdownReagents}" />
+        <div class="strs">
+            <b>Sequence Targeting Reagents</b>
+            <zfin2:sequenceTargetingReagentsInGene sequenceTargetingReagentBeans="${mutantsOnMarkerBean.knockdownReagents}" />
+        </div>
     </c:if>
 
 </zfin2:subsection>
