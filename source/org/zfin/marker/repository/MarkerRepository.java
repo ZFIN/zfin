@@ -1,15 +1,11 @@
 package org.zfin.marker.repository;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.feature.Feature;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -403,7 +399,7 @@ public interface MarkerRepository {
      * @param sequenceTargetingReagent (TALEN or CRISPR)
      * @return list of Feature
      */
-    List<Feature> getFeaturesBySTR(SequenceTargetingReagent sequenceTargetingReagent);
+    List<Feature> getFeaturesBySTR(Marker sequenceTargetingReagent);
 
     SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
 
@@ -456,7 +452,7 @@ public interface MarkerRepository {
      * @param types
      * @return
      */
-    List<Marker> getMarkersContainedIn(Marker marker, MarkerRelationship.Type... types);
+    List<Marker> getRelatedMarkersForTypes(Marker marker, MarkerRelationship.Type... types);
 
     List<Marker> getRelatedGenesViaTranscript(Marker marker, MarkerRelationship.Type relType1, MarkerRelationship.Type relType2);
 

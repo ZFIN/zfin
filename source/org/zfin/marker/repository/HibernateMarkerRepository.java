@@ -2627,7 +2627,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param sequenceTargetingReagent (TALEN or CRISPR)
      * @return list of Feature
      */
-    public List<Feature> getFeaturesBySTR(SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<Feature> getFeaturesBySTR(Marker sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct feat from Feature feat, FeatureMarkerRelationship fmRel " +
@@ -2748,18 +2748,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-    public List<Marker> getMarkersContainedIn(Marker marker, MarkerRelationship.Type... types) {
+    public List<Marker> getRelatedMarkersForTypes(Marker marker, MarkerRelationship.Type... types) {
         Query query = HibernateUtil.currentSession().createQuery(
                 "select m from  Marker as m, MarkerRelationship as rel " +
                         "where rel.firstMarker = :marker  and rel.secondMarker = m and " +
-                        "rel.type in :relationshipTypes");
+                        "rel.type in :relationshipTypes " +
+                        "order by rel.markerRelationshipType, m.markerType, m.abbreviationOrder");
         query.setParameter("marker", marker);
         query.setParameterList("relationshipTypes", types);
         List<Marker> list = (List<Marker>) query.list();
         query = HibernateUtil.currentSession().createQuery(
                 "select m from  Marker as m, MarkerRelationship as rel " +
                         "where rel.secondMarker = :marker  and rel.firstMarker = m and " +
-                        "rel.type in :relationshipTypes");
+                        "rel.type in :relationshipTypes " +
+                        "order by rel.markerRelationshipType, m.markerType, m.abbreviationOrder");
         query.setParameter("marker", marker);
         query.setParameterList("relationshipTypes", types);
         list.addAll((List<Marker>) query.list());

@@ -742,15 +742,21 @@ public class MarkerService {
 
     public static MutantOnMarkerBean getMutantsOnGene(Marker gene) {
         MutantOnMarkerBean mutantOnMarkerBean = new MutantOnMarkerBean();
-        mutantOnMarkerBean.setGenotypeList(getMarkerRepository().getMutantsAndTgsByGene(gene.getZdbID()));
+        mutantOnMarkerBean.setGenotypeList(markerRepository.getMutantsAndTgsByGene(gene.getZdbID()));
         mutantOnMarkerBean.setFeatures(getMutantRepository().getAllelesForMarker(gene.getZdbID(), "is allele of"));
-        if (!gene.isNontranscribed()) {
-            mutantOnMarkerBean.setKnockdownReagents(getMarkerRepository().getRelatedMarkerDisplayForTypes(gene, false, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
+        MarkerRelationship.Type relationshipType = gene.isNontranscribed() ?
+                MarkerRelationship.Type.CRISPR_TARGETS_REGION :
+                MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE;
+        List<Marker> knockdownReagents = markerRepository.getRelatedMarkersForTypes(gene, relationshipType);
+        List<SequenceTargetingReagentBean> knockdownBeans = new ArrayList<>(knockdownReagents.size());
+        for (Marker knockdownReagent : knockdownReagents) {
+            SequenceTargetingReagentBean bean = new SequenceTargetingReagentBean();
+            bean.setMarker(knockdownReagent);
+            bean.setGenomicFeatures(markerRepository.getFeaturesBySTR(knockdownReagent));
+            bean.setHasAbnormalPhenotype(CollectionUtils.isNotEmpty(getPhenotypeDataForSTR((SequenceTargetingReagent) knockdownReagent)));
+            knockdownBeans.add(bean);
         }
-        else{
-            mutantOnMarkerBean.setKnockdownReagents(getMarkerRepository().getRelatedMarkerDisplayForTypes(gene, false, MarkerRelationship.Type.CRISPR_TARGETS_REGION));
-        }
-
+        mutantOnMarkerBean.setKnockdownReagents(knockdownBeans);
         return mutantOnMarkerBean;
     }
 

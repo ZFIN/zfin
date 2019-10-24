@@ -83,19 +83,10 @@
         </div>
     </c:if>
 
-    <table class="summary horizontal-solidblock">
-
-
-        <c:if test="${!empty mutantsOnMarkerBean.knockdownReagents}">
-            <tr>
-                <td class="data-label"><b>Targeting reagents:</b> </td>
-                <td>
-                    <zfin2:toggledMarkerRelationshipList collection="${mutantsOnMarkerBean.knockdownReagents}" maxNumber="5"/>
-                </td>
-            </tr>
-        </c:if>
-    </table>
-
+    <c:if test="${!empty mutantsOnMarkerBean.knockdownReagents}">
+        <b>Sequence Targeting Reagents</b>
+        <zfin2:sequenceTargetingReagentsInGene sequenceTargetingReagentBeans="${mutantsOnMarkerBean.knockdownReagents}" />
+    </c:if>
 
 </zfin2:subsection>
 

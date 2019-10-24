@@ -920,7 +920,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         String id = "ZDB-PAC-030616-4";
         Marker marker = markerRepository.getMarkerByID(id);
         assertNotNull(marker);
-        List<Marker> list = markerRepository.getMarkersContainedIn(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
+        List<Marker> list = markerRepository.getRelatedMarkersForTypes(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
         assertNotNull(list);
 
     }
