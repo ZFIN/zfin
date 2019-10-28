@@ -38,7 +38,7 @@ public class PasswordResetController {
     }
 
     @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
-    public String forgotPasswordSubmit(@RequestParam String emailOrLogin) {
+    public String forgotPasswordSubmit(@RequestParam String emailOrLogin, Model model) {
 
         Person person = profileRepository.getPersonByEmail(emailOrLogin);
         if (person == null) {
@@ -49,8 +49,6 @@ public class PasswordResetController {
             UserService.setPasswordResetKey(person);
 
             MailSender mailer = AbstractZfinMailSender.getInstance();
-
-            //catch mailer is null exception?
 
             String url = "https://"
                     + ZfinPropertiesEnum.DOMAIN_NAME.value()
@@ -71,7 +69,7 @@ public class PasswordResetController {
                             + " <" + person.getEmail() + "> "});
 
             if (!sent) {
-                //uh, do something here too...
+                model.addAttribute("errorMessage", "Unable to send email, please contact zfinadmn@zfin.org");
             }
         }
 
@@ -94,6 +92,8 @@ public class PasswordResetController {
                 && person.getAccountInfo() != null
                 && UserService.passwordResetKeyIsValid(person.getAccountInfo(), resetKey)) {
             model.addAttribute("allowReset", true);
+        } else {
+            model.addAttribute("errorMessage", "Password reset key is no longer valid");
         }
 
         return "profile/reset-password.page";
@@ -112,7 +112,6 @@ public class PasswordResetController {
 
         if (!UserService.passwordResetKeyIsValid(person.getAccountInfo(), resetKey)) {
             //something went wrong if you got here and the key isn't valid
-
             return page;
         }
 

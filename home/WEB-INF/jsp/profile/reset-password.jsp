@@ -1,7 +1,18 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<script src="${zfn:getAssetPath("profiles.js")}"></script>
+<script>
+    function passwordsMatch() {
+        if ($('#pass1').value === undefined
+            || $('#pass2').value === undefined
+            || $('#pass1').value !== $('#pass2').value) {
+            $('#submit').disabled = true;
+        } else {
+            $('#submit').removeAttr('disabled');
+        }
+
+    }
+</script>
 
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
@@ -22,33 +33,26 @@
 
                 <form method="post"
                       action="${secureServer}/action/profile/password-reset/${zdbId}">
-                        <%-- need to embed the resetKey .... can't use person as formbean --%>
                     <input type="hidden" name="resetKey" value="${resetKey}"/>
                     <input type="hidden" name="zdbId" value="${zdbId}"/>
 
-                    <c:if test="${message}">
-                        <div class="alert alert-secondary">${message}</div>
+                    <c:if test="${errorMessage}">
+                        <div class="alert alert-error">${errorMessage}</div>
                     </c:if>
 
                     <div>
                         <label path="pass1">Password:</label>
-                        <input type="password" size="50" name="pass1" cssClass="fill-with-generated-password"
-                               onkeyup="testPassword(document.getElementById('accountInfo.pass1').value,'passwordScore','passwordVerdict');"/>
+                        <input type="password" size="50" name="pass1" id="pass1" onChange="passwordsMatch()"/>
                     </div>
 
                     <div>
                         <label path="pass2">Repeat Password:</label>
-                        <input type="password" size="50" name="pass2" cssClass="fill-with-generated-password"/>
+                        <input type="password" size="50" name="pass2" id="pass2" onChange="passwordsMatch()"/>
                     </div>
-
-                    <input type="button" id="generate-password-button" value="generate password"/>
-                    <span class="fill-with-generated-password"></span>
-
-                    <div>Password Strength: <strong><span id="passwordVerdict"></span></strong></div>
 
                     <br><br>
 
-                    <input type="submit" value="Save"/>
+                    <input type="submit" id="submit" class="btn btn-zfin btn-block" value="Save" disabled/>
 
                         <%--</div>--%>
                 </form>
@@ -58,14 +62,25 @@
 
         </c:when>
         <c:when test="${resetSuccessful}">
-            <div class="alert alert-primary">
-                Password successfully reset, <a href="/action/login">login here</a>
+            <div class="login-container">
+                <div class="alert alert-primary">
+                    Password successfully reset, <a href="/action/login">login here</a>
+                </div>
             </div>
         </c:when>
 
         <c:otherwise>
-            <div class="alert alert-danger">
-                Sorry, something went wrong
+            <div class="login-container">
+                <div class="alert alert-danger">
+                    <c:choose>
+                        <c:when test="${!empty errorMessage}">
+                            ${errorMessage}
+                        </c:when>
+                        <c:otherwise>
+                            Sorry, something went wrong
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
         </c:otherwise>
     </c:choose>
