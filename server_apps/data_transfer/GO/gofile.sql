@@ -33,9 +33,19 @@ insert into tmp_go_identifiers_pipes (goidtmp)
  select distinct goid from tmp_go_identifiers;
 
 update tmp_go_identifiers_pipes
+
   set goid3tmp=(select STRING_AGG(distinct goid3,'|') 
                   from tmp_go_identifiers 
                   where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp);
+set goid3tmp=(select STRING_AGG(goid3,'|') from tmp_go_identifiers where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp and godid3 not like '%GO%');
+update tmp_go_identifiers_pipes
+
+
+
+set goid3tmp=(select STRING_AGG(goid3,'|') from tmp_go_identifiers where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp and godid3 not like '%GO%');
+update tmp_go_identifiers_pipes
+set goid3tmp=(select goid3 from tmp_go_identifiers where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp and godid3 like '%GO%');
+
 
 create temporary table tmp_go_proteinid (mgev_zdb_id text,proteinid text);
 
