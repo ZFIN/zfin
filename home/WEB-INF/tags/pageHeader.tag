@@ -41,38 +41,6 @@
         </li>
 
         <li class="reference">
-            <span class="title">Resources</span>
-            <div class="dropdown">
-                <div class="nav-column">
-                    <span class="nav-column-header">General</span>
-                    <ul>
-                        <li><a href="/zf_info/zfbook/zfbk.html">The Zebrafish Book</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/prot">Protocol Wiki</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/AB">Antibody Wiki</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/Anatomy+Atlases+and+Resources">Anatomy Atlases</a></li>
-                        <li><a href="/zf_info/news/education.html">Resources for Students and Educators</a></li>
-                    </ul>
-                </div>
-                <div class="nav-column">
-                    <span class="nav-column-header">Zebrafish Programs</span>
-                    <ul>
-                        <li><a href="http://www.zf-health.org/" class="external">ZF-Health</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs#husbandry">Husbandry Resources</a></li>
-                        <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs">More...</a></li>
-                    </ul>
-                </div>
-                <div class="nav-column">
-                    <span class="nav-column-header">Resource Centers</span>
-                    <ul>
-                        <li><a href="http://zebrafish.org" class="external">Zebrafish International Resource Center (ZIRC)</a></li>
-                        <li><a href="http://www.zfish.cn/" class="external">China Zebrafish Resource Center (CZRC)</a></li>
-                        <li><a href="https://www.ezrc.kit.edu/" class="external">European Zebrafish Resource Center (EZRC)</a></li>
-                    </ul>
-                </div>
-            </div>
-        </li>
-
-        <li class="reference">
             <span class="title">Genomics</span>
             <div class="dropdown">
                 <div class="nav-column">
@@ -100,6 +68,38 @@
                     <ul>
                         <li><a href="https://@WIKI_HOST@/display/general/Genomic+Resources+for+Zebrafish">Zebrafish Genomics</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/Other+Databases">Other Genome Databases</a></li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+
+        <li class="reference">
+            <span class="title">Resources</span>
+            <div class="dropdown">
+                <div class="nav-column">
+                    <span class="nav-column-header">General</span>
+                    <ul>
+                        <li><a href="/zf_info/zfbook/zfbk.html">The Zebrafish Book</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/prot">Protocol Wiki</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/AB">Antibody Wiki</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/Anatomy+Atlases+and+Resources">Anatomy Atlases</a></li>
+                        <li><a href="/zf_info/news/education.html">Resources for Students and Educators</a></li>
+                    </ul>
+                </div>
+                <div class="nav-column">
+                    <span class="nav-column-header">Zebrafish Programs</span>
+                    <ul>
+                        <li><a href="http://www.zf-health.org/" class="external">ZF-Health</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs#husbandry">Husbandry Resources</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs">More...</a></li>
+                    </ul>
+                </div>
+                <div class="nav-column">
+                    <span class="nav-column-header">Resource Centers</span>
+                    <ul>
+                        <li><a href="http://zebrafish.org" class="external">Zebrafish International Resource Center (ZIRC)</a></li>
+                        <li><a href="http://www.zfish.cn/" class="external">China Zebrafish Resource Center (CZRC)</a></li>
+                        <li><a href="https://www.ezrc.kit.edu/" class="external">European Zebrafish Resource Center (EZRC)</a></li>
                     </ul>
                 </div>
             </div>
