@@ -3,38 +3,40 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
-<div class="full-name">
-    The Zebrafish Information Network
-</div>
-
 <%@ include file="homeSearch.jsp" %>
 
 <div class="container">
     <div class="row">
-        <div class="col-lg-6 col-lg-push-6">
-            <%@ include file="homePrimaryLinks.jsp" %>
-        </div>
+        <div class="col-lg-7">
+            <jsp:include page="homePrimaryLinks.jsp" />
 
-        <div class="col-lg-6 col-lg-pull-6">
-            <div class="section carousel-section">
-                <div class="heading">Recently Curated Figures</div>
-                <zfin2:imageCarousel id="home-carousel" images="${carouselImages}" captions="${sanitizedCaptions}" interval="20000"/>
+            <%-- we might be able to this reordering more elegantly with bootstrap 4 --%>
+            <div class="hide-large">
+                <jsp:include page="homeAboutBox.jsp" />
+
+                <div class="section carousel-section">
+                    <div class="heading">Recently Curated Figures</div>
+                    <zfin2:imageCarousel id="home-carousel-1" images="${carouselImages}" captions="${sanitizedCaptions}" interval="60000"/>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-6">
             <div class="section">
                 <div class="heading">News & Meeting Announcements</div>
                 <div class="__react-root" id="NewsAndMeetingsFeed"></div>
             </div>
-        </div>
 
-        <div class="col-md-6">
             <div class="section">
                 <div class="heading">Zebrafish-Related Job Announcements</div>
                 <div class="__react-root" id="JobsFeed"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-5 display-large">
+            <jsp:include page="homeAboutBox.jsp" />
+
+            <div class="section carousel-section">
+                <div class="heading">Recently Curated Figures</div>
+                <zfin2:imageCarousel id="home-carousel-2" images="${carouselImages}" captions="${sanitizedCaptions}" interval="60000"/>
             </div>
         </div>
     </div>

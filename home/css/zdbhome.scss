@@ -24,6 +24,7 @@ body.home {
 .search-container {
     @include elevated-shadow;
     margin-bottom: 60px;
+    margin-top: -10px;
     background: url(/images/search-background.png) 50% 90%;
     background-size: cover;
     padding: 90px 0;
@@ -59,7 +60,7 @@ body.home {
     margin-bottom: 30px;
     background: white;
     border-radius: 3px;
-    padding: 15px;
+    padding: 10px 15px 15px;
     display: flex;
     flex-direction: column;
 
@@ -130,7 +131,7 @@ body.home {
     font-weight: bold;
 }
 
-#home-carousel {
+.carousel-wrapper {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -165,7 +166,7 @@ body.home {
     }
 
     .item {
-        position: absolute;
+        position: absolute !important;
         top: 0;
         bottom: 0;
         right: 0;
@@ -197,5 +198,21 @@ body.home {
             padding: 0;
             font-size: inherit;
         }
+    }
+}
+
+.display-large {
+    display: none;
+
+    @media (min-width: $break-lg) {
+        display: block;
+    }
+}
+
+.hide-large {
+    display: block;
+
+    @media (min-width: $break-lg) {
+        display: none;
     }
 }

@@ -7,7 +7,7 @@
 
 <c:set var="interval" value="${(empty interval) ? '5000' : interval}" />
 
-<div id="${id}" class="carousel slide" data-ride="carousel" data-interval="${interval}">
+<div id="${id}" class="carousel carousel-wrapper slide" data-ride="carousel" data-interval="${interval}">
 
     <div class="carousel-inner" role="listbox">
         <c:forEach items="${images}" var="image" varStatus="status">
