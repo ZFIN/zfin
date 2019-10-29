@@ -204,12 +204,6 @@ public enum Ontology implements Serializable {
         return false;
     }
 
-    public static boolean isAnatomy(Ontology ontology) {
-        if (ontology == null) { return false; }
-        if (ontology.equals(ANATOMY) || ontology.equals(ANATOMY_FULL)) { return true;}
-        return false;
-    }
-
     /**
      * Retrieve a set of ontologies this ontology is composed of.
      *
