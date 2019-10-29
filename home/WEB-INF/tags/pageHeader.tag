@@ -124,6 +124,15 @@
                         <li><a href="/action/profile/company/search">Companies</a></li>
                     </ul>
                 </div>
+                <div class="nav-column">
+                    <span class="nav-column-header">Societies</span>
+                    <ul>
+                        <li><a href="https://www.izfs.org" class="external">International Zebrafish Society (IZFS)</a></li>
+                        <li><a href="https://www.zdmsociety.org" class="external">Zebrafish Disease Models Society (ZDMS)</a></li>
+                        <li><a href="https://genetics-gsa.org" class="external">Genetics Society of America (GSA)</a></li>
+                        <li><a href="https://zhaonline.org" class="external">Zebrafish Husbandry Association</a></li>
+                    </ul>
+                </div>
             </div>
         </li>
 
