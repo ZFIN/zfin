@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logg
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,10 +31,12 @@ import org.zfin.orthology.presentation.OrthologEvidencePresentation;
 import org.zfin.orthology.presentation.OrthologyPresentationRow;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.presentation.SearchPrototypeController;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.sequence.service.TranscriptService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -62,6 +65,8 @@ public class GeneViewController {
 
     @Autowired
     private EfgViewController efgViewController;
+
+    @Autowired SearchPrototypeController searchController;
 
     @Autowired
     private ExpressionSearchController expressionSearchController;
@@ -203,6 +208,12 @@ public class GeneViewController {
                 .build();
         return "forward:" + searchLink;
     }
+
+    @RequestMapping(value = {"/{geneID}/wt-expression/images","/gene/view/{geneID}/wt-expression/images"})
+    public String getWildtypeExpressionImages(@PathVariable String geneID, Model model, HttpServletRequest request) {
+        return searchController.viewWtExpressionGalleryResults(geneID, model, request);
+    }
+
 
     @RequestMapping(value = "/{geneID}/download/orthology")
     public void getOrthologyCSV(@PathVariable String geneID, HttpServletResponse response) {
