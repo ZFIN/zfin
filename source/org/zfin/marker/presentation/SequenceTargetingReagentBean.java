@@ -33,7 +33,6 @@ public class SequenceTargetingReagentBean extends MarkerBean{
     private Set<GBrowseImage> gBrowseImages;
     private List<ExpressionDisplay> expressionDisplays;
     private List<PhenotypeDisplay> allPhenotypeDisplays;
-    private Boolean hasAbnormalPhenotype;
 
     private boolean phenoMartBeingRegened;
 
@@ -151,14 +150,6 @@ public class SequenceTargetingReagentBean extends MarkerBean{
 
     public void setAllPhenotypeDisplays(List<PhenotypeDisplay> allPhenotypeDisplays) {
         this.allPhenotypeDisplays = allPhenotypeDisplays;
-    }
-
-    public Boolean getHasAbnormalPhenotype() {
-        return hasAbnormalPhenotype;
-    }
-
-    public void setHasAbnormalPhenotype(Boolean hasAbnormalPhenotype) {
-        this.hasAbnormalPhenotype = hasAbnormalPhenotype;
     }
 
     public boolean isPhenoMartBeingRegened() {

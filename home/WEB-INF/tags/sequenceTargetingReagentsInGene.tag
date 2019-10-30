@@ -6,7 +6,6 @@
     <thead>
         <tr>
             <th>Targeting Reagent</th>
-            <th>Has Abnormal Phenotype</th>
             <th>Created Alleles</th>
             <th>Publications</th>
         </tr>
@@ -14,9 +13,6 @@
     <c:forEach items="${sequenceTargetingReagentBeans}" var="bean" varStatus="loop">
         <tr class=${loop.index % 2 == 0 ? "even" : "odd"}>
             <td><zfin:link entity="${bean.marker}" /></td>
-            <td>
-                ${bean.hasAbnormalPhenotype ? "Y" : "N"}
-            </td>
             <td>
                 <c:choose>
                     <c:when test="${bean.marker.type == 'MRPHLNO'}">

@@ -753,7 +753,6 @@ public class MarkerService {
             SequenceTargetingReagentBean bean = new SequenceTargetingReagentBean();
             bean.setMarker(knockdownReagent);
             bean.setGenomicFeatures(markerRepository.getFeaturesBySTR(knockdownReagent));
-            bean.setHasAbnormalPhenotype(CollectionUtils.isNotEmpty(getPhenotypeDataForSTR((SequenceTargetingReagent) knockdownReagent)));
             knockdownBeans.add(bean);
         }
         mutantOnMarkerBean.setKnockdownReagents(knockdownBeans);
