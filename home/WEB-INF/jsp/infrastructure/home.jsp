@@ -15,7 +15,7 @@
                 <jsp:include page="homeAboutBox.jsp" />
 
                 <div class="section carousel-section">
-                    <div class="heading">Recently Curated Figures</div>
+                    <div class="heading">New Data in ZFIN</div>
                     <zfin2:imageCarousel id="home-carousel-1" images="${carouselImages}" captions="${sanitizedCaptions}" interval="60000"/>
                 </div>
             </div>
@@ -35,7 +35,7 @@
             <jsp:include page="homeAboutBox.jsp" />
 
             <div class="section carousel-section">
-                <div class="heading">Recently Curated Figures</div>
+                <div class="heading">New Data in ZFIN</div>
                 <zfin2:imageCarousel id="home-carousel-2" images="${carouselImages}" captions="${sanitizedCaptions}" interval="60000"/>
             </div>
         </div>
