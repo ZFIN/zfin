@@ -2,22 +2,23 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <script>
-    function passwordsMatch() {
-        if ($('#pass1').value === undefined
-            || $('#pass2').value === undefined
-            || $('#pass1').value !== $('#pass2').value) {
-            $('#submit').disabled = true;
-        } else {
-            $('#submit').removeAttr('disabled');
-        }
-
-    }
+    $(document).ready(function() {
+        $('.password-input').change(function() {
+            var pass1 = $('#pass1');
+            var pass2 = $('#pass2');
+            var submit = $('#submit');
+            if (pass1.val() === undefined
+                || pass2.val() === undefined
+                || pass1.val() !== pass2.val()) {
+                submit.disabled = true;
+            } else {
+                submit.removeAttr('disabled');
+            }
+        });
+    });
 </script>
 
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
-
-
 
     <c:choose>
         <c:when test="${allowReset}">
@@ -42,12 +43,12 @@
 
                     <div>
                         <label path="pass1">Password:</label>
-                        <input type="password" size="50" name="pass1" id="pass1" onChange="passwordsMatch()"/>
+                        <input type="password" size="50" class="password-input" name="pass1" id="pass1"/>
                     </div>
 
                     <div>
                         <label path="pass2">Repeat Password:</label>
-                        <input type="password" size="50" name="pass2" id="pass2" onChange="passwordsMatch()"/>
+                        <input type="password" size="50" class="password-input" name="pass2" id="pass2"/>
                     </div>
 
                     <br><br>
