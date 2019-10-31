@@ -140,7 +140,7 @@ public class Antibody extends Marker {
 
         return antibodyLabelings.stream()
                 .filter(experiment -> CollectionUtils.isNotEmpty(experiment.getExpressionResults()))
-                .map(experiment -> experiment.getAssay().getName())
+                .map(experiment -> experiment.getAssay().getAbbreviation())
                 .filter(Objects::nonNull).distinct().sorted().collect(Collectors.toList());
 
     }
