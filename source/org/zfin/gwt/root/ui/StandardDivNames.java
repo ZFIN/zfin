@@ -9,6 +9,7 @@ public interface StandardDivNames {
     String headerDiv = "headerName";
     String directAttributionDiv = "directAttributionName";
     String previousNameDiv = "aliasName";
+    String abRegistryDiv = "abRegistryID" ;
     String publicationLookupDiv = "publicationName";
     String dbLinkDiv = "dbLinksName";
     String geneDiv = "geneName";

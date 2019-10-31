@@ -1874,6 +1874,21 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
         return (List<Date>) sqlQuery.list();
     }
+
+    @Override
+    public List<ControlledVocab> getControlledVocabsForSpeciesByConstruct(Marker construct) {
+        Session session = currentSession();
+        String hql = "SELECT DISTINCT cv FROM ControlledVocab as cv, " +
+                     " ConstructComponent AS cc " +
+                     " WHERE cv.zdbID = cc.componentZdbID " +
+                     "   AND cv.cvForeignSpecies is not null " +
+                     "   AND cc.constructZdbID = :constructId ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("constructId", construct.getZdbID());
+
+        return (List<ControlledVocab>) query.list();
+    }
 }
 
 

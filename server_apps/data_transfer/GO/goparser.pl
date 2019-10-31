@@ -48,7 +48,7 @@ while ($line = <INDEXFILE>) {
       if ($lastmrkrgoev ne '' && $mrkrgoev ne $lastmrkrgoev) {
 
 
-          $lineToProduce = "$db\t$mrkrid\t$mrkrabb\t$qualifier\t$goid\tZFIN:$pubid\t$evidence\t".
+          $lineToProduce = "$db\t$mrkrid\t$mrkrabb\t$qualifier\t$goid\t$pubid\t$evidence\t".
              join(',',@inf_array)."\t$go_o\t$mrkrname\t$aliases\t$gene_product\ttaxon:7955\t$ev_date\t$mod_by\t".
              "$relation\t$proteinid\n";
 
@@ -69,7 +69,7 @@ while ($line = <INDEXFILE>) {
       $mrkrname=$fields[3];
       $qualifier=goQlf($fields[9]);
       $goid=$fields[4];
-      $pubid=goPub($fields[5],$fields[6]);
+      $pubid=goPub($fields[5],$fields[6],$fields[17],,$fields[18]);
       $evidence=$fields[7];
       $inf=goInf($fields[8]);
       push(@inf_array, $inf);
@@ -79,6 +79,8 @@ while ($line = <INDEXFILE>) {
       $aliases=$fields[13];
       $relation=$fields[14];
       $proteinid=$fields[16];
+      $pubdoi=$fields[17];
+      $pubgoref=$fields[18];
 
 
 
@@ -161,9 +163,15 @@ sub goPub()
   {
     $accession = $_[1];
     $pub =$_[0];
-    $pmid='|PMID:';
-    $pub = $pub.$pmid.$accession if (length($accession)!=0 && ($accession ne 'none'));
-    $pub = $pub if (length($accession)==0);
+    $pubdoi=$_[2];
+    $pubgoref=$_[3];
+    $pmid='PMID:';
+    $doiid='DOI:';
+    $zfinid='ZFIN:';
+    $pub = $pmid.$accession if (length($accession)!=0 && ($accession ne 'none'));
+    $pub = $doiid.$pubdoi if (length($accession)==0 && (length($pubdoi)!=0));
+    $pub = $pubgoref if (length($accession)==0 && length($pubdoi)==0 && length($pubgoref)!=0);
+    $pub = $zfinid.$pub if (length($accession)==0 && length($pubdoi)==0  && length($pubgoref)==0);
     return $pub;
   }
 sub goMod()

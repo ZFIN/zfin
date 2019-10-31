@@ -53,7 +53,6 @@ public class AntibodyViewController {
         antibodyBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
 
         // set other antibody data
-        antibodyBean.setDistinctAssayNames(AntibodyMarkerService.getDistinctAssayNames(antibody));
         antibodyBean.setAntigenGenes(markerRepository.getRelatedMarkerDisplayForTypes(antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
 
         // set external notes (same as orthology)

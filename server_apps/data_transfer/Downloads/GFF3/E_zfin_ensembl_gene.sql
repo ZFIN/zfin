@@ -27,7 +27,7 @@ insert into tmp_vega_zeg
 select distinct
 	et.gff_seqname,
 	'ZFIN' source,
-	case gene.mrkr_type when 'GENEP' then 'pseudogene' else  'gene' end feature,
+	szm_term_name feature,
 	et.gff_start gstart,
 	et.gff_end   gend,
 	'1' score ,
@@ -343,7 +343,7 @@ create temp table tmp_ensembl_zeg as
 select
 	gff_seqname,
 	'ZFIN'::text source,
-	case gene.mrkr_type when 'GENEP' then 'pseudogene' else  'gene' end feature,
+	szm_term_name feature,
 	min(gff_start) gstart,
 	max(gff_end)  gend,
 	'2'::text score,

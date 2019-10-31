@@ -15,6 +15,8 @@ public class Transcript extends Marker {
     private TranscriptType transcriptType;
     private TranscriptStatus status;
     private Set<TranscriptDBLink> transcriptDBLinks;
+    private String ensdartId;
+    private String loadId;
 
     public TranscriptType getTranscriptType() {
         return transcriptType;
@@ -79,5 +81,21 @@ public class Transcript extends Marker {
         sb.append("transcript status: ").append(status);
         sb.append("\n");
         return sb.toString();
+    }
+
+    public String getEnsdartId() {
+        return ensdartId;
+    }
+
+    public void setEnsdartId(String ensdartId) {
+        this.ensdartId = ensdartId;
+    }
+
+    public String getLoadId() {
+        return loadId;
+    }
+
+    public void setLoadId(String loadId) {
+        this.loadId = loadId;
     }
 }

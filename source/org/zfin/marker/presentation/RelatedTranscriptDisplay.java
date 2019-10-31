@@ -5,29 +5,26 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.sequence.service.TranscriptService;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 public class RelatedTranscriptDisplay  {
 
-    private TreeSet<RelatedMarker> transcripts;
-    private TreeSet<RelatedMarker> nonWithdrawnTranscripts;
-    private TreeSet<RelatedMarker> withdrawnTranscripts;
+    private List<RelatedMarker> transcripts;
+    private List<RelatedMarker> nonWithdrawnTranscripts;
+    private List<RelatedMarker> withdrawnTranscripts;
     private Marker gene;
     private GBrowseImage gbrowseImage;
 
-
     public RelatedTranscriptDisplay() {
-        transcripts = new TreeSet<>(new RelatedTranscriptNameSort());
+        transcripts = new ArrayList<>();
     }
 
-    public TreeSet<RelatedMarker> getTranscripts() {
-        return transcripts;
+    public List<RelatedMarker> getTranscripts() {
+        List<RelatedMarker> transcriptsList = new ArrayList<>(transcripts);
+        return transcriptsList;
     }
 
-    public void setTranscripts(TreeSet<RelatedMarker> transcripts) {
+    public void setTranscripts(List<RelatedMarker> transcripts) {
         this.transcripts = transcripts;
     }
 
@@ -51,23 +48,6 @@ public class RelatedTranscriptDisplay  {
         this.gbrowseImage = gbrowseImage;
     }
 
-    public static class RelatedTranscriptNameSort implements Comparator<RelatedMarker> {
-
-        public int compare(RelatedMarker rmA, RelatedMarker rmB) {
-
-            Transcript tA = (Transcript) rmA.getMarker();
-            Transcript tB = (Transcript) rmB.getMarker();
-
-            int typeCompare = tB.getTranscriptType().toString().compareTo(tA.getTranscriptType().toString());
-            //if the types aren't equal, sort on that
-            if (typeCompare != 0) return typeCompare;
-
-            //if they're the same type, sort by abbreviationOrder - essentially by name
-            return tA.getAbbreviationOrder().compareTo(tB.getAbbreviationOrder());
-
-        }
-    }
-
     /* This method is made to make CreateAlternatingTR happy, since it wants a list,
      * it's likely that this method is absurdly wasteful */
     public List<RelatedMarker> getList() {
@@ -76,76 +56,96 @@ public class RelatedTranscriptDisplay  {
         return list;
     }
 
-    public TreeSet<RelatedMarker> getNonWithdrawnTranscripts() {
-         if (transcripts == null || transcripts.size() == 0) {
+    public List<RelatedMarker> getNonWithdrawnTranscripts() {
+        if (transcripts == null || transcripts.size() == 0) {
             return null;
-         }
-
-        if (nonWithdrawnTranscripts != null) {
-               return nonWithdrawnTranscripts;
         }
 
-        nonWithdrawnTranscripts = new TreeSet<> ();
+        List<Transcript> nonWithdrawnTranscriptlist = new ArrayList<>();
+        nonWithdrawnTranscripts = new ArrayList<>();
         for (RelatedMarker marker : transcripts) {
-             Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
-             if (!transcript.isWithdrawn()) {
-                  nonWithdrawnTranscripts.add(marker);
-             }
+            Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
+            if (!transcript.isWithdrawn()) {
+                nonWithdrawnTranscripts.add(marker);
+                nonWithdrawnTranscriptlist.add(transcript);
+            }
         }
-        return nonWithdrawnTranscripts;
+
+        nonWithdrawnTranscriptlist.sort(
+                Comparator.comparing(Transcript::getTranscriptType).thenComparing(Transcript::getAbbreviationOrder)
+        );
+
+        List<RelatedMarker> sortedNonWithdrawnTranscripts = new ArrayList<>(nonWithdrawnTranscripts.size());
+        for (Transcript t : nonWithdrawnTranscriptlist) {
+            for (RelatedMarker m : nonWithdrawnTranscripts) {
+                if(t == TranscriptService.convertMarkerToTranscript(m.getMarker())) {
+                    sortedNonWithdrawnTranscripts.add(m);
+                }
+            }
+        }
+
+        return sortedNonWithdrawnTranscripts;
     }
 
-    public TreeSet<RelatedMarker> getWithdrawnTranscripts() {
-         if (transcripts == null || transcripts.size() == 0) {
+    public List<RelatedMarker> getWithdrawnTranscripts() {
+        if (transcripts == null || transcripts.size() == 0) {
             return null;
-         }
+        }
 
-         if (withdrawnTranscripts != null) {
-               return withdrawnTranscripts;
-         }
+        List<Transcript> withdrawnTranscriptlist = new ArrayList<>();
+        withdrawnTranscripts = new ArrayList<>();
+        for (RelatedMarker marker : transcripts) {
+            Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
+            if (transcript.isWithdrawn()) {
+                withdrawnTranscripts.add(marker);
+                withdrawnTranscriptlist.add(transcript);
+            }
+        }
+        withdrawnTranscriptlist.sort(
+                Comparator.comparing(Transcript::getTranscriptType).thenComparing(Transcript::getAbbreviationOrder)
+        );
 
-         withdrawnTranscripts = new TreeSet<> ();
-         for (RelatedMarker marker : transcripts) {
-             Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
-             if (transcript.isWithdrawn()) {
-                  withdrawnTranscripts.add(marker);
-             }
-         }
-         return withdrawnTranscripts;
+        List<RelatedMarker> sortedWithdrawnTranscripts = new ArrayList<>(withdrawnTranscripts.size());
+        for (Transcript t : withdrawnTranscriptlist) {
+            for (RelatedMarker m : nonWithdrawnTranscripts) {
+                if(t == TranscriptService.convertMarkerToTranscript(m.getMarker())) {
+                    sortedWithdrawnTranscripts.add(m);
+                }
+            }
+        }
+
+        return sortedWithdrawnTranscripts;
     }
 
     public List<RelatedMarker> getWithdrawnList() {
-         if (withdrawnTranscripts == null) {
+        if (withdrawnTranscripts == null) {
             return null;
-         }
-         if (withdrawnTranscripts == null) {
-               withdrawnTranscripts = getWithdrawnTranscripts();
-         }
+        }
+        if (withdrawnTranscripts == null) {
+            withdrawnTranscripts = getWithdrawnTranscripts();
+        }
 
-         if (withdrawnTranscripts == null) {
-               return null;
-         }
+        if (withdrawnTranscripts == null) {
+            return null;
+        }
 
-         List<RelatedMarker> withdrawnlist = new ArrayList<>(withdrawnTranscripts.size());
-         withdrawnlist.addAll(withdrawnTranscripts);
-         return withdrawnlist;
+        List<RelatedMarker> withdrawnlist = new ArrayList<>(withdrawnTranscripts.size());
+        withdrawnlist.addAll(withdrawnTranscripts);
+        return withdrawnlist;
     }
 
     public List<RelatedMarker> getNonWithdrawnList() {
-         if (nonWithdrawnTranscripts == null) {
+        if (nonWithdrawnTranscripts == null) {
+            nonWithdrawnTranscripts = getNonWithdrawnTranscripts();
+        }
+
+        if (nonWithdrawnTranscripts == null) {
             return null;
-         }
+        }
 
-         if (nonWithdrawnTranscripts == null) {
-               nonWithdrawnTranscripts = getNonWithdrawnTranscripts();
-         }
-
-         if (nonWithdrawnTranscripts == null) {
-               return null;
-         }
-
-         List<RelatedMarker> nonWithdrawnlist = new ArrayList<>(nonWithdrawnTranscripts.size());
-         nonWithdrawnlist.addAll(nonWithdrawnTranscripts);
-         return nonWithdrawnlist;
+        List<RelatedMarker> nonWithdrawnlist = new ArrayList<>(nonWithdrawnTranscripts.size());
+        nonWithdrawnlist.addAll(nonWithdrawnTranscripts);
+        return nonWithdrawnlist;
     }
+
 }

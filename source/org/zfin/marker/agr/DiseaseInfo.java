@@ -106,6 +106,12 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             strDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
                             diseaseDTOList.add(strDiseaseDto);
 
+                            DiseaseDTO fishDiseaseDto = getBaseDiseaseDTO(fish.getZdbID(), fish.getName(), disease);
+                            RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
+                            fishDiseaseDto.setObjectRelation(fishRelationship);
+                            fishDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
+                            diseaseDTOList.add(fishDiseaseDto);
+
                         } else {
                             genotype.getGenotypeFeatures().forEach(genotypeFeature -> {
                                 Feature feature = genotypeFeature.getFeature();
@@ -115,7 +121,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                     DiseaseDTO FeatureDiseaseDto = getBaseDiseaseDTO(feature.getZdbID(), feature.getAbbreviation(), disease);
                                     RelationshipDTO alleleRelationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.ALELLE);
                                     List<String> geneticEntityIds = new ArrayList<>();
-                                    geneticEntityIds.add(fish.getZdbID());
+                                    geneticEntityIds.add("ZFIN:"+fish.getZdbID());
                                     FeatureDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
                                     FeatureDiseaseDto.setObjectRelation(alleleRelationship);
                                     FeatureDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));

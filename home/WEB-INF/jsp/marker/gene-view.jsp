@@ -11,6 +11,7 @@
     <c:set var="markerID">${formBean.marker.zdbID}</c:set>
     <c:set var="deleteURL">/action/infrastructure/deleteRecord/${markerID}</c:set>
     <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${markerID}</c:set>
+    <c:set var="editURL">/action/marker/gene/edit/${markerID}</c:set>
     <script>
         if (opener != null)
             opener.fireCreateMarkerEvent();
@@ -19,8 +20,8 @@
     <zfin2:dataManager zdbID="${markerID}"
                        deleteURL="none"
                        mergeURL="${mergeURL}"
-                       editMarker="true"/>
-
+                       editURL="${editURL}"
+    />
 
     <div style="float: right">
         <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -29,20 +30,9 @@
     </div>
 
     <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"
-                    soTerm="${formBean.zfinSoTerm}" userID="${formBean.user.zdbID}"/>
+                    soTerm="${formBean.zfinSoTerm}" geneDesc="${formBean.allianceGeneDesc}" userID="${formBean.user.zdbID}"/>
 
-    <zfin2:subsection test="${!empty formBean.allianceGeneDesc.gdDesc}" showNoData="true" noDataText="No data available"
-            title="AUTOMATED DESCRIPTION <a class='popup-link info-popup-link' href='/action/marker/note/automated-gene-desc'></a>">
-        <table>
-            <tr>
 
-                <td>
-                    <zfin2:toggleTextLength text="${formBean.allianceGeneDesc.gdDesc}"
-                                            idName="${zfn:generateRandomDomID()}" shortLength="200"/>
-                </td>
-            </tr>
-        </table>
-    </zfin2:subsection>
 
     <zfin2:uninformativeGeneName name="${formBean.marker.abbreviation}"
                                  fromChimericClone="${formBean.hasChimericClone}"/>
@@ -77,10 +67,8 @@
         <zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>
     </c:if>
     <%--Transcripts--%>
-    <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}"
+    <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}" locations="${formBean.locations}"
                                    title="TRANSCRIPTS" showAllTranscripts="true"/>
-
-    <zfin2:geneProductsDescription geneBean="${formBean}"/>
 
 
     <zfin2:subsection title="INTERACTIONS AND PATHWAYS" anchor="pathway_links">
@@ -105,11 +93,8 @@
 
     </zfin2:subsection>
 
-    <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}"> <%--Antibodies--%>
-        <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}"
-                                                  marker="${formBean.marker}"
-                                                  title="ANTIBODIES" maxNumber="5"/>
-    </c:if>
+    <%--Antibodies--%>
+    <zfin2:antibodySummary antibodyBeans="${formBean.antibodyBeans}"/>
 
 
     <%--Plasmid Links--%>
@@ -118,15 +103,16 @@
         <table class="summary">
             <c:forEach var="link" items="${formBean.plasmidDBLinks}" varStatus="loop">
                 <tr>
-                    <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
+                    <td><a href="${link.link}">${link.referenceDatabaseName}:${link.accNumDisplay}</a></td>
                 </tr>
             </c:forEach>
         </table>
     </zfin2:subsection>
 
-
     <%--Constructs--%>
-    <zfin2:constructsWithSequences formBean="${formBean}"/>
+    <div id="constructs">
+        <zfin2:constructsSummary gene="${formBean.marker}" constructBeans="${formBean.constructBeans}" />
+    </div>
 
     <%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
 
@@ -138,7 +124,7 @@
 
 
     <%--other GENE/Marker Pages--%>
-    <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
+
 
     <%--ORTHOLOGY--%>
     <zfin2:orthology marker="${formBean.marker}" showTitle="true"/>
@@ -149,9 +135,11 @@
 </div>
 
 <script>
-    jQuery(function () {
-        jQuery("#mutant-info").find(".alleles").tableCollapse({label: "alleles"});
-        jQuery("#disease").find(".marker-go-table").tableCollapse({label: "records"});
+    $(function () {
+        $("#mutant-info").find(".alleles").tableCollapse({label: "alleles"});
+        $("#mutant-info").find(".strs").tableCollapse({label: "reagents"});
+        $("#disease").find(".marker-go-table").tableCollapse({label: "records"});
+        $("#constructs").find(".marker-go-table").tableCollapse({label: "constructs"});
     });
 </script>
 

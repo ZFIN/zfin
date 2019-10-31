@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui.feature;
 
 
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
@@ -62,7 +63,27 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
     public void addHandlesErrorListener(HandlesError handlesError) {
 
     }
+    public void onLabDesigChange() {
 
+
+        if (view.labDesignationBox.getSelected().equals(ZF_PREFIX)) {
+            FeatureRPCService.App.getInstance().getNextZFLineNum(
+                    new FeatureEditCallBack<String>("Failed to return line number for feature  ", this) {
+                        @Override
+                        public void onSuccess(String result) {
+                            view.lineNumberBox.setText(result);
+                            handleDirty();
+                            clearError();
+                        }
+                    }
+
+            );
+        }
+        else{
+
+            view.lineNumberBox.setText("");
+        }
+    }
     public void onLabOfOriginChange(String labOfOriginSelected) {
 
         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_START);
@@ -95,6 +116,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
                         handleDirty();
                         clearError();
                         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_STOP);
+                        onLabDesigChange();
                     }
 
                     @Override

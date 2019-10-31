@@ -251,25 +251,6 @@ public class AntibodyMarkerService {
         return terms;
     }
 
-    public static Set<String> getDistinctAssayNames(Antibody antibody) {
-        Set<ExpressionExperiment> antibodyLabelings = antibody.getAntibodyLabelings();
-        if (antibodyLabelings == null) {
-            return new TreeSet<>();
-        }
-        Set<String> assayNames = new TreeSet<>();
-        for (ExpressionExperiment labeling : antibodyLabelings) {
-            Set<ExpressionResult> results = labeling.getExpressionResults();
-            // exclude those assays with no expression result record
-            if (results != null && !results.isEmpty()) {
-                String assayName = labeling.getAssay().getName();
-                if (assayName != null) {
-                    assayNames.add(assayName);
-                }
-            }
-        }
-        return assayNames;
-    }
-
     public static List<AnatomyLabel> getAntibodyLabelings(Antibody antibody) {
         // a map of AOname-CCnames as keys and display objects as values
         Map<String, AnatomyLabel> map = new HashMap<>();

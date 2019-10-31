@@ -178,7 +178,7 @@ class PubTrackerAuthorNotification extends Component {
                         <div className="form-inline notif-letter" ref={this.letterRef}>
                             <p>Dear {previewing ? names : <input className="form-control" style={{width: '500px'}} value={names} onChange={e => this.setState({names: e.target.value})} />},</p>
                             <p>I am pleased to report that information about your paper has been entered into ZFIN, the Zebrafish Information Network.</p>
-                            <p><a href={`/${pub.zdbID}`}>{pub.citation}</a></p>
+                            <p><a href={`https://${window.location.hostname}/${pub.zdbID}`}>{pub.citation}</a></p>
                             <p>Please notify me if you have corrections, comments about the data associated with your paper:</p>
                             <div>
                                 <ul>

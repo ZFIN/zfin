@@ -8,8 +8,7 @@
 <c:if test="${empty title}">
 
     <c:set var="title">
-        OTHER&nbsp;<zfin:abbrev
-            entity="${marker}"/>&nbsp;${marker.markerType.displayName eq 'cDNA' ? marker.markerType.displayName : fn:toUpperCase(marker.markerType.displayName)}&nbsp;PAGES
+        Genome Resources:
     </c:set>
     <c:if test="${marker.markerType.displayName.contains('Construct')}">
         <c:set var="title">
@@ -26,33 +25,38 @@
 </authz:authorize>
 
 <c:if test="${loggedIn && marker.genedom}">
-    <div class="summary">
+    <%--<div class="summary">--%>
         <span class="summaryTitle">${title}</span>
+    <td>
         <other-markers marker-id="${marker.zdbID}" edit="editMode">
-        </other-markers>
-    </div>
+        </other-markers></td>
+    <%--</div>--%>
 </c:if>
 
 <c:if test="${loggedIn eq 'no' || !marker.genedom}">
-    <zfin2:subsection title="${title}" anchor="other_pages"
-                      test="${!empty links}" showNoData="true" noDataText="No links to external sites">
-        <table class="summary">
-            <tr>
-                <td>
+    <%--<zfin2:subsection title="${title}" anchor="other_pages"--%>
+                      <%--test="${!empty links}" showNoData="true" noDataText="No links to external sites">--%>
+
+
+    <span class="summaryTitle">${title}</span>
+<td>
                         <c:set var="lastRefDB" value=""/>
                     <c:forEach var="link" items="${links}" varStatus="loop">
+
                         <c:set var="refDB" value="${link.referenceDatabaseName}"/>
-                        ${(!loop.first and (refDB ne lastRefDB) ? "</td>" : "")}
-                        ${(!loop.first and (refDB ne lastRefDB) ? "<td>" : "")}
+                        ${(!loop.first and (refDB ne lastRefDB) ? " " : "")}
+
                         <%-- entry.value is the MarkerDBLink --%>
-                    <li style="list-style-type:none;">
+<c:if test="${!link.displayName.contains('VEGA')}">
+
                         <a href="${link.link}">${link.displayName}</a>
                             ${link.attributionLink}
-                    </li>
+</c:if>
                         <c:set var="lastRefDB" value="${refDB}"/>
+
                     </c:forEach>
-            </tr>
-        </table>
-    </zfin2:subsection>
+</td>
+    <%--</zfin2:subsection>--%>
+
 </c:if>
 

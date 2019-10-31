@@ -41,8 +41,12 @@ returns varchar as $dblinkAccNumDisplay$
   --get_dblink_acc_num_display('ZDB-FDBCONT-090529-1','dre-let-7g')
  
   else
+
+    -- we need to prepend 'wz' to the acc_num
+
     -- spew out exactly what came in
     dblinkAccNumDisplay = dblinkAccNum;
+
   end if;
 
   return dblinkAccNumDisplay;

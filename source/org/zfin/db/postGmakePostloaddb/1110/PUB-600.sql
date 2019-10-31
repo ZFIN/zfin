@@ -7,9 +7,7 @@ drop table if exists tmp_pub1;
 
 
 select pth_pub_zdb_id as pubzdb into tmp_pub from pub_tracking_history
-where exists(select 1 from publication_file
-where pth_pub_zdb_id = pf_pub_zdb_id)
-and pth_status_id=4 and pth_location_id is null;
+where pth_status_id=4 and pth_location_id is null;
 
 select distinct pubzdb
 into tmp_pub1
@@ -20,12 +18,11 @@ and pth_status_is_current='t'
 and pth_status_id=4
 and jtype='Journal'
 and pub_jrnl_zdb_id=jrnl_zdb_id
-
 and pub_arrival_date between '2010-01-01' and '2017-12-31'
-and zdb_id = recattrib_source_zdb_id and (recattrib_data_zdb_id not like 'ZDB-XPAT%'
-and pth_pub_zdb_id not in (Select pt_pub_zdb_id from pheno_term)
+and zdb_id not in (select recattrib_source_zdb_id from record_attribution where (recattrib_data_zdb_id not like 'ZDB-XPAT%'
 and recattrib_data_zdb_id not like 'ZDB-ORTHO%'
-and recattrib_Data_zdb_id not like 'ZDB-DAT%' and recattrib_data_zdb_id not like '%MRKRGOEV%');
+and recattrib_Data_zdb_id not like 'ZDB-DAT%' and recattrib_data_zdb_id not like '%MRKRGOEV%'))
+ and pth_pub_zdb_id not in (Select pt_pub_zdb_id from pheno_term);
 
 
 insert into pub_tracking_history(pth_pub_zdb_id, pth_status_id, pth_status_set_by)

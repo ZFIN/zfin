@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.zfin.ExternalNote;
 import org.zfin.anatomy.presentation.AnatomyLabel;
+import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionSummaryCriteria;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.profile.MarkerSupplier;
@@ -25,6 +26,7 @@ public class AntibodyMarkerBean extends MarkerBean {
     private int numberOfDistinctComposedTerms ;
     private List<MarkerRelationshipPresentation> antigenGenes;
     private String abRegistryID;
+    private Antibody antibody;
 
     public String getAbRegistryID() {
         return abRegistryID;
@@ -112,5 +114,21 @@ public class AntibodyMarkerBean extends MarkerBean {
 
     public void setAntigenGenes(List<MarkerRelationshipPresentation> antigenGenes) {
         this.antigenGenes = antigenGenes;
+    }
+
+    public int getNumberOfPublications() {
+        return numberOfPublications;
+    }
+
+    public void setNumberOfPublications(int numberOfPublications) {
+        this.numberOfPublications = numberOfPublications;
+    }
+
+    public Antibody getAntibody() {
+        return antibody;
+    }
+
+    public void setAntibody(Antibody antibody) {
+        this.antibody = antibody;
     }
 }

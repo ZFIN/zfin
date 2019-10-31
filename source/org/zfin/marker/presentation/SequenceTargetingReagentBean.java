@@ -1,24 +1,20 @@
 package org.zfin.marker.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionResultTermComparator;
-import org.zfin.expression.Figure;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.feature.Feature;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gbrowse.presentation.GBrowseImageSimilarComparator;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Fish;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.MarkerSupplier;
-import org.zfin.publication.Publication;
 import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.sequence.blast.Database;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  */

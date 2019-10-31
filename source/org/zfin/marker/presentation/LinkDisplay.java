@@ -24,6 +24,7 @@ public class LinkDisplay implements ProvidesLink {
     private String length;
     private String dataType;
     private Integer typeOrder;
+    private String accNumDisplay;
 
     public String getDisplayName() {
         if (accession.contains("ZDB")) {
@@ -39,7 +40,16 @@ public class LinkDisplay implements ProvidesLink {
         return urlPrefix + accession + (urlSuffix != null ? urlSuffix : "");
     }
 
+    public String getAccNumDisplay() {
+        return accNumDisplay;
+    }
+
+    public void setAccNumDisplay(String accNumDisplay) {
+        this.accNumDisplay = accNumDisplay;
+    }
+
     @Override
+
     public String getLinkWithAttribution() {
         return getLink() + " " + getAttributionLink();
     }

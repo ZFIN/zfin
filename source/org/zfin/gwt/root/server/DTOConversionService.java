@@ -646,8 +646,19 @@ public class DTOConversionService {
         MutationDetailDnaChangeDTO dnaChangeDTO = featureDTO.getDnaChangeDTO();
         if (dnaChangeDTO != null) {
             FeatureDnaMutationDetail detail = convertToDnaMutationDetail(null, dnaChangeDTO);
+
             detail.setFeature(feature);
             feature.setFeatureDnaMutationDetail(detail);
+            if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
+                if (feature.getFeatureDnaMutationDetail().getNumberAddedBasePair() == feature.getFeatureDnaMutationDetail().getNumberRemovedBasePair()) {
+                    if (feature.getFeatureDnaMutationDetail().getNumberAddedBasePair() > 1) {
+
+                        feature.setType(FeatureTypeEnum.MNV);
+
+                    }
+                }
+            }
+            ;
         }
         MutationDetailProteinChangeDTO proteinChangeDTO = featureDTO.getProteinChangeDTO();
         if (proteinChangeDTO != null) {
@@ -660,8 +671,13 @@ public class DTOConversionService {
             FeatureGenomicMutationDetail detail = convertToFeatureGenomicMutationDetail(null, fgmdChangeDTO);
             detail.setFeature(feature);
             feature.setFeatureGenomicMutationDetail(detail);
-            if (feature.getFeatureGenomicMutationDetail().getFgmdSeqVar().length()==feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length()){
-                feature.setType(FeatureTypeEnum.MNV);
+            if (feature.getType().equals(FeatureTypeEnum.INDEL)){
+            if (feature.getFeatureGenomicMutationDetail().getFgmdSeqVar().length() == feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length()) {
+                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqVar().length() > 1) {
+
+                    feature.setType(FeatureTypeEnum.MNV);
+                }
+            }
             };
         }
         if (CollectionUtils.isNotEmpty(featureDTO.getTranscriptChangeDTOSet())) {

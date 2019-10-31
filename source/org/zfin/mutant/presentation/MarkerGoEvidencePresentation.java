@@ -206,6 +206,8 @@ public class MarkerGoEvidencePresentation {
                 return createLink(accession, getUnipathwayReferenceDatabase().getForeignDB(), inferenceCategory);
             case UNIRULE:
                 return createUniRuleLink(accession, inferenceCategory);
+            case PANTHER:
+                return createPantherLink(accession, inferenceCategory);
             default:
                 return inferredFrom;
         }
@@ -278,6 +280,17 @@ public class MarkerGoEvidencePresentation {
     public static String createUniRuleLink(String accession, InferenceCategory inferenceCategory) {
         StringBuilder sb = new StringBuilder("");
         sb.append("<a href=\"http://prosite.expasy.org/unirule/");
+        sb.append(accession);
+        sb.append("\">");
+        sb.append(inferenceCategory.prefix());
+        sb.append(accession);
+        sb.append("</a>");
+        return sb.toString();
+    }
+
+    public static String createPantherLink(String accession, InferenceCategory inferenceCategory) {
+        StringBuilder sb = new StringBuilder("");
+        sb.append("<a href=\"http://pantree.org/node/annotationNode.jsp?id=");
         sb.append(accession);
         sb.append("\">");
         sb.append(inferenceCategory.prefix());

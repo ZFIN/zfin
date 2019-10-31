@@ -1,40 +1,28 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.dto.MarkerRelationshipDTO;
-import org.zfin.gwt.root.dto.MarkerRelationshipEnumTypeGWTHack;
-import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerRelationshipType;
-import org.zfin.marker.MarkerTypeGroup;
-import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.sequence.DisplayGroup;
-import org.zfin.sequence.ReferenceDatabase;
 
 import javax.validation.Valid;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.zfin.marker.MarkerRelationship.Type.*;
 
 @Controller
 @RequestMapping("/marker")
@@ -72,7 +60,6 @@ public class MarkerRelationshipController {
 
         return relType;
     }
-
 
 
 

@@ -441,7 +441,7 @@ public class ResultService {
         if (CollectionUtils.isNotEmpty(marker.getSuppliers())) {
             result.addAttribute(SOURCE, withCommas(marker.getSuppliers(), new SupplierLinkTransformer()));
         }
-        List<Marker> genesContainedInClones = getMarkerRepository().getMarkersContainedIn(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
+        List<Marker> genesContainedInClones = getMarkerRepository().getRelatedMarkersForTypes(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
         if (CollectionUtils.isNotEmpty(genesContainedInClones)) {
             result.addAttribute(CLONE_CONTAINS_GENES, withCommasAndLink(genesContainedInClones, "abbreviation", "zdbID"));
         }
@@ -450,7 +450,7 @@ public class ResultService {
         if (CollectionUtils.isNotEmpty(genesContainedViaTranscript)) {
             result.addAttribute(CLONE_CONTAINS_GENES, withCommasAndLink(genesContainedViaTranscript, "abbreviation", "zdbID"));
         }
-        List<Marker> cloneEncodesGene = getMarkerRepository().getMarkersContainedIn(marker, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+        List<Marker> cloneEncodesGene = getMarkerRepository().getRelatedMarkersForTypes(marker, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
         if (CollectionUtils.isNotEmpty(cloneEncodesGene)) {
             result.addAttribute(CLONE_ENCODED_BY_GENES, withCommasAndLink(cloneEncodesGene, "abbreviation", "zdbID"));
         }

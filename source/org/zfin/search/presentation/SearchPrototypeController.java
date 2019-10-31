@@ -67,6 +67,19 @@ public class SearchPrototypeController {
     }
 
 
+    public String viewWtExpressionGalleryResults(String geneZdbId, Model model, HttpServletRequest request) {
+        String fq[] = { "category:\"Expression\"",
+                "conditions:\"standard or control\"",
+                "-sequence_targeting_reagent:[* TO *]",
+                "is_genotype_wildtype:true",
+                "xref:" + geneZdbId};
+
+        return viewResults(null, fq, Category.EXPRESSIONS.getName(),
+                null, null, null, false, false,
+                true, true, model, request);
+
+    }
+
     @RequestMapping(value = "/prototype")
     public String viewResults(@RequestParam(value = "q", required = false) String q,
                               @RequestParam(value = "fq", required = false) String[] filterQuery,

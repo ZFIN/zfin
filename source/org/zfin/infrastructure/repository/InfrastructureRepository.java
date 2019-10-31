@@ -452,6 +452,8 @@ public interface InfrastructureRepository {
     List<AnnualStats> getAnnualStats();
 
     List<Date> getDistinctDatesFromAnnualStats();
+
+    List<ControlledVocab> getControlledVocabsForSpeciesByConstruct(Marker construct);
 }
 
 

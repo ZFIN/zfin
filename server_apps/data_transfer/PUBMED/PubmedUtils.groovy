@@ -106,6 +106,7 @@ class PubmedUtils {
         // pubmed doc says "if more than about 200 UIDs are to be provided, the request should be
         // made using the HTTP POST method" ... okay pubmed, you're such a good guy, we'll play
         // by your rules
+        System.out.println("getFromPubMed")
         def url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
         def query = "db=pubmed&id=${ids.join(",")}&retmode=xml"
 
@@ -114,13 +115,15 @@ class PubmedUtils {
         connection.setDoOutput(true)
         def writer = new OutputStreamWriter(connection.outputStream)
         writer.write(query)
+        System.out.println("query written" || query)
         writer.flush()
         writer.close()
         connection.connect()
+        System.out.println("connected" || url)
         new XmlSlurper().parse(connection.inputStream)
     }
 
-    static Iterator<GPathResult> searchPubmed(query, daysBack = 1000) {
+    static Iterator<GPathResult> searchPubmed(query, daysBack = 500) {
         def url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/" +
                 "esearch.fcgi?db=pubmed&term=${URLEncoder.encode(query, "UTF-8")}" +
                 "&usehistory=y&reldate=${daysBack}&datetype=edat"
@@ -252,7 +255,7 @@ class PubmedUtils {
         private String queryKey
         private int count
         private int start = 0
-        private final int max = 200
+        private final int max = 1000
 
         ArticleIterator(String webEnv, String queryKey, int count) {
             this.webEnv = webEnv
@@ -280,21 +283,24 @@ class PubmedUtils {
                     "&retmode=xml&retstart=${start}&retmax=${max}"
             while (attempt < 3) {
                 attempt += 1
-                println("$attempt: $fetchUrl")
+                println("attempt" + "$attempt: $fetchUrl")
                 try {
                     def articles = new XmlSlurper().parse(fetchUrl).PubmedArticle
                     if (articles.size() > 0) {
+                        println("articleSize: " + articles.size())
                         articles.each { queue.push(it) }
                         start += max
                         return
                     }
-                    println("No articles!")
+                    println("No articles")
                 } catch (IOException ignore) {
                     println("Caught IOException!")
                 }
-                sleep(5000)
             }
+            println("fetching done")
             throw new RuntimeException("Giving up after 3 attempt to fetch from NCBI")
+
+
         }
     }
 }

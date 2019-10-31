@@ -1243,3 +1243,9 @@ input + label {
 .horizontal-buttons > * {
     margin-right: 5px;
 }
+
+.scale
+{
+    height: 1em;
+    width: 1em;
+}

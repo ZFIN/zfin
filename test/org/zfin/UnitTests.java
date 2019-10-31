@@ -78,7 +78,7 @@ import org.zfin.util.*;
         AntibodySearchCriteriaTest.class,
         ApgPaginationBeanTest.class,
         BeanCompareServiceTest.class,
-//        BlastNonDBTest.class, // temporarily excluded because of disk space issues on thorax
+        //BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
         CurationExperimentTest.class,
         DatabaseServiceTest.class,

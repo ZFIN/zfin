@@ -89,6 +89,7 @@ public enum InferenceCategory {
             return "UniProtKB-KW" + SEPARATOR;
         }
 
+
         return prefix + SEPARATOR;
     }
 

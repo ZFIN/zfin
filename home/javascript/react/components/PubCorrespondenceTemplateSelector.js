@@ -19,7 +19,30 @@ It is important to note that your publication will not be made publicly availabl
 Since 1994, ZFIN has provided current and free information to zebrafish researchers, educators and students around the world.
 
 Thank you,
-${sender}`,
+${sender}`
+    },
+{
+    label: 'Indexing Question',
+        subject: 'Requesting additional information on your recent article',
+    body: (citation, sender) => `Dear Professor,
+    
+Congratulations on your recent article. At ZFIN we are happy to include your newly published information in the database. In order to facilitate this process, it would be very helpful if you would provide some additional information about this article.
+
+${citation}
+
+Best regards,
+Holly 
+
+******************************
+Holly L. Paddock M.S.
+holly@zfin.org
+www.zfin.org
+Zebrafish Information Network
+5291 University of Oregon
+Eugene, OR 97403-5291
+Phone: (541) 346-7485
+******************************
+`
     }
 ];
 

@@ -121,7 +121,13 @@
                     query="select ortho_other_species_symbol as ortholog_other_species_symbol,
                            ortho_other_species_name as ortholog_other_species_name,
                            ortho_zebrafish_gene_zdb_id as gene_zdb_id
-                           from ortholog"
+                           from ortholog
+                          union
+                            select noa_alias as ortholog_other_species_symbol,
+                           ortho_other_species_name as ortholog_other_species_name,
+                           ortho_zebrafish_gene_zdb_id as gene_zdb_id
+                          from ortholog, ncbi_ortholog_alias
+                            where ortho_other_species_ncbi_gene_id = noa_ncbi_gene_id"
                     where="gene_zdb_id=gene.id"
                     cacheImpl="SortedMapBackedCache"
             />
@@ -3554,7 +3560,14 @@
 		           union
 			   select dalias_alias alias, fmrel_ftr_zdb_id as data_id from feature_marker_relationship, data_alias
 			     where dalias_data_zdb_id = fmrel_mrkr_zdb_id
-			     and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature')"
+			     and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature')
+                   union
+               select ft_feature_abbrev alias, wd_new_zdb_id data_id from feature_tracking, withdrawn_data
+                  where ft_feature_zdb_id = wd_old_zdb_id
+                union
+               select ft_feature_abbrev alias, zrepld_new_zdb_id data_id from feature_tracking, zdb_replaced_data
+                  where ft_feature_zdb_id = zrepld_old_zdb_id
+                    "
                     where="data_id=feature.id"
                     cacheImpl="SortedMapBackedCache"
             >
@@ -4483,7 +4496,8 @@ and child.term_ontology = 'disease_ontology';
                              jtype as publication_type,
                              pub_abstract as abstract,
                              pub_jrnl_zdb_id as xref,
-                             'PMID:' || accession_no as related_accession,
+                             'PMID:' || accession_no as pubmedid,
+                             'PMCID:' || pub_pmc_id as pubpmcid,
                              case when pub_is_indexed = 't' then 'Indexed'
                                   else 'Not Indexed' end as indexing_status,
                              case when status = 'active' then 'Active'
@@ -4494,6 +4508,8 @@ and child.term_ontology = 'disease_ontology';
                              pub_is_curatable as is_curatable
                              from publication"
         >
+            <field column="pubmedid" name="related_accession" />
+            <field column="pubpmcid" name="related_accession" />
 
             <entity name="pub_images"
                     query="select
@@ -4780,7 +4796,19 @@ and child.term_ontology = 'disease_ontology';
                     query="select recattrib_source_zdb_id as pub_zdb_id,
                           feature_abbrev as sequence_alteration, feature_zdb_id as xref
                              from feature, record_attribution
-                            where recattrib_data_zdb_id = feature_zdb_id;"
+                            where recattrib_data_zdb_id = feature_zdb_id
+                            union
+                            select wd_new_zdb_id as pub_zdb_id,
+                            ft_feature_abbrev as sequence_alteration, ft_feature_zdb_id as xref
+                              from feature_tracking, withdrawn_data
+                              where ft_feature_zdb_id = wd_old_zdb_id
+                              and wd_new_zdb_id like 'ZDB-PUB%'
+                            union
+                            select zrepld_new_zdb_id as pub_zdb_id,
+                            ft_feature_abbrev as sequence_alteration, ft_feature_zdb_id as xref
+                              from feature_tracking, zdb_replaced_data
+                              where ft_feature_zdb_id = zrepld_old_zdb_id
+                              and zrepld_new_zdb_id like 'ZDB-PUB%';"
                     cacheImpl="SortedMapBackedCache"
                     where="pub_zdb_id=publication.id"
             />
@@ -5490,7 +5518,8 @@ and child.term_ontology = 'disease_ontology';
                               image as profile_image,
                               pers_bio as biography,
                               address as postal_address,
-                              email as email_address
+                              email as email_address,
+                              orcid_id as related_accession
                        from person
                        where pers_is_hidden = 'f'"
         >

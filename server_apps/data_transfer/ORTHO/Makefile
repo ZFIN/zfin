@@ -10,7 +10,8 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-
+all:
+	gradle -p $(SOURCEROOT) :server_apps:data_transfer:ORTHO:deployFiles
 
 # ---------------  Variable Definitions  --------------------------------
 
@@ -19,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/ORTHO
 
-GENERICS = runOrthology.pl loadAndUpdateNCBIOrthologs.sql parseOrthoFile.pl downloadFiles.pl reportOrthoNameChanges.pl updateZebrafishGeneNames.pl
+GENERICS = runOrthology.pl loadAndUpdateNCBIOrthologs.sql parseOrthoFile.pl downloadFiles.pl reportOrthoNameChanges.pl updateZebrafishGeneNames.pl loadHumanSynonyms.sql
 STATICS =  updateZebrafishGeneNames.sql compareNcbiMgiOmim.pl
 
 

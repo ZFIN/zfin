@@ -11,8 +11,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         BlastAccessTest.class ,
-        ExecuteBlastTest.class,
-        BlastDownloadsTest.class
+        //ExecuteBlastTest.class,
+        //BlastDownloadsTest.class
         })
 
 public class BlastAndDBTests {

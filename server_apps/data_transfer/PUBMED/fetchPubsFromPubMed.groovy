@@ -108,6 +108,7 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
     article.PublicationTypeList.PublicationType.each { pubtype ->
         if (pubtype == 'Review'){
             isReview = 'review'
+            //print("pub is identified as review " + pmid + "\n")
         }
     }
     row.push(isReview)

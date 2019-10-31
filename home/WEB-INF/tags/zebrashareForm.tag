@@ -106,9 +106,12 @@
         <div class="col-sm-8">
             <div class="file-drag-target">
                 <input multiple type="file" id="imageFiles" name="imageFiles"
-                       accept=".png,.gif,.jpeg,.jpg,image/png,image/gif,image/jpeg"/>
-                <label for="imageFiles" class="btn btn-default">Choose files</label> or drag them here
+                       accept=".png,.gif,.jpeg,.jpg,image/png,image/gif,image/jpeg" />
+                <label for="imageFiles" class="btn btn-default" >Choose files</label> or drag them here
             </div>
+            <span class="help-block">
+                    Acceptable File Formats include png, jpeg, jpg and gif.
+                </span>
             <div class="right-align">
                 <a id="clearImages" class="btn btn-link hidden">
                 <span class="text-danger">
@@ -117,7 +120,8 @@
                 </a>
             </div>
 
-            <div id="selectedFiles"></div>
+            <div id="selectedFiles" >
+                </div>
         </div>
     </div>
 

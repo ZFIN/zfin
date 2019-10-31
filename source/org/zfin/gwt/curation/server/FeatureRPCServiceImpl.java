@@ -219,6 +219,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
             }
             DTOConversionService.updateDnaMutationDetailWithDTO(detail, featureDTO.getDnaChangeDTO());
+            if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
+                if (detail.getNumberRemovedBasePair() == detail.getNumberAddedBasePair()) {
+                    if (detail.getNumberRemovedBasePair() > 1) {
+                        feature.setType(FeatureTypeEnum.MNV);
+                    }
+                }
+            }
             if (!detail.equals(oldDetail)) {
                 infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), featureDTO.getPublicationZdbID());
             }
@@ -279,8 +286,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (fgmd.getZdbID() == null) {
                 HibernateUtil.currentSession().save(fgmd);
             }
-            if (fgmd.getFgmdSeqRef().length()==fgmd.getFgmdSeqVar().length()){
-                feature.setType(FeatureTypeEnum.MNV);
+            if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
+                if (fgmd.getFgmdSeqRef().length() == fgmd.getFgmdSeqVar().length()) {
+                    if (fgmd.getFgmdSeqRef().length() > 1) {
+                        feature.setType(FeatureTypeEnum.MNV);
+                    }
+                }
             }
             /*if (!fgmd.equals(oldDetail)) {
                 System.out.println(oldDetail.getFgmdSeqRef());

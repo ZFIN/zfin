@@ -39,7 +39,6 @@ CREATE TEMP TABLE expression_search_anatomy_generated_temp AS
     AND (er.xpatres_superterm_zdb_id = atc.alltermcon_contained_zdb_id OR
          er.xpatres_subterm_zdb_id = atc.alltermcon_contained_zdb_id)
     AND atc.alltermcon_container_zdb_id = t.term_zdb_id
-    AND t.term_ontology = 'zebrafish_anatomy'
     AND er.xpatres_expression_found = 't';
 
 -- load distinct rows into final table. this is faster as a separate step

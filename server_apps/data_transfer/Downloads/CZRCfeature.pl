@@ -354,10 +354,10 @@ $featureFileForCZRC = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/do
 open (CZRCFEATURES, ">$featureFileForCZRC") || die "can not open $featureFileForCZRC: $!\n";
 
 foreach $featureName (sort keys %featureNames) {
-  print CZRCFEATURES "$featureNames{$featureName}\t$featureName\t$affectedGeneAbbrevs{$featureName}\t$affectedGeneIds{$featureName}\t";    
-  print CZRCFEATURES "$featureAliases{$featureName}\t$featureTypes{$featureName}\t$featureProtocols{$featureName}\t$featureComments{$featureName}\t";
-  print CZRCFEATURES "$featureLabNames{$featureName}\t$featureLabIds{$featureName}\t$featureLocations{$featureName}\t";
-  print CZRCFEATURES "$featureConstructNames{$featureName}\t$featureConstructIds{$featureName}\t$downloadedTimes{$featureName}\n";
+  print CZRCFEATURES "$featureNames{$featureName}|$featureName|$affectedGeneAbbrevs{$featureName}|$affectedGeneIds{$featureName}|";    
+  print CZRCFEATURES "$featureAliases{$featureName}|$featureTypes{$featureName}|$featureProtocols{$featureName}|$featureComments{$featureName}|";
+  print CZRCFEATURES "$featureLabNames{$featureName}|$featureLabIds{$featureName}|$featureLocations{$featureName}|";
+  print CZRCFEATURES "$featureConstructNames{$featureName}|$featureConstructIds{$featureName}|$downloadedTimes{$featureName}\n";
 }
 
 close CZRCFEATURES;

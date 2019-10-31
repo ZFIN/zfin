@@ -1,6 +1,9 @@
 package org.zfin.marker.presentation;
 
+import org.zfin.mapping.presentation.BrowserLink;
+
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * TODO: move more stuff off of MarkerBean
@@ -11,6 +14,7 @@ public class GeneBean extends MarkerBean {
     boolean hasChimericClone ;
     private List<LinkDisplay> plasmidDBLinks;
     private List<LinkDisplay> pathwayDBLinks;
+    private TreeSet<BrowserLink> locations;
 
     public boolean isHasChimericClone() {
         return hasChimericClone;
@@ -34,5 +38,13 @@ public class GeneBean extends MarkerBean {
 
     public void setPathwayDBLinks(List<LinkDisplay> pathwayDBLinks) {
         this.pathwayDBLinks = pathwayDBLinks;
+    }
+
+    public TreeSet<BrowserLink> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(TreeSet<BrowserLink> locations) {
+        this.locations = locations;
     }
 }

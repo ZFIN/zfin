@@ -4,6 +4,7 @@
 
 <%@ attribute name="relatedTranscriptDisplay" required="true"
               rtexprvalue="true" type="org.zfin.marker.presentation.RelatedTranscriptDisplay" %>
+<%@ attribute name="locations" required="false" type="java.util.Collection" %>
 <%@ attribute name="showAllTranscripts" required="true"
               type="java.lang.Boolean" %>
 <%@ attribute name="unlinkedTranscript" required="false"
@@ -22,7 +23,7 @@
 
 
         for(var i = 0; i < numWithdrawnTranscripts; i++) {
-	    document.getElementById("withdrawnTranscripts-"+i).style.display = 'table-row' ;
+            document.getElementById("withdrawnTranscripts-"+i).style.display = 'table-row' ;
         }
 
     }
@@ -35,9 +36,9 @@
         //window.alert(numWithdrawnTranscripts);
 
 
-       for(var i = 0; i < numWithdrawnTranscripts; i++) {
-	    document.getElementById("withdrawnTranscripts-"+i).style.display = 'none' ;
-       }
+        for(var i = 0; i < numWithdrawnTranscripts; i++) {
+            document.getElementById("withdrawnTranscripts-"+i).style.display = 'none' ;
+        }
     }
 </script>
 
@@ -68,7 +69,7 @@
 
                                 <th width="18%">Type <a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
                                 <th width="22%">Name</th>
-                                <th width="15%" class="length">Length (bp)</th>
+                                <th width="15%" class="length">Length (nt)</th>
                                 <th width="25%" class="analysis">
                                     Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a>
                                 </th>
@@ -80,10 +81,10 @@
 
                         <tr class=${loop.index%2==0 ? "even" : "odd"}>
                             <td width="18%"> <%-- only show if different from the last row--%>
-                                <zfin:groupByDisplay loopName="loop" groupBeanCollection="${relatedTranscriptDisplay.nonWithdrawnList}" groupByBean="marker.transcriptType.display">
-                             <span title="${nonWithdrawnTranscript.marker.transcriptType.definition}">
-                                     ${nonWithdrawnTranscript.marker.transcriptType.display}</span>
-                                </zfin:groupByDisplay>
+                                <c:if test="${nonWithdrawnTranscript.marker.transcriptType.display ne lastType}">
+                                    <span title="${nonWithdrawnTranscript.marker.transcriptType.definition}">${nonWithdrawnTranscript.marker.transcriptType.display}</span>
+                                </c:if>
+                                <c:set var="lastType" value="${nonWithdrawnTranscript.marker.transcriptType.display}"/>
                             </td>
                             <td width="22%">
                                 <c:choose>
@@ -93,6 +94,9 @@
                                     <c:otherwise>
                                         <zfin:link entity="${nonWithdrawnTranscript.marker}"/>
                                         <zfin:attribution entity="${nonWithdrawnTranscript}"/>
+                                        <c:if test="${!empty nonWithdrawnTranscript.marker.ensdartId}">
+                                            &nbsp;&nbsp;&nbsp;<a href="http://www.ensembl.org/id/${nonWithdrawnTranscript.marker.ensdartId}"><img src="/images/Ensembl.png" title="Ensembl" alt="Ensembl" border="0" align="top" class="scale" /></a>
+                                        </c:if>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
@@ -120,54 +124,54 @@
                             </td>
 
                             <c:choose>
-                              <c:when test="${loop.first}">
-                                <td class="gbrowseimage" width="20%"
-                                    rowspan="${fn:length(relatedTranscriptDisplay.transcripts)}">
+                                <c:when test="${loop.first}">
+                                    <td class="gbrowseimage" width="20%"
+                                        rowspan="${fn:length(relatedTranscriptDisplay.transcripts)}">
 
-                                    <c:if test="${!empty relatedTranscriptDisplay.gbrowseImage}">
-                                        <div class="gbrowse-image" />
-                                    </c:if>
-                                </td>
-                              </c:when>
-                              <c:otherwise>
-                              </c:otherwise>
+                                        <c:if test="${!empty relatedTranscriptDisplay.gbrowseImage}">
+                                            <div class="gbrowse-image" />
+                                        </c:if>
+                                    </td>
+                                </c:when>
+                                <c:otherwise>
+                                </c:otherwise>
                             </c:choose>
 
                         </tr>
                     </c:if>
                 </c:forEach>
 
-       <c:if test="${relatedTranscriptDisplay.withdrawnTranscripts != null && fn:length(relatedTranscriptDisplay.withdrawnTranscripts) > 0}">
-       <table class="summary rowstripes_withdrawn">
-                <tr class=${loop.index%2==0 ? "even" : "odd"}>
-                    <td width="18%"><strong><a id="withdrawnTranscriptsLink" href="javascript:;" onclick="showWithdrawnTranscripts(${fn:length(relatedTranscriptDisplay.withdrawnTranscripts)})"><img src="/images/plus-13.png" style="border:none;" title="show withdrawn transcripts"></a><a id="hideWithdrawnTranscriptsLink" style="display: none;" href="javascript:;" onclick="hideWithdrawnTranscripts(${fn:length(relatedTranscriptDisplay.withdrawnTranscripts)})"><img src="/images/minus-13.png" style="border:none;" title="hide withdrawn transcripts"></a>&nbsp;Withdrawn Transcripts<img src="/images/warning-noborder.gif" border="0" alt="extinct" width="20" align="top" height="20"></strong></td>
-                    <td width="22%"></td>
-                    <td width="15%"></td>
-                    <td width="25%"></td>
-                    <td width="20%"></td>
-                </tr>
+                <c:if test="${relatedTranscriptDisplay.withdrawnTranscripts != null && fn:length(relatedTranscriptDisplay.withdrawnTranscripts) > 0}">
+                    <authz:authorize access="hasRole('root')">
+                        <tr class=${loop.index%2==0 ? "even" : "odd"}>
+                            <td width="18%"><strong><a id="withdrawnTranscriptsLink" href="javascript:;" onclick="showWithdrawnTranscripts(${fn:length(relatedTranscriptDisplay.withdrawnTranscripts)})"><img src="/images/plus-13.png" style="border:none;" title="show withdrawn transcripts"></a><a id="hideWithdrawnTranscriptsLink" style="display: none;" href="javascript:;" onclick="hideWithdrawnTranscripts(${fn:length(relatedTranscriptDisplay.withdrawnTranscripts)})"><img src="/images/minus-13.png" style="border:none;" title="hide withdrawn transcripts"></a>&nbsp;Withdrawn Transcripts<img src="/images/warning-noborder.gif" border="0" alt="extinct" width="20" align="top" height="20"></strong></td>
+                            <td width="22%"></td>
+                            <td width="15%"></td>
+                            <td width="25%"></td>
+                            <td width="20%"></td>
+                        </tr>
 
-                <c:forEach var="withdrawnTranscript" items="${relatedTranscriptDisplay.withdrawnTranscripts}" varStatus="withdrawnloop">
+                        <c:forEach var="withdrawnTranscript" items="${relatedTranscriptDisplay.withdrawnTranscripts}" varStatus="withdrawnloop">
 
-                        <tr id ="withdrawnTranscripts-${withdrawnloop.index}" style="display: none;" class=${withdrawnloop.index%2==0 ? "even" : "odd"}>
-                            <td width="18%">
-                             <zfin:groupByDisplay loopName="withdrawnloop" groupBeanCollection="${relatedTranscriptDisplay.withdrawnList}" groupByBean="marker.transcriptType.display">
-			       <span title="${withdrawnTranscript.marker.transcriptType.definition}">${withdrawnTranscript.marker.transcriptType.display}</span>
-                             </zfin:groupByDisplay>
-                            </td>
-                            <td width="22%">
-                               <zfin:link entity="${withdrawnTranscript.marker}"/><zfin:attribution entity="${withdrawnTranscript}"/>
-                            </td>
-                            <td class="length" width="15%">
-                                   ${withdrawnTranscript.marker.length}
-                            </td>
-                            <td class="analysis" width="25%">
-                                <c:if test="${empty withdrawnTranscript}">
-                                    no sequence available
-                                </c:if>
-                                <c:if test="${empty withdrawnTranscript.displayedSequenceDBLinks}">
-                                    withdrawnTranscript.displayedSequenceDBLinks is empty
-                                </c:if>
+                            <tr id ="withdrawnTranscripts-${withdrawnloop.index}" style="display: none;" class=${withdrawnloop.index%2==0 ? "even" : "odd"}>
+                                <td width="18%">
+                                    <zfin:groupByDisplay loopName="withdrawnloop" groupBeanCollection="${relatedTranscriptDisplay.withdrawnList}" groupByBean="marker.transcriptType.display">
+                                        <span title="${withdrawnTranscript.marker.transcriptType.definition}">${withdrawnTranscript.marker.transcriptType.display}</span>
+                                    </zfin:groupByDisplay>
+                                </td>
+                                <td width="22%">
+                                    <zfin:link entity="${withdrawnTranscript.marker}"/><zfin:attribution entity="${withdrawnTranscript}"/>
+                                </td>
+                                <td class="length" width="15%">
+                                        ${withdrawnTranscript.marker.length}
+                                </td>
+                                <td class="analysis" width="25%">
+                                    <c:if test="${empty withdrawnTranscript}">
+                                        no sequence available
+                                    </c:if>
+                                    <c:if test="${empty withdrawnTranscript.displayedSequenceDBLinks}">
+                                        withdrawnTranscript.displayedSequenceDBLinks is empty
+                                    </c:if>
 
                                     <c:choose>
                                         <c:when test="${fn:length(withdrawnTranscript.displayedSequenceDBLinks) eq 1}">
@@ -177,14 +181,23 @@
                                             (${fn:length(withdrawnTranscript.displayedSequenceDBLinks)} sequences)
                                         </c:when>
                                     </c:choose>
-                            </td>
+                                </td>
 
-                            <td width="20%">&nbsp;</td>
-                        </tr>
-                </c:forEach>
-       </c:if>
+                                <td width="20%">&nbsp;</td>
+                            </tr>
+                        </c:forEach>
+                    </authz:authorize>
+                </c:if>
 
             </table>
+            <c:if test="${!empty locations}">
+            <div>
+                <strong>Browsers:</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <c:forEach var="location" items="${locations}" varStatus="loop">
+                    <a href="${location.url}">${location.name}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </c:forEach>
+            </div>
+            </c:if>
         </c:when>
         <c:otherwise>
             <b>${title}</b> <zfin2:noDataAvailable/>

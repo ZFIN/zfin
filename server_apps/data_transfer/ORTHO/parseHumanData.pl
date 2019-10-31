@@ -1,7 +1,11 @@
 #!/opt/zfin/bin/perl
 
 #set environment variables
+use DBI;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
+sub parseHuman(){
 system("rm -f updateHumanOrthologyLog1");
 system("rm -f updateHumanOrthologyLog2");
 system("rm -f Homo_sapiens.gene_info.gz");
@@ -18,6 +22,8 @@ $ctHumanLines = $ctMissingMIM = 0;
 open (HUMAN, "Homo_sapiens.gene_info") ||  die "Cannot open Homo_sapiens.gene_info : $!\n";
 
 open (PARSEDHUMAN,  ">hum_chr_loc_sym_mim.tab") || die "Can't open: hum_chr_loc_sym_mim.tab $!\n";
+
+open (HUMANSYNONYMS,  ">human_gene_synonyms.txt") || die "Can't open: human_gene_synonyms.txt $!\n";
 
 
 while (<HUMAN>) {
@@ -37,6 +43,7 @@ while (<HUMAN>) {
 
  ## Symbol_from_nomenclature_authority
  $symbol = $fieldsHuman[10]; 
+ $synonyms = $fieldsHuman[4];
  $dbXrefs = $fieldsHuman[5];
  
  ### assumption: MIM numbers are always 6 digits
@@ -47,11 +54,27 @@ while (<HUMAN>) {
      ### print "\n$geneId\t$Chr\t$loc\t$symbol\t$dbXrefs\n";
      $mim = " ";
  }
- 
- ###print "\n$geneId\t$Chr\t$loc\t$symbol\t$mim\n" if $ctHumanLines < 10;
- 
- print PARSEDHUMAN "$geneId\t$Chr\t$loc\t$symbol\t$mim\n";
- 
+
+ $pipe = "|";
+if ($synonyms =~ /\Q$pipe\E/) {
+
+   my @synonyms = split(/\|/, $synonyms);
+   
+   foreach my $syn (@synonyms) { 
+       if ($syn != '-') {
+           print HUMANSYNONYMS "$geneId,$syn\n"; 
+       }
+   }
+}
+ else {
+     if ($syn != '-') {
+         print HUMANSYNONYMS "$geneId,$synonyms\n";
+     }
+ } 
+
+print PARSEDHUMAN "$geneId\t$Chr\t$loc\t$symbol\t$mim\n";
+
+
  undef @fieldsHuman;
  
 }
@@ -60,11 +83,9 @@ close (HUMAN);
 close (PARSEDHUMAN);
 
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> update_human_ortho_loc.sql >updateHumanOrthologyLog1 2> updateHumanOrthologyLog2");
+#system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> update_human_ortho_loc.sql >updateHumanOrthologyLog1 2> updateHumanOrthologyLog2");
 
+return();
 
-print "\nHuman part tested........ctMissingMIM = $ctMissingMIM...........\n";
-
-exit;
-
-
+}
+1;

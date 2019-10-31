@@ -356,6 +356,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         });*/
         return markerRelationships;
     }
+
     public List<Transcript> getTranscriptsForNonCodingGenes() {
 
         List<MarkerRelationship.Type> markerRelationshipList = new ArrayList<MarkerRelationship.Type>();
@@ -2023,6 +2024,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
             if (tuple.length > 12 && tuple[12] != null) {
                 linkDisplay.setTypeOrder(Integer.valueOf(tuple[12].toString()));
             }
+            if (tuple.length > 12 && tuple[13] != null) {
+                linkDisplay.setAccNumDisplay(tuple[13].toString());
+            }
             return linkDisplay;
         }
 
@@ -2041,7 +2045,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
             }
 
-            return new ArrayList<LinkDisplay>(linkMap.values());
+            return new ArrayList<>(linkMap.values());
         }
     }
 
@@ -2050,16 +2054,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (MarkerDBLink) session.get(MarkerDBLink.class, linkId);
     }
 
-public String getABRegID(String zdbID){
-    Session session = HibernateUtil.currentSession();
-    String sql = "select dblink_acc_num as num " +
-            "  from db_link " +
-            " where dblink_linked_recid = :zdbID" +
-            "   and dblink_acc_num like 'AB%' order by dblink_zdb_id desc limit 1";
-    Query query = session.createSQLQuery(sql);
-    query.setParameter("zdbID", zdbID);
-    return (String) query.uniqueResult();
-}
+    public String getABRegID(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        String sql = "select dblink_acc_num as num " +
+                "  from db_link " +
+                " where dblink_linked_recid = :zdbID" +
+                "   and dblink_acc_num like 'AB%' order by dblink_zdb_id desc limit 1";
+        Query query = session.createSQLQuery(sql);
+        query.setParameter("zdbID", zdbID);
+        return (String) query.uniqueResult();
+    }
 
     public String getAALink(Feature feature) {
         Session session = HibernateUtil.currentSession();
@@ -2089,7 +2093,7 @@ public String getABRegID(String zdbID){
 
     public List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) {
         String sql = "select fdbdt.fdbdt_data_type,dbl.dblink_length,dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
-                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order, dbl.dblink_acc_num_display " +
                 "from db_link dbl  " +
                 "join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id " +
                 "join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id " +
@@ -2623,7 +2627,7 @@ public String getABRegID(String zdbID){
      * @param sequenceTargetingReagent (TALEN or CRISPR)
      * @return list of Feature
      */
-    public List<Feature> getFeaturesBySTR(SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<Feature> getFeaturesBySTR(Marker sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct feat from Feature feat, FeatureMarkerRelationship fmRel " +
@@ -2661,33 +2665,6 @@ public String getABRegID(String zdbID){
                 ;
     }
 
-    @Override
-    public List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString) {
-
-        List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
-        String hql = " select targetGene from Marker targetGene " +
-                "where " +
-                "lower(targetGene.abbreviation) like :lookupString " +
-                "and targetGene.markerType in (:markerType)  " +
-                "order by targetGene.abbreviation  ";
-
-        return HibernateUtil.currentSession().createQuery(hql)
-                .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
-                .setParameterList("markerType", markerTypes)
-                .setResultTransformer(new BasicTransformerAdapter() {
-                    @Override
-                    public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
-                        Marker targetGene = (Marker) tuple[0];
-                        TargetGeneLookupEntry targetGeneSuggestionList = new TargetGeneLookupEntry();
-                        targetGeneSuggestionList.setId(targetGene.getZdbID());
-                        targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
-                        targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
-                        return targetGeneSuggestionList;
-                    }
-                })
-                .list()
-                ;
-    }
 
     public List<String> getMarkerTypesforRelationship(String relType) {
         Session session = currentSession();
@@ -2771,18 +2748,20 @@ public String getABRegID(String zdbID){
     }
 
 
-    public List<Marker> getMarkersContainedIn(Marker marker, MarkerRelationship.Type... types) {
+    public List<Marker> getRelatedMarkersForTypes(Marker marker, MarkerRelationship.Type... types) {
         Query query = HibernateUtil.currentSession().createQuery(
                 "select m from  Marker as m, MarkerRelationship as rel " +
                         "where rel.firstMarker = :marker  and rel.secondMarker = m and " +
-                        "rel.type in :relationshipTypes");
+                        "rel.type in :relationshipTypes " +
+                        "order by rel.markerRelationshipType, m.markerType, m.abbreviationOrder");
         query.setParameter("marker", marker);
         query.setParameterList("relationshipTypes", types);
         List<Marker> list = (List<Marker>) query.list();
         query = HibernateUtil.currentSession().createQuery(
                 "select m from  Marker as m, MarkerRelationship as rel " +
                         "where rel.secondMarker = :marker  and rel.firstMarker = m and " +
-                        "rel.type in :relationshipTypes");
+                        "rel.type in :relationshipTypes " +
+                        "order by rel.markerRelationshipType, m.markerType, m.abbreviationOrder");
         query.setParameter("marker", marker);
         query.setParameterList("relationshipTypes", types);
         list.addAll((List<Marker>) query.list());
@@ -2894,25 +2873,26 @@ public String getABRegID(String zdbID){
     }
 
     @Override
-    public List<TargetGeneLookupEntry> getGenesForMerge(String lookupString) {
-        String hql = " select gene from Marker gene " +
+    public List<TargetGeneLookupEntry> getGeneSuggestionList(String lookupString) {
+        List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
+        String hql = " select targetGene from Marker targetGene " +
                 "where " +
-                "lower(gene.abbreviation) like :lookupString " +
-                "and gene.markerType.name in (:type1 , :type2) " +
+                "lower(targetGene.abbreviation) like :lookupString " +
+                "and targetGene.markerType in (:markerType)  " +
                 "order by targetGene.abbreviation  ";
+
         return HibernateUtil.currentSession().createQuery(hql)
                 .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
-                .setString("type1", "GENE")
-                .setString("type2", "GENEP")
+                .setParameterList("markerType", markerTypes)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
-                        Marker geneMergedInto = (Marker) tuple[0];
-                        TargetGeneLookupEntry geneSuggestionList = new TargetGeneLookupEntry();
-                        geneSuggestionList.setId(geneMergedInto.getZdbID());
-                        geneSuggestionList.setLabel(geneMergedInto.getAbbreviation());
-                        geneSuggestionList.setValue(geneMergedInto.getAbbreviation());
-                        return geneSuggestionList;
+                        Marker targetGene = (Marker) tuple[0];
+                        TargetGeneLookupEntry targetGeneSuggestionList = new TargetGeneLookupEntry();
+                        targetGeneSuggestionList.setId(targetGene.getZdbID());
+                        targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
+                        targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
+                        return targetGeneSuggestionList;
                     }
                 })
                 .list()
@@ -3230,7 +3210,7 @@ public String getABRegID(String zdbID){
         if (number < 1)
             hql += "left join fetch marker.dbLinks ";
         hql += "where marker.markerType.name in (:names) " +
-        "   and mrkr_abbrev not like :withdrawn " ;
+                "   and mrkr_abbrev not like :withdrawn ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("names", type.getTypeStrings());
         query.setString("withdrawn", Marker.WITHDRAWN + "%");
@@ -3359,6 +3339,17 @@ public String getABRegID(String zdbID){
                 })
                 .list()
                 ;
+    }
+
+    @Override
+    public Set<Antibody> getAntibodies(Set<String> antibodyIds) {
+
+        String hql = " select ab from Antibody ab " +
+                "where ab.zdbID in (:IDs) " +
+                "order by ab.abbreviation  ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("IDs", antibodyIds);
+        return new HashSet<>((List<Antibody>) query.list());
     }
 
 }

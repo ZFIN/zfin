@@ -275,6 +275,8 @@
 
         <joined-subclass name="org.zfin.marker.Transcript" table="transcript">
             <key column="tscript_mrkr_zdb_id"/>
+            <property name="ensdartId" column="tscript_ensdart_id"/>
+            <property name="loadId" column="tscript_load_id"/>
             <many-to-one name="transcriptType" column="tscript_type_id" class="TranscriptType" not-null="true"/>
             <many-to-one name="status" column="tscript_status_id" class="TranscriptStatus" not-null="false"/>
 

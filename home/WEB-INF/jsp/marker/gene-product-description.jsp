@@ -3,11 +3,15 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<div class="popup-header">
+    GENE PRODUCT DESCRIPTION
+</div>
+
 <c:forEach var="geneProductBean" items="${formBean}">
 
     <table border=0 width=100% bgcolor=#EEEEEE>
         <tr>
-            <td>UniProt ID: ${geneProductBean.accession}</td>
+            <td>UniProt ID: <a href="https://www.uniprot.org/uniprot/${geneProductBean.accession}">${geneProductBean.accession}</a></td>
         </tr>
         <tr>
             <td><KBD>${geneProductBean.comment}</KBD></td>
@@ -15,7 +19,6 @@
     </table>
 </c:forEach>
 
-<%--<c:if test="${fn:length(formBean)>0}">--%>
 <table>
     <tr>
         <td>
@@ -23,6 +26,5 @@
         </td>
     </tr>
 </table>
-<%--</c:if>--%>
 
 

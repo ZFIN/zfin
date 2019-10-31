@@ -2,8 +2,8 @@
 --changeset sierra:eco_go_mapping.sql
 
 create table eco_go_mapping (egm_pk_id serial8 not null primary key,
-             egm_term_zdb_id text,
-             egm_go_evidence_code text);
+             egm_term_zdb_id text not null,
+             egm_go_evidence_code text not null);
 
 create unique index egm_alternate_key_index
   on eco_go_mapping (egm_term_zdb_id, egm_go_evidence_code);

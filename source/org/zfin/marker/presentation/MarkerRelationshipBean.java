@@ -4,6 +4,7 @@ import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.sequence.DBLink;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +16,17 @@ public class MarkerRelationshipBean {
     private MarkerDTO first;
     private MarkerDTO second;
     private Collection<MarkerReferenceBean> references;
+    private Collection<DBLink> dbLinks;
+
+
+    public Collection<DBLink> getDbLinks() {
+        return dbLinks;
+    }
+
+    public void setDbLinks(Collection<DBLink> dbLinks) {
+        this.dbLinks = dbLinks;
+    }
+
 
     public String getZdbID() {
         return zdbID;

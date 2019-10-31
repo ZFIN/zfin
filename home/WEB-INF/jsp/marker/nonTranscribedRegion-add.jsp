@@ -90,8 +90,11 @@
 
     $(document).ready(function () {
         $('#type').change(function () {
+
             var value = $('#type option:selected').val();
+            window.alert(value);
             oboID = value.split('|')[0];
+            window.alert(oboID);
             jQuery("#term-info").load('/action/ontology/term-detail-popup?termID=' + oboID)
         });
     });

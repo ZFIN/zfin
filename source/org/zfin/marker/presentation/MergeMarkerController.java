@@ -50,22 +50,6 @@ public class MergeMarkerController {
     private MergeMarkerValidator validator = new MergeMarkerValidator();
     private Logger logger = LogManager.getLogger(MergeMarkerController.class);
 
-    protected void onBind(HttpServletRequest request, Object command, BindException errors) throws Exception {
-        MergeBean mergeBean = (MergeBean) command;
-        Marker markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(mergeBean.getZdbIDToDelete());
-        mergeBean.setMarkerToDelete(markerToDelete);
-
-        Marker markerToMergeInto = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(mergeBean.getMarkerToMergeIntoViewString());
-        mergeBean.setMarkerToMergeInto(markerToMergeInto);
-
-        if (markerToMergeInto == null) {
-            Antibody antibodyToMergeInto = RepositoryFactory.getAntibodyRepository().getAntibodyByName(mergeBean.getMarkerToMergeIntoViewString());
-            if (antibodyToMergeInto == null) {
-                errors.rejectValue(null, "nocode", new String[]{mergeBean.getMarkerToMergeIntoViewString()}, "Bad antibody name [{0}]");
-            }
-        }
-    }
-
     @RequestMapping(value = "/merge", method = RequestMethod.GET)
     protected String getView(
             Model model
@@ -77,15 +61,10 @@ public class MergeMarkerController {
 
         Marker markerToDelete;
 
-        //      if (type.startsWith("ATB") || type.startsWith("GEN") || type.startsWith("MRP") || type.startsWith("TAL") || type.startsWith("CRI")
-        //              || type.startsWith("LIN") || type.startsWith("NCR"))  {
-
         markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean.getZdbIDToDelete());
 
         formBean.setMarkerToDelete(markerToDelete);
-        //        model.addAttribute("markerToDeleteId", markerToDelete.getZdbID());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
-        //      }
 
         if (type.startsWith("ATB")) {
             return "marker/merge-antibody.page";
@@ -98,8 +77,6 @@ public class MergeMarkerController {
     protected String mergeMarkers(
             Model model
             , @ModelAttribute("formBean") MergeBean formBean
-//            ,@RequestParam("getZdbIDToDelete") String zdbIDToDelete
-//            ,@RequestParam("markerToMergeIntoViewString") String markerToMergeIntoViewString
             , BindingResult result
     ) throws Exception {
         Marker markerTobeMerged = formBean.getMarkerToDelete();
@@ -139,9 +116,6 @@ public class MergeMarkerController {
                 result.reject("no lookup", "Error merging marker [" + markerToDelete + "] into [" + markerToMergeInto + "]:\n" + e);
                 return getView(model, formBean.getZdbIDToDelete(), formBean, result);
             }
-//        finally {
-//            HibernateUtil.rollbackTransaction();
-//        }
 
             model.addAttribute(LookupStrings.FORM_BEAN, formBean);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
@@ -155,7 +129,7 @@ public class MergeMarkerController {
     public
     @ResponseBody
     List<TargetGeneLookupEntry> lookupGeneToMergeInto(@RequestParam("term") String lookupString, @RequestParam("exclude") String zdbId) {
-        List<TargetGeneLookupEntry> genesFound = RepositoryFactory.getMarkerRepository().getTargetGenesWithNoTranscriptForString(lookupString);
+        List<TargetGeneLookupEntry> genesFound = RepositoryFactory.getMarkerRepository().getGeneSuggestionList(lookupString);
         List<TargetGeneLookupEntry> processedFoundGeneList = new ArrayList<>();
         for (TargetGeneLookupEntry gene : genesFound) {
             if (!gene.getId().equals(zdbId)) {

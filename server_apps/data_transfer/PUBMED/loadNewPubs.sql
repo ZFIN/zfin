@@ -138,7 +138,7 @@ create temp table tmp_ids as
 select get_id('JRNL') as id, journaltitle, iso, issn
 from tmp_new_journals;
 
-insert into zdb_active_source
+insert into zdb_active_source (zactvs_zdb_id)
   select id from tmp_ids;
 
 \copy (select distinct get_id('JRNL'), journaltitle, iso, issn from tmp_new_pubs where journal_zdb_id is null) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newJournals.txt' delimiter '|';
@@ -171,7 +171,7 @@ where status = 'aheadofprint';
 
 update tmp_new_pubs
  set pubtype = 'Review'
- where pubtype = 'review'
+ where pubtype = 'review';
 
 insert into zdb_active_source
   select zdb_id from tmp_new_pubs;

@@ -203,7 +203,7 @@ public class SequenceTargetingReagentAddController {
     public
     @ResponseBody
     List<TargetGeneLookupEntry> lookupTargetGenes(@RequestParam("term") String lookupString) {
-        return mr.getTargetGenesWithNoTranscriptForString(lookupString);
+        return mr.getGeneSuggestionList(lookupString);
     }
 
     @RequestMapping(value = "/find-relationshipTargets", method = RequestMethod.GET)
