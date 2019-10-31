@@ -110,10 +110,10 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         GWT.log("Hello");
     }
 
-    public void onLabDesigChange() {
+    public void onLabDesigChange(String labPrefix) {
        
 
-        if (view.labDesignationBox.getSelected().equals(ZF_PREFIX)) {
+        if (labPrefix.equals(ZF_PREFIX)) {
             FeatureRPCService.App.getInstance().getNextZFLineNum(
                     new FeatureEditCallBack<String>("Failed to return line number for feature  ", this) {
                         @Override
@@ -125,10 +125,15 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                     }
 
             );
-        } /*else{
-
-            view.lineNumberBox.setText("");
-        }*/
+        }
+        else{
+            if (dto.getLineNumber()==null) {
+                view.lineNumberBox.setText("");
+            }
+            else{
+                view.lineNumberBox.setText(dto.getLineNumber());
+            }
+        }
     }
 
 
@@ -173,7 +178,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                         handleDirty();
                         clearError();
                         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_FEATURE_PREFIX_LIST_STOP);
-                        onLabDesigChange();
+
                     }
 
                     @Override

@@ -141,6 +141,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
 
         Feature existingFeature = featureRepository.getFeatureByAbbreviation(featureDTO.getAbbreviation());
+        System.out.println(featureDTO.getAbbreviation());
+        System.out.println(existingFeature.getZdbID());
         if (existingFeature == null) {
             feature.setAbbreviation(featureDTO.getAbbreviation());
         }
@@ -341,12 +343,17 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         }
         try {
-            featureRepository.update(feature, addTranscriptAttribution, featureDTO.getPublicationZdbID());
+
+                featureRepository.update(feature, addTranscriptAttribution, featureDTO.getPublicationZdbID());
+
         } catch (ConstraintViolationException e) {
-            String message = "FEATURE_TRACKING table violation: feature with name " + feature.getName() + " already exists in tracking table";
-            DuplicateEntryException duplicateEntryException = new DuplicateEntryException(message);
-            e.printStackTrace();
-            throw duplicateEntryException;
+
+                String message = "FEATURE_TRACKING table violation: feature with name " + feature.getName() + " already exists in tracking table";
+                DuplicateEntryException duplicateEntryException = new DuplicateEntryException(message);
+                e.printStackTrace();
+                throw duplicateEntryException;
+
+
         }
         if (!StringUtils.equals(oldFtrName, newFtrName)) {
 

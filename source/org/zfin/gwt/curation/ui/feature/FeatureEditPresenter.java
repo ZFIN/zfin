@@ -26,8 +26,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         if (publicationID == null)
             throw new RuntimeException("NO pub ID found");
         this.view = view;
-        this.
-                dto = new FeatureDTO();
+        this.dto = new FeatureDTO();
         dto.setPublicationZdbID(publicationID);
         featureNotesPresenter = new FeatureNotesPresenter(publicationID, view.featureNotesView);
         view.featureNotesView.setPresenter(featureNotesPresenter);
@@ -226,7 +225,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         featureNotesPresenter.rebuildGUI();
         view.featureNameBox.setText(FeatureValidationService.getNameFromFullName(dto));
         view.labOfOriginBox.setIndexForValue(dto.getLabOfOrigin());
-        String selectedLab = view.labOfOriginBox.getSelectedText();
+        String selectedLab =  view.labOfOriginBox.getSelectedText();
         if (selectedLab != null)
             onLabOfOriginChange(selectedLab, dto.getLabPrefix());
         view.knownInsertionCheckBox.setValue(dto.getKnownInsertionSite());

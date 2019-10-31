@@ -236,6 +236,7 @@ public class FeatureValidationService {
             case POINT_MUTATION:
             case DELETION:
             case SEQUENCE_VARIANT:
+            case MNV:
             case INSERTION:
                 // just uses the defaults
                 return fullName;
@@ -265,6 +266,7 @@ public class FeatureValidationService {
             case DELETION:
             case SEQUENCE_VARIANT:
             case INDEL:
+            case MNV:
             case INSERTION:
                 // just uses the defaults
                 return null;

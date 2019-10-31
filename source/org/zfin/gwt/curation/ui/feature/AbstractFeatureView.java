@@ -129,7 +129,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     void onChangeLabOfDesignation(@SuppressWarnings("unused") ChangeEvent event) {
         final String labDesigSelected=labDesignationBox.getSelectedText();
 
-            presenter.onLabDesigChange();
+            presenter.onLabDesigChange(labDesigSelected);
 
 
         handleChanges();

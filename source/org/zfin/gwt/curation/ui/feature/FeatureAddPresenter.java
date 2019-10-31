@@ -63,7 +63,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
     public void addHandlesErrorListener(HandlesError handlesError) {
 
     }
-    public void onLabDesigChange() {
+   public void onLabDesigChange() {
 
 
         if (view.labDesignationBox.getSelected().equals(ZF_PREFIX)) {
@@ -166,7 +166,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
         final FeatureDTO featureDTO = createDTOFromGUI();
 
         String errorMessage = FeatureValidationService.isValidToSave(featureDTO);
-        System.out.println(errorMessage);
+
         if (errorMessage != null) {
             setError(errorMessage);
             return;
