@@ -284,6 +284,13 @@ public class HibernateProfileRepository implements ProfileRepository {
         }
     }
 
+    public Person getPersonByEmail(String email) {
+        return (Person) HibernateUtil.currentSession()
+                .createCriteria(Person.class)
+                .add(Restrictions.eq("email", email)).uniqueResult();
+    }
+
+
     /**
      * Retrieve a person record by login name.
      *

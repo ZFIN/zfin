@@ -38,7 +38,8 @@
 
     <div class="panel panel-default">
         <div class="panel-body">
-            Need an account? Forgot your password? Contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>.
+            <div><a href="/action/profile/forgot-password">Forgot password?</a></div>
+            <div>Need an account? Contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>.</div>
         </div>
     </div>
 </div>

@@ -32,6 +32,9 @@ public class AccountInfo implements Serializable {
     private boolean curator;
     private boolean student;
 
+    private String passwordResetKey;
+    private Date passwordResetDate;
+
     public String getLogin() {
         return login;
     }
@@ -138,6 +141,22 @@ public class AccountInfo implements Serializable {
 
     public void setStudent(boolean student) {
         this.student = student;
+    }
+
+    public String getPasswordResetKey() {
+        return passwordResetKey;
+    }
+
+    public void setPasswordResetKey(String passwordResetKey) {
+        this.passwordResetKey = passwordResetKey;
+    }
+
+    public Date getPasswordResetDate() {
+        return passwordResetDate;
+    }
+
+    public void setPasswordResetDate(Date passwordResetDate) {
+        this.passwordResetDate = passwordResetDate;
     }
 
     @Override
