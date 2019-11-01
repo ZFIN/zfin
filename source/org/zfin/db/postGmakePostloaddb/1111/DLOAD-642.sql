@@ -18,7 +18,7 @@ set tscript_status_id=1
 from tmp_ottens
 where tscript_ensdart_id is null
 and trim(tscriptid)=trim(tscript_mrkr_zdb_id) and comments is not null and ensdartid is null;
-
+drop table if exists pre_db_link;
 create table pre_db_link (
 
         predblink_data_zdb_id varchar(50) not null,
