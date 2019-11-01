@@ -9,15 +9,15 @@ create temporary table tmp_go_annot (mev_zdb_id text,anno_group_id bigint,annoex
 
 
 insert into tmp_go_annot (mev_zdb_id,anno_group_id,annoextn)
-select distinct mrkrgoev_zdb_id, 
-                mgtaeg_annotation_extension_group_id, 
+select distinct mrkrgoev_zdb_id,
+                mgtaeg_annotation_extension_group_id,
                 term_name||'('||mgtae_term_text||')'
-  from marker_go_term_evidence, 
-       marker_go_term_annotation_extension_group, 
+  from marker_go_term_evidence,
+       marker_go_term_annotation_extension_group,
        marker_go_term_annotation_extension,
        term
-  where mrkrgoev_zdb_id= mgtaeg_mrkrgoev_zdb_id 
-      and mgtae_relationship_term_zdb_id=term_zdb_id 
+  where mrkrgoev_zdb_id= mgtaeg_mrkrgoev_zdb_id
+      and mgtae_relationship_term_zdb_id=term_zdb_id
       and mgtae_extension_group_id=mgtaeg_annotation_extension_group_id ;
 
 create temporary table tmp_go_identifiers (goid text, goid2 bigint,goid3 text);
@@ -32,19 +32,18 @@ create temporary table tmp_go_identifiers_pipes (goidtmp text, goid3tmp text);
 insert into tmp_go_identifiers_pipes (goidtmp)
  select distinct goid from tmp_go_identifiers;
 
-update tmp_go_identifiers_pipes
+--update tmp_go_identifiers_pipes
+--set goid3tmp=(select distinct goid3 from tmp_go_identifiers where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp and goid3 like '%GO%');
 
-  set goid3tmp=(select STRING_AGG(distinct goid3,'|') 
-                  from tmp_go_identifiers 
+
+update tmp_go_identifiers_pipes
+  set goid3tmp=(select STRING_AGG(distinct goid3,'|')
+                  from tmp_go_identifiers
                   where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp);
-set goid3tmp=(select STRING_AGG(goid3,'|') from tmp_go_identifiers where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp and godid3 not like '%GO%');
-update tmp_go_identifiers_pipes
 
 
+select * from tmp_go_identifiers_pipes where goid3tmp like '%occurs_in(GO:0043005)%';
 
-set goid3tmp=(select STRING_AGG(goid3,'|') from tmp_go_identifiers where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp and godid3 not like '%GO%');
-update tmp_go_identifiers_pipes
-set goid3tmp=(select goid3 from tmp_go_identifiers where tmp_go_identifiers.goid = tmp_go_identifiers_pipes.goidtmp and godid3 like '%GO%');
 
 
 create temporary table tmp_go_proteinid (mgev_zdb_id text,proteinid text);
@@ -95,13 +94,14 @@ select mrkrgoev_zdb_id,
 				upper(substring(term_ontology from 1 for 1)), mrkrgoev_date_modified, 
                                 mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid,pub_doi,pub_goref_id
 			   from marker_go_term_evidence
+
 			   join marker on mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
 			   join term on mrkrgoev_term_zdb_id = term_zdb_id
 			   join publication on mrkrgoev_source_zdb_id  = zdb_id
 			   join so_zfin_mapping on mrkr_type = szm_object_type
 		           full outer join inference_group_member on mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
 		           full outer join tmp_go_identifiers_pipes on  mrkrgoev_zdb_id=goidtmp
-			         full outer join tmp_go_proteinid on mrkrgoev_zdb_id=mgev_zdb_id ;
+			         full outer join tmp_go_proteinid on mrkrgoev_zdb_id=mgev_zdb_id   ;
 
 select distinct gene_type from tmp_go where gene_type is not null;
 
