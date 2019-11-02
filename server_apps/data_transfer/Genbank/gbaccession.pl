@@ -7,6 +7,7 @@
 # /research/zblastfiles/files/daily for weekly BLAST db updates.
 #
 use strict;
+use Try::Tiny;
 
 my ($mailprog, $md_date, $prefix, $unzipfile, $newfile, $dir_on_development_machine, $accfile, $report);
 
@@ -96,7 +97,13 @@ if ($move_blast_files_to_development eq "true") {
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
     
     # load the updates into accesson_bank and db_link
-    system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < GenBank-Accession-Update_d.sql >> $report 2>&1");
+    try {
+      system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < GenBank-Accession-Update_d.sql >> $report 2>&1");
+    } catch {
+      warn "Failed at GenBank-Accession-Update_d.sql - $_";
+      exit -1;
+    };
+
 } else {
     &writeReport("Failed to rename the daily accession file.");
 }
@@ -138,3 +145,5 @@ sub sendReport() {
     close (REPORT);
     close (MAIL);
   }
+
+

@@ -42,7 +42,7 @@
 #       zfin id of gene, gene symbol, zfin id of MO, MO symbol, public note
 
 use DBI;
-
+use Try::Tiny;
 
 # define GLOBALS
 
@@ -64,10 +64,26 @@ else {
 
 }
 
-system("psql -d <!--|DB_NAME|--> -a -f DownloadFiles.sql") and die "there was an error in the DownloadFiles.sql";
-system("./patoNumbers.pl") and die "there was an error in patoNumbers.pl";
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f DownloadFiles.sql");
+} catch {
+  warn "Failed at DownloadFiles.sql - $_";
+  exit -1;
+};
 
-system("./generateStagedAnatomy.pl") and die "there was an error in generateStagedAnatomy.pl";
+try {
+  system("./patoNumbers.pl");
+} catch {
+  warn "Failed at patoNumbers.pl - $_";
+  exit -1;
+};
+
+try {
+  system("./generateStagedAnatomy.pl");
+} catch {
+  warn "Failed at generateStagedAnatomy.pl - $_";
+  exit -1;
+};
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
@@ -183,7 +199,12 @@ while ($cur->fetch()) {
 close MOWITHPUBS;
 
 ## generate a feature data file for CZRC
-system("./CZRCfeature.pl") and die "there was an error in CZRCfeature.pl";
+try {
+  system("./CZRCfeature.pl")
+} catch {
+  warn "Failed at CZRCfeature.pl - $_";
+  exit -1;
+};
 
 ## generate a file with antibodies and associated expression experiment
 ## ZFIN-5654
@@ -438,7 +459,7 @@ close AB;
 $cur->finish();
 
 $dbh->disconnect
-    or warn "Disconnection failed: $DBI::errstr\n";
+    or warn "Disconnection failed: $DBI::errstr \n";
 
 
 # FB case 8886, remove HTML tags from the download file of Sanger Alleles
@@ -522,3 +543,4 @@ system("cp <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 system("<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dumper.sh") and die "error running dumper.sh";
 
 system("/opt/zfin/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
+

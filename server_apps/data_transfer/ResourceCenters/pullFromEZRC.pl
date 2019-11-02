@@ -17,6 +17,8 @@
 
 use DBI;
 use MIME::Lite;
+use Try::Tiny;
+
 #----------------------------------------------------------------------
 # Write a line to the report 
 #
@@ -158,8 +160,12 @@ my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $pass
 #  o parse and prepare the downloaded data into a format that can be used.
 #  o Update the database, reporting as it goes
 
-&geno_main($dbh, $ezrcZdbId,"EZRC");           # Genotype availability EZRC
-# &atb_main($dbh, $zircZdbId);	        # Antibody availability
+try {
+  &geno_main($dbh, $ezrcZdbId, "EZRC");           # Genotype availability EZRC
+} catch {
+  warn "Failed at &geno_main($dbh, $ezrcZdbId, \"EZRC\") - $_";
+  exit -1;
+};
 
 $dbh->commit();
 $dbh->disconnect();
@@ -171,7 +177,14 @@ $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $passwor
 $dbh->commit();
 $dbh->disconnect();
 
-system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks.sh");
-#&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
+try {
+  system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks.sh");
+  #&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
+} catch {
+  warn "Failed to execute syncFishOrderThisLinks.sh - $_";
+  exit -1;
+};
 
 exit 0;
+
+

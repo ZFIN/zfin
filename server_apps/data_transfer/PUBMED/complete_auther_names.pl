@@ -5,6 +5,7 @@
 use DBI;
 use XML::Twig;
 use utf8;
+use Try::Tiny;
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
@@ -51,7 +52,13 @@ foreach $pmid (sort keys %pmids) {
   $pubZdbId = $pmids{$pmid};
   
   $url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=".$pmid."&retmode=xml";
-  $twig = XML::Twig->nparse($url);
+  try {
+    $twig = XML::Twig->nparse($url);
+  } catch {
+    warn "Failed to parse $url - $_";
+    exit -1;
+  };
+  
   if ($twig) {
     $root = $twig->root;
     $authListElmt = $root->first_descendant('AuthorList');
@@ -83,7 +90,12 @@ $dbh->disconnect();
 
 close $AUTHOR;
 
-system("psql -d <!--|DB_NAME|--> -a -f load_complete_author_names.sql");
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f load_complete_author_names.sql");
+} catch {
+  warn "Failed to execute load_complete_author_names.sql - $_";
+  exit -1;
+};
 
 system("/bin/date");
 

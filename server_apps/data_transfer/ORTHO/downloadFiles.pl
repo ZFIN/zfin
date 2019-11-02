@@ -61,6 +61,7 @@ sub doSystemCommand {
      print LOG "\nFailed to execute system command, $systemCommand\nExit.\n\n";
      
      close LOG;
-     exit;
+     exit -1;
   }
 }
+

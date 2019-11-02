@@ -5,6 +5,7 @@
 # prepare the list to update related sequence_feature_chromosome_location_generated records 
 
 use DBI;
+use Try::Tiny;
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
@@ -148,7 +149,12 @@ foreach $zdbID (keys %zdbIDsMissingCor) {
 
 close ADDLIST;
 
-&doSystemCommand("psql -d <!--|DB_NAME|--> -a -f NCBIStartEnd.sql");
+try {
+  &doSystemCommand("psql -d <!--|DB_NAME|--> -a -f NCBIStartEnd.sql");
+} catch {
+  warn "Failed to execute NCBIStartEnd.sql - $_";
+  exit -1;
+};
 
 exit;
 

@@ -6,6 +6,7 @@
 # Run this script to do ec2go part only.
  
 use MIME::Lite;
+use Try::Tiny;
 
 # ----------------- Send Error Report -------------
 # Parameter
@@ -40,7 +41,13 @@ sub sendErrorReport ($) {
 #------------------- Download -----------
 
 sub downloadGOtermFiles () {
-   system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
+   try {
+      system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
+   } catch {
+      chomp $_;
+      &sendErrorReport("Failed to download http://www.geneontology.org/external2go/ec2go - $_");
+      exit -1;
+   };
  }
 
 #=======================================================
@@ -59,12 +66,24 @@ system("rm -f *2go");
 
 print "\n delete records source from last ec2go loading.\n";
 ###system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete_ec2gopart.sql >out 2>report.txt");
-system("psql -d <!--|DB_NAME|--> -a -f sp_delete_ec2gopart.sql > report.txt");
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f sp_delete_ec2gopart.sql > report.txt");
+} catch {
+  chomp $_;
+  &sendErrorReport("Failed to execute sp_delete_ec2gopart.sql - $_");
+  exit -1;
+};
 
 # ------------ Parse ec2go ---------------
 
 print "\nectogo.pl ec2go\n";
-system ("ectogo.pl ec2go");
+try {
+  system ("ectogo.pl ec2go");
+} catch {
+  chomp $_;
+  &sendErrorReport("Failed at ectogo.pl ec2go - $_");
+  exit -1;
+};
 $count = 0;
 $retry = 1;
 # wait till parsing is finished
@@ -78,24 +97,37 @@ while( !( -e "ec_mrkrgoterm.unl")) {
       $count = 0;
       $retry = 0;
       print "retry ectogo.pl\n";
-      system("ectogo.pl ec2go");
+      try {
+        system("ectogo.pl ec2go");
+      } catch 
+      {
+        chomp $_;
+        &sendErrorReport("Failed at ectogo.pl ec2go - $_");
+        exit -1;
+      };
     }
     else
     {
       &sendErrorReport("Failed to run ectogo.pl"); 
-      exit;     
+      exit -1;     
     }
   }  
 }
 
 # ------------ Loading ---------------------
 print "\nloading...\n";
-##system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_load_ec2gopart.sql >out 2> report2.txt");
-system("psql -d <!--|DB_NAME|--> -a -f sp_load_ec2gopart.sql >out 2> report2.txt");
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f sp_load_ec2gopart.sql >out 2> report2.txt");
+} catch {
+  chomp $_;
+  &sendErrorReport("Failed to execute sp_load_ec2gopart.sql - $_");
+  exit -1;
+};
+
 open F, "out" or die "Cannot open out";
 if (<F>) {
-   &sendErrorReport("Failed to load ec2go part of SWISS_PROT records");
-  exit;
+  &sendErrorReport("Failed to load ec2go part of SWISS_PROT records");
+  exit -1;
 }
 close F;
 
@@ -104,10 +136,14 @@ close F;
 
 #----------- Match the obsolete/secondary go terms in the translation file -----
 print "\n deal with obsolete / secondary go terms \n";
-
-system ("sp_badgo_report_ec2gopart.pl");
+try {
+  system ("sp_badgo_report_ec2gopart.pl");
+} catch {
+  chomp $_;
+  &sendErrorReport("Failed at sp_badgo_report_ec2gopart.pl ec2go - $_");
+  exit -1;
+};
 
 exit;
-
 
 

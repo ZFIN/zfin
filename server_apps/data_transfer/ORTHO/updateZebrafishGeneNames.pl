@@ -9,6 +9,7 @@ use DBI;
 
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
+use Try::Tiny;
 
 ## set environment variables
 
@@ -168,8 +169,12 @@ foreach $newName (keys %newGeneNames) {
 close(UPDATELIST);
 
 if ($ctProblem == 0) {
-    $cmd = "psql -d <!--|DB_NAME|--> -a -f updateZebrafishGeneNames.sql >updateZebrafishGeneNameSQLlog1";
-    system($cmd);
+    try {
+      ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f updateZebrafishGeneNames.sql >updateZebrafishGeneNameSQLlog1");
+    } catch {
+      warn "Failed to execute updateZebrafishGeneNames.sql - $_";
+      exit -1;
+    };
 
     system("/bin/cat updateZebrafishGeneNameSQLlog2 >> updateZebrafishGeneNameSQLlog1");
 

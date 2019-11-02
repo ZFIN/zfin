@@ -30,6 +30,8 @@ use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
 
+use Try::Tiny;
+
 system("/bin/date");
 
 # set environment variables
@@ -96,23 +98,21 @@ $catalogFile = "RefSeq-release" . $releaseNum . ".catalog.gz";
 
 $ftpNCBIrefSeqCatalog = $catlogFolder . $catalogFile;
 
-&doSystemCommand("/local/bin/wget -N $ftpNCBIrefSeqCatalog");
+try {
+  &doSystemCommand("/local/bin/wget -N $ftpNCBIrefSeqCatalog");
+  &doSystemCommand("/local/bin/gunzip -c $catalogFile >RefSeqCatalog");
+  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz");
+  &doSystemCommand("/local/bin/gunzip gene2accession.gz");
+  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene2vega.gz");
+  &doSystemCommand("/local/bin/gunzip gene2vega.gz");
+  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2unigene");
+  &doSystemCommand("/local/bin/wget -O zf_gene_info.gz ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz");
+  &doSystemCommand("/local/bin/gunzip zf_gene_info.gz");
+} catch {
+  chomp $_;
+  &reportErrAndExit("Auto from $dbname: NCBI_gene_load.pl :: $_");
+} ;
 
-&doSystemCommand("/local/bin/gunzip -c $catalogFile >RefSeqCatalog");
-
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz");
-
-&doSystemCommand("/local/bin/gunzip gene2accession.gz");
-
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene2vega.gz");
-
-&doSystemCommand("/local/bin/gunzip gene2vega.gz");
-
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2unigene");
-
-&doSystemCommand("/local/bin/wget -O zf_gene_info.gz ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz");
-
-&doSystemCommand("/local/bin/gunzip zf_gene_info.gz");
 
 
 print LOG "Done with downloading.\n\n";
@@ -149,8 +149,12 @@ $fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
 #--------------------------------------------------------------------------------------------------------------------
 
 ##&doSystemCommand($cmd);
-
-&doSystemCommand("psql -d <!--|DB_NAME|--> -a -f prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2");
+try {
+  &doSystemCommand("psql -d <!--|DB_NAME|--> -a -f prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2");
+} catch {
+  chomp $_;
+  &reportErrAndExit("Auto from $dbname: NCBI_gene_load.pl :: faile at prepareNCBIgeneLoad.sql - $_");
+} ;
 
 print LOG "Done with preparing the delete list and the list for mapping.\n\n";
 
@@ -579,7 +583,7 @@ $sqlGetSupportingGenBankRNAs = "select dblink_acc_num
                                 select dblink_acc_num
                                   from db_link
                                  where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37'
-                                   and dblink_linked_recid not like 'ZDB-GENE%' 
+                                   and dblink_linked_recid not like 'ZDB-GENE%'
                                    and dblink_linked_recid not like '%RNAG%'
                                    and exists(select 1 from marker_relationship
                                                where mrel_mrkr_1_zdb_id = ?
@@ -712,7 +716,7 @@ foreach $acc (keys %supportingAccZFIN) {
 
    $ref_arrayOfGenes = $supportingAccZFIN{$acc};
 
-   if ($#$ref_arrayOfGenes > 0) {  
+   if ($#$ref_arrayOfGenes > 0) {
        @zdbGeneIDs = @$ref_arrayOfGenes;
        $firstZDBID = $zdbGeneIDs[0];
        $ctZdbGeneIds = 0;
@@ -724,7 +728,7 @@ foreach $acc (keys %supportingAccZFIN) {
            $firstZDBID = $zdbGeneID;
          }
        }
-       
+
        if ($numDifferentGenes > 0) { ## if the last index > 0, and not the same zdb gene ID, indicating more than 1 genes supported
            $ctAccZFINSupportingMoreThan1++;
            $accZFINsupportingMoreThan1{$acc} = $ref_arrayOfGenes;
@@ -732,13 +736,13 @@ foreach $acc (keys %supportingAccZFIN) {
            foreach $genesInQuestion (@$ref_arrayOfGenes) {
              $ref_arrayOfAccs = $supportedGeneZFIN{$genesInQuestion};
              $geneZFINwithAccSupportingMoreThan1{$genesInQuestion} = $ref_arrayOfAccs;
-           }       
+           }
        } else { ## the acc only supports 1 gene
            $ctAccZFINSupportingOnly1++;
 
            foreach $geneWithAccSupportingOnly1 (@$ref_arrayOfGenes) { ## only 1 element in the array
              $accZFINsupportingOnly1{$acc} = $geneWithAccSupportingOnly1;
-           }       
+           }
        }
    } else {  ## the acc only supports 1 gene
 
@@ -2176,7 +2180,7 @@ foreach $GenPept (sort keys %GenPeptNCBIgeneIds) {
           $GenPeptsToLoad{$GenPept} = $zdbGeneId;
       } else {
           if (exists($GenPeptAttributedToNonLoadPub{$GenPept}) && exists($GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept})) {
-            $moreToDelete = $GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept}; 
+            $moreToDelete = $GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept};
             print MORETODELETE "$moreToDelete\n";
             $toDelete{$moreToDelete} = 1;
             print TOLOAD "$zdbGeneId|$GenPept||$sequenceLength{$GenPept}|$fdcontGenPept|$pubMappedbasedOnVega\n";
@@ -2412,8 +2416,12 @@ if (!-e "toLoad.unl" || $ctToLoad == 0) {
    &reportErrAndExit($subjectLine);
 }
 
-
-&doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadNCBIgeneAccs.sql >loadLog1 2> loadLog2");
+try {
+  &doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadNCBIgeneAccs.sql >loadLog1 2> loadLog2");
+} catch {
+  chomp $_;
+  &reportErrAndExit("Auto from $dbname: NCBI_gene_load.pl :: failed at loadNCBIgeneAccs.sql");
+} ;
 
 print LOG "\nDone with the deltion and loading!\n\n";
 
@@ -2807,4 +2815,6 @@ sub sendLoadLogs {
   $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog1 file";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","loadLog1");
 }
+
+
 

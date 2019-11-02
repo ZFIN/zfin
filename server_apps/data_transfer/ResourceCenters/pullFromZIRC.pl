@@ -17,6 +17,8 @@
 
 use DBI;
 use MIME::Lite;
+use Try::Tiny;
+
 #----------------------------------------------------------------------
 # Write a line to the report 
 #
@@ -163,12 +165,24 @@ $dbh->disconnect();
 $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
-&geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
+try {
+  &geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
+} catch {
+  warn "Failed at &geno_main($dbh, $zircZdbId, \"CZIRCC\") - $_";
+  exit -1;
+};
 
 $dbh->commit();
 $dbh->disconnect();
 
-system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinksPG.sh");
-#&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
+try {
+  system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks.sh");
+  #&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
+} catch {
+  warn "Failed to execute syncFishOrderThisLinks.sh - $_";
+  exit -1;
+};
 
 exit 0;
+
+

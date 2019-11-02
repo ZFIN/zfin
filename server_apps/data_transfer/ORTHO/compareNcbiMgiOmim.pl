@@ -2,6 +2,8 @@
 
 # compareNcbiMgiOmim.pl
 
+use Try::Tiny;
+
 system("rm -f logCompareNcbiMgiOmim.rpt");
 system("rm -f Mus_musculus.gene_info");
 system("rm -f MGIgene.gene_info");
@@ -21,15 +23,20 @@ system("rm -f ncbiIDsWithSameMimDiffAtNCBIfromOMIM.rpt");
 
 open LOG, '>', "logCompareNcbiMgiOmim.rpt" or die "can not open logCompareNcbiMgiOmim.rpt: $! \n";
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz");
-&doSystemCommand("/local/bin/gunzip Mus_musculus.gene_info.gz");
-
-&doSystemCommand("/local/bin/wget http://www.informatics.jax.org/downloads/reports/HGNC_homologene.rpt -O MGIgene.gene_info");
-
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
-&doSystemCommand("/local/bin/gunzip Homo_sapiens.gene_info.gz");
-
-&doSystemCommand("/local/bin/wget http://omim.org/static/omim/data/mim2gene.txt -O mim2gene.gene_info");
+try {
+  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz");
+  &doSystemCommand("/local/bin/gunzip Mus_musculus.gene_info.gz");
+  
+  &doSystemCommand("/local/bin/wget http://www.informatics.jax.org/downloads/reports/HGNC_homologene.rpt -O MGIgene.gene_info");
+  
+  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
+  &doSystemCommand("/local/bin/gunzip Homo_sapiens.gene_info.gz");
+  
+  &doSystemCommand("/local/bin/wget http://omim.org/static/omim/data/mim2gene.txt -O mim2gene.gene_info");
+} catch {
+  warn "Failed to download - $_";
+  exit -1;
+};
 
 open (NCBIMOUSEDATA, "Mus_musculus.gene_info") ||  die "Cannot open Mus_musculus.gene_info : $!\n";
 
@@ -321,8 +328,5 @@ sub doSystemCommand {
      &reportErrAndExit($subjectLine);
   }
 }
-
-
-
 
 

@@ -18,6 +18,7 @@
 use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
+use Try::Tiny;
 
 # ----------------- Send Error Report -------------
 # Parameter
@@ -215,11 +216,23 @@ $sql = "select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
 $numMrkrProcessBefore = countData($sql);
 
 #--------------- Delete records from last SWISS-PROT loading-----
-
-system("psql -d <!--|DB_NAME|--> -a -f sp_addbackattr.sql >addBackAttributionReport.txt");
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f sp_addbackattr.sql >addBackAttributionReport.txt");
+} catch {
+  chomp $_;
+  &sendErrorReport("Failed to execute sp_addbackattr.sql - $_");
+  exit -1;
+};
 
 print "\n delete records source from last SWISS-PROT loading.\n";
-system("psql -d <!--|DB_NAME|--> -a -f sp_delete.sql >deletereport.txt");
+
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f sp_delete.sql >deletereport.txt");
+} catch {
+  chomp $_;
+  &sendErrorReport("Failed to execute sp_delete.sql - $_");
+  exit -1;
+};
 
 # good records for loading
 # concatenate okfile ok2file
@@ -342,7 +355,13 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 
 # ------------ Loading ---------------------
 print "\nloading...\n";
-system("psql -d <!--|DB_NAME|--> -a -f sp_load.sql > report.txt");
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f sp_load.sql > report.txt");
+} catch {
+  chomp $_;
+  &sendErrorReport("Failed to execute sp_load.sql - $_");
+  exit -1;
+};
 
 #--------------------------- record counts after loading finishes ----------------------------
 
@@ -585,6 +604,5 @@ print "\n create_file_for_swiss_prot.pl\n";
 system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/create_file_for_swiss_prot.pl");
 
 exit;
-
 
 

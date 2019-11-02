@@ -6,6 +6,7 @@
 use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
+use Try::Tiny;
 
 #set environment variables
 
@@ -133,7 +134,12 @@ print "\nct = $ct\n\n";
 #remove the used input file
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/mergeJournalInput");
 
-system("psql -d $dbname -a -f insertJournalAlias.sql") && die "inserting journal alias failed.";
+try {
+  system("psql -d $dbname -a -f insertJournalAlias.sql");
+} catch {
+  warn "Failed to execute insertJournalAlias.sql - $_";
+  exit -1;
+};
 
 exit;
 

@@ -7,6 +7,7 @@
 #
 
 use DBI;
+use Try::Tiny;
 
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
@@ -79,8 +80,13 @@ open (LOG, ">log1.log") || die "Cannot open log1.log : $!\n";
 
 print LOG "\nDownloading OMIM files ... \n\n";
 
-system("/local/bin/wget http://omim.org/static/omim/data/mim2gene.txt");
-system("/local/bin/wget https://data.omim.org/downloads/TsbrMAQ1T76RqganEcUayA/genemap2.txt");
+try {
+  system("/local/bin/wget http://omim.org/static/omim/data/mim2gene.txt");
+  system("/local/bin/wget https://data.omim.org/downloads/TsbrMAQ1T76RqganEcUayA/genemap2.txt");
+} catch {
+  warn "Downloading from OMIM failed - $_";
+  exit -1;
+} ;
 
 if (!-e "genemap2.txt" || !-e "mim2gene.txt") {
    print "One or more required file(s) not exisiting/downloaded. Exit.\n";
@@ -504,8 +510,19 @@ print LOG "For all $ctFoundMIMwithSymbolOnGenemap records that found with symbol
 
 ##################################################################################################################################################################
 
-ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadOMIM.sql");
-ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f update_omimp_termxref_mapping.sql");
+try {
+  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadOMIM.sql");
+} catch {
+  warn "Failed to execute loadOMIM.sql - $_";
+  exit -1;
+};
+
+try {
+  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f update_omimp_termxref_mapping.sql");
+} catch {
+  warn "Failed to execute update_omimp_termxref_mapping.sql - $_";
+  exit -1;
+};
 
 print LOG "\nAll done!\n\n\n";
 
@@ -561,6 +578,5 @@ system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/alreadyReportedHum
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/alreadyReportedHumanGenes /research/zarchive/load_files/OMIM/");
 
 exit;
-
 
 

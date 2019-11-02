@@ -478,8 +478,49 @@ sub reportErrAndExit {
   $subjectError = $_[0];
   ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subjectError","logOrthologyUpdateName");
   close LOG;
-  exit;
+  exit -1;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

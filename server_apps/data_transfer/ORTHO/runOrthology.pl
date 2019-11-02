@@ -4,6 +4,7 @@ use DBI;
 
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
+use Try::Tiny;
 
 ## set environment variables
 
@@ -19,12 +20,14 @@ require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/parseHumanData.pl")
 &parseHuman;
 
 print "finished parsing and reporting, do updates.\n";
-$cmd = "psql -d <!--|DB_NAME|--> -a -f loadAndUpdateNCBIOrthologs.sql";
-;
+try {
+  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadAndUpdateNCBIOrthologs.sql");
+} catch {
+  warn "Failed to execute loadAndUpdateNCBIOrthologs.sql - $_";
+  exit -1;
+};
 
-&doSystemCommand($cmd);
+exit;
 
-$cmd = "psql -d <!--|DB_NAME|--> -a -f loadHumanSynonyms.sql";
-;
 
-&doSystemCommand($cmd);
+

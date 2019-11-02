@@ -2,6 +2,7 @@
 #-----------------------------------------------------------------------
 # Runs script to create outgoing data file for S-P data exchange.
 
+use Try::Tiny;
 
 # define GLOBALS
 
@@ -15,7 +16,13 @@ if (! -e "<!--|FTP_ROOT|-->/pub/transfer/Swiss-Prot") {
     system("/bin/mkdir -m 755 -p <!--|FTP_ROOT|-->/pub/transfer/Swiss-Prot");
 }
 
-system("psql -d <!--|DB_NAME|--> -a -f create_file_for_swiss_prot.sql");
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f create_file_for_swiss_prot.sql");
+} catch {
+  warn "Error with create_file_for_swiss_prot.sql - $_";
+  exit -1;
+} ;
 
 system("/bin/chmod 644 <!--|FTP_ROOT|-->/pub/transfer/Swiss-Prot/swiss_prot.txt");
+
 

@@ -9,6 +9,7 @@
 use MIME::Lite;
 use DBI;
 
+
 ### set environment variables
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $ENV{"DATABASE"}="<!--|DB_NAME|-->";
@@ -52,10 +53,16 @@ foreach $line (@lines) {
 
 ### download and unzip the xml files
 foreach $d (@downloadList) {
-  $url = "ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/archive/zebrafish_7955/XML/".$d;
-  system("/local/bin/wget -q $url -O $d");
-  system("/local/bin/gunzip $d");
+  try {
+    $url = "ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/archive/zebrafish_7955/XML/".$d;
+    system("/local/bin/wget -q $url -O $d");
+    system("/local/bin/gunzip $d");
+  } catch {
+    warn "Failed to download and unzip $url - $_";
+    exit -1;
+  };
 }
+
 undef @lines; undef @downloadList;
 print "\nDownloaded and unzipped XML files of dbSNP data\n";
 
@@ -63,14 +70,24 @@ print "\nDownloaded and unzipped XML files of dbSNP data\n";
 $ftpDir = "ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/archive/zebrafish_7955/database/organism_data/";
 $d = "SubSNP.bcp.gz";
 $url = $ftpDir.$d;
-system("/local/bin/wget -q $url -O $d");
-system("/local/bin/gunzip $d");
+try {
+   system("/local/bin/wget -q $url -O $d");
+   system("/local/bin/gunzip $d");
+} catch {
+   warn "Failed to download and unzip $url - $_";
+   exit -1;
+};
 print "\n$d downloaded and decompressed\n";
 
 $d = "SubSNPAcc.bcp.gz";
 $url = $ftpDir.$d;
-system("/local/bin/wget -q $url -O $d");
-system("/local/bin/gunzip $d");
+try {
+   system("/local/bin/wget -q $url -O $d");
+   system("/local/bin/gunzip $d");
+} catch {
+   warn "Failed to download and unzip $url - $_";
+   exit -1;
+};
 print "\n$d downloaded and decompressed\n";
 
 $dbname = "<!--|DB_NAME|-->";
@@ -328,7 +345,13 @@ print "\n ctElse: $ctElse\n\n";
 print "\n ctOutSmith: $ctOutSmith \t ctOutJohson: $ctOutJohson\t ctOutTalbot: $ctOutTalbot\n\n";
 
 if ($ctNew > 0) {
-  system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPs.sql > newSNPs.report.txt 2> loadDbSNPlog.txt" ) and &emailError("failed to load snp_download table");
+  try {
+    system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPs.sql > newSNPs.report.txt 2> loadDbSNPlog.txt" );
+  } catch {
+    &emailError("failed to load snp_download table");
+    warn "Failed to execute loadNewSNPs.sql - $_";
+    exit -1;
+  };
   &createReport("has added $ctNew new records into snp_download table");
 }
 
@@ -448,12 +471,24 @@ print "\n ctNew2: $ctNew2 \t   ctRedn2: $ctRedn2 \t ctNew3: $ctNew3 \t   ctRedn3
 print "\n ctJohson = $ctJohson \t ctSmith = $ctSmith \t ctTalbot: $ctTalbot \n\n";
 
 if ($ctNew2 > 0) {
-  system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPAttrs.sql > newSNPattribution.report.txt 2> loadDbSNPlog2.txt" ) and &emailError("failed to load snp_download_attribution table");
+  try {
+    system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPAttrs.sql > newSNPattribution.report.txt 2> loadDbSNPlog2.txt" );
+  } catch {
+    &emailError("failed to load snp_download_attribution table");
+    warn "Failed to execute loadNewSNPAttrs.sql - $_";
+    exit -1;
+  };
   &createReport("has added $ctNew2 new records into snp_download_attribution table");
 }
 
 if ($ctNew3 > 0) {
-  system( "psql -d <!--|DB_NAME|--> -a -f addTalbotSNPAttr.sql > talbotAttribution.report.txt 2> loadDbSNPlog3.txt" ) and &emailError("failed to insert record_attribution table");
+  try {
+    system( "psql -d <!--|DB_NAME|--> -a -f addTalbotSNPAttr.sql > talbotAttribution.report.txt 2> loadDbSNPlog3.txt" );
+  } catch {
+    &emailError("failed to insert record_attribution table");
+    warn "Failed to execute addTalbotSNPAttr.sql - $_";
+    exit -1;
+  };
   &createReport("has added $ctNew3 new records into record_attribution table for Talbot SNPs");
 } 
 

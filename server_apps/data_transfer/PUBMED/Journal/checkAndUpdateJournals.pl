@@ -4,6 +4,7 @@
 # from NCBI, reporting problems, and update the journal data accordingly.
 
 use DBI;
+use Try::Tiny;
 
 #set environment variables
 
@@ -68,8 +69,12 @@ close ALLJOURNALS;
 
 close NCBIJOURNALS;
 
-
-system("psql -d <!--|DB_NAME|--> -a -f  checkAndUpdateJournals.sql") && die "Checking and updating journals failed.";
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f  checkAndUpdateJournals.sql");
+} catch {
+  warn "Failed to execute checkAndUpdateJournals.sql - $_";
+  exit -1;
+};
 
 open (WRONGISSN, "><!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/wrongIssnPrintByMedAbbr.txt") ||  die "Cannot open wrongIssnPrintByMedAbbr.txt : $!\n";
 
@@ -111,5 +116,4 @@ $cur_nlmids->finish();
 $dbh->disconnect();
 
 exit;
-
 

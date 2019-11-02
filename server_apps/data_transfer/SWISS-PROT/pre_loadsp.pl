@@ -1,15 +1,16 @@
-#!/opt/zfin/bin/perl 
-use strict ; 
+#!/opt/zfin/bin/perl
+use strict ;
 
 #
 # pre_loadsp.pl
 #
- 
+
 use MIME::Lite;
 use LWP::Simple;
 use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
+use Try::Tiny;
 
 #------------------- Download -----------
 
@@ -20,19 +21,19 @@ sub downloadGOtermFiles () {
 
    if (!-e "spkw2go" || !-e "interpro2go" || !-e "ec2go") {
       print "One or more of the go translation files not exisiting. Exit.\n";
-      exit;
+      exit -1;
    } else {
-      print "\nDone with downloading the go translation files.\n\n\n";  
+      print "\nDone with downloading the go translation files.\n\n\n";
    }
 
    &select_zebrafish ;
 
    if (!-e "pre_zfin.dat") {
       print "\nSomething is wrong with pre_zfin.dat. Exit.\n\n";
-      exit;
+      exit -1;
    } else {
-      print "\nDone with generating pre_zfin.dat\n\n\n";  
-   }  
+      print "\nDone with generating pre_zfin.dat\n\n\n";
+   }
 
    my $sleepNumDownload1 = 500;
    while($sleepNumDownload1--){
@@ -47,16 +48,16 @@ sub downloadGOtermFiles () {
    }
 
    system("touch *2go");
-   
+
  }
 
 # ----------------- Send Error Report -------------
 # Parameter
-#   $    Error message 
+#   $    Error message
 
 sub sendErrorReport ($) {
     my $subject = "Auto from SWISS-PROT:".$_[0];
-    ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","report.txt");  
+    ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","report.txt");
 }
 
 #------------------ Send Running Result ----------------
@@ -67,14 +68,14 @@ sub sendRunningResult {
   #----- One mail send out the checking report----
   my $subject = "Auto from $dbname: SWISS-PROT check report";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","checkreport.txt");
-  		
+
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: SWISS-PROT problem file";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","allproblems.txt");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: PubMed not in ZFIN";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","pubmed_not_in_zfin");  
+  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","pubmed_not_in_zfin");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: report of processing pre_zfin.org";
@@ -87,24 +88,51 @@ sub sendRunningResult {
 # Extracts only zfin data from vertebrates.
 #
 sub select_zebrafish {
-    system("/local/bin/wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz");
-    system("gunzip uniprot_trembl_vertebrates.dat.gz");
-    
+    try {
+      system("/local/bin/wget -q  https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz");
+    } catch {
+      chomp $_;
+      &sendErrorReport("Failed to download https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz - $_");
+      exit -1;
+    };
+
+    try {
+      system("gunzip uniprot_trembl_vertebrates.dat.gz");
+    } catch {
+      chomp $_;
+      &sendErrorReport("Failed to gunzip uniprot_trembl_vertebrates.dat.gz - $_");
+      exit -1;
+    };
+
     if (!-e "uniprot_trembl_vertebrates.dat") {
         print "Failed to download uniprot_trembl_vertebrates.dat. Exit.\n";
-        exit;
+        exit -1;
     } else {
-        print "\nDownload uniprot_trembl_vertebrates.dat\n\n";    
+        print "\nDownloaded uniprot_trembl_vertebrates.dat\n\n";
     }
-        
-    system("/local/bin/wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz");
-    system("gunzip uniprot_sprot_vertebrates.dat.gz");
+
+    try {
+      system("/local/bin/wget -q https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz");
+    } catch {
+      chomp $_;
+      &sendErrorReport("Failed to download https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz - $_");
+      exit -1;
+    };
+
+    try {
+      system("gunzip uniprot_sprot_vertebrates.dat.gz");
+    } catch {
+      chomp $_;
+      &sendErrorReport("Failed to gunzip  uniprot_sprot_vertebrates.dat.gz - $_");
+      exit -1;
+    };
+
 
     if (!-e "uniprot_sprot_vertebrates.dat") {
         print "Failed to download uniprot_sprot_vertebrates.dat. Exit.\n";
-        exit;
+        exit -1;
     } else {
-        print "\nDownload uniprot_sprot_vertebrates.dat\n\n";    
+        print "\nDownloaded uniprot_sprot_vertebrates.dat\n\n";
     }
 
     $/ = "\/\/\n";
@@ -115,20 +143,20 @@ sub select_zebrafish {
     my @records = <DAT1>;
     my $record;
     foreach $record (@records){
-       print OUTPUT "$record" if $record =~ m/OS   Danio rerio/; 
+       print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
     }
-    close(DAT1) ; 
+    close(DAT1) ;
 
-    open(DAT2, "uniprot_sprot_vertebrates.dat") || die("Could not open uniprot_sprot_vertebrates.dat!"); 
+    open(DAT2, "uniprot_sprot_vertebrates.dat") || die("Could not open uniprot_sprot_vertebrates.dat!");
     @records = <DAT2>;
     foreach $record (@records){
-       print OUTPUT "$record" if $record =~ m/OS   Danio rerio/; 
+       print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
     }
 
     $/ = "\n";
 
-    close(DAT2) ; 
-    close(OUTPUT) ; 
+    close(DAT2) ;
+    close(OUTPUT) ;
 }
 
 #=======================================================
@@ -142,7 +170,7 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
 
 
 #remove old files
- 
+
 system("rm -f ./ccnote/*");
 system("rmdir ./ccnote");
 system("rm -f *.ontology");
@@ -263,12 +291,12 @@ $/ = "//\n";
 open(PREDAT, "pre_zfin.dat") || die("Could not open pre_zfin.dat !");
 my @blocks = <PREDAT>;
 close(PREDAT);
-    
+
 open ZFINDAT, ">zfin.dat" || die ("Cannot open zfin.dat !");
 open ZFINDATDELETED, ">zfinGeneDeleted.dat" || die ("Cannot open zfinGeneDeleted.dat !");
 open ZFINGENES, ">zfinGenes.dat" || die ("Cannot open zfinGenes.dat !");
 open DBG, ">debugfile.dat" || die ("Cannot open debugfile.dat !");
-    
+
 my $totalOnZfinDat = 0;
 my $totalOnDeleted = 0;
 my $ttt = 0;
@@ -289,45 +317,45 @@ foreach $block (@blocks) {
    $ttt++;
    if($block =~ m/OS   Danio rerio/) {
         @lines = split(/\n/, $block);
-        %toNewInput = ();   
-        %deletes = (); 
+        %toNewInput = ();
+        %deletes = ();
         $ct = 0;
         %ZDBgeneIDgeneAbbrevs = ();
         foreach $line (@lines) {
-           if($line !~ m/CC   -------/ && 
+           if($line !~ m/CC   -------/ &&
              $line !~ m/CC   Copyrighted/ &&
              $line !~ m/CC   Distributed/)  {
-                   
+
                ## add 10000 to pad so that the sorting would be right
                $lineKey = 10000 + $ct;
-               $toNewInput{$lineKey} = $line; 
+               $toNewInput{$lineKey} = $line;
                $deletes{$lineKey} = 0;
-                   
+
                if ($line =~ m/DR   ZFIN; ZDB-GENE-/) {
                    @fields = split(/;/, $line);
                    $ZFINgeneId = $fields[1];
-                   $ZFINgeneId =~ s/^\s+//; 
-                   $ZFINgeneId =~ s/\s+$//;                                          
-                     
+                   $ZFINgeneId =~ s/^\s+//;
+                   $ZFINgeneId =~ s/\s+$//;
+
                    $geneAbbrev = $fields[2];
-                   $geneAbbrev =~ s/^\s+//; 
+                   $geneAbbrev =~ s/^\s+//;
                    $geneAbbrev =~ s/\s+$//;
                    $geneAbbrev =~ s/\.$//;
-                          
+
                    if ($ttt < 1000)  {
                              print DBG "ZFINgeneId : $ZFINgeneId \t geneAbbrev : $geneAbbrev  \n";
-                             
+
                              if (exists($ZDBgeneIDgeneAbbrevs{$ZFINgeneId})) {
                                                               print DBG "exists  $ZDBgeneIDgeneAbbrevs{$ZFINgeneId} \n";
                              }
-   
+
                              if (!exists($ZDBgeneIDgeneAbbrevs{$ZFINgeneId})) {
                                                                  print DBG "Not exists  ZDBgeneIDgeneAbbrevs{ZFINgeneId} \n";
                              }
-   
-   
+
+
                    }
-                          
+
 
                    if (!exists($ZDBgeneIDgeneAbbrevs{$ZFINgeneId})) {
                        $cur = $dbh->prepare('select mrkr_abbrev from marker where mrkr_zdb_id = ?;');
@@ -338,7 +366,7 @@ foreach $block (@blocks) {
                        while ($cur->fetch()) {
                            $ZDBgeneIDgeneAbbrevs{$ZFINgeneId} = $ZFINgeneAbbrev;
                        }
-                       $cur->finish(); 
+                       $cur->finish();
                     ###       $line = $fields[0] . " " . ";" . $fields[1] . " " . ";" . $ZFINgeneAbbrev . ".";
                        $line =~ s/$geneAbbrev/$ZFINgeneAbbrev/g;
                        $toNewInput{$lineKey} = $line;
@@ -347,35 +375,35 @@ foreach $block (@blocks) {
                    }
 
                }
-                                                        
+
                $ct++;
            }
         }
-            
+
         foreach $newLineNumber (sort keys %toNewInput) {
            if ($deletes{$newLineNumber} == 0) {
                print ZFINDAT "$toNewInput{$newLineNumber}\n";
-               $totalOnZfinDat = $totalOnZfinDat + 1;  
+               $totalOnZfinDat = $totalOnZfinDat + 1;
            } else {
                print ZFINDATDELETED "$toNewInput{$newLineNumber}\n";
                $totalOnDeleted++;
            }
-        }   
-            
+        }
+
         foreach $key (sort keys %ZDBgeneIDgeneAbbrevs) {
                print ZFINGENES "$ZDBgeneIDgeneAbbrevs{$key}\n";
-        } 
-            
+        }
+
    }
 
 }
-    
-close(ZFINDAT); 
-close(ZFINDATDELETED); 
-close(ZFINGENES); 
+
+close(ZFINDAT);
+close(ZFINDATDELETED);
+close(ZFINGENES);
 close(DBG);
 
-$dbh->disconnect();  
+$dbh->disconnect();
 
 
 open(PRE, "pre_zfin.dat") || die("Could not open pre_zfin.dat !");
@@ -383,12 +411,12 @@ my @blocksPRE = <PRE>;
 close(PRE);
 my $prezfin = 0;
 my $totalprezfin = 0;
-    
+
 foreach $block (@blocksPRE){
    $totalprezfin++;
    if($block =~ m/OS   Danio rerio/) {
       $prezfin++;
-   } 
+   }
 }
 
 
@@ -402,7 +430,7 @@ foreach $block (@blocksZF){
    $totalzfin++;
    if($block =~ m/OS   Danio rerio/) {
       $zfin++;
-   }  
+   }
 }
 
 
@@ -431,7 +459,7 @@ foreach $block (@blocksZF){
    $zfinLines++;
    if($block =~ m/DR   ZFIN; ZDB-GENE-/) {
       $zfinGene++;
-   }  
+   }
 }
 
 

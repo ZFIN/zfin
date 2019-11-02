@@ -4,6 +4,7 @@
 # one time use script
 # add new clones associated with Jeff Smith SNPs
 # 
+use Try::Tiny;
 
 ### set environment variables
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
@@ -110,8 +111,14 @@ close(OUTPUT2);
 print "ct1: $ct1\tct2: $ct2\tctNew: $ctNew\n";
 
 if ($ctNew > 0) {
-  system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadClonesJSmith.sql" );
+  try {
+    system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadClonesJSmith.sql" );
+  } catch {
+    warn "Failed to execute loadClonesJSmith.sql - $_";
+    exit -1;
+  };
 }
   
 exit;
+
 

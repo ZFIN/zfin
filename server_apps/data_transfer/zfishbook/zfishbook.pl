@@ -7,7 +7,7 @@
 # Then it calls loadZfishbookData.sql to do the load and sends in email the records inserted into feature and genotype tables.
 
 use MIME::Lite;
-
+use Try::Tiny;
 
 #------------------ Send load output ----------------
 # 
@@ -152,7 +152,14 @@ print "\nPre-processing done. doTheLoad =  $doTheLoad   \n\n";
 
 print "\n\nStarting to load ...\n\n\n" if $doTheLoad > 0;
 
-system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> log2") if $doTheLoad > 0;
+if ($doTheLoad > 0)[
+  try {
+    system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> log2") ;
+  } catch {
+    warn "Failed to execute loadZfishbookData.sql - $_";
+    exit -1;
+  };
+]
 
 #sendLoadLogs("$dbname") if $doTheLoad > 0;
 
@@ -161,3 +168,4 @@ system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> 
 print "\n\nLoading data done.\n\n\n" if $doTheLoad > 0;
 
 exit;
+

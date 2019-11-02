@@ -10,6 +10,7 @@
 use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
+use Try::Tiny;
 
 #set environment variables
 
@@ -48,12 +49,33 @@ foreach $id (keys %identifiers) {
 }
 close IDS;
 
-ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile.sql");
+try {
+  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile.sql");
+} catch {
+  warn "Failed at gofile.sql - $_";
+  exit -1;
+};
 
-ZFINPerlModules->doSystemCommand("./goparser.pl");
+try {
+  ZFINPerlModules->doSystemCommand("./goparser.pl");
+} catch {
+  warn "Failed at goparser.pl - $_";
+  exit -1;
+};
 
-ZFINPerlModules->doSystemCommand("/bin/rm -f gene_association.zfin.gz");
+try {
+  ZFINPerlModules->doSystemCommand("/bin/rm -f gene_association.zfin.gz");
+} catch {
+  warn "Failed at rm -f gene_association.zfin.gz - $_";
+  exit -1;
+};
 
-ZFINPerlModules->doSystemCommand("/local/bin/gzip gene_association.zfin");
+try {
+  ZFINPerlModules->doSystemCommand("/local/bin/gzip gene_association.zfin");
+} catch {
+  warn "Failed at gzip gene_association.zfin - $_";
+  exit -1;
+};
 
 exit;
+

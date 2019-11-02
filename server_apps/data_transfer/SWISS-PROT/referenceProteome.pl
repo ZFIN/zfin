@@ -14,10 +14,9 @@
 use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
+use Try::Tiny;
 
 # set environment variables
-
-
 $ENV{"DBDATE"}="Y4MD-";
 $ENV{"CLIENT_LOCALE"}="en_US.utf8";
 $ENV{"DB_LOCALE"}="en_US.utf8";
@@ -149,7 +148,13 @@ while(<FASTA>) {
 
 close(REFPR);
 
-ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f referenceProteome.sql");
+try {
+  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f referenceProteome.sql");
+} catch {
+  warn "Failed to execute referenceProteome.sql - $_";
+  exit -1;
+};
 
 exit;
+
 
