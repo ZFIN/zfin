@@ -210,7 +210,6 @@ public class GeneViewController {
                 List<ControlledVocab> species = infrastructureRepository.getControlledVocabsForSpeciesByConstruct(mrkr);
                 species.add(zebrafish);
                 List sortedSpecies = species.stream().sorted(Comparator.comparing(ControlledVocab::getCvNameDefinition)).collect(Collectors.toList());;
-              //  List<ControlledVocab> sortedSpecies = species.stream().sorted((e1, e2) -> e1.getCvNameDefinition().compareTo(e2.getCvNameDefinition())).collect(Collectors.toList());;
                 constructBean.setSpecies(sortedSpecies);
                 constructBeans.add(constructBean);
             }
