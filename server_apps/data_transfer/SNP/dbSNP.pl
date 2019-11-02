@@ -53,14 +53,9 @@ foreach $line (@lines) {
 
 ### download and unzip the xml files
 foreach $d (@downloadList) {
-  try {
-    $url = "ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/archive/zebrafish_7955/XML/".$d;
-    system("/local/bin/wget -q $url -O $d");
-    system("/local/bin/gunzip $d");
-  } catch {
-    warn "Failed to download and unzip $url - $_";
-    exit -1;
-  };
+  $url = "ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/archive/zebrafish_7955/XML/".$d;
+  system("/local/bin/wget -q $url -O $d");
+  system("/local/bin/gunzip $d");
 }
 
 undef @lines; undef @downloadList;
@@ -70,24 +65,14 @@ print "\nDownloaded and unzipped XML files of dbSNP data\n";
 $ftpDir = "ftp://ftp.ncbi.nlm.nih.gov/snp/organisms/archive/zebrafish_7955/database/organism_data/";
 $d = "SubSNP.bcp.gz";
 $url = $ftpDir.$d;
-try {
-   system("/local/bin/wget -q $url -O $d");
-   system("/local/bin/gunzip $d");
-} catch {
-   warn "Failed to download and unzip $url - $_";
-   exit -1;
-};
+system("/local/bin/wget -q $url -O $d");
+system("/local/bin/gunzip $d");
 print "\n$d downloaded and decompressed\n";
 
 $d = "SubSNPAcc.bcp.gz";
 $url = $ftpDir.$d;
-try {
-   system("/local/bin/wget -q $url -O $d");
-   system("/local/bin/gunzip $d");
-} catch {
-   warn "Failed to download and unzip $url - $_";
-   exit -1;
-};
+system("/local/bin/wget -q $url -O $d");
+system("/local/bin/gunzip $d");
 print "\n$d downloaded and decompressed\n";
 
 $dbname = "<!--|DB_NAME|-->";
