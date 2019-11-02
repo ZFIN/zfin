@@ -50,12 +50,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
@@ -214,7 +209,8 @@ public class GeneViewController {
                 constructBean.setNumberOfTransgeniclines(featureRepository.getNumberOfFeaturesForConstruct(mrkr));
                 List<ControlledVocab> species = infrastructureRepository.getControlledVocabsForSpeciesByConstruct(mrkr);
                 species.add(zebrafish);
-                List<ControlledVocab> sortedSpecies = species.stream().sorted((e1, e2) -> e1.getCvNameDefinition().compareTo(e2.getCvNameDefinition())).collect(Collectors.toList());;
+                List sortedSpecies = species.stream().sorted(Comparator.comparing(ControlledVocab::getCvNameDefinition)).collect(Collectors.toList());;
+              //  List<ControlledVocab> sortedSpecies = species.stream().sorted((e1, e2) -> e1.getCvNameDefinition().compareTo(e2.getCvNameDefinition())).collect(Collectors.toList());;
                 constructBean.setSpecies(sortedSpecies);
                 constructBeans.add(constructBean);
             }
