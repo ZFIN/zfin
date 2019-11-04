@@ -27,6 +27,12 @@ try {
   exit -1;
 };
 
+
+$cmd = "psql -d <!--|DB_NAME|--> -a -f loadHumanSynonyms.sql";
+;
+ 
+&doSystemCommand($cmd);
+
 exit;
 
 
