@@ -27,10 +27,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerNotFoundException;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.agr.AllDiseaseDTO;
-import org.zfin.marker.agr.AllGeneDTO;
-import org.zfin.marker.agr.BasicGeneInfo;
-import org.zfin.marker.agr.DiseaseInfo;
+import org.zfin.marker.agr.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.OrthologExternalReference;
@@ -432,6 +429,11 @@ public class GeneViewController {
         return getFirstDiseases(0);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/expression")
+    public AllExpressionDTO getAllExpression() throws Exception {
+        return getFirstExpression(0);
+    }
 
     @ResponseBody
     @RequestMapping(value = "/all-genes/{number}")
@@ -445,6 +447,13 @@ public class GeneViewController {
     public AllDiseaseDTO getFirstDiseases(@PathVariable("number") int number) throws Exception {
         DiseaseInfo info = new DiseaseInfo(number);
         return info.getDiseaseInfo(number);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/expression/{number}")
+    public AllExpressionDTO getFirstExpression(@PathVariable("number") int number) throws Exception {
+        BasicExpressionInfo info = new BasicExpressionInfo(number);
+        return info.getBasicExpressionInfo(number);
     }
 
 }
