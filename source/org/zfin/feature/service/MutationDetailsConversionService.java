@@ -70,6 +70,9 @@ public class MutationDetailsConversionService {
             case INDEL:
                 change = indelStatement(dnaChange);
                 break;
+            case MNV:
+                change = indelStatement(dnaChange);
+                break;
             case TRANSGENIC_INSERTION:
                 change = transgenicStatement(dnaChange);
                 break;

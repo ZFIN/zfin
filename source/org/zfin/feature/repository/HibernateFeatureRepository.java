@@ -129,6 +129,25 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
+    public List<Feature> getFeaturesWithLocationOnAssembly11() {
+        String hql = "select distinct fs.feature from FeatureLocation fs where fs.sfclAssembly like '%z11' ";
+
+        Query query = currentSession().createQuery(hql);
+
+        return (List<Feature>) query.list();
+    }
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Feature> getFeaturesWithGenomicMutDets() {
+        String hql = "select distinct fs.feature from FeatureGenomicMutationDetail fs ";
+
+        Query query = currentSession().createQuery(hql);
+
+        return (List<Feature>) query.list();
+    }
+
+    @SuppressWarnings("unchecked")
     public List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID) {
 
         Session session = currentSession();
@@ -387,6 +406,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
+
+
     public String getPrefixById(int labPrefixID) {
         Session session = HibernateUtil.currentSession();
         String hqlLab1 = " select fp.prefixString from  FeaturePrefix fp where fp.featurePkID =:labPrefixID ";
@@ -605,6 +626,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
         FeatureLocation ftrLoc = (FeatureLocation) featureLocationCriteria.uniqueResult();
         return ftrLoc;
     }
+
+
 
     public List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails(){
         Criteria fgmdCriteria = HibernateUtil.currentSession().createCriteria(FeatureGenomicMutationDetail.class);

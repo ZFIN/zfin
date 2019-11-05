@@ -105,6 +105,11 @@ public class FeatureDetailController {
 
         return "feature/feature-detail.page";
     }
+    @RequestMapping("/flank-seq")
+    public String getFlankingSequenceNote() {
+        return "feature/flank-seq-note.insert";
+    }
+
 
     @RequestMapping(value = "/feature/view/{zdbID}")
     public String retrieveFeatureDetail(Model model, @PathVariable("zdbID") String zdbID) throws Exception {

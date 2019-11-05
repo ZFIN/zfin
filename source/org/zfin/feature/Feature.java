@@ -17,6 +17,7 @@ import org.zfin.mutant.GenotypeFeature;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.FeatureSupplier;
 import org.zfin.sequence.FeatureDBLink;
+import org.zfin.mapping.FeatureLocation;
 
 import javax.persistence.*;
 import java.util.*;
@@ -124,7 +125,10 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Set<FeatureDnaMutationDetail> featureDnaMutationDetailSet;
 
+
+
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Set<FeatureGenomicMutationDetail> featureGenomicMutationDetailSet;
 
@@ -484,6 +488,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         }
         return affectedGenes;
     }
+
 
     public SortedSet<FeatureMarkerRelationship> getAffectedGenesReln() {
         SortedSet<FeatureMarkerRelationship> affectedGenesReln = new TreeSet<>();
