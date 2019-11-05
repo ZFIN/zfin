@@ -359,11 +359,14 @@
         </c:if>
     </table>
 </zfin2:subsection>
-<zfin2:subsection title="FLANKING SEQUENCE"
+<zfin2:subsection title="FLANKING SEQUENCE <a class='popup-link info-popup-link' href='/action/feature/flank-seq'></a>"
                   showNoData="true"
                   test="${!empty formBean.varSequence}">
-    <table class="summary horizontal-solidblock">
+     <table style="border: 1px solid black; width:100%; word-wrap:break-word;table-layout:fixed;>
+              table-layout: fixed;">
         <c:if test="${!empty formBean.varSequence}">
+
+
             <tr>
             <tr>
                 <td>
@@ -377,11 +380,20 @@
                        </span>
                 </td>
             </tr>
+
             <tr>
                 <td>
+                    <c:if test="${formBean.varSequence.vfsVariation.length()>450}">
+                        <zfin2:toggleTextLength text="${formBean.varSequence.vfsRightEnd}" idName="${zfn:generateRandomDomID()}"
+                                                shortLength="80"/>
+                    </c:if>
+                    <c:if test="${formBean.varSequence.vfsVariation.length()<450}">
                         ${formBean.varSequence.vfsRightEnd}
+                    </c:if>
+
                 </td>
             </tr>
+
             <tr>
                 <td>
                 <c:choose>
