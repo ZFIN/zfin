@@ -42,13 +42,13 @@
     }
 </script>
 
-
 <div class="summary">
     <c:choose>
         <c:when test="${!empty relatedTranscriptDisplay.transcripts}">
             <table class="summary rowstripes_withdrawn">
                 <c:set var="lastType" value=""/>
                 <c:set var="groupIndex" value="0"/>
+                <c:set var="lastTypeWithdrawn" value=""/>
                 <c:forEach var="nonWithdrawnTranscript" items="${relatedTranscriptDisplay.nonWithdrawnTranscripts}" varStatus="loop">
 
 
@@ -140,7 +140,7 @@
                         </tr>
                     </c:if>
                 </c:forEach>
-
+                
                 <c:if test="${relatedTranscriptDisplay.withdrawnTranscripts != null && fn:length(relatedTranscriptDisplay.withdrawnTranscripts) > 0}">
                     <authz:authorize access="hasRole('root')">
                         <tr class=${loop.index%2==0 ? "even" : "odd"}>
@@ -152,12 +152,12 @@
                         </tr>
 
                         <c:forEach var="withdrawnTranscript" items="${relatedTranscriptDisplay.withdrawnTranscripts}" varStatus="withdrawnloop">
-
-                            <tr id ="withdrawnTranscripts-${withdrawnloop.index}" style="display: none;" class=${withdrawnloop.index%2==0 ? "even" : "odd"}>
+                            <tr id ="withdrawnTranscripts-${withdrawnloop.index}" style="display: none;" class=${withdrawnloop.index%2==0 ? "even" : "odd"}>                                
                                 <td width="18%">
-                                    <zfin:groupByDisplay loopName="withdrawnloop" groupBeanCollection="${relatedTranscriptDisplay.withdrawnList}" groupByBean="marker.transcriptType.display">
-                                        <span title="${withdrawnTranscript.marker.transcriptType.definition}">${withdrawnTranscript.marker.transcriptType.display}</span>
-                                    </zfin:groupByDisplay>
+                                  <c:if test="${withdrawnTranscript.marker.transcriptType.display ne lastTypeWithdrawn}">
+                                    <span title="${withdrawnTranscript.marker.transcriptType.definition}">${withdrawnTranscript.marker.transcriptType.display}</span>
+                                  </c:if>
+                                  <c:set var="lastTypeWithdrawn" value="${withdrawnTranscript.marker.transcriptType.display}"/>
                                 </td>
                                 <td width="22%">
                                     <zfin:link entity="${withdrawnTranscript.marker}"/><zfin:attribution entity="${withdrawnTranscript}"/>
