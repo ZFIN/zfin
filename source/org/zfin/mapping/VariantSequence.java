@@ -8,8 +8,8 @@ public class VariantSequence  {
     private String zdbID;
     private String vseqDataZDB;
     private String vfsTargetSequence;
-    private Long vfsOffsetStart;
-    private Long vfsOffsetStop;
+    private int vfsOffsetStart;
+    private int vfsOffsetStop;
     private String vfsVariation;
     private String vfsLeftEnd;
     private String vfsRightEnd;
@@ -21,6 +21,22 @@ public class VariantSequence  {
 
     public String getZdbID() {
         return zdbID;
+    }
+
+    public int getVfsOffsetStart() {
+        return vfsOffsetStart;
+    }
+
+    public void setVfsOffsetStart(int vfsOffsetStart) {
+        this.vfsOffsetStart = vfsOffsetStart;
+    }
+
+    public int getVfsOffsetStop() {
+        return vfsOffsetStop;
+    }
+
+    public void setVfsOffsetStop(int vfsOffsetStop) {
+        this.vfsOffsetStop = vfsOffsetStop;
     }
 
     public void setZdbID(String zdbID) {
@@ -43,21 +59,7 @@ public class VariantSequence  {
         this.vfsTargetSequence = vfsTargetSequence;
     }
 
-    public Long getVfsOffsetStart() {
-        return vfsOffsetStart;
-    }
 
-    public void setVfsOffsetStart(Long vfsOffsetStart) {
-        this.vfsOffsetStart = vfsOffsetStart;
-    }
-
-    public Long getVfsOffsetStop() {
-        return vfsOffsetStop;
-    }
-
-    public void setVfsOffsetStop(Long vfsOffsetStop) {
-        this.vfsOffsetStop = vfsOffsetStop;
-    }
 
     public String getVfsVariation() {
         return vfsVariation;
