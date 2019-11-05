@@ -10,7 +10,7 @@ import org.zfin.marker.agr.BasicExpressionInfo;
 public class DataController {
 
     @RequestMapping(value = "/expression")
-    public AllExpressionDTO getFirstDiseases() {
+    public AllExpressionDTO getFirstExpression() {
         BasicExpressionInfo info = new BasicExpressionInfo(5);
         AllExpressionDTO basicExpressionDTO = info.getBasicExpressionInfo(5);
         return basicExpressionDTO;

@@ -52,7 +52,6 @@ public interface ExpressionRepository {
     int getExpressionFigureCountForClone(Clone clone);
 
     List<BasicExpressionDTO> getBasicExpressionDTOObjects();
-
     /**
      *
      * @param marker marker

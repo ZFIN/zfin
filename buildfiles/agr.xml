@@ -10,6 +10,7 @@
         <antcall target="create-fish"/>
         <antcall target="create-str"/>
         <antcall target="create-variant"/>
+        <antcall target="create-zfin-expression"/>
     </target>
 
     <target name="create-bgi-test" >
@@ -26,7 +27,9 @@
     <target name="create-variant-test" >
         <antcall target="create-basic-variant-info-file-test"  />
     </target>
-
+    <target name="create-zfin-expression-test" >
+        <antcall target="create-zfin-expression-info-file-test"  />
+    </target>
 
     <target name="create-disease-test" >
         <antcall target="create-disease-info-file-test"  />
@@ -59,6 +62,11 @@
     <target name="create-variant" >
         <antcall target="create-basic-variant-info-file"  />
     </target>
+
+    <target name="create-zfin-expression" >
+        <antcall target="create-zfin-expression-info-file"  />
+    </target>
+
 
     <target name="create-allele" >
         <antcall target="create-basic-allele-info-file"  />
@@ -107,6 +115,15 @@
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.agr.BasicVariantInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="6G">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
+    <target name="create-zfin-expression-info-file" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.ZFINExpressionInfo" fork="yes" classpathref="extended.classpath"
               failonerror="true" maxmemory="6G">
             <classpath refid="classpath"/>
         </java>
