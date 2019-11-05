@@ -359,9 +359,20 @@
         </c:if>
     </table>
 </zfin2:subsection>
-<zfin2:subsection title="FLANKING SEQUENCE <a class='popup-link info-popup-link' href='/action/feature/flank-seq'></a>"
-                  showNoData="true"
-                  test="${!empty formBean.varSequence}">
+<c:if test="${fn:contains(formBean.feature.type.display, 'Point')==true}">
+    <c:set var="title">
+        FLANKING SEQUENCE
+    </c:set>
+
+</c:if>
+<c:if test="${fn:contains(formBean.feature.type.display, 'Point')==false}">
+    <c:set var="title">
+        FLANKING SEQUENCE<a class='popup-link info-popup-link' href='/action/feature/flank-seq'></a>
+    </c:set>
+    </c:if>
+    <zfin2:subsection title="${title}"
+                      showNoData="true"
+                      test="${!empty formBean.varSequence}">
      <table style="border: 1px solid black; width:100%; word-wrap:break-word;table-layout:fixed;>
               table-layout: fixed;">
         <c:if test="${!empty formBean.varSequence}">
