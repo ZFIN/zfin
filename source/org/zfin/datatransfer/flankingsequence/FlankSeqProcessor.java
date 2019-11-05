@@ -63,7 +63,7 @@ String seq2="";
             try {
 
                 for (Feature feature : featureRepository.getFeaturesWithGenomicMutDets()) {
-                   if (feature.getType() != FeatureTypeEnum.POINT_MUTATION) {
+                 //  if (feature.getType() != FeatureTypeEnum.POINT_MUTATION) {
 
                         if (featureRepository.getFeatureVariant(feature) == null) {
                             FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
@@ -118,7 +118,7 @@ else{
                                 updateFlankSeq(feature, seq1, seq2, offset);
 }
                             }
-                        }}
+                        }
 
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (NullPointerException e) {
@@ -205,6 +205,11 @@ else{
                 vrSeq.setVfsVariation("-" + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar());
             }
             if (ftr.getType() == FeatureTypeEnum.POINT_MUTATION) {
+                vrSeq.setVfsTargetSequence(seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar() + "]" + seq2);
+                vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar());
+            }
+            if (ftr.getType() == FeatureTypeEnum.MNV) {
+
                 vrSeq.setVfsTargetSequence(seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar() + "]" + seq2);
                 vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar());
             }
