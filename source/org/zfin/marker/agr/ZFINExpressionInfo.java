@@ -7,7 +7,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -45,7 +44,7 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
 
         //Object to JSON in String
         String jsonInString = writer.writeValueAsString(basicExpressionDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream(ZfinPropertiesEnum.TARGETROOT +"zfin_wt_expression.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("zfin_wt_expression.json"))) {
             out.print(jsonInString);
         }
     }
