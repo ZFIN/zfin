@@ -9,6 +9,27 @@ public class ZFINExpressionDTO extends BasicExpressionDTO {
 
     private String assayName;
     private List<CrossReferenceDTO> ensemblCrossReferences;
+    private String publicationTitle;
+    private String generatedGeneDescription;
+
+
+    public String getPublicationTitle() {
+        return publicationTitle;
+    }
+
+    public void setPublicationTitle(String publicationTitle) {
+        this.publicationTitle = publicationTitle;
+    }
+
+    public String getGeneratedGeneDescription() {
+        return generatedGeneDescription;
+    }
+
+    public void setGeneratedGeneDescription(String generatedGeneDescription) {
+        this.generatedGeneDescription = generatedGeneDescription;
+    }
+
+
 
     public List<CrossReferenceDTO> getEnsemblCrossReferences() {
         return ensemblCrossReferences;

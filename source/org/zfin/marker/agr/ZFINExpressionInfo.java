@@ -57,12 +57,16 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
         for (BasicExpressionDTO basicDTOitem : basicExpressionDTOList){
 
             ZFINExpressionDTO zfinExpressionDTO = new ZFINExpressionDTO();
+            ZFINEvidenceDTO zfinExpressionEvidenceDTO = new ZFINEvidenceDTO();
 
             zfinExpressionDTO.setAssay(basicDTOitem.getAssay());
             zfinExpressionDTO.setWhereExpressed(basicDTOitem.getWhereExpressed());
             zfinExpressionDTO.setWhenExpressed(basicDTOitem.getWhenExpressed());
             zfinExpressionDTO.setGeneId(basicDTOitem.getGeneId());
-            zfinExpressionDTO.setEvidence(basicDTOitem.getEvidence());
+            zfinExpressionEvidenceDTO.setCrossReference(basicDTOitem.getEvidence().getCrossReference());
+            zfinExpressionEvidenceDTO.setPublicationId(basicDTOitem.getEvidence().getPublicationId());
+            zfinExpressionEvidenceDTO.setPublicationTitle(getPublicationRepository().getPublication(basicDTOitem.getEvidence().getCrossReference().getId()).getTitle());
+            zfinExpressionDTO.setEvidence(zfinExpressionEvidenceDTO);
             zfinExpressionDTO.setDateAssigned(basicDTOitem.getDateAssigned());
             zfinExpressionDTO.setDataProviderList(basicDTOitem.getDataProvider());
             zfinExpressionDTO.setCrossReference(basicDTOitem.getCrossReference());
@@ -85,6 +89,7 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
                     }
                 zfinExpressionDTO.setEnsemblCrossReferences(xrefs);
             }
+
             GenericTerm mmoTerm = getOntologyRepository().getTermByOboID(zfinExpressionDTO.getAssay());
             zfinExpressionDTO.setAssayName(mmoTerm.getTermName());
             zfinExpressionDTOList.add(zfinExpressionDTO);
