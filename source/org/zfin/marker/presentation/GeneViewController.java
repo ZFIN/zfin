@@ -21,6 +21,7 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.marker.Marker;
@@ -140,19 +141,19 @@ public class GeneViewController {
         TreeSet locations = new TreeSet<>();
         for (MarkerGenomeLocation genomeMarkerLocation : genomeMarkerLocationList) {
             BrowserLink location = new BrowserLink();
-            if (genomeMarkerLocation.getSource().getDisplayName().equals("ZFIN Gbrowse")) {
+            if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.ZFIN)) {
                 location.setUrl(genomeMarkerLocation.getUrl());
                 location.setName("ZFIN");
                 location.setOrder(0);
-            } else if (genomeMarkerLocation.getSource().getDisplayName().equals("Ensembl")) {
+            } else if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.ENSEMBL)) {
                 location.setUrl(genomeMarkerLocation.getUrl());
                 location.setName(genomeMarkerLocation.getSource().getDisplayName());
                 location.setOrder(1);
-            } else if (genomeMarkerLocation.getSource().getDisplayName().equals("NCBI Map Viewer")) {
+            } else if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.NCBI)) {
                 location.setUrl(genomeMarkerLocation.getUrl());
                 location.setName("NCBI");
                 location.setOrder(2);
-            } else if (genomeMarkerLocation.getSource().getDisplayName().equals("UCSC")) {
+            } else if (genomeMarkerLocation.getSource().equals(GenomeLocation.Source.UCSC)) {
                 location.setUrl(genomeMarkerLocation.getUrl());
                 location.setName(genomeMarkerLocation.getSource().getDisplayName());
                 location.setOrder(3);

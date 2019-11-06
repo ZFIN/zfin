@@ -61,32 +61,7 @@ public class RelatedTranscriptDisplay  {
             return null;
         }
 
-        List<Transcript> nonWithdrawnTranscriptlist = new ArrayList<>();
-        nonWithdrawnTranscripts = new ArrayList<>();
-        for (RelatedMarker marker : transcripts) {
-            Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
-            if (!transcript.isWithdrawn()) {
-                nonWithdrawnTranscripts.add(marker);
-                nonWithdrawnTranscriptlist.add(transcript);
-            }
-        }
-
-        List<RelatedMarker> sortedNonWithdrawnTranscripts = new ArrayList<>();
-        if (nonWithdrawnTranscripts.size() > 0)  {
-            nonWithdrawnTranscriptlist.sort(
-                    Comparator.comparing(Transcript::getTranscriptType).thenComparing(Transcript::getAbbreviationOrder)
-            );
-            ;
-            for (Transcript t : nonWithdrawnTranscriptlist) {
-                for (RelatedMarker m : nonWithdrawnTranscripts) {
-                    if(t == TranscriptService.convertMarkerToTranscript(m.getMarker())) {
-                        sortedNonWithdrawnTranscripts.add(m);
-                    }
-                }
-            }
-        }
-
-        return sortedNonWithdrawnTranscripts;
+        return TranscriptService.getSortedTranscripts(transcripts, false);
     }
 
     public List<RelatedMarker> getWithdrawnTranscripts() {
@@ -94,32 +69,7 @@ public class RelatedTranscriptDisplay  {
             return null;
         }
 
-        List<Transcript> withdrawnTranscriptlist = new ArrayList<>();
-        withdrawnTranscripts = new ArrayList<>();
-        for (RelatedMarker marker : transcripts) {
-            Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
-            if (transcript.isWithdrawn()) {
-                withdrawnTranscripts.add(marker);
-                withdrawnTranscriptlist.add(transcript);
-            }
-        }
-
-        List<RelatedMarker> sortedWithdrawnTranscripts = new ArrayList<>();
-        if (withdrawnTranscripts.size() > 0)  {
-            withdrawnTranscriptlist.sort(
-                    Comparator.comparing(Transcript::getTranscriptType).thenComparing(Transcript::getAbbreviationOrder)
-            );
-            ;
-            for (Transcript t : withdrawnTranscriptlist) {
-                for (RelatedMarker m : withdrawnTranscripts) {
-                    if(t == TranscriptService.convertMarkerToTranscript(m.getMarker())) {
-                        sortedWithdrawnTranscripts.add(m);
-                    }
-                }
-            }
-        }
-
-        return sortedWithdrawnTranscripts;
+        return TranscriptService.getSortedTranscripts(transcripts, true);
     }
 
     public List<RelatedMarker> getWithdrawnList() {

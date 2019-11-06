@@ -93,7 +93,7 @@ public class TranscriptService {
             rm.setDisplayedSequenceDBLinks(RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(transcript, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE));
             rtd.add(rm);
         }
-        
+
         if (displayGBrowseImage
                 && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)
                 && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
@@ -374,5 +374,41 @@ public class TranscriptService {
 
     public static boolean isSupportingSequence(TranscriptDBLink transcriptDBLink) {
         return transcriptDBLink.isInDisplayGroup(DisplayGroup.GroupName.TRANSCRIPT_LINKED_SEQUENCE);
+    }
+
+    public static List<RelatedMarker> getSortedTranscripts(List<RelatedMarker> transcripts, boolean withdrawn) {
+        List<Transcript> transcriptlist = new ArrayList<>();
+        List<RelatedMarker> transcriptsAsMRelatedMarker = new ArrayList<>();
+        for (RelatedMarker marker : transcripts) {
+            Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
+            if (withdrawn)  {
+                if (transcript.isWithdrawn()) {
+                    transcriptsAsMRelatedMarker.add(marker);
+                    transcriptlist.add(transcript);
+                }
+            }  else {
+                if (!transcript.isWithdrawn()) {
+                    transcriptsAsMRelatedMarker.add(marker);
+                    transcriptlist.add(transcript);
+                }
+            }
+        }
+
+        List<RelatedMarker> sortedTranscripts = new ArrayList<>();
+        if (transcriptsAsMRelatedMarker.size() > 0)  {
+            transcriptlist.sort(
+                    Comparator.comparing(Transcript::getTranscriptType).thenComparing(Transcript::getAbbreviationOrder)
+            );
+            ;
+            for (Transcript t : transcriptlist) {
+                for (RelatedMarker m : transcriptsAsMRelatedMarker) {
+                    if(t == TranscriptService.convertMarkerToTranscript(m.getMarker())) {
+                        sortedTranscripts.add(m);
+                    }
+                }
+            }
+        }
+
+        return sortedTranscripts;
     }
 }
