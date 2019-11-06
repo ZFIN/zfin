@@ -91,7 +91,7 @@ String seq2="";
                                 }
                                 if (feature.getType() == FeatureTypeEnum.INDEL) {
 
-                                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length() == 0) {
+                                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length()!= 0) {
                                     /*String ftrChrom = ftrLoc.getSfclChromosome();
                                     FeatureGenomicMutationDetail fgmd = featureRepository.getFeatureGenomicDetail(feature);
                                     if (fgmd != null) {
@@ -99,10 +99,11 @@ String seq2="";
                                         System.out.println(fgmd.getFeature().getZdbID() + ',' + seqRef + '\n');*/
                                       /*    fgmd.setFgmdSeqRef(seqRef);
                                           HibernateUtil.currentSession().save(fgmd);*/
-                                    }
 
-                           seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
-                           seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
+
+                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
+                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
+                                }
 
 
                                 }
