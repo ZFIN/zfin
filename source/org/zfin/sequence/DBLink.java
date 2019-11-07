@@ -3,7 +3,9 @@
  */
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -20,8 +22,11 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
 
     private final static Logger logger = LogManager.getLogger(DBLink.class);
 
+    @JsonView(View.SequenceAPI.class)
     private String zdbID;
+    @JsonView(View.SequenceAPI.class)
     private String accessionNumber;
+    @JsonView(View.SequenceAPI.class)
     private Integer length;
     private ReferenceDatabase referenceDatabase;
     private Set<PublicationAttribution> publications;
