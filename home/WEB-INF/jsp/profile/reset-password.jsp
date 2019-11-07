@@ -3,17 +3,14 @@
 
 <script>
     $(document).ready(function() {
-        $('.password-input').change(function() {
+        $('.password-input').on('input', function() {
             var pass1 = $('#pass1');
             var pass2 = $('#pass2');
             var submit = $('#submit');
-            if (pass1.val() === undefined
+            var invalid = pass1.val() === undefined
                 || pass2.val() === undefined
-                || pass1.val() !== pass2.val()) {
-                submit.disabled = true;
-            } else {
-                submit.removeAttr('disabled');
-            }
+                || pass1.val() !== pass2.val();
+            submit.prop('disabled', invalid);
         });
     });
 </script>
@@ -41,21 +38,17 @@
                         <div class="alert alert-error">${errorMessage}</div>
                     </c:if>
 
-                    <div>
-                        <label path="pass1">Password:</label>
-                        <input type="password" size="50" class="password-input" name="pass1" id="pass1"/>
+                    <div class="form-group">
+                        <label path="pass1">New Password</label>
+                        <input type="password" size="50" class="password-input form-control" name="pass1" id="pass1"/>
                     </div>
 
-                    <div>
-                        <label path="pass2">Repeat Password:</label>
-                        <input type="password" size="50" class="password-input" name="pass2" id="pass2"/>
+                    <div class="form-group">
+                        <label path="pass2">Confirm New Password</label>
+                        <input type="password" size="50" class="password-input form-control" name="pass2" id="pass2"/>
                     </div>
 
-                    <br><br>
-
-                    <input type="submit" id="submit" class="btn btn-zfin btn-block" value="Save" disabled/>
-
-                        <%--</div>--%>
+                    <input type="submit" id="submit" class="btn btn-zfin btn-block" value="Save" disabled />
                 </form>
 
             </div>
@@ -65,7 +58,7 @@
         <c:when test="${resetSuccessful}">
             <div class="login-container">
                 <div class="alert alert-primary">
-                    Password successfully reset, <a href="/action/login">login here</a>
+                    Password successfully reset. <a href="/action/login">Login here.</a>
                 </div>
             </div>
         </c:when>

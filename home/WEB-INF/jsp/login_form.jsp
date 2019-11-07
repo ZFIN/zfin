@@ -38,8 +38,8 @@
 
     <div class="panel panel-default">
         <div class="panel-body">
-            <div><a href="/action/profile/forgot-password">Forgot password?</a></div>
-            <div>Need an account? Contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>.</div>
+            <p><a href="/action/profile/forgot-password">Forgot password?</a></p>
+            <div>Need an account? <zfin2:mailTo>Contact us.</zfin2:mailTo></div>
         </div>
     </div>
 </div>
