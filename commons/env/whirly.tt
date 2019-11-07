@@ -2,7 +2,6 @@
 
 <!--|AO_EMAIL_CURATOR|-->	xshao\@zfin.org
 <!--|AO_EMAIL_ERR|-->	xshao\@zfin.org
-<!--|BACKGROUND_COLOR|-->	#FFEEFF
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|CLIENT_LOCALE|-->	en_US.utf8
@@ -34,14 +33,10 @@
 <!--|GO_EMAIL_ERR|-->	xshao\@zfin.org
 <!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/whirly/home/WEB-INF/lib*:/opt/zfin/source_roots/whirly/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/whirly/home/WEB-INF/classes:/opt/apache/apache-tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
-<!--|HEADER_COLOR|-->	#99CCCC
-<!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
-<!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	whirly
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
-<!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	xshao\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp/pubs
 <!--|LOCUS_REGISTRATION_EMAIL|-->	xshao\@zfin.org
@@ -61,8 +56,6 @@
 <!--|ROOT_PATH|-->	/opt/zfin/www_homes/whirly
 <!--|SECURE_HTTP|-->	https://
 <!--|SHARED_DOMAIN_NAME|-->	false
-<!--|SIDEBAR_COLOR|-->	#CCCCCC
-<!--|SITE_BACKGROUND|-->	#FFFFFF
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/whirly/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	iris.zfin.org

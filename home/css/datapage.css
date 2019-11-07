@@ -72,8 +72,6 @@ table.ontology-term-mini-summary td.name {
 
 .related-ontology-term {
     display: block;
-    margin-left: 2em;
-    text-indent: -2em;
 }
 
 .no-data-tag {

@@ -3,11 +3,13 @@ package org.zfin.framework.presentation;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.hibernate.Session;
 import org.hibernate.jdbc.ReturningWork;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.zfin.figure.repository.FigureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
@@ -39,6 +41,8 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 @RequestMapping(value = "/devtool")
 public class DatabaseInfoController {
 
+    @Autowired
+    FigureRepository figureRepository;
 
     @RequestMapping("/database-info")
     protected String showDatabaseInfo(Model model) throws Exception {
@@ -170,6 +174,12 @@ public class DatabaseInfoController {
         model.addAttribute("deadlockedThreads", mxbean.findDeadlockedThreads());
         model.addAttribute("monitorDeadlockedThreads", mxbean.findMonitorDeadlockedThreads());
         return "thread-info.page";
+    }
+
+    @RequestMapping("/home-carousel-items")
+    public String showHomeCarouselItems(Model model) {
+        model.addAttribute("carouselImages", figureRepository.getRecentlyCuratedImages());
+        return "home-carousel-items";
     }
 
     public List<Thread> getThreads(ThreadGroup group) {

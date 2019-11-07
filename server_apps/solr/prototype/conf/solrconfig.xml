@@ -517,7 +517,7 @@
             </str>
             <str name="hl.simple.pre"><![CDATA[<span class="search-result-highlight">]]></str>
             <str name="hl.simple.post"><![CDATA[</span>]]></str>
-            <str name="fl">id,name,category,type,full_name</str>
+            <str name="fl">id,name,category,type,full_name,url</str>
         </lst>
     </requestHandler>
 

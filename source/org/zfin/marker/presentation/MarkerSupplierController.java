@@ -30,7 +30,7 @@ public class MarkerSupplierController {
     @Autowired
     private ProfileRepository profileRepository;
 
-    @InitBinder
+    @InitBinder("supplierBean")
     public void initBinder(WebDataBinder binder) {
         binder.setValidator(new SupplierBeanValidator());
     }

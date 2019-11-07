@@ -120,7 +120,6 @@ public class CurationController implements CurationService {
         model.addAttribute("publication", publication);
         model.addAttribute("curationTabs", CurationModuleType.values());
         model.addAttribute("currentTab", currentTab);
-        model.addAttribute("currentUser", ProfileService.getCurrentSecurityUser());
         model.addAttribute("curatingStatus", publicationRepository.getPublicationStatusByName(PublicationTrackingStatus.Name.CURATING));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Curate: " + publication.getTitle());

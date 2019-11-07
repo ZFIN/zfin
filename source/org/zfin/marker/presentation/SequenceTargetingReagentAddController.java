@@ -75,7 +75,7 @@ public class SequenceTargetingReagentAddController {
     @Autowired
     private HttpServletRequest request;
 
-    @InitBinder
+    @InitBinder("formBean")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new SequenceTargetingReagentAddBeanValidator());
     }

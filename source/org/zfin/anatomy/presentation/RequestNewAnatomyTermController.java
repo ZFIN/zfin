@@ -35,7 +35,7 @@ public class RequestNewAnatomyTermController {
     @Autowired
     private javax.servlet.http.HttpServletRequest request;
 
-    @InitBinder
+    @InitBinder("formBean")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new RequestNewAnatomyTermBeanValidator());
     }

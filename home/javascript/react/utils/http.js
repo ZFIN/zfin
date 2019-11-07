@@ -8,6 +8,8 @@ export default {
             url,
             data,
             dataType: 'json',
+            crossDomain: true,
+            contentType: 'application/json',
         })
     },
 

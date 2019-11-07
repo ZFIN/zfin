@@ -1,32 +1,30 @@
 package org.zfin.figure.repository;
 
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.antibody.Antibody;
-import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
-import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.framework.ComparatorCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Clone;
-import org.zfin.marker.Marker;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-import static org.zfin.framework.HibernateUtil.currentSession;
+import static java.util.Calendar.YEAR;
 
 @Repository
 public class HibernateFigureRepository implements FigureRepository {
@@ -145,6 +143,48 @@ public class HibernateFigureRepository implements FigureRepository {
         return HibernateUtil.currentSession()
                 .createCriteria(Image.class)
                 .add(Restrictions.in("zdbID", zdbIDs)).list();
+    }
+
+    public List<Image> getRecentlyCuratedImages() {
+        String hql = "select distinct image " +
+                "from Image as image " +
+                "inner join image.figure as figure " +
+                "inner join figure.publication as publication " +
+                "inner join publication.statusHistory as pubStatus " +
+                "left outer join figure.expressionResults as expression " +
+                "left outer join figure.phenotypeExperiments as phenotype " +
+                "where pubStatus.isCurrent = true " +
+                "and pubStatus.status.name = :closedCurated " +
+                "and pubStatus.date > :oneYearAgo " +
+                "and publication.publicationDate > :oneYearAgo " +
+                "and publication.canShowImages = true " +
+                "and image.imageFilename is not null " +
+                "and ( " +
+                "  phenotype.id is not null " +
+                "  or ( " +
+                "    expression.xpatresID is not null " +
+                "    and (" +
+                "      expression.expressionExperiment.assay.name = 'Immunohistochemistry' " +
+                "      or expression.expressionExperiment.assay.name = 'mRNA in situ hybridization' " +
+                "    ) " +
+                "  ) " +
+                ") ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+
+        Calendar oneYearAgo = Calendar.getInstance();
+        oneYearAgo.add(YEAR, -1);
+        query.setParameter("oneYearAgo", oneYearAgo);
+
+//        Calendar twoYearsAgo = Calendar.getInstance();
+//        twoYearsAgo.add(YEAR, -2);
+//        query.setParameter("twoYearsAgo", twoYearsAgo);
+
+        query.setParameter("closedCurated", PublicationTrackingStatus.Name.CLOSED_CURATED);
+
+        // TODO: figure out how to shuffle the list in the query instead of returning the whole list here
+
+        return query.list();
     }
 
 }

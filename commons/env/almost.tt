@@ -2,7 +2,6 @@
 
 <!--|AO_EMAIL_CURATOR|-->	informix\@zfin.org
 <!--|AO_EMAIL_ERR|-->	informix\@zfin.org
-<!--|BACKGROUND_COLOR|-->	#CCFFFF
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/almdb/
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|COUNT_PATO_ERR|-->	informix\@zfin.org
@@ -30,14 +29,10 @@
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org smoxon\@zfin.org xshao\@zfin.org
 <!--|GO_EMAIL_ERR|-->	smoxon\@zfin.org xshao\@zfin.org dhowe\@zfin.org
 <!--|HAS_PARTNER|-->	false
-<!--|HEADER_COLOR|-->	#99CCCC
-<!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
-<!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	almost
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
-<!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	informix\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp/pubs
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@zfin.org
@@ -57,8 +52,6 @@
 <!--|ROOT_PATH|-->	${TARGETROOT_PREFIX}/www_homes/almost
 <!--|SECURE_HTTP|-->	https://
 <!--|SHARED_DOMAIN_NAME|-->	false
-<!--|SIDEBAR_COLOR|-->	#CCCCCC
-<!--|SITE_BACKGROUND|-->	#CCFFFF
 <!--|SOURCEROOT|-->	/research/zusers/almost/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SWISSPROT_EMAIL_CURATOR|-->	informix\@zfin.org

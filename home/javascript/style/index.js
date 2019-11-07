@@ -1,4 +1,5 @@
 require('jquery.tipsy/src/jquery.tipsy.css');
+require('@fortawesome/fontawesome-free/css/all.css');
 
 require('../../css/constructAdd.css');
 require('../../css/searchresults.css');
@@ -8,12 +9,12 @@ require('../../css/Marker.css');
 require('../../css/datapage.css');
 require('../../css/popup.css');
 require('../../css/modal.css');
-require('../../css/typeahead.css');
+require('../../css/typeahead.scss');
 require('../../css/zfin.css');
-require('../../css/header.css');
-require('../../css/footer.css');
+require('../../css/layout.scss');
 require('../../css/faceted-search.css');
 require('../../css/figure_gallery.css');
 require('../../css/pagination.css');
 require('../../css/tabEdit.css');
-require('../../css/zdbhome.css');
+require('../../css/zdbhome.scss');
+require('../../css/login.scss');

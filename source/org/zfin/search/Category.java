@@ -1,9 +1,9 @@
 package org.zfin.search;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.zfin.profile.service.ProfileService;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.zfin.search.FieldName.*;
@@ -265,6 +265,22 @@ public enum Category {
             }
         }
         return matchingFacetQueries;
+    }
+
+    public static Collection<String> getCategoryDisplayList() {
+        return Arrays.stream(Category.values())
+                .filter(category -> {
+                    if (category == STR_RELATIONSHIP) {
+                        return false;
+                    }
+                    if (category == JOURNAL && !ProfileService.isRootUser()) {
+                        return false;
+                    }
+                    return true;
+                })
+                .map(Category::getName)
+                .sorted(FacetCategoryComparator::compareString)
+                .collect(Collectors.toList());
     }
 
     private static Map<String, String> facetMap = new HashMap<>();

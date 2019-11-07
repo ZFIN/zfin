@@ -151,7 +151,7 @@ public class AntibodyFigureSummaryController {
         return "antibody/antibody-publication-list.page";
     }
 
-    @InitBinder
+    @InitBinder("formBean")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new AddPublicationValidator());
     }

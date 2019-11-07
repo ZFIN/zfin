@@ -35,7 +35,7 @@ public class AlleleDesignationCreateController {
         return "feature/alleleDesig-add-form.page";
     }
 
-    @InitBinder
+    @InitBinder("formBean")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new AlleleLineDesignationValidator());
     }

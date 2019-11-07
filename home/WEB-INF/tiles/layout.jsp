@@ -4,7 +4,9 @@
     <tiles:getAsString ignore="true" name="staticTitle"/> ${dynamicTitle}
 </c:set>
 
-<zfin2:page title="${title}">
+<tiles:useAttribute name="bodyClass" ignore="true"/>
+
+<zfin2:page title="${title}" bodyClass="${bodyClass}">
     <tiles:insertAttribute name="header" ignore="true" />
     <tiles:insertAttribute name="body" />
 </zfin2:page>
