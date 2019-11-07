@@ -179,6 +179,8 @@ public class PersonController {
                 errors.reject("", "Passwords must match");
             }
             newAccountInfo.setPassword(profileService.encodePassword(newAccountInfo.getPass1()));
+        } else if (StringUtils.equals(newAccountInfo.getPass1(),newAccountInfo.getLogin())) {
+            errors.reject("","We won't let you use your username as a password");
         } else {
             newAccountInfo.setPassword(oldAccountInfo.getPassword());
         }

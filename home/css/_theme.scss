@@ -1,0 +1,20 @@
+$primary: #008080 !default; // can be overridden by variable injected by webpack
+$primary-light: scale-color(mix(white, $primary, 90%), $saturation: -50%);
+$primary-dark: darken($primary, 5%);
+
+$grey: #757575;
+$grey-light: #F5F5F5;
+$grey-dark: #424242;
+
+$border-color: #CCCCCC;
+
+$break-lg: 1200px;
+$break-md: 992px;
+
+@mixin shadow {
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 1px 3px 0 rgba(0,0,0,0.12);
+}
+
+@mixin elevated-shadow {
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,0.2), 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12);
+}

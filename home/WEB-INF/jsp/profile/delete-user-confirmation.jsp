@@ -1,7 +1,7 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<div class="allcontent">
+<div>
     <h1 align=center>CONFIRMATION</h1>
     <big>You have successfully deleted the ZFIN registration of
         <b>${formBean.person.name}</b>.

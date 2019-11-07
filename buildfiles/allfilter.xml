@@ -10,7 +10,6 @@
 <filter token="APACHE_PORT_SECURE" value="${APACHE_PORT_SECURE}"/>
 <filter token="APACHE_SERVER_NAME" value="${APACHE_SERVER_NAME}"/>
 <filter token="APACHE_USER" value="${APACHE_USER}"/>
-<filter token="BACKGROUND_COLOR" value="${BACKGROUND_COLOR}"/>
 <filter token="BLASTSCRIPT_TARGET_PATH" value="${BLASTSCRIPT_TARGET_PATH}"/>
 <filter token="BLASTSERVER_BINARY_PATH" value="${BLASTSERVER_BINARY_PATH}"/>
 <filter token="BLASTSERVER_BLAST_DATABASE_PATH" value="${BLASTSERVER_BLAST_DATABASE_PATH}"/>
@@ -74,11 +73,7 @@
 <filter token="GROOVY_CLASSPATH" value="${GROOVY_CLASSPATH}"/>
 <filter token="GROOVY_HOME" value="${GROOVY_HOME}"/>
 <filter token="HAS_PARTNER" value="${HAS_PARTNER}"/>
-<filter token="HEADER_BACKGROUND" value="${HEADER_BACKGROUND}"/>
-<filter token="HEADER_COLOR" value="${HEADER_COLOR}"/>
 <filter token="HIBERNATE_CONFIGURATION_DIRECTORY" value="${HIBERNATE_CONFIGURATION_DIRECTORY}"/>
-<filter token="HIGHLIGHTER_COLOR" value="${HIGHLIGHTER_COLOR}"/>
-<filter token="HIGHLIGHT_COLOR" value="${HIGHLIGHT_COLOR}"/>
 <filter token="HOSTNAME" value="${HOSTNAME}"/>
 <filter token="IMAGE_LOAD" value="${IMAGE_LOAD}"/>
 <filter token="INDEXER_REPORT_EMAIL" value="${INDEXER_REPORT_EMAIL}"/>
@@ -95,7 +90,6 @@
 <filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>
 <filter token="JENKINS_PORT" value="${JENKINS_PORT}"/>
 <filter token="JPDA_ADDRESS" value="${JPDA_ADDRESS}"/>
-<filter token="LINKBAR_COLOR" value="${LINKBAR_COLOR}"/>
 <filter token="LN54_CONTACT_EMAIL" value="${LN54_CONTACT_EMAIL}"/>
 <filter token="LOADUP_FULL_PATH" value="${LOADUP_FULL_PATH}"/>
 <filter token="LOAD_ONTOLOGIES_AT_STARTUP" value="${LOAD_ONTOLOGIES_AT_STARTUP}"/>
@@ -124,6 +118,7 @@
 <filter token="PGBINDIR" value="${PGBINDIR}"/>
 <filter token="PGDATA" value="${PGDATA}"/>
 <filter token="PGDATABASE" value="${PGDATABASE}"/>
+<filter token="PRIMARY_COLOR" value="${PRIMARY_COLOR}"/>
 <filter token="PRODUCTION_NOTIFICATION_EMAIL" value="${PRODUCTION_NOTIFICATION_EMAIL}"/>
 <filter token="REQUEST_NEW_ANATOMY_EMAIL" value="${REQUEST_NEW_ANATOMY_EMAIL}"/>
 <filter token="ROOT_PATH" value="${ROOT_PATH}"/>
@@ -135,8 +130,6 @@
 <filter token="SHARED_DOMAIN_NAME" value="${SHARED_DOMAIN_NAME}"/>
 <filter token="SHOW_SQL" value="${SHOW_SQL}"/>
 <filter token="SHUTDOWNPORT" value="${SHUTDOWNPORT}"/>
-<filter token="SIDEBAR_COLOR" value="${SIDEBAR_COLOR}"/>
-<filter token="SITE_BACKGROUND" value="${SITE_BACKGROUND}"/>
 <filter token="SOLR_CONTEXT" value="${SOLR_CONTEXT}"/>
 <filter token="SOLR_CREATE_BACKUPS" value="${SOLR_CREATE_BACKUPS}"/>
 <filter token="SOLR_HOME" value="${SOLR_HOME}"/>
@@ -193,7 +186,6 @@
 <filter token="WIKI_PASS" value="${WIKI_PASS}"/>
 <filter token="WIKI_PUSH_TO_WIKI" value="${WIKI_PUSH_TO_WIKI}"/>
 <filter token="WIKI_USER" value="${WIKI_USER}"/>
-<filter token="ZDBHOME_BACKGROUND" value="${ZDBHOME_BACKGROUND}"/>
 <filter token="ZFIN_ADMIN" value="${ZFIN_ADMIN}"/>
 </filterset>
 </project>

@@ -40,7 +40,7 @@ public class ControlledVocabularyAddController {
     @Autowired
     private HttpServletRequest request;
 
-    @InitBinder
+    @InitBinder("formBean")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new ControlledVocabularyAddBeanValidator());
     }

@@ -35,10 +35,16 @@ const config = {
                 use: ['babel-loader'],
             },
             {
-                test: /\.css$/,
+                test: /\.s?css$/,
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            data: '$primary: ' + (process.env.PRIMARY_COLOR || 'null') + ';',
+                        }
+                    },
                 ],
             },
             {

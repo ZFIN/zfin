@@ -23,21 +23,7 @@
 <script src="${zfn:getAssetPath("search.js")}"></script>
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
-<style>
-    /* remove parts of the header that we don't need */
-    #quicksearchBox {
-        display: none
-    }
-</style>
-
-<script>
-    hdrSetCookie("tabCookie","Motto","","/");
-</script>
-
-
 <div class="container-fluid">
-
-
     <div class="row">
         <div class="search-box col-md-offset-1 col-md-11">
             <form id="query-form" class="form-inline" method="get" action="/search">
@@ -384,7 +370,7 @@ function submitAdvancedQuery(fields) {
 }
 
 $(function () {
-    $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {directLink: true});
+    $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
 
     $('#primary-query-input').bind("typeahead:select", function() {
         $('#query-form').submit();

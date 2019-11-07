@@ -157,6 +157,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/figure/{1}.jsp"/>
     </definition>
 
+    <definition name="infrastructure/home.page" extends="main_layout">
+        <put-attribute name="bodyClass" value="home" />
+        <put-attribute name="body" value="/WEB-INF/jsp/infrastructure/home.jsp" />
+    </definition>
+
     <definition name="infrastructure/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/infrastructure/{1}.jsp" />
     </definition>

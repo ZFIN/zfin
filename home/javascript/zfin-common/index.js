@@ -1,10 +1,9 @@
+require('./polyfills');
+
+require('./animated-placeholder.jquery');
 require('./autocompletify');
 require('./blast');
-
-const headerMenu = require('exports-loader?hdrGetCookie,hdrSetCookie!./header-menu');
-window.hdrGetCookie = headerMenu.hdrGetCookie;
-window.hdrSetCookie = headerMenu.hdrSetCookie;
-
+require('./header-menu');
 require('./form-reset');
 
 window.processPopupLinks = require('exports-loader?processPopupLinks!./popups');

@@ -10,5 +10,6 @@
     <include file="source/org/zfin/db/load/1110/ZFIN-6190.sql"/>
     <include file="source/org/zfin/db/load/1110/add_goref_id.sql"/>
     <include file="source/org/zfin/db/load/1110/ZFIN-6301b.sql"/>
+    <include file="source/org/zfin/db/load/1110/PLC-165.sql"/>
 
 </databaseChangeLog>
