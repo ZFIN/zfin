@@ -5,9 +5,9 @@
     </div>
 </div>
 
-<form class="form-horizontal" ng-show="vm.newEmail">
-    <div class="form-group">
-        <label class="col-md-2 control-label">To</label>
+<form ng-show="vm.newEmail">
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label">To</label>
         <div class="col-md-4">
             <div ng-show="vm.newEmail.outgoing">
                 <div class="checkbox" ng-repeat="author in vm.authors" ng-show="!vm.newEmail.reply">
@@ -22,26 +22,26 @@
             <p class="form-control-static" ng-show="!vm.newEmail.outgoing">{{vm.newEmail.to[0].email}}</p>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">From</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label">From</label>
         <div class="col-md-4">
             <input class="form-control" ng-show="!vm.newEmail.outgoing" placeholder="alice@example.edu" ng-model="vm.newEmail.from.email">
             <p class="form-control-static" ng-show="vm.newEmail.outgoing">{{vm.newEmail.from.email}}</p>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">Subject</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label">Subject</label>
         <div class="col-md-6">
             <input class="form-control" ng-model="vm.newEmail.subject">
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">Message</label>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label">Message</label>
         <div class="col-md-6">
             <textarea class="form-control" rows="5" ng-model="vm.newEmail.message"></textarea>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group row">
         <div class="offset-md-2 col-md-10">
             <button class="btn btn-default" ng-click="vm.closeForm()">Cancel</button>
             <button class="btn btn-primary" ng-click="vm.sendMessage()" ng-show="vm.newEmail.outgoing" ng-disabled="!vm.isValid() || vm.processing">

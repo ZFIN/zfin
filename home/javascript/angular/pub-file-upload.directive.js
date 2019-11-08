@@ -5,9 +5,9 @@
 
     function pubFileUpload() {
         var template =
-            '<form class="form-horizontal">' +
-            '    <div class="form-group">' +
-            '        <label class="col-md-2 control-label">Type</label>' +
+            '<form>' +
+            '    <div class="form-group row">' +
+            '        <label class="col-md-2 col-form-label">Type</label>' +
             '        <div class="col-md-3">' +
             '            <select class="form-control" ng-model="vm.type" ng-options="type.name for type in vm.fileTypes track by type.id"></select>' +
             '            <p class="text-warning" ng-show="vm.checkOriginalArticle()">' +
@@ -15,13 +15,13 @@
             '            </p>' +
             '        </div>' +
             '    </div>' +
-            '    <div class="form-group">' +
-            '        <label class="col-md-2 control-label">File</label>' +
+            '    <div class="form-group row">' +
+            '        <label class="col-md-2 col-form-label">File</label>' +
             '        <div class="col-md-6">' +
             '            <div file-input files="vm.file" multiple="false" error-message="vm.errorMessage"></div>' +
             '        </div>' +
             '    </div>' +
-            '    <div class="form-group">' +
+            '    <div class="form-group row">' +
             '        <div class="offset-md-2 col-md-6">' +
             '            <button class="btn btn-primary" ng-click="vm.upload()" ng-disabled="!vm.readyToUpload() || vm.uploading">' +
             '              <span ng-show="!vm.uploading">Save</span>' +

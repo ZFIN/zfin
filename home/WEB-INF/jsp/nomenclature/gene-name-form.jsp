@@ -19,22 +19,22 @@
     <jsp:attribute name="submissionForm">
         <h3>Proposed Nomenclature</h3>
 
-        <div class="form-group">
-            <form:label path="geneSymbol" cssClass="col-md-2 control-label required">Gene Symbol</form:label>
+        <div class="form-group row">
+            <form:label path="geneSymbol" cssClass="col-md-2 col-form-label required">Gene Symbol</form:label>
             <div class="col-md-4">
                 <form:input path="geneSymbol" cssClass="form-control" placeholder="e.g. ndr2" />
             </div>
         </div>
 
-        <div class="form-group">
-            <form:label path="geneName" cssClass="col-md-2 control-label required">Gene Name</form:label>
+        <div class="form-group row">
+            <form:label path="geneName" cssClass="col-md-2 col-form-label required">Gene Name</form:label>
             <div class="col-md-4">
                 <form:input path="geneName" cssClass="form-control" placeholder="e.g. nodal-related 2" />
             </div>
         </div>
 
-        <div class="form-group">
-            <form:label path="otherNames" cssClass="col-md-2 control-label">Other Names</form:label>
+        <div class="form-group row">
+            <form:label path="otherNames" cssClass="col-md-2 col-form-label">Other Names</form:label>
             <div class="col-md-4">
                 <form:input path="otherNames" cssClass="form-control" />
             </div>
@@ -56,22 +56,22 @@
             <em>Sequence data will be treated in complete confidence.</em>
         </p>
 
-        <div class="form-group">
-            <form:label path="genBankID" cssClass="col-md-2 control-label">GenBank ID</form:label>
+        <div class="form-group row">
+            <form:label path="genBankID" cssClass="col-md-2 col-form-label">GenBank ID</form:label>
             <div class="col-md-4">
                 <form:input path="genBankID" cssClass="form-control" />
             </div>
         </div>
 
-        <div class="form-group">
-            <form:label path="sequence" cssClass="col-md-2 control-label">Sequence</form:label>
+        <div class="form-group row">
+            <form:label path="sequence" cssClass="col-md-2 col-form-label">Sequence</form:label>
             <div class="col-md-6">
                 <form:textarea path="sequence" rows="5" cssClass="form-control" />
             </div>
         </div>
 
-        <div class="form-group">
-            <form:label path="chromosome" cssClass="col-md-2 control-label">Chromosome</form:label>
+        <div class="form-group row">
+            <form:label path="chromosome" cssClass="col-md-2 col-form-label">Chromosome</form:label>
             <div class="col-md-4">
                 <form:input path="chromosome" cssClass="form-control" />
             </div>
@@ -82,20 +82,20 @@
         <div id="homologs">
             <c:forEach var="homolog" items="${submission.homologyInfoList}" varStatus="status">
                 <div class="line-form-row">
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Species</label>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">Species</label>
                         <div class="col-md-4">
                             <form:input path="homologyInfoList[${status.index}].species" class="form-control" />
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Gene Symbol</label>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">Gene Symbol</label>
                         <div class="col-md-4">
                             <form:input path="homologyInfoList[${status.index}].geneSymbol" class="form-control" />
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">Database ID</label>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">Database ID</label>
                         <div class="col-md-4">
                             <form:input path="homologyInfoList[${status.index}].databaseID" class="form-control" />
                             <span class="help-block">

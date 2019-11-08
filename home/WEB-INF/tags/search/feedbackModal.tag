@@ -5,46 +5,46 @@
 <div class="row">
     <div class="col-lg-6 offset-lg-3 feedback-box alert" style="display: none; margin-top: 1em;">
         <a href="#" class="close" data-hide="feedback-box">&times;</a>
-        <form style="margin-top: 18px; clear:both;" class="your-input-welcome-form form-horizontal" name="your-input-welcome" id="feedback-form">
+        <form style="margin-top: 18px; clear:both;" class="your-input-welcome-form" name="your-input-welcome" id="feedback-form">
 
-            <div class="form-group">
-                <label for="feedbackName" class="control-label col-2">Name</label>
+            <div class="form-group row">
+                <label for="feedbackName" class="col-form-label col-2">Name</label>
                 <div class="col-10">
                     <input name="yiw-name" id="feedbackName" type="text" class="form-control required"/>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="feedbackInstitution" class="control-label col-2">Institution</label>
+            <div class="form-group row">
+                <label for="feedbackInstitution" class="col-form-label col-2">Institution</label>
                 <div class="col-10">
                     <input name="yiw-institution" id="feedbackInstitution" type="text" class="form-control required"/>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="feedbackEmail" class="control-label col-2">Email</label>
+            <div class="form-group row">
+                <label for="feedbackEmail" class="col-form-label col-2">Email</label>
                 <div class="col-10">
                     <input name="yiw-email" id="feedbackEmail" class="form-control required email" type="text"/>
                 </div>
             </div>
             <%-- spam preventer --%>
-            <div class="form-group" style="display: none">
-                <label for="feedbackEmail2" class="control-label col-2">Please leave blank</label>
+            <div class="form-group row" style="display: none">
+                <label for="feedbackEmail2" class="col-form-label col-2">Please leave blank</label>
                 <div class="col-10">
                     <input type="text" id="feedbackEmail2" name="email" autocomplete="off" class="form-control"/>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="feedbackSubject"class="control-label col-2">Subject</label>
+            <div class="form-group row">
+                <label for="feedbackSubject"class="col-form-label col-2">Subject</label>
                 <div class="col-10">
                     <input id="feedbackSubject" type=text name="yiw-subject" class="required form-control"/>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="feedbackComments" class="control-label col-2">Comments</label>
+            <div class="form-group row">
+                <label for="feedbackComments" class="col-form-label col-2">Comments</label>
                 <div class="col-10">
                     <textarea class="form-control required" id="feedbackComments" name="yiw-comments" rows=7></textarea>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group row">
                 <div class="offset-2 col-10">
                     <input type="submit" value="Send" class="btn btn-zfin" id="feedback-send-button"/>
                     <button class="btn btn-default" data-hide="feedback-box">Close</button>

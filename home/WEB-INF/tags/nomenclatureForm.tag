@@ -24,12 +24,12 @@
 
     <hr>
 
-    <form:form action="" method="POST" commandName="submission" cssClass="form-horizontal" id="nomenclature">
+    <form:form action="" method="POST" commandName="submission" id="nomenclature">
 
         <h3>Contact Information</h3>
 
-        <div class="form-group">
-            <form:label path="name" cssClass="col-md-2 control-label required">Name</form:label>
+        <div class="form-group row">
+            <form:label path="name" cssClass="col-md-2 col-form-label required">Name</form:label>
             <div class="col-md-4">
                 <form:input path="name" cssClass="form-control"/>
             </div>
@@ -37,21 +37,21 @@
 
         <%--hidden email field, used for spam prevention--%>
         <div class="alternate-email">
-            <form:label path="email" cssClass="col-md-2 control-label">Please leave blank</form:label>
+            <form:label path="email" cssClass="col-md-2 col-form-label">Please leave blank</form:label>
             <div class="col-md-4">
                 <form:input path="email" cssClass="form-control"/>
             </div>
         </div>
 
-        <div class="form-group">
-            <form:label path="email2" cssClass="col-md-2 control-label required">Email</form:label>
+        <div class="form-group row">
+            <form:label path="email2" cssClass="col-md-2 col-form-label required">Email</form:label>
             <div class="col-md-4">
                 <form:input path="email2" cssClass="form-control"/>
             </div>
         </div>
 
-        <div class="form-group">
-            <form:label path="laboratory" cssClass="col-md-2 control-label required">Laboratory</form:label>
+        <div class="form-group row">
+            <form:label path="laboratory" cssClass="col-md-2 col-form-label required">Laboratory</form:label>
             <div class="col-md-4">
                 <form:input path="laboratory" cssClass="form-control"/>
             </div>
@@ -61,7 +61,7 @@
 
         <h3>Publication Status</h3>
 
-        <div class="form-group">
+        <div class="form-group row">
             <div class="col-md-4">
                 <c:forEach items="${pubStatusOptions}" var="option">
                     <div class="radio">
@@ -74,8 +74,8 @@
             </div>
         </div>
 
-        <div class="form-group citations-group">
-            <form:label path="citations" cssClass="col-md-2 control-label">Citations</form:label>
+        <div class="form-group row citations-group">
+            <form:label path="citations" cssClass="col-md-2 col-form-label">Citations</form:label>
             <div class="col-md-6">
                 <form:input path="citations" cssClass="form-control"/>
             </div>
@@ -85,7 +85,7 @@
 
         <h3>Additional Comments</h3>
 
-        <div class="form-group">
+        <div class="form-group row">
             <div class="col-md-8">
                 <form:textarea path="comments" cols="80" rows="5" cssClass="form-control"/>
             </div>

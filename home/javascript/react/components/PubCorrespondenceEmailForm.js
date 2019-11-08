@@ -56,9 +56,9 @@ const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onCompl
     };
 
     return (
-        <form className="form-horizontal">
-            <div className="form-group">
-                <label className="col-md-2 control-label">To</label>
+        <form>
+            <div className="form-group row">
+                <label className="col-md-2 col-form-label">To</label>
                 <div className="col-md-6">
                     {email.outgoing ?
                         <div>
@@ -72,8 +72,8 @@ const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onCompl
                 </div>
             </div>
 
-            <div className="form-group">
-                <label className="col-md-2 control-label">From</label>
+            <div className="form-group row">
+                <label className="col-md-2 col-form-label">From</label>
                 <div className="col-md-4">
                     {email.outgoing ?
                         <p className="form-control-static">{email.from.email}</p> :
@@ -82,8 +82,8 @@ const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onCompl
                 </div>
             </div>
 
-            <div className="form-group">
-                <label className="col-md-2 control-label">Subject</label>
+            <div className="form-group row">
+                <label className="col-md-2 col-form-label">Subject</label>
                 <div className="col-md-6">
                     <input className="form-control" value={email.subject} onChange={handleSubjectChange} />
                 </div>
@@ -92,14 +92,14 @@ const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onCompl
                 </div>
             </div>
 
-            <div className="form-group">
-                <label className="col-md-2 control-label">Message</label>
+            <div className="form-group row">
+                <label className="col-md-2 col-form-label">Message</label>
                 <div className="col-md-6">
                     <textarea className="form-control" rows="5" value={email.message} onChange={handleMessageChange} />
                 </div>
             </div>
 
-            <div className="form-group">
+            <div className="form-group row">
                 <div className="offset-md-2 col-md-10 horizontal-buttons">
                     <button type='button' className="btn btn-default" onClick={onCancel}>Cancel</button>
                     <LoadingButton className="btn btn-primary" disabled={!isValid || loading} loading={loading} onClick={onComplete}>

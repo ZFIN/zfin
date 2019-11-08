@@ -5,22 +5,22 @@
 
     function figureUpload() {
         var template =
-            '<form class="form-horizontal">' +
-            '    <div class="form-group">' +
-            '        <label class="col-md-2 control-label">Label</label>' +
+            '<form>' +
+            '    <div class="form-group row">' +
+            '        <label class="col-md-2 col-form-label">Label</label>' +
             '        <div class="col-md-6">' +
             '            Fig. <input class="form-control form-control-fixed-width-sm" ng-model="vm.label">' +
             '        </div>' +
             '    </div>' +
             '    <div ng-show="vm.hasPermissions">' +
-            '      <div class="form-group">' +
-            '          <label class="col-md-2 control-label">Caption</label>' +
+            '      <div class="form-group row">' +
+            '          <label class="col-md-2 col-form-label">Caption</label>' +
             '          <div class="col-md-6">' +
             '              <textarea class="form-control" rows="6" ng-model="vm.caption"></textarea>' +
             '          </div>' +
             '      </div>' +
-            '      <div class="form-group">' +
-            '          <label class="col-md-2 control-label">Images</label>' +
+            '      <div class="form-group row">' +
+            '          <label class="col-md-2 col-form-label">Images</label>' +
             '          <div class="col-md-6">' +
             '              <div file-input files="vm.files" multiple="true" accept="image/*" error-message="vm.errorMessage"></div>' +
             '          </div>' +
@@ -36,7 +36,7 @@
             '        </div>' +
             '      </div>' +
             '    </div>' +
-            '    <div class="form-group">' +
+            '    <div class="form-group row">' +
             '        <div class="offset-md-2 col-md-6">' +
             '            <button class="btn btn-primary" ng-click="vm.upload()" ng-disabled="!vm.label || vm.uploading">' +
             '              <span ng-show="!vm.uploading">Save</span>' +

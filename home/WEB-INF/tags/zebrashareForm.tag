@@ -2,19 +2,19 @@
 
 <%@attribute name="formBean" type="org.zfin.zebrashare.presentation.SubmissionFormBean" required="true" %>
 
-<form:form method="POST" commandName="formBean" class="form-horizontal" id="zebrashareForm" enctype="multipart/form-data">
+<form:form method="POST" commandName="formBean" id="zebrashareForm" enctype="multipart/form-data">
     <h3>Submitter</h3>
     <p>We will contact this person if we have questions about this submission.</p>
-    <div class="form-group">
-        <label class="col-md-3 control-label">Submitter Name</label>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Submitter Name</label>
         <div class="col-md-8">
             <form:input path="submitterName" cssClass="form-control"/>
             <form:errors path="submitterName" cssClass="text-danger" />
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-md-3 control-label">Submitter Email</label>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Submitter Email</label>
         <div class="col-md-8">
             <form:input path="submitterEmail" cssClass="form-control"/>
             <form:errors path="submitterEmail" cssClass="text-danger" />
@@ -25,8 +25,8 @@
 
     <h3>Attribution</h3>
     <p>We will make a ZFIN publication record and use it for attribution of the alleles.</p>
-    <div class="form-group">
-        <label class="col-md-3 control-label">Authors</label>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Authors</label>
         <div class="col-md-8">
             <form:textarea path="authors" cssClass="form-control"/>
             <form:errors path="authors" cssClass="text-danger" />
@@ -39,24 +39,24 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-md-3 control-label">Title</label>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Title</label>
         <div class="col-md-8">
             <form:textarea path="title" cssClass="form-control" placeholder="e.g. A CRISPR Mutagenesis Screen of Sox9a"/>
             <form:errors path="title" cssClass="text-danger" />
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-md-3 control-label">Abstract</label>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Abstract</label>
         <div class="col-md-8">
             <form:textarea path="abstractText" cssClass="form-control" rows="8" placeholder="e.g. CRISPRs were used to create premature stops in each exon of the sox9a gene. Only mutations in exon 1 and 2 resulted in any observable phenotype, which included small eyes."/>
             <form:errors path="abstractText" cssClass="text-danger" />
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-md-3 control-label">Lab of Origin</label>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Lab of Origin</label>
         <div class="col-md-8">
         <c:choose>
             <c:when test="${!empty labOptions}">
@@ -77,8 +77,8 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-md-3 control-label">Who Can Edit Alleles Associated With This Publication?</label>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Who Can Edit Alleles Associated With This Publication?</label>
         <div class="col-md-8">
             <input id="userLookup" class="form-control" />
             <div id="selectedUsers"></div>
@@ -88,8 +88,8 @@
     <hr />
 
     <h3>Files</h3>
-    <div class="form-group">
-        <label class="col-md-3 control-label">Submission Workbook</label>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Submission Workbook</label>
         <div class="col-md-8">
             <label class="btn btn-default">
                 Choose file
@@ -101,8 +101,8 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-md-3 control-label">Images</label>
+    <div class="form-group row">
+        <label class="col-md-3 col-form-label">Images</label>
         <div class="col-md-8">
             <div class="file-drag-target">
                 <input multiple type="file" id="imageFiles" name="imageFiles"
@@ -125,7 +125,7 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group row">
         <div class="offset-md-3 col-md-8">
             <button type="submit" class="btn btn-primary">Submit</button>
             <a class="btn btn-default" href="/">Cancel</a>

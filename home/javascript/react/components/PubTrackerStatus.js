@@ -182,9 +182,9 @@ class PubTrackerStatus extends Component {
         const curatorOptions = [{zdbID: '', name: ''}].concat(curators);
 
         return (
-            <form className="form-horizontal">
-                <div className="form-group">
-                    <label className="col-md-3 control-label">Status</label>
+            <form>
+                <div className="form-group row">
+                    <label className="col-md-3 col-form-label">Status</label>
                     <div className="col-md-8">
                         <ObjectSelectBox className='form-control' getDisplay="name" getValue="id" options={statusOptions}
                                          value={status} onChange={status => this.setState({status})} />
@@ -192,8 +192,8 @@ class PubTrackerStatus extends Component {
                 </div>
 
                 {statusHasLocation(status) &&
-                <div className="form-group">
-                    <label className="col-md-3 control-label">{getLocationLabelForStatus(status)}</label>
+                <div className="form-group row">
+                    <label className="col-md-3 col-form-label">{getLocationLabelForStatus(status)}</label>
                     <div className="col-md-8">
                         <ObjectSelectBox className='form-control' getDisplay="name" getValue="id" options={locationOptions}
                                          value={location} onChange={location => this.setState({location})}/>
@@ -202,8 +202,8 @@ class PubTrackerStatus extends Component {
                 }
 
                 {statusRequiresOwner(status) &&
-                <div className="form-group">
-                    <label className="col-md-3 control-label">Owner</label>
+                <div className="form-group row">
+                    <label className="col-md-3 col-form-label">Owner</label>
                     <div className="col-md-8">
                         <ObjectSelectBox className='form-control' getDisplay="name" getValue="zdbID" options={curatorOptions}
                                          value={owner} onChange={owner => this.setState({owner})}/>
@@ -212,7 +212,7 @@ class PubTrackerStatus extends Component {
                 }
 
                 {warnings.length === 0 &&
-                <div className="form-group">
+                <div className="form-group row">
                     <div className="offset-md-3 col-md-9 horizontal-buttons">
                         <button type="button" className="btn btn-default" disabled={loading || !this.readyToSave()}
                                 onClick={this.populateState}>

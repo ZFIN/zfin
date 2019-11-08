@@ -1,4 +1,19 @@
+// variable overrides
 $font-size-base: 0.875rem;
 $table-cell-padding: 0.5rem;
+$label-margin-bottom: 0.3125rem;
 
+// import bootstrap
 @import "~bootstrap/scss/bootstrap";
+
+label {
+  font-weight: bold;
+}
+
+// amend rules
+.col-form-label,
+.col-form-label-lg,
+.col-form-label-sm {
+  font-weight: bold;
+  text-align: right;
+}

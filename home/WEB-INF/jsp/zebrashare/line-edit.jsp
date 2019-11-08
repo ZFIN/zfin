@@ -28,9 +28,9 @@
         <div class="alert alert-success" role="alert">${success}</div>
     </c:if>
 
-    <form:form method="POST" commandName="formBean" cssClass="form-horizontal">
-        <div class="form-group">
-            <form:label cssClass="col-md-3 control-label" path="functionalConsequence">Functional Consequence</form:label>
+    <form:form method="POST" commandName="formBean">
+        <div class="form-group row">
+            <form:label cssClass="col-md-3 col-form-label" path="functionalConsequence">Functional Consequence</form:label>
             <div class="col-md-3">
                 <form:select path="functionalConsequence" cssClass="form-control">
                     <form:option value="" />
@@ -39,8 +39,8 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <form:label path="adultViable" cssClass="col-md-3 control-label">Adult Viable</form:label>
+        <div class="form-group row">
+            <form:label path="adultViable" cssClass="col-md-3 col-form-label">Adult Viable</form:label>
             <div class="col-md-3">
                 <form:select path="adultViable" cssClass="form-control">
                     <form:option value="">Unknown</form:option>
@@ -50,8 +50,8 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <form:label path="maternalZygosityExamined" cssClass="col-md-3 control-label">Maternal Zygocity Examined</form:label>
+        <div class="form-group row">
+            <form:label path="maternalZygosityExamined" cssClass="col-md-3 col-form-label">Maternal Zygocity Examined</form:label>
             <div class="col-md-3">
                 <form:select path="maternalZygosityExamined" cssClass="form-control">
                     <form:option value="">Unknown</form:option>
@@ -61,8 +61,8 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <form:label path="currentlyAvailable" cssClass="col-md-3 control-label">Currently Available</form:label>
+        <div class="form-group row">
+            <form:label path="currentlyAvailable" cssClass="col-md-3 col-form-label">Currently Available</form:label>
             <div class="col-md-3">
                 <form:select path="currentlyAvailable" cssClass="form-control">
                     <form:option value="">Unknown</form:option>
@@ -72,14 +72,14 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <form:label path="otherLineInformation" cssClass="col-md-3 control-label">Other Line Information</form:label>
+        <div class="form-group row">
+            <form:label path="otherLineInformation" cssClass="col-md-3 col-form-label">Other Line Information</form:label>
             <div class="col-md-9">
                 <form:textarea path="otherLineInformation" cssClass="form-control" rows="5"/>
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group row">
             <div class="offset-md-3 col-md-8">
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>

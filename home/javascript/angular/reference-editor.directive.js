@@ -12,8 +12,8 @@
             '    <h4 class="modal-title">References for {{vm.entity}}</h4>' +
             '  </div>' +
             '  <div class="modal-body">' +
-            '    <form class="form-horizontal">' +
-            '      <div class="form-group">' +
+            '    <form>' +
+            '      <div class="form-group row">' +
             '        <div class="col-md-10">' +
             '          <input pub-lookup placeholder="Add Reference" class="form-control" ng-model="vm.newReference"/>' +
             '        </div>' +

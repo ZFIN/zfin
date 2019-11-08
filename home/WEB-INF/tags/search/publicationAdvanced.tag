@@ -1,35 +1,29 @@
 
+<div>
+    <form id="pub-advanced-form">
 
-<style>
-    #pub-advanced-form .control-group { margin-top: 6px; margin-bottom: 6px; }
-</style>
-
-<%--<strong>Publication Advanced Search</strong>--%>
-<div <%--style="border: 1px solid #ccc; padding: 20px;--%> ">
-    <form id="pub-advanced-form" class="form-horizontal">
-
-        <div class="control-group">
+        <div class="form-group">
             <label class="control-label" for="pub-advanced-abstract">Title</label>
             <div class="controls">
                 <input id="pub-advanced-title" class="input advanced-text-input" type="text"/>
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="form-group">
             <label class="control-label" for="pub-advanced-author">Author</label>
             <div class="controls">
                 <input id="pub-advanced-author" class="input advanced-text-input" type="text"/>
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="form-group">
             <label class="control-label" for="pub-advanced-abstract">Abstract</label>
             <div class="controls">
                 <input id="pub-advanced-abstract" class="input advanced-text-input" type="text"/>
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="form-group">
             <label class="control-label">PET Date from</label>
             <div class="controls">
                 <input id="pub-advanced-start-date" name="start-date" placeholder="YYYY-MM-DD" class="input datepicker"
@@ -42,7 +36,7 @@
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="form-group">
             <label class="control-label">&nbsp;</label>
             <div class="controls">
                 <button id="pub-advanced-button" type="submit" class="btn btn-zfin" value="Go">Search</button>

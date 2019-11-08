@@ -7,39 +7,39 @@
     <div class="alert alert-danger">${error}</div>
 </c:if>
 
-<form:form method="POST" commandName="publicationBean" cssClass="form-horizontal">
-    <div class="form-group">
-        <label for="publication.title" class="col-md-3 control-label">Title</label>
+<form:form method="POST" commandName="publicationBean">
+    <div class="form-group row">
+        <label for="publication.title" class="col-md-3 col-form-label">Title</label>
         <div class="col-md-8">
             <form:textarea path="publication.title" cssClass="form-control"/>
             <form:errors path="publication.title" cssClass="text-danger" />
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.status" class="col-md-3 control-label">Status</label>
+    <div class="form-group row">
+        <label for="publication.status" class="col-md-3 col-form-label">Status</label>
         <div class="col-md-8">
             <form:select path="publication.status" items="${statusList}" itemLabel="display" cssClass="form-control"/>
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="accessionNumber" class="col-md-3 control-label">PubMed ID</label>
+    <div class="form-group row">
+        <label for="accessionNumber" class="col-md-3 col-form-label">PubMed ID</label>
         <div class="col-md-8">
             <form:input path="accessionNumber" cssClass="form-control"/>
             <form:errors path="accessionNumber" cssClass="text-danger" />
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.doi" class="col-md-3 control-label">DOI</label>
+    <div class="form-group row">
+        <label for="publication.doi" class="col-md-3 col-form-label">DOI</label>
         <div class="col-md-8">
             <form:input path="publication.doi" cssClass="form-control"/>
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.authors" class="col-md-3 control-label">Authors</label>
+    <div class="form-group row">
+        <label for="publication.authors" class="col-md-3 col-form-label">Authors</label>
         <div class="col-md-8">
             <form:textarea path="publication.authors" cssClass="form-control"/>
             <form:errors path="publication.authors" cssClass="text-danger" />
@@ -63,8 +63,8 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.publicationDate" class="col-md-3 control-label">Date</label>
+    <div class="form-group row">
+        <label for="publication.publicationDate" class="col-md-3 col-form-label">Date</label>
         <div class="col-md-8">
             <form:input path="publication.publicationDate" cssClass="form-control datepicker" data-provide="datepicker"/>
             <form:errors path="publication.publicationDate" cssClass="text-danger" />
@@ -72,8 +72,8 @@
         </div>
     </div>
 
-    <div id="journal" class="form-group">
-        <label for="publication.journal" class="col-md-3 control-label">Journal Abbreviation</label>
+    <div id="journal" class="form-group row">
+        <label for="publication.journal" class="col-md-3 col-form-label">Journal Abbreviation</label>
         <div class="col-md-8">
             <div class="scrollable-dropdown-menu">
                 <form:input path="publication.journal" cssClass="form-control" id="journal-autocomplete"/>
@@ -82,50 +82,50 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.volume" class="col-md-3 control-label">Journal Volume</label>
+    <div class="form-group row">
+        <label for="publication.volume" class="col-md-3 col-form-label">Journal Volume</label>
         <div class="col-md-8">
             <form:input path="publication.volume" cssClass="form-control"/>
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.pages" class="col-md-3 control-label">Pages</label>
+    <div class="form-group row">
+        <label for="publication.pages" class="col-md-3 col-form-label">Pages</label>
         <div class="col-md-8">
             <form:input path="publication.pages" cssClass="form-control"/>
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.type" class="col-md-3 control-label">Type</label>
+    <div class="form-group row">
+        <label for="publication.type" class="col-md-3 col-form-label">Type</label>
         <div class="col-md-8">
             <form:select path="publication.type" items="${typeList}" itemLabel="display" cssClass="form-control"/>
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.keywords" class="col-md-3 control-label">Keywords</label>
+    <div class="form-group row">
+        <label for="publication.keywords" class="col-md-3 col-form-label">Keywords</label>
         <div class="col-md-8">
             <form:textarea path="publication.keywords" cssClass="form-control"/>
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.abstractText" class="col-md-3 control-label">Abstract</label>
+    <div class="form-group row">
+        <label for="publication.abstractText" class="col-md-3 col-form-label">Abstract</label>
         <div class="col-md-8">
             <form:textarea path="publication.abstractText" cssClass="form-control" rows="8"/>
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.errataAndNotes" class="col-md-3 control-label">Errata & Notes</label>
+    <div class="form-group row">
+        <label for="publication.errataAndNotes" class="col-md-3 col-form-label">Errata & Notes</label>
         <div class="col-md-8">
             <form:textarea path="publication.errataAndNotes" cssClass="form-control"/>
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="publication.canShowImages" class="col-md-3 control-label">Has Image Permissions</label>
+    <div class="form-group row">
+        <label for="publication.canShowImages" class="col-md-3 col-form-label">Has Image Permissions</label>
         <div class="col-md-8">
             <div class="checkbox">
                 <label><form:checkbox path="publication.canShowImages"/></label>
@@ -133,8 +133,8 @@
             <form:errors path="publication.canShowImages" cssClass="text-danger" />
         </div>
     </div>
-    <div class="form-group">
-        <label for="publication.curatable" class="col-md-3 control-label">Is Curatable</label>
+    <div class="form-group row">
+        <label for="publication.curatable" class="col-md-3 col-form-label">Is Curatable</label>
         <div class="col-md-8">
             <div class="checkbox">
                 <label><form:checkbox path="publication.curatable" checked="checked"/></label>
@@ -143,7 +143,7 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group row">
         <div class="offset-md-3 col-md-8">
             <button type="submit" class="btn btn-primary">Submit</button>
             <a class="btn btn-default" href="/${publication.zdbID}">Cancel</a>
