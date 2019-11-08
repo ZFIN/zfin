@@ -30,10 +30,8 @@ require('./pub-file-edit.directive');
 require('./pub-file-upload.directive');
 require('./pub-lookup.directive');
 require('./public-note.directive');
-require('./publication-correspondence.directive');
 require('./quick-figure.directive');
 require('./reference-editor.directive');
-require('./select-all-list.directive');
 require('./str-details.directive');
 require('./str-sequence.directive');
 
