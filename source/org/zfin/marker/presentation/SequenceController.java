@@ -33,18 +33,16 @@ public class SequenceController {
     public JsonResultResponse<MarkerDBLink> getSequenceView(@PathVariable("zdbID") String zdbID,
                                                             @RequestParam(value = "limit", required = false, defaultValue = "20") Integer limit,
                                                             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                                            @RequestParam(value = "sortBy", required = false) String sortBy,
                                                             @RequestParam(value = "filter.type", required = false) String type,
                                                             @RequestParam(value = "filter.accession", required = false) String accessionNumber,
-                                                            @RequestParam(value = "filter.length", required = false) String length
-    ) {
+                                                            @RequestParam(value = "filter.length", required = false) String length) {
         long startTime = System.currentTimeMillis();
         Pagination pagination = new Pagination();
         pagination.setLimit(limit);
         pagination.setPage(page);
-        pagination.addFieldFilter(FieldFilter.ACCESSION, accessionNumber);
-        pagination.addFieldFilter(FieldFilter.TYPE, type);
-
-
+        pagination.addFieldFilter(FieldFilter.SEQUENCE_ACCESSION, accessionNumber);
+        pagination.addFieldFilter(FieldFilter.SEQUENCE_TYPE, type);
 
 
         Marker marker = markerRepository.getMarker(zdbID);
@@ -61,20 +59,26 @@ public class SequenceController {
 
 
         // filtering
+        FilterService<MarkerDBLink> filterService = new FilterService<>(new SequenceFiltering());
+        List<MarkerDBLink> filteredDBLinksList = filterService.filterAnnotations(markerDBLinks, pagination.getFieldFilterValueMap());
+
+        // sorting
+        SequenceSorting sorting = new SequenceSorting();
+        filteredDBLinksList.sort(sorting.getComparator(sortBy));
+
 
         JsonResultResponse<MarkerDBLink> response = new JsonResultResponse<>();
         response.calculateRequestDuration(startTime);
-        response.setResults(markerDBLinks);
+        response.setResults(filteredDBLinksList);
         response.setTotal(markerDBLinks.size());
         response.setHttpServletRequest(request);
 
         // paginating
-        response.setResults(markerDBLinks.stream()
+        response.setResults(filteredDBLinksList.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList()));
         return response;
     }
-
 
 }

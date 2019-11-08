@@ -156,6 +156,7 @@ public class MarkerService {
                     link.setAccessionNumber(dbLink.getAccessionNumber());
                     link.setAccessionNumberDisplay(dbLink.getAccessionNumberDisplay());
                     link.setLength(dbLink.getLength());
+                    link.setReferenceDatabase(dbLink.getReferenceDatabase());
                     return link;
                 })
                 .collect(Collectors.toList());

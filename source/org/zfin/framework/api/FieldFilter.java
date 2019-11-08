@@ -3,8 +3,8 @@ package org.zfin.framework.api;
 import java.util.StringJoiner;
 
 public enum FieldFilter {
-    ACCESSION("accession"),
-    TYPE("type"),
+    SEQUENCE_ACCESSION("sequence.accession"),
+    SEQUENCE_TYPE("sequence.type"),
     ;
     private String name;
 

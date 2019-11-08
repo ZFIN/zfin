@@ -1,10 +1,12 @@
 /**
- *  Class DBLink.
+ * Class DBLink.
  */
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.infrastructure.EntityZdbID;
@@ -51,6 +53,11 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
         this.accessionNumberDisplay = accessionNumberDisplay;
     }
 
+    @JsonView(View.SequenceAPI.class)
+    @JsonProperty("type")
+    public String getSequenceType() {
+        return referenceDatabase.getForeignDBDataType().getDataType().toString();
+    }
 
     /**
      * Get blastable databases according to FogBugz 4244
@@ -82,7 +89,7 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
                                 &&
                                 database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST
                         )
-                        ) {
+                ) {
                     iterator.remove();
 //                    blastableDatabases.remove(i);
                 } else
@@ -103,7 +110,7 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
                                 &&
                                 database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST
                         )
-                        ) {
+                ) {
                     iterator.remove();
 //                    blastableDatabases.remove(i);
                 } else
@@ -133,7 +140,7 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
         if (referenceDatabase == null
                 ||
                 referenceDatabase.getPrimaryBlastDatabase() == null
-                ) {
+        ) {
             return false;
         }
 
@@ -235,7 +242,7 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
             if (dbLink.getAccessionNumber().equals(dbLink.getAccessionNumber())
                     &&
                     dbLink.getReferenceDatabase().equals(dbLink.getReferenceDatabase())
-                    ) {
+            ) {
                 return true;
             }
         }
