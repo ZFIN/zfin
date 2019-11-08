@@ -13,7 +13,7 @@
     <table class="summary rowstripes marker-go-table">
         <tr>
             <th width="25%">Disease Ontology Term</th>
-            <th width="20%">Alliance Multi-Species Data</th>
+            <th width="20%">Multi-Species Data</th>
             <th width="25%">OMIM Term</th>
             <th width="20%" style="text-align: center">OMIM Phenotype ID</th>
         </tr>
@@ -27,8 +27,7 @@
                 <td>
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${diseases}" groupByBean="diseaseTerm">
                         <c:if test="${!empty row.diseaseTerm}">
-                            <a href="http://www.alliancegenome.org/disease/${row.diseaseTerm.oboID}"><img src="/images/ALLIANCE-logo-nobackground_foundingmember.png"
-                                                                                                    title="Alliance" alt="Alliance" border="0" align="center" style="width:100%;max-width:50px"/></a>
+                            <a href="http://www.alliancegenome.org/disease/${row.diseaseTerm.oboID}">Alliance</a>
                         </c:if>
                     </zfin:groupByDisplay>
                 </td>
