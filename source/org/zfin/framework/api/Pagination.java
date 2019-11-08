@@ -19,7 +19,7 @@ public class Pagination {
     private String sortBy;
     //    private FieldFilter sortByField;
     private Boolean asc;
-    //    private BaseFilter fieldFilterValueMap = new BaseFilter();
+    private BaseFilter fieldFilterValueMap = new BaseFilter();
     private List<String> errorList = new ArrayList<>();
     private List<String> invalidFilterList = new ArrayList<>();
 
@@ -60,7 +60,6 @@ public class Pagination {
         }
     }
 
-    /*
         public void addFieldFilter(FieldFilter fieldFilter, String value) {
             fieldFilterValueMap.put(fieldFilter, value);
         }
@@ -74,7 +73,6 @@ public class Pagination {
             fieldFilterValueMap.remove(fieldFilter);
         }
 
-    */
     public boolean hasErrors() {
         return !errorList.isEmpty();
     }

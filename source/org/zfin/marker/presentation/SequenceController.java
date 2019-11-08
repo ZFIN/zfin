@@ -32,12 +32,20 @@ public class SequenceController {
     @RequestMapping(value = "/marker/{zdbID}/sequences")
     public JsonResultResponse<MarkerDBLink> getSequenceView(@PathVariable("zdbID") String zdbID,
                                                             @RequestParam(value = "limit", required = false, defaultValue = "20") Integer limit,
-                                                            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page
+                                                            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                                            @RequestParam(value = "filter.type", required = false) String type,
+                                                            @RequestParam(value = "filter.accession", required = false) String accessionNumber,
+                                                            @RequestParam(value = "filter.length", required = false) String length
     ) {
         long startTime = System.currentTimeMillis();
         Pagination pagination = new Pagination();
         pagination.setLimit(limit);
         pagination.setPage(page);
+        pagination.addFieldFilter(FieldFilter.ACCESSION, accessionNumber);
+        pagination.addFieldFilter(FieldFilter.TYPE, type);
+
+
+
 
         Marker marker = markerRepository.getMarker(zdbID);
 
@@ -50,6 +58,9 @@ public class SequenceController {
         }
 
         List<MarkerDBLink> markerDBLinks = MarkerService.getMarkerDBLinks(marker);
+
+
+        // filtering
 
         JsonResultResponse<MarkerDBLink> response = new JsonResultResponse<>();
         response.calculateRequestDuration(startTime);

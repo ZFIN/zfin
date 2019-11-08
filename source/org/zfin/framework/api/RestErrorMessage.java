@@ -11,7 +11,7 @@ import java.util.List;
 
 @Setter
 @Getter
-@JsonPropertyOrder({"statusCode", "errors", "statusName"})
+@JsonPropertyOrder({"errors", "statusCode", "statusName"})
 public class RestErrorMessage {
 
     private int statusCode;
