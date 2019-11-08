@@ -38,7 +38,7 @@
     "@fortawesome/fontawesome-free": "5.8.1",
     "angular": "1.5.8",
     "bloodhound-js": "1.2.3",
-    "bootstrap": "3.3.2",
+    "bootstrap": "4.3.1",
     "bootstrap-datepicker": "^1.8.0",
     "imagesloaded": "4.1.0",
     "immutability-helper": "3.0.0",
