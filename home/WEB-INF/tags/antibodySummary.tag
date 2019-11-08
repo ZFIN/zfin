@@ -12,7 +12,7 @@
             <th width="17%"> Host Organism</th>
             <th width="17%"> Assay <a class="popup-link info-popup-link" href="/ZFIN/help_files/antibody_assay_help.html"></a></th>
             <th width="17%"> Source</th>
-            <th width="5%"> Publication</th>
+            <th width="5%"> Publications</th>
         </tr>
         <c:forEach var="antibodyBean" items="${antibodyBeans}" varStatus="loop">
             <c:set var="antibody" value="${antibodyBean.antibody}"/>
@@ -41,10 +41,8 @@
                 <td><zfin2:orderThis markerSuppliers="${antibodyBean.antibody.suppliers}"
                                      accessionNumber="${antibodyBean.antibody.zdbID}"
                 organization=""/></td>
-                <td style="vertical-align: text-top">
-                    <div class="summary">
+                <td style="vertical-align: text-top; text-align: right">
                         <a href="/action/antibody/antibody-publication-list?antibodyID=${antibodyBean.antibody.zdbID}&orderBy=author">${antibodyBean.numPubs}</a>
-                    </div>
                 </td>
             </tr>
         </c:forEach>
