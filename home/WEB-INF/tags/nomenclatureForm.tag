@@ -149,7 +149,7 @@
         $(el).closest('.form-group').removeClass('has-error');
       },
       errorElement: 'span',
-      errorClass: 'help-block',
+      errorClass: 'form-text',
       errorPlacement: function (error, element) {
         if (element.is(':radio')) {
           error.prependTo(element.closest('.radio').parent());

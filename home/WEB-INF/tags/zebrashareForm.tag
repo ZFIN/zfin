@@ -30,7 +30,7 @@
         <div class="col-md-8">
             <form:textarea path="authors" cssClass="form-control"/>
             <form:errors path="authors" cssClass="text-danger" />
-            <span class="help-block">
+            <span class="form-text text-muted">
                 Enter each author as the last name followed by the first and (where appproriate) middle initials
                 followed by periods. Each name should be separated by a comma. For example:
                 <span class="nowrap">Hargrove J.M.</span>, <span class="nowrap">Lacasse N.D.</span>, and
@@ -61,7 +61,7 @@
         <c:choose>
             <c:when test="${!empty labOptions}">
                 <form:select path="labZdbId" items="${labOptions}" itemLabel="name" itemValue="zdbID" cssClass="form-control"/>
-                <span class="help-block">
+                <span class="form-text text-muted">
                     Don't see your lab listed here? Please
                     <zfin2:mailTo subject="Lab update request">contact us</zfin2:mailTo> to update your information.
                 </span>
@@ -109,8 +109,8 @@
                        accept=".png,.gif,.jpeg,.jpg,image/png,image/gif,image/jpeg" />
                 <label for="imageFiles" class="btn btn-default" >Choose files</label> or drag them here
             </div>
-            <span class="help-block">
-                    Acceptable File Formats include png, jpeg, jpg and gif.
+            <span class="form-text text-muted">
+                    Acceptable file formats include png, jpeg, jpg and gif.
                 </span>
             <div class="right-align">
                 <a id="clearImages" class="btn btn-link hidden">

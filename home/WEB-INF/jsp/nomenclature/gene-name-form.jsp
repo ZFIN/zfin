@@ -98,7 +98,7 @@
                         <label class="col-md-2 col-form-label">Database ID</label>
                         <div class="col-md-4">
                             <form:input path="homologyInfoList[${status.index}].databaseID" class="form-control" />
-                            <span class="help-block">
+                            <span class="form-text text-muted">
                             An identifier from <a href="http://www.ncbi.nlm.nih.gov/Genbank/index.html" target="_blank">GenBank</a>,
                             <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM" target="_blank">OMIM</a>,
                             <a href="http://www.informatics.jax.org/" target="_blank">Mouse Genome Informatics</a>, etc.

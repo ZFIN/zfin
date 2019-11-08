@@ -43,7 +43,7 @@
         <div class="col-md-8">
             <form:textarea path="publication.authors" cssClass="form-control"/>
             <form:errors path="publication.authors" cssClass="text-danger" />
-            <span class="help-block">Standard format: Dole, J.P., Nixon, R.M., and Gingrinch, N.
+            <span class="form-text text-muted">Standard format: Dole, J.P., Nixon, R.M., and Gingrinch, N.
                 <a data-toggle="collapse" href="#authors-more-help"><i class="fas fa-question-circle"></i></a>
             </span>
             <div class="collapse" id="authors-more-help">
@@ -68,7 +68,7 @@
         <div class="col-md-8">
             <form:input path="publication.publicationDate" cssClass="form-control datepicker" data-provide="datepicker"/>
             <form:errors path="publication.publicationDate" cssClass="text-danger" />
-            <span class="help-block">(MM/DD/YYYY)</span>
+            <span class="form-text text-muted">(MM/DD/YYYY)</span>
         </div>
     </div>
 
