@@ -4,13 +4,12 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
+import org.zfin.marker.AllianceGeneDesc;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
-import org.zfin.marker.AllianceGeneDesc;
-import org.zfin.publication.Publication;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,17 +66,18 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
             zfinExpressionDTO.setGeneId(basicDTOitem.getGeneId());
             zfinExpressionEvidenceDTO.setCrossReference(basicDTOitem.getEvidence().getCrossReference());
             zfinExpressionEvidenceDTO.setPublicationId(basicDTOitem.getEvidence().getPublicationId());
+
 //
-            if (basicDTOitem.getEvidence().getPublicationId().startsWith("ZFIN:")) {
-                String publicationId = basicDTOitem.getEvidence().getPublicationId();
-                Publication pub = getPublicationRepository().getPublication(publicationId.substring(5));
-                zfinExpressionEvidenceDTO.setPublicationTitle(pub.getTitle());
-            }
-            else {
-                Integer pmid = Integer.parseInt(basicDTOitem.getEvidence().getPublicationId().substring(5));
-                Publication pub = getPublicationRepository().getSinglePublicationByPmid(pmid);
-                zfinExpressionEvidenceDTO.setPublicationTitle(pub.getTitle());
-            }
+//            if (basicDTOitem.getEvidence().getPublicationId().startsWith("ZFIN:")) {
+//                String publicationId = basicDTOitem.getEvidence().getPublicationId();
+//                Publication pub = getPublicationRepository().getPublication(publicationId.substring(5));
+//                zfinExpressionEvidenceDTO.setPublicationTitle(pub.getTitle());
+//            }
+//            else {
+//                Integer pmid = Integer.parseInt(basicDTOitem.getEvidence().getPublicationId().substring(5));
+//                Publication pub = getPublicationRepository().getSinglePublicationByPmid(pmid);
+//                zfinExpressionEvidenceDTO.setPublicationTitle(pub.getTitle());
+//            }
 
             zfinExpressionDTO.setEvidence(zfinExpressionEvidenceDTO);
             zfinExpressionDTO.setDateAssigned(basicDTOitem.getDateAssigned());
