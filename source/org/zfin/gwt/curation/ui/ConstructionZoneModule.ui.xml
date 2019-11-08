@@ -23,7 +23,7 @@
             <table class="table table-borderless searchresults">
                 <tbody>
                     <tr>
-                        <th class="col-xs-1 align-text-top bold">Subterm</th>
+                        <th class="align-text-top bold">Subterm</th>
                         <td colspan="2">
                             <zfin:TermEntry ui:field="subTermEntry"
                                             listOFOntologies="zebrafish_anatomy,cellular_component,spatial,mouse_pathology.ontology"

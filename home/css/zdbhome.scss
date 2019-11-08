@@ -200,19 +200,3 @@ body.home {
         }
     }
 }
-
-.display-large {
-    display: none;
-
-    @media (min-width: $break-lg) {
-        display: block;
-    }
-}
-
-.hide-large {
-    display: block;
-
-    @media (min-width: $break-lg) {
-        display: none;
-    }
-}

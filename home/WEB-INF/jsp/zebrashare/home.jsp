@@ -10,7 +10,7 @@
     </p>
 
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-md-6">
             <a href="/zf_info/zebraShareSubmission.xlsx" class="zebrashare-button">
                 <span class="inner">
                     <i class="fas fa-download icon"></i>
@@ -21,7 +21,7 @@
                 </span>
             </a>
         </div>
-        <div class="col-sm-6">
+        <div class="col-md-6">
             <a href="/action/zebrashare/new" class="zebrashare-button">
                 <span class="inner">
                     <i class="fas fa-upload icon"></i>

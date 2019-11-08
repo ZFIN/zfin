@@ -98,7 +98,7 @@
                             <table class="table table-borderless searchresults">
                                 <tbody>
                                 <tr>
-                                    <th class="col-xs-1 align-text-top bold">Subterm</th>
+                                    <th class="align-text-top bold">Subterm</th>
                                     <td>
                                         <div id="structure-pile-construction-zone-entity_subterm-info"></div>
                                     </td>
@@ -132,7 +132,7 @@
                                 <table class="table table-borderless searchresults">
                                     <tbody>
                                     <tr>
-                                        <th class="col-xs-1 align-text-top bold">Subterm</th>
+                                        <th class="align-text-top bold">Subterm</th>
                                         <td align="top">
                                             <div id="structure-pile-construction-zone-related_entity_subterm-info"></div>
                                         </td>

@@ -60,7 +60,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         String url = path + "?q=" + q;
 
         StringBuilder out = new StringBuilder();
-        out.append("<div class=\"col-md-12 horizontal-breadbox\">");
+        out.append("<div class=\"col-lg-12 horizontal-breadbox\">");
         out.append("<a class=\"btn btn-default horizontal-breadbox-label\" href=\"");
         out.append(StringEscapeUtils.escapeHtml4(url));
         out.append("\">Remove All</a>");

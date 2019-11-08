@@ -11,16 +11,16 @@
                 <%-- not selected --%>
                 <c:when test="${!facetQuery.selected}">
                     <li class="facet-value row">
-                        <div class="col-md-2 col-xs-3 tight-on-the-right">
+                        <div class="col-lg-2 col-3 tight-on-the-right">
                         </div>
-                        <div class="col-md-7 col-xs-7 tight-on-the-left">
+                        <div class="col-lg-7 col-7 tight-on-the-left">
                             <a class="facet-link"
                                onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${facetQuery.label}')"
                                href="${facetQuery.url}">
                                     ${facetQuery.label}
                             </a>
                         </div>
-                        <div class="col-md-3 col-xs-2 facet-count">
+                        <div class="col-lg-3 col-2 facet-count">
                             <span class="pull-right">
                                 (<fmt:formatNumber value="${facetQuery.count}" pattern="##,###"/>)
                             </span>
@@ -30,12 +30,12 @@
                 <%-- selected --%>
                 <c:otherwise>
                     <li class="facet-value row">
-                        <div class="col-md-2 col-xs-3 tight-on-the-right">
+                        <div class="col-lg-2 col-3 tight-on-the-right">
                             <div class="pull-right">
                                 <i class="fas fa-check-square facet-selected"></i>
                             </div>
                         </div>
-                        <div class="col-md-10 col-xs-9 tight-on-the-left">
+                        <div class="col-lg-10 col-9 tight-on-the-left">
                             <a class="facet-link" href="${facetQuery.url}">
                                     ${facetQuery.label}
                             </a>

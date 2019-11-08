@@ -202,7 +202,7 @@ class PubTrackerStatusTab extends React.Component {
             <div>
                 <PubTrackerPanel title={statusHeader}>
                     <div className="row clearfix">
-                        <div className="col-xs-6" style={{borderRight: '1px solid #dddddd'}}>
+                        <div className="col-6" style={{borderRight: '1px solid #dddddd'}}>
                             {curators.length > 0 && statuses.length > 0 && locations.length > 0 &&
                             <PubTrackerStatus
                                 curators={curators}
@@ -220,9 +220,9 @@ class PubTrackerStatusTab extends React.Component {
                             />
                             }
                         </div>
-                        <div className="col-xs-5">
+                        <div className="col-5">
                             <div className="row">
-                                <div className="col-xs-offset-1" style={{marginTop: '7px'}}>
+                                <div className="offset-1" style={{marginTop: '7px'}}>
                                     <PubTrackerIndexed
                                         indexed={indexed}
                                         onToggle={this.handleIndexedToggle}

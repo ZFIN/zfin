@@ -69,9 +69,9 @@
         </div>
         <c:if test="${(fn:length(facet.facetValues) + fn:length(facet.selectedFacetValues)) > 4 && !facet.alwaysShowAllFacets}">
             <li class="row">
-                <div class="col-md-2 col-xs-2"> <%-- this is a placehold because tight-on-the-left breaks the offsets --%></div>
+                <div class="col-lg-2 col-2"> <%-- this is a placehold because tight-on-the-left breaks the offsets --%></div>
                 <div id="${name}-facet-expand-contract-links"
-                     class="col-md-8 col-xs-9 tight-on-the-left facet-expand-contract-links">
+                     class="col-lg-8 col-9 tight-on-the-left facet-expand-contract-links">
                     <div>
                         <a class="facet-show-all-facets-link facet-value-modal-link" href="#"
                            onclick="ga('send', 'event', '${zfn:buildFacetedSearchGACategory(category, facet.label)} Facet', 'show all');"

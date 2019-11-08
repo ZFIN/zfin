@@ -17,8 +17,8 @@
                ng-app="app"
                method="post">
         <div class="form-group">
-            <form:label path="strType" class="col-sm-2 control-label">Type</form:label>
-            <div class="col-sm-4">
+            <form:label path="strType" class="col-md-2 control-label">Type</form:label>
+            <div class="col-md-4">
                 <form:select path="strType" class="form-control">
                     <form:option value="" label="Select..." disabled="true" selected="true"/>
                     <form:options items="${formBean.strTypes}"/>
@@ -27,29 +27,29 @@
             </div>
         </div>
         <div class="form-group">
-            <form:label path="publicationID" class="col-sm-2 control-label">Reference</form:label>
-            <div class="col-sm-4">
+            <form:label path="publicationID" class="col-md-2 control-label">Reference</form:label>
+            <div class="col-md-4">
                 <form:input path="publicationID" class="form-control" placeholder="ZDB-PUB-123456-7"/>
                 <form:errors path="publicationID" cssClass="error"/>
             </div>
         </div>
         <div class="form-group">
-            <form:label path="name" class="col-sm-2 control-label">Name</form:label>
-            <div class="col-sm-4">
+            <form:label path="name" class="col-md-2 control-label">Name</form:label>
+            <div class="col-md-4">
                 <form:input path="name" class="form-control"/>
                 <form:errors path="name" class="error"/>
             </div>
         </div>
         <div class="form-group">
-            <form:label path="alias" class="col-sm-2 control-label">Alias</form:label>
-            <div class="col-sm-4">
+            <form:label path="alias" class="col-md-2 control-label">Alias</form:label>
+            <div class="col-md-4">
                 <form:input path="alias" class="form-control"/>
                 <form:errors path="alias" class="error"/>
             </div>
         </div>
         <div class="form-group">
-            <form:label path="targetGeneSymbol" class="col-sm-2 control-label">Target Gene</form:label>
-            <div class="col-sm-4">
+            <form:label path="targetGeneSymbol" class="col-md-2 control-label">Target Gene</form:label>
+            <div class="col-md-4">
                 <div class="scrollable-dropdown-menu">
                     <form:input path="targetGeneSymbol" class="form-control"/>
                 </div>
@@ -57,8 +57,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label id="sequence-label" class="col-sm-2 control-label">Sequence</label>
-            <div class="col-sm-6">
+            <label id="sequence-label" class="col-md-2 control-label">Sequence</label>
+            <div class="col-md-6">
                 <div str-sequence
                      type="${formBean.strType}"
                      sequence-text="${formBean.sequence}"
@@ -71,8 +71,8 @@
             </div>
         </div>
         <div id="sequence2-group" class="form-group">
-            <label class="col-sm-2 control-label">Target Sequence 2</label>
-            <div class="col-sm-6">
+            <label class="col-md-2 control-label">Target Sequence 2</label>
+            <div class="col-md-6">
                 <div str-sequence
                      type="${formBean.strType}"
                      sequence-text="${formBean.sequence2}"
@@ -85,19 +85,19 @@
             </div>
         </div>
         <div class="form-group">
-            <form:label path="publicNote" class="col-sm-2 control-label">Public Note</form:label>
-            <div class="col-sm-6">
+            <form:label path="publicNote" class="col-md-2 control-label">Public Note</form:label>
+            <div class="col-md-6">
                 <form:textarea path="publicNote" class="form-control" rows="3"/>
             </div>
         </div>
         <div class="form-group">
-            <form:label path="curatorNote" class="col-sm-2 control-label">Curator Note</form:label>
-            <div class="col-sm-6">
+            <form:label path="curatorNote" class="col-md-2 control-label">Curator Note</form:label>
+            <div class="col-md-6">
                 <form:textarea path="curatorNote" class="form-control" rows="3"/>
             </div>
         </div>
         <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
+            <div class="offset-md-2 col-md-10">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>

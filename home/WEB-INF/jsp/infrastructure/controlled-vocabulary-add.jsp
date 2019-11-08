@@ -16,28 +16,28 @@
                commandName="formBean"
                method="post">
         <div class="form-group">
-            <form:label path="termName" class="col-sm-2 control-label">Term Name</form:label>
-            <div class="col-sm-1">
+            <form:label path="termName" class="col-md-2 control-label">Term Name</form:label>
+            <div class="col-md-1">
                 <form:input path="termName" class="form-control" placeholder="Hsa."/>
                 <form:errors path="termName" class="error"/>
             </div>
         </div>
         <div class="form-group">
-            <form:label path="foreignSpecies" class="col-sm-2 control-label">Foreign Species</form:label>
-            <div class="col-sm-2">
+            <form:label path="foreignSpecies" class="col-md-2 control-label">Foreign Species</form:label>
+            <div class="col-md-2">
                 <form:input path="foreignSpecies" class="form-control" placeholder="Human"/>
                 <form:errors path="foreignSpecies" class="error"/>
             </div>
         </div>
         <div class="form-group">
-            <form:label path="nameDefinition" class="col-sm-2 control-label">Name Definition</form:label>
-            <div class="col-sm-2">
+            <form:label path="nameDefinition" class="col-md-2 control-label">Name Definition</form:label>
+            <div class="col-md-2">
                 <form:input path="nameDefinition" class="form-control" placeholder="Homo sapiens"/>
                 <form:errors path="nameDefinition" class="error"/>
             </div>
         </div>
         <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
+            <div class="offset-md-2 col-md-10">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>

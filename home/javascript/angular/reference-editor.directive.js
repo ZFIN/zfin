@@ -14,10 +14,10 @@
             '  <div class="modal-body">' +
             '    <form class="form-horizontal">' +
             '      <div class="form-group">' +
-            '        <div class="col-sm-10">' +
+            '        <div class="col-md-10">' +
             '          <input pub-lookup placeholder="Add Reference" class="form-control" ng-model="vm.newReference"/>' +
             '        </div>' +
-            '        <div class="col-sm-2">' +
+            '        <div class="col-md-2">' +
             '          <button type="button" class="btn btn-primary" ng-click="vm.add()" ng-disabled="!vm.newReference">' +
             '            <span ng-hide="vm.processing">Add</span>' +
             '            <i ng-show="vm.processing" class="fas fa-spinner fa-spin"></i>' +
@@ -27,7 +27,7 @@
             '    </form>' +
             '    <p class="text-danger" ng-repeat="error in vm.errors.zdbID">{{error}}</p>' +
             '    <div class="row">' +
-            '      <div class="col-sm-10">' +
+            '      <div class="col-md-10">' +
             '        <table class="table">' +
             '          <tr ng-repeat="reference in vm.references">' +
             '            <td>' +

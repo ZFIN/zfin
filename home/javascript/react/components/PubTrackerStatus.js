@@ -184,8 +184,8 @@ class PubTrackerStatus extends Component {
         return (
             <form className="form-horizontal">
                 <div className="form-group">
-                    <label className="col-sm-3 control-label">Status</label>
-                    <div className="col-sm-8">
+                    <label className="col-md-3 control-label">Status</label>
+                    <div className="col-md-8">
                         <ObjectSelectBox className='form-control' getDisplay="name" getValue="id" options={statusOptions}
                                          value={status} onChange={status => this.setState({status})} />
                     </div>
@@ -193,8 +193,8 @@ class PubTrackerStatus extends Component {
 
                 {statusHasLocation(status) &&
                 <div className="form-group">
-                    <label className="col-sm-3 control-label">{getLocationLabelForStatus(status)}</label>
-                    <div className="col-sm-8">
+                    <label className="col-md-3 control-label">{getLocationLabelForStatus(status)}</label>
+                    <div className="col-md-8">
                         <ObjectSelectBox className='form-control' getDisplay="name" getValue="id" options={locationOptions}
                                          value={location} onChange={location => this.setState({location})}/>
                     </div>
@@ -203,8 +203,8 @@ class PubTrackerStatus extends Component {
 
                 {statusRequiresOwner(status) &&
                 <div className="form-group">
-                    <label className="col-sm-3 control-label">Owner</label>
-                    <div className="col-sm-8">
+                    <label className="col-md-3 control-label">Owner</label>
+                    <div className="col-md-8">
                         <ObjectSelectBox className='form-control' getDisplay="name" getValue="zdbID" options={curatorOptions}
                                          value={owner} onChange={owner => this.setState({owner})}/>
                     </div>
@@ -213,7 +213,7 @@ class PubTrackerStatus extends Component {
 
                 {warnings.length === 0 &&
                 <div className="form-group">
-                    <div className="col-sm-offset-3 col-sm-9 horizontal-buttons">
+                    <div className="offset-md-3 col-md-9 horizontal-buttons">
                         <button type="button" className="btn btn-default" disabled={loading || !this.readyToSave()}
                                 onClick={this.populateState}>
                             Reset
@@ -231,7 +231,7 @@ class PubTrackerStatus extends Component {
                 }
 
                 {warnings.length > 0 &&
-                <div className="col-sm-offset-3 col-sm-9 alert alert-warning" role="alert">
+                <div className="offset-md-3 col-md-9 alert alert-warning" role="alert">
                     <h4>Heads up!</h4>
                     <p className="bottom-buffer-sm">You might not want to close this publication yet. Are you sure you
                         want to close it?</p>

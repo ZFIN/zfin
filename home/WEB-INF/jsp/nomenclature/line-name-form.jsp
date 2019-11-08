@@ -35,56 +35,56 @@
             <c:forEach var="details" items="${submission.lineDetails}" varStatus="status">
                 <div class="line-form-row">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Genetic Background</label>
-                        <div class="col-sm-6">
+                        <label class="col-md-2 control-label">Genetic Background</label>
+                        <div class="col-md-6">
                             <form:input path="lineDetails[${status.index}].background" class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <form:label path="${details.geneName}" class="col-sm-2 control-label">Gene or Construct Name</form:label>
-                        <div class="col-sm-6">
+                        <form:label path="${details.geneName}" class="col-md-2 control-label">Gene or Construct Name</form:label>
+                        <div class="col-md-6">
                             <form:input path="lineDetails[${status.index}].geneName" class="form-control"/>
                         </div>
-                        <div class="input-addon col-sm-1">
+                        <div class="input-addon col-md-1">
                             <a href="https://${WIKI_HOST}/display/general/ZFIN+Zebrafish+Nomenclature+Conventions#ZFINZebrafishNomenclatureGuidelines-4.3.1" target="_blank"><i class="fas fa-question-circle"></i></a>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Gene Symbol</label>
-                        <div class="col-sm-6">
+                        <label class="col-md-2 control-label">Gene Symbol</label>
+                        <div class="col-md-6">
                             <form:input path="lineDetails[${status.index}].geneSymbol" class="form-control"/>
                         </div>
-                        <div class="input-addon gene-search col-sm-1">
+                        <div class="input-addon gene-search col-md-1">
                             <a href="#" target="_blank"><i class="fas fa-search"></i></a>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Allele/Line Designation</label>
-                        <div class="col-sm-6">
+                        <label class="col-md-2 control-label">Allele/Line Designation</label>
+                        <div class="col-md-6">
                             <form:input path="lineDetails[${status.index}].designation" class="form-control"/>
                         </div>
-                        <div class="input-addon col-sm-1">
+                        <div class="input-addon col-md-1">
                             <a href="/action/feature/line-designations" target="_blank"><i class="fas fa-question-circle"></i></a>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Protocol</label>
-                        <div class="col-sm-6">
+                        <label class="col-md-2 control-label">Protocol</label>
+                        <div class="col-md-6">
                             <form:input path="lineDetails[${status.index}].protocol" class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Mutation Type</label>
-                        <div class="col-sm-6">
+                        <label class="col-md-2 control-label">Mutation Type</label>
+                        <div class="col-md-6">
                             <form:input path="lineDetails[${status.index}].mutationType" class="form-control"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Mutation Details</label>
-                        <div class="col-sm-6">
+                        <label class="col-md-2 control-label">Mutation Details</label>
+                        <div class="col-md-6">
                             <form:input path="lineDetails[${status.index}].mutationDetails" class="form-control"/>
                         </div>
-                        <div class="input-addon col-sm-1">
+                        <div class="input-addon col-md-1">
                             <a class="clickable" tabindex="-1" role="button" data-toggle="popover" data-trigger="focus" data-placement="right"
                                data-content="Please include any additional details about the mutation including an accession number of
                                     the WT gene that was used to compare the mutation or an accession number of the mutant sequence, genomic
@@ -95,8 +95,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">CRISPR or TALEN Sequence</label>
-                        <div class="col-sm-6">
+                        <label class="col-md-2 control-label">CRISPR or TALEN Sequence</label>
+                        <div class="col-md-6">
                             <form:input path="lineDetails[${status.index}].sequence" class="form-control"/>
                         </div>
                     </div>
@@ -107,8 +107,8 @@
 
     <jsp:attribute name="keepPrivateOption">
         <div class="form-group keep-private-group">
-            <label class="col-sm-2 control-label required">Add lines and all data to database</label>
-            <div class="col-sm-6 radio">
+            <label class="col-md-2 control-label required">Add lines and all data to database</label>
+            <div class="col-md-6 radio">
                 <label>
                     <form:radiobutton path="keepPrivate" value="immediately" /> immediately (will be publicly viewable immediately)
                 </label>

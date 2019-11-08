@@ -9,7 +9,7 @@
 <%@attribute name="curatorContent" fragment="true" %>
 <%-- Initially set to display:none for root users only, since they're the only users that can select the table view,
     document.ready in prototype-results.jsp will make these visible --%>
-<div style="clear:both; <authz:authorize access="hasRole('root')">display:none;</authz:authorize>" class="col-md-12 search-result boxy-search-result">
+<div style="clear:both; <authz:authorize access="hasRole('root')">display:none;</authz:authorize>" class="col-lg-12 search-result boxy-search-result">
 
     <div class="result-meta-data search-result-category">
         <jsp:invoke fragment="metadata"/>

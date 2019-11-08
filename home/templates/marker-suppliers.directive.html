@@ -1,11 +1,11 @@
 <div class="form-group row">
-    <div class="col-sm-6">
+    <div class="col-md-6">
         <input placeholder="Add supplier" class="form-control"
                url="/action/marker/find-suppliers?term=%QUERY"
                ng-model="vm.supplier"
                autocompletify>
     </div>
-    <div class="col-sm-6">
+    <div class="col-md-6">
         <button class="btn btn-primary" type="button"
                 ng-click="vm.submit()" ng-disabled="vm.processing || !vm.supplier">
             <span ng-hide="vm.processing">Add</span>
@@ -14,12 +14,12 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-md-6">
         <p class="text-danger" ng-repeat="error in vm.errors.name">{{error}}</p>
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-md-6">
         <p class="text-muted" ng-hide="vm.suppliers.length">
             <i>No suppliers yet</i>
         </p>

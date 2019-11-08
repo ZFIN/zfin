@@ -25,7 +25,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="search-box col-md-offset-1 col-md-11">
+        <div class="search-box offset-lg-1 col-lg-11">
             <form id="query-form" class="form-inline" method="get" action="/search">
                 <div class="search-input-container">
 
@@ -70,7 +70,7 @@
 
             <div id="advanced-container" style="display:none;"  >
                 <div class="row" >
-                    <div class="col-md-10 col-md-offset-1">
+                    <div class="col-lg-10 offset-lg-1">
                         <c:choose>
                             <c:when test="${category eq publicationCategoryName}">
                                 <zfin-search:publicationAdvanced/>
@@ -107,7 +107,7 @@
 
     <c:if test="${!empty message}">
         <div style="margin-top: 1em;" class="row">
-            <div class="col-md-offset-2 col-md-6 alert alert-info">
+            <div class="offset-lg-2 col-lg-6 alert alert-info">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                     ${message}
             </div>
@@ -116,7 +116,7 @@
 
     <c:if test="${isDashQuery}">
         <div style="margin-top: 1em;" class="row">
-            <div class="col-md-offset-2 col-md-6 alert alert-info">
+            <div class="offset-lg-2 col-lg-6 alert alert-info">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 Did you mean to search for <a href="#" onclick="javascript:replaceQuery('${newQuery}')">${newQuery}</a>?
                 A leading dash means NOT.
@@ -126,7 +126,7 @@
 
     <c:if test="${!empty suggestions}">
         <div style="margin-top: 1em;" class="row">
-            <div class="col-md-offset-2 col-md-6 alert alert-info">
+            <div class="offset-lg-2 col-lg-6 alert alert-info">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 Related:
                 <c:forEach var="suggestion" items="${suggestions}" varStatus="loop">
@@ -147,13 +147,13 @@
 
     <div class="row">
 
-        <div class="col-md-3 col-sm-5 col-xs-6 refinement-section">
+        <div class="col-lg-3 col-md-5 col-6 refinement-section">
             <c:if test="${!empty facetGroups}">
                 <zfin2:showFacets facetGroups="${facetGroups}"/>
             </c:if>
         </div>
 
-        <div class="col-md-9 col-sm-7 col-xs-6">
+        <div class="col-lg-9 col-md-7 col-6">
 
             <c:if test="${showResults eq false}">
                 <zfin-search:searchMessage/>
@@ -172,7 +172,7 @@
                 </c:if>
 
                 <div class="row">
-                    <div class="col-xs-12 center">
+                    <div class="col-12 center">
                         <div class="pull-left">
                             <c:if test="${!galleryMode}">
                                 <a href="${downloadUrl}" class="btn btn-default">

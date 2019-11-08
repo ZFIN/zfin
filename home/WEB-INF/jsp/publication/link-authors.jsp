@@ -36,15 +36,15 @@
                      curateURL="${curateURL}"/>
 
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-12">
             <zfin-figure:publicationInfo publication="${publication}" showThisseInSituLink="false" showErrataAndNotes="false"/>
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-8">
+        <div class="col-8">
             <h2>Linking ${publication.zdbID}</h2>
         </div>
-        <div class="col-xs-4">
+        <div class="col-4">
             <div class="__react-root"
                  id="ProcessorApproval"
                  data-pub-id="${publication.zdbID}"
@@ -62,7 +62,7 @@
         </div>
 
         <div class="row">
-            <div class="col-xs-4">
+            <div class="col-4">
                 <h4>Listed Authors</h4>
                 <form class="form-inline">
                     <input class="form-control" ng-model="alCtrl.filterValue" placeholder="Filter authors">
@@ -75,7 +75,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-xs-4">
+            <div class="col-4">
                 <h4>
                     Suggested Authors
                     <span ng-show="alCtrl.selectedAuthor">
@@ -98,7 +98,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-xs-4">
+            <div class="col-4">
                 <h4>Linked Authors</h4>
                 <div class="form-inline">
                     <input ng-model="alCtrl.authorZdbID" class="form-control" placeholder="Link by ZDB ID..."/>

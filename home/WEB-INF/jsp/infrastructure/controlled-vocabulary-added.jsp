@@ -13,13 +13,13 @@
 
     <form:form id="cv-form-added" commandName="formBean" class="form-horizontal">
       <div class="form-group">
-        <form:label path="termName" class="col-sm-2 control-label">Term Name: ${formBean.termName}</form:label>
+        <form:label path="termName" class="col-md-2 control-label">Term Name: ${formBean.termName}</form:label>
       </div>
       <div class="form-group">
-        <form:label path="foreignSpecies" class="col-sm-2 control-label">Foreign Species: ${formBean.foreignSpecies}</form:label>
+        <form:label path="foreignSpecies" class="col-md-2 control-label">Foreign Species: ${formBean.foreignSpecies}</form:label>
       </div>
       <div class="form-group">
-        <form:label path="nameDefinition" class="col-sm-2 control-label">Name Definition: ${formBean.nameDefinition}</form:label>
+        <form:label path="nameDefinition" class="col-md-2 control-label">Name Definition: ${formBean.nameDefinition}</form:label>
       </div>
       <div class="form-group">
         <c:if test="${!empty newlyCreatedControlledVocab}">

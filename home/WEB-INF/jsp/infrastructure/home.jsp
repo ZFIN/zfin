@@ -7,11 +7,11 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-lg-7">
+        <div class="col-xl-7">
             <jsp:include page="homePrimaryLinks.jsp" />
 
             <%-- we might be able to this reordering more elegantly with bootstrap 4 --%>
-            <div class="hide-large">
+            <div class="d-block d-xl-none">
                 <jsp:include page="homeAboutBox.jsp" />
 
                 <div class="section carousel-section">
@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <div class="col-lg-5 display-large">
+        <div class="col-xl-5 d-none d-xl-block">
             <jsp:include page="homeAboutBox.jsp" />
 
             <div class="section carousel-section">

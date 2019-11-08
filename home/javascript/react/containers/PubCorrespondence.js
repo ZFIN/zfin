@@ -191,7 +191,7 @@ class PubCorrespondence extends React.Component {
         return (
             <div>
                 <div className="row bottom-buffer">
-                    <div className="col-sm-12 horizontal-buttons">
+                    <div className="col-md-12 horizontal-buttons">
                         <button className="btn btn-default" onClick={this.openOutgoingForm}>Send Email</button>
                         <button className="btn btn-default" onClick={this.openIncomingForm}>Record Reply</button>
                     </div>

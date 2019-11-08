@@ -30,11 +30,11 @@
 
 <div class="row">
     <form class="form-single-row">
-        <div class="form-group col-sm-9">
+        <div class="form-group col-md-9">
             <label>Curator Notes</label>
             <textarea class="form-control" rows="3" ng-model="vm.newCuratorNote"></textarea>
         </div>
-        <div class="form-group col-sm-3">
+        <div class="form-group col-md-3">
             <button class="btn btn-primary"
                     ng-disabled="vm.processing || !vm.newCuratorNote"
                     ng-click="vm.addCuratorNote()">

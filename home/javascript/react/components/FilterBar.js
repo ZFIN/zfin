@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const FilterBar = ({children}) => {
     return (
         <div className="row filter-bar">
-            <div className="col-sm-12">
+            <div className="col-md-12">
                 <form className="form-inline">
                     {children}
                 </form>

@@ -216,7 +216,7 @@ public class ShowFacetLinksTag extends TagSupport {
 
             //set css per category
             String categoryCssClasses = "";
-            facetHtml.append("<span style=\"min-height:10px\" class=\"col-md-9 selectable-facet-value\">");
+            facetHtml.append("<span style=\"min-height:10px\" class=\"col-lg-9 selectable-facet-value\">");
             facetHtml.append("<a title=\"require in results\" style=\"min-height:10px\" class=\" ");
             facetHtml.append(categoryCssClasses);
             facetHtml.append("\" href=\"");
@@ -229,7 +229,7 @@ public class ShowFacetLinksTag extends TagSupport {
 
             String shortenedName = SolrService.shortenFacetValue(value.getLabel());
 
-            facetHtml.append("<ul style=\"min-height:10px\" class=\"facet-count-container col-md-3 unstyled\">\n" +
+            facetHtml.append("<ul style=\"min-height:10px\" class=\"facet-count-container col-lg-3 unstyled\">\n" +
                     "  <li class=\"dropdown\">\n" +
                     "    <a class=\"facet-count dropdown-toggle\"\n" +
                     "       data-toggle=\"dropdown\"\n" +
