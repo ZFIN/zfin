@@ -67,7 +67,7 @@ const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onCompl
                                 <input className="form-control" placeholder="alice@example.edu" value={email.additionalTo} onChange={handleAdditionalRecipientChange} />
                             </div>
                         </div> :
-                        <p className="form-control-static">{email.to[0].email}</p>
+                        <p className="form-control-plaintext">{email.to[0].email}</p>
                     }
                 </div>
             </div>
@@ -76,7 +76,7 @@ const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onCompl
                 <label className="col-md-2 col-form-label">From</label>
                 <div className="col-md-4">
                     {email.outgoing ?
-                        <p className="form-control-static">{email.from.email}</p> :
+                        <p className="form-control-plaintext">{email.from.email}</p> :
                         <input className="form-control" placeholder="alice@example.edu" value={email.from.email} onChange={handleFromChange} />
                     }
                 </div>

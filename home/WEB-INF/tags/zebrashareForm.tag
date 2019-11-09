@@ -67,7 +67,7 @@
                 </span>
             </c:when>
             <c:otherwise>
-                <p class="text-danger form-control-static">
+                <p class="text-danger form-control-plaintext">
                     <b>Uh oh!</b> Your profile is not associated with any labs. Please
                     <zfin2:mailTo subject="Lab update request">contact us</zfin2:mailTo> to update your information
                     before proceeding.
@@ -185,7 +185,7 @@
             .on('typeahead:select', function(event, item) {
                 $(this).typeahead('val', '');
                 var hiddenInput = $('<input hidden name="editors" value="' + item.id  + '"/>');
-                var userDisplay = $('<p class="form-control-static">' + item.value + '</p>');
+                var userDisplay = $('<p class="form-control-plaintext">' + item.value + '</p>');
                 var removeButton = $('<button class="btn btn-link"><i class="fas fa-times"></i></button>');
                 removeButton.on('click', function () {
                     hiddenInput.remove();
