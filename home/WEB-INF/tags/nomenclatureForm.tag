@@ -150,7 +150,7 @@
       errorClass: 'form-text',
       errorPlacement: function (error, element) {
         if (element.is(':radio')) {
-          error.prependTo(element.closest('.radio').parent());
+          error.prependTo(element.closest('.form-check').parent());
         } else {
           error.insertAfter(element);
         }

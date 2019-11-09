@@ -21,3 +21,17 @@ label {
     font-weight: normal;
   }
 }
+
+.has-error {
+  .form-control {
+    border-color: $danger;
+  }
+
+  .form-text {
+    color: $danger;
+  }
+
+  label {
+    color: $danger;
+  }
+}
