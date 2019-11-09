@@ -6,14 +6,18 @@ $label-margin-bottom: 0.3125rem;
 // import bootstrap
 @import "~bootstrap/scss/bootstrap";
 
-label {
-  font-weight: bold;
+// form-horizontal is no longer defined by bootstrap as of v4 but we still
+// use it to do label alignment
+.form-horizontal {
+  label {
+    text-align: right;
+  }
 }
 
-// amend rules
-.col-form-label,
-.col-form-label-lg,
-.col-form-label-sm {
+label {
   font-weight: bold;
-  text-align: right;
+
+  &.form-check-label {
+    font-weight: normal;
+  }
 }

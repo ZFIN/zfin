@@ -7,7 +7,7 @@
 
 <div class="container-fluid">
   <h2 class="page-header">New Gene</h2>
-  <form:form id="gene-add" commandName="formBean" action="gene-add">
+  <form:form id="gene-add" cssClass="form-horizontal" commandName="formBean" action="gene-add">
     <div class="form-group row">
       <form:label path="type" class="col-md-2 col-form-label">Type</form:label>
       <div class="col-md-4">

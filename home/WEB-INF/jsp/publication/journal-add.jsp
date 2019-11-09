@@ -10,6 +10,7 @@
     <h2 class="page-header">New Journal</h2>
 
     <form:form id="journal-form"
+               cssClass="form-horizontal"
                action="journal-add"
                commandName="formBean"
                ng-app="app"

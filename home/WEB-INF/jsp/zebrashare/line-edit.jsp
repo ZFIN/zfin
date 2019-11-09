@@ -28,7 +28,7 @@
         <div class="alert alert-success" role="alert">${success}</div>
     </c:if>
 
-    <form:form method="POST" commandName="formBean">
+    <form:form method="POST" cssClass="form-horizontal" commandName="formBean">
         <div class="form-group row">
             <form:label cssClass="col-md-3 col-form-label" path="functionalConsequence">Functional Consequence</form:label>
             <div class="col-md-3">

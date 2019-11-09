@@ -11,6 +11,7 @@
     <h2 class="page-header">New Species As Construct Component</h2>
 
     <form:form id="cv-form"
+               cssClass="form-horizontal"
                action="controlled-vocabulary-add"
                commandName="formBean"
                method="post">

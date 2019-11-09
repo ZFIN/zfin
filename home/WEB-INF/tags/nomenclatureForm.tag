@@ -24,7 +24,7 @@
 
     <hr>
 
-    <form:form action="" method="POST" commandName="submission" id="nomenclature">
+    <form:form action="" method="POST" cssClass="form-horizontal" commandName="submission" id="nomenclature">
 
         <h3>Contact Information</h3>
 
@@ -63,12 +63,10 @@
 
         <div class="form-group row">
             <div class="col-md-4">
-                <c:forEach items="${pubStatusOptions}" var="option">
-                    <div class="radio">
-                        <label>
-                            <form:radiobutton path="pubStatus" value="${option}"/>
-                                ${option}
-                        </label>
+                <c:forEach items="${pubStatusOptions}" var="option" varStatus="loop">
+                    <div class="form-check">
+                        <form:radiobutton path="pubStatus" value="${option}" cssClass="form-check-input" />
+                        <label for="pubStatus${loop.index + 1}" class="form-check-label">${option}</label>
                     </div>
                 </c:forEach>
             </div>

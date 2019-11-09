@@ -11,6 +11,7 @@
     <h2 class="page-header">New Sequence Targeting Reagent</h2>
 
     <form:form id="str-form"
+               cssClass="form-horizontal"
                action="sequence-targeting-reagent-add"
                commandName="formBean"
                ng-app="app"

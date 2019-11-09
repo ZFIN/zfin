@@ -5,7 +5,7 @@
 
     function pubFileUpload() {
         var template =
-            '<form>' +
+            '<form class="form-horizontal">' +
             '    <div class="form-group row">' +
             '        <label class="col-md-2 col-form-label">Type</label>' +
             '        <div class="col-md-3">' +

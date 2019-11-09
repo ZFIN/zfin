@@ -7,7 +7,7 @@
     <div class="alert alert-danger">${error}</div>
 </c:if>
 
-<form:form method="POST" commandName="publicationBean">
+<form:form method="POST" commandName="publicationBean" cssClass="form-horizontal">
     <div class="form-group row">
         <label for="publication.title" class="col-md-3 col-form-label">Title</label>
         <div class="col-md-8">
@@ -125,19 +125,19 @@
     </div>
 
     <div class="form-group row">
-        <label for="publication.canShowImages" class="col-md-3 col-form-label">Has Image Permissions</label>
+        <form:label path="publication.canShowImages" cssClass="col-md-3">Has Image Permissions</form:label>
         <div class="col-md-8">
-            <div class="checkbox">
-                <label><form:checkbox path="publication.canShowImages"/></label>
+            <div class="form-check">
+                <form:checkbox path="publication.canShowImages" cssClass="form-check-input position-static" />
             </div>
             <form:errors path="publication.canShowImages" cssClass="text-danger" />
         </div>
     </div>
     <div class="form-group row">
-        <label for="publication.curatable" class="col-md-3 col-form-label">Is Curatable</label>
+        <form:label path="publication.curatable" cssClass="col-md-3">Is Curatable</form:label>
         <div class="col-md-8">
-            <div class="checkbox">
-                <label><form:checkbox path="publication.curatable" checked="checked"/></label>
+            <div class="form-check">
+                <form:checkbox path="publication.curatable" checked="checked" cssClass="form-check-input position-static"/>
             </div>
             <form:errors path="publication.curatable" cssClass="text-danger" />
         </div>

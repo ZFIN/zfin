@@ -2,7 +2,7 @@
 
 <%@attribute name="formBean" type="org.zfin.zebrashare.presentation.SubmissionFormBean" required="true" %>
 
-<form:form method="POST" commandName="formBean" id="zebrashareForm" enctype="multipart/form-data">
+<form:form method="POST" commandName="formBean" cssClass="form-horizontal" id="zebrashareForm" enctype="multipart/form-data">
     <h3>Submitter</h3>
     <p>We will contact this person if we have questions about this submission.</p>
     <div class="form-group row">

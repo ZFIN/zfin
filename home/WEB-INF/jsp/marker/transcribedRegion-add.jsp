@@ -7,7 +7,7 @@
 
 <div class="container-fluid">
   <h2 class="page-header">New Region</h2>
-  <form:form id="transcribedRegion-add" commandName="formBean" action="transcribedRegion-add">
+  <form:form id="transcribedRegion-add" cssClass="form-horizontal" commandName="formBean" action="transcribedRegion-add">
     <div class="form-group row">
       <form:label path="type" class="col-md-2 col-form-label">Type</form:label>
       <div class="col-md-4">

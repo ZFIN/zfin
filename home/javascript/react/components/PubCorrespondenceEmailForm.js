@@ -56,7 +56,7 @@ const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onCompl
     };
 
     return (
-        <form>
+        <form class="form-horizontal">
             <div className="form-group row">
                 <label className="col-md-2 col-form-label">To</label>
                 <div className="col-md-6">

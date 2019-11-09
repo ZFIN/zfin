@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-lg-6 offset-lg-3 feedback-box alert" style="display: none; margin-top: 1em;">
         <a href="#" class="close" data-hide="feedback-box">&times;</a>
-        <form style="margin-top: 18px; clear:both;" class="your-input-welcome-form" name="your-input-welcome" id="feedback-form">
+        <form style="margin-top: 18px; clear:both;" class="your-input-welcome-form form-horizontal" name="your-input-welcome" id="feedback-form">
 
             <div class="form-group row">
                 <label for="feedbackName" class="col-form-label col-2">Name</label>
