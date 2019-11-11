@@ -4,7 +4,7 @@
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
         xmlns:zfin-marker='urn:import:org.zfin.gwt.marker.ui'>
 
-    <g:VerticalPanel spacing="10" title="Sequence" ui:field="sequencePanel" styleName="table table-borderless" horizontalAlignment="left">
+    <g:VerticalPanel spacing="10" title="Sequence" ui:field="sequencePanel" horizontalAlignment="left">
         <g:Label text="Sequence:" addStyleNames="name-label text-left"/>
         <zfin-marker:SequenceBox ui:field="sequenceBox"/>
         <g:HorizontalPanel>

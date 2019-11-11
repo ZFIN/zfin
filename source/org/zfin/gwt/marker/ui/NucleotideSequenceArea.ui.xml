@@ -6,8 +6,7 @@
         xmlns:zfin-marker='urn:import:org.zfin.gwt.marker.ui'
         >
 
-    <g:VerticalPanel spacing="10" title="Nucleotide Sequence" styleName="table table-borderless"
-                     horizontalAlignment="left">
+    <g:VerticalPanel spacing="10" title="Nucleotide Sequence" horizontalAlignment="left">
         <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
             <g:Label text="Add Stem Loop Sequence" addStyleNames="bold" horizontalAlignment="left"/>
             <g:Label text=":&nbsp;" addStyleNames="bold"/>

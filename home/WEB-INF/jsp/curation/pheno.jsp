@@ -1,4 +1,4 @@
-<table class="table table-borderless">
+<table>
     <tr>
         <td>
             <span id="show-hide-experiments"></span>
@@ -95,7 +95,7 @@
                     <tbody>
                     <tr>
                         <td style="vertical-align: top">
-                            <table class="table table-borderless searchresults">
+                            <table class="searchresults">
                                 <tbody>
                                 <tr>
                                     <th class="align-text-top bold">Subterm</th>
@@ -129,7 +129,7 @@
                             </table>
                             <div id="related-terms-panel">
                                 <div class="dots"></div>
-                                <table class="table table-borderless searchresults">
+                                <table class="searchresults">
                                     <tbody>
                                     <tr>
                                         <th class="align-text-top bold">Subterm</th>

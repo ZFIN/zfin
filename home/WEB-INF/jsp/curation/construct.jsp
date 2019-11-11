@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("jquery-ui.css")}">
 <script src="${zfn:getAssetPath("jquery-ui.js")}"></script>
 
-<table class="table table-borderless">
+<table>
     <tr>
         <td>
             <span class="bold">CREATE NEW CONSTRUCT: </span>

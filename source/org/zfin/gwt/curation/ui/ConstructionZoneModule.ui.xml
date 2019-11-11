@@ -18,9 +18,9 @@
         }
     </ui:style>
 
-    <g:HorizontalPanel styleName="table table-borderless searchresults {style.term-construction-zone-width}">
+    <g:HorizontalPanel styleName="searchresults {style.term-construction-zone-width}">
         <g:HTMLPanel>
-            <table class="table table-borderless searchresults">
+            <table class="searchresults">
                 <tbody>
                     <tr>
                         <th class="align-text-top bold">Subterm</th>
@@ -55,10 +55,10 @@
                     <tr>
                         <th class="align-text-top bold">EaP</th>
                         <td class="align-text-top topAlign">
-                            <g:VerticalPanel ui:field="qualityListLeft"/>
+                            <g:FlowPanel ui:field="qualityListLeft"/>
                         </td>
                         <td class="align-text-top topAlign">
-                            <g:VerticalPanel ui:field="qualityListRight"/>
+                            <g:FlowPanel ui:field="qualityListRight"/>
                         </td>
                     </tr>
                 </tbody>

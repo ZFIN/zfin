@@ -3,7 +3,7 @@
     $.fn.modal.noConflict();
 </script>
 
-<table class="table table-borderless">
+<table>
     <tr>
         <td>
             <div ortho-edit pub="${publication.zdbID}" edit="true" showDownloadLink="false"></div>

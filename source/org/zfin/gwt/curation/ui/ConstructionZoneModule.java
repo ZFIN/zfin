@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -56,9 +57,9 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     @UiField
     TermEntry superTermEntry;
     @UiField
-    VerticalPanel qualityListLeft;
+    FlowPanel qualityListLeft;
     @UiField
-    VerticalPanel qualityListRight;
+    FlowPanel qualityListRight;
 
     private FxCurationPresenter fxCurationPresenter;
 
@@ -113,6 +114,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         if (name.equals(EapQualityTermDTO.ABSENT_PHENOTYPIC))
             box.addStyleName("red");
         box.addStyleName("checkbox-label");
+        box.getElement().getStyle().setDisplay(Style.Display.BLOCK);
         return box;
     }
 
@@ -300,12 +302,11 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
         int numOfEntriesFirstCol = eapQualityList.size() / 2;
         int index = 0;
         for (EapQualityTermDTO qualityTerm : eapQualityList) {
-            VerticalPanel panel;
+            FlowPanel panel;
             if (index++ < numOfEntriesFirstCol)
                 panel = qualityListLeft;
             else
                 panel = qualityListRight;
-            panel.addStyleName("table table-condensed");
             CheckBox qualityCheckBox = getQualityCheckBox(qualityTerm.getNickName());
             qualityCheckBoxList.add(qualityCheckBox);
             panel.add(qualityCheckBox);

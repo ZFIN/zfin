@@ -17,7 +17,7 @@
         <h3>
             Add New Marker Note
         </h3>
-        <table class="table table-condensed">
+        <table>
             <tr>
                 <td><textarea name="newPublicNote" ng-model="pn.noteText" rows="4" cols="58" required></textarea></td>
             </tr>
@@ -36,7 +36,7 @@
         <h3>
             Edit Marker Note
         </h3>
-        <table class="table table-condensed">
+        <table>
             <tr>
                 <td><textarea name="editPublicNote" placeholder="{{pn.noteText}}" ng-model="pn.noteText" rows="4" cols="58" required></textarea></td>
             </tr>
@@ -55,7 +55,7 @@
         <h3>
             Delete Marker Note
         </h3>
-        <table class="table table-condensed">
+        <table>
             <tr>
                 <td>
                     <span ng-if="pn.noteText.length < 80">{{pn.noteText}}</span>

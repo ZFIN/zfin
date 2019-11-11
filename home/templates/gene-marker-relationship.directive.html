@@ -8,7 +8,7 @@
     <h3>
         Add new Relationship
     </h3>
-    <table class="table table-condensed">
+    <table>
         <tr>
             <td>Relationship Type</td>
 <td><select class="form-control" ng-model="mkrreln.newRelationship" ng-options="str for str in mkrreln.relationshipTypes"></select></td>
@@ -107,7 +107,7 @@
 
 
     </h3>
-    <table class="table table-condensed">
+    <table>
         <tr>
             <td>
                 <a style="font-weight: bold;" target="_blank" ng-href="{{mkrreln.markerId}}"><i>{{mkrreln.markerAbbrev}}</i></a>  {{mkrreln.otherLink.relationshipType}} [{{mkrreln.otherLink.markerType}}] <span ng-bind-html="mkrreln.otherLink.link | trustedHtml"></span>{{relationship.abbrev}}

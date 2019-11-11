@@ -51,7 +51,7 @@
         <h3>
             Add New Curator Note
         </h3>
-        <table class="table table-condensed">
+        <table>
             <tr>
                 <td><textarea ng-model="cn.noteText" name="newCuratorNote" rows="4" cols="58" required></textarea></td>
             </tr>
@@ -70,7 +70,7 @@
         <h3>
             Edit Curator Note
         </h3>
-        <table class="table table-condensed">
+        <table>
             <tr>
                 <td><textarea placeholder="{{cn.noteText}}" ng-model="cn.noteText" name="editCuratorNote" rows="4" cols="58" required></textarea></td>
             </tr>
@@ -89,7 +89,7 @@
         <h3>
             Delete the curator note
         </h3>
-        <table class="table table-condensed">
+        <table>
             <tr>
                 <td>
                     <span ng-if="cn.noteText.length < 80">{{cn.noteText}}</span>

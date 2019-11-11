@@ -73,7 +73,7 @@
             <h3>
                 Add New Sequence Information
             </h3>
-            <table class="table table-condensed">
+            <table>
                 <tr>
                     <td>Database:</td><td><select class="form-control"  ng-model="si.newDatabase" ng-change="si.errorDb=''"
                                                      ng-options="database.zdbID as database.label for database in si.databases"></select></td>
@@ -105,7 +105,7 @@
             <h3>
                 Delete Sequence Information
             </h3>
-            <table class="table table-condensed">
+            <table>
                 <tr>
                     <td>
                         <a style="font-weight: bold;" target="_blank" ng-href="{{si.seqenceInfo.urlPrefix + si.seqenceInfo.accession}}">{{si.seqenceInfo.referenceDatabaseName}}:{{si.seqenceInfo.accession}}</a>
@@ -134,7 +134,7 @@
             <h3>
                 Update <a style="font-weight: bold;" target="_blank" ng-href="{{si.seqenceInfo.urlPrefix + si.seqenceInfo.accession}}">{{si.seqenceInfo.referenceDatabaseName}}:{{si.seqenceInfo.accession}}</a>
             </h3>
-            <table class="table table-condensed">
+            <table>
                 <tr>
                     <td>Database:&nbsp;&nbsp;{{si.seqenceInfo.referenceDatabaseDisplay}}</td>
                     <td><span class="error">{{si.errorDb}}</span></td>

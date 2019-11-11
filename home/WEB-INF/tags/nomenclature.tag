@@ -7,7 +7,7 @@
     <h3>
         {{control.fieldName}} Edit
     </h3>
-    <table class="table">
+    <table>
         <tr>
             <td>ID:</td>
             <td>{{control.nomenID}}</td>

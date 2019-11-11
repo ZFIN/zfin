@@ -4,7 +4,7 @@
     <h3>
         Add new Alias
     </h3>
-    <table class="table table-condensed">
+    <table>
         <tr>
             <td>Alias</td>
             <td><input type="text" name="newAlias" ng-model="control.newAlias"

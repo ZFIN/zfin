@@ -1,4 +1,4 @@
-<table class="table table-borderless">
+<table>
     <tr>
         <td>
             <div id="go-add-link"></div>
