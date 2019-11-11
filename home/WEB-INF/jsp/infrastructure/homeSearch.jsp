@@ -7,7 +7,7 @@
             <label>Search expert curated zebrafish data</label>
             <div class="input-group input-group-lg">
                 <div class="input-group-btn category-dropdown">
-                    <button type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-outline-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="category-label">Any</span> <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">

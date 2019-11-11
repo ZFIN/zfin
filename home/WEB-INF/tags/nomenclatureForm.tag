@@ -89,7 +89,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-default">Submit</button>
+        <button type="submit" class="btn btn-outline-secondary">Submit</button>
     </form:form>
 </div>
 

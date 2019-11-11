@@ -70,7 +70,7 @@
             vm.errorClass = vm.errorClass || 'error';
             vm.textAreaClass = vm.textAreaClass || ['form-control', 'form-group'];
             vm.saveButtonClass = vm.saveButtonClass || ['btn', 'btn-primary'];
-            vm.cancelButtonClass = vm.cancelButtonClass || ['btn', 'btn-default'];
+            vm.cancelButtonClass = vm.cancelButtonClass || ['btn', 'btn-outline-secondary'];
         }
 
         function beginEdit() {

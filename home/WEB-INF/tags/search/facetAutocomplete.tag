@@ -23,9 +23,9 @@
             <div style="margin-top: .5em;">
 
                 <%--Page:--%>
-                <button style="margin-left: 3em;" class="btn btn-default" ng-click="prevPage()"><i class="fas fa-chevron-left"></i></button>
+                <button style="margin-left: 3em;" class="btn btn-outline-secondary" ng-click="prevPage()"><i class="fas fa-chevron-left"></i></button>
                 {{page}}/{{   Math.ceil(filteredValues.length/perPage)  }}
-                <button class="btn btn-default" ng-click="nextPage()"><i class="fas fa-chevron-right"></i></button>
+                <button class="btn btn-outline-secondary" ng-click="nextPage()"><i class="fas fa-chevron-right"></i></button>
 
                 <div class="pull-right">
                     Show:

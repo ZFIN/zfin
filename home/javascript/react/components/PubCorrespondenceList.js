@@ -29,7 +29,7 @@ const PubCorrespondenceList = ({correspondences, onResend, onRecordReply, onSend
                     </div> :
                     <div>
                         <div className="dropdown pull-right">
-                            <button className="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                            <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">
                                 <i className="fas fa-ellipsis-v" />
                             </button>
                             {correspondence.outgoing ?

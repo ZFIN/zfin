@@ -72,16 +72,16 @@ const PubTrackerTopics = ({onTopicSave, topics}) => {
                     <td>{!isNewTopic(topic) ? topic.curator.name : ""}</td>
                     <td>
                         {isNewTopic(topic) &&
-                        <button className="btn btn-default btn-dense" onClick={() => onOpenTopic(topic)}>
+                        <button className="btn btn-outline-secondary btn-dense" onClick={() => onOpenTopic(topic)}>
                             Open
                         </button>}
 
                         {isOpenTopic(topic) &&
                         <div className="btn-group">
-                            <button type="button" className="btn btn-default btn-dense" onClick={() => onCloseTopic(topic)}>
+                            <button type="button" className="btn btn-outline-secondary btn-dense" onClick={() => onCloseTopic(topic)}>
                                 Close
                             </button>
-                            <button type="button" className="btn btn-default dropdown-toggle btn-dense" data-toggle="dropdown">
+                            <button type="button" className="btn btn-outline-secondary dropdown-toggle btn-dense" data-toggle="dropdown">
                                 <span className="caret" />
                                 <span className="sr-only">Toggle Dropdown</span>
                             </button>
@@ -91,7 +91,7 @@ const PubTrackerTopics = ({onTopicSave, topics}) => {
                         </div>}
                         
                         {isClosedTopic(topic) &&
-                        <button className="btn btn-default btn-dense" onClick={() => onOpenTopic(topic)}>
+                        <button className="btn btn-outline-secondary btn-dense" onClick={() => onOpenTopic(topic)}>
                             Re-open
                         </button>}
                     </td>

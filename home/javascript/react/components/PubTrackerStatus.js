@@ -214,7 +214,7 @@ class PubTrackerStatus extends Component {
                 {warnings.length === 0 &&
                 <div className="form-group row">
                     <div className="offset-md-3 col-md-9 horizontal-buttons">
-                        <button type="button" className="btn btn-default" disabled={loading || !this.readyToSave()}
+                        <button type="button" className="btn btn-outline-secondary" disabled={loading || !this.readyToSave()}
                                 onClick={this.populateState}>
                             Reset
                         </button>
@@ -243,7 +243,7 @@ class PubTrackerStatus extends Component {
                         ))}
                     </ul>
                     <p className='horizontal-buttons'>
-                        <button type='button' className="btn btn-default" disabled={loading} onClick={this.handleValidateCancel}>Cancel</button>
+                        <button type='button' className="btn btn-outline-secondary" disabled={loading} onClick={this.handleValidateCancel}>Cancel</button>
                         <LoadingButton loading={loading} type='button' className="btn btn-warning" disabled={loading} onClick={this.handleSave}>
                             Yes, close it
                         </LoadingButton>

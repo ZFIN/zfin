@@ -7,7 +7,7 @@
     <g:FlowPanel>
         <g:HTMLPanel ui:field="menuDiv">
             <div class="input-group-btn select" id="select1">
-                <g:Button ui:field="button" styleName="btn btn-default dropdown-toggle">
+                <g:Button ui:field="button" styleName="btn btn-outline-secondary dropdown-toggle">
                     <span class="selected">One</span>
                     <span class="caret"></span>
                 </g:Button>
@@ -37,7 +37,7 @@
         <!--
 
         <div class="input-group-btn select" id="select1">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="selected">One</span> <span class="caret"></span></button>
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="selected">One</span> <span class="caret"></span></button>
         <ul class="dropdown-menu option" role="menu">
             <li id="1"><a href="#">One</a></li>
             <li id="2"><a href="#">Two</a></li>

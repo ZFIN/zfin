@@ -215,7 +215,7 @@ class PubTrackerAuthorNotification extends Component {
                             >
                                 {previewing ? 'Send Notification' : 'Preview Notification'}
                             </LoadingButton>
-                            <button className="btn btn-default" type="button" onClick={previewing ? this.cancelPreview : this.cancelEdit}>
+                            <button className="btn btn-outline-secondary" type="button" onClick={previewing ? this.cancelPreview : this.cancelEdit}>
                                 Cancel
                             </button>
                         </div>

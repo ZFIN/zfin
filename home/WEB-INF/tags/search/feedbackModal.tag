@@ -47,7 +47,7 @@
             <div class="form-group row">
                 <div class="offset-2 col-10">
                     <input type="submit" value="Send" class="btn btn-zfin" id="feedback-send-button"/>
-                    <button class="btn btn-default" data-hide="feedback-box">Close</button>
+                    <button class="btn btn-outline-secondary" data-hide="feedback-box">Close</button>
                 </div>
             </div>
             <div class="offset-2 col-10">

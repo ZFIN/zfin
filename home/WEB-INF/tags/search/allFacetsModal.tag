@@ -17,7 +17,7 @@
 
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal" aria-hidden="true">Close</button>
             </div>
         </div>
     </div>

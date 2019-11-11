@@ -70,7 +70,7 @@ class ProcessorApproval extends React.Component {
                     open && ( checklistEntry ?
                             <span>
                                 Approved by {checklistEntry.person.name} on {(new Date(checklistEntry.date)).toLocaleDateString()}.
-                                <button className='btn btn-default' onClick={this.handleUndo} style={{marginLeft: '20px'}}>Undo</button>
+                                <button className='btn btn-outline-secondary' onClick={this.handleUndo} style={{marginLeft: '20px'}}>Undo</button>
                             </span> :
                             <button className='btn btn-primary' onClick={this.handleSignoff}>
                                 {approvalMessage[this.props.task]}

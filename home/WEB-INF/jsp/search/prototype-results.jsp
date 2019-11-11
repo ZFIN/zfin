@@ -45,18 +45,18 @@
                                value="<c:out value="${q}" escapeXml="true"/>"/>
 
                         <div class="btn-group search-box-buttons">
-                            <button type="submit" class="btn btn-default btn-zfin">Go</button>
+                            <button type="submit" class="btn btn-outline-secondary btn-zfin">Go</button>
                             <authz:authorize access="hasRole('root')">
                                 <c:if test="${category eq publicationCategoryName}">
-                                    <a id="advanced-search-button" class="btn btn-default" href="#" title="Advanced Search Options"
+                                    <a id="advanced-search-button" class="btn btn-outline-secondary" href="#" title="Advanced Search Options"
                                        onClick="jQuery('#advanced-container').slideToggle(200);"><i class="fas fa-list"></i></a>
                                 </c:if>
                             </authz:authorize>
-                            <a class="btn btn-default" href="/search?q=" onclick="localStorage.clear();">New</a>
-                            <a  class="btn btn-default" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
+                            <a class="btn btn-outline-secondary" href="/search?q=" onclick="localStorage.clear();">New</a>
+                            <a  class="btn btn-outline-secondary" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
                                 <i class="fas fa-question-circle"></i>
                             </a>
-                            <a class="btn btn-default feedback-link" href="#">Feedback</a>
+                            <a class="btn btn-outline-secondary feedback-link" href="#">Feedback</a>
                         </div>
                     </div>
 
@@ -175,12 +175,12 @@
                     <div class="col-12 center">
                         <div class="pull-left">
                             <c:if test="${!galleryMode}">
-                                <a href="${downloadUrl}" class="btn btn-default">
+                                <a href="${downloadUrl}" class="btn btn-outline-secondary">
                                     <i class="fas fa-download"></i> Download
                                 </a>
                             </c:if>
                             <c:if test="${galleryMode}">
-                                <a class="btn btn-default" href="${baseUrlWithoutGalleryMode}galleryMode=false">
+                                <a class="btn btn-outline-secondary" href="${baseUrlWithoutGalleryMode}galleryMode=false">
                                     <i class="fas fa-chevron-left"></i>
                                     See all <fmt:formatNumber value="${numFound}" pattern="##,###"/><zfin:choice choicePattern="0# results| 1# result| 2# results" integerEntity="${numFound}"/>
                                 </a>
@@ -198,29 +198,29 @@
                             <div class="pull-right">
                                 <authz:authorize access="hasRole('root')">
                                     <div class="btn-group">
-                                        <button id="boxy-result-button" class="btn btn-default result-action-tooltip" title="Detailed Results">
+                                        <button id="boxy-result-button" class="btn btn-outline-secondary result-action-tooltip" title="Detailed Results">
                                             <i class="far fa-newspaper fa-flip-horizontal"></i>
                                         </button>
-                                        <button id="table-result-button" class="btn btn-default result-action-tooltip" title="Tabular Results">
+                                        <button id="table-result-button" class="btn btn-outline-secondary result-action-tooltip" title="Tabular Results">
                                             <i class="fas fa-table"></i>
                                         </button>
                                     </div>
 
                                     <div class="btn-group">
-                                        <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=20" class="btn btn-default <c:if test="${rows eq 20}">btn-selected disabled</c:if>">20</a>
-                                        <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=50" class="btn btn-default <c:if test="${rows eq 50}">btn-selected disabled</c:if>">50</a>
-                                        <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=200" class="btn btn-default <c:if test="${rows eq 200}">btn-selected disabled</c:if>">200</a>
+                                        <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=20" class="btn btn-outline-secondary <c:if test="${rows eq 20}">btn-selected disabled</c:if>">20</a>
+                                        <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=50" class="btn btn-outline-secondary <c:if test="${rows eq 50}">btn-selected disabled</c:if>">50</a>
+                                        <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=200" class="btn btn-outline-secondary <c:if test="${rows eq 200}">btn-selected disabled</c:if>">200</a>
                                     </div>
                                 </authz:authorize>
 
                                 <c:if test="${!empty images && !empty category && category != 'Any'}">
-                                    <a href="${baseUrlWithoutGalleryMode}galleryMode=true" class="btn btn-default">
+                                    <a href="${baseUrlWithoutGalleryMode}galleryMode=true" class="btn btn-outline-secondary">
                                         <i class="fas fa-camera"></i> Browse Images
                                     </a>
                                 </c:if>
 
                                 <div class="btn-group sort-controls">
-                                    <a class="btn btn-default dropdown-toggle sort-button" data-toggle="dropdown" href="#">
+                                    <a class="btn btn-outline-secondary dropdown-toggle sort-button" data-toggle="dropdown" href="#">
                                         Sorted ${sortDisplay}
                                         <span class="caret"></span>
                                     </a>

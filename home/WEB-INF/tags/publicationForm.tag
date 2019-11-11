@@ -146,7 +146,7 @@
     <div class="form-group row">
         <div class="offset-md-3 col-md-8">
             <button type="submit" class="btn btn-primary">Submit</button>
-            <a class="btn btn-default" href="/${publication.zdbID}">Cancel</a>
+            <a class="btn btn-outline-secondary" href="/${publication.zdbID}">Cancel</a>
         </div>
     </div>
 </form:form>

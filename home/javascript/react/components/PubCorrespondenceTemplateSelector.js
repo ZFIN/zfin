@@ -54,7 +54,7 @@ const PubCorrespondenceTemplateSelector = ({onSelect}) => {
 
     return (
         <div className="dropdown">
-            <button className="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">
                 Insert Template <span className="caret" />
             </button>
             <ul className="dropdown-menu">

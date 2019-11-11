@@ -95,7 +95,7 @@
                 </li>
             </ul>
             <form class="navbar-form navbar-right hidden" id="claim-form">
-                <button type="submit" class="btn btn-default">Claim</button>
+                <button type="submit" class="btn btn-outline-secondary">Claim</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
                 <li class="navbar-text" id="status-message"></li>

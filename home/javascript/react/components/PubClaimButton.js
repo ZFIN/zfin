@@ -7,7 +7,7 @@ const PubClaimButton = ({publication, onClaimPub}) => {
         <React.Fragment>
             <LoadingButton
                 loading={publication.saving || false}
-                className={`btn ${publication.claimed ? 'btn-success' : 'btn-default'}`}
+                className={`btn ${publication.claimed ? 'btn-success' : 'btn-outline-secondary'}`}
                 disabled={publication.saving}
                 onClick={onClaimPub}
             >

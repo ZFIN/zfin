@@ -10,9 +10,9 @@
             <c:if test="${result.curatable}">
                 <a class="btn btn-primary" href="/action/curation/${result.id}" role="button">Curate</a>
             </c:if>
-            <a class="btn btn-default" href="/action/publication/${result.id}/track" role="button">Track</a>
-            <a class="btn btn-default" href="/action/publication/${result.id}/link" role="button">Link</a>
-            <a class="btn btn-default" href="/action/publication/${result.id}/edit" role="button">Edit</a>
+            <a class="btn btn-outline-secondary" href="/action/publication/${result.id}/track" role="button">Track</a>
+            <a class="btn btn-outline-secondary" href="/action/publication/${result.id}/link" role="button">Link</a>
+            <a class="btn btn-outline-secondary" href="/action/publication/${result.id}/edit" role="button">Edit</a>
         </div>
     </jsp:attribute>
     <jsp:body>

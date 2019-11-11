@@ -14,7 +14,7 @@
             <textarea class="form-control" rows="3" ng-model="vm.newPublicNote"></textarea>
         </div>
         <div class="form-group">
-            <button class="btn btn-default" ng-click="vm.cancelEditPublicNote()">
+            <button class="btn btn-outline-secondary" ng-click="vm.cancelEditPublicNote()">
                 Cancel
             </button>
             <button class="btn btn-primary" ng-click="vm.savePublicNote()" ng-disabled="vm.publicNote.processing">
@@ -69,7 +69,7 @@
                     <textarea class="form-control" rows="3" ng-model="note.editText"></textarea>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-default" ng-click="vm.cancelEditCuratorNote(note)">
+                    <button class="btn btn-outline-secondary" ng-click="vm.cancelEditCuratorNote(note)">
                         Cancel
                     </button>
                     <button class="btn btn-primary" ng-click="vm.saveCuratorNote(note, $index)" ng-disabled="note.processing">

@@ -65,8 +65,8 @@
         <form:hidden path="rows"/>
 
 
-        <button type="submit" class="btn btn-default btn-zfin">Search</button>
-        <a href="/action/marker/search" class="btn btn-default">Reset</a>
+        <button type="submit" class="btn btn-outline-secondary btn-zfin">Search</button>
+        <a href="/action/marker/search" class="btn btn-outline-secondary">Reset</a>
     </div>
 </form:form>
 <%--

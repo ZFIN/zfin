@@ -84,7 +84,7 @@ class PubEditableNote extends Component {
                                 <button onClick={this.handleEditSave} type="button" className="btn btn-primary">
                                     Done Editing
                                 </button>
-                                <button onClick={this.handleEditCancel} type="submit" className="btn btn-default">
+                                <button onClick={this.handleEditCancel} type="submit" className="btn btn-outline-secondary">
                                     Cancel
                                 </button>
                             </div>

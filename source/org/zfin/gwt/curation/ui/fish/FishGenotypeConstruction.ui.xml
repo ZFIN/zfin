@@ -22,17 +22,17 @@
                         <zfin:StringListBox ui:field="zygosityListBox"/>
                         <zfin:StringListBox ui:field="zygosityMaternalListBox"/>
                         <zfin:StringListBox ui:field="zygosityPaternalListBox"/>
-                        <g:Button ui:field="addGenotypeFeature" text="Add" styleName="btn btn-default"/>
+                        <g:Button ui:field="addGenotypeFeature" text="Add" styleName="btn btn-outline-secondary"/>
                     </td>
                 </tr>
                 <tr>
                     <td width="15%"></td>
                     <td class="bold" style="white-space: nowrap;">
-                        <g:Button ui:field="buttonUUU" addStyleNames=" btn-default">UUU</g:Button>
-                        <g:Button ui:field="button2UU" addStyleNames=" btn-default">2UU</g:Button>
-                        <g:Button ui:field="button211" addStyleNames=" btn-default">211</g:Button>
-                        <g:Button ui:field="button1UU" addStyleNames=" btn-default">1UU</g:Button>
-                        <g:Button ui:field="button22U" addStyleNames=" btn-default">22U</g:Button>
+                        <g:Button ui:field="buttonUUU" addStyleNames=" btn-outline-secondary">UUU</g:Button>
+                        <g:Button ui:field="button2UU" addStyleNames=" btn-outline-secondary">2UU</g:Button>
+                        <g:Button ui:field="button211" addStyleNames=" btn-outline-secondary">211</g:Button>
+                        <g:Button ui:field="button1UU" addStyleNames=" btn-outline-secondary">1UU</g:Button>
+                        <g:Button ui:field="button22U" addStyleNames=" btn-outline-secondary">22U</g:Button>
                     </td>
                 </tr>
                 <tr>

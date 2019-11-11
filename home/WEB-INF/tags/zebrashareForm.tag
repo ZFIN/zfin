@@ -91,7 +91,7 @@
     <div class="form-group row">
         <label class="col-md-3 col-form-label">Submission Workbook</label>
         <div class="col-md-8">
-            <label class="btn btn-default">
+            <label class="btn btn-outline-secondary">
                 Choose file
                 <input type="file" id="dataFile" name="dataFile" style="display: none;"
                        accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"/>
@@ -107,7 +107,7 @@
             <div class="file-drag-target">
                 <input multiple type="file" id="imageFiles" name="imageFiles"
                        accept=".png,.gif,.jpeg,.jpg,image/png,image/gif,image/jpeg" />
-                <label for="imageFiles" class="btn btn-default" >Choose files</label> or drag them here
+                <label for="imageFiles" class="btn btn-outline-secondary" >Choose files</label> or drag them here
             </div>
             <span class="form-text text-muted">
                     Acceptable file formats include png, jpeg, jpg and gif.
@@ -128,7 +128,7 @@
     <div class="form-group row">
         <div class="offset-md-3 col-md-8">
             <button type="submit" class="btn btn-primary">Submit</button>
-            <a class="btn btn-default" href="/">Cancel</a>
+            <a class="btn btn-outline-secondary" href="/">Cancel</a>
         </div>
     </div>
 </form:form>

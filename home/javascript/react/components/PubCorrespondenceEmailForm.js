@@ -101,7 +101,7 @@ const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onCompl
 
             <div className="form-group row">
                 <div className="offset-md-2 col-md-10 horizontal-buttons">
-                    <button type='button' className="btn btn-default" onClick={onCancel}>Cancel</button>
+                    <button type='button' className="btn btn-outline-secondary" onClick={onCancel}>Cancel</button>
                     <LoadingButton className="btn btn-primary" disabled={!isValid || loading} loading={loading} onClick={onComplete}>
                         {email.outgoing ? 'Send' : 'Save'}
                     </LoadingButton>
