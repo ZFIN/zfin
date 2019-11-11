@@ -35,3 +35,10 @@ label {
     color: $danger;
   }
 }
+
+.page-header {
+  @extend .pb-3;
+  @extend .mt-3;
+  @extend .mb-3;
+  @extend .border-bottom;
+}
