@@ -33,18 +33,18 @@
                     </c:choose>
                     &nbsp;<small><fmt:formatDate value="${update.whenUpdated}" pattern="yyyy-MM-dd"/></small>
                 </h4>
-                <dl class="dl-horizontal">
-                    <dt>Field</dt>
-                    <dd>${update.fieldName}</dd>
+                <dl class="row">
+                    <dt class="col-md-2 text-md-right">Field</dt>
+                    <dd class="col-md-10 mb-md-0">${update.fieldName}</dd>
 
-                    <dt>Previous value</dt>
-                    <dd>${update.oldValue}</dd>
+                    <dt class="col-md-2 text-md-right">Previous value</dt>
+                    <dd class="col-md-10 mb-md-0">${update.oldValue}</dd>
 
-                    <dt>New value</dt>
-                    <dd>${update.newValue}</dd>
+                    <dt class="col-md-2 text-md-right">New value</dt>
+                    <dd class="col-md-10 mb-md-0">${update.newValue}</dd>
 
-                    <dt>Comments</dt>
-                    <dd>${update.comments}</dd>
+                    <dt class="col-md-2 text-md-right">Comments</dt>
+                    <dd class="col-md-10 mb-md-0">${update.comments}</dd>
                 </dl>
             </div>
         </div>
