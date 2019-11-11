@@ -82,12 +82,11 @@ const PubTrackerTopics = ({onTopicSave, topics}) => {
                                 Close
                             </button>
                             <button type="button" className="btn btn-outline-secondary dropdown-toggle btn-dense" data-toggle="dropdown">
-                                <span className="caret" />
                                 <span className="sr-only">Toggle Dropdown</span>
                             </button>
-                            <ul className="dropdown-menu" role="menu">
-                                <li><a href='#' onClick={(e) => {e.preventDefault(); onReturnTopicToNew(topic)}}>Back to New</a></li>
-                            </ul>
+                            <div className="dropdown-menu" role="menu">
+                                <a className='dropdown-item' href='#' onClick={(e) => {e.preventDefault(); onReturnTopicToNew(topic)}}>Back to New</a>
+                            </div>
                         </div>}
                         
                         {isClosedTopic(topic) &&

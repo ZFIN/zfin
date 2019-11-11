@@ -55,15 +55,15 @@ const PubCorrespondenceTemplateSelector = ({onSelect}) => {
     return (
         <div className="dropdown">
             <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">
-                Insert Template <span className="caret" />
+                Insert Template
             </button>
-            <ul className="dropdown-menu">
+            <div className="dropdown-menu">
                 {templates.map(template => (
-                    <li key={template.label}>
-                        <a href="#" onClick={e => handleSelect(e, template)}>{template.label}</a>
-                    </li>
+                    <a className='dropdown-item' key={template.label} href="#" onClick={e => handleSelect(e, template)}>
+                        {template.label}
+                    </a>
                 ))}
-            </ul>
+            </div>
         </div>
     );
 };

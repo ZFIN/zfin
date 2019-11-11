@@ -6,17 +6,17 @@
         <form class="fs-autocomplete" action="/search" method="get">
             <label>Search expert curated zebrafish data</label>
             <div class="input-group input-group-lg">
-                <div class="input-group-btn category-dropdown">
-                    <button type="button" class="btn btn-outline-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="category-label">Any</span> <span class="caret"></span>
+                <div class="input-group-btn category-dropdown dropdown">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="category-label">Any</span>
                     </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Any</a></li>
-                        <li role="separator" class="divider"></li>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Any</a>
+                        <div role="separator" class="dropdown-divider"></div>
                         <c:forEach items="${searchCategories}" var="category">
-                            <li><a href="#">${category}</a></li>
+                            <a class="dropdown-item" href="#">${category}</a>
                         </c:forEach>
-                    </ul>
+                    </div>
                 </div>
                 <input type="hidden" name="category">
                 <input type="text" class="form-control" name="q" autocomplete="off" data-placeholders="bmp2a|heart contraction abnormal|tp53 antibody">

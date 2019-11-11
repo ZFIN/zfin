@@ -222,15 +222,14 @@
                                 <div class="btn-group sort-controls">
                                     <a class="btn btn-outline-secondary dropdown-toggle sort-button" data-toggle="dropdown" href="#">
                                         Sorted ${sortDisplay}
-                                        <span class="caret"></span>
                                     </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="${baseUrlWithoutSort}">Relevance</a></li>
-                                        <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=A+to+Z">A to Z</a></li>
-                                        <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Z+to+A">Z to A</a></li>
-                                        <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Newest">Newest</a></li>
-                                        <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Oldest">Oldest</a></li>
-                                    </ul>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="${baseUrlWithoutSort}">Relevance</a>
+                                        <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=A+to+Z">A to Z</a>
+                                        <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Z+to+A">Z to A</a>
+                                        <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Newest">Newest</a>
+                                        <a class="dropdown-item" href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Oldest">Oldest</a>
+                                    </div>
                                 </div>
                             </div>
                         </c:if>

@@ -29,21 +29,21 @@ const PubCorrespondenceList = ({correspondences, onResend, onRecordReply, onSend
                     </div> :
                     <div>
                         <div className="dropdown pull-right">
-                            <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                            <button className="btn btn-outline-secondary" type="button" data-toggle="dropdown">
                                 <i className="fas fa-ellipsis-v" />
                             </button>
                             {correspondence.outgoing ?
-                                <ul className="dropdown-menu">
-                                    <li className={correspondence.to.length === 0 ? 'disabled' : ''}>
-                                        <a href='#' onClick={preventDefault(() => onResend(correspondence))}>Resend</a>
-                                    </li>
-                                    <li><a href='#' onClick={preventDefault(() => onRecordReply(correspondence))}>Record Reply</a></li>
-                                    <li><a href='#' onClick={preventDefault(() => onDelete(correspondence))}>Delete</a></li>
-                                </ul> :
-                                <ul className="dropdown-menu">
-                                    <li><a href='#' onClick={preventDefault(() => onSendReply(correspondence))}>Reply</a></li>
-                                    <li><a href='#' onClick={preventDefault(() => onDelete(correspondence))}>Delete</a></li>
-                                </ul>
+                                <div className="dropdown-menu">
+                                    <a className={`dropdown-item ${correspondence.to.length === 0 ? 'disabled' : ''}`} href='#' onClick={preventDefault(() => onResend(correspondence))}>
+                                        Resend
+                                    </a>
+                                    <a className='dropdown-item' href='#' onClick={preventDefault(() => onRecordReply(correspondence))}>Record Reply</a>
+                                    <a className='dropdown-item' href='#' onClick={preventDefault(() => onDelete(correspondence))}>Delete</a>
+                                </div> :
+                                <div className="dropdown-menu">
+                                    <a className='dropdown-item' href='#' onClick={preventDefault(() => onSendReply(correspondence))}>Reply</a>
+                                    <a className='dropdown-item' href='#' onClick={preventDefault(() => onDelete(correspondence))}>Delete</a>
+                                </div>
                             }
                         </div>
 

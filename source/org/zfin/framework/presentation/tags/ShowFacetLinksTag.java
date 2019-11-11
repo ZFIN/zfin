@@ -235,15 +235,15 @@ public class ShowFacetLinksTag extends TagSupport {
                     "       data-toggle=\"dropdown\"\n" +
                     "       href=\"#\">\n(" +
                     value.getCount() +
-                    ")        <b class=\"caret\"></b>\n" +
+                    ") \n" +
                     "      </a>\n" +
-                    "    <ul class=\"dropdown-menu\">\n" +
-                    "      <li><a href=\"" + SolrService.getFacetUrl(facetField.getName(), value.getLabel(), baseUrl) + "\">Require</a></li>\n" +
-                    "      <li><a href=\"" + SolrService.getNotFacetUrl(facetField.getName(), value.getLabel(), baseUrl) + "\">Exclude</a></li>\n");
+                    "    <div class=\"dropdown-menu\">\n" +
+                    "      <a class=\"dropdown-item\" href=\"" + SolrService.getFacetUrl(facetField.getName(), value.getLabel(), baseUrl) + "\">Require</a>\n" +
+                    "      <a class=\"dropdown-item\" href=\"" + SolrService.getNotFacetUrl(facetField.getName(), value.getLabel(), baseUrl) + "\">Exclude</a>\n");
             if (SolrService.isAJoinableFacetField(facetField.getName())) {
-                facetHtml.append("      <li class=\"divider\"></li>\n" +
-                        "      <li><a target=\"_blank\" href=\"/prototype?q=" + value.getLabel()
-                        + "\">Search for <strong>" + value.getLabel() + "</strong> in New Window</a></li>\n");
+                facetHtml.append("      <div class=\"dropdown-divider\"></div>\n" +
+                        "      <a class=\"dropdown-item\" target=\"_blank\" href=\"/prototype?q=" + value.getLabel()
+                        + "\">Search for <strong>" + value.getLabel() + "</strong> in New Window</a>\n");
             }
             facetHtml.append(        "    </ul>\n" +
                     "  </li>\n" +

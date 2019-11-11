@@ -57,15 +57,15 @@ const DashboardPubList = ({ pubs, statusCounts }) => {
                                     <td>{pub.status.owner.name}</td>
                                     <td>
                                         <div className="dropdown">
-                                            <button className="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">
+                                            <button className="btn btn-link" type="button" data-toggle="dropdown">
                                                 <i className="fas fa-ellipsis-v" />
                                             </button>
-                                            <ul className="dropdown-menu dropdown-menu-right">
-                                                {hasCurateAction && <li><a href={`/action/curation/${pub.zdbId}`} target="_blank" rel="noopener noreferrer">Curate</a></li>}
-                                                <li><a href={`/action/publication/${pub.zdbId}/track`} target="_blank" rel="noopener noreferrer">Track</a></li>
-                                                <li><a href={`/action/publication/${pub.zdbId}/link`} target="_blank" rel="noopener noreferrer">Link</a></li>
-                                                <li><a href={`/action/publication/${pub.zdbId}/edit`} target="_blank" rel="noopener noreferrer">Edit</a></li>
-                                            </ul>
+                                            <div className="dropdown-menu dropdown-menu-right">
+                                                {hasCurateAction && <a className='dropdown-item' href={`/action/curation/${pub.zdbId}`} target="_blank" rel="noopener noreferrer">Curate</a>}
+                                                <a className='dropdown-item' href={`/action/publication/${pub.zdbId}/track`} target="_blank" rel="noopener noreferrer">Track</a>
+                                                <a className='dropdown-item' href={`/action/publication/${pub.zdbId}/link`} target="_blank" rel="noopener noreferrer">Link</a>
+                                                <a className='dropdown-item' href={`/action/publication/${pub.zdbId}/edit`} target="_blank" rel="noopener noreferrer">Edit</a>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>

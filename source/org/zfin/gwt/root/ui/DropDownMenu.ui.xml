@@ -9,16 +9,11 @@
             <div class="input-group-btn select" id="select1">
                 <g:Button ui:field="button" styleName="btn btn-outline-secondary dropdown-toggle">
                     <span class="selected">One</span>
-                    <span class="caret"></span>
                 </g:Button>
-                <ul class="dropdown-menu option" role="menu">
-                    <li id="1">
-                        <a href="#">One</a>
-                    </li>
-                    <li id="2">
-                        <a href="#">Two</a>
-                    </li>
-                </ul>
+                <div class="dropdown-menu option" role="menu">
+                    <a class="dropdown-item" id="1" href="#">One</a>
+                    <a class="dropdown-item" id="2" href="#">Two</a>
+                </div>
             </div>
             <select class="form-control">
                 <option data-subtext="French's">Mustard</option>
@@ -37,7 +32,7 @@
         <!--
 
         <div class="input-group-btn select" id="select1">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="selected">One</span> <span class="caret"></span></button>
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="selected">One</span></span></button>
         <ul class="dropdown-menu option" role="menu">
             <li id="1"><a href="#">One</a></li>
             <li id="2"><a href="#">Two</a></li>
