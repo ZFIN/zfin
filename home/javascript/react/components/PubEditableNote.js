@@ -67,10 +67,10 @@ class PubEditableNote extends Component {
 
                     {note.editable &&
                     <ul className="list-inline">
-                        <li>
+                        <li className="list-inline-item">
                             <small><a href='#' onClick={this.handleEditClick}>Edit</a></small>
                         </li>
-                        <li>
+                        <li className="list-inline-item">
                             <small><a href='#' onClick={this.handleDeleteClick}>Delete</a></small>
                         </li>
                     </ul>}
