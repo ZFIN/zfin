@@ -62,15 +62,17 @@ if ($synonyms =~ /\|/) {
    
    foreach my $syn (@synonyms) { 
        if ($syn != '-') {
+           print $synonyms
+           print $syn
            print HUMANSYNONYMS "$geneId,$syn\n"; 
        }
    }
 }
- else {
-     if ($syn != '-') {
+else {
+     if ($synonyms != '-') {
          print HUMANSYNONYMS "$geneId,$synonyms\n";
      }
- } 
+} 
 
 print PARSEDHUMAN "$geneId\t$Chr\t$loc\t$symbol\t$mim\n";
 
