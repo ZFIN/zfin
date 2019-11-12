@@ -71,25 +71,25 @@
         </div>
     </div>
 
-    <nav class="pub-navigator navbar navbar-default navbar-static-top" id="curation-nav">
+    <nav class="pub-navigator navbar navbar-light navbar-expand" id="curation-nav">
         <div class="container-fluid">
-            <ul class="nav navbar-nav" id="curation-tabs">
+            <ul class="navbar-nav" id="curation-tabs">
                 <c:forEach var="curationTab" items="${curationTabs}">
-                    <li class="${curationTab.value eq currentTab ? 'active' : ''}">
-                        <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab" class="nav-tabs-loading"
+                    <li class="nav-item ${curationTab.value eq currentTab ? 'active' : ''}">
+                        <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab" class="nav-link nav-tabs-loading"
                            onclick="handleTabToggle('${curationTab.value}')"
                            data-toggle="tab" id="${curationTab.value}-tab">
                                 ${curationTab.displayName}
                         </a>
                     </li>
                 </c:forEach>
-                <li>
-                    <a aria-controls="refresh" onclick="refresh()" role="tab" title="Refresh current tab" class="zfin-tooltip">
+                <li class="nav-item">
+                    <a aria-controls="refresh" onclick="refresh()" role="tab" title="Refresh current tab" class="nav-link zfin-tooltip">
                         <i class="fas fa-sync" aria-hidden="true"></i>
                     </a>
                 </li>
-                <li>
-                    <a aria-controls="history" onclick="showHistory()" role="tab" title="Show history" class="zfin-tooltip">
+                <li class="nav-item">
+                    <a aria-controls="history" onclick="showHistory()" role="tab" title="Show history" class="nav-link zfin-tooltip">
                         <i class="fas fa-history" aria-hidden="true"></i>
                     </a>
                 </li>
