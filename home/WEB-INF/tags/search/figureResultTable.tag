@@ -35,7 +35,7 @@
             <td class="nowrap">${result.id}</td>
             <td><zfin-search:relatedLinkMenu links="${result.relatedLinks}"/></td>
         </tr>
-        <tr class="${loop.index % 2 == 0 ? 'even' : 'odd'} hidden" id="caption-row-${loop.index}">
+        <tr class="${loop.index % 2 == 0 ? 'even' : 'odd'} d-none" id="caption-row-${loop.index}">
             <td colspan="6">
                 ${result.attributes['Caption:']}
             </td>
@@ -50,7 +50,7 @@
             elm.preventDefault();
             var idx = $(this).data('index');
             $(this).find('.icon-toggle').toggleClass('open');
-            $('#caption-row-' + idx).toggleClass('hidden');
+            $('#caption-row-' + idx).toggleClass('d-none');
         });
     });
 </script>

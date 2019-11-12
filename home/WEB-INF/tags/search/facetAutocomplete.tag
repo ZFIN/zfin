@@ -17,7 +17,7 @@
                     <a class="facet-include" href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)"><i class="include-exclude-icon fa fa-plus-circle"></i></a>
                     <a class="facet-exclude" href="${baseUrlWithoutPage}fq=-{{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('exclude', value.name)"><i class="include-exclude-icon fa fa-minus-circle"></i></a>
                     <a href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)" ng-bind-html="value.value | trustedHtml"></a>
-                      <span style="padding-left: 1em;" class="pull-right">({{value.count}})</span>
+                      <span style="padding-left: 1em;" class="float-right">({{value.count}})</span>
                 </li>
             </ul>
             <div style="margin-top: .5em;">
@@ -27,7 +27,7 @@
                 {{page}}/{{   Math.ceil(filteredValues.length/perPage)  }}
                 <button class="btn btn-outline-secondary" ng-click="nextPage()"><i class="fas fa-chevron-right"></i></button>
 
-                <div class="pull-right">
+                <div class="float-right">
                     Show:
                     <select style="width: 4em; position:relative; top: .3em;"
                             ng-init="perPage = 10; maxPage = -1" ng-model="perPage" ng-change="page = 1">

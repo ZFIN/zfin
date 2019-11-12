@@ -7,7 +7,7 @@
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Related
         </button>
-        <div class="dropdown-menu pull-right">
+        <div class="dropdown-menu float-right">
             <c:forEach var="link" items="${links}">
                 ${link}
             </c:forEach>

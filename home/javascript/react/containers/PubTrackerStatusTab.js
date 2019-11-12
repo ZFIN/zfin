@@ -189,7 +189,7 @@ class PubTrackerStatusTab extends React.Component {
 
         const statusHeader = [
             'Status',
-            <span className="pull-right" key='history'>
+            <span className="float-right" key='history'>
                 <small>
                     <a href={`/action/publication/${pubId}/status-history`} target="_blank" rel="noopener noreferrer">
                         History <i className="fas fa-external-link-alt" />

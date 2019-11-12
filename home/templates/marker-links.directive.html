@@ -40,7 +40,7 @@
                 <td>
                     <a ng-href="{{link.urlPrefix + link.accession}}">{{link.referenceDatabaseName}}:{{link.accession}}</a>
                     ({{link.references.length}})
-                    <span class="small pull-right">
+                    <span class="small float-right">
                         <a href ng-click="vm.edit(link)">Edit References</a> |
                         <a href ng-click="vm.remove(link, $index)">Remove</a>
                     </span>

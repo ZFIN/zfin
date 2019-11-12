@@ -35,7 +35,7 @@
         <a href="#" class="figure-gallery-modal-nav next" role="button">
             <i class="fas fa-chevron-right"></i>
         </a>
-        <div class="figure-gallery-modal-loader hidden">
+        <div class="figure-gallery-modal-loader d-none">
             <i class="fas fa-spinner fa-spin"></i>
         </div>
     </div>

@@ -31,7 +31,7 @@
             '        <table class="table">' +
             '          <tr ng-repeat="reference in vm.references">' +
             '            <td>' +
-            '              <span class="small pull-right" ng-show="vm.references.length > 1">' +
+            '              <span class="small float-right" ng-show="vm.references.length > 1">' +
             '                <a href ng-click="vm.onRemove({reference: reference, index: $index})">Remove</a>' +
             '              </span>' +
             '              {{reference.zdbID}}<br>' +

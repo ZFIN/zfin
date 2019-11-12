@@ -173,7 +173,7 @@
 
                 <div class="row">
                     <div class="col-12 center">
-                        <div class="pull-left">
+                        <div class="float-left">
                             <c:if test="${!galleryMode}">
                                 <a href="${downloadUrl}" class="btn btn-outline-secondary">
                                     <i class="fas fa-download"></i> Download
@@ -195,7 +195,7 @@
                         </c:if>
 
                         <c:if test="${!galleryMode}">
-                            <div class="pull-right">
+                            <div class="float-right">
                                 <authz:authorize access="hasRole('root')">
                                     <div class="btn-group">
                                         <button id="boxy-result-button" class="btn btn-outline-secondary result-action-tooltip" title="Detailed Results">
@@ -297,7 +297,7 @@
                                      data-category="${category}">
                                     <div class="figure-gallery-image-container gallery">
                                         <img src="${image.mediumUrl}">
-                                        <div class="hidden figure-gallery-loading-overlay">
+                                        <div class="d-none figure-gallery-loading-overlay">
                                             <i class="fas fa-spinner fa-spin"></i>
                                         </div>
                                     </div>
@@ -490,7 +490,7 @@ $(function () {
 
     function loadModal(el) {
         var $el = $(el);
-        var loading = $el.find('.figure-gallery-loading-overlay').removeClass('hidden');
+        var loading = $el.find('.figure-gallery-loading-overlay').removeClass('d-none');
         var summaryUrl = '/action/image/' + $el.data('zdb-id') + '/summary' +
                 '?category=' + encodeURIComponent($el.data('category')) +
                 '&record=' + encodeURIComponent($el.data('result'));
@@ -504,13 +504,13 @@ $(function () {
                 switch (evt.which) {
                     case 37: // left
                         if (prev.length) {
-                            loader.removeClass('hidden');
+                            loader.removeClass('d-none');
                             loadModal(prev);
                         }
                         break;
                     case 39: // right
                         if (next.length) {
-                            loader.removeClass('hidden');
+                            loader.removeClass('d-none');
                             loadModal(next);
                         }
                         break;
@@ -520,17 +520,17 @@ $(function () {
                 evt.preventDefault();
             });
             content.find('.figure-gallery-modal-nav.prev')
-                    .toggleClass('hidden', prev.length === 0)
+                    .toggleClass('d-none', prev.length === 0)
                     .click(function (evt) {
                         evt.preventDefault();
-                        loader.removeClass('hidden');
+                        loader.removeClass('d-none');
                         loadModal(prev);
                     });
             content.find('.figure-gallery-modal-nav.next')
-                    .toggleClass('hidden', next.length === 0)
+                    .toggleClass('d-none', next.length === 0)
                     .click(function (evt) {
                         evt.preventDefault();
-                        loader.removeClass('hidden');
+                        loader.removeClass('d-none');
                         loadModal(next);
                     });
             content.find('.figure-gallery-modal-details').toggle(shouldGalleryHeaderBeOpen());
@@ -546,7 +546,7 @@ $(function () {
             content.find('.figure-gallery-modal-image').on('load', function() {
                 $figureGalleryModal.find('.modal-dialog').html(content);
                 $figureGalleryModal.figureGalleryResize();
-                loading.addClass('hidden');
+                loading.addClass('d-none');
             });
         });
     }

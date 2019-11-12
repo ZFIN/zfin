@@ -51,12 +51,12 @@
                 </td>
                 <td align="right" valign="top">
                     <c:if test="${not empty result.image}">
-                        <div class="result-thumbnail-container pull-right" style="min-width: 100px;">
+                        <div class="result-thumbnail-container float-right" style="min-width: 100px;">
                             <zfin-search:imageModal result="${result}"/>
                         </div>
                     </c:if>
                     <c:if test="${not empty result.profileImage}">
-                        <div class="pull-right result-thumbnail-container">
+                        <div class="float-right result-thumbnail-container">
                             <div class="search-result-thumbnail">
                                 <a href="${result.url}">
                                     <img style="max-width: 150px; max-height: 70px;"

@@ -113,7 +113,7 @@
                     Acceptable file formats include png, jpeg, jpg and gif.
                 </span>
             <div class="right-align">
-                <a id="clearImages" class="btn btn-link hidden">
+                <a id="clearImages" class="btn btn-link d-none">
                 <span class="text-danger">
                     <i class="fas fa-times"></i> Remove images
                 </span>
@@ -212,7 +212,7 @@
             });
         imageFiles.on('change', function() {
             $('.file-drag-target').hide();
-            $('#clearImages').removeClass('hidden');
+            $('#clearImages').removeClass('d-none');
             handleImageFiles();
         });
         $('#dataFile').on('change', function () {
@@ -221,7 +221,7 @@
         $('#clearImages').on('click', function (event) {
             event.preventDefault();
             $('.file-drag-target').show();
-            $(this).addClass('hidden');
+            $(this).addClass('d-none');
             imageFiles[0].value = '';
             handleImageFiles();
         });

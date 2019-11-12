@@ -251,7 +251,7 @@
 
         function resetStatusIndicator() {
           $navbar.removeClass('success danger warning');
-          $claimForm.addClass('hidden');
+          $claimForm.addClass('d-none');
           $claimButton
             .prop('disabled', false)
             .html('Claim');
@@ -264,7 +264,7 @@
             $navbar.addClass('danger');
           } else if (status.status.type !== 'CURATING') {
             if (status.status.type === 'READY_FOR_CURATION') {
-              $claimForm.removeClass('hidden');
+              $claimForm.removeClass('d-none');
             }
             $statusMessage.html('Status: <b>' + status.status.name + '</b>');
             $navbar.addClass('warning');

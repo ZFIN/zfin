@@ -30,7 +30,7 @@
             <tr ng-repeat="alias in vm.aliases">
                 <td>
                     {{alias.alias}} ({{alias.references.length}})
-                    <span class="small pull-right">
+                    <span class="small float-right">
                         <a href ng-click="vm.edit(alias)">Edit References</a> |
                         <a href ng-click="vm.remove(alias, $index)">Remove</a>
                     </span>

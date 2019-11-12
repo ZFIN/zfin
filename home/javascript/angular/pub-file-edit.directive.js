@@ -24,7 +24,7 @@
             '    <td>{{file.type}}</td>' +
             '    <td><a ng-href="{{file.fileName}}">{{file.originalFileName}}</a></td>' +
             '    <td>' +
-            '      <div class="figure-delete-button pull-right">' +
+            '      <div class="figure-delete-button float-right">' +
             '        <button class="btn btn-dense btn-link" title="Remove file" ' +
             '                ng-click="vm.deleteFile(file, $index)" ng-disabled="file.deleting">' +
             '          <i class="fas fa-trash"></i>' +

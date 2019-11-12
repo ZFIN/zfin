@@ -28,7 +28,7 @@ const PubCorrespondenceList = ({correspondences, onResend, onRecordReply, onSend
                         <span className="text-muted"> Resent email from {new Date(correspondence.composedDate).toLocaleDateString()}</span>
                     </div> :
                     <div>
-                        <div className="dropdown pull-right">
+                        <div className="dropdown float-right">
                             <button className="btn btn-outline-secondary" type="button" data-toggle="dropdown">
                                 <i className="fas fa-ellipsis-v" />
                             </button>

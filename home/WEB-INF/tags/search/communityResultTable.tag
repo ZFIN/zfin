@@ -59,7 +59,7 @@
                 <td style="word-wrap: break-word">${result.attributes[addressAttribute]}</td>
                 <td>
                     <c:if test="${not empty result.profileImage}">
-                        <div class="pull-right result-thumbnail-container">
+                        <div class="float-right result-thumbnail-container">
                             <div class="search-result-thumbnail">
                                 <a href="${result.url}">
                                     <img style="max-width: 150px; max-height: 70px;"

@@ -36,7 +36,7 @@
                 </c:if>
             </td>
         </tr>
-        <tr class="${loop.index % 2 == 0 ? 'even' : 'odd'} hidden" id="abstract-row-${loop.index}">
+        <tr class="${loop.index % 2 == 0 ? 'even' : 'odd'} d-none" id="abstract-row-${loop.index}">
             <td colspan="6">
                 ${result.attributes[abstrct]}
             </td>
@@ -50,7 +50,7 @@
             elm.preventDefault();
             var idx = $(this).data('index');
             $(this).find('.icon-toggle').toggleClass('open');
-            $('#abstract-row-' + idx).toggleClass('hidden');
+            $('#abstract-row-' + idx).toggleClass('d-none');
         });
     });
 </script>

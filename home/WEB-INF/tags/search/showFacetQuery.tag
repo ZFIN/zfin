@@ -21,7 +21,7 @@
                             </a>
                         </div>
                         <div class="col-lg-3 col-2 facet-count">
-                            <span class="pull-right">
+                            <span class="float-right">
                                 (<fmt:formatNumber value="${facetQuery.count}" pattern="##,###"/>)
                             </span>
                         </div>
@@ -31,7 +31,7 @@
                 <c:otherwise>
                     <li class="facet-value row">
                         <div class="col-lg-2 col-3 tight-on-the-right">
-                            <div class="pull-right">
+                            <div class="float-right">
                                 <i class="fas fa-check-square facet-selected"></i>
                             </div>
                         </div>

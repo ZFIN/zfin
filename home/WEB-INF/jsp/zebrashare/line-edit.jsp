@@ -6,7 +6,7 @@
 
 <div class="container-fluid">
     <c:if test="${!empty publication}">
-        <span class="pull-right">
+        <span class="float-right">
             Edit other line associated with ${publication.shortAuthorList}:
             <select id="other-lines">
                 <c:forEach items="${otherFeatures}" var="other">

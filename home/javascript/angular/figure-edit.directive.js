@@ -30,7 +30,7 @@
             '      <div figure-update figure="figure" has-permissions="vm.pubCanShowImages"></div>' +
             '    </td>' +
             '    <td>' +
-            '      <div class="figure-delete-button pull-right" data-toggle="tooltip"' +
+            '      <div class="figure-delete-button float-right" data-toggle="tooltip"' +
             '           ng-attr-data-expr-count={{figure.numExpressionStatements}}' +
             '           ng-attr-data-pheno-count={{figure.numPhenotypeStatements}}>' +
             '        <button class="btn btn-dense btn-link" ng-click="vm.deleteFigure(figure, $index)" title="Remove figure"' +
