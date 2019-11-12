@@ -90,6 +90,7 @@ public class GeneViewController {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
+        markerRepository = null;
         zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
 
