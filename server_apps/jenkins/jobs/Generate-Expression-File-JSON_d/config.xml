@@ -22,12 +22,12 @@
       <buildFile>$SOURCEROOT/build.xml</buildFile>
     </hudson.tasks.Ant>
     <hudson.tasks.Shell>
-      <command>cp $SOURCEROOT/zfin-wt-expression.json $DOWNLOAD_DIRECTORY/current/</command>
+      <command>cp $SOURCEROOT/zfin_wt_expression.json $DOWNLOAD_DIRECTORY/current/</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>$SOURCEROOT/zfin-wt-expression.json</artifacts>
+            <artifacts>$SOURCEROOT/zfin_wt_expression.json</artifacts>
             <allowEmptyArchive>false</allowEmptyArchive>
             <onlyIfSuccessful>false</onlyIfSuccessful>
             <fingerprint>false</fingerprint>
@@ -65,7 +65,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;$SOURCEROOT/zfin-wt-expression.json&quot;}
+                            ${FILE,path=&quot;$SOURCEROOT/zfin_wt_expression.json&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
