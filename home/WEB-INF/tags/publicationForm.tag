@@ -47,8 +47,8 @@
                 <a data-toggle="collapse" href="#authors-more-help"><i class="fas fa-question-circle"></i></a>
             </span>
             <div class="collapse" id="authors-more-help">
-                <div class="well">
-                    <button type="button" class="close" data-dismiss="alert">
+                <div class="alert alert-secondary alert-dismissible">
+                    <button type="button" class="close" data-toggle="collapse" href="#authors-more-help">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     Use the following formatting guidelines:
@@ -167,8 +167,8 @@
                     },
                     limit: 10000
                 });
-        $('#authors-more-help .close').click(function() {
-            $('#authors-more-help').collapse('hide');
-        });
+        // $('#authors-more-help .close').click(function() {
+        //     $('#authors-more-help').collapse('hide');
+        // });
     });
 </script>

@@ -3,13 +3,11 @@ import PropTypes from 'prop-types';
 
 const PubTrackerPanel = ({children, title}) => {
     return (
-        <div className="panel panel-default">
-            <div className="panel-heading">
-                <h3 className="panel-title">
-                    {title}
-                </h3>
-            </div>
-            <div className="panel-body">
+        <div className="card mb-3">
+            <h5 className="card-header">
+                {title}
+            </h5>
+            <div className="card-body">
                 {children}
             </div>
         </div>

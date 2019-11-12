@@ -74,9 +74,11 @@
                     </div>
                 </div>
 
-                <div class="col-6 panel panel-default">
-                    <div id="term-info" class="panel-body">
-                        <h4 class="panel-heading">Term Info</h4>
+                <div class="col-6">
+                    <div class="card">
+                        <div id="term-info" class="card-body">
+                            <h4 class="card-title">Term Info</h4>
+                        </div>
                     </div>
                 </div>
             </div>

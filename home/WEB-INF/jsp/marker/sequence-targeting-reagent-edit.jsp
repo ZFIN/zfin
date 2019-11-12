@@ -20,29 +20,23 @@
 <div class="container-fluid" ng-app="app">
     <h2 class="page-header">Editing ${str.zdbID}</h2>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">STR Details</h3>
-        </div>
-        <div class="panel-body">
+    <div class="card mb-3">
+        <h5 class="card-header">STR Details</h5>
+        <div class="card-body">
             <div str-details marker-id="${str.zdbID}" type="${str.type}"></div>
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Aliases</h3>
-        </div>
-        <div class="panel-body">
+    <div class="card mb-3">
+        <h5 class="card-header">Aliases</h5>
+        <div class="card-body">
             <div marker-aliases marker-id="${str.zdbID}" name="${str.abbreviation}"></div>
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Target Genes</h3>
-        </div>
-        <div class="panel-body">
+    <div class="card mb-3">
+        <h5 class="card-header">Target Genes</h5>
+        <div class="card-body">
             <div marker-relationships
                  marker-id="${str.zdbID}"
                  relationship="knockdown reagent targets gene"
@@ -51,30 +45,24 @@
     </div>
 
     <c:if test="${showSupplier}">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Suppliers</h3>
-            </div>
-            <div class="panel-body">
+        <div class="card mb-3">
+            <h5 class="card-header">Suppliers</h5>
+            <div class="card-body">
                 <div marker-suppliers marker-id="${str.zdbID}"></div>
             </div>
         </div>
     </c:if>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Notes</h3>
-        </div>
-        <div class="panel-body">
+    <div class="card mb-3">
+        <h5 class="card-header">Notes</h5>
+        <div class="card-body">
             <div marker-notes marker-id="${str.zdbID}" user-id="${user.zdbID}"></div>
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Other ${str.name} Pages</h3>
-        </div>
-        <div class="panel-body">
+    <div class="card mb-3">
+        <h5 class="card-header">Other ${str.name} Pages</h5>
+        <div class="card-body">
             <div marker-links marker-id="${str.zdbID}" group="summary page"></div>
         </div>
     </div>

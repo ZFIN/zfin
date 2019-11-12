@@ -36,8 +36,8 @@
         <button type="submit" class="btn btn-zfin btn-block">Sign In</button>
     </form>
 
-    <div class="panel panel-default">
-        <div class="panel-body">
+    <div class="card">
+        <div class="card-body">
             <p><a href="/action/profile/forgot-password">Forgot password?</a></p>
             <div>Need an account? <zfin2:mailTo>Contact us.</zfin2:mailTo></div>
         </div>
