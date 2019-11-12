@@ -6,8 +6,8 @@
         <form class="fs-autocomplete" action="/search" method="get">
             <label>Search expert curated zebrafish data</label>
             <div class="input-group input-group-lg">
-                <div class="input-group-btn category-dropdown dropdown">
-                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="input-group-prepend category-dropdown">
+                    <button type="button" class="btn btn-outline-secondary bg-white text-body dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="category-label">Any</span>
                     </button>
                     <div class="dropdown-menu">
@@ -20,9 +20,9 @@
                 </div>
                 <input type="hidden" name="category">
                 <input type="text" class="form-control" name="q" autocomplete="off" data-placeholders="bmp2a|heart contraction abnormal|tp53 antibody">
-                <span class="input-group-btn">
-                    <button class="btn btn-zfin" type="submit">Search</button>
-                </span>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
             </div>
         </form>
     </div>

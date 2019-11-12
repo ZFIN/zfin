@@ -60,20 +60,3 @@
 .tt-input {
     vertical-align: middle !important;
 }
-
-/**
-Fix the size of the inputs when placed in a large input group
-*/
-.input-group.input-group-lg .twitter-typeahead .tt-input,
-.input-group.input-group-lg .twitter-typeahead .tt-hint {
-    height: 46px;
-    padding: 10px 16px;
-    font-size: 18px;
-    line-height: 1.33;
-}
-.input-group.input-group-lg .twitter-typeahead {
-    display: table-cell !important;
-}
-.twitter-typeahead .tt-hint {
-    color: #999999;
-}
