@@ -58,8 +58,6 @@ new File(UPDATED_PUBS).withWriter { output ->
 PubmedUtils.dbaccess DBNAME, """
  BEGIN WORK;
 
-  
-
   CREATE TEMP TABLE tmp_pmcid_update (pmid integer,
    altId text,
    idType text );

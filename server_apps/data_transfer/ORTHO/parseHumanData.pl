@@ -56,7 +56,7 @@ while (<HUMAN>) {
  }
 
  $pipe = "|";
-if ($synonyms =~ /\Q$pipe\E/) {
+if ($synonyms =~ /\|/) {
 
    my @synonyms = split(/\|/, $synonyms);
    
