@@ -11,7 +11,7 @@
 
     <div class="carousel-inner" role="listbox">
         <c:forEach items="${images}" var="image" varStatus="status">
-            <a href="/${image.figure.zdbID}" class="item ${status.first ? 'active' : ''}" style="background-image: url('@IMAGE_LOAD@/${image.imageFilename}')">
+            <a href="/${image.figure.zdbID}" class="carousel-item ${status.first ? 'active' : ''}" style="background-image: url('@IMAGE_LOAD@/${image.imageFilename}')">
                 <div class="carousel-caption">
                     <div><b>${image.figure.label} of ${image.figure.publication.shortAuthorList}</b></div>
                     <div class="figure-caption">${captions[status.index]}</div>

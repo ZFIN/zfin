@@ -157,15 +157,28 @@ body.home {
         vertical-align: middle;
 
         li {
-            border-color: #7f7f7f;
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 1px;
+            text-indent: -999px;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0);
+            border: 1px solid #7f7f7f;
+            border-radius: 10px;
+            box-sizing: border-box;
+            background-clip: border-box;
 
             &.active {
+                width: 12px;
+                height: 12px;
+                margin: 0;
                 background-color: #7f7f7f;
             }
         }
     }
 
-    .item {
+    .carousel-item {
         position: absolute !important;
         top: 0;
         bottom: 0;
