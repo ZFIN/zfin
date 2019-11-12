@@ -137,7 +137,7 @@ class ProcessingBin extends React.Component {
 
                 <BinPubList columns={tableColumns} loading={loading} pubs={results.publications} />
 
-                <div className='center'>
+                <div className='d-flex justify-content-center'>
                     <Pagination onChange={this.handlePageChange}
                                 page={page}
                                 perPageSize={PUBS_PER_PAGE}

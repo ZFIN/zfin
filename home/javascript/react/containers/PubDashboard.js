@@ -127,7 +127,7 @@ class PubDashboard extends React.Component {
 
                 <DashboardPubList pubs={results.publications} statusCounts={results.statusCounts}/>
 
-                <div className="center">
+                <div className="d-flex justify-content-center">
                     <Pagination
                         onChange={this.handlePageChange}
                         page={page}

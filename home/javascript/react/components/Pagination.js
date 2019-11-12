@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 
 const PAGE_LIST_SIZE = 2;
 
-const Pagination = ({ onChange, page, perPageSize, total }) => {
+const Pagination = ({ className, onChange, page, perPageSize, total }) => {
+    const PageItem = ({className, ...rest}) => <li {...rest} className={`page-item ${className}`} />;
+    const PageLink = ({className, ...rest}) => <a {...rest} className={`page-link ${className}`} />;
+
     const isFirstPage = page === 1;
     const totalPages = Math.ceil(total / perPageSize);
     if (!total || !totalPages || totalPages === 1) {
@@ -14,38 +17,39 @@ const Pagination = ({ onChange, page, perPageSize, total }) => {
     const start = Math.max(page - PAGE_LIST_SIZE, 1);
     const end = Math.min(page + PAGE_LIST_SIZE, totalPages);
     if (start > 1) {
-        pageLinks.push(<li key='page-1'><a href='#' onClick={() => onChange(1)}>1</a></li>);
+        pageLinks.push(<PageItem key='page-1'><PageLink href='#' onClick={() => onChange(1)}>1</PageLink></PageItem>);
     }
     if (start > 2) {
-        pageLinks.push(<li className='disabled' key='start-spacer'><a>&hellip;</a></li>);
+        pageLinks.push(<PageItem className='disabled' key='start-spacer'><PageLink>&hellip;</PageLink></PageItem>);
     }
     for (let i = start; i <= end; i++) {
         pageLinks.push(
-            <li className={i === page ? 'active' : ''} key={`page-${i}`}>
-                <a href="#" onClick={() => onChange(i)}>{i}</a>
-            </li>
+            <PageItem className={i === page ? 'active' : ''} key={`page-${i}`}>
+                <PageLink href="#" onClick={() => onChange(i)}>{i}</PageLink>
+            </PageItem>
         );
     }
     if (end < totalPages - 1) {
-        pageLinks.push(<li className='disabled' key='end-spacer'><a>&hellip;</a></li>);
+        pageLinks.push(<PageItem className='disabled' key='end-spacer'><PageLink>&hellip;</PageLink></PageItem>);
     }
     if (end < totalPages) {
-        pageLinks.push(<li key='page-end'><a href='#' onClick={() => onChange(totalPages)}>{totalPages}</a></li>);
+        pageLinks.push(<PageItem key='page-end'><PageLink href='#' onClick={() => onChange(totalPages)}>{totalPages}</PageLink></PageItem>);
     }
     return (
         <ul className="pagination">
-            <li className={isFirstPage ? 'disabled' : ''}>
-                <a href="#" onClick={() => !isFirstPage && onChange(page - 1)}>&laquo; Prev</a>
-            </li>
+            <PageItem className={isFirstPage ? 'disabled' : ''}>
+                <PageLink href="#" onClick={() => !isFirstPage && onChange(page - 1)}>&laquo; Prev</PageLink>
+            </PageItem>
             {pageLinks}
-            <li className={isLastPage ? 'disabled' : ''}>
-                <a href="#" onClick={() => !isLastPage && onChange(page + 1)}>&raquo; Next</a>
-            </li>
+            <PageItem className={isLastPage ? 'disabled' : ''}>
+                <PageLink href="#" onClick={() => !isLastPage && onChange(page + 1)}>&raquo; Next</PageLink>
+            </PageItem>
         </ul>
     );
 };
 
 Pagination.propTypes = {
+    className: PropTypes.string,
     onChange: PropTypes.func,
     page: PropTypes.number.isRequired,
     total: PropTypes.number,
