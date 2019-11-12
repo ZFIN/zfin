@@ -93,6 +93,9 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
                 zfinExpressionDTO.setGeneratedGeneDescription(geneDescription.getGdDesc());
             }
 
+            zfinExpressionDTO.setGeneName(gene.getName());
+            zfinExpressionDTO.setGeneSymbol(gene.getAbbreviation());
+            
             if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
             List<CrossReferenceDTO> xrefs= new ArrayList<>();
 
