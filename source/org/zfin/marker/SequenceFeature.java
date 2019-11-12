@@ -1,7 +1,12 @@
 package org.zfin.marker;
 
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
 public class SequenceFeature {
+
+    @JsonView(View.API.class)
     public String zdbID;
 
     public String getNameOrder() {

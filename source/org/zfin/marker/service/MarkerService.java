@@ -2,7 +2,8 @@ package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
@@ -43,6 +44,7 @@ import org.zfin.sequence.service.TranscriptService;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -92,8 +94,8 @@ public class MarkerService {
         SequenceInfo sequenceInfo = new SequenceInfo();
 
         sequenceInfo.setDbLinks(RepositoryFactory.getSequenceRepository()
-                        .getDBLinksForMarkerAndDisplayGroup(marker
-                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
+                .getDBLinksForMarkerAndDisplayGroup(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
         );
 
         List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
@@ -109,10 +111,10 @@ public class MarkerService {
 
         Set<RelatedMarkerDBLinkDisplay> markerDBLinks = new TreeSet<>();
         markerDBLinks.addAll(RepositoryFactory.getSequenceRepository()
-                        .getDBLinksForSecondRelatedMarker(marker
-                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                        )
+                .getDBLinksForSecondRelatedMarker(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
         );
 
         markerDBLinks.addAll(getTranscriptReferences(marker));
@@ -143,6 +145,23 @@ public class MarkerService {
         return sequenceInfo;
     }
 
+    public static List<MarkerDBLink> getMarkerDBLinks(Marker marker) {
+        SequencePageInfoBean sequenceInfo = getSequenceInfoFull(marker);
+
+        return sequenceInfo.getDbLinks().stream()
+                .map(dbLink -> {
+                    MarkerDBLink link = new MarkerDBLink();
+                    link.setMarker(marker);
+                    link.setZdbID(dbLink.getZdbID());
+                    link.setAccessionNumber(dbLink.getAccessionNumber());
+                    link.setAccessionNumberDisplay(dbLink.getAccessionNumberDisplay());
+                    link.setLength(dbLink.getLength());
+                    link.setReferenceDatabase(dbLink.getReferenceDatabase());
+                    return link;
+                })
+                .collect(Collectors.toList());
+    }
+
     /**
      * To be called to display full page as on sequence-view
      *
@@ -161,10 +180,10 @@ public class MarkerService {
                         MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
                 );
         relatedLinks.addAll(RepositoryFactory.getSequenceRepository()
-                        .getDBLinksForSecondRelatedMarker(marker
-                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                        )
+                .getDBLinksForSecondRelatedMarker(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
         );
         relatedLinks.addAll(getTranscriptReferences(marker));
         for (RelatedMarkerDBLinkDisplay relatedLink : relatedLinks) {
@@ -890,7 +909,6 @@ public class MarkerService {
 
         // OTHER GENE / MARKER PAGES:
         markerBean.setOtherMarkerPages(markerRepository.getMarkerDBLinksFast(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
-
 
 
         // sequence info page

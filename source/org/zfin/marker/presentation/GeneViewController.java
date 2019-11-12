@@ -203,7 +203,7 @@ public class GeneViewController {
                 }
                 constructBean.setRegulatoryRegions(regulatoryRegions);
                 constructBean.setCodingSequences(codingSequences);
-                constructBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(mrkr.getZdbID()));
+                constructBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(mrkr.getZdbID()));
                 constructBean.setNumberOfTransgeniclines(featureRepository.getNumberOfFeaturesForConstruct(mrkr));
                 List<ControlledVocab> species = infrastructureRepository.getControlledVocabsForSpeciesByConstruct(mrkr);
                 species.add(zebrafish);

@@ -19,7 +19,7 @@ class OntologyWebSpec extends AbstractZfinSmokeSpec {
         expect ontologyLinks[0].text(), is("QuickGO")
         expect ontologyLinks[1].text(), is("AmiGO")
         expect termDefinition.text(), startsWith("A semiautonomous")
-        expect isTypeOfRow.text(), containsString("cytoplasmic part")
+        expect isTypeOfRow.text(), containsString("intracellular membrane-bounded organelle")
     }
 
     def "ontology details page by term id"() {
