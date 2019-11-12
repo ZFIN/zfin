@@ -7,12 +7,14 @@
     An error occurred! ${error}
 </div>
 
-<div>
-    <p><strong>${exception}</strong></p>
-</div>
-<p>Stack Trace:</p>
-<p>
-    <small>${stackTrace}</small>
-</p>
-</div>
 
+<c:if test="${not empty exception}">
+    <div>
+        <p><strong>${exception}</strong></p>
+    </div>
+    <p>Stack Trace:</p>
+    <p>
+        <small>${stackTrace}</small>
+    </p>
+    </div>
+</c:if>
