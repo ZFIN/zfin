@@ -124,7 +124,7 @@
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.agr.ZFINExpressionInfo" fork="yes" classpathref="extended.classpath"
-              failonerror="true" maxmemory="6G">
+              failonerror="true" maxmemory="8G">
             <classpath refid="classpath"/>
         </java>
     </target>

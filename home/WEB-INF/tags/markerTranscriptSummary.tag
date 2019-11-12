@@ -188,16 +188,19 @@
                         </c:forEach>
                     </authz:authorize>
                 </c:if>
-
+                <c:if test="${!empty locations}">
+                    <tfoot>
+                        <tr>
+                            <td colspan="3">
+                                <strong>Browsers:</strong>
+                                <c:forEach var="location" items="${locations}" varStatus="loop">
+                                    <a href="${location.url}">${location.name}</a>
+                                </c:forEach>
+                            </td>
+                        </tr>
+                    </tfoot>
+                    </c:if>
             </table>
-            <c:if test="${!empty locations}">
-            <div>
-                <strong>Browsers:</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <c:forEach var="location" items="${locations}" varStatus="loop">
-                    <a href="${location.url}">${location.name}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </c:forEach>
-            </div>
-            </c:if>
         </c:when>
         <c:otherwise>
             <b>${title}</b> <zfin2:noDataAvailable/>
