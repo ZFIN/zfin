@@ -86,7 +86,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         }
 
         StringBuilder out = new StringBuilder();
-        out.append("<a class=\"btn btn-outline-secondary btn-zfin horizontal-breadbox-label\" href=\"");
+        out.append("<a class=\"btn btn-primary horizontal-breadbox-label\" href=\"");
         out.append(SolrService.getBreadBoxUrl(fq, baseUrl));
         out.append("\">");
 

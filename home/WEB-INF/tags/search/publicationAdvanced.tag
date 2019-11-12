@@ -39,7 +39,7 @@
         <div class="form-group">
             <label class="control-label">&nbsp;</label>
             <div class="controls">
-                <button id="pub-advanced-button" type="submit" class="btn btn-zfin" value="Go">Search</button>
+                <button id="pub-advanced-button" type="submit" class="btn btn-primary" value="Go">Search</button>
                 <button type="button" class="btn" onClick="jQuery('#advanced-container').slideToggle(200);">Close</button>
             </div>
         </div>

@@ -17,7 +17,7 @@
             <input type="text" class="form-control" name="emailOrLogin" id="emailOrLogin">
         </div>
 
-        <button type="submit" class="btn btn-zfin btn-block">Submit</button>
+        <button type="submit" class="btn btn-primary btn-block">Submit</button>
     </form>
 
 </div>

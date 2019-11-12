@@ -48,7 +48,7 @@
                         <input type="password" size="50" class="password-input form-control" name="pass2" id="pass2"/>
                     </div>
 
-                    <input type="submit" id="submit" class="btn btn-zfin btn-block" value="Save" disabled />
+                    <input type="submit" id="submit" class="btn btn-primary btn-block" value="Save" disabled />
                 </form>
 
             </div>

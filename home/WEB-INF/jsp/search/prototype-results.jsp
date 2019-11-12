@@ -45,7 +45,7 @@
                                value="<c:out value="${q}" escapeXml="true"/>"/>
 
                         <div class="btn-group search-box-buttons">
-                            <button type="submit" class="btn btn-outline-secondary btn-zfin">Go</button>
+                            <button type="submit" class="btn btn-primary">Go</button>
                             <authz:authorize access="hasRole('root')">
                                 <c:if test="${category eq publicationCategoryName}">
                                     <a id="advanced-search-button" class="btn btn-outline-secondary" href="#" title="Advanced Search Options"

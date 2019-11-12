@@ -45,23 +45,6 @@ a:hover {
     margin-right: .25em;
 }
 
-.btn-zfin {
-    color: #FFFFFF;
-    background-color: $primary;
-    border-color: $primary-dark;
-
-    &:hover,
-    &:focus,
-    &:active,
-    &.active,
-    &.disabled,
-    &[disabled] {
-        color: #FFFFFF;
-        background-color: darken($primary, 10%);
-        border-color: darken($primary-dark, 12%);
-    }
-}
-
 .form-control-fixed-width-sm {
     display: inline-block;
     width: 60px !important;
