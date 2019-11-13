@@ -5,13 +5,13 @@ use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
 
-sub parseHuman(){
 system("rm -f updateHumanOrthologyLog1");
 system("rm -f updateHumanOrthologyLog2");
 system("rm -f Homo_sapiens.gene_info.gz");
 ###system("rm -f Homo_sapiens.gene_info");
 system("rm -f hum_chr_loc_sym_mim.tab");
 
+sub parseHuman() {
 if (!-e "Homo_sapiens.gene_info") {
   system("wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
   system("gunzip Homo_sapiens.gene_info.gz");
@@ -55,22 +55,22 @@ while (<HUMAN>) {
      $mim = " ";
  }
 
- $pipe = "|";
-if ($synonyms =~ /\|/) {
+
+if ($synonyms =~ m/\|/) {
 
    my @synonyms = split(/\|/, $synonyms);
    
    foreach my $syn (@synonyms) { 
-       if ($syn != '-') {
-           print $synonyms
-           print $syn
-           print HUMANSYNONYMS "$geneId,$syn\n"; 
+
+       if ($syn ne '-') {
+           print HUMANSYNONYMS "$geneId\t$syn\n"; 
        }
    }
 }
 else {
      if ($synonyms != '-') {
-         print HUMANSYNONYMS "$geneId,$synonyms\n";
+
+         print HUMANSYNONYMS "$geneId\t$synonyms\n";
      }
 } 
 
@@ -83,11 +83,12 @@ print PARSEDHUMAN "$geneId\t$Chr\t$loc\t$symbol\t$mim\n";
  
 close (HUMAN);
 close (PARSEDHUMAN);
-
-
-#system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> update_human_ortho_loc.sql >updateHumanOrthologyLog1 2> updateHumanOrthologyLog2");
-
 return();
 
 }
 1;
+
+#system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> update_human_ortho_loc.sql >updateHumanOrthologyLog1 2> updateHumanOrthologyLog2");
+
+
+
