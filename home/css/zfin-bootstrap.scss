@@ -2,6 +2,8 @@
 $font-size-base: 0.875rem;
 $table-cell-padding: 0.5rem;
 $label-margin-bottom: 0.3125rem;
+$font-family-sans-serif: Arial, sans-serif;
+$link-color: blue;
 
 // import bootstrap
 @import "~bootstrap/scss/bootstrap";
@@ -41,6 +43,10 @@ label {
   @extend .mt-3;
   @extend .mb-3;
   @extend .border-bottom;
+}
+
+.btn-dense {
+  @include button-size(1px, $btn-padding-x-sm, $btn-font-size, $btn-line-height, $btn-border-radius-sm);
 }
 
 // keep ye olde typeahead library lumbering along

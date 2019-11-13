@@ -1,5 +1,5 @@
-<div class="row">
-    <form class="form-single-row">
+<form>
+    <div class="form-row align-items-end">
         <div class="form-group col-md-3">
             <label>Gene</label>
             <p class="text-danger" ng-repeat="error in vm.errors.second">{{error}}</p>
@@ -21,8 +21,8 @@
                 <i ng-show="vm.processing" class="fas fa-spinner fa-spin"></i>
             </button>
         </div>
-    </form>
-</div>
+    </div>
+</form>
 
 <div class="row">
     <div class="col-md-6">

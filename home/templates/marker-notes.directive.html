@@ -28,8 +28,8 @@
 
 <hr>
 
-<div class="row">
-    <form class="form-single-row">
+<form>
+    <div class="form-row align-items-end">
         <div class="form-group col-md-9">
             <label>Curator Notes</label>
             <textarea class="form-control" rows="3" ng-model="vm.newCuratorNote"></textarea>
@@ -42,8 +42,8 @@
                 <i ng-show="vm.processing" class="fas fa-spinner fa-spin"></i>
             </button>
         </div>
-    </form>
-</div>
+    </div>
+</form>
 
 <p class="text-danger" ng-show="vm.errors.curator">{{vm.errors.curator}}</p>
 

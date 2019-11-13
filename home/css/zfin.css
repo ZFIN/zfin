@@ -1251,3 +1251,8 @@ input + label {
     height: 1em;
     width: 1em;
 }
+
+.form-control-fixed-width-sm {
+    display: inline-block;
+    width: 60px !important;
+}

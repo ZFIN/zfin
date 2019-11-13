@@ -4,50 +4,12 @@
     font-size: small;
 }
 
-body {
-    font-family: arial, sans-serif;
-    background: white;
-}
-
 header {
     display: flex;
 }
 
 main {
     margin: 0 0 20px 0;
-}
-
-a,
-a:hover {
-    color: blue
-}
-
-.table tbody > tr > td {
-    vertical-align: middle;
-}
-
-.btn-dense,
-.btn-group-dense > .btn {
-    padding: 1px 8px;
-    line-height: 1.5;
-    border-radius: 3px;
-}
-
-.form-single-row {
-    display: flex;
-    align-items: flex-end;
-}
-
-
-.search-form-top-bar {
-    margin-top: 1em;
-    margin-left: .25em;
-    margin-right: .25em;
-}
-
-.form-control-fixed-width-sm {
-    display: inline-block;
-    width: 60px !important;
 }
 
 .quick-fig-content .close {
