@@ -39,6 +39,7 @@
             </div>
         </div>
 
+
         <div class="form-group">
             <form:label path="adultViable" cssClass="col-sm-3 control-label">Adult Viable</form:label>
             <div class="col-sm-3">
@@ -60,7 +61,15 @@
                 </form:select>
             </div>
         </div>
-
+        <div class="form-group">
+            <form:label cssClass="col-sm-3 control-label" path="nmdApparent">NMD Apparent</form:label>
+            <div class="col-sm-3">
+                <form:select path="nmdApparent" cssClass="form-control">
+                    <form:option value="" />
+                    <form:options items="${nmdApparentList}" itemLabel="display" />
+                </form:select>
+            </div>
+        </div>
         <div class="form-group">
             <form:label path="currentlyAvailable" cssClass="col-sm-3 control-label">Currently Available</form:label>
             <div class="col-sm-3">

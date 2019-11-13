@@ -44,7 +44,10 @@ public class LineEditController {
     public List<FeatureCommunityContribution.FunctionalConsequence> getFunctionalConsequenceList() {
         return Arrays.asList(FeatureCommunityContribution.FunctionalConsequence.values());
     }
-
+    @ModelAttribute("nmdApparentList")
+    public List<FeatureCommunityContribution.NMDApparent> getNMDApparentList() {
+        return Arrays.asList(FeatureCommunityContribution.NMDApparent.values());
+    }
     @RequestMapping(value = "/line-edit/{id}", method = RequestMethod.GET)
     public String viewLineEditForm(@PathVariable String id,
                                    @ModelAttribute("formBean") LineEditBean bean,
@@ -65,6 +68,7 @@ public class LineEditController {
         FeatureCommunityContribution current = zebrashareRepository.getLatestCommunityContribution(feature);
         if (current != null) {
             bean.setFunctionalConsequence(current.getFunctionalConsequence());
+            bean.setNmdApparent(current.getNmdApparent());
             bean.setAdultViable(current.getAdultViable());
             bean.setMaternalZygosityExamined(current.getMaternalZygosityExamined());
             bean.setCurrentlyAvailable(current.getCurrentlyAvailable());
@@ -100,6 +104,7 @@ public class LineEditController {
         Person user = ProfileService.getCurrentSecurityUser();
         newContribution.setFeature(feature);
         newContribution.setFunctionalConsequence(bean.getFunctionalConsequence());
+        newContribution.setNmdApparent(bean.getNmdApparent());
         newContribution.setAdultViable(bean.getAdultViable());
         newContribution.setMaternalZygosityExamined(bean.getMaternalZygosityExamined());
         newContribution.setCurrentlyAvailable(bean.getCurrentlyAvailable());
@@ -129,6 +134,7 @@ public class LineEditController {
             ));
             message.append("<table>");
             appendDiff(message, "Functional Consequence", prevContribution.getFunctionalConsequence(), newContribution.getFunctionalConsequence());
+            appendDiff(message, "NMD Apparent", prevContribution.getNmdApparent(), newContribution.getNmdApparent());
             appendDiff(message, "Adult Viable", prevContribution.getAdultViable(), newContribution.getAdultViable());
             appendDiff(message, "Maternal Zygocity Examined", prevContribution.getMaternalZygosityExamined(), newContribution.getMaternalZygosityExamined());
             appendDiff(message, "Currently Available", prevContribution.getCurrentlyAvailable(), newContribution.getCurrentlyAvailable());

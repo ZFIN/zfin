@@ -981,8 +981,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void antibodyGoStatistics() {
         // check if there are any antibodies for a given GO
-        // axon part
-        String termID = "ZDB-TERM-091209-16699";
+        // axon
+        String termID = "ZDB-TERM-091209-13933";
         GenericTerm term = getOntologyRepository().getTermByZdbID(termID);
         int numberOfAntibodiesPerAOTerm = getAntibodyRepository().getAntibodyCount(term, false);
         assertTrue(numberOfAntibodiesPerAOTerm > 0);
