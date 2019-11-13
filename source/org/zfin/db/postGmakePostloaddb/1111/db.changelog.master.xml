@@ -19,4 +19,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1111/DLOAD-642.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1111/ZFIN-6266.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1111/ZFIN-6392a.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1111/ZFIN-6440.sql"/>
 </databaseChangeLog>
