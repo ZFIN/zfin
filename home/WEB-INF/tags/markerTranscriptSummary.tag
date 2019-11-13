@@ -95,7 +95,7 @@
                                         <zfin:link entity="${nonWithdrawnTranscript.marker}"/>
                                         <zfin:attribution entity="${nonWithdrawnTranscript}"/>
                                         <c:if test="${!empty nonWithdrawnTranscript.marker.ensdartId}">
-                                            &nbsp;&nbsp;&nbsp;<a href="http://www.ensembl.org/id/${nonWithdrawnTranscript.marker.ensdartId}"><img src="/images/Ensembl.png" title="Ensembl" alt="Ensembl" border="0" align="top" class="scale" /></a>
+                                            &nbsp;&nbsp;&nbsp;<a href="http://www.ensembl.org/id/${nonWithdrawnTranscript.marker.ensdartId}" class="externalLink"><img src="/images/Ensembl.png" title="Ensembl" alt="Ensembl" border="0" align="top" class="scale" /></a>
                                         </c:if>
                                     </c:otherwise>
                                 </c:choose>
@@ -194,7 +194,7 @@
                             <td colspan="3">
                                 <strong>Browsers:</strong>
                                 <c:forEach var="location" items="${locations}" varStatus="loop">
-                                    <a href="${location.url}">${location.name}</a>
+                                    <a href="${location.url}">${location.name}</a><c:if test="${!loop.last}">,&nbsp;</c:if>
                                 </c:forEach>
                             </td>
                         </tr>
