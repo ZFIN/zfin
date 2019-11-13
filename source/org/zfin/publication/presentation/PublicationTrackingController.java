@@ -325,6 +325,9 @@ public class PublicationTrackingController {
             if (communityContribution == null || communityContribution.getCurrentlyAvailable() == null) {
                 zebrashareWarnings.add(feature.getName() + " Currently Available");
             }
+            if (communityContribution == null || communityContribution.getNmdApparent() == null) {
+                zebrashareWarnings.add(feature.getName() + " NMD Apparent");
+            }
         }
         if (CollectionUtils.isNotEmpty(zebrashareWarnings)) {
             warnings.add("The following Zebrashare features have missing details: <br>" + StringUtils.join(zebrashareWarnings, "<br>"));
