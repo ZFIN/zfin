@@ -26,14 +26,6 @@
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-        <hudson.tasks.ArtifactArchiver>
-            <artifacts>$SOURCEROOT/zfin_wt_expression.json</artifacts>
-            <allowEmptyArchive>false</allowEmptyArchive>
-            <onlyIfSuccessful>false</onlyIfSuccessful>
-            <fingerprint>false</fingerprint>
-            <defaultExcludes>true</defaultExcludes>
-            <caseSensitive>true</caseSensitive>
-        </hudson.tasks.ArtifactArchiver>
         <hudson.plugins.logparser.LogParserPublisher plugin="log-parser@1.0.8">
             <unstableOnWarning>true</unstableOnWarning>
             <failBuildOnError>false</failBuildOnError>

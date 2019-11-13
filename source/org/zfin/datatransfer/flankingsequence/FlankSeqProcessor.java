@@ -110,10 +110,6 @@ public class FlankSeqProcessor {
                         if (feature.getType() == FeatureTypeEnum.MNV) {
                             seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                             seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-
-
-
-
                         }
                         if (featureRepository.getFeatureVariant(feature) == null) {
                             insertFlankSeq(feature, seq1, seq2, offset);
