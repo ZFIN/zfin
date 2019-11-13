@@ -508,6 +508,7 @@
                 <th>Functional Consequence:</th>
                 <td>${formBean.ftrCommContr.functionalConsequence.toString()}</td>
             </tr>
+
             <tr>
                 <th>Adult Viable:</th>
                 <td><zfin2:nullableBoolean value="${formBean.ftrCommContr.adultViable}" /></td>
@@ -515,6 +516,10 @@
             <tr>
                 <th>Maternal Zygosity Examined:</th>
                 <td><zfin2:nullableBoolean value="${formBean.ftrCommContr.maternalZygosityExamined}" /></td>
+            </tr>
+            <tr>
+                <th>NMD Apparent:</th>
+                <td>${formBean.ftrCommContr.nmdApparent.toString()}</td>
             </tr>
             <tr>
                 <th>Available:</th>
