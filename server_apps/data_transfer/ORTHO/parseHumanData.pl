@@ -5,7 +5,7 @@ use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
 
-sub parseHuman(){
+sub parseHuman() {
 system("rm -f updateHumanOrthologyLog1");
 system("rm -f updateHumanOrthologyLog2");
 system("rm -f Homo_sapiens.gene_info.gz");
@@ -55,15 +55,12 @@ while (<HUMAN>) {
      $mim = " ";
  }
 
- $pipe = "|";
-if ($synonyms =~ /\|/) {
+if ($synonyms =~ m/\|/) {
 
    my @synonyms = split(/\|/, $synonyms);
    
    foreach my $syn (@synonyms) { 
        if ($syn != '-') {
-           print $synonyms
-           print $syn
            print HUMANSYNONYMS "$geneId,$syn\n"; 
        }
    }
@@ -84,10 +81,10 @@ print PARSEDHUMAN "$geneId\t$Chr\t$loc\t$symbol\t$mim\n";
 close (HUMAN);
 close (PARSEDHUMAN);
 
-
-#system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> update_human_ortho_loc.sql >updateHumanOrthologyLog1 2> updateHumanOrthologyLog2");
-
 return();
-
 }
 1;
+#system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> update_human_ortho_loc.sql >updateHumanOrthologyLog1 2> updateHumanOrthologyLog2");
+
+
+
