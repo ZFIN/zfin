@@ -64,6 +64,8 @@ public class FlankSeqProcessor {
 
                 for (Feature feature : featureRepository.getFeaturesWithGenomicMutDets()) {
 
+
+
                     FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
                     if (ftrLoc != null
                             && ftrLoc.getSfclStart() != null && ftrLoc.getSfclStart().toString() != ""
@@ -110,6 +112,8 @@ public class FlankSeqProcessor {
                             seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
 
 
+
+
                         }
                         if (featureRepository.getFeatureVariant(feature) == null) {
                             insertFlankSeq(feature, seq1, seq2, offset);
@@ -118,6 +122,7 @@ public class FlankSeqProcessor {
                         }
                     }
                 }
+
 
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (NullPointerException e) {
