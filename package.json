@@ -42,7 +42,6 @@
     "bootstrap-datepicker": "^1.8.0",
     "imagesloaded": "4.1.0",
     "immutability-helper": "3.0.0",
-    "jquery": "1.11.1",
     "jquery-bridget": "2.0.1",
     "jquery-modal": "0.5.9",
     "jquery-stickytabs": "1.2.4",

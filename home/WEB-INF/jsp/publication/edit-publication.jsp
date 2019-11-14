@@ -30,9 +30,15 @@
     </div>
 
     <ul id="fig-edit-tabs" class="nav nav-tabs nav-justified nav-padded" role="tablist">
-        <li role="presentation" class="active"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Details</a></li>
-        <li role="presentation"><a href="#files" aria-controls="files" role="tab" data-toggle="tab">Files</a></li>
-        <li role="presentation"><a href="#figures" aria-controls="figures" role="tab" data-toggle="tab">Figures</a></li>
+        <li role="presentation" class="nav-item">
+            <a href="#details" class="nav-link active" aria-controls="details" role="tab" data-toggle="tab">Details</a>
+        </li>
+        <li role="presentation" class="nav-item">
+            <a href="#files" class="nav-link" aria-controls="files" role="tab" data-toggle="tab">Files</a>
+        </li>
+        <li role="presentation" class="nav-item">
+            <a href="#figures" class="nav-link" aria-controls="figures" role="tab" data-toggle="tab">Figures</a>
+        </li>
     </ul>
 
     <div class="tab-content" ng-app="app">
@@ -62,7 +68,7 @@
 </div>
 
 <script>
-    $('#fig-edit-tabs').stickyTabs();
+    $('#fig-edit-tabs').stickyTabs({initialTab: $('#fig-edit-tabs a.active')});
 </script>
 
 <script src="${zfn:getAssetPath("react.js")}"></script>

@@ -53,8 +53,8 @@ class Tabs extends React.Component {
                             }
                             const { label } = child.props;
                             return (
-                                <li role='presentation' className={idx === selected ? 'active' : ''}>
-                                    <a href={'#' + label} aria-controls='status' role='tab' onClick={event => this.handleTabClick(event, idx, label)}>
+                                <li role='presentation' className='nav-item'>
+                                    <a href={'#' + label} className={`nav-link ${idx === selected ? 'active' : ''}`} role='tab' onClick={event => this.handleTabClick(event, idx, label)}>
                                         {label}
                                     </a>
                                 </li>

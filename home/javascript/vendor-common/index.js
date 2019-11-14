@@ -1,4 +1,3 @@
-window.$ = window.jQuery = require('jquery');
 require('jquery-modal');
 require('jquery-stickytabs');
 require('jquery.tipsy');

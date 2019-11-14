@@ -67,6 +67,10 @@ const config = {
             publicPath: true,
         }),
     ],
+    // jquery is loaded via CDN to make bootstrap 4 play nicely with inline script tags
+    externals: {
+        jquery: 'jQuery',
+    },
 };
 
 if (isProd) {
