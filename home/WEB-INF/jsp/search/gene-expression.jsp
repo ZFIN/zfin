@@ -3,11 +3,11 @@
 
 
 <div class="modal-header">
+    <span class="result-header search-result-name">
+        <span class="genedom">${result.name}</span>
+        Wildtype Expression
+    </span>
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <span class="result-header search-result-name">
-                           <span class="genedom">${result.name}</span>
-                           Wildtype Expression
-                        </span>
 </div>
 <div class="modal-body modal-body-scrolling">
     <table class="gene-expression-data-modal">

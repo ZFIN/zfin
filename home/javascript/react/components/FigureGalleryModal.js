@@ -35,10 +35,10 @@ class FigureGalleryModal extends Component {
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
+                            <h4 className="modal-title">{image && image.label}</h4>
                             <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true"><i className="fas fa-fw fa-times" /></span>
                             </button>
-                            <h4 className="modal-title">{image && image.label}</h4>
                         </div>
                         <div className="modal-body figure-gallery-modal-body">
                             {onPrev && <a href='#' className="figure-gallery-modal-nav prev" role="button" onClick={this.handleNavigation(onPrev)}>

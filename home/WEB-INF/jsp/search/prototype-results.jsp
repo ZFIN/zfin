@@ -564,5 +564,15 @@ $(function () {
         });
     });
 
+    $('.related-data-modal')
+        .on('show.bs.modal', function (event) {
+            var trigger = $(event.relatedTarget);
+            var modal = $(this);
+            var url = trigger.attr('href');
+            if (!modal.hasClass('loaded')) {
+                modal.find('.modal-content').load(url, function () { modal.addClass('loaded') });
+            }
+        });
+
 });
 </script>

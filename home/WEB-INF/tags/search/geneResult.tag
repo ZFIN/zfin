@@ -8,7 +8,7 @@
         <c:set var="expressionModalDomID" value="${result.id}-gene-expression-modal"/>
         <c:set var="phenotypeModalDomID" value="${result.id}-phenotype-modal"/>
 
-        <div id="${expressionModalDomID}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div id="${expressionModalDomID}" class="modal fade related-data-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div style="padding: 5em;">
@@ -18,7 +18,7 @@
             </div>
         </div>
 
-        <div id="${phenotypeModalDomID}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div id="${phenotypeModalDomID}" class="modal fade related-data-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div style="padding: 5em;">
@@ -27,12 +27,6 @@
                 </div>
             </div>
         </div>
-
-        <script>
-            $('#${phenotypeModalDomID}').appendTo('body');
-            $('#${expressionModalDomID}').appendTo('body');
-        </script>
-
     </jsp:body>
 </zfin-search:resultTemplate>
 

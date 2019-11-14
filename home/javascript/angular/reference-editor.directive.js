@@ -8,8 +8,8 @@
         var template =
             '<div bootstrap-modal show="vm.show">' +
             '  <div class="modal-header">' +
-            '    <button type="button" class="close" ng-click="vm.close()">&times;</button>' +
             '    <h4 class="modal-title">References for {{vm.entity}}</h4>' +
+            '    <button type="button" class="close" ng-click="vm.close()">&times;</button>' +
             '  </div>' +
             '  <div class="modal-body">' +
             '    <form class="form-horizontal">' +

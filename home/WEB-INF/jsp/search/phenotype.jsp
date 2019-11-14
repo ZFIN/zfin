@@ -3,11 +3,11 @@
 
 
 <div class="modal-header">
+    <span class="result-header search-result-name">
+        <span class="genedom">${result.name}</span>
+        Phenotype
+    </span>
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <span class="result-header search-result-name">
-                           <span class="genedom">${result.name}</span>
-                           Phenotype
-                        </span>
 </div>
 <div class="modal-body modal-body-scrolling">
     <table class="phenotype-data-modal">

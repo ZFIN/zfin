@@ -437,7 +437,7 @@ public class RelatedDataService {
         String domID = id + "-phenotype-modal";
 
         StringBuilder link = new StringBuilder();
-        link.append("<a class =\"related-data-modal\" href=\"/action/quicksearch/phenotype/");
+        link.append("<a class =\"related-data-modal-link\" href=\"/action/quicksearch/phenotype/");
         link.append(id);
         link.append("\" data-toggle=\"modal\" data-target=\"#");
         link.append(domID);
@@ -454,7 +454,7 @@ public class RelatedDataService {
         String domID = id + "-gene-expression-modal";
 
         StringBuilder link = new StringBuilder();
-        link.append("<a class =\"related-data-modal\" href=\"/action/quicksearch/gene-expression/");
+        link.append("<a class =\"related-data-modal-link\" href=\"/action/quicksearch/gene-expression/");
         link.append(id);
         link.append("\" data-toggle=\"modal\" data-target=\"#");
         link.append(domID);

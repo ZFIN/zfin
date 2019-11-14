@@ -3,7 +3,7 @@
     var pluginName = 'figureGalleryResize';
 
     function modalIsShown($modal) {
-        return ($modal.data('bs.modal') || {}).isShown;
+        return ($modal.data('bs.modal') || {})._isShown;
     }
 
     function doResize($modal) {
@@ -15,7 +15,6 @@
         var navigationArrowSize = 150;
         var headerHeight = $modal.find('.modal-header').outerHeight();
         var modalBody = $modal.find('.modal-body');
-        var modalBackdrop = $modal.find('.modal-backdrop');
         var modalDialog = $modal.find('.modal-dialog');
         var modalImage = $modal.find('.figure-gallery-modal-image')[0];
         var availableHeight = totalHeight - headerHeight - padding;
@@ -29,7 +28,6 @@
         newHeight = Math.min(newHeight, modalImage.naturalHeight);
         modalBody.height(newHeight);
         modalDialog.height(newHeight + headerHeight + 30);
-        modalBackdrop.height(totalHeight);
     }
 
     $.fn[pluginName] = function () {

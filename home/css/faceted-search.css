@@ -491,6 +491,7 @@ a.facet-link:hover {
 
 .figure-gallery-modal > .modal-dialog {
     width: auto;
+    max-width: none;
     margin: 30px;
 }
 
