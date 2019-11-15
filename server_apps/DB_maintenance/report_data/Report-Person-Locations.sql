@@ -2,7 +2,7 @@ unload to total_rows_returned_for_per_country_count
 select count(*), person_country 
   from person 
   where exists (select 'x' from int_person_lab 
-                           and source_id = zdb_id) 
+                           where source_id = zdb_id) 
  and person_country is not null
  group by person_country order by count(*) desc;
 
