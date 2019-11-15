@@ -305,7 +305,7 @@ undef %uniproInterpro;
 undef %updatedUniproInterpro;
 undef %unipIprFromInput;
 
-open (POSTLOADREPORT, '>postUniProtLoadStatistics.txt') or die "Cannot open postUniProtLoadStatistics.txt: $!";
+open (POSTLOADREPORT, '>postProteinDomainInfoLoadStatistics.txt') or die "Cannot open postProteinDomainInfoLoadStatistics.txt: $!";
 
 print POSTLOADREPORT "count of records associated with protein domain info load\t";
 print POSTLOADREPORT "before load\t";
