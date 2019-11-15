@@ -32,7 +32,7 @@ import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
  */
 public class FlankSeqProcessor {
 
-    private static final String MISSING_VARSEQS_FILE = "indel-missing-varseqs.txt";
+    private static final String MISSING_VARSEQS_FILE = "indel-missing-varseqs.csv";
     private FeatureRepository featureRepository = new HibernateFeatureRepository();
     private PublicationRepository pubRepo = new HibernatePublicationRepository();
     private Logger logger = LogManager.getLogger(FlankSeqProcessor.class);
@@ -63,65 +63,54 @@ public class FlankSeqProcessor {
             try {
 
                 for (Feature feature : featureRepository.getFeaturesWithGenomicMutDets()) {
-                    if (feature.getType() != FeatureTypeEnum.POINT_MUTATION) {
+                    if (feature.getType()==FeatureTypeEnum.INDEL ||feature.getType()==FeatureTypeEnum.DELETION ||feature.getType()==FeatureTypeEnum.INSERTION||feature.getType()==FeatureTypeEnum.MNV) {
+                        System.out.println(feature.getAbbreviation());
+                        FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
+                        if (ftrLoc != null
+                                && ftrLoc.getSfclStart() != null && ftrLoc.getSfclStart().toString() != ""
+                                && ftrLoc.getSfclEnd() != null && ftrLoc.getSfclEnd().toString() != ""
+                                && ftrLoc.getSfclAssembly() != null
 
-                        if (featureRepository.getFeatureVariant(feature) == null) {
-                            System.out.println(feature.getAbbreviation());
-                            FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
-                            if (ftrLoc != null
-                                    && ftrLoc.getSfclStart() != null && ftrLoc.getSfclStart().toString() != ""
-                                    && ftrLoc.getSfclEnd() != null && ftrLoc.getSfclEnd().toString() != ""
-                                    && ftrLoc.getSfclAssembly() != null
+                                ) {
+                            String ftrChrom = ftrLoc.getSfclChromosome();
+                            locStart = ftrLoc.getSfclStart();
+                            locEnd = ftrLoc.getSfclEnd();
+                            if (feature.getType() == FeatureTypeEnum.DELETION) {
+                                seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
+                                seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
+                            }
 
-                                    ) {
-                                String ftrChrom = ftrLoc.getSfclChromosome();
-                                locStart = ftrLoc.getSfclStart();
-                                locEnd = ftrLoc.getSfclEnd();
-                                if (feature.getType() == FeatureTypeEnum.DELETION) {
+                            if (feature.getType() == FeatureTypeEnum.INSERTION) {
+                                seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
+                                seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd, locEnd + offset).getBases());
+                            }
+                            if (feature.getType() == FeatureTypeEnum.POINT_MUTATION) {
+                                seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
+                                seq2 = new String(ref.getSubsequenceAt(ftrChrom, locStart, locStart + offset).getBases());
+                            }
+                            if (feature.getType() == FeatureTypeEnum.INDEL) {
+
+                                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length() != 0) {
+
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
                                 }
 
-                                if (feature.getType() == FeatureTypeEnum.INSERTION) {
-                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
-                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd, locEnd + offset).getBases());
-                                }
-                                if (feature.getType() == FeatureTypeEnum.POINT_MUTATION) {
-                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
-                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locStart, locStart + offset).getBases());
-                                }
-                                if (feature.getType() == FeatureTypeEnum.INDEL) {
 
-                                    if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length() != 0) {
-                                    /*String ftrChrom = ftrLoc.getSfclChromosome();
-                                    FeatureGenomicMutationDetail fgmd = featureRepository.getFeatureGenomicDetail(feature);
-                                    if (fgmd != null) {
-                                        String seqRef = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
-                                        System.out.println(fgmd.getFeature().getZdbID() + ',' + seqRef + '\n');*/
-                                      /*    fgmd.setFgmdSeqRef(seqRef);
-                                          HibernateUtil.currentSession().save(fgmd);*/
-
-
-                                        seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
-                                        seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-                                    }
-
-
-                        }
-                        if (feature.getType() == FeatureTypeEnum.MNV) {
-                            seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
-                            seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-                        }
-
-
-                                insertFlankSeq(feature, seq1, seq2, offset);
-                            } else {
-                                updateFlankSeq(feature, seq1, seq2, offset);
+                            }
+                            if (feature.getType() == FeatureTypeEnum.MNV) {
+                                seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
+                                seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
                             }
 
+
+                            insertFlankSeq(feature, seq1, seq2, offset);
                         }
                     }
                 }
+
+
+
 
 
                 HibernateUtil.flushAndCommitCurrentSession();
@@ -143,6 +132,10 @@ public class FlankSeqProcessor {
 
     private void insertFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
         VariantSequence vrSeq = new VariantSequence();
+        if (featureRepository.getFeatureVariant(ftr) != null) {
+
+            vrSeq = featureRepository.getFeatureVariant(ftr);
+        }
         vrSeq.setVseqDataZDB(ftr.getZdbID());
         vrSeq.setVfsLeftEnd(seq1);
         vrSeq.setVfsRightEnd(seq2);
@@ -175,11 +168,13 @@ public class FlankSeqProcessor {
             vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar());
         }
         HibernateUtil.currentSession().save(vrSeq);
-        PublicationAttribution pa = new PublicationAttribution();
-        pa.setPublication(pubRepo.getPublication("ZDB-PUB-191030-9"));
-        pa.setDataZdbID(vrSeq.getZdbID());
-        pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-        currentSession().save(pa);
+        if (featureRepository.getFeatureVariant(ftr) == null) {
+            PublicationAttribution pa = new PublicationAttribution();
+            pa.setPublication(pubRepo.getPublication("ZDB-PUB-191030-9"));
+            pa.setDataZdbID(vrSeq.getZdbID());
+            pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+            currentSession().save(pa);
+        }
 
 
     }
