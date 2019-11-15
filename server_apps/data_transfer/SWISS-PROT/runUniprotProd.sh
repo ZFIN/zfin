@@ -25,6 +25,9 @@ echo "#########################################################################"
 echo "running loadsp.pl"
 ./loadsp.pl ;
 
+echo "running protein_domain_info_load.pl"
+./protein_domain_info_load.pl ;
+
 echo "running go.pl"
 cd <!--|TARGETROOT|-->/server_apps/data_transfer/GO;
 ./go.pl ;
