@@ -12,5 +12,5 @@ select
   as pct_with_country
  from person
  where exists (select 'x' from int_person_lab 
-                           and source_id = zdb_id);
+                           where source_id = zdb_id);
    
