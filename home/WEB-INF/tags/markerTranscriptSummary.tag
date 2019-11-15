@@ -98,7 +98,7 @@
                                         <zfin:link entity="${nonWithdrawnTranscript.marker}"/>
                                         <zfin:attribution entity="${nonWithdrawnTranscript}"/>
                                         <c:if test="${!empty nonWithdrawnTranscript.marker.ensdartId}">
-                                            &nbsp;&nbsp;&nbsp;<a href="http://www.ensembl.org/id/${nonWithdrawnTranscript.marker.ensdartId}" class="externalLink"><img src="/images/Ensembl.png" title="Ensembl" alt="Ensembl" border="0" align="top" class="scale" /></a>
+                                            &nbsp;&nbsp;&nbsp;<a href="http://www.ensembl.org/id/${nonWithdrawnTranscript.marker.ensdartId}"><img src="/images/Ensembl.png" title="Ensembl" alt="Ensembl" border="0" align="top" class="scale" /></a>
                                         </c:if>
                                     </c:otherwise>
                                 </c:choose>
