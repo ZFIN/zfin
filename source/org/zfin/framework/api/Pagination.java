@@ -13,7 +13,6 @@ import java.util.StringJoiner;
 @Getter
 public class Pagination {
 
-    public static final String SORTING_DELIMITER = ",";
     private Integer page = 1;
     private Integer limit = 20;
     private String sortBy;
@@ -103,20 +102,8 @@ public class Pagination {
         return page * limit;
     }
 
-    /*
-        public List<FieldFilter> getSortByList() {
-            if (StringUtils.isEmpty(sortBy))
-                return null;
-            String[] sortingTokens = sortBy.split(SORTING_DELIMITER);
-            return Arrays.stream(sortingTokens)
-                    .map(FieldFilter::getFieldFilterByName)
-                    .collect(Collectors.toList());
-        }
-
-    */
     public boolean hasInvalidElements() {
         return invalidFilterList == null || !invalidFilterList.isEmpty();
-
     }
 
     public void setLimitToAll() {
