@@ -119,6 +119,7 @@ public class FlankSeqProcessor {
                                 updateFlankSeq(feature, seq1, seq2, offset);
                             }
 
+
                         }
                     }
                 }
