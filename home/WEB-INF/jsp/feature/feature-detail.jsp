@@ -367,7 +367,7 @@
 </c:if>
 <c:if test="${fn:contains(formBean.feature.type.display, 'Point')==false}">
     <c:set var="title">
-        FLANKING SEQUENCE<a class='popup-link info-popup-link' href='/action/feature/flank-seq'></a>
+        FLANKING SEQUENCE (GENOMIC) <a class='popup-link info-popup-link' href='/action/feature/flank-seq'></a>
     </c:set>
     </c:if>
     <zfin2:subsection title="${title}"
