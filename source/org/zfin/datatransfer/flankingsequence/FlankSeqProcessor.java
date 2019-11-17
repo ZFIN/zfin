@@ -113,6 +113,7 @@ public class FlankSeqProcessor {
 
 
 
+
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (NullPointerException e) {
                 System.err.println("Cannot fetch sequence " +

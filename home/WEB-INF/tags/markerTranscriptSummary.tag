@@ -209,14 +209,14 @@
             <c:if test="${!empty locations}">
                 <table>
                     <tfoot>
-                        <tr>
-                            <td colspan="3">
-                                <strong>Browsers:</strong>
-                                <c:forEach var="location" items="${locations}" varStatus="loop">
-                                    <a href="${location.url}">${location.name}</a><c:if test="${!loop.last}">,&nbsp;</c:if>
-                                </c:forEach>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="3">
+                            <strong>Browsers:</strong>
+                            <c:forEach var="location" items="${locations}" varStatus="loop">
+                                <a href="${location.url}">${location.name}</a><c:if test="${!loop.last}">,&nbsp;</c:if>
+                            </c:forEach>
+                        </td>
+                    </tr>
                     </tfoot>
                 </table>
             </c:if>

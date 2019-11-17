@@ -27,8 +27,6 @@
 <c:if test="${loggedIn && marker.genedom}">
     <%--<div class="summary">--%>
 
-
-
         <span class="summaryTitle">${title}</span>
     <td>
         <other-markers marker-id="${marker.zdbID}" edit="editMode">
