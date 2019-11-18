@@ -288,7 +288,7 @@ $dbh->disconnect();
 
 # execute the sql file to do the loading
 try {
-  system("psql -d <!--|DB_NAME|--> -a -f load_protein_domain.sql");
+  system("psql -d <!--|DB_NAME|--> -a -f load_protein_domain_info.sql");
 } catch {
   warn "Failed to execute load_protein_domain.sql - $_";
   exit -1;
