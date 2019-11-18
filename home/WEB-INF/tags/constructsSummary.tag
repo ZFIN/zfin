@@ -45,7 +45,7 @@
                 <td>
                     <a href="/search?category=Mutation+/+Tg&q=&fq=xref:${constructBean.marker.zdbID}">${constructBean.numberOfTransgeniclines}</a>
                 </td>
-                <td style="vertical-align: text-top">
+                <td style="style="vertical-align: text-top; text-align: right"">
                     <a href="/action/marker/citation-list/${constructBean.marker.zdbID}">${constructBean.numPubs}</a>
                 </td>
             </tr>
