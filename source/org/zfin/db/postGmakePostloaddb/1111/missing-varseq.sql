@@ -1,7 +1,9 @@
 --liquibase formatted sql
 --changeset pm:missing-varseq
 
-update feature_genomic_mutation_detail set fgmd_sequence_of_reference = (select seqref from missing_varseq  where fgmd_zdb_id=fgmdid) where length(fgmd_sequence_of_reference)=0;
+update feature_genomic_mutation_detail set fgmd_sequence_of_reference = (select seqref from missing_varseq  where fgmd_zdb_id=fgmdid)
+from missing_varseq
+where fgmdid=fgmd_zdb_id and  length(fgmd_sequence_of_reference)=0;
 
 
 drop table if exists tmp_seqref;
