@@ -18,6 +18,8 @@
 use DBI;
 use MIME::Lite;
 use Try::Tiny;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use use ZFINPerlModules;
 
 #----------------------------------------------------------------------
 # Write a line to the report 
@@ -178,10 +180,9 @@ $dbh->commit();
 $dbh->disconnect();
 
 try {
-  system("<!--|TARGETROOT|-->/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks.sh");
-  #&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
+  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f /opt/zfin/www_homes/swirl/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks.sql");
 } catch {
-  warn "Failed to execute syncFishOrderThisLinks.sh - $_";
+  warn "Failed to execute syncFishOrderThisLinks.sql - $_";
   exit -1;
 };
 
