@@ -16,6 +16,9 @@
 
 # ---------------  Variable Definitions  --------------------------------
 
+all:
+	gradle -p $(SOURCEROOT) :server_apps:data_transfer:ResourceCenters:deployFiles
+
 TOP = ../../..
 include $(TOP)/make.include
 
