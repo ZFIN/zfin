@@ -106,6 +106,7 @@ public class FlankSeqProcessor {
 
                             insertFlankSeq(feature, seq1, seq2, offset);
                         }
+
                     }
                 }
 
