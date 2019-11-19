@@ -12,11 +12,13 @@
 
             <%-- we might be able to this reordering more elegantly with bootstrap 4 --%>
             <div class="hide-large">
-                <jsp:include page="homeAboutBox.jsp"/>
-
-                <div class="section genomic-resources">
-                    <div class="heading">Additional Resources</div>
-                    <a href="http://uswest.ensembl.org/Danio_rerio/Info/Index">Ensembl</a> <a href="http://www.ensembl.org/biomart/index.html">BioMart</a> <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a>
+                <div class="row">
+                    <div class="col-md-6">
+                        <jsp:include page="homeAboutBox.jsp"/>
+                    </div>
+                    <div class="col-md-6">
+                        <jsp:include page="homeAdditionalResources.jsp"/>
+                    </div>
                 </div>
 
                 <div class="section carousel-section">
@@ -40,10 +42,7 @@
         <div class="col-lg-5 display-large">
             <jsp:include page="homeAboutBox.jsp"/>
 
-            <div class="section genomic-resources">
-                <div class="heading">Additional Resources</div>
-                <a href="http://uswest.ensembl.org/Danio_rerio/Info/Index">Ensembl</a> <a href="http://www.ensembl.org/biomart/index.html">BioMart</a> <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a>
-            </div>
+            <jsp:include page="homeAdditionalResources.jsp"/>
 
             <div class="section carousel-section">
                 <div class="heading">New Data in ZFIN</div>
