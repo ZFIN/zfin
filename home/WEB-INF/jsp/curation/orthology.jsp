@@ -3,10 +3,4 @@
     $.fn.modal.noConflict();
 </script>
 
-<table>
-    <tr>
-        <td>
-            <div ortho-edit pub="${publication.zdbID}" edit="true" showDownloadLink="false"></div>
-        </td>
-    </tr>
-</table>
+<div ortho-edit class="p-2" pub="${publication.zdbID}" edit="true" showDownloadLink="false"></div>
