@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
+import org.zfin.marker.AllianceGeneDesc;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -45,7 +45,7 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
 
         //Object to JSON in String
         String jsonInString = writer.writeValueAsString(basicExpressionDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream(ZfinPropertiesEnum.TARGETROOT +"zfin_wt_expression.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("zfin_wt_expression.json"))) {
             out.print(jsonInString);
         }
     }
@@ -58,12 +58,28 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
         for (BasicExpressionDTO basicDTOitem : basicExpressionDTOList){
 
             ZFINExpressionDTO zfinExpressionDTO = new ZFINExpressionDTO();
+            ZFINEvidenceDTO zfinExpressionEvidenceDTO = new ZFINEvidenceDTO();
 
             zfinExpressionDTO.setAssay(basicDTOitem.getAssay());
             zfinExpressionDTO.setWhereExpressed(basicDTOitem.getWhereExpressed());
             zfinExpressionDTO.setWhenExpressed(basicDTOitem.getWhenExpressed());
             zfinExpressionDTO.setGeneId(basicDTOitem.getGeneId());
-            zfinExpressionDTO.setEvidence(basicDTOitem.getEvidence());
+            zfinExpressionEvidenceDTO.setCrossReference(basicDTOitem.getEvidence().getCrossReference());
+            zfinExpressionEvidenceDTO.setPublicationId(basicDTOitem.getEvidence().getPublicationId());
+
+//
+//            if (basicDTOitem.getEvidence().getPublicationId().startsWith("ZFIN:")) {
+//                String publicationId = basicDTOitem.getEvidence().getPublicationId();
+//                Publication pub = getPublicationRepository().getPublication(publicationId.substring(5));
+//                zfinExpressionEvidenceDTO.setPublicationTitle(pub.getTitle());
+//            }
+//            else {
+//                Integer pmid = Integer.parseInt(basicDTOitem.getEvidence().getPublicationId().substring(5));
+//                Publication pub = getPublicationRepository().getSinglePublicationByPmid(pmid);
+//                zfinExpressionEvidenceDTO.setPublicationTitle(pub.getTitle());
+//            }
+
+            zfinExpressionDTO.setEvidence(zfinExpressionEvidenceDTO);
             zfinExpressionDTO.setDateAssigned(basicDTOitem.getDateAssigned());
             zfinExpressionDTO.setDataProviderList(basicDTOitem.getDataProvider());
             zfinExpressionDTO.setCrossReference(basicDTOitem.getCrossReference());
@@ -72,6 +88,14 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
 
             Marker gene = getMarkerRepository().getMarkerByID(zfinExpressionDTO.getGeneId().substring(5));
 
+            AllianceGeneDesc geneDescription = getMarkerRepository().getGeneDescByMkr(gene);
+            if (geneDescription != null) {
+                zfinExpressionDTO.setGeneratedGeneDescription(geneDescription.getGdDesc());
+            }
+
+            zfinExpressionDTO.setGeneName(gene.getName());
+            zfinExpressionDTO.setGeneSymbol(gene.getAbbreviation());
+            
             if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
             List<CrossReferenceDTO> xrefs= new ArrayList<>();
 
@@ -86,6 +110,7 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
                     }
                 zfinExpressionDTO.setEnsemblCrossReferences(xrefs);
             }
+
             GenericTerm mmoTerm = getOntologyRepository().getTermByOboID(zfinExpressionDTO.getAssay());
             zfinExpressionDTO.setAssayName(mmoTerm.getTermName());
             zfinExpressionDTOList.add(zfinExpressionDTO);

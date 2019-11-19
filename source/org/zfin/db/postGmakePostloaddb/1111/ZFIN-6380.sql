@@ -20,12 +20,7 @@ update marker_relationship set mrel_mrkr_2_zdb_id='ZDB-ENHANCER-190923-1' where 
 
 
 
-update construct set construct_name='Tg(en.crest1-hsp70l:mKaede)' where construct_zdb_id='ZDB-TGCONSTRCT-170424-2';
-update marker set mrkr_name='Tg(en.crest1-hsp70l:mKaede)' where mrkr_zdb_id='ZDB-TGCONSTRCT-170424-2';
-update marker set mrkr_abbrev ='Tg(en.crest1-hsp70l:mKaede)' where mrkr_zdb_id='ZDB-TGCONSTRCT-170424-2';
-update construct_component set cc_component_zdb_id='ZDB-ENHANCER-190923-1'  where cc_component='isl1' and cc_construct_zdb_id='ZDB-TGCONSTRCT-170424-3';
-update construct_marker_relationship set conmrkrrel_mrkr_zdb_id='ZDB-ENHANCER-190923-1' where conmrkrrel_construct_zdb_id='ZDB-TGCONSTRCT-170424-3' and conmrkrrel_mrkr_zdb_id='ZDB-GENE-980526-112';
-update marker_relationship set mrel_mrkr_2_zdb_id='ZDB-ENHANCER-190923-1' where mrel_mrkr_1_zdb_id='ZDB-TGCONSTRCT-170424-3' and mrel_mrkr_2_zdb_id='ZDB-GENE-980526-112';
+
 
 update construct set construct_name='Tg(en.crest1-hsp70l:mRFP)' where construct_zdb_id='ZDB-TGCONSTRCT-110201-1';
 update marker set mrkr_name='Tg(en.crest1-hsp70l:mRFP)' where mrkr_zdb_id='ZDB-TGCONSTRCT-110201-1';

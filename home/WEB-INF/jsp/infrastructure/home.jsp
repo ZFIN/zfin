@@ -12,11 +12,19 @@
 
             <%-- we might be able to this reordering more elegantly with bootstrap 4 --%>
             <div class="d-block d-xl-none">
-                <jsp:include page="homeAboutBox.jsp" />
+                <div class="row">
+                    <div class="col-lg-6">
+                        <jsp:include page="homeAboutBox.jsp"/>
+                    </div>
+                    <div class="col-lg-6">
+                        <jsp:include page="homeAdditionalResources.jsp"/>
+                    </div>
+                </div>
 
                 <div class="section carousel-section">
                     <div class="heading">New Data in ZFIN</div>
-                    <zfin2:imageCarousel id="home-carousel-1" images="${carouselImages}" captions="${sanitizedCaptions}" interval="60000"/>
+                    <zfin2:imageCarousel id="home-carousel-1" images="${carouselImages}" captions="${sanitizedCaptions}"
+                                         interval="60000"/>
                 </div>
             </div>
 
@@ -31,12 +39,16 @@
             </div>
         </div>
 
+
         <div class="col-xl-5 d-none d-xl-block">
             <jsp:include page="homeAboutBox.jsp" />
 
+            <jsp:include page="homeAdditionalResources.jsp"/>
+
             <div class="section carousel-section">
                 <div class="heading">New Data in ZFIN</div>
-                <zfin2:imageCarousel id="home-carousel-2" images="${carouselImages}" captions="${sanitizedCaptions}" interval="60000"/>
+                <zfin2:imageCarousel id="home-carousel-2" images="${carouselImages}" captions="${sanitizedCaptions}"
+                                     interval="60000"/>
             </div>
         </div>
     </div>

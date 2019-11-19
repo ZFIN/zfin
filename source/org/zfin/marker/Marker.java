@@ -1,11 +1,13 @@
 
 package org.zfin.marker;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.framework.api.View;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
 import org.zfin.marker.service.MarkerService;
@@ -34,6 +36,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     /*private String zdbID;
     private String name;*/
+    @JsonView(View.API.class)
     private String abbreviation;
     private String abbreviationOrder;
     private Set<ExpressionExperiment> probeExpressionExperiments;

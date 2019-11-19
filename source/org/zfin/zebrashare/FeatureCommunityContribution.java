@@ -37,6 +37,31 @@ public class FeatureCommunityContribution {
             return Arrays.stream(values()).filter(n -> n.display.equals(value)).findAny().orElse(null);
         }
     }
+    public enum NMDApparent {
+        Yes("Yes"),
+        NO("No"),
+        PARTIAL("Partial"),
+        NOTASSAYED("Not Assayed");
+
+        private String display;
+
+        NMDApparent(String display) {
+            this.display = display;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
+
+        @Override
+        public String toString() {
+            return display;
+        }
+
+        public static NMDApparent fromString(String value) {
+            return Arrays.stream(values()).filter(n -> n.display.equals(value)).findAny().orElse(null);
+        }
+    }
 
     @Id
     @Column(name = "fcc_pk_id")
@@ -50,6 +75,10 @@ public class FeatureCommunityContribution {
     @Column(name = "fcc_functional_consequence")
     @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.zebrashare.FeatureCommunityContribution$FunctionalConsequence")})
     private FunctionalConsequence functionalConsequence;
+
+    @Column(name = "fcc_nmd_apparent")
+    @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.zebrashare.FeatureCommunityContribution$NMDApparent")})
+    private NMDApparent nmdApparent;
 
     @Column(name = "fcc_adult_viable")
     private Boolean adultViable;
@@ -142,12 +171,21 @@ public class FeatureCommunityContribution {
         this.submitter = submitter;
     }
 
+    public NMDApparent getNmdApparent() {
+        return nmdApparent;
+    }
+
+    public void setNmdApparent(NMDApparent nmdApparent) {
+        this.nmdApparent = nmdApparent;
+    }
+
     @Override
     public String toString() {
         return "FeatureCommunityContribution{" +
                 "id=" + id +
                 ", feature=" + feature +
                 ", functionalConsequence=" + functionalConsequence +
+                ", nmdApparent=" + nmdApparent +
                 ", adultViable=" + adultViable +
                 ", maternalZygosityExamined=" + maternalZygosityExamined +
                 ", currentlyAvailable=" + currentlyAvailable +

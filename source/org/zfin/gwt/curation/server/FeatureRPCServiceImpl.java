@@ -142,7 +142,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         Feature existingFeature = featureRepository.getFeatureByAbbreviation(featureDTO.getAbbreviation());
         System.out.println(featureDTO.getAbbreviation());
-        System.out.println(existingFeature.getZdbID());
+
         if (existingFeature == null) {
             feature.setAbbreviation(featureDTO.getAbbreviation());
         }

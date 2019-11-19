@@ -2,6 +2,7 @@ package org.zfin;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.zfin.framework.api.SequenceControllerTest;
 import org.zfin.ontology.presentation.OntologyControllerTest;
 
 
@@ -13,7 +14,8 @@ import org.zfin.ontology.presentation.OntologyControllerTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-        OntologyControllerTest.class
+        OntologyControllerTest.class,
+        SequenceControllerTest.class
 })
 
 public class DbControllerTests {

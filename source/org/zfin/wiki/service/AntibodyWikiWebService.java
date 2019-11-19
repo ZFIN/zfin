@@ -187,7 +187,7 @@ public class AntibodyWikiWebService extends WikiWebService {
         StringBuilder antibodyNameString = new StringBuilder();
         antibodyNameString.append(getHyperlink(antibody.getName(), "http://zfin.org/" + antibody.getZdbID()));
         antibodyNameString.append(" from the ");
-        antibodyNameString.append(getHyperlink("ZFIN antibody database", "http://zfin.org/action/antibody/search") + ".");
+        antibodyNameString.append(getHyperlink("ZFIN antibody database", "https://zfin.org/search?category=Antibody&q=" + antibody.getAbbreviation()) + ".");
         content = content.replace("{text-data:AntibodyName}{page-info:title}{text-data}", antibodyNameString.toString());
 
         // aliases

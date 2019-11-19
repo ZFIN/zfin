@@ -33,8 +33,8 @@
                     <ul>
                         <li><a href="/downloads">Downloads</a></li>
                         <li><a href="/schemaSpy/index.html">Data Model</a></li>
-                        <li><a href="http://www.zebrafishmine.org" class="external" target="_blank" rel="noopener noreferrer">ZebrafishMine</a></li>
-                        <li><a href="http://www.ensembl.org/biomart" class="external">BioMart</a></li>
+                        <li><zfin2:externalLink href="http://www.zebrafishmine.org">ZebrafishMine</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="https://ensembl.org/biomart/martview">BioMart</zfin2:externalLink></li>
                     </ul>
                 </div>
             </div>
@@ -47,20 +47,20 @@
                     <span class="nav-column-header">BLAST</span>
                     <ul>
                         <li><a href="/action/blast/blast">ZFIN</a></li>
-                        <li><a href="http://www.ensembl.org/Danio_rerio/blastview" class="external">Ensembl</a></li>
-                        <li><a href="http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&BLAST_SPEC=OGP__7955__9557" class="external">NCBI</a></li>
-                        <li><a href="https://genome.ucsc.edu/cgi-bin/hgBlat?command=start" class="external">UCSC</a></li>
+                        <li><zfin2:externalLink href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&BLAST_SPEC=OGP__7955__9557">NCBI</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="https://genome.ucsc.edu/cgi-bin/hgBlat?command=start">UCSC</zfin2:externalLink></li>
                     </ul>
                 </div>
                 <div class="nav-column">
                     <span class="nav-column-header">Genome Browsers</span>
                     <ul>
                         <li><a href="@GBROWSE_PATH_FROM_ROOT@">ZFIN</a></li>
-                        <li><a href="http://www.ensembl.org/Danio_rerio/" class="external">Ensembl</a></li>
-                        <li><a href="http://vega.sanger.ac.uk/Danio_rerio/" class="external">Vega</a></li>
-                        <li><a href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/" class="external">GRC</a></li>
-                        <li><a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0" class="external">UCSC</a></li>
-                        <li><a href="https://www.ncbi.nlm.nih.gov/genome/gdv/?org=danio-rerio" class="external">NCBI</a></li>
+                        <li><zfin2:externalLink href="http://www.ensembl.org/Danio_rerio/">Ensembl</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/">GRC</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="https://www.ncbi.nlm.nih.gov/genome/gdv/?org=danio-rerio">NCBI</zfin2:externalLink></li>
                     </ul>
                 </div>
                 <div class="nav-column">
@@ -89,7 +89,7 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Zebrafish Programs</span>
                     <ul>
-                        <li><a href="http://www.zf-health.org/" class="external">ZF-Health</a></li>
+                        <li><zfin2:externalLink href="http://www.zf-health.org/">ZF-Health</zfin2:externalLink></li>
                         <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs#husbandry">Husbandry Resources</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/Zebrafish+Programs">More...</a></li>
                     </ul>
@@ -97,9 +97,9 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Resource Centers</span>
                     <ul>
-                        <li><a href="http://zebrafish.org" class="external">Zebrafish International Resource Center (ZIRC)</a></li>
-                        <li><a href="http://www.zfish.cn/" class="external">China Zebrafish Resource Center (CZRC)</a></li>
-                        <li><a href="https://www.ezrc.kit.edu/" class="external">European Zebrafish Resource Center (EZRC)</a></li>
+                        <li><zfin2:externalLink href="http://zebrafish.org">Zebrafish International Resource Center (ZIRC)</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="http://www.zfish.cn/">China Zebrafish Resource Center (CZRC)</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="https://www.ezrc.kit.edu/">European Zebrafish Resource Center (EZRC)</zfin2:externalLink></li>
                     </ul>
                 </div>
             </div>
@@ -127,10 +127,10 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Societies</span>
                     <ul>
-                        <li><a href="https://www.izfs.org" class="external">International Zebrafish Society (IZFS)</a></li>
-                        <li><a href="https://www.zdmsociety.org" class="external">Zebrafish Disease Models Society (ZDMS)</a></li>
-                        <li><a href="https://genetics-gsa.org" class="external">Genetics Society of America (GSA)</a></li>
-                        <li><a href="https://zhaonline.org" class="external">Zebrafish Husbandry Association</a></li>
+                        <li><zfin2:externalLink href="https://www.izfs.org">International Zebrafish Society (IZFS)</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="https://www.zdmsociety.org">Zebrafish Disease Models Society (ZDMS)</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="https://genetics-gsa.org">Genetics Society of America (GSA)</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="https://zhaonline.org">Zebrafish Husbandry Association</zfin2:externalLink></li>
                     </ul>
                 </div>
             </div>

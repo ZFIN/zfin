@@ -1,5 +1,6 @@
 package org.zfin.marker.repository;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -61,6 +62,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
+@Log4j2
 @Repository
 public class HibernateMarkerRepository implements MarkerRepository {
 
@@ -74,6 +76,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public Marker getMarker(Marker marker) {
         Session session = currentSession();
         return (Marker) session.get(Marker.class, marker.getZdbID());
+    }
+
+    @Override
+    public Marker getMarker(String id) {
+        Marker marker = getMarkerByID(id);
+        if (marker == null) {
+            String replacedID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(id);
+            if (replacedID != null) {
+                marker = getMarkerByID(replacedID);
+                log.debug("found a replaced zdbID for: " + id + "->" + replacedID);
+            }
+        }
+        return marker;
     }
 
     public Marker getMarkerByID(String zdbID) {

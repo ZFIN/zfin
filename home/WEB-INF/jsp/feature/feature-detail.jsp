@@ -367,7 +367,7 @@
 </c:if>
 <c:if test="${fn:contains(formBean.feature.type.display, 'Point')==false}">
     <c:set var="title">
-        FLANKING SEQUENCE<a class='popup-link info-popup-link' href='/action/feature/flank-seq'></a>
+        FLANKING SEQUENCE (GENOMIC) <a class='popup-link info-popup-link' href='/action/feature/flank-seq'></a>
     </c:set>
     </c:if>
     <zfin2:subsection title="${title}"
@@ -508,6 +508,7 @@
                 <th>Functional Consequence:</th>
                 <td>${formBean.ftrCommContr.functionalConsequence.toString()}</td>
             </tr>
+
             <tr>
                 <th>Adult Viable:</th>
                 <td><zfin2:nullableBoolean value="${formBean.ftrCommContr.adultViable}" /></td>
@@ -515,6 +516,10 @@
             <tr>
                 <th>Maternal Zygosity Examined:</th>
                 <td><zfin2:nullableBoolean value="${formBean.ftrCommContr.maternalZygosityExamined}" /></td>
+            </tr>
+            <tr>
+                <th>NMD Apparent:</th>
+                <td>${formBean.ftrCommContr.nmdApparent.toString()}</td>
             </tr>
             <tr>
                 <th>Available:</th>

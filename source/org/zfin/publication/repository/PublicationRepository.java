@@ -485,6 +485,7 @@ public interface PublicationRepository extends PaginationParameter {
     PaginationResult<Publication> getAllAssociatedPublicationsForGenotype(Genotype genotype, int maxPubs);
 
     List<Publication> getPublicationByPmid(Integer pubMedID);
+    Publication getSinglePublicationByPmid(Integer pubMedID);
 
     int getNumberDirectPublications(String zdbID);
 

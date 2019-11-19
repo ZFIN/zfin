@@ -21,7 +21,7 @@ println command2.execute().text
 PUB_IDS_TO_CHECK = "pubsThatNeedActivation.txt"
 PUBS_TO_ACTIVATE = new File("pubsToActivate.txt")
 REPORT_ACTIVATED_PUBS = new File("listOfActivatedPubs.txt")
-def PMC_ID_PUBS = new File ("pmcIdPubs.txt")
+def PMC_ID_PUBS = new File ("pmcIdPubsActive.txt")
 
 PubmedUtils.dbaccess DBNAME, """
   \\copy (

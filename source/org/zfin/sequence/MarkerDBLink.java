@@ -1,6 +1,8 @@
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 
 import java.io.Serializable;
@@ -10,6 +12,7 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
 
     Logger logger = LogManager.getLogger(MarkerDBLink.class);
 
+    @JsonView(View.SequenceAPI.class)
     private Marker marker;
 //    private Accession referencingAccession ;
 

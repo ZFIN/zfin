@@ -1,13 +1,16 @@
 package org.zfin.marker.presentation;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.marker.Marker;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 
-/**
- */
+
+@Setter
+@Getter
 public class SequencePageInfoBean {
 
     private Collection<DBLink> dbLinks;
@@ -39,18 +42,6 @@ public class SequencePageInfoBean {
         }
     }
 
-    public Collection<DBLink> getDbLinks() {
-        return dbLinks;
-    }
-
-    public void setDbLinks(Collection<DBLink> dbLinks) {
-        this.dbLinks = dbLinks;
-    }
-
-    public TreeMap<String, TreeSet<MarkerDBLink>> getRelatedMarkerDBLinks() {
-        return relatedMarkerDBLinks;
-    }
-
     public void addRelatedMarkerDBLink(String relationshipType, MarkerDBLink link) {
         if (!relatedMarkerDBLinks.containsKey(relationshipType)) {
             relatedMarkerDBLinks.put(relationshipType, new TreeSet<>(new DbLinkMarkerSortComparator()));
@@ -58,20 +49,4 @@ public class SequencePageInfoBean {
         relatedMarkerDBLinks.get(relationshipType).add(link);
     }
 
-    public Marker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(Marker marker) {
-        this.marker = marker;
-    }
-
-
-    public List<GeneProductsBean> getGeneProductsBean() {
-        return geneProductsBean;
-    }
-
-    public void setGeneProductsBean(List<GeneProductsBean> geneProductsBean) {
-        this.geneProductsBean = geneProductsBean;
-    }
 }

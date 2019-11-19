@@ -1690,6 +1690,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .list();
     }
 
+    public Publication getSinglePublicationByPmid(Integer pubMedID) {
+        return (Publication) HibernateUtil.currentSession().createCriteria(Publication.class)
+                .add(Restrictions.eq("accessionNumber", pubMedID))
+                .uniqueResult();
+    }
+
     @Override
     public int getNumberDirectPublications(String zdbID) {
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery("select count(*) " +

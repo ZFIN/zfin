@@ -11,7 +11,7 @@
                                                                                               title="Edit attributions"></i></span>
             <span ng-if="link.referenceDatabaseName!='Alliance'" ng-show="om.edit" style="cursor: pointer;"
                                            ng-click="om.openDeleteOtherMarkerLink(link,$index)">
-                       <i class="fas fa-trash red" aria-hidden="true" title="Delete the link"></i></span>
+                       <i class="fas fa-trash red" aria-hidden="true" title="Delete the link"></i></span>{{$last ? '' : ', '}}
 
     </span>
 <!--</table>-->

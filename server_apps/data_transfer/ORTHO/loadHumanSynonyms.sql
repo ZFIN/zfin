@@ -3,7 +3,7 @@ begin work ;
 create temp table tmp_syns (human_gene_id text,
                         synonym text);
 
-\copy tmp_syns from '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/human_gene_synonyms.txt' delimiter ',';
+\copy tmp_syns from '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/human_gene_synonyms.txt' delimiter E'\t';
 
 delete from tmp_syns
  where not exists (select 'x' from ncbi_ortholog

@@ -33,6 +33,8 @@ import java.util.TreeSet;
 public interface MarkerRepository {
     Marker getMarker(Marker marker);
 
+    Marker getMarker(String id);
+
     Marker getMarkerByID(String zdbID);
 
     SNP getSNPByID(String zdbID);

@@ -1,23 +1,32 @@
 package org.zfin.sequence.service;
 
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.zfin.Species;
+import org.zfin.framework.api.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.SummaryDBLinkDisplay;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DBLink;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ForeignDBDataType;
-import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  */
-//@Service
+@Service
+@Log4j2
 public class SequenceService {
 
     private final static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
+
+    @Autowired
+    private MarkerRepository markerRepository;
+
 
     private ReferenceDatabase omimHumanOrthologDB;
     private ReferenceDatabase entrezGeneHumarnRefDB;
@@ -84,4 +93,41 @@ public class SequenceService {
         summaryDBLinkDisplay.addAllDBlinks(dbLinkList);
         return summaryDBLinkDisplay;
     }
+
+    public JsonResultResponse<MarkerDBLink> getMarkerDBLinkJsonResultResponse(String zdbID,
+                                                                              Pagination pagination) {
+        long startTime = System.currentTimeMillis();
+        Marker marker = markerRepository.getMarker(zdbID);
+        if (marker == null) {
+            String errorMessage = "No marker found for ID: " + zdbID;
+            log.error(errorMessage);
+            RestErrorMessage error = new RestErrorMessage(404);
+            error.addErrorMessage(errorMessage);
+            throw new RestErrorException(error);
+        }
+
+        List<MarkerDBLink> fullMarkerDBLinks = MarkerService.getMarkerDBLinks(marker);
+
+        // filtering
+        FilterService<MarkerDBLink> filterService = new FilterService<>(new SequenceFiltering());
+        List<MarkerDBLink> filteredDBLinksList = filterService.filterAnnotations(fullMarkerDBLinks, pagination.getFieldFilterValueMap());
+
+        // sorting
+        SequenceSorting sorting = new SequenceSorting();
+        filteredDBLinksList.sort(sorting.getComparator(pagination.getSortBy()));
+
+
+        JsonResultResponse<MarkerDBLink> response = new JsonResultResponse<>();
+        response.calculateRequestDuration(startTime);
+        response.setTotal(filteredDBLinksList.size());
+
+        // paginating
+        response.setResults(filteredDBLinksList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
+    }
+
+
 }

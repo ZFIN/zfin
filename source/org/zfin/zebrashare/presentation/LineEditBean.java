@@ -9,6 +9,7 @@ public class LineEditBean {
     private Boolean maternalZygosityExamined;
     private Boolean currentlyAvailable;
     private String otherLineInformation;
+    private FeatureCommunityContribution.NMDApparent nmdApparent;
 
     public FeatureCommunityContribution.FunctionalConsequence getFunctionalConsequence() {
         return functionalConsequence;
@@ -30,7 +31,16 @@ public class LineEditBean {
         return maternalZygosityExamined;
     }
 
+    public FeatureCommunityContribution.NMDApparent getNmdApparent() {
+        return nmdApparent;
+    }
+
+    public void setNmdApparent(FeatureCommunityContribution.NMDApparent nmdApparent) {
+        this.nmdApparent = nmdApparent;
+    }
+
     public void setMaternalZygosityExamined(Boolean maternalZygosityExamined) {
+
         this.maternalZygosityExamined = maternalZygosityExamined;
     }
 

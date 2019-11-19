@@ -62,6 +62,16 @@
         </div>
 
         <div class="form-group row">
+            <form:label cssClass="col-md-3 col-form-label" path="nmdApparent">NMD Apparent</form:label>
+            <div class="col-md-3">
+                <form:select path="nmdApparent" cssClass="form-control">
+                    <form:option value="" />
+                    <form:options items="${nmdApparentList}" itemLabel="display" />
+                </form:select>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <form:label path="currentlyAvailable" cssClass="col-md-3 col-form-label">Currently Available</form:label>
             <div class="col-md-3">
                 <form:select path="currentlyAvailable" cssClass="form-control">
