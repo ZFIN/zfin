@@ -27,7 +27,7 @@
                     </c:otherwise>
                 </c:choose>
             </td>
-            <td>
+            <td style="vertical-align: text-top; text-align: right">
                 <a href="/action/marker/citation-list/${bean.marker.zdbID}">${fn:length(bean.marker.publications)}</a>
             </td>
         </tr>
