@@ -19,7 +19,7 @@ use DBI;
 use MIME::Lite;
 use Try::Tiny;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
-use use ZFINPerlModules;
+use ZFINPerlModules;
 
 #----------------------------------------------------------------------
 # Write a line to the report 
