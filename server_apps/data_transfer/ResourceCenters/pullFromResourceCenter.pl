@@ -199,7 +199,7 @@ $dbh->commit();
 $dbh->disconnect();
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f /opt/zfin/www_homes/swirl/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks.sql");
+  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f ${TARGETROOT}/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks.sql");
   #&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
 } catch {
   warn "Failed to execute syncFishOrderThisLinks.sh - $_";
