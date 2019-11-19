@@ -178,7 +178,7 @@ $dbh->commit();
 $dbh->disconnect();
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f ${TARGETROOT}/server_apps/data_transfer/ResourceCenters/syncFishOrderThisLinks.sql");
+  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f syncFishOrderThisLinks.sql");
 } catch {
   warn "Failed to execute syncFishOrderThisLinks.sql - $_";
   exit -1;
