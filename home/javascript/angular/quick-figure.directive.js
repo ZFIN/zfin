@@ -12,9 +12,9 @@
             '    <button type="button" class="close" ng-click="vm.toggle()"><span aria-hidden="true">&times;</span></button>' +
             '    <h4>Quick Figure</h4>' +
             '    <form class="form-inline">' +
-            '      <select class="form-control" ng-model="vm.type" ng-change="vm.label = \'\'" ng-options="t for t in vm.types">' +
+            '      <select class="form-control mr-1" ng-model="vm.type" ng-change="vm.label = \'\'" ng-options="t for t in vm.types">' +
             '      </select>' +
-            '      <input type="text" class="form-control form-control-fixed-width-sm" ng-model="vm.label" ng-disabled="vm.type == \'text only\'">' +
+            '      <input type="text" class="form-control form-control-fixed-width-sm mr-1" ng-model="vm.label" ng-disabled="vm.type == \'text only\'">' +
             '      <button class="btn btn-primary" ng-click="vm.submit()" ng-disabled="vm.submitting || !vm.readyToSubmit()">' +
             '        <i ng-show="!vm.submitting" class="fas fa-check"></i>' +
             '        <i ng-show="vm.submitting" class="fas fa-spinner fa-spin"></i>' +
