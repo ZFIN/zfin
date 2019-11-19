@@ -155,13 +155,13 @@
             var reader = new FileReader();
             var mediaContainer = $(
                 '<div class="media">' +
-                '  <div class="media-left">' +
+                '  <div class="mr-3">' +
                 '    <div style="width: 128px; height: 128px; text-align: center">' +
                 '      <img class="media-object thumb-image" src="">' +
                 '    </div>' +
                 '  </div>' +
                 '  <div class="media-body">' +
-                '    <h4 class="media-heading">' + file.name + '</h4>' +
+                '    <h5>' + file.name + '</h5>' +
                 '    <textarea name="captions" class="form-control" rows="4" placeholder="Enter caption here"></textarea>' +
                 '  </div>' +
                 '</div>'

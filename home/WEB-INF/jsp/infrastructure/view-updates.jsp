@@ -12,7 +12,7 @@
     </c:if>
     <c:forEach items="${updates}" var="update">
         <div class="media">
-            <div class="media-left">
+            <div class="mr-3">
                 <div class="thumb-container">
                     <c:choose>
                         <c:when test="${!empty update.submitter}">
@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="media-body">
-                <h4 class="media-heading">
+                <h5>
                     <c:choose>
                         <c:when test="${!empty update.submitter}">
                             ${update.submitter.display}
@@ -31,8 +31,8 @@
                             ${update.submitterName}
                         </c:otherwise>
                     </c:choose>
-                    &nbsp;<small><fmt:formatDate value="${update.whenUpdated}" pattern="yyyy-MM-dd"/></small>
-                </h4>
+                    &nbsp;<small class="text-muted"><fmt:formatDate value="${update.whenUpdated}" pattern="yyyy-MM-dd"/></small>
+                </h5>
                 <dl class="row">
                     <dt class="col-md-2 text-md-right">Field</dt>
                     <dd class="col-md-10 mb-md-0">${update.fieldName}</dd>

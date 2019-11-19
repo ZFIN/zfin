@@ -55,18 +55,16 @@ class PubEditableNote extends Component {
 
         return (
             <div className="media">
-                <div className="media-left">
+                <div className="mr-3">
                     <div className="thumb-container">
                         <img className="thumb-image" src={note.curator.imageURL} />
                     </div>
                 </div>
                 <div className="media-body">
-                    <h4 className="media-heading">
-                        {note.curator.name} <small>{new Date(note.date).toLocaleDateString()}</small>
-                    </h4>
+                    <h5 className='mb-0'>{note.curator.name} <small className='text-muted'>{new Date(note.date).toLocaleDateString()}</small></h5>
 
                     {note.editable &&
-                    <ul className="list-inline">
+                    <ul className="list-inline mb-2">
                         <li className="list-inline-item">
                             <small><a href='#' onClick={this.handleEditClick}>Edit</a></small>
                         </li>
