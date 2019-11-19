@@ -71,14 +71,13 @@
         </div>
     </div>
 
-    <nav class="pub-navigator navbar navbar-expand" id="curation-nav">
+    <nav class="pub-navigator navbar navbar-expand-sm" id="curation-nav">
         <div class="container-fluid">
-            <ul class="navbar-nav" id="curation-tabs">
+            <ul class="nav navbar-nav mr-auto" id="curation-tabs" role="tablist">
                 <c:forEach var="curationTab" items="${curationTabs}">
-                    <li class="nav-item ${curationTab.value eq currentTab ? 'active' : ''}">
-                        <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab" class="nav-link nav-tabs-loading"
-                           onclick="handleTabToggle('${curationTab.value}')"
-                           data-toggle="tab" id="${curationTab.value}-tab">
+                    <li class="nav-item" role="presentation">
+                        <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab" class="nav-link nav-tabs-loading ${curationTab.value eq currentTab ? 'active' : ''}"
+                           onclick="handleTabToggle('${curationTab.value}')" data-toggle="tab" id="${curationTab.value}-tab">
                                 ${curationTab.displayName}
                         </a>
                     </li>
@@ -94,12 +93,12 @@
                     </a>
                 </li>
             </ul>
-            <form class="navbar-form navbar-right hidden" id="claim-form">
-                <button type="submit" class="btn btn-outline-secondary">Claim</button>
-            </form>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav mr-2">
                 <li class="navbar-text" id="status-message"></li>
             </ul>
+            <form class="navbar-form d-none" id="claim-form">
+                <button type="submit" class="btn btn-light">Claim</button>
+            </form>
         </div>
     </nav>
 
@@ -134,7 +133,7 @@
         $('.zfin-tooltip').tipsy({gravity: 's'});
 
         function goToTab (hash) {
-          $('#curation-tabs a[href=' + hash + ']').tab('show');
+          $('#curation-tabs a[href="' + hash + '"]').tab('show');
         }
 
         var hash = window.location.hash;
