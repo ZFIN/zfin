@@ -7,8 +7,9 @@
         >
 
     <g:FlowPanel>
-        <zfin-disease:DiseaseModelView ui:field="diseaseModelView" styleName="flow-margin"/>
-        <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left" styleName="flow-margin">
+        <zfin-disease:DiseaseModelView ui:field="diseaseModelView" styleName="mb-3"/>
+
+        <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left" styleName="mb-3">
             <g:VerticalPanel spacing="10" title="Pile">
                 <zfin:TermEntry ui:field="termEntry" listOFOntologies="disease_ontology"
                                 entityPart="ENTITY_SUPERTERM"

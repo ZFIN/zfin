@@ -5,9 +5,10 @@
         xmlns:zfin-fish='urn:import:org.zfin.gwt.curation.ui.fish'
         >
 
-    <g:VerticalPanel spacing="10" width="100%">
-        <zfin-fish:FishGenotypeConstruction ui:field="genotypeConstructionView" styleName="flow-margin"/>
-        <zfin-fish:FishView ui:field="fishView" styleName="flow-margin"/>
-        <zfin-fish:GenotypeView ui:field="genotypeView" styleName="flow-margin"/>
-    </g:VerticalPanel>
+    <g:FlowPanel>
+        <zfin-fish:FishGenotypeConstruction ui:field="genotypeConstructionView" styleName="mb-3"/>
+        <zfin-fish:FishView ui:field="fishView" styleName="mb-3"/>
+        <zfin-fish:GenotypeView ui:field="genotypeView" styleName="mb-3"/>
+    </g:FlowPanel>
+
 </ui:UiBinder>

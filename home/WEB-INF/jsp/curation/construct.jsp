@@ -3,32 +3,28 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("jquery-ui.css")}">
 <script src="${zfn:getAssetPath("jquery-ui.js")}"></script>
 
-<table>
-    <tr>
-        <td>
-            <span class="bold">CREATE NEW CONSTRUCT: </span>
-            <a onclick="showCreateConstructSection()" id="showConstructAdd" style="text-decoration:underline">Show</a>
-            <a style="display: none;" onclick="hideCreateConstructSection()" id="hideConstructAdd">Hide</a>
 
-            <div id="constructAddContainer" style="display: none;"></div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <span class="bold">EDIT CONSTRUCT: </span>
-            <a onclick="showEditConstructSection()" id="showConstructEdit" style="text-decoration:underline">Show</a>
-            <a style="display: none;" onclick="hideEditConstructSection()" id="hideConstructEdit">Hide</a>
+<div class="mb-3">
+    <span class="bold">CREATE NEW CONSTRUCT: </span>
+    <a onclick="showCreateConstructSection()" id="showConstructAdd" style="text-decoration:underline">Show</a>
+    <a style="display: none;" onclick="hideCreateConstructSection()" id="hideConstructAdd">Hide</a>
 
-            <div id="constructEditContainer" style="display: none;"></div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div id="construct-relationship-link"></div>
-            <div id="construct-relationship"></div>
-        </td>
-    </tr>
-</table>
+    <div id="constructAddContainer" style="display: none;"></div>
+</div>
+
+<div class="mb-3">
+    <span class="bold">EDIT CONSTRUCT: </span>
+    <a onclick="showEditConstructSection()" id="showConstructEdit" style="text-decoration:underline">Show</a>
+    <a style="display: none;" onclick="hideEditConstructSection()" id="hideConstructEdit">Hide</a>
+
+    <div id="constructEditContainer" style="display: none;"></div>
+</div>
+
+<div class="mb-3">
+    <div id="construct-relationship-link"></div>
+    <div id="construct-relationship"></div>
+</div>
+
 
 <script type="text/javascript">
     jQuery('#constructAddContainer').load('/action/construct/construct-add?constructPublicationZdbID=${publication.zdbID}');

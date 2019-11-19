@@ -5,8 +5,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import org.zfin.gwt.curation.event.CloneFishEvent;
 import org.zfin.gwt.curation.event.CloneFishEventHandler;
 import org.zfin.gwt.curation.event.CurationEvent;
@@ -27,7 +27,7 @@ public class FishModule extends Composite implements ZfinCurationModule {
     private AjaxCallBaseManager ajaxCallBaseManager = new AjaxCallBaseManager();
 
     @UiTemplate("FishModule.ui.xml")
-    interface MyUiBinder extends UiBinder<VerticalPanel, FishModule> {
+    interface MyUiBinder extends UiBinder<FlowPanel, FishModule> {
     }
 
     private String publicationID;
@@ -51,7 +51,7 @@ public class FishModule extends Composite implements ZfinCurationModule {
     @Override
     public void init() {
         bindEventBusHandler();
-        VerticalPanel outer = uiBinder.createAndBindUi(this);
+        FlowPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(FISH_TAB).add(outer);
         presenter = new GenotypePresenter(genotypeView, publicationID);
 

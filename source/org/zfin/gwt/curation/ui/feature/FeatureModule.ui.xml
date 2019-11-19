@@ -4,16 +4,11 @@
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
         xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui.feature'
         >
-    <ui:style>
-        .flow-margin {
-            margin: 10px;
-        }
-    </ui:style>
 
     <g:FlowPanel>
-        <zfin-mod:FeatureAddView ui:field="featureAddView" styleName="flow-margin"/>
-        <zfin-mod:FeatureEditView ui:field="featureEditView" styleName="flow-margin"/>
-        <zfin-mod:FeatureRelationshipView ui:field="featureRelationshipView" styleName="flow-margin"/>
-        <zfin-mod:FeatureZebrashareEditView ui:field="featureZebrashareEditView" styleName="flow-margin"/>
+        <zfin-mod:FeatureAddView ui:field="featureAddView" styleName="mb-3"/>
+        <zfin-mod:FeatureEditView ui:field="featureEditView" styleName="mb-3"/>
+        <zfin-mod:FeatureRelationshipView ui:field="featureRelationshipView" styleName="mb-3"/>
+        <zfin-mod:FeatureZebrashareEditView ui:field="featureZebrashareEditView" styleName="mb-3"/>
     </g:FlowPanel>
 </ui:UiBinder>

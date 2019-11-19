@@ -1,7 +1,1 @@
-<table>
-    <tr>
-        <td>
-            <div id="expressionZone"></div>
-        </td>
-    </tr>
-</table>
+<div id="expressionZone"></div>

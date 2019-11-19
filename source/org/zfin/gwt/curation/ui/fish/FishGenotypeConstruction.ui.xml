@@ -76,7 +76,7 @@
                     </td>
                 </tr>
             </g:HTMLPanel>
-            <g:HorizontalPanel styleName="flow-margin">
+            <g:HorizontalPanel styleName="mb-3">
                 <g:Button ui:field="createFishGenotypeButton" text="Create Fish / Genotype"
                           addStyleNames="btn btn-primary" enabled="false"/>
                 <g:Button ui:field="resetButton" text="Reset" addStyleNames="btn btn-link"/>

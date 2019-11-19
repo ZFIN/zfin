@@ -102,7 +102,7 @@
         </div>
     </nav>
 
-    <div class="tab-content edit-form-content">
+    <div class="tab-content edit-form-content p-2">
         <c:forEach var="tab" items="${curationTabs}">
             <div role="tabpanel" class="tab-pane ${tab.value eq currentTab ? 'active' : ''}" id="${tab.value}">
                 <jsp:include page="${tab.value.toLowerCase()}.jsp"/>
