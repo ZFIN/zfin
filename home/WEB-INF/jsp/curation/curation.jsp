@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <nav class="pub-navigator navbar navbar-light navbar-expand" id="curation-nav">
+    <nav class="pub-navigator navbar navbar-expand" id="curation-nav">
         <div class="container-fluid">
             <ul class="navbar-nav" id="curation-tabs">
                 <c:forEach var="curationTab" items="${curationTabs}">
