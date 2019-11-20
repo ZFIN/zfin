@@ -9,6 +9,15 @@ $modal-md: 600px;
 // import bootstrap
 @import "~bootstrap/scss/bootstrap";
 
+// undo stuff from _reset.scss
+header {
+  display: flex;
+}
+
+main {
+  margin: 0 0 20px 0;
+}
+
 // form-horizontal is no longer defined by bootstrap as of v4 but we still
 // use it to do label alignment
 .form-horizontal {
@@ -84,4 +93,14 @@ label {
 
 .form-control.tt-input:focus {
   z-index: 3
+}
+
+/* jQuery UI overrides */
+.ui-menu-item {
+  font-size: small;
+}
+
+.ui-corner-all  {
+  font-size: .9em !important;
+  background: #fff;
 }

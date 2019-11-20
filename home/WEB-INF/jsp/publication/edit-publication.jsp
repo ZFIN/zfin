@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <ul id="fig-edit-tabs" class="nav nav-tabs nav-justified nav-padded" role="tablist">
+    <ul id="fig-edit-tabs" class="nav nav-tabs nav-justified mb-5" role="tablist">
         <li role="presentation" class="nav-item">
             <a href="#details" class="nav-link active" aria-controls="details" role="tab" data-toggle="tab">Details</a>
         </li>

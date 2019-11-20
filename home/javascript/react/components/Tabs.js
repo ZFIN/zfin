@@ -45,7 +45,7 @@ class Tabs extends React.Component {
 
         return (
             <div>
-                <ul className='nav nav-tabs nav-justified nav-padded' role='tablist'>
+                <ul className='nav nav-tabs nav-justified mb-5' role='tablist'>
                     {
                         React.Children.map(children, (child, idx) => {
                             if (!child.type || child.type !== Tab) {
