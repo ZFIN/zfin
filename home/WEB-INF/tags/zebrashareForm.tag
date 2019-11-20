@@ -154,7 +154,7 @@
         var renderCaptionInput = function (file) {
             var reader = new FileReader();
             var mediaContainer = $(
-                '<div class="media">' +
+                '<div class="media mb-3">' +
                 '  <div class="mr-3">' +
                 '    <div style="width: 128px; height: 128px; text-align: center">' +
                 '      <img class="media-object thumb-image" src="">' +

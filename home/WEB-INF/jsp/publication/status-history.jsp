@@ -12,7 +12,7 @@
     </p>
 
     <c:forEach items="${events}" var="event">
-        <div class="media">
+        <div class="media mb-3">
             <div class="mr-3">
                 <div class="thumb-container">
                     <zfin2:profileImage className="thumb-image" value="${event.performedBy}"/>

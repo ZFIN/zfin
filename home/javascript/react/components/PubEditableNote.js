@@ -54,7 +54,7 @@ class PubEditableNote extends Component {
         const { editing, editText } = this.state;
 
         return (
-            <div className="media">
+            <div className="media mb-3">
                 <div className="mr-3">
                     <div className="thumb-container">
                         <img className="thumb-image" src={note.curator.imageURL} />

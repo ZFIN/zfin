@@ -182,7 +182,7 @@ class PubTrackerStatus extends Component {
         const curatorOptions = [{zdbID: '', name: ''}].concat(curators);
 
         return (
-            <form class="form-horizontal">
+            <form className="form-horizontal">
                 <div className="form-group row">
                     <label className="col-md-3 col-form-label">Status</label>
                     <div className="col-md-8">
