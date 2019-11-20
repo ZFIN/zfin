@@ -85,6 +85,36 @@ $cur_uniproInterpro->finish();
 
 print "ctUniproInterpro = $ctUniproInterpro\n";
 
+$cur_gene = $dbh->prepare("select mrkr_zdb_id from marker where mrkr_zdb_id like 'ZDB-GENE%';");
+$cur_gene->execute();
+$cur_gene->bind_columns(\$zdbGeneId);
+
+$ctGenes = 0;
+%zfinGeneIds = ();
+while ($cur_gene->fetch()) {
+   $zfinGeneIds{$zdbGeneId} = 1;
+   $ctGenes++;
+}
+
+$cur_gene->finish();
+
+print "ctGenes = $ctGenes\n";
+
+$cur_replaced = $dbh->prepare("select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data where zrepld_old_zdb_id like 'ZDB-GENE%' and zrepld_new_zdb_id like 'ZDB-GENE%';");
+$cur_replaced->execute();
+$cur_replaced->bind_columns(\$oldid, \$newid);
+
+$ctReplacedGenes = 0;
+%replacedGeneIds = ();
+while ($cur_replaced->fetch()) {
+   $replacedGeneIds{$oldid} = $newid;
+   $ctReplacedGenes++;
+}
+
+$cur_replaced->finish();
+
+print "ctReplacedGenes = $ctReplacedGenes\n";
+
 system("/bin/rm -f entry.list");
 
 system("/bin/rm -f domain.txt");
@@ -174,20 +204,36 @@ $ctRecords = $ctUniProtIDs = $ctZfinUniProt = $ctUniProtInterpro = 0;
 %unipIprFromInput = ();
 foreach $record (@uniproRecords) {
   $ctRecords++;
+  @zfinids = ();
   @iprs = ();
   @lines = split(/\n/, $record);
   foreach $line (@lines) {
     ## ID   A0A1L1QZT0_DANRE        Unreviewed;       337 AA.
     if ($line =~ m/ID\s+(\S+)_DANRE\s+\w+;\s+(\d+)\s+AA/) {
       $id = $1;
+      next if exists($uniproIdFromInput{$id}); ## do not process the redundant record
       $length = $2;
       $uniproIdFromInput{$id} = $length;
     }
     ## DR   ZFIN; ZDB-GENE-131122-26; ikbip.
+    ## could be multiple ZFIN ID
     if ($line =~ m/DR\s+ZFIN;\s+(ZDB-GENE\S+);/) {
-        $zfinid = $1;
-        $mrkrUnipFromInput{$zfinid.$id} = 1;
+        $zfinidFromInput = $1;
+        if (!exists($zfinGeneIds{$zfinidFromInput})) {
+          if (exists($replacedGeneIds{$zfinidFromInput}))  {
+             $zfinid = $replacedGeneIds{$zfinidFromInput};
+          } else {
+             undef $zfinid;
+          }
+        } else {
+          $zfinid = $zfinidFromInput;
+        }
+        if (defined $zfinid) {
+          $mrkrUnipFromInput{$zfinid.$id} = 1;
+          push @zfinids, $zfinid;
+        }
     }
+
     ## DR   InterPro; IPR024152; Inh_kappa-B_kinase-int.
     ## could be multiple InterPro
     if ($line =~ m/DR\s+InterPro;\s+(IPR\S+);/) {
@@ -196,9 +242,9 @@ foreach $record (@uniproRecords) {
       push @iprs, $interproID;
     }            
   }
-  
+
   # if the parsed data	not existing at	ZFIN, write to the file to be used by the loading process
-  if (defined $id) {
+  if (defined $id && scalar @zfinids > 0) {
     $length = "" if (!defined $length);
     if (!exists($updatedUniproIds{$id}) || $uniproIds{$id} ne $length) {
       $updatedUniproIds{$id} = 1;
@@ -206,15 +252,17 @@ foreach $record (@uniproRecords) {
       $ctUniProtIDs++;
     }
 
-    if (defined $zfinid && !exists($updatedMrkrUnipro{$zfinid.$id})) {
-      $updatedMrkrUnipro{$zfinid.$id} = 1;
-      print ZFINPROT "$zfinid|$id\n";
-      $ctZfinUniProt++;   
+    foreach $zdbid (@zfinids) {
+      if(!exists($updatedMrkrUnipro{$zdbid.$id})) {
+         $updatedMrkrUnipro{$zdbid.$id} = 1;
+         print ZFINPROT "$zdbid|$id\n";
+         $ctZfinUniProt++;
+      }
     }
-      
+
     if (scalar @iprs > 0) {
       foreach $ipr (@iprs) {
-        if(!exists($updatedUniproInterpro{$id.$ipr})) {
+        if(!exists($updatedUniproInterpro{$id.$ipr}) && (exists($interproIds{$ipr}) || exists($updatedUniproInterpro{$id.$ipr}))) {
            $updatedUniproInterpro{$id.$ipr} = 1;
            print UNIPROTINTERPRO "$id|$ipr\n";
            $ctUniProtInterpro++;  
@@ -226,7 +274,10 @@ foreach $record (@uniproRecords) {
   
   undef $id;
   undef $length;
+  undef $zfinidFromInput;
   undef $zfinid;
+  @zfinids = ();
+  undef $interproID;
   @iprs = ();
 }
 
@@ -318,6 +369,7 @@ $ctInterproAfter = countData("select * from interpro_protein;");
 print POSTLOADREPORT "interpro_protein records                   \t";
 print POSTLOADREPORT "$ctExistingInterpro           \t";
 print POSTLOADREPORT "$ctInterproAfter           \t";
+print POSTLOADREPORT "\n" if ($ctExistingInterpro == 0);
 printf POSTLOADREPORT "%.2f\n", ($ctInterproAfter - $ctExistingInterpro) / $ctExistingInterpro * 100 if ($ctExistingInterpro > 0);
 
 $ctUniproAfter = countData("select * from protein;");
@@ -325,6 +377,7 @@ $ctUniproAfter = countData("select * from protein;");
 print POSTLOADREPORT "(uniprot) protein records                  \t";
 print POSTLOADREPORT "$ctUnipro           \t";
 print POSTLOADREPORT "$ctUniproAfter           \t";
+print POSTLOADREPORT "\n" if ($ctUnipro == 0);
 printf POSTLOADREPORT "%.2f\n", ($ctUniproAfter - $ctUnipro) / $ctUnipro * 100 if ($ctUnipro > 0);
 
 $ctMrkrUniproAfter = countData("select * from marker_to_protein;");
@@ -332,6 +385,7 @@ $ctMrkrUniproAfter = countData("select * from marker_to_protein;");
 print POSTLOADREPORT "marker_to_protein records                  \t";   
 print POSTLOADREPORT "$ctMrkrUnipro           \t";
 print POSTLOADREPORT "$ctMrkrUniproAfter           \t";
+print POSTLOADREPORT "\n" if ($ctMrkrUnipro == 0);
 printf POSTLOADREPORT "%.2f\n", ($ctMrkrUniproAfter - $ctMrkrUnipro) / $ctMrkrUnipro * 100 if ($ctMrkrUnipro > 0);
 
 $ctUniproInterproAfter = countData("select * from protein_to_interpro;");
@@ -339,6 +393,7 @@ $ctUniproInterproAfter = countData("select * from protein_to_interpro;");
 print POSTLOADREPORT "protein_to_interpro records                \t";   
 print POSTLOADREPORT "$ctUniproInterpro           \t";
 print POSTLOADREPORT "$ctUniproInterproAfter           \t";
+print POSTLOADREPORT "\n" if ($ctUniproInterpro == 0);
 printf POSTLOADREPORT "%.2f\n", ($ctUniproInterproAfter - $ctUniproInterpro) / $ctUniproInterpro * 100 if ($ctUniproInterpro > 0);
 
 close POSTLOADREPORT;
