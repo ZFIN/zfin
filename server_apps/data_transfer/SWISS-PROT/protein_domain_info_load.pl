@@ -168,7 +168,7 @@ close DOMAINOUT;
 $ctDeletedDomain = 0;
 $cur_delete_record = $dbh->prepare_cached("delete from zdb_active_data where zactvd_zdb_id = ?;");
 for $existingIpr (keys %interproIds) {
-  if(!exists($interproIdFromInput{$existingIpr}) or $interproIdFromInput{$existingIpr} ne $interproIds{$existingIpr}) {
+  if(!exists($interproIdFromInput{$existingIpr}) || $interproIdFromInput{$existingIpr} ne $interproIds{$existingIpr}) {
      $cur_delete_record->execute($existingIpr);  
      $ctDeletedDomain++;
   } 
@@ -179,7 +179,6 @@ print "ctInput = $ctInput\nctLoadedDomains = $ctLoadedDomains\n";
 print "ctDeletedDomain = $ctDeletedDomain\n\n";
 
 undef %interproIds;
-undef %interproIdFromInput;
 undef @lines;
 
 system("/bin/rm -f protein.txt");
@@ -238,15 +237,17 @@ foreach $record (@uniproRecords) {
     ## could be multiple InterPro
     if ($line =~ m/DR\s+InterPro;\s+(IPR\S+);/) {
       $interproID = $1;
-      $unipIprFromInput{$id.$interproID} = 1;
-      push @iprs, $interproID;
+      if (exists($interproIdFromInput{$interproID})) {
+        $unipIprFromInput{$id.$interproID} = 1;
+        push @iprs, $interproID;
+      }
     }            
   }
 
   # if the parsed data	not existing at	ZFIN, write to the file to be used by the loading process
   if (defined $id && scalar @zfinids > 0) {
-    $length = "" if (!defined $length);
-    if (!exists($updatedUniproIds{$id}) || $uniproIds{$id} ne $length) {
+    $length = 0 if (!defined $length || $length =~ m/\s+/ || $length eq '');
+    if (!exists($updatedUniproIds{$id}) || ($length > 0 && $uniproIds{$id} ne $length)) {
       $updatedUniproIds{$id} = 1;
       print PROTEIN "$id|ZDB-FDBCONT-040412-47|$length\n";
       $ctUniProtIDs++;
@@ -262,7 +263,7 @@ foreach $record (@uniproRecords) {
 
     if (scalar @iprs > 0) {
       foreach $ipr (@iprs) {
-        if(!exists($updatedUniproInterpro{$id.$ipr}) && (exists($interproIds{$ipr}) || exists($updatedUniproInterpro{$id.$ipr}))) {
+        if(!exists($updatedUniproInterpro{$id.$ipr})) {
            $updatedUniproInterpro{$id.$ipr} = 1;
            print UNIPROTINTERPRO "$id|$ipr\n";
            $ctUniProtInterpro++;  
@@ -362,37 +363,37 @@ print POSTLOADREPORT "count of records associated with protein domain info load\
 print POSTLOADREPORT "before load\t";
 print POSTLOADREPORT "after load\t";
 print POSTLOADREPORT "percentage change\n";
-print POSTLOADREPORT "---------------------------------------------------------\t-----------\t-----------\t-----------\n";
+print POSTLOADREPORT "---------------------------------------------------------\t-----------\t-----------\t-----------------\n";
 
 $ctInterproAfter = countData("select * from interpro_protein;");
 
-print POSTLOADREPORT "interpro_protein records                   \t";
-print POSTLOADREPORT "$ctExistingInterpro           \t";
-print POSTLOADREPORT "$ctInterproAfter           \t";
+print POSTLOADREPORT "interpro_protein records                                       \t";
+print POSTLOADREPORT "$ctExistingInterpro        \t";
+print POSTLOADREPORT "$ctInterproAfter        \t";
 print POSTLOADREPORT "\n" if ($ctExistingInterpro == 0);
 printf POSTLOADREPORT "%.2f\n", ($ctInterproAfter - $ctExistingInterpro) / $ctExistingInterpro * 100 if ($ctExistingInterpro > 0);
 
 $ctUniproAfter = countData("select * from protein;");
 
-print POSTLOADREPORT "(uniprot) protein records                  \t";
-print POSTLOADREPORT "$ctUnipro           \t";
-print POSTLOADREPORT "$ctUniproAfter           \t";
+print POSTLOADREPORT "(uniprot) protein records                                      \t";
+print POSTLOADREPORT "$ctUnipro        \t";
+print POSTLOADREPORT "$ctUniproAfter        \t";
 print POSTLOADREPORT "\n" if ($ctUnipro == 0);
 printf POSTLOADREPORT "%.2f\n", ($ctUniproAfter - $ctUnipro) / $ctUnipro * 100 if ($ctUnipro > 0);
 
 $ctMrkrUniproAfter = countData("select * from marker_to_protein;");
 
-print POSTLOADREPORT "marker_to_protein records                  \t";   
-print POSTLOADREPORT "$ctMrkrUnipro           \t";
-print POSTLOADREPORT "$ctMrkrUniproAfter           \t";
+print POSTLOADREPORT "marker_to_protein records                                  \t";
+print POSTLOADREPORT "$ctMrkrUnipro        \t";
+print POSTLOADREPORT "$ctMrkrUniproAfter        \t";
 print POSTLOADREPORT "\n" if ($ctMrkrUnipro == 0);
 printf POSTLOADREPORT "%.2f\n", ($ctMrkrUniproAfter - $ctMrkrUnipro) / $ctMrkrUnipro * 100 if ($ctMrkrUnipro > 0);
 
 $ctUniproInterproAfter = countData("select * from protein_to_interpro;");
 
-print POSTLOADREPORT "protein_to_interpro records                \t";   
-print POSTLOADREPORT "$ctUniproInterpro           \t";
-print POSTLOADREPORT "$ctUniproInterproAfter           \t";
+print POSTLOADREPORT "protein_to_interpro records                                \t";
+print POSTLOADREPORT "$ctUniproInterpro        \t";
+print POSTLOADREPORT "$ctUniproInterproAfter        \t";
 print POSTLOADREPORT "\n" if ($ctUniproInterpro == 0);
 printf POSTLOADREPORT "%.2f\n", ($ctUniproInterproAfter - $ctUniproInterpro) / $ctUniproInterpro * 100 if ($ctUniproInterpro > 0);
 
