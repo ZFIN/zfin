@@ -41,7 +41,7 @@
                 <td><zfin2:orderThis markerSuppliers="${antibodyBean.antibody.suppliers}"
                                      accessionNumber="${antibodyBean.antibody.zdbID}"
                 organization=""/></td>
-                <td style="vertical-align: text-top; text-align: right">
+                <td style="vertical-align: text-top; text-align: left">
                         <a href="/action/antibody/antibody-publication-list?antibodyID=${antibodyBean.antibody.zdbID}&orderBy=author">${antibodyBean.numPubs}</a>
                 </td>
             </tr>
