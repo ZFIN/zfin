@@ -104,6 +104,7 @@ public interface SequenceRepository {
 
     List<DBLink> getDBLinksForMarker(String zdbID, ForeignDBDataType.SuperType protein);
 
+
     int getNumberDBLinks(Marker marker);
 
     List<DBLink> getDBLinksForMarkerAndDisplayGroup(Marker marker, DisplayGroup.GroupName groupName);
