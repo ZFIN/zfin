@@ -8,7 +8,7 @@ const templates = [
         body: (citation, sender) => `Dear [[NAME]],
 
 I am writing to request a full text PDF and published supplemental data from the following article:
-${citation}
+${citation.replace(/(<([^>]+)>)/ig,"")}
 
 Background information and intended use:
 
@@ -28,7 +28,7 @@ ${sender}`
     
 Congratulations on your recent article. At ZFIN we are happy to include your newly published information in the database. In order to facilitate this process, it would be very helpful if you would provide some additional information about this article.
 
-${citation}
+${citation.replace(/(<([^>]+)>)/ig,"")};
 
 Best regards,
 Holly 
