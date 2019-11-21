@@ -2248,6 +2248,31 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
+    public List<ProteinDomainBean> getInterProLinksForMarker(Marker marker) {
+        String sql = " SELECT distinct ip_interpro_id,ip_name,ip_type " +
+                " FROM interpro_protein,marker_to_protein,protein_to_interpro  " +
+                " WHERE ip_interpro_id = pti_interpro_id " +
+                " AND pti_uniprot_id = mtp_uniprot_id " +
+                " AND mtp_mrkr_zdb_id = :markerZdbID " ;
+        List<ProteinDomainBean> proteinDomains = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        ProteinDomainBean proteinDomainBean = new ProteinDomainBean();
+                        proteinDomainBean.setIpID(tuple[0].toString());
+                        proteinDomainBean.setIpName(tuple[1].toString());
+                        proteinDomainBean.setIpType(tuple[2].toString());
+
+                        return proteinDomainBean;
+                    }
+                })
+                .setString("markerZdbID", marker.getZdbID())
+                .list();
+        return proteinDomains;
+    }
+
+
+    @Override
     public boolean isFromChimericClone(String zdbID) {
         String sql = "   SELECT count(*) AS count  " +
                 "    FROM marker_relationship " +

@@ -374,6 +374,7 @@ public interface MarkerRepository {
     List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker,Boolean interacts);
 
     List<GeneProductsBean> getGeneProducts(String zdbID);
+    List<ProteinDomainBean> getInterProLinksForMarker(Marker marker);
 
     boolean isFromChimericClone(String zdbID);
 

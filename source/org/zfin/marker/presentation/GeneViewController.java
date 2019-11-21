@@ -38,7 +38,8 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.presentation.SearchPrototypeController;
 import org.zfin.sequence.DisplayGroup;
-import org.zfin.sequence.service.SequenceService;
+import org.zfin.sequence.repository.SequenceRepository;
+
 import org.zfin.sequence.service.TranscriptService;
 import org.zfin.feature.repository.FeatureRepository;
 
@@ -53,7 +54,7 @@ import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 @Controller
 @RequestMapping("/marker")
 public class GeneViewController {
@@ -73,6 +74,9 @@ public class GeneViewController {
 
     @Autowired
     private FeatureRepository featureRepository;
+
+    @Autowired
+    private SequenceRepository sequenceRepository;
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
@@ -133,7 +137,8 @@ public class GeneViewController {
         geneBean.setGeneOntologyOnMarkerBeans(MarkerService.getGeneOntologyOnMarker(gene));
 
         // Protein Products (Protein Families, Domains, and Sites)
-        geneBean.setProteinProductDBLinkDisplay(SequenceService.getProteinProducts(gene));
+        //geneBean.setProteinProductDBLinkDisplay(SequenceService.getProteinProducts(gene));
+      geneBean.setProteinDomainBeans(markerRepository.getInterProLinksForMarker(gene));
 
         // Transcripts
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));

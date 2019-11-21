@@ -14,6 +14,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.sequence.InterProProtein;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +44,15 @@ public class MarkerBean extends PaginationBean {
     private boolean hasMarkerHistory;
     private List<AntibodyMarkerBean> antibodyBeans;
     private List<ConstructBean> constructBeans;
+    private List<ProteinDomainBean> proteinDomainBeans;
+
+    public List<ProteinDomainBean> getProteinDomainBeans() {
+        return proteinDomainBeans;
+    }
+
+    public void setProteinDomainBeans(List<ProteinDomainBean> proteinDomainBeans) {
+        this.proteinDomainBeans = proteinDomainBeans;
+    }
 
     public AllianceGeneDesc getAllianceGeneDesc() {
         return allianceGeneDesc;

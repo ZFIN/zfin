@@ -16,6 +16,7 @@ public class GeneBean extends MarkerBean {
     private List<LinkDisplay> pathwayDBLinks;
     private TreeSet<BrowserLink> locations;
 
+
     public boolean isHasChimericClone() {
         return hasChimericClone;
     }
