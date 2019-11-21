@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -53,6 +54,8 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
     public ZFINAllExpressionDTO getZFINExpressionInfo(int numberOrRecords) {
         List<BasicExpressionDTO> basicExpressionDTOList = getExpressionRepository().getBasicExpressionDTOObjects();
 
+        Map<String, List<ImageDTO>> imageDtoMap = getExpressionRepository().getDirectSubmissionImageDTOMap();
+
         List<ZFINExpressionDTO> zfinExpressionDTOList = new ArrayList<>();
 
         for (BasicExpressionDTO basicDTOitem : basicExpressionDTOList){
@@ -81,8 +84,8 @@ public class ZFINExpressionInfo extends AbstractScriptWrapper {
 
             zfinExpressionDTO.setEvidence(zfinExpressionEvidenceDTO);
             zfinExpressionDTO.setDateAssigned(basicDTOitem.getDateAssigned());
-            zfinExpressionDTO.setDataProviderList(basicDTOitem.getDataProvider());
             zfinExpressionDTO.setCrossReference(basicDTOitem.getCrossReference());
+            zfinExpressionDTO.setImages(imageDtoMap.get(basicDTOitem.getExpressionResultId()));
 
             List<String> dblinkPages = new ArrayList<>();
 

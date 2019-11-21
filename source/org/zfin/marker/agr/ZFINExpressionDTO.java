@@ -13,23 +13,23 @@ public class ZFINExpressionDTO extends BasicExpressionDTO {
     private String generatedGeneDescription;
     private String geneName;
     private String geneSymbol;
+    private List<ImageDTO> images;
 
-    public String getGeneName() {
-        return geneName;
+    public String getAssayName() {
+        return assayName;
     }
 
-    public void setGeneName(String geneName) {
-        this.geneName = geneName;
+    public void setAssayName(String assayName) {
+        this.assayName = assayName;
     }
 
-    public String getGeneSymbol() {
-        return geneSymbol;
+    public List<CrossReferenceDTO> getEnsemblCrossReferences() {
+        return ensemblCrossReferences;
     }
 
-    public void setGeneSymbol(String geneSymbol) {
-        this.geneSymbol = geneSymbol;
+    public void setEnsemblCrossReferences(List<CrossReferenceDTO> ensemblCrossReferences) {
+        this.ensemblCrossReferences = ensemblCrossReferences;
     }
-
 
     public String getPublicationTitle() {
         return publicationTitle;
@@ -47,25 +47,27 @@ public class ZFINExpressionDTO extends BasicExpressionDTO {
         this.generatedGeneDescription = generatedGeneDescription;
     }
 
-
-
-    public List<CrossReferenceDTO> getEnsemblCrossReferences() {
-        return ensemblCrossReferences;
+    public String getGeneName() {
+        return geneName;
     }
 
-    public void setEnsemblCrossReferences(List<CrossReferenceDTO> ensemblCrossReferences) {
-        this.ensemblCrossReferences = ensemblCrossReferences;
+    public void setGeneName(String geneName) {
+        this.geneName = geneName;
     }
 
-
-    public String getAssayName() {
-        return assayName;
+    public String getGeneSymbol() {
+        return geneSymbol;
     }
 
-    public void setAssayName(String assayName) {
-        this.assayName = assayName;
+    public void setGeneSymbol(String geneSymbol) {
+        this.geneSymbol = geneSymbol;
     }
 
+    public List<ImageDTO> getImages() {
+        return images;
+    }
 
-
+    public void setImages(List<ImageDTO> images) {
+        this.images = images;
+    }
 }

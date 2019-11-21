@@ -41,6 +41,8 @@ import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.FigurePresentation;
@@ -327,6 +329,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         for (Object[] basicExpressionObjects : expressions) {
 
             //get the array objects converted to named vars & handle basic null stuff
+            String expressionResultId = basicExpressionObjects[0].toString();
             String pubZdbId = basicExpressionObjects[1].toString();
             Integer pubMedId = basicExpressionObjects[2] != null ? (Integer) basicExpressionObjects[2] : null;
             String geneZdbId = basicExpressionObjects[3].toString();
@@ -339,7 +342,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             UberonSlimTermDTO stageUberonDTO = basicExpressionObjects[11] != null ? new UberonSlimTermDTO(basicExpressionObjects[11].toString()) : null;
             String stageName = basicExpressionObjects[12] != null ? basicExpressionObjects[12].toString() : null;
 
+
             BasicExpressionDTO basicXpat = new BasicExpressionDTO();
+            basicXpat.setExpressionResultId(expressionResultId);
             basicXpat.setGeneId("ZFIN:" + geneZdbId);
 
             basicXpat.setWhenExpressed(
@@ -405,6 +410,44 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             basicExpressions.add(basicXpat);
         }
         return basicExpressions;
+    }
+
+    public Map<String, List<ImageDTO>> getDirectSubmissionImageDTOMap() {
+
+        String baseUrl = "https://zfin.org/";
+
+        Map<String, List<ImageDTO>> map = new HashMap<>();
+
+        String sql = "select xpatres_zdb_id, img_zdb_id, img_image " +
+                "from expression_result " +
+                "     join figure on xpatres_fig_zdb_id = fig_zdb_id " +
+                "     join image on img_fig_zdb_id = fig_zdb_id " +
+                "     join publication on publication.zdb_id = fig_source_zdb_id " +
+                "where pub_can_show_images = 't' " +
+                "      and jtype = 'Unpublished'";
+
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+
+        List<Object[]> rows = query.list();
+        for (Object[] row : rows) {
+            String key = row[0].toString();
+            String imgZdbId = row[1].toString();
+            String imageFilename = row[2].toString();
+
+            ImageDTO dto = new ImageDTO();
+
+            dto.setImageZdbId(imgZdbId);
+            dto.setImageFileUrl(baseUrl + "imageLoadUp/" + imageFilename);
+            dto.setImagePageUrl(baseUrl + imgZdbId);
+
+            if (map.get(key) == null) {
+                List<ImageDTO> dtoList = new ArrayList<>();
+                map.put(key,dtoList);
+            }
+            map.get(key).add(dto);
+        }
+
+        return map;
     }
 
     public int getExpressionFigureCountForClone(Clone clone) {

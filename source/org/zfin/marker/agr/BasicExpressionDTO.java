@@ -1,5 +1,6 @@
 package org.zfin.marker.agr;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.zfin.util.JsonDateSerializer;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,6 +13,8 @@ public class BasicExpressionDTO {
     @JsonSerialize(using = JsonDateSerializer.class)
     private GregorianCalendar dateAssigned = new GregorianCalendar();
 
+    @JsonIgnore
+    private String expressionResultId;
     private String geneId;
     private PublicationAgrDTO evidence;
     private CrossReferenceDTO crossReference;
@@ -20,36 +23,20 @@ public class BasicExpressionDTO {
     private ExpressionStageIdentifiersDTO whenExpressed;
     private ExpressionTermIdentifiersDTO whereExpressed;
 
-    public ExpressionStageIdentifiersDTO getWhenExpressed() {
-        return whenExpressed;
+    public GregorianCalendar getDateAssigned() {
+        return dateAssigned;
     }
 
-    public void setWhenExpressed(ExpressionStageIdentifiersDTO whenExpressed) {
-        this.whenExpressed = whenExpressed;
+    public void setDateAssigned(GregorianCalendar dateAssigned) {
+        this.dateAssigned = dateAssigned;
     }
 
-    public ExpressionTermIdentifiersDTO getWhereExpressed() {
-        return whereExpressed;
+    public String getExpressionResultId() {
+        return expressionResultId;
     }
 
-    public void setWhereExpressed(ExpressionTermIdentifiersDTO whereExpressed) {
-        this.whereExpressed = whereExpressed;
-    }
-
-    public CrossReferenceDTO getCrossReference() {
-        return crossReference;
-    }
-
-    public void setCrossReference(CrossReferenceDTO crossReference) {
-        this.crossReference = crossReference;
-    }
-
-    public DataProviderDTO getDataProvider() {
-        return dataProvider;
-    }
-
-    public void setDataProviderList(DataProviderDTO dataProvider) {
-        this.dataProvider = dataProvider;
+    public void setExpressionResultId(String expressionResultId) {
+        this.expressionResultId = expressionResultId;
     }
 
     public String getGeneId() {
@@ -68,12 +55,43 @@ public class BasicExpressionDTO {
         this.evidence = evidence;
     }
 
-    public String getAssay() { return assay; }
+    public CrossReferenceDTO getCrossReference() {
+        return crossReference;
+    }
 
-    public void setAssay(String assay) { this.assay = assay; }
+    public void setCrossReference(CrossReferenceDTO crossReference) {
+        this.crossReference = crossReference;
+    }
 
-    public GregorianCalendar getDateAssigned() { return dateAssigned; }
+    public String getAssay() {
+        return assay;
+    }
 
-    public void setDateAssigned(GregorianCalendar dateAssigned) { this.dateAssigned = dateAssigned; }
+    public void setAssay(String assay) {
+        this.assay = assay;
+    }
 
+    public DataProviderDTO getDataProvider() {
+        return dataProvider;
+    }
+
+    public void setDataProvider(DataProviderDTO dataProvider) {
+        this.dataProvider = dataProvider;
+    }
+
+    public ExpressionStageIdentifiersDTO getWhenExpressed() {
+        return whenExpressed;
+    }
+
+    public void setWhenExpressed(ExpressionStageIdentifiersDTO whenExpressed) {
+        this.whenExpressed = whenExpressed;
+    }
+
+    public ExpressionTermIdentifiersDTO getWhereExpressed() {
+        return whereExpressed;
+    }
+
+    public void setWhereExpressed(ExpressionTermIdentifiersDTO whereExpressed) {
+        this.whereExpressed = whereExpressed;
+    }
 }

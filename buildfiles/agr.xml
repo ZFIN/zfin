@@ -125,6 +125,7 @@
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.agr.ZFINExpressionInfo" fork="yes" classpathref="extended.classpath"
               failonerror="true" maxmemory="8G">
+            <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5555"/>
             <classpath refid="classpath"/>
         </java>
     </target>
