@@ -64,7 +64,8 @@
     <%--protein families, domains, and sites--%>
     <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
 
-        <zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>
+        <%--<zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>--%>
+        <zfin2:proteinProductsLight proteinDomainBeans="${formBean.proteinDomainBeans}"/>
     </c:if>
     <%--Transcripts--%>
     <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}" locations="${formBean.locations}"
