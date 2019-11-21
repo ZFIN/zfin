@@ -156,6 +156,9 @@
         <mapping class="org.zfin.publication.PubmedPublicationAuthor"/>
         <mapping class="org.zfin.sequence.ForeignDB"/>
         <mapping class="org.zfin.sequence.ForeignDBDataType"/>
+        <mapping class="org.zfin.sequence.InterProProtein"/>
+        <mapping class="org.zfin.sequence.ProteinToInterPro"/>
+        <mapping class="org.zfin.sequence.MarkerToProtein"/>
         <mapping class="org.zfin.sequence.reno.Candidate"/>
         <mapping class="org.zfin.sequence.reno.NomenclatureRun"/>
         <mapping class="org.zfin.sequence.reno.RedundancyRun"/>
