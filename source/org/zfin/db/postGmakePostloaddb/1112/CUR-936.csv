@@ -1,4 +1,4 @@
-﻿featureid,featureabb,geneid,geneabb,mutterm,mutname,location,mutdesc,refseq,varseq
+﻿featureid,featureabb,geneid,geneabb,muttype,mutterm,mutname,location,mutdesc,refseq,varseq
 ZDB-ALT-120727-286,sa989,ZDB-GENE-050517-19,abcc6b.1,POINT_MUTATION,ZDB-TERM-130401-1965,G_to_A_transition,3:36818645,G_to_A_transition,C,T
 ZDB-ALT-130411-1597,sa11801,ZDB-GENE-050517-19,abcc6b.1,POINT_MUTATION,ZDB-TERM-130401-1974,A_to_T_transversion,3:36757599,A_to_T_transversion,T,A
 ZDB-ALT-130411-4147,sa15585,ZDB-GENE-050517-19,abcc6b.1,POINT_MUTATION,ZDB-TERM-130401-1965,G_to_A_transition,,G_to_A_transition,C,T

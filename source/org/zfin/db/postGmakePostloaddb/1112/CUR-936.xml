@@ -14,6 +14,7 @@
             <column name="featureabb" type="String"/>
             <column name="geneid" type="String"/>
             <column name="geneabb" type="String"/>
+            <column name="muttype" type="String"/>
             <column name="mutterm" type="String"/>
             <column name="mutname" type="String"/>
             <column name="location" type="String"/>
