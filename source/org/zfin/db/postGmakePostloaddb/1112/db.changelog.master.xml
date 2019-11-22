@@ -11,5 +11,8 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1112/CUR-936_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1112/CUR-936.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1112/CUR-936.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1112/pmflankseq_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1112/pmflankseq.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1112/pmflankseq.sql" />
 
 </databaseChangeLog>
