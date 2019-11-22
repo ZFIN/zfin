@@ -1,7 +1,10 @@
 package org.zfin.framework.presentation.tags;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
 import org.zfin.expression.*;
@@ -13,7 +16,10 @@ import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.presentation.FeaturePrefixPresentation;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.fish.FishAnnotation;
-import org.zfin.fish.presentation.*;
+import org.zfin.fish.presentation.DiseaseModelPresentation;
+import org.zfin.fish.presentation.FishAnnotationPresentation;
+import org.zfin.fish.presentation.FishPresentation;
+import org.zfin.fish.presentation.ZfinEntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -72,6 +78,8 @@ import java.util.Collection;
 /**
  * Tag that creates a hyper link for an object of type provided.
  */
+@Setter
+@Getter
 public class CreateLinkTag extends BodyTagSupport {
 
     private final Logger logger = LogManager.getLogger(CreateLinkTag.class);
@@ -82,6 +90,7 @@ public class CreateLinkTag extends BodyTagSupport {
     private boolean suppressPopupLink;
     private boolean curationLink;
     private boolean suppressMoDetails;
+    private Marker suppressSelf;
 
     public int doStartTag() throws JspException {
         return BodyTag.EVAL_BODY_BUFFERED;
@@ -106,9 +115,13 @@ public class CreateLinkTag extends BodyTagSupport {
             link = ((ProvidesLink) o).getLink();
         else if (o instanceof SequenceTargetingReagent)
             link = MarkerPresentation.getLink((SequenceTargetingReagent) o, suppressPopupLink);
-        else if (o instanceof Marker)
-            link = MarkerPresentation.getLink((Marker) o);
-        else if (o instanceof RelatedMarker)
+        else if (o instanceof Marker) {
+            if (o.equals(suppressSelf))
+                link = MarkerPresentation.getAbbreviation((Marker) o);
+            else
+                link = MarkerPresentation.getLink((Marker) o);
+
+        } else if (o instanceof RelatedMarker)
             link = MarkerPresentation.getLink(((RelatedMarker) o).getMarker());
         else if (o instanceof RunCandidate)
             link = RunCandidatePresentation.getLink((RunCandidate) o);
