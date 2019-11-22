@@ -1,8 +1,6 @@
 package org.zfin.expression.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
@@ -41,8 +39,6 @@ import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.FigurePresentation;
@@ -51,7 +47,6 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
-import javax.ws.rs.core.MultivaluedMap;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -436,7 +431,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
             ImageDTO dto = new ImageDTO();
 
-            dto.setImageZdbId(imgZdbId);
+            dto.setImageId(imgZdbId);
             dto.setImageFileUrl(baseUrl + "imageLoadUp/" + imageFilename);
             dto.setImagePageUrl(baseUrl + imgZdbId);
 

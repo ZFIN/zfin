@@ -1,7 +1,5 @@
 package org.zfin.framework.presentation.tags;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,8 +76,6 @@ import java.util.Collection;
 /**
  * Tag that creates a hyper link for an object of type provided.
  */
-@Setter
-@Getter
 public class CreateLinkTag extends BodyTagSupport {
 
     private final Logger logger = LogManager.getLogger(CreateLinkTag.class);
@@ -323,5 +319,13 @@ public class CreateLinkTag extends BodyTagSupport {
 
     public void setSuppressMoDetails(boolean suppressMoDetails) {
         this.suppressMoDetails = suppressMoDetails;
+    }
+
+    public Marker getSuppressSelf() {
+        return suppressSelf;
+    }
+
+    public void setSuppressSelf(Marker suppressSelf) {
+        this.suppressSelf = suppressSelf;
     }
 }
