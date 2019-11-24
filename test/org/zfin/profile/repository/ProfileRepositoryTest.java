@@ -153,19 +153,19 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
     public void getSuppliersLinkForMarker() {
         // test lab
         List<OrganizationLink> organizationLinks;
-        organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-CDNA-080114-74");
+        organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-CDNA-050503-2");
         assertEquals(1, organizationLinks.size());
-        String linkText1 = "<a href=\"/action/profile/view/ZDB-LAB-060808-1\">Wright Lab</a>";
+        String linkText1 = "<a href=\"/action/profile/view/ZDB-LAB-991005-53\">Zebrafish International Resource Center (ZIRC)</a>";
         linkText1 += " ";
-        linkText1 += "<span style=\"font-size: small;\">(<a href=\"/action/profile/view/ZDB-LAB-060808-1\">order this</a>)</span>";
+        linkText1 += "<span style=\"font-size: small;\">(<a href=\"http://zebrafish.org/est/estAll.php?OID=ZDB-CDNA-050503-2\">order this</a>)</span>";
         assertEquals(linkText1, organizationLinks.iterator().next().getLinkWithAttributionAndOrderThis());
 
         // test has source url
-        organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-FOSMID-100127-525");
+        organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-GENO-960809-7");
         assertEquals(1, organizationLinks.size());
-        String linkText2 = "<a href=\"/action/profile/view/ZDB-LAB-040701-1\">BACPAC Resources Center (BPRC)</a>";
+        String linkText2 = "<a href=\"/action/profile/view/ZDB-LAB-130607-1\">European Zebrafish Resource Center (EZRC)</a>";
         linkText2 += " ";
-        linkText2 += "<span style=\"font-size: small;\">(<a href=\"http://bacpacresources.org/order_clones.php?cloneList=CH1073-18O17\">order this</a>)</span>";
+        linkText2 += "<span style=\"font-size: small;\">(<a href=\"http://www.ezrc.kit.edu/catalog.php?text=ZDB-GENO-960809-7\">order this</a>)</span>";
         assertEquals(linkText2, organizationLinks.iterator().next().getLinkWithAttributionAndOrderThis());
 
 
