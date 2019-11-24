@@ -475,8 +475,8 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void markerHasSupplier() {
-        Marker marker = getMarkerRepository().getMarkerByID("ZDB-BAC-060503-214");
-        Organization bprc = getProfileRepository().getLabById("ZDB-LAB-040701-1");
+        Marker marker = getMarkerRepository().getMarkerByID("ZDB-EST-010914-100");
+        Organization bprc = getProfileRepository().getLabById("ZDB-LAB-991005-53");
         Organization geneTools = getProfileRepository().getCompanyById("ZDB-COMPANY-000502-1");
 
         assertThat(bprc.getZdbID() + " should be a supplier for " + marker.getZdbID(),
