@@ -14,5 +14,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1112/pmflankseq_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1112/pmflankseq.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1112/pmflankseq.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1112/ZFIN-6386.sql" />
 
 </databaseChangeLog>
