@@ -642,7 +642,6 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                join genotype_feature on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
                 "                join fish on genofeat_geno_zdb_id = fish_genotype_zdb_id" +
                 "                join fish_experiment on fish_zdb_id = genox_fish_zdb_id" +
-                "                join mutant_fast_search on mfs_genox_zdb_id = genox_zdb_id" +
                 "                join phenotype_source_generated on pg_genox_zdb_id = genox_zdb_id" +
                 "                join phenotype_observation_generated on psg_pg_id = pg_id" +
                 "                join figure on fig_zdb_id = pg_fig_zdb_id" +
