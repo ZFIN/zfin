@@ -9,6 +9,7 @@ import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.agr.BasicExpressionDTO;
+import org.zfin.marker.agr.ImageDTO;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
@@ -21,6 +22,7 @@ import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -52,6 +54,9 @@ public interface ExpressionRepository {
     int getExpressionFigureCountForClone(Clone clone);
 
     List<BasicExpressionDTO> getBasicExpressionDTOObjects();
+
+    Map<String, List<ImageDTO>> getDirectSubmissionImageDTOMap();
+
     /**
      *
      * @param marker marker

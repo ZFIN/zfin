@@ -26,14 +26,14 @@
                 <td>
                     <c:if test="${not empty constructBean.regulatoryRegions}">
                         <c:forEach var="reg" items="${constructBean.regulatoryRegions}" varStatus="rloop">
-                            <zfin:link entity="${reg}"/><c:if test="${!rloop.last}">,&nbsp;</c:if>
+                            <zfin:link entity="${reg}"  suppressSelf="${gene}"/><c:if test="${!rloop.last}">,&nbsp;</c:if>
                         </c:forEach>
                     </c:if>
                 </td>
                 <td>
                     <c:if test="${not empty constructBean.codingSequences}">
                         <c:forEach var="codingSeq" items="${constructBean.codingSequences}" varStatus="cloop">
-                            <zfin:link entity="${codingSeq}"/><c:if test="${!cloop.last}">,&nbsp;</c:if>
+                            <zfin:link entity="${codingSeq}" suppressSelf="${gene}"/><c:if test="${!cloop.last}">,&nbsp;</c:if>
                         </c:forEach>
                     </c:if>
                 </td>
@@ -45,7 +45,7 @@
                 <td>
                     <a href="/search?category=Mutation+/+Tg&q=&fq=xref:${constructBean.marker.zdbID}">${constructBean.numberOfTransgeniclines}</a>
                 </td>
-                <td style="vertical-align: text-top; text-align: right">
+                <td style="vertical-align: text-top; text-align: left">
                     <a href="/action/marker/citation-list/${constructBean.marker.zdbID}">${constructBean.numPubs}</a>
                 </td>
             </tr>
