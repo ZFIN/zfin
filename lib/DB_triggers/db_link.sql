@@ -35,5 +35,4 @@ $BODY$ LANGUAGE plpgsql;
 
 create trigger db_link_trigger before insert or update on db_link
  for each row
- WHEN (OLD.dblink_fdbcont_zdb_id!='ZDB-FDBCONT-141007-1')
  execute procedure db_link();

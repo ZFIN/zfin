@@ -14,5 +14,5 @@
     <include file="source/org/zfin/db/load/1111/alnc_308.sql"/>
     <include file="source/org/zfin/db/load/1111/remove_null_constraint.sql"/>
     <include file="source/org/zfin/db/load/1111/remove_index.sql"/>
-
+<include file="source/org/zfin/db/load/1111/update_dblink_constraint.sql"/>
 </databaseChangeLog>
