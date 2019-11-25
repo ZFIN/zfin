@@ -1,16 +1,16 @@
 package org.zfin.marker.agr;
 
 public class ImageDTO {
-    private String imageZdbId;
+    private String imageId;
     private String imageFileUrl;
     private String imagePageUrl;
 
-    public String getImageZdbId() {
-        return imageZdbId;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setImageZdbId(String imageZdbId) {
-        this.imageZdbId = imageZdbId;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
     }
 
     public String getImageFileUrl() {

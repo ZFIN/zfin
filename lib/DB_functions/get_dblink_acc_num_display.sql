@@ -33,6 +33,10 @@ returns varchar as $dblinkAccNumDisplay$
   if (dblinkDbName = 'WashUZ') then
     -- we need to prepend 'wz' to the acc_num
     dblinkAccNumDisplay := 'wz' || dblinkAccNum;
+ 
+  if dblinkFdbcontId == 'ZDB-FDBCONT-141007-1' then
+    dblinkAccNumDisplay = null;
+ 
 
   --replace the miranda acc num with one that looks more like the 
   --way curators want to display miRNA names at ZFIN.

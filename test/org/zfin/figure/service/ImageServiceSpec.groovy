@@ -57,8 +57,6 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
         then: "${imageFile}"
         imageFile.exists()
-        thumbnailFile.exists()
-        mediumFile.exists()
     }
 
 

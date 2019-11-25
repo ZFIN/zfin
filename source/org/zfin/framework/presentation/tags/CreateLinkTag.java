@@ -324,4 +324,12 @@ public class CreateLinkTag extends BodyTagSupport {
     public void setSuppressMoDetails(boolean suppressMoDetails) {
         this.suppressMoDetails = suppressMoDetails;
     }
+
+    public Marker getSuppressSelf() {
+        return suppressSelf;
+    }
+
+    public void setSuppressSelf(Marker suppressSelf) {
+        this.suppressSelf = suppressSelf;
+    }
 }
