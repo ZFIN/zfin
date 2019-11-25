@@ -157,12 +157,12 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
         assertEquals(1, organizationLinks.size());
         String linkText1 = "<a href=\"/action/profile/view/ZDB-LAB-991005-53\">Zebrafish International Resource Center (ZIRC)</a>";
         linkText1 += " ";
-        linkText1 += "<span style=\"font-size: small;\">(<a href=\"http://zebrafish.org/est/estAll.php?OID=ZDB-CDNA-050503-2\">order this</a>)</span>";
+        linkText1 += "<span style=\"font-size: small;\">(<a href=\"http://zebrafish.org?OID=ZDB-CDNA-050503-2\">order this</a>)</span>";
         assertEquals(linkText1, organizationLinks.iterator().next().getLinkWithAttributionAndOrderThis());
 
         // test has source url
         organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-GENO-960809-7");
-        assertEquals(1, organizationLinks.size());
+        assertEquals(2, organizationLinks.size());
         String linkText2 = "<a href=\"/action/profile/view/ZDB-LAB-130607-1\">European Zebrafish Resource Center (EZRC)</a>";
         linkText2 += " ";
         linkText2 += "<span style=\"font-size: small;\">(<a href=\"http://www.ezrc.kit.edu/catalog.php?text=ZDB-GENO-960809-7\">order this</a>)</span>";
