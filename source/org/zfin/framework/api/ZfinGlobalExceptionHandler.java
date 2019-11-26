@@ -1,15 +1,37 @@
 package org.zfin.framework.api;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.zfin.framework.presentation.ErrorResource;
+import org.zfin.framework.presentation.FieldErrorResource;
+import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.presentation.PageLayoutControllerAdvice;
+import org.zfin.marker.MarkerNotFoundException;
+import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.zebrashare.repository.ZebrashareRepository;
+
+import javax.servlet.http.HttpServletResponse;
+import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
 
 @ControllerAdvice
 
@@ -27,6 +49,8 @@ public class ZfinGlobalExceptionHandler extends ResponseEntityExceptionHandler {
             model.addAttribute("exception", exception);
             model.addAttribute("stackTrace", ExceptionUtils.getFullStackTrace(exception));
         }
+        model.addAttribute("pageURL", ((ServletWebRequest) request).getRequest().getRequestURI());
+        advice.populateModelAttributes(model);
         return "infrastructure/exception.page";
     }
 
@@ -35,5 +59,56 @@ public class ZfinGlobalExceptionHandler extends ResponseEntityExceptionHandler {
         RestErrorMessage error = restErrorException.getError();
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(MarkerNotFoundException.class)
+    public String handleMarkerNotFoundException (MarkerNotFoundException e, HttpServletResponse response, Model model) {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        model.addAttribute(LookupStrings.ZDB_ID, e.getZdbID());
+        model.addAttribute("copyrightYear", advice.populateCopyrightYear());
+        advice.populateModelAttributes(model);
+        return LookupStrings.RECORD_NOT_FOUND_PAGE;
+    }
+
+    @Autowired
+    private MessageSource messageSource;
+
+    @ExceptionHandler({InvalidWebRequestException.class})
+    protected ResponseEntity<Object> handleInvalidRequest(InvalidWebRequestException ire, WebRequest request) {
+
+        List<FieldErrorResource> fieldErrorResources = new ArrayList<>();
+
+
+        if (ire.getErrors() != null) {
+            List<FieldError> fieldErrors = ire.getErrors().getFieldErrors();
+            for (FieldError fieldError : fieldErrors) {
+                FieldErrorResource fieldErrorResource = new FieldErrorResource();
+                fieldErrorResource.setResource(fieldError.getObjectName());
+                fieldErrorResource.setField(fieldError.getField());
+                fieldErrorResource.setCode(fieldError.getCode());
+                fieldErrorResource.setMessage(messageSource.getMessage(fieldError, null));
+                fieldErrorResources.add(fieldErrorResource);
+            }
+
+            for (ObjectError globalError : ire.getErrors().getGlobalErrors()) {
+                FieldErrorResource fieldErrorResource = new FieldErrorResource();
+                fieldErrorResource.setResource(globalError.getObjectName());
+                fieldErrorResource.setField("$global");
+                fieldErrorResource.setCode(globalError.getCode());
+                fieldErrorResource.setMessage(messageSource.getMessage(globalError, null));
+                fieldErrorResources.add(fieldErrorResource);
+            }
+        }
+
+        ErrorResource error = new ErrorResource("InvalidRequest", ire.getMessage());
+        error.setFieldErrors(fieldErrorResources);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return handleExceptionInternal(ire, error, headers, HttpStatus.UNPROCESSABLE_ENTITY, request);
+    }
+
+    @Autowired
+    private PageLayoutControllerAdvice advice;
 
 }
