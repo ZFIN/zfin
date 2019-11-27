@@ -17,7 +17,7 @@ class FigureGalleryModal extends Component {
 
     componentDidUpdate() {
         if (this.props.image) {
-            $(this.modalRef.current).modal('show');
+            $(this.modalRef.current).bootstrapModal('show');
         }
     }
 

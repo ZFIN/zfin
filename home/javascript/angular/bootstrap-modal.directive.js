@@ -25,9 +25,9 @@
             var $modal = element.find('.modal');
             scope.$watch('show', function(value) {
                 if (value) {
-                    $modal.modal('show');
+                    $modal.bootstrapModal('show');
                 } else {
-                    $modal.modal('hide');
+                    $modal.bootstrapModal('hide');
                 }
             });
         }
