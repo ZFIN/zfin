@@ -18,6 +18,12 @@ main {
   margin: 0 0 20px 0;
 }
 
+.table {
+  th {
+    border-top: 0;
+  }
+}
+
 // form-horizontal is no longer defined by bootstrap as of v4 but we still
 // use it to do label alignment
 .form-horizontal {
