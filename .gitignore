@@ -1,5 +1,6 @@
 # Generated things
 .gradle
+git-info.txt
 home/WEB-INF/classes/
 home/WEB-INF/jsp/dev-tools/zfin-properties.jsp
 home/WEB-INF/log4j.xml
