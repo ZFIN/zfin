@@ -156,6 +156,14 @@
         <load-ontology oboDirectory="${run-directory}" oboFileName="eco-ontology.obo"
                        scripts="${scriptFilesNoAnnotation}"/>
     </target>
+    <taskdef name="groovy"
+             classname="org.codehaus.groovy.ant.Groovy"
+             classpathref="classpath"/>
+
+
+    <target name="get-ecogo-mapping">
+        <groovy src="../eco_go_mapping/getECOGOMapping.groovy"/>
+    </target>
 
     <target name="load-disease-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="disease-ontology.obo"/>
@@ -263,7 +271,7 @@
 
     <target name="load-cell" depends="download-cell-ontology,load-cell-ontology"/>
 
-    <target name="load-eco" depends="download-eco-ontology,load-eco-ontology"/>
+    <target name="load-eco" depends="download-eco-ontology,load-eco-ontology,get-ecogo-mapping"/>
 
     <target name="load-zro" depends="download-zro-ontology,load-zro-ontology"/>
 
