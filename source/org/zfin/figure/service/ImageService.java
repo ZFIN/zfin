@@ -107,9 +107,9 @@ public class ImageService {
         Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         try {
-            String makeMedium = "/bin/convert -thumbnail 1000x64 " + destinationFile + " " + thumbnailFile;
+            String makeMedium = "/bin/convert -thumbnail 1000x64 " + destinationFile + " " + mediumFile;
             Runtime.getRuntime().exec(makeMedium);
-            String makeThumbnail = "/bin/convert -thumbnail 500x550 " + destinationFile + " " + mediumFile;
+            String makeThumbnail = "/bin/convert -thumbnail 500x550 " + destinationFile + " " + thumbnailFile;
             Runtime.getRuntime().exec(makeThumbnail);
 
         } catch (IOException e) {
