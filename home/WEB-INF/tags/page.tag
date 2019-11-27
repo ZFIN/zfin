@@ -50,7 +50,7 @@
         });
     </script>
 </head>
-<body class="${bodyClass}">
+<body class="${bodyClass}" data-spy="scroll" data-target=".data-page-nav-container">
 <zfin2:pageHeader />
 <main>
     <jsp:doBody/>

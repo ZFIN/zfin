@@ -1,3 +1,30 @@
+@import "theme";
+
+body.data-page {
+    main {
+        margin: -10px 0 0 0;
+        background: $grey-light !important;
+    }
+}
+
+.data-page-nav-container {
+    width: 200px;
+    flex-shrink: 0;
+    height: 100vh;
+    min-height: 200px;
+    overflow: auto;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background: white;
+    @include shadow;
+
+    .nav-pills > li > a {
+        border-radius: 0;
+        color: $primary;
+    }
+}
+
 .name-label, .name-value {
     font-size: large;
     font-weight: bold;

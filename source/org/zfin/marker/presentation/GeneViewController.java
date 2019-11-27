@@ -89,17 +89,9 @@ public class GeneViewController {
     @Autowired
     private ExpressionSearchController expressionSearchController;
 
-    @RequestMapping(value = "/gene/view/{zdbID}")
-    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+    private void prepareGeneView(Model model, String zdbID) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();
-
-        zdbID = markerService.getActiveMarkerID(zdbID);
-        logger.info("zdbID: " + zdbID);
-
-        if (!markerService.isOfTypeGene(zdbID)) {
-            return "redirect:/" + zdbID;
-        }
 
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
         logger.info("gene: " + gene);
@@ -138,7 +130,7 @@ public class GeneViewController {
 
         // Protein Products (Protein Families, Domains, and Sites)
         //geneBean.setProteinProductDBLinkDisplay(SequenceService.getProteinProducts(gene));
-      geneBean.setProteinDomainBeans(markerRepository.getInterProLinksForMarker(gene));
+        geneBean.setProteinDomainBeans(markerRepository.getInterProLinksForMarker(gene));
 
         // Transcripts
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
@@ -254,8 +246,28 @@ public class GeneViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
+    }
+
+    @RequestMapping(value = "/gene/view/{zdbID}")
+    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        zdbID = markerService.getActiveMarkerID(zdbID);
+        if (!markerService.isOfTypeGene(zdbID)) {
+            return "redirect:/" + zdbID;
+        }
+        prepareGeneView(model, zdbID);
 
         return "marker/gene-view.page";
+    }
+
+    @RequestMapping(value = "/gene/prototype-view/{zdbID}")
+    public String getGenePrototypeView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        zdbID = markerService.getActiveMarkerID(zdbID);
+        if (!markerService.isOfTypeGene(zdbID)) {
+            return "redirect:/" + zdbID;
+        }
+        prepareGeneView(model, zdbID);
+
+        return "marker/gene-prototype-view.page";
     }
 
     @RequestMapping(value = "/gene/edit/{zdbID}")

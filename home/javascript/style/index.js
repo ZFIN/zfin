@@ -6,7 +6,7 @@ require('../../css/searchresults.css');
 require('../../css/summary.css');
 require('../../css/Lookup.css');
 require('../../css/Marker.css');
-require('../../css/datapage.css');
+require('../../css/datapage.scss');
 require('../../css/popup.css');
 require('../../css/modal.css');
 require('../../css/typeahead.scss');
