@@ -10,7 +10,7 @@ body.data-page {
 .data-page-nav-container {
     width: 200px;
     flex-shrink: 0;
-    height: 100vh;
+    max-height: 100vh;
     min-height: 200px;
     overflow: auto;
     position: -webkit-sticky;
