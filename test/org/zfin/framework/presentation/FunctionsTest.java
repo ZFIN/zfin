@@ -127,16 +127,16 @@ public class FunctionsTest {
     @Test
     public void makeDomIdentifierShouldRemoveIllegalCharacters() {
         assertThat("makeDomIdentifier should remove spaces from input",
-                ZfinJSPFunctions.makeDomIdentifier("Affected Genomic Region"), is("AffectedGenomicRegion"));
+                ZfinJSPFunctions.makeDomIdentifier("Affected Genomic Region"), is("affected-genomic-region"));
 
         assertThat("makeDomIdentifier should remove slashes from input",
-                ZfinJSPFunctions.makeDomIdentifier("Mutation / Tg"), is("MutationTg"));
+                ZfinJSPFunctions.makeDomIdentifier("Mutation / Tg"), is("mutation---tg"));
 
         assertThat("makeDomIdentifier should remove parens from input",
-                ZfinJSPFunctions.makeDomIdentifier("Sequence Targeting Reagent (STR)"), is("SequenceTargetingReagentSTR"));
+                ZfinJSPFunctions.makeDomIdentifier("Sequence Targeting Reagent (STR)"), is("sequence-targeting-reagent--str-"));
 
         assertThat("makeDomIdentifier should remove ampersand from input",
-                ZfinJSPFunctions.makeDomIdentifier("Cookies & Cream"), is("CookiesCream"));
+                ZfinJSPFunctions.makeDomIdentifier("Cookies & Cream"), is("cookies---cream"));
     }
 }
 

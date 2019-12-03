@@ -86,7 +86,7 @@ public class ZfinJSPFunctions {
     }
 
     public static String makeDomIdentifier(String identifier) {
-        return identifier.toLowerCase().replaceAll("[^A-Za-z0-9-_:\\.]", "");
+        return identifier.toLowerCase().replaceAll("[^A-Za-z0-9-_:\\.]", "-");
     }
 
     /**
