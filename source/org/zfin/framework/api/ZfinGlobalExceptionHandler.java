@@ -1,6 +1,5 @@
 package org.zfin.framework.api;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -13,7 +12,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -24,17 +22,13 @@ import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.presentation.PageLayoutControllerAdvice;
 import org.zfin.marker.MarkerNotFoundException;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import javax.servlet.http.HttpServletResponse;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice
-
 public class ZfinGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
@@ -61,7 +55,7 @@ public class ZfinGlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(MarkerNotFoundException.class)
-    public String handleMarkerNotFoundException (MarkerNotFoundException e, HttpServletResponse response, Model model) {
+    public String handleMarkerNotFoundException(MarkerNotFoundException e, HttpServletResponse response, Model model) {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         model.addAttribute(LookupStrings.ZDB_ID, e.getZdbID());
         model.addAttribute("copyrightYear", advice.populateCopyrightYear());

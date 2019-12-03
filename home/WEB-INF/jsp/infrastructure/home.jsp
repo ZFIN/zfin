@@ -8,7 +8,7 @@
 <div class="container">
     <div class="row">
         <div class="col-xl-7">
-            <jsp:include page="homePrimaryLinks.jsp" />
+            <jsp:include page="homePrimaryLinks.jsp"/>
 
             <%-- we might be able to this reordering more elegantly with bootstrap 4 --%>
             <div class="d-block d-xl-none">
@@ -29,8 +29,13 @@
             </div>
 
             <div class="section">
-                <div class="heading">News & Meeting Announcements</div>
-                <div class="__react-root" id="NewsAndMeetingsFeed"></div>
+                <div class="heading">News</div>
+                <div class="__react-root" id="NewsFeed"></div>
+            </div>
+
+            <div class="section">
+                <div class="heading">Meeting Announcements</div>
+                <div class="__react-root" id="MeetingsFeed"></div>
             </div>
 
             <div class="section">
@@ -41,7 +46,7 @@
 
 
         <div class="col-xl-5 d-none d-xl-block">
-            <jsp:include page="homeAboutBox.jsp" />
+            <jsp:include page="homeAboutBox.jsp"/>
 
             <jsp:include page="homeAdditionalResources.jsp"/>
 

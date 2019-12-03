@@ -8,9 +8,11 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.wiki.*;
 
 import javax.xml.rpc.ServiceException;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.rmi.RemoteException;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Please see http://confluence.atlassian.com/display/DOC/Remote+API+Specification
@@ -307,4 +309,32 @@ public class WikiWebService {
         return service.getBlogEntry(token, id);
     }
 
+    public List<String> getLabels(long id) throws RemoteException {
+        final RemoteLabel[] labelsById = service.getLabelsById(token, id);
+        return Arrays.stream(labelsById)
+                .map(RemoteLabel::getName)
+                .collect(Collectors.toList());
+    }
+
+    public LocalDate getDateLabel(long id) {
+        final List<String> labels;
+        try {
+            labels = getLabels(id);
+            return labels.stream()
+                    .filter(label -> Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$").matcher(label).matches())
+                    .map(LocalDate::parse)
+                    .findFirst().orElse(null);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<RemotePageSummary> getPagesSorted(String spaceName) {
+        RemotePageSummary[] pageSummaries = instance.getAllPagesForSpace(spaceName);
+        return Arrays.stream(pageSummaries)
+//                .filter(page -> getDateLabel(page.getId()) != null)
+                .sorted(Comparator.comparing(page -> getDateLabel(page.getId())))
+                .collect(Collectors.toList());
+    }
 }

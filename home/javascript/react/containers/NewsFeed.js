@@ -2,8 +2,8 @@ import React from 'react';
 import {getBlogPosts} from "../api/wiki";
 import WikiBlogPostList from "../components/WikiBlogPostList";
 
-function NewsAndMeetingsFeed() {
+function NewsFeed() {
     return <WikiBlogPostList onInit={() => getBlogPosts('news')} showAll='/display/news' />
 }
 
-export default NewsAndMeetingsFeed;
+export default NewsFeed;
