@@ -11,7 +11,7 @@ export const getBlogPosts = (space, options = {}) => {
 
 export const getPosts = (space = {}) => {
     const params = {
-        limit: 2,
+        limit: 5,
     };
     return http.get(`/action/api/wiki/${space}`, params);
 };

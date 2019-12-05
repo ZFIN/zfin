@@ -21,7 +21,6 @@ class WikiPostList extends Component {
             next: response.nextPageURL,
             loading: false,
         }));
-        alert('Hi: '+this.state.next)
     }
 
     loadNext(evt) {
