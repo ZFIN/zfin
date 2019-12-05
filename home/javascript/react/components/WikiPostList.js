@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {getLink} from "../api/wiki";
+import {getMeetingLink} from "../api/wiki";
 import LoadingSpinner from "./LoadingSpinner";
 
 class WikiPostList extends Component {
@@ -18,37 +18,40 @@ class WikiPostList extends Component {
         this.setState({loading: true});
         this.props.onInit().then(response => this.setState({
             posts: response.results,
-            next: response._links.next,
+            next: response.nextPageURL,
             loading: false,
         }));
+        alert('Hi: '+this.state.next)
     }
 
     loadNext(evt) {
         evt.preventDefault();
         this.setState({loading: true});
-        getLink(this.state.next).then(response => this.setState(state => ({
+        getMeetingLink(this.state.next).then(response => this.setState(state => ({
             posts: state.posts.concat(response.results),
-            next: response._links.next,
+            next: response.nextPageURL,
             loading: false,
         })));
     }
 
     render() {
         const {posts, next, loading} = this.state;
-        const { showAll } = this.props;
+        const {showAll} = this.props;
+//        alert('state: ' + this.state.posts)
         return (
             <div>
                 <ul className='list-unstyled'>
                     {posts.map(post => (
                         <li key={post.id}>
-                            <p><a href={`https://@WIKI_HOST@${post.url}`}>{post.title}</a></p>
+                            <p><a href={post.url}>{post.title}</a></p>
                         </li>
                     ))}
                 </ul>
-                <LoadingSpinner loading={loading} />
+                <LoadingSpinner loading={loading}/>
                 <div className='wiki-list-controls'>
-                    <span>{ next && <a href='#' onClick={this.loadNext}>Load More</a> }</span>
-                    <span>{ showAll && <a href={`https://@WIKI_HOST@${showAll}`}>See All <i className='fas fa-chevron-right' /></a>}</span>
+                    <span>{next && <a href='#' onClick={this.loadNext}>Load More</a>}</span>
+                    <span>{showAll &&
+                    <a href={`https://@WIKI_HOST@${showAll}`}>See All <i className='fas fa-chevron-right'/></a>}</span>
                 </div>
             </div>
         );

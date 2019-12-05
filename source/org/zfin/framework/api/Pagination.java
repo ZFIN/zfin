@@ -59,18 +59,18 @@ public class Pagination {
         }
     }
 
-        public void addFieldFilter(FieldFilter fieldFilter, String value) {
-            fieldFilterValueMap.put(fieldFilter, value);
-        }
+    public void addFieldFilter(FieldFilter fieldFilter, String value) {
+        fieldFilterValueMap.put(fieldFilter, value);
+    }
 
-        public void makeSingleFieldFilter(FieldFilter fieldFilter, String value) {
-            fieldFilterValueMap.clear();
-            fieldFilterValueMap.put(fieldFilter, value);
-        }
+    public void makeSingleFieldFilter(FieldFilter fieldFilter, String value) {
+        fieldFilterValueMap.clear();
+        fieldFilterValueMap.put(fieldFilter, value);
+    }
 
-        public void removeFieldFilter(FieldFilter fieldFilter) {
-            fieldFilterValueMap.remove(fieldFilter);
-        }
+    public void removeFieldFilter(FieldFilter fieldFilter) {
+        fieldFilterValueMap.remove(fieldFilter);
+    }
 
     public boolean hasErrors() {
         return !errorList.isEmpty();
@@ -108,6 +108,10 @@ public class Pagination {
 
     public void setLimitToAll() {
         limit = Integer.MAX_VALUE;
+    }
+
+    public Integer getNextPage() {
+        return page + 1;
     }
 
     enum AscendingValues {

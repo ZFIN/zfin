@@ -3,6 +3,7 @@ package org.zfin.wiki.service;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zfin.framework.api.Pagination;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.wiki.*;
@@ -11,6 +12,7 @@ import javax.xml.rpc.ServiceException;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -59,7 +61,10 @@ public class WikiWebService {
 
     private static WikiWebService instance = null;
 
+    private CacheUpdater cacheUpdater = new CacheUpdater("meetings");
+
     protected WikiWebService() {
+//        cacheUpdater.start();
     }
 
     public static WikiWebService getInstance() throws WikiLoginException {
@@ -330,11 +335,57 @@ public class WikiWebService {
         return null;
     }
 
-    public List<RemotePageSummary> getPagesSorted(String spaceName) {
-        RemotePageSummary[] pageSummaries = instance.getAllPagesForSpace(spaceName);
-        return Arrays.stream(pageSummaries)
-//                .filter(page -> getDateLabel(page.getId()) != null)
-                .sorted(Comparator.comparing(page -> getDateLabel(page.getId())))
+    // Cached variable
+    private List<RemotePageSummary> pageSummaries;
+
+    public List<RemotePageSummary> getPagesSorted(String wikiSpace, Pagination pagination) {
+        if (pageSummaries == null)
+//            return null;
+            populateRemotePageSummaries(wikiSpace);
+        return pageSummaries.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
                 .collect(Collectors.toList());
     }
+
+    private void populateRemotePageSummaries(String spaceName) {
+        RemotePageSummary[] pageSummariesLocal = instance.getAllPagesForSpace(spaceName);
+
+        Map<Long, LocalDate> pageDateMap = new HashMap<>();
+        Arrays.stream(pageSummariesLocal)
+                .forEach(page -> {
+                    LocalDate date = getDateLabel(page.getId());
+                    if (date != null)
+                        pageDateMap.put(page.getId(), date);
+                });
+
+        pageSummaries = Arrays.stream(pageSummariesLocal)
+                .filter(remotePageSummary -> pageDateMap.get(remotePageSummary.getId()) != null)
+                .sorted(Comparator.comparing(page -> pageDateMap.get(page.getId())))
+                .collect(Collectors.toList());
+    }
+
+
+    class CacheUpdater extends Thread {
+
+        String cacheSpace;
+
+        public CacheUpdater(String cacheSpaceName) {
+            cacheSpace = cacheSpaceName;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                populateRemotePageSummaries(cacheSpace);
+                try {
+                    TimeUnit.MINUTES.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
 }

@@ -36,6 +36,7 @@ class WikiBlogPostList extends Component {
     render() {
         const {posts, next, loading} = this.state;
         const { showAll } = this.props;
+
         return (
             <div>
                 <ul className='list-unstyled'>

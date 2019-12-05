@@ -9,12 +9,15 @@ export const getBlogPosts = (space, options = {}) => {
     return http.get('https://wiki.zfin.org/rest/api/content/search', params);
 };
 
-export const getPosts = (space, options = {}) => {
+export const getPosts = (space = {}) => {
     const params = {
-        limit: 5,
-        expand: 'history',
+        limit: 2,
     };
-    return http.get('http://schlapp/action/api/wiki/meetings', params);
+    return http.get(`/action/api/wiki/${space}`, params);
+};
+
+export const getMeetingLink = (link) => {
+    return http.get(link);
 };
 
 export const getLink = (link) => {

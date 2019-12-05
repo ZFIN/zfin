@@ -2,12 +2,13 @@ package org.zfin.framework.api;
 
 
 import com.fasterxml.jackson.annotation.JsonView;
-
-import java.util.Map;
-import java.util.TreeMap;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Setter
 @Getter
@@ -17,10 +18,13 @@ public class Request {
     String uri;
 
     @JsonView(View.Default.class)
-    TreeMap<String, String[]> parameterMap = new TreeMap<>();
+    TreeMap<String, List<String>> parameterMap = new TreeMap<>();
 
     void setParameterMap(Map<String, String[]> parameterMap) {
-        this.parameterMap.putAll(parameterMap);
+
+        parameterMap.forEach((key, values) -> {
+            this.parameterMap.put(key, Arrays.asList(values));
+        });
     }
 
 }
