@@ -83,7 +83,7 @@
                     <td>${person.fax}</td>
                 </tr>
                 <tr>
-                    <th>Orcid ID:</th>
+                    <th>ORCID ID:</th>
                     <td><a href="http://orcid.org/${person.orcidID}">${person.orcidID}</a></td>
                 </tr>
             </table>
