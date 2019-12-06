@@ -499,7 +499,7 @@ $(function () {
         $.get(summaryUrl, function (data) {
             var content = $(data);
             var loader = content.find('.figure-gallery-modal-loader');
-            $figureGalleryModal.modal();
+            $figureGalleryModal.bootstrapModal();
             $(document).off('keydown.figuregallery').on('keydown.figuregallery', function (evt) {
                 switch (evt.which) {
                     case 37: // left
