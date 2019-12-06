@@ -9,7 +9,7 @@
 <%@attribute name="curatorContent" fragment="true" %>
 <%-- Initially set to display:none for root users only, since they're the only users that can select the table view,
     document.ready in prototype-results.jsp will make these visible --%>
-<div style="clear:both; <authz:authorize access="hasRole('root')">display:none;</authz:authorize>" class="col-lg-12 search-result boxy-search-result">
+<div style="clear:both; <authz:authorize access="hasRole('root')">display:none;</authz:authorize>" class="search-result boxy-search-result">
 
     <div class="result-meta-data search-result-category">
         <jsp:invoke fragment="metadata"/>
@@ -18,7 +18,8 @@
     <c:if test="${!empty result.displayedID}">
         <span class="result-id"> ${result.displayedID}</span>
     </c:if>
-    <div class="result-header search-result-name">
+
+    <div class="result-header search-result-name clearfix">
         <zfin:link entity="${result}"/>
 
         <authz:authorize access="hasRole('root')">
@@ -30,44 +31,35 @@
                class="result-explain-link"><i class="fas fa-list-ol"></i></span>
           </c:if>
         </authz:authorize>
-
-
     </div>
 
     <div class="result-body">
-        <table style="width: 99%">
-            <tr>
-                <td>
-                    <c:if test="${!empty result.attributes}">
-                        <table class="search-result-entity-attributes">
-                            <c:forEach var="entry" items="${result.attributes}" varStatus="loop">
-                                <tr>
-                                    <th width="5%">${entry.key}</th>
-                                    <td>${entry.value}</td>
-                                </tr>
-                            </c:forEach>
-                        </table>
-                    </c:if>
-                </td>
-                <td align="right" valign="top">
-                    <c:if test="${not empty result.image}">
-                        <div class="result-thumbnail-container float-right" style="min-width: 100px;">
-                            <zfin-search:imageModal result="${result}"/>
-                        </div>
-                    </c:if>
-                    <c:if test="${not empty result.profileImage}">
-                        <div class="float-right result-thumbnail-container">
-                            <div class="search-result-thumbnail">
-                                <a href="${result.url}">
-                                    <img style="max-width: 150px; max-height: 70px;"
-                                         src="<%=ZfinPropertiesEnum.IMAGE_LOAD.value()%>/${result.profileImage}">
-                                </a>
-                            </div>
-                        </div>
-                    </c:if>
-                </td>
-            </tr>
-        </table>
+        <c:if test="${not empty result.image}">
+            <div class="result-thumbnail-container float-right">
+                <zfin-search:imageModal result="${result}"/>
+            </div>
+        </c:if>
+        <c:if test="${not empty result.profileImage}">
+            <div class="float-right result-thumbnail-container">
+                <div class="search-result-thumbnail">
+                    <a href="${result.url}">
+                        <img style="max-width: 150px; max-height: 70px;"
+                             src="<%=ZfinPropertiesEnum.IMAGE_LOAD.value()%>/${result.profileImage}">
+                    </a>
+                </div>
+            </div>
+        </c:if>
+
+        <c:if test="${!empty result.attributes}">
+            <table class="search-result-entity-attributes">
+                <c:forEach var="entry" items="${result.attributes}" varStatus="loop">
+                    <tr>
+                        <th width="5%">${entry.key}</th>
+                        <td>${entry.value}</td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
 
         <c:if test="${!empty result.featureGenes}">
             <table class="fish-result-table">
@@ -150,9 +142,5 @@ ${result.explain}
             </div>
         </div>
     </c:if>
-
-
-    <div style="clear:both;">&nbsp;</div>
-
 
 </div>

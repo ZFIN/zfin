@@ -5,9 +5,9 @@ div.search-result-container {
 
 div.search-result {
     border: 1px solid #c0c7c0;
-    border-top-right-radius: 5px;;
+    border-top-right-radius: 5px;
     margin-top: .5em;
-    padding: .5em;
+    padding: .5em .5em 2em;
 }
 
 .cross-reference-result-container {
