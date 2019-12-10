@@ -19,11 +19,11 @@
         </tr>
         <c:forEach var="fishModel" items="${fishModels}" varStatus="loop">
             <zfin:alternating-tr loopName="loop" groupBeanCollection="${fishModels}"
-                                 groupByBean="fishModel.fish.name">
+                                 groupByBean="fishModel.fish.zdbID">
 
                 <td>
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${fishModels}"
-                                         groupByBean="fishModel.fish.name">
+                                         groupByBean="fishModel.fish.zdbID">
 
                         <zfin:link entity="${fishModel.fishModel.fish}"/>
                     </zfin:groupByDisplay>
