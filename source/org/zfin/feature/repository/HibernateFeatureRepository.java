@@ -146,6 +146,15 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
         return (List<Feature>) query.list();
     }
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Feature> getNonSaFeaturesWithGenomicMutDets() {
+        String hql = "select distinct fs.feature from FeatureGenomicMutationDetail fs  where fs.feature.abbreviation  not like 'sa%' ";
+
+        Query query = currentSession().createQuery(hql);
+
+        return (List<Feature>) query.list();
+    }
 
     @SuppressWarnings("unchecked")
     public List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID) {

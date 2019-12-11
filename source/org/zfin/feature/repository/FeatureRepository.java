@@ -62,6 +62,7 @@ public interface FeatureRepository {
     List<FeaturePrefix> getLabPrefixes(String labName);
     List<Feature> getFeaturesWithLocationOnAssembly11();
     List<Feature> getFeaturesWithGenomicMutDets();
+    List<Feature> getNonSaFeaturesWithGenomicMutDets();
     String getNextZFLineNum();
 
     List<FeaturePrefix> getLabPrefixes(String labName, boolean assignIfEmpty);
