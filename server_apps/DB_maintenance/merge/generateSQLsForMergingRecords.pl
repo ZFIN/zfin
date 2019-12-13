@@ -38,10 +38,6 @@ if ($recordToBeMergedInto =~ m/^ZDB\-([A-Z]+)\-\d{6}\-\d+$/) {
     die "Not a valid ZDB ID for the record to be merged into\n";
 }
 
-if ($type1 ne $type2) {
-  die "\n\nCannot merge the different type of ZFIN records\n\n";
-}
-
 my $tableName;
 my $primaryKeyColumn;
 
@@ -94,22 +90,23 @@ recursivelyGetSQLs($recordToBeDeleted, $recordToBeMergedInto, $tableName, $prima
 $dbh->disconnect();
 
 ## print out all the generated SQLs, sort by the values first (depth, reversed; i.e. the deepest first), then by the keys (delete before update)
-open (SQLFILE, ">merge.sql") || die "Cannot open merge.sql : $!\n"; 
+open (SQLFILE, ">merge.sql") || die "Cannot open merge.sql : $!\n";
+open (FINALSQLFILE, ">final-merge.sql") || die "Cannot open final-merge.sql : $!\n";
 my @sorted = sort { $mergeSQLs{$b} <=> $mergeSQLs{$a} || $a cmp $b } keys %mergeSQLs;
-print SQLFILE "begin work;\n\n";
 for (@sorted) {
     print SQLFILE "$_\n\n";
+    print FINALSQLFILE "$_\n\n";
 }
 
 ## if not zdb_active_data records, adding final SQLs:
 if ($type1 eq 'COMPANY' || $type1 eq 'JRNL' || $type1 eq 'LAB' || $type1 eq 'PERS' || $type1 eq 'PUB' || $type1 eq 'SALIAS') {
    my $deleteSQL = "delete from zdb_active_source where zactvs_zdb_id = '$recordToBeDeleted';";
    print SQLFILE "$deleteSQL\n\n";
+   print FINALSQLFILE "$deleteSQL\n\n";
    my $insertWithdrawnDataSQL = "insert into withdrawn_data (wd_old_zdb_id, wd_new_zdb_id, wd_display_note) values ('$recordToBeDeleted', '$recordToBeMergedInto', 'merged');";
    print SQLFILE "$insertWithdrawnDataSQL\n\n";
+   print FINALSQLFILE "$insertWithdrawnDataSQL\n\n";
 }
-
-print SQLFILE "\nrollback work;\n\n\n";
 
 close SQLFILE;
 
@@ -124,6 +121,7 @@ for (@sorted2) {
 }
 
 close DEPTHANDSQL;
+close FINALSQLFILE;
 
 exit;
 
@@ -555,6 +553,5 @@ sub validateZDBID {
   die "\n\n$zdbID is not found at ZFIN\n\n" if $ctRecords == 0;
   
 } # end of validateZDBID function
-
 
 

@@ -37,9 +37,6 @@ if ($recordToBeMergedInto =~ m/^ZDB\-([A-Z]+)\-\d{6}\-\d+$/) {
     die "\n\nNot a valid ZDB ID for the record to be merged into\n\n";
 }
 
-if ($type1 ne $type2) {
-  die "\n\nCannot merge the different type of ZFIN records\n\n";
-}
 
 ## global hash variable storing the SQLs
 my %mergeSQLs = ();
@@ -136,15 +133,16 @@ $mergeSQLs{$sqlInsertReplacedData} = 0;
 
 
 ## print out all the generated SQLs, sort by the values first (depth, reversed; i.e. the deepest first), then by the keys (delete before update)
-open (SQLFILE, ">post-merge.sql") || die "Cannot open post-merge.sql : $!\n"; 
+open (SQLFILE, ">post-merge.sql") || die "Cannot open post-merge.sql : $!\n";
+open (FINALSQLFILE, ">>final-merge.sql") || die "Cannot open final-merge.sql : $!\n";
 my @sorted = sort { $mergeSQLs{$b} <=> $mergeSQLs{$a} || $a cmp $b } keys %mergeSQLs;
-print SQLFILE "begin work;\n\n";
 for (@sorted) {
     print SQLFILE "$_\n\n";
+    print FINALSQLFILE "$_\n\n";
 }
-print SQLFILE "\nrollback work;\n\n\n";
 
 close SQLFILE;
+close FINALSQLFILE;
 
 exit;
 
@@ -210,7 +208,5 @@ sub validateZDBID {
   die "\n\n$zdbID is not found at ZFIN\n\n" if $ctRecords == 0;
   
 } # end of validateZDBID function
-
-
 
 

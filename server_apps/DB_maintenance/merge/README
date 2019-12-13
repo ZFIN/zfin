@@ -1,23 +1,26 @@
 README
 
-On PostGreSQL (not Informix), run the following
+On PostGreSQL, run the following
 
 generateSQLsForMergingRecords.pl ZDB_ID1 ZDB_ID2
 
 to generate the SQLs (written to merge.sql) needed for the merge action.
 
-If the records are zdb_active_data records, need to first change the "rollback work" into "commit work;"
-in the merge.sql and execute the file on PostGreSQL. Then, run another Perl script on PostGreSQL.
+Execute the merge.sql file on PostGreSQL. Then, run another Perl script on PostGreSQL.
 
 generatePostMergeSQLs.pl ZDB_ID1 ZDB_ID2
 
 to generate the rest of SQLs (written to post-merge.sql).
 
-Copy the SQLs from post-merge.sql and add them into merge.sql. 
+Execute the post-merge.sql file to make sure there is no error.
 
-Then, merge.sql could be executed on bith Innformix and PostGreSQL to get the two ZFIN records merged.
+If no error, final-merge.sql has all the SQLs needed to get the two ZFIN records merged and could be copied to the LiquiBase file (ZDB_ID1 merged into ZDB_ID2).
 
-Notice that if the records are two markers, the merge.sql could be only executed on bith Innformix, 
-since there is some SQL syntax with select ... into temp table, which could not be executed on PostGreSQL.
+Notice that no previous name/alias is created by the generated SQLs. If previous name/alias is needed, some SQL for that purpose should be manually added to final-merge.sql.
 
 The key code to generate the SQLs is inside the recursive function, which takes advantage of PostGreSQL Information Schema views.
+
+As long as all necessary foreign keys are in place, all data associated with ZDB_ID1 should be able to be moved to ZDB_ID2 after executing the SQLs in final-merge.sql
+
+(or after executing merge.sql and post-merge.sql).
+
