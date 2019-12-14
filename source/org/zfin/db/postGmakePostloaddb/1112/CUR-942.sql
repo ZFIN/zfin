@@ -1,6 +1,9 @@
 --liquibase formatted sql
 --changeset xshao:CUR-942
 
+update marker set mrkr_comments = (select mrkr_comments from marker m where m.mrkr_zdb_id = 'ZDB-NCCR-191112-21')
+  where mrkr_zdb_id = 'ZDB-ENHANCER-190910-1';
+
 update construct_marker_relationship 
                                 set conmrkrrel_mrkr_zdb_id = 'ZDB-NCCR-191112-21'
                               where conmrkrrel_mrkr_zdb_id = 'ZDB-ENHANCER-190910-1';
