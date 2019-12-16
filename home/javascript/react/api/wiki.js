@@ -12,12 +12,9 @@ export const getBlogPosts = (space, options = {}) => {
 export const getPosts = (space = {}) => {
     const params = {
         limit: 5,
+        page: 1,
     };
     return http.get(`/action/api/wiki/${space}`, params);
-};
-
-export const getMeetingLink = (link) => {
-    return http.get(link);
 };
 
 export const getLink = (link) => {

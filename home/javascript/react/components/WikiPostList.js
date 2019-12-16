@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {getMeetingLink} from "../api/wiki";
 import LoadingSpinner from "./LoadingSpinner";
+import http from '../utils/http';
 
 class WikiPostList extends Component {
     constructor(props) {
@@ -26,7 +26,7 @@ class WikiPostList extends Component {
     loadNext(evt) {
         evt.preventDefault();
         this.setState({loading: true});
-        getMeetingLink(this.state.next).then(response => this.setState(state => ({
+        http.get(this.state.next).then(response => this.setState(state => ({
             posts: state.posts.concat(response.results),
             next: response.nextPageURL,
             loading: false,
@@ -36,7 +36,6 @@ class WikiPostList extends Component {
     render() {
         const {posts, next, loading} = this.state;
         const {showAll} = this.props;
-//        alert('state: ' + this.state.posts)
         return (
             <div>
                 <ul className='list-unstyled'>
