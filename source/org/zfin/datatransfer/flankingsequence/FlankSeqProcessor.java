@@ -90,7 +90,7 @@ public class FlankSeqProcessor {
 
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd, locEnd + offset).getBases());
-                                
+
                             }
                             if (feature.getType() == FeatureTypeEnum.POINT_MUTATION) {
                                 if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length() == 0) {
