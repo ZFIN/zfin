@@ -131,7 +131,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getFeaturesWithLocationOnAssembly11() {
-        String hql = "select distinct fs.feature from FeatureLocation fs where fs.sfclAssembly like '%z11' ";
+        String hql = "select distinct fs.feature from FeatureLocation fs where fs.ftrAssembly like '%z11' ";
 
         Query query = currentSession().createQuery(hql);
 
@@ -389,7 +389,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public FeatureLocation getLocationByFeature(Feature ftr) {
         Session session = HibernateUtil.currentSession();
         String hql = "select fs  from  FeatureLocation fs " +
-                "     where fs.feature = :feature and fs.sfclAssembly like '%z1%' order by fs.sfclAssembly desc  ";
+                "     where fs.feature = :feature and fs.ftrAssembly like '%z1%' order by fs.ftrAssembly desc  ";
 
         Query query = session.createQuery(hql);
         query.setParameter("feature", ftr);
@@ -400,7 +400,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         if (fl==null)
         {
             String hql1 = "select fs  from  FeatureLocation fs " +
-                    "     where fs.feature = :feature and fs.sfclAssembly like '%9%' order by fs.sfclAssembly desc ";
+                    "     where fs.feature = :feature and fs.ftrAssembly like '%9%' order by fs.ftrAssembly desc ";
 
             Query query1 = session.createQuery(hql1);
             query.setParameter("feature", ftr);
@@ -629,7 +629,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     public FeatureLocation getAllFeatureLocationsOnGRCz11(Feature feature) {
         Criteria featureLocationCriteria = HibernateUtil.currentSession().createCriteria(FeatureLocation.class);
-        featureLocationCriteria.add(Restrictions.eq("sfclAssembly", "GRCz11"));
+        featureLocationCriteria.add(Restrictions.eq("ftrAssembly", "GRCz11"));
         featureLocationCriteria.add(Restrictions.eq("feature",feature));
         featureLocationCriteria.setMaxResults(1);
         FeatureLocation ftrLoc = (FeatureLocation) featureLocationCriteria.uniqueResult();

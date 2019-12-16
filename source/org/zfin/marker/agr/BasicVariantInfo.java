@@ -60,9 +60,9 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                 FeatureLocation ftrLoc = getFeatureRepository().getAllFeatureLocationsOnGRCz11(feature);
 
                                 if (ftrLoc != null
-                                        && ftrLoc.getSfclStart() != null && ftrLoc.getSfclStart().toString() != ""
-                                        && ftrLoc.getSfclEnd() != null && ftrLoc.getSfclEnd().toString() != ""
-                                        && ftrLoc.getSfclAssembly() != null && ftrLoc.getSfclAssembly() != ""
+                                        && ftrLoc.getFtrStartLocation() != null && ftrLoc.getFtrStartLocation().toString() != ""
+                                        && ftrLoc.getFtrEndLocation() != null && ftrLoc.getFtrEndLocation().toString() != ""
+                                        && ftrLoc.getFtrAssembly() != null && ftrLoc.getFtrAssembly() != ""
                                         && ftrLoc.getReferenceSequenceAccessionNumber() != null && ftrLoc.getReferenceSequenceAccessionNumber() != ""
                                         ) {
                                     String featureType = variant.getFeature().getType().toString();
@@ -105,16 +105,16 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
 
                                         dto.setSequenceOfReferenceAccessionNumber(ftrLoc.getReferenceSequenceAccessionNumber());
                                         if (ftrLoc.getReferenceSequenceAccessionNumber() == "" || ftrLoc.getReferenceSequenceAccessionNumber() == null
-                                        || ftrLoc.getSfclStart() == null && ftrLoc.getSfclStart().toString() == ""
-                                                || ftrLoc.getSfclEnd() == null && ftrLoc.getSfclEnd().toString() == ""
-                                                || ftrLoc.getSfclAssembly() == null && ftrLoc.getSfclAssembly().toString() == "") {
+                                        || ftrLoc.getFtrStartLocation() == null && ftrLoc.getFtrStartLocation().toString() == ""
+                                                || ftrLoc.getFtrEndLocation() == null && ftrLoc.getFtrEndLocation().toString() == ""
+                                                || ftrLoc.getFtrAssembly() == null && ftrLoc.getFtrAssembly().toString() == "") {
                                             System.out.println(feature.getZdbID());
                                         }
                                         dto.setAlleleId("ZFIN:" + feature.getZdbID());
-                                        dto.setAssembly(ftrLoc.getSfclAssembly());
-                                        dto.setStart(ftrLoc.getSfclStart());
-                                        dto.setEnd(ftrLoc.getSfclEnd());
-                                        dto.setChromosome(ftrLoc.getSfclChromosome());
+                                        dto.setAssembly(ftrLoc.getFtrAssembly());
+                                        dto.setStart(ftrLoc.getFtrStartLocation());
+                                        dto.setEnd(ftrLoc.getFtrEndLocation());
+                                        dto.setChromosome(ftrLoc.getFtrChromosome());
                                     }
                                 }
 

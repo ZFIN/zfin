@@ -10,10 +10,8 @@ import org.zfin.feature.repository.HibernateFeatureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
-import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.mapping.VariantSequence;
 import org.zfin.publication.repository.HibernatePublicationRepository;
@@ -21,10 +19,9 @@ import org.zfin.publication.repository.PublicationRepository;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 
 
 /**
@@ -32,7 +29,6 @@ import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
  */
 public class FlankSeqProcessor {
 
-    private static final String MISSING_VARSEQS_FILE = "indel-missing-varseqs.csv";
     private FeatureRepository featureRepository = new HibernateFeatureRepository();
     private PublicationRepository pubRepo = new HibernatePublicationRepository();
     private Logger logger = LogManager.getLogger(FlankSeqProcessor.class);
@@ -56,67 +52,64 @@ public class FlankSeqProcessor {
             int offset = 500;
             String seq1 = "";
             String seq2 = "";
-            // new Faidx(fasta);
+
             HibernateUtil.createTransaction();
 
 
             try {
-
+//We are not loading flanking sequences for sa alleles. they have alreday bene laoded via a one time SQL script
                 for (Feature feature : featureRepository.getNonSaFeaturesWithGenomicMutDets()) {
                     if (feature.getType()==FeatureTypeEnum.INDEL ||feature.getType()==FeatureTypeEnum.DELETION ||feature.getType()==FeatureTypeEnum.INSERTION||feature.getType()==FeatureTypeEnum.MNV||feature.getType()==FeatureTypeEnum.POINT_MUTATION) {
+                       
                         System.out.println(feature.getAbbreviation()+feature.getType().getName());
                         FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
                         if (ftrLoc != null
-                                && ftrLoc.getSfclStart() != null && ftrLoc.getSfclStart().toString() != ""
-                                && ftrLoc.getSfclEnd() != null && ftrLoc.getSfclEnd().toString() != ""
-                                && ftrLoc.getSfclAssembly() != null
+                                && ftrLoc.getFtrStartLocation() != null && ftrLoc.getFtrStartLocation().toString() != ""
+                                && ftrLoc.getFtrEndLocation() != null && ftrLoc.getFtrEndLocation().toString() != ""
+                                && ftrLoc.getFtrAssembly() != null
 
                                 ) {
-                            String ftrChrom = ftrLoc.getSfclChromosome();
-                            locStart = ftrLoc.getSfclStart();
-                            locEnd = ftrLoc.getSfclEnd();
-
-                            if (feature.getType() == FeatureTypeEnum.DELETION) {
-                                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length() == 0) {
-                                    String refSeq= new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
-                                    UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(),refSeq);
-                                }
-                                seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
-                                seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-                            }
-
-                            if (feature.getType() == FeatureTypeEnum.INSERTION) {
-
-
+                            String ftrChrom = ftrLoc.getFtrChromosome();
+                            locStart = ftrLoc.getFtrStartLocation();
+                            locEnd = ftrLoc.getFtrEndLocation();
+                            switch (feature.getType()) {
+                                case POINT_MUTATION:
+                                    if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
+                                        String refSeq= new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
+                                        UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(),refSeq);
+                                    }
+                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
+                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locStart, locStart + offset).getBases());
+                                    break;
+                                case DELETION:
+                                    if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
+                                        String refSeq= new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
+                                        UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(),refSeq);
+                                    }
+                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
+                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
+                                    break;
+                                case INSERTION:
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd, locEnd + offset).getBases());
-
-                            }
-                            if (feature.getType() == FeatureTypeEnum.POINT_MUTATION) {
-                                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length() == 0) {
-                                    String refSeq= new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
-                                    UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(),refSeq);
-                                }
-                                seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
-                                seq2 = new String(ref.getSubsequenceAt(ftrChrom, locStart, locStart + offset).getBases());
-                            }
-                            if (feature.getType() == FeatureTypeEnum.INDEL) {
-
-                                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length() == 0) {
-                                    String refSeq= new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
-                                    UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(),refSeq);
-                                }
+                                    break;
+                                case INDEL:
+                                    if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
+                                        String refSeq= new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
+                                        UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(),refSeq);
+                                    }
 
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-                                }
 
+                                    break;
+                                case MNV:
+                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
+                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
+                                    break;
 
-
-                            if (feature.getType() == FeatureTypeEnum.MNV) {
-                                seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
-                                seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
                             }
+
 
 
                             insertFlankSeq(feature, seq1, seq2, offset);

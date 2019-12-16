@@ -812,12 +812,12 @@ public class DTOConversionService {
             //FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getFeatureLocation(feature);
             FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getLocationByFeature(feature);
             if (ftrLocation != null) {
-                featureDTO.setFeatureChromosome(ftrLocation.getSfclChromosome());
-                featureDTO.setFeatureAssembly(ftrLocation.getSfclAssembly());
-                featureDTO.setAssembly(ftrLocation.getSfclAssembly());
-                featureDTO.setFeatureStartLoc(ftrLocation.getSfclStart());
-                featureDTO.setFeatureEndLoc(ftrLocation.getSfclEnd());
-                featureDTO.setEvidence(FeatureService.getFeatureGenomeLocationEvidenceCode(ftrLocation.getSfclEvidence().getZdbID()));
+                featureDTO.setFeatureChromosome(ftrLocation.getFtrChromosome());
+                featureDTO.setFeatureAssembly(ftrLocation.getFtrAssembly());
+                featureDTO.setAssembly(ftrLocation.getFtrAssembly());
+                featureDTO.setFeatureStartLoc(ftrLocation.getFtrStartLocation());
+                featureDTO.setFeatureEndLoc(ftrLocation.getFtrEndLocation());
+                featureDTO.setEvidence(FeatureService.getFeatureGenomeLocationEvidenceCode(ftrLocation.getFtrLocEvidence().getZdbID()));
             }
                 /*FeatureGenomicMutationDetail fgmd=RepositoryFactory.getFeatureRepository().getFeatureGenomicDetail(feature);
                 if (fgmd!=null)

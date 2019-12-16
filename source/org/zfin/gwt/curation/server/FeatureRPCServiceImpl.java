@@ -1,7 +1,6 @@
 package org.zfin.gwt.curation.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.zerog.ia.platform.Sys;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
@@ -171,12 +170,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             fgl.setFeature(feature);
         }
         if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
-            fgl.setSfclChromosome(featureDTO.getFeatureChromosome());
-            fgl.setSfclAssembly(featureDTO.getFeatureAssembly());
-            fgl.setSfclStart(featureDTO.getFeatureStartLoc());
-            fgl.setSfclEnd(featureDTO.getFeatureEndLoc());
+            fgl.setFtrChromosome(featureDTO.getFeatureChromosome());
+            fgl.setFtrAssembly(featureDTO.getFeatureAssembly());
+            fgl.setFtrStartLocation(featureDTO.getFeatureStartLoc());
+            fgl.setFtrEndLocation(featureDTO.getFeatureEndLoc());
             // convert code into TermID and then get GenericTerm
-            fgl.setSfclEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
+            fgl.setFtrLocEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
             HibernateUtil.currentSession().save(fgl);
             infrastructureRepository.insertPublicAttribution(fgl.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
         }
@@ -568,13 +567,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (StringUtils.isNotEmpty((featureDTO.getFeatureChromosome()))) {
                 FeatureLocation fgl = new FeatureLocation();
                 fgl.setFeature(feature);
-                fgl.setSfclChromosome(featureDTO.getFeatureChromosome());
+                fgl.setFtrChromosome(featureDTO.getFeatureChromosome());
 
-                fgl.setSfclAssembly(featureDTO.getFeatureAssembly());
-                fgl.setSfclStart(featureDTO.getFeatureStartLoc());
-                fgl.setSfclEnd(featureDTO.getFeatureEndLoc());
+                fgl.setFtrAssembly(featureDTO.getFeatureAssembly());
+                fgl.setFtrStartLocation(featureDTO.getFeatureStartLoc());
+                fgl.setFtrEndLocation(featureDTO.getFeatureEndLoc());
                 // convert code into TermID and then get GenericTerm
-                fgl.setSfclEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
+                fgl.setFtrLocEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
                 HibernateUtil.currentSession().save(fgl);
 
                     PublicationAttribution pa = new PublicationAttribution();
