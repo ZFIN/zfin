@@ -20,9 +20,11 @@ export const getStatus = (pubId) => {
     return http.get(`/action/publication/${pubId}/status`);
 };
 
-export const updateStatus = (pubId, status, checkOwner) => {
-    const endpoint = '/status' + (checkOwner ? '?checkOwner=true' : '');
-    return http.post('/action/publication/' + pubId + endpoint, status);
+export const updateStatus = (pubId, status, options = {}) => {
+    const params = Object.entries(options)
+        .map(([option, value]) => !!value ? `${option}=true` : '')
+        .join('&');
+    return http.post(`/action/publication/${pubId}/status?${params}`, status);
 };
 
 export const getChecklist = (pubId) => {

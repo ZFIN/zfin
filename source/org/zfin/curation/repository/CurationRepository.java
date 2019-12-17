@@ -14,4 +14,6 @@ public interface CurationRepository {
 
     void closeCurationTopics(Publication pub, Person curator);
 
+    void resetCurationTopics(Publication publication);
+
 }

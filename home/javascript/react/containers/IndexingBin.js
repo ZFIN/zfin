@@ -105,7 +105,7 @@ class IndexingBin extends React.Component {
             location: null,
             owner: { zdbID: userId }
         };
-        updateStatus(pub.zdbId, status, true)
+        updateStatus(pub.zdbId, status, {checkOwner: true})
             .then(() => this.setPubState(index, 'claimed', true))
             .fail(error => error.responseJSON && this.setPubState(index, 'claimError', error.responseJSON.message))
             .always(() => this.setPubState(index, 'saving', false));

@@ -203,6 +203,7 @@ public class PublicationTrackingController {
     @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.POST)
     public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID,
                                                   @RequestParam(required = false, defaultValue = "false") Boolean checkOwner,
+                                                  @RequestParam(required = false, defaultValue = "false") Boolean resetTopics,
                                                   @RequestBody CurationStatusDTO dto) throws InvalidWebRequestException {
         Publication publication = publicationRepository.getPublication(zdbID);
         PublicationTrackingHistory pth = publicationRepository.currentTrackingStatus(publication);
@@ -228,6 +229,10 @@ public class PublicationTrackingController {
             expressionRepository.deleteExpressionStructuresForPub(publication);
             publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
             mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
+        } else {
+            if (resetTopics) {
+                curationRepository.resetCurationTopics(publication);
+            }
         }
         session.save(newStatus);
         tx.commit();

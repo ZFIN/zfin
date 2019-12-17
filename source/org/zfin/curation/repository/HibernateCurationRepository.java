@@ -3,6 +3,7 @@ package org.zfin.curation.repository;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.curation.Curation;
@@ -79,6 +80,16 @@ public class HibernateCurationRepository implements CurationRepository {
                 curation.setClosedDate(now);
                 session.save(curation);
             }
+        }
+    }
+
+    public void resetCurationTopics(Publication publication) {
+        Session session = HibernateUtil.currentSession();
+        for (Curation curation : getCurationForPub(publication)) {
+            curation.setOpenedDate(null);
+            curation.setClosedDate(null);
+            curation.setDataFound(false);
+            session.save(curation);
         }
     }
 }

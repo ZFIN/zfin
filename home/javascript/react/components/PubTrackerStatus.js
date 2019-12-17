@@ -49,6 +49,7 @@ class PubTrackerStatus extends Component {
             location: {},
             owner: {},
             saved: false,
+            resetTopics: false,
         };
         this.populateState = this.populateState.bind(this);
         this.handleSave = this.handleSave.bind(this);
@@ -106,13 +107,13 @@ class PubTrackerStatus extends Component {
 
     handleSave() {
         const { onSave } = this.props;
-        const { status, location, owner } = this.state;
-        this.setState({saved: false});
+        const { status, location, owner, resetTopics } = this.state;
+        this.setState({saved: false, resetTopics: false});
         onSave({
             status,
             location: (statusHasLocation(status) && getId(location)) ? location : null,
             owner: statusRequiresOwner(status) ? owner : null,
-        });
+        }, {resetTopics});
     }
 
     handleValidate() {
@@ -160,9 +161,17 @@ class PubTrackerStatus extends Component {
         );
     }
 
+    isReopening() {
+        const { defaultStatus } = this.props;
+        const { status } = this.state;
+
+        const statusChanged = getId(defaultStatus) !== getId(status);
+        return statusChanged && defaultStatus.type === 'CLOSED' && status.type !== 'CLOSED';
+    }
+
     render() {
         const { curators, defaultStatus, statuses, locations, loading, warnings } = this.props;
-        const { status, location, owner, saved } = this.state;
+        const { status, location, owner, saved, resetTopics } = this.state;
 
         const statusOptions = [];
         if (!getId(defaultStatus)) {
@@ -207,6 +216,16 @@ class PubTrackerStatus extends Component {
                     <div className="col-md-8">
                         <ObjectSelectBox className='form-control' getDisplay="name" getValue="zdbID" options={curatorOptions}
                                          value={owner} onChange={owner => this.setState({owner})}/>
+                    </div>
+                </div>
+                }
+
+                {this.isReopening() &&
+                <div className="form-group row">
+                    <div className='col-md-8 offset-md-3'>
+                        <label>
+                            <input type='checkbox' value={resetTopics} onChange={event => this.setState({resetTopics: event.target.checked})} /> Reset topics
+                        </label>
                     </div>
                 </div>
                 }

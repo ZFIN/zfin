@@ -69,17 +69,17 @@ class PubTrackerStatusTab extends React.Component {
         getTopics(pubId).then(topics => this.setState({topics}));
     }
 
-    handleStatusSave(status) {
+    handleStatusSave(status, options = {}) {
         const {pubId} = this.props;
         this.setState({statusLoading: true});
-        updateStatus(pubId, status).then(status => {
+        updateStatus(pubId, status, options).then(status => {
             this.setState({
                 status,
                 statusLoading: false,
                 validationWarnings: [],
             });
             intertab.fireEvent(intertab.EVENTS.PUB_STATUS);
-            if (status.status.type === 'CLOSED') {
+            if (status.status.type === 'CLOSED' || options.resetTopics) {
                 getTopics(pubId).then(topics => this.setState({topics}));
             }
         });
@@ -202,7 +202,7 @@ class PubTrackerStatusTab extends React.Component {
             <div>
                 <PubTrackerPanel title={statusHeader}>
                     <div className="row clearfix">
-                        <div className="col-6" style={{borderRight: '1px solid #dddddd'}}>
+                        <div className="col-6 border-right">
                             {curators.length > 0 && statuses.length > 0 && locations.length > 0 &&
                             <PubTrackerStatus
                                 curators={curators}
@@ -222,7 +222,7 @@ class PubTrackerStatusTab extends React.Component {
                         </div>
                         <div className="col-5">
                             <div className="row">
-                                <div className="offset-1" style={{marginTop: '7px'}}>
+                                <div className="offset-1 mt-2">
                                     <PubTrackerIndexed
                                         indexed={indexed}
                                         onToggle={this.handleIndexedToggle}
