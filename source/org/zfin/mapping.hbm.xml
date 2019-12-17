@@ -185,12 +185,12 @@
         </id>
 
 
-        <property name="getFtrChromosome" column="sfcl_chromosome" type="string"/>
+        <property name="ftrChromosome" column="sfcl_chromosome" type="string"/>
         <many-to-one name="feature"  column="sfcl_feature_zdb_id"  />
-        <property name="getFtrStartLocation" column="sfcl_start_position" type="java.lang.Integer"/>
-        <property name="getFtrEndLocation" column="sfcl_end_position" type="java.lang.Integer"/>
-        <property name="getFtrAssembly" column="sfcl_assembly" type="string"/>
-        <many-to-one name="getFtrLocEvidence" column="sfcl_evidence_code"/>
+        <property name="ftrStartLocation" column="sfcl_start_position" type="java.lang.Integer"/>
+        <property name="ftrEndLocation" column="sfcl_end_position" type="java.lang.Integer"/>
+        <property name="ftrAssembly" column="sfcl_assembly" type="string"/>
+        <many-to-one name="ftrLocEvidence" column="sfcl_evidence_code"/>
         <property name="referenceSequenceAccessionNumber" column="sfcl_chromosome_reference_accession_number" type="string"/>
 
 
