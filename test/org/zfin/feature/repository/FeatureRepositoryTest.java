@@ -95,6 +95,18 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getNonSaFeaturesWithGenomicMutDets() {
+
+
+        List<Feature> features = featureRepository.getNonSaFeaturesWithGenomicMutDets();
+
+        assertNotNull("feature list exists", features);
+        assertTrue("non sa  features have genomic mutation details", features.size() > 0);
+
+    }
+
+
+    @Test
     public void getFeatureRelationshipTypesForPointMutationType() {
         List<String> pointMutantTypes = new ArrayList<String>();
         pointMutantTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
