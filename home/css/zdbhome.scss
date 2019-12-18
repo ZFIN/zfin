@@ -115,6 +115,23 @@ body.home {
         margin-bottom: 10px;
         padding-bottom: 2px;
     }
+
+    // subsections
+    & .section {
+        box-shadow: none;
+        margin-bottom: 1rem;
+        border-radius: 0;
+        padding: 0;
+
+        .heading {
+            font-size: 15.5px;
+            font-weight: bold;
+            border: none;
+            color: $grey-dark;
+            padding: 0;
+            margin-bottom: 0.5rem;
+        }
+    }
 }
 
 .carousel-section {
