@@ -21,6 +21,7 @@
                        deleteURL="none"
                        mergeURL="${mergeURL}"
                        editURL="${editURL}"
+                       prototypeURL="/action/marker/gene/prototype-view/${markerID}"
     />
 
     <div style="float: right">

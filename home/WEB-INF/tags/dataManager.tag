@@ -10,6 +10,7 @@
 <%@ attribute name="correspondenceURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="linkURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="curateURL" type="java.lang.String" rtexprvalue="true" required="false" %>
+<%@ attribute name="prototypeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="viewURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="termID" type="java.lang.String" rtexprvalue="true" required="false" %>
@@ -52,7 +53,7 @@
                                          deleteURL="${deleteURL}" linkURL="${linkURL}" curateURL="${curateURL}" viewURL="${viewURL}"
                                          mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}"
                                          showLastUpdate="${showLastUpdate}" editMarker="${editMarker}"
-                                         correspondenceURL="${correspondenceURL}" />
+                                         correspondenceURL="${correspondenceURL}" prototypeURL="${prototypeURL}" />
         </authz:authorize>
         <authz:authorize access="hasRole('submit')">
             <c:if test="${isOwner}">

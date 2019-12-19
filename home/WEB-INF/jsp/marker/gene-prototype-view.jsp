@@ -9,6 +9,14 @@
 <c:set var="ANTIBODIES" value="Antibodies" />
 
 <zfin-prototype:dataPage sections="${[SUMMARY, ANTIBODIES]}">
+    <zfin-prototype:dataManagerDropdown>
+        <a class="dropdown-item active" href="/action/marker/gene/prototype-view/${formBean.marker.zdbID}">View</a>
+        <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
+        <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}">Merge</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="/${formBean.marker.zdbID}">Old View</a>
+    </zfin-prototype:dataManagerDropdown>
+
     <div id="${zfn:makeDomIdentifier(SUMMARY)}">
         <div class="small text-uppercase text-muted">${formBean.marker.markerType.displayName}</div>
         <h1><zfin:abbrev entity="${formBean.marker}"/></h1>

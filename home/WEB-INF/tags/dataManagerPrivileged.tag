@@ -10,6 +10,7 @@
 <%@ attribute name="correspondenceURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="linkURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="curateURL" type="java.lang.String" rtexprvalue="true" required="false" %>
+<%@ attribute name="prototypeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="viewURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="showLastUpdate" type="java.lang.Boolean" rtexprvalue="true" required="false"
@@ -22,6 +23,11 @@
 <c:if test="${!empty viewURL}">
     <td>
         <a href="${viewURL}" class="root">View</a>
+    </td>
+</c:if>
+<c:if test="${!empty prototypeURL}">
+    <td>
+        <a href="${prototypeURL}" class="root">Prototype View</a>
     </td>
 </c:if>
 <c:if test="${!empty editURL}">
