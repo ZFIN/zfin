@@ -233,7 +233,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         hql += "       join fetch phenox.endStage ";
         hql += "       join fetch phenox.figure ";
         hql += "       left join fetch phenox.phenotypeStatements ";
-        hql += "       left join fetch phenox.fishExperiment ";
+        hql += "       left join fetch phenox.fishExperiment fishox";
         if (fishID != null) {
             hql += "       join phenox.fishExperiment.fish fish";
         }
