@@ -11,7 +11,7 @@
 <zfin-prototype:dataPage sections="${[SUMMARY, ANTIBODIES]}">
     <div id="${zfn:makeDomIdentifier(SUMMARY)}">
         <div class="small text-uppercase text-muted">${formBean.marker.markerType.displayName}</div>
-        <h1>${formBean.marker.abbreviation}</h1>
+        <h1><zfin:abbrev entity="${formBean.marker}"/></h1>
 
         <zfin-prototype:attributeList>
             <zfin-prototype:attributeListItem label="ID">
