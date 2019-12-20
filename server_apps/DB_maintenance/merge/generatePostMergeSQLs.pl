@@ -72,7 +72,7 @@ if ($type1 eq 'ALT') {
   $curGetSpecifiedFeatureAssay->finish();
   if ($ctSpecifiedMutagen > 0 && $ctUnspecifiedMutagen > 0) {
     my $sqlUpdateFeatureAssay = "update feature_assay set featassay_feature_zdb_id = '$recordToBeMergedInto' where featassay_feature_zdb_id = '$recordToBeDeleted';";
-    $mergeSQLs{$sqlUpdateFeatureAssay} = 9;
+    $mergeSQLs{$sqlUpdateFeatureAssay} = 11;
   }
 }
 
@@ -96,7 +96,9 @@ if ($type1 eq 'GENE' || $type1 eq 'MRPHLNO' || $type1 eq 'CRISPR' || $type1 eq '
   while ($curGetMarkerInfoForMergedInto->fetch()) {}
   $curGetMarkerInfoForMergedInto->finish();
   
-  my $sqlTmpId = "select get_id('DALIAS') as dalias_id, get_id('NOMEN') as nomen_id from single into temp tmp_ids;";
+  my $sqlCreateTemp = "create temp table tmp_ids (dalias_id text, nomen_id text);";
+  $mergeSQLs{$sqlCreateTemp} = 9;
+  my $sqlTmpId = "insert into tmp_ids(dalias_id, nomen_id) select get_id('DALIAS'), get_id('NOMEN') from single;";
   $mergeSQLs{$sqlTmpId} = 8;
   my $insertZdbActiveData = "insert into zdb_active_data select dalias_id from tmp_ids;";
   $mergeSQLs{$insertZdbActiveData} = 7;
@@ -108,7 +110,7 @@ if ($type1 eq 'GENE' || $type1 eq 'MRPHLNO' || $type1 eq 'CRISPR' || $type1 eq '
   $mergeSQLs{$insertZdbActiveDataNomen} = 5;
   my $sqlInsertMrkrHistory = "insert into marker_history (mhist_zdb_id, mhist_mrkr_zdb_id, mhist_event, mhist_reason, mhist_date, 
                                                           mhist_mrkr_name_on_mhist_date, mhist_mrkr_abbrev_on_mhist_date, mhist_comments,mhist_dalias_zdb_id)
-                              select nomen_id, '$recordToBeMergedInto', 'merged', 'same marker', CURRENT, 
+                              select nomen_id, '$recordToBeMergedInto', 'merged', 'same marker', now(), 
                                     '$markerNameMergedInto', '$markerAbbrevMergedInto', 'none', dalias_id
                                 from tmp_ids;";
   $mergeSQLs{$sqlInsertMrkrHistory} = 4;   
@@ -117,7 +119,7 @@ if ($type1 eq 'GENE' || $type1 eq 'MRPHLNO' || $type1 eq 'CRISPR' || $type1 eq '
 $dbh->disconnect();
 
 my $sqlUpdateRecordAttribution = "update record_attribution set recattrib_data_zdb_id = '$recordToBeMergedInto' where recattrib_data_zdb_id = '$recordToBeDeleted';";
-$mergeSQLs{$sqlUpdateRecordAttribution} = 9;
+$mergeSQLs{$sqlUpdateRecordAttribution} = 10;
 
 my $sqlDeleteReplacedData = "delete from zdb_replaced_data where zrepld_old_zdb_id = '$recordToBeDeleted';";
 $mergeSQLs{$sqlDeleteReplacedData} = 3;

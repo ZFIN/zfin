@@ -87,15 +87,51 @@ if ($tableName eq 'zdb_active_data') {
 ## call the recursive function to construct all the merge-related SQLs
 recursivelyGetSQLs($recordToBeDeleted, $recordToBeMergedInto, $tableName, $primaryKeyColumn, 0);
 
-$dbh->disconnect();
-
 ## print out all the generated SQLs, sort by the values first (depth, reversed; i.e. the deepest first), then by the keys (delete before update)
 open (SQLFILE, ">merge.sql") || die "Cannot open merge.sql : $!\n";
 open (FINALSQLFILE, ">final-merge.sql") || die "Cannot open final-merge.sql : $!\n";
+
+my $sqlGetPublicNote = "select mrkr_comments from marker where mrkr_zdb_id = ?;";
+my $curGetPublicNote = $dbh->prepare_cached($sqlGetPublicNote);
+$curGetPublicNote->execute($recordToBeDeleted);
+my $firstNote = "none";
+$curGetPublicNote->bind_columns(\$firstNote);
+my $firstNoteFound = 0;
+while ($curGetPublicNote->fetch()) {
+   $firstNoteFound = 1;
+}
+
+my $combinedPublicNote = "none";
+if($firstNoteFound == 1 && $firstNote ne 'none') {
+   $curGetPublicNote->execute($recordToBeMergedInto);
+   my $secondNote = "none";
+   $curGetPublicNote->bind_columns(\$secondNote);
+   my $secondNoteFound = 0;
+   while ($curGetPublicNote->fetch()) {
+      $secondNoteFound = 1;
+   }
+   if($secondNoteFound == 1 && $secondNote ne 'none') {
+      $combinedPublicNote = $secondNote . "\n\n" . "$firstNote";
+   } else {
+      $combinedPublicNote = $firstNote;
+   }
+}
+
+$curGetPublicNote->finish();
+
+$dbh->disconnect();
+
+if($combinedPublicNote ne 'none') {
+   my $updatedNote = "'" . $combinedPublicNote . "'";
+   my $sqlUpdatePublicNote = "update marker set mrkr_comments = $updatedNote where mrkr_zdb_id = '$recordToBeMergedInto';";
+   print SQLFILE "$sqlUpdatePublicNote\n\n";
+   print FINALSQLFILE "$sqlUpdatePublicNote\n\n";
+}
+
 my @sorted = sort { $mergeSQLs{$b} <=> $mergeSQLs{$a} || $a cmp $b } keys %mergeSQLs;
 for (@sorted) {
-    print SQLFILE "$_\n\n";
-    print FINALSQLFILE "$_\n\n";
+    print SQLFILE "$_\n\n" if $_ !~ m/update gene_description/;
+    print FINALSQLFILE "$_\n\n" if $_ !~ m/update gene_description/;
 }
 
 ## if not zdb_active_data records, adding final SQLs:
