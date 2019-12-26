@@ -63,6 +63,14 @@
                     ${formBean.allianceGeneDesc.gdDesc}
                 </jsp:body>
             </zfin-prototype:attributeListItem>
+            <zfin-prototype:attributeListItem label="Genome Resources">
+                <ul class="comma-separated">
+                    <c:forEach var="link" items="${formBean.otherMarkerPages}" varStatus="loop">
+                        <li><a href="${link.link}">${link.displayName}</a>
+                                ${link.attributionLink}</li>
+                    </c:forEach>
+                </ul>
+            </zfin-prototype:attributeListItem>
 
             <authz:authorize access="hasRole('root')">
                 <zfin-prototype:attributeListItem label="Curator Notes">
