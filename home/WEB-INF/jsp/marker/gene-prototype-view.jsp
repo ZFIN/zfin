@@ -140,7 +140,7 @@
                         <td>
                             <c:set var="mutagen" value="${feature.featureAssay.mutagen}"/>
                             <c:if test="${mutagen ne zfn:getMutagen('not specified')}">
-                                ${feature.featureAssay.mutagen}
+                                ${feature.featureAssay.mutagen.toString()}
                             </c:if>
                         </td>
                         <td>
