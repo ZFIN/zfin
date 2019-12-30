@@ -106,7 +106,6 @@ class PubmedUtils {
         // pubmed doc says "if more than about 200 UIDs are to be provided, the request should be
         // made using the HTTP POST method" ... okay pubmed, you're such a good guy, we'll play
         // by your rules
-        System.out.println("getFromPubMed")
         def url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
         def query = "db=pubmed&id=${ids.join(",")}&retmode=xml"
 
@@ -115,11 +114,9 @@ class PubmedUtils {
         connection.setDoOutput(true)
         def writer = new OutputStreamWriter(connection.outputStream)
         writer.write(query)
-        System.out.println("query written" || query)
         writer.flush()
         writer.close()
         connection.connect()
-        System.out.println("connected" || url)
         new XmlSlurper().parse(connection.inputStream)
     }
 
