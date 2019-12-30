@@ -100,7 +100,7 @@
             <arg value="${validateData}/gafLoad"/>
             <arg value="${jobName}"/>
             <arg value="Noctua"/>
-            <arg value="https://build.berkeleybop.org/job/export-lego-to-gpad-sparql/lastSuccessfulBuild/artifact/legacy/zfin.gpad"/>
+            <arg value="http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz"/>
             <arg value="org.zfin.datatransfer.go.GpadParser"/>
         </java>
     </target>
