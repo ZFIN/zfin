@@ -62,7 +62,7 @@ PubmedUtils.dbaccess DBNAME, """
    altId text,
    idType text );
    
-   \\copy tmp_pmcid_update FROM '$PMC_ID_PUBS' null '' delimiter ',';
+   copy tmp_pmcid_update FROM '$PMC_ID_PUBS' null '' delimiter ',';
 
   UPDATE publication
     SET pub_pmc_id = (SELECT distinct altId from tmp_pmcid_update where idType = 'pmc' and pmid = accession_no and altId!='')
