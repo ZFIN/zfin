@@ -65,14 +65,14 @@ PubmedUtils.dbaccess DBNAME, """
    \\copy tmp_pmcid_update FROM '$PMC_ID_PUBS' null '' delimiter ',';
 
   UPDATE publication
-    SET pub_pmc_id = (SELECT distinct altId from tmp_pmcid_update where idType = 'pmc' and pmid = accession_no and altId!='')
+    SET pub_pmc_id = (SELECT distinct altId from tmp_pmcid_update where idType = 'pmc' and pmid = accession_no and altId != '')
     WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE accession_no = pmid)
-    and pub_pmc_id is null ;
+    and (pub_pmc_id is null or pub_pmc_id = '');
    
    UPDATE publication
     SET pub_mid = (SELECT distinct altId from tmp_pmcid_update where idType = 'mid' and pmid = accession_no)
     WHERE EXISTS (SELECT 'x' FROM tmp_pmcid_update WHERE accession_no = pmid)
-    and pub_mid is null ;   
+    and (pub_mid is null or pub_mid = '');   
 
   COMMIT WORK;
 """
