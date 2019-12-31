@@ -384,6 +384,18 @@ project(':server_apps:data_transfer:PUBMED') {
     }
 }
 
+project(':server_apps:data_transfer:ExpressionAtlas') {
+    task "deployFiles"(type: ZfinTargetCopy) {
+      from(project.projectDir) {
+            ttNameMap.each { name, value ->
+        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+            }
+            include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
+        }
+        into targetroot + pName
+    }
+}
+
 project(':server_apps:data_transfer:ResourceCenters') {
     task "deployFiles"(type: ZfinTargetCopy) {
       from(project.projectDir) {
@@ -461,6 +473,7 @@ task make(type: GradleBuild) {
              ':server_apps:data_transfer:deployFiles',
              ':server_apps:data_transfer:Ensembl:deployFiles', 
              ':server_apps:data_transfer:PUBMED:deployFiles', 
+             ':server_apps:data_transfer:ExpressionAtlas:deployFiles', 
              ':server_apps:data_transfer:ResourceCenters:deployFiles', 
              ':server_apps:data_transfer:GO:deployFiles',
              ':server_apps:data_transfer:ORTHO:deployFiles',
