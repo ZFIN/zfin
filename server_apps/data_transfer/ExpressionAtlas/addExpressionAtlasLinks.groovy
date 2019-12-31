@@ -1,6 +1,7 @@
 #!/bin/bash
-import groovy.json.JsonSlurper
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
+import groovy.json.*
+
 import org.zfin.properties.ZfinProperties
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
@@ -22,8 +23,7 @@ ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properti
 
 print "Loading local JSON file ... "
 
-//This URL has to change to fms.alliancegenome.org -- but I can't until Olin gets it together.
-releaseVersionJson = new JsonSlurper().parseText(new URL('https://fmsdev.alliancegenome.org/api/releaseversion/all').text)
+releaseVersionJson = new JsonSlurper().parseText(new URL('https://fms.alliancegenome.org/api/releaseversion/all').text)
 
 releaseIds = new ArrayList<>()
 
@@ -50,24 +50,17 @@ fmsJson.snapShot.dataFiles.each{
     dataFile ->
         s3Path = dataFile.s3Path
 
-        if (dataFile.dataType.name == 'GENECROSSREFERENCE'){
+        if (dataFile.dataType.name == 'GENECROSSREFERENCEJSON'){
             crossReferencePath = "https://download.alliancegenome.org/" + s3Path
             println dataFile.dataType.name
         }
 }
 
-println (crossReferencePath.tokenize("/")[-1])
-
-
-
-def file = new FileOutputStream(crossReferencePath.tokenize("/")[-1])
-def out = new BufferedOutputStream(file)
-out << new URL(crossReferencePath).openStream()
-
-def jsonSlurper = new JsonSlurper()
-File xRefFile = new File(crossReferencePath.tokenize("/")[-1])
-def crossReferences = jsonSlurper.parse(xRefFile)
-crossReferences.each{ println  it."$GeneID" }
+def jsonSlurper =  new JsonSlurper()
+def reader = new BufferedReader(new InputStreamReader(new FileInputStream(crossReferencePath.tokenize("/")[-1]),"UTF-8"))
+def crossReferences = jsonSlurper.parse(reader)
+println crossReferences
+crossReferences.each{ println  it }
 
 println "done"
 
