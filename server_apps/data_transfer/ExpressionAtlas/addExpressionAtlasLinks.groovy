@@ -114,6 +114,12 @@ psql dbname, """
                                                         and fdb_db_name = 'ExpressionAtlas')
                                           );
 
+ update tmp_links
+   set geneId = (select zrepld_new_zdb_id from zdb_replaced_data
+                    where zrepld_old_zdb_id = geneId)
+   where exists (select 'x' from zdb_replaced_data
+                    where zrepld_old_zdb_id = geneId);
+
   create temp table tmp_id_links (
      geneId text,
      accessionNumber text,
@@ -135,7 +141,8 @@ psql dbname, """
               geneId,
               (select fdbcont_zdb_id from foreign_db_contains, foreign_db
                     where fdbcont_fdb_db_id = fdb_db_pk_id
-                    and fdb_db_name = 'ExpressionAtlas'); 
+                    and fdb_db_name = 'ExpressionAtlas')
+           from tmp_id_links; 
                         
 """
 println ("done with loading expression atlas links into db")
