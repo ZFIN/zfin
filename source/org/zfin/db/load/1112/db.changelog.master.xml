@@ -7,6 +7,7 @@
 
     <include file="source/org/zfin/db/load/1112/ZFIN-6437.sql"/>
     <include file="source/org/zfin/db/load/1112/update_people_locations.sql"/>
+    <include file="source/org/zfin/db/load/1112/add_expression_atlas_fdb.sql"/>
 
     
 

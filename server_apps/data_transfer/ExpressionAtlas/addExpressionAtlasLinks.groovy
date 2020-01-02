@@ -62,54 +62,85 @@ fmsJson.snapShot.dataFiles.each{
 def jsonSlurper =  new JsonSlurper()
 def reader = new BufferedReader(new InputStreamReader(new FileInputStream(crossReferencePath.tokenize("/")[-1]),"UTF-8"))
 def crossReferences = jsonSlurper.parse(reader)
-crossReferences.each{ if (it.ResourceDescriptorPage == "gene/expressionAtlas" && it.GeneID.startsWith("ZFIN")) {
-        println  it.GeneID + " " + it.CrossReferenceCompleteURL
+new File("loadableGXALinks.txt").withWriter { output ->
+    crossReferences.each{ if (it.ResourceDescriptorPage == "gene/expressionAtlas" && it.GeneID.startsWith("ZFIN")) {
+        output.writeLine([it.GeneID.tokenize(":")[-1],it.CrossReferenceCompleteURL.tokenize("/")[-1].toUpperCase()].join(","))
+        } }
+}
 
-} }
+//TODO: pull these two methods out into a class for all data_transfer scripts to use
+static Process dbaccess(String dbname, String sql) {
+    sql = sql.replace("\n", "")
+    sql = sql.replace("\\copy", "\n  \\copy")
+    println sql
 
-println "done"
+    def proc
+    proc = "psql -d $dbname -a".execute()
+    proc.getOutputStream().with {
+        write(sql.bytes)
+        close()
+    }
+    proc.waitFor()
+    proc.getErrorStream().eachLine { println(it) }
+    if (proc.exitValue()) {
+        throw new RuntimeException("dbaccess call failed")
+    }
+    proc
+}
 
-/*
+static Process psql(String dbname, String sql) {
+    return dbaccess(dbname, sql)
+}
 
 dbname = System.getenv("DBNAME")
-println("Loading terms into $dbname")
+println("Loading expression atlas links into $dbname")
 
 
 psql dbname, """
-
-
-
-  CREATE TEMP TABLE tmp_terms(
-    zfinid text,
-    genedesc text
+  CREATE TEMP TABLE tmp_links(
+    geneId text,
+    accessionNumber text
       ) ;
 
-  \\COPY tmp_terms FROM 'geneDesc.csv' delimiter '|' ;
+  \\COPY tmp_links FROM 'loadableGXALinks.txt' delimiter ',' ;
 
+  delete from tmp_links
+    where exists (select 'x' from db_link
+                       where dblink_acc_num = accessionNumber
+                       and dblink_linked_recid = geneId
+                       and dblink_fdbcont_zdb_id = (select fdbcont_zdb_id 
+                                                      from foreign_db_contains, foreign_db
+                                                        where fdbcont_fdb_db_id = fdb_db_pk_id
+                                                        and fdb_db_name = 'ExpressionAtlas')
+                                          );
 
-delete from tmp_terms where zfinid not in (select mrkr_zdb_id from marker);
-
-insert into gene_description (gd_gene_zdb_id,gd_description)
-  select distinct zfinid,genedesc
-    from tmp_terms where zfinid not in (Select gd_gene_zdb_id from gene_description) and genedesc !='null';
-
-update gene_description set gd_description=(select distinct genedesc from tmp_terms where gene_description.gd_gene_zdb_id=tmp_terms.zfinid);
+  create temp table tmp_id_links (
+     geneId text,
+     accessionNumber text,
+     dblinkId text);
+     
+  insert into tmp_id_links
+    select geneId, accessionNumber, get_id('DBLINK')
+     from tmp_links;
+     
+  insert into zdb_active_data
+    select dblinkId from tmp_id_links;
     
+  insert into db_link (dblink_zdb_id,
+                       dblink_acc_num, 
+                       dblink_linked_recid,
+                       dblink_fdbcont_zdb_id)
+       select dblinkId,
+              accessionNumber,
+              geneId,
+              (select fdbcont_zdb_id from foreign_db_contains, foreign_db
+                    where fdbcont_fdb_db_id = fdb_db_pk_id
+                    and fdb_db_name = 'ExpressionAtlas'); 
+                        
 """
-println ("done with script")
+println ("done with loading expression atlas links into db")
 
 
-if (args) {
-    // means we're (probably) running from Jenkins, so make a report.
-
-    new ReportGenerator().with {
-        setReportTitle("Report for ${args[0]}")
-        includeTimestamp()
-        //addDataTable("${added.size()} terms added", ["ID", "Term"], added.collect { it.split("\\|") as List })
-        writeFiles(new File("."), "loadGeneDescReport")
-    }
-}
-*/
 
 
 
