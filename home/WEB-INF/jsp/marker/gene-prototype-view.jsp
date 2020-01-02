@@ -343,11 +343,27 @@
     <zfin-prototype:section title="${PROTEINS}">
         <zfin-prototype:dataTable hasData="${!empty formBean.proteinDomainBeans}">
             <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
-                <%--<zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>--%>
-                <zfin2:proteinProductsLight proteinDomainBeans="${formBean.proteinDomainBeans}"/>
+                <thead>
+                <tr>
+                    <th style="width: 17%">Type</th>
+                    <th style="width: 17%">InterPro ID</th>
+                    <th style="width: 17%">Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="category" items="${formBean.proteinDomainBeans}">
+                    <tr>
+                        <td>${category.ipType}</td>
+
+                        <td>${category.ipID}</td>
+                        <td>${category.ipName}</td>
+                    </tr>
+                </c:forEach>
+                </tbody>
             </c:if>
         </zfin-prototype:dataTable>
     </zfin-prototype:section>
+
 
 </zfin-prototype:dataPage>
 
