@@ -52,15 +52,20 @@ fmsJson.snapShot.dataFiles.each{
 
         if (dataFile.dataType.name == 'GENECROSSREFERENCEJSON'){
             crossReferencePath = "https://download.alliancegenome.org/" + s3Path
-            println dataFile.dataType.name
+            def file = new FileOutputStream(crossReferencePath.tokenize("/")[-1])
+            def out = new BufferedOutputStream(file)
+            out << new URL(crossReferencePath).openStream()
+            out.close()
         }
 }
 
 def jsonSlurper =  new JsonSlurper()
 def reader = new BufferedReader(new InputStreamReader(new FileInputStream(crossReferencePath.tokenize("/")[-1]),"UTF-8"))
 def crossReferences = jsonSlurper.parse(reader)
-println crossReferences
-crossReferences.each{ println  it }
+crossReferences.each{ if (it.ResourceDescriptorPage == "gene/expressionAtlas" && it.GeneID.startsWith("ZFIN")) {
+        println  it.GeneID + " " + it.CrossReferenceCompleteURL
+
+} }
 
 println "done"
 
