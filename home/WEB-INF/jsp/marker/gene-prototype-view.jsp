@@ -110,7 +110,7 @@
                 </thead>
                 <tbody>
                 <c:forEach var="feature" items="${formBean.mutantOnMarkerBeans.features}" varStatus="loop">
-                    <tr class=${loop.index%2==0 ? "even" : "odd"}>
+                    <tr>
                         <td>
                             <a href="/${feature.zdbID}">${feature.abbreviation}</a>
                         </td>
@@ -145,14 +145,16 @@
                             </c:if>
                         </td>
                         <td>
+                            <ul class="list-unstyled">
                             <c:forEach var="supplier" items="${feature.suppliers}">
-                                <li style="list-style-type: none;">
-                                    <a href="/${supplier.organization.zdbID}"> ${supplier.organization.name}</a>
+
+                                    <li><a href="/${supplier.organization.zdbID}"> ${supplier.organization.name}</a>
                                     <c:if test="${!empty supplier.orderURL}">
                                         <a href="${supplier.orderURL}"> (order this)</a>
                                     </c:if>
-                                </li>
+                                    </li>
                             </c:forEach>
+                            </ul>
                         </td>
                     </tr>
                 </c:forEach>
@@ -177,7 +179,7 @@
         </thead>
 
             <c:forEach items="${formBean.mutantOnMarkerBeans.knockdownReagents}" var="bean" varStatus="loop">
-                <tr class=${loop.index % 2 == 0 ? "even" : "odd"}>
+                <tr>
                     <td><zfin:link entity="${bean.marker}"/></td>
                     <td>
                         <c:choose>
