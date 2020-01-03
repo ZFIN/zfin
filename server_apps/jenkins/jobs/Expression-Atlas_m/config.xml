@@ -1,7 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>update PMCids daily to allow PDF slurper to try and retrieve PDFs.&#xd;
+  <description>update links to expression atlas via alliance.&#xd;
 &#xd;
 See wiki project documentation:&#xd;
 http://fogbugz.zfin.org/default.asp?W1589</description>
