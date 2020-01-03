@@ -120,6 +120,7 @@ psql dbname, """
    where exists (select 'x' from zdb_replaced_data
                     where zrepld_old_zdb_id = geneId);
 
+
   create temp table tmp_id_links (
      geneId text,
      accessionNumber text,
@@ -143,13 +144,16 @@ psql dbname, """
                     where fdbcont_fdb_db_id = fdb_db_pk_id
                     and fdb_db_name = 'ExpressionAtlas')
            from tmp_id_links; 
+           
+  insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+    select dblinkId, 'ZDB-PUB-200103-6'
+       from tmp_links
+       where not exists (Select 'x' from record_attribution 
+                            where recattrib_data_zdb_id = dblinkId
+                            and recattrib_source_zdb_id = 'ZDB-PUB-200103-6');
                         
 """
 println ("done with loading expression atlas links into db")
-
-
-
-
 
 
 System.exit(0)

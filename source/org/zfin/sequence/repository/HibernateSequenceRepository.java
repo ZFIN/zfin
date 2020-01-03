@@ -667,6 +667,20 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return (DBLink) query.uniqueResult();
     }
 
+
+    @Override
+    public DBLink getAtlasDBLink(String featureZDbID, String referenceDBName) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from DBLink mdbl where mdbl.dataZdbID = :markerZdbID " +
+                " and mdbl.referenceDatabase.foreignDB.dbName = :referenceDBName";
+        logger.debug("dblink " + featureZDbID + referenceDBName);
+        Query query = session.createQuery(hql);
+        query.setString("referenceDBName", referenceDBName);
+        query.setString("markerZdbID", featureZDbID);
+
+        return (DBLink) query.uniqueResult();
+    }
+
     @Override
     public DBLink getDBLink(String featureZDbID, String accession) {
         Session session = HibernateUtil.currentSession();

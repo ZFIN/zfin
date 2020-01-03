@@ -1,6 +1,8 @@
 package org.zfin.expression.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.zfin.marker.presentation.LinkDisplay;
 
 public class MarkerExpression {
 
@@ -9,6 +11,17 @@ public class MarkerExpression {
 //    private List<MarkerDBLink> microarrayLinks = new ArrayList<MarkerDBLink>();
     private WildTypeExpression wildTypeStageExpression;
     private String geoLink;
+    private LinkDisplay expressionAtlasLink;
+
+    public LinkDisplay getExpressionAtlasLink() {
+        return expressionAtlasLink;
+    }
+
+    public void setExpressionAtlasLink(LinkDisplay expressionAtlasLink) {
+        this.expressionAtlasLink = expressionAtlasLink;
+    }
+
+
     private String geoGeneSymbol ;
     private boolean geoLinkSearching = true ;
 

@@ -98,6 +98,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         ENSEMBL_CLONE("Ensembl_Clone"),
         ENSEMBL_TRANS("Ensembl_Trans"),
         ENSEMBL_SNP("Ensembl_SNP"),
+        EXPRESSIONATLAS("ExpressionAtlas"),
         FLYBASE("FLYBASE"),
         FLYBASE_ANATOMY("FLYBASE-Anatomy"),
         GENBANK("GenBank"),
