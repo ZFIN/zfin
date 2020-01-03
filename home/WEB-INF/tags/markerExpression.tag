@@ -98,8 +98,8 @@
                     <tr>
                         <td class="data-label"><b>Curated Microarray Expression:</b></td>
                         <td align="left">
-                                ${markerExpression.geoLink}
-                                <c:if test="${not empty markerExpression.expressionAtlasLink.displayName}">, <a href="${markerExpression.expressionAtlasLink.link}">Expression Atlas</a>${markerExpression.expressionAtlasLink.attributionLink}
+                            ${markerExpression.geoLink}
+                                <c:if test="${not empty markerExpression.expressionAtlasLink.displayName}"> <a href="${markerExpression.expressionAtlasLink.link}">Expression Atlas</a>${markerExpression.expressionAtlasLink.attributionLink}
                                 </c:if>
                         </td>
                     </tr>
