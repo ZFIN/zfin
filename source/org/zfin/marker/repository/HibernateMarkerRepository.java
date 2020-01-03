@@ -2011,36 +2011,51 @@ public class HibernateMarkerRepository implements MarkerRepository {
         public Object transformTuple(Object[] tuple, String[] aliases) {
             LinkDisplay linkDisplay = new LinkDisplay();
             linkDisplay.setDataType(tuple[0].toString());
+
             if (tuple[1] != null) {
                 linkDisplay.setLength(tuple[1].toString());
             }
+
             linkDisplay.setMarkerZdbID(tuple[2].toString());
+
             linkDisplay.setAccession(tuple[3].toString());
+
             linkDisplay.setReferenceDatabaseName(tuple[4].toString());
+
             linkDisplay.setUrlPrefix(tuple[5].toString());
+
             if (tuple[6] != null) {
                 linkDisplay.setUrlSuffix(tuple[6].toString());
+;
             }
             if (tuple[7] != null) {
                 MarkerReferenceBean reference = new MarkerReferenceBean();
                 reference.setZdbID(tuple[7].toString());
+
                 if (tuple.length > 11 && tuple[11] != null) {
                     reference.setTitle(tuple[11].toString());
+
                 }
                 linkDisplay.addReference(reference);
             }
             if (tuple[8] != null) {
                 linkDisplay.setSignificance(Integer.valueOf(tuple[8].toString()));
+
             }
             linkDisplay.setDblinkZdbID(tuple[9].toString());
+
             if (tuple.length > 10) {
                 linkDisplay.setReferenceDatabaseZdbID(tuple[10].toString());
+
             }
             if (tuple.length > 12 && tuple[12] != null) {
                 linkDisplay.setTypeOrder(Integer.valueOf(tuple[12].toString()));
+
             }
+
             if (tuple.length > 12 && tuple[13] != null) {
                 linkDisplay.setAccNumDisplay(tuple[13].toString());
+
             }
             return linkDisplay;
         }
@@ -2090,7 +2105,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<LinkDisplay> getMarkerLinkDisplay(String dbLinkId) {
         String sql = "SELECT fdbdt.fdbdt_data_type, dbl.dblink_length, dbl.dblink_linked_recid, dbl.dblink_acc_num, fdb.fdb_db_display_name, fdb.fdb_db_query, fdb.fdb_url_suffix, " +
-                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order " +
+                "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order, dbl.dblink_acc_num_display " +
                 "FROM db_link dbl  " +
                 "JOIN foreign_db_contains fdbc ON dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
                 "JOIN foreign_db fdb ON fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
