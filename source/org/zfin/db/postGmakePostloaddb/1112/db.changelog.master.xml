@@ -21,6 +21,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1112/CUR-942.sql" />
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1112/PUB-628.sql" />
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1112/CUR-946.sql" />
 
 </databaseChangeLog>
