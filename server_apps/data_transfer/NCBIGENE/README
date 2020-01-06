@@ -4,7 +4,7 @@ Overview of the NCBI Gene Load
 
 This process loads the following db_link records based on mapped gene records between ZFIn and NCBI:
 1) NCBI Gene Ids
-2) UniGene Ids
+2) UniGene Ids  ## as of January, 2020, no more UniGene Ids will be loaded or kept at ZFIN.
 3) RefSeq accessioons (including RefSeq RNA, RefPept, RefSeq DNA)
 4) GenBank accessions (including GenBank RNA, GenPept, GenBank DNA)
 
@@ -28,12 +28,6 @@ Step 1: Download and decompress NCBI data files
 ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz
 
                 (6.3M decompressed, 33K+ rows)
-
-ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2unigene     (about 10M,  597K+ rows)
-
-#Format: GeneID UniGene_cluster
-30037   Dr.33789
-30560   Dr.88553
 
 ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz           (2.37G decompressed, 28,964,915 rows)
 
@@ -77,8 +71,6 @@ Step 3: Gather statistics for all the following NCBI accessions at ZFIN
 Run SQLs to get the numbers of all the following accessions got from NCBI/EntrezGene load before the next step of deletion.
 
 NCBI Gene Ids                         ZDB-FDBCONT-040412-1                 not curatable        no length
-
-UniGene Ids                           ZDB-FDBCONT-040412-44                not curatable        no length           
 
 RefSeq RNA accessions                 ZDB-FDBCONT-040412-38                not curatable       
 
@@ -245,14 +237,9 @@ Step 6: map ZFIN gene records to NCBI gene Ids based on common Vega Gene Id
 
 For those ZFIN genes not in final 1:1, 1:N, N:1, N:N and those excluded for RNA-based mapping sets.
 
-Step 7: prepare the add list for db_link records of RefSeq accessions, GenBank accessions and UniGene Ids
+### Step 7: prepare the add list for db_link records of RefSeq accessions, GenBank accessions and UniGene Ids
 ----------------------------------------------------------------------------------------------------------
-
-Run SQL to get the existing db_link data to be kept (including manually curated db_link accessions) and store in a hash to avoid re-loading them
-
-Output the accessions and related info such as length values to be loaded (according to mapping) to the add list, toLoad.unl; Output the accessions, current attribution, 1 of the 2 load pubs (according to mapping type) to toAttribute.unl.
-
-Parse NCBI's gene2unigene file and output those mapped ones to the add list, toLoad.unl file.
+## as of January, 2020, no more UniGene Ids will be loaded or kept at ZFIN.
 
 ----------------------------------------------------------------------------------------------------------
 Step 8: Execute loadNCBIgeneAccs.sql to:
@@ -280,3 +267,4 @@ Email all reports.
  
  
  
+

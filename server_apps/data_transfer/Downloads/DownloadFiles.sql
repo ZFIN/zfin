@@ -30,7 +30,7 @@
 -- Mapping data
 --	zfin id, symbol, panel symbol, LG, loc, metric
 --
--- Sequence data - separate files for GenBank, RefSeq, Gene, Unigene,
+-- Sequence data - separate files for GenBank, RefSeq, Gene
 -- UniProt, Interpro, GenPept and Vega (genes and transcripts) 1:1 Ensembl ID
 -- as well as sequences indirectly associated with genes
 --	zfin id, symbol, accession number
@@ -778,7 +778,7 @@ order by 1;
 \copy (select * from mappings) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mappings.txt' with delimiter as '	' null as '';
 drop view mappings;
 
--- Generate sequence data files for GenBank, RefSeq, Entrez, UniGene, UniProt, Interpro and GenPept
+-- Generate sequence data files for GenBank, RefSeq, Entrez, UniProt, Interpro and GenPept
 
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genbank.txt'"
 
@@ -827,20 +827,6 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  order by 1;
 \copy (select * from genes) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene.txt' with delimiter as '	' null as '';
 drop view genes;
-
---! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/unigene.txt'"
-
-create view unigene as
-select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
- from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
- where mrkr_zdb_id = dblink_linked_recid
-  and fdbcont_fdb_db_id = fdb_db_pk_id
-  and szm_object_type = mrkr_type
-  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-  and fdb_db_name = 'UniGene'
-order by 1;
-\copy (select * from unigene) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/unigene.txt' with delimiter as '	' null as '';
-drop view unigene;
 
 --! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot.txt' with delimiter as '	' null as '';"
 create view uniprot as
@@ -2433,3 +2419,4 @@ order by 2, 4, 5, 7;
 drop view diseaseGeneOrtholog;
 
 commit work;
+

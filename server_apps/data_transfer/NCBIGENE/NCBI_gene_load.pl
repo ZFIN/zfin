@@ -4,7 +4,7 @@
 #
 # This script loads the following db_link records based on mapped gene records between ZFIn and NCBI:
 # 1) NCBI Gene Ids
-# 2) UniGene Ids
+# 2) UniGene Ids     ## as of January, 2020, no more UniGene Ids will be loaded or kept at ZFIN.
 # 3) RefSeq accessioons (including RefSeq RNA, RefPept, RefSeq DNA)
 # 4) GenBank accessions (including GenBank RNA, GenPept, GenBank DNA)
 #
@@ -61,7 +61,7 @@ system("/bin/rm -f *.gz");
 
 system("/bin/rm -f zf_gene_info");
 system("/bin/rm -f gene2vega");
-system("/bin/rm -f gene2unigene");
+##system("/bin/rm -f gene2unigene");
 system("/bin/rm -f gene2accession");
 system("/bin/rm -f RefSeqCatalog");
 system("/bin/rm -f RELEASE_NUMBER");
@@ -105,7 +105,7 @@ try {
   &doSystemCommand("/local/bin/gunzip gene2accession.gz");
   &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene2vega.gz");
   &doSystemCommand("/local/bin/gunzip gene2vega.gz");
-  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2unigene");
+##  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2unigene");
   &doSystemCommand("/local/bin/wget -O zf_gene_info.gz ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz");
   &doSystemCommand("/local/bin/gunzip zf_gene_info.gz");
 } catch {
@@ -122,7 +122,7 @@ print LOG "Done with downloading.\n\n";
 # If not, stop the process and send email to alert.
 #-------------------------------------------------------------------------------------------------
 
-if (!-e "zf_gene_info" || !-e "gene2accession" || !-e "RefSeqCatalog" || !-e "gene2unigene") {
+if (!-e "zf_gene_info" || !-e "gene2accession" || !-e "RefSeqCatalog") {
    $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: ERROR with download";
    print LOG "\nMissing one or more downloaded NCBI file(s)\n\n";
    &reportErrAndExit($subjectLine);
@@ -134,7 +134,7 @@ $pubMappedbasedOnRNA = "ZDB-PUB-020723-3";
 $pubMappedbasedOnVega = "ZDB-PUB-130725-2";
 
 $fdcontNCBIgeneId = "ZDB-FDBCONT-040412-1";
-$fdcontUniGeneId = "ZDB-FDBCONT-040412-44";
+##$fdcontUniGeneId = "ZDB-FDBCONT-040412-44";
 $fdcontGenBankRNA = "ZDB-FDBCONT-040412-37";
 $fdcontGenPept = "ZDB-FDBCONT-040412-42";
 $fdcontGenBankDNA = "ZDB-FDBCONT-040412-36";
@@ -148,7 +148,6 @@ $fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
 #    2) a list of ZFIN genes to be mapped, toMap.unl
 #--------------------------------------------------------------------------------------------------------------------
 
-##&doSystemCommand($cmd);
 try {
   &doSystemCommand("psql -d <!--|DB_NAME|--> -a -f prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2");
 } catch {
@@ -226,14 +225,6 @@ $sql = "select distinct dblink_acc_num
            and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
 
 $numNCBIgeneIdBefore = ZFINPerlModules->countData($sql);
-
-# UniGene
-$sql = "select distinct dblink_acc_num
-          from db_link
-         where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-44'
-           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
-
-$numUniGeneBefore = ZFINPerlModules->countData($sql);
 
 #RefSeq RNA
 $sql = "select distinct dblink_acc_num
@@ -2360,44 +2351,6 @@ foreach $RefSeqDNA (sort keys %RefSeqDNAncbiGeneIds) {
   }
 }
 
-#---------------------------------------------------------------------------
-#  write UniGene Ids with mapped genes onto toLoad.unl
-#---------------------------------------------------------------------------
-
-open (GENECLUSTER, "gene2unigene") ||  die "Cannot open gene2unigene : $!\n";
-
-## sample records:
-## 324615  Dr.743
-## 445030  Dr.743
-
-$ctUniGenes = 0;
-while (<GENECLUSTER>) {
-  chomp;
-
-  if ($_ =~ m/([0-9]+)\s+Dr.([0-9]+)/) {
-
-    $ctUniGenes++;
-
-    $ncbiGeneId = $1;
-    $UniGeneId = $2;
-
-    # print the UniGene accessions to be loaded
-    if (exists($mappedReversed{$ncbiGeneId})) {
-        $zdbGeneId = $mappedReversed{$ncbiGeneId};
-        print TOLOAD "$zdbGeneId|$UniGeneId|||$fdcontUniGeneId|$pubMappedbasedOnRNA\n";
-        $ctToLoad++;
-    } elsif (exists($oneToOneViaVega{$ncbiGeneId})) {
-        $zdbGeneId = $oneToOneViaVega{$ncbiGeneId};
-        print TOLOAD "$zdbGeneId|$UniGeneId|||$fdcontUniGeneId|$pubMappedbasedOnVega\n";
-        $ctToLoad++;
-    }
-  }
-}
-
-print LOG "\nctUniGenes = $ctUniGenes\n\n\n";
-
-close GENECLUSTER;
-
 close TOLOAD;
 
 system("/bin/date");
@@ -2556,14 +2509,6 @@ $sql = "select distinct dblink_acc_num
 
 $numNCBIgeneIdAfter = ZFINPerlModules->countData($sql);
 
-# UniGene
-$sql = "select distinct dblink_acc_num
-          from db_link
-         where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-44'
-           and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%');";
-
-$numUniGeneAfter = ZFINPerlModules->countData($sql);
-
 #RefSeq RNA
 $sql = "select distinct dblink_acc_num
           from db_link
@@ -2661,12 +2606,6 @@ print STATS "NCBI gene Id                                  \t";
 print STATS "$numNCBIgeneIdBefore   \t";
 print STATS "$numNCBIgeneIdAfter   \t";
 printf STATS "%.2f\n", ($numNCBIgeneIdAfter - $numNCBIgeneIdBefore) / $numNCBIgeneIdBefore * 100 if ($numNCBIgeneIdBefore > 0);
-
-print STATS "UniGene Id                                    \t";
-print STATS "$numUniGeneBefore        \t";
-print STATS "$numUniGeneAfter       \t";
-printf STATS "%.2f\n", ($numUniGeneAfter - $numUniGeneBefore) / $numUniGeneBefore * 100 if ($numUniGeneBefore > 0);
-
 
 print STATS "RefSeq RNA                                 \t";
 print STATS "$numRefSeqRNABefore        \t";
@@ -2815,6 +2754,7 @@ sub sendLoadLogs {
   $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog1 file";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","loadLog1");
 }
+
 
 
 

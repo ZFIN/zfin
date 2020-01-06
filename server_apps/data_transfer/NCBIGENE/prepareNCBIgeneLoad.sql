@@ -11,15 +11,11 @@
 
 begin work;
 
---!echo 'Attribute the UniGene accessions missing attribution to one of the NCBI gene load publications (ZDB-PUB-020723-3)'
---!echo 'This piece of SQL for FB case 9915 should be kept because curator may accidentally curate such accessions which should be maintained by the load with no attribution again'
-
-insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-  select dblink_zdb_id,'ZDB-PUB-020723-3'
-    from db_link
-   where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-44'      -- UniGene
-     and not exists (select 1 from record_attribution
-                      where recattrib_data_zdb_id = dblink_zdb_id);
+-- delete all UniGene accessions
+delete from zdb_active_data
+  where exists(select 1 from db_link
+                where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-44'
+                  and dblink_zdb_id = zactvd_zdb_id);
                       
 create temp table pre_delete (dblink_loaded_zdb_id		text
                              );

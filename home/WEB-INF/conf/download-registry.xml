@@ -734,34 +734,6 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="3">Symbol</Column>
             <Column id="4">Vega ID</Column>
         </Download>
-        <Download orderIndex="30">
-            <Name>
-                ZFIN Marker associations to UniGene sequence data
-            </Name>
-            <Category>
-                Sequence Data
-            </Category>
-            <Description></Description>
-            <WikiLink></WikiLink>
-            <FileName>unigene</FileName>
-            <FileExtension>txt</FileExtension>
-            <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[
-                    select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
-                     from marker, db_link, foreign_db_contains, foreign_db
-                     where mrkr_zdb_id = dblink_linked_recid
-                      and fdbcont_fdb_db_id = fdb_db_pk_id
-                      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                      and fdb_db_name = 'UniGene'
-                    order by 1
-                ]]>
-            </Query>
-            <Column id="1" unique="true">ZFIN ID</Column>
-            <Column id="2">SO ID</Column>
-            <Column id="3">Symbol</Column>
-            <Column id="4">UniGene ID</Column>
-        </Download>
         <Download orderIndex="60">
             <Name>
                 ZFIN Marker associations to UniProt protein data
@@ -2778,4 +2750,5 @@ order by 2, 4, 5, 7;
         </Category>
     </DownloadCategories>
 </ns2:downloadFileRegistry>
+
 
