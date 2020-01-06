@@ -147,7 +147,7 @@ psql dbname, """
            
   insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
     select dblinkId, 'ZDB-PUB-200103-6'
-       from tmp_links
+       from tmp_id_links
        where not exists (Select 'x' from record_attribution 
                             where recattrib_data_zdb_id = dblinkId
                             and recattrib_source_zdb_id = 'ZDB-PUB-200103-6');
