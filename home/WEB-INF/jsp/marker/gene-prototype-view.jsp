@@ -218,7 +218,7 @@
                     <th width="25%">Disease Ontology Term</th>
                     <th width="20%">Multi-Species Data</th>
                     <th width="25%">OMIM Term</th>
-                    <th width="20%" style="text-align: center">OMIM Phenotype ID</th>
+                    <th width="20%">OMIM Phenotype ID</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -242,7 +242,7 @@
                             </zfin:groupByDisplay>
                         </td>
                         <td>${row.omimPhenotype.name}</td>
-                        <td style="text-align: center"><c:if test="${!empty row.omimPhenotype.omimNum}"><a
+                        <td><c:if test="${!empty row.omimPhenotype.omimNum}"><a
                                 href="http://omim.org/entry/${row.omimPhenotype.omimNum}">${row.omimPhenotype.omimNum}</a></c:if>
                         </td>
                     </zfin:alternating-tr>
@@ -251,7 +251,7 @@
             </zfin-prototype:dataTable>
         </zfin-prototype:section>
         <zfin-prototype:section title="Associated with <i>${formBean.marker.abbreviation}</i> via experimental Models">
-            <zfin-prototype:dataTable hasData="${!empty formBean.diseaseDisplays}">
+            <zfin-prototype:dataTable hasData="${!empty formBean.diseaseModelDisplays}">
                 <thead>
                 <tr>
                     <th>Human Disease</th>
