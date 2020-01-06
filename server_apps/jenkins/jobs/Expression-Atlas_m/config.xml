@@ -35,7 +35,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/PUBMED/*.txt,server_apps/data_transfer/ExpressionAtlas/*.log</artifacts>
+      <artifacts>server_apps/data_transfer/ExpressionAtlas/*.txt,server_apps/data_transfer/ExpressionAtlas/*.log</artifacts>
       <allowEmptyArchive>true</allowEmptyArchive>
       <onlyIfSuccessful>false</onlyIfSuccessful>
       <fingerprint>false</fingerprint>
