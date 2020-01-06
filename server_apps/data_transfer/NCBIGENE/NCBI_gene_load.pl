@@ -103,7 +103,7 @@ try {
   &doSystemCommand("/local/bin/gunzip -c $catalogFile >RefSeqCatalog");
   &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz");
   &doSystemCommand("/local/bin/gunzip gene2accession.gz");
-  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene2vega.gz");
+  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/ARCHIVE/gene2vega.gz");
   &doSystemCommand("/local/bin/gunzip gene2vega.gz");
 ##  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2unigene");
   &doSystemCommand("/local/bin/wget -O zf_gene_info.gz ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz");
