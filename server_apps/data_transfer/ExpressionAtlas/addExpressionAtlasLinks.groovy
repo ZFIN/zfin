@@ -126,9 +126,12 @@ psql dbname, """
      accessionNumber text,
      dblinkId text);
      
-  insert into tmp_id_links
-    select geneId, accessionNumber, get_id('DBLINK')
+  insert into tmp_id_links (geneId, accessionNumber)
+    select distinct geneId, accessionNumber
      from tmp_links;
+     
+  update tmp_id_links
+    set dblinkId = get_id('DBLINK');
      
   insert into zdb_active_data
     select dblinkId from tmp_id_links;
