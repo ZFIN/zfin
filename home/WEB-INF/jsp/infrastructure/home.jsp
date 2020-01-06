@@ -34,7 +34,7 @@
             </div>
 
             <div class="section">
-                <div class="heading">Meeting Announcements</div>
+                <div class="heading">Upcoming Meetings</div>
                 <div class="__react-root" id="MeetingsFeed"></div>
             </div>
 

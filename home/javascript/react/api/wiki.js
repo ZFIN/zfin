@@ -6,7 +6,7 @@ export const getBlogPosts = (space, options = {}) => {
         limit: 5,
         expand: 'history',
     };
-    return http.get('https://wiki.zfin.org/rest/api/content/search', params);
+    return http.get('https://@WIKI_HOST@/rest/api/content/search', params);
 };
 
 export const getPosts = (space = {}) => {
