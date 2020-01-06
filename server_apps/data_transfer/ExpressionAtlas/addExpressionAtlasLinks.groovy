@@ -146,7 +146,13 @@ psql dbname, """
               (select fdbcont_zdb_id from foreign_db_contains, foreign_db
                     where fdbcont_fdb_db_id = fdb_db_pk_id
                     and fdb_db_name = 'ExpressionAtlas')
-           from tmp_id_links; 
+           from tmp_id_links
+           where not exists (select 'x' from db_link where dblink_acc_num = accessionNumber
+                                and dblink_linked_recid = geneId
+                                    and dblink_fdbcont_zdb_id = (select fdbcont_zdb_id
+                                        from foreign_db_contains, foreign_db
+                    where fdbcont_fdb_db_id = fdb_db_pk_id
+                    and fdb_db_name = 'ExpressionAtlas')); 
            
   insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
     select dblinkId, 'ZDB-PUB-200103-6'
