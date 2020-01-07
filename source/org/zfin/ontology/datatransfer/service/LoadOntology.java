@@ -171,9 +171,11 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             loader.debugMode = Boolean.parseBoolean(debugOptionValue);
         LOG.info("Property: " + ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL.value());
         CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
-        if (loader.initialize(oboFile, cronJobUtil)) {
+        try {
+            loader.initialize(oboFile, cronJobUtil);
             loader.runOntologyUpdateProcess();
-        } else {
+        } catch (RuntimeException e) {
+            LOG.error("Error during Ontology Load", e);
             System.exit(-1);
         }
         System.exit(0);
@@ -315,11 +317,11 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         cronJobUtil.emailReport("ontology-loader-invalid-stage-defintions.ftl", cronReport);
     }
 
-    public boolean initialize(String fileName, CronJobUtil cronJobUtil) {
-        return initialize(new CronJobReport("Load Ontology: " + fileName, cronJobUtil));
+    public void initialize(String fileName, CronJobUtil cronJobUtil) {
+        initialize(new CronJobReport("Load Ontology: " + fileName, cronJobUtil));
     }
 
-    public boolean initialize(CronJobReport cronJobReport) {
+    public void initialize(CronJobReport cronJobReport) {
         sectionTime = System.currentTimeMillis();
         this.report = cronJobReport;
         this.propertiesFile = "report.properties";
@@ -332,13 +334,12 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         } catch (OBOParseException e) {
             LOG.error("Error while parsing Obo file", e);
             report.error("Error while parsing Obo file");
-            return false;
+            throw new RuntimeException(e);
         } catch (IOException e) {
             LOG.error("No obo file found", e);
             report.error("Error while parsing Obo file");
-            return false;
+            throw new RuntimeException(e);
         }
-        return true;
     }
 
     private void postLoadProcess() {
