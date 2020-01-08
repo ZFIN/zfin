@@ -195,12 +195,16 @@ public class ExpressionService {
     public LinkDisplay getExpressionAtlasForMarker(String mrkrZdbID, ForeignDB.AvailableName foreignDBName){
         DBLink gxaLink ;
         gxaLink = sequenceRepository.getAtlasDBLink(mrkrZdbID, foreignDBName.toString());
+        LOG.debug ("gxaLink" + gxaLink);
+        if (gxaLink == null) {
+            return null;
+        } else {
         List<LinkDisplay> linkDisplays = markerRepository.getMarkerLinkDisplay(gxaLink.getZdbID());
         if (linkDisplays.size() > 1) {
             LOG.error("too many LinkDisplays returned for " + gxaLink.getZdbID());
         }
-
-        return linkDisplays.get(0);
+            return linkDisplays.get(0);
+        }
     }
 
     public String getGeoLinkForMarkerIfExists(Marker marker) {
@@ -229,9 +233,11 @@ public class ExpressionService {
         logger.debug(marker.getZdbID());
         logger.debug(ForeignDB.AvailableName.EXPRESSIONATLAS);
 
-        LinkDisplay newLink = getExpressionAtlasForMarker(marker.getZdbID(),ForeignDB.AvailableName.EXPRESSIONATLAS);
+        LinkDisplay atlasLink = getExpressionAtlasForMarker(marker.getZdbID(),ForeignDB.AvailableName.EXPRESSIONATLAS);
         logger.debug("got the newLink");
-        markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.getZdbID(),ForeignDB.AvailableName.EXPRESSIONATLAS));
+        if (atlasLink != null) {
+            markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.getZdbID(), ForeignDB.AvailableName.EXPRESSIONATLAS));
+        }
         logger.info("executed expression atlas link");
         logger.info(markerExpression.getExpressionAtlasLink());
 
