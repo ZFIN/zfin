@@ -37,9 +37,9 @@ insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, bio
     where dblink_fdbcont_zdb_id = fdbcont_zdb_id
     and fdbcont_fdb_db_id = fdb_db_pk_id;
 
-insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
+/*insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
  select 'ZFIN:XPATRES-'||xpatres_pk_id,'ZFIN:XPATRES-'||xpatres_pk_id,'','','','expression result','' from expression_result2;
-
+*/
 insert into tmp_id(id, id2, uri, destination_url, outgoing_uri, entity_type, biolink_type)
  select 'ZFIN:'||exp_zdb_id, 'ZFIN:'||exp_zdb_id, 'https://http://zfin.org/action/expression/experiment?id='||exp_zdb_id,'https://http://zfin.org/action/expression/experiment?id='||exp_zdb_id,'https://http://zfin.org/action/expression/experiment?id='||exp_zdb_id,'experiment','' from experiment;
 
