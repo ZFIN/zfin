@@ -32,8 +32,7 @@
             <label for="password">Password</label>
             <input type="password" class="form-control" name="password" id="password">
         </div>
-
-        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        <button type="submit" class="btn btn-primary btn-block" name="loginButton">Sign In</button>
     </form>
 
     <div class="card">

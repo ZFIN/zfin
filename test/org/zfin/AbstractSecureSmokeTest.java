@@ -1,6 +1,7 @@
 package org.zfin;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -115,7 +116,7 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
         nameField.setValueAttribute(person.getAccountInfo().getLogin());
         HtmlInput passwordField = loginForm.getInputByName("password");
         passwordField.setValueAttribute(password);
-        HtmlInput loginButton = loginForm.getInputByName("action");
+        HtmlButton loginButton = loginForm.getButtonByName("loginButton");
         try {
             HtmlPage pageLogin = loginButton.click();
         } catch (Throwable t) {
