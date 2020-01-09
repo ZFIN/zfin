@@ -33,52 +33,52 @@
                     <th width="50%">Suppliers</th>
                 </tr>
                 <c:forEach var="feature" items="${mutantsOnMarkerBean.features}" varStatus="loop">
-                    <tr class=${loop.index%2==0 ? "even" : "odd"}>
-                        <td>
-                            <a href="/${feature.zdbID}">${feature.abbreviation}</a>
-                        </td>
-                        <td>
+                <tr class=${loop.index%2==0 ? "even" : "odd"}>
+                    <td>
+                        <a href="/${feature.zdbID}">${feature.abbreviation}</a>
+                    </td>
+                    <td>
                             ${feature.type.display}
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${!empty feature.geneLocalizationStatement}">
-                                    ${feature.geneLocalizationStatement}
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="no-data-tag">Unknown</span>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${!empty feature.transcriptConsequenceStatement}">
-                                    ${feature.transcriptConsequenceStatement}
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="no-data-tag">Unknown</span>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
+                    </td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${!empty feature.geneLocalizationStatement}">
+                                ${feature.geneLocalizationStatement}
+                            </c:when>
+                            <c:otherwise>
+                                <span class="no-data-tag">Unknown</span>
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${!empty feature.transcriptConsequenceStatement}">
+                                ${feature.transcriptConsequenceStatement}
+                            </c:when>
+                            <c:otherwise>
+                                <span class="no-data-tag">Unknown</span>
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
 
-                        <td>
-                            <c:set var="mutagen" value="${feature.featureAssay.mutagen}"/>
-                            <c:if test="${mutagen ne zfn:getMutagen('not specified')}">
-                                ${feature.featureAssay.mutagen}
-                            </c:if>
-                        </td>
-                        <td>
-                            <c:forEach var="supplier" items="${feature.suppliers}">
-                                <li style="list-style-type: none;">
-                                    <a href="/${supplier.organization.zdbID}"> ${supplier.organization.name}</a>
-                                    <c:if test="${!empty supplier.orderURL}">
-                                        <a href="${supplier.orderURL}"> (order this)</a>
-                                    </c:if>
-                                </li>
-                            </c:forEach>
-                        </td>
-                    </tr>
-                </c:forEach>
+                    <td>
+                        <c:set var="mutagen" value="${feature.featureAssay.mutagen}"/>
+                        <c:if test="${mutagen ne zfn:getMutagen('not specified')}">
+                            ${feature.featureAssay.mutagen}
+                        </c:if>
+                    </td>
+                    <td>
+                        <c:forEach var="supplier" items="${feature.suppliers}">
+                            <li style="list-style-type: none;">
+                                <a href="/${supplier.organization.zdbID}"> ${supplier.organization.name}</a>
+                                <c:if test="${!empty supplier.orderURL}">
+                                    <a href="${supplier.orderURL}"> (order this)</a>
+                                </c:if>
+                            </li>
+                        </c:forEach>
+                    </td>
+                </tr>
+            </c:forEach>
             </table>
         </div>
     </c:if>

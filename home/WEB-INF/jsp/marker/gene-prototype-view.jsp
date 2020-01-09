@@ -7,11 +7,13 @@
 
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="ANTIBODIES" value="Antibodies"/>
+<c:set var="PLASMIDS" value="Plasmids"/>
+<c:set var="PATHWAYS" value="Interactions and Pathways"/>
 <c:set var="MUTANTS" value="Mutations"/>
 <c:set var="DISEASES" value="Diseases"/>
 <c:set var="PROTEINS" value="Proteins"/>
 
-<zfin-prototype:dataPage sections="${[SUMMARY, MUTANTS, DISEASES, ANTIBODIES, PROTEINS]}">
+<zfin-prototype:dataPage sections="${[SUMMARY, MUTANTS, DISEASES, PATHWAYS, ANTIBODIES, PLASMIDS, PROTEINS]}">
     <zfin-prototype:dataManagerDropdown>
         <a class="dropdown-item active" href="/action/marker/gene/prototype-view/${formBean.marker.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
@@ -161,9 +163,6 @@
                 </tbody>
 
 
-
-
-
             </zfin-prototype:dataTable>
         </zfin-prototype:section>
 
@@ -195,7 +194,7 @@
                             </c:otherwise>
                         </c:choose>
                     </td>
-                    <td style="vertical-align: text-top; text-align: left">
+                    <td>
                         <a href="/action/marker/citation-list/${bean.marker.zdbID}">${fn:length(bean.marker.publications)}</a>
                     </td>
                 </tr>
@@ -292,6 +291,29 @@
         </zfin-prototype:section>
     </zfin-prototype:section>
 
+    <zfin-prototype:section title="${PLASMIDS}">
+
+
+            <zfin-prototype:dataTable hasData="${!empty formBean.plasmidDBLinks}">
+            <c:forEach var="link" items="${formBean.plasmidDBLinks}" varStatus="loop">
+                <tr>
+                    <td><a href="${link.link}">${link.referenceDatabaseName}:${link.accNumDisplay}</a></td>
+                </tr>
+            </c:forEach>
+            </zfin-prototype:dataTable>
+    </zfin-prototype:section>
+
+    <zfin-prototype:section title="${PATHWAYS}">
+
+
+        <zfin-prototype:dataTable hasData="${!empty formBean.pathwayDBLinks}">
+            <c:forEach var="link" items="${formBean.pathwayDBLinks}" varStatus="loop">
+                <tr>
+                    <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
+                </tr>
+            </c:forEach>
+        </zfin-prototype:dataTable>
+    </zfin-prototype:section>
 
     <zfin-prototype:section title="${ANTIBODIES}">
         <zfin-prototype:dataTable hasData="${!empty formBean.antibodyBeans}">
