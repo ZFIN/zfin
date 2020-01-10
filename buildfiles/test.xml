@@ -274,6 +274,7 @@ test(s) need to be run before committing changes or pushing files to production 
              <jvmarg value="--add-opens=java.base/java.security=ALL-UNNAMED"/>
              <jvmarg value="--add-opens=java.base/java.net=ALL-UNNAMED"/>
              <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED"/>
+             <jvmarg value="-Djavax.xml.soap.SAAJMetaFactory=com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl"/>
              <classpath>
  		<path refid="extended.classpath"/>
              </classpath>
