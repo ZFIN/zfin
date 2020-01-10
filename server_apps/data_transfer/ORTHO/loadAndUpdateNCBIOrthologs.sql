@@ -127,6 +127,7 @@ where exists (Select 'x' from just_ncbi_info
 delete from ncbi_ortholog
  where not exists (Select 'x' from just_ncbi_info
        	   	  	  where ncbiGeneId = noi_ncbi_gene_id);
+       	   	  	  
 
 create view missingNcbiGeneIdsWithOrthos as
   select * from ortholog
@@ -302,6 +303,20 @@ union
 \copy (select * from orthoStats) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/ortho_statistics.txt' with delimiter as '	' null as '';
 drop view orthoStats;
 
+create view obsoleteOrthos as
+  SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_ncbi_gene_id,ortho_other_species_name,
+                   oev_evidence_code, oev_pub_zdb_id
+    FROM ortholog
+    INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+    INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
+    WHERE ortho_other_species_ncbi_gene_is_obsolete ='t'
+    ORDER BY mrkr_zdb_id;
+
+\copy (select * from obsoleteOrthos) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/obsolete_orthos.txt' with delimiter as '	' null as '';
+drop view obsoleteOrthos;
+
 commit work;
+
+
 
 --rollback work;

@@ -351,6 +351,7 @@ create view human_orthos as
     LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
     LEFT OUTER JOIN tmp_hgnc ON ortho_zdb_id = tmp_hgnc.ortho_id
     WHERE organism_common_name = 'Human'
+    AND  ortho_other_species_ncbi_gene_is_obsolete ='f'
     ORDER BY mrkr_zdb_id;
 \copy (select * from human_orthos) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt' with delimiter as '	' null as '';  
 drop view human_orthos;    
