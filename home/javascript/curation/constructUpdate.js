@@ -65,6 +65,7 @@ $(function () {
     $('#constructEditContainer').on('click', '#updatePublicNotes', function updatePNotes() {
 
         var constructUpdateComments = jQuery("#constructEditComments").val();
+        var constructUpdateComments=constructUpdateComments.replace('/', 'slash');;
 
         var constructID = jQuery('#constructEdit').val();
         if (constructUpdateComments==""){
@@ -75,7 +76,7 @@ $(function () {
 
         jQuery.ajax({
             url: "/action/construct/update-comments/" + constructID
-                + "/constructEditComments/" + constructUpdateComments,
+                + "/constructEditComments/" + constructUpdateComments1,
             type: 'POST',
             //data: param,
             success: function (response) {
@@ -93,6 +94,8 @@ $(function () {
 
     $('#constructEditContainer').on('click', '#addConstructEditNotes', function addNotes() {
         var notes = jQuery("#curatorEditNotes").val();
+        var notes=notes.replace('/', 'slash');
+
         var constructID = jQuery('#constructEdit').val();
         var pubID = jQuery('#constructPublicationZdbID').val();
 
