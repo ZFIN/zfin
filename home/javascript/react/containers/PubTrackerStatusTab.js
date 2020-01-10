@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import update from 'immutability-helper';
+import produce from 'immer';
+
 import {
     addNote,
     addTopic,
@@ -122,25 +123,27 @@ class PubTrackerStatusTab extends React.Component {
         }
         request.then(topic => {
             const idx = this.state.topics.findIndex(other => other.topic === topic.topic);
-            this.setState({
-                topics: update(this.state.topics, {[idx]: {$set: topic}})
-            });
+            this.setState(produce(state => {
+                state.topics[idx] = topic;
+            }));
         });
     }
 
     handleAddNote(note) {
-        return addNote(this.props.pubId, note).then(note => this.setState({
-            notes: update(this.state.notes, {$unshift: [note]})
-        }));
+        return addNote(this.props.pubId, note).then(note => {
+            this.setState(produce(state => {
+                state.notes.unshift(note);
+            }));
+        });
     }
 
     handleEditNote(note) {
         const { notes } = this.state;
         const idx = notes.findIndex(other => other.zdbID === note.zdbID);
         return updateNote(note.zdbID, note).then(note => {
-            this.setState({
-                notes: update(notes, {[idx]: {$set: note}})
-            });
+            this.setState(produce(state => {
+                state.notes[idx] = note;
+            }));
         });
     }
 
@@ -148,9 +151,9 @@ class PubTrackerStatusTab extends React.Component {
         const { notes } = this.state;
         const idx = notes.findIndex(other => other.zdbID === note.zdbID);
         return deleteNote(note.zdbID).then(() => {
-            this.setState({
-                notes: update(notes, {$splice: [[idx, 1]]})
-            });
+            this.setState(produce(state => {
+                state.notes.splice(idx, 1);
+            }));
         });
     }
 

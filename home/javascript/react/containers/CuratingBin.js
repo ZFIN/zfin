@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import update from 'immutability-helper';
+import produce from 'immer';
+
 import {getLocations, searchPubStatus, updateStatus} from "../api/publication";
 import intertab from '../utils/intertab';
 
@@ -95,9 +96,9 @@ class CuratingBin extends React.Component {
     }
 
     setPubState(index, field, value) {
-        this.setState({
-            results: update(this.state.results, {publications: {[index]: {[field]: {$set: value}}}})
-        });
+        this.setState(produce(state => {
+            state.results.publications[index][field] = value;
+        }));
     }
 
     updatePubStatus(pub, index) {

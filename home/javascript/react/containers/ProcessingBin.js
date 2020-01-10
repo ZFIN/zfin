@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import update from 'immutability-helper';
+import produce from 'immer';
+
 import {searchPubStatus, updateStatus} from "../api/publication";
 import Pagination from "../components/Pagination";
 import FilterBar from "../components/FilterBar";
@@ -72,9 +73,9 @@ class ProcessingBin extends React.Component {
     }
 
     setPubState(index, field, value) {
-        this.setState({
-            results: update(this.state.results, {publications: {[index]: {[field]: {$set: value}}}})
-        });
+        this.setState(produce(state => {
+            state.results.publications[index][field] = value;
+        }));
     }
 
     updatePubStatus(pub, index) {

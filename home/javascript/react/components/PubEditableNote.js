@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import update from 'immutability-helper';
 
 class PubEditableNote extends Component {
     constructor(props) {
@@ -37,7 +36,10 @@ class PubEditableNote extends Component {
     }
 
     handleEditSave() {
-        const note = update(this.props.note, {text: {$set: this.state.editText}});
+        const note = {
+            ...this.props.note,
+            text: this.state.editText
+        };
         this.props.onSaveNote(note).then(() => this.setState({
             editing: false
         }));

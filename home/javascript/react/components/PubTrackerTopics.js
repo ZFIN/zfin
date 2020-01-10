@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import update from 'immutability-helper';
 
 import RelativeDate from "./RelativeDate";
 
@@ -20,34 +19,34 @@ const PubTrackerTopics = ({onTopicSave, topics}) => {
     };
 
     const onToggleDataFound = (topic, dataFound) => {
-        topic = update(topic, {
-            dataFound: {$set: dataFound}
+        onTopicSave({
+            ...topic,
+            dataFound,
         });
-        onTopicSave(topic);
     };
 
     const onOpenTopic = (topic) => {
-        topic = update(topic, {
-            openedDate: {$set: Date.now()},
-            closedDate: {$set: null},
-            dataFound: {$set: true},
+        onTopicSave({
+            ...topic,
+            openedDate: Date.now(),
+            closedDate: null,
+            dataFound: true,
         });
-        onTopicSave(topic);
     };
 
     const onCloseTopic = (topic) => {
-        topic = update(topic, {
-            closedDate: {$set: Date.now()},
-            dataFound: {$set: true},
+        onTopicSave({
+            ...topic,
+            closedDate: Date.now(),
+            dataFound: true,
         });
-        onTopicSave(topic);
     };
 
     const onReturnTopicToNew = (topic) => {
-        topic = update(topic, {
-            openedDate: {$set: null}
+        onTopicSave({
+            ...topic,
+            openedDate: null,
         });
-        onTopicSave(topic);
     };
 
     return (
