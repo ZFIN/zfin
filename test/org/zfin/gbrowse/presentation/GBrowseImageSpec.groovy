@@ -69,6 +69,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         zdbId << ["ZDB-ALT-120130-650"]
     }
 
+/*
     def "add tracks"() {
         when:
         def image = GBrowseImage.builder()
@@ -79,6 +80,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         then:
         image.imageUrl.contains("type=genes+mRNA")
     }
+*/
 
     def "default grid off"() {
         when:
