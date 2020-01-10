@@ -134,7 +134,7 @@ public class ConstructEditController {
             m.setPublicComments(constructUpdateComments);
 
             ConstructCuration c = cr.getConstructByID(constructID);
-            c.setPublicComments(constructUpdateComments);
+            c.setPublicComments(constructUpdateComments.replace("slash","/"));
             ir.insertUpdatesTable(m, "comments", "updated public notes");
             HibernateUtil.flushAndCommitCurrentSession();
 
@@ -165,7 +165,7 @@ public class ConstructEditController {
 
     ) {
         HibernateUtil.createTransaction();
-        mr.addMarkerDataNote(mr.getMarkerByID(constructID),notes);
+        mr.addMarkerDataNote(mr.getMarkerByID(constructID),notes.replace("slash","/"));
         ir.insertUpdatesTable(mr.getMarkerByID(constructID),"curator notes","added new curator note");
         HibernateUtil.currentSession().getTransaction().commit();
     }
