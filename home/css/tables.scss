@@ -1,0 +1,11 @@
+.data-table-container {
+  @extend .border, .rounded, .mb-3, .overflow-hidden;
+}
+
+.data-table {
+  @extend .table, .table-hover, .m-0;
+
+  thead {
+    @extend .bg-light;
+  }
+}

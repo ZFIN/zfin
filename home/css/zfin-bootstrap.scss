@@ -8,6 +8,7 @@ $modal-md: 600px;
 
 // import bootstrap
 @import "~bootstrap/scss/bootstrap";
+@import "tables";
 
 // undo stuff from _reset.scss
 header {

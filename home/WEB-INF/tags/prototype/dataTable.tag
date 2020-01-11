@@ -3,7 +3,9 @@
 <%@ attribute name="hasData" required="false" rtexprvalue="true" type="java.lang.Boolean" %>
 
 <zfin-prototype:ifHasData test="${hasData}">
-    <table class="table table-hover">
-        <jsp:doBody />
-    </table>
+    <div class="data-table-container">
+        <table class="data-table">
+            <jsp:doBody />
+        </table>
+    </div>
 </zfin-prototype:ifHasData>
