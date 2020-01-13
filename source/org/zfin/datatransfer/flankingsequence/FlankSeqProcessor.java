@@ -57,7 +57,7 @@ public class FlankSeqProcessor {
 
 
             try {
-//We are not loading flanking sequences for sa alleles. they have alreday bene laoded via a one time SQL script
+//We are not loading flanking sequences for sa alleles. they have alreday bene loaded via a one time SQL script
                 for (Feature feature : featureRepository.getNonSaFeaturesWithGenomicMutDets()) {
                     if (feature.getType()==FeatureTypeEnum.INDEL ||feature.getType()==FeatureTypeEnum.DELETION ||feature.getType()==FeatureTypeEnum.INSERTION||feature.getType()==FeatureTypeEnum.MNV||feature.getType()==FeatureTypeEnum.POINT_MUTATION) {
                        
@@ -78,8 +78,9 @@ public class FlankSeqProcessor {
                                         String refSeq= new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                                         UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(),refSeq);
                                     }
-                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart).getBases());
-                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locStart, locStart + offset).getBases());
+                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart-1).getBases());
+                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locStart+1, locStart + offset).getBases());
+
                                     break;
                                 case DELETION:
                                     if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
