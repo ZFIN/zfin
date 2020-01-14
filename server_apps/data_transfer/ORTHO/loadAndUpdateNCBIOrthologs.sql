@@ -124,6 +124,10 @@ update ncbi_ortholog
 where exists (Select 'x' from just_ncbi_info
       	     	     where noi_ncbi_Gene_id = ncbiGeneId);
 
+delete from ncbi_ortholog_alias
+ where not exists (Select 'x' from just_ncbi_info
+                          where ncbiGeneId = noa_ncbi_gene_id);
+
 delete from ncbi_ortholog
  where not exists (Select 'x' from just_ncbi_info
        	   	  	  where ncbiGeneId = noi_ncbi_gene_id);
