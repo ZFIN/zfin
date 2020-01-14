@@ -49,7 +49,7 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
 	FOSMID_CONTAINS_GENEDOM("FOSMID contains GENEDOM"),
 	FOSMID_CONTAINS_NTR("FOSMID contains NTR")
 ;
-        @JsonView(View.API.class)
+        @JsonView(View.MarkerRelationshipAPI.class)
         private final String value;
 
         Type(String value) {
@@ -68,8 +68,9 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
             throw new RuntimeException("No MarkerRelationship type of string " + type + " found.");
         }
     }
-
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String zdbID;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private Type type;
     private Marker firstMarker;
     private Marker secondMarker;

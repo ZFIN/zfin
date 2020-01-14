@@ -15,12 +15,15 @@ import java.util.List;
  */
 
 public class RelatedMarker implements Comparable {
-    @JsonView(View.API.class)
+    @JsonView(View.MarkerRelationshipAPI.class)
     private Marker marker;
+    @JsonView(View.MarkerRelationshipAPI.class)
     MarkerRelationshipType markerRelationshipType;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private MarkerRelationship markerRelationship;
     private String label;
     private List<TranscriptDBLink> displayedSequenceDBLinks; // if a marker has ONE associated sequence
+
     public void setMarkerRelationshipType(MarkerRelationshipType markerRelationshipType) {
         this.markerRelationshipType = markerRelationshipType;
     }
