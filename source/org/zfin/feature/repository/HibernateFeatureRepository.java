@@ -157,6 +157,22 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
+    public List<Feature> getDeletionFeatures() {
+
+
+            Session session = HibernateUtil.currentSession();
+            Criteria criteria = session.createCriteria(Feature.class);
+            criteria.add(Restrictions.eq("type", FeatureTypeEnum.DELETION));
+            criteria.addOrder(Order.asc("abbreviationOrder"));
+            return (List<Feature>) criteria.list();
+        }
+
+
+
+
+
+    @SuppressWarnings("unchecked")
     public List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID) {
 
         Session session = currentSession();
