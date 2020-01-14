@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-const stringToFunction = (getter) => {
-    return typeof getter === 'string' ? (o) => o[getter] : getter;
-};
+import {stringToFunction} from '../utils';
 
 const ObjectSelectBox = ({getDisplay, getValue, options, onChange, value, ...rest}) => {
     getDisplay = stringToFunction(getDisplay);

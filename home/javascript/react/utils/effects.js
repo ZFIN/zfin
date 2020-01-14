@@ -1,0 +1,43 @@
+import { useEffect, useState } from 'react';
+import produce from 'immer';
+import http from './http';
+
+export const useTableDataFetch = (baseUrl, tableState) => {
+    const [data, setData] = useState({
+        pending: false,
+        rejected: false,
+        reason: null,
+        fulfilled: false,
+        value: null,
+    });
+    const [request, setRequest] = useState(null);
+
+    useEffect(() => {
+        setData(produce(data => {
+            data.pending = true;
+            data.rejected = false;
+            data.fulfilled = false;
+        }));
+        if (request) {
+            request.abort();
+        }
+        const xhr = http.get(`${baseUrl}?limit=${tableState.limit}&page=${tableState.page}`);
+        setRequest(xhr);
+        xhr.then(result => setData(produce(data => {
+            data.fulfilled = true;
+            data.rejected = false;
+            data.value = result;
+            data.reason = null;
+        }))).fail(error => setData(produce(data => {
+            data.fulfilled = false;
+            data.rejected = true;
+            data.value = null;
+            data.reason = error;
+        }))).always(() => {
+            setRequest(null);
+            setData(produce(data => { data.pending = false }));
+        });
+    }, [baseUrl, tableState]);
+
+    return data;
+};
