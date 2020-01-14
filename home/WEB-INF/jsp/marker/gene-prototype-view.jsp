@@ -99,6 +99,7 @@
     <zfin-prototype:section title="${MUTANTS}">
         <zfin-prototype:section title="Mutants">
             <zfin-prototype:dataTable
+                    collapse="true"
                     hasData="${!empty formBean.mutantOnMarkerBeans and (!empty formBean.mutantOnMarkerBeans.features or !empty formBean.mutantOnMarkerBeans.knockdownReagents)}">
                 <thead>
                     <tr>
@@ -164,7 +165,7 @@
         </zfin-prototype:section>
 
         <zfin-prototype:section title="Sequence Targeting Reagents">
-            <zfin-prototype:dataTable hasData="${!empty formBean.mutantOnMarkerBeans.knockdownReagents}">
+            <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.mutantOnMarkerBeans.knockdownReagents}">
                 <thead>
                     <tr>
                         <th>Targeting Reagent</th>
@@ -201,7 +202,7 @@
 
     <zfin-prototype:section title="${DISEASES}">
         <zfin-prototype:section title="Associated with <i>${formBean.marker.abbreviation}</i> human ortholog">
-            <zfin-prototype:dataTable hasData="${!empty formBean.diseaseDisplays}">
+            <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.diseaseDisplays}">
                 <thead>
                     <tr>
                         <th width="25%">Disease Ontology Term</th>
@@ -238,7 +239,7 @@
             </zfin-prototype:dataTable>
         </zfin-prototype:section>
         <zfin-prototype:section title="Associated with <i>${formBean.marker.abbreviation}</i> via experimental Models">
-            <zfin-prototype:dataTable hasData="${!empty formBean.diseaseModelDisplays}">
+            <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.diseaseModelDisplays}">
                 <thead>
                     <tr>
                         <th>Human Disease</th>
@@ -295,7 +296,7 @@
     </zfin-prototype:section>
 
     <zfin-prototype:section title="${ANTIBODIES}">
-        <zfin-prototype:dataTable hasData="${!empty formBean.antibodyBeans}">
+        <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.antibodyBeans}">
             <thead>
                 <tr>
                     <th style="width: 17%">Name</th>
@@ -344,7 +345,7 @@
     </zfin-prototype:section>
 
     <zfin-prototype:section title="${PROTEINS}">
-        <zfin-prototype:dataTable hasData="${!empty formBean.proteinDomainBeans}">
+        <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.proteinDomainBeans}">
             <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
                 <thead>
                     <tr>

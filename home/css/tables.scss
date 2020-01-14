@@ -9,3 +9,14 @@
     @extend .bg-light;
   }
 }
+
+.data-table-pagination {
+  @extend .bg-light, .p-2, .border-top;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+[data-table='collapse'] {
+  display: none;
+}

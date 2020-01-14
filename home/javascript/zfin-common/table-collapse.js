@@ -27,73 +27,90 @@
  *             targeted genes' when the table is collapsed, and 'Show first N targeted
  *             genes' when the table is expanded.
  *
- *  Options can also be provided by using a 'data-table-collapse' attribute on the
- *  selected element. The attribute should be set to a JSON-formatted string.
+ *  Options can also be provided by using data attributes on the selected element. For
+ *  example, label can be specified by data-label="genes".
  */
 
 ;(function ($) {
 
-    var pluginName = 'tableCollapse',
-        defaults = {
-            headerRows: 1,
-            rowsToShow: 5,
-            label: ''
-        };
-
-    function TableCollapse(element, options) {
-        this.element = element.is('table') ? element : element.find('table');
-
-        this.options = $.extend({}, defaults, options, element.data('table-collapse'));
-
-        this.init();
-    }
-
-    TableCollapse.prototype = {
-
-        init: function() {
-            var table = this.element,
-                startRow = this.options.headerRows,
-                endRow = startRow + this.options.rowsToShow,
-                rows = table.find("tr"),
-                showText = ' Show all ' + (rows.length - startRow) + ' ' + this.options.label,
-                hideText = ' Show first ' + this.options.rowsToShow + ' ' + this.options.label,
-                tbody, showLink, linkIcon, linkText;
-
-            if (rows.length > endRow) {
-                // create a new tbody element and add the collapsible rows to it
-                tbody = $('<tbody></tbody>').appendTo(table);
-                rows.slice(endRow).appendTo(tbody);
-                tbody.hide();
-
-                // add the show/hide controls and hook up events
-                showLink = $('<a class="table-collapse-link"></a>')
-                    .attr('href', '#')
-                    .insertAfter(table);
-                linkIcon = $('<span class="fa-animation-container"><i class="fas fa-caret-down"></i></span>')
-                    .appendTo(showLink);
-                linkText = $('<span></span>')
-                    .text(showText)
-                    .appendTo(showLink);
-                showLink.on('click', function (evt) {
-                    evt.preventDefault();
-                    linkText.text(tbody.is(':visible') ? showText : hideText);
-                    linkIcon.toggleClass('fa-rotate-180');
-                    tbody.toggle();
-                });
-            }
-        }
-
+    const PLUGIN_NAME = 'tableCollapse';
+    const DEFAULTS = {
+        headerRows: 1,
+        rowsToShow: 5,
+        label: '',
     };
 
-    $.fn[pluginName] = function (options) {
+    class TableCollapse {
+        constructor(element, options) {
+            this.element = element.is('table') ? element : element.find('table');
+
+            this.options = $.extend({}, DEFAULTS, options, element.data());
+
+            this._init();
+        }
+
+        _init() {
+            const table = this.element;
+            const rows = table.find("tr").slice(this.options.headerRows);
+            const toggleContainer = table.parent().find(this.options.toggleContainer);
+            let numVisibleRows = rows.length;
+            const numRowsText = $(`<span>1 - ${numVisibleRows} of ${rows.length}</span>`).appendTo(toggleContainer);
+            const showText = toggleContainer.length ?
+                ' Show all' :
+                ' Show all ' + rows.length + ' ' + this.options.label;
+            const hideText = toggleContainer.length ?
+                ' Show fewer' :
+                ' Show first ' + this.options.rowsToShow + ' ' + this.options.label;
+
+            if (rows.length > this.options.rowsToShow) {
+                let removed = rows.slice(this.options.rowsToShow).detach();
+                numRowsText.text(`1 - ${this.options.rowsToShow} of ${rows.length}`);
+
+                const linkClass = 'table-collapse-link' + toggleContainer.length ? ' text-dark' : '';
+                // add the show/hide controls and hook up events
+                const showLink = $(`<a href="#" class="${linkClass}"></a>`);
+                if (toggleContainer.length) {
+                    showLink.appendTo(toggleContainer);
+                } else {
+                    showLink.insertAfter(table);
+                }
+                const linkIcon = $('<span class="fa-animation-container"><i class="fas fa-angle-down"></i></span>')
+                    .appendTo(showLink);
+                const linkText = $('<span></span>')
+                    .text(showText)
+                    .appendTo(showLink);
+                showLink.on('click', (evt) => {
+                    evt.preventDefault();
+                    if (removed) {
+                        removed.appendTo(rows.first().parent());
+                        numRowsText.text(`1 - ${numVisibleRows} of ${rows.length}`);
+                        removed = null;
+                    } else {
+                        removed = rows.slice(this.options.rowsToShow).detach();
+                        numRowsText.text(`1 - ${this.options.rowsToShow} of ${rows.length}`);
+                    }
+                    linkIcon.toggleClass('fa-rotate-180');
+                    linkText.text(removed ? showText : hideText);
+                });
+            }
+
+            table.css({display: 'table'});
+        }
+    }
+
+    $.fn[PLUGIN_NAME] = function (options) {
 
         return this.each(function () {
             // prevent multiple instantiations
-            if (!$.data(this, 'plugin_' + pluginName)) {
-                $.data(this, 'plugin_' + pluginName, new TableCollapse($(this), options));
+            if (!$.data(this, 'plugin_' + PLUGIN_NAME)) {
+                $.data(this, 'plugin_' + PLUGIN_NAME, new TableCollapse($(this), options));
             }
         });
 
     };
+
+    $(function () {
+        $("[data-table='collapse']").tableCollapse();
+    });
 
 })(jQuery);
