@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.*;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
@@ -337,6 +338,20 @@ public class MarkerService {
             if (mrel.getType().equals(type)) {
                 relatedMarkers.add(new RelatedMarker(marker, mrel));
             }
+        }
+
+        return relatedMarkers;
+    }
+
+    public static List<RelatedMarker> getRelatedMarkersOfAnyType(Marker marker) {
+        List<RelatedMarker> relatedMarkers = new ArrayList<>();
+
+        for (MarkerRelationship mrel : marker.getFirstMarkerRelationships()) {
+            relatedMarkers.add(new RelatedMarker(marker, mrel));
+
+        }
+        for (MarkerRelationship mrel : marker.getSecondMarkerRelationships()) {
+            relatedMarkers.add(new RelatedMarker(marker, mrel));
         }
 
         return relatedMarkers;
@@ -1080,4 +1095,44 @@ public class MarkerService {
             return false;
         return true;
     }
+
+    public JsonResultResponse<RelatedMarker> getMarkerRelationshipJsonResultResponse(String zdbID,
+                                                                              Pagination pagination) {
+        long startTime = System.currentTimeMillis();
+        Marker marker = markerRepository.getMarker(zdbID);
+        if (marker == null) {
+            String errorMessage = "No marker found for ID: " + zdbID;
+            logger.error(errorMessage);
+            RestErrorMessage error = new RestErrorMessage(404);
+            error.addErrorMessage(errorMessage);
+            throw new RestErrorException(error);
+        }
+
+        List<RelatedMarker> fullMarkerRelationships = MarkerService.getRelatedMarkersOfAnyType(marker);
+
+        // filtering
+        FilterService<RelatedMarker> filterService = new FilterService<>(new MarkerRelationshipFiltering());
+        List<RelatedMarker> filteredMarkerRelationshipList = filterService.filterAnnotations(fullMarkerRelationships, pagination.getFieldFilterValueMap());
+
+        // sorting
+        MarkerRelationshipSorting sorting = new MarkerRelationshipSorting();
+        filteredMarkerRelationshipList.sort(sorting.getComparator(pagination.getSortBy()));
+
+
+        JsonResultResponse<RelatedMarker> response = new JsonResultResponse<>();
+        response.calculateRequestDuration(startTime);
+        response.setTotal(filteredMarkerRelationshipList.size());
+
+        // paginating
+        response.setResults(filteredMarkerRelationshipList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
+    }
+
+
 }
+
+
+

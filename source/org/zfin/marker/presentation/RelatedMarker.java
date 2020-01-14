@@ -1,5 +1,7 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerRelationshipType;
@@ -11,12 +13,20 @@ import java.util.List;
  * A helpful abstraction from the mapped marker relationship object,
  * contains the related marker and the marker relationship type
  */
+
 public class RelatedMarker implements Comparable {
+    @JsonView(View.API.class)
     private Marker marker;
     MarkerRelationshipType markerRelationshipType;
     private MarkerRelationship markerRelationship;
     private String label;
     private List<TranscriptDBLink> displayedSequenceDBLinks; // if a marker has ONE associated sequence
+    public void setMarkerRelationshipType(MarkerRelationshipType markerRelationshipType) {
+        this.markerRelationshipType = markerRelationshipType;
+    }
+
+
+
 
 
     public RelatedMarker() { }

@@ -1,5 +1,7 @@
 package org.zfin.marker;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.publication.Publication;
@@ -47,7 +49,7 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
 	FOSMID_CONTAINS_GENEDOM("FOSMID contains GENEDOM"),
 	FOSMID_CONTAINS_NTR("FOSMID contains NTR")
 ;
-
+        @JsonView(View.API.class)
         private final String value;
 
         Type(String value) {
