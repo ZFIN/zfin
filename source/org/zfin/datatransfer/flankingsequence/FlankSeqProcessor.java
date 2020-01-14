@@ -53,11 +53,34 @@ public class FlankSeqProcessor {
             String seq1 = "";
             String seq2 = "";
 
-            HibernateUtil.createTransaction();
+
 
 
             try {
+                HibernateUtil.createTransaction();
 //We are not loading flanking sequences for sa alleles. they have alreday bene loaded via a one time SQL script
+                for (Feature feature : featureRepository.getDeletionFeatures()) {
+
+                    FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
+                    if (ftrLoc != null
+                            && ftrLoc.getFtrStartLocation() != null && ftrLoc.getFtrStartLocation().toString() != ""
+                            && ftrLoc.getFtrEndLocation() != null && ftrLoc.getFtrEndLocation().toString() != ""
+                            && ftrLoc.getFtrAssembly() != null
+
+                            ) {
+                        String ftrChrom = ftrLoc.getFtrChromosome();
+                        locStart = ftrLoc.getFtrStartLocation();
+                        locEnd = ftrLoc.getFtrEndLocation();
+                        if (feature.getFeatureGenomicMutationDetail() == null) {
+
+                            String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
+
+                            InsertFeatureGenomeRecord(feature, refSeq);
+                            HibernateUtil.createTransaction();
+                        }
+
+                    }
+                }
                 for (Feature feature : featureRepository.getNonSaFeaturesWithGenomicMutDets()) {
                     if (feature.getType()==FeatureTypeEnum.INDEL ||feature.getType()==FeatureTypeEnum.DELETION ||feature.getType()==FeatureTypeEnum.INSERTION||feature.getType()==FeatureTypeEnum.MNV||feature.getType()==FeatureTypeEnum.POINT_MUTATION) {
                        
@@ -83,6 +106,7 @@ public class FlankSeqProcessor {
 
                                     break;
                                 case DELETION:
+
                                     if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
                                         String refSeq= new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                                         UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(),refSeq);
@@ -145,6 +169,18 @@ private void UpdateFeatureGenomeRecord(FeatureGenomicMutationDetail fgmd, String
     HibernateUtil.currentSession().update(fgmd);
 
 }
+
+    private void InsertFeatureGenomeRecord(Feature ftr, String seqRef){
+
+        FeatureGenomicMutationDetail fgmd=new FeatureGenomicMutationDetail();
+        fgmd.setFeature(ftr);
+        fgmd.setFgmdSeqRef(seqRef);
+        fgmd.setFeature(ftr);
+        fgmd.setFgmdVarStrand("+");
+        HibernateUtil.currentSession().save(fgmd);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+    }
     private void insertFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
         VariantSequence vrSeq = new VariantSequence();
         if (featureRepository.getFeatureVariant(ftr) != null) {
