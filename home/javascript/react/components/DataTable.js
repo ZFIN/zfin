@@ -53,9 +53,22 @@ const DataTable = ({columns, rowKey, url}) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {results.map(row => (
+                    {results.map((row, idx, rows) => (
                         <tr key={stringToFunction(rowKey)(row)}>
-                            {columns.map(column => <td key={column.label}>{stringToFunction(column.content)(row)}</td>)}
+                            {columns.map(column => {
+                                let isRepeat = false;
+                                const valueGetter = stringToFunction(column.content);
+                                const value = valueGetter(row);
+                                if (column.grouped && idx > 0) {
+                                    const lastValue = valueGetter(rows[idx - 1]);
+                                    isRepeat = value === lastValue;
+                                }
+                                return (
+                                    <td key={column.label} className={isRepeat ? 'border-0' : ''}>
+                                        {!isRepeat && value}
+                                    </td>
+                                );
+                            })}
                         </tr>
                     ))}
                 </tbody>
@@ -89,11 +102,12 @@ const DataTable = ({columns, rowKey, url}) => {
 
 DataTable.propTypes = {
     columns: PropTypes.arrayOf(PropTypes.shape({
-        label: PropTypes.string,
-        content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    })),
-    rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-    url: PropTypes.string,
+        label: PropTypes.string.isRequired,
+        content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+        grouped: PropTypes.bool,
+    })).isRequired,
+    rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+    url: PropTypes.string.isRequired,
 };
 
 export default DataTable;
