@@ -10,6 +10,7 @@ public class View {
         public static class Disease extends API { }
         public static class Expression extends API { }
         public static class SequenceAPI extends API { }
+        public static class ConstructAPI extends API { }
         public static class MarkerRelationshipAPI extends API { }
 
 }

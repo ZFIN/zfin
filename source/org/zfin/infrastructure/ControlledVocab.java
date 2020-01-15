@@ -1,6 +1,8 @@
 package org.zfin.infrastructure;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.GenericGenerator;
+import org.zfin.framework.api.View;
 
 import javax.persistence.*;
 
@@ -18,10 +20,13 @@ public class ControlledVocab {
             })
     @Column(name = "cv_zdb_id")
     private String zdbID;
+    @JsonView(View.API.class)
     @Column(name = "cv_term_name")
     private String cvTermName;
+    @JsonView(View.API.class)
     @Column(name = "cv_foreign_species")
     private String cvForeignSpecies;
+    @JsonView(View.API.class)
     @Column(name = "cv_name_definition")
     private String cvNameDefinition;
 
