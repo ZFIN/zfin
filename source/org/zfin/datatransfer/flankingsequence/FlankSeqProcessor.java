@@ -107,10 +107,6 @@ public class FlankSeqProcessor {
                                     break;
                                 case DELETION:
 
-                                    if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
-                                        String refSeq= new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
-                                        UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(),refSeq);
-                                    }
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
                                     break;
