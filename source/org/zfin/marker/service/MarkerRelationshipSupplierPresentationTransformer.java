@@ -3,6 +3,9 @@ package org.zfin.marker.service;
 import org.hibernate.transform.ResultTransformer;
 import org.zfin.marker.presentation.MarkerRelationshipPresentation;
 import org.zfin.marker.presentation.OrganizationLink;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 
@@ -16,8 +19,10 @@ public class MarkerRelationshipSupplierPresentationTransformer implements Result
         this.is1to2 = is1to2;
     }
 
+    private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     @Override
     public Object transformTuple(Object[] tuple, String[] aliases) {
+
         MarkerRelationshipPresentation returnObject = new MarkerRelationshipPresentation();
         returnObject.setIs1To2(is1to2);
         returnObject.setAbbreviation(tuple[0].toString());
@@ -54,6 +59,10 @@ public class MarkerRelationshipSupplierPresentationTransformer implements Result
         }
         if(tuple.length>11 && tuple[11]!=null){
             returnObject.setMarkerRelationshipZdbId(tuple[11].toString());
+        }
+        if(tuple.length>12) {
+            MarkerDBLink gbDbLink = mr.getMarkerDBLink(tuple[12].toString());
+            returnObject.setOtherMarkerGenBankDBLinkZdbId(gbDbLink);
         }
 
         return returnObject;

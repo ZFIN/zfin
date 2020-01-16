@@ -26,14 +26,16 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
 
     @JsonView(View.SequenceAPI.class)
     private String zdbID;
-    @JsonView(View.SequenceAPI.class)
+    @JsonView(View.API.class)
     private String accessionNumber;
-    @JsonView(View.SequenceAPI.class)
+    @JsonView(View.API.class)
     private Integer length;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private ReferenceDatabase referenceDatabase;
     private Set<PublicationAttribution> publications;
     private String dataZdbID;
     private Integer version;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String accessionNumberDisplay;
     private String linkInfo;
 

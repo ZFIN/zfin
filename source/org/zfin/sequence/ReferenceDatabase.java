@@ -3,6 +3,8 @@
  */
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.sequence.blast.Database;
 
 import java.util.*;
@@ -10,6 +12,7 @@ import java.util.*;
 public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
 
     private String zdbID;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private ForeignDB foreignDB;
     private String organism;
     private ForeignDBDataType foreignDBDataType;

@@ -1108,10 +1108,20 @@ public class MarkerService {
             throw new RestErrorException(error);
         }
 
-
         List<MarkerRelationshipPresentation> fullMarkerRelationships = new ArrayList<>();
         fullMarkerRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, true));
         fullMarkerRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
+
+        List<MarkerRelationshipPresentation> clonesForGeneTranscripts =
+                markerRepository.getWeakReferenceMarker(marker.getZdbID()
+                        , MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
+                        , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+        for (MarkerRelationshipPresentation markerRelationshipPresentation : clonesForGeneTranscripts) {
+            if (!fullMarkerRelationships.contains(markerRelationshipPresentation)) {
+                fullMarkerRelationships.add(markerRelationshipPresentation);
+            }
+        }
+        Collections.sort(fullMarkerRelationships, markerRelationshipSupplierComparator);
 
         // filtering
         FilterService<MarkerRelationshipPresentation> filterService = new FilterService<>(new MarkerRelationshipFiltering());

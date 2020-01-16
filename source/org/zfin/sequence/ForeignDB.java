@@ -1,5 +1,8 @@
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,16 +13,20 @@ public class ForeignDB implements Comparable<ForeignDB> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fdb_db_pk_id")
     private Long dbID;
+    @JsonView(View.MarkerRelationshipAPI.class)
     @Column(name = "fdb_db_name")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDB$AvailableName")})
     private AvailableName dbName;
     @Column(name = "fdb_db_query")
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String dbUrlPrefix;
     @Column(name = "fdb_url_suffix")
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String dbUrlSuffix;
     @Column(name = "fdb_db_significance")
     private Integer significance;
+    @JsonView(View.MarkerRelationshipAPI.class)
     @Column(name = "fdb_db_display_name")
     private String displayName;
 

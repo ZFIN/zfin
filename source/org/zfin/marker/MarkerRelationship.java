@@ -76,7 +76,7 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
     private Marker secondMarker;
 
     private MarkerRelationshipType markerRelationshipType;
-
+    @JsonView(View.MarkerRelationshipAPI.class)
     private Set<PublicationAttribution> publications;
 
     /**

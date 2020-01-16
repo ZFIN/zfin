@@ -1,9 +1,11 @@
 package org.zfin.marker.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.profile.presentation.SourcePresentation;
-import org.zfin.properties.ZfinProperties;
 
 
 /**
@@ -11,10 +13,13 @@ import org.zfin.properties.ZfinProperties;
 public class OrganizationLink implements ProvidesLink {
 
     private Logger logger = LogManager.getLogger(OrganizationLink.class);
-
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String supplierZdbId;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String sourceUrl;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String urlDisplayText;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String accessionNumber;
     private String companyName;
     private String labName;

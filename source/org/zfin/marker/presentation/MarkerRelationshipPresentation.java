@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.publication.presentation.PublicationPresentation;
+import org.zfin.sequence.MarkerDBLink;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,22 +22,31 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     private String abbreviationOrder;
     private String zdbId; // id of the thing you are on
     private String markerRelationshipZdbId; // primary key
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String markerType;
-    @JsonView(View.MarkerRelationshipAPI.class)
     private String markerRelationshipAttributionPubZdbId;
-    @JsonView(View.MarkerRelationshipAPI.class)
     private String supplierZdbId;
-    @JsonView(View.MarkerRelationshipAPI.class)
     private String link;
-    private Set<String> attributionZdbIDs = new HashSet<String>(); // TODO: implement with munging if needed
     @JsonView(View.MarkerRelationshipAPI.class)
+    private Set<String> attributionZdbIDs = new HashSet<String>(); // TODO: implement with munging if needed
     private String arbitraryOrder;
     @JsonView(View.MarkerRelationshipAPI.class)
     private String mappedMarkerRelationshipType;
     @JsonView(View.MarkerRelationshipAPI.class)
-    private Set<OrganizationLink> organizationLinks = new HashSet<OrganizationLink>();
-    @JsonView(View.MarkerRelationshipAPI.class)
+    private Set<OrganizationLink> organizationLinks = new HashSet<>();
     private String name;
+    @JsonView(View.MarkerRelationshipAPI.class)
+    private MarkerDBLink otherMarkerGenBankDBLinkZdbId;
+
+    public MarkerDBLink getOtherMarkerGenBankDBLinkZdbId() {
+        return otherMarkerGenBankDBLinkZdbId;
+    }
+
+    public void setOtherMarkerGenBankDBLinkZdbId(MarkerDBLink otherMarkerGenBankDBLinkZdbId) {
+        this.otherMarkerGenBankDBLinkZdbId = otherMarkerGenBankDBLinkZdbId;
+    }
+
+
 
     @Override
     public String getLinkWithAttribution() {

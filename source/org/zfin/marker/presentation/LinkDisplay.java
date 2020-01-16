@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.framework.presentation.EntityPresentation;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.publication.presentation.PublicationPresentation;
 
@@ -14,16 +15,20 @@ public class LinkDisplay implements ProvidesLink {
 
     private String referenceDatabaseName;
     private String referenceDatabaseZdbID;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String accession;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String urlPrefix;
     private Set<MarkerReferenceBean> references;
     private String markerZdbID;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String urlSuffix;
     private Integer significance;
     private String dblinkZdbID;
     private String length;
     private String dataType;
     private Integer typeOrder;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String accNumDisplay;
 
     public String getDisplayName() {

@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
         @JsonView(View.MarkerRelationshipAPI.class)
         @RequestMapping(value = "/marker/{zdbID}/relationships")
         public JsonResultResponse<MarkerRelationshipPresentation> getMarkerRelationshipView (@PathVariable("zdbID") String zdbID,
-                                                                @RequestParam(value = "filter.markerRelationshiptype", required = false) String type,
+                                                                @RequestParam(value = "filter.markerRelationshipType", required = false) String type,
                                                                 @Version Pagination pagination) {
             pagination.addFieldFilter(FieldFilter.RELATIONSHIP_TYPE, type);
 
