@@ -13,7 +13,7 @@
 <c:set var="DISEASES" value="Diseases"/>
 <c:set var="PROTEINS" value="Proteins"/>
 
-<zfin-prototype:dataPage sections="${[SUMMARY, MUTANTS, DISEASES, PATHWAYS, ANTIBODIES, PLASMIDS, PROTEINS]}">
+<zfin-prototype:dataPage sections="${[SUMMARY, MUTANTS, DISEASES, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS]}">
     <zfin-prototype:dataManagerDropdown>
         <a class="dropdown-item active" href="/action/marker/gene/prototype-view/${formBean.marker.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
@@ -275,13 +275,26 @@
         </zfin-prototype:section>
     </zfin-prototype:section>
 
-    <zfin-prototype:section title="${PLASMIDS}">
-        <zfin-prototype:dataTable hasData="${!empty formBean.plasmidDBLinks}">
-            <c:forEach var="link" items="${formBean.plasmidDBLinks}" varStatus="loop">
-                <tr>
-                    <td><a href="${link.link}">${link.referenceDatabaseName}:${link.accNumDisplay}</a></td>
-                </tr>
-            </c:forEach>
+    <zfin-prototype:section title="${PROTEINS}">
+        <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.proteinDomainBeans}">
+            <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
+                <thead>
+                    <tr>
+                        <th style="width: 17%">Type</th>
+                        <th style="width: 17%">InterPro ID</th>
+                        <th style="width: 17%">Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="category" items="${formBean.proteinDomainBeans}">
+                        <tr>
+                            <td>${category.ipType}</td>
+                            <td>${category.ipID}</td>
+                            <td>${category.ipName}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </c:if>
         </zfin-prototype:dataTable>
     </zfin-prototype:section>
 
@@ -344,29 +357,15 @@
         </zfin-prototype:dataTable>
     </zfin-prototype:section>
 
-    <zfin-prototype:section title="${PROTEINS}">
-        <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.proteinDomainBeans}">
-            <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
-                <thead>
-                    <tr>
-                        <th style="width: 17%">Type</th>
-                        <th style="width: 17%">InterPro ID</th>
-                        <th style="width: 17%">Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="category" items="${formBean.proteinDomainBeans}">
-                        <tr>
-                            <td>${category.ipType}</td>
-                            <td>${category.ipID}</td>
-                            <td>${category.ipName}</td>
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </c:if>
+    <zfin-prototype:section title="${PLASMIDS}">
+        <zfin-prototype:dataTable hasData="${!empty formBean.plasmidDBLinks}">
+            <c:forEach var="link" items="${formBean.plasmidDBLinks}" varStatus="loop">
+                <tr>
+                    <td><a href="${link.link}">${link.referenceDatabaseName}:${link.accNumDisplay}</a></td>
+                </tr>
+            </c:forEach>
         </zfin-prototype:dataTable>
     </zfin-prototype:section>
-
 
 </zfin-prototype:dataPage>
 
