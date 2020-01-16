@@ -4,6 +4,7 @@
 
 .data-table {
   @extend .table, .table-hover, .m-0;
+  table-layout: fixed;
 
   thead {
     @extend .bg-light;

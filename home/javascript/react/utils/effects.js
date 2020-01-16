@@ -28,12 +28,17 @@ export const useTableDataFetch = (baseUrl, tableState) => {
             data.rejected = false;
             data.value = result;
             data.reason = null;
-        }))).fail(error => setData(produce(data => {
-            data.fulfilled = false;
-            data.rejected = true;
-            data.value = null;
-            data.reason = error;
-        }))).always(() => {
+        }))).fail(error => {
+            if (error.statusText === 'abort') {
+                return;
+            }
+            setData(produce(data => {
+                data.fulfilled = false;
+                data.rejected = true;
+                data.value = null;
+                data.reason = error;
+            }))
+        }).always(() => {
             setRequest(null);
             setData(produce(data => { data.pending = false }));
         });

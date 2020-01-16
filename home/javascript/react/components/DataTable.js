@@ -42,14 +42,18 @@ const DataTable = ({columns, rowKey, url}) => {
         setTableState(produce(state => {
             state.page = Math.max(1, Math.min(totalPages, page));
         }))
-    }
+    };
 
     return (
         <div className='data-table-container'>
             <table className='data-table'>
                 <thead>
                     <tr>
-                        {columns.map(column => <th key={column.label}>{column.label}</th>)}
+                        {columns.map(column => (
+                            <th key={column.label} style={{width: column.width, textAlign: column.align}}>
+                                {column.label}
+                            </th>
+                        ))}
                     </tr>
                 </thead>
                 <tbody>
@@ -64,7 +68,7 @@ const DataTable = ({columns, rowKey, url}) => {
                                     isRepeat = value === lastValue;
                                 }
                                 return (
-                                    <td key={column.label} className={isRepeat ? 'border-0' : ''}>
+                                    <td key={column.label} className={isRepeat ? 'border-0' : ''} style={{textAlign: column.align}}>
                                         {!isRepeat && value}
                                     </td>
                                 );
