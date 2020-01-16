@@ -2,14 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/DataTable';
 import CommaSeparatedList from '../components/CommaSeparatedList';
+import MarkerAbbreviation from '../components/MarkerAbbreviation';
+import MarkerLink from '../components/MarkerLink';
 
 const MarkerList = ({focusMarkerId, markers}) => (
     <CommaSeparatedList>
         {markers.map(marker => {
             if (marker.zdbID === focusMarkerId) {
-                return marker.abbreviation;
+                return <MarkerAbbreviation marker={marker} />;
             } else {
-                return <a href={`/${marker.zdbID}`} key={marker.zdbID}>{marker.abbreviation}</a>;
+                return <MarkerLink marker={marker} />
             }
         })}
     </CommaSeparatedList>
@@ -19,7 +21,7 @@ const GeneConstructsTable = ({geneId}) => {
     const columns = [
         {
             label: 'Construct',
-            content: ({construct}) => <a href={`/${construct.zdbID}`}>{construct.abbreviation}</a>,
+            content: ({construct}) => <MarkerLink marker={construct} />,
             width: '150px',
         },
         {
@@ -34,7 +36,11 @@ const GeneConstructsTable = ({geneId}) => {
         },
         {
             label: 'Species',
-            content: ({species}) => <CommaSeparatedList>{species.map(s => <i key={s.cvNameDefinition}>{s.cvNameDefinition}</i>)}</CommaSeparatedList>,
+            content: ({species}) => (
+                <CommaSeparatedList>
+                    {species.map(s => <i key={s.cvNameDefinition}>{s.cvNameDefinition}</i>)}
+                </CommaSeparatedList>
+            ),
             width: '130px',
         },
         {
