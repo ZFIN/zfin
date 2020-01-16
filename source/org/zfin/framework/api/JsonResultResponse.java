@@ -84,6 +84,8 @@ public class JsonResultResponse<T> {
         }
         Optional<Map.Entry<String, List<String>>> entry = params.entrySet().stream().filter(stringListEntry -> stringListEntry.getKey().equals("page"))
                 .findFirst();
+        if (pagination == null)
+            return "";
         // replace current page with next page
         entry.ifPresent(page -> page.setValue(List.of(String.valueOf(pagination.getNextPage()))));
 
