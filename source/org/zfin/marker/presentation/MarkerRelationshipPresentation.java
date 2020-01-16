@@ -1,8 +1,9 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.publication.presentation.PublicationPresentation;
 
@@ -13,19 +14,28 @@ import java.util.Set;
  */
 public class MarkerRelationshipPresentation implements ProvidesLink {
     private boolean is1To2;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String relationshipType;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String abbreviation;
     private String abbreviationOrder;
     private String zdbId; // id of the thing you are on
     private String markerRelationshipZdbId; // primary key
     private String markerType;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String markerRelationshipAttributionPubZdbId;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String supplierZdbId;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String link;
     private Set<String> attributionZdbIDs = new HashSet<String>(); // TODO: implement with munging if needed
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String arbitraryOrder;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String mappedMarkerRelationshipType;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private Set<OrganizationLink> organizationLinks = new HashSet<OrganizationLink>();
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String name;
 
     @Override

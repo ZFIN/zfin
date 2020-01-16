@@ -1,15 +1,15 @@
 package org.zfin.framework.api;
 
-import org.zfin.marker.presentation.RelatedMarker;
+import org.zfin.marker.presentation.MarkerRelationshipPresentation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class MarkerRelationshipSorting implements Sorting<RelatedMarker> {
+public class MarkerRelationshipSorting implements Sorting<MarkerRelationshipPresentation> {
 
-    private List<Comparator<RelatedMarker>> defaultList;
+    private List<Comparator<MarkerRelationshipPresentation>> defaultList;
 
     public MarkerRelationshipSorting() {
         super();
@@ -19,10 +19,10 @@ public class MarkerRelationshipSorting implements Sorting<RelatedMarker> {
     }
 
 
-    private static Comparator<RelatedMarker> relationshipTypeOrder =
-            Comparator.comparing(relatedMarker -> relatedMarker.getMarkerRelationshipType().getName());
+    private static Comparator<MarkerRelationshipPresentation> relationshipTypeOrder =
+            Comparator.comparing(relatedMarker -> relatedMarker.getMappedMarkerRelationshipType());
 
-    public Comparator<RelatedMarker> getComparator(String value) {
+    public Comparator<MarkerRelationshipPresentation> getComparator(String value) {
         Field field = Field.getField(value);
         if (field == null)
             return getJoinedComparator(defaultList);

@@ -1096,7 +1096,7 @@ public class MarkerService {
         return true;
     }
 
-    public JsonResultResponse<RelatedMarker> getMarkerRelationshipJsonResultResponse(String zdbID,
+    public JsonResultResponse<MarkerRelationshipPresentation> getMarkerRelationshipJsonResultResponse(String zdbID,
                                                                               Pagination pagination) {
         long startTime = System.currentTimeMillis();
         Marker marker = markerRepository.getMarker(zdbID);
@@ -1108,18 +1108,21 @@ public class MarkerService {
             throw new RestErrorException(error);
         }
 
-        List<RelatedMarker> fullMarkerRelationships = MarkerService.getRelatedMarkersOfAnyType(marker);
+
+        List<MarkerRelationshipPresentation> fullMarkerRelationships = new ArrayList<>();
+        fullMarkerRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, true));
+        fullMarkerRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
 
         // filtering
-        FilterService<RelatedMarker> filterService = new FilterService<>(new MarkerRelationshipFiltering());
-        List<RelatedMarker> filteredMarkerRelationshipList = filterService.filterAnnotations(fullMarkerRelationships, pagination.getFieldFilterValueMap());
+        FilterService<MarkerRelationshipPresentation> filterService = new FilterService<>(new MarkerRelationshipFiltering());
+        List<MarkerRelationshipPresentation> filteredMarkerRelationshipList = filterService.filterAnnotations(fullMarkerRelationships, pagination.getFieldFilterValueMap());
 
         // sorting
         MarkerRelationshipSorting sorting = new MarkerRelationshipSorting();
         filteredMarkerRelationshipList.sort(sorting.getComparator(pagination.getSortBy()));
 
 
-        JsonResultResponse<RelatedMarker> response = new JsonResultResponse<>();
+        JsonResultResponse<MarkerRelationshipPresentation> response = new JsonResultResponse<>();
         response.calculateRequestDuration(startTime);
         response.setTotal(filteredMarkerRelationshipList.size());
 
