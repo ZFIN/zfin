@@ -671,14 +671,18 @@ public class DTOConversionService {
             FeatureGenomicMutationDetail detail = convertToFeatureGenomicMutationDetail(null, fgmdChangeDTO);
             detail.setFeature(feature);
             feature.setFeatureGenomicMutationDetail(detail);
-            if (feature.getType().equals(FeatureTypeEnum.INDEL)){
-            if (feature.getFeatureGenomicMutationDetail().getFgmdSeqVar().length() == feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length()) {
-                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqVar().length() > 1) {
 
-                    feature.setType(FeatureTypeEnum.MNV);
+            if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
+                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef()!=null) {
+                    if (feature.getFeatureGenomicMutationDetail().getFgmdSeqVar().length() == feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length()) {
+                        if (feature.getFeatureGenomicMutationDetail().getFgmdSeqVar().length() > 1) {
+
+                            feature.setType(FeatureTypeEnum.MNV);
+                        }
+                    }
                 }
+
             }
-            };
         }
         if (CollectionUtils.isNotEmpty(featureDTO.getTranscriptChangeDTOSet())) {
             for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
