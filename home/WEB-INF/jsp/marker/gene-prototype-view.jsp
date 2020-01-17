@@ -99,9 +99,7 @@
 
     <zfin-prototype:section title="${MUTANTS}">
         <zfin-prototype:section title="Mutants">
-            <zfin-prototype:dataTable
-                    collapse="true"
-                    hasData="${!empty formBean.mutantOnMarkerBeans and (!empty formBean.mutantOnMarkerBeans.features or !empty formBean.mutantOnMarkerBeans.knockdownReagents)}">
+            <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.mutantOnMarkerBeans.features}">
                 <thead>
                     <tr>
                         <th width="10%">Allele</th>
