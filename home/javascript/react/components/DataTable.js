@@ -51,7 +51,7 @@ const DataTable = ({columns, rowKey, url}) => {
 
     return (
         <div className='data-table-container'>
-            <table className='data-table'>
+            <table className='data-table table-fixed'>
                 <thead>
                     <tr>
                         {columns.map(column => (

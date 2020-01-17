@@ -4,11 +4,14 @@
 
 .data-table {
   @extend .table, .table-hover, .m-0;
-  table-layout: fixed;
 
   thead {
     @extend .bg-light;
   }
+}
+
+.table-fixed {
+  table-layout: fixed;
 }
 
 .data-table-pagination {
