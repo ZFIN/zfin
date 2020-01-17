@@ -25,6 +25,11 @@ const DataTable = ({columns, rowKey, url}) => {
     }
 
     const { results, returnedRecords, total } = data.value;
+
+    if (total === 0) {
+        return <i className="text-muted">No data available</i>
+    }
+
     const start = (tableState.page - 1) * tableState.limit + 1;
     const end = start + returnedRecords - 1;
     const totalPages = Math.ceil(total / tableState.limit);
