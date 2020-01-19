@@ -241,9 +241,6 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 //        assertEquals(ForeignDBDataType.DataType.POLYPEPTIDE,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
 //        assertEquals(ForeignDB.AvailableName.GENPEPT,dbLink.getReferenceDatabase().getForeignDB().getDbName());
 
-//        dbLink = iter.next();
-//        assertEquals(ForeignDBDataType.DataType.SEQUENCE_CLUSTERS,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
-//        assertEquals(ForeignDB.AvailableName.UNIGENE,dbLink.getReferenceDatabase().getForeignDB().getDbName());
 
         MarkerDBLink markerDBLink;
 
