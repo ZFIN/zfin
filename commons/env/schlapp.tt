@@ -81,7 +81,7 @@
 <!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/trunk
 <!--|WEBHOST_FASTA_FILE_PATH|-->	/research/zblastfiles/dev_files
 <!--|WEB_ADMIN_EMAIL|-->	cmpich\@zfin.org
-<!--|WIKI_HOST|-->	devwiki.zfin.org
+<!--|WIKI_HOST|-->	wiki.zfin.org
 <!--|ZFIN_ADMIN|-->	cmpich\@zfin.org
 # ----------------  SANITY CHECKS  -------------
 
