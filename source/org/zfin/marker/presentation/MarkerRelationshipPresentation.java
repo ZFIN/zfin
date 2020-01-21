@@ -7,7 +7,7 @@ import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.sequence.MarkerDBLink;
-
+import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +20,7 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     @JsonView(View.MarkerRelationshipAPI.class)
     private String abbreviation;
     private String abbreviationOrder;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String zdbId; // id of the thing you are on
     private String markerRelationshipZdbId; // primary key
     @JsonView(View.MarkerRelationshipAPI.class)
@@ -36,15 +37,17 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     private Set<OrganizationLink> organizationLinks = new HashSet<>();
     private String name;
     @JsonView(View.MarkerRelationshipAPI.class)
-    private MarkerDBLink otherMarkerGenBankDBLinkZdbId;
+    private List<MarkerDBLink> otherMarkerGenBankDBLink;
 
-    public MarkerDBLink getOtherMarkerGenBankDBLinkZdbId() {
-        return otherMarkerGenBankDBLinkZdbId;
+    public List<MarkerDBLink> getOtherMarkerGenBankDBLink() {
+        return otherMarkerGenBankDBLink;
     }
 
-    public void setOtherMarkerGenBankDBLinkZdbId(MarkerDBLink otherMarkerGenBankDBLinkZdbId) {
-        this.otherMarkerGenBankDBLinkZdbId = otherMarkerGenBankDBLinkZdbId;
+    public void setOtherMarkerGenBankDBLink(List<MarkerDBLink> otherMarkerGenBankDBLink) {
+        this.otherMarkerGenBankDBLink = otherMarkerGenBankDBLink;
     }
+
+
 
 
 

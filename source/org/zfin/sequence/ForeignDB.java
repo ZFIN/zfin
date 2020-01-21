@@ -13,7 +13,6 @@ public class ForeignDB implements Comparable<ForeignDB> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fdb_db_pk_id")
     private Long dbID;
-    @JsonView(View.MarkerRelationshipAPI.class)
     @Column(name = "fdb_db_name")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDB$AvailableName")})

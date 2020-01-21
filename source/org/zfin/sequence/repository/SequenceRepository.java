@@ -60,6 +60,7 @@ public interface SequenceRepository {
     DBLink getDBLinkByData(String dataZdbID,ReferenceDatabase referenceDatabase);
     FeatureDBLink getFeatureDBLinkByAlternateKey(String accessionString, String dataZdbID, ReferenceDatabase referenceDatabases);
 
+    MarkerDBLink getSingleDBLinkForMarker (Marker marker, ReferenceDatabase referenceDatabase);
 
     List<MarkerDBLink> getDBLinksForMarker(Marker marker, ReferenceDatabase... referenceDatabases);
 

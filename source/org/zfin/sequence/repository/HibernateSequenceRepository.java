@@ -405,6 +405,16 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return returnList;
     }
 
+    public MarkerDBLink getSingleDBLinkForMarker (Marker marker, ReferenceDatabase referenceDatabase) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(MarkerDBLink.class);
+        criteria.add(Restrictions.eq("marker", marker));
+
+        criteria.addOrder(Order.asc("referenceDatabase"));
+        criteria.addOrder(Order.asc("marker"));
+
+        return (MarkerDBLink) criteria.uniqueResult();
+    }
 
     public List<MarkerDBLink> getDBLinksForMarker(Marker marker, ReferenceDatabase... referenceDatabases) {
         Session session = HibernateUtil.currentSession();

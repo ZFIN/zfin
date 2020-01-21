@@ -19,6 +19,7 @@ import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.OmimPhenotype;
@@ -57,6 +58,8 @@ public class MarkerService {
 
     private static Logger logger = LogManager.getLogger(MarkerService.class);
     private static MarkerRepository markerRepository = getMarkerRepository();
+    private static SequenceRepository sequenceRepository = getSequenceRepository();
+
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
@@ -1100,6 +1103,9 @@ public class MarkerService {
                                                                               Pagination pagination) {
         long startTime = System.currentTimeMillis();
         Marker marker = markerRepository.getMarker(zdbID);
+        ReferenceDatabase genbankRNA = getSequenceRepository().getReferenceDatabaseByID("ZDB-FDBCONT-040412-37");
+        ReferenceDatabase genbankGenomic = getSequenceRepository().getReferenceDatabaseByID("ZDB-FDBCONT-040412-36");
+
         if (marker == null) {
             String errorMessage = "No marker found for ID: " + zdbID;
             logger.error(errorMessage);
@@ -1121,6 +1127,12 @@ public class MarkerService {
                 fullMarkerRelationships.add(markerRelationshipPresentation);
             }
         }
+
+        for (MarkerRelationshipPresentation mrelP: fullMarkerRelationships) {
+            List<MarkerDBLink> mdbLink = sequenceRepository.getDBLinksForMarker(markerRepository.getMarker(mrelP.getZdbId()), genbankGenomic, genbankRNA);
+            mrelP.setOtherMarkerGenBankDBLink(mdbLink);
+        }
+
         Collections.sort(fullMarkerRelationships, markerRelationshipSupplierComparator);
 
         // filtering

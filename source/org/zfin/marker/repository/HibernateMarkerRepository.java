@@ -1876,10 +1876,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... typesNotIn) {
         String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
-                "	       mreltype_1_to_2_comments," +
+                "	       mreltype_1_to_2_comments, " +
                 "          '<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
-                "          src.srcurl_url, src.srcurl_display_text , mrel_zdb_id, dblink_zdb_id  " +
+                "          src.srcurl_url, src.srcurl_display_text , mrel_zdb_id  " +
                 " 	  from marker_relationship  " +
                 "	       inner join marker_relationship_type " +
                 "                 on mrel_type = mreltype_name " +
@@ -1890,9 +1890,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "	       left outer join record_attribution ra on ra.recattrib_data_zdb_id=mrel_zdb_id " +
                 "	       left outer join int_data_supplier sup on sup.idsup_data_zdb_id=mrel_mrkr_2_zdb_id " +
                 "	       left outer join source_url src on sup.idsup_supplier_zdb_id=src.srcurl_source_zdb_id  " +
-                "          left outer join db_link on mrel_mrkr_2_zdb_id = dblink_linked_recid" +
-                "	 where mrel_mrkr_1_zdb_id = :markerZdbId  " +
-                "    and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-36'";
+                "          left outer join db_link on mrel_mrkr_2_zdb_id = dblink_linked_recid " +
+                "               and (dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-36' or dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-37')" +
+                "	 where mrel_mrkr_1_zdb_id = :markerZdbId  ";
         if (typesNotIn.length > 0) {
             sql1To2 += "	   and mrel_type not in (:types) ";
         }
@@ -1902,7 +1902,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "	       mreltype_2_to_1_comments, " +
                 "          '<a href=\"/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "          ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
-                "          src.srcurl_url, src.srcurl_display_text  , mrel_zdb_id, dblink_zdb_id   " +
+                "          src.srcurl_url, src.srcurl_display_text  , mrel_zdb_id   " +
                 " 	  from marker_relationship " +
                 "	       inner join marker_relationship_type " +
                 "             	  on mrel_type = mreltype_name " +
@@ -1913,9 +1913,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "	       left outer join record_attribution ra on ra.recattrib_data_zdb_id=mrel_zdb_id " +
                 "	       left outer join int_data_supplier sup on sup.idsup_data_zdb_id=mrel_mrkr_1_zdb_id " +
                 "	       left outer join source_url src on sup.idsup_supplier_zdb_id=src.srcurl_source_zdb_id  " +
-                "          left outer join db_link on mrel_mrkr_1_zdb_id = dblink_linked_recid" +
-                "	 where mrel_mrkr_2_zdb_id = :markerZdbId  " +
-                "    and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-36'";
+                "	 where mrel_mrkr_2_zdb_id = :markerZdbId  ";
 
         if (typesNotIn.length > 0) {
             sql2To1 += "	   and mrel_type not in (:types) ";
