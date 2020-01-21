@@ -306,8 +306,6 @@ public class MergeMarkerController {
 
         if (db.equals("NcbiGene")) {
             return RepositoryFactory.getSequenceRepository().getAccessionPresentation(ForeignDB.AvailableName.GENE, marker);
-        } else if (db.equals("UniGene")) {
-            return RepositoryFactory.getSequenceRepository().getAccessionPresentation(ForeignDB.AvailableName.UNIGENE, marker);
         } else if (db.equals("EnsemblGRCz11")) {
             return RepositoryFactory.getSequenceRepository().getAccessionPresentation(ForeignDB.AvailableName.ENSEMBL_GRCZ11_, marker);
         } else if (db.equals("Vega")) {

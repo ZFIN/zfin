@@ -44,7 +44,6 @@
             sequenceTargetingReagentsIgnored = true;
             antibodiesIgnored = true;
             ncbiGeneIdsIgnored = true;
-            uniGeneIdsIgnored = true;
             vegaIdsIgnored = true;
             EnsemblGRCz11IdsIgnored = true;
             transcriptsIgnored = true;
@@ -160,7 +159,6 @@
             jQuery('#ignoreSTR').hide();
             jQuery('#ignoreAntibody').hide();
             jQuery('#ignoreNCBIGeneId').hide();
-            jQuery('#ignoreUniGeneId').hide();
             jQuery('#ignoreVegaId').hide();
             jQuery('#ignoreEnsemblGRCz11Id').hide();
             jQuery('#ignoreTranscript').hide();
@@ -436,75 +434,10 @@
             checkNCBIgeneIdsDone = 1;
 
             if (checkNCBIgeneIdsDone == 1) {
-                validateUniGeneIds(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
-            }
-        };
-
-        var validateUniGeneIds = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
-            var checkUniGeneIdsDone = 0;
-            var uniGenesOfGene1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-accession?db=UniGene&markerZdbId=" + geneIDdelete,
-                dataType: "json",
-                async: false
-            }).responseText);
-
-            var uniGeneIdsOfGene1 = new Array();
-            var uniGeneIdLinksOfGene1 = new Array();
-            for (uniGene in uniGenesOfGene1) {
-                uniGeneIdsOfGene1.push(uniGenesOfGene1[uniGene].accessionNumber);
-                uniGeneIdLinksOfGene1.push(uniGenesOfGene1[uniGene].url);
-            }
-
-            var uniGenesOfGene2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-accession?db=UniGene&markerZdbId=" + geneZdbIdMergedInto,
-                dataType: "json",
-                async: false
-            }).responseText);
-
-            var uniGeneIdsOfGene2 = new Array();
-            var uniGeneIdLinksOfGene2 = new Array();
-            for (uniGene in uniGenesOfGene2) {
-                uniGeneIdsOfGene2.push(uniGenesOfGene2[uniGene].accessionNumber);
-                uniGeneIdLinksOfGene2.push(uniGenesOfGene2[uniGene].url);
-            }
-
-            var differentUniGeneIds = false;
-            if(uniGeneIdsOfGene1.length !== 0 && uniGeneIdsOfGene2.length !== 0) {
-                if (uniGeneIdsOfGene1.length !== uniGeneIdsOfGene2.length) {
-                    differentUniGeneIds = true;
-                } else {
-                    for (var i = 0; i < uniGeneIdsOfGene1.length; i++) {
-                        if (uniGeneIdsOfGene1[i] !== uniGeneIdsOfGene2[i])
-                            differentUniGeneIds = true;
-                    }
-                }
-            }
-
-            if (differentUniGeneIds) {
-                uniGeneIdsIgnored = false;
-                jQuery('#validationUniGeneIdsText').append('<h3><a target="_blank" href="/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following UniGene Id:</h3>');
-                for (var i = 0; i < uniGeneIdsOfGene1.length; i++) {
-                    jQuery('#validationUniGeneIdsText').append('<div>'
-                            + '<a target="_blank" href="' + uniGeneIdLinksOfGene1[i] +'">'
-                            + uniGeneIdsOfGene1[i] + '</a>'
-                            + '</div>');
-                }
-
-                jQuery('#validationUniGeneIdsText').append('<h3><a target="_blank" href="/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following UniGene Id:</h3>');
-                for (var i = 0; i < uniGeneIdsOfGene2.length; i++) {
-                    jQuery('#validationUniGeneIdsText').append('<div>'
-                            + '<a target="_blank" href="' + uniGeneIdLinksOfGene2[i] +'">'
-                            + uniGeneIdsOfGene2[i] + '</a>'
-                            + '</div>');
-                }
-
-                jQuery('#ignoreUniGeneId').show();
-            }
-
-            checkUniGeneIdsDone = 1;
-
-            if (checkUniGeneIdsDone == 1) {
                 validateVegaIds(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
             }
         };
+
 
         var validateVegaIds = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
             var checkVegaIdsDone = 0;
@@ -1096,14 +1029,6 @@
             enableMerge();
         }
 
-        function ignoreUniGeneIds(formObj) {
-            uniGeneIdsIgnored = true;
-            jQuery('#validationUniGeneIdsText').hide();
-            jQuery('#ignoreUniGeneId').hide();
-
-            enableMerge();
-        }
-
         function ignoreVegaIds(formObj) {
             vegaIdsIgnored = true;
             jQuery('#validationVegaIdsText').hide();
@@ -1173,7 +1098,7 @@
         }
 
         function enableMerge() {
-            if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && EnsemblGRCz11IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored && !differentSequence && !differentFish && !differentTargets) {
+            if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && vegaIdsIgnored && EnsemblGRCz11IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored && !differentSequence && !differentFish && !differentTargets) {
                 jQuery('#submitMerge').removeAttr('disabled');
             }
         }
@@ -1219,10 +1144,6 @@
         <div id="validationNCBIgeneIdsText"></div>
         <form id="ignoreNCBIGeneId">
             <input type="button" value="Ignore NCBI Gene Ids" onclick="ignoreNCBIgeneIds(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, all the above NCBI Gene Ids will be associated with the gene retained.">
-        </form>
-        <div id="validationUniGeneIdsText"></div>
-        <form id="ignoreUniGeneId">
-            <input type="button" value="Ignore UniGene Gene Ids" onclick="ignoreUniGeneIds(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, all the above UniGene Ids will be associated with the gene retained.">
         </form>
         <div id="validationVegaIdsText"></div>
         <form id="ignoreVegaId">
