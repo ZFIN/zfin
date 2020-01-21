@@ -106,8 +106,9 @@ public class MarkerSearchService {
         //sorting, handled here so that the name query can be dropped in
         //starts with matches against the abbrev will get alphabetized first, everything else alphabetized after
         if (StringUtils.isNotEmpty(criteria.getName())) {
-            String symbolMatch = "mul(termfreq(name_ac, '" + SolrService.luceneEscape(criteria.getName()) + "'),10000)";
-            String nameMatch = "mul(termfreq(full_name_kac, '" + SolrService.luceneEscape(criteria.getName()) + "'),1000)";
+            String name = SolrService.luceneEscape(criteria.getName()).replace("'", "\\'");
+            String symbolMatch = "mul(termfreq(name_ac, '" + name + "'),10000)";
+            String nameMatch = "mul(termfreq(full_name_kac, '" + name + "'),1000)";
             String alphaRank = "scale(rord(name_sort),1,100)";
             String computedScore = "sum(" + symbolMatch + "," + nameMatch +"," + alphaRank + ")";
 
