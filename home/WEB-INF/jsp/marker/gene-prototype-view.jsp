@@ -13,8 +13,9 @@
 <c:set var="DISEASES" value="Diseases"/>
 <c:set var="PROTEINS" value="Proteins"/>
 <c:set var="CONSTRUCTS" value="Constructs"/>
+<c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
 
-<zfin-prototype:dataPage sections="${[SUMMARY, MUTANTS, DISEASES, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS]}">
+<zfin-prototype:dataPage sections="${[SUMMARY, MUTANTS, DISEASES, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS]}">
     <zfin-prototype:dataManagerDropdown>
         <a class="dropdown-item active" href="/action/marker/gene/prototype-view/${formBean.marker.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
@@ -368,6 +369,10 @@
 
     <zfin-prototype:section title="${CONSTRUCTS}">
         <div class="__react-root" id="GeneConstructsTable" data-gene-id="${formBean.marker.zdbID}"></div>
+    </zfin-prototype:section>
+
+    <zfin-prototype:section title="${MARKERRELATIONSHIPS}">
+        <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
     </zfin-prototype:section>
 
 </zfin-prototype:dataPage>

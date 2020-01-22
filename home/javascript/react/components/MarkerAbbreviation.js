@@ -17,6 +17,7 @@ const TYPE_CLASSES = [
 const MarkerAbbreviation = ({marker}) => {
     let className;
     const match = marker.zdbID.match(/^ZDB-([A-Za-z]+)-/)
+
     if (match) {
         const markerType = match[1];
         for (const typeClass of TYPE_CLASSES) {

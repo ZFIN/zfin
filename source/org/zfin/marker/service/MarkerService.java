@@ -1131,6 +1131,8 @@ public class MarkerService {
         for (MarkerRelationshipPresentation mrelP: fullMarkerRelationships) {
             List<MarkerDBLink> mdbLink = sequenceRepository.getDBLinksForMarker(markerRepository.getMarker(mrelP.getZdbId()), genbankGenomic, genbankRNA);
             mrelP.setOtherMarkerGenBankDBLink(mdbLink);
+            mrelP.setNumberOfPublications(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(mrelP.getMarkerRelationshipZdbId()));
+            mrelP.setRelatedMarker(markerRepository.getMarker(mrelP.getZdbId()));
         }
 
         Collections.sort(fullMarkerRelationships, markerRelationshipSupplierComparator);

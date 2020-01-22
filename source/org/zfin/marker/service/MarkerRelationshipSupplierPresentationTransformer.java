@@ -26,6 +26,7 @@ public class MarkerRelationshipSupplierPresentationTransformer implements Result
         returnObject.setIs1To2(is1to2);
         returnObject.setAbbreviation(tuple[0].toString());
         returnObject.setZdbId(tuple[1].toString());
+        returnObject.setZdbID(tuple[1].toString());
         returnObject.setAbbreviationOrder(tuple[2].toString());
         returnObject.setMarkerType(tuple[3].toString());
         returnObject.setRelationshipType(tuple[4].toString());

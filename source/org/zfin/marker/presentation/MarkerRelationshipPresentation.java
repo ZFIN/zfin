@@ -1,34 +1,43 @@
 package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.sequence.MarkerDBLink;
-import java.util.List;
+import org.zfin.marker.Marker;
+
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  */
+@Getter
+@Setter
 public class MarkerRelationshipPresentation implements ProvidesLink {
     private boolean is1To2;
     @JsonView(View.MarkerRelationshipAPI.class)
     private String relationshipType;
     @JsonView(View.MarkerRelationshipAPI.class)
     private String abbreviation;
-    private String abbreviationOrder;
     @JsonView(View.MarkerRelationshipAPI.class)
+    private Marker relatedMarker;
+    private String abbreviationOrder;
     private String zdbId; // id of the thing you are on
+    @JsonView(View.MarkerRelationshipAPI.class)
+    private String zdbID;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String markerRelationshipZdbId; // primary key
     @JsonView(View.MarkerRelationshipAPI.class)
     private String markerType;
     private String markerRelationshipAttributionPubZdbId;
     private String supplierZdbId;
     private String link;
-    @JsonView(View.MarkerRelationshipAPI.class)
     private Set<String> attributionZdbIDs = new HashSet<String>(); // TODO: implement with munging if needed
     private String arbitraryOrder;
     @JsonView(View.MarkerRelationshipAPI.class)
@@ -38,6 +47,32 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     private String name;
     @JsonView(View.MarkerRelationshipAPI.class)
     private List<MarkerDBLink> otherMarkerGenBankDBLink;
+    @JsonView(View.MarkerRelationshipAPI.class)
+    private int numberOfPublications;
+
+    public Marker getRelatedMarker() {
+        return relatedMarker;
+    }
+
+    public void setRelatedMarker(Marker relatedMarker) {
+        this.relatedMarker = relatedMarker;
+    }
+    public int getNumberOfPublications() {
+        return numberOfPublications;
+    }
+
+    public void setNumberOfPublications(int numberOfPublications) {
+        this.numberOfPublications = numberOfPublications;
+    }
+
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
+    }
+
 
     public List<MarkerDBLink> getOtherMarkerGenBankDBLink() {
         return otherMarkerGenBankDBLink;
@@ -46,9 +81,6 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     public void setOtherMarkerGenBankDBLink(List<MarkerDBLink> otherMarkerGenBankDBLink) {
         this.otherMarkerGenBankDBLink = otherMarkerGenBankDBLink;
     }
-
-
-
 
 
     @Override
