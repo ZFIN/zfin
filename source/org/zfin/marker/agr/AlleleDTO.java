@@ -11,6 +11,15 @@ public class AlleleDTO extends ZfinDTO {
   private String gene;
   private List<CrossReferenceDTO> crossReferences;
   private String symbolText;
+  private String construct;
+
+  public String getConstruct() {
+    return construct;
+  }
+
+  public void setConstruct(String construct) {
+    this.construct = construct;
+  }
 
   public List<CrossReferenceDTO> getCrossReferences() {
     return crossReferences;

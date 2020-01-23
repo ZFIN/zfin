@@ -132,6 +132,7 @@ public interface FeatureRepository {
 
     List<String> getAllFeaturePrefixes();
     List<Feature> getSingleAffectedGeneAlleles();
+    Marker getSingleConstruct(String featureZdbId);
 
     Marker getSingleAllelicGene(String featureZdbId);
 

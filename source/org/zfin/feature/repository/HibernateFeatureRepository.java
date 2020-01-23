@@ -112,18 +112,37 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @SuppressWarnings("unchecked")
     @Override
+    public Marker getSingleConstruct(String featureZdbId) {
+            String hql = "select distinct fmrel1.marker from FeatureMarkerRelationship fmrel1" +
+                    " where fmrel1.type in (:innocuous, :phenotypic) " +
+                    " and fmrel1.feature = :featureZdbId" +
+                    " and not exists (select 'x' from FeatureMarkerRelationship fmrel2 " +
+                    "where fmrel1.zdbID != fmrel2.zdbID and fmrel1.feature = fmrel2.feature)" ;
+
+            Query query = currentSession().createQuery(hql);
+            query.setString("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
+            query.setString("phenotypic", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
+            query.setString("featureZdbId", featureZdbId);
+
+            return (Marker) query.uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     public List<Feature> getSingleAffectedGeneAlleles() {
-        String hql = "select distinct fmrel1.feature from FeatureMarkerRelationship fmrel1" +
-                " where fmrel1.type in (:relation) and " +
-                "not exists (select 'x' from FeatureMarkerRelationship fmrel2 " +
+        String hql = "select distinct fmrel1.feature from FeatureMarkerRelationship fmrel1, Feature ftr" +
+                " where ftr = fmrel1.feature" +
+                " and ftr.type not in (:transversion, :deficiency, :inversion, :complexSubstitution)" +
+                " and not exists (select 'x' FROM FeatureMarkerRelationship fmrel2 " +
                 "where fmrel1.zdbID != fmrel2.zdbID and fmrel1.feature = fmrel2.feature " +
-                "and fmrel2.type != :createdBy " +
-                "and fmrel2.type != :innocuous)";
+                "and fmrel2.type != :createdBy)" ;
 
         Query query = currentSession().createQuery(hql);
-        query.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
         query.setString("createdBy", FeatureMarkerRelationshipTypeEnum.CREATED_BY.toString());
-        query.setString("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
+        query.setString("transversion", FeatureTypeEnum.TRANSLOC.toString());
+        query.setString("deficiency", FeatureTypeEnum.DEFICIENCY.toString());
+        query.setString("inversion", FeatureTypeEnum.INVERSION.toString());
+        query.setString("complexSubstitution", FeatureTypeEnum.COMPLEX_SUBSTITUTION.toString());
 
         return (List<Feature>) query.list();
     }
