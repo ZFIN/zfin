@@ -1103,6 +1103,7 @@ public class MarkerService {
                                                                               Pagination pagination) {
         long startTime = System.currentTimeMillis();
         Marker marker = markerRepository.getMarker(zdbID);
+        // needs refactor to remove hardcoding of fdbcont ids
         ReferenceDatabase genbankRNA = getSequenceRepository().getReferenceDatabaseByID("ZDB-FDBCONT-040412-37");
         ReferenceDatabase genbankGenomic = getSequenceRepository().getReferenceDatabaseByID("ZDB-FDBCONT-040412-36");
 
@@ -1129,10 +1130,11 @@ public class MarkerService {
         }
 
         for (MarkerRelationshipPresentation mrelP: fullMarkerRelationships) {
-            List<MarkerDBLink> mdbLink = sequenceRepository.getDBLinksForMarker(markerRepository.getMarker(mrelP.getZdbId()), genbankGenomic, genbankRNA);
+            Marker relatedMarker = markerRepository.getMarker(mrelP.getZdbId());
+            List<MarkerDBLink> mdbLink = sequenceRepository.getDBLinksForMarker(relatedMarker, genbankGenomic, genbankRNA);
             mrelP.setOtherMarkerGenBankDBLink(mdbLink);
             mrelP.setNumberOfPublications(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(mrelP.getMarkerRelationshipZdbId()));
-            mrelP.setRelatedMarker(markerRepository.getMarker(mrelP.getZdbId()));
+            mrelP.setRelatedMarker(relatedMarker);
         }
 
         Collections.sort(fullMarkerRelationships, markerRelationshipSupplierComparator);
