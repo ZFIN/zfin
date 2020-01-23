@@ -95,12 +95,13 @@ def generateGenesAndTranscripts() {
     Map<String,String> ensemblToZfinIDMap = [:]
     Map<String,String> zfinToEnsemblIDMap = [:]
 
-    db.eachRow(""" 
+    db.eachRow("""
     select tscript_ensdart_id, tscript_mrkr_zdb_id
     from transcript where tscript_ensdart_id is not null """) { row ->
         ensemblToZfinIDMap[row.tscript_ensdart_id] = row.tscript_mrkr_zdb_id
         zfinToEnsemblIDMap[row.tscript_mrkr_zdb_id] = row.tscript_ensdart_id
     }
+
 
     db.eachRow("""
     select dblink_acc_num, dblink_linked_recid from db_link where dblink_acc_num like 'ENSDARG%' """) { row ->
@@ -111,7 +112,7 @@ def generateGenesAndTranscripts() {
     db.eachRow("""
     select tscript_ensdart_id, mrkr_abbrev
     from transcript join marker on tscript_mrkr_zdb_id = mrkr_zdb_id """) { row ->
-        ensemblToZfinNameMap[row.tscript_ensdart_id, row.mrkr_abbrev]
+        ensemblToZfinNameMap[row.tscript_ensdart_id] = row.mrkr_abbrev
     }
 
     Map<String,List<String>> aliasMap = [:]
@@ -160,10 +161,32 @@ def generateGenesAndTranscripts() {
 
         //need zdb_id for self & parent on transcripts
         String parent = ensemblToZfinIDMap[row.gff_parent] ?: row.gff_parent
-        String id = ensemblToZfinIDMap[row.gff_id] ?: row.gff_id
+        String id = row.gff_id
+        String zdbId = ensemblToZfinIDMap[row.gff_id]
+        //only switch to ZFIN IDs for genes
+        if (id.startsWith("ENSDARG") && zdbId) {
+            id = zdbId
+        }
+
+
+
         String name = ensemblToZfinNameMap[row.gff_id] ?: row.gff_name
 
         gff += "ID=$id;Name=$name;Parent=$parent"
+
+        if (zdbId) {
+            gff += ";zdb_id=$zdbId"
+        }
+
+        if (id.startsWith("ENSDAR")) {
+            gff += ";curie=ENSEMBL:" + id
+        } else if (id.startsWith("ZDB")) {
+            gff += ";curie=ZFIN:" + id
+        }
+
+        if (zdbId && id.startsWith("ENSDART")) {
+            gff += ";Dbxref=ZFIN:" + zdbId
+        }
 
         if (ensemblFeatureMap[parent]) {
             ensemblFeatureMap[parent].add(new GenomeFeature(gff))
@@ -188,7 +211,8 @@ def generateGenesAndTranscripts() {
         def zfinTranscripts = []
         def otherTranscripts = []
         ensemblFeatureMap[gene.getId()]?.each { transcript ->
-            if (StringUtils.startsWith(transcript.getId(), "ZDB")) {
+            String zdbId = transcript.getAttribute("zdb_id")
+            if (StringUtils.isNotEmpty(zdbId)) {
                 zfinTranscripts.add(transcript)
             } else {
                 otherTranscripts.add(transcript)
@@ -253,6 +277,9 @@ def printHeader(String contigs, BufferedWriter out) {
     new File(contigs).eachLine { line ->
         out.println line
     }
+    out.println "#!date-produced " + new Date().format( 'yyyy-MM-dd' )
+    out.println "#!data-source ZFIN"
+    out.println "#!assembly GRCz11"
 
 
 }
