@@ -61,7 +61,7 @@
                 <div class="nav-column-header">Genomics</div>
                 <ul>
                     <li><a href="/action/blast/blast">BLAST</a></li>
-                    <li><a href="@GBROWSE_PATH_FROM_ROOT@">Genome Browser</a></li>
+                    <li><a href="/@GBROWSE_PATH_FROM_ROOT@">Genome Browser</a></li>
                 </ul>
             </div>
 
