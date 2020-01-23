@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.feature.Feature;
+import org.zfin.ExternalNote;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.SecondaryFeature;
 import org.zfin.marker.Marker;
@@ -48,7 +49,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
 
 //Object to JSON in String
         String jsonInString = writer.writeValueAsString(allAlleleDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.9_allele.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.0_allele.json"))) {
             out.print(jsonInString);
         }
     }
@@ -71,6 +72,13 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                             }
                             if (gene != null) {
                                 dto.setGene(gene.getZdbID());
+                            }
+                            if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
+                                String alleleDescription = null;
+                                for (ExternalNote note: feature.getExternalNotes()){
+                                    alleleDescription = alleleDescription + " " + note.getNote();
+                                }
+                                dto.setAlleleDescription(alleleDescription);
                             }
                             if (CollectionUtils.isNotEmpty(feature.getAliases())) {
                                 List<String> aliasList = new ArrayList<>(feature.getAliases().size());

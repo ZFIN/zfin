@@ -110,6 +110,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return (Marker) query.uniqueResult();
     }
 
+
+
     @SuppressWarnings("unchecked")
     @Override
     public Marker getSingleConstruct(String featureZdbId) {

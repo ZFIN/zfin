@@ -12,6 +12,17 @@ public class AlleleDTO extends ZfinDTO {
   private List<CrossReferenceDTO> crossReferences;
   private String symbolText;
   private String construct;
+  private String alleleDescription;
+
+  public String getAlleleDescription() {
+    return alleleDescription;
+  }
+
+  public void setAlleleDescription(String alleleDescription) {
+    this.alleleDescription = alleleDescription;
+  }
+
+
 
   public String getConstruct() {
     return construct;
