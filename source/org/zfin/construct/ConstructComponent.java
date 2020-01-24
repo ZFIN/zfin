@@ -42,9 +42,15 @@ public class ConstructComponent {
 
     public enum Type {
         PROMOTER_OF("promoter of"),
+        PROMOTER_OF_("promoter of "),
         CODING_SEQUENCE_OF("coding sequence of"),
+        CODING_SEQUENCE_OF_("coding sequence of "),
         CONTROLLED_VOCAB_COMPONENT("controlled vocab component"),
-        TEXT_COMPONENT("text component");
+        CONTROLLED_VOCAB_COMPONENT_("controlled vocab component "),
+        TEXT_COMPONENT("text component"),
+        TEXT_COMPONENT_("text component "),
+        UNKNOWN_COMPONENT("unknown component"),
+        CODING_COMPONENT("coding component");
 
         private final String value;
 

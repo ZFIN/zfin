@@ -62,14 +62,14 @@ public class BasicConstructInfo extends AbstractScriptWrapper {
                             dto.setPrimaryId(construct.getZdbID());
                             dto.setName(construct.getName());
                             List<ConstructComponent> components = getConstructRepository().getConstructComponentsByConstructZdbId(construct.getZdbID());
+                            List<ConstructComponentDTO> componentDTOs = new ArrayList<>();
                             if (CollectionUtils.isNotEmpty(components)) {
-                                List<ConstructComponentDTO> componentDTOs = null;
                                 for (ConstructComponent component : components) {
                                     ConstructComponentDTO componentDTO = new ConstructComponentDTO();
                                     componentDTO.setComponentId("ZFIN:" + component.getComponentZdbID());
-                                    if (component.getComponentCategory() == "coding sequence component") {
+                                    if (component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF) || component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF_)) {
                                         componentDTO.setComponentRelation("expressed");
-                                    } else if (component.getComponentCategory() == "promoter component") {
+                                    } else if (component.getType().equals(ConstructComponent.Type.PROMOTER_OF) || component.getType().equals(ConstructComponent.Type.PROMOTER_OF_)) {
                                         componentDTO.setComponentRelation("is_regulated_by");
                                     } else {
                                         continue;
@@ -78,7 +78,9 @@ public class BasicConstructInfo extends AbstractScriptWrapper {
                                     componentDTOs.add(componentDTO);
                                 }
                             }
-                            //dto.setConstructComponents(componentDTOs);
+                            if (!componentDTOs.isEmpty()) {
+                                dto.setConstructComponents(componentDTOs);
+                            }
                             if (CollectionUtils.isNotEmpty(construct.getAliases())) {
                                 List<String> aliasList = new ArrayList<>(construct.getAliases().size());
                                 for (MarkerAlias alias : construct.getAliases()) {

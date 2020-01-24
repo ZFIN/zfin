@@ -10,11 +10,11 @@ public class AllConstructDTO {
     private List<ConstructDTO> constructs;
     private MetaDataDTO metaData;
 
-    public List<ConstructDTO> getAlleles() {
+    public List<ConstructDTO> getConstructs() {
         return constructs;
     }
 
-    public void setConstructs(List<ConstructDTO> alleles) {
+    public void setConstructs(List<ConstructDTO> constructs) {
         this.constructs = constructs;
     }
 
