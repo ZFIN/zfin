@@ -46,7 +46,7 @@ public class BasicSTRInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
         String jsonInString = writer.writeValueAsString(allSTRDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.9_STR.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.0_STR.json"))) {
             out.print(jsonInString);
         }
     }

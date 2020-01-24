@@ -40,7 +40,7 @@ public class BasicPhenotypeInfo extends AbstractScriptWrapper {
 
         //Object to JSON in String
         String jsonInString = writer.writeValueAsString(basicPhenotypeDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.9_phenotype.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.0_phenotype.json"))) {
             out.print(jsonInString);
         }
     }

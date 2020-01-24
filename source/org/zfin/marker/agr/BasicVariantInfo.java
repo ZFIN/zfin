@@ -42,7 +42,7 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
         String jsonInString = writer.writeValueAsString(allVariantDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.0.9_variant.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.0_variant.json"))) {
             out.print(jsonInString);
         }
     }
