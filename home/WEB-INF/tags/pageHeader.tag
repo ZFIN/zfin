@@ -55,7 +55,7 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Genome Browsers</span>
                     <ul>
-                        <li><a href="@GBROWSE_PATH_FROM_ROOT@">ZFIN</a></li>
+                        <li><a href="/@GBROWSE_PATH_FROM_ROOT@">ZFIN</a></li>
                         <li><zfin2:externalLink href="http://www.ensembl.org/Danio_rerio/">Ensembl</zfin2:externalLink></li>
                         <li><zfin2:externalLink href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</zfin2:externalLink></li>
                         <li><zfin2:externalLink href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/">GRC</zfin2:externalLink></li>
