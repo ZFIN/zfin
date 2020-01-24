@@ -10,13 +10,11 @@ import org.springframework.stereotype.Repository;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
-import org.zfin.expression.Figure;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Fish;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -25,7 +23,6 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
  * Basic repository class to handle fish searches against a database.
@@ -191,6 +188,23 @@ public class HibernateConstructRepository implements ConstructRepository {
         return (ConstructCuration) session.get(ConstructCuration.class, conName);
     }
 
+    public List<Marker> getAllConstructs(){
+        List<String> types = new ArrayList<String>();
+
+        types.add(Marker.Type.TGCONSTRCT.name());
+        types.add(Marker.Type.GTCONSTRCT.name());
+        types.add(Marker.Type.PTCONSTRCT.name());
+        types.add(Marker.Type.ETCONSTRCT.name());
+
+
+        String hql = "select m from Marker m " +
+                " where m.markerType.name in (:types) ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("types", types);
+        return (List<Marker>) query.list();
+
+    }
+
     public void createConstruct(ConstructCuration construct, Publication pub) {
         if (construct.getName() == null)
             throw new RuntimeException("Cannot create a new construct without a name.");
@@ -214,6 +228,15 @@ public class HibernateConstructRepository implements ConstructRepository {
 
         // run procedure for fast search table
 
+    }
+
+    @Override
+    public List<ConstructComponent> getConstructComponentsByConstructZdbId(String constructZdbId){
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(ConstructComponent.class);
+        criteria.add(Restrictions.eq("constructZdbID", constructZdbId));
+        return (List<ConstructComponent>) criteria.list();
     }
 
     @Override

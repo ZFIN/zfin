@@ -11,10 +11,14 @@
         <antcall target="create-str"/>
         <antcall target="create-variant"/>
         <antcall target="create-zfin-expression"/>
+        <antcall target="create-construct"/>
     </target>
 
     <target name="create-bgi-test" >
         <antcall target="create-basic-gene-info-file-test"  />
+    </target>
+    <target name="create-construct-test" >
+        <antcall target="create-construct-file-test"  />
     </target>
 
     <target name="create-fish-test" >
@@ -49,6 +53,10 @@
 
     <target name="create-bgi" >
         <antcall target="create-basic-gene-info-file"  />
+    </target>
+
+    <target name="create-construct" >
+        <antcall target="create-construct-file"  />
     </target>
 
     <target name="create-fish" >
@@ -88,6 +96,15 @@
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
         <java classname="org.zfin.marker.agr.BasicGeneInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="6G">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
+    <target name="create-construct-file" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.BasicConstructInfo" fork="yes" classpathref="extended.classpath"
               failonerror="true" maxmemory="6G">
             <classpath refid="classpath"/>
         </java>

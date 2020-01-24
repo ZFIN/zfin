@@ -34,6 +34,8 @@ public interface ConstructRepository {
     ConstructCuration getConstructByID(String zdbID);
     ConstructCuration getConstructByName(String conName);
     void createConstruct(ConstructCuration construct, Publication publication);
+    List<Marker> getAllConstructs();
 
     List<ConstructComponent> getConstructComponentsByComponentID(String componentZdbID);
+    List<ConstructComponent> getConstructComponentsByConstructZdbId(String constructZdbId);
 }
