@@ -175,8 +175,8 @@ class PubTrackerAuthorNotification extends Component {
 
                 { (editing || previewing) &&
                     <div>
-                        <div className="form-inline notif-letter" ref={this.letterRef}>
-                            <p>Dear {previewing ? names : <input className="form-control" style={{width: '500px'}} value={names} onChange={e => this.setState({names: e.target.value})} />},</p>
+                        <div className="notif-letter" ref={this.letterRef}>
+                            <p>Dear {previewing ? names : <input className="form-control d-inline" style={{width: '500px'}} value={names} onChange={e => this.setState({names: e.target.value})} />},</p>
                             <p>I am pleased to report that information about your paper has been entered into ZFIN, the Zebrafish Information Network.</p>
                             <p><a href={`https://${window.location.hostname}/${pub.zdbID}`}>{pub.citation}</a></p>
                             <p>Please notify me if you have corrections, comments about the data associated with your paper:</p>
@@ -191,7 +191,7 @@ class PubTrackerAuthorNotification extends Component {
                                     ))}
                                 </ul>
                             </div>
-                            <p>{previewing ? customNote : <textarea className="form-control" cols="80" rows="4" value={customNote} onChange={e => this.setState({customNote: e.target.value})} />}</p>
+                            <p>{previewing ? customNote : <textarea className="form-control d-inline w-auto" cols="80" rows="4" value={customNote} onChange={e => this.setState({customNote: e.target.value})} />}</p>
                             <p>ZFIN is The Zebrafish Information Network, a centralized community
                                 resource for zebrafish genetic, genomic, and developmental data. We encourage you to
                                 share this message with your co-authors and appreciate any feedback that you are able to
