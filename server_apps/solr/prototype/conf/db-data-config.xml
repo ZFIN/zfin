@@ -2063,6 +2063,8 @@
                     where="mrel_mrkr_1_zdb_id=construct.id"
             />
 
+
+
             <entity name="construct_coding_sequence"
                     query="select mrel_mrkr_1_zdb_id, mrkr_abbrev as coding_sequence, mrkr_name as coding_sequence_full_name
                           from marker_relationship, marker
@@ -2070,6 +2072,17 @@
                             and mrel_mrkr_2_zdb_id = mrkr_zdb_id"
                     cacheImpl="SortedMapBackedCache"
                     where="mrel_mrkr_1_zdb_id=construct.id"
+            />
+
+            <entity name="construct_coding_sequence_species"
+                    query="select cv_foreign_species || ' (' || cv_name_definition || ')' as coding_sequence_species,
+                             cc_construct_zdb_id as construct_zdb_id
+                                 from construct_component
+                                  join controlled_vocabulary on cc_component_zdb_id = cv_zdb_id
+                              where cc_component_category = 'coding sequence component'
+                                and cv_foreign_species is not null;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="construct_zdb_id=construct.id"
             />
 
             <entity name="construct_regulatory_region"
@@ -2080,6 +2093,18 @@
                     cacheImpl="SortedMapBackedCache"
                     where="mrel_mrkr_1_zdb_id=construct.id"
             />
+
+            <entity name="construct_regulatory_region_species"
+                    query="select cv_foreign_species || ' (' || cv_name_definition || ')' as regulatory_region_species,
+                             cc_construct_zdb_id as construct_zdb_id
+                                 from construct_component
+                                  join controlled_vocabulary on cc_component_zdb_id = cv_zdb_id
+                              where cv_foreign_species is not null
+                                and cc_component_category = 'promoter component';"
+                    cacheImpl="SortedMapBackedCache"
+                    where="construct_zdb_id=construct.id"
+            />
+
 
             <entity name="construct_publication_xref"
                     query="
