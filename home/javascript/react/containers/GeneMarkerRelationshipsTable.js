@@ -4,7 +4,7 @@ import DataTable from '../components/DataTable';
 import CommaSeparatedList from '../components/CommaSeparatedList';
 import MarkerLink from '../components/MarkerLink';
 
-const AccessionNumberList = ({focusMarkerId, dblinks}) => (
+const AccessionNumberList = ({dblinks}) => (
     <CommaSeparatedList>
         {dblinks.map(dblink => {
             return <a href={`${dblink.referenceDatabase.foreignDB.dbUrlPrefix}${dblink.accessionNumber}`}>
@@ -36,7 +36,7 @@ const GeneMarkerRelationshipsTable = ({geneId}) => {
         },
         {
              label: 'Accession Numbers',
-             content: ({otherMarkerGenBankDBLink}) => <AccessionNumberList focusMarkerId={geneId} dblinks={otherMarkerGenBankDBLink} />,
+             content: ({otherMarkerGenBankDBLink}) => <AccessionNumberList dblinks={otherMarkerGenBankDBLink} />,
              width: '120px',
         },
         {

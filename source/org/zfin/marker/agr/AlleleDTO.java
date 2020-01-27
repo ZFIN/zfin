@@ -13,6 +13,17 @@ public class AlleleDTO extends ZfinDTO {
   private String symbolText;
   private String construct;
   private String alleleDescription;
+  private String constructInsertionType;
+
+  public String getConstructInsertionType() {
+    return constructInsertionType;
+  }
+
+  public void setConstructInsertionType(String constructInsertionType) {
+    this.constructInsertionType = constructInsertionType;
+  }
+
+
 
   public String getAlleleDescription() {
     return alleleDescription;
