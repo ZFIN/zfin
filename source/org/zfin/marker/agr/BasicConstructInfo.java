@@ -68,7 +68,7 @@ public class BasicConstructInfo extends AbstractScriptWrapper {
                                     ConstructComponentDTO componentDTO = new ConstructComponentDTO();
                                     componentDTO.setComponentId("ZFIN:" + component.getComponentZdbID());
                                     if (component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF) || component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF_)) {
-                                        componentDTO.setComponentRelation("expressed");
+                                        componentDTO.setComponentRelation("expresses");
                                     } else if (component.getType().equals(ConstructComponent.Type.PROMOTER_OF) || component.getType().equals(ConstructComponent.Type.PROMOTER_OF_)) {
                                         componentDTO.setComponentRelation("is_regulated_by");
                                     } else {
