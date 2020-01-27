@@ -164,7 +164,7 @@
 <br>
 
 <span class="summaryTitle">ZEBRAFISH PUBLICATIONS OF LAB MEMBERS</span>
-x
+
 <zfin2:listPublications publications="${publications}"/>
 
 
