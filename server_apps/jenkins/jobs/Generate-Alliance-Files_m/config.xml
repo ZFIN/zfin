@@ -30,17 +30,10 @@
       <targets>create-alliance-files</targets>
       <buildFile>$SOURCEROOT/build.xml</buildFile>
     </hudson.tasks.Ant>
+    <hudson.tasks.Shell>
+      <command>mv $SOURCEROOT/ZFIN*.json $DOWNLOAD_DIRECTORY/current</command>
+    </hudson.tasks.Shell>
   </builders>
- <publishers>
-    <hudson.tasks.ArtifactArchiver>
-      <artifacts>$SOURCEROOT/ZFIN*.json</artifacts>
-      <allowEmptyArchive>true</allowEmptyArchive>
-      <onlyIfSuccessful>false</onlyIfSuccessful>
-      <fingerprint>false</fingerprint>
-      <defaultExcludes>true</defaultExcludes>
-      <caseSensitive>true</caseSensitive>
-    </hudson.tasks.ArtifactArchiver>
-  </publishers>
   <buildWrappers>
     <EnvInjectBuildWrapper plugin="envinject@1.89">
       <info>
