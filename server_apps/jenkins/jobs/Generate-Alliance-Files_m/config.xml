@@ -1,9 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>generate ZFIN's files for the Alliance, sans GFF3 file which is created by the Download-Files_d job.&#xd;
-&#xd;
-</description>
+  <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>
@@ -27,14 +25,15 @@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$TARGETROOT</customWorkspace>
-    <builders>
-        <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>create-alliance-files</targets>
-        </hudson.tasks.Ant>
-    </builders>
-  <publishers>
+  <builders>
+    <hudson.tasks.Ant plugin="ant@1.2">
+      <targets>create-alliance-files</targets>
+      <buildFile>$SOURCEROOT/build.xml</buildFile>
+    </hudson.tasks.Ant>
+  </builders>
+ <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>*.json</artifacts>
+      <artifacts>$SOURCEROOT/ZFIN*.json</artifacts>
       <allowEmptyArchive>true</allowEmptyArchive>
       <onlyIfSuccessful>false</onlyIfSuccessful>
       <fingerprint>false</fingerprint>
