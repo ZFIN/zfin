@@ -366,7 +366,7 @@
     
     <zfin2:subsection title="${title}"
                       showNoData="true"
-                      test="${!empty formBean.varSequence}">
+                      test="${!empty formBean.feature.featureGenomicMutationDetailSet}">
      <table style="border: 1px solid black; width:100%; word-wrap:break-word;table-layout:fixed;>
               table-layout: fixed;">
         <c:if test="${!empty formBean.varSequence}">
@@ -393,6 +393,11 @@
                                                 shortLength="80"/>
                     </c:if>
                     <c:if test="${formBean.varSequence.vfsVariation.length()<450}">
+
+                        ${formBean.varSequence.vfsRightEnd}
+                    </c:if>
+                    <c:if test="${empty formBean.varSequence.vfsVariation}">
+
                         ${formBean.varSequence.vfsRightEnd}
                     </c:if>
 
