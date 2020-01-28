@@ -1,5 +1,7 @@
 package org.zfin.sequence.blast;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.File;
@@ -13,15 +15,19 @@ import java.util.Set;
  */
 public class Database {
 
+    @JsonView(View.SequenceAPI.class)
     private String zdbID;
     private String name;
     private AvailableAbbrev abbrev;
     private String description;
+    @JsonView(View.SequenceAPI.class)
     private Type type;
+    @JsonView(View.SequenceAPI.class)
     private String location;
     private boolean publicDatabase;
     private boolean isLocked;
     private Origination origination;
+    @JsonView(View.SequenceAPI.class)
     private String displayName;
 
 
@@ -177,6 +183,19 @@ public class Database {
         return name + " " + abbrev.toString() + " " + type.toString();
     }
 
+    @JsonView(View.SequenceAPI.class)
+    public String getUrlPrefix() {
+        if (location == null) {
+            String prefix = "/action/blast/blast?&program=";
+            prefix += type.equals(Type.NUCLEOTIDE) ? "blastn" : "blastp";
+            prefix += "&sequenceType=";
+            prefix += type.equals(Type.NUCLEOTIDE) ? "nt" : "pt";
+            prefix += "&queryType=SEQUENCE_ID&dataLibraryString=RNASequences&sequenceID=";
+            return prefix;
+        } else {
+            return location;
+        }
+    }
 
     @Override
     public String toString() {

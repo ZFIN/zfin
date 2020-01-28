@@ -19,7 +19,6 @@ import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.OmimPhenotype;
@@ -41,6 +40,7 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
+import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
@@ -152,18 +152,23 @@ public class MarkerService {
     public static List<MarkerDBLink> getMarkerDBLinks(Marker marker) {
         SequencePageInfoBean sequenceInfo = getSequenceInfoFull(marker);
 
-        return sequenceInfo.getDbLinks().stream()
-                .map(dbLink -> {
-                    MarkerDBLink link = new MarkerDBLink();
-                    link.setMarker(marker);
-                    link.setZdbID(dbLink.getZdbID());
-                    link.setAccessionNumber(dbLink.getAccessionNumber());
-                    link.setAccessionNumberDisplay(dbLink.getAccessionNumberDisplay());
-                    link.setLength(dbLink.getLength());
-                    link.setReferenceDatabase(dbLink.getReferenceDatabase());
-                    return link;
-                })
+        List<MarkerDBLink> links = sequenceInfo.getDbLinks().stream()
+                .map(dbLink -> getMarkerDBLink(marker, dbLink))
                 .collect(Collectors.toList());
+        sequenceInfo.getRelatedMarkerDBLinks().values().forEach(markerDBLinks -> markerDBLinks.forEach(markerDBLink -> links.add(getMarkerDBLink(marker, markerDBLink))));
+        return links;
+    }
+
+    private static MarkerDBLink getMarkerDBLink(Marker marker, DBLink dbLink) {
+        MarkerDBLink link = new MarkerDBLink();
+        link.setMarker(marker);
+        link.setZdbID(dbLink.getZdbID());
+        link.setAccessionNumber(dbLink.getAccessionNumber());
+        link.setAccessionNumberDisplay(dbLink.getAccessionNumberDisplay());
+        link.setLength(dbLink.getLength());
+        link.setReferenceDatabase(dbLink.getReferenceDatabase());
+        link.setPublications(dbLink.getPublications());
+        return link;
     }
 
     /**
@@ -1100,7 +1105,7 @@ public class MarkerService {
     }
 
     public JsonResultResponse<MarkerRelationshipPresentation> getMarkerRelationshipJsonResultResponse(String zdbID,
-                                                                              Pagination pagination) {
+                                                                                                      Pagination pagination) {
         long startTime = System.currentTimeMillis();
         Marker marker = markerRepository.getMarker(zdbID);
         // needs refactor to remove hardcoding of fdbcont ids
@@ -1129,7 +1134,7 @@ public class MarkerService {
             }
         }
 
-        for (MarkerRelationshipPresentation mrelP: fullMarkerRelationships) {
+        for (MarkerRelationshipPresentation mrelP : fullMarkerRelationships) {
             Marker relatedMarker = markerRepository.getMarker(mrelP.getZdbId());
             List<MarkerDBLink> mdbLink = sequenceRepository.getDBLinksForMarker(relatedMarker, genbankGenomic, genbankRNA);
             mrelP.setOtherMarkerGenBankDBLink(mdbLink);

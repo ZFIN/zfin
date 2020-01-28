@@ -25,17 +25,17 @@ public class SequencePageInfoBean {
         }
     }
 
-    public List<DBLink> getDbLinkList(){
-        List<DBLink> dbLinkList = new ArrayList<DBLink>();
-        if(dbLinks!=null){
+    public List<DBLink> getDbLinkList() {
+        List<DBLink> dbLinkList = new ArrayList<>();
+        if (dbLinks != null) {
             dbLinkList.addAll(dbLinks);
         }
         return dbLinkList;
     }
 
     public void addDBLink(DBLink dblink) {
-        if(dbLinks == null){
-            dbLinks = new TreeSet<DBLink>(new DbLinkDisplayComparator());
+        if (dbLinks == null) {
+            dbLinks = new TreeSet<>(new DbLinkDisplayComparator());
         }
         if (dblink != null) {
             dbLinks.add(dblink);

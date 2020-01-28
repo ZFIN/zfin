@@ -1,8 +1,10 @@
 package org.zfin.publication;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.curation.PublicationNote;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
+import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.profile.Person;
 import org.zfin.zebrashare.ZebrashareEditor;
@@ -15,7 +17,9 @@ import java.util.*;
  */
 public class Publication implements Comparable<Publication>, Serializable, EntityZdbID {
 
+    @JsonView(View.Default.class)
     private String zdbID;
+    @JsonView(View.Default.class)
     private String title;
     private String authors;
     private String shortAuthorList;

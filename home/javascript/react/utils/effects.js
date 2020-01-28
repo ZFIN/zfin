@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import produce from 'immer';
 import http from './http';
 
@@ -21,7 +21,10 @@ export const useTableDataFetch = (baseUrl, tableState) => {
         if (request) {
             request.abort();
         }
-        const xhr = http.get(`${baseUrl}?limit=${tableState.limit}&page=${tableState.page}`);
+        let url = `${baseUrl}?limit=${tableState.limit}&page=${tableState.page}`;
+        if (baseUrl.includes("?"))
+            url = `${baseUrl}&limit=${tableState.limit}&page=${tableState.page}`;
+        const xhr = http.get(url);
         setRequest(xhr);
         xhr.then(result => setData(produce(data => {
             data.fulfilled = true;
@@ -40,7 +43,9 @@ export const useTableDataFetch = (baseUrl, tableState) => {
             }))
         }).always(() => {
             setRequest(null);
-            setData(produce(data => { data.pending = false }));
+            setData(produce(data => {
+                data.pending = false
+            }));
         });
     }, [baseUrl, tableState]);
 
