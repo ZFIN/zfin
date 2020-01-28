@@ -90,6 +90,7 @@
 <filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>
 <filter token="JENKINS_PORT" value="${JENKINS_PORT}"/>
 <filter token="JPDA_ADDRESS" value="${JPDA_ADDRESS}"/>
+<filter token="JSD_EMAIL" value="${JSD_EMAIL}"/>
 <filter token="LN54_CONTACT_EMAIL" value="${LN54_CONTACT_EMAIL}"/>
 <filter token="LOADUP_FULL_PATH" value="${LOADUP_FULL_PATH}"/>
 <filter token="LOAD_ONTOLOGIES_AT_STARTUP" value="${LOAD_ONTOLOGIES_AT_STARTUP}"/>
