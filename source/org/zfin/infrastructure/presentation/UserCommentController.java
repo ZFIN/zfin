@@ -52,11 +52,11 @@ public class UserCommentController {
         }
 
         // send mail to admin
-        boolean sent = mailer.sendMail("Your Input Welcome - " + subject,
+        boolean sent = mailer.sendMail(subject,
                 String.format(ADMIN_EMAIL_TEMPLATE, name, email, institution, referer, comments),
                 false,
                 email,
-                ZfinPropertiesEnum.ZFIN_ADMIN.value().split(" "));
+                ZfinPropertiesEnum.JSD_EMAIL.value().split(" "));
         if (sent) {
             return new ResponseEntity<>(new JSONStatusResponse("OK", ""), HttpStatus.OK);
         } else {

@@ -15,6 +15,7 @@ import org.zfin.publication.Publication;
 import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.Origination;
 
+import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -61,6 +62,16 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
         return referenceDatabase.getForeignDBDataType().getDataType().toString();
     }
 
+/*
+    @JsonView(View.SequenceAPI.class)
+    @JsonProperty("lengthDisplay")
+*/
+    public String getHRLength() {
+        if (length != null)
+            return NumberFormat.getInstance().format(length);
+        return "0";
+    }
+
     /**
      * Get blastable databases according to FogBugz 4244
      * From fogbugz 4244.
@@ -77,6 +88,7 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
      *
      * @return List of blastable databases
      */
+    @JsonView(View.SequenceAPI.class)
     public List<Database> getBlastableDatabases() {
 
         List<Database> blastableDatabases = referenceDatabase.getOrderedRelatedBlastDB();
@@ -127,11 +139,12 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
         return blastableDatabases;
     }
 
+    @JsonView(View.SequenceAPI.class)
     public String getUnits() {
         if (referenceDatabase.getForeignDBDataType().getDataType().equals(ForeignDBDataType.DataType.POLYPEPTIDE)) {
             return "aa";
         } else {
-            return "bp";
+            return "nt";
         }
     }
 
@@ -195,6 +208,7 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     }
 
 
+    @JsonView(View.SequenceAPI.class)
     public Publication getSinglePublication() {
         if (getPublicationCount() == 1) {
             return getPublications().iterator().next().getPublication();
@@ -203,6 +217,7 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
         }
     }
 
+    @JsonView(View.SequenceAPI.class)
     public int getPublicationCount() {
         if (publications == null)
             return 0;
@@ -299,6 +314,18 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     @Override
     public String getEntityName() {
         return accessionNumber;
+    }
+
+    @JsonView(View.SequenceAPI.class)
+    @JsonProperty("url")
+    public String getUrl() {
+        return referenceDatabase.getForeignDB().getDbUrlPrefix() + accessionNumber;
+    }
+
+    @JsonView(View.SequenceAPI.class)
+    @JsonProperty("displayName")
+    public String getDisplayName() {
+        return referenceDatabase.getForeignDB().getDisplayName() + ":" + accessionNumber;
     }
 }
 

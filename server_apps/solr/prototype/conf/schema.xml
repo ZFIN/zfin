@@ -563,6 +563,7 @@
         <field name="gene_sort" type="sortable-string" indexed="true" stored="true" />
 
         <field name="regulatory_region" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="regulatory_region_species" type="keyword" indexed="true" stored="true" multiValued="true"  />
         <field name="coding_sequence" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="engineered_region" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
@@ -577,6 +578,7 @@
 
         <field name="promoter_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
         <field name="coding_sequence_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
+        <field name="coding_sequence_species" type="keyword" indexed="true" stored="true" multiValued="true"  />
         <field name="engineered_region_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
 
         <field name="prefix" type="keyword" indexed="true" stored="true" multiValued="true"   />
