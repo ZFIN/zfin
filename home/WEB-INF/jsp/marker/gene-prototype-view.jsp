@@ -383,13 +383,13 @@
 
     <zfin-prototype:section title="${SEQUENCES}">
         <zfin-prototype:section title="RNA">
-            <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}" data-type="RNA"></div>
+            <div class="__react-root" id="GeneSequencesTable__rna" data-gene-id="${formBean.marker.zdbID}" data-type="RNA"></div>
         </zfin-prototype:section>
         <zfin-prototype:section title="Genomic">
-            <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}" data-type="Genomic"></div>
+            <div class="__react-root" id="GeneSequencesTable__genomic" data-gene-id="${formBean.marker.zdbID}" data-type="Genomic"></div>
         </zfin-prototype:section>
         <zfin-prototype:section title="Polypeptide">
-            <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}" data-type="Polypeptide"></div>
+            <div class="__react-root" id="GeneSequencesTable__polypeptide" data-gene-id="${formBean.marker.zdbID}" data-type="Polypeptide"></div>
         </zfin-prototype:section>
     </zfin-prototype:section>
 

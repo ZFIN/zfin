@@ -48,7 +48,7 @@
         <div role="tabpanel" class="tab-pane" id="files">
             <div pub-file-edit pub-id="${pubID}"></div>
             <div class="__react-root"
-                 id="ProcessorApproval"
+                 id="ProcessorApproval__pdf"
                  data-pub-id="${pubID}"
                  data-task="ADD_PDF"
             >
@@ -57,7 +57,7 @@
         <div role="tabpanel" class="tab-pane figure-edit-panel" id="figures">
             <div figure-edit pub-id="${pubID}"></div>
             <div class="__react-root"
-                 id="ProcessorApproval"
+                 id="ProcessorApproval__figures"
                  data-pub-id="${pubID}"
                  data-task="ADD_FIGURES"
             >
