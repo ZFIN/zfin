@@ -161,6 +161,10 @@ def generateGenesAndTranscripts() {
 
         //need zdb_id for self & parent on transcripts
         String parent = ensemblToZfinIDMap[row.gff_parent] ?: row.gff_parent
+        //explicitly set the parent to back to ensembl ID for transcript components
+        if (['CDS', 'exon', 'three_prime_UTR', 'five_prime_UTR'].contains(row.gff_feature)) {
+            parent = row.gff_parent
+        }
         String id = row.gff_id
         String zdbId = ensemblToZfinIDMap[row.gff_id]
         //only switch to ZFIN IDs for genes
