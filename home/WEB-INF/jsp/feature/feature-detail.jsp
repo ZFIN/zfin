@@ -363,10 +363,10 @@
     <c:set var="title">
         FLANKING SEQUENCE (GENOMIC) <a class='popup-link info-popup-link' href='/action/feature/flank-seq'></a>
     </c:set>
-    
+
     <zfin2:subsection title="${title}"
                       showNoData="true"
-                      test="${!empty formBean.feature.featureGenomicMutationDetailSet}">
+                      test="${!empty formBean.feature.featureGenomicMutationDetailSet && !(formBean.varSequence.vfsVariation.contains('null'))}">
      <table style="border: 1px solid black; width:100%; word-wrap:break-word;table-layout:fixed;>
               table-layout: fixed;">
         <c:if test="${!empty formBean.varSequence}">
