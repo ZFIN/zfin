@@ -103,7 +103,7 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                             System.out.println("invalid feature type");
                                         }
 
-                                        dto.setSequenceOfReferenceAccessionNumber(ftrLoc.getReferenceSequenceAccessionNumber());
+                                        dto.setSequenceOfReferenceAccessionNumber("RefSeq:"+ftrLoc.getReferenceSequenceAccessionNumber());
                                         if (ftrLoc.getReferenceSequenceAccessionNumber() == "" || ftrLoc.getReferenceSequenceAccessionNumber() == null
                                         || ftrLoc.getFtrStartLocation() == null && ftrLoc.getFtrStartLocation().toString() == ""
                                                 || ftrLoc.getFtrEndLocation() == null && ftrLoc.getFtrEndLocation().toString() == ""
