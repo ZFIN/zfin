@@ -51,7 +51,7 @@
             <tr>
                 <th width="30%">Type</th>
                 <th width="50%"> Accession # </th>
-                <th width="20%"> Length (bp/aa) </th>
+                <th width="20%"> Length (nt/aa) </th>
             </tr>
             <tr ng-repeat="link in si.linkDisplays" ng-class-odd="'odd'" ng-class-even="'even'">
                 <td>{{link.dataType}}</td>

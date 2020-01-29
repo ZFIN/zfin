@@ -4,14 +4,13 @@ import DataTable from '../components/DataTable';
 import AttributionLink from '../components/AttributionLink';
 import BlastDropDown from '../components/BlastDropDown';
 
-const AccessionLink = ({accession, url}) => (
-    <AccessionLink>
-        return <a href={url}>{accession}</a>;
-    </AccessionLink>
-);
-
-const GeneSequencesTable = ({geneId, type}) => {
+const GeneSequencesTable = ({geneId}) => {
     const columns = [
+        {
+            label: 'Type',
+            content: row => row.type,
+            width: '50px',
+        },
         {
             label: 'Accession #',
             content: row => (
@@ -21,26 +20,21 @@ const GeneSequencesTable = ({geneId, type}) => {
             width: '150px',
         },
         {
-            label: 'Length',
-            content: row => (<span>{row.length}</span>),
+            label: 'Length (nt/aa)',
+            content: row => row.length && `${row.length} ${row.units}`,
             width: '100px',
             align: 'right',
         },
         {
-            label: '[nt/aa]',
-            content: row => (<span>{row.units}</span>),
-            width: '20px',
-        },
-        {
             label: 'Analysis',
-            content: row => (<BlastDropDown dbLink={row}/>),
+            content: row => <BlastDropDown dbLink={row}/>,
             width: '150px',
         }
     ];
     return (
         <DataTable
             columns={columns}
-            url={`/action/api/marker/${geneId}/sequences?filter.type=${type}`}
+            url={`/action/api/marker/${geneId}/sequences`}
             rowKey={row => row.zdbID}
         />
     );
