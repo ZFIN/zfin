@@ -7,7 +7,7 @@ public class ConstructComponentDTO {
 
     private String componentRelation;
     protected String componentSymbol;
-    protected String componentId;
+    protected String componentID;
 
     public String getComponentRelation() {
         return componentRelation;
@@ -25,12 +25,12 @@ public class ConstructComponentDTO {
         this.componentSymbol = componentSymbol;
     }
 
-    public String getComponentId() {
-        return componentId;
+    public String getComponentID() {
+        return componentID;
     }
 
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
+    public void setComponentID(String componentID) {
+        this.componentID = componentID;
     }
 }
 
