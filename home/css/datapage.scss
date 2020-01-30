@@ -10,14 +10,15 @@ body.data-page {
 .data-page-nav-container {
     width: 200px;
     flex-shrink: 0;
-    max-height: 100vh;
-    min-height: 200px;
-    overflow: auto;
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
     background: white;
     @include shadow;
+
+    .nav {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        border-bottom: 1px solid white;
+    }
 
     .nav-pills > li > a {
         border-radius: 0;
