@@ -134,14 +134,13 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public List<Feature> getSingleAffectedGeneAlleles() {
         String hql = "select distinct fmrel1.feature from FeatureMarkerRelationship fmrel1, Feature ftr" +
                 " where ftr = fmrel1.feature" +
-                " and ftr.type not in (:transversion, :deficiency, :inversion, :complexSubstitution)"
+                " and ftr.type not in (:transversion, :deficiency, :inversion)"
                 ;
 
         Query query = currentSession().createQuery(hql);
         query.setString("transversion", FeatureTypeEnum.TRANSLOC.toString());
         query.setString("deficiency", FeatureTypeEnum.DEFICIENCY.toString());
         query.setString("inversion", FeatureTypeEnum.INVERSION.toString());
-        query.setString("complexSubstitution", FeatureTypeEnum.COMPLEX_SUBSTITUTION.toString());
 
         return (List<Feature>) query.list();
     }

@@ -105,9 +105,22 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                             return dto;
                         })
                 .collect(Collectors.toList());
+        List<AlleleDTO> allAlleleDTOListRemoveNulls = new ArrayList<>();
+
+        allAlleleDTOList.forEach(alleleDTO -> {
+                    if (!(alleleDTO.getGene() == null && alleleDTO.getConstruct() == null)) {
+                        allAlleleDTOListRemoveNulls.add(alleleDTO);
+                    }
+                    else {
+                        System.out.println("alleles with more than one construct");
+                        System.out.println(alleleDTO.getPrimaryId());
+                    }
+                }
+
+        );
 
         AllAlleleDTO allAlleleDTO = new AllAlleleDTO();
-        allAlleleDTO.setAlleles(allAlleleDTOList);
+        allAlleleDTO.setAlleles(allAlleleDTOListRemoveNulls);
         String dataProvider = "ZFIN";
         List<String> pages = new ArrayList<>();
         pages.add("homepage");
