@@ -1,12 +1,42 @@
 .data-table-container {
-  @extend .border, .rounded, .mb-3, .overflow-hidden;
+  @extend .mb-3;
 }
 
 .data-table {
   @extend .table, .table-hover, .m-0;
+  border-collapse: separate;
+  border-spacing: 0;
 
   thead {
     @extend .bg-light;
+
+    th {
+      border-color: $border-color;
+      border-style: solid;
+      border-width: 1px 0;
+
+      &:first-child {
+        border-left-width: 1px;
+        border-top-left-radius: 0.25rem;
+      }
+
+      &:last-child {
+        border-right-width: 1px;
+        border-top-right-radius: 0.25rem;
+      }
+    }
+  }
+
+  td {
+    vertical-align: baseline;
+
+    &:first-child {
+      border-left: 1px solid $border-color;
+    }
+
+    &:last-child {
+      border-right: 1px solid $border-color;
+    }
   }
 }
 
@@ -15,10 +45,12 @@
 }
 
 .data-table-pagination {
-  @extend .bg-light, .p-2, .border-top;
+  @extend .bg-light, .p-2, .border;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
 }
 
 [data-table='collapse'] {

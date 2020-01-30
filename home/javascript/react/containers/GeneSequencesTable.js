@@ -33,7 +33,7 @@ const GeneSequencesTable = ({geneId}) => {
         {
             label: 'Analysis',
             content: row => <BlastDropDown dbLink={row}/>,
-            width: '150px',
+            width: '100px',
         }
     ];
     return (
