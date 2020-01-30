@@ -88,7 +88,9 @@ public class AntibodyHeaderEdit extends AbstractHeaderEdit<AntibodyDTO> {
             final AntibodyDTO antibodyDTO = new AntibodyDTO();
             antibodyDTO.setZdbID(this.dto.getZdbID());
             antibodyDTO.setName(nameBox.getText());
-         antibodyDTO.setRegistryID(registryIDBox.getText());
+            if(registryIDBox.getText()!="") {
+                antibodyDTO.setRegistryID(registryIDBox.getText());
+            }
         if (isDirty()) {
             if (false == nameValidator.validate(nameBox.getText(), this)) return;
 

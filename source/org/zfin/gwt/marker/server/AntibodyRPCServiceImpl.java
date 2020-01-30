@@ -188,7 +188,7 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
             ReferenceDatabase refDB = sr.getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
             MarkerDBLink mdb = markerRepository.getDBLink(antibody, markerRepository.getABRegID(antibody.getZdbID()), refDB);
 
-            if (dto.getRegistryID()!="") {
+            if (dto.getRegistryID()!=null) {
 
 
 
@@ -202,6 +202,7 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
             }
         }
         else{
+            if (dto.getRegistryID()!=null) {
                 ReferenceDatabase refDB = sr.getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
                 MarkerDBLink mdb = new MarkerDBLink();
                 mdb.setMarker(antibody);
@@ -209,6 +210,7 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
                 mdb.setAccessionNumberDisplay(dto.getRegistryID());
                 mdb.setReferenceDatabase(refDB);
                 HibernateUtil.currentSession().save(mdb);
+            }
             }
 
             HibernateUtil.flushAndCommitCurrentSession();
