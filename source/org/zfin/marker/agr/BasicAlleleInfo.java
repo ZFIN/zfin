@@ -61,7 +61,6 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
         List<AlleleDTO> allAlleleDTOList = allAlleles.stream()
                 .map(
                         feature -> {
-                            //TODO: constructInsertionType
                             AlleleDTO dto = new AlleleDTO();
                             dto.setSymbol(feature.getName());
                             dto.setSymbolText(feature.getName());
@@ -73,7 +72,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                                 dto.setConstructInsertionType("Transgenic Insertion");
                             }
                             if (gene != null) {
-                                dto.setGene(gene.getZdbID());
+                                dto.setGene("ZFIN:"+gene.getZdbID());
                             }
                             if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
                                 String alleleDescription = null;
