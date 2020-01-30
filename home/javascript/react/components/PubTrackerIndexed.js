@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from './LoadingSpinner';
 
 const PubTrackerIndexed = ({indexed, onToggle, saving}) => {
     const handleToggle = event => onToggle({
@@ -15,7 +15,7 @@ const PubTrackerIndexed = ({indexed, onToggle, saving}) => {
         <form>
             {!saving &&
                 <div>
-                    <label><input type="checkbox" checked={indexed.indexed} onChange={handleToggle} /> Indexed</label>
+                    <label><input type='checkbox' checked={indexed.indexed} onChange={handleToggle} /> Indexed</label>
                     {indexed.indexed && <div>by {indexed.indexer.name} on {new Date(indexed.indexedDate).toLocaleDateString()}</div>}
                 </div>
             }

@@ -11,12 +11,12 @@ const CuratorSelectBox = ({curators, userId, selectedId, onSelect}) => {
     me.name = 'Me';
     options = [
         me,
-        {zdbID: '*', name: "Anyone"},
-        {zdbID: '-', name: "──────────", disabled: true},
+        {zdbID: '*', name: 'Anyone'},
+        {zdbID: '-', name: '──────────', disabled: true},
         ...options
     ];
     return (
-        <select className="form-control" onChange={(event) => onSelect(event.target.value)} value={selectedId}>
+        <select className='form-control' onChange={(event) => onSelect(event.target.value)} value={selectedId}>
             {options.map(option => (
                 <option disabled={option.disabled} key={option.zdbID} value={option.zdbID}>
                     {option.name}

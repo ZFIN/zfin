@@ -22,7 +22,7 @@ export const getStatus = (pubId) => {
 
 export const updateStatus = (pubId, status, options = {}) => {
     const params = Object.entries(options)
-        .map(([option, value]) => !!value ? `${option}=true` : '')
+        .map(([option, value]) => value ? `${option}=true` : '')
         .join('&');
     return http.post(`/action/publication/${pubId}/status?${params}`, status);
 };

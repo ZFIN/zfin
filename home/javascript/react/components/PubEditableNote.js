@@ -56,40 +56,40 @@ class PubEditableNote extends Component {
         const { editing, editText } = this.state;
 
         return (
-            <div className="media mb-3">
-                <div className="mr-3">
-                    <div className="thumb-container">
-                        <img className="thumb-image" src={note.curator.imageURL} />
+            <div className='media mb-3'>
+                <div className='mr-3'>
+                    <div className='thumb-container'>
+                        <img className='thumb-image' src={note.curator.imageURL} />
                     </div>
                 </div>
-                <div className="media-body">
+                <div className='media-body'>
                     <h5 className='mb-0'>{note.curator.name} <small className='text-muted'>{new Date(note.date).toLocaleDateString()}</small></h5>
 
                     {note.editable &&
-                    <ul className="list-inline mb-2">
-                        <li className="list-inline-item">
+                    <ul className='list-inline mb-2'>
+                        <li className='list-inline-item'>
                             <small><a href='#' onClick={this.handleEditClick}>Edit</a></small>
                         </li>
-                        <li className="list-inline-item">
+                        <li className='list-inline-item'>
                             <small><a href='#' onClick={this.handleDeleteClick}>Delete</a></small>
                         </li>
                     </ul>}
 
                     {editing ?
                         <div>
-                            <div className="form-group">
-                                <textarea className="form-control" value={editText} onChange={this.handleNoteChange} />
+                            <div className='form-group'>
+                                <textarea className='form-control' value={editText} onChange={this.handleNoteChange} />
                             </div>
-                            <div className="horizontal-buttons">
-                                <button onClick={this.handleEditSave} type="button" className="btn btn-primary">
+                            <div className='horizontal-buttons'>
+                                <button onClick={this.handleEditSave} type='button' className='btn btn-primary'>
                                     Done Editing
                                 </button>
-                                <button onClick={this.handleEditCancel} type="submit" className="btn btn-outline-secondary">
+                                <button onClick={this.handleEditCancel} type='submit' className='btn btn-outline-secondary'>
                                     Cancel
                                 </button>
                             </div>
                         </div> :
-                        <p className="keep-breaks">{note.text}</p>
+                        <p className='keep-breaks'>{note.text}</p>
                     }
                 </div>
             </div>

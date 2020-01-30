@@ -31,22 +31,22 @@ class FigureGalleryModal extends Component {
     render() {
         const { image, onPrev, onNext } = this.props;
         return (
-            <div className="modal figure-gallery-modal" tabIndex="-1" role="dialog" ref={this.modalRef}>
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h4 className="modal-title">{image && image.label}</h4>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true"><i className="fas fa-fw fa-times" /></span>
+            <div className='modal figure-gallery-modal' tabIndex='-1' role='dialog' ref={this.modalRef}>
+                <div className='modal-dialog'>
+                    <div className='modal-content'>
+                        <div className='modal-header'>
+                            <h4 className='modal-title'>{image && image.label}</h4>
+                            <button type='button' className='close' data-dismiss='modal' aria-label='Close'>
+                                <span aria-hidden='true'><i className='fas fa-fw fa-times' /></span>
                             </button>
                         </div>
-                        <div className="modal-body figure-gallery-modal-body">
-                            {onPrev && <a href='#' className="figure-gallery-modal-nav prev" role="button" onClick={this.handleNavigation(onPrev)}>
-                                <i className="fas fa-chevron-left" />
+                        <div className='modal-body figure-gallery-modal-body'>
+                            {onPrev && <a href='#' className='figure-gallery-modal-nav prev' role='button' onClick={this.handleNavigation(onPrev)}>
+                                <i className='fas fa-chevron-left' />
                             </a>}
-                            <img className="figure-gallery-modal-image" src={image && image.fullPath} />
-                            {onNext && <a href='#' className="figure-gallery-modal-nav next" role="button" onClick={this.handleNavigation(onNext)}>
-                                <i className="fas fa-chevron-right" />
+                            <img className='figure-gallery-modal-image' src={image && image.fullPath} />
+                            {onNext && <a href='#' className='figure-gallery-modal-nav next' role='button' onClick={this.handleNavigation(onNext)}>
+                                <i className='fas fa-chevron-right' />
                             </a>}
                         </div>
                     </div>

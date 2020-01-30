@@ -89,6 +89,24 @@
       "react": {
         "version": "detect"
       }
+    },
+    "rules": {
+      "curly": "error",
+      "eqeqeq": "error",
+      "indent": ["warn", 4],
+      "jsx-quotes": ["error", "prefer-single"],
+      "no-alert": "error",
+      "no-console": ["warn", { "allow": ["warn", "error"] }],
+      "no-var": "error",
+      "react/display-name": "off",
+      "react/jsx-closing-bracket-location": ["warn", "line-aligned"],
+      "react/jsx-first-prop-new-line": "warn",
+      "react/jsx-indent": ["warn", 4],
+      "react/jsx-indent-props": ["warn", 4],
+      "react/jsx-max-props-per-line": ["warn", { "when": "multiline" }],
+      "react/self-closing-comp": "error",
+      "react/prop-types": ["error", { "skipUndeclared": true }],
+      "quotes": ["error", "single"]
     }
   }
 }

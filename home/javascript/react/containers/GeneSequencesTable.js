@@ -14,8 +14,13 @@ const GeneSequencesTable = ({geneId}) => {
         {
             label: 'Accession #',
             content: row => (
-                <AttributionLink url={row.url} accession={row.displayName} publicationCount={row.publicationCount}
-                                 publication={row.singlePublication} multiPubAccessionID={row.zdbID}/>
+                <AttributionLink
+                    url={row.url}
+                    accession={row.displayName}
+                    publicationCount={row.publicationCount}
+                    publication={row.singlePublication}
+                    multiPubAccessionID={row.zdbID}
+                />
             ),
             width: '150px',
         },

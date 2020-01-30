@@ -7,8 +7,8 @@ const Alert = ({children, color, dismissable, onDismiss}) => {
     }
 
     return (
-        <div className={`alert alert-${color}`} role="alert">
-            {dismissable && <button type="button" className="close" onClick={onDismiss}>&times;</button>}
+        <div className={`alert alert-${color}`} role='alert'>
+            {dismissable && <button type='button' className='close' onClick={onDismiss}>&times;</button>}
             {children}
         </div>
     );

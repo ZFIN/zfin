@@ -21,9 +21,9 @@ export const useTableDataFetch = (baseUrl, tableState) => {
         if (request) {
             request.abort();
         }
-        let url = `${baseUrl}?limit=${tableState.limit}&page=${tableState.page}`;
-        if (baseUrl.includes("?"))
-            url = `${baseUrl}&limit=${tableState.limit}&page=${tableState.page}`;
+        const url = baseUrl +
+            (baseUrl.indexOf('?') < 0 ? '?' : '&') +
+            `limit=${tableState.limit}&page=${tableState.page}`;
         const xhr = http.get(url);
         setRequest(xhr);
         xhr.then(result => setData(produce(data => {

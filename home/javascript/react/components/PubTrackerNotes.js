@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import PubEditableNote from "./PubEditableNote";
+import PubEditableNote from './PubEditableNote';
 
 class PubTrackerNotes extends Component {
     constructor(props) {
@@ -27,15 +27,15 @@ class PubTrackerNotes extends Component {
         const { newNote } = this.state;
         return (
             <div>
-                <form role="form">
-                    <div className="form-group">
+                <form role='form'>
+                    <div className='form-group'>
                         <label>New Note</label>
-                        <textarea value={newNote} className="form-control" rows="3" onChange={this.handleNewNoteChange}/>
+                        <textarea value={newNote} className='form-control' rows='3' onChange={this.handleNewNoteChange}/>
                     </div>
-                    <button onClick={this.handleNewNoteSave} type="button" className="btn btn-primary">Post</button>
+                    <button onClick={this.handleNewNoteSave} type='button' className='btn btn-primary'>Post</button>
                 </form>
                 <hr/>
-                {notes.length === 0 && <p className="text-muted text-center">No notes yet</p>}
+                {notes.length === 0 && <p className='text-muted text-center'>No notes yet</p>}
                 {notes.map(note => (
                     <PubEditableNote
                         key={note.zdbID}

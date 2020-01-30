@@ -20,15 +20,15 @@ import {
     updateStatus,
     updateTopic,
     validate,
-} from "../api/publication";
+} from '../api/publication';
 import intertab from '../utils/intertab';
 
-import PubTrackerPanel from "../components/PubTrackerPanel";
-import PubTrackerStatus from "../components/PubTrackerStatus";
-import PubTrackerIndexed from "../components/PubTrackerIndexed";
-import PubTrackerTopics from "../components/PubTrackerTopics";
-import PubTrackerNotes from "../components/PubTrackerNotes";
-import PubTrackerAuthorNotification from "../components/PubTrackerAuthorNotification";
+import PubTrackerPanel from '../components/PubTrackerPanel';
+import PubTrackerStatus from '../components/PubTrackerStatus';
+import PubTrackerIndexed from '../components/PubTrackerIndexed';
+import PubTrackerTopics from '../components/PubTrackerTopics';
+import PubTrackerNotes from '../components/PubTrackerNotes';
+import PubTrackerAuthorNotification from '../components/PubTrackerAuthorNotification';
 
 class PubTrackerStatusTab extends React.Component {
     constructor(props) {
@@ -192,10 +192,10 @@ class PubTrackerStatusTab extends React.Component {
 
         const statusHeader = [
             'Status',
-            <span className="float-right" key='history'>
+            <span className='float-right' key='history'>
                 <small>
-                    <a href={`/action/publication/${pubId}/status-history`} target="_blank" rel="noopener noreferrer">
-                        History <i className="fas fa-external-link-alt" />
+                    <a href={`/action/publication/${pubId}/status-history`} target='_blank' rel='noopener noreferrer'>
+                        History <i className='fas fa-external-link-alt' />
                     </a>
                 </small>
             </span>
@@ -204,8 +204,8 @@ class PubTrackerStatusTab extends React.Component {
         return (
             <div>
                 <PubTrackerPanel title={statusHeader}>
-                    <div className="row clearfix">
-                        <div className="col-6 border-right">
+                    <div className='row clearfix'>
+                        <div className='col-6 border-right'>
                             {curators.length > 0 && statuses.length > 0 && locations.length > 0 &&
                             <PubTrackerStatus
                                 curators={curators}
@@ -223,9 +223,9 @@ class PubTrackerStatusTab extends React.Component {
                             />
                             }
                         </div>
-                        <div className="col-5">
-                            <div className="row">
-                                <div className="offset-1 mt-2">
+                        <div className='col-5'>
+                            <div className='row'>
+                                <div className='offset-1 mt-2'>
                                     <PubTrackerIndexed
                                         indexed={indexed}
                                         onToggle={this.handleIndexedToggle}

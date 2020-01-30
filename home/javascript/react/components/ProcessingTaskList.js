@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ProcessingTaskItem from "./ProcessingTaskItem";
+import ProcessingTaskItem from './ProcessingTaskItem';
 
 const hasCompletedTask = (pub, task) => pub.processingTasks.find(entry => entry.task === task) !== undefined;
 

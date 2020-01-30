@@ -7,11 +7,12 @@ import MarkerLink from '../components/MarkerLink';
 const AccessionNumberList = ({dblinks}) => (
     <CommaSeparatedList>
         {dblinks.map(dblink => {
-            return <a href={`${dblink.referenceDatabase.foreignDB.dbUrlPrefix}${dblink.accessionNumber}`}>
-                {dblink.accessionNumber}
-            </a>
-            })
-        }
+            return (
+                <a href={`${dblink.referenceDatabase.foreignDB.dbUrlPrefix}${dblink.accessionNumber}`} key={dblink.accessionNumber}>
+                    {dblink.accessionNumber}
+                </a>
+            );
+        })}
     </CommaSeparatedList>
 );
 
@@ -35,9 +36,9 @@ const GeneMarkerRelationshipsTable = ({geneId}) => {
             width: '150px',
         },
         {
-             label: 'Accession Numbers',
-             content: ({otherMarkerGenBankDBLink}) => <AccessionNumberList dblinks={otherMarkerGenBankDBLink} />,
-             width: '120px',
+            label: 'Accession Numbers',
+            content: ({otherMarkerGenBankDBLink}) => <AccessionNumberList dblinks={otherMarkerGenBankDBLink} />,
+            width: '120px',
         },
         {
             label: 'Publications',

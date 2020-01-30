@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import LoadingButton from "./LoadingButton";
+import LoadingButton from './LoadingButton';
 
 const PubClaimButton = ({publication, onClaimPub}) => {
     return (
@@ -11,7 +11,7 @@ const PubClaimButton = ({publication, onClaimPub}) => {
                 disabled={publication.saving}
                 onClick={onClaimPub}
             >
-                {publication.claimed && <span><i className="fas fa-check"/> Claimed</span>}
+                {publication.claimed && <span><i className='fas fa-check'/> Claimed</span>}
                 {!publication.claimed && <span>Claim</span>}
             </LoadingButton>
             {publication.claimError && <p className='text-danger'>{publication.claimError}</p>}

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {getLink} from "../api/wiki";
-import LoadingSpinner from "./LoadingSpinner";
+import {getLink} from '../api/wiki';
+import LoadingSpinner from './LoadingSpinner';
 
 class WikiBlogPostList extends Component {
     constructor(props) {

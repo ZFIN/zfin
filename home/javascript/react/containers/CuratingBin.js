@@ -2,19 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 
-import {getLocations, searchPubStatus, updateStatus} from "../api/publication";
+import {getLocations, searchPubStatus, updateStatus} from '../api/publication';
 import intertab from '../utils/intertab';
 
-import Pagination from "../components/Pagination";
-import FilterBar from "../components/FilterBar";
-import SelectBox from "../components/SelectBox";
-import RefreshButton from "../components/RefreshButton";
-import LoadingCount from "../components/LoadingCount";
-import PubClaimButton from "../components/PubClaimButton";
-import BinPubList from "../components/BinPubList";
-import RelativeDate from "../components/RelativeDate";
-import PubPDFLink from "../components/PubPDFLink";
-import FigureGalleryModal from "../components/FigureGalleryModal";
+import Pagination from '../components/Pagination';
+import FilterBar from '../components/FilterBar';
+import SelectBox from '../components/SelectBox';
+import RefreshButton from '../components/RefreshButton';
+import LoadingCount from '../components/LoadingCount';
+import PubClaimButton from '../components/PubClaimButton';
+import BinPubList from '../components/BinPubList';
+import RelativeDate from '../components/RelativeDate';
+import PubPDFLink from '../components/PubPDFLink';
+import FigureGalleryModal from '../components/FigureGalleryModal';
 
 const PUBS_PER_PAGE = 50;
 const SORT_OPTIONS = [
@@ -150,7 +150,7 @@ class CuratingBin extends React.Component {
             {
                 label: 'ZDB-ID',
                 width: '150px',
-                content: pub => <a href={`/${pub.zdbId}`} target="_blank" rel="noopener noreferrer">{pub.zdbId}</a>,
+                content: pub => <a href={`/${pub.zdbId}`} target='_blank' rel='noopener noreferrer'>{pub.zdbId}</a>,
             },
             {
                 label: 'Details',
@@ -183,7 +183,7 @@ class CuratingBin extends React.Component {
         ];
         return (
             <React.Fragment>
-                <div className="pub-dashboard">
+                <div className='pub-dashboard'>
                     <FilterBar>
                         <b><LoadingCount count={results.totalCount} loading={loading}/></b> Pubs in
                         <SelectBox options={locationOptions} value={location} onSelect={this.handleLocationChange} />
@@ -195,10 +195,11 @@ class CuratingBin extends React.Component {
                     <BinPubList columns={tableColumns} loading={loading} pubs={results.publications} />
 
                     <div className='d-flex justify-content-center'>
-                        <Pagination onChange={this.handlePageChange}
-                                    page={page}
-                                    perPageSize={PUBS_PER_PAGE}
-                                    total={results.totalCount}
+                        <Pagination
+                            onChange={this.handlePageChange}
+                            page={page}
+                            perPageSize={PUBS_PER_PAGE}
+                            total={results.totalCount}
                         />
                     </div>
                 </div>

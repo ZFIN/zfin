@@ -1,10 +1,10 @@
 import React from 'react';
-import Tabs from "../components/Tabs";
-import Tab from "../components/Tab";
-import PubTrackerStatusTab from "./PubTrackerStatusTab";
-import PropTypes from "prop-types";
-import PubCorrespondence from "./PubCorrespondence";
-import {getDetails} from "../api/publication";
+import Tabs from '../components/Tabs';
+import Tab from '../components/Tab';
+import PubTrackerStatusTab from './PubTrackerStatusTab';
+import PropTypes from 'prop-types';
+import PubCorrespondence from './PubCorrespondence';
+import {getDetails} from '../api/publication';
 
 class PubTracker extends React.Component {
     constructor(props) {

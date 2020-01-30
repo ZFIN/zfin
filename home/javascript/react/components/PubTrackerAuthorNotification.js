@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import LoadingButton from "./LoadingButton";
-import {buildRecipientList, splitEmailRecipientListString} from "../utils/publication";
-import AuthorEmailCheckboxList from "./AuthorEmailCheckboxList";
+import LoadingButton from './LoadingButton';
+import {buildRecipientList, splitEmailRecipientListString} from '../utils/publication';
+import AuthorEmailCheckboxList from './AuthorEmailCheckboxList';
 
 class PubTrackerAuthorNotification extends Component {
     constructor(props) {
@@ -136,7 +136,7 @@ class PubTrackerAuthorNotification extends Component {
             <div>
                 { !editing && !previewing &&
                     <div>
-                        <div className="form-group">
+                        <div className='form-group'>
                             <label>Registered Authors</label>
                             <AuthorEmailCheckboxList
                                 value={registeredRecipients}
@@ -145,7 +145,7 @@ class PubTrackerAuthorNotification extends Component {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className='form-group'>
                             <label>Additional Recipients</label>
                             <input
                                 className='form-control'
@@ -156,8 +156,8 @@ class PubTrackerAuthorNotification extends Component {
                         </div>
 
                         <LoadingButton
-                            className="btn btn-primary"
-                            type="button"
+                            className='btn btn-primary'
+                            type='button'
                             disabled={loading || !this.hasRecipients()}
                             onClick={this.handleEditNotificationClick}
                             loading={loading}
@@ -175,8 +175,8 @@ class PubTrackerAuthorNotification extends Component {
 
                 { (editing || previewing) &&
                     <div>
-                        <div className="notif-letter" ref={this.letterRef}>
-                            <p>Dear {previewing ? names : <input className="form-control d-inline" style={{width: '500px'}} value={names} onChange={e => this.setState({names: e.target.value})} />},</p>
+                        <div className='notif-letter' ref={this.letterRef}>
+                            <p>Dear {previewing ? names : <input className='form-control d-inline' style={{width: '500px'}} value={names} onChange={e => this.setState({names: e.target.value})} />},</p>
                             <p>I am pleased to report that information about your paper has been entered into ZFIN, the Zebrafish Information Network.</p>
                             <p><a href={`https://${window.location.hostname}/${pub.zdbID}`}>{pub.citation}</a></p>
                             <p>Please notify me if you have corrections, comments about the data associated with your paper:</p>
@@ -191,7 +191,7 @@ class PubTrackerAuthorNotification extends Component {
                                     ))}
                                 </ul>
                             </div>
-                            <p>{previewing ? customNote : <textarea className="form-control d-inline w-auto" cols="80" rows="4" value={customNote} onChange={e => this.setState({customNote: e.target.value})} />}</p>
+                            <p>{previewing ? customNote : <textarea className='form-control d-inline w-auto' cols='80' rows='4' value={customNote} onChange={e => this.setState({customNote: e.target.value})} />}</p>
                             <p>ZFIN is The Zebrafish Information Network, a centralized community
                                 resource for zebrafish genetic, genomic, and developmental data. We encourage you to
                                 share this message with your co-authors and appreciate any feedback that you are able to
@@ -208,23 +208,23 @@ class PubTrackerAuthorNotification extends Component {
                         </div>
                         <div className='horizontal-buttons'>
                             <LoadingButton
-                                className="btn btn-primary"
-                                type="button"
+                                className='btn btn-primary'
+                                type='button'
                                 onClick={previewing ? this.sendNotification : this.previewNotification}
                                 loading={loading}
                             >
                                 {previewing ? 'Send Notification' : 'Preview Notification'}
                             </LoadingButton>
-                            <button className="btn btn-outline-secondary" type="button" onClick={previewing ? this.cancelPreview : this.cancelEdit}>
+                            <button className='btn btn-outline-secondary' type='button' onClick={previewing ? this.cancelPreview : this.cancelEdit}>
                                 Cancel
                             </button>
                         </div>
                     </div>
                 }
 
-                <div className="notif-letter-alert">
-                    {sendSuccess && <div className="alert alert-success">Message has been sent.</div>}
-                    {sendError && <div className="alert alert-danger">Something went wrong while sending the message.</div>}
+                <div className='notif-letter-alert'>
+                    {sendSuccess && <div className='alert alert-success'>Message has been sent.</div>}
+                    {sendError && <div className='alert alert-danger'>Something went wrong while sending the message.</div>}
                 </div>
             </div>
         );

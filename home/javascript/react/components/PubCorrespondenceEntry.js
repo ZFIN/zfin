@@ -25,8 +25,9 @@ class PubCorrespondenceEntry extends React.Component {
                 <div><strong>To:</strong> {correspondence.to.map(p => p.email).join(', ')}</div>
                 <div><strong>Subject:</strong> {correspondence.subject}</div>
                 <div className={open ? 'keep-breaks' : 'one-line-preview'}><span
-                    className={`icon-toggle ${open ? 'open' : ''}`} onClick={this.handleToggleOpen}><i
-                    className="fas fa-fw fa-chevron-right" /></span> {correspondence.message}
+                    className={`icon-toggle ${open ? 'open' : ''}`}
+                    onClick={this.handleToggleOpen}
+                ><i className='fas fa-fw fa-chevron-right'/></span> {correspondence.message}
                 </div>
             </div>
         );

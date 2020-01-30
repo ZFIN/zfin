@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import PubCorrespondenceEntry from "./PubCorrespondenceEntry";
+import PubCorrespondenceEntry from './PubCorrespondenceEntry';
 
 const PubCorrespondenceList = ({correspondences, onResend, onRecordReply, onSendReply, onDelete}) => {
     if (!correspondences) {
@@ -8,7 +8,7 @@ const PubCorrespondenceList = ({correspondences, onResend, onRecordReply, onSend
     }
 
     if (!correspondences.length) {
-        return <div className="text-muted text-center"><hr />No correspondences yet</div>;
+        return <div className='text-muted text-center'><hr />No correspondences yet</div>;
     }
 
     const preventDefault = (next) => {
@@ -25,22 +25,22 @@ const PubCorrespondenceList = ({correspondences, onResend, onRecordReply, onSend
                 {correspondence.resend ?
                     <div>
                         <strong>{new Date(correspondence.date).toLocaleDateString()}</strong>
-                        <span className="text-muted"> Resent email from {new Date(correspondence.composedDate).toLocaleDateString()}</span>
+                        <span className='text-muted'> Resent email from {new Date(correspondence.composedDate).toLocaleDateString()}</span>
                     </div> :
                     <div>
-                        <div className="dropdown float-right">
-                            <button className="btn btn-outline-secondary" type="button" data-toggle="dropdown">
-                                <i className="fas fa-ellipsis-v" />
+                        <div className='dropdown float-right'>
+                            <button className='btn btn-outline-secondary' type='button' data-toggle='dropdown'>
+                                <i className='fas fa-ellipsis-v' />
                             </button>
                             {correspondence.outgoing ?
-                                <div className="dropdown-menu">
+                                <div className='dropdown-menu'>
                                     <a className={`dropdown-item ${correspondence.to.length === 0 ? 'disabled' : ''}`} href='#' onClick={preventDefault(() => onResend(correspondence))}>
                                         Resend
                                     </a>
                                     <a className='dropdown-item' href='#' onClick={preventDefault(() => onRecordReply(correspondence))}>Record Reply</a>
                                     <a className='dropdown-item' href='#' onClick={preventDefault(() => onDelete(correspondence))}>Delete</a>
                                 </div> :
-                                <div className="dropdown-menu">
+                                <div className='dropdown-menu'>
                                     <a className='dropdown-item' href='#' onClick={preventDefault(() => onSendReply(correspondence))}>Reply</a>
                                     <a className='dropdown-item' href='#' onClick={preventDefault(() => onDelete(correspondence))}>Delete</a>
                                 </div>

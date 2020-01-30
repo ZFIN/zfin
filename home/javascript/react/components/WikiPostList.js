@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from './LoadingSpinner';
 import http from '../utils/http';
 
 class WikiPostList extends Component {

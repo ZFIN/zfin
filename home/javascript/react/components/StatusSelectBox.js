@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const StatusSelectBox = ({statuses, selectedId, onSelect}) => {
     return (
-        <select className="form-control" onChange={(event) => onSelect(event.target.value)} value={selectedId}>
+        <select className='form-control' onChange={(event) => onSelect(event.target.value)} value={selectedId}>
             <option value=''>Any</option>
             {statuses.map(status => (
                 <option key={status.id} value={status.id}>

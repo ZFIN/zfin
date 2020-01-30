@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 import LoadingSpinner from './LoadingSpinner';
@@ -27,7 +27,7 @@ const DataTable = ({columns, rowKey, url}) => {
     const { results, returnedRecords, total } = data.value;
 
     if (total === 0) {
-        return <i className="text-muted">No data available</i>
+        return <i className='text-muted'>No data available</i>
     }
 
     const start = (tableState.page - 1) * tableState.limit + 1;
@@ -92,16 +92,16 @@ const DataTable = ({columns, rowKey, url}) => {
                         <option value={100}>100</option>
                     </select>
                     <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(1)}>
-                        <i className="fas fa-angle-double-left" />
+                        <i className='fas fa-angle-double-left' />
                     </button>
                     <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(tableState.page - 1)}>
-                        <i className="fas fa-angle-left" />
+                        <i className='fas fa-angle-left' />
                     </button>
                     <button disabled={tableState.page === totalPages} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(tableState.page + 1)}>
-                        <i className="fas fa-angle-right" />
+                        <i className='fas fa-angle-right' />
                     </button>
                     <button disabled={tableState.page === totalPages} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(totalPages)}>
-                        <i className="fas fa-angle-double-right" />
+                        <i className='fas fa-angle-double-right' />
                     </button>
                 </div>
             </div>

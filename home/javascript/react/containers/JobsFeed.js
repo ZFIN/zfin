@@ -1,6 +1,6 @@
 import React from 'react';
-import {getBlogPosts} from "../api/wiki";
-import WikiBlogPostList from "../components/WikiBlogPostList";
+import {getBlogPosts} from '../api/wiki';
+import WikiBlogPostList from '../components/WikiBlogPostList';
 
 function JobsFeed() {
     return <WikiBlogPostList

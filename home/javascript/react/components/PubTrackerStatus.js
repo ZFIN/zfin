@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import ObjectSelectBox from "./ObjectSelectBox";
-import LoadingButton from "./LoadingButton";
+import ObjectSelectBox from './ObjectSelectBox';
+import LoadingButton from './LoadingButton';
 
 const getId = (obj) => obj && obj.id;
 const getZdbId = (obj) => obj && obj.zdbID;
@@ -191,37 +191,55 @@ class PubTrackerStatus extends Component {
         const curatorOptions = [{zdbID: '', name: ''}].concat(curators);
 
         return (
-            <form className="form-horizontal">
-                <div className="form-group row">
-                    <label className="col-md-3 col-form-label">Status</label>
-                    <div className="col-md-8">
-                        <ObjectSelectBox className='form-control' getDisplay="name" getValue="id" options={statusOptions}
-                                         value={status} onChange={status => this.setState({status})} />
+            <form className='form-horizontal'>
+                <div className='form-group row'>
+                    <label className='col-md-3 col-form-label'>Status</label>
+                    <div className='col-md-8'>
+                        <ObjectSelectBox
+                            className='form-control'
+                            getDisplay='name'
+                            getValue='id'
+                            options={statusOptions}
+                            value={status}
+                            onChange={status => this.setState({status})}
+                        />
                     </div>
                 </div>
 
                 {statusHasLocation(status) &&
-                <div className="form-group row">
-                    <label className="col-md-3 col-form-label">{getLocationLabelForStatus(status)}</label>
-                    <div className="col-md-8">
-                        <ObjectSelectBox className='form-control' getDisplay="name" getValue="id" options={locationOptions}
-                                         value={location} onChange={location => this.setState({location})}/>
+                <div className='form-group row'>
+                    <label className='col-md-3 col-form-label'>{getLocationLabelForStatus(status)}</label>
+                    <div className='col-md-8'>
+                        <ObjectSelectBox
+                            className='form-control'
+                            getDisplay='name'
+                            getValue='id'
+                            options={locationOptions}
+                            value={location}
+                            onChange={location => this.setState({location})}
+                        />
                     </div>
                 </div>
                 }
 
                 {statusRequiresOwner(status) &&
-                <div className="form-group row">
-                    <label className="col-md-3 col-form-label">Owner</label>
-                    <div className="col-md-8">
-                        <ObjectSelectBox className='form-control' getDisplay="name" getValue="zdbID" options={curatorOptions}
-                                         value={owner} onChange={owner => this.setState({owner})}/>
+                <div className='form-group row'>
+                    <label className='col-md-3 col-form-label'>Owner</label>
+                    <div className='col-md-8'>
+                        <ObjectSelectBox
+                            className='form-control'
+                            getDisplay='name'
+                            getValue='zdbID'
+                            options={curatorOptions}
+                            value={owner}
+                            onChange={owner => this.setState({owner})}
+                        />
                     </div>
                 </div>
                 }
 
                 {this.isReopening() &&
-                <div className="form-group row">
+                <div className='form-group row'>
                     <div className='col-md-8 offset-md-3'>
                         <label>
                             <input type='checkbox' value={resetTopics} onChange={event => this.setState({resetTopics: event.target.checked})} /> Reset topics
@@ -231,30 +249,38 @@ class PubTrackerStatus extends Component {
                 }
 
                 {warnings.length === 0 &&
-                <div className="form-group row">
-                    <div className="offset-md-3 col-md-9 horizontal-buttons">
-                        <button type="button" className="btn btn-outline-secondary" disabled={loading || !this.readyToSave()}
-                                onClick={this.populateState}>
+                <div className='form-group row'>
+                    <div className='offset-md-3 col-md-9 horizontal-buttons'>
+                        <button
+                            type='button'
+                            className='btn btn-outline-secondary'
+                            disabled={loading || !this.readyToSave()}
+                            onClick={this.populateState}
+                        >
                             Reset
                         </button>
 
-                        <LoadingButton loading={loading}type="button" className="btn btn-primary"
-                                       disabled={loading || !this.readyToSave()}
-                                       onClick={status.type === 'CLOSED' ? this.handleValidate : this.handleSave}>
+                        <LoadingButton
+                            loading={loading}
+                            type='button'
+                            className='btn btn-primary'
+                            disabled={loading || !this.readyToSave()}
+                            onClick={status.type === 'CLOSED' ? this.handleValidate : this.handleSave}
+                        >
                             Save
                         </LoadingButton>
 
-                        {saved && <span className="text-success"><i className="fas fa-check"/> Saved</span>}
+                        {saved && <span className='text-success'><i className='fas fa-check'/> Saved</span>}
                     </div>
                 </div>
                 }
 
                 {warnings.length > 0 &&
-                <div className="offset-md-3 col-md-9 alert alert-warning" role="alert">
+                <div className='offset-md-3 col-md-9 alert alert-warning' role='alert'>
                     <h4>Heads up!</h4>
-                    <p className="bottom-buffer-sm">You might not want to close this publication yet. Are you sure you
+                    <p className='bottom-buffer-sm'>You might not want to close this publication yet. Are you sure you
                         want to close it?</p>
-                    <ul className="bottom-buffer">
+                    <ul className='bottom-buffer'>
                         {warnings.map((warning, idx) => (
                             <li key={idx}>
                                 <span dangerouslySetInnerHTML={{__html: warning}} />
@@ -262,8 +288,8 @@ class PubTrackerStatus extends Component {
                         ))}
                     </ul>
                     <p className='horizontal-buttons'>
-                        <button type='button' className="btn btn-outline-secondary" disabled={loading} onClick={this.handleValidateCancel}>Cancel</button>
-                        <LoadingButton loading={loading} type='button' className="btn btn-warning" disabled={loading} onClick={this.handleSave}>
+                        <button type='button' className='btn btn-outline-secondary' disabled={loading} onClick={this.handleValidateCancel}>Cancel</button>
+                        <LoadingButton loading={loading} type='button' className='btn btn-warning' disabled={loading} onClick={this.handleSave}>
                             Yes, close it
                         </LoadingButton>
                     </p>

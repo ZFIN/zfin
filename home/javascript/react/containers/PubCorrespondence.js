@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import PubCorrespondenceEmailForm from "../components/PubCorrespondenceEmailForm";
+import PubCorrespondenceEmailForm from '../components/PubCorrespondenceEmailForm';
 import Alert from '../components/Alert';
-import {splitEmailRecipientListString} from "../utils/publication";
-import {addCorrespondence, deleteCorrespondence, getCorrespondences} from "../api/publication";
-import PubCorrespondenceList from "../components/PubCorrespondenceList";
-import intertab from "../utils/intertab";
+import {splitEmailRecipientListString} from '../utils/publication';
+import {addCorrespondence, deleteCorrespondence, getCorrespondences} from '../api/publication';
+import PubCorrespondenceList from '../components/PubCorrespondenceList';
+import intertab from '../utils/intertab';
 
 const prependSubject = (subject) => {
     if (subject.toLowerCase().substr(0, 3) !== 're:') {
@@ -190,10 +190,10 @@ class PubCorrespondence extends React.Component {
 
         return (
             <div>
-                <div className="row bottom-buffer">
-                    <div className="col-md-12 horizontal-buttons">
-                        <button className="btn btn-outline-secondary" onClick={this.openOutgoingForm}>Send Email</button>
-                        <button className="btn btn-outline-secondary" onClick={this.openIncomingForm}>Record Reply</button>
+                <div className='row bottom-buffer'>
+                    <div className='col-md-12 horizontal-buttons'>
+                        <button className='btn btn-outline-secondary' onClick={this.openOutgoingForm}>Send Email</button>
+                        <button className='btn btn-outline-secondary' onClick={this.openIncomingForm}>Record Reply</button>
                     </div>
                 </div>
 

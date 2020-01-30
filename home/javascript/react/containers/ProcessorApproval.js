@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {addChecklistEntry, deleteChecklistEntry, getChecklist} from "../api/publication";
+import {addChecklistEntry, deleteChecklistEntry, getChecklist} from '../api/publication';
 
 const approvalMessage = {
     ADD_PDF: 'Original article PDF upload complete',
@@ -68,13 +68,13 @@ class ProcessorApproval extends React.Component {
                 </h5>
                 {
                     open && ( checklistEntry ?
-                            <span>
-                                Approved by {checklistEntry.person.name} on {(new Date(checklistEntry.date)).toLocaleDateString()}.
-                                <button className='btn btn-outline-secondary' onClick={this.handleUndo} style={{marginLeft: '20px'}}>Undo</button>
-                            </span> :
-                            <button className='btn btn-primary' onClick={this.handleSignoff}>
-                                {approvalMessage[this.props.task]}
-                            </button>
+                        <span>
+                            Approved by {checklistEntry.person.name} on {(new Date(checklistEntry.date)).toLocaleDateString()}.
+                            <button className='btn btn-outline-secondary' onClick={this.handleUndo} style={{marginLeft: '20px'}}>Undo</button>
+                        </span> :
+                        <button className='btn btn-primary' onClick={this.handleSignoff}>
+                            {approvalMessage[this.props.task]}
+                        </button>
                     )
                 }
 

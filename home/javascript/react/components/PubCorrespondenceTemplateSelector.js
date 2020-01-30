@@ -8,7 +8,7 @@ const templates = [
         body: (citation, sender) => `Dear [[NAME]],
 
 I am writing to request a full text PDF and published supplemental data from the following article:
-${citation.replace(/(<([^>]+)>)/ig,"")}
+${citation.replace(/(<([^>]+)>)/ig,'')}
 
 Background information and intended use:
 
@@ -21,14 +21,14 @@ Since 1994, ZFIN has provided current and free information to zebrafish research
 Thank you,
 ${sender}`
     },
-{
-    label: 'Indexing Question',
+    {
+        label: 'Indexing Question',
         subject: 'Requesting additional information on your recent article',
-    body: (citation, sender) => `Dear Professor,
+        body: (citation) => `Dear Professor,
     
 Congratulations on your recent article. At ZFIN we are happy to include your newly published information in the database. In order to facilitate this process, it would be very helpful if you would provide some additional information about this article.
 
-${citation.replace(/(<([^>]+)>)/ig,"")};
+${citation.replace(/(<([^>]+)>)/ig,'')};
 
 Best regards,
 Holly 
@@ -53,13 +53,13 @@ const PubCorrespondenceTemplateSelector = ({onSelect}) => {
     };
 
     return (
-        <div className="dropdown">
-            <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+        <div className='dropdown'>
+            <button className='btn btn-outline-secondary dropdown-toggle' type='button' data-toggle='dropdown'>
                 Insert Template
             </button>
-            <div className="dropdown-menu">
+            <div className='dropdown-menu'>
                 {templates.map(template => (
-                    <a className='dropdown-item' key={template.label} href="#" onClick={e => handleSelect(e, template)}>
+                    <a className='dropdown-item' key={template.label} href='#' onClick={e => handleSelect(e, template)}>
                         {template.label}
                     </a>
                 ))}

@@ -6,8 +6,8 @@ const PubPDFLink = ({publication}) => {
         return null;
     }
     return (
-        <a href={`/PDFLoadUp/${publication.pdfPath}`} target='_blank' rel="noopener noreferrer">
-            <i className="far fa-file-pdf"/>
+        <a href={`/PDFLoadUp/${publication.pdfPath}`} target='_blank' rel='noopener noreferrer'>
+            <i className='far fa-file-pdf'/>
         </a>
     );
 };

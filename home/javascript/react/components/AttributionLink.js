@@ -1,13 +1,18 @@
 import React from 'react';
 
 const AttributionLink = ({accession, url, publicationCount, publication, multiPubAccessionID}) => {
-    if (publicationCount == 0)
+    if (publicationCount === 0) {
         return <span><a href={url}>{accession}</a></span>
-    else if (publicationCount == 1)
+    } else if (publicationCount === 1) {
         return <span><a href={url}>{accession}</a> (<a href={`/${publication.zdbID}`}>{publicationCount}</a>) </span>
-    else
-        return <span><a href={url}>{accession}</a> (<a href={`/action/infrastructure/data-citation-list/${multiPubAccessionID}`}>{publicationCount}</a>) </span>
+    } else {
+        return (
+            <span>
+                <a href={url}>{accession}</a>
+                (<a href={`/action/infrastructure/data-citation-list/${multiPubAccessionID}`}>{publicationCount}</a>)
+            </span>
+        );
+    }
 }
-
 
 export default AttributionLink;

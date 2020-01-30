@@ -2,18 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 
-import {getLocations, searchPubStatus, updateStatus} from "../api/publication";
+import {getLocations, searchPubStatus, updateStatus} from '../api/publication';
 
-import Pagination from "../components/Pagination";
-import FilterBar from "../components/FilterBar";
-import SelectBox from "../components/SelectBox";
-import RefreshButton from "../components/RefreshButton";
-import LoadingCount from "../components/LoadingCount"
-import BinPubList from "../components/BinPubList";
-import RelativeDate from "../components/RelativeDate";
-import PubPDFLink from "../components/PubPDFLink";
-import PubClaimButton from "../components/PubClaimButton";
-import intertab from "../utils/intertab";
+import Pagination from '../components/Pagination';
+import FilterBar from '../components/FilterBar';
+import SelectBox from '../components/SelectBox';
+import RefreshButton from '../components/RefreshButton';
+import LoadingCount from '../components/LoadingCount'
+import BinPubList from '../components/BinPubList';
+import RelativeDate from '../components/RelativeDate';
+import PubPDFLink from '../components/PubPDFLink';
+import PubClaimButton from '../components/PubClaimButton';
+import intertab from '../utils/intertab';
 
 const PUBS_PER_PAGE = 50;
 const SORT_OPTIONS = [
@@ -145,9 +145,10 @@ class IndexingBin extends React.Component {
                 label: 'Priority',
                 width: '70px',
                 content: (pub, index) => (
-                    <SelectBox options={priorityOptions}
-                               value={pub.status.location ? pub.status.location.id : 0}
-                               onSelect={location => this.updatePubLocation(pub, index, location)}
+                    <SelectBox
+                        options={priorityOptions}
+                        value={pub.status.location ? pub.status.location.id : 0}
+                        onSelect={location => this.updatePubLocation(pub, index, location)}
                     />
                 )
             },
@@ -159,7 +160,7 @@ class IndexingBin extends React.Component {
             {
                 label: 'ZDB-ID',
                 width: '150px',
-                content: pub => <a href={`/${pub.zdbId}`} target="_blank" rel="noopener noreferrer">{pub.zdbId}</a>,
+                content: pub => <a href={`/${pub.zdbId}`} target='_blank' rel='noopener noreferrer'>{pub.zdbId}</a>,
             },
             {
                 label: 'Details',
@@ -183,7 +184,7 @@ class IndexingBin extends React.Component {
         ];
 
         return (
-            <div className="pub-dashboard">
+            <div className='pub-dashboard'>
                 <FilterBar>
                     <b><LoadingCount count={results.totalCount} loading={loading}/></b> Pubs with priority
                     <SelectBox options={priorityOptions} value={priority} onSelect={this.handlePriorityChange}/>
@@ -195,10 +196,11 @@ class IndexingBin extends React.Component {
                 <BinPubList columns={tableColumns} loading={loading} pubs={results.publications} />
 
                 <div className='d-flex justify-content-center'>
-                    <Pagination onChange={this.handlePageChange}
-                                page={page}
-                                perPageSize={PUBS_PER_PAGE}
-                                total={results.totalCount}
+                    <Pagination
+                        onChange={this.handlePageChange}
+                        page={page}
+                        perPageSize={PUBS_PER_PAGE}
+                        total={results.totalCount}
                     />
                 </div>
             </div>

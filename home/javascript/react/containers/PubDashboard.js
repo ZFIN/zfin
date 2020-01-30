@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {getCurators, getStatuses, searchPubStatus} from "../api/publication";
-import DashboardPubList from "../components/DashboardPubList";
-import Pagination from "../components/Pagination";
-import FilterBar from "../components/FilterBar";
-import CuratorSelectBox from "../components/CuratorSelectBox";
-import StatusSelectBox from "../components/StatusSelectBox";
-import SelectBox from "../components/SelectBox";
-import RefreshButton from "../components/RefreshButton";
-import LoadingSpinner from "../components/LoadingSpinner";
-import intertab from "../utils/intertab";
+import {getCurators, getStatuses, searchPubStatus} from '../api/publication';
+import DashboardPubList from '../components/DashboardPubList';
+import Pagination from '../components/Pagination';
+import FilterBar from '../components/FilterBar';
+import CuratorSelectBox from '../components/CuratorSelectBox';
+import StatusSelectBox from '../components/StatusSelectBox';
+import SelectBox from '../components/SelectBox';
+import RefreshButton from '../components/RefreshButton';
+import LoadingSpinner from '../components/LoadingSpinner';
+import intertab from '../utils/intertab';
 
 const PUBS_PER_PAGE = 50;
 const SORT_OPTIONS = [
@@ -105,11 +105,15 @@ class PubDashboard extends React.Component {
     render() {
         const {curators, statuses, loading, page, owner, sort, status, results} = this.state;
         return (
-            <div className="pub-dashboard">
+            <div className='pub-dashboard'>
                 <FilterBar>
                     Pubs assigned to
-                    <CuratorSelectBox curators={curators} selectedId={owner} userId={this.props.userId}
-                                      onSelect={this.handleOwnerChange}/>
+                    <CuratorSelectBox
+                        curators={curators}
+                        selectedId={owner}
+                        userId={this.props.userId}
+                        onSelect={this.handleOwnerChange}
+                    />
                     with status
                     <StatusSelectBox statuses={statuses} selectedId={status} onSelect={this.handleStatusChange}/>
                     by
@@ -117,17 +121,17 @@ class PubDashboard extends React.Component {
                     <RefreshButton loading={loading} onClick={this.fetchPubs}/>
                 </FilterBar>
 
-                {loading && <div className="text-center text-muted">
+                {loading && <div className='text-center text-muted'>
                     <LoadingSpinner/> Loading...
                 </div>}
 
-                {!loading && results.totalCount === 0 && <div className="text-center text-muted">
+                {!loading && results.totalCount === 0 && <div className='text-center text-muted'>
                     No pubs match query
                 </div>}
 
                 <DashboardPubList pubs={results.publications} statusCounts={results.statusCounts}/>
 
-                <div className="d-flex justify-content-center">
+                <div className='d-flex justify-content-center'>
                     <Pagination
                         onChange={this.handlePageChange}
                         page={page}

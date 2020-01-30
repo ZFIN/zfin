@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 
 const PAGE_LIST_SIZE = 2;
 
-const Pagination = ({ className, onChange, page, perPageSize, total }) => {
-    const PageItem = ({className, ...rest}) => <li {...rest} className={`page-item ${className}`} />;
-    const PageLink = ({className, ...rest}) => <a {...rest} className={`page-link ${className}`} />;
+const PageItem = ({className, ...rest}) => <li {...rest} className={`page-item ${className}`} />;
+const PageLink = ({className, ...rest}) => <a {...rest} className={`page-link ${className}`} />;
+
+const Pagination = ({ onChange, page, perPageSize, total }) => {
 
     const isFirstPage = page === 1;
     const totalPages = Math.ceil(total / perPageSize);
@@ -25,7 +26,7 @@ const Pagination = ({ className, onChange, page, perPageSize, total }) => {
     for (let i = start; i <= end; i++) {
         pageLinks.push(
             <PageItem className={i === page ? 'active' : ''} key={`page-${i}`}>
-                <PageLink href="#" onClick={() => onChange(i)}>{i}</PageLink>
+                <PageLink href='#' onClick={() => onChange(i)}>{i}</PageLink>
             </PageItem>
         );
     }
@@ -36,20 +37,19 @@ const Pagination = ({ className, onChange, page, perPageSize, total }) => {
         pageLinks.push(<PageItem key='page-end'><PageLink href='#' onClick={() => onChange(totalPages)}>{totalPages}</PageLink></PageItem>);
     }
     return (
-        <ul className="pagination">
+        <ul className='pagination'>
             <PageItem className={isFirstPage ? 'disabled' : ''}>
-                <PageLink href="#" onClick={() => !isFirstPage && onChange(page - 1)}>&laquo; Prev</PageLink>
+                <PageLink href='#' onClick={() => !isFirstPage && onChange(page - 1)}>&laquo; Prev</PageLink>
             </PageItem>
             {pageLinks}
             <PageItem className={isLastPage ? 'disabled' : ''}>
-                <PageLink href="#" onClick={() => !isLastPage && onChange(page + 1)}>&raquo; Next</PageLink>
+                <PageLink href='#' onClick={() => !isLastPage && onChange(page + 1)}>&raquo; Next</PageLink>
             </PageItem>
         </ul>
     );
 };
 
 Pagination.propTypes = {
-    className: PropTypes.string,
     onChange: PropTypes.func,
     page: PropTypes.number.isRequired,
     total: PropTypes.number,
