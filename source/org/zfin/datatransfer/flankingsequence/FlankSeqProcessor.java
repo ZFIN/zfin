@@ -74,8 +74,8 @@ public class FlankSeqProcessor {
                         if (feature.getFeatureGenomicMutationDetail() == null) {
 
                             String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
-
                             InsertFeatureGenomeRecord(feature, refSeq);
+                            
                             HibernateUtil.createTransaction();
                         }
 
@@ -83,7 +83,7 @@ public class FlankSeqProcessor {
                 }
                 for (Feature feature : featureRepository.getNonSaFeaturesWithGenomicMutDets()) {
                     if (feature.getType()==FeatureTypeEnum.INDEL ||feature.getType()==FeatureTypeEnum.DELETION ||feature.getType()==FeatureTypeEnum.INSERTION||feature.getType()==FeatureTypeEnum.MNV||feature.getType()==FeatureTypeEnum.POINT_MUTATION) {
-                       
+
                         System.out.println(feature.getAbbreviation()+feature.getType().getName());
                         FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
                         if (ftrLoc != null
@@ -106,7 +106,7 @@ public class FlankSeqProcessor {
 
                                     break;
                                 case DELETION:
-
+                                    System.out.println(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef());
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
                                     break;
@@ -120,16 +120,16 @@ public class FlankSeqProcessor {
                                         UpdateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(),refSeq);
                                     }
 
-                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
-                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
+                                seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
+                                seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
 
-                                    break;
-                                case MNV:
-                                    seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
-                                    seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
-                                    break;
+                                break;
+                            case MNV:
+                                seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
+                                seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
+                                break;
 
-                            }
+                        }
 
 
 
@@ -149,6 +149,8 @@ public class FlankSeqProcessor {
                 System.err.println("Cannot fetch sequence " +
                         " for fasta file " + fasta);
                 e.printStackTrace();
+                logger.error(e);
+                errors.add(ExceptionUtils.getFullStackTrace(e));
             }
 
             HibernateUtil.currentSession().flush();
@@ -159,6 +161,8 @@ public class FlankSeqProcessor {
             errors.add(ExceptionUtils.getFullStackTrace(e));
         }
     }
+
+
 
 private void UpdateFeatureGenomeRecord(FeatureGenomicMutationDetail fgmd, String seqRef){
         fgmd.setFgmdSeqRef(seqRef);
@@ -174,7 +178,17 @@ private void UpdateFeatureGenomeRecord(FeatureGenomicMutationDetail fgmd, String
         fgmd.setFeature(ftr);
         fgmd.setFgmdVarStrand("+");
         HibernateUtil.currentSession().save(fgmd);
+        //HibernateUtil.currentSession().getTransaction().commit();
         HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.currentSession().update(fgmd);
+        HibernateUtil.currentSession().refresh(fgmd);
+        HibernateUtil.currentSession().update(ftr);
+        HibernateUtil.currentSession().refresh(ftr);
+       // HibernateUtil.closeSession();
+        System.out.println(fgmd.getFeature());
+        System.out.println(fgmd.getFgmdSeqRef());
+
+
 
     }
     private void insertFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
@@ -192,6 +206,7 @@ private void UpdateFeatureGenomeRecord(FeatureGenomicMutationDetail fgmd, String
         vrSeq.setVfsFlankOrigin("directly sequenced");
         vrSeq.setVfsType("Genomic");
         if (ftr.getType() == FeatureTypeEnum.DELETION) {
+            System.out.println(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef());
             vrSeq.setVfsTargetSequence(seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + "-" + "]" + seq2);
             vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + "-");
         }
@@ -226,44 +241,6 @@ private void UpdateFeatureGenomeRecord(FeatureGenomicMutationDetail fgmd, String
 
     }
 
-    private void updateFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
-        VariantSequence vrSeq = featureRepository.getFeatureVariant(ftr);
-
-        if (vrSeq != null) {
-            vrSeq.setVseqDataZDB(ftr.getZdbID());
-            vrSeq.setVfsLeftEnd(seq1);
-            vrSeq.setVfsRightEnd(seq2);
-            vrSeq.setVfsOffsetStart(offset);
-            vrSeq.setVfsOffsetStop(offset);
-            vrSeq.setVfsFlankType("genomic");
-            vrSeq.setVfsFlankOrigin("directly sequenced");
-            vrSeq.setVfsType("Genomic");
-            if (ftr.getType() == FeatureTypeEnum.DELETION) {
-                vrSeq.setVfsTargetSequence(seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + "-" + "]" + seq2);
-                vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + "-");
-            }
-            if (ftr.getType() == FeatureTypeEnum.INDEL) {
-                vrSeq.setVfsTargetSequence(seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar() + "]" + seq2);
-                vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar());
-            }
-            if (ftr.getType() == FeatureTypeEnum.INSERTION) {
-                vrSeq.setVfsTargetSequence(seq1 + "[" + "-" + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar() + "]" + seq2);
-                vrSeq.setVfsVariation("-" + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar());
-            }
-            if (ftr.getType() == FeatureTypeEnum.POINT_MUTATION) {
-                vrSeq.setVfsTargetSequence(seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar() + "]" + seq2);
-                vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar());
-            }
-            if (ftr.getType() == FeatureTypeEnum.MNV) {
-
-                vrSeq.setVfsTargetSequence(seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar() + "]" + seq2);
-                vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar());
-            }
-
-            HibernateUtil.currentSession().save(vrSeq);
-        }
-
-    }
 
 
     public List<String> getMessages() {
