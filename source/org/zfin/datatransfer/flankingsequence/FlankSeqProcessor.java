@@ -185,8 +185,7 @@ private void UpdateFeatureGenomeRecord(FeatureGenomicMutationDetail fgmd, String
         HibernateUtil.currentSession().update(ftr);
         HibernateUtil.currentSession().refresh(ftr);
        // HibernateUtil.closeSession();
-        System.out.println(fgmd.getFeature());
-        System.out.println(fgmd.getFgmdSeqRef());
+        
 
 
 
