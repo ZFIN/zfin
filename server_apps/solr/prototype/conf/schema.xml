@@ -803,7 +803,7 @@
         <field name="xref" type="string" indexed="true" stored="true" multiValued="true"/>
 
         <field name="related_gene_symbol" type="gene_symbol" indexed="true" stored="true" multiValued="true"/>
-
+        <field name="term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
         <field name="construct_name" type="construct_name" indexed="true" stored="true" multiValued="false" />
         <field name="construct_alias" type="construct_name" indexed="true" stored="true" multiValued="true" />
 

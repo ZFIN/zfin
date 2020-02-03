@@ -87,6 +87,10 @@
         <runBatchTest classNamePattern="**/Sequence*Spec.class" outFile="sequenceTests" verbose="true"/>
     </target>
 
+    <target name="runMarkerGoServiceSpec" depends="compile,build-tests">
+        <runBatchTest classNamePattern="**/MarkerGoServiceIntegrationSpec.class" outFile="markerGoServiceTests" verbose="true"/>
+    </target>
+
     <target name="runSpecifiedTest" depends="compile,build-tests">
         <runBatchTest classNamePattern="**/${RUN_TEST}*.class" outFile="specifiedTests" verbose="true"/>
     </target>

@@ -251,8 +251,6 @@ public class HibernateOntologyRepository implements OntologyRepository {
         criteria.add(Restrictions.eq("oboID", termID));
         criteria.setCacheable(true);
         GenericTerm term = (GenericTerm) criteria.uniqueResult();
-        if (term == null)
-            return null;
         return term;
     }
 
@@ -1060,13 +1058,13 @@ public class HibernateOntologyRepository implements OntologyRepository {
         query.setParameter("partOf", "part_of");
         return query.list();
     }
-    public List<GenericTerm> getTermsInSubset(String subsetName){
+    public List<String> getTermsInSubset(String subsetName){
         Session session = HibernateUtil.currentSession();
         String sql = "select distinct term_ont_id " +
-                            "from term, term_subset, ontology_subset" +
-                            "where term_zdb_id = termsub_term_zdb_id" +
-                               "and osubset_pk_id = termsub_subset_id" +
-                               "and osubset_subset_name in ( :subsetN )";
+                            " from term, term_subset, ontology_subset " +
+                            " where term_zdb_id = termsub_term_zdb_id " +
+                               " and osubset_pk_id = termsub_subset_id " +
+                               " and osubset_subset_name = :subsetN ";
 
         Query query = session.createSQLQuery(sql);
         query.setString("subsetN", subsetName);

@@ -5663,6 +5663,31 @@ and child.term_ontology = 'disease_ontology';
 
         </entity>
 
+        <!-- these documents are for counting annotations
+             for gene/term pairs in the go section of the gene page,
+              required fields are just minimally filled, since they won't be used -->
+
+        <entity name="go_annotation"
+                query="select mrkrgoev_zdb_id as id,
+                           'GO Annotation' as Category,
+                           mrkrgoev_zdb_id as name,
+                           mrkrgoev_zdb_id as proper_name,
+                           mrkrgoev_zdb_id as full_name,
+                           mrkrgoev_zdb_id as name_sort,
+                           '/' || mrkrgoev_mrkr_zdb_id as url,
+                           to_date(get_date_from_id(mrkrgoev_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
+                           mrkrgoev_mrkr_zdb_id as gene_zdb_id
+                       from marker_go_term_evidence">
+            <entity name="go_annotation_term_id"
+                    query="select term.term_ont_id as term_id, mrkrgoev_zdb_id as id
+                           from marker_go_term_evidence
+                               join all_term_contains on mrkrgoev_term_zdb_id = alltermcon_contained_zdb_id
+                               join term on alltermcon_container_zdb_id = term_zdb_id; "
+                    where="id=go_annotation.id"
+                    cacheImpl="SortedMapBackedCache">
+            </entity>
+        </entity>
+
         <!-- this fills the STR categories on marker search, but is excluded from site search -->
         <entity name="str_relationship"
                 query="select mrel_zdb_id as id,

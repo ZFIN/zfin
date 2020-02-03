@@ -4,6 +4,7 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.zfin.marker.presentation.MarkerGoServiceIntegrationSpec;
 import org.zfin.search.service.MarkerSearchServiceSpec;
 import org.zfin.search.service.SearchSuggestionServiceSpec;
 import org.zfin.uniquery.CategoriesAndFacetsSpec;
@@ -21,6 +22,7 @@ import org.zfin.uniquery.ResultAttributesSpec;
         ResultAttributesSpec.class,
         RelatedLinksSpec.class,
         CategoriesAndFacetsSpec.class,
+        MarkerGoServiceIntegrationSpec.class,
         MarkerSearchServiceSpec.class,
         QuerySpec.class,
         SearchSuggestionServiceSpec.class

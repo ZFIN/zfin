@@ -275,10 +275,7 @@ public enum Category {
                     if (category == STR_RELATIONSHIP) {
                         return false;
                     }
-                    if (category == JOURNAL && !ProfileService.isRootUser()) {
-                        return false;
-                    }
-                    return true;
+                    return category != JOURNAL || ProfileService.isRootUser();
                 })
                 .map(Category::getName)
                 .sorted(FacetCategoryComparator::compareString)

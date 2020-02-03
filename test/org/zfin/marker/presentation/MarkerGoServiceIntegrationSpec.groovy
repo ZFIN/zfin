@@ -17,10 +17,11 @@ class MarkerGoServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Shared MarkerGoService markerGoService
 
     //todo: this should be autowired!
-    public def setupSpec() {
+    def setupSpec() {
         markerGoService = new MarkerGoService()
     }
-    public def cleanupSpec() {
+
+    def cleanupSpec() {
         markerGoService = null
     }
 
@@ -50,6 +51,27 @@ class MarkerGoServiceIntegrationSpec extends ZfinIntegrationSpec {
         where:
         abbreviation << ["fgf8a","pax2a","bmp2a"]
 
+
+    }
+
+    @Unroll
+    def "#geneZdbId should have non-zero annotation count for #termID"() {
+        when:
+        Map<String, Integer> termCounts = markerGoService.getGoSlimAgrCountsForGene(geneZdbId)
+
+        then:
+        termCounts
+        termCounts.get(termID) != null
+        termCounts.get(termID) > 0
+
+        where:
+        geneZdbId              | termID
+        "ZDB-GENE-990415-8"    | "GO:0005634"
+        "ZDB-GENE-980526-426"  | "GO:0032502"
+        "ZDB-GENE-980526-426"  | "GO:0003677"
+        "ZDB-GENE-980526-178"  | "GO:0008283"
+        "ZDB-GENE-980526-178"  | "GO:0005102"
+        "ZDB-GENE-980526-178"  | "GO:0030154"
 
     }
 

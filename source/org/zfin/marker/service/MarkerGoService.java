@@ -1,10 +1,12 @@
 package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.stereotype.Service;
-import org.zfin.framework.presentation.EntityPresentation;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerGoViewTableRow;
 import org.zfin.mutant.MarkerGoTermAnnotationExtn;
@@ -13,12 +15,14 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationPresentation;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.service.SolrService;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  * Created by kschaper on 12/16/14.
@@ -112,7 +116,7 @@ public class MarkerGoService {
             sb.append("/inference/");
             sb.append(row.getFirstInference());
             sb.append("\">");
-            sb.append(String.valueOf(row.getPublications().size()));
+            sb.append(row.getPublications().size());
             sb.append(" Publications");
             sb.append("</a>");
         } else {
@@ -122,4 +126,32 @@ public class MarkerGoService {
 
         return sb.toString();
     }
+
+    Map<String, Integer> getGoSlimAgrCountsForGene(String geneZdbId) throws SolrServerException, IOException {
+
+        Map<String, Integer> termCounts = new HashMap<>();
+
+        List<String> termIDs = RepositoryFactory.getOntologyRepository().getTermsInSubset("goslim_agr");
+
+        SolrQuery query = new SolrQuery();
+        query.setQuery("*:*");
+        query.setRequestHandler("/go-annotation");
+        query.addFilterQuery("gene_zdb_id:" + geneZdbId);
+
+        termIDs.stream().forEach(t -> query.addFacetQuery("term_id:" + SolrService.luceneEscape(t) ));
+
+        QueryResponse response = SolrService.getSolrClient("prototype").query(query);
+
+        Pattern pattern = Pattern.compile("(GO:\\d+)");
+        for (Map.Entry<String, Integer> entry : response.getFacetQuery().entrySet()) {
+            Matcher matcher = pattern.matcher(entry.getKey().replace("\\",""));
+            if (matcher.find()) {
+                String termID = matcher.group(1);
+                termCounts.put(termID, entry.getValue());
+            }
+        }
+
+        return termCounts;
+    }
+
 }

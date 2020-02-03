@@ -11,7 +11,7 @@ import org.zfin.sequence.GenomeFeature
 
 import java.util.stream.Collectors
 
-Logger log = Logger.getLogger(getClass());
+Logger log = Logger.getLogger(getClass())
 
 ZfinProperties.init("${System.getenv()['SOURCEROOT']}/home/WEB-INF/zfin.properties")
 def db = Sql.newInstance(ZfinPropertiesEnum.JDBC_URL.value(), ZfinPropertiesEnum.JDBC_DRIVER.value())
@@ -105,7 +105,7 @@ def generateGenesAndTranscripts() {
 
     db.eachRow("""
     select dblink_acc_num, dblink_linked_recid from db_link where dblink_acc_num like 'ENSDARG%' """) { row ->
-        ensemblToZfinIDMap[row.dblink_acc_num] = row.dblink_linked_recid;
+        ensemblToZfinIDMap[row.dblink_acc_num] = row.dblink_linked_recid
     }
 
     Map<String,String> ensemblToZfinNameMap = [:]

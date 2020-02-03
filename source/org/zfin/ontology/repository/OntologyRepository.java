@@ -337,7 +337,7 @@ public interface OntologyRepository {
      */
     List<GenericTerm> getActiveTermsWithoutRelationships();
 
-    List<GenericTerm> getTermsInSubset(String subsetName);
+    List<String> getTermsInSubset(String subsetName);
 
     HumanGeneDetail getHumanGeneDetailById(String id);
 
