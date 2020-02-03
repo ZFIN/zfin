@@ -2270,7 +2270,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 " FROM interpro_protein,marker_to_protein,protein_to_interpro  " +
                 " WHERE ip_interpro_id = pti_interpro_id " +
                 " AND pti_uniprot_id = mtp_uniprot_id " +
-                " AND mtp_mrkr_zdb_id = :markerZdbID " ;
+                " AND mtp_mrkr_zdb_id = :markerZdbID order by ip_type" ;
         List<ProteinDomainBean> proteinDomains = HibernateUtil.currentSession().createSQLQuery(sql)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
@@ -2279,6 +2279,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         proteinDomainBean.setIpID(tuple[0].toString());
                         proteinDomainBean.setIpName(tuple[1].toString());
                         proteinDomainBean.setIpType(tuple[2].toString());
+
 
                         return proteinDomainBean;
                     }
