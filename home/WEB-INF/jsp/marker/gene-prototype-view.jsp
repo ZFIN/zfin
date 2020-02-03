@@ -295,7 +295,7 @@
                 <c:forEach var="category" items="${formBean.proteinDomainBeans}">
                     <tr>
                         <td>${category.ipType}</td>
-                        <td>${category.ipID}</td>
+                        <td><a href="http://www.ebi.ac.uk/interpro/entry/${category.ipID}">${category.ipID}</a></td>
                         <td>${category.ipName}</td>
                     </tr>
                 </c:forEach>
