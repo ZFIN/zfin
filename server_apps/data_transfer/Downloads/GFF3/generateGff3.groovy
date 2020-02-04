@@ -91,13 +91,14 @@ def generateGenesAndTranscripts() {
         genes.add(new GenomeFeature(gff))
     }
 
-
+    Map<String,String> zfinToVegaIDMap = [:]
     Map<String,String> ensemblToZfinIDMap = [:]
     Map<String,String> zfinToEnsemblIDMap = [:]
 
     db.eachRow("""
-    select tscript_ensdart_id, tscript_mrkr_zdb_id
+    select tscript_ensdart_id, tscript_load_id, tscript_mrkr_zdb_id
     from transcript where tscript_ensdart_id is not null """) { row ->
+        zfinToVegaIDMap[row.tscript_mrkr_zdb_id] = row.tscript_load_id
         ensemblToZfinIDMap[row.tscript_ensdart_id] = row.tscript_mrkr_zdb_id
         zfinToEnsemblIDMap[row.tscript_mrkr_zdb_id] = row.tscript_ensdart_id
     }
@@ -142,6 +143,18 @@ def generateGenesAndTranscripts() {
     }
 
 
+    def secondaryIds = [:]
+    db.eachRow("""
+        select zrepld_new_zdb_id, zrepld_old_zdb_id 
+        from zdb_replaced_data 
+    """) { row ->
+        if (!secondaryIds[row.zrepld_new_zdb_id]) {
+            secondaryIds[row.zrepld_new_zdb_id] = [row.zrepld_old_zdb_id]
+        } else {
+            secondaryIds[row.zrepld_new_zdb_id].add(row.zrepld_old_zdb_id)
+        }
+
+    }
 
     Map <String,List<GenomeFeature>> ensemblFeatureMap = [:]
     db.eachRow("""
@@ -188,8 +201,21 @@ def generateGenesAndTranscripts() {
             gff += ";curie=ZFIN:" + id
         }
 
-        if (zdbId && id.startsWith("ENSDART")) {
-            gff += ";Dbxref=ZFIN:" + zdbId
+        def xrefs = []
+        if (zdbId) {
+            xrefs.add("ZFIN:" + zdbId)
+        }
+        if (zfinToVegaIDMap[zdbId]) {
+            xrefs.add("VEGA:" + zfinToVegaIDMap[zdbId])
+        }
+        if (row.gff_id.startsWith("ENS")) {
+            xrefs.add("ENSEMBL:" + row.gff_id)
+        }
+
+        gff += ";dbxref=" + xrefs.join(",")
+
+        if (secondaryIds[zdbId] && !secondaryIds[zdbId].isEmpty() ) {
+            gff += ";secondaryIds=" + secondaryIds[zdbId].join(",")
         }
 
         if (ensemblFeatureMap[parent]) {
@@ -211,6 +237,10 @@ def generateGenesAndTranscripts() {
     printHeader("$gff3Dir/zfin_genes_header.gff3", zfinGenesWriter)
 
     genes.each { GenomeFeature gene ->
+
+        if (secondaryIds[gene.id]) {
+            gene.addAttribute("secondaryIds",secondaryIds[gene.id].join(','))
+        }
 
         def zfinTranscripts = []
         def otherTranscripts = []
