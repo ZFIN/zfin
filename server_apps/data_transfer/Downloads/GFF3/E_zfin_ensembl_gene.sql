@@ -36,6 +36,7 @@ select distinct
 	'gene_id=' || gene.mrkr_zdb_id
 	   ||';Name=' || gene.mrkr_abbrev
      ||';full_name=' || replace(gene.mrkr_name,';','%3B')
+        ||';ontology_term=' || szm_term_ont_id
 	   || ';so_term_name=' || szm_term_name as id_name,
 	gene.mrkr_zdb_id alias
  from  marker gene, marker_type_group_member, marker_relationship, gff3 vt, gff3 et, db_link vTdbl, db_link eTdbl, so_zfin_mapping
@@ -351,6 +352,7 @@ select
 		'gene_id=' || gene.mrkr_zdb_id
 	   ||';Name=' || gene.mrkr_abbrev
 	   ||';full_name=' || gene.mrkr_name
+	   ||';ontology_term=' || szm_term_ont_id
 	   || ';so_term_name=' || szm_term_name as id_name,
 	gene.mrkr_zdb_id alias
  from  marker gene, db_link eGdbl, gff3, so_zfin_mapping
