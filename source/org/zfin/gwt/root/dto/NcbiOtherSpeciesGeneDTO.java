@@ -1,6 +1,8 @@
 package org.zfin.gwt.root.dto;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 
 /**
  * External ortholog, i.e. the non-zebrafish ortholog found at NCBI
@@ -9,9 +11,11 @@ public class NcbiOtherSpeciesGeneDTO {
 
     private String ID;
     private String name;
+    @JsonView(View.OrthologyAPI.class)
     private String abbreviation;
     private String chromosome;
     private String position;
+    @JsonView(View.OrthologyAPI.class)
     private String organism;
 
     public String getOrganism() {

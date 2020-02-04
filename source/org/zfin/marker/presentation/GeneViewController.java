@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +16,7 @@ import org.zfin.expression.presentation.ExpressionSearchController;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.expression.service.ExpressionService;
+import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.ControlledVocab;
@@ -31,6 +31,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.agr.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.OrthologExternalReference;
 import org.zfin.orthology.presentation.OrthologEvidencePresentation;
 import org.zfin.orthology.presentation.OrthologyPresentationRow;
@@ -39,9 +40,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.presentation.SearchPrototypeController;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.repository.SequenceRepository;
-
 import org.zfin.sequence.service.TranscriptService;
-import org.zfin.feature.repository.FeatureRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,9 +51,8 @@ import java.io.OutputStreamWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
+import static org.zfin.repository.RepositoryFactory.*;
+
 @Controller
 @RequestMapping("/marker")
 public class GeneViewController {
@@ -84,7 +82,8 @@ public class GeneViewController {
     @Autowired
     private EfgViewController efgViewController;
 
-    @Autowired SearchPrototypeController searchController;
+    @Autowired
+    SearchPrototypeController searchController;
 
     @Autowired
     private ExpressionSearchController expressionSearchController;
@@ -179,7 +178,7 @@ public class GeneViewController {
             geneBean.setNumberOfConstructs(relatedMarkers.size());
             List<ConstructBean> constructBeans = new ArrayList<>();
             for (Marker mrkr : relatedMarkers) {
-                ConstructBean constructBean  = new ConstructBean();
+                ConstructBean constructBean = new ConstructBean();
                 constructBean.setMarker(mrkr);
                 List<MarkerRelationshipPresentation> mrkrRels = new ArrayList<>();
                 mrkrRels.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
@@ -204,7 +203,8 @@ public class GeneViewController {
                 constructBean.setNumberOfTransgeniclines(featureRepository.getNumberOfFeaturesForConstruct(mrkr));
                 List<ControlledVocab> species = infrastructureRepository.getControlledVocabsForSpeciesByConstruct(mrkr);
                 species.add(zebrafish);
-                List sortedSpecies = species.stream().sorted(Comparator.comparing(ControlledVocab::getCvNameDefinition)).collect(Collectors.toList());;
+                List sortedSpecies = species.stream().sorted(Comparator.comparing(ControlledVocab::getCvNameDefinition)).collect(Collectors.toList());
+                ;
                 constructBean.setSpecies(sortedSpecies);
                 constructBeans.add(constructBean);
             }
@@ -242,6 +242,12 @@ public class GeneViewController {
                 markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PLASMIDS));
         geneBean.setPathwayDBLinks(
                 markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PATHWAYS));
+
+        // orthology
+        List<Ortholog> orthologList = getOrthologyRepository().getOrthologs(gene);
+        model.addAttribute("hasOrthology", CollectionUtils.isNotEmpty(orthologList));
+        if (gene.getOrthologyNote() != null)
+            model.addAttribute("orthologyNote", gene.getOrthologyNote().getNote());
 
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
@@ -377,7 +383,7 @@ public class GeneViewController {
         return "forward:" + searchLink;
     }
 
-    @RequestMapping(value = {"/{geneID}/wt-expression/images","/gene/view/{geneID}/wt-expression/images"})
+    @RequestMapping(value = {"/{geneID}/wt-expression/images", "/gene/view/{geneID}/wt-expression/images"})
     public String getWildtypeExpressionImages(@PathVariable String geneID, Model model, HttpServletRequest request) {
         return searchController.viewWtExpressionGalleryResults(geneID, model, request);
     }

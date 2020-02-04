@@ -15,9 +15,10 @@
 <c:set var="CONSTRUCTS" value="Constructs"/>
 <c:set var="SEQUENCES" value="Sequences"/>
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
+<c:set var="ORTHOLOGY" value="Orthology"/>
 
 <zfin-prototype:dataPage
-        sections="${[SUMMARY, MUTANTS, DISEASES, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, SEQUENCES]}">
+        sections="${[SUMMARY, MUTANTS, DISEASES, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, SEQUENCES, ORTHOLOGY]}">
     <zfin-prototype:dataManagerDropdown>
         <a class="dropdown-item active" href="/action/marker/gene/prototype-view/${formBean.marker.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
@@ -104,64 +105,64 @@
         <zfin-prototype:section title="Mutants">
             <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.mutantOnMarkerBeans.features}">
                 <thead>
-                <tr>
-                    <th width="10%">Allele</th>
-                    <th width="13%">Type</th>
-                    <th width="15%">Localization</th>
-                    <th width="20%">Consequence</th>
-                    <th width="10%">Mutagen</th>
-                    <th width="50%">Suppliers</th>
-                </tr>
+                    <tr>
+                        <th width="10%">Allele</th>
+                        <th width="13%">Type</th>
+                        <th width="15%">Localization</th>
+                        <th width="20%">Consequence</th>
+                        <th width="10%">Mutagen</th>
+                        <th width="50%">Suppliers</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="feature" items="${formBean.mutantOnMarkerBeans.features}" varStatus="loop">
-                    <tr>
-                        <td>
-                            <a href="/${feature.zdbID}">${feature.abbreviation}</a>
-                        </td>
-                        <td>
-                                ${feature.type.display}
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${!empty feature.geneLocalizationStatement}">
-                                    ${feature.geneLocalizationStatement}
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="no-data-tag">Unknown</span>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${!empty feature.transcriptConsequenceStatement}">
-                                    ${feature.transcriptConsequenceStatement}
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="no-data-tag">Unknown</span>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
+                    <c:forEach var="feature" items="${formBean.mutantOnMarkerBeans.features}" varStatus="loop">
+                        <tr>
+                            <td>
+                                <a href="/${feature.zdbID}">${feature.abbreviation}</a>
+                            </td>
+                            <td>
+                                    ${feature.type.display}
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${!empty feature.geneLocalizationStatement}">
+                                        ${feature.geneLocalizationStatement}
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="no-data-tag">Unknown</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${!empty feature.transcriptConsequenceStatement}">
+                                        ${feature.transcriptConsequenceStatement}
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="no-data-tag">Unknown</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
 
-                        <td>
-                            <c:set var="mutagen" value="${feature.featureAssay.mutagen}"/>
-                            <c:if test="${mutagen ne zfn:getMutagen('not specified')}">
-                                ${feature.featureAssay.mutagen.toString()}
-                            </c:if>
-                        </td>
-                        <td>
-                            <ul class="list-unstyled">
-                                <c:forEach var="supplier" items="${feature.suppliers}">
-                                    <li><a href="/${supplier.organization.zdbID}"> ${supplier.organization.name}</a>
-                                        <c:if test="${!empty supplier.orderURL}">
-                                            <a href="${supplier.orderURL}"> (order this)</a>
-                                        </c:if>
-                                    </li>
-                                </c:forEach>
-                            </ul>
-                        </td>
-                    </tr>
-                </c:forEach>
+                            <td>
+                                <c:set var="mutagen" value="${feature.featureAssay.mutagen}"/>
+                                <c:if test="${mutagen ne zfn:getMutagen('not specified')}">
+                                    ${feature.featureAssay.mutagen.toString()}
+                                </c:if>
+                            </td>
+                            <td>
+                                <ul class="list-unstyled">
+                                    <c:forEach var="supplier" items="${feature.suppliers}">
+                                        <li><a href="/${supplier.organization.zdbID}"> ${supplier.organization.name}</a>
+                                            <c:if test="${!empty supplier.orderURL}">
+                                                <a href="${supplier.orderURL}"> (order this)</a>
+                                            </c:if>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </td>
+                        </tr>
+                    </c:forEach>
                 </tbody>
             </zfin-prototype:dataTable>
         </zfin-prototype:section>
@@ -170,11 +171,11 @@
             <zfin-prototype:dataTable collapse="true"
                                       hasData="${!empty formBean.mutantOnMarkerBeans.knockdownReagents}">
                 <thead>
-                <tr>
-                    <th>Targeting Reagent</th>
-                    <th>Created Alleles</th>
-                    <th>Publications</th>
-                </tr>
+                    <tr>
+                        <th>Targeting Reagent</th>
+                        <th>Created Alleles</th>
+                        <th>Publications</th>
+                    </tr>
                 </thead>
 
                 <c:forEach items="${formBean.mutantOnMarkerBeans.knockdownReagents}" var="bean" varStatus="loop">
@@ -207,75 +208,75 @@
         <zfin-prototype:section title="Associated with <i>${formBean.marker.abbreviation}</i> human ortholog">
             <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.diseaseDisplays}">
                 <thead>
-                <tr>
-                    <th width="25%">Disease Ontology Term</th>
-                    <th width="20%">Multi-Species Data</th>
-                    <th width="25%">OMIM Term</th>
-                    <th width="20%">OMIM Phenotype ID</th>
-                </tr>
+                    <tr>
+                        <th width="25%">Disease Ontology Term</th>
+                        <th width="20%">Multi-Species Data</th>
+                        <th width="25%">OMIM Term</th>
+                        <th width="20%">OMIM Phenotype ID</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="row" items="${formBean.diseaseDisplays}" varStatus="loop">
-                    <tr>
-                        <zfin-prototype:groupedCell items="${formBean.diseaseDisplays}" loop="${loop}"
-                                                    property="diseaseTerm">
-                            <c:if test="${!empty row.diseaseTerm}">
-                                <zfin:link entity="${row.diseaseTerm}" longVersion="true"/>
-                            </c:if>
-                        </zfin-prototype:groupedCell>
+                    <c:forEach var="row" items="${formBean.diseaseDisplays}" varStatus="loop">
+                        <tr>
+                            <zfin-prototype:groupedCell items="${formBean.diseaseDisplays}" loop="${loop}"
+                                                        property="diseaseTerm">
+                                <c:if test="${!empty row.diseaseTerm}">
+                                    <zfin:link entity="${row.diseaseTerm}" longVersion="true"/>
+                                </c:if>
+                            </zfin-prototype:groupedCell>
 
-                        <zfin-prototype:groupedCell items="${formBean.diseaseDisplays}" loop="${loop}"
-                                                    property="diseaseTerm">
-                            <c:if test="${!empty row.diseaseTerm}">
-                                <a href="http://www.alliancegenome.org/disease/${row.diseaseTerm.oboID}">Alliance</a>
-                            </c:if>
-                        </zfin-prototype:groupedCell>
+                            <zfin-prototype:groupedCell items="${formBean.diseaseDisplays}" loop="${loop}"
+                                                        property="diseaseTerm">
+                                <c:if test="${!empty row.diseaseTerm}">
+                                    <a href="http://www.alliancegenome.org/disease/${row.diseaseTerm.oboID}">Alliance</a>
+                                </c:if>
+                            </zfin-prototype:groupedCell>
 
-                        <td>${row.omimPhenotype.name}</td>
+                            <td>${row.omimPhenotype.name}</td>
 
-                        <td>
-                            <c:if test="${!empty row.omimPhenotype.omimNum}">
-                                <a href="http://omim.org/entry/${row.omimPhenotype.omimNum}">${row.omimPhenotype.omimNum}</a>
-                            </c:if>
-                        </td>
-                    </tr>
-                </c:forEach>
+                            <td>
+                                <c:if test="${!empty row.omimPhenotype.omimNum}">
+                                    <a href="http://omim.org/entry/${row.omimPhenotype.omimNum}">${row.omimPhenotype.omimNum}</a>
+                                </c:if>
+                            </td>
+                        </tr>
+                    </c:forEach>
                 </tbody>
             </zfin-prototype:dataTable>
         </zfin-prototype:section>
         <zfin-prototype:section title="Associated with <i>${formBean.marker.abbreviation}</i> via experimental Models">
             <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.diseaseModelDisplays}">
                 <thead>
-                <tr>
-                    <th>Human Disease</th>
-                    <th>Fish</th>
-                    <th>Conditions</th>
-                    <th>Citations</th>
-                </tr>
+                    <tr>
+                        <th>Human Disease</th>
+                        <th>Fish</th>
+                        <th>Conditions</th>
+                        <th>Citations</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${formBean.diseaseModelDisplays}" var="disease" varStatus="loop">
-                    <tr>
-                        <zfin-prototype:groupedCell items="${formBean.diseaseModelDisplays}" loop="${loop}"
-                                                    property="disease">
-                            <zfin:link entity="${disease.disease}"/>
-                        </zfin-prototype:groupedCell>
-                        <td><zfin:link entity="${disease.experiment.fish}"/></td>
-                        <td><zfin:link entity="${disease.experiment.experiment}"/></td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${fn:length(disease.publications) == 1}">
-                                    <zfin:link entity="${disease.publications[0]}"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <a href="/action/ontology/fish-model-publication-list/${disease.disease.oboID}/${disease.experiment.fish.zdbID}">
-                                        (${fn:length(disease.publications)})
-                                    </a>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                    </tr>
-                </c:forEach>
+                    <c:forEach items="${formBean.diseaseModelDisplays}" var="disease" varStatus="loop">
+                        <tr>
+                            <zfin-prototype:groupedCell items="${formBean.diseaseModelDisplays}" loop="${loop}"
+                                                        property="disease">
+                                <zfin:link entity="${disease.disease}"/>
+                            </zfin-prototype:groupedCell>
+                            <td><zfin:link entity="${disease.experiment.fish}"/></td>
+                            <td><zfin:link entity="${disease.experiment.experiment}"/></td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${fn:length(disease.publications) == 1}">
+                                        <zfin:link entity="${disease.publications[0]}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="/action/ontology/fish-model-publication-list/${disease.disease.oboID}/${disease.experiment.fish.zdbID}">
+                                            (${fn:length(disease.publications)})
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                    </c:forEach>
                 </tbody>
             </zfin-prototype:dataTable>
         </zfin-prototype:section>
@@ -285,20 +286,20 @@
         <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.proteinDomainBeans}">
             <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
                 <thead>
-                <tr>
-                    <th style="width: 17%">Type</th>
-                    <th style="width: 17%">InterPro ID</th>
-                    <th style="width: 17%">Name</th>
-                </tr>
-                </thead>
-                <tbody>
-                <c:forEach var="category" items="${formBean.proteinDomainBeans}">
                     <tr>
                         <td>${category.ipType}</td>
                         <td><a href="http://www.ebi.ac.uk/interpro/entry/${category.ipID}">${category.ipID}</a></td>
                         <td>${category.ipName}</td>
                     </tr>
-                </c:forEach>
+                </thead>
+                <tbody>
+                    <c:forEach var="category" items="${formBean.proteinDomainBeans}">
+                        <tr>
+                            <td>${category.ipType}</td>
+                            <td>${category.ipID}</td>
+                            <td>${category.ipName}</td>
+                        </tr>
+                    </c:forEach>
                 </tbody>
             </c:if>
         </zfin-prototype:dataTable>
@@ -317,48 +318,48 @@
     <zfin-prototype:section title="${ANTIBODIES}">
         <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.antibodyBeans}">
             <thead>
-            <tr>
-                <th style="width: 17%">Name</th>
-                <th style="width: 17%">Type</th>
-                <th style="width: 10%">Isotype</th>
-                <th style="width: 17%">Host Organism</th>
-                <th style="width: 17%">Assay <a class="popup-link info-popup-link"
-                                                href="/ZFIN/help_files/antibody_assay_help.html"></a></th>
-                <th style="width: 17%">Source</th>
-                <th style="width: 5%">Publications</th>
-            </tr>
+                <tr>
+                    <th style="width: 17%">Name</th>
+                    <th style="width: 17%">Type</th>
+                    <th style="width: 10%">Isotype</th>
+                    <th style="width: 17%">Host Organism</th>
+                    <th style="width: 17%">Assay <a class="popup-link info-popup-link"
+                                                    href="/ZFIN/help_files/antibody_assay_help.html"></a></th>
+                    <th style="width: 17%">Source</th>
+                    <th style="width: 5%">Publications</th>
+                </tr>
             </thead>
             <tbody>
-            <c:forEach var="antibodyBean" items="${formBean.antibodyBeans}">
-                <c:set var="antibody" value="${antibodyBean.antibody}"/>
-                <tr>
-                    <td><zfin:link entity="${antibody}"/></td>
-                    <td>${antibody.clonalType}</td>
-                    <td>
-                            ${antibody.heavyChainIsotype}
-                        <c:if test="${antibody.heavyChainIsotype != null && antibody.lightChainIsotype != null}">, </c:if>
-                            ${antibody.lightChainIsotype}
-                    </td>
-                    <td>
-                            ${antibody.hostSpecies}
-                    </td>
-                    <td>
-                        <ul class="comma-separated">
-                            <c:forEach var="assay" items="${antibody.distinctAssayNames}">
-                                <li>${assay}</li>
-                            </c:forEach>
-                        </ul>
-                    </td>
-                    <td>
-                        <zfin2:orderThis markerSuppliers="${antibody.suppliers}"
-                                         accessionNumber="${antibody.zdbID}"
-                                         organization=""/>
-                    </td>
-                    <td class="text-right">
-                        <a href="/action/antibody/antibody-publication-list?antibodyID=${antibodyBean.antibody.zdbID}&orderBy=author">${antibodyBean.numPubs}</a>
-                    </td>
-                </tr>
-            </c:forEach>
+                <c:forEach var="antibodyBean" items="${formBean.antibodyBeans}">
+                    <c:set var="antibody" value="${antibodyBean.antibody}"/>
+                    <tr>
+                        <td><zfin:link entity="${antibody}"/></td>
+                        <td>${antibody.clonalType}</td>
+                        <td>
+                                ${antibody.heavyChainIsotype}
+                            <c:if test="${antibody.heavyChainIsotype != null && antibody.lightChainIsotype != null}">, </c:if>
+                                ${antibody.lightChainIsotype}
+                        </td>
+                        <td>
+                                ${antibody.hostSpecies}
+                        </td>
+                        <td>
+                            <ul class="comma-separated">
+                                <c:forEach var="assay" items="${antibody.distinctAssayNames}">
+                                    <li>${assay}</li>
+                                </c:forEach>
+                            </ul>
+                        </td>
+                        <td>
+                            <zfin2:orderThis markerSuppliers="${antibody.suppliers}"
+                                             accessionNumber="${antibody.zdbID}"
+                                             organization=""/>
+                        </td>
+                        <td class="text-right">
+                            <a href="/action/antibody/antibody-publication-list?antibodyID=${antibodyBean.antibody.zdbID}&orderBy=author">${antibodyBean.numPubs}</a>
+                        </td>
+                    </tr>
+                </c:forEach>
             </tbody>
         </zfin-prototype:dataTable>
     </zfin-prototype:section>
@@ -383,6 +384,19 @@
 
     <zfin-prototype:section title="${SEQUENCES}">
         <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
+    </zfin-prototype:section>
+
+    <zfin-prototype:section title="${ORTHOLOGY}">
+        <div class="__react-root" id="OrthologyTable" data-gene-id="${formBean.marker.zdbID}"></div>
+        <div style="display: ${hasOrthology ? 'flex' : 'none'}">
+            <a href="/action/marker/${formBean.marker.zdbID}/download/orthology">
+                <i class="fas fa-download"></i> Download Curated Orthology
+            </a>
+        </div>
+        <div class="summary" style="display: ${orthologyNote!= null ? 'inline' : 'none'}">
+            <b>Orthology Note</b>
+            <div>${orthologyNote}</div>
+        </div>
     </zfin-prototype:section>
 
 </zfin-prototype:dataPage>

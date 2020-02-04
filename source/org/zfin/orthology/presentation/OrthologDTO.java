@@ -1,26 +1,38 @@
 package org.zfin.orthology.presentation;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.NcbiOtherSpeciesGeneDTO;
 import org.zfin.orthology.presentation.OrthologEvidenceDTO;
 import org.zfin.orthology.presentation.OrthologEvidenceGroupedByCode;
 import org.zfin.orthology.presentation.OrthologExternalReferenceDTO;
 
+import java.util.List;
 import java.util.Set;
 
 public class OrthologDTO {
 
+    @JsonView(View.API.class)
     private String zdbID;
     private MarkerDTO zebrafishGene;
+    @JsonView(View.OrthologyAPI.class)
+    @JsonProperty("orthologousGene")
     private NcbiOtherSpeciesGeneDTO ncbiOtherSpeciesGeneDTO;
     private Set<OrthologEvidenceDTO> evidenceSet;
+    @JsonView(View.OrthologyAPI.class)
+    @JsonProperty("evidence")
     private Set<OrthologEvidenceGroupedByCode> evidenceSetGroupedByCode;
+    @JsonView(View.OrthologyAPI.class)
+    @JsonProperty("orthologousGeneReference")
     private Set<OrthologExternalReferenceDTO> orthologExternalReferenceDTOSet;
     private String name;
+    @JsonView(View.API.class)
     private String symbol;
+    @JsonView(View.API.class)
     private String chromosome;
     private String position;
-
 
     public MarkerDTO getZebrafishGene() {
         return zebrafishGene;

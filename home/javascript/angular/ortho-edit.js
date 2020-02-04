@@ -251,7 +251,7 @@
 
         function addOrtholog() {
             var alreadyAdded = vm.orthologs.some(function (existing) {
-                return existing.ncbiOtherSpeciesGeneDTO.id === vm.ncbiGeneNumber;
+                return existing.orthologousGene.id === vm.ncbiGeneNumber;
             });
 
             if (alreadyAdded) {

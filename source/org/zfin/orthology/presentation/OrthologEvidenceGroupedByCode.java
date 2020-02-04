@@ -1,13 +1,20 @@
 package org.zfin.orthology.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
 import java.util.Set;
 
 /**
  * Convenience class for orthology presentation
  */
 public class OrthologEvidenceGroupedByCode {
+
+    @JsonView(View.OrthologyAPI.class)
     private String code;
+    @JsonView(View.OrthologyAPI.class)
     private String name;
+    @JsonView(View.OrthologyAPI.class)
     private Set<String> pubIds;
 
     public OrthologEvidenceGroupedByCode(String code, String name, Set<String> pubIds) {
@@ -27,4 +34,11 @@ public class OrthologEvidenceGroupedByCode {
     public Set<String> getPubIds() {
         return pubIds;
     }
+
+    @JsonView(View.OrthologyAPI.class)
+    public int getPublicationCount() {
+        return pubIds.size();
+    }
+
+
 }

@@ -5,7 +5,7 @@ import LoadingSpinner from './LoadingSpinner';
 import { useTableDataFetch } from '../utils/effects';
 import {stringToFunction} from '../utils';
 
-const DataTable = ({columns, rowKey, url}) => {
+const DataTable = ({columns, rowKey, url, noPaginate}) => {
     const [tableState, setTableState] = useState({
         limit: 10,
         page: 1,
@@ -82,7 +82,7 @@ const DataTable = ({columns, rowKey, url}) => {
                     ))}
                 </tbody>
             </table>
-            <div className='data-table-pagination'>
+            <div className='data-table-pagination' style={{display: noPaginate ? 'none' : 'flex'}} >
                 <span>{start} - {end} of {total}</span>
                 <div>
                     <span className='mr-1'>Show</span>
@@ -116,6 +116,7 @@ DataTable.propTypes = {
         grouped: PropTypes.bool,
     })).isRequired,
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+    noPaginate: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
     url: PropTypes.string.isRequired,
 };
 
