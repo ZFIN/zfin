@@ -5708,11 +5708,14 @@ and child.term_ontology = 'disease_ontology';
                            to_date(get_date_from_id(mrkrgoev_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                            mrkrgoev_mrkr_zdb_id as gene_zdb_id
                        from marker_go_term_evidence">
+            <!-- enfocing container.term_ontology = contained.term_ontology prevents looking at cross-aspect relationships -->
             <entity name="go_annotation_term_id"
-                    query="select term.term_ont_id as term_id, mrkrgoev_zdb_id as id
+                    query="select container.term_ont_id as term_id, mrkrgoev_zdb_id as id
                            from marker_go_term_evidence
-                               join all_term_contains on mrkrgoev_term_zdb_id = alltermcon_contained_zdb_id
-                               join term on alltermcon_container_zdb_id = term_zdb_id; "
+                               inner join all_term_contains on mrkrgoev_term_zdb_id = alltermcon_contained_zdb_id
+                               inner join term as container on alltermcon_container_zdb_id = container.term_zdb_id
+                               inner join term as contained on alltermcon_contained_zdb_id = contained.term_zdb_id
+                               where container.term_ontology = contained.term_ontology; "
                     where="id=go_annotation.id"
                     cacheImpl="SortedMapBackedCache">
             </entity>

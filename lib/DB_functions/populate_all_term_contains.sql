@@ -27,18 +27,18 @@ create or replace function populate_all_term_contains()
 	   termrel_term_2_zdb_id, 
 	   dist
     from term_relationship
-    where termrel_type in ('is_a','part_of','part of');
+    where termrel_type in ('is_a','part_of','part of', 'positively regulates', 'negatively regulates', 'regulates', 'occurs in');
 
   -- continue as long as progress is made 
   -- there may be more elegant ways to do this so please do tell. 
   while (delta  <  (select count(*) from all_term_contains_new) ) loop
      dist = dist + 1;
     -- set the baseline for determining is progress is made
-    select count(*) 
-      into delta 
-      from all_term_contains_new; 
-		
-    -- try adding new ancestors 
+    select count(*)
+      into delta
+      from all_term_contains_new;
+
+    -- try adding new ancestors
     insert into all_term_contains_new
       select distinct a.termrel_term_1_zdb_id,     -- A.ancestor
 		      b.alltermcon_containeD_zdb_id,  -- B.child
@@ -46,14 +46,14 @@ create or replace function populate_all_term_contains()
 	from term_relationship a,            -- source of all ancestors
              all_term_contains_new b     -- source of all childs 
 
-	where b.alltermcon_min_contain_distance = (dist - 1) 
-	      -- limit the search to the previous level          
+	where b.alltermcon_min_contain_distance = (dist - 1)
+	      -- limit the search to the previous level
           and b.alltermcon_containeR_zdb_id = a.termrel_term_2_zdb_id
 	      -- B.ancestor == A.child
-	      -- checking for duplicates here is where the time gets absurd  
-	      -- (2:30 vs 0:06), so 
+	      -- checking for duplicates here is where the time gets absurd
+	      -- (2:30 vs 0:06), so
 	      --   "kill em all and let god sort them out later"
-	  and a.termrel_type in ('is_a', 'part_of', 'part of')
+	  and a.termrel_type in ('is_a', 'part_of', 'part of', 'positively regulates', 'negatively regulates', 'regulates', 'occurs in')
 	      -- all_term_contains doesn't want develops_from relationships,
 	      -- and it's better to explicitly include rather than exclude,
 	      -- since we want the behavior to stay the same the next time
@@ -64,8 +64,8 @@ create or replace function populate_all_term_contains()
 
  drop table if exists all_term_contains_new_tmp;
 
-  -- split out the keepers in one step usings the dbs strength with set 
-  -- operations instead of n-1 peicemeal steps 
+  -- split out the keepers in one step usings the dbs strength with set
+  -- operations instead of n-1 peicemeal steps
  create temp table all_term_contains_new_tmp (alltermcon_container_zdb_id text,
  	     	   			      alltermcon_contained_zdb_id text,
 					      alltermcon_min_contain_distance int)
@@ -82,8 +82,8 @@ create or replace function populate_all_term_contains()
 
   -- move the keepers to where they will live
   delete from all_term_contains_new;
-  insert into all_term_contains_new 
-    select distinct * 
+  insert into all_term_contains_new
+    select distinct *
       from all_term_contains_new_tmp
       ;
 
