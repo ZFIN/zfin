@@ -22,15 +22,13 @@ const GeneMarkerRelationshipsTable = ({geneId}) => {
             label: 'Relationship',
             content: row => row.relationshipType,
             width: '100px',
-            align: 'left',
-            grouped: 'true'
+            align: 'left'
         },
         {
             label: 'Marker Type',
             content: row => row.markerType,
             width: '100px',
-            align: 'left',
-            grouped: 'true'
+            align: 'left'
         },
         {
             label: 'Marker',
