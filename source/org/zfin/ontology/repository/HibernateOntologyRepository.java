@@ -59,6 +59,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
         EcoGoEvidenceCodeMapping ecoMapTerm = (EcoGoEvidenceCodeMapping) criteria.uniqueResult();
         return ecoMapTerm;
     }
+
     @Override
     public Map<String, TermDTO> getTermDTOsFromOntology(Ontology ontology) {
         String sql = " " +
@@ -136,10 +137,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 subsets.add(result[12].toString().intern());
                 termDTO.setSubsets(subsets);
                 if (subsets.contains(Subset.GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS) ||
-                        subsets.contains(Subset.GO_CHECK_DO_NOT_USE_FOR_MANUAL_ANNOTATIONS))
+                        subsets.contains(Subset.GO_CHECK_DO_NOT_USE_FOR_MANUAL_ANNOTATIONS)) {
                     termDTO.setDoNotAnnotateWith(true);
-                else
+                } else {
                     termDTO.setDoNotAnnotateWith(false);
+                }
             }
 
 
@@ -671,14 +673,16 @@ public class HibernateOntologyRepository implements OntologyRepository {
      */
     @Override
     public List<String> getAllTerms(int firstNIds) {
-        if (firstNIds < 0)
+        if (firstNIds < 0) {
             return null;
+        }
         Session session = HibernateUtil.currentSession();
         String hql = "select id from GenericTerm " +
                 " where secondary = :secondary order by id";
         Query query = session.createQuery(hql);
-        if (firstNIds > 0)
+        if (firstNIds > 0) {
             query.setMaxResults(firstNIds);
+        }
         query.setBoolean("secondary", false);
         return query.list();
     }
@@ -697,26 +701,30 @@ public class HibernateOntologyRepository implements OntologyRepository {
      */
     @Override
     public List<String> getFirstNTermsPerOntology(int firstNIds) {
-        if (firstNIds < 0)
+        if (firstNIds < 0) {
             return null;
+        }
         Session session = HibernateUtil.currentSession();
         List<Ontology> ontologies = getDistinctOntologies();
-        if (ontologies == null)
+        if (ontologies == null) {
             return null;
+        }
 
         // currently 6 different ontologies used.
         List<String> allTerms = new ArrayList<String>(6 * firstNIds);
         for (Ontology ontology : ontologies) {
-            if (ontology.shouldNotBeIndexed())
+            if (ontology.shouldNotBeIndexed()) {
                 continue;
+            }
             String hql = "select oboID from GenericTerm where ontology = :ontology " +
                     " AND secondary = :secondary " +
                     "order by oboID";
             Query query = session.createQuery(hql);
             query.setParameter("ontology", ontology);
             query.setBoolean("secondary", false);
-            if (firstNIds > 0)
+            if (firstNIds > 0) {
                 query.setMaxResults(firstNIds);
+            }
             allTerms.addAll(query.list());
         }
         return allTerms;
@@ -730,8 +738,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
      */
     @Override
     public List<ReplacementTerm> getReplacedByTerms(GenericTerm obsoletedTerm) {
-        if (!obsoletedTerm.isObsolete())
+        if (!obsoletedTerm.isObsolete()) {
             return null;
+        }
         Session session = HibernateUtil.currentSession();
         String hql = " from ReplacementTerm " +
                 " where obsoletedTerm = :obsoletedTerm";
@@ -748,8 +757,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
      */
     @Override
     public List<ConsiderTerm> getConsiderTerms(GenericTerm obsoletedTerm) {
-        if (!obsoletedTerm.isObsolete())
+        if (!obsoletedTerm.isObsolete()) {
             return null;
+        }
         Session session = HibernateUtil.currentSession();
         String hql = " from ConsiderTerm " +
                 " where obsoletedTerm = :obsoletedTerm";
@@ -1058,16 +1068,15 @@ public class HibernateOntologyRepository implements OntologyRepository {
         query.setParameter("partOf", "part_of");
         return query.list();
     }
-    public List<String> getTermsInSubset(String subsetName){
-        Session session = HibernateUtil.currentSession();
-        String sql = "select distinct term_ont_id " +
-                            " from term, term_subset, ontology_subset " +
-                            " where term_zdb_id = termsub_term_zdb_id " +
-                               " and osubset_pk_id = termsub_subset_id " +
-                               " and osubset_subset_name = :subsetN ";
 
-        Query query = session.createSQLQuery(sql);
-        query.setString("subsetN", subsetName);
+    public List<GenericTerm> getTermsInSubset(String subsetName) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select subset.terms " +
+                "from Subset as subset " +
+                "where subset.internalName = :subsetName ";
+
+        Query query = session.createQuery(hql);
+        query.setString("subsetName", subsetName);
         return query.list();
     }
 

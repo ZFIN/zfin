@@ -15,7 +15,6 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationPresentation;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class MarkerGoService {
         List<MarkerGoViewTableRow> rows = new ArrayList<>();
 
 
-        for (MarkerGoTermEvidence evidence  : marker.getGoTermEvidence()) {
+        for (MarkerGoTermEvidence evidence : marker.getGoTermEvidence()) {
             MarkerGoViewTableRow row = new MarkerGoViewTableRow(evidence);
             row.setInferredFrom(getInferrenceLinks(evidence));
             row.setAnnotExtns(getAnnotationExtensionsAsString(evidence));
@@ -65,9 +64,11 @@ public class MarkerGoService {
     String getInferrenceLinks(MarkerGoTermEvidence evidence) {
         StringBuilder sb = new StringBuilder();
 
-        if (CollectionUtils.isNotEmpty(evidence.getInferredFrom()) ) {
+        if (CollectionUtils.isNotEmpty(evidence.getInferredFrom())) {
             for (String s : evidence.getInferencesAsString()) {
-                if (org.apache.commons.lang.StringUtils.isNotEmpty(sb.toString())) { sb.append(", "); }
+                if (org.apache.commons.lang.StringUtils.isNotEmpty(sb.toString())) {
+                    sb.append(", ");
+                }
                 sb.append(MarkerGoEvidencePresentation.generateInferenceLink(s));
             }
 
@@ -75,10 +76,11 @@ public class MarkerGoService {
 
         return sb.toString();
     }
+
     String getAnnotationExtensionsAsString(MarkerGoTermEvidence evidence) {
         StringBuilder sb = new StringBuilder();
 
-        if (CollectionUtils.isNotEmpty(evidence.getGoTermAnnotationExtnGroup()) ) {
+        if (CollectionUtils.isNotEmpty(evidence.getGoTermAnnotationExtnGroup())) {
             for (MarkerGoTermAnnotationExtnGroup mgtaeg : evidence.getGoTermAnnotationExtnGroup()) {
 
                 for (MarkerGoTermAnnotationExtn mgtae : mgtaeg.getMgtAnnoExtns()) {
@@ -86,10 +88,10 @@ public class MarkerGoService {
                         sb.append(System.lineSeparator());
                     }
 
-                  if (!sb.toString().contains(MarkerGoEvidencePresentation.generateAnnotationExtensionLink(mgtae))) {
+                    if (!sb.toString().contains(MarkerGoEvidencePresentation.generateAnnotationExtensionLink(mgtae))) {
                         sb.append(MarkerGoEvidencePresentation.generateAnnotationExtensionLink(mgtae));
                     }
-                //    sb.append("ExtID"+mgtae.getId().toString()+"GroupID="+ mgtae.getAnnotExtnGroupID().getId().toString());
+                    //    sb.append("ExtID"+mgtae.getId().toString()+"GroupID="+ mgtae.getAnnotExtnGroupID().getId().toString());
 
                 }
             }
@@ -127,24 +129,23 @@ public class MarkerGoService {
         return sb.toString();
     }
 
-    Map<String, Integer> getGoSlimAgrCountsForGene(String geneZdbId) throws SolrServerException, IOException {
-
-        Map<String, Integer> termCounts = new HashMap<>();
-
-        List<String> termIDs = RepositoryFactory.getOntologyRepository().getTermsInSubset("goslim_agr");
+    public Map<String, Integer> getRibbonAnnotationCountsForGene(String geneZdbId, List<String> includeTermIDs, List<String> excludeTermIDs)
+            throws SolrServerException, IOException {
+        Map<String, Integer> termCounts = new HashMap<>(includeTermIDs.size());
 
         SolrQuery query = new SolrQuery();
         query.setQuery("*:*");
         query.setRequestHandler("/go-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneZdbId);
 
-        termIDs.stream().forEach(t -> query.addFacetQuery("term_id:" + SolrService.luceneEscape(t) ));
+        includeTermIDs.forEach(t -> query.addFacetQuery("term_id:" + SolrService.luceneEscape(t)));
+        excludeTermIDs.forEach(t -> query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t)));
 
         QueryResponse response = SolrService.getSolrClient("prototype").query(query);
 
         Pattern pattern = Pattern.compile("(GO:\\d+)");
         for (Map.Entry<String, Integer> entry : response.getFacetQuery().entrySet()) {
-            Matcher matcher = pattern.matcher(entry.getKey().replace("\\",""));
+            Matcher matcher = pattern.matcher(entry.getKey().replace("\\", ""));
             if (matcher.find()) {
                 String termID = matcher.group(1);
                 termCounts.put(termID, entry.getValue());
