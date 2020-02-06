@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import produce from 'immer';
 import http from './http';
 
-export const useTableDataFetch = (baseUrl, tableState) => {
+export const useFetch = (url) => {
     const [data, setData] = useState({
         pending: false,
         rejected: false,
@@ -21,9 +21,6 @@ export const useTableDataFetch = (baseUrl, tableState) => {
         if (request) {
             request.abort();
         }
-        const url = baseUrl +
-            (baseUrl.indexOf('?') < 0 ? '?' : '&') +
-            `limit=${tableState.limit}&page=${tableState.page}`;
         const xhr = http.get(url);
         setRequest(xhr);
         xhr.then(result => setData(produce(data => {
@@ -47,7 +44,14 @@ export const useTableDataFetch = (baseUrl, tableState) => {
                 data.pending = false
             }));
         });
-    }, [baseUrl, tableState]);
+    }, [url]);
 
     return data;
+};
+
+export const useTableDataFetch = (baseUrl, tableState) => {
+    const url = baseUrl +
+        (baseUrl.indexOf('?') < 0 ? '?' : '&') +
+        `limit=${tableState.limit}&page=${tableState.page}`;
+    return useFetch(url);
 };

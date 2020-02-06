@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.8.1",
+    "@geneontology/ribbon": "1.11.2",
     "angular": "1.5.8",
     "bloodhound-js": "1.2.3",
     "bootstrap": "4.3.1",
@@ -93,20 +94,56 @@
     "rules": {
       "curly": "error",
       "eqeqeq": "error",
-      "indent": ["warn", 4],
-      "jsx-quotes": ["error", "prefer-single"],
+      "indent": [
+        "warn",
+        4
+      ],
+      "jsx-quotes": [
+        "error",
+        "prefer-single"
+      ],
       "no-alert": "error",
-      "no-console": ["warn", { "allow": ["warn", "error"] }],
+      "no-console": [
+        "warn",
+        {
+          "allow": [
+            "warn",
+            "error"
+          ]
+        }
+      ],
       "no-var": "error",
       "react/display-name": "off",
-      "react/jsx-closing-bracket-location": ["warn", "line-aligned"],
+      "react/jsx-closing-bracket-location": [
+        "warn",
+        "line-aligned"
+      ],
       "react/jsx-first-prop-new-line": "warn",
-      "react/jsx-indent": ["warn", 4],
-      "react/jsx-indent-props": ["warn", 4],
-      "react/jsx-max-props-per-line": ["warn", { "when": "multiline" }],
+      "react/jsx-indent": [
+        "warn",
+        4
+      ],
+      "react/jsx-indent-props": [
+        "warn",
+        4
+      ],
+      "react/jsx-max-props-per-line": [
+        "warn",
+        {
+          "when": "multiline"
+        }
+      ],
       "react/self-closing-comp": "error",
-      "react/prop-types": ["error", { "skipUndeclared": true }],
-      "quotes": ["error", "single"]
+      "react/prop-types": [
+        "error",
+        {
+          "skipUndeclared": true
+        }
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ]
     }
   }
 }

@@ -79,7 +79,7 @@ public class GeneOntologyRibbonController {
                     );
 
                     RibbonGroup otherGroup = new RibbonGroup();
-                    otherGroup.setId(categoryTerm.getOboID() + "-other");
+                    otherGroup.setId(categoryTerm.getOboID());
                     otherGroup.setLabel("Other " + categoryTerm.getTermName());
                     otherGroup.setDescription("Show all " + categoryTerm.getTermName() + " annotations not mapped to a specific term");
                     otherGroup.setType(RibbonGroup.Type.OTHER);

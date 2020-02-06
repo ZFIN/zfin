@@ -10,7 +10,8 @@
 <c:set var="PLASMIDS" value="Plasmids"/>
 <c:set var="PATHWAYS" value="Interactions and Pathways"/>
 <c:set var="MUTANTS" value="Mutations"/>
-<c:set var="DISEASES" value="Diseases"/>
+<c:set var="DISEASES" value="Disease"/>
+<c:set var="GO" value="Gene Ontology"/>
 <c:set var="PROTEINS" value="Proteins"/>
 <c:set var="CONSTRUCTS" value="Constructs"/>
 <c:set var="SEQUENCES" value="Sequences"/>
@@ -18,7 +19,7 @@
 <c:set var="ORTHOLOGY" value="Orthology"/>
 
 <zfin-prototype:dataPage
-        sections="${[SUMMARY, MUTANTS, DISEASES, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, SEQUENCES, ORTHOLOGY]}">
+        sections="${[SUMMARY, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, SEQUENCES, ORTHOLOGY]}">
     <zfin-prototype:dataManagerDropdown>
         <a class="dropdown-item active" href="/action/marker/gene/prototype-view/${formBean.marker.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
@@ -280,6 +281,10 @@
                 </tbody>
             </zfin-prototype:dataTable>
         </zfin-prototype:section>
+    </zfin-prototype:section>
+
+    <zfin-prototype:section title="${GO}">
+        <div class="__react-root" id="GeneOntologyRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
     </zfin-prototype:section>
 
     <zfin-prototype:section title="${PROTEINS}">
