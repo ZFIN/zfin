@@ -1,18 +1,26 @@
 package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.zfin.framework.api.JsonResultResponse;
+import org.zfin.framework.api.Pagination;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.ConstructInfo;
 import org.zfin.marker.presentation.MarkerGoViewTableRow;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.MarkerGoTermAnnotationExtn;
 import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.search.service.SolrService;
@@ -21,6 +29,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 /**
@@ -28,6 +37,12 @@ import java.util.regex.Pattern;
  */
 @Service
 public class MarkerGoService {
+
+    @Autowired
+    private MarkerRepository markerRepository;
+
+    @Autowired
+    private OntologyRepository ontologyRepository;
 
     public static Logger log = LogManager.getLogger(MarkerGoService.class);
 
@@ -45,6 +60,7 @@ public class MarkerGoService {
                 for (MarkerGoViewTableRow matchingRow : rows) {
                     if (row.equals(matchingRow)) {
                         matchingRow.addPublication(evidence.getSource());
+                        matchingRow.setId(matchingRow.getId() + "+" + row.getId());
                     }
                 }
             }
@@ -153,6 +169,27 @@ public class MarkerGoService {
         }
 
         return termCounts;
+    }
+
+    public JsonResultResponse<MarkerGoViewTableRow> getGoEvidence(String geneId, String termId, Pagination pagination) {
+        long startTime = System.currentTimeMillis();
+        Marker gene = markerRepository.getMarkerByID(geneId);
+        GenericTerm term = ontologyRepository.getTermByOboID(termId);
+        List<GenericTerm> childTerms = ontologyRepository.getAllChildTerms(term);
+        List<MarkerGoViewTableRow> rows = getMarkerGoViewTableRows(gene).stream()
+                .filter(row -> childTerms == null || childTerms.contains(row.getTerm()))
+                .collect(Collectors.toList());
+
+        JsonResultResponse<MarkerGoViewTableRow> response = new JsonResultResponse<>();
+        response.calculateRequestDuration(startTime);
+        response.setTotal(rows.size());
+
+        // paginating
+        response.setResults(rows.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
     }
 
 }

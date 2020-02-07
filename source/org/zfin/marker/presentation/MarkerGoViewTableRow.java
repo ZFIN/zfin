@@ -1,34 +1,44 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.zfin.framework.api.View;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.MarkerGoTermEvidence;
-import org.zfin.ontology.Term;
-
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.UUID;
 
 /**
  * Created by kschaper on 12/16/14.
  */
 public class MarkerGoViewTableRow implements Comparable {
+    @JsonView(View.API.class)
+    private String id;
+
     String ontology;
+    @JsonView(View.API.class)
     String qualifier;
-    Term term;
+    @JsonView(View.API.class)
+    GenericTerm term;
+    @JsonView(View.API.class)
     GoEvidenceCode evidenceCode;
+    @JsonView(View.API.class)
     String inferredFrom;
+    @JsonView(View.API.class)
     String annotExtns;
     Set<Publication> publications;
+    @JsonView(View.API.class)
     String referencesLink;
     String inferredFromAsString;
     String firstInference;
 
     public MarkerGoViewTableRow(MarkerGoTermEvidence evidence) {
+        setId(evidence.getZdbID());
         setOntology(evidence.getGoTerm().getOntology().getCommonName().replace("GO: ", ""));
         if (evidence.getFlag() != null) {
             setQualifier(evidence.getFlag().toString().toUpperCase());
@@ -45,7 +55,14 @@ public class MarkerGoViewTableRow implements Comparable {
         }
 
 
+    }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getOntology() {
@@ -64,11 +81,11 @@ public class MarkerGoViewTableRow implements Comparable {
         this.qualifier = qualifier;
     }
 
-    public Term getTerm() {
+    public GenericTerm getTerm() {
         return term;
     }
 
-    public void setTerm(Term term) {
+    public void setTerm(GenericTerm term) {
         this.term = term;
     }
 
@@ -134,30 +151,45 @@ public class MarkerGoViewTableRow implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        MarkerGoViewTableRow other = (MarkerGoViewTableRow)o;
+        MarkerGoViewTableRow other = (MarkerGoViewTableRow) o;
 
-        if (other == null) { return 1; }
+        if (other == null) {
+            return 1;
+        }
 
         //reverse sorting this one
         int i = ObjectUtils.compare(other.getOntology(), getOntology());
-        if (i != 0) { return i; }
+        if (i != 0) {
+            return i;
+        }
 
         i = ObjectUtils.compare(getTerm(), other.getTerm());
-        if (i != 0) { return i; }
+        if (i != 0) {
+            return i;
+        }
 
         i = ObjectUtils.compare(getQualifier(), other.getQualifier());
-        if (i != 0) { return i; }
+        if (i != 0) {
+            return i;
+        }
 
         i = ObjectUtils.compare(getEvidenceCode().getName(), other.getEvidenceCode().getName());
-        if (i != 0) { return i; }
+        if (i != 0) {
+            return i;
+        }
 
         i = ObjectUtils.compare(getInferredFrom(), other.getInferredFrom());
-        if (i != 0) { return i; }
+        if (i != 0) {
+            return i;
+        }
 
         i = ObjectUtils.compare(getAnnotExtns(), other.getAnnotExtns());
-        if (i != 0) { return i; }
+        if (i != 0) {
+            return i;
+        }
         return 0;
     }
+
     public boolean equals(Object o) {
         return compareTo(o) == 0;
     }

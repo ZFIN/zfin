@@ -2,9 +2,10 @@
 @import "~@geneontology/ribbon/lib/main";
 
 body.data-page {
+    background: $grey-light !important;
+
     main {
         margin: -10px 0 0 0;
-        background: $grey-light !important;
     }
 }
 
@@ -151,4 +152,25 @@ tr.spaceUnder > td{
     font-weight: bold;
     font-style:italic;
     background: #ccc;
+}
+
+.ontology-ribbon-container {
+    white-space: nowrap;
+    margin-right: 5.5rem;
+    margin-bottom: 1rem;
+}
+
+.ontology-ribbon__block__tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ontology-ribbon__block__tile--selected {
+    transform: none;
+    text-shadow: none;
+}
+
+.ontology-ribbon__block__tile:hover {
+    transform: none;
 }

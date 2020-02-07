@@ -1,9 +1,11 @@
 package org.zfin.ontology;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
+import org.zfin.framework.api.View;
 import org.zfin.util.NumberAwareStringComparator;
 
 import javax.persistence.*;
@@ -23,14 +25,21 @@ public class GenericTerm implements Term<GenericTermRelationship> {
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "TERM")
             })
+    @JsonView(View.API.class)
     @Column(name = "term_zdb_id")
     protected String zdbID;
+
+    @JsonView(View.API.class)
     @Column(name = "term_name")
     protected String termName;
+
     @Column(name = "term_name_order")
     protected String termNameOrder;
+
+    @JsonView(View.API.class)
     @Column(name = "term_ont_id")
     protected String oboID;
+
     @Column(name = "term_ontology")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.ontology.Ontology")})

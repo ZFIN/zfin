@@ -492,6 +492,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     @Override
     public List<GenericTerm> getChildTerms(GenericTerm goTerm, int distance) {
+        if (goTerm == null) {
+            return null;
+        }
         String hql = " select t from TransitiveClosure tc join tc.child as t " +
                 " where tc.root.id = :goTermId ";
         if (distance >= 0) {
