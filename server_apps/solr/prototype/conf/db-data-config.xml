@@ -1998,7 +1998,7 @@
             <entity name="construct_lab"
                     query="
                        select
-                           lab.name,
+                           lab.name as lab_of_origin,
                            feat_to_cons.fmrel_mrkr_zdb_id as construct_zdb_id
                        from feature
                        inner join feature_marker_relationship feat_to_cons on feature.feature_zdb_id = feat_to_cons.fmrel_ftr_zdb_id
@@ -3634,6 +3634,36 @@
                             where mrkr_zdb_id = fmrel_mrkr_zdb_id
                               and mtgrpmem_mrkr_type_group = 'CONSTRUCT'
                               and mtgrpmem_mrkr_type = mrkr_type;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="feature_zdb_id=feature.id"
+            />
+
+            <entity name="feature_coding_sequence"
+                    query="select coding.mrkr_abbrev as coding_sequence,
+                                   coding.mrkr_name as coding_sequence_full_name,
+                                   fmrel_ftr_zdb_id as feature_zdb_id
+                            from feature_marker_relationship
+                                 join marker construct on construct.mrkr_zdb_id = fmrel_mrkr_zdb_id
+                                 join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                                                              and mtgrpmem_mrkr_type_group = 'CONSTRUCT'
+                                 join marker_relationship on mrel_mrkr_1_zdb_id = construct.mrkr_zdb_id
+                                                         and mrel_type = 'coding sequence of'
+                                 join marker coding on mrel_mrkr_2_zdb_id = coding.mrkr_zdb_id;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="feature_zdb_id=feature.id"
+            />
+
+            <entity name="feature_regulatory_region"
+                    query="select region.mrkr_abbrev as regulatory_region,
+                                   region.mrkr_name as regulatory_region_full_name,
+                                   fmrel_ftr_zdb_id as feature_zdb_id
+                            from feature_marker_relationship
+                                 join marker construct on construct.mrkr_zdb_id = fmrel_mrkr_zdb_id
+                                 join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                                                              and mtgrpmem_mrkr_type_group = 'CONSTRUCT'
+                                 join marker_relationship on mrel_mrkr_1_zdb_id = construct.mrkr_zdb_id
+                                                         and mrel_type = 'promoter of'
+                                 join marker region on mrel_mrkr_2_zdb_id = region.mrkr_zdb_id;"
                     cacheImpl="SortedMapBackedCache"
                     where="feature_zdb_id=feature.id"
             />

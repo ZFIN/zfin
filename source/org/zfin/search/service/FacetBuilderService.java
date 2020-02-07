@@ -234,6 +234,8 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Lab of Origin", "lab_of_origin", false));
         facetGroups.add(buildSingleFacetGroup("Institution", "institution", false));
         facetGroups.add(buildSingleFacetGroup("Is ZebraShare", "is_zebrashare", false));
+        facetGroups.add(buildSingleFacetGroup("Construct Regulatory Region", REGULATORY_REGION.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Construct Coding Sequence", CODING_SEQUENCE.getName(), false));
         //screen used to be here, removed as a result of case 11323
         //facetGroups.add(buildSingleFacetGroup("Screen", "screen", false,  fqMap));
 

@@ -38,6 +38,7 @@ public enum Category {
             CODING_SEQUENCE_SPECIES,
             INSERTED_IN_GENE,
             EXPRESSED_IN_TF,
+            LAB_OF_ORIGIN,
             REPORTER_COLOR,
             ENGINEERED_REGION
     ),
@@ -72,6 +73,8 @@ public enum Category {
             CONSEQUENCE,
             INSTITUTION,
             MUTAGEN,
+            REGULATORY_REGION,
+            CODING_SEQUENCE,
             IS_ZEBRASHARE
 
 //            SCREEN   <!--screen used to be here, removed as a result of case 11323-->
