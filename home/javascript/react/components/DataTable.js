@@ -5,7 +5,7 @@ import LoadingSpinner from './LoadingSpinner';
 import { useTableDataFetch } from '../utils/effects';
 import {stringToFunction} from '../utils';
 
-const DataTable = ({columns, rowKey, url, noPaginate}) => {
+const DataTable = ({columns, pagination = true, rowKey, url}) => {
     const [tableState, setTableState] = useState({
         limit: 10,
         page: 1,
@@ -82,28 +82,30 @@ const DataTable = ({columns, rowKey, url, noPaginate}) => {
                     ))}
                 </tbody>
             </table>
-            <div className='data-table-pagination' style={{display: noPaginate ? 'none' : 'flex'}} >
-                <span>{start} - {end} of {total}</span>
-                <div>
-                    <span className='mr-1'>Show</span>
-                    <select className='form-control-sm mr-2' onChange={handleLimitChange} value={tableState.limit}>
-                        <option value={10}>10</option>
-                        <option value={25}>25</option>
-                        <option value={100}>100</option>
-                    </select>
-                    <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(1)}>
-                        <i className='fas fa-angle-double-left' />
-                    </button>
-                    <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(tableState.page - 1)}>
-                        <i className='fas fa-angle-left' />
-                    </button>
-                    <button disabled={tableState.page === totalPages} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(tableState.page + 1)}>
-                        <i className='fas fa-angle-right' />
-                    </button>
-                    <button disabled={tableState.page === totalPages} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(totalPages)}>
-                        <i className='fas fa-angle-double-right' />
-                    </button>
-                </div>
+            <div className='data-table-pagination'>
+                {pagination && <React.Fragment>
+                    <span>{start} - {end} of {total}</span>,
+                    <div>
+                        <span className='mr-1'>Show</span>
+                        <select className='form-control-sm mr-2' onChange={handleLimitChange} value={tableState.limit}>
+                            <option value={10}>10</option>
+                            <option value={25}>25</option>
+                            <option value={100}>100</option>
+                        </select>
+                        <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(1)}>
+                            <i className='fas fa-angle-double-left' />
+                        </button>
+                        <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(tableState.page - 1)}>
+                            <i className='fas fa-angle-left' />
+                        </button>
+                        <button disabled={tableState.page === totalPages} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(tableState.page + 1)}>
+                            <i className='fas fa-angle-right' />
+                        </button>
+                        <button disabled={tableState.page === totalPages} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(totalPages)}>
+                            <i className='fas fa-angle-double-right' />
+                        </button>
+                    </div>
+                </React.Fragment>}
             </div>
         </div>
     );
@@ -115,8 +117,8 @@ DataTable.propTypes = {
         content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
         grouped: PropTypes.bool,
     })).isRequired,
+    pagination: PropTypes.bool,
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
-    noPaginate: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
     url: PropTypes.string.isRequired,
 };
 

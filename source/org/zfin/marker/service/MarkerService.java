@@ -159,7 +159,7 @@ public class MarkerService {
         return links;
     }
 
-    private static MarkerDBLink getMarkerDBLink(Marker marker, DBLink dbLink) {
+    public static MarkerDBLink getMarkerDBLink(Marker marker, DBLink dbLink) {
         MarkerDBLink link = new MarkerDBLink();
         link.setMarker(marker);
         link.setZdbID(dbLink.getZdbID());

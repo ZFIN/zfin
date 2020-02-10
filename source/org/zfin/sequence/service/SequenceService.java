@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.zfin.Species;
 import org.zfin.framework.api.*;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.SequenceInfo;
 import org.zfin.marker.presentation.SummaryDBLinkDisplay;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -97,7 +98,8 @@ public class SequenceService {
 
 
     public JsonResultResponse<MarkerDBLink> getMarkerDBLinkJsonResultResponse(String zdbID,
-                                                                              Pagination pagination) {
+                                                                              Pagination pagination,
+                                                                              boolean summary) {
         long startTime = System.currentTimeMillis();
         Marker marker = markerRepository.getMarker(zdbID);
         if (marker == null) {
@@ -108,26 +110,36 @@ public class SequenceService {
             throw new RestErrorException(error);
         }
 
-        List<MarkerDBLink> fullMarkerDBLinks = MarkerService.getMarkerDBLinks(marker);
-
-        // filtering
-        FilterService<MarkerDBLink> filterService = new FilterService<>(new SequenceFiltering());
-        List<MarkerDBLink> filteredDBLinksList = filterService.filterAnnotations(fullMarkerDBLinks, pagination.getFieldFilterValueMap());
-
-        // sorting
-        SequenceSorting sorting = new SequenceSorting();
-        filteredDBLinksList.sort(sorting.getComparator(pagination.getSortBy()));
-
-
         JsonResultResponse<MarkerDBLink> response = new JsonResultResponse<>();
-        response.calculateRequestDuration(startTime);
-        response.setTotal(filteredDBLinksList.size());
+        if (summary) {
+            SequenceInfo sequenceInfo = MarkerService.getSequenceInfoSummary(marker);
+            response.setResults(sequenceInfo.getDbLinks().stream()
+                    .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
+                    .collect(Collectors.toList())
+            );
+            response.setTotal(sequenceInfo.getNumberDBLinks());
+        } else {
+            List<MarkerDBLink> fullMarkerDBLinks = MarkerService.getMarkerDBLinks(marker);
 
-        // paginating
-        response.setResults(filteredDBLinksList.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList()));
+            // filtering
+            FilterService<MarkerDBLink> filterService = new FilterService<>(new SequenceFiltering());
+            List<MarkerDBLink> filteredDBLinksList = filterService.filterAnnotations(fullMarkerDBLinks, pagination.getFieldFilterValueMap());
+
+            // sorting
+            SequenceSorting sorting = new SequenceSorting();
+            filteredDBLinksList.sort(sorting.getComparator(pagination.getSortBy()));
+
+
+            response.calculateRequestDuration(startTime);
+            response.setTotal(filteredDBLinksList.size());
+
+            // paginating
+            response.setResults(filteredDBLinksList.stream()
+                    .skip(pagination.getStart())
+                    .limit(pagination.getLimit())
+                    .collect(Collectors.toList()));
+        }
+
         return response;
     }
 
