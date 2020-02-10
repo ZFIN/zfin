@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.framework.api.*;
 import org.zfin.marker.service.MarkerGoService;
-import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.wiki.presentation.Version;
@@ -63,15 +62,17 @@ public class GeneOntologyRibbonController {
         List<RibbonCategory> categories = categoryTerms.stream()
                 .map(categoryTerm -> {
                     RibbonCategory category = new RibbonCategory();
+                    String termNameDisplay = categoryTerm.getTermName().replace('_', ' ');
+
                     category.setDescription(categoryTerm.getDefinition());
                     category.setId(categoryTerm.getOboID());
-                    category.setLabel(categoryTerm.getTermName());
+                    category.setLabel(termNameDisplay);
                     List<RibbonGroup> groups = new ArrayList<>();
 
                     RibbonGroup allGroup = new RibbonGroup();
                     allGroup.setId(categoryTerm.getOboID());
-                    allGroup.setLabel("All " + categoryTerm.getTermName());
-                    allGroup.setDescription("Show all " + categoryTerm.getTermName() + " annotations");
+                    allGroup.setLabel("All " + termNameDisplay);
+                    allGroup.setDescription("Show all " + termNameDisplay + " annotations");
                     allGroup.setType(RibbonGroup.Type.ALL);
                     groups.add(allGroup);
 
@@ -90,8 +91,8 @@ public class GeneOntologyRibbonController {
 
                     RibbonGroup otherGroup = new RibbonGroup();
                     otherGroup.setId(categoryTerm.getOboID());
-                    otherGroup.setLabel("Other " + categoryTerm.getTermName());
-                    otherGroup.setDescription("Show all " + categoryTerm.getTermName() + " annotations not mapped to a specific term");
+                    otherGroup.setLabel("Other " + termNameDisplay);
+                    otherGroup.setDescription("Show all " + termNameDisplay + " annotations not mapped to a specific term");
                     otherGroup.setType(RibbonGroup.Type.OTHER);
                     groups.add(otherGroup);
 
