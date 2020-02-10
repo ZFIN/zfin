@@ -1,7 +1,6 @@
 package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.marker.Marker;
-import org.zfin.marker.presentation.ConstructInfo;
 import org.zfin.marker.presentation.MarkerGoViewTableRow;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.MarkerGoTermAnnotationExtn;
@@ -20,9 +18,12 @@ import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationPresentation;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
@@ -47,10 +48,13 @@ public class MarkerGoService {
     public static Logger log = LogManager.getLogger(MarkerGoService.class);
 
     public List<MarkerGoViewTableRow> getMarkerGoViewTableRows(Marker marker) {
+        return getMarkerGoViewTableRows(marker, marker.getGoTermEvidence());
+    }
+
+    public List<MarkerGoViewTableRow> getMarkerGoViewTableRows(Marker marker, Collection<MarkerGoTermEvidence> evidenceList) {
         List<MarkerGoViewTableRow> rows = new ArrayList<>();
 
-
-        for (MarkerGoTermEvidence evidence : marker.getGoTermEvidence()) {
+        for (MarkerGoTermEvidence evidence : evidenceList) {
             MarkerGoViewTableRow row = new MarkerGoViewTableRow(evidence);
             row.setInferredFrom(getInferrenceLinks(evidence));
             row.setAnnotExtns(getAnnotationExtensionsAsString(evidence));
@@ -171,24 +175,35 @@ public class MarkerGoService {
         return termCounts;
     }
 
-    public JsonResultResponse<MarkerGoViewTableRow> getGoEvidence(String geneId, String termId, Pagination pagination) {
+    public JsonResultResponse<MarkerGoViewTableRow> getGoEvidence(String geneId, String termId, boolean isOther, Pagination pagination) throws IOException, SolrServerException {
         long startTime = System.currentTimeMillis();
         Marker gene = markerRepository.getMarkerByID(geneId);
-        GenericTerm term = ontologyRepository.getTermByOboID(termId);
-        List<GenericTerm> childTerms = ontologyRepository.getAllChildTerms(term);
-        List<MarkerGoViewTableRow> rows = getMarkerGoViewTableRows(gene).stream()
-                .filter(row -> childTerms == null || childTerms.contains(row.getTerm()))
+
+        SolrQuery query = new SolrQuery();
+        query.setRequestHandler("/go-annotation");
+        query.addFilterQuery("gene_zdb_id:" + geneId);
+        if (termId != null) {
+            query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
+            if (isOther) {
+                List<GenericTerm> slimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
+                slimTerms.forEach(term -> query.addFilterQuery("-term_id:" + SolrService.luceneEscape(term.getOboID())));
+            }
+        }
+        query.setStart(pagination.getStart());
+        query.setRows(pagination.getLimit());
+
+        QueryResponse queryResponse = SolrService.getSolrClient("prototype").query(query);
+        MarkerGoTermEvidenceRepository repository = RepositoryFactory.getMarkerGoTermEvidenceRepository();
+        List<MarkerGoTermEvidence> evidenceList = queryResponse.getResults().stream()
+                .map(doc -> repository.getMarkerGoTermEvidenceByZdbID(doc.getFieldValue(FieldName.ID.getName()).toString()))
                 .collect(Collectors.toList());
+        List<MarkerGoViewTableRow> results = getMarkerGoViewTableRows(gene, evidenceList);
 
         JsonResultResponse<MarkerGoViewTableRow> response = new JsonResultResponse<>();
         response.calculateRequestDuration(startTime);
-        response.setTotal(rows.size());
+        response.setTotal((int) queryResponse.getResults().getNumFound());
+        response.setResults(results);
 
-        // paginating
-        response.setResults(rows.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList()));
         return response;
     }
 

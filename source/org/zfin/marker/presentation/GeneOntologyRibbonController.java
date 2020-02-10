@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.log4j.Log4j2;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -132,8 +134,9 @@ public class GeneOntologyRibbonController {
     @RequestMapping(value = "/marker/{zdbID}/go")
     public JsonResultResponse<MarkerGoViewTableRow> getGoAnnotations(@PathVariable String zdbID,
                                                                      @RequestParam(required = false) String termId,
-                                                                     @Version Pagination pagination) {
-        JsonResultResponse<MarkerGoViewTableRow> response = markerGoService.getGoEvidence(zdbID, termId, pagination);
+                                                                     @RequestParam(required = false) boolean isOther,
+                                                                     @Version Pagination pagination) throws IOException, SolrServerException {
+        JsonResultResponse<MarkerGoViewTableRow> response = markerGoService.getGoEvidence(zdbID, termId, isOther, pagination);
         response.setHttpServletRequest(request);
 
         return response;

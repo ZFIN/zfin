@@ -61,13 +61,21 @@ const GeneOntologyRibbon = ({geneId}) => {
     ];
 
     const handleItemClick = (subject, group) => {
-        if (selected && selected.group.id === group.id) {
+        if (selected && selected.group.id === group.id && selected.group.type === group.type) {
             setSelected(null);
         } else {
             setSelected({subject, group});
         }
     };
-    const termQuery = selected && selected.group.type !== 'GlobalAll' ? `?termId=${selected.group.id}` : ''
+    let termQuery = '';
+    if (selected) {
+        if (selected.group.type !== 'GlobalAll') {
+            termQuery += `?termId=${selected.group.id}`;
+        }
+        if (selected.group.type === 'Other') {
+            termQuery += '&isOther=true';
+        }
+    }
 
     return (
         <div>
