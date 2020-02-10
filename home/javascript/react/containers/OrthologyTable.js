@@ -40,8 +40,8 @@ const OrthologyTable = ({geneId}) => {
         <DataTable
             columns={columns}
             url={`/action/api/gene/${geneId}/orthologs`}
+            pagination={false}
             rowKey={row => row.zdbID}
-            noPaginate={true}
         />
     );
 };
