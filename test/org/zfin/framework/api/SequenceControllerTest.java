@@ -11,8 +11,7 @@ import org.zfin.framework.ZfinConfiguration;
 import org.zfin.marker.presentation.SequenceController;
 import org.zfin.sequence.MarkerDBLink;
 
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -29,20 +28,25 @@ public class SequenceControllerTest extends AbstractDatabaseTest {
         // alcama
         String zdbID = "ZDB-GENE-990415-30";
 
-        JsonResultResponse<MarkerDBLink> links = controller.getSequenceView(zdbID, null, null, null, new Pagination());
+        JsonResultResponse<MarkerDBLink> links = controller.getSequenceView(zdbID, false, null, null, null, new Pagination());
         assertNotNull(links);
         assertThat(links.getTotal(), greaterThanOrEqualTo(34));
 
-        links = controller.getSequenceView(zdbID, null, "1", null, new Pagination());
+        links = controller.getSequenceView(zdbID, false, null, "1", null, new Pagination());
         assertNotNull(links);
         // filtered records for accession number '1'.
         assertThat(links.getTotal(), greaterThanOrEqualTo(13));
         assertThat(links.getTotal(), lessThanOrEqualTo(13));
 
-        links = controller.getSequenceView(zdbID, "GEnomic", null, null, new Pagination());
+        links = controller.getSequenceView(zdbID, false, "GEnomic", null, null, new Pagination());
         assertNotNull(links);
         // filtered records on type
         assertThat(links.getTotal(), greaterThanOrEqualTo(3));
         assertThat(links.getTotal(), lessThanOrEqualTo(3));
+
+        // summary view
+        links = controller.getSequenceView(zdbID, true, null, null, null, new Pagination());
+        assertNotNull(links);
+        assertThat(links.getTotal(), equalTo(3));
     }
 }
