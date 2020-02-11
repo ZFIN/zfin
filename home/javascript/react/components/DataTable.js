@@ -84,7 +84,7 @@ const DataTable = ({columns, pagination = true, rowKey, url}) => {
             </table>
             <div className='data-table-pagination'>
                 {pagination && <React.Fragment>
-                    <span>{start} - {end} of {total}</span>,
+                    <span>{start} - {end} of {total}</span>
                     <div>
                         <span className='mr-1'>Show</span>
                         <select className='form-control-sm mr-2' onChange={handleLimitChange} value={tableState.limit}>
