@@ -11,7 +11,7 @@
         </ul>
     </div>
 
-    <div class="flex-grow-1 p-4">
+    <div class="data-page-content-container">
         <jsp:doBody />
     </div>
 </div>

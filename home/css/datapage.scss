@@ -13,6 +13,7 @@ body.data-page {
     width: 200px;
     flex-shrink: 0;
     background: white;
+    z-index: 1;
     @include shadow;
 
     .nav {
@@ -26,6 +27,12 @@ body.data-page {
         border-radius: 0;
         color: $primary;
     }
+}
+
+.data-page-content-container {
+    flex-grow: 1;
+    padding: 1.5rem;
+    overflow-x: auto;
 }
 
 .name-label, .name-value {
@@ -158,6 +165,7 @@ tr.spaceUnder > td{
     white-space: nowrap;
     margin-right: 5.5rem;
     margin-bottom: 1rem;
+    position: relative;
 }
 
 .ontology-ribbon__block__tile {
