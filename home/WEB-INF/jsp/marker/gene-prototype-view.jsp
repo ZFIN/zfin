@@ -291,20 +291,20 @@
         <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.proteinDomainBeans}">
             <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
                 <thead>
-                    <tr>
-                        <td>${category.ipType}</td>
-                        <td><a href="http://www.ebi.ac.uk/interpro/entry/${category.ipID}">${category.ipID}</a></td>
-                        <td>${category.ipName}</td>
-                    </tr>
+                <tr>
+                    <th style="width: 17%">Type</th>
+                    <th style="width: 17%">InterPro ID</th>
+                    <th style="width: 17%">Name</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <c:forEach var="category" items="${formBean.proteinDomainBeans}">
-                        <tr>
-                            <td>${category.ipType}</td>
-                            <td>${category.ipID}</td>
-                            <td>${category.ipName}</td>
-                        </tr>
-                    </c:forEach>
+                <c:forEach var="category" items="${formBean.proteinDomainBeans}">
+                    <tr>
+                        <td>${category.ipType}</td>
+                        td><a href="http://www.ebi.ac.uk/interpro/entry/${category.ipID}">${category.ipID}</a></td>
+                        <td>${category.ipName}</td>
+                    </tr>
+                </c:forEach>
                 </tbody>
             </c:if>
         </zfin-prototype:dataTable>
