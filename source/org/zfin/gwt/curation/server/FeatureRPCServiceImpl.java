@@ -288,10 +288,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 HibernateUtil.currentSession().save(fgmd);
             }
             if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
-                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef() != null) {
-                    if (fgmd.getFgmdSeqRef().length() == fgmd.getFgmdSeqVar().length()) {
-                        if (fgmd.getFgmdSeqRef().length() > 1) {
-                            feature.setType(FeatureTypeEnum.MNV);
+                if (feature.getFeatureGenomicMutationDetail() != null) {
+                    if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef() != null) {
+                        if (fgmd.getFgmdSeqRef().length() == fgmd.getFgmdSeqVar().length()) {
+                            if (fgmd.getFgmdSeqRef().length() > 1) {
+                                feature.setType(FeatureTypeEnum.MNV);
+                            }
                         }
                     }
                 }
