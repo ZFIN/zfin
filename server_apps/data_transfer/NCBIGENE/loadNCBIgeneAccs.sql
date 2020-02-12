@@ -3,9 +3,8 @@
 -- This SQL script deletes the db_link records according to the delete list, toDelete.unl.
 -- And it loads all the following kinds of db_link records according to the add list, toLoad.unl.
 -- 1) NCBI Gene Ids
--- 2) UniGene Ids
--- 3) RefSeq accessioons (including RefSeq RNA, RefPept, RefSeq DNA)
--- 4) GenBank accessions (including GenBank RNA, GenPept, GenBank DNA)
+-- 2) RefSeq accessioons (including RefSeq RNA, RefPept, RefSeq DNA)
+-- 3) GenBank accessions (including GenBank RNA, GenPept, GenBank DNA)
 -- The script also attribute the manually curated GenBank accessions to 1 of the load publications, if the accession is found with the load.
 
 begin work;

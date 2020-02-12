@@ -10,15 +10,8 @@
 
 
 begin work;
-
--- delete all UniGene accessions
-delete from zdb_active_data
-  where exists(select 1 from db_link
-                where dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-44'
-                  and dblink_zdb_id = zactvd_zdb_id);
                       
-create temp table pre_delete (dblink_loaded_zdb_id		text
-                             );
+create temp table pre_delete (dblink_loaded_zdb_id		text );
 
 --!echo 'Prepare the delete list with accession records in record_attribution table attributed to NCBI gene load publications (ZDB-PUB-020723-3, ZDB-PUB-130725-2)'
 		
@@ -144,5 +137,6 @@ drop view genes_supported_by_rna;
 --rollback work;
 
 commit work;
+
 
 

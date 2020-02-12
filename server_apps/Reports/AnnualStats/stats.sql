@@ -246,7 +246,6 @@ select count(*), 'Genomics', 'Links to other databases', now() from db_link, for
 'SignaFish',
 'UBERON',
 'UniPathway',
-'UniGene', --                            22272
 'UniProtKB', --                          25865
 'UniProtKB-SubCell',
 'UniRule',
