@@ -5,11 +5,22 @@ import LoadingSpinner from './LoadingSpinner';
 import { useTableDataFetch } from '../utils/effects';
 import {stringToFunction} from '../utils';
 
-const DataTable = ({columns, pagination = true, rowKey, url}) => {
-    const [tableState, setTableState] = useState({
-        limit: 10,
-        page: 1,
-    });
+export const DEFAULT_TABLE_STATE = {
+    limit: 10,
+    page: 1,
+};
+
+const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tableState, url}) => {
+    if ((tableState && !onTableStateChange) || (!tableState && onTableStateChange)) {
+        if (process.env.NODE_ENV === 'development') {
+            console.warn("DataTable must either be controlled (by setting tableState and onTableStateChange) or uncontrolled (by setting neither)");
+        }
+    }
+
+    const [controlledTableState, setControlledTableState] = useState(DEFAULT_TABLE_STATE);
+    tableState = tableState || controlledTableState;
+    const setTableState = onTableStateChange || setControlledTableState;
+
     const data = useTableDataFetch(url, tableState);
 
     if (data.rejected) {
@@ -84,7 +95,7 @@ const DataTable = ({columns, pagination = true, rowKey, url}) => {
             </table>
             <div className='data-table-pagination'>
                 {pagination && <React.Fragment>
-                    <span>{start} - {end} of {total}</span>
+                    {data.pending ? <LoadingSpinner /> : <span>{start} - {end} of {total}</span>}
                     <div>
                         <span className='mr-1'>Show</span>
                         <select className='form-control-sm mr-2' onChange={handleLimitChange} value={tableState.limit}>
@@ -117,8 +128,13 @@ DataTable.propTypes = {
         content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
         grouped: PropTypes.bool,
     })).isRequired,
+    onTableStateChange: PropTypes.func,
     pagination: PropTypes.bool,
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+    tableState: PropTypes.shape({
+        limit: PropTypes.number,
+        page: PropTypes.number,
+    }),
     url: PropTypes.string.isRequired,
 };
 

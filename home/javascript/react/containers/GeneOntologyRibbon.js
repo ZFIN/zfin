@@ -5,10 +5,12 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import {GenericRibbon} from '@geneontology/ribbon';
 
 import style from './style.scss';
-import DataTable from '../components/DataTable';
+import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
 
 const GeneOntologyRibbon = ({geneId}) => {
     const [selected, setSelected] = useState(null);
+    const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
+
     const data = useFetch(`/action/api/marker/${geneId}/go/ribbon-summary`);
 
     if (data.rejected) {
@@ -64,9 +66,11 @@ const GeneOntologyRibbon = ({geneId}) => {
         if (selected && selected.group.id === group.id && selected.group.type === group.type) {
             setSelected(null);
         } else {
+            setTableState(DEFAULT_TABLE_STATE);
             setSelected({subject, group});
         }
     };
+
     let termQuery = '';
     if (selected) {
         if (selected.group.type !== 'GlobalAll') {
@@ -97,6 +101,8 @@ const GeneOntologyRibbon = ({geneId}) => {
                     url={`/action/api/marker/${geneId}/go${termQuery}`}
                     columns={columns}
                     rowKey='id'
+                    tableState={tableState}
+                    onTableStateChange={setTableState}
                 />
             }
         </div>
