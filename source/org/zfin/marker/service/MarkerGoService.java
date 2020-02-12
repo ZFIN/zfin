@@ -191,6 +191,7 @@ public class MarkerGoService {
         }
         query.setStart(pagination.getStart());
         query.setRows(pagination.getLimit());
+        query.setSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
 
         QueryResponse queryResponse = SolrService.getSolrClient("prototype").query(query);
         MarkerGoTermEvidenceRepository repository = RepositoryFactory.getMarkerGoTermEvidenceRepository();
