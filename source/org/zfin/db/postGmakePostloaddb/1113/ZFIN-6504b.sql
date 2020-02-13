@@ -7,7 +7,7 @@
 --We have a table in the database sanger_flanking_sequence which stores allele, variation and if on positive or negative strand.
 
 
-drop table sangerpointmut;
+
 create   table sangerpointmut (featzdb text, strand text);
 insert into sangerpointmut (featzdb,strand) select distinct feature_zdb_id,strand from feature, sanger_flanking_sequence where feature_abbrev=allele and feature_zdb_id not in (select fgmd_feature_zdb_id from feature_genomic_mutation_detail);
 select count(*) from sangerpointmut;
@@ -54,7 +54,7 @@ insert into record_Attribution(recattrib_Data_Zdb_id,recattrib_source_zdb_id) se
 
 update variant_flanking_sequence set vfseq_variation=
    (select distinct fgmd_sequence_of_reference|| '/' ||fgmd_sequence_of_variation  from feature_genomic_mutation_detail where fgmd_feature_zdb_id=vfseq_data_Zdb_id and vfseq_variation is null) from feature_genomic_mutation_detail where fgmd_feature_zdb_id=vfseq_data_Zdb_id and vfseq_variation is null ;
-
+drop table sangerpointmut;
 --update variant_flanking_sequence set vfseq_sequence=
 --   (select distinct vfseq_five_prime_flanking_sequence||'['||fgmd_sequence_of_reference|| '/' ||fgmd_sequence_of_variation||']'||vfseq_three_prime_flanking_sequence from feature_genomic_mutation_detail where fgmd_feature_zdb_id=vfseq_data_Zdb_id and vfseq_sequence is null) from feature_genomic_mutation_detail where fgmd_feature_zdb_id=vfseq_data_Zdb_id and vfseq_sequence is null ;
 
