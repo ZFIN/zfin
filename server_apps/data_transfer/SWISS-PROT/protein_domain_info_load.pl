@@ -83,7 +83,27 @@ while ($cur_uniproInterpro->fetch()) {
 
 $cur_uniproInterpro->finish();
 
-print "ctUniproInterpro = $ctUniproInterpro\n";
+print "ctUniproPdb = $ctUniproPdb\n";
+
+$cur_uniproPdb = $dbh->prepare("select ptp_uniprot_id, ptp_pdb_id from protein_to_pdb;");
+$cur_uniproPdb->execute();
+$cur_uniproPdb->bind_columns(\$uniproId, \$pdbId);
+
+$ctUniproPdb = 0;
+%uniproPdb = ();
+%updatedUniproPdb = ();
+while ($cur_uniproPdb->fetch()) {
+   $uniproPdb{$uniproId.$pdbId} = $uniproId."|".$pdbId;
+   $updatedUniproPdb{$uniproId.$pdbId} = 1;
+   $ctUniproPdb++;
+}
+
+$cur_uniproPdb->finish();
+
+print "ctUniproPdb = $ctUniproPdb\n";
+
+
+
 
 $cur_gene = $dbh->prepare("select mrkr_zdb_id from marker where mrkr_zdb_id like 'ZDB-GENE%';");
 $cur_gene->execute();
@@ -184,6 +204,7 @@ undef @lines;
 system("/bin/rm -f protein.txt");
 system("/bin/rm -f zfinprotein.txt");
 system("/bin/rm -f unipro2interpro.txt");
+system("/bin/rm -f unipro2pdb.txt");
 system("/bin/rm -f postProteinDomainInfoLoadStatistics.txt");
 
 $/ = "\/\/\n";
@@ -192,10 +213,12 @@ open (UNIPROT, "okfile") || die "Cannot open okfile : $!\n";
 open (PROTEIN, ">protein.txt") || die "Cannot open protein.txt : $!\n";
 open (ZFINPROT, ">zfinprotein.txt") || die "Cannot open zfinprotein.txt : $!\n";
 open (UNIPROTINTERPRO, ">unipro2interpro.txt") || die "Cannot open unipro2interpro.txt : $!\n";
+open (UNIPROTPDB, ">unipro2pdb.txt") || die "Cannot open unipro2pdb.txt : $!\n";
 
 @uniproRecords = <UNIPROT>;
 
-# parsing the UniProt file 
+# parsing the UniProt file
+
 
 $ctRecords = $ctUniProtIDs = $ctZfinUniProt = $ctUniProtInterpro = 0;
 %uniproIdFromInput = ();
@@ -241,7 +264,15 @@ foreach $record (@uniproRecords) {
         $unipIprFromInput{$id.$interproID} = 1;
         push @iprs, $interproID;
       }
-    }            
+    }
+    if ($line =~ m/DR\s+PDB;/) {
+    @values = split(';', $line);
+
+        $pdbID=$values[1];
+         push @pbids, $pdbID;
+
+      }
+
   }
 
   # if the parsed data	not existing at	ZFIN, write to the file to be used by the loading process
@@ -270,6 +301,17 @@ foreach $record (@uniproRecords) {
         } 
       }
     }
+
+    if (scalar @pbids > 0) {
+          foreach $pbid (@pbids) {
+          if(!exists($updatedUniproPdb{$id.$pbid})) {
+                     $updatedUniproPdb{$id.$pbid} = 1;
+               print  UNIPROTPDB "$id|$pbid\n";
+               $ctUniProtPdb++;
+
+            }
+          }
+        }
   
   }
   
@@ -280,6 +322,7 @@ foreach $record (@uniproRecords) {
   @zfinids = ();
   undef $interproID;
   @iprs = ();
+  @pbids = ();
 }
 
 print "ctRecords = $ctRecords \t ctUniProtIDs = $ctUniProtIDs\t ctZfinUniProt = $ctZfinUniProt\tctUniProtInterpro = $ctUniProtInterpro\n";
@@ -331,10 +374,30 @@ $cur_delete_unipr_ipr->finish();
 
 print "ctDeletedUnipInterpro = $ctDeletedUnipInterpro\n\n";
 
+
+# delete the records in protein_to_pdb table that are not in this load
+$ctDeletedUnipPdb = 0;
+$cur_delete_unipr_pdb = $dbh->prepare_cached("delete from protein_to_pdb where ptp_uniprot_id = ? and ptp_pdb_id = ?;");
+for $existingUniproPdb (keys %uniproPdb) {
+  if(!exists($unipIprFromInput{$existingUniproPdb})) {
+     @strings = split(/\|/, $uniproPdb{$existingUniproPdb});
+     $unipro = $strings[0];
+     $pdb = $strings[1];
+     $cur_delete_unipr_pdb->execute($unipro, $pdb);
+     $ctDeletedUnipPdb++;
+  }
+}
+
+$cur_delete_unipr_pdb->finish();
+
+print "ctDeletedUnipPdb = $ctDeletedUnipPdb\n\n";
+
+
 close UNIPROT;
 close PROTEIN;
 close ZFINPROT;
 close UNIPROTINTERPRO;
+close UNIPROTPDB;
 
 $dbh->disconnect();
 
@@ -355,6 +418,8 @@ undef %updatedMrkrUnipro;
 undef %mrkrUnipFromInput;
 undef %uniproInterpro;
 undef %updatedUniproInterpro;
+undef %updatedUniproPdb;
+
 undef %unipIprFromInput;
 
 open (POSTLOADREPORT, '>postProteinDomainInfoLoadStatistics.txt') or die "Cannot open postProteinDomainInfoLoadStatistics.txt: $!";

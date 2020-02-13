@@ -64,6 +64,24 @@ delete from protein_to_interpro
 
 --rollback work;
 
+create temp table pre_unipro_pdb(unip text, pdb text);
+
+create index pre_unipropdb_unip_idx on pre_unipro_pdb(unip);
+create index pre_unipropdb_iprid_idx on pre_unipro_pdb(pdb);
+
+copy pre_unipro_pdb from '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/unipro2pdb.txt' (delimiter '|');
+
+insert into protein_to_pdb(ptp_uniprot_id, ptp_pdb_id)
+ select unip, pdb
+   from pre_unipro_pdb;
+
+delete from protein_to_pdb
+  where not exists(select 'x' from protein
+                    where up_uniprot_id = ptp_uniprot_id);
+
+
+
+
 commit work;  
 
 
