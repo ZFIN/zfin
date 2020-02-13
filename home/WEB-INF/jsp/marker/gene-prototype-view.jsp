@@ -219,19 +219,17 @@
                 <tbody>
                     <c:forEach var="row" items="${formBean.diseaseDisplays}" varStatus="loop">
                         <tr>
-                            <zfin-prototype:groupedCell items="${formBean.diseaseDisplays}" loop="${loop}"
-                                                        property="diseaseTerm">
+                            <td>
                                 <c:if test="${!empty row.diseaseTerm}">
                                     <zfin:link entity="${row.diseaseTerm}" longVersion="true"/>
                                 </c:if>
-                            </zfin-prototype:groupedCell>
+                            </td>
 
-                            <zfin-prototype:groupedCell items="${formBean.diseaseDisplays}" loop="${loop}"
-                                                        property="diseaseTerm">
+                            <td>
                                 <c:if test="${!empty row.diseaseTerm}">
                                     <a href="http://www.alliancegenome.org/disease/${row.diseaseTerm.oboID}">Alliance</a>
                                 </c:if>
-                            </zfin-prototype:groupedCell>
+                            </td>
 
                             <td>${row.omimPhenotype.name}</td>
 
@@ -258,10 +256,7 @@
                 <tbody>
                     <c:forEach items="${formBean.diseaseModelDisplays}" var="disease" varStatus="loop">
                         <tr>
-                            <zfin-prototype:groupedCell items="${formBean.diseaseModelDisplays}" loop="${loop}"
-                                                        property="disease">
-                                <zfin:link entity="${disease.disease}"/>
-                            </zfin-prototype:groupedCell>
+                            <td><zfin:link entity="${disease.disease}"/></td>
                             <td><zfin:link entity="${disease.experiment.fish}"/></td>
                             <td><zfin:link entity="${disease.experiment.experiment}"/></td>
                             <td>

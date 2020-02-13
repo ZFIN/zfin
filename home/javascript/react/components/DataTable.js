@@ -76,16 +76,11 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                     {results.map((row, idx, rows) => (
                         <tr key={stringToFunction(rowKey)(row)}>
                             {columns.map(column => {
-                                let isRepeat = false;
                                 const valueGetter = stringToFunction(column.content);
                                 const value = valueGetter(row);
-                                if (column.grouped && idx > 0) {
-                                    const lastValue = valueGetter(rows[idx - 1]);
-                                    isRepeat = value === lastValue;
-                                }
                                 return (
-                                    <td key={column.label} className={isRepeat ? 'border-0' : ''} style={{textAlign: column.align}}>
-                                        {!isRepeat && value}
+                                    <td key={column.label} style={{textAlign: column.align}}>
+                                        {value}
                                     </td>
                                 );
                             })}
@@ -124,9 +119,9 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
 
 DataTable.propTypes = {
     columns: PropTypes.arrayOf(PropTypes.shape({
+        align: PropTypes.oneOf(['right', 'center', 'left']),
         label: PropTypes.string.isRequired,
         content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
-        grouped: PropTypes.bool,
     })).isRequired,
     onTableStateChange: PropTypes.func,
     pagination: PropTypes.bool,
