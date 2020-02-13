@@ -314,7 +314,7 @@
                 <tbody>
                 <c:forEach var="category" items="${formBean.proteinDomainBeans}">
                     <tr>
-                        <td>${category.ipType}</td>
+                        <td>${category.ipType}</td
                         <td><a href="http://www.ebi.ac.uk/interpro/entry/${category.ipID}">${category.ipID}</a></td>
                         <td>${category.ipName}</td>
                     </tr>
@@ -322,7 +322,11 @@
                 </tbody>
             </c:if>
         </zfin-prototype:dataTable>
-    </zfin-prototype:section>
+
+
+
+
+</zfin-prototype:section>
 
     <zfin-prototype:section title="${PATHWAYS}">
         <zfin-prototype:dataTable hasData="${!empty formBean.pathwayDBLinks}">
