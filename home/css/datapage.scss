@@ -163,9 +163,10 @@ tr.spaceUnder > td{
 
 .ontology-ribbon-container {
     white-space: nowrap;
-    margin-right: 5.5rem;
     margin-bottom: 1rem;
     position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .ontology-ribbon__block__tile {
