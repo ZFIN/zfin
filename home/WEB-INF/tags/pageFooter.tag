@@ -98,7 +98,7 @@
         </div>
         <div class="nav-column right-align">
             <div class="nowrap">&copy; 1994&ndash;${copyrightYear} University of Oregon</div>
-            <div><a href="/zf_info/warranty.html">Terms of Use</a></div>
+            <div><a href="https://@WIKI_HOST@/display/general/WARRANTY+AND+LIABILITY+DISCLAIMER%2C+OWNERSHIP%2C+AND+LIMITS+ON+USE">Terms of Use</a></div>
             <div><small>ZFIN logo designed by Kari Pape</small></div>
             <div style="max-width: 450px"><small>Home page banner reprinted from Hearing Research, 341, Monroe, J.D. et al., Hearing sensitivity differs between zebrafish lines used in auditory research, 220-231, Copyright (2016) with permission from Elsevier</small></div>
         </div>
