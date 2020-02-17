@@ -242,6 +242,15 @@ def generateGenesAndTranscripts() {
             gene.addAttribute("secondaryIds",secondaryIds[gene.id].join(','))
         }
 
+        if (!gene.getAttribute("curie") && gene.getId().startsWith("ZDB")) {
+            gene.addAttribute("curie", "ZFIN:" + gene.getId())
+        }
+
+        //Alliance requirements are that we use gene rather than protein_coding_gene in gff3 files
+        if (gene.getType() == "protein_coding_gene") {
+            gene.setType("gene")
+        }
+
         def zfinTranscripts = []
         def otherTranscripts = []
         ensemblFeatureMap[gene.getId()]?.each { transcript ->
