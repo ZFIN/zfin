@@ -45,6 +45,11 @@ public class MarkerBean extends PaginationBean {
     private List<AntibodyMarkerBean> antibodyBeans;
     private List<ConstructBean> constructBeans;
     private List<ProteinDomainBean> proteinDomainBeans;
+    private ProteinDetailDomainBean proteinDetailDomainBean;
+
+    public ProteinDetailDomainBean getProteinDetailDomainBean() {
+        return proteinDetailDomainBean;
+    }
 
     public List<ProteinDomainBean> getProteinDomainBeans() {
         return proteinDomainBeans;
@@ -53,6 +58,23 @@ public class MarkerBean extends PaginationBean {
     public void setProteinDomainBeans(List<ProteinDomainBean> proteinDomainBeans) {
         this.proteinDomainBeans = proteinDomainBeans;
     }
+
+    public void setProteinDetailDomainBean(ProteinDetailDomainBean proteinDetailDomainBean) {
+        this.proteinDetailDomainBean = proteinDetailDomainBean;
+    }
+
+    private List<String> proteinType;
+
+
+    public List<String> getProteinType() {
+        return proteinType;
+    }
+
+    public void setProteinType(List<String> proteinType) {
+        this.proteinType = proteinType;
+    }
+
+
 
     public AllianceGeneDesc getAllianceGeneDesc() {
         return allianceGeneDesc;

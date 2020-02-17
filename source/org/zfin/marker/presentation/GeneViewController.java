@@ -130,6 +130,9 @@ public class GeneViewController {
         // Protein Products (Protein Families, Domains, and Sites)
         //geneBean.setProteinProductDBLinkDisplay(SequenceService.getProteinProducts(gene));
         geneBean.setProteinDomainBeans(markerRepository.getInterProLinksForMarker(gene));
+        geneBean.setProteinType(markerRepository.getProteinType(gene));
+        geneBean.setProteinDetailDomainBean(markerService.getProteinDomainDetailBean2(gene));
+
 
         // Transcripts
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));

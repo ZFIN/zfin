@@ -1,4 +1,4 @@
-package org.zfin.marker.presentation;
+ package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;

@@ -375,6 +375,10 @@ public interface MarkerRepository {
 
     List<GeneProductsBean> getGeneProducts(String zdbID);
     List<ProteinDomainBean> getInterProLinksForMarker(Marker marker);
+    List<ProteinDetail> getProteinDetail(Marker marker);
+    List<String> getUniProtID(Marker marker);
+    List<String> getProteinType(Marker marker);
+    List<String> getIPNames( String uniprot);
 
     boolean isFromChimericClone(String zdbID);
 
