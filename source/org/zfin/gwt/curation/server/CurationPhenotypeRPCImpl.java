@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.server;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -12,6 +13,7 @@ import org.zfin.gwt.curation.ui.CurationPhenotypeRPC;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
+import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
@@ -142,7 +144,8 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
         }
     }
 
-    public List<PhenotypeExperimentDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> updateEntity) {
+    public List<PhenotypeExperimentDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> updateEntity)
+            throws ValidationException {
         LoggingUtil loggingUtil = new LoggingUtil(logger);
         List<PhenotypeExperimentDTO> mutantsToBeAnnotated = updateEntity.getFigureAnnotations();
         if (mutantsToBeAnnotated == null)
@@ -170,6 +173,14 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
                     }
                     // add phenotype if marked as such
                     if (pileStructure.getAction() == PileStructureAnnotationDTO.Action.ADD) {
+                        if (phenotypePileStructure.getTag().equals(PhenotypeStatement.Tag.AMELIORATED) ||
+                                phenotypePileStructure.getTag().equals(PhenotypeStatement.Tag.EXACERBATED)) {
+                            if (phenoExperiment.getFishExperiment().getFish().getFishFunctionalAffectedGeneCount() < 2) {
+                                throw new ValidationException("You can only use the tags 'ameliorated' and 'exacerbated with fish that have at " +
+                                        "least 2 misfortunes. ");
+                            }
+                        }
+
                         PhenotypeStatementDTO phenotypeTermDTO = addExpressionToAnnotation(phenoExperiment, phenotypePileStructure);
                         if (phenotypeTermDTO != null) {
                             dto.addExpressedTerm(phenotypeTermDTO);

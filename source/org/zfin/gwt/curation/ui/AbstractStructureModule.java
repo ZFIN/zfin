@@ -439,8 +439,9 @@ public abstract class AbstractStructureModule extends Composite implements Struc
         }
 
         @Override
-        public void onFailureCleanup() {
-            loadingImage.setVisible(true);
+        public void onFailure(Throwable throwable) {
+            super.onFailure(throwable);
+            loadingImage.setVisible(false);
         }
     }
 

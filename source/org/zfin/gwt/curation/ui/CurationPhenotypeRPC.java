@@ -8,6 +8,7 @@ import org.zfin.gwt.root.dto.ExpressionExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.PileStructureAnnotationDTO;
+import org.zfin.gwt.root.ui.ValidationException;
 
 import java.util.List;
 
@@ -35,7 +36,8 @@ public interface CurationPhenotypeRPC extends RemoteService {
 
     void deleteFigureAnnotation(PhenotypeExperimentDTO figureAnnotation);
 
-    List<PhenotypeExperimentDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> updateEntity);
+    List<PhenotypeExperimentDTO> updateStructuresForExpression(UpdateExpressionDTO<PileStructureAnnotationDTO, PhenotypeExperimentDTO> updateEntity)
+            throws ValidationException;
     List<ExpressionPhenotypeExperimentDTO> getPhenotypeFromExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID);
 
     /**
