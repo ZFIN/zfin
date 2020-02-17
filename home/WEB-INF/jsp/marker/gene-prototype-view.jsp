@@ -205,6 +205,25 @@
         </zfin-prototype:section>
     </zfin-prototype:section>
 
+    <%--Transcripts--%>
+    <zfin-prototype:section title="${TRANSCRIPTS}">
+        relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}" locations="${formBean.locations}"
+        <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.relatedTranscriptDisplay}">
+            <thead>
+            <tr>
+                <th width="25%">Type</th>
+                <th width="20%">Name</th>
+                <th width="25%">Length</th>
+                <th width="20%">Analysis</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach var="row" items="${formBean.relatedTranscriptDisplay}" varStatus="loop">
+            <tr>
+            <td>
+        </zfin-prototype:dataTable>
+    </zfin-prototype:section>
+
     <zfin-prototype:section title="${DISEASES}">
         <zfin-prototype:section title="Associated with <i>${formBean.marker.abbreviation}</i> human ortholog">
             <zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.diseaseDisplays}">
