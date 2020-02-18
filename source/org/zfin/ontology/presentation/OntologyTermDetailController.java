@@ -387,32 +387,6 @@ public class OntologyTermDetailController {
         return "ontology/fish-model-publication-list.page";
     }
 
-    @RequestMapping("/term-detail/{termID}/phenogrid")
-    public String phenogrid(@PathVariable String termID, Model model) {
-
-        if (termID == null) {
-            return getErrorPage(model);
-        }
-
-        GenericTerm term = null;
-        // check if TERM id
-        if (ActiveData.isValidActiveData(termID, ActiveData.Type.TERM)) {
-            term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
-        } else {
-            // check if it is an OBO ID
-            if (Ontology.isOboID(termID))
-                term = RepositoryFactory.getOntologyRepository().getTermByOboID(termID);
-        }
-        if (term == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, termID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        model.addAttribute("term", term);
-
-        return "ontology/phenogrid.page";
-    }
-
     @RequestMapping("/note/ontology-relationship")
     public String getOntologyRelationshipNote() {
         return "ontology/ontology-relationship-note.insert";

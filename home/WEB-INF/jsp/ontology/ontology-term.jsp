@@ -168,11 +168,6 @@
 
     <zfin2:ExpandRequestSections sectionVisibility="${formBean.sectionVisibility}"/>
 
-    <authz:authorize access="hasRole('root')">
-        <c:if test="${isDiseaseTerm}">
-            <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
-        </c:if>
-    </authz:authorize>
     <c:if test="${isDiseaseTerm}">
         <div class="summary">
             <c:choose>

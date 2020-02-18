@@ -654,7 +654,6 @@
                     <include name="WEB-INF/**"/>
                     <include name="javascript/**"/>
                     <exclude name="css/images/**"/>
-                    <exclude name="javascript/phenogrid/**"/>
                     <exclude name="images/**"/>
                     <exclude name="templates/**"/>
                     <exclude name="**/*.jar"/>
@@ -668,7 +667,6 @@
 
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
-                    <include name="javascript/phenogrid/**"/>
                     <include name="images/**"/>
                     <include name="css/images/**"/>
                     <include name="templates/**"/>
