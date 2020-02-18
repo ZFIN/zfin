@@ -13,7 +13,7 @@ export const DEFAULT_TABLE_STATE = {
 const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tableState, url}) => {
     if ((tableState && !onTableStateChange) || (!tableState && onTableStateChange)) {
         if (process.env.NODE_ENV === 'development') {
-            console.warn("DataTable must either be controlled (by setting tableState and onTableStateChange) or uncontrolled (by setting neither)");
+            console.warn('DataTable must either be controlled (by setting tableState and onTableStateChange) or uncontrolled (by setting neither)');
         }
     }
 
@@ -73,7 +73,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                     </tr>
                 </thead>
                 <tbody>
-                    {results.map((row, idx, rows) => (
+                    {results.map(row => (
                         <tr key={stringToFunction(rowKey)(row)}>
                             {columns.map(column => {
                                 const valueGetter = stringToFunction(column.content);
