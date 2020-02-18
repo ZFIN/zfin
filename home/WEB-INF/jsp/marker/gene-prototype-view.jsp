@@ -16,10 +16,11 @@
 <c:set var="CONSTRUCTS" value="Constructs"/>
 <c:set var="SEQUENCES" value="Sequences"/>
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
+<c:set var="TRANSCRIPTS" value="Transcripts"/>
 <c:set var="ORTHOLOGY" value="Orthology"/>
 
 <zfin-prototype:dataPage
-        sections="${[SUMMARY, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, SEQUENCES, ORTHOLOGY]}">
+        sections="${[SUMMARY, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY]}">
     <zfin-prototype:dataManagerDropdown>
         <a class="dropdown-item active" href="/action/marker/gene/prototype-view/${formBean.marker.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
@@ -322,26 +323,13 @@
             <tbody>
             <c:forEach var="category" items="${formBean.proteinDetailDomainBean.interProDomains}">
                 <tr>
-
-
                          <td>   ${category.proDetail.upID}</td>
                     <td>   ${category.proDetail.upLength}</td>
-
-
-
-
-
-
 
                     <c:forEach var="entry" items="${category.interProDomain}">
 
                         <td style="padding-right: 1em;"><b>${entry.value}</b></td>
                     </c:forEach>
-
-
-
-
-
 
                 </tr>
             </c:forEach>
@@ -417,6 +405,11 @@
                 </tr>
             </c:forEach>
         </zfin-prototype:dataTable>
+    </zfin-prototype:section>
+
+    <zfin-prototype:section title="${TRANSCRIPTS}">
+    <zfin2:markerTranscriptSummary relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}" locations="${formBean.locations}"
+                                   showAllTranscripts="true"/>
     </zfin-prototype:section>
 
     <zfin-prototype:section title="${CONSTRUCTS}">
