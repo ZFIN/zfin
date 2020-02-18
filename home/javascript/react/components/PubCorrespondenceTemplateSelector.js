@@ -40,7 +40,6 @@ www.zfin.org
 Zebrafish Information Network
 5291 University of Oregon
 Eugene, OR 97403-5291
-Phone: (541) 346-7485
 ******************************
 `
     }
