@@ -2,6 +2,8 @@
 
 source $(dirname "$0")/helpers
 
-run_cmd npm run lint
+changed_files=$(git diff --cached --name-only --diff-filter=ACM)
+
+run_if_changes $changed_files home/javascript/react/ "npm run lint"
 
 exit 0
