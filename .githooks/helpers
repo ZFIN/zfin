@@ -8,11 +8,11 @@ print () {
 }
 
 run_cmd () {
-  print "running '$@'"
+  print "running '$*'"
   "$@"
   status=$?
   if [ $status -ne 0 ]; then
-    print "ABORTING! '$@' failed."
+    print "ABORTING! '$*' failed."
     exit $status
   fi
 }
