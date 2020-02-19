@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source $(dirname "$0")/helpers
+
+run_cmd npm run lint
+
+exit 0

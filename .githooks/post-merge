@@ -1,0 +1,11 @@
+#!/bin/bash
+
+source $(dirname "$0")/helpers
+
+changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+
+run_if_changed() {
+  echo "$changed_files" | grep --quiet "$1" && print "$1 changed. running '$2'" && eval "$2"
+}
+
+run_if_changed package.json "npm install && gradle deployPackageFiles && ant npmInstall"
