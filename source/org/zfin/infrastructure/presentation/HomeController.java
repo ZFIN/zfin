@@ -48,7 +48,7 @@ public class HomeController {
         model.addAttribute("searchCategories", Category.getCategoryDisplayList());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "The Zebrafish Information Network");
 
-        return "infrastructure/home.page";
+        return "infrastructure/home/home.page";
     }
 
     @RequestMapping(path = "/submit-data")

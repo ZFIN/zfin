@@ -2,8 +2,9 @@
 
 <%@ attribute name="title" required="true" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="hasData" required="false" rtexprvalue="true" type="java.lang.Boolean" %>
+<%@ attribute name="cssClass" required="false" rtexprvalue="true" type="java.lang.String" %>
 
-<section class="section" id="${zfn:makeDomIdentifier(title)}">
+<section class="section ${cssClass}" id="${zfn:makeDomIdentifier(title)}">
     <div class="heading">${title}</div>
     <z:ifHasData test="${hasData}">
         <jsp:doBody />
