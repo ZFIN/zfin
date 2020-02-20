@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Zebrafish Science Monitor, Vol. 7 (1)">
+<z:page title="ZFIN Zebrafish Science Monitor, Vol. 7 (1)">
 <div><div align="center"><center>
 <table border="3" bordercolordark="#000080" bordercolorlight="#C0C0C0" cellpadding="0" cellspacing="0" width="80%">
 <tr>
@@ -656,4 +656,4 @@ Developmental Dynamics (an AAA journal).</font></p></font><font size="2">
 <p><a href="#August 14, 2000"><font face="Comic Sans MS">Return to Table of Contents</font></a></p>
 <hr>
 </div>
-</zfin2:page>
+</z:page>

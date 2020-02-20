@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN NIH RFA">
+<z:page title="ZFIN NIH RFA">
 <div><h1>RFA on Mutagenesis Screen/Phenotyping Tools for Zebrafish</h1>
 <p>The Trans-NIH Zebrafish Coordinating Committee (ZFCC), under the co-chairmanship 
   of the National Institute of Child Health and Human Development (NICHD) and 
@@ -30,4 +30,4 @@
 <p> <a href="http://grants.nih.gov/grants/guide/rfa-files/RFA-HD-00-004.html">http://grants.nih.gov/grants/guide/rfa-files/RFA-HD-00-004.html 
   </a></p>
 </div>
-</zfin2:page>
+</z:page>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN News 2005">
+<z:page title="ZFIN News 2005">
 <div><table cellspacing="0" width="100%">
 <tr>
 <td align="left" width="80%">
@@ -51,4 +51,4 @@ contact <a href="mailto:zfinadmn@zfin.org">Jonathan Knight</a>.
 <br>
 It's still 'early days' - it takes time and effort to annotate  figures and load them into the database, and some journals still  impose copyright restrictions, but we're keeping up with new  publications and plan to gradually add figures from older papers.  <a href="/action/expression/search">Try out the new gene expression search page.</a>
 </p></div>
-</zfin2:page>
+</z:page>

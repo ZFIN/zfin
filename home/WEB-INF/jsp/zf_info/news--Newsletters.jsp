@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN NEWS - ZFIN Newsletter">
+<z:page title="ZFIN NEWS - ZFIN Newsletter">
 <div>
 <h3>"ZFIN NEWS" is the ZFIN Newsletter, published bi-annually at the University of Oregon.  </h3>
 <a href="ZNEWS_fall_09.pdf"> Vol. 6, No. 2 - Fall 2009</a>
@@ -63,4 +63,4 @@
 		 Phenotype Futures <br>
 		 Gene Ontology Annotation Of Zebrafish Genes </blockquote>
 </div>
-</zfin2:page>
+</z:page>

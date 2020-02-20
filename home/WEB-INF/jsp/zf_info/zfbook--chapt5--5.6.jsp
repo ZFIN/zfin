@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN: Zebrafish Book: Cellular Methods">
+<z:page title="ZFIN: Zebrafish Book: Cellular Methods">
 <div><table align="center" bgcolor="#ffcccc" width="50%"> <tr><td class="small"> This material is from the 4th edition of The Zebrafish Book.  The 5th edition is available <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">in print</a> and within the <a href="https://wiki.zfin.org/display/prot/ZFIN+Protocol+Wiki">ZFIN Protocol Wiki</a>.  </td></tr> <table>
 <b><i><h1>CHAPTER 5 - CELLULAR METHODS</h1></i></b><p>
 </p><h2><a name="6">Overview of Single Cell Transplantation</a></h2>
@@ -13,4 +13,4 @@ During cell transplantation, arrange the labeled donor embryos and unlabeled hos
 <hr>
 <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%2520Zebrafish%2520Book"><b>The Zebrafish Book</b></a>
 </b></p></table></table></div>
-</zfin2:page>
+</z:page>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Zebrafish anatomical dictionary December 10,1999 meeting">
+<z:page title="ZFIN Zebrafish anatomical dictionary December 10,1999 meeting">
 <div><h1 align="center"><font face="Helvetica" size="4"> Summary of the Zebrafish Anatomical
   Dictionary Workshop <br>
   December 10, 1999 </font></h1>
@@ -171,4 +171,4 @@
     Gower Street, London WC1E 6BT, UNITED KINGDOM</li>
 </ul>
 </div>
-</zfin2:page>
+</z:page>

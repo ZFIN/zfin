@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 2(2)">
+<z:page title="ZFIN ZF Monitor Vol 2(2)">
 <div><b>LETTERS TO THE EDITOR</b><p>
 To the Editor:</p><p>
 	I write to argue that Zebrafish Science Monitor (ZSM) should continue to
@@ -30,4 +30,4 @@ Eugene, OR  97403 USA  <br>
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

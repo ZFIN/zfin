@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 3(2)">
+<z:page title="ZFIN ZFMonitor Vol 3(2)">
 <div><h3>TEMPERATURE AND THE RATE OF EMBRYONIC DEVELOPMENT</h3><p>
 </p><p>
 By C.B. Kimmel and B. Ullmann, Institute of Neuroscience, 1254 University of Oregon, Eugene, OR 97403-1254, USA.</p><p>
@@ -18,4 +18,4 @@ Stage abbreviations in the figure (including time to reach the stage at 28.5&#17
 <a href="contents.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

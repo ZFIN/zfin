@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN: Zebrafish Book: Recipes">
+<z:page title="ZFIN: Zebrafish Book: Recipes">
 <div><table align="center" bgcolor="#ffcccc" width="50%"> <tr><td class="small"> This material is from the 4th edition of The Zebrafish Book.  The 5th edition is available <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">in print</a> and within the <a href="https://wiki.zfin.org/display/prot/ZFIN+Protocol+Wiki">ZFIN Protocol Wiki</a>.  </td></tr> <table>
 <b><i>
 <h1>CHAPTER 6 - DISSOCIATED CELL CULTURE</h1></i></b><p>
@@ -76,4 +76,4 @@ Zebrafish embryonic cells attach well to glass coated with laminin or to plastic
 L-15 (Sigma), 0.3 mg/ml glutamine, 50 U/ml penicillin, 0.05 mg/ml streptomycin, 0.8 mM CaCl2, 10% embryo extract, and 3% fetal calf serum. Filter through a syringe filter.
 
 </p></table></table></div>
-</zfin2:page>
+</z:page>

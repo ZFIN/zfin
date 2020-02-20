@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN  Westerfield et al., On-Line Database">
+<z:page title="ZFIN  Westerfield et al., On-Line Database">
 <div><p>
 
 Sem. Cell Devel. Biol. 8:477-488, 1997.<br>
@@ -148,4 +148,4 @@ CP, Kelsh RN, Furutani-Seiki M, Vogelsang E, Beuchle D, Schach U, Fabian C, N&#2
 </p><p>Westerfield et al.,  On-line Zebrafish Database 		
 
 </p></li></div>
-</zfin2:page>
+</z:page>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="Zebrafish Genome Resources Tutorial">
+<z:page title="Zebrafish Genome Resources Tutorial">
 <div><h1 align="center"><a name="Meetings">Zebrafish Genome Resources Tutorial</a></h1>
 <p>ZFIN, the Sanger Institute, and NCBI provide a broad range of zebrafish web resources.   These resources include genome browsers, map viewers, gene expression, mutant, morpholino, sequence and orthology data, BLAST, data mining tools and much more.  These tutorials offer an opportunity to receive assistance with your questions.
 
@@ -33,4 +33,4 @@
    <br>iii. How Can I Find Possible Molecular Markers for an Anatomical Structure? (<a href="/zf_info/2006_tutorial/Madison_2006_workshopmodule_zfin-4iii.pdf">ZFIN</a>)
    </blockquote><br>
 </div>
-</zfin2:page>
+</z:page>

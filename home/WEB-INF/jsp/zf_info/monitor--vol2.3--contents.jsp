@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(3)">
+<z:page title="ZFIN ZFMonitor Vol 2(3)">
 <div><h1><i>THE ZEBRAFISH SCIENCE MONITOR</i></h1>
 <b><i>All the Zebrafish News That's Fit to Print</i><br></b>
 Volume 2, Issue 3, August 9, 1993, Eugene, Oregon<br><br><hr>
@@ -16,4 +16,4 @@ EXCELLENT HISTOLOGICAL RESULTS WITH ZEBRAFISH EMBRYOS</a></p><p>
 <a href="9.html">NUCLEIC ACID EXTRACTION PROCEDURE FOR ZEBRAFISH EMBRYOS</a>
 
 </p></div>
-</zfin2:page>
+</z:page>

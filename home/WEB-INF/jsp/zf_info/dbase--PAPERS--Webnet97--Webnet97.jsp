@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Task-centered Navigation in Web-accessible Dataspaces">
+<z:page title="ZFIN Task-centered Navigation in Web-accessible Dataspaces">
 <div><a name="top"></a>
 <a href="../Doerry97b.pdf"><img border="0" height="31" src="../../../../images/pdficon.gif" width="28"></a>
 <h1><center>
@@ -83,4 +83,4 @@ The increasing popularity of complex, web-accessible dataspaces demands intra-da
 <hr>Return to <a href="#top">Top of Page</a> || <a href="#index">Index</a>.
 
 </div>
-</zfin2:page>
+</z:page>

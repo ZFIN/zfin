@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Atlas of Zebrafish Anatomy">
+<z:page title="ZFIN Atlas of Zebrafish Anatomy">
 <div><h1><center>Anatomy of the 24, 48, 72 and 120 hours Zebrafish (<i>Danio
 rerio</i>) Embryo </center>
 </h1>
@@ -46,4 +46,4 @@ WWW page designed by Jonathan Delgado<br>
 <p></p><center><a href="anatomy/24hrs/24hrs.html"><img align="BOTTOM" border="0" height="47" naturalsizeflag="3" src="anatomy/24hrs.gif" width="153"></a><a href="anatomy/48hrs/48hrs.html"><img align="BOTTOM" border="0" height="47" naturalsizeflag="3" src="anatomy/48hrs.gif" width="153"></a><a href="anatomy/72hrs/72hrs.html"><img align="BOTTOM" border="0" height="47" naturalsizeflag="3" src="anatomy/72hrs.gif" width="153"></a><a href="anatomy/120hrs/120hrs.html"><img align="BOTTOM" border="0" height="47" naturalsizeflag="3" src="anatomy/120hrs.gif" width="153"></a></center>
 <p></p><hr>
 </div>
-</zfin2:page>
+</z:page>

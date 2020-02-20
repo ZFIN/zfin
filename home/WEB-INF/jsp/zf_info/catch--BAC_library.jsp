@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Instructions for proposing organisms from which to make new BAC libraries">
+<z:page title="ZFIN Instructions for proposing organisms from which to make new BAC libraries">
 <div><p><font face="Arial Black" size="4">*****FIRST RECEIPT DATE - NOVEMBER 15,
 2001*****</font></p>
 <p><font face="Arial">Instructions for proposing organisms from which to make
@@ -146,4 +146,4 @@ construction program, please contact:</font></p>
   e-mail: <a href="mailto:jane_peterson@nih.gov">jane_peterson@nih.gov</a> </font></p>
 </blockquote>
 </div>
-</zfin2:page>
+</z:page>

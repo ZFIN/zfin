@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN >Construction of a high-resolution Zebrafish genetic map">
+<z:page title="ZFIN >Construction of a high-resolution Zebrafish genetic map">
 <div><table cols="2" width="600">
 <tr>
 <td width="210"><b><i><font size="+4">Catch of the day...</font></i></b>
@@ -207,4 +207,4 @@
 </tr>
 </table>
 </div>
-</zfin2:page>
+</z:page>

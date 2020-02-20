@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 2(2)">
+<z:page title="ZFIN ZF Monitor Vol 2(2)">
 <div><b>CHARACTERIZATION OF A CELL LINE DERIVED FROM ZEBRAFISH
 (<i>BRACHYDANIO RERIO</i>) EMBRYOS</b><p>
 By Wolfgang Driever and Zehava Rangini</p><p>
@@ -25,4 +25,4 @@ of gene regulation in zebrafish.
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

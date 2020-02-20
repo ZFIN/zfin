@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 3(2)">
+<z:page title="ZFIN ZFMonitor Vol 3(2)">
 <div><h3>A GENETIC LINKAGE MAP FOR THE ZEBRAFISH</h3><p>
 By J.H. Postlethwait, S. Johnson, C.N. Midson, W.S. Talbot, M. Gates, E.W. Ballinger, D. Africa, R. Andrews, T. Carl, J.S. Eisen, S. Horne, C.B. Kimmel, M. Hutchinson, M. Johnson, and A. Rodriguez; Institute of Neuroscience, University of Oregon, Eugene, OR 97403-1254</p><p>
 <i>
@@ -9,4 +9,4 @@ To facilitate molecular genetic analysis of vertebrate development, haploid gene
 <a href="contents.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

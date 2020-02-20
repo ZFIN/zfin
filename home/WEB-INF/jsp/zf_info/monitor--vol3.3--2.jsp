@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 3(3)">
+<z:page title="ZFIN ZF Monitor Vol 3(3)">
 <div><h2>BIONET NEWS GROUP ESTABLISHED</h2>
 <h3>by Dick Vogt</h3><p>
 </p><p>
@@ -71,4 +71,4 @@ Best wishes for a successful newsgroup!</p><p>
 <a href="cont.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

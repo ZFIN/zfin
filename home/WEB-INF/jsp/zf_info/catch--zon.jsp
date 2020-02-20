@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Zon letter">
+<z:page title="ZFIN Zon letter">
 <div><table cols="2" width="600">
 <tr>
 <td width="210"><b><i><font size="+4">Catch of the day...</font></i></b>
@@ -110,4 +110,4 @@ Marc Ekker - <a href="mailto:ekker@civich.ottawa.on.ca">ekker@civich.ottawa.on.c
 <br>Len Zon - <a href="mailto:zon@rascal.med.harvard.edu">zon@rascal.med.harvard.edu</a>
 
 </div>
-</zfin2:page>
+</z:page>

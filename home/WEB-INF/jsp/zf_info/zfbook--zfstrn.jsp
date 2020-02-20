@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN: Zebrafish Book: Strains">
+<z:page title="ZFIN: Zebrafish Book: Strains">
 <div><center>
 <h1>ZEBRAFISH STRAINS</h1>
 </center> 
@@ -14,4 +14,4 @@ Strains and strain information can be obtained through the <a href="http://zebra
     Book</a>, Chapter 7, Genetic Methods.<br>
 
 </p></div>
-</zfin2:page>
+</z:page>

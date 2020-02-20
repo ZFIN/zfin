@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 3(2)">
+<z:page title="ZFIN ZFMonitor Vol 3(2)">
 <div><h3>ELECTRONIC ZEBRAFISH</h3>
 <p>
 By M. Westerfield, Institute of Neuroscience, University of Oregon, Eugene, OR 97403-1254 USA.
@@ -22,4 +22,4 @@ If you don't know how to access a database, don't worry.  You can either ask a l
 <a href="contents.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(3)">
+<z:page title="ZFIN ZFMonitor Vol 2(3)">
 <div><h2>THE VENTRAL AND POSTERIOR EXPRESSION OF THE ZEBRAFISH HOMEOBOX GENE <i>EVE1</i> IS PERTURBED IN DORSALIZED AND MUTANT EMBRYOS</h2><p>
 <b>By J.-S. Joly<sup>1</sup>, C. Joly<sup>2</sup>, S. Schulte-Merker<sup>3</sup>,
 H. Boulekbache<sup>2</sup>, and H. Condamine<sup>1</sup></b></p><p>
@@ -39,4 +39,4 @@ and posterior cell fate, and provide first insights into its regulation.</p><p>
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

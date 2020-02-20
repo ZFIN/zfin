@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="Key to the Expression ratings">
+<z:page title="Key to the Expression ratings">
 <div><font size="+1"><b>Key to the Expression Rankings</b></font>
 <p>
     Probes from <a href="/ZDB-PUB-051025-1">Thisse, C.,
@@ -41,4 +41,4 @@
 </table>
 
 </div>
-</zfin2:page>
+</z:page>

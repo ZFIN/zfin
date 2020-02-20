@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN  Zebrafish Science Monitor">
+<z:page title="ZFIN  Zebrafish Science Monitor">
 <div><h2>The Zebrafish Science Monitor, Vol 4 (1)</h2>
 <h3><i>All the Zebrafish News That's Fit to Print</i></h3>
 <hr>
@@ -22,4 +22,4 @@
 <hr>
  Return to <a href="/zf_info/monitor/mon.html">Monitor Contents</a>
 </div>
-</zfin2:page>
+</z:page>

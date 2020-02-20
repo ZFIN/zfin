@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN News 2006">
+<z:page title="ZFIN News 2006">
 <div><table cellspacing="0" width="100%">
 <tr>
 <td align="left" width="80%">
@@ -237,4 +237,4 @@ website <a href="http://www.zf-models.org">http://www.zf-models.org</a>.</p><br>
 <p><br>
 </p>
 </div>
-</zfin2:page>
+</z:page>

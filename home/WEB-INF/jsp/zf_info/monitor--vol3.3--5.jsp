@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 3(3)">
+<z:page title="ZFIN ZF Monitor Vol 3(3)">
 <div><h2>A SIMPLE AND RELIABLE PROTOCOL FOR RAISING FRESHWATER ROTIFIERS AS BABY FOOD</h2><p>
 </p><p>
 By M.R. Naegeli and J. Wittbrodt, Biocenter of the University of Basel, Klingelbergstrasse 70, 
@@ -38,4 +38,4 @@ Don't forget to have 3 funnels of algae culture, so that you always have one rea
 <a href="cont.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

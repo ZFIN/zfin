@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 2(2)">
+<z:page title="ZFIN ZF Monitor Vol 2(2)">
 <div><b>NEW PROTOCOLS FOR RAISING BABIES</b><p>
 By Michael B. Rust</p><p>
 School of Fisheries, WH 10, University of Washington, Seattle, WA 98195</p><p>
@@ -59,4 +59,4 @@ fruit flies, or liver paste.
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

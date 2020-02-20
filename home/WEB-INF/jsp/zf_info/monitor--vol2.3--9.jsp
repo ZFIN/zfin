@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(3)">
+<z:page title="ZFIN ZFMonitor Vol 2(3)">
 <div><h3>NUCLEIC ACID EXTRACTION PROCEDURE FOR ZEBRAFISH EMBRYOS</h3><p>
 By Debbie Ellies, Loeb Institute for Medical Research, Ottawa Civic Hospital,
 725 Parkdale Avenue, Ottawa, Ontario, CANADA K1Y 4E9</p><p>
@@ -44,4 +44,4 @@ visible and can be centrifuged right away.</i>
 </li></ul><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

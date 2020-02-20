@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 3(2)">
+<z:page title="ZFIN ZFMonitor Vol 3(2)">
 <div><h3>LARGE-SCALE MUTAGENESIS IN THE ZEBRAFISH: IN SEARCH OF GENES CONTROLLING DEVELOPMENT IN A VERTEBRATE</h3><p>
 By M.C. Mullins, M. Hammerschmidt, P. Haffter, and C. N&#252;sslein-Volhard</p><p>
 Max-Planck-Institut f&#252;r Entwicklungsbiologie, Spemannstrasse 35/III, 72076 T&#252;bingen, GERMANY</p><p>
@@ -13,4 +13,4 @@ Conclusion:  The high rate of induction and recovery of point mutations, in addi
 <a href="contents.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(4)">
+<z:page title="ZFIN ZFMonitor Vol 2(4)">
 <div><h1><i>THE ZEBRAFISH SCIENCE MONITOR</i></h1>
 <b><i>All the Zebrafish News That's Fit to Print</i><br></b>
 Volume 2, Issue 4, October 25, 1993, Eugene, Oregon<br><br><hr>
@@ -508,4 +508,4 @@ Robinson, J., E.A. Schmitt, F.I. H&#225;rosi, R.J. Reece, and J.E. Dowling (1993
 Str&#228;hle, U., P. Blader, D. Henrique, and P.W. Ingham (1993) <i>Axial</i>, a zebrafish gene expressed along the developing body axis, shows altered expression in <i>cyclops</i> mutant embryos.  <i>Genes Dev.</i> <b>7</b>:1436-1446.
 
 </p></div>
-</zfin2:page>
+</z:page>

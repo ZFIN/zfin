@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Zebrafish Science Monitor, Vol. 6 (1)">
+<z:page title="ZFIN Zebrafish Science Monitor, Vol. 6 (1)">
 <div><div align="center"><center>
 <table border="3" bordercolordark="#000080" bordercolorlight="#C0C0C0" cellpadding="0" cellspacing="0" width="80%">
 <tr>
@@ -615,4 +615,4 @@ procedure is labor intensive and is stressful for the fish. </font></p>
 <hr>
 </a>
 </align></div>
-</zfin2:page>
+</z:page>

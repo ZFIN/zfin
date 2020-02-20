@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 3(5)">
+<z:page title="ZFIN ZF Monitor Vol 3(5)">
 <div><h2>The Zebrafish Science Monitor Vol 3(5)</h2>
 <b>ZEBRAFISH WEB SERVER (SOUTH CAROLINA) CHANGES</b>
 <p>
@@ -22,4 +22,4 @@ pointers set to a specific file, please note this change.
 <b>Zebrafish Science Monitor Vol 3(5)</b><br>
 <a href="cont.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

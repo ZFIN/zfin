@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 3(1)">
+<z:page title="ZFIN ZFMonitor Vol 3(1)">
 <div><h1><i>THE ZEBRAFISH SCIENCE MONITOR</i></h1>
 <b><i>All the Zebrafish News That's Fit to Print</i><br></b>
 <img src="figures/logo.gif"><br>
@@ -496,4 +496,4 @@ Van Asselt, E., F. De Graaf, and W. Van Raamsdonk (1993) Ultrastructural charact
 Wilson, E.T., K.A. Helde, and D.J. Grunwald (1993) Something's fishy here--Rethinking cell  movements and cell fate in the zebrafish embryo.  <i>Trends Genet.</i> <b>9</b>:348-352.
 
 </p></li></div>
-</zfin2:page>
+</z:page>

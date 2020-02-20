@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 3(2)">
+<z:page title="ZFIN ZFMonitor Vol 3(2)">
 <div><h2><a name="2">CSH MEETING ON ZEBRAFISH DEVELOPMENT AND GENETICS: SYNOPSIS OF COMMUNITY ORGANIZATIONAL SESSION</a></h2>
 <p>
 By J.S. Eisen<i>1</i> and S. Fraser<i>2</i><br>
@@ -91,4 +91,4 @@ Several groups are considering or in the process of putting together anatomical 
 <a href="contents.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

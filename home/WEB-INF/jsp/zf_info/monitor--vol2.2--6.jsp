@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 2(2)">
+<z:page title="ZFIN ZF Monitor Vol 2(2)">
 <div><b>CELL CYCLES, CLONAL STRINGS, AND THE ORIGIN OF THE
 ZEBRAFISH CENTRAL NERVOUS SYSTEM</b><p>
 By Charles B. Kimmel, Rachel M. Warga<b>*</b>, and Donald A. Kane<b>*</b></p><p>
@@ -24,4 +24,4 @@ be cell-cycle dependent.
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

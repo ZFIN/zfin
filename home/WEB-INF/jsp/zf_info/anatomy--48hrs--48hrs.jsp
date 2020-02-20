@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN The 48 hr embryo">
+<z:page title="ZFIN The 48 hr embryo">
 <div><h1>The 48 hr Embryo</h1>
 <h2>Dorsal view</h2>
 <br>
@@ -38,4 +38,4 @@
 <a href="../dev_atlas.html">Back to Atlas of Zebrafish Anatomy </a>
 <hr>Last updated: 26 February 1996 
 </div>
-</zfin2:page>
+</z:page>

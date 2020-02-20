@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 3(3)">
+<z:page title="ZFIN ZF Monitor Vol 3(3)">
 <div><h2>PUBLICATIONS ON GASTRULATION IN RELATED SPECIES</h2><p>
 By J.P. Trinkaus, Department of Biology, Osborn Memorial Laboratories, P.O. Box 6666, New Haven, CT 06511-8155</p><p>
 
@@ -21,4 +21,4 @@ Wood, A. and L.P.M. Timmermans (1988) Teleost epiboly: reassessment of deep cell
 <a href="cont.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

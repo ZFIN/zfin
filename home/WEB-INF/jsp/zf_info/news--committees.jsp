@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="Zebrafish Committees and Working Groups">
+<z:page title="Zebrafish Committees and Working Groups">
 <div><h1 align="center"><b>Committees and Working Groups</b></h1>
 <hr>
 <p><b>Zebrafish Nomenclature Committee (ZNC)</b></p>
@@ -88,4 +88,4 @@
 <li><a href="/ZDB-PERS-960805-635">Len Zon</a> - Division of Hematology/Oncology, Howard Hughes Medical Institute, USA</li>
 </ul>
 </div>
-</zfin2:page>
+</z:page>

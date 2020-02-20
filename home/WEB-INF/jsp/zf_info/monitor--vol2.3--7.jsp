@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(3)">
+<z:page title="ZFIN ZFMonitor Vol 2(3)">
 <div><h2>GENOMIC LIBRARY</h2><p>
 By Scott E. Stachel, Department of Molecular and Cell Biology, Division of
 Biochemistry, and Molecular Biology, 401 Barker Hall, University of California
@@ -22,4 +22,4 @@ Inserts have been in the 20 kb size range.</p><p>
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

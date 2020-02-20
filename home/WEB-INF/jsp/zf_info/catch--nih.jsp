@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN TRANS-NIH ZEBRAFISH COORDINATING COMMITTEE ROSTER">
+<z:page title="ZFIN TRANS-NIH ZEBRAFISH COORDINATING COMMITTEE ROSTER">
 <div><hr size="5">
 <center>
 <h1>
@@ -45,4 +45,4 @@ Dr. David Badman NIDDK 45/6AS-13C 594-7717 <a href="mailto:David_Badman@nih.gov"
 </p><p>Updated&#160;&#160; 3/11/99
 
 </p></div>
-</zfin2:page>
+</z:page>

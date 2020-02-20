@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN The Zebrafish Science Monitor">
+<z:page title="ZFIN The Zebrafish Science Monitor">
 <div><h1 align="center"><strong>The Zebrafish Science Monitor</strong></h1>
 <h2 align="center">Volume 2, Issue 1</h2>
 <h2 align="center">September 21, 1992</h2>
@@ -809,4 +809,4 @@ collect embryos in an Eppendorf tube.  Remove as much water as possible and put 
 liquid nitrogen.  With a precooled device, grind the embryos to a fine powder.  Afterwards,
 follow steps 4-15 and scale down the required volumes accordingly.
 </p></div>
-</zfin2:page>
+</z:page>
