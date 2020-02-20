@@ -8,12 +8,6 @@
 
     <zfin2:dataManager oboID="${formBean.term.oboID}" termID="${formBean.term.zdbID}"/>
 
-    <div style="float: right;">
-        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:putAttribute name="subjectName" value="${formBean.term.termName}"/>
-        </tiles:insertTemplate>
-    </div>
-
     <table class="primary-entity-attributes">
 
         <tr>

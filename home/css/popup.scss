@@ -1,19 +1,8 @@
-div.popup-header {
-    margin: 0 0 3px;
-    background: #eee;
-    padding: 5px;
-    font-weight: bold;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-bottom: 2px solid #ccc;
-}
+@import "theme";
 
 div.popup-body {
     max-height: 450px;
     overflow-y: auto;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    padding: 5px;
 }
 
 div.popup-actions {
@@ -26,7 +15,7 @@ div.phenotype-popup-body {
 }
 
 hr.popup-divider {
-    background-color: #ddd;
+    background-color: $border-color;
     height: 2px;
     width: 100%;
     padding: 0;

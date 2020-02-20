@@ -24,12 +24,6 @@
                        prototypeURL="/action/marker/gene/prototype-view/${markerID}"
     />
 
-    <div style="float: right">
-        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:putAttribute name="subjectName" value="${formBean.marker.name}"/>
-        </tiles:insertTemplate>
-    </div>
-
     <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"
                     soTerm="${formBean.zfinSoTerm}" geneDesc="${formBean.allianceGeneDesc}" userID="${formBean.user.zdbID}"/>
 

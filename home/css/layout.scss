@@ -8,12 +8,11 @@ body {
 }
 
 header {
-    @include shadow;
     display: flex;
     position: relative;
     align-items: center;
     background: $primary-light;
-    border-bottom: 4px solid $primary;
+    border-bottom: $border-width-heavy solid $primary;
     margin-bottom: 10px;
     height: 80px;
     box-sizing: border-box;
@@ -21,7 +20,8 @@ header {
     font-size: 16px;
     line-height: 1.15;
     color: $grey-dark;
-    z-index: 101;
+    z-index: $header-z-index;
+    box-shadow: $shadow;
 
     * {
         box-sizing: border-box;
@@ -154,7 +154,7 @@ header {
     }
 
     .dropdown {
-        @include elevated-shadow;
+        box-shadow: $shadow-elevated;
         visibility: hidden;
         position: fixed;
         left: 0;
@@ -162,7 +162,7 @@ header {
         background: $primary;
         color: white;
         padding: 20px;
-        z-index: 101;
+        z-index: $header-z-index;
         font-size: 0.9em;
         flex-wrap: wrap;
 
@@ -203,7 +203,7 @@ header {
             padding: 10px 30px 10px 10px;
             background: rgba(255, 255, 255, 0.75);
             border: none;
-            border-radius: 3px;
+            border-radius: $border-radius;
             width: 100%;
             display: block;
         }
@@ -253,7 +253,7 @@ footer {
     font-size: 14px;
     line-height: 1.15;
     box-sizing: border-box;
-    z-index: 1;
+    z-index: $footer-z-index;
 
     a, a:hover, a:active {
         color: white;
@@ -361,4 +361,20 @@ footer {
 
 .uber-banner a:hover {
     color: white;
+}
+
+#input-welcome-button {
+    box-shadow: $shadow-elevated;
+    position: fixed;
+    right: 1rem;
+    bottom: 0;
+    z-index: $input-welcome-z-index;
+    background: rgba(white, 0.9);
+    border: 1px solid $border-color;
+    border-bottom: none;
+    font-family: inherit;
+    font-size: 0.85rem;
+    line-height: 1;
+    padding: 0.75rem 1rem;
+    border-radius: $border-radius $border-radius 0 0;
 }

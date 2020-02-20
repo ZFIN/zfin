@@ -5,12 +5,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.MarkerBean" scope="request"/>
 
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${formBean.marker.name}"/>
-    </tiles:insertTemplate>
-</div>
-
 <span class="name-label">Clone Name: <zfin:link entity="${formBean.marker}"/></span>
 <p>
 <strong>Note:</strong>

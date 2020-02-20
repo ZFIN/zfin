@@ -112,12 +112,6 @@ table.data_manager a.root {
     font-style: normal;
 }
 
-/*** Your Input Welcome form ***/
-.yourinputwelcome {
-    float: right;
-    margin: .3em;
-}
-
 /** error messages for forms **/
 .error {
     color: red;
@@ -455,10 +449,6 @@ table.searchform th {
     font-size: large;
     margin-left: 2px;
     color: #666;
-}
-
-.search-form-your-input-welcome {
-    float: right;
 }
 
 .postal-address {

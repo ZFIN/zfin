@@ -4,12 +4,6 @@
 
 <div class="data-sub-page-title">Antibody Expression Figure Summary</div>
 
-<div style="float: right; margin: .2em;">
-<tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-    <tiles:putAttribute name="subjectName" value="${formBean.antibody.name}"/>
-</tiles:insertTemplate>
-</div>
-
 <zfin2:expressionSummaryCriteria criteria="${formBean.expressionSummaryCriteria}"/>
 
 <div class="summary">

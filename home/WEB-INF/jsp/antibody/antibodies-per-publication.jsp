@@ -11,11 +11,6 @@
                     </center>
                 </font>
             </td>
-            <td align="right" width="110" nowrap="nowrap">
-                <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                    <tiles:putAttribute name="subjectName" value="Antibodies per Publication"/>
-                </tiles:insertTemplate>
-            </td>
         </tr>
     </tbody>
 </table>

@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<a href="#" id="input-welcome-button" rel="#input-welcome-overlay"><button>Your Input Welcome</button></a>
+<button id="input-welcome-button" rel="#input-welcome-overlay">Your Input Welcome</button>
+
 <div class="jq-modal" id="input-welcome-overlay">
     <div class="popup-content">
         <div class="popup-header">
@@ -34,7 +35,7 @@
                     </div>
                     <div class="control">
                         <label for="input-welcome-subject">Subject:</label>
-                        <input type="text" id="input-welcome-subject" name="yiw-subject" value="<tiles:getAsString name="subjectName"/>" />
+                        <input type="text" id="input-welcome-subject" name="yiw-subject" />
                     </div>
                     <div class="control">
                         <label for="input-welcome-comments">Comments:</label>

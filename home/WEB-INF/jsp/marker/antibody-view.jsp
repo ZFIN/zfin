@@ -7,13 +7,6 @@
                    deleteURL="${formBean.deleteURL}"
                    mergeURL="${formBean.mergeURL}"/>
 
-
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${formBean.marker.name}"/>
-    </tiles:insertTemplate>
-</div>
-
 <zfin2:antibodyMarkerHeader antibodyBean="${formBean}"/>
 
 <zfin2:externalNotes notes="${formBean.externalNotes}"/>

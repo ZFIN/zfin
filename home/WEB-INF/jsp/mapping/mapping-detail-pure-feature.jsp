@@ -4,11 +4,6 @@
 
 <div class="titlebar">
     <h1>Mapping Details</h1>
-    <span class="yourinputwelcome">
-        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:putAttribute name="subjectName" value="Mapping Details"/>
-        </tiles:insertTemplate>
-    </span>
 </div>
 
 <table class="primary-entity-attributes">

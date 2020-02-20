@@ -14,7 +14,7 @@ body.data-page {
     flex-shrink: 0;
     background: white;
     z-index: 1;
-    @include shadow;
+    box-shadow: $shadow;
 
     .nav {
         position: -webkit-sticky;

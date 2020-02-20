@@ -54,11 +54,6 @@
 
 <div class="titlebar">
     <h1>${formBean.results == null ? "Search for Publications" : "Modify your search"}</h1>
-    <span class="yourinputwelcome">
-        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:putAttribute name="subjectName" value="Publication search"/>
-        </tiles:insertTemplate>
-    </span>
 </div>
 
 <form:form method="get" modelAttribute="formBean" id="pub-search-form">

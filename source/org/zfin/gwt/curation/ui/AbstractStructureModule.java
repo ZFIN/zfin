@@ -110,7 +110,6 @@ public abstract class AbstractStructureModule extends Composite implements Struc
     private void initSizePanel() {
         Widget boxCheckAndSize = new BoxCheckAndSize(false, RootPanel.get(STRUCTURES_DISPLAY), publicationID);
         boxCheckAndSize.setWidth("100%");
-        boxCheckAndSize.setStyleName("yourinputwelcome");
         RootPanel.get(CHECK_SIZE_BAR).add(boxCheckAndSize);
     }
 

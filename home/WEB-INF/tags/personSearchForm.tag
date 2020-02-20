@@ -9,13 +9,6 @@
         Search for People
         <a href="/action/profile/help/international-characters" class="popup-link help-popup-link"></a>
     </div>
-
-
-    <div class="search-form-your-input-welcome">
-        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:putAttribute name="subjectName" value="Person search"/>
-        </tiles:insertTemplate>
-    </div>
 </div>
 
 

@@ -6,12 +6,6 @@
 <zfin2:dataManager zdbID="${markerHistory.zdbID}"
                    showLastUpdate="false"/>
 
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${markerHistory.event} "/>
-    </tiles:insertTemplate>
-</div>
-
 <zfin2:subsection title="Nomenclature"
                   showNoData="false" inlineTitle="true">
     Event for <zfin:link entity="${markerHistory.marker}"/>

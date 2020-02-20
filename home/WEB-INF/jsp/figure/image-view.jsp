@@ -19,20 +19,6 @@
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"/>
 
-
-
-
-
-<c:if test="${image.figure ne null}">
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-
-        <tiles:putAttribute name="subjectName" value="${image.figure.publication.shortAuthorList} - ${image.figure.label}"/>
-
-    </tiles:insertTemplate>
-</div>
-</c:if>
-
 <%--<zfin-figure:publicationInfo publication="${image.figure.publication}"
                              submitters="${submitters}"
                              showThisseInSituLink="${showThisseInSituLink}"
