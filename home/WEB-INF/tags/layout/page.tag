@@ -51,11 +51,11 @@
         </script>
     </head>
     <body class="${bodyClass}" data-spy="scroll" data-target=".data-page-nav-container">
-        <zfin2:pageHeader/>
+        <z:pageHeader/>
         <main>
             <jsp:doBody/>
         </main>
-        <zfin2:pageFooter/>
+        <z:pageFooter/>
         <zfin2:yourInputWelcome />
     </body>
 </html>
