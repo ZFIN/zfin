@@ -276,7 +276,7 @@ public class GeneViewController {
         }
         prepareGeneView(model, zdbID);
 
-        return "marker/gene-prototype-view.page";
+        return "marker/gene/gene-view.page";
     }
 
     @RequestMapping(value = "/gene/edit/{zdbID}")
