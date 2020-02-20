@@ -5,7 +5,7 @@
 
 <section class="section" id="${zfn:makeDomIdentifier(title)}">
     <div class="heading">${title}</div>
-    <zfin-prototype:ifHasData test="${hasData}">
+    <z:ifHasData test="${hasData}">
         <jsp:doBody />
-    </zfin-prototype:ifHasData>
+    </z:ifHasData>
 </section>

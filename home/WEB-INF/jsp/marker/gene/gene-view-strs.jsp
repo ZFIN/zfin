@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.mutantOnMarkerBeans.knockdownReagents}">
+<z:dataTable collapse="true" hasData="${!empty formBean.mutantOnMarkerBeans.knockdownReagents}">
     <thead>
         <tr>
             <th>Targeting Reagent</th>
@@ -31,4 +31,4 @@
             </td>
         </tr>
     </c:forEach>
-</zfin-prototype:dataTable>
+</z:dataTable>

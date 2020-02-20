@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.mutantOnMarkerBeans.features}">
+<z:dataTable collapse="true" hasData="${!empty formBean.mutantOnMarkerBeans.features}">
     <thead>
         <tr>
             <th width="10%">Allele</th>
@@ -61,4 +61,4 @@
             </tr>
         </c:forEach>
     </tbody>
-</zfin-prototype:dataTable>
+</z:dataTable>

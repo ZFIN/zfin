@@ -8,6 +8,6 @@
         <jsp:doBody />
     </c:when>
     <c:otherwise>
-        <zfin-prototype:noData>${noDataMessage}</zfin-prototype:noData>
+        <z:noData>${noDataMessage}</z:noData>
     </c:otherwise>
 </c:choose>

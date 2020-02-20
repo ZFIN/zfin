@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.proteinDomainBeans}">
+<z:dataTable collapse="true" hasData="${!empty formBean.proteinDomainBeans}">
     <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
         <thead>
             <tr>
@@ -19,9 +19,9 @@
             </c:forEach>
         </tbody>
     </c:if>
-</zfin-prototype:dataTable>
+</z:dataTable>
 
-<zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.proteinDetailDomainBean}">
+<z:dataTable collapse="true" hasData="${!empty formBean.proteinDetailDomainBean}">
     <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
         <thead>
             <tr>
@@ -30,23 +30,18 @@
                 <c:forEach var="category" items="${formBean.proteinType}">
                     <th>${category}</th>
                 </c:forEach>
-
-
             </tr>
         </thead>
         <tbody>
             <c:forEach var="category" items="${formBean.proteinDetailDomainBean.interProDomains}">
                 <tr>
-                    <td>   ${category.proDetail.upID}</td>
-                    <td>   ${category.proDetail.upLength}</td>
-
+                    <td>${category.proDetail.upID}</td>
+                    <td>${category.proDetail.upLength}</td>
                     <c:forEach var="entry" items="${category.interProDomain}">
-
                         <td style="padding-right: 1em;"><b>${entry.value}</b></td>
                     </c:forEach>
-
                 </tr>
             </c:forEach>
         </tbody>
     </c:if>
-</zfin-prototype:dataTable>
+</z:dataTable>

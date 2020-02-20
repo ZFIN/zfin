@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<zfin-prototype:dataTable collapse="true" hasData="${!empty formBean.diseaseModelDisplays}">
+<z:dataTable collapse="true" hasData="${!empty formBean.diseaseModelDisplays}">
     <thead>
         <tr>
             <th>Human Disease</th>
@@ -30,4 +30,4 @@
             </tr>
         </c:forEach>
     </tbody>
-</zfin-prototype:dataTable>
+</z:dataTable>
