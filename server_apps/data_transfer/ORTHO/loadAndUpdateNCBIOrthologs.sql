@@ -316,7 +316,7 @@ create view obsoleteOrthos as
     WHERE ortho_other_species_ncbi_gene_is_obsolete ='t'
     ORDER BY mrkr_zdb_id;
 
-\copy (select * from obsoleteOrthos) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/obsolete_orthos.txt' with delimiter as '	' null as '';
+\copy (select * from obsoleteOrthos) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/ortho_obsolete.txt' with delimiter as '	' null as '';
 drop view obsoleteOrthos;
 
 commit work;
