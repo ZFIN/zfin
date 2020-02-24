@@ -21,6 +21,7 @@ import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.zfin.gwt.curation.ui.CurationEntryPoint.curationService;
@@ -52,6 +53,7 @@ public class DiseaseModelPresenter implements Presenter {
             return;
         processing = true;
         DiseaseAnnotationDTO disease = getDiseaseModel();
+        Window.alert(disease.getFish().getHandle());
 
         if (disease == null) {
             processing = false;
@@ -68,15 +70,23 @@ public class DiseaseModelPresenter implements Presenter {
     private DiseaseAnnotationDTO getDiseaseModel() {
         DiseaseAnnotationDTO dto = new DiseaseAnnotationDTO();
         int selectedIndexFish = view.getFishSelectionBox().getSelectedIndex();
+
+
         int selectedIndexEnv = view.getEnvironmentSelectionBox().getSelectedIndex();
+
+
         if ((selectedIndexFish == 0 && selectedIndexEnv > 0) ||
                 (selectedIndexFish > 0 && selectedIndexEnv == 0)) {
             setError("You need to select both a Fish and an Environment or none at all.");
             return null;
         }
         if (selectedIndexEnv > 0 && selectedIndexFish > 0) {
-            FishDTO fish = fishList.get(selectedIndexFish - 1);
-            ExperimentDTO environment = environmentList.get(selectedIndexEnv - 1);
+
+            FishDTO fish = fishList.get(selectedIndexFish-1);
+            
+
+            ExperimentDTO environment = environmentList.get(selectedIndexEnv-1);
+
             if (fish.isWildtype() && environment.isStandard()) {
                 setError("You cannot use a wildtype fish with Standard or Generic Control environment");
                 return null;
@@ -240,7 +250,16 @@ public class DiseaseModelPresenter implements Presenter {
             super.onFinish();
             if (list == null)
                 return;
-            view.getFishSelectionBox().clear();
+            if (list.size() > 0) {
+
+                Collections.sort(list, new Comparator<FishDTO>() {
+                    @Override
+                    public int compare(FishDTO o1, FishDTO o2) {
+                        return o1.compareToWildtypeFirst(o2);
+                    }
+                });
+            }
+           // view.getFishSelectionBox().clear();
             fishList = list;
             view.getFishSelectionBox().addItem("None");
             for (FishDTO dto : list) {
