@@ -5,7 +5,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
-import org.zfin.marker.repository.HibernateMarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.MarkerGoTermAnnotationExtn;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -18,6 +17,7 @@ import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
 
 /**
+ *
  */
 public class MarkerGoEvidencePresentation {
     public static ReferenceDatabase genbankReferenceDatabase;
@@ -160,22 +160,21 @@ public class MarkerGoEvidencePresentation {
         switch (inferenceCategory) {
             case ZFIN_MRPH_GENO:
             case ZFIN_GENE:
-                if (accession.startsWith("ZDB-MRPHLNO-") || accession.startsWith("ZDB-TALEN-") ||accession.startsWith("ZDB-CRISPR-")) {
+                if (accession.startsWith("ZDB-MRPHLNO-") || accession.startsWith("ZDB-TALEN-") || accession.startsWith("ZDB-CRISPR-")) {
                     //Marker sequenceTargetingReagent = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
                     SequenceTargetingReagent sequenceTargetingReagent = (SequenceTargetingReagent) HibernateUtil.currentSession().get(SequenceTargetingReagent.class, accession);
                     if (sequenceTargetingReagent == null) {
                         return "<span class=error>" + accession + " is a bad link</span>";
                     }
-                    return MarkerPresentation.getLink(sequenceTargetingReagent,false);
+                    return MarkerPresentation.getLink(sequenceTargetingReagent, false);
                 } else if (accession.startsWith("ZDB-GENO-")) {
                     Genotype genotype = (Genotype) HibernateUtil.currentSession().get(Genotype.class, accession);
                     return GenotypePresentation.getLink(genotype, false);
-                } else if (accession.startsWith("ZDB-GENE-")||accession.contains("RNAG")){
+                } else if (accession.startsWith("ZDB-GENE-") || accession.contains("RNAG")) {
                     //Marker gene = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
                     Marker gene = RepositoryFactory.getMarkerRepository().getMarkerOrReplacedByID(accession);
                     return MarkerPresentation.getLink(gene);
-                }
-                else {
+                } else {
                     return inferredFrom;
                 }
             case UNIPROTKB:
@@ -215,10 +214,9 @@ public class MarkerGoEvidencePresentation {
     }
 
 
-
     public static String generateAnnotationExtensionLink(MarkerGoTermAnnotationExtn mgtae) {
         String relationTerm = RepositoryFactory.getOntologyRepository().getTermByZdbID(mgtae.getRelationshipTerm()).getTermName();
-        if (mgtae.getIdentifierTerm()!=null) {
+        if (mgtae.getIdentifierTerm() != null) {
             if (mgtae.getIdentifierTerm().startsWith("ZDB-TERM")) {
                 Term extnTerm = RepositoryFactory.getOntologyRepository().getTermByZdbID(mgtae.getIdentifierTerm());
                 return relationTerm + "(" + TermPresentation.getLink(extnTerm, false) + ")";
@@ -230,10 +228,8 @@ public class MarkerGoEvidencePresentation {
                 return relationTerm + "(" + MarkerPresentation.getLink(gene) + ")";
             }
         }
-        return relationTerm+ "(" +mgtae.getIdentifierTermText() +")";
+        return relationTerm + "(" + mgtae.getIdentifierTermText() + ")";
     }
-
-
 
 
     public static String createGOLink(String accession, ForeignDB foreignDB, InferenceCategory inferenceCategory) {

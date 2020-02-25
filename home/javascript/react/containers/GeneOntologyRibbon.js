@@ -38,7 +38,7 @@ const GeneOntologyRibbon = ({geneId}) => {
         },
         {
             label: 'Annotation Extension',
-            content: ({annotExtns}) => <span dangerouslySetInnerHTML={{__html: annotExtns}} />,
+            content: ({annotationExtensions}) => annotationExtensions.map(ax => <div key={ax} dangerouslySetInnerHTML={{__html: ax}} />),
             width: '100px',
         },
         {
@@ -52,12 +52,14 @@ const GeneOntologyRibbon = ({geneId}) => {
         },
         {
             label: 'With/From',
-            content: ({inferredFrom}) => <span dangerouslySetInnerHTML={{__html: inferredFrom}} />,
+            content: ({inferenceLinks}) => inferenceLinks.map(il => <div key={il} dangerouslySetInnerHTML={{__html: il}} />),
             width: '120px',
         },
         {
-            label: 'Publication',
-            content: ({referencesLink}) => <span dangerouslySetInnerHTML={{__html: referencesLink}} />,
+            label: 'Publications',
+            content: ({publications}) => publications.map(pub => (
+                <div key={pub.zdbID}><a href={'/' + pub.zdbID} dangerouslySetInnerHTML={{__html: pub.shortAuthorList}} /></div>
+            )),
             width: '120px',
         },
     ];

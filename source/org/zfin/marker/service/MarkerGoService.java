@@ -5,14 +5,18 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.GeneOntologyAnnotationTableRow;
 import org.zfin.marker.presentation.MarkerGoViewTableRow;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermAnnotationExtn;
 import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -175,7 +179,7 @@ public class MarkerGoService {
         return termCounts;
     }
 
-    public JsonResultResponse<MarkerGoViewTableRow> getGoEvidence(String geneId, String termId, boolean isOther, Pagination pagination) throws IOException, SolrServerException {
+    public JsonResultResponse<GeneOntologyAnnotationTableRow> getGoEvidence(String geneId, String termId, boolean isOther, Pagination pagination) throws IOException, SolrServerException {
         long startTime = System.currentTimeMillis();
         Marker gene = markerRepository.getMarkerByID(geneId);
 
@@ -189,20 +193,48 @@ public class MarkerGoService {
                 slimTerms.forEach(term -> query.addFilterQuery("-term_id:" + SolrService.luceneEscape(term.getOboID())));
             }
         }
+
         query.setStart(pagination.getStart());
         query.setRows(pagination.getLimit());
+        query.add("group", "true");
+        query.add("group.field", FieldName.GROUP_KEY.getName());
+        query.add("group.limit", "-1");
+        query.add("group.ngroups", "true");
         query.setSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
 
         QueryResponse queryResponse = SolrService.getSolrClient("prototype").query(query);
+        GroupCommand groupResults = queryResponse.getGroupResponse().getValues().get(0);
         MarkerGoTermEvidenceRepository repository = RepositoryFactory.getMarkerGoTermEvidenceRepository();
-        List<MarkerGoTermEvidence> evidenceList = queryResponse.getResults().stream()
-                .map(doc -> repository.getMarkerGoTermEvidenceByZdbID(doc.getFieldValue(FieldName.ID.getName()).toString()))
-                .collect(Collectors.toList());
-        List<MarkerGoViewTableRow> results = getMarkerGoViewTableRows(gene, evidenceList);
 
-        JsonResultResponse<MarkerGoViewTableRow> response = new JsonResultResponse<>();
+        List<GeneOntologyAnnotationTableRow> results = groupResults.getValues().stream()
+                .map(group -> {
+                    GeneOntologyAnnotationTableRow row = new GeneOntologyAnnotationTableRow();
+                    SolrDocument firstInGroup = group.getResult().get(0);
+                    String id = (String) firstInGroup.getFieldValue(FieldName.ID.getName());
+                    MarkerGoTermEvidence groupEntry = repository.getMarkerGoTermEvidenceByZdbID(id);
+                    row.setQualifier(Objects.toString(groupEntry.getFlag(), ""));
+                    row.setTerm(groupEntry.getGoTerm());
+                    row.setEvidenceCode(groupEntry.getEvidenceCode());
+                    row.setInferenceLinks(groupEntry.getInferredFrom().stream()
+                            .map(InferenceGroupMember::getInferredFrom)
+                            .map(MarkerGoEvidencePresentation::generateInferenceLink)
+                            .collect(Collectors.toSet()));
+                    row.setAnnotationExtensions(groupEntry.getAnnotationExtensions().stream()
+                            .map(MarkerGoEvidencePresentation::generateAnnotationExtensionLink)
+                            .collect(Collectors.toSet()));
+                    Set<Publication> publications = group.getResult().stream()
+                            .map(doc -> (String) doc.getFieldValue(FieldName.ID.getName()))
+                            .map(repository::getMarkerGoTermEvidenceByZdbID)
+                            .map(MarkerGoTermEvidence::getSource)
+                            .collect(Collectors.toSet());
+                    row.setPublications(publications);
+                    return row;
+                })
+                .collect(Collectors.toList());
+
+        JsonResultResponse<GeneOntologyAnnotationTableRow> response = new JsonResultResponse<>();
         response.calculateRequestDuration(startTime);
-        response.setTotal((int) queryResponse.getResults().getNumFound());
+        response.setTotal(groupResults.getNGroups());
         response.setResults(results);
 
         return response;

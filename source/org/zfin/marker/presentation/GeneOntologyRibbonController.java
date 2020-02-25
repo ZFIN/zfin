@@ -133,11 +133,11 @@ public class GeneOntologyRibbonController {
 
     @JsonView(View.API.class)
     @RequestMapping(value = "/marker/{zdbID}/go")
-    public JsonResultResponse<MarkerGoViewTableRow> getGoAnnotations(@PathVariable String zdbID,
-                                                                     @RequestParam(required = false) String termId,
-                                                                     @RequestParam(required = false) boolean isOther,
-                                                                     @Version Pagination pagination) throws IOException, SolrServerException {
-        JsonResultResponse<MarkerGoViewTableRow> response = markerGoService.getGoEvidence(zdbID, termId, isOther, pagination);
+    public JsonResultResponse<GeneOntologyAnnotationTableRow> getGoAnnotations(@PathVariable String zdbID,
+                                                                               @RequestParam(required = false) String termId,
+                                                                               @RequestParam(required = false) boolean isOther,
+                                                                               @Version Pagination pagination) throws IOException, SolrServerException {
+        JsonResultResponse<GeneOntologyAnnotationTableRow> response = markerGoService.getGoEvidence(zdbID, termId, isOther, pagination);
         response.setHttpServletRequest(request);
 
         return response;
