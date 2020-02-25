@@ -66,9 +66,11 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                 <thead>
                     <tr>
                         {columns.map(column => (
-                            <th key={column.label} style={{width: column.width, textAlign: column.align}}>
-                                {column.label}
-                            </th>
+                            !column.hidden && (
+                                <th key={column.label} style={{width: column.width, textAlign: column.align}}>
+                                    {column.label}
+                                </th>
+                            )
                         ))}
                     </tr>
                 </thead>
@@ -76,6 +78,9 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                     {results.map(row => (
                         <tr key={stringToFunction(rowKey)(row)}>
                             {columns.map(column => {
+                                if (column.hidden) {
+                                    return null;
+                                }
                                 const valueGetter = stringToFunction(column.content);
                                 const value = valueGetter(row);
                                 return (

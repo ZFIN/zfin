@@ -198,9 +198,14 @@ public class MarkerGoService {
         query.setRows(pagination.getLimit());
         query.add("group", "true");
         query.add("group.field", FieldName.GROUP_KEY.getName());
-        query.add("group.limit", "-1");
+        query.add("group.limit", "100");
         query.add("group.ngroups", "true");
-        query.setSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
+
+        query.addSort(FieldName.TERM_ONTOLOGY.getName(), SolrQuery.ORDER.asc);
+        query.addSort(FieldName.NAME_SORT.getName(), SolrQuery.ORDER.asc);
+        query.addSort(FieldName.QUALIFIER.getName(), SolrQuery.ORDER.asc);
+        query.addSort(FieldName.EVIDENCE_CODE.getName(), SolrQuery.ORDER.asc);
+        query.addSort(FieldName.GROUP_KEY.getName(), SolrQuery.ORDER.asc);
 
         QueryResponse queryResponse = SolrService.getSolrClient("prototype").query(query);
         GroupCommand groupResults = queryResponse.getGroupResponse().getValues().get(0);
@@ -212,6 +217,7 @@ public class MarkerGoService {
                     SolrDocument firstInGroup = group.getResult().get(0);
                     String id = (String) firstInGroup.getFieldValue(FieldName.ID.getName());
                     MarkerGoTermEvidence groupEntry = repository.getMarkerGoTermEvidenceByZdbID(id);
+                    row.setOntology(groupEntry.getGoTerm().getOntology().getCommonName().replace("GO: ", ""));
                     row.setQualifier(Objects.toString(groupEntry.getFlag(), ""));
                     row.setTerm(groupEntry.getGoTerm());
                     row.setEvidenceCode(groupEntry.getEvidenceCode());

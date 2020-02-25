@@ -14,6 +14,7 @@ import java.util.Collection;
 @Setter
 public class GeneOntologyAnnotationTableRow {
 
+    @JsonView(View.API.class) private String ontology;
     @JsonView(View.API.class) private String qualifier;
     @JsonView(View.API.class) private GenericTerm term;
     @JsonView(View.API.class) private GoEvidenceCode evidenceCode;

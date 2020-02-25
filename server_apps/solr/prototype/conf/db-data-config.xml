@@ -5705,7 +5705,10 @@ and child.term_ontology = 'disease_ontology';
                            term_name as name,
                            marker_go_term_evidence.mrkrgoev_zdb_id as full_name,
                            term_name as name_sort,
-                           mrkrgoev_mrkr_zdb_id as gene_zdb_id
+                           term_ontology,
+                           mrkrgoev_mrkr_zdb_id as gene_zdb_id,
+                           mrkrgoev_gflag_name as qualifier,
+                           mrkrgoev_evidence_code as evidence_code
                        from marker_go_term_evidence
                            inner join term on marker_go_term_evidence.mrkrgoev_term_zdb_id = term.term_zdb_id
                            left outer join (

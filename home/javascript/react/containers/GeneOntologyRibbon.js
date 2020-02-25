@@ -27,6 +27,12 @@ const GeneOntologyRibbon = ({geneId}) => {
 
     const columns = [
         {
+            label: 'Ontology',
+            content: ({ontology}) => ontology,
+            width: '60px',
+            hidden: selected && selected.group.type !== 'GlobalAll',
+        },
+        {
             label: 'Qualifier',
             content: ({qualifier}) => qualifier,
             width: '60px',
