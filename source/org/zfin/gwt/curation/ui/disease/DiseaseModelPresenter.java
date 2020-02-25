@@ -53,7 +53,7 @@ public class DiseaseModelPresenter implements Presenter {
             return;
         processing = true;
         DiseaseAnnotationDTO disease = getDiseaseModel();
-        Window.alert(disease.getFish().getHandle());
+
 
         if (disease == null) {
             processing = false;
