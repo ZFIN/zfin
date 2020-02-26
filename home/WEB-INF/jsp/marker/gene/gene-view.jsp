@@ -76,11 +76,7 @@
     </z:section>
 
     <z:section title="${TRANSCRIPTS}">
-        <zfin2:markerTranscriptSummary
-                relatedTranscriptDisplay="${formBean.relatedTranscriptDisplay}"
-                locations="${formBean.locations}"
-                showAllTranscripts="true"
-        />
+        <jsp:include page="gene-view-transcripts.jsp" />
     </z:section>
 
     <z:section title="${CONSTRUCTS}">
