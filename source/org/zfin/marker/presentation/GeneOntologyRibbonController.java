@@ -122,6 +122,7 @@ public class GeneOntologyRibbonController {
                 ));
         RibbonSubject subject = new RibbonSubject();
         subject.setId(zdbID);
+        subject.setNumberOfAnnotations(allCounts.values().stream().mapToInt(Integer::intValue).sum());
         subject.setGroups(groups);
 
         // build the final result object

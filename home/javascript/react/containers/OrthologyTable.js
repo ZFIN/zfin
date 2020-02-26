@@ -36,7 +36,7 @@ const OrthologyTable = ({geneId}) => {
             label: 'Evidence',
             content: row => (
                 row.evidence.map((evidence) => (
-                    <div key={row.zdbID}>
+                    <div key={evidence.code}>
                         <OrthologyEvidenceLink
                             name={evidence.name}
                             code={evidence.code}
