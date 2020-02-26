@@ -217,6 +217,7 @@ public class MarkerGoService {
                     SolrDocument firstInGroup = group.getResult().get(0);
                     String id = (String) firstInGroup.getFieldValue(FieldName.ID.getName());
                     MarkerGoTermEvidence groupEntry = repository.getMarkerGoTermEvidenceByZdbID(id);
+                    row.setRowKey(group.getGroupValue());
                     row.setOntology(groupEntry.getGoTerm().getOntology().getCommonName().replace("GO: ", ""));
                     row.setQualifier(Objects.toString(groupEntry.getFlag(), ""));
                     row.setTerm(groupEntry.getGoTerm());

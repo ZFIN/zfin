@@ -108,7 +108,7 @@ const GeneOntologyRibbon = ({geneId}) => {
                 <DataTable
                     url={`/action/api/marker/${geneId}/go${termQuery}`}
                     columns={columns}
-                    rowKey='id'
+                    rowKey='rowKey'
                     tableState={tableState}
                     onTableStateChange={setTableState}
                 />
