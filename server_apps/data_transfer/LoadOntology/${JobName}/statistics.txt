@@ -1,0 +1,7 @@
+Report for ${JobName}
+=====================
+
+Report generated 2020-02-04 10:58:34
+
+No update found for spatial load. Current version saved by null on January 24, 2020.
+
