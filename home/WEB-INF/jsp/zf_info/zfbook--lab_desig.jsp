@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN :   Line Designations">
+<z:page title="ZFIN :   Line Designations">
 <div><table align="center" bgcolor="#ffcccc" width="50%">
 <tr><td class="small">
      These line designations are outdated and are kept for historical reasons only (from December 2010).
@@ -1108,4 +1108,4 @@ Medicine</td>
 </tr>
 </table>
 </div>
-</zfin2:page>
+</z:page>

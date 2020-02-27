@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Zebrafish Science Monitor">
+<z:page title="ZFIN Zebrafish Science Monitor">
 <div><h1 align="center"><strong><em>The Zebrafish Science Monitor </em></strong></h1>
 <p align="center"><strong>Volume 5, Issue 1, June 15, 1998</strong>
 </p><h2 align="center">Table of Contents</h2>
@@ -2092,4 +2092,4 @@ If you no longer wish to automatically receive the news group
 
 included here.  They can be obtained from the ZF Information server at <a href="http://zebra.biol.sc.edu/">http://zebra.biol.sc.edu</a>
 </p></div>
-</zfin2:page>
+</z:page>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN: Zebrafish Book: Contents">
+<z:page title="ZFIN: Zebrafish Book: Contents">
 <div><table align="center" bgcolor="#ffcccc" width="50%">
 <tr>
 <td class="small"> This material is from the 4th edition of The Zebrafish Book.
@@ -60,4 +60,4 @@ Press, Eugene.<br>
 </li></ol>
 
 </div>
-</zfin2:page>
+</z:page>

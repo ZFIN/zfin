@@ -4,11 +4,6 @@
 
 <div class="titlebar">
     <h1>Phenotype Summary</h1>
-    <span class="yourinputwelcome">
-        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:putAttribute name="subjectName" value="Phenotype summary from genotype"/>
-        </tiles:insertTemplate>
-    </span>
 </div>
 
 <table class="primary-entity-attributes">

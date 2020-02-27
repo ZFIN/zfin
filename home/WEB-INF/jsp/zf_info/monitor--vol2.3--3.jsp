@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(3)">
+<z:page title="ZFIN ZFMonitor Vol 2(3)">
 <div><h2>MARK THE DATES ON YOUR CALENDAR!</h2><p>
 By J.S. Eisen<b>*</b>, D. Grunwald, and W. Driever, <b>*</b>Institute of
 Neuroscience, University of Oregon, Eugene, OR 97403 USA</p><p>
@@ -10,4 +10,4 @@ responded so promptly to our queries about the meeting.</p><p>
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

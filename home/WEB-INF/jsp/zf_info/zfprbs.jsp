@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Zebrafish Molecular Probes">
+<z:page title="ZFIN Zebrafish Molecular Probes">
 <div><h3>Molecular Probes for zebrafish currently available:</h3>
 <hr><p>
 <b>Monoclonal antibodies</b> 
@@ -125,4 +125,4 @@ libraries are unfortunately no longer available from David Grunwald or Bruce App
 
 
 </p></div>
-</zfin2:page>
+</z:page>

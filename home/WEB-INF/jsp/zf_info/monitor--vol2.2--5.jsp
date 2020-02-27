@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 2(2)">
+<z:page title="ZFIN ZF Monitor Vol 2(2)">
 <div><b>EXPANDED MIDLINE SIGNALING IN THE ZEBRAFISH ANTERIOR
 CENTRAL NERVOUS SYSTEM</b><p>
 By Kohei Hatta, Andreas W. P&#252;schel<b>*</b> and Charles B. Kimmel</p><p>
@@ -20,4 +20,4 @@ depends upon the <i>cyclops</i> gene product.
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

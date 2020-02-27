@@ -8,12 +8,6 @@
         editURL="${editURL}"
         deleteURL="${deleteURL}"/>
 
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${formBean.marker.name}"/>
-    </tiles:insertTemplate>
-</div>
-
 <%--<jsp:useBean id="formBean"  class="org.zfin.marker.presentation.SequencePageInfoBean"/>--%>
 
 <zfin2:sequenceHead gene="${formBean.marker}"/>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Task-centered navigation">
+<z:page title="ZFIN Task-centered navigation">
 <div><h3></h3>
 <h3><center>Position Paper for the CHI 97<br>
 Workshop on<br>
@@ -82,4 +82,4 @@ Moving beyond HTML to Create a Multimedia Database with User-Centered Design: A 
 <br>
 <hr>Return to <a href="#top">Top of Page</a> || <a href="#index">Index</a>.
 </div>
-</zfin2:page>
+</z:page>

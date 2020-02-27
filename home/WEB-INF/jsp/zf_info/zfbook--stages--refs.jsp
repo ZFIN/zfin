@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Staging References">
+<z:page title="ZFIN Staging References">
 <div><table align="center" bgcolor="#ffcccc" width="50%"> <tr><td class="small"> This material is from the 4th edition of The Zebrafish Book.  The 5th edition is available <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">in print</a> and within the <a href="https://wiki.zfin.org/display/prot/ZFIN+Protocol+Wiki">ZFIN Protocol Wiki</a>.  </td></tr> <table>
 <h3>REFERENCES</h3>
 <p><i>Modified from: 
@@ -110,4 +110,4 @@ Wilson, S.W., Ross, L.S., Parrett, T., and Easter, Jr., S.S. (1990) The developm
   }
 </script>
 </table></table></div>
-</zfin2:page>
+</z:page>

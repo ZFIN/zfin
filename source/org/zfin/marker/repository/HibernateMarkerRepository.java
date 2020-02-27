@@ -2284,9 +2284,85 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         return proteinDomainBean;
                     }
                 })
+
                 .setString("markerZdbID", marker.getZdbID())
-                .list();
+.list();
         return proteinDomains;
+    }
+
+    @Override
+    public List<ProteinDetail> getProteinDetail(Marker gene) {
+        String sql = " select distinct mtp_uniprot_id,up_length " +
+                     " from marker_to_protein, protein_to_interpro, protein " +
+                     " where mtp_mrkr_zdb_id=:markerzdb and mtp_uniprot_id=pti_uniprot_id and mtp_uniprot_id=up_uniprot_id" +
+                     " order by mtp_uniprot_id ";
+        List<ProteinDetail> proteinDetailDomain = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        ProteinDetail proteinDetail = new ProteinDetail();
+                        proteinDetail.setUpID(tuple[0].toString());
+                        proteinDetail.setUpLength(tuple[1].toString());
+
+
+                        return proteinDetail;
+                    }
+                })
+
+
+
+
+                .setString("markerzdb", gene.getZdbID())
+
+
+                .list();
+        return proteinDetailDomain;
+    }
+
+
+    public List<String> getUniProtID(Marker gene) {
+        String sql = " select distinct mtp_uniprot_id" +
+                " from marker_to_protein, protein_to_interpro,interpro_protein " +
+                " where mtp_mrkr_zdb_id=:markerzdb and mtp_uniprot_id=pti_uniprot_id and pti_interpro_id=ip_interpro_id  " +
+                " order by mtp_uniprot_id ";
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("markerzdb", gene.getZdbID())
+                .list()
+                ;
+
+
+
+
+
+    }
+
+    public List<String> getIPNames(String uniprot) {
+        String sql = " select ip_name " +
+                " from marker_to_protein, protein_to_interpro,interpro_protein " +
+                " where mtp_uniprot_id=:uniprot and mtp_uniprot_id=pti_uniprot_id and pti_interpro_id=ip_interpro_id " +
+                " order by ip_name ";
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("uniprot", uniprot)
+                .list()
+                ;
+    }
+
+
+
+
+
+
+
+    @Override
+    public List<String> getProteinType(Marker gene) {
+        String sql = " select distinct ip_name " +
+                " from marker_to_protein, protein_to_interpro,interpro_protein " +
+                " where mtp_mrkr_zdb_id=:markerzdb and mtp_uniprot_id=pti_uniprot_id and pti_interpro_id=ip_interpro_id " +
+                " order by ip_name ";
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("markerzdb", gene.getZdbID())
+                .list()
+                ;
     }
 
 

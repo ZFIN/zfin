@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 3(2)">
+<z:page title="ZFIN ZFMonitor Vol 3(2)">
 <div><h3>TWO COLOR WHOLE-MOUNT IN SITU HYBRIDIZATION</h3><p>
 </p><p>
 G. Hauptmann, Biozentrum der Universitat Basel, Abteilung Zellbiologie, Klingelbergstr. 70, 4056 Basel, SWITZERLAND</p><p>
@@ -171,4 +171,4 @@ Hauptmann, G. and Gerster, T. (1994) 2 Color whole-mount <i>in situ</i> hybridiz
 <a href="contents.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN zebrafish anatomy">
+<z:page title="ZFIN zebrafish anatomy">
 <div><h1 align="center">Zebrafish Anatomical Dictionary</h1><p>
 </p><hr>
 <h2>Structure description: lateral line</h2>
@@ -247,4 +247,4 @@ et al., 1985</a>).<!-- /DESC -->
   et al., 1994</a>) suggests that there may be a small neural crest contribution
   to the lateral line. <!-- /COMMENTS -->
 </p></div>
-</zfin2:page>
+</z:page>

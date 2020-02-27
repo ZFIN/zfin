@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN The 72 hr embryo">
+<z:page title="ZFIN The 72 hr embryo">
 <div><h1>The 72 hr Embryo</h1>
 <h2>Dorsal view</h2>
 <map name="72hrsdorsal">
@@ -35,4 +35,4 @@
 <hr>Last updated: 26 February 1996 
 
 </div>
-</zfin2:page>
+</z:page>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 3(2)">
+<z:page title="ZFIN ZFMonitor Vol 3(2)">
 <div><h3>POSTDOCTORAL POSITION</h3><p>
 University of Auckland, New Zealand</p><p>
 A post-doctoral position for a person interested in studying muscle differentiation using the zebrafish as a model system is available within a small group in the School of Biological Sciences at the University of Auckland. Candidates must have practical expertise in molecular biological techniques. The position is available for two years at $NZ35,000 per year. Assistance with travel expenses will be provided.</p><p>
@@ -8,4 +8,4 @@ For further information interested persons should contact Clive Evans, Developme
 <a href="contents.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

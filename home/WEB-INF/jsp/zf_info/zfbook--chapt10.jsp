@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN">
+<z:page title="ZFIN">
 <div><table align="center" bgcolor="#ffcccc" width="50%"> <tr><td class="small"> This material is from the 4th edition of The Zebrafish Book.  The 5th edition is available <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">in print</a> and within the <a href="https://wiki.zfin.org/display/prot/ZFIN+Protocol+Wiki">ZFIN Protocol Wiki</a>.  </td></tr> <table>
 <h1>CHAPTER 10 - RECIPES</h1><br>
 <a href="#wptohtml1">ABC Solution (Avidin-Biotin HRP Complex)</a><br>
@@ -447,4 +447,4 @@ HYB* - 50% formamide, 5xSSC, 0.1% Tween-20<br>
 HYB+ - HYB* with 5mg/ml torula (yeast) RNA, 50 &#181;g/ml heparin<br>
 
 </table></table></div>
-</zfin2:page>
+</z:page>

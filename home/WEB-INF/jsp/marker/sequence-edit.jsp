@@ -23,12 +23,6 @@
                 editURL=""
                 deleteURL="${deleteURL}"/>
 
-    <div style="float: right">
-            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="${formBean.marker.name}"/>
-            </tiles:insertTemplate>
-    </div>
-
     <div style="font-size: large; text-align: center;">
             <a href="/action/marker/sequence/view/${formBean.marker.zdbID}">[View Sequences]</a>
     </div>

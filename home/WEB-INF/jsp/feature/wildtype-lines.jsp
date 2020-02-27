@@ -7,14 +7,6 @@
         <td witdh=60% align=center>
             <FONT SIZE=+1>Wild-Type Lines</font>
         </td>
-        <td width=20% align=center>
-            <div style="float: right;">
-                <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                    <tiles:putAttribute name="subjectName" value="Wildtype Lines"/>
-                </tiles:insertTemplate>
-            </div>
-
-        </td>
     </tr>
 </table>
 

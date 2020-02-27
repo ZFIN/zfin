@@ -10,12 +10,6 @@
     <div class="search-form-title" style="display: inline-block;">
         Search for Genes / Markers / Clones
     </div>
-
-    <div class="search-form-your-input-welcome">
-        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:putAttribute name="subjectName" value="Genes / Markers / Clones Search"/>
-        </tiles:insertTemplate>
-    </div>
 </div>
 
 

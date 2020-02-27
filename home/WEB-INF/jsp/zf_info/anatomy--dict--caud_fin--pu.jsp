@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN zebrafish anatomy">
+<z:page title="ZFIN zebrafish anatomy">
 <div><h1 align="center">Zebrafish Anatomical Dictionary</h1>
 <h2>Structure description: Preural Centra and Urostyle </h2>
 <h3>
@@ -248,4 +248,4 @@ Potthoff, In Ontogeny and Systematics of Fishes, vol. 1 (ed. H. G. Moser) Spec. 
 <!-- /COMMENTS -->
 </p>
 </div>
-</zfin2:page>
+</z:page>

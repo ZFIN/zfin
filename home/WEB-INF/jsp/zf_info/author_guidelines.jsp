@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Author Guidelines">
+<z:page title="ZFIN Author Guidelines">
 <div><h1>ZFIN Author Guidelines</h1>  (Use this <a href="/zf_info/author_guide_checklist.html">printable checklist</a> to be sure your manuscript includes all the important details.)
 
 <p>Unambiguous identification of the biological entities described in published literature is critical for accurate curation of your published data.  When a publication is ambiguous or unclear, we must curate to a less detailed record, or not curate the data at all, which in turn degrades the usefulness of published data in ZFIN and for our downstream data collaborators.  We suggest including a section of the methods or a supplemental table dedicated to identification of the genes, alleles, genotypes, probes and antibodies used in your publications.  The utility of your published data is greatly enhanced when these are explicitly described:
@@ -92,4 +92,4 @@ support the work of curators.
 </table>
 
 </div>
-</zfin2:page>
+</z:page>

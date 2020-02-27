@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Participatory Design for Widely-Distributed Scientific Communities">
+<z:page title="ZFIN Participatory Design for Widely-Distributed Scientific Communities">
 <div><center><b><font size="+3">Participatory Design for Widely-Distributed Scientific
 Communities</font></b></center>
 <center><b>Eckehard Doerry<sup>1</sup>, Sarah A. Douglas<sup>1</sup>, Arthur E. Kirkpatrick<sup>1</sup>,
@@ -591,4 +591,4 @@ Eugene, OR.
 
 </li></ol>
 </div>
-</zfin2:page>
+</z:page>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 3(3)">
+<z:page title="ZFIN ZF Monitor Vol 3(3)">
 <div><h2>PARAMECIA PROTOCOL</h2>
 <p>
 By R. Kimmel, Institute of Neuroscience, 1254 University of Oregon, Eugene, OR 97403-1254, USA</p><p>
@@ -14,4 +14,4 @@ Fill each two liter amber mouse cage (actual capacity 2750 ml) with two liters o
 <a href="cont.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

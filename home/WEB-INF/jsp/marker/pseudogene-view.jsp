@@ -17,13 +17,6 @@
                    mergeURL="${mergeURL}"
                    editMarker="true"/>
 
-
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${formBean.marker.name}"/>
-    </tiles:insertTemplate>
-</div>
-
 <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}" userID="${formBean.user.zdbID}" />
 
 <%--// EXPRESSION SECTION--%>

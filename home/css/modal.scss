@@ -1,0 +1,37 @@
+@import "theme";
+
+.jq-modal {
+  box-shadow: $shadow-elevated !important;
+  display: none;
+  width: 675px;
+  top: 100px !important;
+  margin-top: 0 !important;
+  z-index: $modal-z-index + 1 !important;
+}
+
+.jquery-modal.blocker {
+  opacity: 0.5 !important;
+  z-index: $modal-z-index !important;
+}
+
+.jq-modal a.close-modal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0;
+  padding: 0.5rem;
+  line-height: 1;
+
+  &::after {
+    font-family: "Font Awesome 5 Free";
+    content: '\f00d';
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 900;
+    color: $grey;
+  }
+}
+
+.jq-modal.curation {
+  width: 470px;
+}

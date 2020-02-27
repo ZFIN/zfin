@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 2(2)">
+<z:page title="ZFIN ZF Monitor Vol 2(2)">
 <div><b>FISH R US</b><p>
 Developmental biology experiments at home have brought baby boys to Bill
 Trevarrow and Jeremy Wegner.</p><p>
@@ -11,4 +11,4 @@ summer.</p><p>
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

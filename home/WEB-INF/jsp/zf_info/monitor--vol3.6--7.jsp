@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Monitor 3(6)">
+<z:page title="ZFIN Monitor 3(6)">
 <div><h2>The Zebrafish Science Monitor, Vol 3 (6)</h2>
 <p>
 </p><h3>WHOLE-MOUNT <i>IN SITU</i> HYBRIDIZATION OF THICK
@@ -117,4 +117,4 @@ then continue hybridization protocol at step 4.</p><p>
 </p><h3>The Zebrafish Science Monitor, Vol 3 (6)</h3>
 Return to <a href="cont.html">Contents</a><p>
 </p></div>
-</zfin2:page>
+</z:page>

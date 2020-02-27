@@ -5,13 +5,6 @@
 
     <zfin2:dataManager zdbID="${fish.fishID}"/>
 
-
-<div style="float: right;">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${fish.name}"/>
-    </tiles:insertTemplate>
-</div>
-
 <table class="primary-entity-attributes">
     <tr>
         <th class="fish-name-label" style="vertical-align: bottom;">

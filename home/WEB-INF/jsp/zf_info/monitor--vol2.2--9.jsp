@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 2(2)">
+<z:page title="ZFIN ZF Monitor Vol 2(2)">
 <div><b>RNA EXTRACTION FROM ZEBRAFISH EMBRYOS</b><p>
 By Anat Yarden and Sigal Bitzur</p><p>
 Department of Chemical Immunology, The Weizmann Institute of Science, Rehovot 76100, Israel</p><p>
@@ -22,4 +22,4 @@ RNA directly for Northern analysis.
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

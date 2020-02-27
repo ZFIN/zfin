@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(3)">
+<z:page title="ZFIN ZFMonitor Vol 2(3)">
 <div><h2>GENTLE FIXATION BY FREEZE SUBSTITUTION GIVES
 EXCELLENT HISTOLOGICAL RESULTS WITH ZEBRAFISH EMBRYOS</h2>
 <p>
@@ -105,4 +105,4 @@ same antibody. The notochord is well displayed in this section, showing a heavy
 central area of staining in what appears to be the Golgi apparatus.  The yolk
 cell and YSL can be seen immediately underneath, and the neural tube above.</p><p>
 </p></div>
-</zfin2:page>
+</z:page>

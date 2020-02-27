@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(3)">
+<z:page title="ZFIN ZFMonitor Vol 2(3)">
 <div><h2>CARDIOVASCULAR DEVELOPMENT IN THE ZEBRAFISH: I. MYOCARDIAL FATE MAP AND HEART TUBE FORMATION</h2><p>
 <b>By D.Y.R. Stainier, R.K. Lee, and M.C. Fishman, Cardiovascular Research Center,
 Massachusetts General Hospital, 149 13th St., Charlestown, MA 02129, USA and
@@ -37,4 +37,4 @@ in the zebrafish.</p><p>
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

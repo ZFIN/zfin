@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 3(2)">
+<z:page title="ZFIN ZFMonitor Vol 3(2)">
 <div><h3>IDENTIFICATION OF RAPD PRIMERS THAT REVEAL EXTENSIVE POLYMORPHISMS BETWEEN LABORATORY STRAINS OF ZEBRAFISH</h3><p>
 </p><p>
 By S.L. Johnson, C.N. Midson, E.W. Ballinger, and J.H. Postlethwait; Institute of Neuroscience, University of Oregon, Eugene, OR 97403-1254</p><p>
@@ -9,4 +9,4 @@ The zebrafish has recently emerged as a useful system for understanding vertebra
 <a href="contents.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

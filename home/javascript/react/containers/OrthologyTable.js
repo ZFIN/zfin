@@ -23,17 +23,29 @@ const OrthologyTable = ({geneId}) => {
         },
         {
             label: 'Accession #',
-            content: row => (<div>{row.orthologousGeneReference.map((reference) => (
-                <div><a href={reference.accession.url}  key={reference.accession.url}>{reference.accession.name}
-                </a></div>
-            ))} </div>),
+            content: row => (
+                row.orthologousGeneReference.map((reference) => (
+                    <div key={reference.accession.url}>
+                        <a href={reference.accession.url}>{reference.accession.name}</a>
+                    </div>
+                ))
+            ),
             width: '200px',
         },
         {
             label: 'Evidence',
-            content: row => (<div>{row.evidence.map((evidence) => (
-                <div><OrthologyEvidenceLink name={evidence.name} code={evidence.code} publications={evidence.pubIds} orthoID={row.zdbID}/></div>
-            ))} </div>),
+            content: row => (
+                row.evidence.map((evidence) => (
+                    <div key={evidence.code}>
+                        <OrthologyEvidenceLink
+                            name={evidence.name}
+                            code={evidence.code}
+                            publications={evidence.pubIds}
+                            orthoID={row.zdbID}
+                        />
+                    </div>
+                ))
+            ),
         },
     ];
     return (

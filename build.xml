@@ -98,6 +98,13 @@
     <!--here, we are only loading property files into ant, not into the enum -->
     <loadProperties file="home/WEB-INF/zfin.properties"/>
 
+    <!-- ensure git is looking in the source tree directory for hooks -->
+    <exec executable="git">
+        <arg value="config" />
+        <arg value="core.hooksPath" />
+        <arg value=".githooks" />
+    </exec>
+
 
     <import file="${buildfiles.dir}/agr.xml"/>
     <import file="${buildfiles.dir}/allfilter.xml"/>
@@ -654,7 +661,6 @@
                     <include name="WEB-INF/**"/>
                     <include name="javascript/**"/>
                     <exclude name="css/images/**"/>
-                    <exclude name="javascript/phenogrid/**"/>
                     <exclude name="images/**"/>
                     <exclude name="templates/**"/>
                     <exclude name="**/*.jar"/>
@@ -668,7 +674,6 @@
 
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
-                    <include name="javascript/phenogrid/**"/>
                     <include name="images/**"/>
                     <include name="css/images/**"/>
                     <include name="templates/**"/>

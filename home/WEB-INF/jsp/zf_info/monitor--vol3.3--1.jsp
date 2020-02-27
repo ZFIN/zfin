@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 3(3)">
+<z:page title="ZFIN ZF Monitor Vol 3(3)">
 <div><h2>NEUROANATOMY OF THE ZEBRAFISH BRAIN</h2><h3>by Steven Wilson</h3>
 <p>
 As was briefly mentioned at the CSH meeting, plans are afoot to produce an atlas of embryonic and adult neuroanatomy of the zebrafish brain.  The book will hopefully be published towards the end of 1995  by user Press.  The authors dealing with adult neuroanatomy are Heinrich Reichert, Barbara Rupp and Mario Wulliman and those concerned with the embryonic CNS are John Kuwada and myself.	</p><p>
@@ -18,4 +18,4 @@ email: udbl042@bay.cc.kcl.ac.uk<br></p><hr>
 <a href="cont.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

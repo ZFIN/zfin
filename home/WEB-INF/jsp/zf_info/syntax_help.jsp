@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Site Search Tips">
+<z:page title="ZFIN Site Search Tips">
 <div><div>
 <h2 align="center">ZFIN Site Search Tips</h2>
 <p><b>Site Search</b> provides a quick and easy glance at data available on the ZFIN web site.  Simply enter your topic of interest and press the enter key.  
@@ -70,4 +70,4 @@
 </div>
 
 </div>
-</zfin2:page>
+</z:page>

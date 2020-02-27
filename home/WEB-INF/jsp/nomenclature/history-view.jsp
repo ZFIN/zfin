@@ -7,12 +7,6 @@
                    showLastUpdate="true"
                    editURL="javascript:editNomenclature();"/>
 
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${marker.abbreviation} "/>
-    </tiles:insertTemplate>
-</div>
-
 <script src="${zfn:getAssetPath("angular.js")}"></script>
 
 <div ng-app="app" ng-controller="EditController as eControl">

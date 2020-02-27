@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN zebrafish anatomy">
+<z:page title="ZFIN zebrafish anatomy">
 <div><h1 align="center">Zebrafish Anatomical Dictionary</h1>
 <h2>Structure description: Parhypural </h2>
 <h3>
@@ -250,4 +250,4 @@ axial skeleton. ZFIN Direct Data Submission.</a>
 <!-- /COMMENTS -->
 </p>
 </div>
-</zfin2:page>
+</z:page>

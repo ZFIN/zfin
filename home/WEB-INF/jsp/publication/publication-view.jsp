@@ -41,12 +41,6 @@
                    linkURL="${linkURL}"
                    curateURL="${curateURL}"/>
 
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${publication.zdbID}"/>
-    </tiles:insertTemplate>
-</div>
-
 <div style="text-align: center; font-size: x-large; margin-top: 1em; ">
     ${publication.title}
 </div>

@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(3)">
+<z:page title="ZFIN ZFMonitor Vol 2(3)">
 <div><h2>AUTONOMOUS EXPRESSION OF THE <i>NIC1</i> ACETYLCHOLINE RECEPTOR MUTATION IN ZEBRAFISH MUSCLE CELLS</h2><p>
 By D.S. Sepich, R.K. Ho, and M. Westerfield</p><p>
 </p><p>
@@ -20,4 +20,4 @@ and clustering of AChRs.</p><p>
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

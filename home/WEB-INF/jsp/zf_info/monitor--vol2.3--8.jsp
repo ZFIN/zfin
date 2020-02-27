@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(3)">
+<z:page title="ZFIN ZFMonitor Vol 2(3)">
 <div><h2>TIDBITS (NIBBLES) ON RAISING ZEBRAFISH BABIES</h2><p>
 
 By K.C. Cheng, E. Kauffman, and E. Gestl, Department of Pathology, Penn State,
@@ -45,4 +45,4 @@ L-10 and spirulina powder until all the fish are eating brine shrimp.</p><p>
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

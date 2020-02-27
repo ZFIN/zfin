@@ -24,11 +24,6 @@
                 </c:choose>
             </div>
         </td>
-        <td class="yourinputwelcome" nowrap="nowrap">
-            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Antibody search"/>
-            </tiles:insertTemplate>
-        </td>
     </tr>
     <tr>
         <td>&nbsp;</td>

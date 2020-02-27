@@ -33,14 +33,14 @@ const PubCorrespondenceList = ({correspondences, onResend, onRecordReply, onSend
                                 <i className='fas fa-ellipsis-v' />
                             </button>
                             {correspondence.outgoing ?
-                                <div className='dropdown-menu'>
+                                <div className='dropdown-menu dropdown-menu-right'>
                                     <a className={`dropdown-item ${correspondence.to.length === 0 ? 'disabled' : ''}`} href='#' onClick={preventDefault(() => onResend(correspondence))}>
                                         Resend
                                     </a>
                                     <a className='dropdown-item' href='#' onClick={preventDefault(() => onRecordReply(correspondence))}>Record Reply</a>
                                     <a className='dropdown-item' href='#' onClick={preventDefault(() => onDelete(correspondence))}>Delete</a>
                                 </div> :
-                                <div className='dropdown-menu'>
+                                <div className='dropdown-menu dropdown-menu-right'>
                                     <a className='dropdown-item' href='#' onClick={preventDefault(() => onSendReply(correspondence))}>Reply</a>
                                     <a className='dropdown-item' href='#' onClick={preventDefault(() => onDelete(correspondence))}>Delete</a>
                                 </div>

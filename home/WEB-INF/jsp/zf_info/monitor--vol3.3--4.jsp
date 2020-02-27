@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 3(3)">
+<z:page title="ZFIN ZF Monitor Vol 3(3)">
 <div><h2>DIFFERENTIATION WAVES</h2>
 <p>
 Dear Colleague:</p><p>
@@ -46,4 +46,4 @@ Fax: (204) 783-8565</address><p></p><hr>
 <a href="cont.html">Return to Contents</a><br>
 
 </div>
-</zfin2:page>
+</z:page>

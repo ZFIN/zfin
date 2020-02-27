@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="Funding Opportunities">
+<z:page title="Funding Opportunities">
 <div>
 <h1><center>Zebrafish Research Funding Opportunities</center></h1>
 <hr>
@@ -12,4 +12,4 @@ traits in zebrafish.  The deadline for receipt of Letters of Intent is
 <a href="http://grants.nih.gov/grants/guide/rfa-files/RFA-DK-03-018.html">http://grants.nih.gov/grants/guide/rfa-files/RFA-DK-03-018.html</a>
 </p><hr>
 </div>
-</zfin2:page>
+</z:page>

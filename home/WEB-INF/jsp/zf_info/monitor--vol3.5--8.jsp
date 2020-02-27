@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 3(5)">
+<z:page title="ZFIN ZF Monitor Vol 3(5)">
 <div><h2>The Zebrafish Science Monitor Vol 3(5)</h2>
 <b>DELAYED <i>IN VITRO</i> FERTILIZATION OF ZEBRAFISH EGGS USING COHO SALMON (<i>ONCHORHYNCHUS KISUTCH</i>) OVARIAN FLUID</b>
 <p>
@@ -119,4 +119,4 @@ teaching us the basics of running a zebrafish research facility.
 <b>Zebrafish Science Monitor Vol 3(5)</b><br>
 <a href="cont.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

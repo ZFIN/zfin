@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Zebrafish Movies">
+<z:page title="ZFIN Zebrafish Movies">
 <div><font face="Times">
 <p>
 </p><h1>
@@ -16,4 +16,4 @@
   Kane</a>; <a href="/ZDB-PUB-970210-38">Development
   123:461, 1996</a>).</font></p>
 </div>
-</zfin2:page>
+</z:page>

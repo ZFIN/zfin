@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 2(2)">
+<z:page title="ZFIN ZF Monitor Vol 2(2)">
 <div><h1><i>THE ZEBRAFISH SCIENCE MONITOR</i></h1>
 <b><i>All the Zebrafish News That's Fit to Print</i><br></b>
 Volume 2, Issue 2, March 1, 1993, Eugene, Oregon<br><br><hr>
@@ -17,4 +17,4 @@ Volume 2, Issue 2, March 1, 1993, Eugene, Oregon<br><br><hr>
 </li></ul>
 
 </div>
-</zfin2:page>
+</z:page>

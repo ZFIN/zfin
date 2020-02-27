@@ -2,12 +2,6 @@
 
 <jsp:useBean id="entity" class="org.zfin.ontology.PostComposedEntity" scope="request"/>
 
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="PostComposed Term ${entity.superterm.zdbID} ${entity.subterm.zdbID}"/>
-    </tiles:insertTemplate>
-</div>
-
 <table class="primary-entity-attributes">
   <tr>
     <th>Term:</th>

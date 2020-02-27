@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Author Guide Checklist">
+<z:page title="ZFIN Author Guide Checklist">
 <div><h1>Author Guide Checklist</h1>
 <p>Please be sure to address the following items in your manuscripts:
 
@@ -13,4 +13,4 @@
 </li></ol>
 
 </div>
-</zfin2:page>
+</z:page>

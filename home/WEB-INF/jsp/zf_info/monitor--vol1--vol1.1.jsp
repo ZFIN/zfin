@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZEBRAFISH SCIENCE MONITOR">
+<z:page title="ZFIN ZEBRAFISH SCIENCE MONITOR">
 <div><h1 align="center">ZEBRAFISH SCIENCE MONITOR</h1>
 <h3 align="center">Volume 1  Issue 1; July 1, 1991</h3>
 <h3><a href="#ZEBRAFISH RESEARCH COMMUNITY STARTS">ZEBRAFISH RESEARCH COMMUNITY STARTS TALKING</a></h3>
@@ -200,4 +200,4 @@ after finishing a post-doc with John Kuwada in Ann Arbor.
 to Penn in October.
 
 </p></div>
-</zfin2:page>
+</z:page>

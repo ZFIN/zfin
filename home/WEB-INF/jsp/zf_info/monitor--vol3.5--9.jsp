@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZF Monitor Vol 3(5)">
+<z:page title="ZFIN ZF Monitor Vol 3(5)">
 <div><h2>The Zebrafish Science Monitor Vol 3(5)</h2>
 <b>CHROMOSOME COMPLEMENT, C-, AG- NOR
 AND REPLICATION BANDING IN THE ZEBRAFISH <i>Danio rerio</i></b>
@@ -15,4 +15,4 @@ Malaga, 29071- Malaga, SPAIN; <sup>2</sup>Institute of Neuroscience, University 
 <b>Zebrafish Science Monitor Vol 3(5)</b><br>
 <a href="cont.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

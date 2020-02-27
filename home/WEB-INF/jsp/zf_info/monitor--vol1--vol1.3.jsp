@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN The Zebrafish Science Monitor">
+<z:page title="ZFIN The Zebrafish Science Monitor">
 <div><h1 align="center"><strong><em>The Zebrafish Science Monitor</em></strong></h1>
 <h3 align="center"><strong>Volume 1 Issue 3</strong>, December 30, 1991</h3>
 <p align="center"><a href="#NEW EDITION OF ZEBRAFISH BOOK PLANNED">NEW EDITION OF <em>THE ZEBRAFISH BOOK</em> PLANNED</a>
@@ -375,4 +375,4 @@ medium needed for different amounts of sperm:
 <br wp="br1"><br wp="br2">
 </p><p>c. Multiply the calculated volume x 10 and use that much 10% Hank's saline for thawing.
 </p></div>
-</zfin2:page>
+</z:page>

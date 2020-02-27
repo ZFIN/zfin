@@ -70,7 +70,8 @@
     "parser": "babel-eslint",
     "env": {
       "browser": true,
-      "jquery": true
+      "jquery": true,
+      "node": true
     },
     "parserOptions": {
       "ecmaVersion": 9,

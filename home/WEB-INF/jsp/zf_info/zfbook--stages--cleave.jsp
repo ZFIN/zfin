@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Cleavage Period Description">
+<z:page title="ZFIN Cleavage Period Description">
 <div><table align="center" bgcolor="#ffcccc" width="50%"> <tr><td class="small"> This material is from the 4th edition of The Zebrafish Book.  The 5th edition is available <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">in print</a> and within the <a href="https://wiki.zfin.org/display/prot/ZFIN+Protocol+Wiki">ZFIN Protocol Wiki</a>.  </td></tr> <table>
 <h3>CLEAVAGE PERIOD (0.7- 2.2 h)</h3><p>
 </p><p><i>Modified from: 
@@ -21,4 +21,4 @@ One can be quite accurate about staging during this period, as well as the early
   }
 </script>
 </table></table></div>
-</zfin2:page>
+</z:page>

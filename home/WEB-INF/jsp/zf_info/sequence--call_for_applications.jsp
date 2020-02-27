@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Call For Applications">
+<z:page title="ZFIN Call For Applications">
 <div><h3 align="center"><img border="0" height="68" src="nihlogo.gif" width="61"></h3>
 <h3 align="center"><font face="Arial">CALL FOR APPLICATIONS</font></h3>
 <p align="center">&#160;</p>
@@ -71,4 +71,4 @@ access the request form, please visit our website: </font><b><font face="Arial">
   TEL: (301) 402-0838</font></h3>
 </blockquote>
 </div>
-</zfin2:page>
+</z:page>

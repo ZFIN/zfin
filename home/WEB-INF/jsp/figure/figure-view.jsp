@@ -12,12 +12,6 @@
 
 <zfin2:dataManager zdbID="${figure.zdbID}"/>
 
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${figure.publication.shortAuthorList} - ${figure.label}"/>
-    </tiles:insertTemplate>
-</div>
-
 <zfin-figure:publicationInfo publication="${figure.publication}"
                              submitters="${submitters}"
                              showThisseInSituLink="${showThisseInSituLink}"

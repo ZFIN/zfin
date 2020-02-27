@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN The Zebrafish Science Monitor">
+<z:page title="ZFIN The Zebrafish Science Monitor">
 <div><h1 align="center"><strong><em>The Zebrafish Science Monitor</em></strong></h1>
 <h3 align="center"><strong>Volume 1 Issue 4</strong>, June 1, 1992</h3>
 <p align="center"><a href="#A TRANSGENE CONTAINING LacZ IS">A TRANSGENE CONTAINING <em>LacZ</em> IS EXPRESSED IN PRIMARY SENSORY NEURONS
@@ -429,4 +429,4 @@ baby-tubes.
 
 <p>******************************************************************************
 </p></div>
-</zfin2:page>
+</z:page>

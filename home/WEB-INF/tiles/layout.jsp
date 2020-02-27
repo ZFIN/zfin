@@ -6,7 +6,7 @@
 
 <tiles:useAttribute name="bodyClass" ignore="true"/>
 
-<zfin2:page title="${title}" bodyClass="${bodyClass}">
+<z:page title="${title}" bodyClass="${bodyClass}">
     <tiles:insertAttribute name="header" ignore="true" />
     <tiles:insertAttribute name="body" />
-</zfin2:page>
+</z:page>

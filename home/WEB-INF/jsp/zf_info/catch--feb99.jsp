@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Zebrafish Breakout Group">
+<z:page title="ZFIN Zebrafish Breakout Group">
 <div><p>
 
 &#160;
@@ -423,4 +423,4 @@ million spent over a three year period.
 </tr>
 </table>
 </div>
-</zfin2:page>
+</z:page>

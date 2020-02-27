@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN  Zebrafish Science Monitor">
+<z:page title="ZFIN  Zebrafish Science Monitor">
 <div><h1>Zebrafish Science Monitor Vol 4(1)</h1>
 <h3>June 10, 1996</h3>
 <hr size="2">
@@ -63,4 +63,4 @@ Oppenheimer, J.M. (1936a) The development of isolated blastomeres of Fundulus he
 <h3><i>The Zebrafish Science Monitor</i>, Vol 4(1)</h3>
 Return to <a href="cont.html">Contents</a>
 </div>
-</zfin2:page>
+</z:page>

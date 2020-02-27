@@ -1,12 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${publication.shortAuthorList} - ${figure.label}"/>
-    </tiles:insertTemplate>
-</div>
-
 <zfin-figure:publicationInfo publication="${publication}"
                              showThisseInSituLink="false"
                              showErrataAndNotes="false"/>

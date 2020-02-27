@@ -7,12 +7,6 @@
 
 <zfin2:dataManager zdbID="${formBean.feature.zdbID}"/>
 
-<div style="float: right;">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${formBean.feature.name}"/>
-    </tiles:insertTemplate>
-</div>
-
 <table class="two-column-info">
     <tr>
         <td>

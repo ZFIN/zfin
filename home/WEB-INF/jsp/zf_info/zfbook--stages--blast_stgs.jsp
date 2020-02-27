@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Blastula Stages">
+<z:page title="ZFIN Blastula Stages">
 <div><table align="center" bgcolor="#ffcccc" width="50%"> <tr><td class="small"> This material is from the 4th edition of The Zebrafish Book.  The 5th edition is available <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">in print</a> and within the <a href="https://wiki.zfin.org/display/prot/ZFIN+Protocol+Wiki">ZFIN Protocol Wiki</a>.  </td></tr> <table>
 <h3>Stages During the Blastula Period	</h3>
 <p><i>Modified from: 
@@ -55,4 +55,4 @@ The blastoderm thickness is not exactly uniform in many embryos at this stage.  
   }
 </script>
 </table></table></div>
-</zfin2:page>
+</z:page>

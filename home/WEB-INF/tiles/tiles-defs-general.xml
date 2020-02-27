@@ -18,9 +18,9 @@
     </definition>
 
     <!--marker definitions-->
-    <definition name="marker/gene-prototype-view.page" extends="main_layout">
+    <definition name="marker/gene/gene-view.page" extends="main_layout">
         <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/gene-prototype-view.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/marker/gene/gene-view.jsp" />
     </definition>
     <definition name="marker/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/marker/{1}.jsp"/>
@@ -161,9 +161,9 @@
         <put-attribute name="body" value="/WEB-INF/jsp/figure/{1}.jsp"/>
     </definition>
 
-    <definition name="infrastructure/home.page" extends="main_layout">
+    <definition name="infrastructure/home/home.page" extends="main_layout">
         <put-attribute name="bodyClass" value="home" />
-        <put-attribute name="body" value="/WEB-INF/jsp/infrastructure/home.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/infrastructure/home/home.jsp" />
     </definition>
 
     <definition name="infrastructure/*.page" extends="main_layout">

@@ -5702,17 +5702,31 @@ and child.term_ontology = 'disease_ontology';
               required fields are just minimally filled, since they won't be used -->
 
         <entity name="go_annotation"
-                query="select mrkrgoev_zdb_id as id,
-                           'GO Annotation' as Category,
+                query="select
+                           marker_go_term_evidence.mrkrgoev_zdb_id as id,
+                           concat_ws('||', mrkrgoev_gflag_name, term_zdb_id, mrkrgoev_evidence_code, inferred_from_group, extension_group) as group_key,
+                           'GO Annotation' as category,
                            term_name as name,
-                           mrkrgoev_zdb_id as proper_name,
-                           mrkrgoev_zdb_id as full_name,
+                           marker_go_term_evidence.mrkrgoev_zdb_id as full_name,
                            term_name as name_sort,
-                           '/' || mrkrgoev_mrkr_zdb_id as url,
-                           to_date(get_date_from_id(mrkrgoev_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
-                           mrkrgoev_mrkr_zdb_id as gene_zdb_id
+                           term_ontology,
+                           mrkrgoev_mrkr_zdb_id as gene_zdb_id,
+                           mrkrgoev_gflag_name as qualifier,
+                           mrkrgoev_evidence_code as evidence_code
                        from marker_go_term_evidence
-                       inner join term on marker_go_term_evidence.mrkrgoev_term_zdb_id = term.term_zdb_id">
+                           inner join term on marker_go_term_evidence.mrkrgoev_term_zdb_id = term.term_zdb_id
+                           left outer join (
+                               select infgrmem_mrkrgoev_zdb_id, string_agg(infgrmem_inferred_from, '|') as inferred_from_group
+                               from inference_group_member
+                               group by infgrmem_mrkrgoev_zdb_id
+                           ) as grouped_inf on grouped_inf.infgrmem_mrkrgoev_zdb_id = mrkrgoev_zdb_id
+                           left outer join (
+                               select distinct mrkrgoev_zdb_id, concat_ws('||', mgtae_relationship_term_zdb_id, mgtae_identifier_term_zdb_id, mgtae_term_text) as extension_group
+                               from marker_go_term_evidence
+                               inner join marker_go_term_annotation_extension_group mgtaeg on marker_go_term_evidence.mrkrgoev_zdb_id = mgtaeg.mgtaeg_mrkrgoev_zdb_id
+                               inner join marker_go_term_annotation_extension mgtae on mgtaeg.mgtaeg_annotation_extension_group_id = mgtae.mgtae_extension_group_id
+                           ) as grouped_extensions on grouped_extensions.mrkrgoev_zdb_id = marker_go_term_evidence.mrkrgoev_zdb_id"
+        >
             <!-- enfocing container.term_ontology = contained.term_ontology prevents looking at cross-aspect relationships -->
             <entity name="go_annotation_term_id"
                     query="select container.term_ont_id as term_id, mrkrgoev_zdb_id as id

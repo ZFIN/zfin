@@ -31,19 +31,6 @@
                     <b>Anatomy Term: <zfin:link entity="${formBean.anatomyItem}"/> </b>
                 </font>
             </td>
-            <td>
-                <table align="right" width="15%">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                                    <tiles:putAttribute name="subjectName" value="Anatomy: All Antibodies"/>
-                                </tiles:insertTemplate>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
         </tr>
     </tbody>
 </table>

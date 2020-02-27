@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZEBRAFISH SCIENCE MONITOR">
+<z:page title="ZFIN ZEBRAFISH SCIENCE MONITOR">
 <div><h1 align="center">ZEBRAFISH SCIENCE MONITOR</h1>
 <h3 align="center">Volume 1  Issue 2<strong>, Monday, August 30, 1991</strong></h3>
 <h3><strong><a href="#Electronic">ELECTRONIC BULLETIN BOARD TURNED ON IN EUGENE</a></strong></h3>
@@ -217,4 +217,4 @@ Gerster to the Cell Biology Department. Jochen Wittbrodt has joined Frederic Ros
 lab in the same department.</strong></li>
 </ul>
 </div>
-</zfin2:page>
+</z:page>

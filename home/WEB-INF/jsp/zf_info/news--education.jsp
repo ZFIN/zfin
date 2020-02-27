@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="Educational Resources">
+<z:page title="Educational Resources">
 <div>
 <h1 align="center"><b>Educational Resources</b></h1>
 <hr>
@@ -58,4 +58,4 @@
 </p>
 </div>
 </a></div>
-</zfin2:page>
+</z:page>

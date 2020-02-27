@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN ZFMonitor Vol 2(3)">
+<z:page title="ZFIN ZFMonitor Vol 2(3)">
 <div><h2>A SIMPLIFIED RIBONUCLEASE PROTECTION ASSAY FOR EMBRYOS</h2><p>
 By G.M. Kelly and R.T. Moon, Department of Pharmacology, SJ-30, University of
 Washington, Seattle, WA 98195</p><p>
@@ -48,4 +48,4 @@ autoradiography.</p><p>
 </p><hr>
 <a href="contents.html">Return to Contents</a><br>
 </div>
-</zfin2:page>
+</z:page>

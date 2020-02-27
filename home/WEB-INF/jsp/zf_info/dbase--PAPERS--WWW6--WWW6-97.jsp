@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Moving beyond HTML to Create a Multimedia Database with User-Centered Design: A Case Study of a Biological Database">
+<z:page title="ZFIN Moving beyond HTML to Create a Multimedia Database with User-Centered Design: A Case Study of a Biological Database">
 <div><p>
 
 Tech. Report CIS-TR-97-02, Computer and Information Science Dept., University of Oregon, 1997.
@@ -976,4 +976,4 @@ with arbitrary text descriptions. </font> </center>
 <center><font size="2"><b>Figure 8b:</b> The genetic mapping tool supports analysis of spatial relationships among genetic markers.</font> </center>
 <p>
 </p></center></center></center></div>
-</zfin2:page>
+</z:page>

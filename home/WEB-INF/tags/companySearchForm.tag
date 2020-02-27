@@ -18,13 +18,6 @@
             </a>
         </small>
     </div>
-
-
-    <div class="search-form-your-input-welcome">
-        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-            <tiles:putAttribute name="subjectName" value="Company Search"/>
-        </tiles:insertTemplate>
-    </div>
 </div>
 
 <%--<span class="header">Company Search</span>--%>

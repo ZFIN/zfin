@@ -16,13 +16,6 @@
 
 <zfin2:dataManager zdbID="${formBean.genotype.zdbID}"/>
 
-
-<div style="float: right;">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${formBean.genotype.name}"/>
-    </tiles:insertTemplate>
-</div>
-
 <table class="primary-entity-attributes">
     <tr>
         <th class="genotype-name-label">

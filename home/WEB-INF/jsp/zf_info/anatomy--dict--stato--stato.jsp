@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN zebrafish anatomy">
+<z:page title="ZFIN zebrafish anatomy">
 <div><h1 align="center">Zebrafish Anatomical Dictionary</h1>
 <hr>
 <h2>Structure description: statoacoustic ganglion</h2>
@@ -109,4 +109,4 @@
 <!-- COMMENTS-DATA -->None<!-- /COMMENTS-DATA -->
 <!-- /COMMENTS -->
 </p></div>
-</zfin2:page>
+</z:page>

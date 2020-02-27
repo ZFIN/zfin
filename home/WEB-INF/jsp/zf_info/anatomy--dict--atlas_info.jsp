@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN zebrafish atlas">
+<z:page title="ZFIN zebrafish atlas">
 <div><h3><b>Zebrafish anatomical atlases - general information</b></h3>
 <p>Currently there is an <a href="/zf_info/anatomy.html">atlas</a> for four developmental 
   stages (24h, 48h, 72h and 128h). There is also a <a href="../../../zf_info/zfbook/stages/stages.html">developmental 
@@ -11,4 +11,4 @@
   of mutant phenotypes, gene expression patterns, etc. </p>
 <!-- #EndEditable -->
 </div>
-</zfin2:page>
+</z:page>

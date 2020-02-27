@@ -1,9 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<div style="float: right">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="Phenotype Statement id ${phenotypeStatement.id}"/>
-    </tiles:insertTemplate>
-</div>
+
 <table class="primary-entity-attributes">
     <tr>
         <th>Phenotype:</th>

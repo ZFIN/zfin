@@ -4,6 +4,7 @@ import produce from 'immer';
 import LoadingSpinner from './LoadingSpinner';
 import { useTableDataFetch } from '../utils/effects';
 import {stringToFunction} from '../utils';
+import NoData from './NoData';
 
 export const DEFAULT_TABLE_STATE = {
     limit: 10,
@@ -13,7 +14,7 @@ export const DEFAULT_TABLE_STATE = {
 const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tableState, url}) => {
     if ((tableState && !onTableStateChange) || (!tableState && onTableStateChange)) {
         if (process.env.NODE_ENV === 'development') {
-            console.warn("DataTable must either be controlled (by setting tableState and onTableStateChange) or uncontrolled (by setting neither)");
+            console.warn('DataTable must either be controlled (by setting tableState and onTableStateChange) or uncontrolled (by setting neither)');
         }
     }
 
@@ -38,7 +39,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
     const { results, returnedRecords, total } = data.value;
 
     if (total === 0) {
-        return <i className='text-muted'>No data available</i>
+        return <NoData />
     }
 
     const start = (tableState.page - 1) * tableState.limit + 1;
@@ -66,16 +67,21 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                 <thead>
                     <tr>
                         {columns.map(column => (
-                            <th key={column.label} style={{width: column.width, textAlign: column.align}}>
-                                {column.label}
-                            </th>
+                            !column.hidden && (
+                                <th key={column.label} style={{width: column.width, textAlign: column.align}}>
+                                    {column.label}
+                                </th>
+                            )
                         ))}
                     </tr>
                 </thead>
                 <tbody>
-                    {results.map((row, idx, rows) => (
+                    {results.map(row => (
                         <tr key={stringToFunction(rowKey)(row)}>
                             {columns.map(column => {
+                                if (column.hidden) {
+                                    return null;
+                                }
                                 const valueGetter = stringToFunction(column.content);
                                 const value = valueGetter(row);
                                 return (

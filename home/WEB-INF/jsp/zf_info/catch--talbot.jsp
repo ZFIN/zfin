@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Catch of the Day">
+<z:page title="ZFIN Catch of the Day">
 <div><p> </p><h1><strong>A Zebrafish Map for Comparative and 
 Functional Genomics</strong></h1>
 <p align="center"><strong><hr size="4">
@@ -65,4 +65,4 @@ from our haploid mapping panel (Gates, Schier, and Talbot, unpublished).
 
 
 </p></div>
-</zfin2:page>
+</z:page>

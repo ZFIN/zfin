@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Glossary">
+<z:page title="ZFIN Glossary">
 <div><hr>
 <h2 align="center">ZFIN Glossary</h2>
 <p>This glossary provides definitions for terms that are useful in understanding
@@ -2763,4 +2763,4 @@ End of markup -->
 <hr>
 
 </div>
-</zfin2:page>
+</z:page>

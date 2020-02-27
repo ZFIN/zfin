@@ -4,12 +4,6 @@
 
 <div><span class="name-label">Experiment Conditions Description:&nbsp;</span><span style="font-size: large;">${experiment.displayAllConditions}</span></div>
 
-<div style="float: right;">
-    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${experiment.zdbID}"/>
-    </tiles:insertTemplate>
-</div>
-
 <div class="data-page">
     <c:forEach var="condition" items="${experiment.experimentConditions}" varStatus="loop">
         <table class="primary-entity-attributes">

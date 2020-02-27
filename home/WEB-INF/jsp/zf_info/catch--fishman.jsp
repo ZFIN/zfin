@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN CONSTRUCTION OF A">
+<z:page title="ZFIN CONSTRUCTION OF A">
 <div><h1 align="center"><strong>CONSTRUCTION OF A </strong></h1>
 <h1 align="center"><strong>HIGH-RESOLUTION ZEBRAFISH</strong></h1>
 <h1 align="center"><strong>GENETIC MAP</strong></h1>
@@ -102,4 +102,4 @@ administrator plus others as needed)</p></td>
 <tr valign="top"><td>Lab telephone</td>
 <td>(617) 726-6902</td></tr></table>
 </div>
-</zfin2:page>
+</z:page>

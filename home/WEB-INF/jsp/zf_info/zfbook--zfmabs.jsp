@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN The Zebrafish Server">
+<z:page title="ZFIN The Zebrafish Server">
 <div>
 For the most current and complete antibody data, use the <a href="/action/antibody/search"> Antibody Search Page</a>
 <br>
@@ -970,4 +970,4 @@ Please feel free to communicate with us via email if you have any questions:
 </tr>
 </table>
 </div>
-</zfin2:page>
+</z:page>

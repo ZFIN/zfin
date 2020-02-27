@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<zfin2:page title="ZFIN Gastrula Period Stages">
+<z:page title="ZFIN Gastrula Period Stages">
 <div><table align="center" bgcolor="#ffcccc" width="50%"> <tr><td class="small"> This material is from the 4th edition of The Zebrafish Book.  The 5th edition is available <a href="http://zebrafish.org/zirc/orders/buyBookQ.php?item=Book&id=book&detail=The%20Zebrafish%20Book">in print</a> and within the <a href="https://wiki.zfin.org/display/prot/ZFIN+Protocol+Wiki">ZFIN Protocol Wiki</a>.  </td></tr> <table>
 <h3>Stages During the Gastrula Period</h3>
 <p><i>Modified from: 
@@ -44,4 +44,4 @@ Along the dorsal side, anterior to the tail bud, the neural plate is now thicken
 
 </script>
 </p></table></table></div>
-</zfin2:page>
+</z:page>

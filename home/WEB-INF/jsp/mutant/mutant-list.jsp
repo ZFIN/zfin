@@ -20,11 +20,6 @@
 
           </font>
       </TD>
-             <td align="right" width="110" nowrap="nowrap">
-                <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                    <tiles:putAttribute name="subjectName" value="Mutant / Transgenic Lines"/>
-                </tiles:insertTemplate>
-            </td>    
     </TR>
   </TABLE>
 
