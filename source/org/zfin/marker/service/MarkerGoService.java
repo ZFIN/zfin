@@ -149,32 +149,6 @@ public class MarkerGoService {
         return sb.toString();
     }
 
-    public Map<String, Integer> getRibbonAnnotationCountsForGene(String geneZdbId, List<String> includeTermIDs, List<String> excludeTermIDs)
-            throws SolrServerException, IOException {
-        Map<String, Integer> termCounts = new HashMap<>(includeTermIDs.size());
-
-        SolrQuery query = new SolrQuery();
-        query.setQuery("*:*");
-        query.setRequestHandler("/go-annotation");
-        query.addFilterQuery("gene_zdb_id:" + geneZdbId);
-
-        includeTermIDs.forEach(t -> query.addFacetQuery("term_id:" + SolrService.luceneEscape(t)));
-        excludeTermIDs.forEach(t -> query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t)));
-
-        QueryResponse response = SolrService.getSolrClient("prototype").query(query);
-
-        Pattern pattern = Pattern.compile("(GO:\\d+)");
-        for (Map.Entry<String, Integer> entry : response.getFacetQuery().entrySet()) {
-            Matcher matcher = pattern.matcher(entry.getKey().replace("\\", ""));
-            if (matcher.find()) {
-                String termID = matcher.group(1);
-                termCounts.put(termID, entry.getValue());
-            }
-        }
-
-        return termCounts;
-    }
-
     public JsonResultResponse<MarkerGoViewTableRow> getGoEvidence(String geneId, String termId, boolean isOther, Pagination pagination) throws IOException, SolrServerException {
         long startTime = System.currentTimeMillis();
         Marker gene = markerRepository.getMarkerByID(geneId);

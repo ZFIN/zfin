@@ -32,6 +32,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -917,6 +918,7 @@ public class SolrService {
 
         return new URL(url);
     }
+
 
 }
 
