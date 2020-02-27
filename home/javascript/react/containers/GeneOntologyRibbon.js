@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {useFetch} from '../utils/effects';
 import LoadingSpinner from '../components/LoadingSpinner';
-import {GenericRibbon} from '@geneontology/ribbon';
 
-import style from './style.scss';
 import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
 import NoData from '../components/NoData';
+import Ribbon from '../components/Ribbon';
 
 const GeneOntologyRibbon = ({geneId}) => {
     const [selected, setSelected] = useState(null);
@@ -96,18 +95,12 @@ const GeneOntologyRibbon = ({geneId}) => {
 
     return (
         <div>
-            <div className='ontology-ribbon-container'>
-                <GenericRibbon
-                    subjects={data.value.subjects}
-                    categories={data.value.categories}
-                    hideFirstSubjectLabel
-                    colorBy={1} // annotations
-                    binaryColor
-                    maxColor={[style.primaryR, style.primaryG, style.primaryB]}
-                    itemClick={handleItemClick}
-                    selected={selected}
-                />
-            </div>
+            <Ribbon
+                subjects={data.value.subjects}
+                categories={data.value.categories}
+                itemClick={handleItemClick}
+                selected={selected}
+            />
 
             {selected &&
                 <DataTable
