@@ -4,6 +4,7 @@ import produce from 'immer';
 import LoadingSpinner from './LoadingSpinner';
 import { useTableDataFetch } from '../utils/effects';
 import {stringToFunction} from '../utils';
+import NoData from './NoData';
 
 export const DEFAULT_TABLE_STATE = {
     limit: 10,
@@ -38,7 +39,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
     const { results, returnedRecords, total } = data.value;
 
     if (total === 0) {
-        return <i className='text-muted'>No data available</i>
+        return <NoData />
     }
 
     const start = (tableState.page - 1) * tableState.limit + 1;

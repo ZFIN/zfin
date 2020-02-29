@@ -3,6 +3,7 @@ package org.zfin.expression.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
@@ -25,6 +26,7 @@ import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.service.SolrService;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -33,6 +35,7 @@ import org.zfin.util.ExpressionResultSplitStatement;
 import org.zfin.util.TermFigureStageRange;
 import org.zfin.util.TermStageSplitStatement;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
@@ -873,4 +876,5 @@ public class ExpressionService {
 
 
     }
+
 }

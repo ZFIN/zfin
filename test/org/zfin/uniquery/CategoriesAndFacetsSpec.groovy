@@ -120,14 +120,18 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.PHENOTYPE_STATEMENT,
                         FieldName.SOURCE,
                         FieldName.TYPE,
+                        FieldName.REGULATORY_REGION,
+                        FieldName.CODING_SEQUENCE,
                         FieldName.IS_ZEBRASHARE
                 ],
                 (Category.CONSTRUCT)                 : [
                         FieldName.CODING_SEQUENCE,
+                        FieldName.CODING_SEQUENCE_SPECIES,
                         FieldName.ENGINEERED_REGION,
                         FieldName.EXPRESSED_IN_TF,
                         FieldName.INSERTED_IN_GENE,
                         FieldName.REGULATORY_REGION,
+                        FieldName.REGULATORY_REGION_SPECIES,
                         FieldName.REPORTER_COLOR,
                         FieldName.TYPE
                 ],

@@ -300,6 +300,7 @@
 
          <str name="qf">
              proper_name_k^50.0
+             proper_name_ka^30.0
              proper_name^10.0
              name
              category_t
@@ -518,6 +519,21 @@
             <str name="hl.simple.pre"><![CDATA[<span class="search-result-highlight">]]></str>
             <str name="hl.simple.post"><![CDATA[</span>]]></str>
             <str name="fl">id,name,category,type,full_name,url</str>
+        </lst>
+    </requestHandler>
+
+    <requestHandler name="/expression-annotation" class="solr.StandardRequestHandler">
+        <lst name="appends">
+            <str name="fq">category:"Expression"</str>
+            <str name="q">*:*</str>
+        </lst>
+        <lst name="defaults">
+            <str name="defType">edismax</str>
+            <str name="wt">json</str>
+            <str name="pretty">true</str>
+            <str name="facet">true</str>
+            <str name="facet.mincount">1</str>
+            <str name="rows">0</str>
         </lst>
     </requestHandler>
 
