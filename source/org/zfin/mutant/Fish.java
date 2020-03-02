@@ -210,12 +210,4 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         return zdbID != null ? zdbID.hashCode() : 0;
     }
 
-    public boolean isAmelioratedOrExacerbated() {
-        boolean nonStdCondition = getFishExperiments().stream().anyMatch(experiment -> !experiment.isStandardOrGenericControl());
-        if (getFishFunctionalAffectedGeneCount() >= 2)
-            return true;
-        if (getFishFunctionalAffectedGeneCount() == 1 && nonStdCondition)
-            return true;
-        return false;
-    }
 }
