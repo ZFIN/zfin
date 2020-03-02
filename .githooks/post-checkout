@@ -5,3 +5,5 @@ source $(dirname "$0")/helpers
 changed_files="$(git diff-tree -r --name-only --no-commit-id $1 $2)"
 
 run_if_changes "$changed_files" package.json "npm install && gradle deployPackageFiles && ant npmInstall"
+
+exit 0
