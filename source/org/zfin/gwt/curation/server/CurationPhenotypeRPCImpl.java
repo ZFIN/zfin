@@ -175,7 +175,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
                     if (pileStructure.getAction() == PileStructureAnnotationDTO.Action.ADD) {
                         if (phenotypePileStructure.getTag().equals(PhenotypeStatement.Tag.AMELIORATED) ||
                                 phenotypePileStructure.getTag().equals(PhenotypeStatement.Tag.EXACERBATED)) {
-                            if (phenoExperiment.getFishExperiment().getFish().getFishFunctionalAffectedGeneCount() < 2) {
+                            if (!phenoExperiment.getFishExperiment().getFish().isAmelioratedOrExacerbated()) {
                                 throw new ValidationException("You can only use the tags 'ameliorated' and 'exacerbated with fish that have at " +
                                         "least 2 misfortunes. ");
                             }
