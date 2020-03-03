@@ -49,7 +49,7 @@
                 <c:set var="lastType" value=""/>
                 <c:set var="groupIndex" value="0"/>
                 <c:set var="lastTypeWithdrawn" value=""/>
-                <c:forEach var="nonWithdrawnTranscript" items="${relatedTranscriptDisplay.nonWithdrawnTranscripts}"
+                <c:forEach var="transcript" items="${relatedTranscriptDisplay.nonWithdrawnTranscripts}"
                            varStatus="loop">
 
 
@@ -61,7 +61,7 @@
                                         ${title}
                                     </c:when>
                                     <c:otherwise>
-                                        <zfin:link entity="${nonWithdrawnTranscript.otherMarker}"/> TRANSCRIPTS
+                                        <zfin:link entity="${transcript.otherMarker}"/> TRANSCRIPTS
                                     </c:otherwise>
                                 </c:choose>
 
@@ -84,43 +84,43 @@
 
                         <tr class=${loop.index%2==0 ? "even" : "odd"}>
                             <td width="18%"> <%-- only show if different from the last row--%>
-                                <c:if test="${nonWithdrawnTranscript.marker.transcriptType.display ne lastType}">
-                                    <span title="${nonWithdrawnTranscript.marker.transcriptType.definition}">${nonWithdrawnTranscript.marker.transcriptType.display}</span>
+                                <c:if test="${transcript.marker.transcriptType.display ne lastType}">
+                                    <span title="${transcript.marker.transcriptType.definition}">${transcript.marker.transcriptType.display}</span>
                                 </c:if>
-                                <c:set var="lastType" value="${nonWithdrawnTranscript.marker.transcriptType.display}"/>
+                                <c:set var="lastType" value="${transcript.marker.transcriptType.display}"/>
                             </td>
                             <td width="22%">
                                 <c:choose>
-                                    <c:when test="${unlinkedTranscript ne null && unlinkedTranscript eq nonWithdrawnTranscript.marker}">
-                                        <zfin:name entity="${nonWithdrawnTranscript.marker}"/>
+                                    <c:when test="${unlinkedTranscript ne null && unlinkedTranscript eq transcript.marker}">
+                                        <zfin:name entity="${transcript.marker}"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <zfin:link entity="${nonWithdrawnTranscript.marker}"/>
-                                        <zfin:attribution entity="${nonWithdrawnTranscript}"/>
-                                        <c:if test="${!empty nonWithdrawnTranscript.marker.ensdartId}">
-                                            &nbsp;&nbsp;&nbsp;<a href="http://www.ensembl.org/id/${nonWithdrawnTranscript.marker.ensdartId}"><img src="/images/Ensembl.png" title="Ensembl" alt="Ensembl" border="0" align="top" class="scale" /></a>
+                                        <zfin:link entity="${transcript.marker}"/>
+                                        <zfin:attribution entity="${transcript}"/>
+                                        <c:if test="${!empty transcript.marker.ensdartId}">
+                                            &nbsp;&nbsp;&nbsp;<a href="http://www.ensembl.org/id/${transcript.marker.ensdartId}"><img src="/images/Ensembl.png" title="Ensembl" alt="Ensembl" border="0" align="top" class="scale" /></a>
                                         </c:if>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
                             <td class="length" width="18%">
-                                    ${nonWithdrawnTranscript.marker.length}
+                                    ${transcript.marker.length}
                             </td>
                             <td class="analysis" width="25%">
-                                <c:if test="${empty nonWithdrawnTranscript}">
+                                <c:if test="${empty transcript}">
                                     no sequence available
                                 </c:if>
-                                <c:if test="${empty nonWithdrawnTranscript.displayedSequenceDBLinks}">
+                                <c:if test="${empty transcript.displayedSequenceDBLinks}">
                                     <%--nonWithdrawnTranscript.displayedSequenceDBLinks is empty--%>
                                 </c:if>
-                                <c:if test="${unlinkedTranscript eq null || unlinkedTranscript ne nonWithdrawnTranscript.marker}">
+                                <c:if test="${unlinkedTranscript eq null || unlinkedTranscript ne transcript.marker}">
                                     <c:choose>
-                                        <c:when test="${fn:length(nonWithdrawnTranscript.displayedSequenceDBLinks) eq 1}">
+                                        <c:when test="${fn:length(transcript.displayedSequenceDBLinks) eq 1}">
                                             <zfin2:externalBlastDropDown
-                                                    dbLink="${nonWithdrawnTranscript.displayedSequenceDBLinks[0]}"/>
+                                                    dbLink="${transcript.displayedSequenceDBLinks[0]}"/>
                                         </c:when>
-                                        <c:when test="${ fn:length(nonWithdrawnTranscript.displayedSequenceDBLinks) > 1}">
-                                            (${fn:length(nonWithdrawnTranscript.displayedSequenceDBLinks)} sequences)
+                                        <c:when test="${ fn:length(transcript.displayedSequenceDBLinks) > 1}">
+                                            (${fn:length(transcript.displayedSequenceDBLinks)} sequences)
                                         </c:when>
                                     </c:choose>
                                 </c:if>
