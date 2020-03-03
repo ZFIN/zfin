@@ -1,5 +1,17 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<%@ tag pageEncoding="UTF-8" %>
+
+<%@ attribute name="relatedTranscriptDisplay" required="true"
+              rtexprvalue="true" type="org.zfin.marker.presentation.RelatedTranscriptDisplay" %>
+<%@ attribute name="locations" required="false" type="java.util.Collection" %>
+<%@ attribute name="showAllTranscripts" required="true"
+              type="java.lang.Boolean" %>
+<%@ attribute name="unlinkedTranscript" required="false"
+              type="org.zfin.marker.Transcript" rtexprvalue="true"
+              description="Don't make a link or show sequence tools for this transcript" %>
+<%@ attribute name="title" required="false" rtexprvalue="true" type="java.lang.String"
+              description="optional title, overrides default" %>
 
 <script type="text/javascript">
     function showWithdrawnTranscripts(numWithdrawnTranscripts) {
