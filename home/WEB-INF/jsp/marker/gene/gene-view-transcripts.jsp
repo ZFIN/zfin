@@ -47,7 +47,7 @@
             <c:if test="${unlinkedTranscript eq null || unlinkedTranscript ne transcript.marker}">
                 <c:choose>
                     <c:when test="${fn:length(transcript.displayedSequenceDBLinks) eq 1}">
-                        <zfin2:externalBlastDropDown
+                        <zfin2:blastDropDown
                                 dbLink="${transcript.displayedSequenceDBLinks[0]}"/>
                     </c:when>
                     <c:when test="${ fn:length(transcript.displayedSequenceDBLinks) > 1}">
