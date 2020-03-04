@@ -6,6 +6,7 @@
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
 <c:set var="SUMMARY" value="Summary"/>
+<c:set var="EXPRESSION" value="Expression"/>
 <c:set var="ANTIBODIES" value="Antibodies"/>
 <c:set var="PLASMIDS" value="Plasmids"/>
 <c:set var="PATHWAYS" value="Interactions and Pathways"/>
@@ -36,6 +37,10 @@
     <div id="${zfn:makeDomIdentifier(SUMMARY)}">
         <jsp:include page="gene-view-summary.jsp" />
     </div>
+
+    <z:section title="${EXPRESSION}">
+        <div class="__react-root" id="GeneExpressionRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
+    </z:section>
 
     <z:section title="${MUTANTS}">
         <z:section title="Mutants">
