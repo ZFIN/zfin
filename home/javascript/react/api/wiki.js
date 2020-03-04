@@ -6,7 +6,7 @@ export const getBlogPosts = (space, options = {}) => {
         limit: 5,
         expand: 'history',
     };
-    return http.get('https://@WIKI_HOST@/rest/api/content/search', params);
+    return http.get(`https://${process.env.WIKI_HOST}/rest/api/content/search`, params);
 };
 
 export const getPosts = (space = {}) => {
@@ -18,5 +18,5 @@ export const getPosts = (space = {}) => {
 };
 
 export const getLink = (link) => {
-    return http.get(`https://@WIKI_HOST@${link}`);
+    return http.get(`https://${process.env.WIKI_HOST}${link}`);
 };

@@ -49,14 +49,14 @@ class WikiBlogPostList extends Component {
                                 minute: '2-digit',
                                 year: 'numeric'
                             })}</small>
-                            <p><a href={`https://@WIKI_HOST@${post._links.webui}`}>{post.title}</a></p>
+                            <p><a href={`https://${process.env.WIKI_HOST}${post._links.webui}`}>{post.title}</a></p>
                         </li>
                     ))}
                 </ul>
                 <LoadingSpinner loading={loading} />
                 <div className='wiki-list-controls'>
                     <span>{ next && <a href='#' onClick={this.loadNext}>Load More</a> }</span>
-                    <span>{ showAll && <a href={`https://@WIKI_HOST@${showAll}`}>See All <i className='fas fa-chevron-right' /></a>}</span>
+                    <span>{ showAll && <a href={`https://${process.env.WIKI_HOST}${showAll}`}>See All <i className='fas fa-chevron-right' /></a>}</span>
                 </div>
             </div>
         );

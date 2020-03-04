@@ -14,7 +14,7 @@ const GeneOntologyRibbon = ({geneId}) => {
     const data = useFetch(`/action/api/marker/${geneId}/go/ribbon-summary`);
 
     if (data.rejected) {
-        return <span className='text-danger'>Something went wrong fetching data. Try again later or <a href='mailto:@ZFIN_ADMIN@'>contact us</a>.</span>;
+        return <span className='text-danger'>Something went wrong fetching data. Try again later or <a href={`mailto:${process.env.ZFIN_ADMIN}`}>contact us</a>.</span>;
     }
 
     if (data.pending) {

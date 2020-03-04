@@ -1,4 +1,6 @@
 const path = require('path');
+const webpack = require('webpack');
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -66,6 +68,11 @@ const config = {
             output: '../asset-manifest.json',
             publicPath: true,
         }),
+        // expose certain environment variables via process.env
+        new webpack.EnvironmentPlugin([
+            'WIKI_HOST',
+            'ZFIN_ADMIN',
+        ]),
     ],
     // jquery is loaded via CDN to make bootstrap 4 play nicely with inline script tags
     externals: {

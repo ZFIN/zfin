@@ -49,7 +49,7 @@ class WikiPostList extends Component {
                 <div className='wiki-list-controls'>
                     <span>{next && <a href='#' onClick={this.loadNext}>Load More</a>}</span>
                     <span>{showAll &&
-                    <a href={`https://@WIKI_HOST@${showAll}`}>See All <i className='fas fa-chevron-right'/></a>}</span>
+                    <a href={`https://${process.env.WIKI_HOST}${showAll}`}>See All <i className='fas fa-chevron-right'/></a>}</span>
                 </div>
             </div>
         );

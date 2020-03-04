@@ -25,7 +25,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
     const data = useTableDataFetch(url, tableState);
 
     if (data.rejected) {
-        return <span className='text-danger'>Something went wrong fetching data. Try again later or <a href='mailto:@ZFIN_ADMIN@'>contact us</a>.</span>
+        return <span className='text-danger'>Something went wrong fetching data. Try again later or <a href={`mailto:${process.env.ZFIN_ADMIN}`}>contact us</a>.</span>
     }
 
     if (!data.value) {
