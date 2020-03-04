@@ -1,11 +1,10 @@
-<%@ attribute name="formBean" type="org.zfin.marker.presentation.AntibodyMarkerBean" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:set var="antibodyDetailLabeling" value="${formBean.antibodyDetailedLabelings}"/>
 
-<zfin2:subsection title="ANATOMICAL LABELING"
-                  test="${fn:length(antibodyDetailLabeling) ne null && fn:length(antibodyDetailLabeling) > 0}">
-    <table class="summary groupstripes">
+<z:dataTable collapse="true"
+             hasData="${fn:length(antibodyDetailLabeling) ne null && fn:length(antibodyDetailLabeling) > 0}">
+    <thead>
         <tr>
             <th>Anatomy</th>
             <th>Stage</th>
@@ -13,17 +12,12 @@
             <th>Gene</th>
             <th>Data</th>
         </tr>
-
+    </thead>
+    <tbody>
         <c:forEach var="detailedLabeling" items="${antibodyDetailLabeling}" varStatus="loop">
-            <zfin:alternating-tr loopName="loop"
-                                 groupBeanCollection="${antibodyDetailLabeling}"
-                                 groupByBean="expressionStatement">
+            <tr>
                 <td>
-                    <zfin:groupByDisplay loopName="loop"
-                                         groupBeanCollection="${antibodyDetailLabeling}"
-                                         groupByBean="expressionStatement">
-                        <zfin:link entity="${detailedLabeling.expressionStatement}"/>
-                    </zfin:groupByDisplay>
+                    <zfin:link entity="${detailedLabeling.expressionStatement}"/>
                 </td>
                 <td>
                     <zfin:link entity="${detailedLabeling.startStage}"/>
@@ -66,8 +60,7 @@
                         </c:if>
                     </c:if>
                 </td>
-            </zfin:alternating-tr>
+            </tr>
         </c:forEach>
-    </table>
-</zfin2:subsection>
-
+    </tbody>
+</z:dataTable>

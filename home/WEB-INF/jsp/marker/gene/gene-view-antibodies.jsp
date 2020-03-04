@@ -28,8 +28,8 @@
                 </td>
                 <td>
                     <ul class="comma-separated">
-                        <c:forEach var="assay" items="${antibody.distinctAssayNames}">
-                            <li>${assay}</li>
+                        <c:forEach var="gene" items="${antibody.distinctAssayNames}">
+                            <li>${gene}</li>
                         </c:forEach>
                     </ul>
                 </td>

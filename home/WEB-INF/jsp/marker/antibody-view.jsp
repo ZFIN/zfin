@@ -5,7 +5,9 @@
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${formBean.editURL}"
                    deleteURL="${formBean.deleteURL}"
-                   mergeURL="${formBean.mergeURL}"/>
+                   mergeURL="${formBean.mergeURL}"
+                   prototypeURL="/action/antibody/view-new/${formBean.marker.zdbID}"
+/>
 
 <zfin2:antibodyMarkerHeader antibodyBean="${formBean}"/>
 

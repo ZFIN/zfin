@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,8 +16,6 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.AntibodyMarkerService;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.ArrayList;
@@ -34,6 +33,50 @@ public class AntibodyViewController {
 
     @Autowired
     private MarkerService markerService;
+
+    @RequestMapping(value = "/view-new/{zdbID}")
+    public String getNewAntibodyView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        // set base bean
+        AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
+
+        zdbID = markerService.getActiveMarkerID(zdbID);
+        logger.info("zdbID: " + zdbID);
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
+        logger.info("antibody: " + antibody);
+        antibodyBean.setMarker(antibody);
+
+
+        // set standard stuff
+        antibodyBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(antibody));
+        antibodyBean.setPreviousNames(markerRepository.getPreviousNamesLight(antibody));
+        antibodyBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
+
+        // set other antibody data
+        antibodyBean.setAntigenGenes(markerRepository.getRelatedMarkerDisplayForTypes(antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
+
+        // set external notes (same as orthology)
+        List<ExternalNote> listOfNotes = new ArrayList<>();
+        listOfNotes.addAll(antibody.getExternalNotes());
+        antibodyBean.setExternalNotes(listOfNotes);
+
+        // set labeling
+        antibodyBean.setAntibodyDetailedLabelings(AntibodyMarkerService.getAntibodyDetailedLabelings(antibody));
+        antibodyBean.setNumberOfDistinctComposedTerms(AntibodyMarkerService.getNumberOfDistinctComposedTerms(antibody));
+
+        // set source
+        antibodyBean.setSuppliers(markerRepository.getSuppliersForMarker(antibody.getZdbID()));
+
+        antibodyBean.setAbRegistryID(markerRepository.getABRegID(antibody.getZdbID()));
+
+//      CITATIONS
+        antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
+
+        model.addAttribute(LookupStrings.FORM_BEAN, antibodyBean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getTitleString() + antibody.getName());
+
+        return "marker/antibody/antibody-view.page";
+    }
+
 
     @RequestMapping(value = "/view/{zdbID}")
     public String getAntibodyView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {

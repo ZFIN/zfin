@@ -34,8 +34,8 @@
                         ${antibody.hostSpecies}
                 </td>
                 <td>
-                    <c:forEach var="assay" items="${antibody.distinctAssayNames}" varStatus="loop">
-                        ${assay}${!loop.last ? ", " : ""}
+                    <c:forEach var="gene" items="${antibody.distinctAssayNames}" varStatus="loop">
+                        ${gene}${!loop.last ? ", " : ""}
                     </c:forEach>
                 </td>
                 <td><zfin2:orderThis markerSuppliers="${antibodyBean.antibody.suppliers}"
