@@ -1,37 +1,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<c:if test="${!empty formBean.relatedTranscriptDisplay.gbrowseImage}">
-<table id="meioticPanel" class="summary">
-    <tr>
-        <td>
-            <div class="gbrowse-image"></div>
-        </td>
-    </tr>
-</table>
-
-    <style>
-        .gbrowse-image {
-            width: 800px;
-            margin: 0;
-        }
-    </style>
-</c:if>
-
-<script>
-    $(".gbrowse-image").gbrowseImage({
-        width: 700,
-        imageUrl: "${formBean.relatedTranscriptDisplay.gbrowseImage.imageUrl}",
-        linkUrl: "${formBean.relatedTranscriptDisplay.gbrowseImage.linkUrl}",
-        build: "${formBean.relatedTranscriptDisplay.gbrowseImage.build}"
-    });
-</script>
-
-<z:dataTable collapse="true" hasData="${!empty formBean.relatedTranscriptDisplay.transcripts}">
+<z:dataTable collapse="true" hasData="${!empty formBean.relatedTranscriptDisplay.withdrawnTranscripts}">
 
     <thead>
     <tr>
         <th>Type <a class="popup-link info-popup-link"
-                                href="/action/marker/transcript-types"></a></th>
+                    href="/action/marker/transcript-types"></a></th>
         <th>Name</th>
         <th style="text-align: right">Length (nt)</th>
         <th>
@@ -40,7 +14,7 @@
         </th>
     </tr>
     </thead>
-    <c:forEach var="transcript" items="${formBean.relatedTranscriptDisplay.nonWithdrawnTranscripts}" varStatus="loop">
+    <c:forEach var="transcript" items="${formBean.relatedTranscriptDisplay.withdrawnTranscripts}">
         <tbody>
         <td>
             <span title="${transcript.marker.transcriptType.definition}">${transcript.marker.transcriptType.display}</span>
@@ -80,10 +54,13 @@
                     </c:when>
                 </c:choose>
             </c:if>
+
         </td>
+
     </c:forEach>
     </tbody>
 </z:dataTable>
+
 <c:if test="${!empty locations}">
     <table>
         <tfoot>
@@ -99,5 +76,10 @@
     </table>
 </c:if>
 
-
-
+<script>
+    jQuery(".gbrowse-image").gbrowseImage({
+        width: 300,
+        imageUrl: "${relatedTranscriptDisplay.gbrowseImage.imageUrl}",
+        linkUrl: "${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
+    });
+</script>

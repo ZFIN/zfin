@@ -87,7 +87,12 @@
     </z:section>
 
     <z:section title="${TRANSCRIPTS}">
-        <jsp:include page="gene-view-transcripts.jsp" />
+        <z:section title="Confirmed Transcripts">
+            <jsp:include page="gene-view-transcripts.jsp" />
+        </z:section>
+        <z:section title="Withdrawn Transcripts">
+            <jsp:include page="gene-view-withdrawn-transcripts.jsp" />
+        </z:section>
     </z:section>
 
     <z:section title="${CONSTRUCTS}">
