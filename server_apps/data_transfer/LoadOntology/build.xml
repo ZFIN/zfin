@@ -29,6 +29,7 @@
     <property name="goQualifierOboURL" value="go-qualifier.obo"/>
     <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
     <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
+    <property name="stageOboURL" value="file:///home/informix/Curation/zfs.obo"/>
     <property name="mmoURL" value="file:///home/informix/Curation/mmo.obo"/>
 
     <property name="root.dir" value="${basedir}/../../../"/>
@@ -105,12 +106,14 @@
         <antcall target="download-ontology"/>
     </target>
 
-
-
     <target name="load-anatomy-ontology" depends="init">
         <property name="localOboFilePath" value="${run-directory}/zebrafish_anatomy.obo"/>
         <echo message="${localOboFilePath}"/>
         <antcall target="load-ontology-with-stages"/>
+    </target>
+
+    <target name="load-anatomy-stage-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="zfs.obo"/>
     </target>
 
     <target name="load-go-qualifier-ontology" depends="init">
@@ -245,6 +248,12 @@
         <antcall target="download-ontology"/>
     </target>
 
+    <target name="download-anatomy-stage-ontology">
+        <property name="localOboFile" value="zfs.obo"/>
+        <property name="oboFileURL" value="${stageOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
     <target name="download-cell-ontology">
         <property name="localOboFile" value="cell.obo"/>
         <property name="oboFileURL" value="${cellOboFile}"/>
@@ -278,6 +287,8 @@
     <target name="load-zeco-taxonomy" depends="load-zeco-taxonomy-ontology"/>
 
     <target name="load-anatomy" depends="download-anatomy-ontology,load-anatomy-ontology"/>
+
+    <target name="load-stage" depends="download-anatomy-stage-ontology,load-anatomy-stage-ontology"/>
 
     <target name="load-go-qualifier" depends="download-go-qualifier-ontology,load-go-qualifier-ontology"/>
 
@@ -542,6 +553,7 @@
             TARGETS:
             download-quality-ontology
             download-anatomy-ontology
+            download-anatomy-stage-ontology
             download-gene-ontology
             download-spatial-ontology
             download-mmo-ontology
@@ -555,6 +567,7 @@
             load-chebi-ontology
             load-quality-ontology
             load-anatomy-ontology
+            load-anatomy-stage-ontology
             load-gene-ontology
             load-spatial-ontology
             load-mmo-ontology
