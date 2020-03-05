@@ -1,24 +1,13 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:if test="${!empty formBean.relatedTranscriptDisplay.gbrowseImage}">
-<table id="meioticPanel" class="summary">
-    <tr>
-        <td>
-            <div class="gbrowse-image"></div>
-        </td>
-    </tr>
-</table>
 
-    <style>
-        .gbrowse-image {
-            width: 800px;
-            margin: 0;
-        }
-    </style>
+    <div class="gbrowse-image-prototype"></div>
+
 </c:if>
 
 <script>
-    $(".gbrowse-image").gbrowseImage({
+    $(".gbrowse-image-prototype").gbrowseImage({
         width: 700,
         imageUrl: "${formBean.relatedTranscriptDisplay.gbrowseImage.imageUrl}",
         linkUrl: "${formBean.relatedTranscriptDisplay.gbrowseImage.linkUrl}",
@@ -84,6 +73,7 @@
     </c:forEach>
     </tbody>
 </z:dataTable>
+
 <c:if test="${!empty locations}">
     <table>
         <tfoot>
