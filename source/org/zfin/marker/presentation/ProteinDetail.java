@@ -1,5 +1,8 @@
 package org.zfin.marker.presentation;
 
+import org.zfin.sequence.DBLink;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -8,6 +11,7 @@ public class ProteinDetail {
 
         private String upID;
         private String upLength;
+    private Collection<DBLink> proteinDBLinks;
 
 
 

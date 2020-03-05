@@ -46,6 +46,7 @@ public class MarkerBean extends PaginationBean {
     private List<ConstructBean> constructBeans;
     private List<ProteinDomainBean> proteinDomainBeans;
     private ProteinDetailDomainBean proteinDetailDomainBean;
+    private List<InterProProtein> ipProtein;
 
     public ProteinDetailDomainBean getProteinDetailDomainBean() {
         return proteinDetailDomainBean;
@@ -74,7 +75,13 @@ public class MarkerBean extends PaginationBean {
         this.proteinType = proteinType;
     }
 
+    public List<InterProProtein> getIpProtein() {
+        return ipProtein;
+    }
 
+    public void setIpProtein(List<InterProProtein> ipProtein) {
+        this.ipProtein = ipProtein;
+    }
 
     public AllianceGeneDesc getAllianceGeneDesc() {
         return allianceGeneDesc;

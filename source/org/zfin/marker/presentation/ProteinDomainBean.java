@@ -1,6 +1,8 @@
 package org.zfin.marker.presentation;
 
 import org.zfin.marker.Marker;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  */
