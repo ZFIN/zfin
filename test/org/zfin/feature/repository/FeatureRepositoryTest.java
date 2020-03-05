@@ -192,7 +192,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getFeaturesForPrefixNoSources() {
         List<FeatureLabEntry> featureLabEntries = featureRepository.getFeaturesForPrefix("zf");
         assertTrue(featureLabEntries.size() > 140);
-        assertTrue(featureLabEntries.size() < 1000);
+        assertTrue(featureLabEntries.size() < 1200);
     }
 
     @Test
