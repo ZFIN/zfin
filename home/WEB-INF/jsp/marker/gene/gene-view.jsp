@@ -13,7 +13,7 @@
 <c:set var="MUTANTS" value="Mutations"/>
 <c:set var="DISEASES" value="Disease"/>
 <c:set var="GO" value="Gene Ontology"/>
-<c:set var="PROTEINS" value="Proteins"/>
+<c:set var="PROTEINS" value="Protein Domains"/>
 <c:set var="CONSTRUCTS" value="Constructs"/>
 <c:set var="SEQUENCES" value="Sequences"/>
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
@@ -65,7 +65,13 @@
     </z:section>
 
     <z:section title="${PROTEINS}">
-        <jsp:include page="gene-view-proteins.jsp" />
+        <z:section title="Domain, Family, and Site Summary">
+            <jsp:include page="gene-view-proteins.jsp" />
+        </z:section>
+        <z:section title="Domain Details Per Protein">
+            <jsp:include page="gene-view-protein-detail.jsp" />
+        </z:section>
+
     </z:section>
 
     <z:section title="${PATHWAYS}">
