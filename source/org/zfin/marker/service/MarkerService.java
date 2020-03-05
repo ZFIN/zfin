@@ -833,45 +833,7 @@ public class MarkerService {
     }
 
 
-    /*public static List<ProteinDetailDomainBean> getProteinDetailDisplay(Marker gene) {
-        List<ProteinDetailList> pdbBean=markerRepository.getProteinDetail();
 
-        logger.debug("get related terms for " + term.getTermName());
-        Map<String,Boolean> types = new HashMap<>(5);
-        List<GenericTermRelationship> relatedItems = term.getAllDirectlyRelatedTerms();
-        if (relatedItems != null) {
-            for (TermRelationship rel : relatedItems) {
-                String displayName;
-                if (rel.getTermTwo() == null) {
-                    logger.error("No term two found for: " + rel.getZdbId());
-                }
-                if (rel.getTermTwo().equals(term)) {
-                    displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), true);
-                } else {
-                    displayName = RelationshipDisplayNames.getRelationshipName(rel.getType(), false);
-                }
-                logger.debug("displayName: " + displayName);
-                RelationshipPresentation presentation = types.get(displayName);
-                if (presentation == null) {
-                    presentation = new RelationshipPresentation();
-                    presentation.setType(displayName);
-                }
-                presentation.addTerm(rel.getRelatedTerm(term));
-                types.put(displayName, presentation);
-            }
-        } else {
-            logger.debug("term has no RelatedTerms");
-        }
-        List<RelationshipPresentation> relPresentations = new ArrayList<>(types.size());
-        for (String type : types.keySet()) {
-            relPresentations.add(types.get(type));
-        }
-        Collections.sort(relPresentations);
-        return relPresentations;
-    }
-
-        return  pdbBean;
-    }*/
 
     /**
      * Retrieve presentation for a collection of orthologs for the same zebrafish gene
@@ -926,86 +888,60 @@ public class MarkerService {
     }
 
 
-    /*public static ProteinDetailDomainBean getProteinDomainDetailBean(Marker gene) {
-        List<ProteinDetail> detail = markerRepository.getProteinDetail(gene);
-        ProteinDetailDomainBean proteinDomainDetailBean = new ProteinDetailDomainBean();
-        if (CollectionUtils.isNotEmpty(detail)) {
-            List<ProteinDomainRow> rows = new ArrayList<>();
-            System.out.println(detail.size());
-            for (ProteinDetail proDetail : detail) {
-                ProteinDomainRow row = new ProteinDomainRow();
-                row.setUpID(proDetail.getUpID());
-                Map<String, String> detailMap = new TreeMap<>();
-                for (String proteinType : markerRepository.getProteinType(gene)) {
-                    String key = proDetail.getIpName();
-
-                    if (StringUtils.trim(key).equals(StringUtils.trim(proteinType))) {
-
-                        detailMap.put(proteinType, "X");
-                    } else {
-                        detailMap.put(proteinType, "");
-                    }
-                    if (MapUtils.isEmpty(detailMap)) {
-                        continue;
-                    }
-
-                    row.setInterProDomain(detailMap);
 
 
-                }
-                rows.add(row);
-
-            }
-            proteinDomainDetailBean.setInterProDomains(rows);
-
-        }
-        return proteinDomainDetailBean;
-    }*/
 
 
-    public static ProteinDetailDomainBean getProteinDomainDetailBean2(Marker gene) {
-        //List<String> protID = markerRepository.getUniProtID(gene);
-        List<ProteinDetail> protID = markerRepository.getProteinDetail(gene);
+    public static ProteinDetailDomainBean getProteinDomainDetailBean(Marker gene) {
+
+        List<DBLink> protID = sequenceRepository.getDBLinksForMarker(gene.getZdbID(), ForeignDBDataType.SuperType.PROTEIN);
+        protID.addAll(sequenceRepository.getDBLinksForMarker(gene.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE));
         ProteinDetailDomainBean proteinDomainDetailBean = new ProteinDetailDomainBean();
         if (CollectionUtils.isNotEmpty(protID)) {
             List<ProteinDomainRow> rows = new ArrayList<>();
 
-            for (ProteinDetail prot : protID) {
+            for (DBLink prot : protID) {
                 ProteinDomainRow row = new ProteinDomainRow();
-                row.setProDetail(prot);
 
-                Map<String, String> detailMap = new TreeMap<>();
-                for (String uniqIpName : markerRepository.getProteinType(gene)) {
+                if (prot.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.UNIPROTKB) {
+                    row.setProDBLink(prot);
+
+              List<ProteinToPDB> ptp=markerRepository.getPDB(prot.getAccessionNumberDisplay());
+              if (CollectionUtils.isNotEmpty(ptp)) {
+
+              row.setPDB(true);
+
+                    }
+                    Map<String, String> detailMap = new TreeMap<>();
+                    for (String uniqIpName : markerRepository.getProteinType(gene)) {
 
 
-                    detailMap.put(uniqIpName, "");
+                        detailMap.put(uniqIpName, "");
 
+
+                    }
+
+                    detailMap.entrySet().forEach(System.out::println);
+                    for (String ipName : markerRepository.getIPNames(prot.getAccessionNumberDisplay())) {
+                        detailMap.put(ipName, "X");
+                    }
+                    System.out.println(prot);
+                    detailMap.entrySet().forEach(System.out::println);
+                    row.setInterProDomain(detailMap);
+                    rows.add(row);
 
                 }
-                System.out.println(prot);
-                detailMap.entrySet().forEach(System.out::println);
-                for (String ipName:markerRepository.getIPNames(prot.getUpID())){
-                    detailMap.put(ipName,"X");
-                }
-                System.out.println(prot);
-                detailMap.entrySet().forEach(System.out::println);
-                row.setInterProDomain(detailMap);
-                rows.add(row);
-
             }
 
 
             proteinDomainDetailBean.setInterProDomains(rows);
 
         }
-
-
-
-
-
-
         return proteinDomainDetailBean;
     }
+
+
+
 
     public static OrthologyPresentationBean getOrthologyEvidence(Marker gene, Publication publication) {
         Collection<Ortholog> orthologs = getOrthologyRepository().getOrthologs(gene);
