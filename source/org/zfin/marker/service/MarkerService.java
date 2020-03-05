@@ -925,7 +925,7 @@ public class MarkerService {
                     for (String ipName : markerRepository.getIPNames(prot.getAccessionNumberDisplay())) {
                         detailMap.put(ipName, "X");
                     }
-                    System.out.println(prot);
+
                     detailMap.entrySet().forEach(System.out::println);
                     row.setInterProDomain(detailMap);
                     rows.add(row);
