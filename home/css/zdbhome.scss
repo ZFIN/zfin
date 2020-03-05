@@ -60,7 +60,7 @@ body.home {
         color: $grey;
         transition: transform 200ms, box-shadow 200ms;
         text-decoration: none;
-        display: inline-block;
+        display: block;
 
         &::after {
             content: '\f054';
