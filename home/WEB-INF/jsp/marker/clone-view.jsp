@@ -6,9 +6,14 @@
 <c:set var="editURL">/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}</c:set>
 <c:set var="deleteURL">none</c:set>
 
-<zfin2:dataManager zdbID="${formBean.marker.zdbID}"
+
+
+<zfin2:dataManager zdbID="${markerID}"
+                   deleteURL="none"
+                   mergeURL="${mergeURL}"
                    editURL="${editURL}"
-                   deleteURL="${deleteURL}"/>
+                   prototypeURL="/action/marker/clone/prototype-view/${formBean.marker.zdbID}"
+/>
 
     <zfin2:cloneHead cloneBean="${formBean}" soTerm="${formBean.zfinSoTerm}"/>
 
