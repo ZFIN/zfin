@@ -26,8 +26,8 @@
 <!--|GBROWSE_PATH_FROM_ROOT|-->	action/gbrowse/
 <!--|GENBANK_DAILY_EMAIL|-->	informix\@zfin.org
 <!--|GOOGLE_ANALYTICS_ID|-->	0
-<!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org smoxon\@zfin.org xshao\@zfin.org
-<!--|GO_EMAIL_ERR|-->	smoxon\@zfin.org xshao\@zfin.org dhowe\@zfin.org
+<!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org smoxon\@zfin.org
+<!--|GO_EMAIL_ERR|-->	smoxon\@zfin.org dhowe\@zfin.org
 <!--|HAS_PARTNER|-->	false
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000

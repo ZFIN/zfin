@@ -106,6 +106,7 @@
 <filter token="MUTANT_NAME" value="${MUTANT_NAME}"/>
 <filter token="NCBI_LINKOUT_UPLOAD" value="${NCBI_LINKOUT_UPLOAD}"/>
 <filter token="NEW_PUBLICATION_REPORT" value="${NEW_PUBLICATION_REPORT}"/>
+<filter token="NODE_ENV" value="${NODE_ENV}"/>
 <filter token="NOMEN_COORDINATOR" value="${NOMEN_COORDINATOR}"/>
 <filter token="NON_SECUREPORT" value="${NON_SECUREPORT}"/>
 <filter token="NON_SECURE_HTTP" value="${NON_SECURE_HTTP}"/>
