@@ -76,10 +76,4 @@
     </table>
 </c:if>
 
-<script>
-    jQuery(".gbrowse-image").gbrowseImage({
-        width: 300,
-        imageUrl: "${relatedTranscriptDisplay.gbrowseImage.imageUrl}",
-        linkUrl: "${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
-    });
-</script>
+
