@@ -99,7 +99,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
                             strDiseaseDto.setObjectRelation(relationship);
                             List<String> geneticEntityIds = new ArrayList<>();
-                            geneticEntityIds.add(fish.getZdbID());
+                            geneticEntityIds.add("ZFIN:" + fish.getZdbID());
                             strDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
                             // evidence
                             strDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
