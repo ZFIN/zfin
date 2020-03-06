@@ -321,18 +321,6 @@ task deployPerlFiles(type: Copy) {
     }
 }
 
-task deployPackageFiles() {
-    description 'Deploy package.json into TARGETROOT'
-    group 'ZFIN Deployment'
-    def packageFiles = ['package.json', 'package-lock.json', 'webpack.config.js']
-    doLast {
-        copy {
-            from(packageFiles)
-            into(targetroot)
-        }
-    }
-}
-
 task deployGitInfoFile() {
     description 'Deploy git-info.txt file into TARGETROOT'
     group 'ZFIN Deployment'
@@ -479,7 +467,6 @@ task make(type: GradleBuild) {
              ':server_apps:data_transfer:ORTHO:deployFiles',
              ':server_apps:data_transfer:eco_go_mapping:deployFiles',         
              ':server_apps:Reports:deployFiles',
-             'deployPackageFiles',
              'deployGitInfoFile',
              ':cgi-bin:deployFiles'
     ]
