@@ -65,11 +65,12 @@ const config = {
             filename: '[name].bundle.[contenthash].css',
         }),
         new WebpackAssetsManifest({
-            output: '../asset-manifest.json',
+            output: '../asset-manifest.json', // relative to output.path
             publicPath: true,
         }),
         // expose certain environment variables via process.env
         new webpack.EnvironmentPlugin([
+            'NODE_ENV',
             'WIKI_HOST',
             'ZFIN_ADMIN',
         ]),

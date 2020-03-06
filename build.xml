@@ -536,11 +536,10 @@
             <move todir="@{to}" overwrite="@{overwrite}" failonerror="@{failonerror}">
                 <fileset dir="@{from}">
                     <include name="WEB-INF/**"/>
+                    <include name="dist/**/"/>
                     <include name="gwt/**"/>
                     <include name="images/**"/>
-                    <include name="css/**"/>
                     <include name="fonts/**"/>
-                    <include name="javascript/**"/>
                     <include name="templates/**"/>
                 </fileset>
             </move>
@@ -594,12 +593,12 @@
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,instrument,restart,deploy-solr,npmInstall,npmBuildProd"/>
+            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,instrument,restart,deploy-solr"/>
 
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
 
-    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release"
+    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release,npmInstall,npmBuild"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <!--        <jsp-compile/> -->
     </target>
@@ -607,9 +606,8 @@
     <macrodef name="removeWebAppLocation">
         <attribute name="location"/>
         <sequential>
-            <delete dir="@{location}/css"/>
+            <delete dir="@{location}/dist"/>
             <delete dir="@{location}/fonts"/>
-            <delete dir="@{location}/javascript"/>
             <delete dir="@{location}/images"/>
             <delete dir="@{location}/templates"/>
             <delete dir="@{location}/WEB-INF"/>
@@ -656,11 +654,7 @@
             />
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
-                    <include name="css/*.css"/>
-                    <include name="css/*.scss"/>
                     <include name="WEB-INF/**"/>
-                    <include name="javascript/**"/>
-                    <exclude name="css/images/**"/>
                     <exclude name="images/**"/>
                     <exclude name="templates/**"/>
                     <exclude name="**/*.jar"/>
@@ -675,7 +669,6 @@
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
                     <include name="images/**"/>
-                    <include name="css/images/**"/>
                     <include name="templates/**"/>
                     <include name="WEB-INF/**/*.jar"/>
                     <include name="WEB-INF/**/*.zip"/>
@@ -697,7 +690,7 @@
     <target name="dirtydeploy" depends="compile,instrument"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
         <copyWebApp from="${web.dir}" to="${home.target}"/>
-        <antcall target="npmBuildDev"/>
+        <antcall target="npmBuild"/>
         <antcall target="deploy-solr"/>
     </target>
 
@@ -799,33 +792,21 @@
         <delete dir="org"/>
     </target>
 
-    <macrodef name="npmBuild">
-        <attribute name="mode" default="development"/>
-        <sequential>
-            <exec dir="${TARGETROOT}" executable="npm" failonerror="true">
-                <env key="NODE_ENV" value="@{mode}"/>
-                <arg value="run"/>
-                <arg value="build"/>
-            </exec>
-        </sequential>
-    </macrodef>
-
     <target name="npmInstall">
-        <exec dir="${TARGETROOT}" executable="npm" failonerror="true">
+        <exec executable="npm" failonerror="true">
             <arg value="install"/>
         </exec>
     </target>
 
-    <target name="npmBuildProd">
-        <npmBuild mode="production"/>
-    </target>
-
-    <target name="npmBuildDev">
-        <npmBuild/>
+    <target name="npmBuild">
+        <exec executable="npm" failonerror="true">
+            <arg value="run"/>
+            <arg value="build"/>
+        </exec>
     </target>
 
     <target name="npmLint">
-        <exec dir="${TARGETROOT}" executable="npm" failonerror="true">
+        <exec executable="npm" failonerror="true">
             <arg value="run"/>
             <arg value="lint"/>
         </exec>
