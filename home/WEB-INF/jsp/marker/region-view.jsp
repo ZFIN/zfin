@@ -21,7 +21,8 @@
     </script>
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    mergeURL="${mergeURL}"
-                   editMarker="true"/>
+                   editMarker="true"
+                   prototypeURL="/action/marker/region/view-new/${formBean.marker.zdbID}" />
 
 <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}" userID="${formBean.user.zdbID}" soTerm="${formBean.zfinSoTerm}" />
 
