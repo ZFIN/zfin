@@ -1,4 +1,3 @@
-
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -14,6 +13,8 @@
 <c:set var="editURL">/action/str/${formBean.marker.zdbID}/edit</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
 <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}</c:set>
+<c:set var="prototypeURL">/action/sequenceTargetingReagent/prototype-view/${formBean.marker.zdbID}"</c:set>
+
 <script>
     if (opener != null)
         opener.fireCreateMarkerEvent();
@@ -22,7 +23,9 @@
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   mergeURL="${mergeURL}"/>
+                   mergeURL="${mergeURL}"
+                   prototypeURL="/action/marker/sequenceTargetingReagent/prototype-view/${formBean.marker.zdbID}">
+</zfin2:dataManager>
 
 <zfin2:sequenceTargetingReagentInfo marker="${sequenceTargetingReagent}" markerBean="${formBean}"
                                     previousNames="${formBean.previousNames}"/>
