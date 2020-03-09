@@ -7,12 +7,13 @@
 
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="TARGETLOCATION" value="Target Location"/>
+<c:set var="GENOMICFEATURES" value="Genomic Features Created From"/>
 <c:set var="CONSTRUCTS" value="Constructs With Sequences"/>
 <c:set var="EXPRESSION" value="Expression"/>
 <c:set var="PHENOTYPE" value="Phenotype"/>
 
 <z:dataPage
-        sections="${[SUMMARY, TARGETLOCATION, CONSTRUCTS, EXPRESSION, PHENOTYPE]}">
+        sections="${[SUMMARY, TARGETLOCATION, CONSTRUCTS, GENOMICFEATURES, EXPRESSION, PHENOTYPE]}">
 
     <z:dataManagerDropdown>
         <a class="dropdown-item active" href="/action/marker/sequenceTargetingReagent/prototype-view/${formBean.marker.zdbID}">View</a>
@@ -141,7 +142,12 @@
     </div>
 
     <z:section title="${TARGETLOCATION}">
-        <jsp:include page="sequence-targeting-reagent-target-location.jsp"/>
+        <jsp:include page="sequence-targeting-reagent-target-location-view.jsp"/>
+    </z:section>
+
+
+    <z:section title="${CONSTRUCTS}">
+        <jsp:include page="sequence-targeting-reagent-constructs-view.jsp"/>
     </z:section>
 </z:dataPage>
 
