@@ -25,7 +25,6 @@ import org.zfin.figure.service.ImageServiceSpec;
 import org.zfin.figure.service.VideoServiceSpec;
 import org.zfin.fish.repository.FishRepositoryTest;
 import org.zfin.fish.repository.FishServiceTest;
-import org.zfin.framework.presentation.ZfinJSPFunctionsTest;
 import org.zfin.gbrowse.GBrowseServiceTest;
 import org.zfin.gbrowse.presentation.GBrowseImageSpec;
 import org.zfin.gwt.GwtConversionTest;
@@ -150,7 +149,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         TranscriptRepositoryTest.class,
         TranscriptServiceTest.class,
         VideoServiceSpec.class,
-        ZfinJSPFunctionsTest.class,
 })
 
 public class DbUnitTests {
