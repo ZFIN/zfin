@@ -86,14 +86,6 @@
         <jsp:include page="gene-view-plasmids.jsp" />
     </z:section>
 
-    <z:section title="${TRANSCRIPTS}">
-        <z:section title="Confirmed Transcripts">
-            <jsp:include page="gene-view-transcripts.jsp" />
-        </z:section>
-        <z:section title="Withdrawn Transcripts">
-            <jsp:include page="gene-view-withdrawn-transcripts.jsp" />
-        </z:section>
-    </z:section>
 
     <z:section title="${CONSTRUCTS}">
         <div class="__react-root" id="GeneConstructsTable" data-gene-id="${formBean.marker.zdbID}"></div>
@@ -103,6 +95,15 @@
         <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
     </z:section>
 
+    <z:section title="${TRANSCRIPTS}">
+        <z:section title="Confirmed Transcripts">
+            <jsp:include page="gene-view-transcripts.jsp" />
+        </z:section>
+        <z:section title="Withdrawn Transcripts">
+            <jsp:include page="gene-view-withdrawn-transcripts.jsp" />
+        </z:section>
+    </z:section>
+    
     <z:section title="${SEQUENCES}">
         <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
     </z:section>
