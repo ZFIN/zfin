@@ -26,9 +26,7 @@
     <c:set var="suppressAnalysisTools" value="${false}"/>
 
     <c:set var="typeName">${formBean.marker.markerType.name}</c:set>
-    <c:if test="${typeName eq 'MRPHLNO'}">
-        <c:set var="typeName">Morpholino</c:set>
-    </c:if>
+
     <c:if test="${fn:length(formBean.markerRelationshipPresentationList) gt 1}">
         <c:set var="targetsLabel" value="Targets"/>
     </c:if>
@@ -58,27 +56,24 @@
             </z:attributeListItem>
 
             <z:attributeListItem label="${targetsLabel}">
-                <td>
-            <span class="">
+
                     <c:forEach var="entry" items="${formBean.markerRelationshipPresentationList}" varStatus="loop">
                         <i>${entry.link}</i> ${entry.attributionLink}${!loop.last ? ", " : ""}
                     </c:forEach>
-            </span>
-                </td>
+
             </z:attributeListItem>
 
-            <c:if test="${typeName ne 'Morpholino'}">
+            <c:if test="${formBean.marker.markerType.name ne 'MRPHLNO'}">
                 <z:attributeListItem label="Source">
                     <zfin2:orderThis markerSuppliers="${formBean.suppliers}" accessionNumber="${formBean.marker.zdbID}"/>
                 </z:attributeListItem>
             </c:if>
 
 
-
-            <c:if test="${typeName ne 'Morpholino'}">
-                <c:set var="seqTypeName">Target Sequence:</c:set>
+            <c:if test="${formBean.marker.markerType.name eq 'MRPHLNO'}">
+                <c:set var="seqTypeName">Target Sequence</c:set>
             </c:if>
-            <c:if test="${typeName ne 'TALEN'}">
+            <c:if test="${typeName eq 'TALEN'}">
                 <c:set var="seqTypeName">Target Sequence 1</c:set>
             </c:if>
 
@@ -90,6 +85,7 @@
                             (${formBean.sequenceAttribution})
                         </c:if>
                     <c:if test="${!suppressAnalysisTools}">
+                        &nbsp;&nbsp;&nbsp;
                         <c:if test="${typeName eq 'TALEN'}">
                             <c:set var="firstSeqLen">${fn:length(formBean.marker.sequence.sequence)}</c:set>
                             <c:set var="secondSeqLen">${fn:length(formBean.marker.sequence.secondSequence)}</c:set>
@@ -109,23 +105,20 @@
             </z:attributeListItem>
 
             <c:if test="${typeName eq 'TALEN'}">
-                <z:attributeListItem label="Target Sequence 2:">
+                <z:attributeListItem label="Target Sequence 2">
                     <c:choose>
-                        <c:when test="${!empty marker.sequence}">
-                            <div class="sequence">
-                                5' - ${marker.sequence.secondSequence} - 3'
-                                <c:if test="${!empty markerBean.sequenceAttribution}">
-                                    (${markerBean.sequenceAttribution})
-                                </c:if>
-                            </div>
+                        <c:when test="${!empty formBean.marker.sequence}">
+                            5' - ${formBean.marker.sequence.secondSequence} - 3'
+                            <c:if test="${!empty formBean.sequenceAttribution}">
+                                (${formBean.sequenceAttribution})
+                            </c:if>
                             <c:if test="${!suppressAnalysisTools}">
                                 &nbsp;&nbsp;&nbsp;
                                 <zfin2:markerSequenceBlastDropDown
-                                        sequence="${marker.sequence.secondSequence}"
-                                        databases="${markerBean.databases}"
+                                        sequence="${formBean.marker.sequence.secondSequence}"
+                                        databases="${formBean.databases}"
                                         instructions="Select Sequence Analysis Tool"
                                 />
-                                <br>
                             </c:if>
                         </c:when>
                         <c:otherwise>
@@ -135,11 +128,9 @@
                 </z:attributeListItem>
             </c:if>
             <z:attributeListItem label="Disclamer">
-                <c:if test="${!empty marker.sequence}">
-                    <small>
-                        (Although ZFIN verifies reagent sequence data, we recommend that you
-                        conduct independent sequence analysis before ordering any reagent.)
-                    </small>
+                <c:if test="${!empty formBean.marker.sequence}">
+                        Although ZFIN verifies reagent sequence data, we recommend that you
+                        conduct independent sequence analysis before ordering any reagent.
                 </c:if>
             </z:attributeListItem>
 
@@ -149,6 +140,9 @@
 
     </div>
 
+    <z:section title="${TARGETLOCATION}">
+        <jsp:include page="sequence-targeting-reagent-target-location.jsp"/>
+    </z:section>
 </z:dataPage>
 
 
