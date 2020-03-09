@@ -40,7 +40,6 @@
         <div class="small text-uppercase text-muted">${formBean.marker.markerType.displayName}</div>
         <h1><zfin:abbrev entity="${formBean.marker}"/></h1>
 
-
         <z:attributeList>
             <z:attributeListItem label="ID">
                 ${formBean.marker.zdbID}
@@ -58,7 +57,15 @@
                 </ul>
             </z:attributeListItem>
 
-            //TODO: targets
+            <z:attributeListItem label="${targetsLabel}">
+                <td>
+            <span class="">
+                    <c:forEach var="entry" items="${formBean.markerRelationshipPresentationList}" varStatus="loop">
+                        <i>${entry.link}</i> ${entry.attributionLink}${!loop.last ? ", " : ""}
+                    </c:forEach>
+            </span>
+                </td>
+            </z:attributeListItem>
 
             <c:if test="${typeName ne 'Morpholino'}">
                 <z:attributeListItem label="Source">
@@ -67,16 +74,22 @@
             </c:if>
 
 
+
+            <c:if test="${typeName ne 'Morpholino'}">
+                <c:set var="seqTypeName">Target Sequence:</c:set>
+            </c:if>
+            <c:if test="${typeName ne 'TALEN'}">
+                <c:set var="seqTypeName">Target Sequence 1</c:set>
+            </c:if>
+
+            <z:attributeListItem label="${seqTypeName}">
             <c:choose>
                 <c:when test="${!empty formBean.marker.sequence}">
-                    <div class="sequence">
-                        5' - ${markerBean.marker.sequence.sequence} - 3'
-                        <c:if test="${!empty markerBean.sequenceAttribution}">
-                            (${markerBean.sequenceAttribution})
+                        5' - ${formBean.marker.sequence.sequence} - 3'
+                        <c:if test="${!empty formBean.sequenceAttribution}">
+                            (${formBean.sequenceAttribution})
                         </c:if>
-                    </div>
                     <c:if test="${!suppressAnalysisTools}">
-                        &nbsp;&nbsp;&nbsp;
                         <c:if test="${typeName eq 'TALEN'}">
                             <c:set var="firstSeqLen">${fn:length(formBean.marker.sequence.sequence)}</c:set>
                             <c:set var="secondSeqLen">${fn:length(formBean.marker.sequence.secondSequence)}</c:set>
@@ -93,40 +106,6 @@
                     <zfin2:noDataAvailable/>
                 </c:otherwise>
             </c:choose>
-            <c:if test="${typeName ne 'Morpholino'}">
-                <c:set var="seqTypeName">Target Sequence:</c:set>
-            </c:if>
-            <c:if test="${typeName ne 'TALEN'}">
-                <c:set var="seqTypeName">Target Sequence 1:</c:set>
-            </c:if>
-
-            <z:attributeListItem label="${seqTypeName}">
-                <c:choose>
-                    <c:when test="${!empty formBeanmarker.sequence}">
-                        <div class="sequence">
-                            5' - ${formBean.marker.sequence.sequence} - 3'
-                            <c:if test="${!empty formBean.sequenceAttribution}">
-                                (${formBean.sequenceAttribution})
-                            </c:if>
-                        </div>
-                        <c:if test="${!suppressAnalysisTools}">
-                            &nbsp;&nbsp;&nbsp;
-                            <c:if test="${typeName eq 'TALEN'}">
-                                <c:set var="firstSeqLen">${fn:length(marker.sequence.sequence)}</c:set>
-                                <c:set var="secondSeqLen">${fn:length(marker.sequence.secondSequence)}</c:set>
-                            </c:if>
-                            <zfin2:markerSequenceBlastDropDown
-                                    sequence="${marker.sequence.sequence}"
-                                    databases="${markerBean.databases}"
-                                    instructions="Select Sequence Analysis Tool"
-                            />
-                            <br>
-                        </c:if>
-                    </c:when>
-                    <c:otherwise>
-                        <zfin2:noDataAvailable/>
-                    </c:otherwise>
-                </c:choose>
             </z:attributeListItem>
 
             <c:if test="${typeName eq 'TALEN'}">
