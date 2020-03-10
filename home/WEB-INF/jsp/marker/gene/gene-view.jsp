@@ -86,7 +86,6 @@
         <jsp:include page="gene-view-plasmids.jsp" />
     </z:section>
 
-<<<<<<< HEAD
     <z:section title="${CONSTRUCTS}">
         <div class="__react-root" id="GeneConstructsTable" data-gene-id="${formBean.marker.zdbID}"></div>
     </z:section>
