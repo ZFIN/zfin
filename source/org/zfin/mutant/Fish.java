@@ -209,4 +209,5 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     public int hashCode() {
         return zdbID != null ? zdbID.hashCode() : 0;
     }
+
 }

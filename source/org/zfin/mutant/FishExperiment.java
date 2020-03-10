@@ -117,4 +117,12 @@ public class FishExperiment implements Comparable<FishExperiment> {
     public int hashCode() {
         return Objects.hash(this.getExperiment(), this.getFish());
     }
+
+    public boolean isAmelioratedOrExacerbated() {
+        if (getFish().getFishFunctionalAffectedGeneCount() >= 2)
+            return true;
+        if (getFish().getFishFunctionalAffectedGeneCount() == 1 && !isStandardOrGenericControl())
+            return true;
+        return false;
+    }
 }

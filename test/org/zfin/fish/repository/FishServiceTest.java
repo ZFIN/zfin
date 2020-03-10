@@ -1,6 +1,5 @@
 package org.zfin.fish.repository;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
@@ -26,9 +25,7 @@ import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.Fish;
-import org.zfin.fish.FeatureGene;
 import org.zfin.mutant.FishExperiment;
-import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
@@ -109,7 +106,17 @@ public class FishServiceTest extends AbstractDatabaseTest {
         assertTrue("Should be more than 2 figure entities", zfinFigureEntities.size() >= 2);
     }
 
+    @Test
+    public void checkMisfortunes() {
+        FishExperiment fishExperiment = RepositoryFactory.getMutantRepository().getFishExperiment("ZDB-GENOX-110718-1");
+        assertTrue("Fish experiment should not have 2 or more misfortunes", !fishExperiment.isAmelioratedOrExacerbated());
 
+        fishExperiment = RepositoryFactory.getMutantRepository().getFishExperiment("ZDB-GENOX-161220-7");
+        assertTrue("Fish experiment should not have 2 or more misfortunes", !fishExperiment.isAmelioratedOrExacerbated());
+
+        fishExperiment = RepositoryFactory.getMutantRepository().getFishExperiment("ZDB-GENOX-070807-5");
+        assertTrue("Fish experiment should have 2 or more misfortunes", fishExperiment.isAmelioratedOrExacerbated());
+    }
 
 
     @Test
@@ -323,7 +330,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         }
 
         List<FigureExpressionSummaryDisplay> list = PresentationConverter.getFigureExpressionSummaryDisplay(summaryList);
-        assertNotNull("Should have expression summary list",list);
+        assertNotNull("Should have expression summary list", list);
         for (FigureExpressionSummaryDisplay display : list) {
             if (display.getFigure().getZdbID().equals(figID)) {
                 if (display.getExpressedGene().getGene().getAbbreviation().equals(geneAbbreviation)) {
@@ -514,7 +521,6 @@ public class FishServiceTest extends AbstractDatabaseTest {
     }
 
 
-
     //single gene, full & partial
     @Test
     public void fgf8aTest() {
@@ -593,7 +599,9 @@ public class FishServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void geneStartsWithTest() { genericGeneAlleleBoxTest("adssl hi3081Tg"); }
+    public void geneStartsWithTest() {
+        genericGeneAlleleBoxTest("adssl hi3081Tg");
+    }
 
     public void genericGeneAlleleBoxTest(String value) {
         FishSearchFormBean formBean = new FishSearchFormBean();
