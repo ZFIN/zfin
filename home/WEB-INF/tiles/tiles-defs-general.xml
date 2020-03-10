@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+?xml version="1.0" encoding="UTF-8" ?>
 
 <!DOCTYPE tiles-definitions PUBLIC
         "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
@@ -32,10 +32,15 @@
         <put-attribute name="bodyClass" value="data-page" />
         <put-attribute name="body" value="/WEB-INF/jsp/marker/clone/clone-view.jsp" />
     </definition>
+    <definition name="marker/sequenceTargetingReagent/sequence-targeting-reagent-view.page" extends="main_layout">
+        <put-attribute name="bodyClass" value="data-page" />
+        <put-attribute name="body" value="/WEB-INF/jsp/marker/sequenceTargetingReagent/sequence-targeting-reagent-view.jsp" />
+    </definition>
     <definition name="marker/region/region-view.page" extends="main_layout">
         <put-attribute name="bodyClass" value="data-page" />
         <put-attribute name="body" value="/WEB-INF/jsp/marker/region/region-view.jsp" />
     </definition>
+
     <definition name="marker/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/marker/{1}.jsp"/>
     </definition>
