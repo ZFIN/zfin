@@ -149,6 +149,11 @@
     <z:section title="${CONSTRUCTS}">
         <jsp:include page="sequence-targeting-reagent-constructs-view.jsp"/>
     </z:section>
+
+
+    <z:section title="${GENOMICFEATURES}">
+        <jsp:include page="sequence-targeting-reagent-genonomicfeatures-view.jsp"/>
+    </z:section>
 </z:dataPage>
 
 
