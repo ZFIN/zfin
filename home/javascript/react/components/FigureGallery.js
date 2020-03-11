@@ -7,7 +7,6 @@ let animationRequest = null;
 const FigureGallery = ({images, loading, onLoadMore, total}) => {
     const handleScroll = event => {
         if (animationRequest) {
-            console.log('cancelled');
             return;
         }
 
