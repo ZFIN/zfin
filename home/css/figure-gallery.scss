@@ -71,3 +71,16 @@
     font-weight: bold;
     font-size: 85%;
 }
+
+.image-strip-container {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+}
+
+.image-strip-image {
+    max-height: 200px;
+    display: block;
+    margin-right: 0.5rem;
+    border: 1px solid black;
+}

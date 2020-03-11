@@ -5,13 +5,14 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 import NoData from '../components/NoData';
 import Ribbon from '../components/Ribbon';
+import GenericErrorMessage from '../components/GenericErrorMessage';
 
 const GeneExpressionRibbon = ({geneId}) => {
 
     const data = useFetch(`/action/api/marker/${geneId}/expression/ribbon-summary`);
 
     if (data.rejected) {
-        return <span className='text-danger'>Something went wrong fetching data. Try again later or <a href='mailto:@ZFIN_ADMIN@'>contact us</a>.</span>;
+        return <GenericErrorMessage />;
     }
 
     if (data.pending) {
