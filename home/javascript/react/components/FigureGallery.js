@@ -2,9 +2,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import LoadingSpinner from './LoadingSpinner';
 
+let animationRequest = null;
+
 const FigureGallery = ({images, loading, onLoadMore, total}) => {
+    const handleScroll = event => {
+        if (animationRequest) {
+            console.log('cancelled');
+            return;
+        }
+
+        const target = event.target;
+        animationRequest = requestAnimationFrame(() => {
+            animationRequest = null;
+            if (loading || images.length === total) {
+                return;
+            }
+            if (target.scrollWidth - target.scrollLeft - target.clientWidth < 200) {
+                onLoadMore();
+            }
+        });
+    };
+
     return (
-        <div className='image-strip-container'>
+        <div className='image-strip-container' onScroll={handleScroll}>
             {images.map(image => (
                 <img alt={image.zdbID} className='image-strip-image' key={image.zdbID} src={image.mediumUrl} />
             ))}

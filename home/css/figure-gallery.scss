@@ -73,13 +73,14 @@
 }
 
 .image-strip-container {
+    height: 200px;
     width: 100%;
     display: flex;
     overflow-x: auto;
 }
 
 .image-strip-image {
-    max-height: 200px;
+    max-height: 100%;
     display: block;
     margin-right: 0.5rem;
     border: 1px solid black;
