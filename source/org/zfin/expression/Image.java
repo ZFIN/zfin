@@ -1,6 +1,8 @@
 package org.zfin.expression;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.framework.api.View;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.Person;
 
@@ -17,7 +19,9 @@ public class Image implements Serializable {
 
     public static String NOT_SPECIFIED = "not specified";
 
+    @JsonView(View.API.class)
     private String zdbID;
+    @JsonView(View.API.class)
     private Figure figure;
     private String label;
     private String imageFilename;
@@ -290,10 +294,12 @@ public class Image implements Serializable {
         return imageFilename;
     }
 
+    @JsonView(View.API.class)
     public String getUrl() {
         return "/imageLoadUp/" + getDisplayedImageFilename();
     }
 
+    @JsonView(View.API.class)
     public String getMediumUrl() {
         return "/imageLoadUp/" + getMedium();
     }
