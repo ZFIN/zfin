@@ -1,5 +1,7 @@
 package org.zfin.curation.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
 
@@ -7,12 +9,12 @@ import java.util.Calendar;
 
 public class CurationStatusDTO {
 
-    private Boolean current;
-    private String pubZdbID;
-    private PublicationTrackingStatus status;
-    private PublicationTrackingLocation location;
-    private PersonDTO owner;
-    private Calendar updateDate;
+    @JsonView(View.API.class) private Boolean current;
+    @JsonView(View.API.class) private String pubZdbID;
+    @JsonView(View.API.class) private PublicationTrackingStatus status;
+    @JsonView(View.API.class) private PublicationTrackingLocation location;
+    @JsonView(View.API.class) private PersonDTO owner;
+    @JsonView(View.API.class) private Calendar updateDate;
 
     public Boolean isCurrent() {
         return current;

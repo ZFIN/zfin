@@ -1,16 +1,18 @@
 package org.zfin.publication.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.curation.presentation.PersonDTO;
+import org.zfin.framework.api.View;
 import org.zfin.publication.ProcessingChecklistTask;
 
 import java.util.Calendar;
 
 public class ProcessingTaskBean {
 
-    private long id;
-    private ProcessingChecklistTask.Task task;
-    private PersonDTO person;
-    private Calendar date;
+    @JsonView(View.API.class) private long id;
+    @JsonView(View.API.class) private ProcessingChecklistTask.Task task;
+    @JsonView(View.API.class) private PersonDTO person;
+    @JsonView(View.API.class) private Calendar date;
 
     public long getId() {
         return id;
