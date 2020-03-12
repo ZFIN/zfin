@@ -69,7 +69,7 @@
             <a href ng-click="vm.addEvidence(ortholog)">Add</a>
         </td>
         <td ng-show="!vm.edit">
-            <div ng-repeat="ev in ortholog.evidenceSetGroupedByCode">
+            <div ng-repeat="ev in ortholog.evidence">
                 {{ev.name}}
                 <span ng-if="ev.pubIds.length == 1">(<a href="/{{ev.pubIds[0]}}">1</a>)</span>
                 <span ng-if="ev.pubIds.length > 1">(<a
