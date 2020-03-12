@@ -21,7 +21,7 @@
 <c:set var="ORTHOLOGY" value="Orthology"/>
 
 <z:dataPage
-        sections="${[SUMMARY, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY]}"
+        sections="${[SUMMARY, EXPRESSION, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY]}"
 >
     <z:dataManagerDropdown>
         <a class="dropdown-item active" href="/action/marker/gene/prototype-view/${formBean.marker.zdbID}">View</a>
