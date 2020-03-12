@@ -77,6 +77,7 @@
     width: 100%;
     display: flex;
     overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .image-strip-image {
@@ -84,4 +85,5 @@
     display: block;
     margin-right: 0.5rem;
     border: 1px solid black;
+    cursor: pointer;
 }
