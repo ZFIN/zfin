@@ -1,5 +1,6 @@
 package org.zfin.publication.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.curation.service.CurationDTOConversionService;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.PublicationTrackingStatus;
@@ -102,6 +104,7 @@ public class PublicationDashboardController {
 
     @ResponseBody
     @RequestMapping(value = "/search-status", method = RequestMethod.GET)
+    @JsonView(View.API.class)
     public DashboardPublicationList getListOfPubsInBin(@RequestParam(required = false) Long status,
                                                                          @RequestParam(required = false) Long location,
                                                                          @RequestParam(required = false) String owner,

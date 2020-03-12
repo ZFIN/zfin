@@ -1,6 +1,5 @@
 package org.zfin.curation.service;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.*;
-import org.zfin.publication.presentation.DashboardImageBean;
 import org.zfin.publication.presentation.DashboardPublicationBean;
 import org.zfin.publication.presentation.ProcessingTaskBean;
 
@@ -197,17 +195,11 @@ public class CurationDTOConversionService {
         bean.setPdfPath(publication.getFileName());
         bean.setLastCorrespondenceDate(publication.getLastCorrespondenceDate());
         bean.setNumberOfCorrespondences(publication.getSentMessages().size() + publication.getReceivedMessages().size());
-        List<DashboardImageBean> images = new ArrayList<>();
-        for (Figure figure : publication.getFigures()) {
-            for (Image image : figure.getImages()) {
-                DashboardImageBean imageBean = new DashboardImageBean();
-                imageBean.setLabel(figure.getLabel());
-                imageBean.setFullPath(image.getUrl());
-                imageBean.setMediumPath(image.getMediumUrl());
-                images.add(imageBean);
-            }
-        }
-        images.sort((o1, o2) -> ObjectUtils.compare(o1.getLabel(), o2.getLabel()));
+        List<Image> images = publication.getFigures().stream()
+                .map(Figure::getImages)
+                .flatMap(Set::stream)
+                .sorted(Comparator.comparing(image -> image.getFigure().getLabel()))
+                .collect(Collectors.toList());
         bean.setImages(images);
         bean.setProcessingTasks(publication.getProcessingChecklistEntries()
                 .stream()

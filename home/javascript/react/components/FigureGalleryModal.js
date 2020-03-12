@@ -35,7 +35,7 @@ class FigureGalleryModal extends Component {
                 <div className='modal-dialog'>
                     <div className='modal-content'>
                         <div className='modal-header'>
-                            <h4 className='modal-title'>{image && image.label}</h4>
+                            <h4 className='modal-title'>{image && image.figure.label}</h4>
                             <button type='button' className='close' data-dismiss='modal' aria-label='Close'>
                                 <span aria-hidden='true'><i className='fas fa-fw fa-times' /></span>
                             </button>
@@ -44,7 +44,7 @@ class FigureGalleryModal extends Component {
                             {onPrev && <a href='#' className='figure-gallery-modal-nav prev' role='button' onClick={this.handleNavigation(onPrev)}>
                                 <i className='fas fa-chevron-left' />
                             </a>}
-                            <img className='figure-gallery-modal-image' src={image && image.fullPath} />
+                            <img className='figure-gallery-modal-image' src={image && image.url} />
                             {onNext && <a href='#' className='figure-gallery-modal-nav next' role='button' onClick={this.handleNavigation(onNext)}>
                                 <i className='fas fa-chevron-right' />
                             </a>}

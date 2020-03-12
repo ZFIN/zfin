@@ -162,8 +162,8 @@ class CuratingBin extends React.Component {
                         <p dangerouslySetInnerHTML={{__html: pub.abstractText}} />
                         <p>
                             {pub.images.map((image, index) => (
-                                <span key={image.mediumPath}>
-                                    <img src={image.mediumPath} onClick={() => this.handleModalOpen(pub.images, index)} />
+                                <span key={image.mediumUrl}>
+                                    <img src={image.mediumUrl} onClick={() => this.handleModalOpen(pub.images, index)} />
                                 </span>
                             ))}
                         </p>
