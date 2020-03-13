@@ -14,7 +14,7 @@ import PubClaimButton from '../components/PubClaimButton';
 import BinPubList from '../components/BinPubList';
 import RelativeDate from '../components/RelativeDate';
 import PubPDFLink from '../components/PubPDFLink';
-import FigureGalleryModal from '../components/FigureGalleryModal';
+import FigureGallery from '../components/FigureGallery';
 
 const PUBS_PER_PAGE = 50;
 const SORT_OPTIONS = [
@@ -44,8 +44,6 @@ class CuratingBin extends React.Component {
             loading: false,
             locations: [],
             location: '',
-            modalImageSet: [],
-            modalImageIdx: 0,
             results: {},
             sort: SORT_OPTIONS[0].value,
         };
@@ -127,16 +125,8 @@ class CuratingBin extends React.Component {
         this.setState({location});
     }
 
-    handleModalOpen(modalImageSet, modalImageIdx) {
-        this.setState({modalImageSet, modalImageIdx});
-    }
-
-    handleModalClose() {
-        this.setState({modalImageSet: [], modalImageIdx: 0});
-    }
-
     render() {
-        const { loading, location, locations, modalImageIdx, modalImageSet, page, sort, results } = this.state;
+        const { loading, location, locations, page, sort, results } = this.state;
         const locationOptions = locations.map(location => ({
             value: location.id,
             display: location.name,
@@ -160,13 +150,7 @@ class CuratingBin extends React.Component {
                         <p>{pub.citation}</p>
                         <p>{pub.authors}</p>
                         <p dangerouslySetInnerHTML={{__html: pub.abstractText}} />
-                        <p>
-                            {pub.images.map((image, index) => (
-                                <span key={image.mediumUrl}>
-                                    <img src={image.mediumUrl} onClick={() => this.handleModalOpen(pub.images, index)} />
-                                </span>
-                            ))}
-                        </p>
+                        <FigureGallery images={pub.images} />
                     </div>
                 ),
             },
@@ -203,13 +187,6 @@ class CuratingBin extends React.Component {
                         />
                     </div>
                 </div>
-
-                <FigureGalleryModal
-                    image={modalImageSet[modalImageIdx]}
-                    onClose={this.handleModalClose.bind(this)}
-                    onPrev={modalImageIdx === 0 ? undefined : () => this.setState({modalImageIdx: modalImageIdx - 1})}
-                    onNext={modalImageIdx === modalImageSet.length - 1 ? undefined : () => this.setState({modalImageIdx: modalImageIdx + 1})}
-                />
             </React.Fragment>
         );
     }

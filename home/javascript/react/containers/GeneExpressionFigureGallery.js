@@ -30,6 +30,7 @@ const GeneExpressionFigureGallery = ({geneId}) => {
 
     return (
         <FigureGallery
+            className='figure-gallery-container'
             images={images}
             loading={pending}
             onLoadMore={() => setPage(prevPage => prevPage + 1)}

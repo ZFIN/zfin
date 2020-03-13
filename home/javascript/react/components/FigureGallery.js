@@ -5,9 +5,10 @@ import FigureGalleryModal from './FigureGalleryModal';
 
 let animationRequest = null;
 
-const FigureGallery = ({images, loading, onLoadMore, total}) => {
+const FigureGallery = ({className, images, loading, onLoadMore, total}) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
     const canLoadMore = !loading && total && images.length < total;
+    const maxIndex = total || images.length;
 
     const handleScroll = event => {
         if (animationRequest) {
@@ -26,7 +27,7 @@ const FigureGallery = ({images, loading, onLoadMore, total}) => {
         });
     };
 
-    const handleModalNext = selectedIndex === total - 1 ? undefined : () => {
+    const handleModalNext = selectedIndex === maxIndex - 1 ? undefined : () => {
         const nextIndex = selectedIndex + 1
         if (canLoadMore && nextIndex === images.length - 1) {
             onLoadMore();
@@ -37,11 +38,11 @@ const FigureGallery = ({images, loading, onLoadMore, total}) => {
     const handleModalPrev = selectedIndex === 0 ? undefined : () => setSelectedIndex(selectedIndex - 1);
 
     return (
-        <div className='image-strip-container' onScroll={handleScroll}>
+        <div className={className} onScroll={handleScroll}>
             {images.map((image, idx) => (
                 <img
                     alt={image.zdbID}
-                    className='image-strip-image'
+                    className='figure-gallery-image'
                     key={image.zdbID}
                     onClick={() => setSelectedIndex(idx)}
                     src={image.mediumUrl}
@@ -66,6 +67,7 @@ const FigureGallery = ({images, loading, onLoadMore, total}) => {
 };
 
 FigureGallery.propTypes = {
+    className: PropTypes.string,
     images: PropTypes.arrayOf(PropTypes.shape({
         zdbID: PropTypes.string,
         mediumUrl: PropTypes.string,
