@@ -2283,7 +2283,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public List<InterProProtein> getInterProForMarker(Marker marker) {
         Session session = currentSession();
-        String sql = " SELECT  ip " +
+        String sql = " SELECT  distinct ip " +
                 " FROM InterProProtein ip, MarkerToProtein mtp, ProteinToInterPro pti " +
                 " WHERE ip.ipID = pti.interProID " +
                 " AND pti.uniProtID = mtp.mtpUniProtID " +
