@@ -12,11 +12,12 @@
 <c:set var="TRANSCRIPTS" value="Transcripts"/>
 <c:set var="CONSTRUCTS" value="Constructs with Sequences"/>
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
+<c:set var="PATHWAYS" value="Interactions and Pathways"/>
 <c:set var="SEQUENCE" value="Sequence Information"/>
 <c:set var="ORTHOLOGY" value="Orthology"/>
 
 <z:dataPage
-        sections="${[SUMMARY, MUTATIONS, PHENOTYPE, GO, TRANSCRIPTS, CONSTRUCTS, SEQUENCE, ORTHOLOGY]}">
+        sections="${[SUMMARY, MUTATIONS, PHENOTYPE, GO, TRANSCRIPTS, PATHWAYS, CONSTRUCTS, SEQUENCE, ORTHOLOGY]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/action/marker/gene/edit/">Edit</a>
         <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=">Merge</a>
@@ -111,7 +112,7 @@
             <div class="__react-root" id="GeneConstructsTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
-        <z:section title="${MARKERRELATIONSHIPS}">
+        <z:section title="${PATHWAYS}">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
