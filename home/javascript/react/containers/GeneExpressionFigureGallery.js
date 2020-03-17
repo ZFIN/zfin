@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import FigureGallery from '../components/FigureGallery';
+import FigureGalleryExpressionDetails from '../components/FigureGalleryExpressionDetails';
 import http from '../utils/http';
 import GenericErrorMessage from '../components/GenericErrorMessage';
+import {useFetch} from '../utils/effects';
 
 const GeneExpressionFigureGallery = ({geneId}) => {
     const [page, setPage] = useState(1);
@@ -10,6 +12,7 @@ const GeneExpressionFigureGallery = ({geneId}) => {
     const [total, setTotal] = useState(0);
     const [error, setError] = useState(null);
     const [pending, setPending] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     // not using useFetch here because the image arrays need to be concatenated, not replaced
     useEffect(() => {
@@ -24,6 +27,11 @@ const GeneExpressionFigureGallery = ({geneId}) => {
             .always(() => setPending(false));
     }, [geneId, page]);
 
+    const figureDetails = useFetch(selectedImage ?
+        `/action/api/figure/${selectedImage.figure.zdbID}/summary` :
+        undefined
+    );
+
     if (error) {
         return <GenericErrorMessage />;
     }
@@ -33,7 +41,9 @@ const GeneExpressionFigureGallery = ({geneId}) => {
             className='figure-gallery-container'
             images={images}
             loading={pending}
+            onImageSelect={setSelectedImage}
             onLoadMore={() => setPage(prevPage => prevPage + 1)}
+            selectedImageDetails={<FigureGalleryExpressionDetails figureDetails={figureDetails} />}
             total={total}
         />
     );

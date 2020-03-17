@@ -39,7 +39,7 @@ public class GeneExpressionRibbonController {
         return ribbonService.buildExpressionRibbonSummary(zdbID);
     }
 
-    @JsonView(View.API.class)
+    @JsonView(View.GeneExpressionAPI.class)
     @RequestMapping(value = "/marker/{zdbID}/expression/images")
     public JsonResultResponse<Image> getExpressionImages(@PathVariable String zdbID,
                                                           @RequestParam(required = false) String termId,

@@ -1,8 +1,10 @@
 package org.zfin.anatomy;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Parameter;
+import org.zfin.framework.api.View;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,10 +30,12 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
                     @Parameter(name = "type", value = "STAGE")
             })
     @Column(name = "stg_zdb_id")
+    @JsonView(View.API.class)
     private String zdbID;
     @Column(name = "stg_obo_id")
     private String oboID;
     @Column(name = "stg_name")
+    @JsonView(View.API.class)
     private String name;
     @Column(name = "stg_name_long")
     private String nameLong;
@@ -42,6 +46,7 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
     @Column(name = "stg_other_features")
     private String otherFeature;
     @Column(name = "stg_abbrev")
+    @JsonView(View.API.class)
     private String abbreviation;
     @Column(name = "stg_name_ext")
     private String timeString;

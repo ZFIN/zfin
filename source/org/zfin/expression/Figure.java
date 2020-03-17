@@ -44,6 +44,7 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     private Set<ExpressionResult> expressionResults;
     private Set<PhenotypeExperiment> phenotypeExperiments;
     private Set<Image> images;
+    @JsonView(View.GeneExpressionAPI.class)
     private Publication publication;
     private Set<Marker> constructs;
     private GregorianCalendar insertedDate;

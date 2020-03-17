@@ -5,7 +5,7 @@ import FigureGalleryModal from './FigureGalleryModal';
 
 let animationRequest = null;
 
-const FigureGallery = ({className, images, loading, onLoadMore, total}) => {
+const FigureGallery = ({className, images, loading, onImageSelect, onLoadMore, selectedImageDetails, total}) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
     const canLoadMore = !loading && total && images.length < total;
     const maxIndex = total || images.length;
@@ -27,15 +27,25 @@ const FigureGallery = ({className, images, loading, onLoadMore, total}) => {
         });
     };
 
+    const handleIndexChange = (idx) => {
+        setSelectedIndex(idx);
+        if (typeof onImageSelect === 'function') {
+            onImageSelect(images[idx]);
+        }
+    };
+
     const handleModalNext = selectedIndex === maxIndex - 1 ? undefined : () => {
-        const nextIndex = selectedIndex + 1
+        const nextIndex = selectedIndex + 1;
         if (canLoadMore && nextIndex === images.length - 1) {
             onLoadMore();
         }
-        setSelectedIndex(nextIndex);
+        handleIndexChange(nextIndex);
     };
 
-    const handleModalPrev = selectedIndex === 0 ? undefined : () => setSelectedIndex(selectedIndex - 1);
+    const handleModalPrev = selectedIndex === 0 ? undefined : () => {
+        const prevIndex = selectedIndex - 1;
+        handleIndexChange(prevIndex);
+    };
 
     return (
         <div className={className} onScroll={handleScroll}>
@@ -44,7 +54,7 @@ const FigureGallery = ({className, images, loading, onLoadMore, total}) => {
                     alt={image.zdbID}
                     className='figure-gallery-image'
                     key={image.zdbID}
-                    onClick={() => setSelectedIndex(idx)}
+                    onClick={() => handleIndexChange(idx)}
                     src={image.mediumUrl}
                 />
             ))}
@@ -58,6 +68,7 @@ const FigureGallery = ({className, images, loading, onLoadMore, total}) => {
 
             <FigureGalleryModal
                 image={images[selectedIndex]}
+                imageDetails={selectedImageDetails}
                 onClose={() => setSelectedIndex(null)}
                 onNext={handleModalNext}
                 onPrev={handleModalPrev}
@@ -74,8 +85,10 @@ FigureGallery.propTypes = {
         url: PropTypes.string,
     })).isRequired,
     total: PropTypes.number,
+    onImageSelect: PropTypes.func,
     onLoadMore: PropTypes.func,
     loading: PropTypes.bool,
+    selectedImageDetails: PropTypes.node,
 };
 
 export default FigureGallery;
