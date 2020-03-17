@@ -30,7 +30,7 @@
 <!--|GENBANK_DAILY_EMAIL|-->	informix\@zfin.org
 <!--|GOOGLE_ANALYTICS_ID|-->	UA-2417927-5
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org smoxon\@zfin.org xshao\@zfin.org
-<!--|GO_EMAIL_ERR|-->	smoxon\@zfin.org xshao\@zfin.org dhowe\@zfin.org
+<!--|GO_EMAIL_ERR|-->	smoxon\@zfin.org dhowe\@zfin.org
 <!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/darwin/home/WEB-INF/lib*:/opt/zfin/source_roots/darwin/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/darwin/home/WEB-INF/classes:/opt/apache/apache-tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|IMAGE_LOAD|-->	/imageLoadUp
@@ -48,7 +48,7 @@
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PARTNER_SOURCEROOT|-->	false
-<!--|PATO_EMAIL_CURATOR|-->	informix\@zfin.org ksf\@zfin.org xshao\@zfin.org
+<!--|PATO_EMAIL_CURATOR|-->	informix\@zfin.org ksf\@zfin.org
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|PGBINDIR|-->	/opt/postgres/postgresql/bin
 <!--|PGDATA|-->	/opt/postgres/data
@@ -61,7 +61,7 @@
 <!--|SQLHOSTS_HOST|-->	thorax.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@zfin.org dhowe\@zfin.org sabrina\@zfin.org
 <!--|SWISSPROT_EMAIL_ERR|-->	informix\@zfin.org xshao\@zfin.org
-<!--|SWISSPROT_EMAIL_REPORT|-->	ksf\@zfin.org dhowe\@zfin.org smoxon\@zfin.org xshao\@zfin.org sramachandran\@zfin.org
+<!--|SWISSPROT_EMAIL_REPORT|-->	ksf\@zfin.org dhowe\@zfin.org smoxon\@zfin.org sramachandran\@zfin.org
 <!--|TARGETROOT|-->	/opt/zfin/www_homes/darwin
 <!--|VALIDATION_EMAIL_AD|-->	smoxon\@zfin.org
 <!--|VALIDATION_EMAIL_CURATOR|-->	ksf\@zfin.org dhowe\@zfin.org dfashena\@uoneuro.uoregon.edu
