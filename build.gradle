@@ -331,7 +331,7 @@ task deployGitInfoFile() {
         }
         copy {
             from(packageFiles)
-            into(targetroot+"/home/WEB-INF/classes")
+            into(targetroot + "/home/WEB-INF/classes")
         }
     }
 }
@@ -350,9 +350,9 @@ project(':server_apps:data_transfer') {
 
 project(':server_apps:data_transfer:Ensembl') {
     task "deployFiles"(type: ZfinTargetCopy) {
-      from(project.projectDir) {
+        from(project.projectDir) {
             ttNameMap.each { name, value ->
-        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
             }
             include '**/*.sh', '**/*.sql', '**/*.groovy'
         }
@@ -362,9 +362,9 @@ project(':server_apps:data_transfer:Ensembl') {
 
 project(':server_apps:data_transfer:PUBMED') {
     task "deployFiles"(type: ZfinTargetCopy) {
-      from(project.projectDir) {
+        from(project.projectDir) {
             ttNameMap.each { name, value ->
-        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
             }
             include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
         }
@@ -374,9 +374,9 @@ project(':server_apps:data_transfer:PUBMED') {
 
 project(':server_apps:data_transfer:ExpressionAtlas') {
     task "deployFiles"(type: ZfinTargetCopy) {
-      from(project.projectDir) {
+        from(project.projectDir) {
             ttNameMap.each { name, value ->
-        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
             }
             include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
         }
@@ -386,9 +386,9 @@ project(':server_apps:data_transfer:ExpressionAtlas') {
 
 project(':server_apps:data_transfer:ResourceCenters') {
     task "deployFiles"(type: ZfinTargetCopy) {
-      from(project.projectDir) {
+        from(project.projectDir) {
             ttNameMap.each { name, value ->
-        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
             }
             include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
         }
@@ -399,9 +399,9 @@ project(':server_apps:data_transfer:ResourceCenters') {
 
 project(':server_apps:data_transfer:GO') {
     task "deployFiles"(type: ZfinTargetCopy) {
-      from(project.projectDir) {
+        from(project.projectDir) {
             ttNameMap.each { name, value ->
-        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
             }
             include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
         }
@@ -411,9 +411,9 @@ project(':server_apps:data_transfer:GO') {
 
 project(':server_apps:data_transfer:ORTHO') {
     task "deployFiles"(type: ZfinTargetCopy) {
-      from(project.projectDir) {
+        from(project.projectDir) {
             ttNameMap.each { name, value ->
-        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
             }
             include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
         }
@@ -423,9 +423,9 @@ project(':server_apps:data_transfer:ORTHO') {
 
 project(':server_apps:data_transfer:eco_go_mapping') {
     task "deployFiles"(type: ZfinTargetCopy) {
-      from(project.projectDir) {
+        from(project.projectDir) {
             ttNameMap.each { name, value ->
-        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
             }
             include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.pl', '**/*.xml', '**/*.txt'
         }
@@ -437,13 +437,13 @@ project(':server_apps:data_transfer:eco_go_mapping') {
 
 project(':server_apps:data_transfer:Downloads:GFF3') {
     task "deployFiles"(type: ZfinTargetCopy) {
-      from(project.projectDir) {
+        from(project.projectDir) {
             ttNameMap.each { name, value ->
-        filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
+                filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
             }
             include '**/*.sh', '**/*.sql', '**/*.groovy', '**/*.xml'
-    }
-    into targetroot + pName
+        }
+        into targetroot + pName
     }
 }
 
@@ -459,17 +459,35 @@ task make(type: GradleBuild) {
              ':server_apps:sysexecs:deployFiles',
              ':server_apps:DB_maintenance:deployFiles',
              ':server_apps:data_transfer:deployFiles',
-             ':server_apps:data_transfer:Ensembl:deployFiles', 
-             ':server_apps:data_transfer:PUBMED:deployFiles', 
-             ':server_apps:data_transfer:ExpressionAtlas:deployFiles', 
-             ':server_apps:data_transfer:ResourceCenters:deployFiles', 
+             ':server_apps:data_transfer:Ensembl:deployFiles',
+             ':server_apps:data_transfer:PUBMED:deployFiles',
+             ':server_apps:data_transfer:ExpressionAtlas:deployFiles',
+             ':server_apps:data_transfer:ResourceCenters:deployFiles',
              ':server_apps:data_transfer:GO:deployFiles',
              ':server_apps:data_transfer:ORTHO:deployFiles',
-             ':server_apps:data_transfer:eco_go_mapping:deployFiles',         
+             ':server_apps:data_transfer:eco_go_mapping:deployFiles',
              ':server_apps:Reports:deployFiles',
              'deployGitInfoFile',
              ':cgi-bin:deployFiles'
     ]
+}
+
+task getLatestSolrIndexFiles() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "bash", "-c", "scp -r " + env['USER'] + "@thorax.zfin.org:/research/zunloads/solr/zfindb/current current.solr.dump";
+        }
+    }
+}
+
+task getLatestPostgresFiles() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "bash", "-c", "scp " + env['USER'] + "@thorax.zfin.org:/research/zunloads/databases/zfindb/current current.postgres.dump";
+        }
+    }
 }
 
 task getLatestSolrIndex() {
@@ -480,11 +498,11 @@ task getLatestSolrIndex() {
         def folder = "/research/zunloads/solr/zfindb";
         def baseDir = new File(folder);
         def files = baseDir.listFiles();
-        Arrays.sort(files, new Comparator<File>(){
-            public int compare(File f1, File f2)
-            {
+        Arrays.sort(files, new Comparator<File>() {
+            public int compare(File f1, File f2) {
                 return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
-            } });
+            }
+        });
         def latestIndex = files[0]
         println latestIndex
         def sout = new StringBuilder(), serr = new StringBuilder()
@@ -495,7 +513,7 @@ task getLatestSolrIndex() {
 
         println proc.text
         println b.toString()
-        
+
     }
 }
 
