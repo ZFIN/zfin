@@ -216,7 +216,7 @@
                     target="${commons.dir}/${INSTANCE}.bash"
                     header="#!/local/bin/bash${line.separator}"
                     keyPrefix="export "
-                    keySuffix=" "
+                    keySuffix="="
                     valuePrefix="&quot;"
                     valueSuffix="&quot;"
                     exportPropertyFile="${commons.dir}/env-exports.properties"/>
@@ -295,6 +295,7 @@
             description="Exports properties to env and tt files.">
         <echo message="Creating properties file: ${INSTANCE}"></echo>
         <createEnv/>
+        <createEnv-bash/>
         <createTT/>
         <echo message="Created properties file: ${INSTANCE}"></echo>
     </target>
