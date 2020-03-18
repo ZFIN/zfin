@@ -1,6 +1,6 @@
 #!/local/bin/bash
 
-export ANT_HOME="/opt/apache/apache-ant"
+export ANT_HOME="/opt/zfin/ant_home"
 export ANT_OPTS="-Xms256m -Xmx4096m -Dgwt.persistentunitcache=false"
 export CATALINA_BASE="/opt/zfin/catalina_bases/local"
 export CATALINA_HOME="/opt/apache/apache-tomcat"
@@ -26,7 +26,7 @@ export INDEXER_WIKI_PASSWORD="dan1orer1o"
 export INDEXER_WIKI_USERNAME="webservice"
 export INSPECTLET_ID="0000000000"
 export INSTANCE="local"
-export JAVA_HOME="/usr/lib/jvm/java-openjdk"
+export JAVA_HOME="/opt/zfin/java_home"
 export JENKINS_HOME="/opt/zfin/www_homes/local/server_apps/jenkins/jenkins-home"
 export JENKINS_PORT="9499"
 export JPDA_ADDRESS="5000"
