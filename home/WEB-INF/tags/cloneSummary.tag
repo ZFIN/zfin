@@ -98,3 +98,6 @@ cloneHead.tag ... that's why there's no table tag here, just rows --%>
             <a href="/ZFIN/Methods/ThisseProtocol.html"><b>Thisse <i>in situ </i> hybridization protocol</b></a>
     </z:attributeListItem>
 </c:if>
+<z:attributeListItem label="Note">
+<zfin2:entityNotes entity="${formBean.clone}"/>
+</z:attributeListItem>
