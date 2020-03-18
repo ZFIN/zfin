@@ -52,7 +52,7 @@ const GeneConstructsTable = ({geneId}) => {
             align: 'right',
         },
         {
-            label: 'Publications',
+            label: 'Citations',
             content: row => <a href={`/action/marker/citation-list/${row.construct.zdbID}`}>{row.numberOfPublications}</a>,
             width: '100px',
             align: 'right',
