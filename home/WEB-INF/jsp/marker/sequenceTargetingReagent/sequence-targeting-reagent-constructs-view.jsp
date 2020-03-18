@@ -2,8 +2,21 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentBean" scope="request"/>
 
- <zfin2:toggledLinkList collection="${formBean.constructs}" maxNumber="5" commaDelimited="true"
-                           numberOfEntities="${formBean.numberOfConstructs}"
-                           ajaxLink="/action/marker/efg/constructs/${formBean.marker.zdbID}" />
+<z:dataTable collapse="true"
+             hasData="${!empty formBean.constructs}">
+ <thead>
+ <tr>
+  <th>Construct</th>
+ </tr>
+ </thead>
+ <tbody>
+ <c:forEach var="construct" items="${formBean.constructs}" varStatus="loop">
+
+  <td>
+   <zfin:link entity="${construct}"/>
+  </td>
+ </c:forEach>
+ </tbody>
+</z:dataTable>
 
 

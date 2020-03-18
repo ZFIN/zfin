@@ -7,8 +7,8 @@
 
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="TARGETLOCATION" value="Target Location"/>
-<c:set var="GENOMICFEATURES" value="Genomic Features Created From"/>
-<c:set var="CONSTRUCTS" value="Constructs With Sequences"/>
+<c:set var="GENOMICFEATURES" value="Genomic Features"/>
+<c:set var="CONSTRUCTS" value="Constructs"/>
 <c:set var="EXPRESSION" value="Expression"/>
 <c:set var="PHENOTYPE" value="Phenotype"/>
 
@@ -153,6 +153,10 @@
 
     <z:section title="${GENOMICFEATURES}">
         <jsp:include page="sequence-targeting-reagent-genonomicfeatures-view.jsp"/>
+    </z:section>
+
+    <z:section title="${EXPRESSION}">
+        <jsp:include page="sequence-targeting-reagent-expression-view.jsp"/>
     </z:section>
 </z:dataPage>
 
