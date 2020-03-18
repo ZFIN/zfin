@@ -1,24 +1,27 @@
 package org.zfin.publication.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.curation.presentation.CurationStatusDTO;
+import org.zfin.expression.Image;
+import org.zfin.framework.api.View;
 
 import java.util.Date;
 import java.util.List;
 
 public class DashboardPublicationBean {
 
-    private String zdbId;
-    private String title;
-    private String citation;
-    private String authors;
-    private String abstractText;
-    private List<DashboardImageBean> images;
-    private String pdfPath;
-    private CurationStatusDTO status;
-    private Date lastCorrespondenceDate;
-    private int numberOfCorrespondences;
-    private List<ProcessingTaskBean> processingTasks;
-    private boolean canShowImages;
+    @JsonView(View.API.class) private String zdbId;
+    @JsonView(View.API.class) private String title;
+    @JsonView(View.API.class) private String citation;
+    @JsonView(View.API.class) private String authors;
+    @JsonView(View.API.class) private String abstractText;
+    @JsonView(View.API.class) private List<Image> images;
+    @JsonView(View.API.class) private String pdfPath;
+    @JsonView(View.API.class) private CurationStatusDTO status;
+    @JsonView(View.API.class) private Date lastCorrespondenceDate;
+    @JsonView(View.API.class) private int numberOfCorrespondences;
+    @JsonView(View.API.class) private List<ProcessingTaskBean> processingTasks;
+    @JsonView(View.API.class) private boolean canShowImages;
 
     public String getZdbId() {
         return zdbId;
@@ -60,11 +63,11 @@ public class DashboardPublicationBean {
         this.abstractText = abstractText;
     }
 
-    public List<DashboardImageBean> getImages() {
+    public List<Image> getImages() {
         return images;
     }
 
-    public void setImages(List<DashboardImageBean> images) {
+    public void setImages(List<Image> images) {
         this.images = images;
     }
 

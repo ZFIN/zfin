@@ -893,13 +893,6 @@ ul.comma-separated {
     vertical-align: text-top;
 }
 
-.pub-dashboard img {
-    max-height: 100px;
-    margin: 4px 4px 0 0;
-    border: 1px solid black;
-    cursor: pointer;
-}
-
 .pub-dashboard .processing-tasks {
     margin: 0 0 10px 0;
     padding: 0;

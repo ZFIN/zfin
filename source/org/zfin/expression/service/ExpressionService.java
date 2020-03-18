@@ -3,7 +3,10 @@ package org.zfin.expression.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
@@ -12,6 +15,9 @@ import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.*;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.figure.repository.FigureRepository;
+import org.zfin.framework.api.JsonResultResponse;
+import org.zfin.framework.api.Pagination;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeStatementDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -26,6 +32,7 @@ import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.ForeignDB;
@@ -37,6 +44,7 @@ import org.zfin.util.TermStageSplitStatement;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
@@ -50,6 +58,9 @@ public class ExpressionService {
     public static final String MICROARRAY_PUB = "ZDB-PUB-071218-1";
 
     private static Logger logger = LogManager.getLogger(ExpressionService.class);
+
+    @Autowired
+    private FigureRepository figureRepository;
 
     private static ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
@@ -875,6 +886,25 @@ public class ExpressionService {
         }
 
 
+    }
+
+    public JsonResultResponse<Image> getExpressionImages(String geneId, String termId, boolean isOther, Pagination pagination) throws IOException, SolrServerException {
+        JsonResultResponse<Image> response = new JsonResultResponse<>();
+
+        SolrQuery query = new SolrQuery();
+        query.setRequestHandler("/images");
+        query.addFilterQuery("expressed_gene_zdb_id:" + geneId);
+        query.setStart(pagination.getStart());
+        query.setRows(pagination.getLimit());
+
+        QueryResponse queryResponse = SolrService.getSolrClient().query(query);
+        List<String> imageIds = queryResponse.getResults().stream()
+                .map(doc -> (String) doc.getFieldValue(FieldName.ID.getName()))
+                .collect(Collectors.toList());
+        response.setTotal(queryResponse.getResults().getNumFound());
+        response.setResults(figureRepository.getImages(imageIds));
+
+        return response;
     }
 
 }

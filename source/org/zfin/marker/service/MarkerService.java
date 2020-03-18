@@ -906,10 +906,10 @@ public class MarkerService {
                 if (prot.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.UNIPROTKB) {
                     row.setProDBLink(prot);
 
-              List<ProteinToPDB> ptp=markerRepository.getPDB(prot.getAccessionNumberDisplay());
-              if (CollectionUtils.isNotEmpty(ptp)) {
+                    List<ProteinToPDB> ptp=markerRepository.getPDB(prot.getAccessionNumberDisplay());
+                    if (CollectionUtils.isNotEmpty(ptp)) {
 
-              row.setPDB(true);
+                        row.setPDB(true);
 
                     }
                     Map<String, String> detailMap = new TreeMap<>();
@@ -925,7 +925,7 @@ public class MarkerService {
                     for (String ipName : markerRepository.getIPNames(prot.getAccessionNumberDisplay())) {
                         detailMap.put(ipName, "X");
                     }
-
+                    System.out.println(prot);
                     detailMap.entrySet().forEach(System.out::println);
                     row.setInterProDomain(detailMap);
                     rows.add(row);
@@ -939,8 +939,6 @@ public class MarkerService {
         }
         return proteinDomainDetailBean;
     }
-
-
 
 
     public static OrthologyPresentationBean getOrthologyEvidence(Marker gene, Publication publication) {

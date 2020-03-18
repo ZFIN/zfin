@@ -1,8 +1,10 @@
 package org.zfin.expression;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
+import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 
@@ -76,10 +78,12 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
 
     @Override
     public int compareTo(ExperimentCondition o) {
-        if (o == null || o.getZecoTerm() == null)
+        if (o == null || o.getZecoTerm() == null) {
             return -1;
-        if (zecoTerm != null && !zecoTerm.getOboID().equals(o.getZecoTerm().getOboID()))
+        }
+        if (zecoTerm != null && !zecoTerm.getOboID().equals(o.getZecoTerm().getOboID())) {
             return zecoTerm.getTermName().compareToIgnoreCase(o.getZecoTerm().getTermName());
+        }
         return 0;
     }
 
@@ -167,34 +171,45 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         return result;
     }
 
+    @JsonView(View.API.class)
     public String getDisplayName() {
-        if (zecoTerm == null)
+        if (zecoTerm == null) {
             return "";
+        }
         String displayName = zecoTerm.getTermName();
-        if (chebiTerm != null)
+        if (chebiTerm != null) {
             displayName += ": " + chebiTerm.getTermName();
-        if (goCCTerm != null)
+        }
+        if (goCCTerm != null) {
             displayName += ": " + goCCTerm.getTermName();
-        if (aoTerm != null)
+        }
+        if (aoTerm != null) {
             displayName += ": " + aoTerm.getTermName();
-        if (taxaonymTerm != null)
+        }
+        if (taxaonymTerm != null) {
             displayName += ": " + taxaonymTerm.getTermName();
+        }
         return displayName;
     }
 
     public List<GenericTerm> getAllTerms() {
-        if (zecoTerm == null)
+        if (zecoTerm == null) {
             return null;
+        }
         List<GenericTerm> terms = new ArrayList<>();
         terms.add(zecoTerm);
-        if (chebiTerm != null)
+        if (chebiTerm != null) {
             terms.add(chebiTerm);
-        if (goCCTerm != null)
+        }
+        if (goCCTerm != null) {
             terms.add(goCCTerm);
-        if (aoTerm != null)
+        }
+        if (aoTerm != null) {
             terms.add(aoTerm);
-        if (taxaonymTerm != null)
+        }
+        if (taxaonymTerm != null) {
             terms.add(taxaonymTerm);
+        }
         return terms;
     }
 }

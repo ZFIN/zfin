@@ -315,7 +315,7 @@ select * from tmp_disjoint_vega_zeg;
 drop table tmp_disjoint_vega_zeg;
 
 --! echo 'Gene / ENSDARG Combinations that need to be excluded because they're not 1-1'
-
+-- excludes ExpressionAtlas as 'ZDB-FDBCONT-200123-1'
 create temp table tmp_ensembl_not_one_to_one as
 select mrkr_zdb_id, dbl1.dblink_acc_num
 from marker
@@ -323,6 +323,7 @@ from marker
   join (select count(*) as be_zero, dblink_acc_num
                             from db_link
                             where dblink_acc_num like 'ENSDARG%'
+                              and dblink_fdbcont_zdb_id <> 'ZDB-FDBCONT-200123-1'
                             group by dblink_acc_num
                             having count(*) > 1) dbl2 on dbl1.dblink_acc_num = dbl2.dblink_acc_num
 union
@@ -331,6 +332,7 @@ from marker
   join (select count(*) as be_zero, dblink_linked_recid as troublemaker_zdb_id
             from db_link dbl1
             where dblink_acc_num like 'ENSDARG%'
+              and dblink_fdbcont_zdb_id <> 'ZDB-FDBCONT-200123-1'
             group by dblink_linked_recid
             having count(*) > 1 ) as alias on mrkr_zdb_id = troublemaker_zdb_id
   join db_link on dblink_linked_recid = mrkr_zdb_id
@@ -371,8 +373,6 @@ select
    )
  group by 1,3,7,9,10
 ;
-
-
 
 --! echo 'any ens based genes on multiple LG? (should be zero)'   -- 0
 select substring(a.alias from 1 for 25) zdb ,count(*) bezero

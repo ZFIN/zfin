@@ -13,6 +13,9 @@ export const useFetch = (url) => {
     const [request, setRequest] = useState(null);
 
     useEffect(() => {
+        if (!url) {
+            return;
+        }
         setData(produce(data => {
             data.pending = true;
             data.rejected = false;

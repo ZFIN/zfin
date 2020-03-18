@@ -1,6 +1,8 @@
 package org.zfin.marker;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.expression.ExpressionExperiment;
+import org.zfin.framework.api.View;
 
 import java.util.Set;
 
@@ -8,6 +10,7 @@ import java.util.Set;
  */
 public class Clone extends Marker{
 
+    @JsonView(View.API.class)
     private Integer rating;
     private ProblemType problem;
     private Set<ExpressionExperiment> expressionExperiments;

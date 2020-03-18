@@ -8,11 +8,12 @@
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="SEQUENCES" value="Sequences"/>
 <c:set var="GBROWSE" value="Genome Browser"/>
+<c:set var="EXPRESSION" value="Gene Expression"/>
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
 
 
 <z:dataPage
-        sections="${[SUMMARY, GBROWSE, MARKERRELATIONSHIPS, SEQUENCES]}"
+        sections="${[SUMMARY, GBROWSE, EXPRESSION, MARKERRELATIONSHIPS, SEQUENCES]}"
 >
     <z:dataManagerDropdown>
         <a class="dropdown-item active" href="/action/marker/clone/prototype-view/${formBean.marker.zdbID}">View</a>
@@ -55,7 +56,9 @@
     </script>
     </z:section>
 
-
+    <z:section title="${EXPRESSION}">
+        <jsp:include page="clone-view-expression.jsp" />
+    </z:section>
 
     <z:section title="${MARKERRELATIONSHIPS}">
         <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>

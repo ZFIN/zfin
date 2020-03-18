@@ -1,6 +1,8 @@
 package org.zfin.publication;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -69,23 +71,29 @@ public class PublicationTrackingStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pts_pk_id")
+    @JsonView(View.API.class)
     private long id;
 
     @Column(name = "pts_status")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingStatus$Type")})
+    @JsonView(View.API.class)
     private Type type;
 
     @Column(name = "pts_status_display")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingStatus$Name")})
+    @JsonView(View.API.class)
     private Name name;
 
     @Column(name = "pts_status_qualifier")
+    @JsonView(View.API.class)
     private String qualifier;
 
     @Column(name = "pts_terminal_status")
+    @JsonView(View.API.class)
     private boolean isTerminal;
 
     @Column(name = "pts_hidden_status")
+    @JsonView(View.API.class)
     private boolean hidden;
 
     public long getId() {

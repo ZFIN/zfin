@@ -1,5 +1,7 @@
 package org.zfin.expression;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
@@ -32,14 +34,17 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
         }
     }
 
+    @JsonView(View.API.class)
     private String zdbID;
     private String caption;
     private String comments;
+    @JsonView(View.API.class)
     private String label;
     private String orderingLabel;
     private Set<ExpressionResult> expressionResults;
     private Set<PhenotypeExperiment> phenotypeExperiments;
     private Set<Image> images;
+    @JsonView(View.GeneExpressionAPI.class)
     private Publication publication;
     private Set<Marker> constructs;
     private GregorianCalendar insertedDate;

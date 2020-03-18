@@ -23,7 +23,7 @@ public class JsonResultResponse<T> {
     @JsonView(View.Default.class)
     private List<T> results = new ArrayList<T>();
     @JsonView(View.Default.class)
-    private int total;
+    private long total;
     @JsonView({View.Default.class})
     private int returnedRecords;
     @JsonView({View.Default.class})

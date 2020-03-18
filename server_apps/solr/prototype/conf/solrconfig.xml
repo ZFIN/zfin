@@ -216,7 +216,7 @@
       <!-- Always append these -->
       <lst name="appends">
           <!-- Some categories should always be excluded from search results -->
-          <str name="fq">-category:Autocomplete -category:"STR Relationship" -category:"GO Annotation" </str>
+          <str name="fq">-category:Autocomplete -category:"STR Relationship" -category:"GO Annotation" -category:Image</str>
       </lst>
 
       <!-- default values for query parameters -->
@@ -503,7 +503,7 @@
                 full_name_t
             </str>
             <str name="bf">recip(complexity,1,1,1)^10 sqrt(popularity)^20</str>
-            <str name="fq">-category:Publication -category:Figure</str>
+            <str name="fq">-category:Publication -category:Figure -category:Image</str>
             <str name="hl">true</str>
             <str name="hl.snippets">1</str>
             <str name="hl.fl">
@@ -549,6 +549,20 @@
             <str name="facet">true</str>
             <str name="facet.mincount">1</str>
             <str name="rows">0</str>
+        </lst>
+    </requestHandler>
+
+    <requestHandler name="/images" class="solr.StandardRequestHandler">
+        <lst name="appends">
+            <str name="fq">category:Image</str>
+            <str name="q">*:*</str>
+        </lst>
+        <lst name="defaults">
+            <str name="defType">edismax</str>
+            <str name="wt">json</str>
+            <str name="pretty">true</str>
+            <str name="facet">true</str>
+            <str name="facet.mincount">1</str>
         </lst>
     </requestHandler>
 

@@ -60,5 +60,5 @@
     
 
 
-    <zfin2:entityNotes entity="${formBean.clone}"/>
+
 </z:attributeList>

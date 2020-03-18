@@ -5,6 +5,7 @@ import LoadingSpinner from './LoadingSpinner';
 import { useTableDataFetch } from '../utils/effects';
 import {stringToFunction} from '../utils';
 import NoData from './NoData';
+import GenericErrorMessage from './GenericErrorMessage';
 
 export const DEFAULT_TABLE_STATE = {
     limit: 10,
@@ -25,12 +26,12 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
     const data = useTableDataFetch(url, tableState);
 
     if (data.rejected) {
-        return <span className='text-danger'>Something went wrong fetching data. Try again later or <a href='mailto:@ZFIN_ADMIN@'>contact us</a>.</span>
+        return <GenericErrorMessage />;
     }
 
     if (!data.value) {
         if (data.pending) {
-            return <LoadingSpinner />
+            return <LoadingSpinner />;
         } else {
             return null;
         }
