@@ -29,6 +29,11 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         "/expression-annotation" | "ZDB-GENE-041001-150"  | "GO:0005737"
         "/expression-annotation" | "ZDB-GENE-041001-150"  | "GO:0005575" //GO-CC root
         "/expression-annotation" | "ZDB-GENE-041001-150"  | "ZFS:0000004"
+        "/expression-annotation" | "ZDB-GENE-041001-150"  | "ZFS:0000046"
+        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000046"
+        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000045"
+        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000049"
+        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000050"
         "/go-annotation"         | "ZDB-GENE-990415-8"    | "GO:0005634"
         "/go-annotation"         | "ZDB-GENE-980526-426"  | "GO:0032502"
         "/go-annotation"         | "ZDB-GENE-980526-426"  | "GO:0003677"
