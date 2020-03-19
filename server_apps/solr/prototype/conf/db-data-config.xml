@@ -3036,6 +3036,7 @@
                             term_name as expression_anatomy_direct,
                             term_ont_id as xref,
                             term_ont_id as term_id,
+                            term_ont_id as anatomy_term_id,
                             'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -3180,6 +3181,7 @@
 
             <entity name="expression_parent_stage"
                     query="select container.term_ont_id as term_id,
+                                  container.term_ont_id as stage_term_id,
                                    'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
                                      join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
