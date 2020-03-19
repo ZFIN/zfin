@@ -128,7 +128,7 @@
                     </c:choose>
                 </z:attributeListItem>
             </c:if>
-            <z:attributeListItem label="Disclamer">
+            <z:attributeListItem label="Disclaimer">
                 <c:if test="${!empty formBean.marker.sequence}">
                         Although ZFIN verifies reagent sequence data, we recommend that you
                         conduct independent sequence analysis before ordering any reagent.
