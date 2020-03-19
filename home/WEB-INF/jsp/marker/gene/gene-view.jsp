@@ -54,10 +54,10 @@
     </z:section>
 
     <z:section title="${DISEASES}">
-        <z:section title="Associated with <i>${formBean.marker.abbreviation}</i> human ortholog">
+        <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Human Ortholog">
             <jsp:include page="gene-view-disease-via-ortholog.jsp" />
         </z:section>
-        <z:section title="Associated with <i>${formBean.marker.abbreviation}</i> via experimental Models">
+        <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Via Experimental Models">
             <jsp:include page="gene-view-disease-via-experiment.jsp" />
         </z:section>
     </z:section>
