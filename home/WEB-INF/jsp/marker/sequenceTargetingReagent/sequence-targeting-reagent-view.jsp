@@ -158,6 +158,15 @@
     <z:section title="${EXPRESSION}">
         <jsp:include page="sequence-targeting-reagent-expression-view.jsp"/>
     </z:section>
+
+    <z:section title="${PHENOTYPE}">
+        <z:section title="Phenotype resulting from ${formBean.marker.name}">
+            <jsp:include page="sequence-targeting-reagent-phenotype-view.jsp" />
+        </z:section>
+        <z:section title="Phenotype of all Fish created by or utilizing ${formBean.marker.name}">
+            <jsp:include page="sequence-targeting-reagent-fish-phenotype-view.jsp" />
+        </z:section>
+    </z:section>
 </z:dataPage>
 
 
