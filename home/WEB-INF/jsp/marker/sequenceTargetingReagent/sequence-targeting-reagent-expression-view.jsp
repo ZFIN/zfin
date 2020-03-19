@@ -44,10 +44,6 @@
                         from <zfin:link entity="${figsPub.key}"/><br/>
                     </c:forEach>
                 </c:when>
-                <c:otherwise>
-                    <a href='/action/expression/sequence-targeting-reagent-expression-figure-summary?strZdbID=${sequenceTargetingReagentID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                            ${xp.numberOfFigures} figures</a>
-                </c:otherwise>
             </c:choose>
             <zfin2:showCameraIcon hasImage="${xp.imgInFigure}"/> from
             <c:choose>
