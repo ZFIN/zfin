@@ -5,7 +5,7 @@
 <%@ attribute name="expressionDisplays" type="java.util.Collection" required="false" %>
 <%@ attribute name="showCondition" type="java.lang.Boolean" required="true" %>
 
-<table width="100%" class="summary rowstripes">
+<table width="100%" class="summary groupstripes">
     <thead>
     <tr>
         <c:choose>
