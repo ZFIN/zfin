@@ -9,7 +9,7 @@
     <tr>
         <th>Targeting Reagent</th>
         <th>Created Alleles</th>
-        <th>Publications</th>
+        <th>Citations</th>
     </tr>
     <c:forEach items="${sequenceTargetingReagentBeans}" var="bean" varStatus="loop">
         <tr>
