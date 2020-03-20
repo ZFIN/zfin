@@ -12,7 +12,7 @@
 <c:set var="PLASMIDS" value="Plasmids"/>
 <c:set var="PATHWAYS" value="Interactions and Pathways"/>
 <c:set var="MUTANTS" value="Mutations"/>
-<c:set var="DISEASES" value="Disease"/>
+<c:set var="DISEASES" value="Human Disease"/>
 <c:set var="GO" value="Gene Ontology"/>
 <c:set var="PROTEINS" value="Protein Domains"/>
 <c:set var="CONSTRUCTS" value="Constructs"/>
