@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 import LoadingSpinner from './LoadingSpinner';
-import { useTableDataFetch } from '../utils/effects';
+import {useTableDataFetch} from '../utils/effects';
 import {stringToFunction} from '../utils';
 import NoData from './NoData';
 import GenericErrorMessage from './GenericErrorMessage';
@@ -24,26 +24,23 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
     const setTableState = onTableStateChange || setControlledTableState;
 
     const data = useTableDataFetch(url, tableState);
-/*
-    alert("warning: "+data.tot)
-*/
 
     if (data.rejected) {
-        return <GenericErrorMessage />;
+        return <GenericErrorMessage/>;
     }
 
     if (!data.value) {
         if (data.pending) {
-            return <LoadingSpinner />;
+            return <LoadingSpinner/>;
         } else {
             return null;
         }
     }
 
-    const { results, returnedRecords, total } = data.value;
+    const {results, returnedRecords, total} = data.value;
 
     if (total === 0) {
-        return <NoData />
+        return <NoData/>
     }
 
     const start = (tableState.page - 1) * tableState.limit + 1;
@@ -100,7 +97,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
             </table>
             <div className='data-table-pagination'>
                 {pagination && <React.Fragment>
-                    {data.pending ? <LoadingSpinner /> : <span>{start} - {end} of {total}</span>}
+                    {data.pending ? <LoadingSpinner/> : <span>{start} - {end} of {total}</span>}
                     <div>
                         <span className='mr-1'>Show</span>
                         <select className='form-control-sm mr-2' onChange={handleLimitChange} value={tableState.limit}>
@@ -108,17 +105,23 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                             <option value={25}>25</option>
                             <option value={100}>100</option>
                         </select>
-                        <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(1)}>
-                            <i className='fas fa-angle-double-left' />
+                        <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0'
+                                onClick={() => handlePageChange(1)}>
+                            <i className='fas fa-angle-double-left'/>
                         </button>
-                        <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(tableState.page - 1)}>
-                            <i className='fas fa-angle-left' />
+                        <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0'
+                                onClick={() => handlePageChange(tableState.page - 1)}>
+                            <i className='fas fa-angle-left'/>
                         </button>
-                        <button disabled={tableState.page === totalPages} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(tableState.page + 1)}>
-                            <i className='fas fa-angle-right' />
+                        <button disabled={tableState.page === totalPages}
+                                className='btn btn-sm btn-outline-secondary border-0'
+                                onClick={() => handlePageChange(tableState.page + 1)}>
+                            <i className='fas fa-angle-right'/>
                         </button>
-                        <button disabled={tableState.page === totalPages} className='btn btn-sm btn-outline-secondary border-0' onClick={() => handlePageChange(totalPages)}>
-                            <i className='fas fa-angle-double-right' />
+                        <button disabled={tableState.page === totalPages}
+                                className='btn btn-sm btn-outline-secondary border-0'
+                                onClick={() => handlePageChange(totalPages)}>
+                            <i className='fas fa-angle-double-right'/>
                         </button>
                     </div>
                 </React.Fragment>}
