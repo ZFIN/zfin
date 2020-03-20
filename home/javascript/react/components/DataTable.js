@@ -24,6 +24,9 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
     const setTableState = onTableStateChange || setControlledTableState;
 
     const data = useTableDataFetch(url, tableState);
+/*
+    alert("warning: "+data.tot)
+*/
 
     if (data.rejected) {
         return <GenericErrorMessage />;

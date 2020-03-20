@@ -1,6 +1,8 @@
 package org.zfin.gwt.root.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.zfin.framework.api.View;
 import org.zfin.publication.Publication;
 
 import java.io.Serializable;
@@ -19,6 +21,7 @@ public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable , S
     protected List<PublicationDTO> associatedPublications;
 
     // display
+    @JsonView(View.API.class)
     protected String name ;
     protected String link;
     private boolean editable =true ;

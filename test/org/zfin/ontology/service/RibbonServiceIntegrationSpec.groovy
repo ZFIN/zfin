@@ -2,20 +2,22 @@ package org.zfin.ontology.service
 
 import org.zfin.ZfinIntegrationSpec
 import org.zfin.framework.api.RibbonCategory
-import org.zfin.framework.api.RibbonGroup
 import org.zfin.framework.api.RibbonSummary
+import org.zfin.marker.presentation.ExpressionRibbonDetail
 import spock.lang.Shared
 import spock.lang.Unroll
 
 class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
 
-    @Shared RibbonService ribbonService = new RibbonService()
-    @Shared def expressionCategory = ["anatomy": 0, "stage": 1, "cellular component": 2]
+    @Shared
+    RibbonService ribbonService = new RibbonService()
+    @Shared
+    def expressionCategory = ["anatomy": 0, "stage": 1, "cellular component": 2]
 
     @Unroll
     def "#zdbID should have non-zero annotation count for #termID using #handler handler"() {
         when:
-        Map<String, Integer> termCounts = ribbonService.getRibbonCounts(handler, zdbID, [termID],[])
+        Map<String, Integer> termCounts = ribbonService.getRibbonCounts(handler, zdbID, [termID], [])
 
         then:
         termCounts
@@ -40,6 +42,22 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         "/go-annotation"         | "ZDB-GENE-980526-178"  | "GO:0008283"
         "/go-annotation"         | "ZDB-GENE-980526-178"  | "GO:0005102"
         "/go-annotation"         | "ZDB-GENE-980526-178"  | "GO:0030154"
+    }
+
+    @Unroll
+    def "#geneID and #termID "() {
+        when:
+        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, termID)
+
+        then:
+        termCounts.size() > numberOfRecords
+
+        where:
+        geneID              | termID        | numberOfRecords
+        // all records
+        //"ZDB-GENE-990415-8" | ""            | 200
+        // nervous system
+        "ZDB-GENE-990415-8" | "ZFA:0000396" | 1000
     }
 
     @Unroll

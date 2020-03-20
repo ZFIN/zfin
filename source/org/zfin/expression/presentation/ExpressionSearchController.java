@@ -1,8 +1,8 @@
 package org.zfin.expression.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,10 +15,9 @@ import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
@@ -131,12 +130,16 @@ public class ExpressionSearchController {
 
         if (startHours != null) {
             DevelopmentStage start = RepositoryFactory.getAnatomyRepository().getStageByStartHours(startHours);
-            if (start != null) { builder.startStage(start.getOboID()); }
+            if (start != null) {
+                builder.startStage(start.getOboID());
+            }
         }
 
         if (endHours != null) {
             DevelopmentStage end = RepositoryFactory.getAnatomyRepository().getStageByEndHours(endHours);
-            if (end != null) { builder.endStage(end.getOboID()); }
+            if (end != null) {
+                builder.endStage(end.getOboID());
+            }
         }
 
         if (StringUtils.isNotEmpty(termZdbIDs)) {
@@ -153,11 +156,12 @@ public class ExpressionSearchController {
     }
 
 
-
     private PaginationBean generatePaginationBean(ExpressionSearchCriteria criteria, String queryString) {
         PaginationBean paginationBean = new PaginationBean();
 
-        if (queryString == null) { queryString = ""; }
+        if (queryString == null) {
+            queryString = "";
+        }
 
         URLCreator paginationUrlCreator = new URLCreator(BASE_URL + queryString);
         paginationUrlCreator.removeNameValuePair("page");

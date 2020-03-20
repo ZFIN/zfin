@@ -4,7 +4,12 @@ const AttributionLink = ({accession, url, publicationCount, publication, multiPu
     if (publicationCount === 0) {
         return <span><a href={url}>{accession}</a></span>
     } else if (publicationCount === 1) {
-        return <span><a href={url}>{accession}</a> (<a href={`/${publication.zdbID}`}>{publicationCount}</a>) </span>
+        if (accession !== null) {
+            return <span><a href={url}>{accession}</a> (<a
+                href={`/${publication.zdbID}`}>{publicationCount}</a>) </span>
+        } else {
+            return <span><a href={`/${publication.zdbID}`}>{publication.miniRef}</a>  </span>
+        }
     } else {
         return (
             <span>

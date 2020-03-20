@@ -11,12 +11,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.expression.Image;
 import org.zfin.expression.service.ExpressionService;
-import org.zfin.framework.api.*;
+import org.zfin.framework.api.JsonResultResponse;
+import org.zfin.framework.api.Pagination;
+import org.zfin.framework.api.RibbonSummary;
+import org.zfin.framework.api.View;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -40,11 +46,42 @@ public class GeneExpressionRibbonController {
     }
 
     @JsonView(View.GeneExpressionAPI.class)
+    @RequestMapping(value = "/marker/{geneID}/expression/ribbon-detail")
+    public JsonResultResponse<ExpressionRibbonDetail> getExpressionRibbonDetail(@PathVariable("geneID") String geneID,
+                                                                                @RequestParam(value = "termId", required = false) String termID,
+                                                                                @Version Pagination pagination) {
+        long startTime = System.currentTimeMillis();
+        List<ExpressionRibbonDetail> allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID);
+
+        // filtering
+/*
+        FilterService<MarkerDBLink> filterService = new FilterService<>(new SequenceFiltering());
+        List<MarkerDBLink> filteredDBLinksList = filterService.filterAnnotations(fullMarkerDBLinks, pagination.getFieldFilterValueMap());
+*/
+
+        // sorting
+        allDetails.sort(Comparator.comparing(detail -> detail.getTerm().getTermName().toLowerCase()));
+
+        // paginating
+        JsonResultResponse<ExpressionRibbonDetail> response = new JsonResultResponse<>();
+        response.setResults(allDetails);
+        response.setTotal(allDetails.size());
+        response.setHttpServletRequest(request);
+        response.setResults(allDetails.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        response.calculateRequestDuration(startTime);
+
+        return response;
+    }
+
+    @JsonView(View.GeneExpressionAPI.class)
     @RequestMapping(value = "/marker/{zdbID}/expression/images")
     public JsonResultResponse<Image> getExpressionImages(@PathVariable String zdbID,
-                                                          @RequestParam(required = false) String termId,
-                                                          @RequestParam(required = false) boolean isOther,
-                                                          @Version Pagination pagination) throws IOException, SolrServerException {
+                                                         @RequestParam(required = false) String termId,
+                                                         @RequestParam(required = false) boolean isOther,
+                                                         @Version Pagination pagination) throws IOException, SolrServerException {
         JsonResultResponse<Image> response = expressionService.getExpressionImages(zdbID, termId, isOther, pagination);
         response.setHttpServletRequest(request);
         return response;

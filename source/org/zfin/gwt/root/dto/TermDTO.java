@@ -1,5 +1,7 @@
 package org.zfin.gwt.root.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.gwt.root.util.StringUtils;
 
 import java.io.Serializable;
@@ -14,6 +16,7 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
 
     private static final long serialVersionUID = 955354076929860754L;
 
+    @JsonView(View.API.class)
     private String oboID;
     private String definition;
     private String comment;

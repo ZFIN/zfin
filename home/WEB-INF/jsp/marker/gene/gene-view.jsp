@@ -36,20 +36,22 @@
     <h1><zfin:abbrev entity="${formBean.marker}"/></h1>
 
     <div id="${zfn:makeDomIdentifier(SUMMARY)}">
-        <jsp:include page="gene-view-summary.jsp" />
+        <jsp:include page="gene-view-summary.jsp"/>
     </div>
 
     <z:section title="${EXPRESSION}">
         <div class="__react-root" id="GeneExpressionRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
+<%--
         <div class="__react-root" id="GeneExpressionFigureGallery" data-gene-id="${formBean.marker.zdbID}"></div>
+--%>
     </z:section>
 
     <z:section title="${MUTANTS}">
         <z:section title="Mutants">
-            <jsp:include page="gene-view-mutants.jsp" />
+            <jsp:include page="gene-view-mutants.jsp"/>
         </z:section>
         <z:section title="Sequence Targeting Reagents">
-            <jsp:include page="gene-view-strs.jsp" />
+            <jsp:include page="gene-view-strs.jsp"/>
         </z:section>
     </z:section>
 
@@ -68,24 +70,24 @@
 
     <z:section title="${PROTEINS}">
         <z:section title="Domain, Family, and Site Summary">
-            <jsp:include page="gene-view-proteins.jsp" />
+            <jsp:include page="gene-view-proteins.jsp"/>
         </z:section>
         <z:section title="Domain Details Per Protein">
-            <jsp:include page="gene-view-protein-detail.jsp" />
+            <jsp:include page="gene-view-protein-detail.jsp"/>
         </z:section>
 
     </z:section>
 
     <z:section title="${PATHWAYS}">
-        <jsp:include page="gene-view-pathways.jsp" />
+        <jsp:include page="gene-view-pathways.jsp"/>
     </z:section>
 
     <z:section title="${ANTIBODIES}">
-        <jsp:include page="gene-view-antibodies.jsp" />
+        <jsp:include page="gene-view-antibodies.jsp"/>
     </z:section>
 
     <z:section title="${PLASMIDS}">
-        <jsp:include page="gene-view-plasmids.jsp" />
+        <jsp:include page="gene-view-plasmids.jsp"/>
     </z:section>
 
     <z:section title="${CONSTRUCTS}">
@@ -98,19 +100,19 @@
 
     <z:section title="${TRANSCRIPTS}">
         <z:section title="Confirmed Transcripts">
-            <jsp:include page="gene-view-transcripts.jsp" />
+            <jsp:include page="gene-view-transcripts.jsp"/>
         </z:section>
         <z:section title="Withdrawn Transcripts">
-            <jsp:include page="gene-view-withdrawn-transcripts.jsp" />
+            <jsp:include page="gene-view-withdrawn-transcripts.jsp"/>
         </z:section>
     </z:section>
-    
+
     <z:section title="${SEQUENCES}">
         <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
     </z:section>
 
     <z:section title="${ORTHOLOGY}">
-        <jsp:include page="gene-view-orthology.jsp" />
+        <jsp:include page="gene-view-orthology.jsp"/>
     </z:section>
 </z:dataPage>
 

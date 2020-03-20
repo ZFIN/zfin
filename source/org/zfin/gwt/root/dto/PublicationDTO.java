@@ -1,6 +1,8 @@
 package org.zfin.gwt.root.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.zfin.framework.api.View;
 
 import java.util.List;
 
@@ -8,14 +10,17 @@ import java.util.List;
  */
 public class PublicationDTO implements IsSerializable {
 
+    @JsonView(View.API.class)
     private String title;
     private String authors;
     private List<PersonDTO> registeredAuthors;
+    @JsonView(View.API.class)
     private String zdbID;
     private String abstractText;
     private String doi;
     private Integer accession;
     private String citation;
+    @JsonView(View.API.class)
     private String miniRef;
 
     public PublicationDTO() {

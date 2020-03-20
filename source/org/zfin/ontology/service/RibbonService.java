@@ -1,15 +1,24 @@
 package org.zfin.ontology.service;
 
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.zfin.expression.service.ExpressionService;
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.api.*;
+import org.zfin.gwt.root.dto.StageDTO;
+import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.marker.presentation.ExpressionRibbonDetail;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
 import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
@@ -19,7 +28,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.*;
+
 @Service
+@Log4j2
 public class RibbonService {
 
 
@@ -48,20 +60,41 @@ public class RibbonService {
                 ontologyRepository.getTermByOboID("GO:0005575")  // cellular_component
         );
 
-        List<GenericTerm> stageSlim = List.of(
-                ontologyRepository.getTermByOboID("ZFS:0000001"), //zygote
-                ontologyRepository.getTermByOboID("ZFS:0000046"), //cleavage
-                ontologyRepository.getTermByOboID("ZFS:0000045"), //blastula
-                ontologyRepository.getTermByOboID("ZFS:0000047"), //gastrula
-                ontologyRepository.getTermByOboID("ZFS:0000049"), //segmentation
-                ontologyRepository.getTermByOboID("ZFS:0000050"), //pharyngula
-                ontologyRepository.getTermByOboID("ZFS:0007000"), //hatching
-                ontologyRepository.getTermByOboID("ZFS:0000048"), //larva
-                ontologyRepository.getTermByOboID("ZFS:0000051"), //juvenile
-                ontologyRepository.getTermByOboID("ZFS:0000044"), //adult
-                ontologyRepository.getTermByOboID("ZFS:0000000")  //unknown
-        );
+        List<GenericTerm> stageSlim = ontologyRepository.getTermsInSubset("granular_stage");
 
+        try {
+            List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
+            stageSlim.sort((stageOne, stageTwo) -> {
+                int stageOneIndex = 0;
+                for (DevelopmentStage term : stages) {
+                    stageOneIndex++;
+                    String prefixOne;
+                    if (term.getName().equalsIgnoreCase("adult"))
+                        prefixOne = "juvenile";
+                    else
+                        prefixOne = term.getName().substring(0, term.getName().indexOf(":") - 1);
+                    if (stageOne.getTermName().toLowerCase().contains(prefixOne.toLowerCase())) {
+                        break;
+                    }
+                }
+                int stageTwoIndex = 0;
+                for (DevelopmentStage term : stages) {
+                    stageTwoIndex++;
+                    String prefixOne;
+                    if (term.getName().equalsIgnoreCase("adult"))
+                        prefixOne = "juvenile";
+                    else
+                        prefixOne = term.getName().substring(0, term.getName().indexOf(":") - 1);
+                    if (stageTwo.getTermName().toLowerCase().contains(prefixOne.toLowerCase())) {
+                        break;
+                    }
+                }
+                return stageOneIndex - stageTwoIndex;
+            });
+
+        } catch (Exception e) {
+            log.info(e);
+        }
         List<GenericTerm> anatomySlim = List.of(
                 ontologyRepository.getTermByOboID("ZFA:0000037"), //all anatomical structures
                 ontologyRepository.getTermByOboID("ZFA:0000010"), //cardiovascular system
@@ -85,8 +118,8 @@ public class RibbonService {
         List<GenericTerm> agrGoSlimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
 
         List<GenericTerm> slimTerms = Stream.of(agrGoSlimTerms, stageSlim, anatomySlim)
-                .flatMap(x -> x.stream())
-                .collect(Collectors.toList());
+                .flatMap(Collection::stream)
+                .collect(toList());
 
 
         RibbonSummary ribbonSummary = buildRibbonSummary(zdbID, categoryTerms, slimTerms, "/expression-annotation");
@@ -102,12 +135,12 @@ public class RibbonService {
                                             String handler) throws Exception {
 
         // pull out just the IDs
-        List<String> categoryIDs = categoryTerms.stream().map(GenericTerm::getOboID).collect(Collectors.toList());
-        List<String> slimIDs = slimTerms.stream().map(GenericTerm::getOboID).collect(Collectors.toList());
+        List<String> categoryIDs = categoryTerms.stream().map(GenericTerm::getOboID).collect(toList());
+        List<String> slimIDs = slimTerms.stream().map(GenericTerm::getOboID).collect(toList());
 
         Map<String, Integer> otherCounts = getRibbonCounts(handler, zdbID, categoryIDs, slimIDs);
         Map<String, Integer> allCounts = getRibbonCounts(handler, zdbID, categoryIDs, Collections.emptyList());
-        Map<String, Integer> slimCounts = getRibbonCounts(handler, zdbID, slimIDs, Collections.emptyList() );
+        Map<String, Integer> slimCounts = getRibbonCounts(handler, zdbID, slimIDs, Collections.emptyList());
 
         // build the categories field with term names and definitions
         List<RibbonCategory> categories = categoryTerms.stream()
@@ -137,7 +170,7 @@ public class RibbonService {
                                 group.setType(RibbonGroup.Type.TERM);
                                 return group;
                             })
-                            .collect(Collectors.toList())
+                            .collect(toList())
                     );
 
                     RibbonGroup otherGroup = new RibbonGroup();
@@ -150,7 +183,7 @@ public class RibbonService {
                     category.setGroups(groups);
                     return category;
                 })
-                .collect(Collectors.toList());
+                .collect(toList());
 
         // rename keys of other counts map with '-other' suffix
         otherCounts = otherCounts.entrySet().stream().collect(Collectors.toMap(
@@ -185,8 +218,8 @@ public class RibbonService {
 
     }
 
-    public Map<String,Integer> getRibbonCounts(String handler, String geneZdbId,
-                                                      List<String> includeTermIDs, List<String> excludeTermIDs)
+    public Map<String, Integer> getRibbonCounts(String handler, String geneZdbId,
+                                                List<String> includeTermIDs, List<String> excludeTermIDs)
             throws SolrServerException, IOException {
         Map<String, Integer> termCounts = new HashMap<>(includeTermIDs.size());
 
@@ -212,4 +245,75 @@ public class RibbonService {
         return termCounts;
     }
 
+    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String termID) {
+        SolrQuery query = new SolrQuery();
+        //query.setRequestHandler("/images");
+        query.setFilterQueries("category:" + Category.EXPRESSIONS.getName());
+        query.addFilterQuery("gene_zdb_id:" + geneID);
+        if (StringUtils.isNotEmpty(termID)) {
+            String escapedTermID = termID.replace(":", "\\:");
+            query.addFilterQuery("term_id:" + escapedTermID);
+        }
+        query.addFacetPivotField("anatomy_term_id,stage_term_id,pub_zdb_id");
+        query.setStart(0);
+        // get them all
+        query.setFacetLimit(-1);
+
+        QueryResponse queryResponse = null;
+        try {
+            queryResponse = SolrService.getSolrClient().query(query);
+        } catch (SolrServerException | IOException e) {
+            log.error("Error while retrieving data form SOLR...", e);
+        }
+        if (queryResponse == null || queryResponse.getFacetPivot() == null)
+            return null;
+
+        HashSet<String> aoTermIDs = queryResponse.getFacetPivot().getVal(0).stream()
+                .map(pivotField -> (String) pivotField.getValue()).collect(toCollection(HashSet::new));
+        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
+        List<GenericTerm> aoTerms = aoRepository.getMultipleTerms(aoTermIDs);
+        Map<String, GenericTerm> termMap = aoTerms.stream()
+                .collect(toMap(GenericTerm::getOboID, term -> term));
+
+        Set<String> stageTermIDs = queryResponse.getFacetPivot().getVal(0).stream()
+                .map(pivotField -> pivotField.getPivot().stream().map(field -> (String) field.getValue()).collect(toList()))
+                .flatMap(Collection::stream)
+                .collect(toSet());
+        List<GenericTerm> stageTerms = aoRepository.getMultipleTerms(stageTermIDs);
+        Map<String, GenericTerm> stageTermMap = stageTerms.stream()
+                .collect(toMap(GenericTerm::getOboID, term -> term));
+        termMap.putAll(stageTermMap);
+
+        List<ExpressionRibbonDetail> details = new ArrayList<>();
+        queryResponse.getFacetPivot().getVal(0).forEach(pivotField -> {
+            ExpressionRibbonDetail detail = new ExpressionRibbonDetail();
+            TermDTO term = new TermDTO();
+            String aoTermID = (String) pivotField.getValue();
+            term.setOboID(aoTermID);
+            term.setName(termMap.get(aoTermID).getTermName());
+            detail.setTerm(term);
+            // stage pivot
+            pivotField.getPivot().stream()
+                    .filter(pivotField1 -> termMap.get((String) pivotField1.getValue()) != null)
+                    .forEach(pivot -> {
+                        StageDTO stage = new StageDTO();
+                        String stageID = (String) pivot.getValue();
+                        stage.setName(termMap.get(stageID).getTermName());
+                        stage.setOboID(stageID);
+                        detail.addStage(stage);
+                        detail.addPublications(pivot.getPivot().stream().map(pivotField1 -> (String) pivotField1.getValue()).collect(toList()));
+                    });
+            details.add(detail);
+        });
+
+        PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
+        // fixup single publications.
+        details.stream()
+                .filter(detail -> detail.getPubIDs().size() == 1)
+                .forEach(detail -> {
+                    Publication pub = pubRepository.getPublication(detail.getPubIDs().get(0));
+                    detail.setPublication(DTOConversionService.convertToPublicationDTO(pub));
+                });
+        return details;
+    }
 }

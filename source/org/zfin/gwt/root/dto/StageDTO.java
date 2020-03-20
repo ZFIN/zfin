@@ -1,19 +1,22 @@
 package org.zfin.gwt.root.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.zfin.framework.api.View;
 
 import java.io.Serializable;
 
 /**
  * Stage domain object for GWT corresponding {@link org.zfin.anatomy.DevelopmentStage}
  */
-public class StageDTO implements IsSerializable , Serializable {
+public class StageDTO implements IsSerializable, Serializable {
 
     private static final long serialVersionUID = 8631863184044243644L;
 
     private String zdbID;
+    @JsonView(View.API.class)
     private String name;
-    private String oboID ;
+    private String oboID;
     private String nameLong;
     private String abbreviation;
     private String timeString;
@@ -22,8 +25,8 @@ public class StageDTO implements IsSerializable , Serializable {
     public static final String UNKNOWN = "Unknown";
     public static final String UNKNOWN_ABBREV = "unk";
 
-    public String getDisplay(){
-        return abbreviation + " " + timeString ;
+    public String getDisplay() {
+        return abbreviation + " " + timeString;
     }
 
     public String getZdbID() {
@@ -106,5 +109,10 @@ public class StageDTO implements IsSerializable , Serializable {
         int result = zdbID != null ? zdbID.hashCode() : 0;
         result = 31 * result + (oboID != null ? oboID.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

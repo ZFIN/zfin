@@ -6,6 +6,7 @@ import org.zfin.framework.CachedRepository;
 import org.zfin.ontology.GenericTerm;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is the interface that provides access to the persistence layer.
@@ -105,4 +106,6 @@ public interface AnatomyRepository extends CachedRepository {
     DevelopmentStage getStageByStartHours(float start);
 
     DevelopmentStage getStageByEndHours(float end);
+
+    List<GenericTerm> getMultipleTerms(Set<String> aoTermIDs);
 }

@@ -1,7 +1,8 @@
 package org.zfin.anatomy.repository;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -21,6 +22,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is an implementation that provides access to the database storage layer.
@@ -269,11 +271,21 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
 
     @Override
     public DevelopmentStage getStageByEndHours(float end) {
-            return (DevelopmentStage) HibernateUtil.currentSession()
-                    .createCriteria(DevelopmentStage.class)
-                    .add(Restrictions.eq("hoursEnd", end))
-                    .add(Restrictions.ne("name", "Unknown"))
-                    .uniqueResult();
+        return (DevelopmentStage) HibernateUtil.currentSession()
+                .createCriteria(DevelopmentStage.class)
+                .add(Restrictions.eq("hoursEnd", end))
+                .add(Restrictions.ne("name", "Unknown"))
+                .uniqueResult();
+    }
+
+    @Override
+    public List<GenericTerm> getMultipleTerms(Set<String> aoTermIDs) {
+        return (List<GenericTerm>) HibernateUtil.currentSession()
+                .createCriteria(GenericTerm.class)
+                .add(Restrictions.in("oboID", aoTermIDs))
+                .list();
+
+
     }
 
 }
