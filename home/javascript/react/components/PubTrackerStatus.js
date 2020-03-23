@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import ObjectSelectBox from './ObjectSelectBox';
 import LoadingButton from './LoadingButton';
+import {isEmptyObject} from '../utils';
 
 const getId = (obj) => obj && obj.id;
 const getZdbId = (obj) => obj && obj.zdbID;
@@ -76,7 +77,7 @@ class PubTrackerStatus extends Component {
         }
 
         // if the user changed the status, set the owner accordingly and clear location if not a valid value
-        if (getId(status) !== getId(prevState.status)) {
+        if (!isEmptyObject(prevState.status) && getId(status) !== getId(prevState.status)) {
             if (status.type === 'CURATING' || status.type === 'INDEXING' || status.type === 'PROCESSING') {
                 this.setState({owner: curators.find(curator => curator.zdbID === userId)});
             } else {
