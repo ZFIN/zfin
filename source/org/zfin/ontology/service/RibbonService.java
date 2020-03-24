@@ -89,8 +89,11 @@ public class RibbonService {
                 .collect(Collectors.toList());
 
 
-        return buildRibbonSummary(zdbID, categoryTerms, slimTerms, "/expression-annotation");
-
+        RibbonSummary ribbonSummary = buildRibbonSummary(zdbID, categoryTerms, slimTerms, "/expression-annotation");
+        //remove the stage-other, because it isn't meaningful
+        ribbonSummary.getSubjects().get(0).getGroups().remove("ZFS:0100000-other");
+        ribbonSummary.getCategories().get(1).getGroups().remove(12);
+        return ribbonSummary;
     }
 
     public RibbonSummary buildRibbonSummary(String zdbID,
