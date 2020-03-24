@@ -410,7 +410,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     }
 
     public boolean isUnpublished() {
-        return (type == Publication.Type.CURATION || type == Publication.Type.UNPUBLISHED);
+        return (type == Publication.Type.CURATION || type == Publication.Type.UNPUBLISHED || type == Type.ACTIVE_CURATION);
     }
 
     public boolean isDeletable() {
