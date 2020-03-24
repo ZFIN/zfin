@@ -51,7 +51,7 @@
 
              <c:if test="${markerExpression.geoLink !=null}">
                     <tr>
-                        <td class="data-label"><b>Curated Microarray Expression:</b></td>
+                        <td class="data-label"><b>High Throughput Expression:</b></td>
                         <td align="left">
                             ${markerExpression.geoLink}
                                 <c:if test="${markerExpression.expressionAtlasLink.link != null}">, <a href="${markerExpression.expressionAtlasLink.link}">Expression Atlas</a>${markerExpression.expressionAtlasLink.attributionLink}
