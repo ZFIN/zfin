@@ -1,6 +1,7 @@
 package org.zfin.ontology.repository;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -432,6 +433,12 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getTermsWithoutRelationships() {
         List<GenericTerm> relationshipList = ontologyRepository.getActiveTermsWithoutRelationships();
+        assertNotNull(relationshipList);
+    }
+
+    @Test
+    public void getRibbonClosure() {
+        Map<String, List<GenericTerm>> relationshipList = ontologyRepository.getRibbonClosure();
         assertNotNull(relationshipList);
     }
 

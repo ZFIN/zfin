@@ -38,6 +38,8 @@ public class JsonResultResponse<T> {
     private String apiVersion;
     @JsonView({View.Default.class})
     private String requestDate;
+    @JsonView({View.Default.class})
+    private Map<String, Object> supplementalData;
     @JsonIgnore
     private Pagination pagination;
 
@@ -95,6 +97,12 @@ public class JsonResultResponse<T> {
                 .build();
 
         return uriComponents.toUriString();
+    }
+
+    public void addSupplementalData(String attribute, Object object) {
+        if (supplementalData == null)
+            supplementalData = new LinkedHashMap<>();
+        supplementalData.put(attribute, object);
     }
 
 }

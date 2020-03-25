@@ -57,7 +57,7 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         // all records
         //"ZDB-GENE-990415-8" | ""            | 200
         // nervous system
-        "ZDB-GENE-990415-8" | "ZFA:0000396" | 1000
+        "ZDB-GENE-990415-8" | "ZFA:0000396" | 60
     }
 
     @Unroll

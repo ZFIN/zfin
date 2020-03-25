@@ -341,4 +341,11 @@ public interface OntologyRepository {
 
     HumanGeneDetail getHumanGeneDetailById(String id);
 
+    Map<String, List<GenericTerm>> getRibbonClosure();
+
+    List<GenericTerm> getZfaRibbonTerms();
+
+    List<GenericTerm> getGoCcRibbonTerms();
+
+    List<String> getZfaRibbonTermIDs();
 }

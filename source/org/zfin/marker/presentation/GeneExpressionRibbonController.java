@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.expression.Image;
 import org.zfin.expression.service.ExpressionService;
-import org.zfin.framework.api.JsonResultResponse;
-import org.zfin.framework.api.Pagination;
-import org.zfin.framework.api.RibbonSummary;
-import org.zfin.framework.api.View;
+import org.zfin.framework.api.*;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.service.OntologyService;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.wiki.presentation.Version;
 
@@ -51,7 +50,15 @@ public class GeneExpressionRibbonController {
                                                                                 @RequestParam(value = "termId", required = false) String termID,
                                                                                 @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
-        List<ExpressionRibbonDetail> allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID);
+        List<ExpressionRibbonDetail> allDetails;
+        try {
+            allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID);
+        } catch (Exception e) {
+            log.error("Error while retrieving ribbon details", e);
+            RestErrorMessage error = new RestErrorMessage(404);
+            error.addErrorMessage(e.getMessage());
+            throw new RestErrorException(error);
+        }
 
         // filtering
 /*
@@ -59,18 +66,24 @@ public class GeneExpressionRibbonController {
         List<MarkerDBLink> filteredDBLinksList = filterService.filterAnnotations(fullMarkerDBLinks, pagination.getFieldFilterValueMap());
 */
 
+
         // sorting
-        allDetails.sort(Comparator.comparing(detail -> detail.getTerm().getTermName().toLowerCase()));
+        if (allDetails != null)
+            allDetails.sort(Comparator.comparing(detail -> detail.getTerm().getTermName().toLowerCase()));
 
         // paginating
         JsonResultResponse<ExpressionRibbonDetail> response = new JsonResultResponse<>();
-        response.setResults(allDetails);
-        response.setTotal(allDetails.size());
+        if (allDetails != null) {
+            response.setResults(allDetails);
+            response.setTotal(allDetails.size());
+            response.setResults(allDetails.stream()
+                    .skip(pagination.getStart())
+                    .limit(pagination.getLimit())
+                    .collect(Collectors.toList()));
+        }
+        OntologyService service = new OntologyService();
+        response.addSupplementalData("stages", service.getRibbonStages().stream().map(GenericTerm::getTermName).collect(Collectors.toList()));
         response.setHttpServletRequest(request);
-        response.setResults(allDetails.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList()));
         response.calculateRequestDuration(startTime);
 
         return response;

@@ -6,7 +6,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.stereotype.Service;
-import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.api.*;
 import org.zfin.gwt.root.dto.StageDTO;
@@ -34,6 +33,9 @@ import static java.util.stream.Collectors.*;
 @Log4j2
 public class RibbonService {
 
+    public static final String STAGE_DEFINED = "stage-defined";
+    public static final String STAGE_SELECTED = "stage-selected";
+    private OntologyService service = new OntologyService();
 
     public RibbonSummary buildGORibbonSummary(String zdbID) throws Exception {
 
@@ -59,62 +61,8 @@ public class RibbonService {
                 ontologyRepository.getTermByOboID("ZFS:0100000"), // ZFS root
                 ontologyRepository.getTermByOboID("GO:0005575")  // cellular_component
         );
-
-        List<GenericTerm> stageSlim = ontologyRepository.getTermsInSubset("granular_stage");
-
-        try {
-            List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
-            stageSlim.sort((stageOne, stageTwo) -> {
-                int stageOneIndex = 0;
-                for (DevelopmentStage term : stages) {
-                    stageOneIndex++;
-                    String prefixOne;
-                    if (term.getName().equalsIgnoreCase("adult"))
-                        prefixOne = "juvenile";
-                    else
-                        prefixOne = term.getName().substring(0, term.getName().indexOf(":") - 1);
-                    if (stageOne.getTermName().toLowerCase().contains(prefixOne.toLowerCase())) {
-                        break;
-                    }
-                }
-                int stageTwoIndex = 0;
-                for (DevelopmentStage term : stages) {
-                    stageTwoIndex++;
-                    String prefixOne;
-                    if (term.getName().equalsIgnoreCase("adult"))
-                        prefixOne = "juvenile";
-                    else
-                        prefixOne = term.getName().substring(0, term.getName().indexOf(":") - 1);
-                    if (stageTwo.getTermName().toLowerCase().contains(prefixOne.toLowerCase())) {
-                        break;
-                    }
-                }
-                return stageOneIndex - stageTwoIndex;
-            });
-
-        } catch (Exception e) {
-            log.info(e);
-        }
-        List<GenericTerm> anatomySlim = List.of(
-                ontologyRepository.getTermByOboID("ZFA:0000037"), //all anatomical structures
-                ontologyRepository.getTermByOboID("ZFA:0000010"), //cardiovascular system
-                ontologyRepository.getTermByOboID("ZFA:0000339"), //digestive system
-                ontologyRepository.getTermByOboID("ZFA:0001158"), //endocrine system
-                ontologyRepository.getTermByOboID("ZFA:0001159"), //immune system
-                ontologyRepository.getTermByOboID("ZFA:0000036"), //liver and biliary system
-                ontologyRepository.getTermByOboID("ZFA:0000548"), //musculature system
-                ontologyRepository.getTermByOboID("ZFA:0000396"), //nervous system
-                ontologyRepository.getTermByOboID("ZFA:0000163"), //renal system
-                ontologyRepository.getTermByOboID("ZFA:0000632"), //reproductive system
-                ontologyRepository.getTermByOboID("ZFA:0000272"), //respiratory system
-                ontologyRepository.getTermByOboID("ZFA:0000282"), //sensory system
-                ontologyRepository.getTermByOboID("ZFA:0001127"), //visual system
-                ontologyRepository.getTermByOboID("ZFA:0000108"), //fin
-                ontologyRepository.getTermByOboID("ZFA:0000368"), //integument
-                ontologyRepository.getTermByOboID("ZFA:0001135"), //neural tube
-                ontologyRepository.getTermByOboID("ZFA:0001122"), //primary germ layer
-                ontologyRepository.getTermByOboID("ZFA:0000155")  //somite
-        );
+        List<GenericTerm> stageSlim = service.getRibbonStages();
+        List<GenericTerm> anatomySlim = ontologyRepository.getZfaRibbonTerms();
         List<GenericTerm> agrGoSlimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
 
         List<GenericTerm> slimTerms = Stream.of(agrGoSlimTerms, stageSlim, anatomySlim)
@@ -128,6 +76,7 @@ public class RibbonService {
         ribbonSummary.getCategories().get(1).getGroups().remove(12);
         return ribbonSummary;
     }
+
 
     public RibbonSummary buildRibbonSummary(String zdbID,
                                             List<GenericTerm> categoryTerms,
@@ -245,13 +194,13 @@ public class RibbonService {
         return termCounts;
     }
 
-    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String termID) {
+    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID) {
         SolrQuery query = new SolrQuery();
         //query.setRequestHandler("/images");
         query.setFilterQueries("category:" + Category.EXPRESSIONS.getName());
         query.addFilterQuery("gene_zdb_id:" + geneID);
-        if (StringUtils.isNotEmpty(termID)) {
-            String escapedTermID = termID.replace(":", "\\:");
+        if (StringUtils.isNotEmpty(ribbonTermID)) {
+            String escapedTermID = ribbonTermID.replace(":", "\\:");
             query.addFilterQuery("term_id:" + escapedTermID);
         }
         query.addFacetPivotField("anatomy_term_id,stage_term_id,pub_zdb_id");
@@ -265,14 +214,14 @@ public class RibbonService {
         } catch (SolrServerException | IOException e) {
             log.error("Error while retrieving data form SOLR...", e);
         }
-        if (queryResponse == null || queryResponse.getFacetPivot() == null)
+        if (queryResponse == null || queryResponse.getFacetPivot() == null || queryResponse.getFacetPivot().getVal(0).size() == 0)
             return null;
 
-        HashSet<String> aoTermIDs = queryResponse.getFacetPivot().getVal(0).stream()
+        HashSet<String> termIDs = queryResponse.getFacetPivot().getVal(0).stream()
                 .map(pivotField -> (String) pivotField.getValue()).collect(toCollection(HashSet::new));
         AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
-        List<GenericTerm> aoTerms = aoRepository.getMultipleTerms(aoTermIDs);
-        Map<String, GenericTerm> termMap = aoTerms.stream()
+        List<GenericTerm> terms = aoRepository.getMultipleTerms(termIDs);
+        Map<String, GenericTerm> termMap = terms.stream()
                 .collect(toMap(GenericTerm::getOboID, term -> term));
 
         Set<String> stageTermIDs = queryResponse.getFacetPivot().getVal(0).stream()
@@ -288,13 +237,13 @@ public class RibbonService {
         queryResponse.getFacetPivot().getVal(0).forEach(pivotField -> {
             ExpressionRibbonDetail detail = new ExpressionRibbonDetail();
             TermDTO term = new TermDTO();
-            String aoTermID = (String) pivotField.getValue();
-            term.setOboID(aoTermID);
-            term.setName(termMap.get(aoTermID).getTermName());
+            String termID = (String) pivotField.getValue();
+            term.setOboID(termID);
+            term.setName(termMap.get(termID).getTermName());
             detail.setTerm(term);
             // stage pivot
             pivotField.getPivot().stream()
-                    .filter(pivotField1 -> termMap.get((String) pivotField1.getValue()) != null)
+                    .filter(pivotField1 -> termMap.get(pivotField1.getValue()) != null)
                     .forEach(pivot -> {
                         StageDTO stage = new StageDTO();
                         String stageID = (String) pivot.getValue();
@@ -303,17 +252,92 @@ public class RibbonService {
                         detail.addStage(stage);
                         detail.addPublications(pivot.getPivot().stream().map(pivotField1 -> (String) pivotField1.getValue()).collect(toList()));
                     });
+            List<GenericTerm> ribbonStages = service.getRibbonStages();
+
+            GenericTerm genericTerm = termMap.get(termID);
+            if (genericTerm != null && genericTerm.getOboID().contains("ZFA")) {
+                List<Boolean> superStageSelections = new ArrayList<>(ribbonStages.size());
+                ribbonStages.forEach(ribbonStage -> {
+                    if (detail.getStages().stream().anyMatch(stage -> stage.getOboID().equals(ribbonStage.getOboID())))
+                        superStageSelections.add(true);
+                    else
+                        superStageSelections.add(false);
+                });
+
+                List<Boolean> definedStages = new ArrayList<>(ribbonStages.size());
+                boolean started = false;
+                boolean finished = false;
+                for (GenericTerm ribbonTerm : ribbonStages) {
+                    if (!started) {
+                        if (ribbonTerm.hasChildTerm(genericTerm.getStart().getOboID())) {
+                            started = true;
+                        }
+                    }
+                    if (started && !finished)
+                        definedStages.add(true);
+                    else
+                        definedStages.add(false);
+                    if (started) {
+                        if (ribbonTerm.hasChildTerm(genericTerm.getEnd().getOboID())) {
+                            finished = true;
+                        }
+                    }
+                }
+                // if uspecified have all stages be 'defined'
+                if (genericTerm.getOboID().equals("ZFA:0001093")) {
+                    List<Boolean> newDefinedStages = new ArrayList<>();
+                    definedStages.forEach(aBoolean -> newDefinedStages.add(Boolean.TRUE));
+                    definedStages = newDefinedStages;
+                }
+                detail.setDefinedStages(definedStages);
+                List<String> combinedSelection = new ArrayList<>();
+                int index = 0;
+                for (Boolean selection : superStageSelections) {
+                    if (!selection && !definedStages.get(index))
+                        combinedSelection.add("");
+                    else if (!selection && definedStages.get(index))
+                        combinedSelection.add(STAGE_DEFINED);
+                    else if (selection)
+                        combinedSelection.add(STAGE_SELECTED);
+                    index++;
+                }
+                detail.setStageHistogram(combinedSelection);
+            }
             details.add(detail);
         });
+
+        // remove BSPO
+        details.removeIf(ribbonDetail -> ribbonDetail.getTerm().getOboID().startsWith("BSPO"));
 
         PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
         // fixup single publications.
         details.stream()
-                .filter(detail -> detail.getPubIDs().size() == 1)
-                .forEach(detail -> {
-                    Publication pub = pubRepository.getPublication(detail.getPubIDs().get(0));
-                    detail.setPublication(DTOConversionService.convertToPublicationDTO(pub));
+                .filter(ribbonDetail -> ribbonDetail.getPubIDs().size() == 1)
+                .forEach(ribbonDetail1 -> {
+                    Publication pub = pubRepository.getPublication(ribbonDetail1.getPubIDs().get(0));
+                    ribbonDetail1.setPublication(DTOConversionService.convertToPublicationDTO(pub));
                 });
+
+
+        // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
+        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+        Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
+        if (ribbonTermID != null) {
+            // filter by stage
+            if (ribbonTermID.contains("ZFS:")) {
+                details.removeIf(detail -> detail.getStages().stream().noneMatch(stage -> stage.getOboID().equals(ribbonTermID)));
+            } else {
+                details.removeIf(expressionRibbonDetail -> {
+                    List<GenericTerm> closure = getClosureForRibbonTerms.get(ribbonTermID);
+                    // remove if no closure element is found
+                    if (closure == null)
+                        return true;
+                    return closure.stream().noneMatch(genericTerm -> genericTerm.getOboID().equals(expressionRibbonDetail.getTerm().getOboID()));
+                });
+            }
+        }
+
+
         return details;
     }
 }

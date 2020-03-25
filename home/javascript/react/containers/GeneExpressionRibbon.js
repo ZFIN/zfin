@@ -8,6 +8,7 @@ import Ribbon from '../components/Ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
 import AttributionLink from '../components/AttributionLink';
+import StagePresentation from '../components/StagePresentation';
 
 const GeneExpressionRibbon = ({geneId}) => {
 
@@ -33,28 +34,32 @@ const GeneExpressionRibbon = ({geneId}) => {
     }
 
     const columns = [
-        {
-            label: 'Expression Location',
-            content: row => <a href={`/action/marker/citation-list/${row.term.oboID}`}>{row.term.name}</a>,
-            width: '60px',
-        },
-        {
-            label: 'Stage Observed',
-            content: '',
-            width: '60px',
-        },
-        {
-            label: 'Publications',
-            content: row => (<AttributionLink
-                url={`/action/marker/${row.term.oboID}`}
-                publicationCount={row.numberOfPublications}
-                publication={row.publication}
-            />)
+            {
+                label: 'Expression Location',
+                content: row => <a href={`/action/marker/citation-list/${row.term.oboID}`}>{row.term.name}</a>,
+                width: '120px',
+            },
+            {
+                label: 'Stage Observed',
+                content: row => (<StagePresentation stages={row.stageHistogram}/>),
+/*
+                subHeader: 'cleavage, blastula, gastrula, segmentation, pharyngula, hatching, larva, juvenile, adult',
+*/
+                width: '400px',
+            },
+            {
+                label: 'Publications',
+                content: row => (<AttributionLink
+                    accession={null}
+                    url={`/action/marker/${row.term.oboID}`}
+                    publicationCount={row.numberOfPublications}
+                    publication={row.publication}
+                />),
+                width: '120px',
+            }
             ,
-            width:
-                '120px',
-        },
-    ];
+        ]
+    ;
 
     const handleItemClick = (subject, group) => {
         if (selected && selected.group.id === group.id && selected.group.type === group.type) {

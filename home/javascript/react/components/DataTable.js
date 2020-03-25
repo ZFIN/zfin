@@ -75,6 +75,13 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                             )
                         ))}
                     </tr>
+                    <tr>
+                        {columns.map(column => (
+                            <th key={stringToFunction(rowKey)(column)}>
+                                {(column.subHeader && (<div style={{textAlign: 'justify'}}>{column.subHeader}</div>))}
+                            </th>
+                        ))}
+                    </tr>
                 </thead>
                 <tbody>
                     {results.map(row => (

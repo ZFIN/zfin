@@ -1,6 +1,8 @@
 package org.zfin.ontology.service;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -22,20 +24,19 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.service.SequenceService;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 /**
  * This service provides a bridge between the OntologyRepository and business logic.
  */
+@Log4j2
 public class OntologyService {
 
     private final static Logger logger = LogManager.getLogger(OntologyService.class);
@@ -227,7 +228,7 @@ public class OntologyService {
             omimDisplays.sort(new OmimPhenotypeDisplayComparator());
         }
 
-        if(omimDisplaysNoOrth.size() > 0) {
+        if (omimDisplaysNoOrth.size() > 0) {
             omimDisplaysNoOrth.sort(new OmimPhenotypeDisplayComparator());
             omimDisplays.addAll(omimDisplaysNoOrth);
         }
@@ -308,5 +309,45 @@ public class OntologyService {
         return transitiveClosures.stream().anyMatch(closure -> closure.getChild().getOboID().equals(allegedChildTerm.getOboID()));
     }
 
+    public List<GenericTerm> getRibbonStages() {
+        List<GenericTerm> stageSlim = ontologyRepository.getTermsInSubset("granular_stage");
+
+        try {
+            List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
+            stageSlim.sort((stageOne, stageTwo) -> {
+                int stageOneIndex = 0;
+                for (DevelopmentStage term : stages) {
+                    stageOneIndex++;
+                    String prefixOne;
+                    if (term.getName().equalsIgnoreCase("adult"))
+                        prefixOne = "adult";
+                    else
+                        prefixOne = term.getName().substring(0, term.getName().indexOf(":") - 1);
+                    if (stageOne.getTermName().toLowerCase().contains(prefixOne.toLowerCase())) {
+                        break;
+                    }
+                }
+                int stageTwoIndex = 0;
+                for (DevelopmentStage term : stages) {
+                    stageTwoIndex++;
+                    String prefixOne;
+                    if (term.getName().equalsIgnoreCase("adult"))
+                        prefixOne = "adult";
+                    else
+                        prefixOne = term.getName().substring(0, term.getName().indexOf(":") - 1);
+                    if (stageTwo.getTermName().toLowerCase().contains(prefixOne.toLowerCase())) {
+                        break;
+                    }
+                }
+                return stageOneIndex - stageTwoIndex;
+            });
+
+        } catch (Exception e) {
+            log.info(e);
+        }
+        // add 'adult' manually. It technically is a superstage
+        stageSlim.add(ontologyRepository.getTermByOboID("ZFS:0000044"));
+        return stageSlim;
+    }
 }
 

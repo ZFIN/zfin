@@ -530,4 +530,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
         return "Term";
     }
 
+    public boolean hasChildTerm(String childOboID) {
+        return getChildTerms().stream().anyMatch(term -> term.getOboID().equals(childOboID));
+    }
 }

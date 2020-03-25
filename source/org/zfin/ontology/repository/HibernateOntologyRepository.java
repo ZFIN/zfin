@@ -1,27 +1,29 @@
 package org.zfin.ontology.repository;
 
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import org.zfin.ontology.HumanGeneDetail;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.RelationshipSorting;
+import org.zfin.datatransfer.go.EcoGoEvidenceCodeMapping;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
-import org.zfin.datatransfer.go.EcoGoEvidenceCodeMapping;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.InfrastructureService;
-import org.zfin.marker.Marker;
 import org.zfin.mutant.MarkerGoTermEvidence;
-import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
@@ -1087,5 +1089,63 @@ public class HibernateOntologyRepository implements OntologyRepository {
     public HumanGeneDetail getHumanGeneDetailById(String id) {
         Session session = HibernateUtil.currentSession();
         return (HumanGeneDetail) session.get(HumanGeneDetail.class, id);
+    }
+
+    // cached
+    Map<String, List<GenericTerm>> closureMap;
+
+    @Override
+    public Map<String, List<GenericTerm>> getRibbonClosure() {
+        if (closureMap != null)
+            return closureMap;
+        closureMap = new HashMap<>();
+
+        Stream.of(getZfaRibbonTerms(), getGoCcRibbonTerms(), List.of(getTermByOboID("ZFA:0100000")))
+                .flatMap(Collection::stream)
+                .forEach(term -> {
+                    List<TransitiveClosure> closure = getChildrenTransitiveClosures(term);
+                    closureMap.put(term.getOboID(), closure.stream().map(TransitiveClosure::getChild).collect(Collectors.toList()));
+                });
+        return closureMap;
+    }
+
+    @Override
+    public List<GenericTerm> getZfaRibbonTerms() {
+        List<GenericTerm> ribbonTerms = new ArrayList<>();
+        getZfaRibbonTermIDs().forEach(termID ->
+                ribbonTerms.add(getTermByOboID(termID))
+        );
+        return ribbonTerms;
+    }
+
+    @Override
+    public List<GenericTerm> getGoCcRibbonTerms() {
+        List<GenericTerm> goslim_agr = getTermsInSubset("goslim_agr");
+        goslim_agr.add(getTermByOboID("GO:0005575"));
+        return goslim_agr;
+    }
+
+    @Override
+    public List<String> getZfaRibbonTermIDs() {
+        return List.of(
+                "ZFA:0000037", //all anatomical structures
+                "ZFA:0000010", //cardiovascular system
+                "ZFA:0000339", //digestive system
+                "ZFA:0001158", //endocrine system
+                "ZFA:0001159", //immune system
+                "ZFA:0000036", //liver and biliary system
+                "ZFA:0000548", //musculature system
+                "ZFA:0000396", //nervous system
+                "ZFA:0000163", //renal system
+                "ZFA:0000632", //reproductive system
+                "ZFA:0000272", //respiratory system
+                "ZFA:0000282", //sensory system
+                "ZFA:0001127", //visual system
+                "ZFA:0000108", //fin
+                "ZFA:0000368", //integument
+                "ZFA:0001135", //neural tube
+                "ZFA:0001122", //primary germ layer
+                "ZFA:0000155"  //somite
+        );
     }
 }
