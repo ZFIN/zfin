@@ -259,7 +259,6 @@ public class Database {
         SPTR_MS("sptr_ms"),
         SPTR_ZF("sptr_zf"),
         UCSC_BLAT("UCSC BLAT"),
-        UNRELEASEDPROTEIN("unreleasedProtein"),
         UNRELEASEDRNA("unreleasedRNA"),
         VEGA_TRANSCRIPT("vega_transcript"),
         VEGA("Vega"),
