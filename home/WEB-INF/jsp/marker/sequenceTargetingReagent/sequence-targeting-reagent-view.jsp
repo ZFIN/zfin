@@ -156,7 +156,9 @@
     </z:section>
 
     <z:section title="${EXPRESSION}">
-        <jsp:include page="sequence-targeting-reagent-expression-view.jsp"/>
+        <z:section title="Gene expression in Wild Types + ${formBean.marker.name}">
+            <jsp:include page="sequence-targeting-reagent-expression-view.jsp"/>
+        </z:section>
     </z:section>
 
     <z:section title="${PHENOTYPE}">
