@@ -3144,7 +3144,6 @@
 
             <entity name="expression_stage"
                     query="select this_stage.stg_name as stage,
-                                  this_stage.stg_obo_id as term_id,
                                   'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -3180,8 +3179,8 @@
             />
 
             <entity name="expression_parent_stage"
-                    query="select container.term_ont_id as term_id,
-                                  container.term_ont_id as stage_term_id,
+                    query="select distinct container.term_ont_id as term_id,
+                                   container.term_ont_id as stage_term_id,
                                    'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
                                      join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -3190,15 +3189,43 @@
                                      join stage this_stage on this_stage.stg_hours_start &gt;= start_stage.stg_hours_start
                                                                                      and this_stage.stg_hours_end &lt;= end_stage.stg_hours_end
                                      join term contained on this_stage.stg_obo_id = contained.term_ont_id
-                                     join all_term_contains on contained.term_zdb_id = all_term_contains.alltermcon_contained_zdb_id
+                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
                                      join term container on alltermcon_container_zdb_id = container.term_zdb_id
-                            where start_stage.stg_name != 'Unknown'
-                              and end_stage.stg_name != 'Unknown'
-                              and this_stage.stg_name != 'Unknown'"
+                                                        where start_stage.stg_name != 'Unknown'
+                                                          and end_stage.stg_name != 'Unknown'
+                                                          and this_stage.stg_name != 'Unknown';"
                     cacheImpl="SortedMapBackedCache"
                     where="efs_pk_id=expression.id"
             />
-
+            <entity name="expression_parent_stage_unknown"
+                    query="select distinct container.term_ont_id as term_id,
+                                            container.term_ont_id as stage_term_id,
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                     join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                     join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                     join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                                     join term contained on start_stage.stg_obo_id = contained.term_ont_id
+                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                                     join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                            where (start_stage.stg_name = 'Unknown'
+                                OR end_stage.stg_name = 'Unknown')
+                            union
+                            select distinct container.term_ont_id as term_id,
+                                            container.term_ont_id as stage_term_id,
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                     join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                     join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                     join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                                     join term contained on end_stage.stg_obo_id = contained.term_ont_id
+                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                                     join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                            where (start_stage.stg_name = 'Unknown'
+                                OR end_stage.stg_name = 'Unknown');"
+                    cacheImpl="SortedMapBackedCache"
+                    where="efs_pk_id=expression.id"
+            />
 
             <entity name="expression_str"
                     query="select mrkr_abbrev as sequence_targeting_reagent,
