@@ -64,18 +64,12 @@
 
             </z:attributeListItem>
 
-            <c:if test="${formBean.marker.markerType.name ne 'MRPHLNO'}">
-                <z:attributeListItem label="Source">
-                    <zfin2:orderThis markerSuppliers="${formBean.suppliers}" accessionNumber="${formBean.marker.zdbID}"/>
-                </z:attributeListItem>
-            </c:if>
 
-
-            <c:if test="${formBean.marker.markerType.name eq 'MRPHLNO'}">
-                <c:set var="seqTypeName">Target Sequence</c:set>
+            <c:if test="${formBean.marker.markerType.name eq 'MRPHLNO' || formBean.marker.markerType.name eq 'CRISPR'}">
+                <c:set var="seqTypeName" value="Sequence"/>
             </c:if>
             <c:if test="${typeName eq 'TALEN'}">
-                <c:set var="seqTypeName">Target Sequence 1</c:set>
+                <c:set var="seqTypeName" value="Target Sequence 1"/>
             </c:if>
 
             <z:attributeListItem label="${seqTypeName}">
@@ -86,18 +80,14 @@
                             (${formBean.sequenceAttribution})
                         </c:if>
                     <c:if test="${!suppressAnalysisTools}">
-                        &nbsp;&nbsp;&nbsp;
                         <c:if test="${typeName eq 'TALEN'}">
                             <c:set var="firstSeqLen">${fn:length(formBean.marker.sequence.sequence)}</c:set>
                             <c:set var="secondSeqLen">${fn:length(formBean.marker.sequence.secondSequence)}</c:set>
                         </c:if>
-                        <zfin2:markerSequenceBlastDropDown
+                        <zfin2:strBlastDropdown
                                 sequence="${formBean.marker.sequence.sequence}"
-                                databases="${formBean.databases}"
-                                instructions="Select Sequence Analysis Tool"
-                        />
+                                databases="${formBean.databases}"/>
                     </c:if>
-
                 </c:when>
                 <c:otherwise>
                     <zfin2:noDataAvailable/>
@@ -115,10 +105,9 @@
                             </c:if>
                             <c:if test="${!suppressAnalysisTools}">
                                 &nbsp;&nbsp;&nbsp;
-                                <zfin2:markerSequenceBlastDropDown
+                                <zfin2:strBlastDropdown
                                         sequence="${formBean.marker.sequence.secondSequence}"
                                         databases="${formBean.databases}"
-                                        instructions="Select Sequence Analysis Tool"
                                 />
                             </c:if>
                         </c:when>

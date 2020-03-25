@@ -12,13 +12,14 @@
     </thead>
     <tbody>
     <c:forEach var="feature" items="${formBean.genomicFeatures}" varStatus="loop">
-
+      <tr>
         <td>
             <zfin:link entity="${feature}"/>
         </td>
         <td>
             <zfin:link entity="${feature.affectedGenes}"/>
         </td>
+      </tr>
     </c:forEach>
     </tbody>
 
