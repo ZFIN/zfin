@@ -21,7 +21,7 @@
         </th>
     </tr>
     </thead>
-    <c:forEach var="phenotypeDisplay" items="${formBean.phenotypeDisplays}" varStatus="loop">
+    <c:forEach var="phenotypeDisplay" items="${formBean.allPhenotypeDisplays}" varStatus="loop">
         <tr>
             <td>
                 <zfin:link entity="${phenotypeDisplay.phenoStatement}"/>
