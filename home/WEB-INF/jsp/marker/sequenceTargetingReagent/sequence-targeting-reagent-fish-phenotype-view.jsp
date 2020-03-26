@@ -3,7 +3,7 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentBean" scope="request"/>
 
 <z:dataTable collapse="true"
-             hasData="${formBean.phenotypeDisplays != null && fn:length(formBean.phenotypeDisplays) > 0 }">
+             hasData="${formBean.allPhenotypeDisplays != null && fn:length(formBean.allPhenotypeDisplays) > 0 }">
 
     <thead>
     <tr>
