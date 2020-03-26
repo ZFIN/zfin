@@ -544,7 +544,7 @@ public class ResultService {
         ExpressionExperiment xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment(result.getXpatZdbId());
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure(result.getFigZdbId());
 
-        if (xpatex != null) {
+        if (xpatex != null && efs != null) {
 
             result.setEntity(xpatex);
             result.setFigure(figure);

@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.zfin.search.service.SolrQueryFacade.addTo;
 
@@ -291,6 +292,7 @@ public class ExpressionSearchService {
                 .flatMap(doc -> ((ArrayList<String>) doc.get(FieldName.XPATRES_ID.getName())).stream())
                 .distinct()
                 .map(id -> expressionRepository.getExpressionResult2(Integer.parseInt(id)))
+                .filter(Objects::nonNull)
                 .filter(ExpressionResult2::isExpressionFound)
                 .collect(Collectors.toList());
 
