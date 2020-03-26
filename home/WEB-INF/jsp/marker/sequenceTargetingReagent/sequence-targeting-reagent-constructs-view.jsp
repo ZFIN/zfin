@@ -4,19 +4,20 @@
 
 <z:dataTable collapse="true"
              hasData="${!empty formBean.constructs}">
- <thead>
- <tr>
-  <th>Construct</th>
- </tr>
- </thead>
- <tbody>
- <c:forEach var="construct" items="${formBean.constructs}" varStatus="loop">
-  <tr>
-  <td
-   <zfin:link entity="${construct}"/>
-  </td></tr>
- </c:forEach>
- </tbody>
+    <thead>
+    <tr>
+        <th>Construct</th>
+    </tr>
+    </thead>
+    <tbody>
+    <c:forEach var="construct" items="${formBean.constructs}" varStatus="loop">
+        <tr>
+            <td>
+                <zfin:link entity="${construct}"/>
+            </td>
+        </tr>
+    </c:forEach>
+    </tbody>
 </z:dataTable>
 
 
