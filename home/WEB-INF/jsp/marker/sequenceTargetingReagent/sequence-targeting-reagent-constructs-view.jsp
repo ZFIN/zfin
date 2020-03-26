@@ -13,7 +13,8 @@
  <c:forEach var="construct" items="${formBean.constructs}" varStatus="loop">
 
   <td>
-   <zfin:link entity="${construct}"/>
+      <tr>
+   <zfin:link entity="${construct}"/></tr>
   </td>
  </c:forEach>
  </tbody>
