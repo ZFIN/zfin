@@ -7,6 +7,11 @@
   border-collapse: separate;
   border-spacing: 0;
 
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.5rem;
+
   thead {
     @extend .bg-light;
 
