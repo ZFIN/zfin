@@ -37,15 +37,13 @@ const GeneExpressionRibbon = ({geneId}) => {
             {
                 label: 'Expression Location',
                 content: row => <a href={`/action/marker/citation-list/${row.term.oboID}`}>{row.term.name}</a>,
-                width: '120px',
+                width: '250px',
             },
             {
                 label: 'Stage Observed',
                 content: row => (<StagePresentation stages={row.stageHistogram}/>),
-/*
-                subHeader: 'cleavage, blastula, gastrula, segmentation, pharyngula, hatching, larva, juvenile, adult',
-*/
-                width: '400px',
+                subHeader: 'cleavage blastula gastrula segmentation pharyngula hatching larva juvenile adult',
+                width: '300',
             },
             {
                 label: 'Publications',
@@ -55,7 +53,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                     publicationCount={row.numberOfPublications}
                     publication={row.publication}
                 />),
-                width: '120px',
+                width: '450px',
             }
             ,
         ]

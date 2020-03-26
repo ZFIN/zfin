@@ -2,13 +2,15 @@ import React from 'react';
 
 const StagePresentation = ({stages}) => {
     return (<div>
-            {stages && stages.map((value) => {
+            {stages && Object.entries(stages).map(([key, value]) => {
                 if (value === 'stage-selected') {
-                    return < div className='ontology-ribbon__item' title={'cleavage'}>
-                        <div className={`ontology-ribbon__block__tile ${value}`}/>
+                    return < div className='ontology-ribbon__item' title={key}>
+                        <a href={''}>
+                            <div className={`ontology-ribbon__block__tile ${value}`}/>
+                        </a>
                     </div>
                 } else {
-                    return < div className='ontology-ribbon__item'>
+                    return < div className='ontology-ribbon__item' title={key}>
                         <div className={`ontology-ribbon__block__tile ${value}`}/>
                     </div>
                 }

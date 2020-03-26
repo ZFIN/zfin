@@ -290,15 +290,16 @@ public class RibbonService {
                     definedStages = newDefinedStages;
                 }
                 detail.setDefinedStages(definedStages);
-                List<String> combinedSelection = new ArrayList<>();
+                Map<String, String> combinedSelection = new LinkedHashMap<>();
                 int index = 0;
                 for (Boolean selection : superStageSelections) {
-                    if (!selection && !definedStages.get(index))
-                        combinedSelection.add("");
-                    else if (!selection && definedStages.get(index))
-                        combinedSelection.add(STAGE_DEFINED);
+                    String termName = ribbonStages.get(index).getTermName();
+                    if (!selection && !definedStages.get(index)) {
+                        combinedSelection.put(termName, "");
+                    } else if (!selection && definedStages.get(index))
+                        combinedSelection.put(termName, STAGE_DEFINED);
                     else if (selection)
-                        combinedSelection.add(STAGE_SELECTED);
+                        combinedSelection.put(termName, STAGE_SELECTED);
                     index++;
                 }
                 detail.setStageHistogram(combinedSelection);

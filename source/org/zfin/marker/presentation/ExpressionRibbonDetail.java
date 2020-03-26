@@ -10,7 +10,7 @@ import org.zfin.gwt.root.dto.TermDTO;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Setter
@@ -22,7 +22,7 @@ public class ExpressionRibbonDetail {
     @JsonView(View.API.class)
     private List<StageDTO> stages;
     @JsonView(View.API.class)
-    private List<String> stageHistogram;
+    private Map<String, String> stageHistogram;
     @JsonView(View.API.class)
     private List<Boolean> definedStages;
     @JsonView(View.API.class)
