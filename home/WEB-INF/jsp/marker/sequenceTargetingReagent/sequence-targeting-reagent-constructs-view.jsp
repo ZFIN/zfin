@@ -11,11 +11,10 @@
  </thead>
  <tbody>
  <c:forEach var="construct" items="${formBean.constructs}" varStatus="loop">
-
-  <td>
-      <tr>
-   <zfin:link entity="${construct}"/></tr>
-  </td>
+  <tr>
+  <td
+   <zfin:link entity="${construct}"/>
+  </td></tr>
  </c:forEach>
  </tbody>
 </z:dataTable>
