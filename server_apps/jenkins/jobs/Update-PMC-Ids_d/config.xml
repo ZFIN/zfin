@@ -1,10 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>update PMCids daily to allow PDF slurper to try and retrieve PDFs.&#xd;
-&#xd;
-See wiki project documentation:&#xd;
-http://fogbugz.zfin.org/default.asp?W1589</description>
+  <description>update PMCids daily to allow PDF slurper to try and retrieve PDFs.
   <keepDependencies>false</keepDependencies>
   <properties>
     <jenkins.model.BuildDiscarderProperty>
