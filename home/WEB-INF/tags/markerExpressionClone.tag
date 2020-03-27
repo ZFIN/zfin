@@ -17,20 +17,14 @@
 
 
                 <c:if test="${markerExpression.directlySubmittedExpression ne null}">
+                    <z:attributeListItem label="Directly Submitted Expression Data">
+
                     <c:forEach var="directlySubmittedExpression"
                                items="${markerExpression.directlySubmittedExpression.markerExpressionInstances}"
                                varStatus="index">
-                        <tr>
-                            <c:choose>
-                                <c:when test="${index.first}">
-                                    <%--<th>Directly submitted expression data:</th>--%>
-                                    <td class="data-label"><b>Directly Submitted Expression Data:</b></td>
-                                </c:when>
-                                <c:otherwise>
-                                    <td> &nbsp;</td>
-                                </c:otherwise>
-                            </c:choose>
-                            <td align="left">
+
+
+
                                 <a href="/action/figure/all-figure-view/${directlySubmittedExpression.publicationZdbID}?probeZdbID=${directlySubmittedExpression.probeFeatureZdbId}">
                                         ${directlySubmittedExpression.numFigures}
                                     figure${directlySubmittedExpression.numFigures ne 1 ? 's' : ''}
@@ -42,22 +36,23 @@
                                 <c:if test="${marker.markerType.type != 'EFG'  }">
                                     [${directlySubmittedExpression.probeFeatureAbbrev}]
                                 </c:if>
-                            </td>
-                        </tr>
+
+
                     </c:forEach>
+
+                    </z:attributeListItem>
                 </c:if>
 
 
 
              <c:if test="${markerExpression.geoLink !=null}">
-                    <tr>
-                        <td class="data-label"><b>High Throughput Expression:</b></td>
-                        <td align="left">
-                            ${markerExpression.geoLink}
+                 <z:attributeListItem label="High Throughput Expression">
+                       ${markerExpression.geoLink}
                                 <c:if test="${markerExpression.expressionAtlasLink.link != null}">, <a href="${markerExpression.expressionAtlasLink.link}">Expression Atlas</a>${markerExpression.expressionAtlasLink.attributionLink}
                                 </c:if>
-                        </td>
-                    </tr>
+                 </z:attributeListItem>
                 </c:if>
+
+
 
 
