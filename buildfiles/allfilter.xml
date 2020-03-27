@@ -188,6 +188,7 @@
 <filter token="WIKI_PASS" value="${WIKI_PASS}"/>
 <filter token="WIKI_PUSH_TO_WIKI" value="${WIKI_PUSH_TO_WIKI}"/>
 <filter token="WIKI_USER" value="${WIKI_USER}"/>
+<filter token="ZEBRASHARE_CURATORS" value="${ZEBRASHARE_CURATORS}"/>
 <filter token="ZFIN_ADMIN" value="${ZFIN_ADMIN}"/>
 </filterset>
 </project>

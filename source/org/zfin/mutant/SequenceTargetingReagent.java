@@ -27,7 +27,7 @@ public class SequenceTargetingReagent extends Marker {
     public List<Marker> getTargetGenes() {
         if (targetGenes != null)
             return targetGenes;
-        targetGenes = new ArrayList<Marker>(1);
+        targetGenes = new ArrayList<>(1);
         for (MarkerRelationship relationship : firstMarkerRelationships) {
             targetGenes.add(relationship.getSecondMarker());
         }

@@ -1,13 +1,16 @@
 package org.zfin.publication.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
 import java.util.List;
 import java.util.Map;
 
 public class DashboardPublicationList {
 
-    int totalCount;
-    List<DashboardPublicationBean> publications;
-    Map<String, Long> statusCounts;
+    @JsonView(View.API.class) int totalCount;
+    @JsonView(View.API.class) List<DashboardPublicationBean> publications;
+    @JsonView(View.API.class) Map<String, Long> statusCounts;
 
     public int getTotalCount() {
         return totalCount;

@@ -50,15 +50,15 @@ public class RibbonService {
 
         List<GenericTerm> stageSlim = List.of(
                 ontologyRepository.getTermByOboID("ZFS:0000001"), //zygote
-/*                ontologyRepository.getTermByOboID("ZFS:0000046"), //cleavage
+                ontologyRepository.getTermByOboID("ZFS:0000046"), //cleavage
                 ontologyRepository.getTermByOboID("ZFS:0000045"), //blastula
                 ontologyRepository.getTermByOboID("ZFS:0000047"), //gastrula
                 ontologyRepository.getTermByOboID("ZFS:0000049"), //segmentation
-                ontologyRepository.getTermByOboID("ZFS:0000050")//, //pharyngula
+                ontologyRepository.getTermByOboID("ZFS:0000050"), //pharyngula
                 ontologyRepository.getTermByOboID("ZFS:0007000"), //hatching
                 ontologyRepository.getTermByOboID("ZFS:0000048"), //larva
                 ontologyRepository.getTermByOboID("ZFS:0000051"), //juvenile
-                ontologyRepository.getTermByOboID("ZFS:0000044"), //adult*/
+                ontologyRepository.getTermByOboID("ZFS:0000044"), //adult
                 ontologyRepository.getTermByOboID("ZFS:0000000")  //unknown
         );
 
@@ -89,8 +89,11 @@ public class RibbonService {
                 .collect(Collectors.toList());
 
 
-        return buildRibbonSummary(zdbID, categoryTerms, slimTerms, "/expression-annotation");
-
+        RibbonSummary ribbonSummary = buildRibbonSummary(zdbID, categoryTerms, slimTerms, "/expression-annotation");
+        //remove the stage-other, because it isn't meaningful
+        ribbonSummary.getSubjects().get(0).getGroups().remove("ZFS:0100000-other");
+        ribbonSummary.getCategories().get(1).getGroups().remove(12);
+        return ribbonSummary;
     }
 
     public RibbonSummary buildRibbonSummary(String zdbID,

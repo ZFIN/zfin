@@ -1,12 +1,17 @@
 package org.zfin.figure.presentation;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.expression.Image;
+import org.zfin.framework.api.View;
 
 public class FigureGalleryImagePresentation {
 
     private Image image;
     private Object titleLinkEntity;
     private Object imageLinkEntity;
+    @JsonView(View.API.class)
+    @JsonProperty("expression")
     private FigureExpressionSummary figureExpressionSummary;
     private FigurePhenotypeSummary figurePhenotypeSummary;
     private String details;

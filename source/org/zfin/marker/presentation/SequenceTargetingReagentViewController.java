@@ -63,6 +63,101 @@ public class SequenceTargetingReagentViewController {
         HibernateUtil.closeSession();
     }
 
+
+    @RequestMapping(value = "/sequenceTargetingReagent/prototype-view/{zdbID}")
+    public String getNewView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        // set base bean
+        SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();
+
+        zdbID = markerService.getActiveMarkerID(zdbID);
+        logger.info("zdbID: " + zdbID);
+        SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagent(zdbID);
+        logger.info("sequenceTargetingReagent: " + sequenceTargetingReagent);
+
+        sequenceTargetingReagentBean.setMarker(sequenceTargetingReagent);
+        model.addAttribute("sequenceTargetingReagent", sequenceTargetingReagent);
+
+        MarkerService.createDefaultViewForMarker(sequenceTargetingReagentBean);
+
+        // set targetGenes
+        addKnockdownRelationships(sequenceTargetingReagent, sequenceTargetingReagentBean);
+
+        populateConstructList(sequenceTargetingReagentBean, sequenceTargetingReagent);
+
+        // (Antibodies)
+
+
+        // Expression data
+        ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
+        List<ExpressionResult> strExpressionResults = expressionRepository.getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
+        List<String> expressionFigureIDs = expressionRepository.getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
+        List<String> expressionPublicationIDs = expressionRepository.getExpressionPublicationIDsBySequenceTargetingReagent(sequenceTargetingReagent);
+        List<ExpressionDisplay> strExpressionDisplays = ExpressionService.createExpressionDisplays(sequenceTargetingReagent.getZdbID(), strExpressionResults, expressionFigureIDs, expressionPublicationIDs, false);
+        sequenceTargetingReagentBean.setExpressionDisplays(strExpressionDisplays);
+
+        // PHENOTYPE
+        boolean phenoMartRegening = RepositoryFactory.getPhenotypeRepository().getPhenoMartStatus().isSystemUpdateDisabled();
+        sequenceTargetingReagentBean.setPhenoMartBeingRegened(phenoMartRegening);
+
+        if (!phenoMartRegening) {
+            List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
+
+            if (genotypeFigures == null || genotypeFigures.size() == 0) {
+                sequenceTargetingReagentBean.setPhenotypeDisplays(null);
+            } else {
+                List<PhenotypeStatementWarehouse> phenotypeStatements = new ArrayList<>();
+                for (GenotypeFigure genotypeFigure : genotypeFigures) {
+                    PhenotypeStatementWarehouse phenotypeStatement = genotypeFigure.getPhenotypeStatement();
+                    if (phenotypeStatement != null) {
+                        phenotypeStatements.add(phenotypeStatement);
+                    }
+                }
+                sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "str", "phenotypeStatement"));
+            }
+
+            List<PhenotypeStatementWarehouse> allPhenotypeStatements = RepositoryFactory.getPhenotypeRepository().getAllPhenotypeStatementsForSTR(sequenceTargetingReagent);
+
+            if (allPhenotypeStatements == null || allPhenotypeStatements.size() == 0) {
+                sequenceTargetingReagentBean.setAllPhenotypeDisplays(null);
+            } else {
+                sequenceTargetingReagentBean.setAllPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(allPhenotypeStatements, "condition", "fish"));
+            }
+        }
+
+        // Genomic Features created by STR (CRISPR and TALEN only at this time)
+        if (sequenceTargetingReagentBean.isTALEN() || sequenceTargetingReagentBean.isCRISPR()) {
+            List<Feature> features = markerRepository.getFeaturesBySTR(sequenceTargetingReagent);
+            sequenceTargetingReagentBean.setGenomicFeatures(features);
+        }
+
+        // get sequence attribution
+        if (sequenceTargetingReagent.getSequence() != null) {
+            List<RecordAttribution> attributions = RepositoryFactory.getInfrastructureRepository()
+                    .getRecordAttributionsForType(sequenceTargetingReagent.getZdbID(), RecordAttribution.SourceType.SEQUENCE);
+            // for this particular set, we only ever want the first one
+            if (attributions.size() >= 1) {
+                sequenceTargetingReagentBean.setSequenceAttribution(PublicationPresentation.getLink(attributions.iterator().next().getSourceZdbID(), "1"));
+            }
+        } else {
+            logger.warn("No sequence available for the sequence targeting reagent: " + sequenceTargetingReagentBean.getZdbID());
+        }
+
+        sequenceTargetingReagentBean.setDatabases(databases);
+        String strType = sequenceTargetingReagent.getType().toString();
+
+        // Todo: there should be a better place to store the display name for the different STR entities
+        if (strType.equals("MRPHLNO")) {
+            strType = "Morpholino";
+        }
+
+        // set source
+        sequenceTargetingReagentBean.setSuppliers(markerRepository.getSuppliersForMarker(sequenceTargetingReagent.getZdbID()));
+        model.addAttribute(LookupStrings.FORM_BEAN, sequenceTargetingReagentBean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, strType + ": " + sequenceTargetingReagent.getAbbreviation());
+
+        return "marker/sequenceTargetingReagent/sequence-targeting-reagent-view.page";
+    }
+
     @RequestMapping(value = "/str/view/{zdbID}")
     public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean

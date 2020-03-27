@@ -1,5 +1,8 @@
 package org.zfin.ontology;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
 /**
  * A class to group superterm and subterm into a single object,
  * intended to be used as a component in expression and phenotype
@@ -7,8 +10,8 @@ package org.zfin.ontology;
  */
 public class PostComposedEntity implements Comparable<PostComposedEntity> {
 
-    protected GenericTerm superterm;
-    protected GenericTerm subterm;
+    @JsonView(View.API.class) protected GenericTerm superterm;
+    @JsonView(View.API.class) protected GenericTerm subterm;
 
     public GenericTerm getSuperterm() {
         return superterm;

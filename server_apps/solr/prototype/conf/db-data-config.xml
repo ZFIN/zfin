@@ -3036,6 +3036,7 @@
                             term_name as expression_anatomy_direct,
                             term_ont_id as xref,
                             term_ont_id as term_id,
+                            term_ont_id as anatomy_term_id,
                             'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -3143,7 +3144,6 @@
 
             <entity name="expression_stage"
                     query="select this_stage.stg_name as stage,
-                                  this_stage.stg_obo_id as term_id,
                                   'xpatex-' || efs_pk_id as efs_pk_id
                             from expression_experiment2
                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
@@ -3174,6 +3174,55 @@
                                 join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
                             where (start_stage.stg_name = 'Unknown'
                                    OR end_stage.stg_name = 'Unknown');"
+                    cacheImpl="SortedMapBackedCache"
+                    where="efs_pk_id=expression.id"
+            />
+
+            <entity name="expression_parent_stage"
+                    query="select distinct container.term_ont_id as term_id,
+                                   container.term_ont_id as stage_term_id,
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                     join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                     join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                     join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                                     join stage this_stage on this_stage.stg_hours_start &gt;= start_stage.stg_hours_start
+                                                                                     and this_stage.stg_hours_end &lt;= end_stage.stg_hours_end
+                                     join term contained on this_stage.stg_obo_id = contained.term_ont_id
+                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                                     join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                                                        where start_stage.stg_name != 'Unknown'
+                                                          and end_stage.stg_name != 'Unknown'
+                                                          and this_stage.stg_name != 'Unknown';"
+                    cacheImpl="SortedMapBackedCache"
+                    where="efs_pk_id=expression.id"
+            />
+            <entity name="expression_parent_stage_unknown"
+                    query="select distinct container.term_ont_id as term_id,
+                                            container.term_ont_id as stage_term_id,
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                     join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                     join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                     join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                                     join term contained on start_stage.stg_obo_id = contained.term_ont_id
+                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                                     join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                            where (start_stage.stg_name = 'Unknown'
+                                OR end_stage.stg_name = 'Unknown')
+                            union
+                            select distinct container.term_ont_id as term_id,
+                                            container.term_ont_id as stage_term_id,
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                     join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                     join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                                     join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                                     join term contained on end_stage.stg_obo_id = contained.term_ont_id
+                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                                     join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                            where (start_stage.stg_name = 'Unknown'
+                                OR end_stage.stg_name = 'Unknown');"
                     cacheImpl="SortedMapBackedCache"
                     where="efs_pk_id=expression.id"
             />
@@ -5819,6 +5868,65 @@ and child.term_ontology = 'disease_ontology';
                     cacheImpl="SortedMapBackedCache"
             />
 
+        </entity>
+
+        <entity name="image"
+                query="select
+                           img_zdb_id as id,
+                           'Image' as category,
+                           img_zdb_id as name,
+                           img_zdb_id as full_name
+                       from image;"
+        >
+            <entity name="image_expressed_gene"
+                    query="select
+                               mrkr_abbrev as expressed_gene,
+                               mrkr_zdb_id as expressed_gene_zdb_id,
+                               img_zdb_id
+                           from expression_experiment2
+                               inner join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                               inner join marker on xpatex_gene_zdb_id = mrkr_zdb_id
+                               inner join figure on efs_fig_zdb_id = fig_zdb_id
+                               inner join image on fig_zdb_id = img_fig_zdb_id
+                               left outer join clone on xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
+                           where substring(xpatex_gene_zdb_id from 1 for 7) != 'ZDB-EFG'
+                               and (clone_problem_type is null or clone_problem_type != 'Chimeric');"
+                    where="img_zdb_id=image.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
+
+            <entity name="image_expression_anatomy_direct"
+                    query="select
+                               term_name as expression_anatomy_direct,
+                               term_ont_id as term_id,
+                               img_zdb_id
+                           from expression_experiment2
+                               inner join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                               inner join expression_result2 on xpatres_efs_id = efs_pk_id
+                               inner join term on (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
+                               inner join figure on efs_fig_zdb_id = fig_zdb_id
+                               inner join image on fig_zdb_id = img_fig_zdb_id
+                           where xpatres_expression_found = 't';"
+                    where="img_zdb_id=image.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
+
+            <entity name="image_expression_anatomy_parent"
+                    query="select
+                               term_name as expression_anatomy_parent,
+                               term_ont_id as term_id,
+                               img_zdb_id
+                           from expression_experiment2
+                               inner join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                               inner join expression_result2 on xpatres_efs_id = efs_pk_id
+                               inner join all_term_contains on (xpatres_superterm_zdb_id = alltermcon_contained_zdb_id OR xpatres_subterm_zdb_id = alltermcon_contained_zdb_id)
+                               inner join term on alltermcon_container_zdb_id = term_zdb_id
+                               inner join figure on efs_fig_zdb_id = fig_zdb_id
+                               inner join image on fig_zdb_id = img_fig_zdb_id
+                            where xpatres_expression_found = 't';"
+                    where="img_zdb_id=image.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
         </entity>
 
     </document>

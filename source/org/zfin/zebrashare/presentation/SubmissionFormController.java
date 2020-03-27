@@ -3,6 +3,8 @@ package org.zfin.zebrashare.presentation;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -15,11 +17,15 @@ import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
 import org.zfin.figure.service.ImageService;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.mail.AbstractZfinMailSender;
+import org.zfin.framework.mail.MailSender;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.infrastructure.presentation.JSONStatusResponse;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationFileType;
 import org.zfin.publication.PublicationTrackingStatus;
@@ -35,7 +41,15 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/zebrashare")
 public class SubmissionFormController {
-
+    private static final String ADMIN_EMAIL_TEMPLATE = "" +
+            "USER INPUT:\n" +
+            "\n" +
+            "Name: %s\n" +
+            "Contact Email: %s\n" +
+            "Institution: %s\n" +
+            "Author: %s\n" +
+            "\n" +
+            "Title: %s\n";
     @Autowired
     private ProfileRepository profileRepository;
 
@@ -167,12 +181,30 @@ public class SubmissionFormController {
             editor.setSubmitter(person == ProfileService.getCurrentSecurityUser());
             HibernateUtil.currentSession().save(editor);
         }
+        MailSender mailer = AbstractZfinMailSender.getInstance();
+
+        // none of the regular fields should be blank. client-side validation should have prevented that. if any of them
+        // are blank or the *hidden* email input is not blank then this was probably a spammy request, so just stop
+        // here.
+
+//ZfinPropertiesEnum.JSD_EMAIL.value().split(" ")
+        // send mail to admin
+         mailer.sendMail("Zebrashare submission",
+                String.format(ADMIN_EMAIL_TEMPLATE, formBean.getSubmitterName(), formBean.getSubmitterEmail()
+                        , formBean.getLabZdbId(),formBean.getAuthors(), formBean.getTitle()),
+                false,
+                formBean.getSubmitterEmail(),
+                ZfinPropertiesEnum.ZEBRASHARE_CURATORS.value().split(" "));
+
 
         tx.commit();
 
         redirectAttributes.addFlashAttribute("publication", publication);
 
-        return "redirect:success";
+            return "redirect:success";
+
+
+
     }
 
     @RequestMapping(value = "/success", method = RequestMethod.GET)

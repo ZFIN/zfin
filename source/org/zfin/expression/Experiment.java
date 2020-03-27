@@ -1,8 +1,9 @@
 package org.zfin.expression;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.SortNatural;
+import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
@@ -26,6 +27,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
                     @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
             })
     @Column(name = "exp_zdb_id")
+    @JsonView(View.API.class)
     private String zdbID;
     @Column(name = "exp_name")
     private String name;
@@ -33,8 +35,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @JoinColumn(name = "exp_source_zdb_id")
     private Publication publication;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
-    /*@SortNatural
-    private Set<ExperimentCondition> experimentConditions;*/
+    @JsonView(View.API.class)
     private Set<ExperimentCondition> experimentConditions;
 
 

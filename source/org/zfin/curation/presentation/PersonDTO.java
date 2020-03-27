@@ -1,15 +1,17 @@
 package org.zfin.curation.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang3.ObjectUtils;
+import org.zfin.framework.api.View;
 
 public class PersonDTO implements Comparable<PersonDTO> {
 
-    private String zdbID;
-    private String firstName;
-    private String lastName;
-    private String name;
-    private String email;
-    private String imageURL;
+    @JsonView(View.API.class) private String zdbID;
+    @JsonView(View.API.class) private String firstName;
+    @JsonView(View.API.class) private String lastName;
+    @JsonView(View.API.class) private String name;
+    @JsonView(View.API.class) private String email;
+    @JsonView(View.API.class) private String imageURL;
 
     public String getZdbID() {
         return zdbID;

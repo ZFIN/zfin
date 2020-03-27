@@ -1,6 +1,8 @@
 package org.zfin.mutant;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.fish.repository.FishService;
+import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.marker.Marker;
 import org.zfin.profile.FishSupplier;
@@ -15,10 +17,12 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public static final String WT = "WT";
 
+    @JsonView(View.API.class)
     private String zdbID;
     private Genotype genotype;
     private String name;
     private String nameOrder;
+    @JsonView(View.API.class)
     private String displayName;
     private String handle;
     private long order;

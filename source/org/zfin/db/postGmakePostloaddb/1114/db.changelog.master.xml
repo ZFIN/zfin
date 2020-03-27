@@ -13,4 +13,8 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1114/ONT-685.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1114/ONT-692.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1114/INF-3717.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1114/DLOAD-660_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1114/DLOAD-660.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1114/DLOAD-660.sql" />
+
 </databaseChangeLog>

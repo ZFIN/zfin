@@ -2,16 +2,34 @@ package org.zfin.marker.presentation;
 
 import org.zfin.marker.presentation.ProteinDomainValue;
 import org.zfin.orthology.presentation.OrthologEvidencePresentation;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.ReferenceDatabase;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.Map;
+import java.util.*;
 
 /**
  */
 public class ProteinDomainRow {
     private String upID;
     private ProteinDetail proDetail;
+    private DBLink proDBLink;
+    private Boolean isPDB;
+
+    public Boolean getPDB() {
+        return isPDB;
+    }
+
+    public void setPDB(Boolean PDB) {
+        isPDB = PDB;
+    }
+
+    public DBLink getProDBLink() {
+        return proDBLink;
+    }
+
+    public void setProDBLink(DBLink proDBLink) {
+        this.proDBLink = proDBLink;
+    }
 
     public ProteinDetail getProDetail() {
         return proDetail;

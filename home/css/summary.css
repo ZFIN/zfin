@@ -9,6 +9,14 @@ table.summary {
     margin-top: .1em;
 }
 
+table.gene_transcript_gbrowse {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+    clear: both;
+}
+
+
 div.summary {
     margin-top: 1em;
     clear: both;

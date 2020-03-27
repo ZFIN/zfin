@@ -183,6 +183,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     }
 
+    public List<ProteinToPDB> getPDB(String uniProtID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select  ptp from ProteinToPDB ptp " +
+                "      where ptp.uniProtID = :uniProtID " ;
+
+
+        Query query = session.createQuery(hql);
+        query.setString("uniProtID", uniProtID);
+
+        return (List<ProteinToPDB>) query.list();
+
+    }
+
 
     public List<String> getTranscriptTypes() {
         Session session = currentSession();
@@ -224,6 +238,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         criteria.add(Restrictions.eq("name", name));
         return (Marker) criteria.uniqueResult();
     }
+
+
 
     //this is kind of awful...
     public List<Marker> getMarkersByZdbIdPrefix(String prefix) {
@@ -2264,77 +2280,31 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return geneProducts;
     }
 
-    @Override
-    public List<ProteinDomainBean> getInterProLinksForMarker(Marker marker) {
-        String sql = " SELECT distinct ip_interpro_id,ip_name,ip_type " +
-                " FROM interpro_protein,marker_to_protein,protein_to_interpro  " +
-                " WHERE ip_interpro_id = pti_interpro_id " +
-                " AND pti_uniprot_id = mtp_uniprot_id " +
-                " AND mtp_mrkr_zdb_id = :markerZdbID order by ip_type" ;
-        List<ProteinDomainBean> proteinDomains = HibernateUtil.currentSession().createSQLQuery(sql)
-                .setResultTransformer(new BasicTransformerAdapter() {
-                    @Override
-                    public Object transformTuple(Object[] tuple, String[] aliases) {
-                        ProteinDomainBean proteinDomainBean = new ProteinDomainBean();
-                        proteinDomainBean.setIpID(tuple[0].toString());
-                        proteinDomainBean.setIpName(tuple[1].toString());
-                        proteinDomainBean.setIpType(tuple[2].toString());
+
+    public List<InterProProtein> getInterProForMarker(Marker marker) {
+        Session session = currentSession();
+        String sql = " SELECT  distinct ip " +
+                " FROM InterProProtein ip, MarkerToProtein mtp, ProteinToInterPro pti " +
+                " WHERE ip.ipID = pti.interProID " +
+                " AND pti.uniProtID = mtp.mtpUniProtID " +
+                " AND mtp.marker = :marker order by ip.ipType" ;
+        Query query = session.createQuery(sql);
+
+        query.setParameter("marker", marker);
 
 
-                        return proteinDomainBean;
-                    }
-                })
-
-                .setString("markerZdbID", marker.getZdbID())
-.list();
-        return proteinDomains;
-    }
-
-    @Override
-    public List<ProteinDetail> getProteinDetail(Marker gene) {
-        String sql = " select distinct mtp_uniprot_id,up_length " +
-                     " from marker_to_protein, protein_to_interpro, protein " +
-                     " where mtp_mrkr_zdb_id=:markerzdb and mtp_uniprot_id=pti_uniprot_id and mtp_uniprot_id=up_uniprot_id" +
-                     " order by mtp_uniprot_id ";
-        List<ProteinDetail> proteinDetailDomain = HibernateUtil.currentSession().createSQLQuery(sql)
-                .setResultTransformer(new BasicTransformerAdapter() {
-                    @Override
-                    public Object transformTuple(Object[] tuple, String[] aliases) {
-                        ProteinDetail proteinDetail = new ProteinDetail();
-                        proteinDetail.setUpID(tuple[0].toString());
-                        proteinDetail.setUpLength(tuple[1].toString());
-
-
-                        return proteinDetail;
-                    }
-                })
-
-
-
-
-                .setString("markerzdb", gene.getZdbID())
-
-
-                .list();
-        return proteinDetailDomain;
+        return (List<InterProProtein>) query.list();
     }
 
 
-    public List<String> getUniProtID(Marker gene) {
-        String sql = " select distinct mtp_uniprot_id" +
-                " from marker_to_protein, protein_to_interpro,interpro_protein " +
-                " where mtp_mrkr_zdb_id=:markerzdb and mtp_uniprot_id=pti_uniprot_id and pti_interpro_id=ip_interpro_id  " +
-                " order by mtp_uniprot_id ";
-        return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setParameter("markerzdb", gene.getZdbID())
-                .list()
-                ;
 
 
 
 
 
-    }
+
+
+
 
     public List<String> getIPNames(String uniprot) {
         String sql = " select ip_name " +
@@ -2359,6 +2329,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 " from marker_to_protein, protein_to_interpro,interpro_protein " +
                 " where mtp_mrkr_zdb_id=:markerzdb and mtp_uniprot_id=pti_uniprot_id and pti_interpro_id=ip_interpro_id " +
                 " order by ip_name ";
+
+
+
+
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("markerzdb", gene.getZdbID())
                 .list()

@@ -19,10 +19,7 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.publication.Publication;
-import org.zfin.sequence.DBLink;
-import org.zfin.sequence.DisplayGroup;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 
 import java.util.List;
@@ -304,6 +301,7 @@ public interface MarkerRepository {
     List<ConstructCuration> getConstructsForAttribution(String publicationZdbID);
 
     List<ConstructComponent> getConstructComponent(String constructZdbID);
+   List<ProteinToPDB> getPDB(String uniProtID);
 
     /**
      * Create a gene for a given SequenceTargetingReagent which is targeting it.
@@ -374,9 +372,10 @@ public interface MarkerRepository {
     List<String> getMarkerRelationshipTypesForMarkerEdit(Marker marker,Boolean interacts);
 
     List<GeneProductsBean> getGeneProducts(String zdbID);
-    List<ProteinDomainBean> getInterProLinksForMarker(Marker marker);
-    List<ProteinDetail> getProteinDetail(Marker marker);
-    List<String> getUniProtID(Marker marker);
+
+     List<InterProProtein> getInterProForMarker(Marker marker);
+
+
     List<String> getProteinType(Marker marker);
     List<String> getIPNames( String uniprot);
 

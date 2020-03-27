@@ -41,7 +41,7 @@ const GeneMarkerRelationshipsTable = ({geneId}) => {
             width: '120px',
         },
         {
-            label: 'Publications',
+            label: 'Citations',
             content: row => <a href={`/action/infrastructure/data-citation-list/${row.markerRelationshipZdbId}`}>{row.numberOfPublications}</a>,
             width: '100px',
             align: 'right',

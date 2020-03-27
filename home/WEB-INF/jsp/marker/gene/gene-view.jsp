@@ -5,14 +5,16 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
+
 <c:set var="SUMMARY" value="Summary"/>
+<c:set var="EXPRESSION" value="Expression"/>
 <c:set var="ANTIBODIES" value="Antibodies"/>
 <c:set var="PLASMIDS" value="Plasmids"/>
 <c:set var="PATHWAYS" value="Interactions and Pathways"/>
 <c:set var="MUTANTS" value="Mutations"/>
-<c:set var="DISEASES" value="Disease"/>
+<c:set var="DISEASES" value="Human Disease"/>
 <c:set var="GO" value="Gene Ontology"/>
-<c:set var="PROTEINS" value="Proteins"/>
+<c:set var="PROTEINS" value="Protein Domains"/>
 <c:set var="CONSTRUCTS" value="Constructs"/>
 <c:set var="SEQUENCES" value="Sequences"/>
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
@@ -20,7 +22,7 @@
 <c:set var="ORTHOLOGY" value="Orthology"/>
 
 <z:dataPage
-        sections="${[SUMMARY, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY]}"
+        sections="${[SUMMARY, EXPRESSION, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY]}"
 >
     <z:dataManagerDropdown>
         <a class="dropdown-item active" href="/action/marker/gene/prototype-view/${formBean.marker.zdbID}">View</a>
@@ -37,6 +39,11 @@
         <jsp:include page="gene-view-summary.jsp" />
     </div>
 
+    <z:section title="${EXPRESSION}">
+        <div class="__react-root" id="GeneExpressionRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
+        <div class="__react-root" id="GeneExpressionFigureGallery" data-gene-id="${formBean.marker.zdbID}"></div>
+    </z:section>
+
     <z:section title="${MUTANTS}">
         <z:section title="Mutants">
             <jsp:include page="gene-view-mutants.jsp" />
@@ -47,10 +54,10 @@
     </z:section>
 
     <z:section title="${DISEASES}">
-        <z:section title="Associated with <i>${formBean.marker.abbreviation}</i> human ortholog">
+        <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Human Ortholog">
             <jsp:include page="gene-view-disease-via-ortholog.jsp" />
         </z:section>
-        <z:section title="Associated with <i>${formBean.marker.abbreviation}</i> via experimental Models">
+        <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Via Experimental Models">
             <jsp:include page="gene-view-disease-via-experiment.jsp" />
         </z:section>
     </z:section>
@@ -60,7 +67,13 @@
     </z:section>
 
     <z:section title="${PROTEINS}">
-        <jsp:include page="gene-view-proteins.jsp" />
+        <z:section title="Domain, Family, and Site Summary">
+            <jsp:include page="gene-view-proteins.jsp" />
+        </z:section>
+        <z:section title="Domain Details Per Protein">
+            <jsp:include page="gene-view-protein-detail.jsp" />
+        </z:section>
+
     </z:section>
 
     <z:section title="${PATHWAYS}">
@@ -75,10 +88,6 @@
         <jsp:include page="gene-view-plasmids.jsp" />
     </z:section>
 
-    <z:section title="${TRANSCRIPTS}">
-        <jsp:include page="gene-view-transcripts.jsp" />
-    </z:section>
-
     <z:section title="${CONSTRUCTS}">
         <div class="__react-root" id="GeneConstructsTable" data-gene-id="${formBean.marker.zdbID}"></div>
     </z:section>
@@ -87,6 +96,15 @@
         <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
     </z:section>
 
+    <z:section title="${TRANSCRIPTS}">
+        <z:section title="Confirmed Transcripts">
+            <jsp:include page="gene-view-transcripts.jsp" />
+        </z:section>
+        <z:section title="Withdrawn Transcripts">
+            <jsp:include page="gene-view-withdrawn-transcripts.jsp" />
+        </z:section>
+    </z:section>
+    
     <z:section title="${SEQUENCES}">
         <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
     </z:section>

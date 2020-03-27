@@ -30,19 +30,19 @@ public class SequenceControllerTest extends AbstractDatabaseTest {
 
         JsonResultResponse<MarkerDBLink> links = controller.getSequenceView(zdbID, false, null, null, null, new Pagination());
         assertNotNull(links);
-        assertThat(links.getTotal(), greaterThanOrEqualTo(34));
+        assertThat(links.getTotal(), greaterThanOrEqualTo(34L));
 
         links = controller.getSequenceView(zdbID, false, null, "1", null, new Pagination());
         assertNotNull(links);
         // filtered records for accession number '1'.
-        assertThat(links.getTotal(), greaterThanOrEqualTo(13));
-        assertThat(links.getTotal(), lessThanOrEqualTo(13));
+        assertThat(links.getTotal(), greaterThanOrEqualTo(13L));
+        assertThat(links.getTotal(), lessThanOrEqualTo(13L));
 
         links = controller.getSequenceView(zdbID, false, "GEnomic", null, null, new Pagination());
         assertNotNull(links);
         // filtered records on type
-        assertThat(links.getTotal(), greaterThanOrEqualTo(3));
-        assertThat(links.getTotal(), lessThanOrEqualTo(3));
+        assertThat(links.getTotal(), greaterThanOrEqualTo(3L));
+        assertThat(links.getTotal(), lessThanOrEqualTo(3L));
 
         // summary view
         links = controller.getSequenceView(zdbID, true, null, null, null, new Pagination());

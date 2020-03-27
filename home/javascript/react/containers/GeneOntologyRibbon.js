@@ -6,6 +6,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
 import NoData from '../components/NoData';
 import Ribbon from '../components/Ribbon';
+import GenericErrorMessage from '../components/GenericErrorMessage';
 
 const GeneOntologyRibbon = ({geneId}) => {
     const [selected, setSelected] = useState(null);
@@ -14,7 +15,7 @@ const GeneOntologyRibbon = ({geneId}) => {
     const data = useFetch(`/action/api/marker/${geneId}/go/ribbon-summary`);
 
     if (data.rejected) {
-        return <span className='text-danger'>Something went wrong fetching data. Try again later or <a href={`mailto:${process.env.ZFIN_ADMIN}`}>contact us</a>.</span>;
+        return <GenericErrorMessage />;
     }
 
     if (data.pending) {

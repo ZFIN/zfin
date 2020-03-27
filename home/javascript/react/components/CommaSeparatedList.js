@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const CommaSeparatedList = ({children}) => (
-    <ul className='comma-separated'>
+const CommaSeparatedList = ({children, semicolon = false}) => (
+    <ul className={`comma-separated ${semicolon ? 'semicolon' : ''}`}>
         {React.Children.map(children, (child, idx) => (
             [<li key={idx}>{child}</li>, ' ']
         ))}
@@ -11,6 +11,7 @@ const CommaSeparatedList = ({children}) => (
 
 CommaSeparatedList.propTypes = {
     children: PropTypes.node,
+    semicolon: PropTypes.bool,
 };
 
 export default CommaSeparatedList;

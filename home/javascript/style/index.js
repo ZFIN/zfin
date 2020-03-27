@@ -13,7 +13,7 @@ require('../../css/typeahead.scss');
 require('../../css/zfin.css');
 require('../../css/layout.scss');
 require('../../css/faceted-search.css');
-require('../../css/figure_gallery.css');
+require('../../css/figure-gallery.scss');
 require('../../css/pagination.css');
 require('../../css/tabEdit.css');
 require('../../css/zdbhome.scss');

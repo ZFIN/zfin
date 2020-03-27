@@ -5,3 +5,7 @@ export const makeId = string => (
 export const stringToFunction = getter => (
     typeof getter === 'string' ? o => o[getter] : getter
 );
+
+export const isEmptyObject = obj => {
+    return Object.keys(obj).length === 0 && obj.constructor === Object;
+};

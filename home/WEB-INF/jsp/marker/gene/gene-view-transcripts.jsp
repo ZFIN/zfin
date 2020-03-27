@@ -1,5 +1,20 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<c:if test="${!empty formBean.relatedTranscriptDisplay.gbrowseImage}">
+
+    <div class="gbrowse-image-prototype"></div>
+
+</c:if>
+
+<script>
+    $(".gbrowse-image-prototype").gbrowseImage({
+        width: 700,
+        imageUrl: "${formBean.relatedTranscriptDisplay.gbrowseImage.imageUrl}",
+        linkUrl: "${formBean.relatedTranscriptDisplay.gbrowseImage.linkUrl}",
+        build: "${formBean.relatedTranscriptDisplay.gbrowseImage.build}"
+    });
+</script>
+
 <z:dataTable collapse="true" hasData="${!empty formBean.relatedTranscriptDisplay.transcripts}">
 
     <thead>
@@ -14,8 +29,7 @@
         </th>
     </tr>
     </thead>
-    <c:forEach var="transcript" items="${formBean.relatedTranscriptDisplay.nonWithdrawnTranscripts}"
-               varStatus="loop">
+    <c:forEach var="transcript" items="${formBean.relatedTranscriptDisplay.nonWithdrawnTranscripts}" varStatus="loop">
         <tbody>
         <td>
             <span title="${transcript.marker.transcriptType.definition}">${transcript.marker.transcriptType.display}</span>
@@ -55,9 +69,25 @@
                     </c:when>
                 </c:choose>
             </c:if>
-
         </td>
-
     </c:forEach>
     </tbody>
 </z:dataTable>
+
+<c:if test="${!empty locations}">
+    <table>
+        <tfoot>
+        <tr>
+            <td colspan="3">
+                <strong>Browsers:</strong>
+                <c:forEach var="location" items="${locations}" varStatus="loop">
+                    <a href="${location.url}">${location.name}</a><c:if test="${!loop.last}">,&nbsp;</c:if>
+                </c:forEach>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</c:if>
+
+
+

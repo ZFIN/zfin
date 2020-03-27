@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
+import org.zfin.marker.MarkerNotFoundException;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -33,6 +34,13 @@ public class NTRViewController {
     public String getNontranscribedRegionView(Model model, @PathVariable("zdbID") String zdbID
     ) throws Exception {
         // set base bean
+        setBaseBean(model, zdbID);
+        //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
+
+        return "marker/region-view.page";
+    }
+
+    private void setBaseBean(Model model, @PathVariable("zdbID") String zdbID) throws MarkerNotFoundException {
         MarkerBean markerBean = new MarkerBean();
 
         zdbID = markerService.getActiveMarkerID(zdbID);
@@ -64,7 +72,7 @@ public class NTRViewController {
 
         // region Ontology
         markerBean.setGeneOntologyOnMarkerBeans(MarkerService.getGeneOntologyOnMarker(region));
-        markerBean.setRelatedMarkers(markerRepository.getRelatedMarkerDisplayForTypes(region, false, MarkerRelationship.Type.PAC_CONTAINS_NTR, MarkerRelationship.Type.BAC_CONTAINS_NTR,MarkerRelationship.Type.FOSMID_CONTAINS_NTR,MarkerRelationship.Type.GENEDOM_CONTAINS_NTR));
+        markerBean.setRelatedMarkers(markerRepository.getRelatedMarkerDisplayForTypes(region, false, MarkerRelationship.Type.PAC_CONTAINS_NTR, MarkerRelationship.Type.BAC_CONTAINS_NTR, MarkerRelationship.Type.FOSMID_CONTAINS_NTR, MarkerRelationship.Type.GENEDOM_CONTAINS_NTR));
 
         //region Transcripts
 //        markerBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(region));
@@ -77,8 +85,15 @@ public class NTRViewController {
         markerBean.setSequenceInfo(MarkerService.getSequenceInfoSummary(region));
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
+    }
+
+    @RequestMapping(value = "/region/view-new/{zdbID}")
+    public String getNontranscribedRegionViewNew(Model model, @PathVariable("zdbID") String zdbID
+    ) throws Exception {
+        // set base bean
+        setBaseBean(model, zdbID);
         //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
 
-        return "marker/region-view.page";
+        return "marker/region/region-view.page";
     }
 }

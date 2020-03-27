@@ -9,7 +9,7 @@
             <th style="width: 17%">Host Organism</th>
             <th style="width: 17%">Assay <a class="popup-link info-popup-link" href="/ZFIN/help_files/antibody_assay_help.html"></a></th>
             <th style="width: 17%">Source</th>
-            <th style="width: 5%">Publications</th>
+            <th style="width: 5%">Citations</th>
         </tr>
     </thead>
     <tbody>

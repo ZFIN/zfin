@@ -37,7 +37,7 @@
         </td>
     </tr>
     <tr>
-        <td>Curated microarray expression</td>
+        <td>High Throughput Expression</td>
         <td> </td>
     </tr>
 

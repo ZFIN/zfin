@@ -1,8 +1,10 @@
 package org.zfin.publication;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.zfin.framework.api.View;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -57,17 +59,21 @@ public class PublicationTrackingLocation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ptl_pk_id")
+    @JsonView(View.API.class)
     private long id;
 
     @Column(name = "ptl_location_display")
     @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingLocation$Name")})
+    @JsonView(View.API.class)
     private Name name;
 
     @Column(name = "ptl_role")
     @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {@Parameter(name = "enumClassname", value="org.zfin.publication.PublicationTrackingLocation$Role")})
+    @JsonView(View.API.class)
     private Role role;
 
     @Column(name = "ptl_display_order")
+    @JsonView(View.API.class)
     private int displayOrder;
 
     public long getId() {

@@ -4,15 +4,7 @@ select
 from
    feature   
 where
-   exists (
-      Select
-         'x' 
-      from
-         genotype_feature                  
-      where
-         genofeat_feature_zdb_id = feature_zdb_id
-   )  
-   and not exists (
+   not exists (
       Select
          'x' 
       from
