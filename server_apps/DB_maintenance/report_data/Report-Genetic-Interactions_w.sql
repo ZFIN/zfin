@@ -4,7 +4,7 @@ drop table if exists tmp_fishnoeap;
 drop table if exists tmp_onlyfish;
 drop table if exists tmp_fish490;
 
-select distinct fish_zdb_id , fish_name, concat(fc_affector_zdb_id,E'\t',feature_abbrev,E'\t',fc_gene_zdb_id,E'\t',mrkr_abbrev) as affector
+select distinct fish_zdb_id , fish_name, concat(fc_gene_zdb_id,E'\t',mrkr_abbrev,E'\t',fc_affector_zdb_id,E'\t',feature_abbrev) as affector
 into tmp_onlyfish
 from fish, fish_components, feature,marker
 where fish_functional_affected_gene_count=2
@@ -14,8 +14,8 @@ and fc_affector_zdb_id = feature_zdb_id
 and feature_type in ('POINT_MUTATION','COMPLEX','DELETION','INSERTION','INDEL')
 and fc_gene_zdb_id=mrkr_zdb_id
 union
-select distinct fish_zdb_id , fish_name, concat(fc_affector_zdb_id,E'\t',fc_gene_zdb_id) as affector
-from fish, fish_components, feature, feature_marker_relationship
+select distinct fish_zdb_id , fish_name, concat(fc_gene_zdb_id,E'\t',mrkr_abbrev,E'\t',fc_affector_zdb_id,E'\t',feature_abbrev) as affector
+from fish, fish_components, feature, feature_marker_relationship, marker
 where fish_functional_affected_gene_count=2
 and fish_zdb_id=fc_fish_zdb_id
 and fc_affector_zdb_id like 'ZDB-ALT%'
@@ -23,8 +23,10 @@ and fc_affector_zdb_id = feature_zdb_id
 and feature_type in ('TRANSGENIC_INSERTION')
 and fmrel_type='contains innocuous sequence feature'
 and fmrel_ftr_zdb_id=fc_affector_zdb_id
+and fc_gene_zdb_id=mrkr_zdb_id
+and fmrel_mrkr_zdb_id=fc_gene_zdb_id
 union
-select distinct fish_zdb_id , fish_name, concat(fc_affector_zdb_id,E'\t',a.mrkr_abbrev,E'\t',fc_gene_zdb_id,E'\t',b.mrkr_abbrev) as affector
+select distinct fish_zdb_id , fish_name, concat(fc_gene_zdb_id,E'\t',b.mrkr_abbrev,E'\t',fc_affector_zdb_id,E'\t',a.mrkr_abbrev) as affector
 from fish, fish_components, marker a, marker b
 where fish_functional_affected_gene_count=2
 and fish_zdb_id=fc_fish_zdb_id
@@ -62,7 +64,7 @@ and xpatex_zdb_id=efs_xpatex_zdb_id and efs_pk_id=xpatres_efs_id
 and xpatres_pk_id=ept_xpatres_id);
 
 update tmp_fishnoeap set psg_e1_relation_name='' where e1subtermname='';
-update tmp_fishnoeap set affected_components=replace(affected_components,',','|') where affected_components like '%,%';
+update tmp_fishnoeap set affected_components=replace(affected_components,',',E'\t') where affected_components like '%,%';
 
 select fish_zdb_id , fish_name,affected_components, genox_exp_zdb_id,exp_name,e1subtermid,e1subtermname,psg_e1_relation_name,
 e1supertermid, e1supertermname,e2subtermid,e2subtermname,psg_e2_relation_name,e2supertermid,e2supertermname,psg_tag,psg_quality_zdb_id,psg_quality_name,fig_zdb_id, fig_label,fig_source_zdb_id, pubmedid
