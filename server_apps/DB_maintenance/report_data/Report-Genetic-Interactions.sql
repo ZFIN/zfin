@@ -40,7 +40,7 @@ select fish_zdb_id, fish_name, string_agg(affector,',') as affected_components i
 
 select distinct fish_zdb_id , fish_name,affected_components, genox_exp_zdb_id,exp_name,genox_zdb_id,
 nvl((Select term_ont_id from term where term_zdb_id = psg_e1b_zdb_id),'') as e1subtermid ,nvl(psg_e1b_name,'') as e1subtermname,psg_e1_relation_name,nvl((Select term_ont_id from term where term_zdb_id = psg_e1a_zdb_id),'') as e1supertermid ,nvl(psg_e1a_name,'') as e1supertermname,
-nvl((Select term_ont_id from term where term_zdb_id =psg_e2b_zdb_id),'') as e2subtermid,nvl(psg_e2b_name,'') as e2subtermname ,psg_e2_relation_name,nvl((Select term_ont_id from term where term_zdb_id =psg_e2a_zdb_id),'') as e2supertermid,nvl(psg_e2a_name,'') as e2supertermname,psg_tag,psg_quality_zdb_id,psg_quality_name,fig_zdb_id, fig_label,fig_source_zdb_id,coalesce(accession_no,0)
+nvl((Select term_ont_id from term where term_zdb_id =psg_e2b_zdb_id),'') as e2subtermid,nvl(psg_e2b_name,'') as e2subtermname ,psg_e2_relation_name,nvl((Select term_ont_id from term where term_zdb_id =psg_e2a_zdb_id),'') as e2supertermid,nvl(psg_e2a_name,'') as e2supertermname,psg_tag,psg_quality_zdb_id,psg_quality_name,fig_zdb_id, fig_label,fig_source_zdb_id,coalesce(accession_no,0) as pubmedid
 into tmp_fish_thatfitthebill from tmp_fish490,fish_Experiment, experiment,phenotype_source_generated,phenotype_observation_generated,figure,publication
      where (psg_tag like '%ameliorated%' or psg_tag like '%exacerbated%')
 	and psg_pg_id = pg_id
@@ -62,8 +62,8 @@ and xpatex_zdb_id=efs_xpatex_zdb_id and efs_pk_id=xpatres_efs_id
 and xpatres_pk_id=ept_xpatres_id);
 
 update tmp_fishnoeap set psg_e1_relation_name='' where e1subtermname='';
-update tmp_fishnoeap set affected_components=replace(affected_components,',',E'\t') where affected_components like '%,%';
+update tmp_fishnoeap set affected_components=replace(affected_components,',','|') where affected_components like '%,%';
 
 select fish_zdb_id , fish_name,affected_components, genox_exp_zdb_id,exp_name,e1subtermid,e1subtermname,psg_e1_relation_name,
-e1supertermid, e1supertermname,e2subtermid,e2subtermname,psg_e2_relation_name,e2supertermid,e2supertermname,psg_tag,psg_quality_zdb_id,psg_quality_name,fig_zdb_id, fig_label,fig_source_zdb_id,coalesce(accession_no,0) as pubmedid
+e1supertermid, e1supertermname,e2subtermid,e2subtermname,psg_e2_relation_name,e2supertermid,e2supertermname,psg_tag,psg_quality_zdb_id,psg_quality_name,fig_zdb_id, fig_label,fig_source_zdb_id, pubmedid
  from tmp_fishnoeap;
