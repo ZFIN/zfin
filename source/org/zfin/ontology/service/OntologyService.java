@@ -346,7 +346,6 @@ public class OntologyService {
             log.info(e);
         }
         // add 'adult' manually. It technically is a superstage
-        stageSlim.add(ontologyRepository.getTermByOboID("ZFS:0000044"));
         return stageSlim;
     }
 }
