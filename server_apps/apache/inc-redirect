@@ -55,6 +55,9 @@ RewriteCond %{QUERY_STRING}     ^MIval=aa-wtlist.apg$    [NC]
 RewriteRule ^/cgi-bin/webdriver/action/feature/wildtype-list [NC,R=301]
 
 # retired apg urls
+RewriteCond %{QUERY_STRING}     ^Mival=aa-ZDB_home.apg$    [NC]
+RewriteRule ^.*$ /? [NC,R=301]
+
 RewriteCond %{QUERY_STRING}     ^Mival=aa-markerview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
 
