@@ -32,7 +32,7 @@
     "clean": "rm -rf $TARGETROOT/home/dist",
     "compile": "webpack",
     "build": "npm run clean && npm run compile",
-    "lint": "eslint home/javascript/react/**"
+    "lint": "eslint home/javascript/react/** --max-warnings 0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.8.1",
