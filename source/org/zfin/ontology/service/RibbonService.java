@@ -123,7 +123,10 @@ public class RibbonService {
 
                     RibbonGroup otherGroup = new RibbonGroup();
                     otherGroup.setId(categoryTerm.getOboID());
-                    otherGroup.setLabel("Other " + termNameDisplay);
+                    if (categoryTerm.getOboID().equals("ZFS:0100000"))
+                        otherGroup.setLabel("Unknown stage " );
+                    else
+                        otherGroup.setLabel("Other " + termNameDisplay);
                     otherGroup.setDescription("Show all " + termNameDisplay + " annotations not mapped to a specific term");
                     otherGroup.setType(RibbonGroup.Type.OTHER);
                     groups.add(otherGroup);

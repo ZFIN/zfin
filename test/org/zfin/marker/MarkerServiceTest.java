@@ -208,7 +208,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         SequenceInfo sequenceInfo = MarkerService.getSequenceInfoSummary(m);
         assertThat(sequenceInfo.getNumberDBLinks(), greaterThan(11));
         assertThat(sequenceInfo.getNumberDBLinks(), lessThan(50)); // was 18
-        assertEquals(4, sequenceInfo.getDbLinks().size());
+        assertEquals(3, sequenceInfo.getDbLinks().size());
     }
 
     @Test

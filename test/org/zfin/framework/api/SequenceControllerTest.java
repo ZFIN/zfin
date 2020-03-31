@@ -36,17 +36,17 @@ public class SequenceControllerTest extends AbstractDatabaseTest {
         assertNotNull(links);
         // filtered records for accession number '1'.
         assertThat(links.getTotal(), greaterThanOrEqualTo(13L));
-        assertThat(links.getTotal(), lessThanOrEqualTo(13L));
+        assertThat(links.getTotal(), lessThanOrEqualTo(20L));
 
         links = controller.getSequenceView(zdbID, false, "GEnomic", null, null, new Pagination());
         assertNotNull(links);
         // filtered records on type
         assertThat(links.getTotal(), greaterThanOrEqualTo(3L));
-        assertThat(links.getTotal(), lessThanOrEqualTo(3L));
+        assertThat(links.getTotal(), lessThanOrEqualTo(10L));
 
         // summary view
         links = controller.getSequenceView(zdbID, true, null, null, null, new Pagination());
         assertNotNull(links);
-        assertThat(links.getTotal(), equalTo(3));
+        assertThat(links.getResults().size(), equalTo(3));
     }
 }

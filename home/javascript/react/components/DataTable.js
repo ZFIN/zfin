@@ -112,22 +112,32 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                             <option value={25}>25</option>
                             <option value={100}>100</option>
                         </select>
-                        <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0'
-                                onClick={() => handlePageChange(1)}>
+                        <button
+                            disabled={tableState.page === 1}
+                            className='btn btn-sm btn-outline-secondary border-0'
+                            onClick={() => handlePageChange(1)}
+                        >
                             <i className='fas fa-angle-double-left'/>
                         </button>
-                        <button disabled={tableState.page === 1} className='btn btn-sm btn-outline-secondary border-0'
-                                onClick={() => handlePageChange(tableState.page - 1)}>
+                        <button
+                            disabled={tableState.page === 1}
+                            className='btn btn-sm btn-outline-secondary border-0'
+                            onClick={() => handlePageChange(tableState.page - 1)}
+                        >
                             <i className='fas fa-angle-left'/>
                         </button>
-                        <button disabled={tableState.page === totalPages}
-                                className='btn btn-sm btn-outline-secondary border-0'
-                                onClick={() => handlePageChange(tableState.page + 1)}>
+                        <button
+                            disabled={tableState.page === totalPages}
+                            className='btn btn-sm btn-outline-secondary border-0'
+                            onClick={() => handlePageChange(tableState.page + 1)}
+                        >
                             <i className='fas fa-angle-right'/>
                         </button>
-                        <button disabled={tableState.page === totalPages}
-                                className='btn btn-sm btn-outline-secondary border-0'
-                                onClick={() => handlePageChange(totalPages)}>
+                        <button
+                            disabled={tableState.page === totalPages}
+                            className='btn btn-sm btn-outline-secondary border-0'
+                            onClick={() => handlePageChange(totalPages)}
+                        >
                             <i className='fas fa-angle-double-right'/>
                         </button>
                     </div>

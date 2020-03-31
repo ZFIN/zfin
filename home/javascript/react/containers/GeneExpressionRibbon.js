@@ -34,30 +34,28 @@ const GeneExpressionRibbon = ({geneId}) => {
     }
 
     const columns = [
-            {
-                label: 'Expression Location',
-                content: row => <a href={`/action/marker/citation-list/${row.term.oboID}`}>{row.term.name}</a>,
-                width: '250px',
-            },
-            {
-                label: 'Stage Observed',
-                content: row => (<StagePresentation stages={row.stageHistogram}/>),
-                subHeader: 'cleavage blastula gastrula segmentation pharyngula hatching larva juvenile adult',
-                width: '300',
-            },
-            {
-                label: 'Publications',
-                content: row => (<AttributionLink
-                    accession={null}
-                    url={`/action/marker/${row.term.oboID}`}
-                    publicationCount={row.numberOfPublications}
-                    publication={row.publication}
-                />),
-                width: '450px',
-            }
-            ,
-        ]
-    ;
+        {
+            label: 'Expression Location',
+            content: row => <a href={`/action/marker/citation-list/${row.term.oboID}`}>{row.term.name}</a>,
+            width: '250px',
+        },
+        {
+            label: 'Stage Observed',
+            content: row => (<StagePresentation stages={row.stageHistogram}/>),
+            subHeader: 'cleavage blastula gastrula segmentation pharyngula hatching larva juvenile adult',
+            width: '300',
+        },
+        {
+            label: 'Publications',
+            content: row => (<AttributionLink
+                accession={null}
+                url={`/action/marker/${row.term.oboID}`}
+                publicationCount={row.numberOfPublications}
+                publication={row.publication}
+            />),
+            width: '450px',
+        },
+    ];
 
     const handleItemClick = (subject, group) => {
         if (selected && selected.group.id === group.id && selected.group.type === group.type) {

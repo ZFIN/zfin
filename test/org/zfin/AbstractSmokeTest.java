@@ -150,6 +150,8 @@ public class AbstractSmokeTest extends WebTestCase {
         webClient.getOptions().setPopupBlockerEnabled(true);
         webClient.getOptions().setRedirectEnabled(true);
         webClient.getOptions().setJavaScriptEnabled(true);
+        // increase timeout to 60 seconds
+        webClient.getOptions().setTimeout(60000);
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         CookieManager cm = new CookieManager();
         webClient.setCookieManager(cm);
