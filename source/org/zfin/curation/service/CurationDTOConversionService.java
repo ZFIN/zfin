@@ -37,8 +37,8 @@ public class CurationDTOConversionService {
         Person currentUser = ProfileService.getCurrentSecurityUser();
         dto.setEditable(
                 currentUser != null &&
-                !currentUser.getShortName().equals("Guest") &&
-                currentUser.equals(note.getCurator()));
+                        !currentUser.getShortName().equals("Guest") &&
+                        currentUser.equals(note.getCurator()));
 
         return dto;
     }
@@ -198,7 +198,7 @@ public class CurationDTOConversionService {
         List<Image> images = publication.getFigures().stream()
                 .map(Figure::getImages)
                 .flatMap(Set::stream)
-                .sorted(Comparator.comparing(image -> image.getFigure().getLabel()))
+                .sorted(Comparator.comparing(image -> image.getFigure().getLabel(), Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
         bean.setImages(images);
         bean.setProcessingTasks(publication.getProcessingChecklistEntries()
