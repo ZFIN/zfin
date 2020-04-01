@@ -48,6 +48,7 @@ public class GeneExpressionRibbonController {
     @RequestMapping(value = "/marker/{geneID}/expression/ribbon-detail")
     public JsonResultResponse<ExpressionRibbonDetail> getExpressionRibbonDetail(@PathVariable("geneID") String geneID,
                                                                                 @RequestParam(value = "termId", required = false) String termID,
+                                                                                @RequestParam(value = "detailTermId", required = false) String detailTermID,
                                                                                 @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
         List<ExpressionRibbonDetail> allDetails;
