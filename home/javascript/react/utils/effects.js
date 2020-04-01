@@ -58,3 +58,20 @@ export const useTableDataFetch = (baseUrl, tableState) => {
         `limit=${tableState.limit}&page=${tableState.page}`;
     return useFetch(url);
 };
+
+export const useRibbonState = (onSelect) => {
+    const [selected, setSelected] = useState(null);
+
+    const handleItemClick = (subject, group) => {
+        if (selected && selected.group.id === group.id && selected.group.type === group.type) {
+            setSelected(null);
+        } else {
+            if (typeof onSelect === 'function') {
+                onSelect();
+            }
+            setSelected({subject, group});
+        }
+    };
+
+    return [selected, handleItemClick];
+};

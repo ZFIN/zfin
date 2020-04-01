@@ -1,19 +1,18 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import {useFetch} from '../utils/effects';
+import {useFetch, useRibbonState} from '../utils/effects';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 import NoData from '../components/NoData';
-import Ribbon from '../components/Ribbon';
+import Ribbon, {getSelectedTermQueryParams} from '../components/Ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
 import AttributionLink from '../components/AttributionLink';
 import StagePresentation from '../components/StagePresentation';
 
 const GeneExpressionRibbon = ({geneId}) => {
-
-    const [selected, setSelected] = useState(null);
     const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
+    const [selected, setSelected] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
 
     const data = useFetch(`/action/api/marker/${geneId}/expression/ribbon-summary`);
 
@@ -57,42 +56,23 @@ const GeneExpressionRibbon = ({geneId}) => {
         },
     ];
 
-    const handleItemClick = (subject, group) => {
-        if (selected && selected.group.id === group.id && selected.group.type === group.type) {
-            setSelected(null);
-        } else {
-            setTableState(DEFAULT_TABLE_STATE);
-            setSelected({subject, group});
-        }
-    };
-
-    let termQuery = '';
-    if (selected) {
-        if (selected.group.type !== 'GlobalAll') {
-            termQuery += `?termId=${selected.group.id}`;
-        }
-        if (selected.group.type === 'Other') {
-            termQuery += '&isOther=true';
-        }
-    }
-
     return (
         <div>
             <Ribbon
                 subjects={data.value.subjects}
                 categories={data.value.categories}
-                itemClick={handleItemClick}
+                itemClick={setSelected}
                 selected={selected}
             />
 
             {selected &&
-            <DataTable
-                url={`/action/api/marker/${geneId}/expression/ribbon-detail${termQuery}`}
-                columns={columns}
-                rowKey='rowKey'
-                tableState={tableState}
-                onTableStateChange={setTableState}
-            />
+                <DataTable
+                    url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selected)}`}
+                    columns={columns}
+                    rowKey='rowKey'
+                    tableState={tableState}
+                    onTableStateChange={setTableState}
+                />
             }
         </div>
     );
