@@ -1,9 +1,18 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
   <description>Used to update the status of a pub from inactive to active.</description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -11,7 +20,7 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
     <hudson.triggers.TimerTrigger>
-      <spec></spec>
+      <spec>10 23 * * *</spec>
     </hudson.triggers.TimerTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
@@ -25,44 +34,17 @@
   <publishers>
     <hudson.tasks.ArtifactArchiver>
       <artifacts>server_apps/data_transfer/PUBMED/listOfActivatedPubs.txt</artifacts>
-      <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList></recipientList>
       <configuredTriggers>
-        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
-          <email>
-            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
-            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
-            <sendToDevelopers>false</sendToDevelopers>
-            <sendToRequester>false</sendToRequester>
-            <includeCulprits>false</includeCulprits>
-            <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>erver_apps/data_transfer/PUBMED/listOfActivatedPubs.txt</attachmentsPattern>
-            <attachBuildLog>false</attachBuildLog>
-            <compressBuildLog>false</compressBuildLog>
-            <replyTo></replyTo>
-            <contentType>project</contentType>
-          </email>
-        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
-        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-          <email>
-            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
-            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>$PROJECT_DEFAULT_CONTENT</body>
-            <sendToDevelopers>false</sendToDevelopers>
-            <sendToRequester>false</sendToRequester>
-            <includeCulprits>false</includeCulprits>
-            <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/data_transfer/PUBMED/listOfActivatedPubs.txt</attachmentsPattern>
-            <attachBuildLog>false</attachBuildLog>
-            <compressBuildLog>false</compressBuildLog>
-            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
-            <contentType>project</contentType>
-          </email>
-        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+        <null/>
+        <null/>
       </configuredTriggers>
       <contentType>text/html</contentType>
       <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
@@ -76,6 +58,12 @@
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.19">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>65</timeoutMinutes>
+      </strategy>
+      <operationList/>
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
     <EnvInjectBuildWrapper plugin="envinject@1.89">
       <info>
         <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
