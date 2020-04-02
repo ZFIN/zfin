@@ -54,8 +54,7 @@ public class BlastLinkPresentation extends EntityPresentation{
                     foreignDBName = "Vega" ;
                 }
                 else
-                if( availableName == ForeignDB.AvailableName.ZFIN_PROT
-                        ||
+                if( 
                         availableName == ForeignDB.AvailableName.PUBPROT
                         ||
                         availableName == ForeignDB.AvailableName.PUBRNA
