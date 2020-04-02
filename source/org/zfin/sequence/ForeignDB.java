@@ -155,7 +155,6 @@ public class ForeignDB implements Comparable<ForeignDB> {
         WASHU("WashU"),
         WASHUZ("WashUZ"),
         ZF_ESPRESSO("ZF-Espresso"),
-        ZFIN_PROT("ZFIN_PROT"),
         ZFISHBOOK("zfishbook"),
         ZFISHBOOK_CONSTRUCTS("zfishbook-constructs"),
         HTTP("HTTP"),
