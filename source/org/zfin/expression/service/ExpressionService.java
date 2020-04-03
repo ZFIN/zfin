@@ -30,6 +30,7 @@ import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.FieldName;
@@ -61,6 +62,9 @@ public class ExpressionService {
 
     @Autowired
     private FigureRepository figureRepository;
+
+    @Autowired
+    private OntologyRepository ontologyRepository;
 
     private static ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
@@ -206,17 +210,17 @@ public class ExpressionService {
         }
     }
 
-    public LinkDisplay getExpressionAtlasForMarker(String mrkrZdbID, ForeignDB.AvailableName foreignDBName){
-        DBLink gxaLink ;
+    public LinkDisplay getExpressionAtlasForMarker(String mrkrZdbID, ForeignDB.AvailableName foreignDBName) {
+        DBLink gxaLink;
         gxaLink = sequenceRepository.getAtlasDBLink(mrkrZdbID, foreignDBName.toString());
-        LOG.debug ("gxaLink" + gxaLink);
+        LOG.debug("gxaLink" + gxaLink);
         if (gxaLink == null) {
             return null;
         } else {
-        List<LinkDisplay> linkDisplays = markerRepository.getMarkerLinkDisplay(gxaLink.getZdbID());
-        if (linkDisplays.size() > 1) {
-            LOG.error("too many LinkDisplays returned for " + gxaLink.getZdbID());
-        }
+            List<LinkDisplay> linkDisplays = markerRepository.getMarkerLinkDisplay(gxaLink.getZdbID());
+            if (linkDisplays.size() > 1) {
+                LOG.error("too many LinkDisplays returned for " + gxaLink.getZdbID());
+            }
             return linkDisplays.get(0);
         }
     }
@@ -247,7 +251,7 @@ public class ExpressionService {
         logger.debug(marker.getZdbID());
         logger.debug(ForeignDB.AvailableName.EXPRESSIONATLAS);
 
-        LinkDisplay atlasLink = getExpressionAtlasForMarker(marker.getZdbID(),ForeignDB.AvailableName.EXPRESSIONATLAS);
+        LinkDisplay atlasLink = getExpressionAtlasForMarker(marker.getZdbID(), ForeignDB.AvailableName.EXPRESSIONATLAS);
         logger.debug("got the newLink");
         if (atlasLink != null) {
             markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.getZdbID(), ForeignDB.AvailableName.EXPRESSIONATLAS));
@@ -757,10 +761,12 @@ public class ExpressionService {
                 statement.setQuality(DTOConversionService.convertToTermDTO(phenotypeTerm.getQualityTerm()));
                 statement.setEntity(DTOConversionService.convertToEntityDTO(result.getEntity()));
                 statement.setTag(phenotypeTerm.getTag());
-                if (result.getExpressionFigureStage().getExpressionExperiment().getGene() != null)
+                if (result.getExpressionFigureStage().getExpressionExperiment().getGene() != null) {
                     statement.setGeneName(result.getExpressionFigureStage().getExpressionExperiment().getGene().getAbbreviation());
-                if (result.getExpressionFigureStage().getExpressionExperiment().getAntibody() != null)
+                }
+                if (result.getExpressionFigureStage().getExpressionExperiment().getAntibody() != null) {
                     statement.setAntibodyName(result.getExpressionFigureStage().getExpressionExperiment().getAntibody().getName());
+                }
                 dto.addExpressedTerm(statement);
                 list.add(dto);
             }
@@ -898,6 +904,12 @@ public class ExpressionService {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/images");
         query.addFilterQuery("expressed_gene_zdb_id:" + geneId);
+        query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
+        if (isOther) {
+            ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
+                    query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t))
+            );
+        }
         query.setStart(pagination.getStart());
         query.setRows(pagination.getLimit());
 

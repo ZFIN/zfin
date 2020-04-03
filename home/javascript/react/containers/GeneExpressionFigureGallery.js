@@ -6,7 +6,7 @@ import http from '../utils/http';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import {useFetch} from '../utils/effects';
 
-const GeneExpressionFigureGallery = ({geneId}) => {
+const GeneExpressionFigureGallery = ({geneId, selectedTermId, selectedTermIsOther}) => {
     const [page, setPage] = useState(1);
     const [images, setImages] = useState([]);
     const [total, setTotal] = useState(0);
@@ -14,18 +14,40 @@ const GeneExpressionFigureGallery = ({geneId}) => {
     const [pending, setPending] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
 
-    // not using useFetch here because the image arrays need to be concatenated, not replaced
-    useEffect(() => {
+    // not using useFetch here because the image arrays sometimes need to be concatenated, not replaced
+    const fetchImages = (page, resultHandler) => {
         setPending(true);
-        http.get(`/action/api/marker/${geneId}/expression/images?page=${page}`)
+        let url = `/action/api/marker/${geneId}/expression/images?page=${page}`;
+        if (selectedTermId) {
+            url += '&termId=' + selectedTermId;
+        }
+        if (selectedTermIsOther) {
+            url += '&isOther=true';
+        }
+        http.get(url)
             .then(response => {
-                setImages(images.concat(response.results));
+                resultHandler(response.results);
                 setTotal(response.total);
                 setError(null);
             })
             .fail(setError)
             .always(() => setPending(false));
-    }, [geneId, page]);
+    };
+
+    // if the gene or selected ribbon block changes, start at the beginning and replace the existing images
+    useEffect(() => {
+        setPage(1);
+        setImages([]);
+        fetchImages(1, results => setImages(results));
+    }, [geneId, selectedTermId, selectedTermIsOther]);
+
+    // if the page changes, concatenate the new images to the old ones
+    useEffect(() => {
+        if (page === 1) {
+            return;
+        }
+        fetchImages(page, results => setImages(images.concat(results)))
+    }, [page]);
 
     const figureDetails = useFetch(selectedImage ?
         `/action/api/figure/${selectedImage.figure.zdbID}/summary` :
@@ -51,6 +73,8 @@ const GeneExpressionFigureGallery = ({geneId}) => {
 
 GeneExpressionFigureGallery.propTypes = {
     geneId: PropTypes.string,
+    selectedTermId: PropTypes.string,
+    selectedTermIsOther: PropTypes.bool,
 };
 
 export default GeneExpressionFigureGallery;

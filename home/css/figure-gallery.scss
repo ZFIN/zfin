@@ -72,18 +72,22 @@
     font-size: 85%;
 }
 
+$figure-gallery-image-height: 150px;
+$figure-gallery-image-margin: 0.5rem;
+
 .figure-gallery-container {
     width: 100%;
     display: flex;
     overflow-x: auto;
     overflow-y: hidden;
-    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    height: calc(#{$figure-gallery-image-height} + #{$figure-gallery-image-margin});
 }
 
 .figure-gallery-image {
-    height: 150px;
+    height: $figure-gallery-image-height;
     display: inline-block;
-    margin: 0 0.5rem 0.5rem 0;
+    margin: 0 $figure-gallery-image-margin $figure-gallery-image-margin 0;
     border: 1px solid black;
     cursor: pointer;
 }

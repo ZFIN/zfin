@@ -1096,8 +1096,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     @Override
     public Map<String, List<GenericTerm>> getRibbonClosure() {
-        if (closureMap != null)
+        if (closureMap != null) {
             return closureMap;
+        }
         closureMap = new HashMap<>();
 
         Stream.of(getZfaRibbonTerms(), getGoCcRibbonTerms(), List.of(getTermByOboID("ZFA:0100000")))
@@ -1128,7 +1129,6 @@ public class HibernateOntologyRepository implements OntologyRepository {
     @Override
     public List<String> getZfaRibbonTermIDs() {
         return List.of(
-                "ZFA:0000037", //all anatomical structures
                 "ZFA:0000010", //cardiovascular system
                 "ZFA:0000339", //digestive system
                 "ZFA:0001158", //endocrine system

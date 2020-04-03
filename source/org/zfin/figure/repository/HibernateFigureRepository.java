@@ -1,6 +1,7 @@
 package org.zfin.figure.repository;
 
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
@@ -140,6 +141,9 @@ public class HibernateFigureRepository implements FigureRepository {
     }
 
     public List<Image> getImages(List<String> zdbIDs) {
+        if (CollectionUtils.isEmpty(zdbIDs)) {
+            return Collections.emptyList();
+        }
         return HibernateUtil.currentSession()
                 .createCriteria(Image.class)
                 .add(Restrictions.in("zdbID", zdbIDs)).list();

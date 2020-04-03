@@ -27,8 +27,4 @@
         </c:if>
     </z:attributeListItem>
 
-    <z:attributeListItem label="Wild Type Expression Summary:">
-
-    </z:attributeListItem>
-
 </z:attributeList>

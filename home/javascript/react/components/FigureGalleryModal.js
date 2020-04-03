@@ -5,12 +5,16 @@ class FigureGalleryModal extends Component {
     constructor(props) {
         super(props);
         this.modalRef = React.createRef();
+        this.state = {
+            imageLoading: false,
+        }
     }
 
     componentDidMount() {
         const $modal = $(this.modalRef.current);
         $modal.on('hidden.bs.modal', this.props.onClose)
-            .find('.figure-gallery-modal-image').on('load', function () {
+            .find('.figure-gallery-modal-image').on('load', () => {
+                this.setState({imageLoading: false});
                 $modal.figureGalleryResize();
             });
     }
@@ -20,8 +24,11 @@ class FigureGalleryModal extends Component {
         const {image, imageDetails} = this.props;
         if (image) {
             $modal.bootstrapModal('show');
+            if (!prevProps.image || image.url !== prevProps.image.url) {
+                this.setState({imageLoading: true});
+            }
         }
-        if (imageDetails !== prevProps.imageDetails) {
+        if (imageDetails !== prevProps.imageDetails && !this.state.imageLoading) {
             $modal.figureGalleryResize();
         }
     }

@@ -5927,6 +5927,67 @@ and child.term_ontology = 'disease_ontology';
                     where="img_zdb_id=image.id"
                     cacheImpl="SortedMapBackedCache"
             />
+
+            <entity name="image_expression_stage_parent"
+                    query="select distinct
+                               container.term_ont_id as term_id,
+                               container.term_ont_id as stage_term_id,
+                               img_zdb_id
+                           from expression_experiment2
+                               inner join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                               inner join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                               inner join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                               inner join stage this_stage on (
+                                   this_stage.stg_hours_start &gt;= start_stage.stg_hours_start and
+                                   this_stage.stg_hours_end &lt;= end_stage.stg_hours_end
+                               )
+                               inner join term contained on this_stage.stg_obo_id = contained.term_ont_id
+                               inner join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                               inner join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                               inner join figure on efs_fig_zdb_id = fig_zdb_id
+                               inner join image on fig_zdb_id = img_fig_zdb_id
+                           where start_stage.stg_name != 'Unknown'
+                               and end_stage.stg_name != 'Unknown'
+                               and this_stage.stg_name != 'Unknown';"
+                    cacheImpl="SortedMapBackedCache"
+                    where="img_zdb_id=image.id"
+            />
+
+            <entity name="image_expression_unknown_stage_parent"
+                    query="select distinct
+                               container.term_ont_id as term_id,
+                               container.term_ont_id as stage_term_id,
+                               img_zdb_id
+                           from expression_experiment2
+                               inner join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                               inner join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                               inner join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                               inner join term contained on start_stage.stg_obo_id = contained.term_ont_id
+                               inner join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                               inner join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                               inner join figure on efs_fig_zdb_id = fig_zdb_id
+                               inner join image on fig_zdb_id = img_fig_zdb_id
+                           where start_stage.stg_name = 'Unknown'
+                               or end_stage.stg_name = 'Unknown'
+                           union
+                           select distinct
+                               container.term_ont_id as term_id,
+                               container.term_ont_id as stage_term_id,
+                               img_zdb_id
+                           from expression_experiment2
+                               inner join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                               inner join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
+                               inner join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
+                               inner join term contained on end_stage.stg_obo_id = contained.term_ont_id
+                               inner join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                               inner join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                               inner join figure on efs_fig_zdb_id = fig_zdb_id
+                               inner join image on fig_zdb_id = img_fig_zdb_id
+                           where start_stage.stg_name = 'Unknown'
+                               or end_stage.stg_name = 'Unknown';"
+                    cacheImpl="SortedMapBackedCache"
+                    where="img_zdb_id=image.id"
+            />
         </entity>
 
     </document>

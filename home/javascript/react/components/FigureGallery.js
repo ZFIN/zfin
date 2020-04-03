@@ -7,7 +7,7 @@ let animationRequest = null;
 
 const FigureGallery = ({className, images, loading, onImageSelect, onLoadMore, selectedImageDetails, total}) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
-    const canLoadMore = !loading && total && images.length < total;
+    const canLoadMore = !loading && total > 0 && images.length < total;
     const maxIndex = total || images.length;
 
     const handleScroll = event => {
@@ -46,6 +46,10 @@ const FigureGallery = ({className, images, loading, onImageSelect, onLoadMore, s
         const prevIndex = selectedIndex - 1;
         handleIndexChange(prevIndex);
     };
+
+    if (!loading && images.length === 0) {
+        return null;
+    }
 
     return (
         <div className={className} onScroll={handleScroll}>
