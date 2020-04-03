@@ -140,7 +140,7 @@ system("/bin/rm -f entry.list");
 system("/bin/rm -f domain.txt");
 
 ## download the Interpro file for protein domain summary
-system("/local/bin/wget ftp://ftp.ebi.ac.uk/pub/databases/interpro/entry.list");
+system("/local/bin/wget ftp://ftp.ebi.ac.uk/pub/databases/interpro/current/entry.list");
 
 open (DOMAINS, "entry.list") || die "Cannot open entry.list : $!\n";
 open (DOMAINOUT, ">domain.txt") || die "Cannot open domain.txt : $!\n";
@@ -232,11 +232,19 @@ foreach $record (@uniproRecords) {
   foreach $line (@lines) {
     ## ID   A0A1L1QZT0_DANRE        Unreviewed;       337 AA.
     if ($line =~ m/ID\s+(\S+)_DANRE\s+\w+;\s+(\d+)\s+AA/) {
-      $id = $1;
-      next if exists($uniproIdFromInput{$id}); ## do not process the redundant record
+
+       ## do not process the redundant record
       $length = $2;
-      $uniproIdFromInput{$id} = $length;
+
     }
+    if ($line =~ m/^AC\s+(.*)/) {
+              $sp_ac_list = $sp_ac_list.$1.' ';
+              @sp_ac = split(' ',$sp_ac_list);
+              $prm_ac = shift @sp_ac;
+              chop $prm_ac;
+              $uniproIdFromInput{$prm_ac} = $length;
+
+          }
     ## DR   ZFIN; ZDB-GENE-131122-26; ikbip.
     ## could be multiple ZFIN ID
     if ($line =~ m/DR\s+ZFIN;\s+(ZDB-GENE\S+);/) {
@@ -251,7 +259,7 @@ foreach $record (@uniproRecords) {
           $zfinid = $zfinidFromInput;
         }
         if (defined $zfinid) {
-          $mrkrUnipFromInput{$zfinid.$id} = 1;
+          $mrkrUnipFromInput{$zfinid.$prm_ac} = 1;
           push @zfinids, $zfinid;
         }
     }
@@ -261,7 +269,7 @@ foreach $record (@uniproRecords) {
     if ($line =~ m/DR\s+InterPro;\s+(IPR\S+);/) {
       $interproID = $1;
       if (exists($interproIdFromInput{$interproID})) {
-        $unipIprFromInput{$id.$interproID} = 1;
+        $unipIprFromInput{$prm_ac.$interproID} = 1;
         push @iprs, $interproID;
       }
     }
@@ -273,30 +281,31 @@ foreach $record (@uniproRecords) {
 
       }
 
+
   }
 
   # if the parsed data	not existing at	ZFIN, write to the file to be used by the loading process
-  if (defined $id && scalar @zfinids > 0) {
+  if (defined $prm_ac && scalar @zfinids > 0) {
     $length = 0 if (!defined $length || $length =~ m/\s+/ || $length eq '');
-    if (!exists($updatedUniproIds{$id}) || ($length > 0 && $uniproIds{$id} ne $length)) {
-      $updatedUniproIds{$id} = 1;
-      print PROTEIN "$id|ZDB-FDBCONT-040412-47|$length\n";
+    if (!exists($updatedUniproIds{$prm_ac}) || ($length > 0 && $uniproIds{$prm_ac} ne $length)) {
+      $updatedUniproIds{$prm_ac} = 1;
+      print PROTEIN "$prm_ac|ZDB-FDBCONT-040412-47|$length\n";
       $ctUniProtIDs++;
     }
-
+;
     foreach $zdbid (@zfinids) {
-      if(!exists($updatedMrkrUnipro{$zdbid.$id})) {
-         $updatedMrkrUnipro{$zdbid.$id} = 1;
-         print ZFINPROT "$zdbid|$id\n";
+      if(!exists($updatedMrkrUnipro{$zdbid.$prm_ac})) {
+         $updatedMrkrUnipro{$zdbid.$prm_ac} = 1;
+         print ZFINPROT "$zdbid|$prm_ac\n";
          $ctZfinUniProt++;
       }
     }
 
     if (scalar @iprs > 0) {
       foreach $ipr (@iprs) {
-        if(!exists($updatedUniproInterpro{$id.$ipr})) {
-           $updatedUniproInterpro{$id.$ipr} = 1;
-           print UNIPROTINTERPRO "$id|$ipr\n";
+        if(!exists($updatedUniproInterpro{$prm_ac.$ipr})) {
+           $updatedUniproInterpro{$prm_ac.$ipr} = 1;
+           print UNIPROTINTERPRO "$prm_ac|$ipr\n";
            $ctUniProtInterpro++;  
         } 
       }
@@ -304,9 +313,9 @@ foreach $record (@uniproRecords) {
 
     if (scalar @pbids > 0) {
           foreach $pbid (@pbids) {
-          if(!exists($updatedUniproPdb{$id.$pbid})) {
-                     $updatedUniproPdb{$id.$pbid} = 1;
-               print  UNIPROTPDB "$id|$pbid\n";
+          if(!exists($updatedUniproPdb{$prm_ac.$pbid})) {
+                     $updatedUniproPdb{$prm_ac.$pbid} = 1;
+               print  UNIPROTPDB "$prm_ac|$pbid\n";
                $ctUniProtPdb++;
 
             }
@@ -319,10 +328,12 @@ foreach $record (@uniproRecords) {
   undef $length;
   undef $zfinidFromInput;
   undef $zfinid;
+  undef $prm_ac;
   @zfinids = ();
   undef $interproID;
   @iprs = ();
   @pbids = ();
+  @sp_ac=(); $sp_ac=''; $sp_ac_list='';
 }
 
 print "ctRecords = $ctRecords \t ctUniProtIDs = $ctUniProtIDs\t ctZfinUniProt = $ctZfinUniProt\tctUniProtInterpro = $ctUniProtInterpro\n";
