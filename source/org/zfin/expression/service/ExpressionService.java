@@ -1,10 +1,12 @@
 package org.zfin.expression.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -902,22 +904,32 @@ public class ExpressionService {
         JsonResultResponse<Image> response = new JsonResultResponse<>();
 
         SolrQuery query = new SolrQuery();
-        query.setRequestHandler("/images");
-        query.addFilterQuery("expressed_gene_zdb_id:" + geneId);
-        query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
+        query.setRequestHandler("/expression-annotation");
+        query.addFilterQuery("gene_zdb_id:" + geneId);
+        query.addFilterQuery("has_image:true");
+        query.addFilterQuery("is_wildtype:true");
+        if (StringUtils.isNotEmpty(termId)) {
+            query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
+        }
         if (isOther) {
             ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
                     query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t))
             );
         }
-        query.setStart(pagination.getStart());
-        query.setRows(pagination.getLimit());
+        String imageFieldName = FieldName.IMG_ZDB_ID.getName();
+        query.addFacetField(imageFieldName);
+        query.setParam("facet.limit", Integer.toString(pagination.getLimit()));
+        query.setParam("facet.offset", Integer.toString(pagination.getStart()));
+        query.setGetFieldStatistics("{!countDistinct=true}" + imageFieldName);
 
         QueryResponse queryResponse = SolrService.getSolrClient().query(query);
-        List<String> imageIds = queryResponse.getResults().stream()
-                .map(doc -> (String) doc.getFieldValue(FieldName.ID.getName()))
+        List<String> imageIds = queryResponse
+                .getFacetField(imageFieldName)
+                .getValues()
+                .stream()
+                .map(FacetField.Count::getName)
                 .collect(Collectors.toList());
-        response.setTotal(queryResponse.getResults().getNumFound());
+        response.setTotal(queryResponse.getFieldStatsInfo().get(imageFieldName).getCountDistinct());
         response.setResults(figureRepository.getImages(imageIds));
 
         return response;
