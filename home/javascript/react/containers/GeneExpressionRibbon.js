@@ -8,7 +8,7 @@ import Ribbon, { getSelectedTermQueryParams } from '../components/Ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
 import AttributionLink from '../components/AttributionLink';
-import StagePresentation from '../components/StagePresentation';
+import StageTimeline from '../components/StageTimeline';
 import GeneExpressionFigureGallery from './GeneExpressionFigureGallery';
 
 const GeneExpressionRibbon = ({geneId}) => {
@@ -47,24 +47,32 @@ const GeneExpressionRibbon = ({geneId}) => {
     const columns = [
         {
             label: 'Expression Location',
-            content: ({term}) => <a href='#' onClick={event => handleTermNameClick(event, term)}>{term.name}</a>,
-            width: '250px',
+            content: ({term}) => <a href='#' onClick={event => handleTermNameClick(event, term)}>{term.termName}</a>,
+            width: '200px',
         },
         {
-            label: 'Stage Observed',
-            content: row => (<StagePresentation stages={row.stageHistogram}/>),
-            subHeader: 'cleavage blastula gastrula segmentation pharyngula hatching larva juvenile adult',
-            width: '300',
+            label: (
+                <div>
+                    <div>Stage Observed</div>
+                    <ul className='list-unstyled d-flex justify-content-between font-weight-normal'>
+                        <li>Zygote</li>
+                        <li>Adult</li>
+                    </ul>
+                </div>
+            ),
+            content: ({stages}, supplementalData) => (<StageTimeline highlightedStages={stages} allStages={supplementalData.stages} />),
+            width: '400px',
         },
         {
-            label: 'Publications',
-            content: row => (<AttributionLink
-                accession={null}
-                url={`/action/marker/${row.term.oboID}`}
-                publicationCount={row.numberOfPublications}
-                publication={row.publication}
-            />),
-            width: '450px',
+            label: 'Citations',
+            content: row => (
+                <AttributionLink
+                    url={`/action/marker/${row.term.oboID}`}
+                    publicationCount={row.numberOfPublications}
+                    publication={row.publication}
+                />
+            ),
+            width: '120px',
         },
     ];
 
@@ -72,7 +80,7 @@ const GeneExpressionRibbon = ({geneId}) => {
     let selectedTermId = '';
     let selectedTermIsOther = false;
     if (selectedTableTerm) {
-        selectedTermName = selectedTableTerm.name;
+        selectedTermName = selectedTableTerm.termName;
         selectedTermId = selectedTableTerm.oboID;
     } else if (selectedRibbonTerm) {
         selectedTermName = selectedRibbonTerm.group.label;
@@ -110,7 +118,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                 <DataTable
                     url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selectedRibbonTerm)}`}
                     columns={columns}
-                    rowKey='rowKey'
+                    rowKey={row => row.term.zdbID}
                     tableState={tableState}
                     onTableStateChange={setTableState}
                 />

@@ -44,14 +44,6 @@
   table-layout: fixed;
 }
 
-.stage-selected {
-  background-color: rgb(0,128,128);
-}
-
-.stage-defined {
-  background-color: #c3e6cb;
-}
-
 .data-table-pagination {
   @extend .bg-light, .p-2, .border;
   display: flex;

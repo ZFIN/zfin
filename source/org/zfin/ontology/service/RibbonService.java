@@ -8,9 +8,6 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.api.*;
-import org.zfin.gwt.root.dto.StageDTO;
-import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -33,8 +30,6 @@ import static java.util.stream.Collectors.*;
 @Log4j2
 public class RibbonService {
 
-    public static final String STAGE_DEFINED = "stage-defined";
-    public static final String STAGE_SELECTED = "stage-selected";
     private OntologyService service = new OntologyService();
 
     public RibbonSummary buildGORibbonSummary(String zdbID) throws Exception {
@@ -68,7 +63,6 @@ public class RibbonService {
         List<GenericTerm> slimTerms = Stream.of(agrGoSlimTerms, stageSlim, anatomySlim)
                 .flatMap(Collection::stream)
                 .collect(toList());
-
 
         RibbonSummary ribbonSummary = buildRibbonSummary(zdbID, categoryTerms, slimTerms, "/expression-annotation");
         //remove the stage-other, because it isn't meaningful
@@ -123,10 +117,11 @@ public class RibbonService {
 
                     RibbonGroup otherGroup = new RibbonGroup();
                     otherGroup.setId(categoryTerm.getOboID());
-                    if (categoryTerm.getOboID().equals("ZFS:0100000"))
-                        otherGroup.setLabel("Unknown stage " );
-                    else
+                    if (categoryTerm.getOboID().equals("ZFS:0100000")) {
+                        otherGroup.setLabel("Unknown stage");
+                    } else {
                         otherGroup.setLabel("Other " + termNameDisplay);
+                    }
                     otherGroup.setDescription("Show all " + termNameDisplay + " annotations not mapped to a specific term");
                     otherGroup.setType(RibbonGroup.Type.OTHER);
                     groups.add(otherGroup);
@@ -165,8 +160,6 @@ public class RibbonService {
         summary.setCategories(categories);
         summary.setSubjects(List.of(subject));
         return summary;
-
-
     }
 
     public Map<String, Integer> getRibbonCounts(String handler, String geneZdbId,
@@ -216,8 +209,9 @@ public class RibbonService {
         } catch (SolrServerException | IOException e) {
             log.error("Error while retrieving data form SOLR...", e);
         }
-        if (queryResponse == null || queryResponse.getFacetPivot() == null || queryResponse.getFacetPivot().getVal(0).size() == 0)
+        if (queryResponse == null || queryResponse.getFacetPivot() == null || queryResponse.getFacetPivot().getVal(0).size() == 0) {
             return null;
+        }
 
         HashSet<String> termIDs = queryResponse.getFacetPivot().getVal(0).stream()
                 .map(pivotField -> (String) pivotField.getValue()).collect(toCollection(HashSet::new));
@@ -238,74 +232,16 @@ public class RibbonService {
         List<ExpressionRibbonDetail> details = new ArrayList<>();
         queryResponse.getFacetPivot().getVal(0).forEach(pivotField -> {
             ExpressionRibbonDetail detail = new ExpressionRibbonDetail();
-            TermDTO term = new TermDTO();
             String termID = (String) pivotField.getValue();
-            term.setOboID(termID);
-            term.setName(termMap.get(termID).getTermName());
-            detail.setTerm(term);
+            detail.setTerm(termMap.get(termID));
             // stage pivot
             pivotField.getPivot().stream()
-                    .filter(pivotField1 -> termMap.get(pivotField1.getValue()) != null)
+                    .filter(pivotField1 -> termMap.containsKey(pivotField1.getValue()))
                     .forEach(pivot -> {
-                        StageDTO stage = new StageDTO();
                         String stageID = (String) pivot.getValue();
-                        stage.setName(termMap.get(stageID).getTermName());
-                        stage.setOboID(stageID);
-                        detail.addStage(stage);
+                        detail.addStage(termMap.get(stageID));
                         detail.addPublications(pivot.getPivot().stream().map(pivotField1 -> (String) pivotField1.getValue()).collect(toList()));
                     });
-            List<GenericTerm> ribbonStages = service.getRibbonStages();
-
-            GenericTerm genericTerm = termMap.get(termID);
-            if (genericTerm != null && genericTerm.getOboID().contains("ZFA")) {
-                List<Boolean> superStageSelections = new ArrayList<>(ribbonStages.size());
-                ribbonStages.forEach(ribbonStage -> {
-                    if (detail.getStages().stream().anyMatch(stage -> stage.getOboID().equals(ribbonStage.getOboID())))
-                        superStageSelections.add(true);
-                    else
-                        superStageSelections.add(false);
-                });
-
-                List<Boolean> definedStages = new ArrayList<>(ribbonStages.size());
-                boolean started = false;
-                boolean finished = false;
-                for (GenericTerm ribbonTerm : ribbonStages) {
-                    if (!started) {
-                        if (ribbonTerm.hasChildTerm(genericTerm.getStart().getOboID())) {
-                            started = true;
-                        }
-                    }
-                    if (started && !finished)
-                        definedStages.add(true);
-                    else
-                        definedStages.add(false);
-                    if (started) {
-                        if (ribbonTerm.hasChildTerm(genericTerm.getEnd().getOboID())) {
-                            finished = true;
-                        }
-                    }
-                }
-                // if uspecified have all stages be 'defined'
-                if (genericTerm.getOboID().equals("ZFA:0001093")) {
-                    List<Boolean> newDefinedStages = new ArrayList<>();
-                    definedStages.forEach(aBoolean -> newDefinedStages.add(Boolean.TRUE));
-                    definedStages = newDefinedStages;
-                }
-                detail.setDefinedStages(definedStages);
-                Map<String, String> combinedSelection = new LinkedHashMap<>();
-                int index = 0;
-                for (Boolean selection : superStageSelections) {
-                    String termName = ribbonStages.get(index).getTermName();
-                    if (!selection && !definedStages.get(index)) {
-                        combinedSelection.put(termName, "");
-                    } else if (!selection && definedStages.get(index))
-                        combinedSelection.put(termName, STAGE_DEFINED);
-                    else if (selection)
-                        combinedSelection.put(termName, STAGE_SELECTED);
-                    index++;
-                }
-                detail.setStageHistogram(combinedSelection);
-            }
             details.add(detail);
         });
 
@@ -318,7 +254,7 @@ public class RibbonService {
                 .filter(ribbonDetail -> ribbonDetail.getPubIDs().size() == 1)
                 .forEach(ribbonDetail1 -> {
                     Publication pub = pubRepository.getPublication(ribbonDetail1.getPubIDs().get(0));
-                    ribbonDetail1.setPublication(DTOConversionService.convertToPublicationDTO(pub));
+                    ribbonDetail1.setPublication(pub);
                 });
 
 
@@ -333,8 +269,9 @@ public class RibbonService {
                 details.removeIf(expressionRibbonDetail -> {
                     List<GenericTerm> closure = getClosureForRibbonTerms.get(ribbonTermID);
                     // remove if no closure element is found
-                    if (closure == null)
+                    if (closure == null) {
                         return true;
+                    }
                     return closure.stream().noneMatch(genericTerm -> genericTerm.getOboID().equals(expressionRibbonDetail.getTerm().getOboID()));
                 });
             }

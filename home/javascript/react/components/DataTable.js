@@ -37,7 +37,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
         }
     }
 
-    const {results, returnedRecords, total} = data.value;
+    const {results, returnedRecords, supplementalData, total} = data.value;
 
     if (total === 0) {
         return <NoData/>
@@ -48,7 +48,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
     const totalPages = Math.ceil(total / tableState.limit);
 
     const handleLimitChange = (event) => {
-        const limit = event.target.value;
+        const limit = parseInt(event.target.value, 10);
         const totalPages = Math.ceil(total / limit);
         setTableState(produce(state => {
             state.limit = limit;
@@ -75,13 +75,6 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                             )
                         ))}
                     </tr>
-                    <tr>
-                        {columns.map(column => (
-                            <th key={stringToFunction(rowKey)(column)}>
-                                {(column.subHeader && (<div style={{textAlign: 'justify'}}>{column.subHeader}</div>))}
-                            </th>
-                        ))}
-                    </tr>
                 </thead>
                 <tbody>
                     {results.map(row => (
@@ -91,7 +84,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                                     return null;
                                 }
                                 const valueGetter = stringToFunction(column.content);
-                                const value = valueGetter(row);
+                                const value = valueGetter(row, supplementalData);
                                 return (
                                     <td key={column.label} style={{textAlign: column.align}}>
                                         {value}
@@ -150,7 +143,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
 DataTable.propTypes = {
     columns: PropTypes.arrayOf(PropTypes.shape({
         align: PropTypes.oneOf(['right', 'center', 'left']),
-        label: PropTypes.string.isRequired,
+        label: PropTypes.node.isRequired,
         content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
     })).isRequired,
     onTableStateChange: PropTypes.func,

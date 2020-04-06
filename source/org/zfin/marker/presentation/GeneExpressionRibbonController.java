@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Image;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.api.*;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.service.OntologyService;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.wiki.presentation.Version;
 
@@ -29,6 +30,12 @@ import java.util.stream.Collectors;
 @Log4j2
 @Repository
 public class GeneExpressionRibbonController {
+
+    @Autowired
+    private AnatomyRepository anatomyRepository;
+
+    @Autowired
+    private OntologyRepository ontologyRepository;
 
     @Autowired
     private HttpServletRequest request;
@@ -82,8 +89,13 @@ public class GeneExpressionRibbonController {
                     .limit(pagination.getLimit())
                     .collect(Collectors.toList()));
         }
-        OntologyService service = new OntologyService();
-        response.addSupplementalData("stages", service.getRibbonStages().stream().map(GenericTerm::getTermName).collect(Collectors.toList()));
+        response.addSupplementalData("stages",
+                anatomyRepository.getAllStagesWithoutUnknown()
+                .stream()
+                .map(DevelopmentStage::getOboID)
+                .map(id -> ontologyRepository.getTermByOboID(id))
+                .collect(Collectors.toList())
+        );
         response.setHttpServletRequest(request);
         response.calculateRequestDuration(startTime);
 
