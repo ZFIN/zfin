@@ -389,7 +389,7 @@
                         select term_ont_id as xref, term_name as affected_anatomy_parent, mfs_mrkr_zdb_id as gene_zdb_id
                           from phenotype_observation_generated ps, phenotype_source_generated, mutant_fast_search, term, all_term_contains
                          where term_zdb_id = alltermcon_container_zdb_id
-                           and alltermcon_contained_zdb_id = psg_e1a_zdb_id
+                           and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                            and psg_pg_id = pg_id
                            and pg_genox_zdb_id = mfs_genox_zdb_id
                            and ps.psg_tag = 'abnormal'
@@ -425,7 +425,7 @@
                         union
                         select term_ont_id as xref, term_name as affected_biological_process_direct, mfs_mrkr_zdb_id as gene_zdb_id
                           from phenotype_observation_generated ps, phenotype_source_generated, mutant_fast_search, term
-                         where term_zdb_id = psg_e1a_zdb_id
+                         where term_zdb_id = psg_e2a_zdb_id
                            and psg_pg_id = pg_id
                            and pg_genox_zdb_id = mfs_genox_zdb_id
                            and ps.psg_tag = 'abnormal'
@@ -464,7 +464,7 @@
                             select term_ont_id as xref, term_name as affected_biological_process_parent, mfs_mrkr_zdb_id as gene_zdb_id
                               from phenotype_observation_generated ps, phenotype_source_generated, mutant_fast_search, term, all_term_contains
                              where term_zdb_id = alltermcon_container_zdb_id
-                               and alltermcon_contained_zdb_id = psg_e1a_zdb_id
+                               and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = mfs_genox_zdb_id
                                and ps.psg_tag = 'abnormal'
@@ -501,7 +501,7 @@
                             union
                             select term_ont_id as xref, term_name as affected_cellular_component_direct, mfs_mrkr_zdb_id as gene_zdb_id
                               from phenotype_observation_generated ps, phenotype_source_generated, mutant_fast_search, term
-                             where term_zdb_id = psg_e1a_zdb_id
+                             where term_zdb_id = psg_e2a_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = mfs_genox_zdb_id
                                and ps.psg_tag = 'abnormal'
@@ -540,7 +540,7 @@
                         select term_ont_id as xref, term_name as affected_cellular_component_parent, mfs_mrkr_zdb_id as gene_zdb_id
                           from phenotype_observation_generated ps, phenotype_source_generated, mutant_fast_search, term, all_term_contains
                          where term_zdb_id = alltermcon_container_zdb_id
-                           and alltermcon_contained_zdb_id = psg_e1a_zdb_id
+                           and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                            and psg_pg_id = pg_id
                            and pg_genox_zdb_id = mfs_genox_zdb_id
                            and ps.psg_tag = 'abnormal'
@@ -577,7 +577,7 @@
                             union
                             select term_ont_id as xref, term_name as affected_molecular_function_direct, mfs_mrkr_zdb_id as gene_zdb_id
                               from phenotype_observation_generated ps, phenotype_source_generated, mutant_fast_search, term
-                             where term_zdb_id = psg_e1a_zdb_id
+                             where term_zdb_id = psg_e2a_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = mfs_genox_zdb_id
                                and ps.psg_tag = 'abnormal'
@@ -616,7 +616,7 @@
                             select term_ont_id as xref, term_name as affected_molecular_function_parent, mfs_mrkr_zdb_id as gene_zdb_id
                               from phenotype_observation_generated ps, phenotype_source_generated, mutant_fast_search, term, all_term_contains
                              where term_zdb_id = alltermcon_container_zdb_id
-                               and alltermcon_contained_zdb_id = psg_e1a_zdb_id
+                               and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = mfs_genox_zdb_id
                                and ps.psg_tag = 'abnormal'
