@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset xshao:ZFIN-6513
+--changeset pm:ZFIN-6513
 
 
 set session_replication_role = 'replica';
