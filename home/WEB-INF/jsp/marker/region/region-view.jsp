@@ -116,6 +116,10 @@
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
+        <z:section title="${MARKERRELATIONSHIPS}">
+            <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
+        </z:section>
+
         <z:section title="${SEQUENCE}">
             <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
