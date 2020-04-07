@@ -9,8 +9,8 @@
 <div class="d-flex">
     <div class="data-page-nav-container">
         <ul class="nav nav-pills flex-column">
-            <li class="nav-item">
-                <h5 class="p-3 m-0 border-bottom">
+            <li class="nav-item w-100">
+                <h5 class="p-3 m-0 border-bottom text-truncate">
                     <jsp:invoke fragment="entityName" />
                 </h5>
             </li>
