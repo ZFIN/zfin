@@ -25,7 +25,7 @@ const StageTimeline = ({allStages, highlightedStages}) => {
 
     const handleRef = useCallback(ref => {
         $(ref).tipsy({gravity: 'n', html: true});
-    });
+    }, []);
 
     return (
         <div className='stage-timeline-container'>
@@ -44,7 +44,7 @@ const StageTimeline = ({allStages, highlightedStages}) => {
                             className='stage-timeline-block'
                             ref={handleRef}
                             style={{left, width}}
-                            title={stageNames.join('<br>')}
+                            title={`<div class='text-left'>${stageNames.join('<br>')}</div>`}
                         />
                     );
                 })
