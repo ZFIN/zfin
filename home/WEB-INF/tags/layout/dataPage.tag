@@ -7,9 +7,9 @@
     <div class="data-page-nav-container">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <h4 class="p-3 m-0 border-bottom">
+                <h5 class="p-3 m-0 border-bottom">
                     <jsp:invoke fragment="entityName" />
-                </h4>
+                </h5>
             </li>
             <c:forEach var="section" items="${sections}">
                 <li class="nav-item" role="presentation">

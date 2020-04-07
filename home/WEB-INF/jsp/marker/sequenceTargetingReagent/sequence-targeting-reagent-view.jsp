@@ -34,29 +34,29 @@
         </div>
 
         <z:section title="${TARGETLOCATION}">
-            <jsp:include page="sequence-targeting-reagent-target-location-view.jsp"/>
+            <jsp:include page="sequence-targeting-reagent-view-target-location.jsp"/>
         </z:section>
 
         <z:section title="${CONSTRUCTS}">
-            <jsp:include page="sequence-targeting-reagent-constructs-view.jsp"/>
+            <jsp:include page="sequence-targeting-reagent-view-constructs.jsp"/>
         </z:section>
 
         <z:section title="${GENOMICFEATURES}">
-            <jsp:include page="sequence-targeting-reagent-genonomicfeatures-view.jsp"/>
+            <jsp:include page="sequence-targeting-reagent-view-genonomicfeatures.jsp"/>
         </z:section>
 
         <z:section title="${EXPRESSION}">
             <z:section title="Gene expression in Wild Types + ${formBean.marker.name}">
-                <jsp:include page="sequence-targeting-reagent-expression-view.jsp"/>
+                <jsp:include page="sequence-targeting-reagent-view-expression.jsp"/>
             </z:section>
         </z:section>
 
         <z:section title="${PHENOTYPE}">
             <z:section title="Phenotype resulting from ${formBean.marker.name}">
-                <jsp:include page="sequence-targeting-reagent-phenotype-view.jsp" />
+                <jsp:include page="sequence-targeting-reagent-view-phenotype.jsp" />
             </z:section>
             <z:section title="Phenotype of all Fish created by or utilizing ${formBean.marker.name}">
-                <jsp:include page="sequence-targeting-reagent-fish-phenotype-view.jsp" />
+                <jsp:include page="sequence-targeting-reagent-view-fish-phenotype.jsp" />
             </z:section>
         </z:section>
     </jsp:body>
