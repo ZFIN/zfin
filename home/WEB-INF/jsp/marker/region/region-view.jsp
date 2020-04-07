@@ -113,7 +113,7 @@
         </z:section>
 
         <z:section title="${PATHWAYS}">
-            <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
+            <!-- TODo -->
         </z:section>
 
         <z:section title="${MARKERRELATIONSHIPS}">
