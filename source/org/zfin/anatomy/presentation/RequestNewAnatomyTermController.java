@@ -81,7 +81,8 @@ public class RequestNewAnatomyTermController {
             emailContents.append(NEWLINE);
         }
         AbstractZfinMailSender.getInstance().sendMail("Request for new Anatomical Structure", emailContents.toString(),
-                ZfinProperties.splitValues(ZfinPropertiesEnum.JSD_EMAIL));
+                false, formBean.getEmail(),ZfinPropertiesEnum.JSD_EMAIL.value().split(" "));
+
         return "anatomy/request-term-feedback.page";
     }
 
