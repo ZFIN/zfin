@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 const StageTimeline = ({allStages, highlightedStages}) => {
@@ -23,6 +23,10 @@ const StageTimeline = ({allStages, highlightedStages}) => {
         }
     }
 
+    const handleRef = useCallback(ref => {
+        $(ref).tipsy({gravity: 'n', html: true});
+    });
+
     return (
         <div className='stage-timeline-container'>
             <div className='stage-timeline-line' />
@@ -38,8 +42,9 @@ const StageTimeline = ({allStages, highlightedStages}) => {
                         <div
                             key={start}
                             className='stage-timeline-block'
+                            ref={handleRef}
                             style={{left, width}}
-                            title={stageNames.join('\n')}
+                            title={stageNames.join('<br>')}
                         />
                     );
                 })
