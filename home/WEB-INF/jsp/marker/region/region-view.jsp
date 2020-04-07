@@ -2,9 +2,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.MarkerBean" scope="request"/>
 
-<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="MUTATIONS" value="Mutations and Sequence Targeting Reagent"/>
 <c:set var="GO" value="Gene Ontology"/>
@@ -73,5 +70,3 @@
         </z:section>
     </jsp:body>
 </z:dataPage>
-
-<script src="${zfn:getAssetPath("react.js")}"></script>

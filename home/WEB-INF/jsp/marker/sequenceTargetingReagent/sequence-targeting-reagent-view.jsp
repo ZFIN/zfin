@@ -2,9 +2,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentBean" scope="request"/>
 
-<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="TARGETLOCATION" value="Target Location"/>
 <c:set var="GENOMICFEATURES" value="Genomic Features"/>
@@ -61,5 +58,3 @@
         </z:section>
     </jsp:body>
 </z:dataPage>
-
-<script src="${zfn:getAssetPath("react.js")}"></script>

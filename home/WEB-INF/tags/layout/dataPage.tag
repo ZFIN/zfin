@@ -3,6 +3,9 @@
 <%@ attribute name="sections" required="true" rtexprvalue="true" type="java.util.Collection" %>
 <%@ attribute name="entityName" required="false" fragment="true" %>
 
+<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
+<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
+
 <div class="d-flex">
     <div class="data-page-nav-container">
         <ul class="nav nav-pills flex-column">
@@ -23,3 +26,5 @@
         <jsp:doBody />
     </div>
 </div>
+
+<script src="${zfn:getAssetPath("react.js")}"></script>

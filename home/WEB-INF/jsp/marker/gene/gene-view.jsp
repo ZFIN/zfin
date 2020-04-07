@@ -2,10 +2,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
 
-<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-
-
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="EXPRESSION" value="Expression"/>
 <c:set var="ANTIBODIES" value="Antibodies"/>
@@ -122,5 +118,3 @@
     </jsp:body>
 
 </z:dataPage>
-
-<script src="${zfn:getAssetPath("react.js")}"></script>

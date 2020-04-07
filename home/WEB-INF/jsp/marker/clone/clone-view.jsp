@@ -2,9 +2,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.CloneBean" scope="request"/>
 
-<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-<script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="SEQUENCES" value="Sequences"/>
 <c:set var="GBROWSE" value="Genome Browser"/>
@@ -67,5 +64,3 @@
         </z:section>
     </jsp:body>
 </z:dataPage>
-
-<script src="${zfn:getAssetPath("react.js")}"></script>
