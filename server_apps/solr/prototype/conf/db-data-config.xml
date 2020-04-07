@@ -337,7 +337,7 @@
                              where term_zdb_id = psg_e1a_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = mfs_genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='zebrafish_anatomy'
                             union
                             select term_ont_id as xref, term_name as affected_anatomy_direct, mfs_mrkr_zdb_id as gene_zdb_id
@@ -345,7 +345,7 @@
                              where term_zdb_id = psg_e1b_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = mfs_genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='zebrafish_anatomy'
                             union
                             select term_ont_id as xref, term_name as affected_anatomy_direct, mfs_mrkr_zdb_id as gene_zdb_id
@@ -353,7 +353,7 @@
                              where term_zdb_id = psg_e1a_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = mfs_genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='zebrafish_anatomy'
                             union
                             select term_ont_id as xref, term_name as affected_anatomy_direct, mfs_mrkr_zdb_id as gene_zdb_id
@@ -361,7 +361,7 @@
                              where term_zdb_id = psg_e2b_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = mfs_genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='zebrafish_anatomy'"
                     cacheImpl="SortedMapBackedCache"
                     where="gene_zdb_id=gene.id"
@@ -1493,7 +1493,7 @@
                     where term_zdb_id = psg_e1a_zdb_id
                       and psg_pg_id = pg_id
                       and pg_genox_zdb_id = genox_zdb_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='zebrafish_anatomy'
                    union
                    select term_ont_id as xref, term_name as affected_anatomy_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1501,7 +1501,7 @@
                     where term_zdb_id = psg_e1b_zdb_id
                       and psg_pg_id = pg_id
                       and pg_genox_zdb_id = genox_zdb_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='zebrafish_anatomy'
                    union
                    select term_ont_id as xref, term_name as affected_anatomy_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1509,7 +1509,7 @@
                     where term_zdb_id = psg_e2a_zdb_id
                       and psg_pg_id = pg_id
                       and pg_genox_zdb_id = genox_zdb_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='zebrafish_anatomy'
                    union
                    select term_ont_id as xref, term_name as affected_anatomy_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1517,7 +1517,7 @@
                     where term_zdb_id = psg_e2b_zdb_id
                       and psg_pg_id = pg_id
                       and pg_genox_zdb_id = genox_zdb_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='zebrafish_anatomy'; "
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
@@ -1530,7 +1530,7 @@
                              and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                              and psg_pg_id = pg_id
                              and pg_genox_zdb_id = genox_zdb_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='zebrafish_anatomy'
                           union
                           select term_ont_id as xref, term_name as affected_anatomy_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1539,7 +1539,7 @@
                              and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                              and psg_pg_id = pg_id
                              and pg_genox_zdb_id = genox_zdb_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='zebrafish_anatomy'
                           union
                           select term_ont_id as xref, term_name as affected_anatomy_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1548,7 +1548,7 @@
                              and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                              and psg_pg_id = pg_id
                              and pg_genox_zdb_id = genox_zdb_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='zebrafish_anatomy'
                           union
                           select term_ont_id as xref, term_name as affected_anatomy_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1557,7 +1557,7 @@
                              and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                              and psg_pg_id = pg_id
                              and pg_genox_zdb_id = genox_zdb_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='zebrafish_anatomy';"
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
@@ -1571,7 +1571,7 @@
                            where term_zdb_id = psg_quality_zdb_id
                             and psg_pg_id = pg_id
                             and pg_genox_zdb_id = genox_zdb_id
-                            and ps.psg_tag = 'abnormal'; "
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated'); "
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
             />
@@ -1585,7 +1585,7 @@
                             and alltermcon_contained_zdb_id = psg_quality_zdb_id
                             and psg_pg_id = pg_id
                             and pg_genox_zdb_id = genox_zdb_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and alltermcon_container_zdb_id != alltermcon_contained_zdb_id;"
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
@@ -1597,7 +1597,7 @@
                            where term_zdb_id = psg_e1a_zdb_id
                              and psg_pg_id = pg_id
                              and pg_genox_zdb_id = genox_zdb_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'
                           union
                           select term_ont_id as xref, term_name as affected_cellular_component_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1605,7 +1605,7 @@
                            where term_zdb_id = psg_e1b_zdb_id
                              and psg_pg_id = pg_id
                              and pg_genox_zdb_id = genox_zdb_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'
                           union
                           select term_ont_id as xref, term_name as affected_cellular_component_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1613,7 +1613,7 @@
                            where term_zdb_id = psg_e2a_zdb_id
                              and psg_pg_id = pg_id
                              and pg_genox_zdb_id = genox_zdb_id
-                             and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'
                           union
                           select term_ont_id as xref, term_name as affected_cellular_component_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1621,7 +1621,7 @@
                            where term_zdb_id = psg_e2b_zdb_id
                              and psg_pg_id = pg_id
                              and pg_genox_zdb_id = genox_zdb_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component';"
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
@@ -1634,7 +1634,7 @@
                                 and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                                 and psg_pg_id = pg_id
                                 and pg_genox_zdb_id = genox_zdb_id
-                                and ps.psg_tag = 'abnormal'
+                                 and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                 and term_ontology='cellular_component'
                              union
                              select term_ont_id as xref, term_name as affected_cellular_component_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1643,7 +1643,7 @@
                                 and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                                 and psg_pg_id = pg_id
                                 and pg_genox_zdb_id = genox_zdb_id
-                                and ps.psg_tag = 'abnormal'
+                                 and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                 and term_ontology='cellular_component'
                              union
                              select term_ont_id as xref, term_name as affected_cellular_component_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1652,7 +1652,7 @@
                                 and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                                 and psg_pg_id = pg_id
                                 and pg_genox_zdb_id = genox_zdb_id
-                                and ps.psg_tag = 'abnormal'
+                                 and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                 and term_ontology='cellular_component'
                              union
                              select term_ont_id as xref, term_name as affected_cellular_component_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1661,7 +1661,7 @@
                                 and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                                 and psg_pg_id = pg_id
                                 and pg_genox_zdb_id = genox_zdb_id
-                                and ps.psg_tag = 'abnormal'
+                                 and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                 and term_ontology='cellular_component'; "
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
@@ -1673,7 +1673,7 @@
                               where term_zdb_id = psg_e1a_zdb_id
                                 and psg_pg_id = pg_id
                                 and pg_genox_zdb_id = genox_zdb_id
-                                and ps.psg_tag = 'abnormal'
+                                 and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                 and term_ontology='biological_process'
                              union
                              select term_ont_id as xref, term_name as affected_biological_process_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1681,7 +1681,7 @@
                               where term_zdb_id = psg_e1b_zdb_id
                                 and psg_pg_id = pg_id
                                 and pg_genox_zdb_id = genox_zdb_id
-                                and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                 and term_ontology='biological_process'
                              union
                              select term_ont_id as xref, term_name as affected_biological_process_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1689,7 +1689,7 @@
                               where term_zdb_id = psg_e2a_zdb_id
                                 and psg_pg_id = pg_id
                                 and pg_genox_zdb_id = genox_zdb_id
-                                and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                 and term_ontology='biological_process'
                              union
                              select term_ont_id as xref, term_name as affected_biological_process_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1697,7 +1697,7 @@
                               where term_zdb_id = psg_e2b_zdb_id
                                 and psg_pg_id = pg_id
                                 and pg_genox_zdb_id = genox_zdb_id
-                                and ps.psg_tag = 'abnormal'
+                                 and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                 and term_ontology='biological_process'; "
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
@@ -1710,7 +1710,7 @@
                                and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='biological_process'
                             union
                             select term_ont_id as xref, term_name as affected_biological_process_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1719,7 +1719,7 @@
                                and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='biological_process'
                             union
                             select term_ont_id as xref, term_name as affected_biological_process_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1728,7 +1728,7 @@
                                and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='biological_process'
                             union
                             select term_ont_id as xref, term_name as affected_biological_process_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1737,7 +1737,7 @@
                                and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='biological_process'; "
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
@@ -1749,7 +1749,7 @@
                           where term_zdb_id = psg_e1a_zdb_id
                             and psg_pg_id = pg_id
                             and pg_genox_zdb_id = genox_zdb_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='molecular_function'
                          union
                          select term_ont_id as xref, term_name as affected_molecular_function_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1757,7 +1757,7 @@
                           where term_zdb_id = psg_e1b_zdb_id
                             and psg_pg_id = pg_id
                             and pg_genox_zdb_id = genox_zdb_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='molecular_function'
                          union
                          select term_ont_id as xref, term_name as affected_molecular_function_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1765,7 +1765,7 @@
                           where term_zdb_id = psg_e2a_zdb_id
                             and psg_pg_id = pg_id
                             and pg_genox_zdb_id = genox_zdb_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='molecular_function'
                          union
                          select term_ont_id as xref, term_name as affected_molecular_function_direct, genox_fish_zdb_id as fish_zdb_id
@@ -1773,7 +1773,7 @@
                           where term_zdb_id = psg_e2b_zdb_id
                             and psg_pg_id = pg_id
                             and pg_genox_zdb_id = genox_zdb_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='molecular_function'; "
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
@@ -1786,7 +1786,7 @@
                                and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='molecular_function'
                             union
                             select term_ont_id as xref, term_name as affected_molecular_function_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1795,7 +1795,7 @@
                                and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='molecular_function'
                             union
                             select term_ont_id as xref, term_name as affected_molecular_function_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1804,7 +1804,7 @@
                                and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                                and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='molecular_function'
                             union
                             select term_ont_id as xref, term_name as affected_molecular_function_parent, genox_fish_zdb_id as fish_zdb_id
@@ -1813,7 +1813,7 @@
                                and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                                and psg_pg_id = pg_id
                                and pg_genox_zdb_id = genox_zdb_id
-                               and ps.psg_tag = 'abnormal'
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                and term_ontology='molecular_function'; "
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
@@ -2540,28 +2540,28 @@
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e1a_zdb_id
                            and psg_pg_id = pg_id
-                           and ps.psg_tag = 'abnormal'
+                            and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                            and term_ontology='zebrafish_anatomy'
                         union
                         select term_ont_id as xref, term_name as anatomy_direct, 'pg-' || pg_id as pg_id
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e1b_zdb_id
                            and psg_pg_id = pg_id
-                           and ps.psg_tag = 'abnormal'
+                            and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                            and term_ontology='zebrafish_anatomy'
                         union
                         select term_ont_id as xref, term_name as anatomy_direct, 'pg-' || pg_id as pg_id
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e2a_zdb_id
                            and psg_pg_id = pg_id
-                           and ps.psg_tag = 'abnormal'
+                            and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                            and term_ontology='zebrafish_anatomy'
                         union
                         select term_ont_id as xref, term_name as anatomy_direct, 'pg-' || pg_id as pg_id
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e2b_zdb_id
                            and psg_pg_id = pg_id
-                           and ps.psg_tag = 'abnormal'
+                            and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                            and term_ontology='zebrafish_anatomy';"
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
@@ -2573,7 +2573,7 @@
                            where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                               and psg_pg_id = pg_id
-                              and ps.psg_tag = 'abnormal'
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                               and term_ontology='zebrafish_anatomy'
                            union
                            select term_ont_id as xref, term_name as anatomy_parent, 'pg-' || pg_id as pg_id
@@ -2581,7 +2581,7 @@
                             where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                               and psg_pg_id = pg_id
-                              and ps.psg_tag = 'abnormal'
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                               and term_ontology='zebrafish_anatomy'
                            union
                            select term_ont_id as xref, term_name as anatomy_parent, 'pg-' || pg_id as pg_id
@@ -2589,7 +2589,7 @@
                             where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                               and psg_pg_id = pg_id
-                              and ps.psg_tag = 'abnormal'
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                               and term_ontology='zebrafish_anatomy'
                            union
                            select term_ont_id as xref, term_name as anatomy_parent, 'pg-' || pg_id as pg_id
@@ -2597,7 +2597,7 @@
                             where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                               and psg_pg_id = pg_id
-                              and ps.psg_tag = 'abnormal'
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                               and term_ontology='zebrafish_anatomy';"
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
@@ -2608,7 +2608,7 @@
                              from phenotype_observation_generated ps, phenotype_source_generated, term
                             where term_zdb_id = psg_quality_zdb_id
                               and psg_pg_id = pg_id
-                              and ps.psg_tag = 'abnormal'; "
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated'); "
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
             />
@@ -2619,7 +2619,7 @@
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_quality_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and alltermcon_contained_zdb_id != alltermcon_container_zdb_id;"
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
@@ -2630,28 +2630,28 @@
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e1a_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='cellular_component'
                    union
                    select term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e1b_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='cellular_component'
                    union
                    select term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e2a_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='cellular_component'
                    union
                    select term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e2b_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='cellular_component'; "
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
@@ -2663,7 +2663,7 @@
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'
                           union
                           select term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
@@ -2671,7 +2671,7 @@
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'
                           union
                           select term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
@@ -2679,7 +2679,7 @@
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'
                           union
                           select term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
@@ -2687,7 +2687,7 @@
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'; "
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
@@ -2698,28 +2698,28 @@
                             from phenotype_observation_generated ps, phenotype_source_generated, term
                            where term_zdb_id = psg_e1a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='biological_process'
                           union
                           select term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term
                            where term_zdb_id = psg_e1b_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='biological_process'
                           union
                           select term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term
                            where term_zdb_id = psg_e2a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='biological_process'
                           union
                           select term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term
                            where term_zdb_id = psg_e2b_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='biological_process';"
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
@@ -2731,7 +2731,7 @@
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                             and psg_pg_id = pg_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='biological_process'
                          union
                          select term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
@@ -2739,7 +2739,7 @@
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                             and psg_pg_id = pg_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='biological_process'
                          union
                          select term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
@@ -2747,7 +2747,7 @@
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                             and psg_pg_id = pg_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='biological_process'
                          union
                          select term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
@@ -2755,7 +2755,7 @@
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                             and psg_pg_id = pg_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='biological_process'; "
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
@@ -2766,28 +2766,28 @@
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e1a_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='molecular_function'
                    union
                    select term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e1a_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='molecular_function'
                    union
                    select term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e2a_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='molecular_function'
                    union
                    select term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e2b_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='molecular_function'; "
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
@@ -2799,7 +2799,7 @@
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='molecular_function'
                           union
                           select term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
@@ -2807,7 +2807,7 @@
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='molecular_function'
                           union
                           select term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
@@ -2815,7 +2815,7 @@
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='molecular_function'
                           union
                           select term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
@@ -2823,7 +2823,7 @@
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='molecular_function'; "
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
@@ -2834,7 +2834,7 @@
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_quality_zdb_id
                            and psg_pg_id = pg_id
-                           and ps.psg_tag = 'abnormal';"
+                            and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated');"
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
             />
@@ -2844,7 +2844,7 @@
                           from phenotype_observation_generated ps, phenotype_source_generated, data_alias
                          where dalias_data_zdb_id = psg_quality_zdb_id
                            and psg_pg_id = pg_id
-                           and ps.psg_tag = 'abnormal';"
+                            and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated');"
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
             />
@@ -2856,7 +2856,7 @@
                             where dalias_data_zdb_id = psg_quality_zdb_id
                              and term_zdb_id = psg_e1a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and psg_e1b_zdb_id is null
                              and psg_e2a_zdb_id is null
                              and psg_e2b_zdb_id is null
@@ -2868,7 +2868,7 @@
                             where quality_alias.dalias_data_zdb_id = psg_quality_zdb_id
                              and entity_alias.dalias_data_zdB_id = psg_e1a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and psg_e1b_zdb_id is null
                              and psg_e2a_zdb_id is null
                              and psg_e2b_zdb_id is null;"
@@ -5241,28 +5241,28 @@ and child.term_ontology = 'disease_ontology';
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e1a_zdb_id
                            and psg_pg_id = pg_id
-                           and ps.psg_tag = 'abnormal'
+                            and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                            and term_ontology='zebrafish_anatomy'
                         union
                         select term_ont_id as xref, term_name as affected_anatomy_direct, pg_fig_zdb_id as fig_zdb_id
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e1b_zdb_id
                            and psg_pg_id = pg_id
-                           and ps.psg_tag = 'abnormal'
+                            and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                            and term_ontology='zebrafish_anatomy'
                         union
                         select term_ont_id as xref, term_name as affected_anatomy_direct, pg_fig_zdb_id as fig_zdb_id
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e2a_zdb_id
                            and psg_pg_id = pg_id
-                           and ps.psg_tag = 'abnormal'
+                            and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                            and term_ontology='zebrafish_anatomy'
                         union
                         select term_ont_id as xref, term_name as affected_anatomy_direct, pg_fig_zdb_id as fig_zdb_id
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e2b_zdb_id
                            and psg_pg_id = pg_id
-                           and ps.psg_tag = 'abnormal'
+                            and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                            and term_ontology='zebrafish_anatomy';"
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
@@ -5274,7 +5274,7 @@ and child.term_ontology = 'disease_ontology';
                            where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                               and psg_pg_id = pg_id
-                              and ps.psg_tag = 'abnormal'
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                               and term_ontology='zebrafish_anatomy'
                            union
                            select term_ont_id as xref, term_name as affected_anatomy_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5282,7 +5282,7 @@ and child.term_ontology = 'disease_ontology';
                             where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                               and psg_pg_id = pg_id
-                              and ps.psg_tag = 'abnormal'
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                               and term_ontology='zebrafish_anatomy'
                            union
                            select term_ont_id as xref, term_name as affected_anatomy_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5290,7 +5290,7 @@ and child.term_ontology = 'disease_ontology';
                             where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                               and psg_pg_id = pg_id
-                              and ps.psg_tag = 'abnormal'
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                               and term_ontology='zebrafish_anatomy'
                            union
                            select term_ont_id as xref, term_name as affected_anatomy_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5298,7 +5298,7 @@ and child.term_ontology = 'disease_ontology';
                             where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                               and psg_pg_id = pg_id
-                              and ps.psg_tag = 'abnormal'
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                               and term_ontology='zebrafish_anatomy';"
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
@@ -5309,7 +5309,7 @@ and child.term_ontology = 'disease_ontology';
                              from phenotype_observation_generated ps, phenotype_source_generated, term
                             where term_zdb_id = psg_quality_zdb_id
                               and psg_pg_id = pg_id
-                              and ps.psg_tag = 'abnormal'; "
+                               and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated'); "
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
             />
@@ -5320,7 +5320,7 @@ and child.term_ontology = 'disease_ontology';
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_quality_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and alltermcon_contained_zdb_id != alltermcon_container_zdb_id;"
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
@@ -5331,28 +5331,28 @@ and child.term_ontology = 'disease_ontology';
                          from phenotype_observation_generated ps, phenotype_source_generated, term
                         where term_zdb_id = psg_e1a_zdb_id
                           and psg_pg_id = pg_id
-                          and ps.psg_tag = 'abnormal'
+                           and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                           and term_ontology='cellular_component'
                        union
                        select term_ont_id as xref, term_name as affected_cellular_component_direct, pg_fig_zdb_id as fig_zdb_id
                          from phenotype_observation_generated ps, phenotype_source_generated, term
                         where term_zdb_id = psg_e1b_zdb_id
                           and psg_pg_id = pg_id
-                          and ps.psg_tag = 'abnormal'
+                           and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                           and term_ontology='cellular_component'
                        union
                        select term_ont_id as xref, term_name as affected_cellular_component_direct, pg_fig_zdb_id as fig_zdb_id
                          from phenotype_observation_generated ps, phenotype_source_generated, term
                         where term_zdb_id = psg_e2a_zdb_id
                           and psg_pg_id = pg_id
-                          and ps.psg_tag = 'abnormal'
+                           and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                           and term_ontology='cellular_component'
                        union
                        select term_ont_id as xref, term_name as affected_cellular_component_direct, pg_fig_zdb_id as fig_zdb_id
                          from phenotype_observation_generated ps, phenotype_source_generated, term
                         where term_zdb_id = psg_e2b_zdb_id
                           and psg_pg_id = pg_id
-                          and ps.psg_tag = 'abnormal'
+                           and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                           and term_ontology='cellular_component'; "
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
@@ -5364,7 +5364,7 @@ and child.term_ontology = 'disease_ontology';
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'
                           union
                           select term_ont_id as xref, term_name as affected_cellular_component_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5372,7 +5372,7 @@ and child.term_ontology = 'disease_ontology';
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'
                           union
                           select term_ont_id as xref, term_name as affected_cellular_component_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5380,7 +5380,7 @@ and child.term_ontology = 'disease_ontology';
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'
                           union
                           select term_ont_id as xref, term_name as affected_cellular_component_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5388,7 +5388,7 @@ and child.term_ontology = 'disease_ontology';
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='cellular_component'; "
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
@@ -5399,28 +5399,28 @@ and child.term_ontology = 'disease_ontology';
                                 from phenotype_observation_generated ps, phenotype_source_generated, term
                                where term_zdb_id = psg_e1a_zdb_id
                                  and psg_pg_id = pg_id
-                                 and ps.psg_tag = 'abnormal'
+                                  and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                  and term_ontology='biological_process'
                               union
                               select term_ont_id as xref, term_name as affected_biological_process_direct, pg_fig_zdb_id as fig_zdb_id
                                 from phenotype_observation_generated ps, phenotype_source_generated, term
                                where term_zdb_id = psg_e1b_zdb_id
                                  and psg_pg_id = pg_id
-                                 and ps.psg_tag = 'abnormal'
+                                  and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                  and term_ontology='biological_process'
                               union
                               select term_ont_id as xref, term_name as affected_biological_process_direct, pg_fig_zdb_id as fig_zdb_id
                                 from phenotype_observation_generated ps, phenotype_source_generated, term
                                where term_zdb_id = psg_e2a_zdb_id
                                  and psg_pg_id = pg_id
-                                 and ps.psg_tag = 'abnormal'
+                                  and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                  and term_ontology='biological_process'
                               union
                               select term_ont_id as xref, term_name as affected_biological_process_direct, pg_fig_zdb_id as fig_zdb_id
                                 from phenotype_observation_generated ps, phenotype_source_generated, term
                                where term_zdb_id = psg_e2b_zdb_id
                                  and psg_pg_id = pg_id
-                                 and ps.psg_tag = 'abnormal'
+                                  and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                                  and term_ontology='biological_process';"
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
@@ -5432,7 +5432,7 @@ and child.term_ontology = 'disease_ontology';
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                             and psg_pg_id = pg_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='biological_process'
                          union
                          select term_ont_id as xref, term_name as affected_biological_process_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5440,7 +5440,7 @@ and child.term_ontology = 'disease_ontology';
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                             and psg_pg_id = pg_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='biological_process'
                          union
                          select term_ont_id as xref, term_name as affected_biological_process_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5448,7 +5448,7 @@ and child.term_ontology = 'disease_ontology';
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                             and psg_pg_id = pg_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='biological_process'
                          union
                          select term_ont_id as xref, term_name as affected_biological_process_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5456,7 +5456,7 @@ and child.term_ontology = 'disease_ontology';
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                             and psg_pg_id = pg_id
-                            and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                             and term_ontology='biological_process'; "
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
@@ -5467,28 +5467,28 @@ and child.term_ontology = 'disease_ontology';
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e1a_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='molecular_function'
                    union
                    select term_ont_id as xref, term_name as affected_molecular_function_direct, pg_fig_zdb_id as fig_zdb_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e1b_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='molecular_function'
                    union
                    select term_ont_id as xref, term_name as affected_molecular_function_direct, pg_fig_zdb_id as fig_zdb_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e2a_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='molecular_function'
                    union
                    select term_ont_id as xref, term_name as affected_molecular_function_direct, pg_fig_zdb_id as fig_zdb_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e2b_zdb_id
                       and psg_pg_id = pg_id
-                      and ps.psg_tag = 'abnormal'
+                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                       and term_ontology='molecular_function'; "
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
@@ -5500,7 +5500,7 @@ and child.term_ontology = 'disease_ontology';
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='molecular_function'
                           union
                           select term_ont_id as xref, term_name as affected_molecular_function_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5508,7 +5508,7 @@ and child.term_ontology = 'disease_ontology';
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1b_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='molecular_function'
                           union
                           select term_ont_id as xref, term_name as affected_molecular_function_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5516,7 +5516,7 @@ and child.term_ontology = 'disease_ontology';
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2a_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                             and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='molecular_function'
                           union
                           select term_ont_id as xref, term_name as affected_molecular_function_parent, pg_fig_zdb_id as fig_zdb_id
@@ -5524,7 +5524,7 @@ and child.term_ontology = 'disease_ontology';
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2b_zdb_id
                              and psg_pg_id = pg_id
-                             and ps.psg_tag = 'abnormal'
+                              and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                              and term_ontology='molecular_function'; "
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
