@@ -106,7 +106,7 @@ const GeneExpressionRibbon = ({geneId}) => {
             }
             {selectedTermName && <h5>Expression in {selectedTermName}</h5>}
 
-            {selectedTermId &&
+            {(selectedRibbonTerm || selectedTableTerm) &&
                 <GeneExpressionFigureGallery
                     geneId={geneId}
                     selectedTermId={selectedTermId}
