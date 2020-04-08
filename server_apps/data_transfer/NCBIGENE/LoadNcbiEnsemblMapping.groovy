@@ -1,38 +1,20 @@
 #!/bin/bash
+import groovy.json.JsonSlurper
+import org.zfin.properties.ZfinProperties
+
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
-import groovy.json.JsonSlurper
-import org.hibernate.Session
-import org.zfin.framework.HibernateSessionCreator
-import org.zfin.framework.HibernateUtil
-import org.zfin.Species
-import org.zfin.infrastructure.RecordAttribution
-import org.zfin.properties.ZfinProperties
-import org.zfin.repository.RepositoryFactory
-import org.zfin.sequence.ForeignDB
-import org.zfin.sequence.ForeignDBDataType
-import org.zfin.sequence.MarkerDBLink
-import org.zfin.sequence.ReferenceDatabase
 import org.zfin.util.ReportGenerator
-
-import java.util.zip.GZIPInputStream
-import java.util.zip.ZipException
-
 
 cli = new CliBuilder(usage: 'LoadAddgene')
 cli.jobName(args: 1, 'Name of the job to be displayed in report')
-cli.localData('Attempt to load a local addgene-plasmids.json file instead of downloading')
+cli.localData('Attempt to load a local ncbiEnsembl file instead of downloading')
 cli.commit('Commits changes, otherwise rollback will be performed')
 cli.report('Generates an HTML report')
 options = cli.parse(args)
 if (!options) {
     System.exit(1)
 }
-
-
-
-
-
 
 /*addgeneDb = RepositoryFactory.sequenceRepository.getReferenceDatabase(
         ForeignDB.AvailableName.ADDGENE,
@@ -55,21 +37,21 @@ proc1
 print "Loading local JSON file ... "
 
 
-    json = new JsonSlurper().parse(new FileReader("plasmids"))
+json = new JsonSlurper().parse(new FileReader("plasmids"))
 
-    def geneids=new ArrayList<String>()
-    def outCSV=new File('addgeneDesc.csv')
-    json.plasmids.each {
-        aGene ->
+def geneids = new ArrayList<String>()
+def outCSV = new File('addgeneDesc.csv')
+json.plasmids.each {
+    aGene ->
 
-            def gene=new String(aGene.id+'@'+ aGene.name.replaceAll("(?:\\n|\\r|@)", "")+'@'+ aGene.inserts.entrez_gene.id+'\n')
-            geneids.add(gene)
+        def gene = new String(aGene.id + '@' + aGene.name.replaceAll("(?:\\n|\\r|@)", "") + '@' + aGene.inserts.entrez_gene.id + '\n')
+        geneids.add(gene)
 
 
-    }
-    geneids.each
-            {aGene ->outCSV.append aGene}
-    println "done"
+}
+geneids.each
+        { aGene -> outCSV.append aGene }
+println "done"
 
 static Process dbaccess(String dbname, String sql) {
     sql = sql.replace("\n", "")
@@ -104,42 +86,111 @@ PRE_FILE = "preaddgene.unl"
 POST_FILE = "postaddgene.unl"
 
 psql dbname, """
-drop table if exists tmp_addgene;
-\\COPY (SELECT dblink_linked_recid,dblink_acc_num
+
+Insert into foreign_db_contains values ('Mouse', get_id('FDBCONT'),11,null,64);
+Insert into foreign_db_contains values ('Human', get_id('FDBCONT'),11,null,64);
+
+
+/*
+\\\\COPY (SELECT dblink_linked_recid,dblink_acc_num
     FROM db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-141007-1') TO $PRE_FILE;
+*/
 
-CREATE   TABLE tmp_addgene(
-    addgeneid text,
-    addgenename text,
-    zfingene text
-      ) ;
+DROP TABLE if exists tmp_ncbi_ensembl;
 
-    \\copy tmp_addgene FROM 'addgeneDesc.csv' delimiter '@' ;
+CREATE TABLE tmp_ncbi_ensembl (
+    taxon_id text,
+    gene_id text,
+    gene_symbol text,
+    ncbi_id text,
+    ensembl_id text
+);
 
-update tmp_addgene set zfingene=replace(zfingene,'[[','');
-update tmp_addgene set zfingene=replace(zfingene,']]','');
+\copy tmp_ncbi_ensembl FROM 'ncbi_ensembl.tsv' WITH delimiter E'\t';
+
+-- remove prefix of taxon IDs
+update tmp_ncbi_ensembl set taxon_id = (replace(taxon_id,'NCBITaxon:',''));
+
+select * from tmp_ncbi_ensembl limit 5;
+
+-- remove import entries that already exist by Ensembl ID
+delete from tmp_ncbi_ensembl where 
+exists (
+select * from ortholog_external_reference, ortholog where
+ oef_ortho_zdb_id = ortho_zdb_id AND
+ ortho_other_species_taxid = taxon_id::integer AND
+ oef_accession_number = ensembl_id
+);
 
 
-delete from tmp_addgene where zfingene='';
-delete from tmp_addgene where zfingene like '%[%';
-delete from tmp_addgene where zfingene like '%]%';
+select count(*) from tmp_ncbi_ensembl where 
+not exists (
+select * from ortholog_external_reference, ortholog where
+ oef_ortho_zdb_id = ortho_zdb_id AND
+ ortho_other_species_taxid = taxon_id::integer AND
+ oef_accession_number = ncbi_id
+);
 
-delete from tmp_addgene where trim(zfingene) not in (select trim(dblink_acc_num) from db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-040412-1');
-delete from tmp_addgene where trim(addgeneid) in (select trim(dblink_acc_num) from db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-141007-1');
+-- remove import entries that do not have a ncbi ID
+delete from tmp_ncbi_ensembl where 
+not exists (
+select 'x' from ortholog_external_reference, ortholog where
+ oef_ortho_zdb_id = ortho_zdb_id AND
+ ortho_other_species_taxid = taxon_id::integer AND
+ oef_accession_number = ncbi_id
+);
 
-alter table tmp_addgene add column dblinkid text;
-update tmp_addgene set dblinkid=get_id('DBLINK');
-update tmp_addgene set zfingene=(select dblink_linked_recid from db_link where zfingene=dblink_acc_num and dblink_fdbcont_Zdb_id='ZDB-FDBCONT-040412-1');
-insert into zdb_active_data (zactvd_zdb_id) select dblinkid from tmp_addgene;
-insert into db_link (dblink_zdb_id,dblink_acc_num,dblink_acc_num_display,dblink_fdbcont_zdb_id,dblink_linked_recid) select dblinkid,addgeneid,addgenename,'ZDB-FDBCONT-141007-1',zfingene from tmp_addgene;
-\\copy (SELECT dblink_linked_recid,dblink_acc_num
-    FROM db_link where dblink_fdbcont_zdb_id='ZDB-FDBCONT-141007-1') TO $POST_FILE;
+drop table tmp_ortholog_external_reference;
 
+create table tmp_ortholog_external_reference (
+ortho_id text,
+accession text,
+fdbcont_id text
+);
+
+insert into tmp_ortholog_external_reference
+select oef_ortho_zdb_id, ensembl_id, 
+case 
+when taxon_id = '10090' then (select fdbcont_zdb_id from foreign_db_contains where fdbcont_organism_common_name = 'Mouse' and fdbcont_fdb_db_id = 64)
+when taxon_id = '9606' then (select fdbcont_zdb_id from foreign_db_contains where fdbcont_organism_common_name = 'Human' and fdbcont_fdb_db_id = 64)
+END
+ from ortholog_external_reference, tmp_ncbi_ensembl, ortholog
+where ncbi_id = oef_accession_number
+AND ortho_zdb_id = oef_ortho_zdb_id
+AND ortho_other_species_taxid = taxon_id::integer
+;
+
+select count(*) from tmp_ortholog_external_reference;
+
+select * from tmp_ortholog_external_reference limit 5;
+
+insert into ortholog_external_reference
+select * from tmp_ortholog_external_reference;
+
+
+-- load data into tmp table
+\\\\copy tmp_ncbi_ensembl FROM 'ncbi_ensembl.tsv' WITH delimiter E'\t';
+
+
+select ortho_zdb_id, count(ortho_zdb_id) as ct from ortholog, tmp_ncbi_ensembl where ncbi_id = ortho_other_species_ncbi_gene_id 
+and taxon_id::integer = ortho_other_species_taxid 
+group by ortho_zdb_id order by ct desc;
+
+-- remove prefix of taxon IDs
+update tmp_ncbi_ensembl set taxon_id = (replace(taxon_id,'NCBITaxon:',''));
+
+delete from tmp_ncbi_ensembl where 
+exists (
+select * from ortholog_external_reference, ortholog where
+ oef_ortho_zdb_id = ortho_zdb_id AND
+ ortho_other_species_taxid = taxon_id::integer AND
+ oef_accession_number = ncbi_id
+);
 
 
     
 """
-println ("done with script")
+println("done with script")
 
 
 if (args) {

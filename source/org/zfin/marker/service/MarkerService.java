@@ -29,6 +29,7 @@ import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.OrthologEvidence;
+import org.zfin.orthology.OrthologExternalReference;
 import org.zfin.orthology.presentation.OrthologEvidencePresentation;
 import org.zfin.orthology.presentation.OrthologyPresentationRow;
 import org.zfin.profile.MarkerSupplier;
@@ -1222,6 +1223,18 @@ public class MarkerService {
     }
 
 
+    public List<String> getBeeGeeStrings(List<LinkDisplay> otherMarkerDBLinksLinks, List<Ortholog> orthologList) {
+        List<String> bGeeIds = orthologList.stream()
+                .map(ortholog -> ortholog.getExternalReferenceList().stream()
+                        .filter(reference -> reference.getAccessionNumber().startsWith("ENS"))
+                        .map(OrthologExternalReference::getAccessionNumber)
+                        .collect(Collectors.toList()))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        bGeeIds.add(otherMarkerDBLinksLinks.stream().filter(linkDisplay -> linkDisplay.getAccession().startsWith("ENSDARG"))
+                .findFirst().get().getAccession());
+        return bGeeIds;
+    }
 }
 
 
