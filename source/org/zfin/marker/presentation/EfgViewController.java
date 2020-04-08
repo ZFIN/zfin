@@ -57,12 +57,12 @@ public class EfgViewController {
         markerBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(efg));
         markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(efg));
         markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
-
+        markerBean.setZfinSoTerm(markerService.getSoTerm(efg));
         // EXPRESSION SECTION
         markerBean.setMarkerExpression(expressionService.getExpressionForEfg(efg));
 
         // (CONSTRUCTS)
-        populateConstructList(markerBean, efg);
+      populateConstructList(markerBean, efg);
 
         // (Antibodies)
         markerBean.setRelatedAntibodies(markerRepository
@@ -118,5 +118,15 @@ public class EfgViewController {
         markerBean.setNumberOfConstructs(relatedMarker.getTotalCount());
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         return "marker/efg-all-constructs.ajax";
+    }
+
+    @RequestMapping(value = "/efg/view-new/{zdbID}")
+    public String getNontranscribedRegionViewNew(Model model, @PathVariable("zdbID") String zdbID
+    ) throws Exception {
+        // set base bean
+        getView(model, zdbID);
+        //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
+
+        return "marker/efg/efg-view.page";
     }
 }
