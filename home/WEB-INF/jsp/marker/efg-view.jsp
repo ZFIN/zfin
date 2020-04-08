@@ -16,7 +16,8 @@
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    deleteURL="${deleteURL}"
-                   editMarker="true"/>
+                   editMarker="true"
+                   prototypeURL="/action/marker/efg/view-new/${formBean.marker.zdbID}" />
 
 <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="true" userID="${formBean.user.zdbID}" />
 
