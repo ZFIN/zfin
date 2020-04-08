@@ -11,7 +11,9 @@
             <span style="font-size:small;">Links will be active for one week.</span>
             <span style="font-size:small;">
                 <a href="/action/blast/blast?previousSearch=${xmlBlastBean.ticketNumber}">Edit&nbsp;and&nbsp;resubmit</a>
-                </span>
+                or
+                <a href="/action/blast/blast">Start new query</a>
+            </span>
             <br>
 
             <c:if test="${!empty xmlBlastBean.blastOutput.ZFINParameters.errorData}">
