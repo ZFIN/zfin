@@ -31,15 +31,7 @@
         </div>
 
         <z:section title="${PLASMIDMAP}">
-            <c:if test="${!empty formBean.marker.figures}">
-                <c:forEach var="fig" items="${formBean.marker.figures}">
-
-                    <c:forEach var="img" items="${fig.images}">
-                        <a href="/${img.zdbID}"><img src="/imageLoadUp/${img.imageFilename}" width="300"
-                                                     height="200"></a>
-                    </c:forEach>
-                </c:forEach>
-            </c:if>
+            <jsp:include page="construct-view-plasmid-map.jsp"/>
         </z:section>
 
         <z:section title="${GENOMICFEATURES}">

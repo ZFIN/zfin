@@ -2,6 +2,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.ConstructBean" scope="request"/>
 
+<z:dataTable  hasData="${!empty formBean.otherMarkerPages}" collapse="true">
 <td>
     <c:forEach var="link" items="${formBean.otherMarkerPages}" varStatus="loop">
 
@@ -11,6 +12,6 @@
             ${link.attributionLink}<c:if test="${!loop.last}">,&nbsp;</c:if>
         </c:if>
 
-
     </c:forEach>
 </td>
+</z:dataTable>
