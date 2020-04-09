@@ -112,9 +112,9 @@ public class InferenceUnitTest {
         assertEquals(1, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.GOREF_ENSEMBL.zdbID()).length);
         assertEquals(InferenceCategory.ENSEMBL, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.GOREF_ENSEMBL.zdbID())[0]);
 
-        assertEquals(1, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.GOREF_SP_SL.zdbID()).length);
+       /* assertEquals(1, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.GOREF_SP_SL.zdbID()).length);
         assertEquals(InferenceCategory.SP_SL, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.GOREF_SP_SL.zdbID())[0]);
-
+*/
         assertEquals(1, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.GOREF_HAMAP.zdbID()).length);
         assertEquals(InferenceCategory.HAMAP, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.GOREF_HAMAP.zdbID())[0]);
 
