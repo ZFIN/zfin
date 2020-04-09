@@ -14,9 +14,41 @@ public class ConstructBean extends MarkerBean {
     private List<Feature> transgenics;
     private List<GenotypeFishResult> fish;
     private List<Marker> regulatoryRegions;
+
+    private List<MarkerRelationshipPresentation> regulatoryRegionPresentations;
+    private List<MarkerRelationshipPresentation> codingSequencePresentations;
+    private List<MarkerRelationshipPresentation> containsSequencePresentations;
+
     private List<Marker> codingSequences;
     private int numberOfTransgeniclines;
     private List<ControlledVocab> species;
+
+    public List<MarkerRelationshipPresentation> getContainsSequencePresentations() {
+        return containsSequencePresentations;
+    }
+
+    public void setContainsSequencePresentations(List<MarkerRelationshipPresentation> containsSequencePresentations) {
+        this.containsSequencePresentations = containsSequencePresentations;
+    }
+
+
+
+    public List<MarkerRelationshipPresentation> getRegulatoryRegionPresentations() {
+        return regulatoryRegionPresentations;
+    }
+
+    public void setRegulatoryRegionPresentations(List<MarkerRelationshipPresentation> regulatoryRegionPresentations) {
+        this.regulatoryRegionPresentations = regulatoryRegionPresentations;
+    }
+
+    public List<MarkerRelationshipPresentation> getCodingSequencePresentations() {
+        return codingSequencePresentations;
+    }
+
+    public void setCodingSequencePresentations(List<MarkerRelationshipPresentation> codingSequencePresentations) {
+        this.codingSequencePresentations = codingSequencePresentations;
+    }
+
 
     public List<Feature> getTransgenics() {
         return transgenics;

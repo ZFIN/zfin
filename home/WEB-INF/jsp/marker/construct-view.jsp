@@ -23,7 +23,8 @@
 <%--Currently, not possible to merge these (not provided as an option on the merge page--%>
 <%--mergeURL="${deleteURL}"--%>
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-                   deleteURL="${deleteURL}"/>
+                   deleteURL="${deleteURL}"
+                   prototypeURL="/action/marker/construct/prototype-view/${formBean.marker.zdbID}"/>
 
     <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="false"/>
 

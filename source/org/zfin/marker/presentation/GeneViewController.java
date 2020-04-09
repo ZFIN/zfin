@@ -192,12 +192,16 @@ public class GeneViewController {
                 ));
 
                 List<Marker> regulatoryRegions = new ArrayList<>();
+                List<MarkerRelationshipPresentation> regulatoryRegionPresentations = new ArrayList<>();
+                List<MarkerRelationshipPresentation> codingSequencePresentations = new ArrayList<>();
                 List<Marker> codingSequences = new ArrayList<>();
                 for (MarkerRelationshipPresentation markerRelationshipPresentation : mrkrRels) {
                     if (markerRelationshipPresentation.getRelationshipType().equals("Has Promoter")) {
                         regulatoryRegions.add(markerRepository.getMarkerByID(markerRelationshipPresentation.getZdbId()));
+                        regulatoryRegionPresentations.add(markerRelationshipPresentation);
                     } else if (markerRelationshipPresentation.getRelationshipType().equals("Has Coding Sequence")) {
                         codingSequences.add(markerRepository.getMarkerByID(markerRelationshipPresentation.getZdbId()));
+                        codingSequencePresentations.add(markerRelationshipPresentation);
                     }
                 }
                 constructBean.setRegulatoryRegions(regulatoryRegions);
