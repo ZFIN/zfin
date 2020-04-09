@@ -3,12 +3,13 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.ConstructBean" scope="request"/>
 
 <c:set var="SUMMARY" value="Summary"/>
+<c:set var="PLASMIDMAP" value="Plasmid Map"/>
 <c:set var="GENOMICFEATURES" value="Genomic Features"/>
 <c:set var="TRANSGENICS" value="Transgenics"/>
 <c:set var="SEQUENCES" value="Sequence Information"/>
-<c:set var="OTHERPAGES" value="Other Pages"/>
+<c:set var="OTHERPAGES" value="Other Construct Pages"/>
 
-<z:dataPage sections="${[SUMMARY, GENOMICFEATURES, TRANSGENICS, SEQUENCEINFORMATION, OTHERPAGES]}">
+<z:dataPage sections="${[SUMMARY, PLASMIDMAP, GENOMICFEATURES, TRANSGENICS, SEQUENCEINFORMATION, OTHERPAGES]}">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -29,12 +30,34 @@
             <jsp:include page="construct-view-summary.jsp"/>
         </div>
 
+        <z:section title="${PLASMIDMAP}">
+            <c:if test="${!empty formBean.marker.figures}">
+                <c:forEach var="fig" items="${formBean.marker.figures}">
+
+                    <c:forEach var="img" items="${fig.images}">
+                        <a href="/${img.zdbID}"><img src="/imageLoadUp/${img.imageFilename}" width="300"
+                                                     height="200"></a>
+                    </c:forEach>
+                </c:forEach>
+            </c:if>
+        </z:section>
+
         <z:section title="${GENOMICFEATURES}">
+            <z:section title="That Utilize ${formBean.marker.abbreviation}</i> Construct">
                 <jsp:include page="construct-view-genomic-features.jsp"/>
+            </z:section>
+        </z:section>
+
+        <z:section title="${GENOMICFEATURES}">
+            <z:section title="That Utilize ${formBean.marker.abbreviation}</i> Construct">
+                <jsp:include page="construct-view-genomic-features.jsp"/>
+            </z:section>
         </z:section>
 
         <z:section title="${TRANSGENICS}">
+            <z:section title="That Utilize ${formBean.marker.abbreviation}</i> Construct">
                 <jsp:include page="construct-view-transgenics.jsp"/>
+            </z:section>
         </z:section>
 
         <z:section title="${SEQUENCES}">
@@ -44,6 +67,6 @@
         <z:section title="${OTHERPAGES}">
             <jsp:include page="construct-view-other-pages.jsp"/>
         </z:section>
-    </jsp:body>
+</jsp:body>
 </z:dataPage>
 

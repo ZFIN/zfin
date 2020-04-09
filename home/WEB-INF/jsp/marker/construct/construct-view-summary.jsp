@@ -39,4 +39,14 @@
 
     </z:attributeListItem>
 
+    <z:attributeListItem label="Contains Sequences">
+        <ul class="comma-separated">
+            <c:forEach var="containSequence" items="${formBean.containsSequencePresentations}" varStatus="loop">
+                <li>${containSequence.linkWithAttribution}</li>
+            </c:forEach>
+        </ul>
+
+    </z:attributeListItem>
+
+
 </z:attributeList>
