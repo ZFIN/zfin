@@ -7,7 +7,11 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.expression.ExpressionFigureStage;
+import org.zfin.expression.ExpressionResult2;
+import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.api.*;
+import org.zfin.marker.presentation.ExpressionDetail;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -188,6 +192,60 @@ public class RibbonService {
 
         return termCounts;
     }
+
+    public List<ExpressionDetail> buildExpressionDetail(String geneID, String termID) {
+        SolrQuery query = new SolrQuery();
+        //query.setRequestHandler("/images");
+        query.setFilterQueries("category:" + Category.EXPRESSIONS.getName());
+        query.addFilterQuery("gene_zdb_id:" + geneID);
+        if (StringUtils.isNotEmpty(termID)) {
+            query.add("f.anatomy_term_id.facet.prefix", termID);
+        }
+        // get Facet for the ao term and the PK of the expression record.
+        query.addFacetPivotField("anatomy_term_id,id");
+        query.setStart(0);
+        // get them all
+        query.setFacetLimit(-1);
+
+
+        QueryResponse queryResponse = null;
+        try {
+            queryResponse = SolrService.getSolrClient().query(query);
+        } catch (SolrServerException | IOException e) {
+            log.error("Error while retrieving data form SOLR...", e);
+        }
+        if (queryResponse == null || queryResponse.getFacetPivot() == null || queryResponse.getFacetPivot().getVal(0).size() == 0) {
+            return null;
+        }
+
+        HashSet<String> expressionIDs = queryResponse.getFacetPivot().getVal(0).get(0).getPivot().stream()
+                .map(pivotField -> (String) pivotField.getValue()).map(name -> name.substring(name.indexOf("-") + 1)).collect(toCollection(HashSet::new));
+
+
+        ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
+        List<Integer> ids = expressionIDs.stream().map(Integer::parseInt).collect(toList());
+        List<ExpressionFigureStage> expressions = expressionRepository.getExperimentFigureStagesByIds(ids);
+        return expressions.stream()
+                .map(expression -> {
+                    ExpressionDetail detail = new ExpressionDetail();
+                    detail.setPublication(expression.getExpressionExperiment().getPublication());
+                    detail.setStartStage(expression.getStartStage().getName());
+                    detail.setEndStage(expression.getEndStage().getName());
+                    detail.setFish(expression.getExpressionExperiment().getFishExperiment().getFish());
+                    detail.setFigure(expression.getFigure());
+                    detail.setGene(expression.getExpressionExperiment().getGene());
+                    detail.setAssay(expression.getExpressionExperiment().getAssay());
+                    detail.setExperiment(expression.getExpressionExperiment().getFishExperiment().getExperiment());
+                    detail.setAntibody(expression.getExpressionExperiment().getAntibody());
+                    detail.setId(expression.getId());
+                    detail.setEntities(expression.getExpressionResultSet().stream().map(ExpressionResult2::getEntity).collect(Collectors.toSet()));
+                    return detail;
+                })
+                .sorted(Comparator.comparing(expression -> expression.getFish().getDisplayName()))
+                .collect(Collectors.toList());
+
+    }
+
 
     public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID) {
         SolrQuery query = new SolrQuery();

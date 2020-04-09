@@ -1,13 +1,18 @@
 package org.zfin.expression;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
 /**
  * Domain object
  */
 public class ExpressionAssay implements Comparable<ExpressionAssay> {
 
+    @JsonView(View.API.class)
     private String name;
     private String comments;
     private int displayOrder;
+    @JsonView(View.API.class)
     private String abbreviation;
     private boolean immunogen;
 

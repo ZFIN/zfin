@@ -1,5 +1,6 @@
 package org.zfin.expression;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
@@ -29,6 +30,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @Column(name = "exp_zdb_id")
     @JsonView(View.API.class)
     private String zdbID;
+    @JsonView(View.API.class)
     @Column(name = "exp_name")
     private String name;
     @ManyToOne
@@ -168,6 +170,8 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         experimentConditions.add(condition);
     }
 
+    @JsonView(View.API.class)
+    @JsonProperty("conditions")
     public String getDisplayAllConditions() {
         String displayConditions = "";
         Iterator iterator = experimentConditions.iterator();

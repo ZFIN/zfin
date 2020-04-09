@@ -52,6 +52,31 @@ public class GeneExpressionRibbonController {
     }
 
     @JsonView(View.GeneExpressionAPI.class)
+    @RequestMapping(value = "/marker/{zdbID}/expression/ribbon-expression-detail")
+    public JsonResultResponse<ExpressionDetail> getExpressionRibbonDetail(@PathVariable("zdbID") String geneID,
+                                                                          @RequestParam(value = "termId", required = false) String termID,
+                                                                          @Version Pagination pagination
+    ) throws Exception {
+        long startTime = System.currentTimeMillis();
+        List<ExpressionDetail> allDetails;
+        try {
+            allDetails = ribbonService.buildExpressionDetail(geneID, termID);
+        } catch (Exception e) {
+            log.error("Error while retrieving ribbon details", e);
+            RestErrorMessage error = new RestErrorMessage(404);
+            error.addErrorMessage(e.getMessage());
+            throw new RestErrorException(error);
+        }
+        JsonResultResponse<ExpressionDetail> response = new JsonResultResponse<>();
+        response.setResults(allDetails);
+        response.setTotal(allDetails.size());
+        response.calculateRequestDuration(startTime);
+        response.setPagination(pagination);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.GeneExpressionAPI.class)
     @RequestMapping(value = "/marker/{geneID}/expression/ribbon-detail")
     public JsonResultResponse<ExpressionRibbonDetail> getExpressionRibbonDetail(@PathVariable("geneID") String geneID,
                                                                                 @RequestParam(value = "termId", required = false) String termID,
@@ -91,10 +116,10 @@ public class GeneExpressionRibbonController {
         }
         response.addSupplementalData("stages",
                 anatomyRepository.getAllStagesWithoutUnknown()
-                .stream()
-                .map(DevelopmentStage::getOboID)
-                .map(id -> ontologyRepository.getTermByOboID(id))
-                .collect(Collectors.toList())
+                        .stream()
+                        .map(DevelopmentStage::getOboID)
+                        .map(id -> ontologyRepository.getTermByOboID(id))
+                        .collect(Collectors.toList())
         );
         response.setHttpServletRequest(request);
         response.calculateRequestDuration(startTime);
