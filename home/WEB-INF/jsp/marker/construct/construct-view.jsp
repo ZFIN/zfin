@@ -40,12 +40,6 @@
             </z:section>
         </z:section>
 
-        <z:section title="${GENOMICFEATURES}">
-            <z:section title="That Utilize ${formBean.marker.abbreviation}</i> Construct">
-                <jsp:include page="construct-view-genomic-features.jsp"/>
-            </z:section>
-        </z:section>
-
         <z:section title="${TRANSGENICS}">
             <z:section title="That Utilize ${formBean.marker.abbreviation}</i> Construct">
                 <jsp:include page="construct-view-transgenics.jsp"/>

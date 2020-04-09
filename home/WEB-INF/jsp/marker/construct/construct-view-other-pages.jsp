@@ -2,16 +2,21 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.ConstructBean" scope="request"/>
 
-<z:dataTable  hasData="${!empty formBean.otherMarkerPages}" collapse="true">
 <td>
-    <c:forEach var="link" items="${formBean.otherMarkerPages}" varStatus="loop">
+    <c:choose>
+        <c:when test="${!empty formBean.otherMarkerPages}">
+            <c:forEach var="link" items="${formBean.otherMarkerPages}" varStatus="loop">
 
-        <c:if test="${!link.displayName.contains('VEGA')}">
+                <c:if test="${!link.displayName.contains('VEGA')}">
 
-            <a href="${link.link}">${link.displayName}</a>
-            ${link.attributionLink}<c:if test="${!loop.last}">,&nbsp;</c:if>
-        </c:if>
+                    <a href="${link.link}">${link.displayName}</a>
+                    ${link.attributionLink}<c:if test="${!loop.last}">,&nbsp;</c:if>
+                </c:if>
 
-    </c:forEach>
+            </c:forEach>
+        </c:when>
+        <c:otherwise>
+            <span class="no-data-tag"><i>No data available</i></span>
+        </c:otherwise>
+    </c:choose>
 </td>
-</z:dataTable>
