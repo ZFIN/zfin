@@ -5,7 +5,7 @@
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="GENOMICFEATURES" value="Genomic Features"/>
 <c:set var="TRANSGENICS" value="Transgenics"/>
-<c:set var="SEQUENCEINFORMATION" value="Sequence Information"/>
+<c:set var="SEQUENCES" value="Sequence Information"/>
 <c:set var="OTHERPAGES" value="Other Pages"/>
 
 <z:dataPage sections="${[SUMMARY, GENOMICFEATURES, TRANSGENICS, SEQUENCEINFORMATION, OTHERPAGES]}">
@@ -37,8 +37,8 @@
                 <jsp:include page="construct-view-transgenics.jsp"/>
         </z:section>
 
-        <z:section title="${SEQUENCEINFORMATION}">
-            <jsp:include page="construct-view-sequence-information.jsp"/>
+        <z:section title="${SEQUENCES}">
+            <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
         <z:section title="${OTHERPAGES}">
