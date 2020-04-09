@@ -65,10 +65,7 @@ public class RibbonService {
         List<GenericTerm> anatomySlim = ontologyRepository.getZfaRibbonTerms();
         List<GenericTerm> agrGoSlimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
 
-        List<GenericTerm> slimTerms = Stream.of(agrGoSlimTerms, stageSlim, anatomySlim)
-                .flatMap(Collection::stream)
-                .collect(toList());
-
+        List<GenericTerm> slimTerms = getSlims();
 
         RibbonSummary ribbonSummary = buildRibbonSummary(zdbID, categoryTerms, slimTerms, "/expression-annotation");
         //remove the stage-other, because it isn't meaningful
@@ -76,6 +73,37 @@ public class RibbonService {
         return ribbonSummary;
     }
 
+    public RibbonSummary buildPhenotypeRibbonSummary(String zdbID) throws Exception {
+        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+
+        List<GenericTerm> categoryTerms = List.of(
+                ontologyRepository.getTermByOboID("ZFA:0100000"), // ZFA root
+                ontologyRepository.getTermByOboID("ZFS:0100000"), // ZFS root
+                ontologyRepository.getTermByOboID("GO:0003674"), // molecular_function
+                ontologyRepository.getTermByOboID("GO:0008150"), // biological_process
+                ontologyRepository.getTermByOboID("GO:0005575")  // cellular_component
+        );
+
+
+        List<GenericTerm> slimTerms = getSlims();
+
+        RibbonSummary ribbonSummary = buildRibbonSummary(zdbID, categoryTerms, slimTerms, "/phenotype-annotation");
+        //remove the stage-other, because it isn't meaningful
+        ribbonSummary.getSubjects().get(0).getGroups().remove("ZFS:0100000-other");
+        return ribbonSummary;
+    }
+
+    private List<GenericTerm> getSlims() {
+        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+
+        List<GenericTerm> stageSlim = service.getRibbonStages();
+        List<GenericTerm> anatomySlim = ontologyRepository.getZfaRibbonTerms();
+        List<GenericTerm> agrGoSlimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
+
+        return Stream.of(agrGoSlimTerms, stageSlim, anatomySlim)
+                .flatMap(Collection::stream)
+                .collect(toList());
+    }
 
     public RibbonSummary buildRibbonSummary(String zdbID,
                                             List<GenericTerm> categoryTerms,

@@ -26,6 +26,7 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
 
         where:
         handler                  | zdbID                  | termID
+        "/phenotype-annotation"  | ""         | ""
         "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFA:0000396"
         "/expression-annotation" | "ZDB-GENE-980526-426"  | "ZFA:0000041"
         "/expression-annotation" | "ZDB-GENE-041001-150"  | "GO:0005737"

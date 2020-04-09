@@ -2326,6 +2326,53 @@
                     where="pg_id=phenotype.id"
             />
 
+            <entity name="phenotype_parent_stage"
+                    query="select distinct container.term_ont_id as term_id,
+                                            container.term_ont_id as stage_term_id,
+                                            'pg-' || pg_id as pg_id
+                            from phenotype_source_generated
+                                     join stage start_stage on pg_start_stg_zdb_id = start_stage.stg_zdb_id
+                                     join stage end_stage on pg_end_stg_zdb_id = end_stage.stg_zdb_id
+                                     join stage this_stage on this_stage.stg_hours_start &gt;= start_stage.stg_hours_start
+                                                                                     and this_stage.stg_hours_end &lt;= end_stage.stg_hours_end
+                                     join term contained on this_stage.stg_obo_id = contained.term_ont_id
+                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                                     join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                                                        where start_stage.stg_name != 'Unknown'
+                                                          and end_stage.stg_name != 'Unknown'
+                                                          and this_stage.stg_name != 'Unknown'"
+                    cacheImpl="SortedMapBackedCache"
+                    where="pg_id=phenotype.id"
+            />
+
+            <entity name="phenotype_parent_stage_unknown"
+                    query="select distinct container.term_ont_id as term_id,
+                                            container.term_ont_id as stage_term_id,
+                                   'pg-' || pg_id as pg_id
+                            from phenotype_source_generated
+                                     join stage start_stage on pg_start_stg_zdb_id = start_stage.stg_zdb_id
+                                     join stage end_stage on pg_end_stg_zdb_id = end_stage.stg_zdb_id
+                                     join term contained on start_stage.stg_obo_id = contained.term_ont_id
+                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                                     join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                            where (start_stage.stg_name = 'Unknown'
+                                OR end_stage.stg_name = 'Unknown')
+                            union
+                            select distinct container.term_ont_id as term_id,
+                                            container.term_ont_id as stage_term_id,
+                                   'pg-' || pg_id as pg_id
+                            from phenotype_source_generated
+                                     join stage start_stage on pg_start_stg_zdb_id = start_stage.stg_zdb_id
+                                     join stage end_stage on pg_end_stg_zdb_id = end_stage.stg_zdb_id
+                                     join term contained on end_stage.stg_obo_id = contained.term_ont_id
+                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
+                                     join term container on alltermcon_container_zdb_id = container.term_zdb_id
+                            where (start_stage.stg_name = 'Unknown'
+                                OR end_stage.stg_name = 'Unknown')"
+                    cacheImpl="SortedMapBackedCache"
+                    where="pg_id=phenotype.id"
+            />
+
             <entity name="phenotype_publication_xref"
                     query="select fig_source_zdb_id as xref,
                                    'pg-' || pg_id as pg_id
@@ -2397,6 +2444,7 @@
                             mrkr_abbrev as gene,
                             mrkr_name as gene_full_name,
                             mrkr_zdb_id as xref,
+                            mrkr_zdb_id as gene_zdb_id,
                             'pg-' || pg_id as pg_id
                             from phenotype_source_generated
                                  join fish_experiment on genox_zdb_id = pg_genox_zdb_id
@@ -2441,6 +2489,7 @@
                     query="select mrkr_abbrev as gene,
                                mrkr_name as gene_full_name,
                                mrkr_zdb_id as xref,
+                               mrkr_zdb_id as gene_zdb_id,
                                'pg-' || pg_id as pg_id
                            from phenotype_source_generated
                              join fish_experiment on genox_zdb_id = pg_genox_zdb_id
@@ -2535,28 +2584,32 @@
             />
 
             <entity name="phenotype_anatomy_direct"
-                    query="select term_ont_id as xref, term_name as anatomy_direct, 'pg-' || pg_id as pg_id
+                    query="select term_ont_id as xref, term_name as anatomy_direct,
+                                  term_ont_id as term_id, term_ont_id as entity_term_id, 'pg-' || pg_id as pg_id
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e1a_zdb_id
                            and psg_pg_id = pg_id
                            and ps.psg_tag = 'abnormal'
                            and term_ontology='zebrafish_anatomy'
                         union
-                        select term_ont_id as xref, term_name as anatomy_direct, 'pg-' || pg_id as pg_id
+                        select term_ont_id as xref, term_name as anatomy_direct,
+                               term_ont_id as term_id, term_ont_id as entity_term_id, 'pg-' || pg_id as pg_id
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e1b_zdb_id
                            and psg_pg_id = pg_id
                            and ps.psg_tag = 'abnormal'
                            and term_ontology='zebrafish_anatomy'
                         union
-                        select term_ont_id as xref, term_name as anatomy_direct, 'pg-' || pg_id as pg_id
+                        select term_ont_id as xref, term_name as anatomy_direct,
+                               term_ont_id as term_id, term_ont_id as entity_term_id, 'pg-' || pg_id as pg_id
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e2a_zdb_id
                            and psg_pg_id = pg_id
                            and ps.psg_tag = 'abnormal'
                            and term_ontology='zebrafish_anatomy'
                         union
-                        select term_ont_id as xref, term_name as anatomy_direct, 'pg-' || pg_id as pg_id
+                        select term_ont_id as xref, term_name as anatomy_direct,
+                               term_ont_id as term_id, term_ont_id as entity_term_id, 'pg-' || pg_id as pg_id
                           from phenotype_observation_generated ps, phenotype_source_generated, term
                          where term_zdb_id = psg_e2b_zdb_id
                            and psg_pg_id = pg_id
@@ -2567,7 +2620,8 @@
             />
 
             <entity name="phenotype_anatomy_parent"
-                    query="select term_ont_id as xref, term_name as anatomy_parent, 'pg-' || pg_id as pg_id
+                    query="select term_ont_id as xref, term_name as anatomy_parent,
+                                  term_ont_id as term_id, term_ont_id as entity_term_id, 'pg-' || pg_id as pg_id
                              from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                            where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e1a_zdb_id
@@ -2575,7 +2629,8 @@
                               and ps.psg_tag = 'abnormal'
                               and term_ontology='zebrafish_anatomy'
                            union
-                           select term_ont_id as xref, term_name as anatomy_parent, 'pg-' || pg_id as pg_id
+                           select term_ont_id as xref, term_name as anatomy_parent,
+                                  term_ont_id as term_id, term_ont_id as entity_term_id, 'pg-' || pg_id as pg_id
                              from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                             where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e1b_zdb_id
@@ -2583,7 +2638,8 @@
                               and ps.psg_tag = 'abnormal'
                               and term_ontology='zebrafish_anatomy'
                            union
-                           select term_ont_id as xref, term_name as anatomy_parent, 'pg-' || pg_id as pg_id
+                           select term_ont_id as xref, term_name as anatomy_parent,
+                                  term_ont_id as term_id, term_ont_id as entity_term_id, 'pg-' || pg_id as pg_id
                              from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                             where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e2a_zdb_id
@@ -2591,7 +2647,8 @@
                               and ps.psg_tag = 'abnormal'
                               and term_ontology='zebrafish_anatomy'
                            union
-                           select term_ont_id as xref, term_name as anatomy_parent, 'pg-' || pg_id as pg_id
+                           select term_ont_id as xref, term_name as anatomy_parent,
+                                  term_ont_id as term_id, term_ont_id as entity_term_id, 'pg-' || pg_id as pg_id
                              from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                             where term_zdb_id = alltermcon_container_zdb_id
                               and alltermcon_contained_zdb_id = psg_e2b_zdb_id
@@ -2625,28 +2682,28 @@
             />
 
             <entity name="phenotype_cellular_component_direct"
-                    query="select term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
+                    query="select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e1a_zdb_id
                       and psg_pg_id = pg_id
                       and ps.psg_tag = 'abnormal'
                       and term_ontology='cellular_component'
                    union
-                   select term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
+                   select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e1b_zdb_id
                       and psg_pg_id = pg_id
                       and ps.psg_tag = 'abnormal'
                       and term_ontology='cellular_component'
                    union
-                   select term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
+                   select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e2a_zdb_id
                       and psg_pg_id = pg_id
                       and ps.psg_tag = 'abnormal'
                       and term_ontology='cellular_component'
                    union
-                   select term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
+                   select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as cellular_component_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e2b_zdb_id
                       and psg_pg_id = pg_id
@@ -2657,7 +2714,7 @@
             />
 
             <entity name="phenotype_cellular_component_parent"
-                    query="select term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
+                    query="select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1a_zdb_id
@@ -2665,7 +2722,7 @@
                              and ps.psg_tag = 'abnormal'
                              and term_ontology='cellular_component'
                           union
-                          select term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
+                          select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1b_zdb_id
@@ -2673,7 +2730,7 @@
                              and ps.psg_tag = 'abnormal'
                              and term_ontology='cellular_component'
                           union
-                          select term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
+                          select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2a_zdb_id
@@ -2681,7 +2738,7 @@
                              and ps.psg_tag = 'abnormal'
                              and term_ontology='cellular_component'
                           union
-                          select term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
+                          select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as cellular_component_parent, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2b_zdb_id
@@ -2693,28 +2750,28 @@
             />
 
             <entity name="phenotype_biological_process_direct"
-                    query="select term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
+                    query="select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term
                            where term_zdb_id = psg_e1a_zdb_id
                              and psg_pg_id = pg_id
                              and ps.psg_tag = 'abnormal'
                              and term_ontology='biological_process'
                           union
-                          select term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
+                          select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term
                            where term_zdb_id = psg_e1b_zdb_id
                              and psg_pg_id = pg_id
                              and ps.psg_tag = 'abnormal'
                              and term_ontology='biological_process'
                           union
-                          select term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
+                          select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term
                            where term_zdb_id = psg_e2a_zdb_id
                              and psg_pg_id = pg_id
                              and ps.psg_tag = 'abnormal'
                              and term_ontology='biological_process'
                           union
-                          select term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
+                          select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as biological_process_direct, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term
                            where term_zdb_id = psg_e2b_zdb_id
                              and psg_pg_id = pg_id
@@ -2725,7 +2782,7 @@
             />
 
             <entity name="phenotype_biological_process_parent"
-                    query="select term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
+                    query="select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
                            from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e1a_zdb_id
@@ -2733,7 +2790,7 @@
                             and ps.psg_tag = 'abnormal'
                             and term_ontology='biological_process'
                          union
-                         select term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
+                         select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
                            from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e1b_zdb_id
@@ -2741,7 +2798,7 @@
                             and ps.psg_tag = 'abnormal'
                             and term_ontology='biological_process'
                          union
-                         select term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
+                         select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
                            from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e2a_zdb_id
@@ -2749,7 +2806,7 @@
                             and ps.psg_tag = 'abnormal'
                             and term_ontology='biological_process'
                          union
-                         select term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
+                         select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as biological_process_parent, 'pg-' || pg_id as pg_id
                            from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                           where term_zdb_id = alltermcon_container_zdb_id
                             and alltermcon_contained_zdb_id = psg_e2b_zdb_id
@@ -2761,28 +2818,28 @@
             />
 
             <entity name="phenotype_molecular_function_direct"
-                    query="select term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
+                    query="select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e1a_zdb_id
                       and psg_pg_id = pg_id
                       and ps.psg_tag = 'abnormal'
                       and term_ontology='molecular_function'
                    union
-                   select term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
+                   select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e1a_zdb_id
                       and psg_pg_id = pg_id
                       and ps.psg_tag = 'abnormal'
                       and term_ontology='molecular_function'
                    union
-                   select term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
+                   select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e2a_zdb_id
                       and psg_pg_id = pg_id
                       and ps.psg_tag = 'abnormal'
                       and term_ontology='molecular_function'
                    union
-                   select term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
+                   select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as molecular_function_direct, 'pg-' || pg_id as pg_id
                      from phenotype_observation_generated ps, phenotype_source_generated, term
                     where term_zdb_id = psg_e2b_zdb_id
                       and psg_pg_id = pg_id
@@ -2793,7 +2850,7 @@
             />
 
             <entity name="phenotype_molecular_function_parent"
-                    query="select term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
+                    query="select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1a_zdb_id
@@ -2801,7 +2858,7 @@
                              and ps.psg_tag = 'abnormal'
                              and term_ontology='molecular_function'
                           union
-                          select term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
+                          select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e1b_zdb_id
@@ -2809,7 +2866,7 @@
                              and ps.psg_tag = 'abnormal'
                              and term_ontology='molecular_function'
                           union
-                          select term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
+                          select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2a_zdb_id
@@ -2817,7 +2874,7 @@
                              and ps.psg_tag = 'abnormal'
                              and term_ontology='molecular_function'
                           union
-                          select term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
+                          select term_ont_id as term_id, term_ont_id as entity_term_id, term_ont_id as xref, term_name as molecular_function_parent, 'pg-' || pg_id as pg_id
                             from phenotype_observation_generated ps, phenotype_source_generated, term, all_term_contains
                            where term_zdb_id = alltermcon_container_zdb_id
                              and alltermcon_contained_zdb_id = psg_e2b_zdb_id

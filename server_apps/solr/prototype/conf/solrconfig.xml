@@ -524,7 +524,22 @@
 
     <requestHandler name="/expression-annotation" class="solr.StandardRequestHandler">
         <lst name="appends">
-            <str name="fq">category:"Expression"</str>
+            <str name="fq">category:"Expression" AND is_wildtype:true</str>
+            <str name="q">*:*</str>
+        </lst>
+        <lst name="defaults">
+            <str name="defType">edismax</str>
+            <str name="wt">json</str>
+            <str name="pretty">true</str>
+            <str name="facet">true</str>
+            <str name="facet.mincount">1</str>
+            <str name="rows">0</str>
+        </lst>
+    </requestHandler>
+
+    <requestHandler name="/phenotype-annotation" class="solr.StandardRequestHandler">
+        <lst name="appends">
+            <str name="fq">category:"Phenotype" AND is_monogenic:true</str>
             <str name="q">*:*</str>
         </lst>
         <lst name="defaults">
