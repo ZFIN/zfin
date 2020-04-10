@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 
 @Builder
 @Getter
-public class RibbonConfigCategory {
+public class RibbonCategoryConfig {
 
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private static OntologyService ontologyService = new OntologyService();
@@ -31,8 +31,8 @@ public class RibbonConfigCategory {
     private String otherLabel;
     private String otherDescription;
 
-    public static RibbonConfigCategory anatomy() {
-        return RibbonConfigCategory.builder()
+    public static RibbonCategoryConfig anatomy() {
+        return RibbonCategoryConfig.builder()
                 .categoryTerm(ontologyRepository.getTermByOboID("ZFA:0100000"))
                 .slimTerms(ontologyRepository.getZfaRibbonTerms())
                 .allLabel("All anatomical structures")
@@ -40,8 +40,8 @@ public class RibbonConfigCategory {
                 .build();
     }
 
-    public static RibbonConfigCategory stage() {
-        return RibbonConfigCategory.builder()
+    public static RibbonCategoryConfig stage() {
+        return RibbonCategoryConfig.builder()
                 .categoryTerm(ontologyRepository.getTermByOboID("ZFS:0100000"))
                 .slimTerms(ontologyService.getRibbonStages())
                 .allLabel("All stages")
@@ -49,22 +49,22 @@ public class RibbonConfigCategory {
                 .build();
     }
 
-    public static RibbonConfigCategory molecularFunction() {
-        return RibbonConfigCategory.builder()
+    public static RibbonCategoryConfig molecularFunction() {
+        return RibbonCategoryConfig.builder()
                 .categoryTerm(ontologyRepository.getTermByOboID("GO:0003674"))
                 .slimTerms(filterTermsByOntology(getAgrGoSlimTerms(), Ontology.GO_MF))
                 .build();
     }
 
-    public static RibbonConfigCategory biologicalProcess() {
-        return RibbonConfigCategory.builder()
+    public static RibbonCategoryConfig biologicalProcess() {
+        return RibbonCategoryConfig.builder()
                 .categoryTerm(ontologyRepository.getTermByOboID("GO:0008150"))
                 .slimTerms(filterTermsByOntology(getAgrGoSlimTerms(), Ontology.GO_BP))
                 .build();
     }
 
-    public static RibbonConfigCategory cellularComponent() {
-        return RibbonConfigCategory.builder()
+    public static RibbonCategoryConfig cellularComponent() {
+        return RibbonCategoryConfig.builder()
                 .categoryTerm(ontologyRepository.getTermByOboID("GO:0005575"))
                 .slimTerms(filterTermsByOntology(getAgrGoSlimTerms(), Ontology.GO_CC))
                 .build();

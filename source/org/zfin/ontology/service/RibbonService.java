@@ -45,66 +45,52 @@ public class RibbonService {
     private PublicationRepository publicationRepository;
 
     public RibbonSummary buildGORibbonSummary(String zdbID) throws Exception {
-        RibbonConfig ribbonConfig = RibbonConfig.builder()
-                .solrRequestHandler("/go-annotation")
-                .categories(List.of(
-                        RibbonConfigCategory.molecularFunction(),
-                        RibbonConfigCategory.biologicalProcess(),
-                        RibbonConfigCategory.cellularComponent()
-                ))
-                .build();
-
-        return buildRibbonSummary(zdbID, ribbonConfig);
+        return buildRibbonSummary(zdbID, "/go-annotation", List.of(
+                RibbonCategoryConfig.molecularFunction(),
+                RibbonCategoryConfig.biologicalProcess(),
+                RibbonCategoryConfig.cellularComponent()
+        ));
     }
 
     public RibbonSummary buildExpressionRibbonSummary(String zdbID) throws Exception {
-        RibbonConfig ribbonConfig = RibbonConfig.builder()
-                .solrRequestHandler("/expression-annotation")
-                .categories(List.of(
-                        RibbonConfigCategory.anatomy(),
-                        RibbonConfigCategory.stage(),
-                        RibbonConfigCategory.cellularComponent()
-                ))
-                .build();
-
-        return buildRibbonSummary(zdbID, ribbonConfig);
+        return buildRibbonSummary(zdbID, "/expression-annotation", List.of(
+                RibbonCategoryConfig.anatomy(),
+                RibbonCategoryConfig.stage(),
+                RibbonCategoryConfig.cellularComponent()
+        ));
     }
 
     public RibbonSummary buildPhenotypeRibbonSummary(String zdbID) throws Exception {
-        RibbonConfig config = RibbonConfig.builder()
-                .solrRequestHandler("/phenotype-annotation")
-                .categories(List.of(
-                        RibbonConfigCategory.anatomy(),
-                        RibbonConfigCategory.stage(),
-                        RibbonConfigCategory.molecularFunction(),
-                        RibbonConfigCategory.biologicalProcess(),
-                        RibbonConfigCategory.cellularComponent()
-                ))
-                .build();
-
-        return buildRibbonSummary(zdbID, config);
+        return buildRibbonSummary(zdbID, "/phenotype-annotation", List.of(
+                RibbonCategoryConfig.anatomy(),
+                RibbonCategoryConfig.stage(),
+                RibbonCategoryConfig.molecularFunction(),
+                RibbonCategoryConfig.biologicalProcess(),
+                RibbonCategoryConfig.cellularComponent()
+        ));
     }
 
-
-    public RibbonSummary buildRibbonSummary(String zdbID, RibbonConfig config) throws Exception {
+    public RibbonSummary buildRibbonSummary(String zdbID,
+                                            String solrRequestHandler,
+                                            List<RibbonCategoryConfig> categoryConfigs) throws Exception {
 
         // pull out just the IDs
-        List<String> categoryIDs = config.getCategories().stream()
-                .map(RibbonConfigCategory::getCategoryTerm)
+        List<String> categoryIDs = categoryConfigs.stream()
+                .map(RibbonCategoryConfig::getCategoryTerm)
                 .map(GenericTerm::getOboID)
                 .collect(toList());
-        List<String> slimIDs = config.getCategories().stream()
-                .map(RibbonConfigCategory::getSlimTerms)
+        List<String> slimIDs = categoryConfigs.stream()
+                .map(RibbonCategoryConfig::getSlimTerms)
                 .flatMap(List::stream)
                 .map(GenericTerm::getOboID)
                 .collect(toList());
 
-        Map<String, Integer> otherCounts = getRibbonCounts(config.getSolrRequestHandler(), zdbID, categoryIDs, slimIDs);
-        Map<String, Integer> allCounts = getRibbonCounts(config.getSolrRequestHandler(), zdbID, categoryIDs, Collections.emptyList());
-        Map<String, Integer> slimCounts = getRibbonCounts(config.getSolrRequestHandler(), zdbID, slimIDs, Collections.emptyList());
+        Map<String, Integer> otherCounts = getRibbonCounts(solrRequestHandler, zdbID, categoryIDs, slimIDs);
+        Map<String, Integer> allCounts = getRibbonCounts(solrRequestHandler, zdbID, categoryIDs, Collections.emptyList());
+        Map<String, Integer> slimCounts = getRibbonCounts(solrRequestHandler, zdbID, slimIDs, Collections.emptyList());
 
         // build the categories field with term names and definitions
-        List<RibbonCategory> categories = config.getCategories().stream()
+        List<RibbonCategory> categories = categoryConfigs.stream()
                 .map(categoryConfig -> {
                     RibbonCategory category = new RibbonCategory();
                     GenericTerm categoryTerm = categoryConfig.getCategoryTerm();
