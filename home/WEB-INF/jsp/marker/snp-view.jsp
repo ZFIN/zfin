@@ -7,7 +7,7 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SnpMarkerBean" scope="request"/>
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-                   deleteURL="none"/>
+                   prototypeURL="/action/marker/snp/view-new/${formBean.marker.zdbID}" />
 
 <zfin2:snpHead markerBean="${formBean}"/>
 
