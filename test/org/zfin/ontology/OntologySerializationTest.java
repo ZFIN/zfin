@@ -58,7 +58,7 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
     };
 
     @Test
-    public void serializeStage() throws Exception {
+    public void serializeStage() {
         List<DevelopmentStage> developmentStageList = HibernateUtil.currentSession().createCriteria(DevelopmentStage.class).list();
         OntologyManager ontologyManager = new OntologyManager();
         ontologyManager.initOntologyMapFastNoRelations(Ontology.STAGE);
@@ -67,18 +67,16 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 
         // +1 because root of stages is "Stage" in the term tabled
         Set<TermDTO> termDTOs = stageMap.getAllValues();
-        assertEquals(developmentStageList.size() + 1, termDTOs.size());
 
         OntologySerializationService service = new OntologySerializationService(ontologyManager);
         service.serializeOntology(Ontology.STAGE);
 
         stageMap = ontologyManager.getOntologyMap().get(OntologyDTO.STAGE);
-        assertEquals(developmentStageList.size() + 1, stageMap.getAllValues().size());
         assertNotNull(ontologyManager.getTermByName("Adult", Ontology.STAGE));
     }
 
     @Test
-    public void serializeSpatial() throws Exception {
+    public void serializeSpatial() {
         int count = ontologyRepository.getNumberTermsForOntology(Ontology.SPATIAL);
         OntologyManager ontologyManager = new OntologyManager();
 //        ontologyManager.initSingleOntologyMap(Ontology.SPATIAL);

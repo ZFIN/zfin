@@ -2,15 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const PostComposedEntities = ({entities}) => {
-    // get the indices of the highlighted stages in the all stages array, remove
-    // non-existent ones and sort numerically.
     return (
         <div>
             {
                 entities.map((postComposedEntity) => {
                     return (
-                        <div key={postComposedEntity.superterm.zdbID}>{postComposedEntity.superterm.termName}</div>
-                    );
+                        <div key={postComposedEntity.superterm.zdbID}>
+                            <span key={postComposedEntity.superterm.zdbID}>
+                                {postComposedEntity.superterm.termName}
+                            </span>
+                            {
+                                postComposedEntity.subterm &&
+                                <span key={postComposedEntity.subterm.zdbID}>
+                                     : {postComposedEntity.subterm.termName}
+                                </span>
+                            }
+                        </div>
+                    )
                 })
             }
         </div>

@@ -16,6 +16,7 @@ const GeneExpressionRibbon = ({geneId}) => {
     const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
     const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
     const [selectedTableTerm, setSelectedTableTerm] = useState(null);
+    const [isChecked, setIsChecked] = useState(false);
 
     const data = useFetch(`/action/api/marker/${geneId}/expression/ribbon-summary`);
 
@@ -141,6 +142,21 @@ const GeneExpressionRibbon = ({geneId}) => {
 
     return (
         <div>
+            <div className='custom-control custom-checkbox'>
+                <input
+                    type='checkbox'
+                    className='custom-control-input'
+                    id='reporterCheckBox'
+                    checked={isChecked}
+                />
+                <label className='custom-control-label'>
+                    Include Expression in Reporter Lines
+                </label>
+                <button onClick={() => setIsChecked(!isChecked)}>
+                    change checkbox state using this button
+                </button>
+            </div>
+
             <Ribbon
                 subjects={data.value.subjects}
                 categories={data.value.categories}
@@ -149,8 +165,8 @@ const GeneExpressionRibbon = ({geneId}) => {
             />
 
             {selectedTableTerm &&
-            <button className='btn btn-link btn-sm px-0' onClick={() => setSelectedTableTerm(null)}>
-                <i className='fas fa-chevron-left'/> Back to expression in {selectedRibbonTerm.group.label}
+            <button className=' btn btn-link btn-sm px-0' onClick={() => setSelectedTableTerm(null)}>
+                <i className=' fas fa-chevron-left'/> Back to expression in {selectedRibbonTerm.group.label}
             </button>
             }
             {selectedTermName && <h5>Expression in {selectedTermName}</h5>}
@@ -165,7 +181,7 @@ const GeneExpressionRibbon = ({geneId}) => {
 
             {selectedRibbonTerm && !selectedTableTerm &&
             <DataTable
-                url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selectedRibbonTerm)}`}
+                url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selectedRibbonTerm)}&includeReporter=${isChecked}`}
                 columns={columns}
                 rowKey={row => row.term.zdbID}
                 tableState={tableState}

@@ -194,9 +194,8 @@ public class RibbonService {
         return termCounts;
     }
 
-    public List<ExpressionDetail> buildExpressionDetail(String geneID, String termID) {
+    public JsonResultResponse<ExpressionDetail> buildExpressionDetail(String geneID, String termID, Pagination pagination) {
         SolrQuery query = new SolrQuery();
-        //query.setRequestHandler("/images");
         query.setFilterQueries("category:" + Category.EXPRESSIONS.getName());
         query.addFilterQuery("gene_zdb_id:" + geneID);
         if (StringUtils.isNotEmpty(termID)) {
@@ -226,7 +225,7 @@ public class RibbonService {
         ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
         List<Integer> ids = expressionIDs.stream().map(Integer::parseInt).collect(toList());
         List<ExpressionFigureStage> expressions = expressionRepository.getExperimentFigureStagesByIds(ids);
-        return expressions.stream()
+        List<ExpressionDetail> detailList = expressions.stream()
                 .map(expression -> {
                     ExpressionDetail detail = new ExpressionDetail();
                     detail.setPublication(expression.getExpressionExperiment().getPublication());
@@ -245,10 +244,19 @@ public class RibbonService {
                 .sorted(Comparator.comparing(expression -> expression.getFish().getDisplayName()))
                 .collect(Collectors.toList());
 
+        JsonResultResponse<ExpressionDetail> response = new JsonResultResponse<>();
+        response.setTotal(detailList.size());
+
+        // paginating
+        response.setResults(detailList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
     }
 
 
-    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID) {
+    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID, boolean includeReporter) {
         SolrQuery query = new SolrQuery();
         //query.setRequestHandler("/images");
         query.setFilterQueries("category:" + Category.EXPRESSIONS.getName());
@@ -257,6 +265,8 @@ public class RibbonService {
             String escapedTermID = ribbonTermID.replace(":", "\\:");
             query.addFilterQuery("term_id:" + escapedTermID);
         }
+        if (includeReporter)
+            query.addFacetQuery("reporter_line\\:[* TO *]");
         query.addFacetPivotField("anatomy_term_id,stage_term_id,pub_zdb_id");
         query.setStart(0);
         // get them all

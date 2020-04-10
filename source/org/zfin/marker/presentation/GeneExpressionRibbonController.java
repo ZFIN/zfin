@@ -55,21 +55,17 @@ public class GeneExpressionRibbonController {
     @RequestMapping(value = "/marker/{zdbID}/expression/ribbon-expression-detail")
     public JsonResultResponse<ExpressionDetail> getExpressionRibbonDetail(@PathVariable("zdbID") String geneID,
                                                                           @RequestParam(value = "termId", required = false) String termID,
-                                                                          @Version Pagination pagination
-    ) throws Exception {
+                                                                          @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
-        List<ExpressionDetail> allDetails;
+        JsonResultResponse<ExpressionDetail> response;
         try {
-            allDetails = ribbonService.buildExpressionDetail(geneID, termID);
+            response = ribbonService.buildExpressionDetail(geneID, termID, pagination);
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
-            RestErrorMessage error = new RestErrorMessage(404);
+            RestErrorMessage error = new RestErrorMessage(500);
             error.addErrorMessage(e.getMessage());
             throw new RestErrorException(error);
         }
-        JsonResultResponse<ExpressionDetail> response = new JsonResultResponse<>();
-        response.setResults(allDetails);
-        response.setTotal(allDetails.size());
         response.calculateRequestDuration(startTime);
         response.setPagination(pagination);
         response.setHttpServletRequest(request);
@@ -81,11 +77,12 @@ public class GeneExpressionRibbonController {
     public JsonResultResponse<ExpressionRibbonDetail> getExpressionRibbonDetail(@PathVariable("geneID") String geneID,
                                                                                 @RequestParam(value = "termId", required = false) String termID,
                                                                                 @RequestParam(value = "detailTermId", required = false) String detailTermID,
+                                                                                @RequestParam(value = "includeReporter", required = false) boolean includeReporter,
                                                                                 @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
         List<ExpressionRibbonDetail> allDetails;
         try {
-            allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID);
+            allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID, includeReporter);
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(404);
