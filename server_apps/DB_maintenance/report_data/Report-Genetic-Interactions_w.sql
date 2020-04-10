@@ -3,6 +3,15 @@ drop table if exists tmp_fish_thatfitthebill;
 drop table if exists tmp_fishnoeap;
 drop table if exists tmp_onlyfish;
 drop table if exists tmp_fish490;
+drop table if exists tmp_onlydeficiencies;
+
+select fmrel_ftr_zdb_id as featdef
+into tmp_onlydeficiencies
+from feature, feature_marker_relationship, marker
+where feature_type='DEFICIENCY'
+and fmrel_ftr_zdb_id=feature_zdb_id
+and fmrel_mrkr_zdb_id=mrkr_zdb_id
+group by fmrel_ftr_zdb_id having count(fmrel_ftr_zdb_id)=1;
 
 select distinct fish_zdb_id , fish_name, concat(fc_gene_zdb_id,E'\t',mrkr_abbrev,E'\t',fc_affector_zdb_id,E'\t',feature_abbrev) as affector
 into tmp_onlyfish
@@ -13,6 +22,15 @@ and fc_affector_zdb_id like 'ZDB-ALT%'
 and fc_affector_zdb_id = feature_zdb_id
 and feature_type in ('POINT_MUTATION','COMPLEX','DELETION','INSERTION','INDEL')
 and fc_gene_zdb_id=mrkr_zdb_id
+union
+select distinct fish_zdb_id, fish_name, concat(featdef,E'\t',feature_abbrev,E'\t',mrkr_zdb_id,E'\t',mrkr_abbrev,E'\t',feature_type) as affector
+from fish, genotype_Feature, feature_marker_relationship, feature,marker,tmp_onlydeficiencies
+where fish_functional_affected_gene_count=2
+and fish_genotype_zdb_id = genofeat_geno_zdb_id
+and genofeat_feature_Zdb_id = featdef
+and feature_zdb_id = featdef
+and featdef=fmrel_ftr_zdb_id
+and fmrel_mrkr_zdb_id = mrkr_zdb_id
 union
 select distinct fish_zdb_id , fish_name, concat(fc_gene_zdb_id,E'\t',mrkr_abbrev,E'\t',fc_affector_zdb_id,E'\t',feature_abbrev) as affector
 from fish, fish_components, feature, feature_marker_relationship, marker
