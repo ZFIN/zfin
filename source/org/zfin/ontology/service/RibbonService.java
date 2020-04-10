@@ -15,7 +15,6 @@ import org.zfin.framework.api.*;
 import org.zfin.marker.presentation.ExpressionDetail;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -45,104 +44,42 @@ public class RibbonService {
     @Autowired
     private PublicationRepository publicationRepository;
 
-    private OntologyService service = new OntologyService();
-
     public RibbonSummary buildGORibbonSummary(String zdbID) throws Exception {
-
-        // define the All terms and get the slim terms from the ontology subset
-        List<GenericTerm> categoryTerms = List.of(
-                ontologyRepository.getTermByOboID("GO:0003674"), // molecular_function
-                ontologyRepository.getTermByOboID("GO:0008150"), // biological_process
-                ontologyRepository.getTermByOboID("GO:0005575")  // cellular_component
-        );
-        List<GenericTerm> goSlimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
-
         RibbonConfig ribbonConfig = RibbonConfig.builder()
                 .solrRequestHandler("/go-annotation")
-                .categories(categoryTerms.stream()
-                        .map(category -> RibbonConfigCategory.builder()
-                                .categoryTerm(category)
-                                .slimTerms(goSlimTerms.stream()
-                                        .filter(slimTerm -> slimTerm.getOntology() == category.getOntology())
-                                        .collect(toList()))
-                                .build())
-                        .collect(Collectors.toList())
-                )
+                .categories(List.of(
+                        RibbonConfigCategory.molecularFunction(),
+                        RibbonConfigCategory.biologicalProcess(),
+                        RibbonConfigCategory.cellularComponent()
+                ))
                 .build();
 
         return buildRibbonSummary(zdbID, ribbonConfig);
     }
 
     public RibbonSummary buildExpressionRibbonSummary(String zdbID) throws Exception {
-
-        List<RibbonConfigCategory> categories = new ArrayList<>(3);
-        categories.add(RibbonConfigCategory.builder()
-                .categoryTerm(ontologyRepository.getTermByOboID("ZFA:0100000")) // ZFA root
-                .slimTerms(ontologyRepository.getZfaRibbonTerms())
-                .allLabel("All anatomical structures")
-                .otherLabel("Other structures")
-                .build()
-        );
-        categories.add(RibbonConfigCategory.builder()
-                .categoryTerm(ontologyRepository.getTermByOboID("ZFS:0100000")) // ZFS root
-                .slimTerms(service.getRibbonStages())
-                .allLabel("All stages")
-                .otherLabel("Unknown stage")
-                .build()
-        );
-        categories.add(RibbonConfigCategory.builder()
-                .categoryTerm(ontologyRepository.getTermByOboID("GO:0005575")) // cellular_component
-                .slimTerms(ontologyRepository.getTermsInSubset("goslim_agr").stream()
-                        .filter(term -> term.getOntology() == Ontology.GO_CC)
-                        .collect(toList())
-                )
-                .build()
-        );
-
         RibbonConfig ribbonConfig = RibbonConfig.builder()
                 .solrRequestHandler("/expression-annotation")
-                .categories(categories)
+                .categories(List.of(
+                        RibbonConfigCategory.anatomy(),
+                        RibbonConfigCategory.stage(),
+                        RibbonConfigCategory.cellularComponent()
+                ))
                 .build();
 
         return buildRibbonSummary(zdbID, ribbonConfig);
     }
 
     public RibbonSummary buildPhenotypeRibbonSummary(String zdbID) throws Exception {
-        List<GenericTerm> agrGoSlimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
-        List<RibbonConfigCategory> categories = new ArrayList<>(5);
-        categories.add(RibbonConfigCategory.builder()
-                .categoryTerm(ontologyRepository.getTermByOboID("ZFA:0100000"))  // ZFA root
-                .slimTerms(ontologyRepository.getZfaRibbonTerms())
-                .allLabel("All affected structures")
-                .otherLabel("Other structures")
-                .build()
-        );
-        categories.add(RibbonConfigCategory.builder()
-                .categoryTerm(ontologyRepository.getTermByOboID("ZFS:0100000")) // ZFS root
-                .slimTerms(service.getRibbonStages())
-                .allLabel("All stages")
-                .otherLabel("Unknown stage")
-                .build()
-        );
-        categories.add(RibbonConfigCategory.builder()
-                .categoryTerm(ontologyRepository.getTermByOboID("GO:0003674")) // molecular_function
-                .slimTerms(agrGoSlimTerms.stream().filter(term -> term.getOntology() == Ontology.GO_MF).collect(toList()))
-                .build()
-        );
-        categories.add(RibbonConfigCategory.builder()
-                .categoryTerm(ontologyRepository.getTermByOboID("GO:0008150")) // biological_process
-                .slimTerms(agrGoSlimTerms.stream().filter(term -> term.getOntology() == Ontology.GO_BP).collect(toList()))
-                .build()
-        );
-        categories.add(RibbonConfigCategory.builder()
-                .categoryTerm(ontologyRepository.getTermByOboID("GO:0005575")) // biological_process
-                .slimTerms(agrGoSlimTerms.stream().filter(term -> term.getOntology() == Ontology.GO_CC).collect(toList()))
-                .build()
-        );
-
         RibbonConfig config = RibbonConfig.builder()
                 .solrRequestHandler("/phenotype-annotation")
-                .categories(categories)
+                .categories(List.of(
+                        RibbonConfigCategory.anatomy(),
+                        RibbonConfigCategory.stage(),
+                        RibbonConfigCategory.molecularFunction(),
+                        RibbonConfigCategory.biologicalProcess(),
+                        RibbonConfigCategory.cellularComponent()
+                ))
                 .build();
 
         return buildRibbonSummary(zdbID, config);
