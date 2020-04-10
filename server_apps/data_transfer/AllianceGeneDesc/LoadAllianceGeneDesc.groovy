@@ -36,7 +36,30 @@ ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properti
 //new HibernateSessionCreator()
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
-DOWNLOAD_URL = "http://reports.alliancegenome.org/gene-descriptions/ZFIN_gene_desc_latest.json"
+
+releaseVersionJson = new JsonSlurper().parseText(new URL('https://fms.alliancegenome.org/api/datafile/by/GENE-DESCRIPTION-JSON/ZFIN?latest=true').text)
+
+
+
+fmsURL = "https://fms.alliancegenome.org/api/datafile/by/GENE-DESCRIPTION-JSON/ZFIN?latest=true"
+
+
+fmsJson = new JsonSlurper().parseText(new URL(fmsURL).text)
+
+        s3Path = fmsJson.s3Path
+
+
+
+
+
+
+
+
+DOWNLOAD_URL = "https://download.alliancegenome.org/" + s3Path
+
+DOWNLOAD_URL=DOWNLOAD_URL.replace("[","")
+DOWNLOAD_URL=DOWNLOAD_URL.replace("]","")
+
 def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
 def out = new BufferedOutputStream(file)
 out << new URL(DOWNLOAD_URL).openStream()
@@ -45,7 +68,11 @@ out.close()
 def proc1 = "rm -rf geneDesc.csv".execute()
 proc1
     print "Loading local JSON file ... "
-    json = new JsonSlurper().parse(new FileReader("ZFIN_gene_desc_latest.json"))
+//    json = new JsonSlurper().parse(new FileReader("GENE-DESCRIPTION-JSON_ZFIN_28.json"))
+def jsonSlurper =  new JsonSlurper()
+def reader = new BufferedReader(new InputStreamReader(new FileInputStream(DOWNLOAD_URL.tokenize("/")[-1]),"UTF-8"))
+def json = jsonSlurper.parse(reader)
+
 def geneids=new ArrayList<String>()
 def outCSV=new File('geneDesc.csv')
 json.data.each {

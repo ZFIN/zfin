@@ -4,6 +4,7 @@
 
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="EXPRESSION" value="Expression"/>
+<c:set var="PHENOTYPE" value="Phenotype"/>
 <c:set var="ANTIBODIES" value="Antibodies"/>
 <c:set var="PLASMIDS" value="Plasmids"/>
 <c:set var="PATHWAYS" value="Interactions and Pathways"/>
@@ -45,6 +46,10 @@
             <z:section title="Wild Type Expression Summary">
                 <div class="__react-root" id="GeneExpressionRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
+        </z:section>
+
+        <z:section title="${PHENOTYPE}">
+            <div class="__react-root" id="PhenotypeRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
         <z:section title="${MUTANTS}">

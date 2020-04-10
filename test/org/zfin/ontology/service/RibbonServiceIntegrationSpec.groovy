@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
 import org.zfin.framework.api.RibbonCategory
 import org.zfin.framework.api.RibbonSummary
+import org.zfin.marker.presentation.ExpressionDetail
 import org.zfin.marker.presentation.ExpressionRibbonDetail
 import spock.lang.Shared
 import spock.lang.Unroll
@@ -46,9 +47,25 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     }
 
     @Unroll
+    def "#geneID and #ribbonTermID "() {
+        when:
+        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, ribbonTermID)
+
+        then:
+        termCounts.size() > numberOfRecords
+
+        where:
+        geneID              | ribbonTermID  | numberOfRecords
+        // all records
+        //"ZDB-GENE-990415-8" | ""            | 200
+        // nervous system
+        "ZDB-GENE-990415-8" | "ZFA:0000396" | 60
+    }
+
+    @Unroll
     def "#geneID and #termID "() {
         when:
-        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, termID)
+        List<ExpressionDetail> termCounts = ribbonService.buildExpressionDetail(geneID, termID)
 
         then:
         termCounts.size() > numberOfRecords
@@ -58,7 +75,7 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         // all records
         //"ZDB-GENE-990415-8" | ""            | 200
         // nervous system
-        "ZDB-GENE-990415-8" | "ZFA:0000396" | 60
+        "ZDB-GENE-990415-8" | "ZFA:0000042" | 60
     }
 
     @Unroll

@@ -1,13 +1,12 @@
 package org.zfin.expression.repository;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.TestConfiguration;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.DirectlySubmittedExpression;
@@ -27,10 +26,10 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -144,6 +143,23 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         ExpressionExperiment2 experiment = expRep.getExpressionExperiment2(experimentID);
         expRep.deleteExpressionExperiment(experiment);
+    }
+
+    @Test
+    public void getExpressionFromPub() {
+        String pubID = "ZDB-PUB-071023-13";
+
+        List<ExpressionExperiment2> experiment = expRep.getExpressionExperiment2ByPub(pubID, null);
+        assertNotNull(experiment);
+    }
+
+    @Test
+    public void getExpressionFromIDs() {
+        String pubID = "ZDB-PUB-071023-13";
+        List ids = new ArrayList();
+        ids.add(1);
+        List<ExpressionFigureStage> experiment = expRep.getExperimentFigureStagesByIds(ids);
+        assertNotNull(experiment);
     }
 
     @Test

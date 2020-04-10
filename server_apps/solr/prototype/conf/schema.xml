@@ -822,6 +822,7 @@
         <field name="term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
         <field name="stage_term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
         <field name="anatomy_term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
+        <field name="entity_term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
         <field name="construct_name" type="construct_name" indexed="true" stored="true" multiValued="false" />
         <field name="construct_alias" type="construct_name" indexed="true" stored="true" multiValued="true" />
 

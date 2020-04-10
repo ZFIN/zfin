@@ -21,6 +21,7 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -458,4 +459,8 @@ public interface ExpressionRepository {
     List<MarkerDBLink> getAllDbLinks(ForeignDB.AvailableName database);
 
     ExpressionResult2 getExpressionResult2(long id);
+
+    List<ExpressionExperiment2> getExpressionExperiment2ByPub(String pubID, String geneID);
+
+    List<ExpressionFigureStage> getExperimentFigureStagesByIds(List<Integer> expressionIDs);
 }
