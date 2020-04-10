@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
-import org.zfin.gwt.root.dto.PublicationDTO;
-import org.zfin.gwt.root.dto.StageDTO;
-import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Setter
@@ -18,34 +16,33 @@ import java.util.stream.Collectors;
 public class ExpressionRibbonDetail {
 
     @JsonView(View.API.class)
-    private TermDTO term;
+    private GenericTerm term;
     @JsonView(View.API.class)
-    private List<StageDTO> stages;
+    private List<GenericTerm> stages;
     @JsonView(View.API.class)
-    private Map<String, String> stageHistogram;
-    @JsonView(View.API.class)
-    private List<Boolean> definedStages;
-    @JsonView(View.API.class)
-    private PublicationDTO publication;
+    private Publication publication;
 
     private List<String> pubIDs;
 
     @JsonView(View.API.class)
     private int getNumberOfPublications() {
-        if (pubIDs == null)
+        if (pubIDs == null) {
             return 0;
+        }
         return pubIDs.size();
     }
 
-    public void addStage(StageDTO stage) {
-        if (stages == null)
+    public void addStage(GenericTerm stage) {
+        if (stages == null) {
             stages = new ArrayList<>();
+        }
         stages.add(stage);
     }
 
     public void addPublications(List<String> pubIDValues) {
-        if (pubIDs == null)
+        if (pubIDs == null) {
             pubIDs = new ArrayList<>();
+        }
         pubIDs.addAll(pubIDValues);
         pubIDs = pubIDs.stream().distinct().collect(Collectors.toList());
     }

@@ -15,6 +15,9 @@
 
     <z:attributeListItem label="Cross-Species Comparison:">
         <a href="https://alliancegenome.org/gene/ZFIN:${formBean.marker.zdbID}">Alliance</a>
+        <c:if test="${bGeeIds != null}">
+            , <a href="https://bgee.org/?page=expression_comparison&gene_list=${bGeeIds}">Bgee</a>
+        </c:if>
     </z:attributeListItem>
 
     <z:attributeListItem label="High Throughput Data:">

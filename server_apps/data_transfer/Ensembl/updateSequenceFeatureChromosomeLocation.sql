@@ -135,7 +135,7 @@ INSERT INTO sequence_feature_chromosome_location_generated
   WHERE  dblink_fdbcont_zdb_id = fdbcont_zdb_id
          AND dblink_acc_num = accnum1
          AND fdb_db_pk_id = fdbcont_fdb_db_id
-         AND fbdcont_zdb_id !='ZDB-FDBCONT-200123-1'
+         AND fdbcont_zdb_id !='ZDB-FDBCONT-200123-1'
          AND start IS NOT NULL
          AND endval IS NOT NULL;
 
@@ -162,7 +162,7 @@ INSERT INTO sequence_feature_chromosome_location_generated
          AND dblink_acc_num = accnum1
          AND fdb_db_pk_id = fdbcont_fdb_db_id
          AND start IS NOT NULL
-         AND fbdcont_zdb_id !='ZDB-FDBCONT-200123-1'
+         AND fdbcont_zdb_id !='ZDB-FDBCONT-200123-1'
          AND endval IS NOT NULL;
 
 insert into sequence_feature_chromosome_location_generated (

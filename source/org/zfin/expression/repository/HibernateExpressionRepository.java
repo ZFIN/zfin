@@ -2,7 +2,8 @@ package org.zfin.expression.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
@@ -15,6 +16,7 @@ import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
@@ -37,7 +39,6 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
@@ -51,6 +52,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
@@ -350,16 +352,15 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
             basicXpat.setAssay(assay);
             PublicationAgrDTO pubDto = new PublicationAgrDTO();
-            if (pubMedId != null){
-                pubDto.setPublicationId("PMID:"+pubMedId);
+            if (pubMedId != null) {
+                pubDto.setPublicationId("PMID:" + pubMedId);
                 List<String> pubPages = new ArrayList<>();
                 pubPages.add("reference");
-                CrossReferenceDTO zfinPubXref = new CrossReferenceDTO("ZFIN", pubZdbId,pubPages);
+                CrossReferenceDTO zfinPubXref = new CrossReferenceDTO("ZFIN", pubZdbId, pubPages);
                 pubDto.setCrossReference(zfinPubXref);
-            }
-            else {
-                if (pubZdbId != null){
-                    pubDto.setPublicationId("ZFIN:"+pubZdbId);
+            } else {
+                if (pubZdbId != null) {
+                    pubDto.setPublicationId("ZFIN:" + pubZdbId);
                 }
             }
             basicXpat.setEvidence(pubDto);
@@ -377,10 +378,18 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             whereExpressedStatement = superTermName;
 
             if (subTermId != null) {
-                if (subTermId.startsWith("GO:")) { cellularComponentTermId = subTermId; }
-                if (subTermId.startsWith("MPATH:")) { anatomicalSubStructureTermId = subTermId; }
-                if (subTermId.startsWith("BSPO:")) { anatomicalStructureQualifierTermId = subTermId; }
-                if (subTermId.startsWith("ZFA:")) { anatomicalSubStructureTermId = subTermId; }
+                if (subTermId.startsWith("GO:")) {
+                    cellularComponentTermId = subTermId;
+                }
+                if (subTermId.startsWith("MPATH:")) {
+                    anatomicalSubStructureTermId = subTermId;
+                }
+                if (subTermId.startsWith("BSPO:")) {
+                    anatomicalStructureQualifierTermId = subTermId;
+                }
+                if (subTermId.startsWith("ZFA:")) {
+                    anatomicalSubStructureTermId = subTermId;
+                }
 
                 whereExpressedStatement += " " + subTermName;
 
@@ -437,7 +446,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
             if (map.get(key) == null) {
                 List<ImageDTO> dtoList = new ArrayList<>();
-                map.put(key,dtoList);
+                map.put(key, dtoList);
             }
             map.get(key).add(dto);
         }
@@ -708,6 +717,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public ExpressionExperiment2 getExpressionExperiment2(String experimentID) {
         Session session = HibernateUtil.currentSession();
         return (ExpressionExperiment2) session.get(ExpressionExperiment2.class, experimentID);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ExpressionExperiment2> getExpressionExperiment2ByPub(String pubID, String geneID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from ExpressionExperiment2 where publication.zdbID = :pubID " +
+                "AND gene.zdbID";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+
+        return (List<ExpressionExperiment2>) query.list();
     }
 
     public ExpressionDetailsGenerated getExpressionExperiment2(long id) {
@@ -1674,7 +1694,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<String>) query.list();
     }
 
-    public List<ExpressionResult> getNonEfgExpressionResultsByFish (Fish fish) {
+    public List<ExpressionResult> getNonEfgExpressionResultsByFish(Fish fish) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
@@ -1690,7 +1710,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionResult>) query.list();
     }
 
-    public List<ExpressionResult> getEfgExpressionResultsByFish (Fish fish) {
+    public List<ExpressionResult> getEfgExpressionResultsByFish(Fish fish) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
@@ -1706,7 +1726,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionResult>) query.list();
     }
 
-    public List<ExpressionResult> getProteinExpressionResultsByFish (Fish fish) {
+    public List<ExpressionResult> getProteinExpressionResultsByFish(Fish fish) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
@@ -1920,8 +1940,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "    and fish_genotype_zdb_id = geno_zdb_id " +
 
                 "    and cefs_genox_zdb_id = genox_zdb_id " +
-                "    and cefs_mrkr_zdb_id = :strID "
-               ;
+                "    and cefs_mrkr_zdb_id = :strID ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
@@ -1959,7 +1978,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and cefs_genox_zdb_id = genox_zdb_id " +
                 "   and genox_fish_zdb_id = fish_zdb_id " +
                 "   and fish_genotype_zdb_id = geno_zdb_id " +
-         
+
                 "   and cefs_mrkr_zdb_id = :strID ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
@@ -2614,5 +2633,24 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public ExpressionResult2 getExpressionResult2(long id) {
         return (ExpressionResult2) HibernateUtil.currentSession().get(ExpressionResult2.class, id);
+    }
+
+    public List<ExpressionFigureStage> getExperimentFigureStagesByIds(List<Integer> expressionIDs) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select efs from ExpressionFigureStage as efs "
+                + "       left join efs.expressionExperiment.gene as gene "
+                + "       left join fetch efs.startStage "
+                + "       left join fetch efs.endStage "
+                + "       left join fetch efs.expressionExperiment "
+                + "       left join fetch efs.expressionResultSet "
+                + "       join fetch efs.figure "
+                + "       join efs.expressionExperiment.fishExperiment.fish as fish "
+                + "       where efs.id in :ids ";
+
+        Query query = session.createQuery(hql);
+        query.setParameterList("ids", expressionIDs.stream().map(Long::valueOf).collect(Collectors.toList()));
+
+        return (List<ExpressionFigureStage>) query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 }

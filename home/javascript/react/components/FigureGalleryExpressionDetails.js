@@ -96,13 +96,13 @@ const FigureGalleryExpressionDetails = ({figureDetails}) => {
                             {expression.entities.map(entity => {
                                 if (entity.subterm) {
                                     return (
-                                        <a href={`/action/ontology/post-composed-term-detail?superTermID=${entity.superterm.oboID}&subTermID=${entity.subterm.oboID}`}>
+                                        <a href={`/action/ontology/post-composed-term-detail?superTermID=${entity.superterm.oboID}&subTermID=${entity.subterm.oboID}`} key={`${entity.superterm.oboID}-${entity.subterm.oboID}`}>
                                             {entity.superterm.termName} {entity.subterm.termName}
                                         </a>
                                     );
                                 } else {
                                     return (
-                                        <a href={`/${entity.superterm.oboID}`}>
+                                        <a href={`/${entity.superterm.oboID}`} key={entity.superterm.oboID}>
                                             {entity.superterm.termName}
                                         </a>
                                     );

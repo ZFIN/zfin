@@ -8,9 +8,6 @@
         <table class="data-table" data-table="${collapse ? 'collapse' : ''}" data-toggle-container=".data-table-pagination">
             <jsp:doBody />
         </table>
-        <c:if test="${collapse}">
-            <div class="data-table-pagination">
-            </div>
-        </c:if>
+        <div class="data-table-pagination"></div>
     </div>
 </z:ifHasData>

@@ -36,9 +36,17 @@
         <put-attribute name="bodyClass" value="data-page" />
         <put-attribute name="body" value="/WEB-INF/jsp/marker/sequenceTargetingReagent/sequence-targeting-reagent-view.jsp" />
     </definition>
+    <definition name="marker/construct/construct-view.page" extends="main_layout">
+        <put-attribute name="bodyClass" value="data-page" />
+        <put-attribute name="body" value="/WEB-INF/jsp/marker/construct/construct-view.jsp" />
+    </definition>
     <definition name="marker/region/region-view.page" extends="main_layout">
         <put-attribute name="bodyClass" value="data-page" />
         <put-attribute name="body" value="/WEB-INF/jsp/marker/region/region-view.jsp" />
+    </definition>
+    <definition name="marker/efg/efg-view.page" extends="main_layout">
+        <put-attribute name="bodyClass" value="data-page" />
+        <put-attribute name="body" value="/WEB-INF/jsp/marker/efg/efg-view.jsp" />
     </definition>
 
     <definition name="marker/*.page" extends="main_layout">
