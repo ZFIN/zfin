@@ -63,7 +63,7 @@ const GeneExpressionRibbon = ({geneId}) => {
             width: '200px',
         },
         {
-            label: 'Terms',
+            label: 'Expressed Location',
             content: ({entities}) => (<PostComposedEntities entities={entities}/>),
             width: '200px',
         },

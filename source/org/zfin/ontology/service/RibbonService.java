@@ -195,6 +195,48 @@ public class RibbonService {
     }
 
     public JsonResultResponse<ExpressionDetail> buildExpressionDetail(String geneID, String termID, Pagination pagination) {
+        HashSet<String> expressionIDs = getDetailExpressionInfo(geneID, termID);
+        if (expressionIDs == null) return null;
+
+        ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
+        List<Integer> ids = expressionIDs.stream().map(Integer::parseInt).collect(toList());
+        List<ExpressionFigureStage> expressions = expressionRepository.getExperimentFigureStagesByIds(ids);
+        List<ExpressionDetail> detailList = expressions.stream()
+                .map(expression -> {
+                    ExpressionDetail detail = new ExpressionDetail();
+                    detail.setPublication(expression.getExpressionExperiment().getPublication());
+                    detail.setStartStage(expression.getStartStage().getName());
+                    detail.setEndStage(expression.getEndStage().getName());
+                    detail.setFish(expression.getExpressionExperiment().getFishExperiment().getFish());
+                    detail.setFigure(expression.getFigure());
+                    detail.setGene(expression.getExpressionExperiment().getGene());
+                    detail.setAssay(expression.getExpressionExperiment().getAssay());
+                    detail.setExperiment(expression.getExpressionExperiment().getFishExperiment().getExperiment());
+                    detail.setAntibody(expression.getExpressionExperiment().getAntibody());
+                    detail.setId(expression.getId());
+                    // filter out the terms that contain the term in question.
+                    detail.setEntities(expression.getExpressionResultSet().stream()
+                            .filter(eResult -> eResult.getEntity().getSuperterm().getOboID().equals(termID)
+                                    || (eResult.getEntity().getSubterm() != null && eResult.getEntity().getSubterm().getOboID().equals(termID)))
+                            .map(ExpressionResult2::getEntity)
+                            .collect(Collectors.toSet()));
+                    return detail;
+                })
+                .sorted(Comparator.comparing(expression -> expression.getFish().getDisplayName()))
+                .collect(Collectors.toList());
+
+        JsonResultResponse<ExpressionDetail> response = new JsonResultResponse<>();
+        response.setTotal(detailList.size());
+
+        // paginating
+        response.setResults(detailList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
+    }
+
+    private HashSet<String> getDetailExpressionInfo(String geneID, String termID) {
         SolrQuery query = new SolrQuery();
         query.setFilterQueries("category:" + Category.EXPRESSIONS.getName());
         query.addFilterQuery("gene_zdb_id:" + geneID);
@@ -218,45 +260,52 @@ public class RibbonService {
             return null;
         }
 
+        // remove artificial PK prefix: 'xpatex-'
         HashSet<String> expressionIDs = queryResponse.getFacetPivot().getVal(0).get(0).getPivot().stream()
-                .map(pivotField -> (String) pivotField.getValue()).map(name -> name.substring(name.indexOf("-") + 1)).collect(toCollection(HashSet::new));
-
-
-        ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
-        List<Integer> ids = expressionIDs.stream().map(Integer::parseInt).collect(toList());
-        List<ExpressionFigureStage> expressions = expressionRepository.getExperimentFigureStagesByIds(ids);
-        List<ExpressionDetail> detailList = expressions.stream()
-                .map(expression -> {
-                    ExpressionDetail detail = new ExpressionDetail();
-                    detail.setPublication(expression.getExpressionExperiment().getPublication());
-                    detail.setStartStage(expression.getStartStage().getName());
-                    detail.setEndStage(expression.getEndStage().getName());
-                    detail.setFish(expression.getExpressionExperiment().getFishExperiment().getFish());
-                    detail.setFigure(expression.getFigure());
-                    detail.setGene(expression.getExpressionExperiment().getGene());
-                    detail.setAssay(expression.getExpressionExperiment().getAssay());
-                    detail.setExperiment(expression.getExpressionExperiment().getFishExperiment().getExperiment());
-                    detail.setAntibody(expression.getExpressionExperiment().getAntibody());
-                    detail.setId(expression.getId());
-                    detail.setEntities(expression.getExpressionResultSet().stream().map(ExpressionResult2::getEntity).collect(Collectors.toSet()));
-                    return detail;
-                })
-                .sorted(Comparator.comparing(expression -> expression.getFish().getDisplayName()))
-                .collect(Collectors.toList());
-
-        JsonResultResponse<ExpressionDetail> response = new JsonResultResponse<>();
-        response.setTotal(detailList.size());
-
-        // paginating
-        response.setResults(detailList.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList()));
-        return response;
+                .map(pivotField -> (String) pivotField.getValue()).map(name -> name.replace("xpatex-", "")).collect(toCollection(HashSet::new));
+        return expressionIDs;
     }
 
 
     public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID, boolean includeReporter) {
+        List<ExpressionRibbonDetail> details = getExpressionRibbonDetails(geneID, ribbonTermID, includeReporter);
+        if (details == null) return null;
+
+        // remove BSPO
+        details.removeIf(ribbonDetail -> ribbonDetail.getTerm().getOboID().startsWith("BSPO"));
+
+        PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
+        // fixup single publications.
+        details.stream()
+                .filter(ribbonDetail -> ribbonDetail.getPubIDs().size() == 1)
+                .forEach(ribbonDetail1 -> {
+                    Publication pub = pubRepository.getPublication(ribbonDetail1.getPubIDs().get(0));
+                    ribbonDetail1.setPublication(pub);
+                });
+
+
+        // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
+        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+        Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
+        if (ribbonTermID != null) {
+            // filter by stage
+            if (ribbonTermID.contains("ZFS:")) {
+                details.removeIf(detail -> detail.getStages().stream().noneMatch(stage -> stage.getOboID().equals(ribbonTermID)));
+            } else {
+                details.removeIf(expressionRibbonDetail -> {
+                    List<GenericTerm> closure = getClosureForRibbonTerms.get(ribbonTermID);
+                    // remove if no closure element is found
+                    if (closure == null) {
+                        return true;
+                    }
+                    return closure.stream().noneMatch(genericTerm -> genericTerm.getOboID().equals(expressionRibbonDetail.getTerm().getOboID()));
+                });
+            }
+        }
+        return details;
+    }
+
+    private List<ExpressionRibbonDetail> getExpressionRibbonDetails(String geneID, String ribbonTermID, boolean includeReporter) {
         SolrQuery query = new SolrQuery();
         //query.setRequestHandler("/images");
         query.setFilterQueries("category:" + Category.EXPRESSIONS.getName());
