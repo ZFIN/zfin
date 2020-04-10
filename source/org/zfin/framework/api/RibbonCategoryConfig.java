@@ -52,29 +52,22 @@ public class RibbonCategoryConfig {
     public static RibbonCategoryConfig molecularFunction() {
         return RibbonCategoryConfig.builder()
                 .categoryTerm(ontologyRepository.getTermByOboID("GO:0003674"))
-                .slimTerms(filterTermsByOntology(getAgrGoSlimTerms(), Ontology.GO_MF))
+                .slimTerms(filterTermsByOntology(ontologyRepository.getTermsInSubset("goslim_agr"), Ontology.GO_MF))
                 .build();
     }
 
     public static RibbonCategoryConfig biologicalProcess() {
         return RibbonCategoryConfig.builder()
                 .categoryTerm(ontologyRepository.getTermByOboID("GO:0008150"))
-                .slimTerms(filterTermsByOntology(getAgrGoSlimTerms(), Ontology.GO_BP))
+                .slimTerms(filterTermsByOntology(ontologyRepository.getTermsInSubset("goslim_agr"), Ontology.GO_BP))
                 .build();
     }
 
     public static RibbonCategoryConfig cellularComponent() {
         return RibbonCategoryConfig.builder()
                 .categoryTerm(ontologyRepository.getTermByOboID("GO:0005575"))
-                .slimTerms(filterTermsByOntology(getAgrGoSlimTerms(), Ontology.GO_CC))
+                .slimTerms(filterTermsByOntology(ontologyRepository.getTermsInSubset("goslim_agr"), Ontology.GO_CC))
                 .build();
-    }
-
-    private static List<GenericTerm> getAgrGoSlimTerms() {
-        if (agrGoSlimTerms == null) {
-            agrGoSlimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
-        }
-        return agrGoSlimTerms;
     }
 
     private static List<GenericTerm> filterTermsByOntology(List<GenericTerm> terms, Ontology ontology) {
