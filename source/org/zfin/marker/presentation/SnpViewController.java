@@ -69,4 +69,16 @@ public class SnpViewController {
 
         return "marker/snp-view.page";
     }
+
+
+    @RequestMapping(value = "/snp/view-new/{zdbID}")
+    public String getSNPViewNew(Model model, @PathVariable("zdbID") String zdbID
+    ) throws Exception {
+        // set base bean
+        getView(model, zdbID);
+        //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
+
+        return "marker/snp/snp-view.page";
+    }
+
 }
