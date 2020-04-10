@@ -5,7 +5,8 @@
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}"
-                   deleteURL="none"/>
+                   deleteURL="none"
+                   prototypeURL="/action/marker/transcript/prototype-view/${formBean.marker.zdbID}"/>
 
 <zfin2:transcriptHead transcript="${formBean.marker}" previousNames="${formBean.previousNames}"
                       relatedGenes="${formBean.relatedGenes}" strain="${formBean.strain}"/>

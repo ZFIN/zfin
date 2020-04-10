@@ -1,0 +1,1 @@
+<jsp:useBean id="formBean" class="org.zfin.marker.presentation.TranscriptBean" scope="request"/>

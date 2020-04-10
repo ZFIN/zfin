@@ -47,6 +47,9 @@
         </ul>
 
     </z:attributeListItem>
-
+    
+    <z:attributeListItem label="Citations">
+        <a href="/action/marker/citation-list/${formBean.marker.zdbID}">(${formBean.numPubs})</a>
+    </z:attributeListItem>
 
 </z:attributeList>

@@ -108,9 +108,11 @@
             <z:section title="Confirmed Transcripts">
                 <jsp:include page="gene-view-transcripts.jsp"/>
             </z:section>
-            <z:section title="Withdrawn Transcripts">
-                <jsp:include page="gene-view-withdrawn-transcripts.jsp"/>
-            </z:section>
+            <authz:authorize access="hasRole('root')">
+                <z:section title="Withdrawn Transcripts">
+                    <jsp:include page="gene-view-withdrawn-transcripts.jsp"/>
+                </z:section>
+            </authz:authorize>
         </z:section>
 
         <z:section title="${SEQUENCES}">
