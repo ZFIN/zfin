@@ -1,19 +1,20 @@
 package org.zfin.ontology.service;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.api.*;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.service.SolrService;
 
@@ -30,11 +31,18 @@ import static java.util.stream.Collectors.*;
 @Log4j2
 public class RibbonService {
 
+    @Autowired
+    private AnatomyRepository anatomyRepository;
+
+    @Autowired
+    private OntologyRepository ontologyRepository;
+
+    @Autowired
+    private PublicationRepository publicationRepository;
+
     private OntologyService service = new OntologyService();
 
     public RibbonSummary buildGORibbonSummary(String zdbID) throws Exception {
-
-        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
         // define the All terms and get the slim terms from the ontology subset
         List<GenericTerm> categoryTerms = List.of(
@@ -42,52 +50,81 @@ public class RibbonService {
                 ontologyRepository.getTermByOboID("GO:0008150"), // biological_process
                 ontologyRepository.getTermByOboID("GO:0005575")  // cellular_component
         );
-        List<GenericTerm> slimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
+        List<GenericTerm> goSlimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
 
-        return buildRibbonSummary(zdbID, categoryTerms, slimTerms, "/go-annotation");
+        RibbonConfig ribbonConfig = RibbonConfig.builder()
+                .solrRequestHandler("/go-annotation")
+                .categories(categoryTerms.stream()
+                        .map(category -> RibbonConfigCategory.builder()
+                                .categoryTerm(category)
+                                .slimTerms(goSlimTerms.stream()
+                                        .filter(slimTerm -> slimTerm.getOntology() == category.getOntology())
+                                        .collect(toList()))
+                                .build())
+                        .collect(Collectors.toList())
+                )
+                .build();
+
+        return buildRibbonSummary(zdbID, ribbonConfig);
     }
 
     public RibbonSummary buildExpressionRibbonSummary(String zdbID) throws Exception {
 
-        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-
-        List<GenericTerm> categoryTerms = List.of(
-                ontologyRepository.getTermByOboID("ZFA:0100000"), // ZFA root
-                ontologyRepository.getTermByOboID("ZFS:0100000"), // ZFS root
-                ontologyRepository.getTermByOboID("GO:0005575")  // cellular_component
+        List<RibbonConfigCategory> categories = new ArrayList<>(3);
+        categories.add(RibbonConfigCategory.builder()
+                .categoryTerm(ontologyRepository.getTermByOboID("ZFA:0100000")) // ZFA root
+                .slimTerms(ontologyRepository.getZfaRibbonTerms())
+                .allLabel("All anatomical structures")
+                .otherLabel("Other structures")
+                .build()
         );
-        List<GenericTerm> stageSlim = service.getRibbonStages();
-        List<GenericTerm> anatomySlim = ontologyRepository.getZfaRibbonTerms();
-        List<GenericTerm> agrGoSlimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
+        categories.add(RibbonConfigCategory.builder()
+                .categoryTerm(ontologyRepository.getTermByOboID("ZFS:0100000")) // ZFS root
+                .slimTerms(service.getRibbonStages())
+                .allLabel("All stages")
+                .otherLabel("Unknown stage")
+                .build()
+        );
+        categories.add(RibbonConfigCategory.builder()
+                .categoryTerm(ontologyRepository.getTermByOboID("GO:0005575")) // cellular_component
+                .slimTerms(ontologyRepository.getTermsInSubset("goslim_agr").stream()
+                        .filter(term -> term.getOntology() == Ontology.GO_CC)
+                        .collect(toList())
+                )
+                .build()
+        );
 
-        List<GenericTerm> slimTerms = Stream.of(agrGoSlimTerms, stageSlim, anatomySlim)
-                .flatMap(Collection::stream)
-                .collect(toList());
+        RibbonConfig ribbonConfig = RibbonConfig.builder()
+                .solrRequestHandler("/expression-annotation")
+                .categories(categories)
+                .build();
 
-        RibbonSummary ribbonSummary = buildRibbonSummary(zdbID, categoryTerms, slimTerms, "/expression-annotation");
-        //remove the stage-other, because it isn't meaningful
-        ribbonSummary.getSubjects().get(0).getGroups().remove("ZFS:0100000-other");
-        return ribbonSummary;
+        return buildRibbonSummary(zdbID, ribbonConfig);
     }
 
 
-    public RibbonSummary buildRibbonSummary(String zdbID,
-                                            List<GenericTerm> categoryTerms,
-                                            List<GenericTerm> slimTerms,
-                                            String handler) throws Exception {
+    public RibbonSummary buildRibbonSummary(String zdbID, RibbonConfig config) throws Exception {
 
         // pull out just the IDs
-        List<String> categoryIDs = categoryTerms.stream().map(GenericTerm::getOboID).collect(toList());
-        List<String> slimIDs = slimTerms.stream().map(GenericTerm::getOboID).collect(toList());
+        List<String> categoryIDs = config.getCategories().stream()
+                .map(RibbonConfigCategory::getCategoryTerm)
+                .map(GenericTerm::getOboID)
+                .collect(toList());
+        List<String> slimIDs = config.getCategories().stream()
+                .map(RibbonConfigCategory::getSlimTerms)
+                .flatMap(List::stream)
+                .map(GenericTerm::getOboID)
+                .collect(toList());
 
-        Map<String, Integer> otherCounts = getRibbonCounts(handler, zdbID, categoryIDs, slimIDs);
-        Map<String, Integer> allCounts = getRibbonCounts(handler, zdbID, categoryIDs, Collections.emptyList());
-        Map<String, Integer> slimCounts = getRibbonCounts(handler, zdbID, slimIDs, Collections.emptyList());
+        Map<String, Integer> otherCounts = getRibbonCounts(config.getSolrRequestHandler(), zdbID, categoryIDs, slimIDs);
+        Map<String, Integer> allCounts = getRibbonCounts(config.getSolrRequestHandler(), zdbID, categoryIDs, Collections.emptyList());
+        Map<String, Integer> slimCounts = getRibbonCounts(config.getSolrRequestHandler(), zdbID, slimIDs, Collections.emptyList());
 
         // build the categories field with term names and definitions
-        List<RibbonCategory> categories = categoryTerms.stream()
-                .map(categoryTerm -> {
+        List<RibbonCategory> categories = config.getCategories().stream()
+                .map(categoryConfig -> {
                     RibbonCategory category = new RibbonCategory();
+                    GenericTerm categoryTerm = categoryConfig.getCategoryTerm();
                     String termNameDisplay = categoryTerm.getTermName().replace('_', ' ');
 
                     category.setDescription(categoryTerm.getDefinition());
@@ -95,15 +132,16 @@ public class RibbonService {
                     category.setLabel(termNameDisplay);
                     List<RibbonGroup> groups = new ArrayList<>();
 
-                    RibbonGroup allGroup = new RibbonGroup();
-                    allGroup.setId(categoryTerm.getOboID());
-                    allGroup.setLabel("All " + termNameDisplay);
-                    allGroup.setDescription("Show all " + termNameDisplay + " annotations");
-                    allGroup.setType(RibbonGroup.Type.ALL);
-                    groups.add(allGroup);
+                    if (categoryConfig.isIncludeAll()) {
+                        RibbonGroup allGroup = new RibbonGroup();
+                        allGroup.setId(categoryTerm.getOboID());
+                        allGroup.setLabel(StringUtils.defaultIfEmpty(categoryConfig.getAllLabel(), "All " + termNameDisplay));
+                        allGroup.setDescription(StringUtils.defaultIfEmpty(categoryConfig.getAllDescription(), "Show all " + termNameDisplay + " annotations"));
+                        allGroup.setType(RibbonGroup.Type.ALL);
+                        groups.add(allGroup);
+                    }
 
-                    groups.addAll(slimTerms.stream()
-                            .filter(slimTerm -> slimTerm.getOntology() == categoryTerm.getOntology())
+                    groups.addAll(categoryConfig.getSlimTerms().stream()
                             .map(slimTerm -> {
                                 RibbonGroup group = new RibbonGroup();
                                 group.setId(slimTerm.getOboID());
@@ -115,16 +153,14 @@ public class RibbonService {
                             .collect(toList())
                     );
 
-                    RibbonGroup otherGroup = new RibbonGroup();
-                    otherGroup.setId(categoryTerm.getOboID());
-                    if (categoryTerm.getOboID().equals("ZFS:0100000")) {
-                        otherGroup.setLabel("Unknown stage");
-                    } else {
-                        otherGroup.setLabel("Other " + termNameDisplay);
+                    if (categoryConfig.isIncludeOther()) {
+                        RibbonGroup otherGroup = new RibbonGroup();
+                        otherGroup.setId(categoryTerm.getOboID());
+                        otherGroup.setLabel(StringUtils.defaultIfEmpty(categoryConfig.getOtherLabel(), "Other " + termNameDisplay));
+                        otherGroup.setDescription(StringUtils.defaultIfEmpty(categoryConfig.getOtherDescription(), "Show all " + termNameDisplay + " annotations not mapped to a specific term"));
+                        otherGroup.setType(RibbonGroup.Type.OTHER);
+                        groups.add(otherGroup);
                     }
-                    otherGroup.setDescription("Show all " + termNameDisplay + " annotations not mapped to a specific term");
-                    otherGroup.setType(RibbonGroup.Type.OTHER);
-                    groups.add(otherGroup);
 
                     category.setGroups(groups);
                     return category;
@@ -215,8 +251,7 @@ public class RibbonService {
 
         HashSet<String> termIDs = queryResponse.getFacetPivot().getVal(0).stream()
                 .map(pivotField -> (String) pivotField.getValue()).collect(toCollection(HashSet::new));
-        AnatomyRepository aoRepository = RepositoryFactory.getAnatomyRepository();
-        List<GenericTerm> terms = aoRepository.getMultipleTerms(termIDs);
+        List<GenericTerm> terms = anatomyRepository.getMultipleTerms(termIDs);
         Map<String, GenericTerm> termMap = terms.stream()
                 .collect(toMap(GenericTerm::getOboID, term -> term));
 
@@ -224,7 +259,7 @@ public class RibbonService {
                 .map(pivotField -> pivotField.getPivot().stream().map(field -> (String) field.getValue()).collect(toList()))
                 .flatMap(Collection::stream)
                 .collect(toSet());
-        List<GenericTerm> stageTerms = aoRepository.getMultipleTerms(stageTermIDs);
+        List<GenericTerm> stageTerms = anatomyRepository.getMultipleTerms(stageTermIDs);
         Map<String, GenericTerm> stageTermMap = stageTerms.stream()
                 .collect(toMap(GenericTerm::getOboID, term -> term));
         termMap.putAll(stageTermMap);
@@ -248,18 +283,16 @@ public class RibbonService {
         // remove BSPO
         details.removeIf(ribbonDetail -> ribbonDetail.getTerm().getOboID().startsWith("BSPO"));
 
-        PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
         // fixup single publications.
         details.stream()
                 .filter(ribbonDetail -> ribbonDetail.getPubIDs().size() == 1)
                 .forEach(ribbonDetail1 -> {
-                    Publication pub = pubRepository.getPublication(ribbonDetail1.getPubIDs().get(0));
+                    Publication pub = publicationRepository.getPublication(ribbonDetail1.getPubIDs().get(0));
                     ribbonDetail1.setPublication(pub);
                 });
 
 
         // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
-        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
         Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
         if (ribbonTermID != null) {
             // filter by stage

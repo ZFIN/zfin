@@ -1,5 +1,6 @@
 package org.zfin.ontology.service
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
 import org.zfin.framework.api.RibbonCategory
 import org.zfin.framework.api.RibbonSummary
@@ -9,8 +10,9 @@ import spock.lang.Unroll
 
 class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
 
-    @Shared
-    RibbonService ribbonService = new RibbonService()
+    @Autowired
+    RibbonService ribbonService
+
     @Shared
     def expressionCategory = ["anatomy": 0, "stage": 1, "cellular component": 2]
 
@@ -33,7 +35,6 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         "/expression-annotation" | "ZDB-GENE-041001-150"  | "ZFS:0000004"
         "/expression-annotation" | "ZDB-GENE-041001-150"  | "ZFS:0000046"
         "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000046"
-        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000045"
         "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000049"
         "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000050"
         "/go-annotation"         | "ZDB-GENE-990415-8"    | "GO:0005634"
@@ -102,7 +103,7 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         RibbonSummary ribbonSummary = ribbonService.buildExpressionRibbonSummary(zdbID)
         RibbonCategory ribbonCategory = ribbonSummary.categories.get(expressionCategory[category])
 
-        Integer allCount = ribbonSummary.subjects[expressionCategory[category]]?.groups[ribbonCategory.id]["ALL"]?.numberOfAnnotations
+        Integer allCount = ribbonSummary.subjects[0].groups[ribbonCategory.id]["ALL"]?.numberOfAnnotations
 
 
         then:
@@ -114,12 +115,12 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
 
         where:
         zdbID                 | category
-        "ZDB-GENE-990415-12"  | "anatomy"
-        "ZDB-GENE-990415-12"  | "stage"
-        "ZDB-GENE-990630-12"  | "cellular component"
-        "ZDB-GENE-041001-150" | "anatomy"
-        "ZDB-GENE-041001-150" | "stage"
-        "ZDB-GENE-041001-150" | "cellular component"
+        "ZDB-GENE-990415-30"  | "anatomy"
+        "ZDB-GENE-990415-30"  | "stage"
+        "ZDB-GENE-990415-30"  | "cellular component"
+        "ZDB-GENE-040624-5"   | "anatomy"
+        "ZDB-GENE-040624-5"   | "stage"
+        "ZDB-GENE-040624-5"   | "cellular component"
         "ZDB-GENE-980526-426" | "anatomy"
         "ZDB-GENE-980526-426" | "stage"
         "ZDB-GENE-980526-178" | "anatomy"
