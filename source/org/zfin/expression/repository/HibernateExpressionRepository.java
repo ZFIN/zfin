@@ -726,6 +726,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "AND gene.zdbID";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
+        query.setString("geneID", geneID);
 
         return (List<ExpressionExperiment2>) query.list();
     }
