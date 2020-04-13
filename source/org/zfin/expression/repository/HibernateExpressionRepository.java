@@ -723,7 +723,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public List<ExpressionExperiment2> getExpressionExperiment2ByPub(String pubID, String geneID) {
         Session session = HibernateUtil.currentSession();
         String hql = "from ExpressionExperiment2 where publication.zdbID = :pubID " +
-                "AND gene.zdbID";
+                "AND gene.zdbID = :geneID ";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setString("geneID", geneID);
