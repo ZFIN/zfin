@@ -922,7 +922,7 @@ public class MarkerService {
 
                     }
 
-                    detailMap.entrySet().forEach(System.out::println);
+                    //detailMap.entrySet().forEach(System.out::println);
                     for (String ipName : markerRepository.getIPNames(prot.getAccessionNumberDisplay())) {
                         detailMap.put(ipName, "X");
                     }
