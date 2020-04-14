@@ -17,6 +17,7 @@ const GeneExpressionRibbon = ({geneId}) => {
     const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
     const [selectedTableTerm, setSelectedTableTerm] = useState(null);
     const [isChecked, setIsChecked] = useState(false);
+    const [filteredTerm, setFilteredTerm] = useState('');
 
     const data = useFetch(`/action/api/marker/${geneId}/expression/ribbon-summary`);
 
@@ -39,6 +40,20 @@ const GeneExpressionRibbon = ({geneId}) => {
     const handleTermNameClick = (event, term) => {
         event.preventDefault();
         setSelectedTableTerm(term);
+    };
+
+    const handleFilterChange = (event) => {
+        event.preventDefault();
+        setFilteredTerm(event.target.value);
+    };
+
+    const handleFilter = (event, term) => {
+        event.preventDefault();
+        setFilteredTerm(term);
+    };
+
+    const handleReporterSelection = (event) => {
+        setIsChecked(event.target.checked);
     };
 
     const handleRibbonCellClick = (subject, group) => {
@@ -94,8 +109,34 @@ const GeneExpressionRibbon = ({geneId}) => {
 
     const columns = [
         {
-            label: 'Expression Location',
-            content: ({term}) => <a href='#' onClick={event => handleTermNameClick(event, term)}>{term.termName}</a>,
+            label: (
+                <div>
+                    <div>Expression Location</div>
+                    <form className='form-inline'>
+                        <label className='sr-only' htmlFor='filterInputField'>Name</label>
+                        <input
+                            type='text'
+                            className='form-control mb-2 mr-sm-2'
+                            id='filterTermName'
+                            size='15'
+                            value={filteredTerm}
+                            onChange={event => handleFilterChange(event)}
+                        />
+                        <button
+                            type='button'
+                            className='btn btn-secondary btn-sm mb-2'
+                            onClick={event => handleFilter(event, '')}
+                        > Clear
+                        </button>
+                    </form>
+                </div>
+            ),
+            content: ({term}) => <a
+                href='#'
+                onClick={event => handleTermNameClick(event, term)}
+                key={term}
+            >{term.termName}
+            </a>,
             width: '200px',
         },
         {
@@ -113,7 +154,10 @@ const GeneExpressionRibbon = ({geneId}) => {
             width: '400px',
         },
         {
-            label: 'Citations',
+            label: <div className='align-content-between'>
+                <div className='justify-content-between'>Citations</div>
+                <div>&nbsp;</div>
+            </div>,
             content: row => (
                 <AttributionLink
                     url={`/action/marker/${row.term.oboID}`}
@@ -145,16 +189,14 @@ const GeneExpressionRibbon = ({geneId}) => {
             <div className='custom-control custom-checkbox'>
                 <input
                     type='checkbox'
+                    id='reporterSelectionCheckbox'
                     className='custom-control-input'
-                    id='reporterCheckBox'
+                    onChange={(event) => handleReporterSelection(event)}
                     checked={isChecked}
                 />
-                <label className='custom-control-label'>
+                <label className='custom-control-label' htmlFor='reporterSelectionCheckbox'>
                     Include Expression in Reporter Lines
                 </label>
-                <button onClick={() => setIsChecked(!isChecked)}>
-                    change checkbox state using this button
-                </button>
             </div>
 
             <Ribbon
@@ -181,7 +223,7 @@ const GeneExpressionRibbon = ({geneId}) => {
 
             {selectedRibbonTerm && !selectedTableTerm &&
             <DataTable
-                url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selectedRibbonTerm)}&includeReporter=${isChecked}`}
+                url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selectedRibbonTerm)}&includeReporter=${isChecked}&filter.termName=${filteredTerm}`}
                 columns={columns}
                 rowKey={row => row.term.zdbID}
                 tableState={tableState}

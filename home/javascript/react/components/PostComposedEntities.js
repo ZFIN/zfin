@@ -14,7 +14,7 @@ const PostComposedEntities = ({entities}) => {
                             {
                                 postComposedEntity.subterm &&
                                 <span key={postComposedEntity.subterm.zdbID}>
-                                    {postComposedEntity.subterm.termName}
+                                    &nbsp; {postComposedEntity.subterm.termName}
                                 </span>
                             }
                         </div>

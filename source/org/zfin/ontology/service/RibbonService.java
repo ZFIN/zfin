@@ -238,6 +238,7 @@ public class RibbonService {
 
     private HashSet<String> getDetailExpressionInfo(String geneID, String termID) {
         SolrQuery query = new SolrQuery();
+        query.setRequestHandler("/expression-annotation");
         query.setFilterQueries("category:" + Category.EXPRESSIONS.getName());
         query.addFilterQuery("gene_zdb_id:" + geneID);
         if (StringUtils.isNotEmpty(termID)) {
@@ -307,7 +308,7 @@ public class RibbonService {
 
     private List<ExpressionRibbonDetail> getExpressionRibbonDetails(String geneID, String ribbonTermID, boolean includeReporter) {
         SolrQuery query = new SolrQuery();
-        //query.setRequestHandler("/images");
+        query.setRequestHandler("/expression-annotation");
         query.setFilterQueries("category:" + Category.EXPRESSIONS.getName());
         query.addFilterQuery("gene_zdb_id:" + geneID);
         if (StringUtils.isNotEmpty(ribbonTermID)) {

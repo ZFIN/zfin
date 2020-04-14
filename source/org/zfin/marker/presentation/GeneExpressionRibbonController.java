@@ -14,6 +14,7 @@ import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Image;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.api.*;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.wiki.presentation.Version;
@@ -76,7 +77,7 @@ public class GeneExpressionRibbonController {
     @RequestMapping(value = "/marker/{geneID}/expression/ribbon-detail")
     public JsonResultResponse<ExpressionRibbonDetail> getExpressionRibbonDetail(@PathVariable("geneID") String geneID,
                                                                                 @RequestParam(value = "termId", required = false) String termID,
-                                                                                @RequestParam(value = "detailTermId", required = false) String detailTermID,
+                                                                                @RequestParam(value = "filter.termName", required = false) String filterTermName,
                                                                                 @RequestParam(value = "includeReporter", required = false) boolean includeReporter,
                                                                                 @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
@@ -96,17 +97,22 @@ public class GeneExpressionRibbonController {
         List<MarkerDBLink> filteredDBLinksList = filterService.filterAnnotations(fullMarkerDBLinks, pagination.getFieldFilterValueMap());
 */
 
+        List<ExpressionRibbonDetail> filteredList = allDetails;
+        if (StringUtils.isNotEmpty(filterTermName)) {
+            filteredList = allDetails.stream()
+                    .filter(expressionRibbonDetail -> expressionRibbonDetail.getTerm().getTermName().contains(filterTermName))
+                    .collect(Collectors.toList());
+        }
 
         // sorting
-        if (allDetails != null)
-            allDetails.sort(Comparator.comparing(detail -> detail.getTerm().getTermName().toLowerCase()));
+        if (filteredList != null)
+            filteredList.sort(Comparator.comparing(detail -> detail.getTerm().getTermName().toLowerCase()));
 
         // paginating
         JsonResultResponse<ExpressionRibbonDetail> response = new JsonResultResponse<>();
         if (allDetails != null) {
-            response.setResults(allDetails);
-            response.setTotal(allDetails.size());
-            response.setResults(allDetails.stream()
+            response.setTotal(filteredList.size());
+            response.setResults(filteredList.stream()
                     .skip(pagination.getStart())
                     .limit(pagination.getLimit())
                     .collect(Collectors.toList()));

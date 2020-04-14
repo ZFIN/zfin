@@ -2,6 +2,8 @@ package org.zfin.ontology.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
+import org.zfin.framework.api.JsonResultResponse
+import org.zfin.framework.api.Pagination
 import org.zfin.framework.api.RibbonCategory
 import org.zfin.framework.api.RibbonSummary
 import org.zfin.marker.presentation.ExpressionDetail
@@ -28,22 +30,22 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         termCounts.get(termID) > 0
 
         where:
-        handler                  | zdbID                  | termID
-        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFA:0000396"
-        "/expression-annotation" | "ZDB-GENE-980526-426"  | "ZFA:0000041"
-        "/expression-annotation" | "ZDB-GENE-041001-150"  | "GO:0005737"
-        "/expression-annotation" | "ZDB-GENE-041001-150"  | "GO:0005575" //GO-CC root
-        "/expression-annotation" | "ZDB-GENE-041001-150"  | "ZFS:0000004"
-        "/expression-annotation" | "ZDB-GENE-041001-150"  | "ZFS:0000046"
-        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000046"
-        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000049"
-        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000050"
-        "/go-annotation"         | "ZDB-GENE-990415-8"    | "GO:0005634"
-        "/go-annotation"         | "ZDB-GENE-980526-426"  | "GO:0032502"
-        "/go-annotation"         | "ZDB-GENE-980526-426"  | "GO:0003677"
-        "/go-annotation"         | "ZDB-GENE-980526-178"  | "GO:0008283"
-        "/go-annotation"         | "ZDB-GENE-980526-178"  | "GO:0005102"
-        "/go-annotation"         | "ZDB-GENE-980526-178"  | "GO:0030154"
+        handler                  | zdbID                 | termID
+        "/expression-annotation" | "ZDB-GENE-990415-8"   | "ZFA:0000396"
+        "/expression-annotation" | "ZDB-GENE-980526-426" | "ZFA:0000041"
+        "/expression-annotation" | "ZDB-GENE-041001-150" | "GO:0005737"
+        "/expression-annotation" | "ZDB-GENE-041001-150" | "GO:0005575" //GO-CC root
+        "/expression-annotation" | "ZDB-GENE-041001-150" | "ZFS:0000004"
+        "/expression-annotation" | "ZDB-GENE-041001-150" | "ZFS:0000046"
+        "/expression-annotation" | "ZDB-GENE-990415-8"   | "ZFS:0000046"
+        "/expression-annotation" | "ZDB-GENE-990415-8"   | "ZFS:0000049"
+        "/expression-annotation" | "ZDB-GENE-990415-8"   | "ZFS:0000050"
+        "/go-annotation"         | "ZDB-GENE-990415-8"   | "GO:0005634"
+        "/go-annotation"         | "ZDB-GENE-980526-426" | "GO:0032502"
+        "/go-annotation"         | "ZDB-GENE-980526-426" | "GO:0003677"
+        "/go-annotation"         | "ZDB-GENE-980526-178" | "GO:0008283"
+        "/go-annotation"         | "ZDB-GENE-980526-178" | "GO:0005102"
+        "/go-annotation"         | "ZDB-GENE-980526-178" | "GO:0030154"
     }
 
     @Unroll
@@ -65,17 +67,20 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#geneID and #termID "() {
         when:
-        List<ExpressionDetail> termCounts = ribbonService.buildExpressionDetail(geneID, termID)
+        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, termID, new Pagination())
 
         then:
-        termCounts.size() > numberOfRecords
+        response.getTotal() > numberOfRecords
 
         where:
         geneID              | termID        | numberOfRecords
         // all records
         //"ZDB-GENE-990415-8" | ""            | 200
-        // nervous system
-        "ZDB-GENE-990415-8" | "ZFA:0000042" | 60
+        // pax2a
+        //                      anatomical entity
+        "ZDB-GENE-990415-8" | "ZFA:0100000" | 130
+        //                      nervous system
+        "ZDB-GENE-990415-8" | "ZFA:0000396" | 60
     }
 
     @Unroll
