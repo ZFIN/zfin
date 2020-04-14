@@ -25,7 +25,7 @@
     <z:attributeListItem label="High Throughput Data:">
         <c:if test="${markerExpression.geoLink !=null}">
             ${markerExpression.geoLink}
-            <c:if test="${markerExpression.expressionAtlasLink.link != null}">,
+            <c:if test="${markerExpression.expressionAtlasLink.link != null}"> &nbsp;
                 <zfin2:externalLink href="${markerExpression.expressionAtlasLink.link}">Expression Atlas
                 </zfin2:externalLink>
                 ${markerExpression.expressionAtlasLink.attributionLink}
