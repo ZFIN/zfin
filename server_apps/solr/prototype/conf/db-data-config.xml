@@ -3169,6 +3169,21 @@
                     where="efs_pk_id=expression.id"
             />
 
+            <entity name="expression_is_reporter"
+                    query="select 'true' as is_reporter,
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                     join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                     join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
+                                     join fish on genox_fish_zdb_id = fish_zdb_id
+                                     join genotype on geno_zdb_id = fish_genotype_zdb_id
+                            where geno_is_wildtype = false
+                                  and exists (select 'x' from clean_expression_fast_search
+                                              where cefs_genox_zdb_id = xpatex_genox_zdb_id);"
+                    cacheImpl="SortedMapBackedCache"
+                    where="efs_pk_id=expression.id"
+            />
+
             <entity name="expression_author"
                     query="select person.full_name as registered_author, 'xpatex-' || efs_pk_id as efs_pk_id
                            from expression_experiment2

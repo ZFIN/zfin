@@ -11,6 +11,7 @@ import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.api.*;
 import org.zfin.marker.presentation.ExpressionDetail;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
@@ -39,21 +40,24 @@ public class RibbonService {
     private AnatomyRepository anatomyRepository;
 
     @Autowired
+    private ExpressionService expressionService;
+
+    @Autowired
     private OntologyRepository ontologyRepository;
 
     @Autowired
     private PublicationRepository publicationRepository;
 
     public RibbonSummary buildGORibbonSummary(String zdbID) throws Exception {
-        return buildRibbonSummary(zdbID, "/go-annotation", List.of(
+        return buildRibbonSummary(zdbID, "/go-annotation", false, List.of(
                 RibbonCategoryConfig.molecularFunction(),
                 RibbonCategoryConfig.biologicalProcess(),
                 RibbonCategoryConfig.cellularComponent()
         ));
     }
 
-    public RibbonSummary buildExpressionRibbonSummary(String zdbID) throws Exception {
-        return buildRibbonSummary(zdbID, "/expression-annotation", List.of(
+    public RibbonSummary buildExpressionRibbonSummary(String zdbID, boolean includeReporter) throws Exception {
+        return buildRibbonSummary(zdbID, "/expression-annotation", includeReporter,  List.of(
                 RibbonCategoryConfig.anatomy(),
                 RibbonCategoryConfig.stage(),
                 RibbonCategoryConfig.cellularComponent()
@@ -61,7 +65,7 @@ public class RibbonService {
     }
 
     public RibbonSummary buildPhenotypeRibbonSummary(String zdbID) throws Exception {
-        return buildRibbonSummary(zdbID, "/phenotype-annotation", List.of(
+        return buildRibbonSummary(zdbID, "/phenotype-annotation", false, List.of(
                 RibbonCategoryConfig.anatomy(),
                 RibbonCategoryConfig.stage(),
                 RibbonCategoryConfig.molecularFunction(),
@@ -72,6 +76,7 @@ public class RibbonService {
 
     public RibbonSummary buildRibbonSummary(String zdbID,
                                             String solrRequestHandler,
+                                            boolean includeReporter,
                                             List<RibbonCategoryConfig> categoryConfigs) throws Exception {
 
         // pull out just the IDs
@@ -85,9 +90,9 @@ public class RibbonService {
                 .map(GenericTerm::getOboID)
                 .collect(toList());
 
-        Map<String, Integer> otherCounts = getRibbonCounts(solrRequestHandler, zdbID, categoryIDs, slimIDs);
-        Map<String, Integer> allCounts = getRibbonCounts(solrRequestHandler, zdbID, categoryIDs, Collections.emptyList());
-        Map<String, Integer> slimCounts = getRibbonCounts(solrRequestHandler, zdbID, slimIDs, Collections.emptyList());
+        Map<String, Integer> otherCounts = getRibbonCounts(solrRequestHandler, zdbID, includeReporter, categoryIDs, slimIDs);
+        Map<String, Integer> allCounts = getRibbonCounts(solrRequestHandler, zdbID, includeReporter, categoryIDs, Collections.emptyList());
+        Map<String, Integer> slimCounts = getRibbonCounts(solrRequestHandler, zdbID, includeReporter, slimIDs, Collections.emptyList());
 
         // build the categories field with term names and definitions
         List<RibbonCategory> categories = categoryConfigs.stream()
@@ -167,7 +172,7 @@ public class RibbonService {
         return summary;
     }
 
-    public Map<String, Integer> getRibbonCounts(String handler, String geneZdbId,
+    public Map<String, Integer> getRibbonCounts(String handler, String geneZdbId, boolean includeReporter,
                                                 List<String> includeTermIDs, List<String> excludeTermIDs)
             throws SolrServerException, IOException {
         Map<String, Integer> termCounts = new HashMap<>(includeTermIDs.size());
@@ -176,6 +181,8 @@ public class RibbonService {
         query.setQuery("*:*");
         query.setRequestHandler(handler);
         query.addFilterQuery("gene_zdb_id:" + geneZdbId);
+
+        expressionService.addReporterFilter(query, includeReporter);
 
         includeTermIDs.forEach(t -> query.addFacetQuery("term_id:" + SolrService.luceneEscape(t)));
         excludeTermIDs.forEach(t -> query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t)));
@@ -315,8 +322,7 @@ public class RibbonService {
             String escapedTermID = ribbonTermID.replace(":", "\\:");
             query.addFilterQuery("term_id:" + escapedTermID);
         }
-        if (includeReporter)
-            query.addFacetQuery("reporter_line\\:[* TO *]");
+        expressionService.addReporterFilter(query, includeReporter);
         query.addFacetPivotField("anatomy_term_id,stage_term_id,pub_zdb_id");
         query.setStart(0);
         // get them all
@@ -326,7 +332,7 @@ public class RibbonService {
         try {
             queryResponse = SolrService.getSolrClient().query(query);
         } catch (SolrServerException | IOException e) {
-            log.error("Error while retrieving data form SOLR...", e);
+            log.error("Error while retrieving data form Solr...", e);
         }
         if (queryResponse == null || queryResponse.getFacetPivot() == null || queryResponse.getFacetPivot().getVal(0).size() == 0) {
             return null;

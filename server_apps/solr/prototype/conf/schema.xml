@@ -783,6 +783,7 @@
 
         <!-- using string rather than boolean so these can be facet values -->
         <field name="has_image" type="string" indexed="true" stored="true" />
+        <field name="is_reporter" type="string" indexed="true" stored="true" />
         <field name="is_wildtype" type="string" indexed="true" stored="true" />
         <field name="is_genotype_wildtype" type="boolean" indexed="true" stored="true" />
         <field name="is_monogenic" type="string" indexed="true" stored="true" />

@@ -19,7 +19,14 @@ const GeneExpressionRibbon = ({geneId}) => {
     const [isChecked, setIsChecked] = useState(false);
     const [filteredTerm, setFilteredTerm] = useState('');
 
-    const data = useFetch(`/action/api/marker/${geneId}/expression/ribbon-summary`);
+
+    let url = `/action/api/marker/${geneId}/expression/ribbon-summary`;
+
+    if (isChecked) {
+        url += '?includeReporter=true';
+    }
+
+    const data = useFetch(url);
 
     if (data.rejected) {
         return <GenericErrorMessage/>;
@@ -216,6 +223,7 @@ const GeneExpressionRibbon = ({geneId}) => {
             {(selectedRibbonTerm || selectedTableTerm) &&
             <GeneExpressionFigureGallery
                 geneId={geneId}
+                includeReporters={isChecked}
                 selectedTermId={selectedTermId}
                 selectedTermIsOther={selectedTermIsOther}
             />
