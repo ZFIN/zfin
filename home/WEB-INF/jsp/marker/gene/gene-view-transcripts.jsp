@@ -15,7 +15,7 @@
     });
 </script>
 
-<z:dataTable collapse="true" hasData="${!empty formBean.relatedTranscriptDisplay.transcripts}">
+<z:dataTable collapse="true" hasData="${!empty formBean.relatedTranscriptDisplay.nonWithdrawnTranscripts}">
 
     <thead>
     <tr>

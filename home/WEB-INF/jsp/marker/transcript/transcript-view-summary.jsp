@@ -43,41 +43,31 @@
                                maxNumber="6"/>
     </z:attributeListItem>
 
+    <z:attributeListItem label="Genome Resources">
+
+        <c:forEach var="link" items="${formBean.otherMarkerPages}" varStatus="loop">
+            <c:if test="${!link.displayName.contains('VEGA')}">
+
+                <a href="${link.link}">${link.displayName}</a>
+                ${link.attributionLink}<c:if test="${!loop.last}">,&nbsp;</c:if>
+            </c:if>
+
+        </c:forEach>
+    </z:attributeListItem>
+
+    <z:attributeListItem label="RNACentral">
+        <c:if test="${formBean.rnaCentralLink eq 'yes'}">
+            <a href=""><b>RNACentral</b></a>
+        </c:if>
+    </z:attributeListItem>
+
     <z:attributeListItem label="Citations">
         <a href="/action/marker/citation-list/${formBean.marker.zdbID}">(${formBean.numPubs})</a>
     </z:attributeListItem>
 
 </z:attributeList>
 
-    <%--&lt;%&ndash;"no siblings" gbrowse image &ndash;%&gt;--%>
-    <%--<c:if test="${(fn:length(relatedTranscriptDisplay.transcripts) == 1) && (!empty relatedTranscriptDisplay.gbrowseImage) }">--%>
-        <%--<div class="summary" id="single-transcript-gbrowse-section">--%>
-            <%--<table class="summary solidblock">--%>
-                <%--<caption>GBrowse:</caption>--%>
-                <%--<tr>--%>
-                    <%--<td style="text-align: center">--%>
-                        <%--<div class="gbrowse-image" />--%>
-                    <%--</td>--%>
-                <%--</tr>--%>
-            <%--</table>--%>
-        <%--</div>--%>
-        <%--<script>--%>
-            <%--jQuery("#single-transcript-gbrowse-section").gbrowseImage({--%>
-                <%--width: 600,--%>
-                <%--imageTarget: ".gbrowse-image",--%>
-                <%--imageUrl: "${relatedTranscriptDisplay.gbrowseImage.imageUrl}",--%>
-                <%--linkUrl: "${relatedTranscriptDisplay.gbrowseImage.linkUrl}"--%>
-            <%--});--%>
-        <%--</script>--%>
-    <%--</c:if>--%>
-<%--</c:forEach>--%>
-
 <c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
     <zfin2:transcriptTargets transcriptTargets="${formBean.transcriptTargets}"/>
 </c:if>
-<br>
-<c:if test="${formBean.rnaCentralLink eq 'yes'}">
-    <a href=""><b>RNACentral</b></a>
-</c:if>
-<zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
 

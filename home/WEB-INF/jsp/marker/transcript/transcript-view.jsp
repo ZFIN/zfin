@@ -7,7 +7,7 @@
 <c:set var="SEQUENCE" value="Sequence"/>
 <c:set var="GBROWSE" value="Gbrowse"/>
 <c:set var="SEGMENTRELATIONSHIPS" value="Segment Relationships"/>
-<c:set var="PROTEINS" value="Proteins"/>
+<c:set var="PROTEINS" value="Protein Products"/>
 <c:set var="SUPPORTINGSEQUENCES" value="Supporting Sequences"/>
 
 <z:dataPage
