@@ -6,7 +6,7 @@ import http from '../utils/http';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import {useFetch} from '../utils/effects';
 
-const GeneExpressionFigureGallery = ({geneId, selectedTermId, selectedTermIsOther}) => {
+const GeneExpressionFigureGallery = ({geneId, includeReporters, selectedTermId, selectedTermIsOther}) => {
     const [page, setPage] = useState(1);
     const [images, setImages] = useState([]);
     const [total, setTotal] = useState(0);
@@ -18,6 +18,9 @@ const GeneExpressionFigureGallery = ({geneId, selectedTermId, selectedTermIsOthe
     const fetchImages = (page, resultHandler) => {
         setPending(true);
         let url = `/action/api/marker/${geneId}/expression/images?page=${page}`;
+        if (includeReporters) {
+            url += '&includeReporters=' + includeReporters;
+        }
         if (selectedTermId) {
             url += '&termId=' + selectedTermId;
         }
@@ -73,6 +76,7 @@ const GeneExpressionFigureGallery = ({geneId, selectedTermId, selectedTermIsOthe
 
 GeneExpressionFigureGallery.propTypes = {
     geneId: PropTypes.string,
+    includeReporters: PropTypes.bool,
     selectedTermId: PropTypes.string,
     selectedTermIsOther: PropTypes.bool,
 };

@@ -524,7 +524,7 @@
 
     <requestHandler name="/expression-annotation" class="solr.StandardRequestHandler">
         <lst name="appends">
-            <str name="fq">category:"Expression" AND is_wildtype:true</str>
+            <str name="fq">category:"Expression"</str>
             <str name="q">*:*</str>
         </lst>
         <lst name="defaults">

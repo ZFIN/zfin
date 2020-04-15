@@ -48,8 +48,9 @@ public class GeneExpressionRibbonController {
     private RibbonService ribbonService;
 
     @RequestMapping(value = "/marker/{zdbID}/expression/ribbon-summary")
-    public RibbonSummary getExpressionRibbonSummary(@PathVariable("zdbID") String zdbID) throws Exception {
-        return ribbonService.buildExpressionRibbonSummary(zdbID);
+    public RibbonSummary getExpressionRibbonSummary(@PathVariable("zdbID") String zdbID,
+                                                    @RequestParam(required = false) boolean includeReporter) throws Exception {
+        return ribbonService.buildExpressionRibbonSummary(zdbID, includeReporter);
     }
 
     @JsonView(View.GeneExpressionAPI.class)
@@ -134,9 +135,10 @@ public class GeneExpressionRibbonController {
     @RequestMapping(value = "/marker/{zdbID}/expression/images")
     public JsonResultResponse<Image> getExpressionImages(@PathVariable String zdbID,
                                                          @RequestParam(required = false) String termId,
+                                                         @RequestParam(required = false) boolean includeReporter,
                                                          @RequestParam(required = false) boolean isOther,
                                                          @Version Pagination pagination) throws IOException, SolrServerException {
-        JsonResultResponse<Image> response = expressionService.getExpressionImages(zdbID, termId, isOther, pagination);
+        JsonResultResponse<Image> response = expressionService.getExpressionImages(zdbID, termId, includeReporter, isOther, pagination);
         response.setHttpServletRequest(request);
         return response;
     }
