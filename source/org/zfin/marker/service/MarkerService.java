@@ -2,7 +2,6 @@ package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,9 @@ import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.ontology.*;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.orthology.Ortholog;
@@ -834,8 +835,6 @@ public class MarkerService {
     }
 
 
-
-
     /**
      * Retrieve presentation for a collection of orthologs for the same zebrafish gene
      *
@@ -889,10 +888,6 @@ public class MarkerService {
     }
 
 
-
-
-
-
     public static ProteinDetailDomainBean getProteinDomainDetailBean(Marker gene) {
 
         List<DBLink> protID = sequenceRepository.getDBLinksForMarker(gene.getZdbID(), ForeignDBDataType.SuperType.PROTEIN);
@@ -907,7 +902,7 @@ public class MarkerService {
                 if (prot.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.UNIPROTKB) {
                     row.setProDBLink(prot);
 
-                    List<ProteinToPDB> ptp=markerRepository.getPDB(prot.getAccessionNumberDisplay());
+                    List<ProteinToPDB> ptp = markerRepository.getPDB(prot.getAccessionNumberDisplay());
                     if (CollectionUtils.isNotEmpty(ptp)) {
 
                         row.setPDB(true);
@@ -1231,9 +1226,13 @@ public class MarkerService {
                         .collect(Collectors.toList()))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        bGeeIds.add(otherMarkerDBLinksLinks.stream().filter(linkDisplay -> linkDisplay.getAccession().startsWith("ENSDARG"))
-                .findFirst().get().getAccession());
-        return bGeeIds;
+        final Optional<LinkDisplay> ensdarg = otherMarkerDBLinksLinks.stream().filter(linkDisplay -> linkDisplay.getAccession().startsWith("ENSDARG"))
+                .findFirst();
+        if (ensdarg.isPresent()) {
+            bGeeIds.add(ensdarg.get().getAccession());
+            return bGeeIds;
+        }
+        return null;
     }
 }
 
