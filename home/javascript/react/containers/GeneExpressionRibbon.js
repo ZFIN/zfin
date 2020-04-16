@@ -234,6 +234,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                 url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selectedRibbonTerm)}&includeReporter=${isChecked}&filter.termName=${filteredTerm}`}
                 columns={columns}
                 rowKey={row => row.term.zdbID}
+                showEmptyTable={filteredTerm}
                 tableState={tableState}
                 onTableStateChange={setTableState}
             />

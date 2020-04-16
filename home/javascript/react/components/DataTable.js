@@ -12,7 +12,7 @@ export const DEFAULT_TABLE_STATE = {
     page: 1,
 };
 
-const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tableState, url}) => {
+const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tableState, url, showEmptyTable = false}) => {
     if ((tableState && !onTableStateChange) || (!tableState && onTableStateChange)) {
         if (process.env.NODE_ENV === 'development') {
             console.warn('DataTable must either be controlled (by setting tableState and onTableStateChange) or uncontrolled (by setting neither)');
@@ -39,7 +39,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
 
     const {results, returnedRecords, supplementalData, total} = data.value;
 
-    if (total === 0) {
+    if (total === 0 && !showEmptyTable) {
         return <NoData/>
     }
 
@@ -92,11 +92,15 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                                 );
                             })}
                         </tr>
-                    ))}
+                    ))
+                    }
+                    {total === 0 && <tr>
+                        <td colSpan={columns.length}><NoData/></td>
+                    </tr>}
                 </tbody>
             </table>
             <div className='data-table-pagination'>
-                {pagination && <React.Fragment>
+                {pagination && total > 0 && <React.Fragment>
                     {data.pending ? <LoadingSpinner/> : <span>{start} - {end} of {total}</span>}
                     <div>
                         <span className='mr-1'>Show</span>
@@ -154,6 +158,7 @@ DataTable.propTypes = {
         page: PropTypes.number,
     }),
     url: PropTypes.string.isRequired,
+    showEmptyTable: PropTypes.bool,
 };
 
 export default DataTable;
