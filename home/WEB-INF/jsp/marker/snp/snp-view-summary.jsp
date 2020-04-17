@@ -1,5 +1,6 @@
 
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
 <z:attributeList>
     <z:attributeListItem label="ID">
         ${formBean.marker.zdbID}
@@ -26,28 +27,31 @@
         ${formBean.variant}
     </z:attributeListItem>
     <z:attributeListItem label="Sequence">
-    <ul class="list-unstyled">
-        <li>${formBean.sequence.startToOffset}</li>
-        <li><span style="color: green;">
+        <div>${formBean.sequence.startToOffset}</div>
+        <span style="color: green;">
                 ${formBean.sequence.ambiguity}
         </span>
-                </li>
-        <li> ${formBean.sequence.offsetToEnd}</li>
-        <li><span style="font-size:small; font-style:oblique;">
-                        &nbsp;(SNP highlighted)
-                        </span></li>
-        <li>   ${formBean.sequence.ambiguity}
-        =
-            ${formBean.variant}</li>
-        <li></li>
-        <li>
-        <zfin2:snpBlastDropdown
-                sequence="${formBean.sequence}"
-        />
-        </li>
+        <div>${formBean.sequence.offsetToEnd}</div>
+        <div>${formBean.sequence.ambiguity} = ${formBean.variant}</div>
+        <div class='btn-group'>
+            <button
+                    class='btn btn-outline-secondary btn-sm dropdown-toggle'
+                    data-toggle='dropdown'
+                    aria-haspopup='true'
+                    aria-expanded='false'
+            >
+                Select Tool
+            </button>
+            <div class='dropdown-menu'>
 
-    </ul>
-
+                <a class='dropdown-item' href="${formBean.ncbiBlastUrl}${formBean.sequence.sequence}">NCBI
+                    BLAST</a>
+                <a class='dropdown-item'
+                   href="/action/blast/blast?&program=blastn&sequenceType=nt&queryType=FASTA&shortAndNearlyExact=true&expectValue=1e-10&dataLibraryString=RNASequences&querySequence=${formBean.sequence.sequence}">ZFIN
+                    BLAST</a>
+                <br>
+            </div>
+        </div>
     </z:attributeListItem>
 
     <z:attributeListItem label="Location">
