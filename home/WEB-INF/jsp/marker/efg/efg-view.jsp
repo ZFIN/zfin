@@ -13,6 +13,9 @@
 
 <z:dataPage
         sections="${[SUMMARY, EXPRESSION,  CONSTRUCTS, SEQUENCE]}">
+    <jsp:attribute name="entityName">
+        <zfin:abbrev entity="${formBean.marker}"/>
+    </jsp:attribute>
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/action/marker/gene/edit/">Edit</a>
 
@@ -53,14 +56,6 @@
 
             <z:attributeListItem label="Location">
                 <zfin2:displayLocation entity="${formBean.marker}" longDetail="true"/>
-            </z:attributeListItem>
-
-            <z:attributeListItem label="Description">
-                ${geneDesc.gdDesc}
-            </z:attributeListItem>
-
-            <z:attributeListItem label="Genome Resources">
-
             </z:attributeListItem>
 
             <authz:authorize access="hasRole('root')">
