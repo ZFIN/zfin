@@ -1,4 +1,6 @@
 @import "theme";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
 @import "~@geneontology/ribbon/lib/main";
 
 body.data-page {
@@ -178,7 +180,7 @@ tr.spaceUnder > td{
 .ontology-ribbon__block__tile--selected {
     transform: none;
     text-shadow: none;
-    color: $grey-dark;
+    color: color-yiq($primary);
 }
 
 .ontology-ribbon__block__tile:hover {
