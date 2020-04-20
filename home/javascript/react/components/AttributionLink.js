@@ -18,8 +18,7 @@ const AttributionLink = ({accession, url, publicationCount, publication, multiPu
     } else {
         return (
             <span>
-                <a href={url}>{accession}{multiPubAccessionID}</a>
-                (<a href={`/action/infrastructure/data-citation-list/${accession}/${multiPubs}`}>{publicationCount}</a>)
+                (<a href={`/action/infrastructure/data-citation-list/${multiPubAccessionID}/${multiPubs}`}>{publicationCount}</a>)
             </span>
         );
     }
