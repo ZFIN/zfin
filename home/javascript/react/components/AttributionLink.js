@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AttributionLink = ({accession, url, publicationCount, publication, multiPubAccessionID}) => {
+const AttributionLink = ({accession, url, publicationCount, publication, multiPubAccessionID, multiPubs}) => {
     if (publicationCount === 0) {
         return <span><a href={url}>{accession}</a></span>;
     } else if (publicationCount === 1) {
@@ -12,14 +12,14 @@ const AttributionLink = ({accession, url, publicationCount, publication, multiPu
             );
         } else {
             return (
-                <a href={`/${publication.zdbID}`} dangerouslySetInnerHTML={{__html: publication.shortAuthorList}} />
+                <a href={`/${publication.zdbID}`} dangerouslySetInnerHTML={{__html: publication.shortAuthorList}}/>
             );
         }
     } else {
         return (
             <span>
-                <a href={url}>{accession}</a>
-                (<a href={`/action/infrastructure/data-citation-list/${multiPubAccessionID}`}>{publicationCount}</a>)
+                <a href={url}>{accession}{multiPubAccessionID}</a>
+                (<a href={`/action/infrastructure/data-citation-list/${accession}/${multiPubs}`}>{publicationCount}</a>)
             </span>
         );
     }

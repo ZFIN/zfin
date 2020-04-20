@@ -172,6 +172,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                     publicationCount={row.numberOfPublications}
                     publication={row.publication}
                     multiPubAccessionID={row.term.oboID}
+                    multiPubs={row.ribbonPubs}
                 />
             ),
             width: '120px',
