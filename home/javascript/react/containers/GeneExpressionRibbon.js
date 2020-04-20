@@ -66,6 +66,7 @@ const GeneExpressionRibbon = ({geneId}) => {
     const handleRibbonCellClick = (subject, group) => {
         setSelectedTableTerm(null);
         setSelectedRibbonTerm(subject, group);
+        setFilteredTerm('');
     };
 
     const columnsDetail = [
