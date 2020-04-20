@@ -2,18 +2,13 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.ConstructBean" scope="request"/>
 
-<c:choose>
-    <c:when test="${!empty formBean.marker.figures}">
+<z:ifHasData ${formBean.marker.figures}>
         <c:forEach var="fig" items="${formBean.marker.figures}">
 
             <c:forEach var="img" items="${fig.images}">
-                <a href="/${img.zdbID}"><img src="/imageLoadUp/${img.imageFilename}" width="300"
-                                             height="200"></a>
+                <a href="/${img.zdbID}"><img src="/imageLoadUp/${img.imageFilename}"></a>
             </c:forEach>
         </c:forEach>
-    </c:when>
-    <c:otherwise>
-        <span class="no-data-tag"><i>No data available</i></span>
-    </c:otherwise>
-</c:choose>
+</z:ifHasData>
+
 

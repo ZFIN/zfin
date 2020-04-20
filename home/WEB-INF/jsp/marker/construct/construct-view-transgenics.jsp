@@ -17,9 +17,10 @@
                 <zfin:link entity="${fishGenotypeStatistics.fish}"/>
             </td>
             <td>
-                <c:forEach var="marker" items="${fishGenotypeStatistics.affectedMarkers}" varStatus="loop">
-                    <zfin:link entity="${marker}"/><c:if test="${!loop.last}">, </c:if>
-                </c:forEach>
+              <ul class="comma-separated">
+		<c:forEach var="marker" items="${fishGenotypeStatistics.affectedMarkers}">
+			<li><zfin:link entity="${marker}"/></li>
+		</c:forEach>
             </td>
             <td>
                 <zfin2:showFigureData

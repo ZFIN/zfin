@@ -6,7 +6,7 @@
 <c:set var="PLASMIDMAP" value="Plasmid Map"/>
 <c:set var="GENOMICFEATURES" value="Genomic Features"/>
 <c:set var="TRANSGENICS" value="Transgenics"/>
-<c:set var="SEQUENCES" value="Sequence Information"/>
+<c:set var="SEQUENCEINFORMATION" value="Sequence Information"/>
 <c:set var="OTHERPAGES" value="Other Construct Pages"/>
 
 <z:dataPage sections="${[SUMMARY, PLASMIDMAP, GENOMICFEATURES, TRANSGENICS, SEQUENCEINFORMATION, OTHERPAGES]}">
@@ -46,7 +46,7 @@
             </z:section>
         </z:section>
 
-        <z:section title="${SEQUENCES}">
+        <z:section title="${SEQUENCEINFORMATION}">
             <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 

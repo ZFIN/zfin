@@ -15,7 +15,7 @@
     </tr>
     </thead>
     <tbody>
-    <c:forEach var="feature" items="${formBean.transgenics}" varStatus="loop">
+    <c:forEach var="feature" items="${formBean.transgenics}">
         <tr>
             <td>
                 <zfin:link entity="${feature}"/>
