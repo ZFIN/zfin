@@ -9,6 +9,9 @@ const getSelectedTermQueryParams = (selected) => {
         if (selected.group.type !== 'GlobalAll') {
             termQuery += `?termId=${selected.group.id}`;
         }
+        if (selected.group.type === 'GlobalAll') {
+            termQuery += '?termId=';
+        }
         if (selected.group.type === 'Other') {
             termQuery += '&isOther=true';
         }

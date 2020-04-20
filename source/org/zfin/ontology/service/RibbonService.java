@@ -57,7 +57,7 @@ public class RibbonService {
     }
 
     public RibbonSummary buildExpressionRibbonSummary(String zdbID, boolean includeReporter) throws Exception {
-        return buildRibbonSummary(zdbID, "/expression-annotation", includeReporter,  List.of(
+        return buildRibbonSummary(zdbID, "/expression-annotation", includeReporter, List.of(
                 RibbonCategoryConfig.anatomy(),
                 RibbonCategoryConfig.stage(),
                 RibbonCategoryConfig.cellularComponent()
@@ -295,7 +295,7 @@ public class RibbonService {
         // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
         OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
         Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
-        if (ribbonTermID != null) {
+        if (StringUtils.isNotEmpty(ribbonTermID)) {
             // filter by stage
             if (ribbonTermID.contains("ZFS:")) {
                 details.removeIf(detail -> detail.getStages().stream().noneMatch(stage -> stage.getOboID().equals(ribbonTermID)));
@@ -379,26 +379,6 @@ public class RibbonService {
                     Publication pub = publicationRepository.getPublication(ribbonDetail1.getPubIDs().get(0));
                     ribbonDetail1.setPublication(pub);
                 });
-
-
-        // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
-        Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
-        if (ribbonTermID != null) {
-            // filter by stage
-            if (ribbonTermID.contains("ZFS:")) {
-                details.removeIf(detail -> detail.getStages().stream().noneMatch(stage -> stage.getOboID().equals(ribbonTermID)));
-            } else {
-                details.removeIf(expressionRibbonDetail -> {
-                    List<GenericTerm> closure = getClosureForRibbonTerms.get(ribbonTermID);
-                    // remove if no closure element is found
-                    if (closure == null) {
-                        return true;
-                    }
-                    return closure.stream().noneMatch(genericTerm -> genericTerm.getOboID().equals(expressionRibbonDetail.getTerm().getOboID()));
-                });
-            }
-        }
-
 
         return details;
     }
