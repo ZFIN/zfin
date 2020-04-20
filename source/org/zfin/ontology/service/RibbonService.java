@@ -15,6 +15,7 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.api.*;
 import org.zfin.marker.presentation.ExpressionDetail;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
+import org.zfin.marker.presentation.MarkerRelationshipPresentation;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
@@ -290,6 +291,12 @@ public class RibbonService {
                     Publication pub = pubRepository.getPublication(ribbonDetail1.getPubIDs().get(0));
                     ribbonDetail1.setPublication(pub);
                 });
+        details.stream()
+                .forEach(ribbonDetail1 -> {
+                    List<String> pubRibbon = ribbonDetail1.getPubIDs();
+
+                    ribbonDetail1.setRibbonPubs(pubRibbon);
+                });
 
 
         // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
@@ -379,7 +386,33 @@ public class RibbonService {
                     Publication pub = publicationRepository.getPublication(ribbonDetail1.getPubIDs().get(0));
                     ribbonDetail1.setPublication(pub);
                 });
+        details.stream()
+                .forEach(ribbonDetail1 -> {
 
+                        List<String> pubRibbon = ribbonDetail1.getPubIDs();
+
+                        ribbonDetail1.setRibbonPubs(pubRibbon);
+                    });
+
+        // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
+        Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
+        if (ribbonTermID != null) {
+            // filter by stage
+            if (ribbonTermID.contains("ZFS:")) {
+                details.removeIf(detail -> detail.getStages().stream().noneMatch(stage -> stage.getOboID().equals(ribbonTermID)));
+            } else {
+                details.removeIf(expressionRibbonDetail -> {
+                    List<GenericTerm> closure = getClosureForRibbonTerms.get(ribbonTermID);
+                    // remove if no closure element is found
+                    if (closure == null) {
+                        return true;
+                    }
+                    return closure.stream().noneMatch(genericTerm -> genericTerm.getOboID().equals(expressionRibbonDetail.getTerm().getOboID()));
+                });
+            }
+        }
+
+        
         return details;
     }
 }
