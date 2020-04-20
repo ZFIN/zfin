@@ -10,5 +10,5 @@
     </tbody>
 </table>
 
-<zfin2:citationList pubListBean="${citationList}" url="/action/infrastructure/data-citation-list/${dataZdbID}">
+<zfin2:citationList pubListBean="${citationList}" url="/action/infrastructure/data-citation-list/${dataZdbID}/">
 </zfin2:citationList>
