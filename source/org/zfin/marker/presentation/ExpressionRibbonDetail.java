@@ -21,6 +21,8 @@ public class ExpressionRibbonDetail {
     private List<GenericTerm> stages;
     @JsonView(View.API.class)
     private Publication publication;
+    @JsonView(View.API.class)
+    private List<String>  ribbonPubs;
 
     private List<String> pubIDs;
 
