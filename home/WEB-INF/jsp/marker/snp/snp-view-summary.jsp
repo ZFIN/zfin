@@ -49,7 +49,6 @@
                 <a class='dropdown-item'
                    href="/action/blast/blast?&program=blastn&sequenceType=nt&queryType=FASTA&shortAndNearlyExact=true&expectValue=1e-10&dataLibraryString=RNASequences&querySequence=${formBean.sequence.sequence}">ZFIN
                     BLAST</a>
-                <br>
             </div>
         </div>
     </z:attributeListItem>
