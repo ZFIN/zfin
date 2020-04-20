@@ -16,10 +16,8 @@
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
+    <jsp:body>
     <z:dataManagerDropdown>
-        <a class="dropdown-item" href="/action/marker/gene/edit/">Edit</a>
-
-        <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="/${formBean.marker.zdbID}">Old View</a>
     </z:dataManagerDropdown>
 
@@ -62,7 +60,7 @@
                 <z:attributeListItem label="Curator Notes">
                     <z:ifHasData test="${!empty formBean.marker.dataNotes}" noDataMessage="None">
                         <c:forEach var="curatorNote" items="${formBean.marker.sortedDataNotes}" varStatus="loopCurNote">
-                            ${curatorNote.curator.shortName}&nbsp;&nbsp;${curatorNote.date}<br/>
+                             ${curatorNote.curator.shortName}&nbsp;&nbsp;${curatorNote.date}<br/>
                             <zfin2:toggleTextLength text="${curatorNote.note}" idName="${zfn:generateRandomDomID()}"
                                                     shortLength="80"/>
                             ${!loopCurNote.last ? "<br/>&nbsp;<br>" : ""}
@@ -103,7 +101,7 @@
 
     </div>
 
-
+    </jsp:body>
 </z:dataPage>
 
 <script src="${zfn:getAssetPath("react.js")}"></script>
