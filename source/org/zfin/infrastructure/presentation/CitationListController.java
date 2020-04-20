@@ -34,27 +34,26 @@ public class CitationListController {
     public String featureMarkerelationCitationList(Model model, @PathVariable String zdbID, @PathVariable String ids) {
         model.addAttribute("dataZdbID", zdbID);
         List<Publication> publications = new ArrayList<>();
-        if (ids != null) {
-            List<String> pubIDs = Arrays.asList(ids.split(","));
-
-            for (String pubs : pubIDs) {
-                publications.add(RepositoryFactory.getPublicationRepository().getPublication(pubs));
-
-            }
-            model.addAttribute("pubCount", pubIDs.size());
-
-        } else
-
-        {
-
-            List<PublicationAttribution> publicationAttributions = RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(zdbID);
-
-            for (PublicationAttribution pub : publicationAttributions) {
-                publications.add(pub.getPublication());
-            }
-            model.addAttribute("pubCount", publications.size());
+        List<String> pubIDs = Arrays.asList(ids.split(","));
+        for (String pubs : pubIDs) {
+            publications.add(RepositoryFactory.getPublicationRepository().getPublication(pubs));
         }
+        model.addAttribute("pubCount", pubIDs.size());
+        PublicationListBean citationBean = new PublicationListAdapter(publications);
+        citationBean.setOrderBy("author");
+        model.addAttribute("citationList", citationBean);
+        return "infrastructure/data-citation-list.page";
+    }
 
+    @RequestMapping(value = "data-citation-list/{zdbID}")
+    public String featureMarkerelationCitationList(Model model, @PathVariable String zdbID) {
+        model.addAttribute("dataZdbID", zdbID);
+        List<Publication> publications = new ArrayList<>();
+        List<PublicationAttribution> publicationAttributions = RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(zdbID);
+        for (PublicationAttribution pub : publicationAttributions) {
+            publications.add(pub.getPublication());
+        }
+        model.addAttribute("pubCount", publications.size());
         PublicationListBean citationBean = new PublicationListAdapter(publications);
         citationBean.setOrderBy("author");
         model.addAttribute("citationList", citationBean);
@@ -62,4 +61,5 @@ public class CitationListController {
         return "infrastructure/data-citation-list.page";
     }
 }
+
 
