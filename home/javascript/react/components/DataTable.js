@@ -69,7 +69,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                     <tr>
                         {columns.map(column => (
                             !column.hidden && (
-                                <th key={column.label} style={{width: column.width, textAlign: column.align}}>
+                                <th key={column.key || column.label} style={{width: column.width, textAlign: column.align}}>
                                     {column.label}
                                 </th>
                             )
@@ -86,7 +86,7 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
                                 const valueGetter = stringToFunction(column.content);
                                 const value = valueGetter(row, supplementalData);
                                 return (
-                                    <td key={column.label} style={{textAlign: column.align}}>
+                                    <td key={column.key || column.label} style={{textAlign: column.align}}>
                                         {value}
                                     </td>
                                 );
@@ -149,6 +149,7 @@ DataTable.propTypes = {
         align: PropTypes.oneOf(['right', 'center', 'left']),
         label: PropTypes.node.isRequired,
         content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+        key: PropTypes.string,
     })).isRequired,
     onTableStateChange: PropTypes.func,
     pagination: PropTypes.bool,

@@ -139,6 +139,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                     </form>
                 </div>
             ),
+            key: 'locations',
             content: ({term}) => <a
                 href='#'
                 onClick={event => handleTermNameClick(event, term)}
@@ -157,6 +158,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                     </ul>
                 </div>
             ),
+            key: 'stages',
             content: ({stages}, supplementalData) => (
                 <StageTimeline highlightedStages={stages} allStages={supplementalData.stages}/>),
             width: '400px',
@@ -166,6 +168,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                 <div className='justify-content-between'>Citations</div>
                 <div>&nbsp;</div>
             </div>,
+            key: 'citations',
             content: row => (
                 <AttributionLink
                     url={`/action/marker/${row.term.oboID}`}
