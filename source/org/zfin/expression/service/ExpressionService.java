@@ -907,7 +907,6 @@ public class ExpressionService {
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneId);
         query.addFilterQuery("has_image:true");
-        query.addFilterQuery("is_wildtype:true");
         if (StringUtils.isNotEmpty(termId)) {
             query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
         }

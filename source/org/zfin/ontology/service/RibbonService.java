@@ -22,6 +22,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
+import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
@@ -50,7 +51,10 @@ public class RibbonService {
     private PublicationRepository publicationRepository;
 
     public RibbonSummary buildGORibbonSummary(String zdbID) throws Exception {
-        return buildRibbonSummary(zdbID, "/go-annotation", false, List.of(
+        SolrQuery query = new SolrQuery();
+        query.setRequestHandler("/go-annotation");
+        query.addFilterQuery(FieldName.GENE_ZDB_ID + ":" + zdbID);
+        return buildRibbonSummary(zdbID, query, List.of(
                 RibbonCategoryConfig.molecularFunction(),
                 RibbonCategoryConfig.biologicalProcess(),
                 RibbonCategoryConfig.cellularComponent()
@@ -58,7 +62,11 @@ public class RibbonService {
     }
 
     public RibbonSummary buildExpressionRibbonSummary(String zdbID, boolean includeReporter) throws Exception {
-        return buildRibbonSummary(zdbID, "/expression-annotation", includeReporter, List.of(
+        SolrQuery query = new SolrQuery();
+        query.setRequestHandler("/expression-annotation");
+        query.addFilterQuery(FieldName.GENE_ZDB_ID + ":" + zdbID);
+        expressionService.addReporterFilter(query, includeReporter);
+        return buildRibbonSummary(zdbID, query, List.of(
                 RibbonCategoryConfig.anatomy(),
                 RibbonCategoryConfig.stage(),
                 RibbonCategoryConfig.cellularComponent()
@@ -66,7 +74,10 @@ public class RibbonService {
     }
 
     public RibbonSummary buildPhenotypeRibbonSummary(String zdbID) throws Exception {
-        return buildRibbonSummary(zdbID, "/phenotype-annotation", false, List.of(
+        SolrQuery query = new SolrQuery();
+        query.setRequestHandler("/phenotype-annotation");
+        query.addFilterQuery(FieldName.GENE_ZDB_ID + ":" + zdbID);
+        return buildRibbonSummary(zdbID, query, List.of(
                 RibbonCategoryConfig.anatomy(),
                 RibbonCategoryConfig.stage(),
                 RibbonCategoryConfig.molecularFunction(),
@@ -76,8 +87,7 @@ public class RibbonService {
     }
 
     public RibbonSummary buildRibbonSummary(String zdbID,
-                                            String solrRequestHandler,
-                                            boolean includeReporter,
+                                            SolrQuery partialQuery,
                                             List<RibbonCategoryConfig> categoryConfigs) throws Exception {
 
         // pull out just the IDs
@@ -91,9 +101,9 @@ public class RibbonService {
                 .map(GenericTerm::getOboID)
                 .collect(toList());
 
-        Map<String, Integer> otherCounts = getRibbonCounts(solrRequestHandler, zdbID, includeReporter, categoryIDs, slimIDs);
-        Map<String, Integer> allCounts = getRibbonCounts(solrRequestHandler, zdbID, includeReporter, categoryIDs, Collections.emptyList());
-        Map<String, Integer> slimCounts = getRibbonCounts(solrRequestHandler, zdbID, includeReporter, slimIDs, Collections.emptyList());
+        Map<String, Integer> otherCounts = getRibbonCounts(partialQuery, categoryIDs, slimIDs);
+        Map<String, Integer> allCounts = getRibbonCounts(partialQuery, categoryIDs);
+        Map<String, Integer> slimCounts = getRibbonCounts(partialQuery, slimIDs);
 
         // build the categories field with term names and definitions
         List<RibbonCategory> categories = categoryConfigs.stream()
@@ -173,18 +183,17 @@ public class RibbonService {
         return summary;
     }
 
-    public Map<String, Integer> getRibbonCounts(String handler, String geneZdbId, boolean includeReporter,
-                                                List<String> includeTermIDs, List<String> excludeTermIDs)
+    public Map<String, Integer> getRibbonCounts(SolrQuery defaultQuery, List<String> includeTermIDs)
+            throws SolrServerException, IOException {
+        return getRibbonCounts(defaultQuery, includeTermIDs, Collections.emptyList());
+    }
+
+    public Map<String, Integer> getRibbonCounts(SolrQuery partialQuery, List<String> includeTermIDs, List<String> excludeTermIDs)
             throws SolrServerException, IOException {
         Map<String, Integer> termCounts = new HashMap<>(includeTermIDs.size());
 
-        SolrQuery query = new SolrQuery();
+        SolrQuery query = partialQuery.getCopy();
         query.setQuery("*:*");
-        query.setRequestHandler(handler);
-        query.addFilterQuery("gene_zdb_id:" + geneZdbId);
-
-        expressionService.addReporterFilter(query, includeReporter);
-
         includeTermIDs.forEach(t -> query.addFacetQuery("term_id:" + SolrService.luceneEscape(t)));
         excludeTermIDs.forEach(t -> query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t)));
 
@@ -204,7 +213,9 @@ public class RibbonService {
 
     public JsonResultResponse<ExpressionDetail> buildExpressionDetail(String geneID, String termID, Pagination pagination) {
         HashSet<String> expressionIDs = getDetailExpressionInfo(geneID, termID);
-        if (expressionIDs == null) return null;
+        if (expressionIDs == null) {
+            return null;
+        }
 
         ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
         List<Integer> ids = expressionIDs.stream().map(Integer::parseInt).collect(toList());
@@ -278,7 +289,9 @@ public class RibbonService {
 
     public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID, boolean includeReporter) {
         List<ExpressionRibbonDetail> details = getExpressionRibbonDetails(geneID, ribbonTermID, includeReporter);
-        if (details == null) return null;
+        if (details == null) {
+            return null;
+        }
 
         // remove BSPO
         details.removeIf(ribbonDetail -> ribbonDetail.getTerm().getOboID().startsWith("BSPO"));
