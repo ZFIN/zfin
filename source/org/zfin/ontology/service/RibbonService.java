@@ -15,7 +15,6 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.api.*;
 import org.zfin.marker.presentation.ExpressionDetail;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
-import org.zfin.marker.presentation.MarkerRelationshipPresentation;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
@@ -53,7 +52,7 @@ public class RibbonService {
     public RibbonSummary buildGORibbonSummary(String zdbID) throws Exception {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/go-annotation");
-        query.addFilterQuery(FieldName.GENE_ZDB_ID + ":" + zdbID);
+        query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
         return buildRibbonSummary(zdbID, query, List.of(
                 RibbonCategoryConfig.molecularFunction(),
                 RibbonCategoryConfig.biologicalProcess(),
@@ -64,7 +63,7 @@ public class RibbonService {
     public RibbonSummary buildExpressionRibbonSummary(String zdbID, boolean includeReporter) throws Exception {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
-        query.addFilterQuery(FieldName.GENE_ZDB_ID + ":" + zdbID);
+        query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
         expressionService.addReporterFilter(query, includeReporter);
         return buildRibbonSummary(zdbID, query, List.of(
                 RibbonCategoryConfig.anatomy(),
@@ -76,7 +75,7 @@ public class RibbonService {
     public RibbonSummary buildPhenotypeRibbonSummary(String zdbID) throws Exception {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
-        query.addFilterQuery(FieldName.GENE_ZDB_ID + ":" + zdbID);
+        query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
         return buildRibbonSummary(zdbID, query, List.of(
                 RibbonCategoryConfig.anatomy(),
                 RibbonCategoryConfig.stage(),
