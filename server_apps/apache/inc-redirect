@@ -40,9 +40,12 @@ RewriteCond %{REQUEST_URI} ^/solr [OR]
 RewriteCond %{REQUEST_URI} ^/action/login-redirect$
 RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 
+#Redirect ftp.zfin.org to zfin.org
+RewriteCond %{HTTP_HOST} ^ftp\.(.*) [NC]
+RewriteRule ^(.*) https://%1/$1 [R=301,L]
+
 #Remove extra stuff for home page url
 RewriteRule ^/$ /action/ [PT]
-
 
 #RewriteRule ^/$ /action/quicksearch/prototype [PT]
 
