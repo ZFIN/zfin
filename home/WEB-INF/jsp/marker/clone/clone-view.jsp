@@ -30,25 +30,11 @@
         </div>
 
         <z:section title="${GBROWSE}">
-            <div class="summary">
-                <div id="clone_gbrowse_thumbnail_box">
-                    <table class="summary solidblock">
-                        <tr>
-                            <td style="text-align: center">
-                                <div class="gbrowse-image"/>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+            <div class="__react-root"
+                 id="GbrowseImage"
+                 data-image-url="${formBean.image.imageUrl}"
+                 data-link-url="${formBean.image.linkUrl}">
             </div>
-            <script>
-                jQuery("#clone_gbrowse_thumbnail_box").gbrowseImage({
-                    width: 600,
-                    imageTarget: ".gbrowse-image",
-                    imageUrl: "${formBean.image.imageUrl}",
-                    linkUrl: "${formBean.image.linkUrl}"
-                });
-            </script>
         </z:section>
 
         <z:section title="${EXPRESSION}">
