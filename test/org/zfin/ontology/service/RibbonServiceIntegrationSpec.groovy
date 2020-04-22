@@ -1,5 +1,6 @@
 package org.zfin.ontology.service
 
+import org.apache.solr.client.solrj.SolrQuery
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
 import org.zfin.framework.api.JsonResultResponse
@@ -8,6 +9,7 @@ import org.zfin.framework.api.RibbonCategory
 import org.zfin.framework.api.RibbonSummary
 import org.zfin.marker.presentation.ExpressionDetail
 import org.zfin.marker.presentation.ExpressionRibbonDetail
+import org.zfin.search.FieldName
 import spock.lang.Shared
 import spock.lang.Unroll
 
@@ -22,7 +24,10 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#zdbID should have non-zero annotation count for #termID using #handler handler"() {
         when:
-        Map<String, Integer> termCounts = ribbonService.getRibbonCounts(handler, zdbID, [termID], [])
+        SolrQuery query = new SolrQuery();
+        query.setRequestHandler(handler);
+        query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
+        Map<String, Integer> termCounts = ribbonService.getRibbonCounts(query, [termID])
 
         then:
         termCounts
@@ -31,6 +36,17 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
 
         where:
         handler                  | zdbID                 | termID
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFS:0100000"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFS:0000050"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFS:0000030"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFS:0100000"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFA:0000559"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFA:0000008"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFA:0001138"
+        "/phenotype-annotation"  | "ZDB-GENE-030131-9008"| "GO:0033153"
+        "/phenotype-annotation"  | "ZDB-GENE-030131-9008"| "GO:0071707"
+        "/phenotype-annotation"  | "ZDB-GENE-030131-9008"| "GO:0044238"
+        "/phenotype-annotation"  | "ZDB-GENE-030131-9008"| "GO:0046649"
         "/expression-annotation" | "ZDB-GENE-990415-8"   | "ZFA:0000396"
         "/expression-annotation" | "ZDB-GENE-980526-426" | "ZFA:0000041"
         "/expression-annotation" | "ZDB-GENE-041001-150" | "GO:0005737"
@@ -65,11 +81,12 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     }
 
     @Unroll
-    def "#geneID and #termID "() {
+    def "#geneID expression detail response with #termID filter should return more than #numberOfRecords "() {
         when:
         JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, termID, new Pagination())
 
         then:
+        response
         response.getTotal() > numberOfRecords
 
         where:
@@ -105,7 +122,7 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#zdbID expression ribbon should have categories and groups populated"() {
         when:
-        RibbonSummary ribbonSummary = ribbonService.buildExpressionRibbonSummary(zdbID)
+        RibbonSummary ribbonSummary = ribbonService.buildExpressionRibbonSummary(zdbID, false)
 
         then:
         ribbonSummary
@@ -122,7 +139,7 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#zdbID expression ribbon should have some annotations for #category"() {
         when:
-        RibbonSummary ribbonSummary = ribbonService.buildExpressionRibbonSummary(zdbID)
+        RibbonSummary ribbonSummary = ribbonService.buildExpressionRibbonSummary(zdbID, false)
         RibbonCategory ribbonCategory = ribbonSummary.categories.get(expressionCategory[category])
 
         Integer allCount = ribbonSummary.subjects[0].groups[ribbonCategory.id]["ALL"]?.numberOfAnnotations
