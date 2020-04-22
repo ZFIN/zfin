@@ -57,7 +57,7 @@
         </z:section>
 
         <z:section title="${PROTEINS}">
-            <jsp:include page="transcript-view-gbrowse.jsp"/>
+            <jsp:include page="transcript-view-protein-products.jsp"/>
         </z:section>
         <z:section title="${SUPPORTINGSEQUENCES}">
             <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>

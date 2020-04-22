@@ -1,19 +1,13 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:if test="${!empty formBean.relatedTranscriptDisplay.gbrowseImage}">
-
-    <div class="gbrowse-image-prototype"></div>
-
+    <div class="__react-root"
+         id="GbrowseImage"
+         data-image-url="${formBean.relatedTranscriptDisplay.gbrowseImage.imageUrl}"
+         data-link-url="${formBean.relatedTranscriptDisplay.gbrowseImage.linkUrl}"
+         data-build="${formBean.relatedTranscriptDisplay.gbrowseImage.build}">
+    </div>
 </c:if>
-
-<script>
-    $(".gbrowse-image-prototype").gbrowseImage({
-        width: 700,
-        imageUrl: "${formBean.relatedTranscriptDisplay.gbrowseImage.imageUrl}",
-        linkUrl: "${formBean.relatedTranscriptDisplay.gbrowseImage.linkUrl}",
-        build: "${formBean.relatedTranscriptDisplay.gbrowseImage.build}"
-    });
-</script>
 
 <z:dataTable collapse="true" hasData="${!empty formBean.relatedTranscriptDisplay.nonWithdrawnTranscripts}">
 

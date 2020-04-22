@@ -621,14 +621,6 @@ video {
     vertical-align: top;
 }
 
-.gbrowse-image-prototype {
-    background: white;
-    display: inline-block;
-    vertical-align: top;
-    padding-bottom: 10px;
-}
-
-
 .gbrowse-image img {
     padding-bottom: 10px;
     border: 0;
