@@ -5,9 +5,11 @@
 
 <z:ifHasData test="${hasData}">
     <div class="data-table-container">
-        <table class="data-table" data-table="${collapse ? 'collapse' : ''}" data-toggle-container=".data-table-pagination">
-            <jsp:doBody />
-        </table>
+        <div class="horizontal-scroll-container">
+            <table class="data-table" data-table="${collapse ? 'collapse' : ''}" data-toggle-container=".data-table-pagination">
+                <jsp:doBody />
+            </table>
+        </div>
         <div class="data-table-pagination"></div>
     </div>
 </z:ifHasData>

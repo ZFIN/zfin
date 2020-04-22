@@ -1200,3 +1200,8 @@ input + label {
     display: inline-block;
     width: 60px !important;
 }
+
+.horizontal-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+}

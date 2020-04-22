@@ -20,7 +20,7 @@ const getSelectedTermQueryParams = (selected) => {
 };
 
 const Ribbon = (props) => (
-    <div className='ontology-ribbon-container'>
+    <div className='ontology-ribbon-container horizontal-scroll-container'>
         <GenericRibbon
             hideFirstSubjectLabel
             colorBy={1} // annotations

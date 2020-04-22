@@ -11,7 +11,7 @@ const GeneSequencesTable = ({geneId}) => {
         {
             label: 'Type',
             content: row => row.type,
-            width: '50px',
+            width: '80px',
         },
         {
             label: 'Accession #',

@@ -30,7 +30,7 @@ const OrthologyTable = ({geneId}) => {
                     </div>
                 ))
             ),
-            width: '200px',
+            width: '150px',
         },
         {
             label: 'Evidence',
@@ -46,6 +46,7 @@ const OrthologyTable = ({geneId}) => {
                     </div>
                 ))
             ),
+            width: '200px',
         },
     ];
     return (

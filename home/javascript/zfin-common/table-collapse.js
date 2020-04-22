@@ -51,8 +51,8 @@
 
         _init() {
             const table = this.element;
-            const rows = table.find("tr").slice(this.options.headerRows);
-            const toggleContainer = table.parent().find(this.options.toggleContainer);
+            const rows = table.find('tr').slice(this.options.headerRows);
+            const toggleContainer = table.closest('.data-table-container').find(this.options.toggleContainer);
             let numVisibleRows = rows.length;
             const numRowsText = $(`<span>1 - ${numVisibleRows} of ${rows.length}</span>`).appendTo(toggleContainer);
             const showText = toggleContainer.length ?

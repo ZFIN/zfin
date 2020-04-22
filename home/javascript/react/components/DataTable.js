@@ -64,41 +64,43 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
 
     return (
         <div className='data-table-container'>
-            <table className='data-table table-fixed'>
-                <thead>
-                    <tr>
-                        {columns.map(column => (
-                            !column.hidden && (
-                                <th key={column.key || column.label} style={{width: column.width, textAlign: column.align}}>
-                                    {column.label}
-                                </th>
-                            )
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {results.map(row => (
-                        <tr key={stringToFunction(rowKey)(row)}>
-                            {columns.map(column => {
-                                if (column.hidden) {
-                                    return null;
-                                }
-                                const valueGetter = stringToFunction(column.content);
-                                const value = valueGetter(row, supplementalData);
-                                return (
-                                    <td key={column.key || column.label} style={{textAlign: column.align}}>
-                                        {value}
-                                    </td>
-                                );
-                            })}
+            <div className='horizontal-scroll-container'>
+                <table className='data-table table-fixed'>
+                    <thead>
+                        <tr>
+                            {columns.map(column => (
+                                !column.hidden && (
+                                    <th key={column.key || column.label} style={{width: column.width, textAlign: column.align}}>
+                                        {column.label}
+                                    </th>
+                                )
+                            ))}
                         </tr>
-                    ))
-                    }
-                    {total === 0 && <tr>
-                        <td colSpan={columns.length}><NoData/></td>
-                    </tr>}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {results.map(row => (
+                            <tr key={stringToFunction(rowKey)(row)}>
+                                {columns.map(column => {
+                                    if (column.hidden) {
+                                        return null;
+                                    }
+                                    const valueGetter = stringToFunction(column.content);
+                                    const value = valueGetter(row, supplementalData);
+                                    return (
+                                        <td key={column.key || column.label} style={{textAlign: column.align}}>
+                                            {value}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        ))
+                        }
+                        {total === 0 && <tr>
+                            <td colSpan={columns.length}><NoData/></td>
+                        </tr>}
+                    </tbody>
+                </table>
+            </div>
             <div className='data-table-pagination'>
                 {pagination && total > 0 && <React.Fragment>
                     {data.pending ? <LoadingSpinner/> : <span>{start} - {end} of {total}</span>}

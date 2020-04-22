@@ -59,12 +59,12 @@ const GeneOntologyRibbon = ({geneId}) => {
                     {evidenceCode.code}
                 </a>
             ),
-            width: '50px',
+            width: '65px',
         },
         {
             label: 'With/From',
             content: ({inferenceLinks}) => inferenceLinks.map(il => <div key={il} dangerouslySetInnerHTML={{__html: il}} />),
-            width: '120px',
+            width: '130px',
         },
         {
             label: 'Publications',
