@@ -14,8 +14,9 @@
 <%--3 - (only geo link is possible) eq 1 && (markerExpression.geoLinkSearching):--%>
 <%--[put No data avialable / or blank into Curated Microarray Expression]--%>
 <%--4 - (no data available) (markerExpression.geoLinkSearching = false && eq 0)--%>
-
-
+<z:attributeList>
+<c:choose>
+    <c:when test="${markerExpression.totalCountForStuff gt 0}">
                 <c:if test="${markerExpression.directlySubmittedExpression ne null}">
                     <z:attributeListItem label="Directly Submitted Expression Data">
 
@@ -54,5 +55,18 @@
                 </c:if>
 
 
+    </c:when>
+    <c:otherwise>
+
+        <%--<z:attributeListItem label="">--%>
+        <div class="col-sm-2 color: #6c757d">
 
 
+            <i>No data available</i>
+            </div>
+        <%--</z:attributeListItem>--%>
+
+    </c:otherwise>
+</c:choose>
+
+</z:attributeList>
