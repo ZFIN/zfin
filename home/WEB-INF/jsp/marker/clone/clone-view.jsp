@@ -7,8 +7,16 @@
 <c:set var="GBROWSE" value="Genome Browser"/>
 <c:set var="EXPRESSION" value="Gene Expression"/>
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
+<c:set var="typeName">${formBean.marker.markerType.name}</c:set>
+<c:if test="${typeName eq 'BAC'}">
+    <c:set var="sections" value="${[SUMMARY, GBROWSE, MARKERRELATIONSHIPS, SEQUENCES]}"></c:set>
+</c:if>
+<c:if test="${typeName eq 'EST' || typeName eq 'CDNA'}">
+    <c:set var="sections" value="${[SUMMARY, EXPRESSION, MARKERRELATIONSHIPS, SEQUENCES]}"></c:set>
+</c:if>
 
-<z:dataPage sections="${[SUMMARY, GBROWSE, EXPRESSION, MARKERRELATIONSHIPS, SEQUENCES]}">
+<z:dataPage sections="${sections}">
+
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -37,9 +45,12 @@
             </div>
         </z:section>
 
+
+
         <z:section title="${EXPRESSION}">
             <jsp:include page="clone-view-expression.jsp"/>
         </z:section>
+
 
         <z:section title="${MARKERRELATIONSHIPS}">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
