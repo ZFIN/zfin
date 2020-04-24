@@ -1185,6 +1185,16 @@ public class MarkerService {
                 fullMarkerRelationships.add(markerRelationshipPresentation);
             }
         }
+        List<MarkerRelationshipPresentation> genesForCloneTranscripts =
+                markerRepository.getWeakReferenceMarker(marker.getZdbID()
+                        , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
+                        , MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
+                        , "Contains");
+        for (MarkerRelationshipPresentation markerRelationshipPresentation : genesForCloneTranscripts) {
+            if (!fullMarkerRelationships.contains(markerRelationshipPresentation)) {
+                fullMarkerRelationships.add(markerRelationshipPresentation);
+            }
+        }
 
         for (MarkerRelationshipPresentation mrelP : fullMarkerRelationships) {
             Marker relatedMarker = markerRepository.getMarker(mrelP.getZdbId());
