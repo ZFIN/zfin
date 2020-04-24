@@ -3,6 +3,7 @@ package org.zfin.marker.presentation;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.api.View;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
@@ -18,7 +19,7 @@ public class ExpressionRibbonDetail {
     @JsonView(View.API.class)
     private GenericTerm term;
     @JsonView(View.API.class)
-    private List<GenericTerm> stages;
+    private List<DevelopmentStage> stages;
     @JsonView(View.API.class)
     private Publication publication;
     @JsonView(View.API.class)
@@ -34,7 +35,7 @@ public class ExpressionRibbonDetail {
         return pubIDs.size();
     }
 
-    public void addStage(GenericTerm stage) {
+    public void addStage(DevelopmentStage stage) {
         if (stages == null) {
             stages = new ArrayList<>();
         }

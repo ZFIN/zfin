@@ -7,6 +7,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionResult2;
@@ -360,29 +361,24 @@ public class RibbonService {
         HashSet<String> termIDs = queryResponse.getFacetPivot().getVal(0).stream()
                 .map(pivotField -> (String) pivotField.getValue()).collect(toCollection(HashSet::new));
         List<GenericTerm> terms = anatomyRepository.getMultipleTerms(termIDs);
-        Map<String, GenericTerm> termMap = terms.stream()
+        Map<String, GenericTerm> anatomyTermMap = terms.stream()
                 .collect(toMap(GenericTerm::getOboID, term -> term));
 
-        Set<String> stageTermIDs = queryResponse.getFacetPivot().getVal(0).stream()
-                .map(pivotField -> pivotField.getPivot().stream().map(field -> (String) field.getValue()).collect(toList()))
-                .flatMap(Collection::stream)
-                .collect(toSet());
-        List<GenericTerm> stageTerms = anatomyRepository.getMultipleTerms(stageTermIDs);
-        Map<String, GenericTerm> stageTermMap = stageTerms.stream()
-                .collect(toMap(GenericTerm::getOboID, term -> term));
-        termMap.putAll(stageTermMap);
+        List<DevelopmentStage> stageTerms = anatomyRepository.getAllStagesWithoutUnknown();
+        Map<String, DevelopmentStage> stageTermMap = stageTerms.stream()
+                .collect(toMap(DevelopmentStage::getOboID, term -> term));
 
         List<ExpressionRibbonDetail> details = new ArrayList<>();
         queryResponse.getFacetPivot().getVal(0).forEach(pivotField -> {
             ExpressionRibbonDetail detail = new ExpressionRibbonDetail();
             String termID = (String) pivotField.getValue();
-            detail.setTerm(termMap.get(termID));
+            detail.setTerm(anatomyTermMap.get(termID));
             // stage pivot
             pivotField.getPivot().stream()
-                    .filter(pivotField1 -> termMap.containsKey(pivotField1.getValue()))
+                    .filter(pivotField1 -> stageTermMap.containsKey(pivotField1.getValue()))
                     .forEach(pivot -> {
                         String stageID = (String) pivot.getValue();
-                        detail.addStage(termMap.get(stageID));
+                        detail.addStage(stageTermMap.get(stageID));
                         detail.addPublications(pivot.getPivot().stream().map(pivotField1 -> (String) pivotField1.getValue()).collect(toList()));
                     });
             details.add(detail);
@@ -400,11 +396,9 @@ public class RibbonService {
                 });
         details.stream()
                 .forEach(ribbonDetail1 -> {
-
-                        List<String> pubRibbon = ribbonDetail1.getPubIDs();
-
-                        ribbonDetail1.setRibbonPubs(pubRibbon);
-                    });
+                    List<String> pubRibbon = ribbonDetail1.getPubIDs();
+                    ribbonDetail1.setRibbonPubs(pubRibbon);
+                });
 
         // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
         Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
@@ -424,7 +418,7 @@ public class RibbonService {
             }
         }
 
-        
+
         return details;
     }
 }

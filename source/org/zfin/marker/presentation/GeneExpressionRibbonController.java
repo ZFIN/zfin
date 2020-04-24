@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Image;
 import org.zfin.expression.service.ExpressionService;
@@ -106,8 +105,9 @@ public class GeneExpressionRibbonController {
         }
 
         // sorting
-        if (filteredList != null)
+        if (filteredList != null) {
             filteredList.sort(Comparator.comparing(detail -> detail.getTerm().getTermName().toLowerCase()));
+        }
 
         // paginating
         JsonResultResponse<ExpressionRibbonDetail> response = new JsonResultResponse<>();
@@ -118,13 +118,7 @@ public class GeneExpressionRibbonController {
                     .limit(pagination.getLimit())
                     .collect(Collectors.toList()));
         }
-        response.addSupplementalData("stages",
-                anatomyRepository.getAllStagesWithoutUnknown()
-                        .stream()
-                        .map(DevelopmentStage::getOboID)
-                        .map(id -> ontologyRepository.getTermByOboID(id))
-                        .collect(Collectors.toList())
-        );
+        response.addSupplementalData("stages", anatomyRepository.getAllStagesWithoutUnknown());
         response.setHttpServletRequest(request);
         response.calculateRequestDuration(startTime);
 

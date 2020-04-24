@@ -32,24 +32,35 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
     @Column(name = "stg_zdb_id")
     @JsonView(View.API.class)
     private String zdbID;
+
     @Column(name = "stg_obo_id")
     private String oboID;
+
     @Column(name = "stg_name")
     @JsonView(View.API.class)
     private String name;
+
     @Column(name = "stg_name_long")
     private String nameLong;
+
     @Column(name = "stg_hours_start")
+    @JsonView(View.GeneExpressionAPI.class)
     private float hoursStart;
+
     @Column(name = "stg_hours_end")
+    @JsonView(View.GeneExpressionAPI.class)
     private float hoursEnd;
+
     @Column(name = "stg_other_features")
     private String otherFeature;
+
     @Column(name = "stg_abbrev")
     @JsonView(View.API.class)
     private String abbreviation;
+
     @Column(name = "stg_name_ext")
     private String timeString;
+
     @Transient
     private long stageID;
     public static final String NEWLINE_PLUS_INDENT = System.getProperty("line.separator") + "    ";
@@ -133,12 +144,14 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
      * @return string
      */
     public String abbreviation() {
-        if (name == null)
+        if (name == null) {
             throw new RuntimeException("No name for stage found yet.");
+        }
 
         int colonIndex = name.indexOf(":");
-        if (colonIndex == -1)
+        if (colonIndex == -1) {
             return name;
+        }
 
         return name.substring(0, colonIndex);
     }
@@ -159,25 +172,30 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
      * @return boolean
      */
     public boolean earlierThan(DevelopmentStage stage) {
-        if (stage == null)
+        if (stage == null) {
             throw new RuntimeException("No valid stage object provided for comparison.");
+        }
 
-        if (this == stage)
+        if (this == stage) {
             return false;
+        }
 
-        if (this.getName().equals(UNKNOWN))
+        if (this.getName().equals(UNKNOWN)) {
             return true;
+        }
 
-        if (stage.getName().equals(UNKNOWN))
+        if (stage.getName().equals(UNKNOWN)) {
             return false;
+        }
 
         return hoursStart <= stage.getHoursStart();
 
     }
 
     public int compareTo(DevelopmentStage anotherStage) {
-        if (anotherStage == null)
+        if (anotherStage == null) {
             return +1;
+        }
         return (int) (hoursStart - anotherStage.getHoursStart());
     }
 

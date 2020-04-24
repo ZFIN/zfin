@@ -11,6 +11,7 @@ import AttributionLink from '../components/AttributionLink';
 import StageTimeline from '../components/StageTimeline';
 import GeneExpressionFigureGallery from './GeneExpressionFigureGallery';
 import PostComposedEntities from '../components/PostComposedEntities';
+import StageTimelineHeader from '../components/StageTimelineHeader';
 
 const GeneExpressionRibbon = ({geneId}) => {
     const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
@@ -77,17 +78,17 @@ const GeneExpressionRibbon = ({geneId}) => {
         },
         {
             label: 'Experiment',
-            content: ({experiment}) => <div>{experiment.conditions}</div>,
+            content: ({experiment}) => experiment.conditions,
             width: '200px',
         },
         {
             label: 'Assay',
-            content: ({assay}) => <div>{assay.abbreviation}</div>,
+            content: ({assay}) => assay.abbreviation,
             width: '200px',
         },
         {
             label: 'Expressed Location',
-            content: ({entities}) => (<PostComposedEntities entities={entities}/>),
+            content: ({entities}) => <PostComposedEntities entities={entities} />,
             width: '200px',
         },
         /*
@@ -99,7 +100,7 @@ const GeneExpressionRibbon = ({geneId}) => {
         */
         {
             label: 'Stage',
-            content: ({startStage}) => <div>{startStage}</div>,
+            content: 'startStage',
             width: '200px',
         },
         {
@@ -113,7 +114,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                 <a href={`/${publication.zdbID}`} dangerouslySetInnerHTML={{__html: publication.shortAuthorList}}/>,
             width: '200px',
         },
-    ]
+    ];
 
     const columns = [
         {
@@ -134,41 +135,34 @@ const GeneExpressionRibbon = ({geneId}) => {
                             type='button'
                             className='btn btn-secondary btn-sm mb-2'
                             onClick={event => handleFilter(event, '')}
-                        > Clear
+                        >
+                            Clear
                         </button>
                     </form>
                 </div>
             ),
             key: 'locations',
-            content: ({term}) => <a
-                href='#'
-                onClick={event => handleTermNameClick(event, term)}
-                key={term}
-            >{term.termName}
-            </a>,
-            width: '200px',
+            content: ({term}) => (
+                <a
+                    href='#'
+                    onClick={event => handleTermNameClick(event, term)}
+                    key={term}
+                >
+                    {term.termName}
+                </a>
+            ),
+            width: '140px',
         },
         {
-            label: (
-                <div>
-                    <div>Stage Observed</div>
-                    <ul className='list-unstyled d-flex justify-content-between font-weight-normal'>
-                        <li>Zygote</li>
-                        <li>Adult</li>
-                    </ul>
-                </div>
-            ),
+            label: <StageTimelineHeader />,
             key: 'stages',
             content: ({stages}, supplementalData) => (
-                <StageTimeline highlightedStages={stages} allStages={supplementalData.stages}/>),
-            width: '400px',
+                <StageTimeline highlightedStages={stages} allStages={supplementalData.stages}/>
+            ),
+            width: '300px',
         },
         {
-            label: <div className='align-content-between'>
-                <div className='justify-content-between'>Citations</div>
-                <div>&nbsp;</div>
-            </div>,
-            key: 'citations',
+            label: 'Citations',
             content: row => (
                 <AttributionLink
                     url={`/action/marker/${row.term.oboID}`}

@@ -1,10 +1,5 @@
 // variable overrides
-$font-size-base: 0.875rem;
-$table-cell-padding: 0.5rem;
-$label-margin-bottom: 0.3125rem;
-$font-family-sans-serif: Arial, sans-serif;
-$link-color: blue;
-$modal-md: 600px;
+@import "theme";
 
 // import bootstrap
 @import "~bootstrap/scss/bootstrap";

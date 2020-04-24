@@ -1,5 +1,14 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import {TICK_LABELS} from './StageTimelineHeader';
+
+const formatHours = (hours) => {
+    if (hours < 168) {
+        return hours + ' hpf';
+    } else {
+        return hours / 24 + ' dpf';
+    }
+};
 
 const StageTimeline = ({allStages, highlightedStages}) => {
     // get the indices of the highlighted stages in the all stages array, remove
@@ -24,19 +33,36 @@ const StageTimeline = ({allStages, highlightedStages}) => {
     }
 
     const handleRef = useCallback(ref => {
-        $(ref).tipsy({gravity: 'n', html: true});
+        $(ref).tipsy({
+            gravity: 'n',
+            html: true,
+            className: 'stage-timeline-tooltip',
+        });
     }, []);
 
     return (
         <div className='stage-timeline-container'>
             <div className='stage-timeline-line' />
             {
+                TICK_LABELS.map(tick => {
+                    const left = tick.index * 100 / numStages + '%';
+                    return (
+                        <div
+                            className='stage-timeline-tick'
+                            key={tick.label}
+                            style={{left}}
+                        />
+                    );
+                })
+            }
+            {
                 ranges.map(([start, end]) => {
                     const left = start * 100 / numStages + '%';
                     const width = (end - start + 1) * 100 / numStages + '%';
                     const stageNames = [];
                     for (let idx = start; idx <= end; idx++) {
-                        stageNames.push(allStages[idx].termName);
+                        const stage = allStages[idx];
+                        stageNames.push(`${stage.name} (${formatHours(stage.hoursStart)} - ${formatHours(stage.hoursEnd)})`);
                     }
                     return (
                         <div

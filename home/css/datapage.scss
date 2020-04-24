@@ -1,6 +1,7 @@
 @import "theme";
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
 @import "~@geneontology/ribbon/lib/main";
 
 body.data-page {
@@ -205,4 +206,43 @@ tr.spaceUnder > td{
     height: 100%;
     background-color: $primary;
     border: 1px solid $grey;
+}
+
+.stage-timeline-tick-container {
+    position: relative;
+    font-weight: normal;
+    height: $line-height-base * $font-size-base;
+}
+
+.stage-timeline-tick {
+    border-left: 1px solid $grey;
+    position: absolute;
+    height: 7px;
+    top: calc(50% - 3px);
+}
+
+.stage-timeline-tick-label {
+    white-space: nowrap;
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+
+    &:first-of-type {
+        transform: none;
+    }
+
+    @include media-breakpoint-down(lg) {
+        &:nth-of-type(even) {
+            display: none;
+        }
+    }
+}
+
+.stage-timeline-tooltip {
+    text-align: left;
+    white-space: nowrap;
+
+    .tipsy-inner {
+        max-width: 400px;
+    }
 }
