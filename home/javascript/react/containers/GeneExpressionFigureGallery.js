@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import FigureGallery from '../components/FigureGallery';
 import FigureGalleryExpressionDetails from '../components/FigureGalleryExpressionDetails';
 import http from '../utils/http';
+import NoData from '../components/NoData';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import {useFetch} from '../utils/effects';
 
@@ -60,6 +61,12 @@ const GeneExpressionFigureGallery = ({geneId, includeReporters, selectedTermId, 
     if (error) {
         return <GenericErrorMessage />;
     }
+
+    if(total === 0){
+        return <NoData placeholder={'No images available'}/>;
+    }
+
+
 
     return (
         <FigureGallery
