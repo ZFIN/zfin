@@ -144,4 +144,30 @@ public class SequenceService {
     }
 
 
+
+    public JsonResultResponse<MarkerDBLink> getOtherMarkerDBLinkJsonResultResponse(String zdbID
+                                                                              ) {
+        Marker marker = markerRepository.getMarker(zdbID);
+        if (marker == null) {
+            String errorMessage = "No marker found for ID: " + zdbID;
+            log.error(errorMessage);
+            RestErrorMessage error = new RestErrorMessage(404);
+            error.addErrorMessage(errorMessage);
+            throw new RestErrorException(error);
+        }
+
+        JsonResultResponse<MarkerDBLink> response = new JsonResultResponse<>();
+
+            SequenceInfo sequenceInfo = MarkerService.getMarkerSequenceInfo(marker);
+            response.setResults(sequenceInfo.getDbLinks().stream()
+                    .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
+                    .collect(Collectors.toList())
+            );
+            response.setTotal(sequenceInfo.getNumberDBLinks());
+
+        return response;
+    }
+
+
+
 }
