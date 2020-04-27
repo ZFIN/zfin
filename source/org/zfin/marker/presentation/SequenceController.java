@@ -54,6 +54,18 @@ public class SequenceController {
         return response;
     }
 
+    @JsonView(View.SequenceAPI.class)
+    @RequestMapping(value = "/marker/{zdbID}/markerSequences")
+    public JsonResultResponse<MarkerDBLink> getMarkerequenceView(@PathVariable("zdbID") String zdbID
+                                                            ) {
+
+
+        JsonResultResponse<MarkerDBLink> response = sequenceService.getOtherMarkerDBLinkJsonResultResponse(zdbID);
+        response.setHttpServletRequest(request);
+
+        return response;
+    }
+
     @JsonView(View.OrthologyAPI.class)
     @RequestMapping(value = "/gene/{geneID}/orthologs", method = RequestMethod.GET)
     public JsonResultResponse<OrthologDTO> listOrthologsApi(@PathVariable String geneID) throws InvalidWebRequestException {

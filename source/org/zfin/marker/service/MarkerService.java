@@ -150,6 +150,38 @@ public class MarkerService {
         return sequenceInfo;
     }
 
+
+    public static SequenceInfo getMarkerSequenceInfo(Marker marker) {
+
+        SequenceInfo sequenceInfo = new SequenceInfo();
+
+        sequenceInfo.setDbLinks(RepositoryFactory.getSequenceRepository()
+                .getDBLinksForMarkerAndDisplayGroup(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
+        );
+
+
+        sequenceInfo.setNumberDBLinks(sequenceInfo.getDbLinks().size());
+
+        List<DBLink> dbLinkSet = new ArrayList<>();
+        Set<String> types = new HashSet<>();
+        for (DBLink dbLink : sequenceInfo.getDbLinks()) {
+            String type = dbLink.getReferenceDatabase().getForeignDBDataType().getDataType().toString();
+            if (!types.contains(type)) {
+                types.add(type);
+                dbLinkSet.add(dbLink);
+            } else if (types.contains(type)) {
+                sequenceInfo.setHasMoreLinks(true);
+            }
+        }
+
+        sequenceInfo.setDbLinks(dbLinkSet);
+
+
+        return sequenceInfo;
+    }
+
+
     public static List<MarkerDBLink> getMarkerDBLinks(Marker marker) {
         SequencePageInfoBean sequenceInfo = getSequenceInfoFull(marker);
 
