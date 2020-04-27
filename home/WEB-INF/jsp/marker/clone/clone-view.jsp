@@ -8,7 +8,7 @@
 <c:set var="EXPRESSION" value="Gene Expression"/>
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
 <c:set var="typeName">${formBean.marker.markerType.name}</c:set>
-<c:if test="${typeName eq 'BAC'}">
+<c:if test="${typeName ne 'EST' || typeName ne 'CDNA'}">
     <c:set var="sections" value="${[SUMMARY, GBROWSE, MARKERRELATIONSHIPS, SEQUENCES]}"></c:set>
 </c:if>
 <c:if test="${typeName eq 'EST' || typeName eq 'CDNA'}">
@@ -57,7 +57,8 @@
         </z:section>
 
         <z:section title="${SEQUENCES}">
-            <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
+            <div class="__react-root" id="OtherMarkerSequencesTable" data-marker-id="${formBean.marker.zdbID}"></div>
+
         </z:section>
     </jsp:body>
 </z:dataPage>
