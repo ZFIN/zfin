@@ -39,6 +39,7 @@ const GeneMarkerRelationshipsTable = ({geneId}) => {
             label: 'Accession Numbers',
             content: ({otherMarkerGenBankDBLink}) => <AccessionNumberList dblinks={otherMarkerGenBankDBLink} />,
             width: '120px',
+            hidden: geneId.indexOf('GENE')===-1
         },
         {
             label: 'Citations',
