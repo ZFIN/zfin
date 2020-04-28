@@ -2,7 +2,7 @@
 
 
 
-<z:dataTable collapse="true" hasData="${!empty formBean.proteinDetailDomainBean}">
+<z:dataTable collapse="true" hasData="${!empty formBean.proteinDetailDomainBean.interProDomains}">
     <c:if test="${!fn:contains(formBean.marker.zdbID,'RNAG')}">
         <thead>
             <tr>
