@@ -18,6 +18,7 @@ const GeneExpressionRibbon = ({geneId}) => {
     const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
     const [selectedTableTerm, setSelectedTableTerm] = useState(null);
     const [isChecked, setIsChecked] = useState(false);
+    const [isDirectlySubmitted, setIsDirectlySubmitted] = useState(false);
     const [filteredTerm, setFilteredTerm] = useState('');
 
 
@@ -25,6 +26,9 @@ const GeneExpressionRibbon = ({geneId}) => {
 
     if (isChecked) {
         url += '?includeReporter=true';
+    }
+    if (isDirectlySubmitted) {
+        url += '?onlyDirectlySubmitted=true';
     }
 
     const data = useFetch(url);
@@ -62,6 +66,9 @@ const GeneExpressionRibbon = ({geneId}) => {
 
     const handleReporterSelection = (event) => {
         setIsChecked(event.target.checked);
+    };
+    const handleDirectSubmissionSelection = (event) => {
+        setIsDirectlySubmitted(event.target.checked);
     };
 
     const handleRibbonCellClick = (subject, group) => {
@@ -204,6 +211,18 @@ const GeneExpressionRibbon = ({geneId}) => {
                     Include Expression in Reporter Lines
                 </label>
             </div>
+            <div className='custom-control custom-checkbox'>
+                <input
+                    type='checkbox'
+                    id='directSubmissionCheckbox'
+                    className='custom-control-input'
+                    onChange={(event) => handleDirectSubmissionSelection(event)}
+                    checked={isDirectlySubmitted}
+                />
+                <label className='custom-control-label' htmlFor='directSubmissionCheckbox'>
+                    Show only Directly Submitted Expression Data
+                </label>
+            </div>
 
             <Ribbon
                 subjects={data.value.subjects}
@@ -223,6 +242,7 @@ const GeneExpressionRibbon = ({geneId}) => {
             <GeneExpressionFigureGallery
                 geneId={geneId}
                 includeReporters={isChecked}
+                onlyDirectlySubmitted={isDirectlySubmitted}
                 selectedTermId={selectedTermId}
                 selectedTermIsOther={selectedTermIsOther}
             />
@@ -230,7 +250,7 @@ const GeneExpressionRibbon = ({geneId}) => {
 
             {selectedRibbonTerm && !selectedTableTerm &&
             <DataTable
-                url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selectedRibbonTerm)}&includeReporter=${isChecked}&filter.termName=${filteredTerm}`}
+                url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selectedRibbonTerm)}&includeReporter=${isChecked}&onlyDirectlySubmitted=${isDirectlySubmitted}&filter.termName=${filteredTerm}`}
                 columns={columns}
                 rowKey={row => row.term.zdbID}
                 showEmptyTable={filteredTerm}
