@@ -900,7 +900,7 @@ public class ExpressionService {
 
     }
 
-    public JsonResultResponse<Image> getExpressionImages(String geneId, String termId, boolean includeReporter, boolean isOther, Pagination pagination) throws IOException, SolrServerException {
+    public JsonResultResponse<Image> getExpressionImages(String geneId, String termId, boolean includeReporter, boolean onlyDirectlySubmitted,  boolean isOther, Pagination pagination) throws IOException, SolrServerException {
         JsonResultResponse<Image> response = new JsonResultResponse<>();
 
         SolrQuery query = new SolrQuery();
@@ -911,6 +911,7 @@ public class ExpressionService {
             query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
         }
         addReporterFilter(query, includeReporter);
+        addDirectSubmissionFilter(query, onlyDirectlySubmitted);
         if (isOther) {
             ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
                     query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t))
@@ -940,6 +941,13 @@ public class ExpressionService {
             query.addFilterQuery("is_wildtype:true OR is_reporter:true");
         } else {
             query.addFilterQuery("is_wildtype:true");
+        }
+    }
+
+    public void addDirectSubmissionFilter(SolrQuery query, boolean onlyDirectlySubmitted) {
+        if (onlyDirectlySubmitted) {
+            query.addFilterQuery("journal_type:Unpublished");
+
         }
     }
 }

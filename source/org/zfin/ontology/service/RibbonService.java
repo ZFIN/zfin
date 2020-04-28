@@ -61,11 +61,12 @@ public class RibbonService {
         ));
     }
 
-    public RibbonSummary buildExpressionRibbonSummary(String zdbID, boolean includeReporter) throws Exception {
+    public RibbonSummary buildExpressionRibbonSummary(String zdbID, boolean includeReporter, boolean onlyDirectlySubmitted) throws Exception {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
         expressionService.addReporterFilter(query, includeReporter);
+        expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
         return buildRibbonSummary(zdbID, query, List.of(
                 RibbonCategoryConfig.anatomy(),
                 RibbonCategoryConfig.stage(),
@@ -287,8 +288,8 @@ public class RibbonService {
     }
 
 
-    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID, boolean includeReporter) {
-        List<ExpressionRibbonDetail> details = getExpressionRibbonDetails(geneID, ribbonTermID, includeReporter);
+    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyDirectlySubmitted) {
+        List<ExpressionRibbonDetail> details = getExpressionRibbonDetails(geneID, ribbonTermID, includeReporter, onlyDirectlySubmitted);
         if (details == null) {
             return null;
         }
@@ -333,7 +334,7 @@ public class RibbonService {
         return details;
     }
 
-    private List<ExpressionRibbonDetail> getExpressionRibbonDetails(String geneID, String ribbonTermID, boolean includeReporter) {
+    private List<ExpressionRibbonDetail> getExpressionRibbonDetails(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyDirectlySubmitted) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
         query.setFilterQueries("category:" + Category.EXPRESSIONS.getName());
@@ -343,6 +344,7 @@ public class RibbonService {
             query.addFilterQuery("term_id:" + escapedTermID);
         }
         expressionService.addReporterFilter(query, includeReporter);
+        expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
         query.addFacetPivotField("anatomy_term_id,stage_term_id,pub_zdb_id");
         query.setStart(0);
         // get them all

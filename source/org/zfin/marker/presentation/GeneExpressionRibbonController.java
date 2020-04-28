@@ -48,8 +48,9 @@ public class GeneExpressionRibbonController {
 
     @RequestMapping(value = "/marker/{zdbID}/expression/ribbon-summary")
     public RibbonSummary getExpressionRibbonSummary(@PathVariable("zdbID") String zdbID,
-                                                    @RequestParam(required = false) boolean includeReporter) throws Exception {
-        return ribbonService.buildExpressionRibbonSummary(zdbID, includeReporter);
+                                                    @RequestParam(required = false) boolean includeReporter,
+                                                    @RequestParam(required = false) boolean onlyDirectlySubmitted) throws Exception {
+        return ribbonService.buildExpressionRibbonSummary(zdbID, includeReporter, onlyDirectlySubmitted);
     }
 
     @JsonView(View.GeneExpressionAPI.class)
@@ -79,11 +80,12 @@ public class GeneExpressionRibbonController {
                                                                                 @RequestParam(value = "termId", required = false) String termID,
                                                                                 @RequestParam(value = "filter.termName", required = false) String filterTermName,
                                                                                 @RequestParam(value = "includeReporter", required = false) boolean includeReporter,
+                                                                                @RequestParam(value = "onlyDirectlySubmitted", required = false) boolean onlyDirectlySubmitted,
                                                                                 @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
         List<ExpressionRibbonDetail> allDetails;
         try {
-            allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID, includeReporter);
+            allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID, includeReporter, onlyDirectlySubmitted );
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(404);
@@ -130,9 +132,10 @@ public class GeneExpressionRibbonController {
     public JsonResultResponse<Image> getExpressionImages(@PathVariable String zdbID,
                                                          @RequestParam(required = false) String termId,
                                                          @RequestParam(required = false) boolean includeReporter,
+                                                         @RequestParam(required = false) boolean onlyDirectlySubmitted,
                                                          @RequestParam(required = false) boolean isOther,
                                                          @Version Pagination pagination) throws IOException, SolrServerException {
-        JsonResultResponse<Image> response = expressionService.getExpressionImages(zdbID, termId, includeReporter, isOther, pagination);
+        JsonResultResponse<Image> response = expressionService.getExpressionImages(zdbID, termId, includeReporter,onlyDirectlySubmitted, isOther, pagination);
         response.setHttpServletRequest(request);
         return response;
     }
