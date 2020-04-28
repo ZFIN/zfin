@@ -41,14 +41,14 @@
             <jsp:include page="gene-view-summary.jsp"/>
         </div>
 
-        <z:section title="${EXPRESSION}">
+        <z:section title="${EXPRESSION}" infoPopup="/ZFIN/help_files/expression_help.html">
             <jsp:include page="gene-view-expression-header.jsp"/>
             <z:section title="Wild Type Expression Summary">
                 <div class="__react-root" id="GeneExpressionRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
         </z:section>
 
-        <z:section title="${PHENOTYPE}">
+        <z:section title="${PHENOTYPE}" infoPopup="/action/marker/note/phenotype">
             <div class="__react-root" id="PhenotypeRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
@@ -62,10 +62,10 @@
         </z:section>
 
         <z:section title="${DISEASES}">
-            <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Human Ortholog">
+            <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Human Ortholog" infoPopup="/action/marker/note/omim-phenotype">
                 <jsp:include page="gene-view-disease-via-ortholog.jsp" />
             </z:section>
-            <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Via Experimental Models">
+            <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Via Experimental Models" infoPopup="/action/marker/note/disease-model">
                 <jsp:include page="gene-view-disease-via-experiment.jsp" />
             </z:section>
         </z:section>
