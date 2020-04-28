@@ -16,7 +16,7 @@ import StageTimelineHeader from '../components/StageTimelineHeader';
 const GeneExpressionRibbon = ({geneId}) => {
     const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
     const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
-    const [selectedTableTerm, setSelectedTableTerm] = useState(null);
+    const [selectedTableEntity, setSelectedTableEntity] = useState(null);
     const [isChecked, setIsChecked] = useState(false);
     const [isDirectlySubmitted, setIsDirectlySubmitted] = useState(false);
     const [filteredTerm, setFilteredTerm] = useState('');
@@ -49,9 +49,9 @@ const GeneExpressionRibbon = ({geneId}) => {
         return <NoData/>
     }
 
-    const handleTermNameClick = (event, term) => {
+    const handleEntityNameClick = (event, entity) => {
         event.preventDefault();
-        setSelectedTableTerm(term);
+        setSelectedTableEntity(entity);
     };
 
     const handleFilterChange = (event) => {
@@ -72,7 +72,7 @@ const GeneExpressionRibbon = ({geneId}) => {
     };
 
     const handleRibbonCellClick = (subject, group) => {
-        setSelectedTableTerm(null);
+        setSelectedTableEntity(null);
         setSelectedRibbonTerm(subject, group);
         setFilteredTerm('');
     };
@@ -149,15 +149,14 @@ const GeneExpressionRibbon = ({geneId}) => {
                 </div>
             ),
             key: 'locations',
-            content: ({term}) => (
+            content: ({entity}) =>
                 <a
                     href='#'
-                    onClick={event => handleTermNameClick(event, term)}
-                    key={term}
+                    onClick={event => handleEntityNameClick(event, term)}
+                    key={entity}
                 >
-                    {term.termName}
-                </a>
-            ),
+                    {entity.superterm.termName} {entity.subterm && entity.subterm.termName}
+                </a>,
             width: '140px',
         },
         {
@@ -172,10 +171,10 @@ const GeneExpressionRibbon = ({geneId}) => {
             label: 'Citations',
             content: row => (
                 <AttributionLink
-                    url={`/action/marker/${row.term.oboID}`}
+                    url={`/action/marker/${geneId}`}
                     publicationCount={row.numberOfPublications}
                     publication={row.publication}
-                    multiPubAccessionID={row.term.oboID}
+                    multiPubAccessionID={geneId}
                     multiPubs={row.ribbonPubs}
                 />
             ),
@@ -186,9 +185,10 @@ const GeneExpressionRibbon = ({geneId}) => {
     let selectedTermName = '';
     let selectedTermId = '';
     let selectedTermIsOther = false;
-    if (selectedTableTerm) {
-        selectedTermName = selectedTableTerm.termName;
-        selectedTermId = selectedTableTerm.oboID;
+    if (selectedTableEntity) {
+        selectedTermName = selectedTableEntity.superterm.termName + (selectedTableEntity.subterm && ' ' + selectedTableEntity.subterm.termName);
+        //todo: need to handle subterm also
+        selectedTermId = selectedTableEntity.superterm.oboID;
     } else if (selectedRibbonTerm) {
         selectedTermName = selectedRibbonTerm.group.label;
         selectedTermIsOther = selectedRibbonTerm.group.type === 'Other';
@@ -231,14 +231,14 @@ const GeneExpressionRibbon = ({geneId}) => {
                 selected={selectedRibbonTerm}
             />
 
-            {selectedTableTerm &&
-            <button className=' btn btn-link btn-sm px-0' onClick={() => setSelectedTableTerm(null)}>
+            {selectedTableEntity &&
+            <button className=' btn btn-link btn-sm px-0' onClick={() => setSelectedTableEntity(null)}>
                 <i className=' fas fa-chevron-left'/> Back to expression in {selectedRibbonTerm.group.label}
             </button>
             }
             {selectedTermName && <h5>Expression in {selectedTermName}</h5>}
 
-            {(selectedRibbonTerm || selectedTableTerm) &&
+            {(selectedRibbonTerm || selectedTableEntity) &&
             <GeneExpressionFigureGallery
                 geneId={geneId}
                 includeReporters={isChecked}
@@ -248,18 +248,18 @@ const GeneExpressionRibbon = ({geneId}) => {
             />
             }
 
-            {selectedRibbonTerm && !selectedTableTerm &&
+            {selectedRibbonTerm && !selectedTableEntity &&
             <DataTable
                 url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selectedRibbonTerm)}&includeReporter=${isChecked}&onlyDirectlySubmitted=${isDirectlySubmitted}&filter.termName=${filteredTerm}`}
                 columns={columns}
-                rowKey={row => row.term.zdbID}
+                rowKey={row => row.entity.superterm.oboID + (row.entity.subterm && ',' + row.entity.subterm.oboID)}
                 showEmptyTable={filteredTerm}
                 tableState={tableState}
                 onTableStateChange={setTableState}
             />
             }
 
-            {selectedTableTerm &&
+            {selectedTableEntity &&
             <DataTable
                 url={`/action/api/marker/${geneId}/expression/ribbon-expression-detail?termId=${selectedTermId}`}
                 columns={columnsDetail}

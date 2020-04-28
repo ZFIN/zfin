@@ -814,6 +814,7 @@
         <field name="gene_zdb_id" type="string" indexed="true" stored="true"/>
 
         <field name="xpatres_id" type="string" indexed="true" stored="true" multiValued="true" />
+        <field name="efs_id" type="string" indexed="true" stored="true" multiValued="true" />
 
         <field name="attribution_count" type="sint" indexed="true" stored="true"/>
 
@@ -824,6 +825,9 @@
         <field name="stage_term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
         <field name="anatomy_term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
         <field name="entity_term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
+        <field name="superterm_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
+        <field name="subterm_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
+        <field name="postcomposed_term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
         <field name="construct_name" type="construct_name" indexed="true" stored="true" multiValued="false" />
         <field name="construct_alias" type="construct_name" indexed="true" stored="true" multiValued="true" />
 

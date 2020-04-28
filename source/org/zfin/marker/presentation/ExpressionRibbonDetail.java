@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.api.View;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 public class ExpressionRibbonDetail {
 
     @JsonView(View.API.class)
-    private GenericTerm term;
+    private PostComposedEntity entity;
     @JsonView(View.API.class)
     private List<DevelopmentStage> stages;
     @JsonView(View.API.class)
@@ -52,6 +53,6 @@ public class ExpressionRibbonDetail {
 
     @Override
     public String toString() {
-        return term.getTermName();
+        return entity.toString();
     }
 }

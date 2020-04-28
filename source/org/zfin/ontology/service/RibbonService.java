@@ -4,7 +4,9 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.PivotField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.util.NamedList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
@@ -17,6 +19,7 @@ import org.zfin.framework.api.*;
 import org.zfin.marker.presentation.ExpressionDetail;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -265,7 +268,7 @@ public class RibbonService {
             query.add("f.anatomy_term_id.facet.prefix", termID);
         }
         // get Facet for the ao term and the PK of the expression record.
-        query.addFacetPivotField("anatomy_term_id,id");
+        query.addFacetPivotField("anatomy_term_id,efs_id");
         query.setStart(0);
         // get them all
         query.setFacetLimit(-1);
@@ -281,9 +284,9 @@ public class RibbonService {
             return null;
         }
 
-        // remove artificial PK prefix: 'xpatex-'
+        // remove artificial PK prefix: 'xpatres-'
         HashSet<String> expressionIDs = queryResponse.getFacetPivot().getVal(0).get(0).getPivot().stream()
-                .map(pivotField -> (String) pivotField.getValue()).map(name -> name.replace("xpatex-", "")).collect(toCollection(HashSet::new));
+                .map(pivotField -> (String) pivotField.getValue()).map(name -> name.replace("xpatres-", "")).collect(toCollection(HashSet::new));
         return expressionIDs;
     }
 
@@ -295,10 +298,11 @@ public class RibbonService {
         }
 
         // remove BSPO
-        details.removeIf(ribbonDetail -> ribbonDetail.getTerm().getOboID().startsWith("BSPO"));
+        details.removeIf(ribbonDetail -> ribbonDetail.getEntity().getSubterm() != null
+                && ribbonDetail.getEntity().getSubterm().getOboID().startsWith("BSPO"));
 
-        PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
         // fixup single publications.
+        PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
         details.stream()
                 .filter(ribbonDetail -> ribbonDetail.getPubIDs().size() == 1)
                 .forEach(ribbonDetail1 -> {
@@ -308,27 +312,13 @@ public class RibbonService {
         details.stream()
                 .forEach(ribbonDetail1 -> {
                     List<String> pubRibbon = ribbonDetail1.getPubIDs();
-
                     ribbonDetail1.setRibbonPubs(pubRibbon);
                 });
 
-
-        // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
-        OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-        Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
         if (StringUtils.isNotEmpty(ribbonTermID)) {
             // filter by stage
             if (ribbonTermID.contains("ZFS:")) {
                 details.removeIf(detail -> detail.getStages().stream().noneMatch(stage -> stage.getOboID().equals(ribbonTermID)));
-            } else {
-                details.removeIf(expressionRibbonDetail -> {
-                    List<GenericTerm> closure = getClosureForRibbonTerms.get(ribbonTermID);
-                    // remove if no closure element is found
-                    if (closure == null) {
-                        return true;
-                    }
-                    return closure.stream().noneMatch(genericTerm -> genericTerm.getOboID().equals(expressionRibbonDetail.getTerm().getOboID()));
-                });
             }
         }
         return details;
@@ -345,7 +335,7 @@ public class RibbonService {
         }
         expressionService.addReporterFilter(query, includeReporter);
         expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
-        query.addFacetPivotField("anatomy_term_id,stage_term_id,pub_zdb_id");
+        query.addFacetPivotField("postcomposed_term_id,stage_term_id,pub_zdb_id");
         query.setStart(0);
         // get them all
         query.setFacetLimit(-1);
@@ -361,7 +351,9 @@ public class RibbonService {
         }
 
         HashSet<String> termIDs = queryResponse.getFacetPivot().getVal(0).stream()
-                .map(pivotField -> (String) pivotField.getValue()).collect(toCollection(HashSet::new));
+                .map(pivotField -> (String) pivotField.getValue())
+                .flatMap(x -> Arrays.stream(x.split(",")))
+                .collect(toCollection(HashSet::new));
         List<GenericTerm> terms = anatomyRepository.getMultipleTerms(termIDs);
         Map<String, GenericTerm> anatomyTermMap = terms.stream()
                 .collect(toMap(GenericTerm::getOboID, term -> term));
@@ -373,8 +365,17 @@ public class RibbonService {
         List<ExpressionRibbonDetail> details = new ArrayList<>();
         queryResponse.getFacetPivot().getVal(0).forEach(pivotField -> {
             ExpressionRibbonDetail detail = new ExpressionRibbonDetail();
-            String termID = (String) pivotField.getValue();
-            detail.setTerm(anatomyTermMap.get(termID));
+            PostComposedEntity entity = new PostComposedEntity();
+            String pivotValue = (String) pivotField.getValue();
+            if (pivotValue.contains(",")) {
+                List<String> termIds = Arrays.asList(pivotValue.split(","));
+                entity.setSuperterm(anatomyTermMap.get(termIds.get(0)));
+                entity.setSubterm(anatomyTermMap.get(termIds.get(1)));
+            } else {
+                entity.setSuperterm(anatomyTermMap.get(pivotValue));
+            }
+
+            detail.setEntity(entity);
             // stage pivot
             pivotField.getPivot().stream()
                     .filter(pivotField1 -> stageTermMap.containsKey(pivotField1.getValue()))
@@ -387,7 +388,8 @@ public class RibbonService {
         });
 
         // remove BSPO
-        details.removeIf(ribbonDetail -> ribbonDetail.getTerm().getOboID().startsWith("BSPO"));
+        details.removeIf(ribbonDetail -> ribbonDetail.getEntity().getSubterm() != null
+                && ribbonDetail.getEntity().getSubterm().getOboID().startsWith("BSPO"));
 
         // fixup single publications.
         details.stream()
@@ -408,19 +410,9 @@ public class RibbonService {
             // filter by stage
             if (ribbonTermID.contains("ZFS:")) {
                 details.removeIf(detail -> detail.getStages().stream().noneMatch(stage -> stage.getOboID().equals(ribbonTermID)));
-            } else {
-                details.removeIf(expressionRibbonDetail -> {
-                    List<GenericTerm> closure = getClosureForRibbonTerms.get(ribbonTermID);
-                    // remove if no closure element is found
-                    if (closure == null) {
-                        return true;
-                    }
-                    return closure.stream().noneMatch(genericTerm -> genericTerm.getOboID().equals(expressionRibbonDetail.getTerm().getOboID()));
-                });
             }
         }
-
-
         return details;
     }
+
 }

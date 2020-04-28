@@ -216,7 +216,7 @@
       <!-- Always append these -->
       <lst name="appends">
           <!-- Some categories should always be excluded from search results -->
-          <str name="fq">-category:Autocomplete -category:"STR Relationship" -category:"GO Annotation"</str>
+          <str name="fq">-category:Autocomplete -category:"STR Relationship" -category:"GO Annotation" -category:"Expression Result"</str>
       </lst>
 
       <!-- default values for query parameters -->
@@ -524,7 +524,7 @@
 
     <requestHandler name="/expression-annotation" class="solr.StandardRequestHandler">
         <lst name="appends">
-            <str name="fq">category:"Expression"</str>
+            <str name="fq">category:"Expression Result"</str>
             <str name="q">*:*</str>
         </lst>
         <lst name="defaults">

@@ -102,13 +102,13 @@ public class GeneExpressionRibbonController {
         List<ExpressionRibbonDetail> filteredList = allDetails;
         if (StringUtils.isNotEmpty(filterTermName)) {
             filteredList = allDetails.stream()
-                    .filter(expressionRibbonDetail -> expressionRibbonDetail.getTerm().getTermName().contains(filterTermName))
+                    .filter(expressionRibbonDetail -> (expressionRibbonDetail.getEntity().getDisplayName().contains(filterTermName)))
                     .collect(Collectors.toList());
         }
 
         // sorting
         if (filteredList != null) {
-            filteredList.sort(Comparator.comparing(detail -> detail.getTerm().getTermName().toLowerCase()));
+            filteredList.sort(Comparator.comparing(detail -> detail.getEntity().getDisplayName()));
         }
 
         // paginating
