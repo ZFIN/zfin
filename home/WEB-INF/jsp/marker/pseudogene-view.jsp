@@ -12,10 +12,12 @@
 
 <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}</c:set>
 
-<zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-                   deleteURL="none"
-                   mergeURL="${mergeURL}"
-                   editMarker="true"/>
+    <zfin2:dataManager zdbID="${markerID}"
+                       deleteURL="none"
+                       mergeURL="${mergeURL}"
+                       editURL="${editURL}"
+                       prototypeURL="/action/marker/pseudogene/prototype-view/${formBean.marker.zdbID}"
+    />
 
 <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}" userID="${formBean.user.zdbID}" />
 
