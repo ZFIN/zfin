@@ -22,8 +22,10 @@
         <put-attribute name="bodyClass" value="data-page" />
         <put-attribute name="body" value="/WEB-INF/jsp/marker/gene/gene-view.jsp" />
     </definition>
-
-
+    <definition name="marker/pseudogene/pseudogene-view.page" extends="main_layout">
+        <put-attribute name="bodyClass" value="data-page" />
+        <put-attribute name="body" value="/WEB-INF/jsp/marker/pseudogene/pseudogene-view.jsp" />
+    </definition>
     <definition name="marker/antibody/antibody-view.page" extends="main_layout">
         <put-attribute name="bodyClass" value="data-page" />
         <put-attribute name="body" value="/WEB-INF/jsp/marker/antibody/antibody-view.jsp" />
