@@ -17,9 +17,10 @@
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
 <c:set var="TRANSCRIPTS" value="Transcripts"/>
 <c:set var="ORTHOLOGY" value="Orthology"/>
+<c:set var="CITATIONS" value="Citations"/>
 
 <z:dataPage
-        sections="${[SUMMARY, EXPRESSION, PHENOTYPE, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY]}"
+        sections="${[SUMMARY, EXPRESSION, PHENOTYPE, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY, CITATIONS]}"
 >
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
@@ -121,6 +122,10 @@
 
         <z:section title="${ORTHOLOGY}">
             <jsp:include page="gene-view-orthology.jsp"/>
+        </z:section>
+
+        <z:section title="${CITATIONS}">
+            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
         </z:section>
     </jsp:body>
 

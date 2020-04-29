@@ -1,12 +1,18 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.SortClause;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
+import org.zfin.framework.api.JsonResultResponse;
+import org.zfin.framework.api.Pagination;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
@@ -17,6 +23,9 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.*;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
+import org.zfin.search.FieldName;
+import org.zfin.search.service.SolrService;
 
 import javax.servlet.ServletContext;
 import java.io.File;
@@ -27,8 +36,11 @@ import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
+ *
  */
 @Service
 public class PublicationService {
@@ -481,6 +493,62 @@ public class PublicationService {
         }
 
         return strings;
+    }
+
+    private SolrQuery getCitationQuery(String xref) {
+        SolrQuery query = new SolrQuery();
+        query.addFilterQuery(FieldName.CATEGORY.getName() + ":" + Category.PUBLICATION.getName());
+        query.addFilterQuery(FieldName.XREF.getName() + ":" + xref);
+        query.setFields(FieldName.ID.getName());
+        return query;
+    }
+
+    public JsonResultResponse<Publication> getCitationsByXref(String xref, Pagination pagination) throws IOException, SolrServerException {
+        SolrQuery query = getCitationQuery(xref);
+
+        query.setStart(pagination.getStart());
+        query.setRows(pagination.getLimit());
+
+        switch (StringUtils.defaultString(pagination.getSortBy())) {
+            case "Year, Oldest":
+                query.addSort(SortClause.asc(FieldName.YEAR.getName()));
+                query.addSort(SortClause.asc(FieldName.AUTHOR_SORT.getName()));
+                break;
+            case "First Author, A to Z":
+                query.addSort(SortClause.asc(FieldName.AUTHOR_SORT.getName()));
+                query.addSort(SortClause.desc(FieldName.YEAR.getName()));
+                break;
+            case "First Author, Z to A":
+                query.addSort(SortClause.desc(FieldName.AUTHOR_SORT.getName()));
+                query.addSort(SortClause.desc(FieldName.YEAR.getName()));
+                break;
+            default:
+                query.addSort(SortClause.desc(FieldName.YEAR.getName()));
+                query.addSort(SortClause.asc(FieldName.AUTHOR_SORT.getName()));
+        }
+
+        QueryResponse queryResponse = SolrService.getSolrClient().query(query);
+        List<Publication> publications = queryResponse.getResults().stream()
+                .map(doc -> (String) doc.getFieldValue(FieldName.ID.getName()))
+                .map(publicationRepository::getPublication)
+                .collect(Collectors.toList());
+
+        JsonResultResponse<Publication> response = new JsonResultResponse<>();
+        response.setResults(publications);
+        response.setTotal(queryResponse.getResults().getNumFound());
+
+        return response;
+    }
+
+    public void getAllCitationsByXref(String xref, Consumer<List<Publication>> consumer) throws IOException, SolrServerException {
+        SolrQuery query = getCitationQuery(xref);
+        SolrService.getAllResults(query, response -> {
+            List<String> ids = response.getResults().stream()
+                    .map(doc -> (String) doc.getFieldValue(FieldName.ID.getName()))
+                    .collect(Collectors.toList());
+            List<Publication> pubs = publicationRepository.getPublications(ids);
+            consumer.accept(pubs);
+        });
     }
 
 }

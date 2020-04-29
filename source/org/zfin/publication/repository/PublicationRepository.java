@@ -34,10 +34,7 @@ import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.SortedSet;
+import java.util.*;
 
 /**
  * Persistence class that deals with Publication objects.
@@ -156,6 +153,8 @@ public interface PublicationRepository extends PaginationParameter {
      * @param zdbID
      */
     Publication getPublication(String zdbID);
+
+    List<Publication> getPublications(List<String> zdbIDs);
 
     /**
      * Retrieve a marker (gene) by its symbol name. If it is not unique a Hibernate runtime exception is thrown.
@@ -485,6 +484,7 @@ public interface PublicationRepository extends PaginationParameter {
     PaginationResult<Publication> getAllAssociatedPublicationsForGenotype(Genotype genotype, int maxPubs);
 
     List<Publication> getPublicationByPmid(Integer pubMedID);
+
     Publication getSinglePublicationByPmid(Integer pubMedID);
 
     int getNumberDirectPublications(String zdbID);

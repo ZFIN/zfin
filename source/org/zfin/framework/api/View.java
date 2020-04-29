@@ -14,5 +14,6 @@ public class View {
         public static class ConstructAPI extends API { }
         public static class MarkerRelationshipAPI extends API { }
         public static class GeneExpressionAPI extends API { }
+        public static class CitationsAPI extends API { }
 
 }

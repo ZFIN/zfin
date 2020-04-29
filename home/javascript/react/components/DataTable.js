@@ -10,9 +10,20 @@ import GenericErrorMessage from './GenericErrorMessage';
 export const DEFAULT_TABLE_STATE = {
     limit: 10,
     page: 1,
+    sortBy: null,
 };
 
-const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tableState, url, showEmptyTable = false}) => {
+const DataTable = ({
+    columns,
+    downloadOptions,
+    onTableStateChange,
+    pagination = true,
+    rowKey,
+    tableState,
+    url,
+    showEmptyTable = false,
+    sortOptions
+}) => {
     if ((tableState && !onTableStateChange) || (!tableState && onTableStateChange)) {
         if (process.env.NODE_ENV === 'development') {
             console.warn('DataTable must either be controlled (by setting tableState and onTableStateChange) or uncontrolled (by setting neither)');
@@ -62,8 +73,48 @@ const DataTable = ({columns, onTableStateChange, pagination = true, rowKey, tabl
         }))
     };
 
+    const handleSortChange = (sortBy) => {
+        setTableState(produce(state => {
+            state.sortBy = sortBy;
+        }))
+    }
+
     return (
         <div className='data-table-container'>
+            <div className='d-flex justify-content-end'>
+                {downloadOptions && downloadOptions.length > 0 &&
+                    <div className='dropdown'>
+                        <button className='btn btn-sm dropdown-toggle' type='button' data-toggle='dropdown'>
+                            Download
+                        </button>
+                        <div className='dropdown-menu dropdown-menu-right'>
+                            {downloadOptions.map(option => (
+                                <a key={option.format} className='dropdown-item' href={option.url}>{option.format}</a>
+                            ))}
+                        </div>
+                    </div>
+                }
+
+                {sortOptions && sortOptions.length > 0 &&
+                    <div className='dropdown'>
+                        <button className='btn btn-sm dropdown-toggle' type='button' data-toggle='dropdown'>
+                            Sort by
+                        </button>
+                        <div className='dropdown-menu dropdown-menu-right'>
+                            {sortOptions.map((option, idx) => {
+                                const isActive = (tableState.sortBy === null && idx === 0) || tableState.sortBy === option;
+                                return (
+                                    <button key={option} className='dropdown-item' type='button' onClick={() => handleSortChange(option)}>
+                                        <i className={`fas fa-fw mr-1 ${isActive ? 'fa-check' : ''}`} />
+                                        {option}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                }
+            </div>
+
             <div className='horizontal-scroll-container'>
                 <table className='data-table table-fixed'>
                     <thead>
@@ -153,9 +204,14 @@ DataTable.propTypes = {
         content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
         key: PropTypes.string,
     })).isRequired,
+    downloadOptions: PropTypes.arrayOf(PropTypes.shape({
+        format: PropTypes.string,
+        url: PropTypes.string,
+    })),
     onTableStateChange: PropTypes.func,
     pagination: PropTypes.bool,
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+    sortOptions: PropTypes.arrayOf(PropTypes.string),
     tableState: PropTypes.shape({
         limit: PropTypes.number,
         page: PropTypes.number,

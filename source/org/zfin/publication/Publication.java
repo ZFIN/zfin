@@ -336,6 +336,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.processingChecklistEntries = processingChecklistEntries;
     }
 
+    @JsonView(View.CitationsAPI.class)
     public String getCitation() {
         StringBuilder sb = new StringBuilder();
         sb.append(authors);

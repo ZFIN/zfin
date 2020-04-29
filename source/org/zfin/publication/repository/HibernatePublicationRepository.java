@@ -2,7 +2,8 @@ package org.zfin.publication.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.*;
 import org.hibernate.transform.BasicTransformerAdapter;
@@ -428,6 +429,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.add(Restrictions.eq("zdbID", zdbID.toUpperCase()));
         Publication pub = (Publication) query.uniqueResult();
         return pub;
+    }
+
+    public List<Publication> getPublications(List<String> zdbIDs) {
+        if (CollectionUtils.isEmpty(zdbIDs)) {
+            return Collections.emptyList();
+        }
+        return HibernateUtil.currentSession()
+                .createCriteria(Publication.class)
+                .add(Restrictions.in("zdbID", zdbIDs))
+                .list();
     }
 
     public Marker getMarker(String symbol) {
@@ -2622,8 +2633,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setParameter("markerID", marker.getZdbID());
         query.setParameter("source", RecordAttribution.SourceType.STANDARD);
         PublicationAttribution pubAttr = (PublicationAttribution) query.uniqueResult();
-        if (pubAttr != null)
+        if (pubAttr != null) {
             return pubAttr;
+        }
         HibernateUtil.currentSession().save(pa);
         return pa;
     }
@@ -2695,20 +2707,20 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
         String sql = String.format(
                 "select " +
-                "  %1$s as category, " +
-                "  avg(history.pth_days_in_status) as average, " +
-                "  stddev(history.pth_days_in_status) as \"standardDeviation\", " +
-                "  min(history.pth_days_in_status) as minimum, " +
-                "  max(history.pth_days_in_status) as maximum " +
-                "from pub_tracking_history history " +
-                "inner join publication pub on pub.zdb_id = history.pth_pub_zdb_id " +
-                "left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id " +
-                "left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id " +
-                "where history.pth_status_is_current = 'f' " +
-                "and history.pth_days_in_status is not null " +
-                "and history.pth_status_insert_date < :end " +
-                "and pub.jtype = :type " +
-                "group by %1$s", groupExpression);
+                        "  %1$s as category, " +
+                        "  avg(history.pth_days_in_status) as average, " +
+                        "  stddev(history.pth_days_in_status) as \"standardDeviation\", " +
+                        "  min(history.pth_days_in_status) as minimum, " +
+                        "  max(history.pth_days_in_status) as maximum " +
+                        "from pub_tracking_history history " +
+                        "inner join publication pub on pub.zdb_id = history.pth_pub_zdb_id " +
+                        "left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id " +
+                        "left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id " +
+                        "where history.pth_status_is_current = 'f' " +
+                        "and history.pth_days_in_status is not null " +
+                        "and history.pth_status_insert_date < :end " +
+                        "and pub.jtype = :type " +
+                        "group by %1$s", groupExpression);
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("end", end)
                 .setParameter("type", Publication.Type.JOURNAL.getDisplay())
@@ -2736,5 +2748,5 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .createCriteria(PubmedPublicationAuthor.class)
                 .add(Restrictions.eq("publication", publication))
                 .list();
-    }  
+    }
 }

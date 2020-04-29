@@ -53,9 +53,12 @@ export const useFetch = (url) => {
 };
 
 export const useTableDataFetch = (baseUrl, tableState) => {
-    const url = baseUrl +
+    let url = baseUrl +
         (baseUrl.indexOf('?') < 0 ? '?' : '&') +
         `limit=${tableState.limit}&page=${tableState.page}`;
+    if (tableState.sortBy) {
+        url += `&sortBy=${tableState.sortBy}`;
+    }
     return useFetch(url);
 };
 

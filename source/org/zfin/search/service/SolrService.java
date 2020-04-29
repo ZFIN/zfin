@@ -5,7 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -15,6 +16,7 @@ import org.apache.solr.client.solrj.request.DirectXmlRequest;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.params.CursorMarkParams;
 import org.apache.solr.common.util.NamedList;
 import org.springframework.stereotype.Service;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -25,14 +27,13 @@ import org.zfin.util.URLCreator;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Matcher;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -48,12 +49,10 @@ public class SolrService {
     private static final String LUCENE_ESCAPE_CHARS = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\[\\{\\}\\~\\*\\?\\\"\\,]";
     private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
     private static final String REPLACEMENT_STRING = "\\\\$0";
-
     private static final String SEARCH_URL = "/search";
-
     private static final String PRIMARY_CORE = "prototype";
-
     private static final String IDLE = "idle";
+    private static final int CURSOR_BATCH_SIZE = 100;
 
     private static SolrClient prototype;
 
@@ -183,7 +182,7 @@ public class SolrService {
         query.addFacetField(FieldName.IMG_ZDB_ID.getName());
 
         if (category != null && CollectionUtils.isNotEmpty(category.getPivotFacetStrings())) {
-            category.getPivotFacetStrings().forEach( pivot -> {
+            category.getPivotFacetStrings().forEach(pivot -> {
                 query.addFacetPivotField(pivot);
             });
         }
@@ -904,7 +903,9 @@ public class SolrService {
     }
 
     public static String dismax(String value, Map<FieldName, String> fields, boolean escapeQuery) {
-        if (escapeQuery) { value = luceneEscape(value); }
+        if (escapeQuery) {
+            value = luceneEscape(value);
+        }
         return "{!edismax qf='" +
                 fields.keySet().stream().map(fieldName -> fieldName.getName() + fields.get(fieldName)).collect(Collectors.joining(" ")) +
                 "'}" + value;
@@ -919,6 +920,25 @@ public class SolrService {
         return new URL(url);
     }
 
+    public static void getAllResults(SolrQuery query, Consumer<QueryResponse> responseConsumer) throws IOException, SolrServerException {
+        SolrQuery cursorQuery = query.getCopy()
+                .setRows(CURSOR_BATCH_SIZE)
+                .addSort(SolrQuery.SortClause.asc(FieldName.ID.getName()));
+        String cursorMark = CursorMarkParams.CURSOR_MARK_START;
+        boolean done = false;
+        while (!done) {
+            cursorQuery.set(CursorMarkParams.CURSOR_MARK_PARAM, cursorMark);
+            QueryResponse response = SolrService.getSolrClient().query(cursorQuery);
+            String nextCursorMark = response.getNextCursorMark();
+
+            responseConsumer.accept(response);
+
+            if (cursorMark.equals(nextCursorMark)) {
+                done = true;
+            }
+            cursorMark = nextCursorMark;
+        }
+    }
 
 }
 
