@@ -45,8 +45,8 @@ public class PseudoGeneViewController {
     @Autowired
     private MarkerService markerService;
 
-    @RequestMapping(value = "/pseudogene/view/{zdbID}")
-    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+
+    public String preparePseudoGeneView(Model model, String zdbID) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
@@ -87,6 +87,29 @@ public class PseudoGeneViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PSEUDOGENE.getTitleString() + gene.getAbbreviation());
 
         return "marker/pseudogene-view.page";
+    }
+
+    @RequestMapping(value = "/pseudogene/view/{zdbID}")
+    public String getPseudoGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        zdbID = markerService.getActiveMarkerID(zdbID);
+        if (!markerService.isOfTypeGene(zdbID)) {
+            return "redirect:/" + zdbID;
+        }
+        preparePseudoGeneView(model, zdbID);
+
+        return "marker/pseudogene-view.page";
+    }
+
+
+    @RequestMapping(value = "/pseudogene/prototype-view/{zdbID}")
+    public String getPseudoGenePrototypeView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        zdbID = markerService.getActiveMarkerID(zdbID);
+        if (!markerService.isOfTypeGene(zdbID)) {
+            return "redirect:/" + zdbID;
+        }
+        preparePseudoGeneView(model, zdbID);
+
+        return "marker/pseudogene/pseudogene-view.page";
     }
 
     @RequestMapping(value = "/pseudogene/view/{zdbID}/expression")
