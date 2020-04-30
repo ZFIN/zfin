@@ -67,7 +67,7 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#geneID and #ribbonTermID "() {
         when:
-        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, ribbonTermID)
+        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, ribbonTermID, false, false)
 
         then:
         termCounts.size() > numberOfRecords
@@ -122,7 +122,7 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#zdbID expression ribbon should have categories and groups populated"() {
         when:
-        RibbonSummary ribbonSummary = ribbonService.buildExpressionRibbonSummary(zdbID, false)
+        RibbonSummary ribbonSummary = ribbonService.buildExpressionRibbonSummary(zdbID, false, false)
 
         then:
         ribbonSummary
@@ -139,7 +139,7 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#zdbID expression ribbon should have some annotations for #category"() {
         when:
-        RibbonSummary ribbonSummary = ribbonService.buildExpressionRibbonSummary(zdbID, false)
+        RibbonSummary ribbonSummary = ribbonService.buildExpressionRibbonSummary(zdbID, false, false)
         RibbonCategory ribbonCategory = ribbonSummary.categories.get(expressionCategory[category])
 
         Integer allCount = ribbonSummary.subjects[0].groups[ribbonCategory.id]["ALL"]?.numberOfAnnotations
