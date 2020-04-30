@@ -65,19 +65,17 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     }
 
     @Unroll
-    def "#geneID and #ribbonTermID "() {
+    def "at least #min found for #geneID and #ribbonTermID with includeReporter: #includeReporter and onlyDirectSubmitted: #onlyDirectSubmitted "() {
         when:
-        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, ribbonTermID, false, false)
+        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, ribbonTermID, includeReporter, onlyDirectlySubmitted)
 
         then:
-        termCounts.size() > numberOfRecords
+        termCounts.size() > min
 
         where:
-        geneID              | ribbonTermID  | numberOfRecords
-        // all records
-        //"ZDB-GENE-990415-8" | ""            | 200
-        // nervous system
-        "ZDB-GENE-990415-8" | "ZFA:0000396" | 60
+        geneID                | ribbonTermID  | min  | includeReporter | onlyDirectlySubmitted
+        "ZDB-GENE-990415-8"   | "ZFA:0000396" | 60   | false           | false
+        "ZDB-GENE-050419-145" | "ZFA:0000396" | 1    | false           | false
     }
 
     @Unroll
