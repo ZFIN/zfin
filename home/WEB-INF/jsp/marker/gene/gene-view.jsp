@@ -50,6 +50,7 @@
         </z:section>
 
         <z:section title="${PHENOTYPE}" infoPopup="/action/marker/note/phenotype">
+            <jsp:include page="gene-view-phenotype-header.jsp"/>
             <div class="__react-root" id="PhenotypeRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
