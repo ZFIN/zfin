@@ -60,5 +60,30 @@ public class PhenotypeRibbonController {
         return response;
     }
 
+    @JsonView(View.GeneExpressionAPI.class)
+    @RequestMapping(value = "/marker/{zdbID}/phenotype/detail")
+    public JsonResultResponse<PhenotypeDetail> getPhenotypeDetail(@PathVariable("zdbID") String geneID,
+                                                                  @RequestParam(value = "termId", required = false) String termID,
+                                                                  @RequestParam(value = "filter.termName", required = false) String filterTermName,
+                                                                  @Version Pagination pagination) {
+        long startTime = System.currentTimeMillis();
+        JsonResultResponse<PhenotypeDetail> response;
+        pagination.addFieldFilter(FieldFilter.FILTER_TERM_NAME, filterTermName);
+        try {
+            response = ribbonService.getPhenotypeDetailSolr(geneID, termID, pagination);
+        } catch (Exception e) {
+            log.error("Error while retrieving ribbon details", e);
+            RestErrorMessage error = new RestErrorMessage(500);
+            error.addErrorMessage(e.getMessage());
+            throw new RestErrorException(error);
+        }
+        response.calculateRequestDuration(startTime);
+        response.setPagination(pagination);
+        response.setHttpServletRequest(request);
+        response.addSupplementalData("stages", anatomyRepository.getAllStagesWithoutUnknown());
+
+        return response;
+    }
+
 
 }

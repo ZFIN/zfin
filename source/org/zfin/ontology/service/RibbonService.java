@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.PivotField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.api.*;
 import org.zfin.marker.presentation.ExpressionDetail;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
+import org.zfin.marker.presentation.PhenotypeDetail;
 import org.zfin.marker.presentation.PhenotypeRibbonSummary;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
@@ -262,6 +264,63 @@ public class RibbonService {
         return response;
     }
 
+    public JsonResultResponse<PhenotypeDetail> getPhenotypeDetailSolr(String geneID, String termID, Pagination pagination) {
+        SolrQuery query = new SolrQuery();
+        query.setRequestHandler("/phenotype-annotation");
+        query.addFilterQuery("gene_zdb_id:" + geneID);
+        if (StringUtils.isNotEmpty(termID)) {
+//            query.add("f.phenotype_statement:"+termID);
+        }
+        final String filterValue = pagination.getFieldFilterValueMap().getFilterValue(FieldFilter.FILTER_TERM_NAME);
+        if (StringUtils.isNotEmpty(filterValue)) {
+            query.addFilterQuery("phenotype_statement:" + "*" + filterValue.trim() + "*");
+        }
+        // get Facet for the ao term and the PK of the expression record.
+        query.addFacetPivotField("phenotype_statement,phenotype_statement_term_id,stage_term_id,pub_zdb_id");
+        query.setParam("f.phenotype_statement.facet.offset", String.valueOf(pagination.getStart()));
+        query.setParam("f.phenotype_statement.facet.limit", String.valueOf(pagination.getLimit()));
+        query.setParam("stats", "true");
+        query.setParam("stats.field", "{!countDistinct=true}phenotype_statement_term_id");
+        query.setParam("f.phenotype_statement.facet.sort", "index");
+        query.setGetFieldStatistics("{!countDistinct=true}phenotype_statement_term_id");
+
+        QueryResponse queryResponse = null;
+        try {
+            queryResponse = SolrService.getSolrClient().query(query);
+        } catch (SolrServerException | IOException e) {
+            log.error("Error while retrieving data form SOLR...", e);
+        }
+        if (queryResponse == null || queryResponse.getFacetPivot() == null || queryResponse.getFacetPivot().getVal(0).size() == 0) {
+            return null;
+        }
+
+        List<DevelopmentStage> stageTerms = anatomyRepository.getAllStagesWithoutUnknown();
+        Map<String, DevelopmentStage> stageTermMap = stageTerms.stream()
+                .collect(toMap(DevelopmentStage::getOboID, term -> term));
+
+        List<PhenotypeDetail> phenotypeRibbonDetails = new ArrayList<>();
+        queryResponse.getFacetPivot().forEach((pivotFieldName, pivotFields) -> pivotFields.forEach(pivotField -> {
+            PhenotypeDetail detail = new PhenotypeDetail();
+            detail.setPhenotype((String) pivotField.getValue());
+            // stage pivot
+            pivotField.getPivot().get(0).getPivot().stream()
+                    .filter(pivotField1 -> stageTermMap.containsKey(pivotField1.getValue()))
+                    .forEach(pivot -> {
+                        String stageID = (String) pivot.getValue();
+                    });
+            phenotypeRibbonDetails.add(detail);
+        }));
+
+
+        // fixup single publications.
+
+        JsonResultResponse<PhenotypeDetail> response = new JsonResultResponse<>();
+        response.setTotal(queryResponse.getFieldStatsInfo().get("phenotype_statement_term_id").getCountDistinct());
+        response.setResults(phenotypeRibbonDetails);
+
+        return response;
+    }
+
     private JsonResultResponse<PhenotypeRibbonSummary> getDetailPhenotypeInfo(String geneID, String termID, Pagination pagination) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
@@ -301,7 +360,9 @@ public class RibbonService {
             PhenotypeRibbonSummary detail = new PhenotypeRibbonSummary();
             detail.setPhenotype((String) pivotField.getValue());
             // stage pivot
-            pivotField.getPivot().get(0).getPivot().stream()
+            PivotField pivotField2 = pivotField.getPivot().get(0);
+            detail.setId((String) pivotField2.getValue());
+            pivotField2.getPivot().stream()
                     .filter(pivotField1 -> stageTermMap.containsKey(pivotField1.getValue()))
                     .forEach(pivot -> {
                         String stageID = (String) pivot.getValue();

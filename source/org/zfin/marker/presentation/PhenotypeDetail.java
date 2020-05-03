@@ -18,9 +18,11 @@ import java.util.Set;
 
 @Setter
 @Getter
-public class ExpressionDetail {
+public class PhenotypeDetail {
 
     private GenericTerm term;
+    @JsonView(View.API.class)
+    private String phenotype;
     @JsonView(View.API.class)
     private long id;
     @JsonView(View.API.class)

@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 public class PhenotypeRibbonSummary {
 
     @JsonView(View.API.class)
+    private String id;
+    @JsonView(View.API.class)
     private String phenotype;
     @JsonView(View.API.class)
     private List<DevelopmentStage> stages;
