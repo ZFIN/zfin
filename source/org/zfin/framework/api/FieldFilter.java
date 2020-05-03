@@ -5,6 +5,7 @@ import java.util.StringJoiner;
 public enum FieldFilter {
     SEQUENCE_ACCESSION("sequence.accession"),
     SEQUENCE_TYPE("sequence.type"),
+    FILTER_TERM_NAME("termName"),
     RELATIONSHIP_TYPE("relationship.type")
     ;
     private String name;

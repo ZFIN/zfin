@@ -99,6 +99,27 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     }
 
     @Unroll
+    def "#geneID phenotype detail response with #termID filter should return more than #numberOfRecords "() {
+        when:
+        JsonResultResponse<ExpressionDetail> response = ribbonService.buildPhenotypeSummary(geneID, termID, new Pagination())
+
+        then:
+        response
+        response.getTotal() > numberOfRecords
+
+        where:
+        geneID              | termID        | numberOfRecords
+        // all records
+        "ZDB-GENE-990415-30" | ""            | 200
+        //"ZDB-GENE-990415-8" | ""            | 200
+        // pax2a
+        //                      anatomical entity
+        "ZDB-GENE-990415-8" | "ZFA:0100000" | 130
+        //                      nervous system
+        "ZDB-GENE-990415-8" | "ZFA:0000396" | 60
+    }
+
+    @Unroll
     def "#zdbID GO ribbon should have categories and groups populated"() {
         when:
         RibbonSummary ribbonSummary = ribbonService.buildGORibbonSummary(zdbID)

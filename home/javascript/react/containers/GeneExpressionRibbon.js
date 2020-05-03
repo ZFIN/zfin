@@ -152,7 +152,7 @@ const GeneExpressionRibbon = ({geneId}) => {
             content: ({entity}) =>
                 <a
                     href='#'
-                    onClick={event => handleEntityNameClick(event, term)}
+                    onClick={event => handleEntityNameClick(event, filteredTerm)}
                     key={entity}
                 >
                     {entity.superterm.termName} {entity.subterm && entity.subterm.termName}

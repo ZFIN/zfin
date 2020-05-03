@@ -22,6 +22,8 @@ public class ExpressionDetail {
 
     private GenericTerm term;
     @JsonView(View.API.class)
+    private String phenotype;
+    @JsonView(View.API.class)
     private long id;
     @JsonView(View.API.class)
     private Set<PostComposedEntity> entities;
