@@ -14,7 +14,7 @@
 
     <z:attributeListItem label="Previous Names">
         <ul class="comma-separated">
-            <c:forEach var="markerAlias" items="${formBean.previousNames}" varStatus="loop">
+            <c:forEach var="markerAlias" items="${formBean.previousNames}">
                 <li>${markerAlias.linkWithAttribution}</li>
             </c:forEach>
         </ul>
@@ -29,30 +29,26 @@
         ${formBean.transcript.status.display}
     </z:attributeListItem>
 
-<z:attributeListItem label="Associated With Genes">
-    <zfin2:toggledLinkList collection="${formBean.relatedGenes}"
-                           maxNumber="6"
-                           showAttributionLinks="true"/>
-</z:attributeListItem>
+    <z:attributeListItem label="Associated With Genes">
+        <zfin2:toggledLinkList collection="${formBean.relatedGenes}" maxNumber="6" showAttributionLinks="true"/>
+    </z:attributeListItem>
+
     <z:attributeListItem label="Strain">
         <zfin:link entity="${formBean.strain}"/>
     </z:attributeListItem>
 
     <z:attributeListItem label="Non Reference Strain">
-        <zfin2:toggledLinkList collection="${formBean.nonReferenceStrains}"
-                               maxNumber="6"/>
+        <zfin2:toggledLinkList collection="${formBean.nonReferenceStrains}" maxNumber="6"/>
     </z:attributeListItem>
 
     <z:attributeListItem label="Genome Resources">
-
-        <c:forEach var="link" items="${formBean.otherMarkerPages}" varStatus="loop">
-            <c:if test="${!link.displayName.contains('VEGA')}">
-
-                <a href="${link.link}">${link.displayName}</a>
-                ${link.attributionLink}<c:if test="${!loop.last}">,&nbsp;</c:if>
-            </c:if>
-
-        </c:forEach>
+        <ul class="comma-separated">
+            <c:forEach var="link" items="${formBean.otherMarkerPages}">
+                <c:if test="${!link.displayName.contains('VEGA')}">
+                    <li><a href="${link.link}">${link.displayName}</a> ${link.attributionLink}</li>
+                </c:if>
+            </c:forEach>
+        </ul>
     </z:attributeListItem>
 
     <z:attributeListItem label="RNACentral">
@@ -60,11 +56,6 @@
             <a href=""><b>RNACentral</b></a>
         </c:if>
     </z:attributeListItem>
-
-    <z:attributeListItem label="Citations">
-        <a href="/action/marker/citation-list/${formBean.marker.zdbID}">(${formBean.numPubs})</a>
-    </z:attributeListItem>
-
 </z:attributeList>
 
 <c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">

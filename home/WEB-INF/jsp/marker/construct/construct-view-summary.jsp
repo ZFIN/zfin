@@ -11,7 +11,7 @@
 
     <z:attributeListItem label="Previous Names">
         <ul class="comma-separated">
-            <c:forEach var="markerAlias" items="${formBean.previousNames}" varStatus="loop">
+            <c:forEach var="markerAlias" items="${formBean.previousNames}">
                 <li>${markerAlias.linkWithAttribution}</li>
             </c:forEach>
         </ul>
@@ -24,7 +24,7 @@
 
     <z:attributeListItem label="Regulatory Regions">
         <ul class="comma-separated">
-            <c:forEach var="regulatoryRegion" items="${formBean.regulatoryRegionPresentations}" varStatus="loop">
+            <c:forEach var="regulatoryRegion" items="${formBean.regulatoryRegionPresentations}">
                 <li>${regulatoryRegion.linkWithAttribution}</li>
             </c:forEach>
         </ul>
@@ -32,24 +32,17 @@
 
     <z:attributeListItem label="Coding Sequences">
         <ul class="comma-separated">
-            <c:forEach var="codingSequence" items="${formBean.codingSequencePresentations}" varStatus="loop">
+            <c:forEach var="codingSequence" items="${formBean.codingSequencePresentations}">
                 <li>${codingSequence.linkWithAttribution}</li>
             </c:forEach>
         </ul>
-
     </z:attributeListItem>
 
     <z:attributeListItem label="Contains Sequences">
         <ul class="comma-separated">
-            <c:forEach var="containSequence" items="${formBean.containsSequencePresentations}" varStatus="loop">
+            <c:forEach var="containSequence" items="${formBean.containsSequencePresentations}">
                 <li>${containSequence.linkWithAttribution}</li>
             </c:forEach>
         </ul>
-
     </z:attributeListItem>
-    
-    <z:attributeListItem label="Citations">
-        <a href="/action/marker/citation-list/${formBean.marker.zdbID}">(${formBean.numPubs})</a>
-    </z:attributeListItem>
-
 </z:attributeList>

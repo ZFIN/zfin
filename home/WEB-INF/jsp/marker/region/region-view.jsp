@@ -11,8 +11,9 @@
 <c:set var="PATHWAYS" value="Interactions and Pathways"/>
 <c:set var="SEQUENCE" value="Sequence Information"/>
 <c:set var="ORTHOLOGY" value="Orthology"/>
+<c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage sections="${[SUMMARY, MUTATIONS, GO, TRANSCRIPTS, CONSTRUCTS, PATHWAYS, SEQUENCE, ORTHOLOGY]}">
+<z:dataPage sections="${[SUMMARY, MUTATIONS, GO, TRANSCRIPTS, CONSTRUCTS, PATHWAYS, SEQUENCE, ORTHOLOGY, CITATIONS]}">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -67,6 +68,10 @@
 
         <z:section title="${ORTHOLOGY}">
             <jsp:include page="../gene/gene-view-orthology.jsp"/>
+        </z:section>
+
+        <z:section title="${CITATIONS}">
+            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
         </z:section>
     </jsp:body>
 </z:dataPage>

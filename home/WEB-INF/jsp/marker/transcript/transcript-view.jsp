@@ -9,9 +9,10 @@
 <c:set var="SEGMENTRELATIONSHIPS" value="Segment Relationships"/>
 <c:set var="PROTEINS" value="Protein Products"/>
 <c:set var="SUPPORTINGSEQUENCES" value="Supporting Sequences"/>
+<c:set var="CITATIONS" value="Citations"/>
 
 <z:dataPage
-        sections="${[SUMMARY, RELATEDTRANSCRIPTS, SEQUENCE, GBROWSE, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES]}">
+        sections="${[SUMMARY, RELATEDTRANSCRIPTS, SEQUENCE, GBROWSE, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -51,7 +52,6 @@
             <jsp:include page="transcript-view-gbrowse.jsp"/>
         </z:section>
 
-
         <z:section title="${SEGMENTRELATIONSHIPS}">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
@@ -59,9 +59,13 @@
         <z:section title="${PROTEINS}">
             <jsp:include page="transcript-view-protein-products.jsp"/>
         </z:section>
+
         <z:section title="${SUPPORTINGSEQUENCES}">
             <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
+        <z:section title="${CITATIONS}">
+            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
+        </z:section>
     </jsp:body>
 </z:dataPage>

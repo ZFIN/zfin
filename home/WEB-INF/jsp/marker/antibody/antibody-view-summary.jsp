@@ -67,9 +67,4 @@
         </script>
         <span id="wikiLink"> </span>
     </z:attributeListItem>
-
-    <z:attributeListItem label="Citations">
-        <a href="/action/antibody/antibody-publication-list?antibodyID=${formBean.marker.zdbID}&orderBy=author">(${formBean.numPubs})</a>
-    </z:attributeListItem>
-
 </z:attributeList>

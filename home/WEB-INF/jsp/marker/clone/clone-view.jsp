@@ -7,12 +7,14 @@
 <c:set var="GBROWSE" value="Genome Browser"/>
 <c:set var="EXPRESSION" value="Gene Expression"/>
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
+<c:set var="CITATIONS" value="Citations"/>
+
 <c:set var="typeName">${formBean.marker.markerType.name}</c:set>
 <c:if test="${typeName ne 'EST' || typeName ne 'CDNA'}">
-    <c:set var="sections" value="${[SUMMARY, GBROWSE, MARKERRELATIONSHIPS, SEQUENCES]}"></c:set>
+    <c:set var="sections" value="${[SUMMARY, GBROWSE, MARKERRELATIONSHIPS, SEQUENCES, CITATIONS]}"/>
 </c:if>
 <c:if test="${typeName eq 'EST' || typeName eq 'CDNA'}">
-    <c:set var="sections" value="${[SUMMARY, EXPRESSION, MARKERRELATIONSHIPS, SEQUENCES]}"></c:set>
+    <c:set var="sections" value="${[SUMMARY, EXPRESSION, MARKERRELATIONSHIPS, SEQUENCES, CITATIONS]}"/>
 </c:if>
 
 <z:dataPage sections="${sections}">
@@ -45,12 +47,9 @@
             </div>
         </z:section>
 
-
-
         <z:section title="${EXPRESSION}">
             <jsp:include page="clone-view-expression.jsp"/>
         </z:section>
-
 
         <z:section title="${MARKERRELATIONSHIPS}">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
@@ -58,7 +57,10 @@
 
         <z:section title="${SEQUENCES}">
             <div class="__react-root" id="OtherMarkerSequencesTable" data-marker-id="${formBean.marker.zdbID}"></div>
+        </z:section>
 
+        <z:section title="${CITATIONS}">
+            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
         </z:section>
     </jsp:body>
 </z:dataPage>

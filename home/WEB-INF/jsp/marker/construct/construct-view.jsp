@@ -8,8 +8,9 @@
 <c:set var="TRANSGENICS" value="Transgenics"/>
 <c:set var="SEQUENCEINFORMATION" value="Sequence Information"/>
 <c:set var="OTHERPAGES" value="Other Construct Pages"/>
+<c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage sections="${[SUMMARY, PLASMIDMAP, GENOMICFEATURES, TRANSGENICS, SEQUENCEINFORMATION, OTHERPAGES]}">
+<z:dataPage sections="${[SUMMARY, PLASMIDMAP, GENOMICFEATURES, TRANSGENICS, SEQUENCEINFORMATION, OTHERPAGES, CITATIONS]}">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -19,7 +20,6 @@
             <a class="dropdown-item active"
                href="/action/marker/construct/prototype-view/${formBean.marker.zdbID}">View</a>
             <div class="dropdown-divider"></div>
-
             <a class="dropdown-item" href="/${formBean.marker.zdbID}">Old View</a>
         </z:dataManagerDropdown>
 
@@ -48,12 +48,15 @@
 
         <z:section title="${SEQUENCEINFORMATION}">
             <div class="__react-root" id="OtherMarkerSequencesTable" data-marker-id="${formBean.marker.zdbID}"></div>
-
         </z:section>
 
         <z:section title="${OTHERPAGES}">
             <jsp:include page="construct-view-other-pages.jsp"/>
         </z:section>
-</jsp:body>
+        
+        <z:section title="${CITATIONS}">
+            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
+        </z:section>
+    </jsp:body>
 </z:dataPage>
 

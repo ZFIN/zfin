@@ -8,8 +8,9 @@
 <c:set var="CONSTRUCTS" value="Constructs"/>
 <c:set var="EXPRESSION" value="Expression"/>
 <c:set var="PHENOTYPE" value="Phenotype"/>
+<c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage sections="${[SUMMARY, TARGETLOCATION, CONSTRUCTS, GENOMICFEATURES, EXPRESSION, PHENOTYPE]}">
+<z:dataPage sections="${[SUMMARY, TARGETLOCATION, CONSTRUCTS, GENOMICFEATURES, EXPRESSION, PHENOTYPE, CITATIONS]}">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -55,6 +56,10 @@
             <z:section title="Phenotype of all Fish created by or utilizing ${formBean.marker.name}">
                 <jsp:include page="sequence-targeting-reagent-view-fish-phenotype.jsp" />
             </z:section>
+        </z:section>
+
+        <z:section title="${CITATIONS}">
+            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
         </z:section>
     </jsp:body>
 </z:dataPage>

@@ -5,8 +5,9 @@
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="NOTES" value="Notes"/>
 <c:set var="LABELING" value="Anatomical Labeling"/>
+<c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage sections="${[SUMMARY, NOTES, LABELING]}">
+<z:dataPage sections="${[SUMMARY, NOTES, LABELING, CITATIONS]}">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -33,6 +34,10 @@
 
         <z:section title="${LABELING}">
             <jsp:include page="antibody-view-labeling.jsp"/>
+        </z:section>
+
+        <z:section title="${CITATIONS}">
+            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
         </z:section>
     </jsp:body>
 </z:dataPage>
