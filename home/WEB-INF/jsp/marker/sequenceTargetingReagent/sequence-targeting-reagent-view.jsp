@@ -10,7 +10,7 @@
 <c:set var="PHENOTYPE" value="Phenotype"/>
 <c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage sections="${[SUMMARY, TARGETLOCATION, CONSTRUCTS, GENOMICFEATURES, EXPRESSION, PHENOTYPE, CITATIONS]}">
+<z:dataPage sections="${[SUMMARY, TARGETLOCATION,  GENOMICFEATURES, EXPRESSION, PHENOTYPE, CITATIONS]}">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -34,10 +34,7 @@
         <z:section title="${TARGETLOCATION}">
             <jsp:include page="sequence-targeting-reagent-view-target-location.jsp"/>
         </z:section>
-
-        <z:section title="${CONSTRUCTS}">
-            <jsp:include page="sequence-targeting-reagent-view-constructs.jsp"/>
-        </z:section>
+        
 
         <z:section title="${GENOMICFEATURES}">
             <jsp:include page="sequence-targeting-reagent-view-genonomicfeatures.jsp"/>
