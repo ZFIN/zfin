@@ -2,10 +2,20 @@ package org.zfin.mutant;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.figure.repository.FigureRepository;
 import org.zfin.fish.repository.FishService;
+import org.zfin.framework.api.JsonResultResponse;
+import org.zfin.framework.api.Pagination;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.presentation.FishModelDisplay;
@@ -19,15 +29,22 @@ import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationAuthorComparator;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.FieldName;
+import org.zfin.search.service.SolrService;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Service class that deals with Phenotype-related logic
  */
+@Service
 public class PhenotypeService {
+    @Autowired
+    private FigureRepository figureRepository;
 
     public static final String ANATOMY = "ANATOMY";
     public static final String GO = "GO";
@@ -524,6 +541,36 @@ public class PhenotypeService {
         return figureSummaryDisplays;
 
     }
+
+
+    public JsonResultResponse<Image> getPhenotypeImages(String geneId, String termId, Pagination pagination) throws IOException, SolrServerException {
+        JsonResultResponse<Image> response = new JsonResultResponse<>();
+
+        SolrQuery query = new SolrQuery();
+        query.setRequestHandler("/phenotype-annotation");
+        query.addFilterQuery("gene_zdb_id:" + geneId);
+        query.addFilterQuery("has_image:true");
+        if (org.apache.commons.lang3.StringUtils.isNotEmpty(termId)) {
+            query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
+        }
+        String imageFieldName = FieldName.IMG_ZDB_ID.getName();
+        query.addFacetField(imageFieldName);
+        query.setParam("facet.limit", Integer.toString(pagination.getLimit()));
+        query.setParam("facet.offset", Integer.toString(pagination.getStart()));
+        query.setGetFieldStatistics("{!countDistinct=true}" + imageFieldName);
+
+        QueryResponse queryResponse = SolrService.getSolrClient().query(query);
+        List<String> imageIds = queryResponse
+                .getFacetField(imageFieldName)
+                .getValues()
+                .stream()
+                .map(FacetField.Count::getName)
+                .collect(Collectors.toList());
+        response.setTotal(queryResponse.getFieldStatsInfo().get(imageFieldName).getCountDistinct());
+        response.setResults(figureRepository.getImages(imageIds));
+        return response;
+    }
+
 }
 
 
