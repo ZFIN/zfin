@@ -36,6 +36,7 @@ const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubm
                 resultHandler(response.results);
                 setTotal(response.total);
                 setError(null);
+
             })
             .fail(setError)
             .always(() => setPending(false));
@@ -65,8 +66,9 @@ const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubm
         return <GenericErrorMessage />;
     }
 
-    if(total=== 0){
-        return <NoData/>;
+    if(total === 0){
+        return <NoData placeholder={'No images available'}/>;
+
     }
 
 
