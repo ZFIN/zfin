@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.api.*;
 import org.zfin.ontology.service.RibbonService;
+import org.zfin.mutant.PhenotypeService;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,9 @@ public class PhenotypeRibbonController {
 
     @Autowired
     private RibbonService ribbonService;
+
+    @Autowired
+    private PhenotypeService phenotypeService;
 
     @Autowired
     private HttpServletRequest request;
@@ -85,5 +89,14 @@ public class PhenotypeRibbonController {
         return response;
     }
 
+    @JsonView(View.GeneExpressionAPI.class)
+    @RequestMapping(value = "/marker/{zdbID}/phenotype/images")
+    public JsonResultResponse<Image> getPhenotypeImages(@PathVariable String zdbID,
+                                                        @RequestParam(required = false) String termId,
+                                                        @Version Pagination pagination) throws IOException, SolrServerException {
+        JsonResultResponse<Image> response = phenotypeService.getPhenotypeImages(zdbID, termId, pagination);
+        response.setHttpServletRequest(request);
+        return response;
+    }
 
 }
