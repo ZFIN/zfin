@@ -13,7 +13,9 @@ import org.zfin.framework.api.*;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.wiki.presentation.Version;
-
+import org.zfin.expression.Image;
+import org.apache.solr.client.solrj.SolrServerException;
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
