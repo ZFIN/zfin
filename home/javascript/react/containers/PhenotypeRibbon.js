@@ -55,6 +55,14 @@ const PhenotypeRibbon = ({geneId}) => {
         setFilteredTerm('');
     };
 
+    const columnsDetail = [
+        {
+            label: 'Fish',
+            content: 'Fish',
+            width: '200px',
+        },
+    ];
+
     const columns = [
         {
             label: (
@@ -159,7 +167,13 @@ const PhenotypeRibbon = ({geneId}) => {
             }
 
             {selectedTablePhenotype &&
-            <div>Hello {selectedTablePhenotype}</div>
+            <DataTable
+                url={`/action/api/marker/${geneId}/phenotype/detail?termId=${selectedTablePhenotype}`}
+                columns={columnsDetail}
+                rowKey={row => row.id}
+                tableState={tableState}
+                onTableStateChange={setTableState}
+            />
             }
 
 

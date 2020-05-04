@@ -509,6 +509,13 @@ public class MutantRepositoryTest {
     }
 
     @Test
+    public void getPhenotypeStatementsRibbon() {
+        List<PhenotypeObservationStatement> models = getMutantRepository().getPhenotypeStatements("ZDB-GENE-990415-30","ZDB-TERM-100331-1165,,ZDB-TERM-070117-618,,,abnormal");
+        assertNotNull(models);
+        assertThat(models.size(), greaterThan(1));
+    }
+
+    @Test
     public void getDiseaseFromGeneAgr() {
         List<OmimPhenotype> models = getMutantRepository().getDiseaseModelsFromGenes(0);
         assertNotNull(models);

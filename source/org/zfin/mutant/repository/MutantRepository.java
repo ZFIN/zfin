@@ -527,5 +527,7 @@ public interface MutantRepository {
 
     List<GeneGenotypeExperiment> getGeneDiseaseAnnotationModels(int numberOfRecords);
     List<GeneGenotypeExperiment> getGeneFishWithPhenotypes(int numberOfRecords);
+
+    List<PhenotypeObservationStatement> getPhenotypeStatements(String geneID, String termID);
 }
 

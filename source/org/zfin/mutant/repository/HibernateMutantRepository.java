@@ -1,16 +1,15 @@
 package org.zfin.mutant.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.jdbc.Work;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
-import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
@@ -26,22 +25,19 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.agr.*;
+import org.zfin.marker.agr.BasicPhenotypeDTO;
+import org.zfin.marker.agr.CrossReferenceDTO;
+import org.zfin.marker.agr.PhenotypeTermIdentifierDTO;
+import org.zfin.marker.agr.PublicationAgrDTO;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.presentation.TermHistogramBean;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.STRMarkerSequence;
-import org.zfin.sequence.Sequence;
 
-import javax.persistence.Basic;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -597,7 +593,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
 
     @Override
-    public List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects(){
+    public List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects() {
         final String alleleQueryString = "select distinct fmrel1.fmrel_ftr_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
                 "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, fish_zdb_id" +
                 "                from feature_marker_relationship fmrel1" +
@@ -650,7 +646,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
                 "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
                 "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
-                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" ;
+                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id";
 
         final Query alleleQuery = HibernateUtil.currentSession().createSQLQuery(alleleQueryString);
         final Query geneQuery = HibernateUtil.currentSession().createSQLQuery(geneQueryString);
@@ -669,7 +665,7 @@ public class HibernateMutantRepository implements MutantRepository {
             List<String> primaryGeneticEntityIDs = new ArrayList<>();
             BasicPhenotypeDTO basicPheno = new BasicPhenotypeDTO();
 
-            if (basicPhenoObjects[0].toString().startsWith("ZDB-ALT") || basicPhenoObjects[0].toString().startsWith("ZDB-GENE")){
+            if (basicPhenoObjects[0].toString().startsWith("ZDB-ALT") || basicPhenoObjects[0].toString().startsWith("ZDB-GENE")) {
                 if (basicPhenoObjects[9] != null) {
                     //System.out.println(basicPhenoObjects[0].toString());
                     //System.out.println(basicPhenoObjects[9]);
@@ -677,20 +673,19 @@ public class HibernateMutantRepository implements MutantRepository {
                     basicPheno.setPrimaryGeneticEntityIDs(primaryGeneticEntityIDs);
                 }
             }
-            basicPheno.setObjectId("ZFIN:"+basicPhenoObjects[0].toString());
+            basicPheno.setObjectId("ZFIN:" + basicPhenoObjects[0].toString());
             basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
             PublicationAgrDTO pubDto = new PublicationAgrDTO();
 
             if (basicPhenoObjects[3] != null) {
                 Integer pubMedId = (Integer) basicPhenoObjects[3];
-                pubDto.setPublicationId("PMID:"+pubMedId);
+                pubDto.setPublicationId("PMID:" + pubMedId);
                 List<String> pubPages = new ArrayList<>();
                 pubPages.add("reference");
                 String pubZdbId = basicPhenoObjects[2].toString();
                 pubDto.setCrossReference(new CrossReferenceDTO("ZFIN", pubZdbId, pubPages));
                 basicPheno.setEvidence(pubDto);
-            }
-            else {
+            } else {
                 String pubZdbId = basicPhenoObjects[2].toString();
                 if (pubZdbId != null) {
                     pubDto.setPublicationId("ZFIN:" + pubZdbId);
@@ -830,7 +825,6 @@ public class HibernateMutantRepository implements MutantRepository {
         }
         return strSequences;
     }
-
 
 
     @SuppressWarnings("unchecked")
@@ -1482,7 +1476,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "join fetch geneGenotype.gene " +
                 "join fetch geneGenotype.fishExperiment " +
                 "where geneGenotype.fishExperiment = phenox.fishExperiment " +
-                "and geneGenotype.gene.markerType.name = :genedom " ;
+                "and geneGenotype.gene.markerType.name = :genedom ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         if (numfOfRecords > 0)
@@ -1490,6 +1484,37 @@ public class HibernateMutantRepository implements MutantRepository {
         //query.setString("genedom", "ZDB-GENE")
         query.setParameter("genedom", Marker.Type.GENE.toString());
         return (List<GeneGenotypeExperiment>) query.list();
+    }
+
+    @Override
+    public List<PhenotypeObservationStatement> getPhenotypeStatements(String geneID, String termIDs) {
+        String[] split = termIDs.split(",");
+        if (split.length != 6)
+            throw new RuntimeException("Need 6 comma-delimited values to be passed in");
+        String e1a = split[0];
+        String e1b = split[1];
+        String quality = split[2];
+        String e2a = split[3];
+        String e2b = split[4];
+        String tag = split[5];
+        String hql = "from PhenotypeObservationStatement as phenoObservation " +
+                "where phenoObservation.gene.zdbID = :geneID " +
+                "AND phenoObservation.superTermE1.zdbID = :superTermE1id ";
+        if (StringUtils.isNotEmpty(e1b))
+            hql += "AND phenoObservation.subTermE1.zdbID = :subTermE1id ";
+        if (StringUtils.isNotEmpty(quality))
+            hql += "AND phenoObservation.quality.zdbID = :quality ";
+
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("geneID", geneID);
+        query.setParameter("superTermE1id", e1a);
+        if (StringUtils.isNotEmpty(e1b))
+            query.setParameter("subTermE1id", e1b);
+        if (StringUtils.isNotEmpty(quality))
+            query.setParameter("quality", quality);
+
+        return query.list();
     }
 
 
@@ -1849,7 +1874,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<SequenceTargetingReagent> getAllSTRs(){
+    public List<SequenceTargetingReagent> getAllSTRs() {
         Session session = HibernateUtil.currentSession();
         Criteria strCriteria = session.createCriteria(SequenceTargetingReagent.class);
         strCriteria.addOrder(Order.asc("name"));
@@ -1863,6 +1888,7 @@ public class HibernateMutantRepository implements MutantRepository {
         fishCriteria.addOrder(Order.asc("name"));
         return fishCriteria.list();
     }
+
     @Override
     public List<Fish> getFishBackgrounds() {
         Session session = HibernateUtil.currentSession();
