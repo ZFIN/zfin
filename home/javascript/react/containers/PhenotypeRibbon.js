@@ -10,6 +10,7 @@ import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
 import StageTimelineHeader from '../components/StageTimelineHeader';
 import StageTimeline from '../components/StageTimeline';
 import AttributionLink from '../components/AttributionLink';
+import PhenotypeFigureGallery from './PhenotypeFigureGallery';
 
 const PhenotypeRibbon = ({geneId}) => {
     const data = useFetch(`/action/api/marker/${geneId}/phenotype/ribbon-summary`);
@@ -154,6 +155,12 @@ const PhenotypeRibbon = ({geneId}) => {
             }
             {selectedTermName && <h5>Phenotype in {selectedTermName}</h5>}
 
+            {(selectedRibbonTerm || selectedTablePhenotype) &&
+            <PhenotypeFigureGallery
+                geneId={geneId}
+                selectedTermId={selectedTablePhenotype}
+            />
+            }
 
             {selectedRibbonTerm && !selectedTablePhenotype &&
             <DataTable
