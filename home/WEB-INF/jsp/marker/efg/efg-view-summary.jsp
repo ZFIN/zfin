@@ -22,7 +22,6 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Type">
-        ${formBean.zfinSoTerm.oboID}
         <zfin2:externalLink
                 href="http://www.sequenceontology.org/browser/current_svn/term/${formBean.zfinSoTerm.oboID}">${formBean.zfinSoTerm.termName}</zfin2:externalLink>
     </z:attributeListItem>
