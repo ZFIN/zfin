@@ -15,6 +15,7 @@ import StageTimelineHeader from '../components/StageTimelineHeader';
 
 const GeneExpressionRibbon = ({geneId}) => {
     const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
+    const [detailTableState, setDetailTableState] = useState(DEFAULT_TABLE_STATE);
     const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
     const [selectedTableEntity, setSelectedTableEntity] = useState(null);
     const [isChecked, setIsChecked] = useState(false);
@@ -264,8 +265,8 @@ const GeneExpressionRibbon = ({geneId}) => {
                 url={`/action/api/marker/${geneId}/expression/ribbon-expression-detail?termId=${selectedTermId}`}
                 columns={columnsDetail}
                 rowKey={row => row.id}
-                tableState={tableState}
-                onTableStateChange={setTableState}
+                tableState={detailTableState}
+                onTableStateChange={setDetailTableState}
             />
             }
         </div>
