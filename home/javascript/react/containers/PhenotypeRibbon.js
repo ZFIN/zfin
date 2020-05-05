@@ -18,6 +18,7 @@ const PhenotypeRibbon = ({geneId}) => {
     const [detailTableState, setDetailTableState] = useState(DEFAULT_TABLE_STATE);
     const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
     const [selectedTablePhenotype, setSelectedTablePhenotype] = useState(null);
+    const [selectedTableIDs, setSelectedTableIDs] = useState(null);
     const [filteredTerm, setFilteredTerm] = useState('');
 
     if (data.rejected) {
@@ -36,9 +37,10 @@ const PhenotypeRibbon = ({geneId}) => {
         return <NoData/>
     }
 
-    const handleEntityNameClick = (event, id) => {
+    const handleEntityNameClick = (event, ids, phenotype) => {
         event.preventDefault();
-        setSelectedTablePhenotype(id);
+        setSelectedTableIDs(ids);
+        setSelectedTablePhenotype(phenotype);
     };
 
     const handleFilterChange = (event) => {
@@ -53,6 +55,7 @@ const PhenotypeRibbon = ({geneId}) => {
 
     const handleRibbonCellClick = (subject, group) => {
         setSelectedTablePhenotype(null);
+        setSelectedTableIDs(null);
         setSelectedRibbonTerm(subject, group);
         setFilteredTerm('');
     };
@@ -119,7 +122,7 @@ const PhenotypeRibbon = ({geneId}) => {
             content: ({phenotype, phenotypeIDs}) =>
                 <a
                     href='#'
-                    onClick={event => handleEntityNameClick(event, phenotypeIDs)}
+                    onClick={event => handleEntityNameClick(event, phenotypeIDs, phenotype)}
                     dangerouslySetInnerHTML={{__html: phenotype}}
                 />,
             width: '140px',
@@ -148,20 +151,18 @@ const PhenotypeRibbon = ({geneId}) => {
     ];
 
     let selectedTermName = '';
-    //    let selectedTermId = '';
-    //    let selectedTermIsOther = false;
+    let selectedTermId = '';
+    let selectedTermIsOther = false;
     if (selectedTablePhenotype) {
-        //selectedTermName = phenotype;
+        selectedTermName = selectedTablePhenotype;
         //todo: need to handle subterm also
-        //      selectedTermId = selectedTablePhenotype.id;
+        selectedTermId = selectedTableIDs;
     } else if (selectedRibbonTerm) {
         selectedTermName = selectedRibbonTerm.group.label;
-        //selectedTermIsOther = selectedRibbonTerm.group.type === 'Other';
-        /*
-                if (selectedRibbonTerm.group.type !== 'GlobalAll') {
-                    selectedTermId = selectedRibbonTerm.group.id;
-                }
-        */
+        selectedTermIsOther = selectedRibbonTerm.group.type === 'Other';
+        if (selectedRibbonTerm.group.type !== 'GlobalAll') {
+            selectedTermId = selectedRibbonTerm.group.id;
+        }
     }
 
     return (
@@ -183,7 +184,8 @@ const PhenotypeRibbon = ({geneId}) => {
             {(selectedRibbonTerm || selectedTablePhenotype) &&
             <PhenotypeFigureGallery
                 geneId={geneId}
-                selectedTermId={selectedTablePhenotype}
+                selectedTermId={selectedTermId}
+                selectedTermIsOther={selectedTermIsOther}
             />
             }
 
@@ -200,7 +202,7 @@ const PhenotypeRibbon = ({geneId}) => {
 
             {selectedTablePhenotype &&
             <DataTable
-                url={`/action/api/marker/${geneId}/phenotype/detail?termId=${selectedTablePhenotype}`}
+                url={`/action/api/marker/${geneId}/phenotype/detail?termId=${selectedTableIDs}`}
                 columns={columnsDetail}
                 rowKey={row => row.id}
                 tableState={detailTableState}

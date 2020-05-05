@@ -80,6 +80,7 @@ const PhenotypeFigureGallery = ({geneId,  selectedTermId}) => {
 PhenotypeFigureGallery.propTypes = {
     geneId: PropTypes.string,
     selectedTermId: PropTypes.string,
+    selectedTermIsOther: PropTypes.bool,
 };
 
 export default PhenotypeFigureGallery;

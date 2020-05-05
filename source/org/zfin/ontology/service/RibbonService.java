@@ -275,12 +275,13 @@ public class RibbonService {
         return response;
     }
 
-    private JsonResultResponse<PhenotypeRibbonSummary> getDetailPhenotypeInfo(String geneID, String termID, Pagination pagination) {
+    private JsonResultResponse<PhenotypeRibbonSummary> getDetailPhenotypeInfo(String geneID, String ribbonTermID, Pagination pagination) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
-        if (StringUtils.isNotEmpty(termID)) {
-//            query.add("f.phenotype_statement:"+termID);
+        if (StringUtils.isNotEmpty(ribbonTermID)) {
+            String escapedRibbonTermID = ribbonTermID.replace(":", "\\:");
+            query.addFilterQuery("term_id:" + escapedRibbonTermID);
         }
         final String filterValue = pagination.getFieldFilterValueMap().getFilterValue(FieldFilter.FILTER_TERM_NAME);
         if (StringUtils.isNotEmpty(filterValue)) {
@@ -356,7 +357,6 @@ public class RibbonService {
         return response;
     }
 
-    //f.phenotype_statement.facet.limit=10&f.phenotype_statement.facet.offset=10&stats=true                                  &facet.pivot=phenotype_statement,phenotype_statement_term_id,stage_term_id,pub_zdb_id&stats.field={!countDistinct=true}phenotype_statement_term_id&fq=phenotype_statement:*bra*
     private HashSet<String> getDetailExpressionInfo(String geneID, String termID) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
