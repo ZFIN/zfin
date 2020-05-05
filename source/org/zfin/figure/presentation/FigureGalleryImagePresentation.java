@@ -14,6 +14,7 @@ public class FigureGalleryImagePresentation {
     @JsonProperty("expression")
     private FigureExpressionSummary figureExpressionSummary;
     private FigurePhenotypeSummary figurePhenotypeSummary;
+    @JsonView(View.API.class)
     private String details;
 
     public Image getImage() {

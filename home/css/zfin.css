@@ -1197,3 +1197,24 @@ input + label {
     overflow-x: auto;
     overflow-y: hidden;
 }
+
+.collapsible-attribute {
+    cursor: pointer;
+}
+
+/*  todo: deal with collapsing attributes, genotype superscripts mess this bit up, but it's getting there */
+.collapsed-attribute {
+    overflow: hidden;
+    position: relative;
+    max-height: 4.5em;
+}
+
+.collapsed-attribute:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 1.5em;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 90%);
+}

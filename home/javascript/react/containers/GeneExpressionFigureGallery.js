@@ -7,7 +7,7 @@ import NoData from '../components/NoData';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import {useFetch} from '../utils/effects';
 
-const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubmitted,  selectedTermId, selectedTermIsOther}) => {
+const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubmitted, selectedTermId, selectedTermIsOther}) => {
     const [page, setPage] = useState(1);
     const [images, setImages] = useState([]);
     const [total, setTotal] = useState(0);
@@ -36,7 +36,6 @@ const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubm
                 resultHandler(response.results);
                 setTotal(response.total);
                 setError(null);
-
             })
             .fail(setError)
             .always(() => setPending(false));
@@ -66,12 +65,10 @@ const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubm
         return <GenericErrorMessage />;
     }
 
-    if(total === 0){
-        return <NoData placeholder={'No images available'}/>;
+    if (total === 0) {
+        return <NoData placeholder={'No images available'} />;
 
     }
-
-
 
     return (
         <FigureGallery

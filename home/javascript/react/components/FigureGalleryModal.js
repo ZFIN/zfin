@@ -5,6 +5,7 @@ class FigureGalleryModal extends Component {
     constructor(props) {
         super(props);
         this.modalRef = React.createRef();
+        this.observer = null;
         this.state = {
             imageLoading: false,
         }
@@ -17,20 +18,30 @@ class FigureGalleryModal extends Component {
                 this.setState({imageLoading: false});
                 $modal.figureGalleryResize();
             });
+        this.observer = new MutationObserver(() => {
+            if (!this.state.imageLoading) {
+                $modal.figureGalleryResize();
+            }
+        });
+        this.observer.observe(
+            $modal.find('.modal-header')[0],
+            {attributes: true, childList: true, subtree: true}
+        )
     }
 
     componentDidUpdate(prevProps) {
         const $modal = $(this.modalRef.current);
-        const {image, imageDetails} = this.props;
+        const {image} = this.props;
         if (image) {
             $modal.bootstrapModal('show');
             if (!prevProps.image || image.url !== prevProps.image.url) {
                 this.setState({imageLoading: true});
             }
         }
-        if (imageDetails !== prevProps.imageDetails && !this.state.imageLoading) {
-            $modal.figureGalleryResize();
-        }
+    }
+
+    componentWillUnmount() {
+        this.observer.disconnect();
     }
 
     handleNavigation(callback) {

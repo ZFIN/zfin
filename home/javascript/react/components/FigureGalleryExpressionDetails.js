@@ -1,9 +1,10 @@
 import React from 'react';
-import { fetchType } from '../utils/types';
+import {fetchType} from '../utils/types';
 import LoadingSpinner from './LoadingSpinner';
 import CommaSeparatedList from './CommaSeparatedList';
 import StageLink from './StageLink';
 import StarRating from './StarRating';
+import OverflowParagraph from './OverflowParagraph';
 
 const FigureGalleryExpressionDetails = ({figureDetails}) => {
     if (figureDetails.pending) {
@@ -14,7 +15,7 @@ const FigureGalleryExpressionDetails = ({figureDetails}) => {
         return null;
     }
 
-    const { expression } = figureDetails.value;
+    const {details, expression} = figureDetails.value;
 
     return (
         <dl className='d-sm-table mt-2 mb-0'>
@@ -143,8 +144,18 @@ const FigureGalleryExpressionDetails = ({figureDetails}) => {
                 </div>
             }
 
+            {details &&
+                <div className='d-sm-table-row'>
+                    <dt className='d-sm-table-cell nowrap'>Caption</dt>
+                    <dd className='my-sm-0 mx-sm-2'>
+                        <OverflowParagraph>
+                            <div dangerouslySetInnerHTML={{__html: details}}/>
+                        </OverflowParagraph>
+                    </dd>
+                </div>
+            }
         </dl>
-    )
+    );
 };
 
 FigureGalleryExpressionDetails.propTypes = {
