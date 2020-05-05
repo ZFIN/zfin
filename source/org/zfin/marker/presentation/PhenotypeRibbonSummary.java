@@ -8,7 +8,9 @@ import org.zfin.framework.api.View;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Setter
@@ -25,8 +27,9 @@ public class PhenotypeRibbonSummary {
     private Publication publication;
     @JsonView(View.API.class)
     private List<String> ribbonPubs;
-
+    @JsonView(View.API.class)
     private List<String> pubIDs;
+    private Set<String> phenotypeIDs;
 
     @JsonView(View.API.class)
     private int getNumberOfPublications() {
@@ -49,6 +52,17 @@ public class PhenotypeRibbonSummary {
         }
         pubIDs.addAll(pubIDValues);
         pubIDs = pubIDs.stream().distinct().collect(Collectors.toList());
+    }
+
+    public void addPhenotypeIds(List<String> phenotypeID) {
+        if (phenotypeIDs == null)
+            phenotypeIDs = new HashSet<>();
+        phenotypeIDs.addAll(phenotypeID);
+    }
+
+    @JsonView(View.API.class)
+    public String getPhenotypeIDs() {
+        return String.join(",", phenotypeIDs);
     }
 
     @Override

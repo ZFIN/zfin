@@ -15,6 +15,7 @@ import PhenotypeFigureGallery from './PhenotypeFigureGallery';
 const PhenotypeRibbon = ({geneId}) => {
     const data = useFetch(`/action/api/marker/${geneId}/phenotype/ribbon-summary`);
     const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
+    const [detailTableState, setDetailTableState] = useState(DEFAULT_TABLE_STATE);
     const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
     const [selectedTablePhenotype, setSelectedTablePhenotype] = useState(null);
     const [filteredTerm, setFilteredTerm] = useState('');
@@ -59,7 +60,32 @@ const PhenotypeRibbon = ({geneId}) => {
     const columnsDetail = [
         {
             label: 'Fish',
-            content: 'Fish',
+            content: ({phenotypeSourceGenerated}) => <a href={`/${phenotypeSourceGenerated.fishExperiment.fish.zdbID}`} dangerouslySetInnerHTML={{__html: phenotypeSourceGenerated.fishExperiment.fish.displayName}}/>,
+            width: '200px',
+        },
+        {
+            label: 'Experiment',
+            content: ({phenotypeSourceGenerated}) => phenotypeSourceGenerated.fishExperiment.experiment.conditions,
+            width: '200px',
+        },
+        {
+            label: 'Start Stage',
+            content: ({phenotypeSourceGenerated}) => phenotypeSourceGenerated.start.name,
+            width: '200px',
+        },
+        {
+            label: 'End Stage',
+            content: ({phenotypeSourceGenerated}) => phenotypeSourceGenerated.end.name,
+            width: '200px',
+        },
+        {
+            label: 'Figure',
+            content: ({phenotypeSourceGenerated}) => <a href={`/${phenotypeSourceGenerated.figure.zdbID}`} dangerouslySetInnerHTML={{__html: phenotypeSourceGenerated.figure.label}}/>,
+            width: '200px',
+        },
+        {
+            label: 'Publication',
+            content: ({phenotypeSourceGenerated}) => <a href={`/${phenotypeSourceGenerated.figure.publication.zdbID}`} dangerouslySetInnerHTML={{__html: phenotypeSourceGenerated.figure.publication.shortAuthorList}}/>,
             width: '200px',
         },
     ];
@@ -90,10 +116,10 @@ const PhenotypeRibbon = ({geneId}) => {
                 </div>
             ),
             key: 'locations',
-            content: ({phenotype, id}) =>
+            content: ({phenotype, phenotypeIDs}) =>
                 <a
                     href='#'
-                    onClick={event => handleEntityNameClick(event, id)}
+                    onClick={event => handleEntityNameClick(event, phenotypeIDs)}
                     dangerouslySetInnerHTML={{__html: phenotype}}
                 />,
             width: '140px',
@@ -120,7 +146,6 @@ const PhenotypeRibbon = ({geneId}) => {
             width: '120px',
         },
     ];
-
 
     let selectedTermName = '';
     //    let selectedTermId = '';
@@ -178,8 +203,8 @@ const PhenotypeRibbon = ({geneId}) => {
                 url={`/action/api/marker/${geneId}/phenotype/detail?termId=${selectedTablePhenotype}`}
                 columns={columnsDetail}
                 rowKey={row => row.id}
-                tableState={tableState}
-                onTableStateChange={setTableState}
+                tableState={detailTableState}
+                onTableStateChange={setDetailTableState}
             />
             }
 

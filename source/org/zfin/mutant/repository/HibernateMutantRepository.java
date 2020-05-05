@@ -1489,30 +1489,12 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<PhenotypeObservationStatement> getPhenotypeStatements(String geneID, String termIDs) {
         String[] split = termIDs.split(",");
-        if (split.length != 6)
-            throw new RuntimeException("Need 6 comma-delimited values to be passed in");
-        String e1a = split[0];
-        String e1b = split[1];
-        String quality = split[2];
-        String e2a = split[3];
-        String e2b = split[4];
-        String tag = split[5];
         String hql = "from PhenotypeObservationStatement as phenoObservation " +
-                "where phenoObservation.gene.zdbID = :geneID " +
-                "AND phenoObservation.superTermE1.zdbID = :superTermE1id ";
-        if (StringUtils.isNotEmpty(e1b))
-            hql += "AND phenoObservation.subTermE1.zdbID = :subTermE1id ";
-        if (StringUtils.isNotEmpty(quality))
-            hql += "AND phenoObservation.quality.zdbID = :quality ";
-
+                //"where phenoObservation.gene.zdbID = :geneID " +
+                "WHERE phenoObservation.id in (:ids) ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setString("geneID", geneID);
-        query.setParameter("superTermE1id", e1a);
-        if (StringUtils.isNotEmpty(e1b))
-            query.setParameter("subTermE1id", e1b);
-        if (StringUtils.isNotEmpty(quality))
-            query.setParameter("quality", quality);
+        query.setParameterList("ids", Arrays.stream(split).map(Long::valueOf).collect(Collectors.toList()));
 
         return query.list();
     }

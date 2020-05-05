@@ -1,7 +1,9 @@
 package org.zfin.mutant;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
@@ -22,6 +24,12 @@ public class PhenotypeObservationStatement implements Comparable<PhenotypeObserv
     @Column(name = "psg_id")
     private long id;
 
+    @JsonView(View.API.class)
+    @ManyToOne
+    @JoinColumn(name = "psg_pg_id")
+    private PhenotypeSourceGenerated phenotypeSourceGenerated;
+
+    @JsonView(View.API.class)
     @ManyToOne
     @JoinColumn(name = "psg_mrkr_zdb_id")
     private Marker gene;
@@ -52,18 +60,29 @@ public class PhenotypeObservationStatement implements Comparable<PhenotypeObserv
     @JoinColumn(name = "psg_e2b_zdb_id")
     private GenericTerm subtermE2;
 
-    /*
-    private PhenotypeExperiment phenotypeExperiment;
-        private PostComposedEntity entity;
-        private GenericTerm quality;
-        private PostComposedEntity relatedEntity;
-    private Date dateCreated;
-    */
     @Column(name = "psg_tag")
     private String tag;
 
     @Override
     public int compareTo(PhenotypeObservationStatement o) {
         return 0;
+    }
+
+    @JsonView(View.API.class)
+    public PhenotypeStatement getPhenotypeStatement() {
+        PhenotypeStatement statement = new PhenotypeStatement();
+        statement.setQuality(quality);
+        PostComposedEntity entity = new PostComposedEntity();
+        entity.setSuperterm(superTermE1);
+        entity.setSubterm(subtermE1);
+        statement.setEntity(entity);
+
+        PostComposedEntity relatedEntity = new PostComposedEntity();
+        relatedEntity.setSuperterm(superTermE2);
+        relatedEntity.setSubterm(subtermE2);
+        statement.setEntity(relatedEntity);
+
+        statement.setTag(tag);
+        return statement;
     }
 }

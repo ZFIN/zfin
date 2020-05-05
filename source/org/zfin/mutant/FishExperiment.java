@@ -1,7 +1,9 @@
 package org.zfin.mutant;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
+import org.zfin.framework.api.View;
 
 import java.util.Objects;
 import java.util.Set;
@@ -10,10 +12,14 @@ import java.util.Set;
  * Domain object.
  */
 public class FishExperiment implements Comparable<FishExperiment> {
+
+    @JsonView(View.API.class)
     private String zdbID;
     private boolean standard;
     private boolean standardOrGenericControl;
+    @JsonView(View.API.class)
     private Experiment experiment;
+    @JsonView(View.API.class)
     private Fish fish;
     private Set<PhenotypeExperiment> phenotypeExperiments;
     private Set<ExpressionExperiment> expressionExperiments;

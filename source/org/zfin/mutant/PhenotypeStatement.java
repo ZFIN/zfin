@@ -69,9 +69,7 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
 
     @Override
     public String toString() {
-        return "PhenotypeStatement{" +
-                "id=" + id +
-                '}';
+        return id + "";
     }
 
     public Date getDateCreated() {

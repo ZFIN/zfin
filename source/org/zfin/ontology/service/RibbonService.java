@@ -20,7 +20,6 @@ import org.zfin.marker.presentation.ExpressionRibbonDetail;
 import org.zfin.marker.presentation.PhenotypeDetail;
 import org.zfin.marker.presentation.PhenotypeRibbonSummary;
 import org.zfin.mutant.PhenotypeObservationStatement;
-import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -267,14 +266,12 @@ public class RibbonService {
         return response;
     }
 
-    public JsonResultResponse<PhenotypeDetail> getPhenotypeDetailSolr(String geneID, String termID, Pagination pagination) {
+    public JsonResultResponse<PhenotypeObservationStatement> getPhenotypeDetailSolr(String geneID, String termID, Pagination pagination) {
 
         List<PhenotypeObservationStatement> list = getMutantRepository().getPhenotypeStatements(geneID, termID);
-
-        // fixup single publications.
-
-        JsonResultResponse<PhenotypeDetail> response = new JsonResultResponse<>();
-
+        JsonResultResponse<PhenotypeObservationStatement> response = new JsonResultResponse<>();
+        response.setResults(list);
+        response.setTotal(list.size());
         return response;
     }
 
@@ -290,7 +287,7 @@ public class RibbonService {
             query.addFilterQuery("phenotype_statement:" + "*" + filterValue.trim() + "*");
         }
         // get Facet for the ao term and the PK of the expression record.
-        query.addFacetPivotField("phenotype_statement,phenotype_statement_term_id,stage_term_id,pub_zdb_id");
+        query.addFacetPivotField("phenotype_statement,phenotype_statement_term_id,stage_term_id,pub_zdb_id,id");
         query.setParam("f.phenotype_statement.facet.offset", String.valueOf(pagination.getStart()));
         query.setParam("f.phenotype_statement.facet.limit", String.valueOf(pagination.getLimit()));
         query.setParam("stats", "true");
@@ -325,6 +322,13 @@ public class RibbonService {
                         String stageID = (String) pivot.getValue();
                         detail.addStage(stageTermMap.get(stageID));
                         detail.addPublications(pivot.getPivot().stream().map(pivotField1 -> (String) pivotField1.getValue()).collect(toList()));
+                        detail.addPhenotypeIds(pivot.getPivot().stream()
+                                .map(pivotPubs -> pivotPubs.getPivot().stream()
+                                        .map(pivotID -> ((String) pivotID.getValue()).replace("psg-", ""))
+                                        .collect(Collectors.toList()))
+                                .flatMap(Collection::stream)
+                                .collect(Collectors.toList())
+                        );
                     });
             phenotypeRibbonDetails.add(detail);
         }));

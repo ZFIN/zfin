@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.api.*;
+import org.zfin.mutant.PhenotypeObservationStatement;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.wiki.presentation.Version;
@@ -68,12 +69,12 @@ public class PhenotypeRibbonController {
 
     @JsonView(View.GeneExpressionAPI.class)
     @RequestMapping(value = "/marker/{zdbID}/phenotype/detail")
-    public JsonResultResponse<PhenotypeDetail> getPhenotypeDetail(@PathVariable("zdbID") String geneID,
-                                                                  @RequestParam(value = "termId", required = false) String termID,
-                                                                  @RequestParam(value = "filter.termName", required = false) String filterTermName,
-                                                                  @Version Pagination pagination) {
+    public JsonResultResponse<PhenotypeObservationStatement> getPhenotypeDetail(@PathVariable("zdbID") String geneID,
+                                                                                @RequestParam(value = "termId", required = false) String termID,
+                                                                                @RequestParam(value = "filter.termName", required = false) String filterTermName,
+                                                                                @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
-        JsonResultResponse<PhenotypeDetail> response;
+        JsonResultResponse<PhenotypeObservationStatement> response;
         pagination.addFieldFilter(FieldFilter.FILTER_TERM_NAME, filterTermName);
         try {
             response = ribbonService.getPhenotypeDetailSolr(geneID, termID, pagination);
