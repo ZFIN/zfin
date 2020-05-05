@@ -28,6 +28,7 @@ public class FigureAPIController {
         FigureGalleryImagePresentation result = new FigureGalleryImagePresentation();
         result.setFigureExpressionSummary(figureViewService.getFigureExpressionSummary(figure));
         result.setDetails(figure.getCaption());
+        result.setFigurePhenotypeSummary(figureViewService.getFigurePhenotypeSummary(figure));
         return result;
     }
 
