@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentBean" scope="request"/>
+<c:set var="typeName">${formBean.marker.markerType.name}</c:set>
 
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="TARGETLOCATION" value="Target Location"/>
@@ -10,7 +11,16 @@
 <c:set var="PHENOTYPE" value="Phenotype"/>
 <c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage sections="${[SUMMARY, TARGETLOCATION,  GENOMICFEATURES, EXPRESSION, PHENOTYPE, CITATIONS]}">
+
+<c:if test="${typeName ne 'MRPHLNO'}">
+        <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, CONSTRUCTS, GENOMICFEATURES, EXPRESSION, PHENOTYPE, CITATIONS]}"/>
+</c:if>
+<c:if test="${typeName eq 'MRPHLNO'}">
+        <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, GENOMICFEATURES, EXPRESSION, PHENOTYPE, CITATIONS]}"/>
+</c:if>
+
+    <z:dataPage sections="${sections}">
+
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -35,6 +45,11 @@
             <jsp:include page="sequence-targeting-reagent-view-target-location.jsp"/>
         </z:section>
         
+        <c:if test="${typeName ne 'MRPHLNO'}">
+            <z:section title="${CONSTRUCTS}">
+                <jsp:include page="sequence-targeting-reagent-view-constructs.jsp"/>
+            </z:section>
+        </c:if>
 
         <z:section title="${GENOMICFEATURES}">
             <jsp:include page="sequence-targeting-reagent-view-genonomicfeatures.jsp"/>
