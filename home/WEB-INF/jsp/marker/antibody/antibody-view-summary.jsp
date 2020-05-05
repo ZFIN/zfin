@@ -26,7 +26,10 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Isotype">
-        <div>${formBean.marker.heavyChainIsotype}, ${formBean.marker.lightChainIsotype}</div>
+        <div>${formBean.marker.heavyChainIsotype}
+            <c:if  test="${formBean.marker.heavyChainIsotype != null && formBean.marker.lightChainIsotype != null}">,
+            </c:if>${formBean.marker.lightChainIsotype}
+        </div>
     </z:attributeListItem>
 
     <z:attributeListItem label="Type">
@@ -50,9 +53,11 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Antibody Registry ID">
+        <c:if  test="${formBean.abRegistryID != null}">
         <zfin2:externalLink href="http://antibodyregistry.org/search.php?q=${formBean.abRegistryID}">
             ${formBean.abRegistryID}
         </zfin2:externalLink>
+        </c:if>
     </z:attributeListItem>
 
     <z:attributeListItem label="Source">
