@@ -58,6 +58,10 @@ update record_attribution
  set recattrib_data_zdb_id = replace(recattrib_data_zdb_id, 'GENE', 'BR')
  where recattrib_data_zdb_id ='ZDB-GENE-071004-117';
 
+ update marker_to_protein
+ set mtp_mrkr_zdb_id=replace(mtp_mrkr_zdb_id, 'GENE', 'BR')
+ where mtp_mrkr_zdb_id ='ZDB-GENE-071004-117';
+
 update expression_experiment2
  set xpatex_gene_zdb_id = replace(xpatex_gene_zdb_id, 'GENE', 'BR')
  where xpatex_gene_zdb_id ='ZDB-GENE-071004-117';

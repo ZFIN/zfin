@@ -11,6 +11,8 @@ update zdb_active_data
  set zactvd_zdb_id = replace(zactvd_zdb_id,  'GENE','LINCRNAG')
  where zactvd_zdb_id in ('ZDB-GENE-130530-538');
 
+delete from zdb_replaced_data where zrepld_new_zdb_id='ZDB-GENE-130530-538';
+
 insert into zdb_replaced_data (zrepld_new_zdb_id, zrepld_old_zdb_id)
  values('ZDB-LINCRNAG-130530-538', 'ZDB-GENE-130530-538');
  
