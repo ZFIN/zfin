@@ -44,7 +44,7 @@
         <z:section title="${TARGETLOCATION}">
             <jsp:include page="sequence-targeting-reagent-view-target-location.jsp"/>
         </z:section>
-        
+
         <c:if test="${typeName ne 'MRPHLNO'}">
             <z:section title="${CONSTRUCTS}">
                 <jsp:include page="sequence-targeting-reagent-view-constructs.jsp"/>
