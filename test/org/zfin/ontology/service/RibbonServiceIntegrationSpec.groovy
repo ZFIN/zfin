@@ -9,6 +9,7 @@ import org.zfin.framework.api.RibbonCategory
 import org.zfin.framework.api.RibbonSummary
 import org.zfin.marker.presentation.ExpressionDetail
 import org.zfin.marker.presentation.ExpressionRibbonDetail
+import org.zfin.marker.presentation.PhenotypeRibbonSummary
 import org.zfin.search.FieldName
 import spock.lang.Shared
 import spock.lang.Unroll
@@ -35,33 +36,33 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         termCounts.get(termID) > 0
 
         where:
-        handler                  | zdbID                 | termID
-        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFS:0100000"
-        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFS:0000050"
-        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFS:0000030"
-        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFS:0100000"
-        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFA:0000559"
-        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFA:0000008"
-        "/phenotype-annotation"  | "ZDB-GENE-990415-72"  | "ZFA:0001138"
-        "/phenotype-annotation"  | "ZDB-GENE-030131-9008"| "GO:0033153"
-        "/phenotype-annotation"  | "ZDB-GENE-030131-9008"| "GO:0071707"
-        "/phenotype-annotation"  | "ZDB-GENE-030131-9008"| "GO:0044238"
-        "/phenotype-annotation"  | "ZDB-GENE-030131-9008"| "GO:0046649"
-        "/expression-annotation" | "ZDB-GENE-990415-8"   | "ZFA:0000396"
-        "/expression-annotation" | "ZDB-GENE-980526-426" | "ZFA:0000041"
-        "/expression-annotation" | "ZDB-GENE-041001-150" | "GO:0005737"
-        "/expression-annotation" | "ZDB-GENE-041001-150" | "GO:0005575" //GO-CC root
-        "/expression-annotation" | "ZDB-GENE-041001-150" | "ZFS:0000004"
-        "/expression-annotation" | "ZDB-GENE-041001-150" | "ZFS:0000046"
-        "/expression-annotation" | "ZDB-GENE-990415-8"   | "ZFS:0000046"
-        "/expression-annotation" | "ZDB-GENE-990415-8"   | "ZFS:0000049"
-        "/expression-annotation" | "ZDB-GENE-990415-8"   | "ZFS:0000050"
-        "/go-annotation"         | "ZDB-GENE-990415-8"   | "GO:0005634"
-        "/go-annotation"         | "ZDB-GENE-980526-426" | "GO:0032502"
-        "/go-annotation"         | "ZDB-GENE-980526-426" | "GO:0003677"
-        "/go-annotation"         | "ZDB-GENE-980526-178" | "GO:0008283"
-        "/go-annotation"         | "ZDB-GENE-980526-178" | "GO:0005102"
-        "/go-annotation"         | "ZDB-GENE-980526-178" | "GO:0030154"
+        handler                  | zdbID                  | termID
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"   | "ZFS:0100000"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"   | "ZFS:0000050"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"   | "ZFS:0000030"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"   | "ZFS:0100000"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"   | "ZFA:0000559"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"   | "ZFA:0000008"
+        "/phenotype-annotation"  | "ZDB-GENE-990415-72"   | "ZFA:0001138"
+        "/phenotype-annotation"  | "ZDB-GENE-030131-9008" | "GO:0033153"
+        "/phenotype-annotation"  | "ZDB-GENE-030131-9008" | "GO:0071707"
+        "/phenotype-annotation"  | "ZDB-GENE-030131-9008" | "GO:0044238"
+        "/phenotype-annotation"  | "ZDB-GENE-030131-9008" | "GO:0046649"
+        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFA:0000396"
+        "/expression-annotation" | "ZDB-GENE-980526-426"  | "ZFA:0000041"
+        "/expression-annotation" | "ZDB-GENE-041001-150"  | "GO:0005737"
+        "/expression-annotation" | "ZDB-GENE-041001-150"  | "GO:0005575" //GO-CC root
+        "/expression-annotation" | "ZDB-GENE-041001-150"  | "ZFS:0000004"
+        "/expression-annotation" | "ZDB-GENE-041001-150"  | "ZFS:0000046"
+        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000046"
+        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000049"
+        "/expression-annotation" | "ZDB-GENE-990415-8"    | "ZFS:0000050"
+        "/go-annotation"         | "ZDB-GENE-990415-8"    | "GO:0005634"
+        "/go-annotation"         | "ZDB-GENE-980526-426"  | "GO:0032502"
+        "/go-annotation"         | "ZDB-GENE-980526-426"  | "GO:0003677"
+        "/go-annotation"         | "ZDB-GENE-980526-178"  | "GO:0008283"
+        "/go-annotation"         | "ZDB-GENE-980526-178"  | "GO:0005102"
+        "/go-annotation"         | "ZDB-GENE-980526-178"  | "GO:0030154"
     }
 
     @Unroll
@@ -73,9 +74,9 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         termCounts.size() > min
 
         where:
-        geneID                | ribbonTermID  | min  | includeReporter | onlyDirectlySubmitted
-        "ZDB-GENE-990415-8"   | "ZFA:0000396" | 60   | false           | false
-        "ZDB-GENE-050419-145" | "ZFA:0000396" | 1    | false           | false
+        geneID                | ribbonTermID  | min | includeReporter | onlyDirectlySubmitted
+        "ZDB-GENE-990415-8"   | "ZFA:0000396" | 60  | false           | false
+        "ZDB-GENE-050419-145" | "ZFA:0000396" | 1   | false           | false
     }
 
     @Unroll
@@ -101,22 +102,20 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#geneID phenotype detail response with #termID filter should return more than #numberOfRecords "() {
         when:
-        JsonResultResponse<ExpressionDetail> response = ribbonService.buildPhenotypeSummary(geneID, termID, new Pagination())
+        JsonResultResponse<PhenotypeRibbonSummary> response = ribbonService.buildPhenotypeSummary(geneID, termID, new Pagination())
 
         then:
         response
         response.getTotal() > numberOfRecords
 
         where:
-        geneID              | termID        | numberOfRecords
+        geneID               | termID        | numberOfRecords
         // all records
-        "ZDB-GENE-990415-30" | ""            | 200
-        //"ZDB-GENE-990415-8" | ""            | 200
-        // pax2a
-        //                      anatomical entity
-        "ZDB-GENE-990415-8" | "ZFA:0100000" | 130
-        //                      nervous system
-        "ZDB-GENE-990415-8" | "ZFA:0000396" | 60
+        "ZDB-GENE-990415-30" | ""            | 15
+        // pax2a             anatomical entity
+        "ZDB-GENE-990415-8"  | "ZFA:0100000" | 100
+        // pax2a              nervous system
+        "ZDB-GENE-990415-8"  | "ZFA:0000396" | 60
     }
 
     @Unroll
