@@ -38,18 +38,22 @@
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <jsp:include page="clone-view-summary.jsp"/>
         </div>
-
-        <z:section title="${GBROWSE}">
-            <div class="__react-root"
+        
+        <c:if test="${typeName ne 'EST' || typeName ne 'CDNA'}">
+            <z:section title="${GBROWSE}">
+               <div class="__react-root"
                  id="GbrowseImage"
                  data-image-url="${formBean.image.imageUrl}"
                  data-link-url="${formBean.image.linkUrl}">
-            </div>
-        </z:section>
+              </div>
+            </z:section>
+        </c:if>
 
-        <z:section title="${EXPRESSION}">
-            <jsp:include page="clone-view-expression.jsp"/>
-        </z:section>
+        <c:if test="${typeName eq 'EST' || typeName eq 'CDNA'}">
+            <z:section title="${EXPRESSION}">
+               <jsp:include page="clone-view-expression.jsp"/>
+            </z:section>
+        </c:if>
 
         <z:section title="${MARKERRELATIONSHIPS}">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
