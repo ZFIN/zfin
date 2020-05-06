@@ -10,7 +10,6 @@ import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
 import AttributionLink from '../components/AttributionLink';
 import StageTimeline from '../components/StageTimeline';
 import GeneExpressionFigureGallery from './GeneExpressionFigureGallery';
-import PostComposedEntities from '../components/PostComposedEntities';
 import StageTimelineHeader from '../components/StageTimelineHeader';
 
 const GeneExpressionRibbon = ({geneId}) => {
@@ -24,13 +23,15 @@ const GeneExpressionRibbon = ({geneId}) => {
 
 
     let url = `/action/api/marker/${geneId}/expression/ribbon-summary`;
-
+    let params = new URLSearchParams();
     if (isChecked) {
-        url += '?includeReporter=true';
+        params.append('includeReporter','true');
     }
     if (isDirectlySubmitted) {
-        url += '?onlyDirectlySubmitted=true';
+        params.append('onlyDirectlySubmitted', 'true');
     }
+
+    url += '?' + params.toString();
 
     const data = useFetch(url);
 
@@ -92,11 +93,6 @@ const GeneExpressionRibbon = ({geneId}) => {
         {
             label: 'Assay',
             content: ({assay}) => assay.abbreviation,
-            width: '200px',
-        },
-        {
-            label: 'Expressed Location',
-            content: ({entities}) => <PostComposedEntities entities={entities} />,
             width: '200px',
         },
         /*
@@ -185,11 +181,18 @@ const GeneExpressionRibbon = ({geneId}) => {
 
     let selectedTermName = '';
     let selectedTermId = '';
+    let selectedSubtermId = '';
+    let selectedSupertermId = '';
     let selectedTermIsOther = false;
     if (selectedTableEntity) {
-        selectedTermName = selectedTableEntity.superterm.termName + (selectedTableEntity.subterm && ' ' + selectedTableEntity.subterm.termName);
-        //todo: need to handle subterm also
-        selectedTermId = selectedTableEntity.superterm.oboID;
+        selectedTermName = selectedTableEntity.superterm.termName
+        if (selectedTableEntity.subterm) {
+            selectedTermName +=  ' ' + selectedTableEntity.subterm.termName
+        }
+        selectedSupertermId = selectedTableEntity.superterm.oboID;
+        if (selectedTableEntity.subterm) {
+            selectedSubtermId = selectedTableEntity.subterm.oboID;
+        }
     } else if (selectedRibbonTerm) {
         selectedTermName = selectedRibbonTerm.group.label;
         selectedTermIsOther = selectedRibbonTerm.group.type === 'Other';
@@ -245,6 +248,8 @@ const GeneExpressionRibbon = ({geneId}) => {
                 includeReporters={isChecked}
                 onlyDirectlySubmitted={isDirectlySubmitted}
                 selectedTermId={selectedTermId}
+                selectedSubtermId={selectedSubtermId}
+                selectedSupertermId={selectedSupertermId}
                 selectedTermIsOther={selectedTermIsOther}
             />
             }
@@ -262,7 +267,7 @@ const GeneExpressionRibbon = ({geneId}) => {
 
             {selectedTableEntity &&
             <DataTable
-                url={`/action/api/marker/${geneId}/expression/ribbon-expression-detail?termId=${selectedTermId}`}
+                url={`/action/api/marker/${geneId}/expression/ribbon-expression-detail?supertermId=${selectedSupertermId}&subtermId=${selectedSubtermId}&includeReporter=${isChecked}&onlyDirectlySubmitted=${isDirectlySubmitted}`}
                 columns={columnsDetail}
                 rowKey={row => row.id}
                 tableState={detailTableState}

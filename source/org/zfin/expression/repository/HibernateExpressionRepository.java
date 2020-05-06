@@ -2654,4 +2654,5 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         return (List<ExpressionFigureStage>) query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
+
 }

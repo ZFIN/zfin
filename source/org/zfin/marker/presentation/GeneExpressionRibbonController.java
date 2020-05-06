@@ -55,13 +55,16 @@ public class GeneExpressionRibbonController {
 
     @JsonView(View.GeneExpressionAPI.class)
     @RequestMapping(value = "/marker/{zdbID}/expression/ribbon-expression-detail")
-    public JsonResultResponse<ExpressionDetail> getExpressionRibbonDetail(@PathVariable("zdbID") String geneID,
-                                                                          @RequestParam(value = "termId", required = false) String termID,
+    public JsonResultResponse<ExpressionDetail> getRibbonExpressionDetail(@PathVariable("zdbID") String geneID,
+                                                                          @RequestParam(value = "supertermId", required = false) String supertermID,
+                                                                          @RequestParam(value = "subtermId", required = false) String subtermID,
+                                                                          @RequestParam(value = "includeReporter", required = false) boolean includeReporter,
+                                                                          @RequestParam(value = "onlyDirectlySubmitted", required = false) boolean onlyDirectlySubmitted,
                                                                           @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
         JsonResultResponse<ExpressionDetail> response;
         try {
-            response = ribbonService.buildExpressionDetail(geneID, termID, pagination);
+            response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, includeReporter, onlyDirectlySubmitted, pagination);
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(500);
@@ -131,11 +134,13 @@ public class GeneExpressionRibbonController {
     @RequestMapping(value = "/marker/{zdbID}/expression/images")
     public JsonResultResponse<Image> getExpressionImages(@PathVariable String zdbID,
                                                          @RequestParam(required = false) String termId,
+                                                         @RequestParam(required = false) String supertermId,
+                                                         @RequestParam(required = false) String subtermId,
                                                          @RequestParam(required = false) boolean includeReporter,
                                                          @RequestParam(required = false) boolean onlyDirectlySubmitted,
                                                          @RequestParam(required = false) boolean isOther,
                                                          @Version Pagination pagination) throws IOException, SolrServerException {
-        JsonResultResponse<Image> response = expressionService.getExpressionImages(zdbID, termId, includeReporter,onlyDirectlySubmitted, isOther, pagination);
+        JsonResultResponse<Image> response = expressionService.getExpressionImages(zdbID, termId, supertermId, subtermId, includeReporter,onlyDirectlySubmitted, isOther, pagination);
         response.setHttpServletRequest(request);
         return response;
     }

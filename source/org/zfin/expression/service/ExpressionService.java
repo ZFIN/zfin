@@ -900,7 +900,7 @@ public class ExpressionService {
 
     }
 
-    public JsonResultResponse<Image> getExpressionImages(String geneId, String termId, boolean includeReporter, boolean onlyDirectlySubmitted,  boolean isOther, Pagination pagination) throws IOException, SolrServerException {
+    public JsonResultResponse<Image> getExpressionImages(String geneId, String termId, String supertermId, String subtermId, boolean includeReporter, boolean onlyDirectlySubmitted,  boolean isOther, Pagination pagination) throws IOException, SolrServerException {
         JsonResultResponse<Image> response = new JsonResultResponse<>();
 
         SolrQuery query = new SolrQuery();
@@ -909,6 +909,12 @@ public class ExpressionService {
         query.addFilterQuery("has_image:true");
         if (StringUtils.isNotEmpty(termId)) {
             query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
+        }
+        if (StringUtils.isNotEmpty(supertermId)) {
+            query.addFilterQuery("superterm_id:" + SolrService.luceneEscape(termId));
+        }
+        if (StringUtils.isNotEmpty(subtermId)) {
+            query.addFilterQuery("subterm_id:" + SolrService.luceneEscape(subtermId));
         }
         addReporterFilter(query, includeReporter);
         addDirectSubmissionFilter(query, onlyDirectlySubmitted);

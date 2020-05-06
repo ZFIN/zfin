@@ -3,6 +3,7 @@ package org.zfin.ontology.service
 import org.apache.solr.client.solrj.SolrQuery
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
+import org.zfin.expression.repository.ExpressionRepository
 import org.zfin.framework.api.JsonResultResponse
 import org.zfin.framework.api.Pagination
 import org.zfin.framework.api.RibbonCategory
@@ -11,6 +12,7 @@ import org.zfin.marker.presentation.ExpressionDetail
 import org.zfin.marker.presentation.ExpressionRibbonDetail
 import org.zfin.marker.presentation.PhenotypeRibbonSummary
 import org.zfin.search.FieldName
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Unroll
 
@@ -18,6 +20,9 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
 
     @Autowired
     RibbonService ribbonService
+
+    @Autowired
+    ExpressionRepository expressionRepository
 
     @Shared
     def expressionCategory = ["anatomy": 0, "stage": 1, "cellular component": 2]
@@ -82,21 +87,47 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#geneID expression detail response with #termID filter should return more than #numberOfRecords "() {
         when:
-        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, termID, new Pagination())
+        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, includeReporter, onlyDirectSubmission, new Pagination())
 
         then:
         response
-        response.getTotal() > numberOfRecords
+        response.getTotal() >= numberOfRecords
 
         where:
-        geneID              | termID        | numberOfRecords
-        // all records
-        //"ZDB-GENE-990415-8" | ""            | 200
-        // pax2a
-        //                      anatomical entity
-        "ZDB-GENE-990415-8" | "ZFA:0100000" | 130
-        //                      nervous system
-        "ZDB-GENE-990415-8" | "ZFA:0000396" | 60
+        geneID                  |   supertermID        | subtermID      | includeReporter | onlyDirectSubmission | numberOfRecords
+          "ZDB-GENE-050419-145" | "ZFA:0009280"        | "GO:0097450"   | true            | false                | 1
+          "ZDB-GENE-050419-145" | "ZFA:0000107"        | null           | true            | false                | 2
+    }
+
+    @Unroll
+    def "All figures for #supertermID #subtermID expression detail for #geneID should be directly annotated"() {
+        when:
+        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, includeReporter, onlyDirectSubmission, new Pagination())
+
+        Set<String> superterms = new HashSet<>()
+        Set<String> subterms = new HashSet<>()
+
+        response.results.each { result ->
+            result.entities.each { entity ->
+                superterms.add(entity.superterm.oboID)
+                if (entity.subterm) { subterms.add(entity.subterm.oboID) }
+            }
+        }
+
+        then:
+        response
+        response.getResults()
+        superterms
+        if (subtermID) { subterms && !subterms.isEmpty() }
+        superterms.contains(supertermID)
+        if (subtermID) { subterms.contains(subtermID) }
+
+
+        where:
+        geneID                | supertermID        | subtermID     | includeReporter | onlyDirectSubmission
+        "ZDB-GENE-990415-8"   | "ZFA:0001135"      | "ZFA:0009052" | false           | false
+        "ZDB-GENE-990415-72"  | "ZFA:0000648"      | null          | false           | false
+        "ZDB-GENE-050419-145" | "ZFA:0009280"      | "GO:0097450"  | true            | false
     }
 
     @Unroll

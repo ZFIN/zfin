@@ -7,7 +7,8 @@ import NoData from '../components/NoData';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import {useFetch} from '../utils/effects';
 
-const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubmitted, selectedTermId, selectedTermIsOther}) => {
+const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubmitted, selectedSubtermId, selectedSupertermId, selectedTermId, selectedTermIsOther}) => {
+
     const [page, setPage] = useState(1);
     const [images, setImages] = useState([]);
     const [total, setTotal] = useState(0);
@@ -27,6 +28,12 @@ const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubm
         }
         if (selectedTermId) {
             url += '&termId=' + selectedTermId;
+        }
+        if (selectedSupertermId) {
+            url += '&supertermId=' + selectedSupertermId;
+        }
+        if (selectedSubtermId) {
+            url += '&subtermId=' + selectedSubtermId;
         }
         if (selectedTermIsOther) {
             url += '&isOther=true';
@@ -87,6 +94,8 @@ GeneExpressionFigureGallery.propTypes = {
     geneId: PropTypes.string,
     includeReporters: PropTypes.bool,
     onlyDirectlySubmitted: PropTypes.bool,
+    selectedSubtermId: PropTypes.string,
+    selectedSupertermId: PropTypes.string,
     selectedTermId: PropTypes.string,
     selectedTermIsOther: PropTypes.bool,
 };

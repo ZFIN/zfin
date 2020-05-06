@@ -8,6 +8,7 @@ import org.apache.solr.client.solrj.response.PivotField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.ExpressionFigureStage;
@@ -217,9 +218,9 @@ public class RibbonService {
         return termCounts;
     }
 
-    public JsonResultResponse<ExpressionDetail> buildExpressionDetail(String geneID, String termID, Pagination pagination) {
-        HashSet<String> expressionIDs = getDetailExpressionInfo(geneID, termID);
-        if (expressionIDs == null) {
+    public JsonResultResponse<ExpressionDetail> buildExpressionDetail(String geneID, String supertermID, String subtermID, boolean includeReporter, boolean onlyDirectlySubmitted, Pagination pagination) {
+        HashSet<String> expressionIDs = getDetailExpressionInfo(geneID, supertermID, subtermID, includeReporter, onlyDirectlySubmitted);
+        if (expressionIDs == null || CollectionUtils.isEmpty(expressionIDs)) {
             return null;
         }
 
@@ -230,6 +231,7 @@ public class RibbonService {
                 .map(expression -> {
                     ExpressionDetail detail = new ExpressionDetail();
                     detail.setPublication(expression.getExpressionExperiment().getPublication());
+                    detail.setEntities(expression.getExpressionResultSet().stream().map(ExpressionResult2::getEntity).collect(toSet()));
                     detail.setStartStage(expression.getStartStage().getName());
                     detail.setEndStage(expression.getEndStage().getName());
                     detail.setFish(expression.getExpressionExperiment().getFishExperiment().getFish());
@@ -239,12 +241,6 @@ public class RibbonService {
                     detail.setExperiment(expression.getExpressionExperiment().getFishExperiment().getExperiment());
                     detail.setAntibody(expression.getExpressionExperiment().getAntibody());
                     detail.setId(expression.getId());
-                    // filter out the terms that contain the term in question.
-                    detail.setEntities(expression.getExpressionResultSet().stream()
-                            .filter(eResult -> eResult.getEntity().getSuperterm().getOboID().equals(termID)
-                                    || (eResult.getEntity().getSubterm() != null && eResult.getEntity().getSubterm().getOboID().equals(termID)))
-                            .map(ExpressionResult2::getEntity)
-                            .collect(Collectors.toSet()));
                     return detail;
                 })
                 .sorted(Comparator.comparing(expression -> expression.getFish().getDisplayName()))
@@ -357,16 +353,25 @@ public class RibbonService {
         return response;
     }
 
-    private HashSet<String> getDetailExpressionInfo(String geneID, String termID) {
+    private HashSet<String> getDetailExpressionInfo(String geneID, String termID, String subtermID, boolean includeReporter, boolean onlyDirectlySubmitted) {
+
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
+
         if (StringUtils.isNotEmpty(termID)) {
-            query.add("f.anatomy_term_id.facet.prefix", termID);
+            query.addFilterQuery("superterm_id:" + SolrService.luceneEscape(termID));
         }
+        if (StringUtils.isNotEmpty(subtermID)) {
+            query.addFilterQuery("subterm_id:" + SolrService.luceneEscape(subtermID));
+        }
+
+        expressionService.addReporterFilter(query, includeReporter);
+        expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
+
         // get Facet for the ao term and the PK of the expression record.
-        query.addFacetPivotField("anatomy_term_id,efs_id");
-        query.setStart(0);
+        query.addFacetField("efs_id");
+
         // get them all
         query.setFacetLimit(-1);
 
@@ -377,13 +382,14 @@ public class RibbonService {
         } catch (SolrServerException | IOException e) {
             log.error("Error while retrieving data form SOLR...", e);
         }
-        if (queryResponse == null || queryResponse.getFacetPivot() == null || queryResponse.getFacetPivot().getVal(0).size() == 0) {
+        if (queryResponse == null || queryResponse.getFacetField("efs_id") == null)  {
             return null;
         }
 
-        // remove artificial PK prefix: 'xpatres-'
-        HashSet<String> expressionIDs = queryResponse.getFacetPivot().getVal(0).get(0).getPivot().stream()
-                .map(pivotField -> (String) pivotField.getValue()).map(name -> name.replace("xpatres-", "")).collect(toCollection(HashSet::new));
+        HashSet<String> expressionIDs = queryResponse.getFacetField("efs_id").getValues().stream()
+                .map(count -> count.getName())
+                .collect(toCollection(HashSet::new));
+
         return expressionIDs;
     }
 
