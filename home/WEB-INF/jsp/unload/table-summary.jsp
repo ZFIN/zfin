@@ -86,7 +86,8 @@
                     (<a onclick="jQuery('#showNameDeleted-${entity.entityId}').hide();
                         jQuery('#fetchDeleted-${entity.entityId}').show();
                         jQuery('#nameDeleted-${entity.entityId}').show();
-                        jQuery('#nameDeleted-${entity.entityId}').load('/action/unload/fetch-entity-record?entityID=${entity.entityId}&tableName=${tableName}&date=${map.key}', function() { processPopupLinks('#nameDeleted-${entity.entityId}'); }); return false;"
+                        jQuery('#nameDeleted-${entity.entityId}').load('/action/unload/fetch-entity-record?entityID=${entity.entityId}&tableName=${tableName}&date=${map.key}');
+                        return false;"
                         class="small-new-link showAllDeleted">Show Record</a>)
                     </span>
                 <span id="fetchDeleted-${entity.entityId}" style="display: none">
@@ -140,7 +141,8 @@
                     (<a onclick="jQuery('#showName-${entity.entityId}').hide();
                         jQuery('#fetch-${entity.entityId}').show();
                         jQuery('#name-${entity.entityId}').show();
-                        jQuery('#name-${entity.entityId}').load('/action/unload/fetch-entity-record?entityID=${entity.entityId}&tableName=${tableName}&date=${map.key}', function() { processPopupLinks('#name-${entity.entityId}'); }); return false;"
+                        jQuery('#name-${entity.entityId}').load('/action/unload/fetch-entity-record?entityID=${entity.entityId}&tableName=${tableName}&date=${map.key}');
+                        return false;"
                         class="small-new-link showAllAdded">Show Record</a>)
                     </span>
                 <span id="fetch-${entity.entityId}" style="display: none">
@@ -193,7 +195,8 @@
                     (<a onclick="jQuery('#showNameUpdate-${entity.entityId}').hide();
                         jQuery('#fetchUpdate-${entity.entityId}').show();
                         jQuery('#nameUpdate-${entity.entityId}').show();
-                        jQuery('#nameUpdate-${entity.entityId}').load('/action/unload/fetch-changed-entity-records?entityID=${entity.entityId}&tableName=${tableName}&date=${map.key}', function() { processPopupLinks('#nameUpdate-${entity.entityId}'); }); return false;"
+                        jQuery('#nameUpdate-${entity.entityId}').load('/action/unload/fetch-changed-entity-records?entityID=${entity.entityId}&tableName=${tableName}&date=${map.key}');
+                        return false;"
                         class="small-new-link showAllModified">Show Record</a>)
                     </span>
                 <span id="fetchUpdate-${entity.entityId}" style="display: none">

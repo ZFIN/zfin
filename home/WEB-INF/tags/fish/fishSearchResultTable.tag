@@ -167,33 +167,6 @@
                           | <a style=" " href="/action/database/view-record/FISH-${fish.ID}">DB</a> | 
                         </span>
                         </authz:authorize>
-
-<%--
-                        <span style="float:right" id="matching-details-show-link${loop.index}">
-                            <c:if test="${result.fish.genotype!=null}">
-                            <a style="font-size:smaller; margin-right: 1em;" class="clickable showAll"
-                               onclick="jQuery('#matching-details-show-link${loop.index}').hide();
-                                       jQuery('#matching-details-hide-detail${loop.index}').show();
-                                       jQuery('#matching-details-${loop.index}').show();
-                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${result.fish.zdbID}&<%= request.getQueryString()%>', function() { processPopupLinks('#matching-details-${loop.index}'); });">
-                                Matching Detail</a>
-                                </c:if>
-                            <c:if test="${result.fish.genotype==null}">
-                            <a style="font-size:smaller; margin-right: 1em;" class="clickable showAll"
-                               onclick="jQuery('#matching-details-show-link${loop.index}').hide();
-                                       jQuery('#matching-details-hide-detail${loop.index}').show();
-                                       jQuery('#matching-details-${loop.index}').show();
-                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${result.fish.zdbID}&<%= request.getQueryString()%>', function() { processPopupLinks('#matching-details-${loop.index}'); });">
-                                Matching Detail</a>
-                        </span>
-                            </c:if>
-                        <span style="text-align:right; display: none;" id="matching-details-hide-detail${loop.index}">
-                            <a style="font-size:small; margin-right: 1em;" class="clickable hideAll"
-                               onclick="jQuery('#matching-details-${loop.index}').hide();
-                                       jQuery('#matching-details-hide-detail${loop.index}').hide();
-                                       jQuery('#matching-details-show-link${loop.index}').show();">Hide Detail</a>
-                        </span>
---%>
                     </c:if>
                 </td>
             </zfin:alternating-tr>

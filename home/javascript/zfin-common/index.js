@@ -5,9 +5,7 @@ require('./autocompletify');
 require('./blast');
 require('./header-menu');
 require('./form-reset');
-
-window.processPopupLinks = require('exports-loader?processPopupLinks!./popups');
-
+require('./popups');
 require('./your-input-welcome');
 require('./list-collapse');
 require('./figure-gallery-resize.jquery');

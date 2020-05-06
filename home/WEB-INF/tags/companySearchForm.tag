@@ -35,7 +35,7 @@
                             <b>Name</b>
                         </td>
                         <td>
-                            <form:input path="name" size="30" cssClass="default-input"/>
+                            <form:input path="name" size="30" autofocus="true"/>
                             <form:hidden path="maxDisplayRecords"/>
                         </TD>
                     </tr>

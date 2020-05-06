@@ -68,7 +68,7 @@
            <%-- <form:input id="geneOrFeatureName" path="geneOrFeatureName" size="30" value="ti282,  ntl tbx,  tnnt EGFP" style="color:#C0C0C0"
                         onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		                        if (k == 13 ) { submitForm(1);}"/>--%>
-            <form:input placeholder="ti282,  ntl tbx,  tnnt EGFP" id="geneOrFeatureName" path="geneOrFeatureName" size="30" cssClass="default-input"
+            <form:input placeholder="ti282,  ntl tbx,  tnnt EGFP" id="geneOrFeatureName" path="geneOrFeatureName" size="30" autofocus="true"
                         onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		                        if (k == 13 ) { submitForm(1);}"/>
         </td>

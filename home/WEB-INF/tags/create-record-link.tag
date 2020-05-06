@@ -41,7 +41,8 @@
             jQuery('#name-${identifier}').show();
             jQuery('#showID-${identifier}').show();
             jQuery('#showName-${identifier}').hide();
-            jQuery('#name-${identifier}').load('/action/database/fetch-entity-name/${val}', function() { processPopupLinks('#name-${identifier}'); }); return false;"
+            jQuery('#name-${identifier}').load('/action/database/fetch-entity-name/${val}');
+            return false;"
             >?</a>
 </span>
 <span id="showID-${identifier}" style="display: none">

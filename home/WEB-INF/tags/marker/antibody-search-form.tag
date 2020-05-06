@@ -34,7 +34,7 @@
             <td>
                 <form:select path="antibodyCriteria.antibodyNameFilterType" id="antibodyNameFilterType"
                              items="${formBean.antibodyNameFilterTypeList}"/> &nbsp;
-                <form:input path="antibodyCriteria.name" size="30" cssClass="default-input"
+                <form:input path="antibodyCriteria.name" size="30" autofocus="true"
                             onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		                        if (k == 13 ) { submitForm(1);}  "/>
             </td>

@@ -1,9 +1,7 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.lookup.ui.LookupPopup;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
@@ -87,19 +85,9 @@ public class GoCurationViewTable extends AbstractGoViewTable {
                     ++rowNumber;
                 }
             }
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    processPopupLinks();
-                }
-            });
         }
 
     }
-
-    public static native void processPopupLinks() /*-{
-        $wnd.processPopupLinks('body');
-    }-*/;
 
     protected enum HeaderName {
         GENE(0, "Gene"),

@@ -36,7 +36,8 @@
                     <a onclick="jQuery('#showNameUpdate-${index.index}').hide();
                             jQuery('#fetchUpdate-${index.index}').show();
                             jQuery('#nameUpdate-${index.index}').show();
-                            jQuery('#nameUpdate-${index.index}').load('/action/unload/fetch-changed-entity-records?entityID=${formBean.entityID}&tableName=${tableName}&date=${entityTrace.date}', function() { processPopupLinks('#nameUpdate-${index.index}'); }); return false;"
+                            jQuery('#nameUpdate-${index.index}').load('/action/unload/fetch-changed-entity-records?entityID=${formBean.entityID}&tableName=${tableName}&date=${entityTrace.date}');
+                            return false;"
                        class="showNameUpdate"></a>
                     </span>
                 <span id="fetchUpdate-${index.index}" style="display: none">

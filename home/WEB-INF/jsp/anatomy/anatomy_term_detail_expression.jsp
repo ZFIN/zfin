@@ -18,9 +18,9 @@
 <%--    see fogbugz 6268, body tag movement kills javascript definition of Ajax --%>
     <script type="text/javascript">
         function show_${expressionSection}() {
-            jQuery('#${expressionSection}-genes').load('/action/ontology/show-expressed-genes/${formBean.term.zdbID}', function() { processPopupLinks('#${expressionSection}-genes'); });
-            jQuery('#${expressionSection}-inSituProbes').load('/action/ontology/show-expressed-insitu-probes/${formBean.term.zdbID}', function() { processPopupLinks('#${expressionSection}-inSituProbes'); });
-            jQuery('#${expressionSection}-antibodies').load('/action/ontology/show-labeled-antibodies/${formBean.term.zdbID}', function() { processPopupLinks('#${expressionSection}-antibodies'); });
+            jQuery('#${expressionSection}-genes').load('/action/ontology/show-expressed-genes/${formBean.term.zdbID}');
+            jQuery('#${expressionSection}-inSituProbes').load('/action/ontology/show-expressed-insitu-probes/${formBean.term.zdbID}');
+            jQuery('#${expressionSection}-antibodies').load('/action/ontology/show-labeled-antibodies/${formBean.term.zdbID}');
             showSection('${expressionSection}', true);
         }
     </script>

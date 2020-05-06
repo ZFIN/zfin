@@ -43,11 +43,6 @@
             };
             </c:otherwise>
             </c:choose>
-
-            $(function () {
-                processPopupLinks('body');
-                $(".default-input").focus();
-            });
         </script>
     </head>
     <body class="${bodyClass}" data-spy="scroll" data-target=".data-page-nav-container">

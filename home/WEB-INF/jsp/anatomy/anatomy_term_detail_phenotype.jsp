@@ -18,9 +18,7 @@
     <%--    see fogbugz 6268, body tag movement kills javascript definition of Ajax --%>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
-            jQuery('#${phenotypeSection}-clean-fish').load('/action/ontology/show-clean-fish/${formBean.term.zdbID}', function () {
-                processPopupLinks('#${phenotypeSection}-clean-fish');
-            });
+            jQuery('#${phenotypeSection}-clean-fish').load('/action/ontology/show-clean-fish/${formBean.term.zdbID}');
             showSection('${phenotypeSection}', true);
         }
     </script>
