@@ -10,6 +10,7 @@ import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
 import StageTimelineHeader from '../components/StageTimelineHeader';
 import StageTimeline from '../components/StageTimeline';
 import AttributionLink from '../components/AttributionLink';
+import Stage from '../components/Stage';
 import PhenotypeFigureGallery from './PhenotypeFigureGallery';
 
 const PhenotypeRibbon = ({geneId}) => {
@@ -69,22 +70,21 @@ const PhenotypeRibbon = ({geneId}) => {
         {
             label: 'Experiment',
             content: ({phenotypeSourceGenerated}) => phenotypeSourceGenerated.fishExperiment.experiment.conditions,
-            width: '200px',
+            width: '150px',
         },
         {
-            label: 'Start Stage',
-            content: ({phenotypeSourceGenerated}) => phenotypeSourceGenerated.start.name,
-            width: '200px',
-        },
-        {
-            label: 'End Stage',
-            content: ({phenotypeSourceGenerated}) => phenotypeSourceGenerated.end.name,
+            label: 'Stage',
+            content: row => (
+                <Stage
+                    startStage={row.phenotypeSourceGenerated.start}
+                    endStage={row.phenotypeSourceGenerated.end}
+                /> ),
             width: '200px',
         },
         {
             label: 'Figure',
             content: ({phenotypeSourceGenerated}) => <a href={`/${phenotypeSourceGenerated.figure.zdbID}`} dangerouslySetInnerHTML={{__html: phenotypeSourceGenerated.figure.label}}/>,
-            width: '200px',
+            width: '100px',
         },
         {
             label: 'Publication',
@@ -179,7 +179,7 @@ const PhenotypeRibbon = ({geneId}) => {
                 <i className=' fas fa-chevron-left'/> Back to phenotype in {selectedRibbonTerm.group.label}
             </button>
             }
-            {selectedTermName && <h5>Phenotype in {selectedTermName}</h5>}
+            {selectedTermName && <h5>Phenotype in <span dangerouslySetInnerHTML={{__html: selectedTermName}} /></h5>}
 
             {(selectedRibbonTerm || selectedTablePhenotype) &&
             <PhenotypeFigureGallery

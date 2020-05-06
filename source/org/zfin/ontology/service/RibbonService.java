@@ -18,7 +18,6 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.api.*;
 import org.zfin.marker.presentation.ExpressionDetail;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
-import org.zfin.marker.presentation.PhenotypeDetail;
 import org.zfin.marker.presentation.PhenotypeRibbonSummary;
 import org.zfin.mutant.PhenotypeObservationStatement;
 import org.zfin.ontology.GenericTerm;
@@ -299,7 +298,8 @@ public class RibbonService {
             log.error("Error while retrieving data form SOLR...", e);
         }
         if (queryResponse == null || queryResponse.getFacetPivot() == null || queryResponse.getFacetPivot().getVal(0).size() == 0) {
-            return null;
+            JsonResultResponse<PhenotypeRibbonSummary> response = new JsonResultResponse<>();
+            return response;
         }
 
         List<DevelopmentStage> stageTerms = anatomyRepository.getAllStagesWithoutUnknown();
@@ -382,7 +382,7 @@ public class RibbonService {
         } catch (SolrServerException | IOException e) {
             log.error("Error while retrieving data form SOLR...", e);
         }
-        if (queryResponse == null || queryResponse.getFacetField("efs_id") == null)  {
+        if (queryResponse == null || queryResponse.getFacetField("efs_id") == null) {
             return null;
         }
 
