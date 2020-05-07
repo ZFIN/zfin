@@ -69,16 +69,20 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                             Marker construct = getFeatureRepository().getSingleConstruct(feature.getZdbID());
                             List<AlleleRelationDTO> alleleObjectRelations = new ArrayList<>();
                             if (construct != null) {
-                               AlleleRelationDTO constructRelation = new AlleleRelationDTO();
-                               constructRelation.setAssociationType("contains");
-                               constructRelation.setConstruct("ZFIN:"+construct.getZdbID());
-                               alleleObjectRelations.add(constructRelation);
+                                AlleleRelationDTO cobjectRelation = new AlleleRelationDTO();
+                                ObjectRelationDTO constructRelation = new ObjectRelationDTO();
+                                constructRelation.setAssociationType("contains");
+                                constructRelation.setConstruct("ZFIN:"+construct.getZdbID());
+                                cobjectRelation.setObjectRelation(constructRelation);
+                                alleleObjectRelations.add(cobjectRelation);
                             }
                             if (gene != null) {
-                                AlleleRelationDTO geneRelation = new AlleleRelationDTO();
+                                AlleleRelationDTO gobjectRelation = new AlleleRelationDTO();
+                                ObjectRelationDTO geneRelation = new ObjectRelationDTO();
                                 geneRelation.setAssociationType("allele_of");
                                 geneRelation.setGene("ZFIN:"+gene.getZdbID());
-                                alleleObjectRelations.add(geneRelation);
+                                gobjectRelation.setObjectRelation(geneRelation);
+                                alleleObjectRelations.add(gobjectRelation);
                             }
                             if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
                                 String alleleDescription = null;
