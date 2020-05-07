@@ -46,7 +46,7 @@ public class BasicConstructInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
         String jsonInString = writer.writeValueAsString(allConstructInfo);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.0_Construct.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.1_Construct.json"))) {
             out.print(jsonInString);
         }
     }

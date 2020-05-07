@@ -43,7 +43,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
 
     private void init() throws IOException {
         initAll();
-        AllAlleleDTO allAlleleDTO = getAllAlleleInfo(numfOfRecords);
+        AllAlleleDTO allAlleleDTO = getAllAlleleInfo();
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 

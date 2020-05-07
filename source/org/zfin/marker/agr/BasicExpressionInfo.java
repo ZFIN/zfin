@@ -40,7 +40,7 @@ public class BasicExpressionInfo extends AbstractScriptWrapper{
 
         //Object to JSON in String
         String jsonInString = writer.writeValueAsString(basicExpressionDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.0_expression.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.1_expression.json"))) {
             out.print(jsonInString);
         }
     }
