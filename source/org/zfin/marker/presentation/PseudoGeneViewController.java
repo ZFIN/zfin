@@ -46,7 +46,8 @@ public class PseudoGeneViewController {
     private MarkerService markerService;
 
 
-    public String preparePseudoGeneView(Model model, String zdbID) throws Exception {
+    @RequestMapping(value = "/pseudogene/view/{zdbID}")
+    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
@@ -89,25 +90,11 @@ public class PseudoGeneViewController {
         return "marker/pseudogene-view.page";
     }
 
-    @RequestMapping(value = "/pseudogene/view/{zdbID}")
-    public String getPseudoGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        zdbID = markerService.getActiveMarkerID(zdbID);
-        if (!markerService.isOfTypeGene(zdbID)) {
-            return "redirect:/" + zdbID;
-        }
-        preparePseudoGeneView(model, zdbID);
-
-        return "marker/pseudogene-view.page";
-    }
-
 
     @RequestMapping(value = "/pseudogene/prototype-view/{zdbID}")
     public String getPseudoGenePrototypeView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        zdbID = markerService.getActiveMarkerID(zdbID);
-        if (!markerService.isOfTypeGene(zdbID)) {
-            return "redirect:/" + zdbID;
-        }
-        preparePseudoGeneView(model, zdbID);
+
+        getGeneView(model, zdbID);
 
         return "marker/pseudogene/pseudogene-view.page";
     }
