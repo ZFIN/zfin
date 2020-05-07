@@ -8,19 +8,17 @@ import java.util.List;
 public class AlleleDTO extends ZfinDTO {
 
   private String symbol;
-  private String gene;
   private List<CrossReferenceDTO> crossReferences;
   private String symbolText;
-  private String construct;
   private String alleleDescription;
-  private String constructInsertionType;
+  private List<AlleleRelationDTO> alleleObjectRelations;
 
-  public String getConstructInsertionType() {
-    return constructInsertionType;
+  public List<AlleleRelationDTO> getAlleleObjectRelations() {
+    return alleleObjectRelations;
   }
 
-  public void setConstructInsertionType(String constructInsertionType) {
-    this.constructInsertionType = constructInsertionType;
+  public void setAlleleObjectRelations(List<AlleleRelationDTO> alleleObjectRelations) {
+    this.alleleObjectRelations = alleleObjectRelations;
   }
 
 
@@ -34,31 +32,12 @@ public class AlleleDTO extends ZfinDTO {
   }
 
 
-
-  public String getConstruct() {
-    return construct;
-  }
-
-  public void setConstruct(String construct) {
-    this.construct = construct;
-  }
-
   public List<CrossReferenceDTO> getCrossReferences() {
     return crossReferences;
   }
 
   public void setCrossReferences(List<CrossReferenceDTO> crossReferences) {
     this.crossReferences = crossReferences;
-  }
-
-
-
-  public String getGene() {
-    return gene;
-  }
-
-  public void setGene(String gene) {
-    this.gene = gene;
   }
 
   public String getSymbol() {

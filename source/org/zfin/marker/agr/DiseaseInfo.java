@@ -47,7 +47,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(allDiseaseDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.0_disease.daf.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.1_disease.daf.json"))) {
             out.print(jsonInString);
         }
     }
@@ -128,6 +128,14 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                         FeatureDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
                                         //populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
                                         diseaseDTOList.add(FeatureDiseaseDto);
+                                        DiseaseDTO GeneDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
+                                        RelationshipDTO geneRelationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
+                                        List<String> geneGeneticEntityIds = new ArrayList<>();
+                                        geneticEntityIds.add("ZFIN:" + fish.getZdbID());
+                                        FeatureDiseaseDto.setPrimaryGeneticEntityIDs(geneGeneticEntityIds);
+                                        FeatureDiseaseDto.setObjectRelation(geneRelationship);
+                                        FeatureDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
+                                        diseaseDTOList.add(GeneDiseaseDto);
                                     } else {
                                         DiseaseDTO FeatureDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
                                         RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
@@ -170,9 +178,9 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         strDiseaseDto.setObjectId(zdbID);
         strDiseaseDto.setObjectName(abbreviation);
         List<String> pages = new ArrayList<>();
-        pages.add("homepage");
+        pages.add("disease");
         List<DataProviderDTO> dpList = new ArrayList<>();
-        dpList.add(new DataProviderDTO("curated", new CrossReferenceDTO("ZFIN", "ZFIN", pages)));
+        dpList.add(new DataProviderDTO("curated", new CrossReferenceDTO("ZFIN", zdbID, pages)));
         strDiseaseDto.setDataProvider(dpList);
         strDiseaseDto.setDoid(disease.getOboID());
         return strDiseaseDto;

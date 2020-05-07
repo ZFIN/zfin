@@ -43,13 +43,13 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
 
     private void init() throws IOException {
         initAll();
-        AllAlleleDTO allAlleleDTO = getAllAlleleInfo();
+        AllAlleleDTO allAlleleDTO = getAllAlleleInfo(numfOfRecords);
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
 //Object to JSON in String
         String jsonInString = writer.writeValueAsString(allAlleleDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.0_allele.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.1_allele.json"))) {
             out.print(jsonInString);
         }
     }
@@ -67,12 +67,18 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                             dto.setPrimaryId(feature.getZdbID());
                             Marker gene = feature.getAllelicGene();
                             Marker construct = getFeatureRepository().getSingleConstruct(feature.getZdbID());
+                            List<AlleleRelationDTO> alleleObjectRelations = new ArrayList<>();
                             if (construct != null) {
-                                dto.setConstruct("ZFIN:"+construct.getZdbID());
-                                dto.setConstructInsertionType("Transgenic Insertion");
+                               AlleleRelationDTO constructRelation = new AlleleRelationDTO();
+                               constructRelation.setAssociationType("contains");
+                               constructRelation.setConstruct("ZFIN:"+construct.getZdbID());
+                               alleleObjectRelations.add(constructRelation);
                             }
                             if (gene != null) {
-                                dto.setGene("ZFIN:"+gene.getZdbID());
+                                AlleleRelationDTO geneRelation = new AlleleRelationDTO();
+                                geneRelation.setAssociationType("allele_of");
+                                geneRelation.setGene("ZFIN:"+gene.getZdbID());
+                                alleleObjectRelations.add(geneRelation);
                             }
                             if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
                                 String alleleDescription = null;
@@ -95,6 +101,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                                 }
                                 dto.setSecondaryIds(secondaryDTOs);
                             }
+                            dto.setAlleleObjectRelations(alleleObjectRelations);
                             List<String> pages = new ArrayList<>();
                             pages.add("allele");
                             pages.add("allele/references");
@@ -109,7 +116,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
         List<AlleleDTO> allAlleleDTOListRemoveNulls = new ArrayList<>();
 
         allAlleleDTOList.forEach(alleleDTO -> {
-                    if (!(alleleDTO.getGene() == null && alleleDTO.getConstruct() == null)) {
+                    if (!(alleleDTO.getAlleleObjectRelations().isEmpty())) {
                         allAlleleDTOListRemoveNulls.add(alleleDTO);
                     }
                     else {
