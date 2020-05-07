@@ -45,6 +45,7 @@ public class ConstructComponent {
         PROMOTER_OF_("promoter of "),
         CODING_SEQUENCE_OF("coding sequence of"),
         CODING_SEQUENCE_OF_("coding sequence of "),
+        CCODING_SEQUENCE_OF("coding sequence of"),
         CONTROLLED_VOCAB_COMPONENT("controlled vocab component"),
         CONTROLLED_VOCAB_COMPONENT_("controlled vocab component "),
         TEXT_COMPONENT("text component"),

@@ -669,7 +669,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 if (basicPhenoObjects[9] != null) {
                     //System.out.println(basicPhenoObjects[0].toString());
                     //System.out.println(basicPhenoObjects[9]);
-                    primaryGeneticEntityIDs.add(basicPhenoObjects[9].toString());
+                    primaryGeneticEntityIDs.add("ZFIN:"+basicPhenoObjects[9].toString());
                     basicPheno.setPrimaryGeneticEntityIDs(primaryGeneticEntityIDs);
                 }
             }
