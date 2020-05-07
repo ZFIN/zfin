@@ -19,7 +19,7 @@
 <c:set var="ORTHOLOGY" value="Orthology"/>
 
 <z:dataPage
-        sections="${[SUMMARY, EXPRESSION, PHENOTYPE, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY, CITATIONS]}"
+        sections="${[SUMMARY, EXPRESSION, MUTANTS,  MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY, CITATIONS]}"
 >
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
@@ -38,79 +38,38 @@
         <h1><zfin:abbrev entity="${formBean.marker}"/></h1>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
-            <jsp:include page="gene-view-summary.jsp"/>
+            <jsp:include page="pseudogene-view-summary.jsp"/>
         </div>
 
         <z:section title="${EXPRESSION}" infoPopup="/ZFIN/help_files/expression_help.html">
-            <jsp:include page="gene-view-expression-header.jsp"/>
+            <jsp:include page="pseudogene-view-expression-header.jsp"/>
             <z:section title="Wild Type Expression Summary">
                 <div class="__react-root" id="GeneExpressionRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
         </z:section>
-
-        <z:section title="${PHENOTYPE}" infoPopup="/action/marker/note/phenotype">
-            <div class="__react-root" id="PhenotypeRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
-        </z:section>
+        
 
         <z:section title="${MUTANTS}">
             <z:section title="Mutants">
-                <jsp:include page="gene-view-mutants.jsp"/>
+                <jsp:include page="pseudogene-view-mutants.jsp"/>
             </z:section>
             <z:section title="Sequence Targeting Reagents">
-                <jsp:include page="gene-view-strs.jsp"/>
+                <jsp:include page="pseudogene-view-strs.jsp"/>
             </z:section>
         </z:section>
 
-        <z:section title="${DISEASES}">
-            <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Human Ortholog" infoPopup="/action/marker/note/omim-phenotype">
-                <jsp:include page="gene-view-disease-via-ortholog.jsp" />
-            </z:section>
-            <z:section title="Associated With <i>${formBean.marker.abbreviation}</i> Via Experimental Models" infoPopup="/action/marker/note/disease-model">
-                <jsp:include page="gene-view-disease-via-experiment.jsp" />
-            </z:section>
-        </z:section>
-
-        <z:section title="${GO}">
-            <div class="__react-root" id="GeneOntologyRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
-        </z:section>
-
-        <z:section title="${PROTEINS}">
-            <z:section title="Domain, Family, and Site Summary">
-                <jsp:include page="gene-view-proteins.jsp"/>
-            </z:section>
-            <z:section title="Domain Details Per Protein">
-                <jsp:include page="gene-view-protein-detail.jsp"/>
-            </z:section>
-
-        </z:section>
-
-        <z:section title="${PATHWAYS}">
-            <jsp:include page="gene-view-pathways.jsp"/>
-        </z:section>
-
-        <z:section title="${ANTIBODIES}">
-            <jsp:include page="gene-view-antibodies.jsp"/>
-        </z:section>
-
-        <z:section title="${PLASMIDS}">
-            <jsp:include page="gene-view-plasmids.jsp"/>
-        </z:section>
-
-        <z:section title="${CONSTRUCTS}">
-            <div class="__react-root" id="GeneConstructsTable" data-gene-id="${formBean.marker.zdbID}"></div>
-        </z:section>
-
+       
         <z:section title="${MARKERRELATIONSHIPS}">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
         <z:section title="${TRANSCRIPTS}">
             <z:section title="Confirmed Transcripts">
-                <jsp:include page="gene-view-transcripts.jsp"/>
+                <jsp:include page="pseudogene-view-transcripts.jsp"/>
             </z:section>
             <authz:authorize access="hasRole('root')">
                 <z:section title="Withdrawn Transcripts">
-                    <jsp:include page="gene-view-withdrawn-transcripts.jsp"/>
+                    <jsp:include page="pseudogene-view-withdrawn-transcripts.jsp"/>
                 </z:section>
             </authz:authorize>
         </z:section>
@@ -120,7 +79,7 @@
         </z:section>
 
         <z:section title="${ORTHOLOGY}">
-            <jsp:include page="gene-view-orthology.jsp"/>
+            <jsp:include page="pseudogene-view-orthology.jsp"/>
         </z:section>
 
         <z:section title="${CITATIONS}">
