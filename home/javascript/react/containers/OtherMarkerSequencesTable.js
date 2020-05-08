@@ -40,7 +40,7 @@ const OtherMarkerSequencesTable = ({markerId}) => {
         <React.Fragment>
             <DataTable
                 columns={columns}
-                url={`/action/api/marker/${markerId}/markerSequences`}
+                url={`/action/api/marker/${markerId}/sequences`}
                 rowKey={row => row.zdbID}
                 pagination={false}
             />
