@@ -1,24 +1,25 @@
 create or replace function get_fish_name (vFishZdbId varchar) returns varchar as $fishName$
 
-declare fishName  fish.fish_name%TYPE := '';
+declare 
+ fishName  fish.fish_name%TYPE;
  mrkrAbbrev  marker.mrkr_abbrev%TYPE;
  genoWT  genotype.geno_is_wildtype%TYPE := (Select geno_is_wildtype 
  	 				      from fish,genotype
     	     	     			      where geno_zdb_id = fish_genotype_zdb_id
 		     			      and fish_zdb_id = vFishZdbId);
-
 begin
+ 
 if (genoWT = 't')
 then
-  fishName := (Select geno_handle from genotype, fish
+  Select geno_handle into fishName from genotype, fish
     	       	 	 where fish_genotype_zdb_id = geno_Zdb_id
-			 and fish_zdb_id = vFishZdbId);
+			 and fish_zdb_id = vFishZdbId;
 else
-
-  fishName := (Select geno_display_name from genotype, fish
+ 
+  Select geno_display_name into fishName from genotype, fish
     	       	 	 where fish_genotype_zdb_id = geno_Zdb_id
-			 and fish_zdb_id = vFishZdbId);
-
+			 and fish_zdb_id = vFishZdbId;
+  raise notice 'fishName %', fishName;
 end if;
 
 if exists (select 'x' from marker, fish_str
@@ -36,7 +37,9 @@ then
 
         end loop;
 end if;
-	 
+
+raise notice 'fishName %', fishName; 
+
 return fishName;
 end
 
