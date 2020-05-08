@@ -19,7 +19,7 @@ else
   Select geno_display_name into fishName from genotype, fish
     	       	 	 where fish_genotype_zdb_id = geno_Zdb_id
 			 and fish_zdb_id = vFishZdbId;
-  raise notice 'fishName %', fishName;
+  raise notice 'fishName1 %', fishName;
 end if;
 
 if exists (select 'x' from marker, fish_str
@@ -38,7 +38,7 @@ then
         end loop;
 end if;
 
-raise notice 'fishName %', fishName; 
+raise notice 'fishName2 %', fishName; 
 
 return fishName;
 end

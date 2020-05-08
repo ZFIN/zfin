@@ -1,5 +1,6 @@
-DROP TRIGGER IF EXISTS genotype_trigger
-ON genotype;
+DROP TRIGGER IF EXISTS genotype_trigger ON genotype;
+DROP TRIGGER IF EXISTS genotype_after ON genotype;
+
 
 CREATE OR REPLACE FUNCTION genotype()
   RETURNS trigger AS $$
@@ -17,7 +18,28 @@ CREATE OR REPLACE FUNCTION genotype()
 
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION genotype()
+  RETURNS trigger AS $$
+
+  BEGIN
+
+    RETURN NEW;
+
+  END;
+
+$$ LANGUAGE plpgsql;
+
+
+
+
+
 CREATE TRIGGER genotype_trigger
 BEFORE INSERT ON genotype
 FOR EACH ROW
 EXECUTE PROCEDURE genotype();
+
+
+CREATE TRIGGER genotype_trigger_after
+AFTER INSERT or UPDATE ON genotype
+FOR EACH ROW
+EXECUTE PROCEDURE genotype_after();
