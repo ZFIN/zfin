@@ -5,9 +5,12 @@ declare vFishHandle fish.fish_handle%TYPE;
  vFishName fish.fish_name%TYPE;
  vFishCount int :=0;
  vFish fish.fish_zdb_id%TyPE;
+ vObjectType marker.mrkr_type%TYPE;
 
 begin
-if (get_obj_type(vZdbId) in ('TALEN','CRISPR','MRPHLNO'))
+ select get_obj_type(vZdbId) into vObjectType;
+
+if (vObjectType in ('TALEN','CRISPR','MRPHLNO'))
  then 
       vFishCount := (Select count(*) from fish_str
       	  	       	       where fishstr_str_zdb_id = vZdbId);
@@ -20,7 +23,7 @@ if (get_obj_type(vZdbId) in ('TALEN','CRISPR','MRPHLNO'))
 	     loop  
 	        select get_fish_handle(vFish) into vFishHandle;
 		select get_fish_name(vFish) into vFishName;
-       		
+		raise notice 'vObjectType1: %', vFishHandle;
 		update fish
             	   set fish_name = vFishName
 	      	   where fish_zdb_id = vFish;

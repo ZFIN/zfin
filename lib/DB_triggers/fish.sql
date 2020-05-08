@@ -6,7 +6,7 @@ ON fish;
 CREATE OR REPLACE FUNCTION fish_trigger()
   RETURNS trigger AS $BODY$
 BEGIN
-  NEW.fish_name = get_genotype_display(NEW.fish_genotype_zdb_id);
+  NEW.fish_name = get_fish_full_name(NEW.fish_zdb_id, NEW.fish_genotype_zdb_id, NEW.fish_name);
   NEW.fish_name_order = zero_pad(NEW.fish_name);
   NEW.fish_full_name = get_fish_full_name(NEW.fish_zdb_id, NEW.fish_genotype_zdb_id, NEW.fish_name);
  

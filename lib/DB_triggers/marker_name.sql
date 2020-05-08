@@ -20,7 +20,7 @@ begin
 
      NEW.mrkr_name_order = mrkr_name_order;
 
-     perform p_update_related_fish_names(NEW.mrkr_zdb_id);
+     --perform p_update_related_fish_names(NEW.mrkr_zdb_id);
 
      RETURN NEW;
 end;
