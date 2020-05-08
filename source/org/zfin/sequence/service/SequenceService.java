@@ -111,8 +111,15 @@ public class SequenceService {
         }
 
         JsonResultResponse<MarkerDBLink> response = new JsonResultResponse<>();
+        SequenceInfo sequenceInfo=new SequenceInfo();
+
         if (summary) {
-            SequenceInfo sequenceInfo = MarkerService.getSequenceInfoSummary(marker);
+            if (!zdbID.contains("GENE")){
+               sequenceInfo = MarkerService.getMarkerSequenceInfo(marker);
+            }
+            else {
+               sequenceInfo = MarkerService.getSequenceInfoSummary(marker);
+            }
             response.setResults(sequenceInfo.getDbLinks().stream()
                     .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
                     .collect(Collectors.toList())
