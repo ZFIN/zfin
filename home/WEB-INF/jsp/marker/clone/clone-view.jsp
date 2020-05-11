@@ -39,7 +39,8 @@
             <jsp:include page="clone-view-summary.jsp"/>
         </div>
         
-        <c:if test="${typeName ne 'EST' || typeName ne 'CDNA'}">
+        <c:if test="${typeName ne 'EST'}">
+           <c:if test="${typeName ne 'CDNA'}">
             <z:section title="${GBROWSE}">
                <div class="__react-root"
                  id="GbrowseImage"
@@ -47,6 +48,7 @@
                  data-link-url="${formBean.image.linkUrl}">
               </div>
             </z:section>
+           </c:if>
         </c:if>
 
         <c:if test="${typeName eq 'EST' || typeName eq 'CDNA'}">
