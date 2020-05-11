@@ -164,7 +164,7 @@ returns text as $genoDisplayHtml$
 	  and fmrel_ftr_zdb_id = feature_zdb_id
 	  and fmrel_mrkr_zdb_id = mrkr_zdb_id
  	  and feature_type = ftrtype_name
-	  and feature_Type = 'TRANSLOC'
+	  and (feature_Type = 'TRANSLOC' or feature_type = 'INVERSION')
 	  and fmrel_type = gcs_fmrel_type
 	  and gcs_mrkr_type = mrkr_type
 	  and gcs_ftr_type = feature_type
