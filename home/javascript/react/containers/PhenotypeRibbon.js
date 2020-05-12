@@ -171,7 +171,7 @@ const PhenotypeRibbon = ({geneId}) => {
                 subjects={data.value.subjects}
                 categories={data.value.categories}
                 itemClick={handleRibbonCellClick}
-
+                selected={selectedRibbonTerm}
             />
 
             {selectedTablePhenotype &&
@@ -219,4 +219,4 @@ PhenotypeRibbon.propTypes = {
     geneId: PropTypes.string,
 };
 
-export default PhenotypeRibbon;
+export default PhenotypeRibbon;2
