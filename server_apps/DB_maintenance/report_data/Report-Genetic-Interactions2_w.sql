@@ -35,10 +35,12 @@ select distinct mrkr_zdb_id,pub,inf,ont,term_ont_id into finalgo from tmp_go1 gr
 
 select distinct mrkr_zdb_id, concat(pub,'&',inf,'&',ont,'&',term_ont_id) as bundle, pub,inf,ont,term_ont_id into finalct3 from finalgo;
 
-\copy (select pub,inf,ont,term_ont_id  from finalct3 group by bundle,pub,inf,ont,term_ont_id having count(bundle)>1) to 'finalreport.csv' delimiter ',';
 
-create temp table jenk491 (pub text,messup text,ont text,goid text);
-\copy jenk491 from finalreport.csv delimiter E',';
+
+
+select pub,inf as messup,ont,term_ont_id as goid into jenk491 from finalct3 group by bundle,pub,inf,ont,term_ont_id having count(bundle)>1;
+
+
 
 update jenk491 set messup=replace(messup,'|',',');
 SELECT pub,unnest(string_to_array(messup, ',')) as inference, goid,ont,messup into jenk491b from jenk491;
