@@ -20,7 +20,7 @@
 <c:set var="CITATIONS" value="Citations"/>
 
 <z:dataPage
-        sections="${[SUMMARY, EXPRESSION, PHENOTYPE, MUTANTS, DISEASES, GO, PROTEINS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY, CITATIONS]}"
+        sections="${[SUMMARY, EXPRESSION, PHENOTYPE, MUTANTS, DISEASES, GO, PROTEINS, TRANSCRIPTS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, SEQUENCES, ORTHOLOGY, CITATIONS]}"
 >
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
@@ -83,7 +83,17 @@
             <z:section title="Domain Details Per Protein">
                 <jsp:include page="gene-view-protein-detail.jsp"/>
             </z:section>
+        </z:section>
 
+        <z:section title="${TRANSCRIPTS}">
+            <z:section title="Confirmed Transcripts">
+                <jsp:include page="gene-view-transcripts.jsp"/>
+            </z:section>
+            <authz:authorize access="hasRole('root')">
+                <z:section title="Withdrawn Transcripts">
+                    <jsp:include page="gene-view-withdrawn-transcripts.jsp"/>
+                </z:section>
+            </authz:authorize>
         </z:section>
 
         <z:section title="${PATHWAYS}">
@@ -106,16 +116,7 @@
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
-        <z:section title="${TRANSCRIPTS}">
-            <z:section title="Confirmed Transcripts">
-                <jsp:include page="gene-view-transcripts.jsp"/>
-            </z:section>
-            <authz:authorize access="hasRole('root')">
-                <z:section title="Withdrawn Transcripts">
-                    <jsp:include page="gene-view-withdrawn-transcripts.jsp"/>
-                </z:section>
-            </authz:authorize>
-        </z:section>
+
 
         <z:section title="${SEQUENCES}">
             <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
