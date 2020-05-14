@@ -4,19 +4,16 @@ import {GenericRibbon} from '@geneontology/ribbon';
 import style from './style.scss';
 
 const getSelectedTermQueryParams = (selected) => {
-    let termQuery = '';
+    let queryParams = {};
     if (selected) {
         if (selected.group.type !== 'GlobalAll') {
-            termQuery += `?termId=${selected.group.id}`;
-        }
-        if (selected.group.type === 'GlobalAll') {
-            termQuery += '?termId=';
+            queryParams.termId = selected.group.id;
         }
         if (selected.group.type === 'Other') {
-            termQuery += '&isOther=true';
+            queryParams.isOther = true;
         }
     }
-    return termQuery;
+    return queryParams;
 };
 
 const Ribbon = (props) => (

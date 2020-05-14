@@ -1,6 +1,7 @@
 package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -32,8 +33,6 @@ import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -160,7 +159,7 @@ public class MarkerGoService {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/go-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneId);
-        if (termId != null) {
+        if (StringUtils.isNotEmpty(termId)) {
             query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
             if (isOther) {
                 List<GenericTerm> slimTerms = ontologyRepository.getTermsInSubset("goslim_agr");

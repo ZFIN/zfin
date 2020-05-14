@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
+import qs from 'qs';
 import {useFetch, useRibbonState} from '../utils/effects';
 
 import GenericErrorMessage from '../components/GenericErrorMessage';
@@ -165,6 +166,15 @@ const PhenotypeRibbon = ({geneId}) => {
         }
     }
 
+    const summaryTableQuery = {
+        ...getSelectedTermQueryParams(selectedRibbonTerm),
+        'filter.termName': filteredTerm,
+    };
+
+    const detailTableQuery = {
+        termId: selectedTableIDs,
+    };
+
     return (
         <div>
             <Ribbon
@@ -191,7 +201,7 @@ const PhenotypeRibbon = ({geneId}) => {
 
             {selectedRibbonTerm && !selectedTablePhenotype &&
             <DataTable
-                url={`/action/api/marker/${geneId}/phenotype/summary${getSelectedTermQueryParams(selectedRibbonTerm)}&filter.termName=${filteredTerm}`}
+                url={`/action/api/marker/${geneId}/phenotype/summary?${qs.stringify(summaryTableQuery)}`}
                 columns={columns}
                 rowKey={row => row.phenotype}
                 showEmptyTable={filteredTerm}
@@ -202,7 +212,7 @@ const PhenotypeRibbon = ({geneId}) => {
 
             {selectedTablePhenotype &&
             <DataTable
-                url={`/action/api/marker/${geneId}/phenotype/detail?termId=${selectedTableIDs}`}
+                url={`/action/api/marker/${geneId}/phenotype/detail?${qs.stringify(detailTableQuery)}`}
                 columns={columnsDetail}
                 rowKey={row => row.id}
                 tableState={detailTableState}
@@ -219,4 +229,4 @@ PhenotypeRibbon.propTypes = {
     geneId: PropTypes.string,
 };
 
-export default PhenotypeRibbon;2
+export default PhenotypeRibbon;

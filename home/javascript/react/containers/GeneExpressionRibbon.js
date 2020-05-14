@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
+import qs from 'qs';
 import {useFetch, useRibbonState} from '../utils/effects';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -21,35 +22,15 @@ const GeneExpressionRibbon = ({geneId}) => {
     const [isDirectlySubmitted, setIsDirectlySubmitted] = useState(false);
     const [filteredTerm, setFilteredTerm] = useState('');
 
-
     let url = `/action/api/marker/${geneId}/expression/ribbon-summary`;
-    let params = new URLSearchParams();
+    let params = {};
     if (isChecked) {
-        params.append('includeReporter','true');
+        params.includeReporter = true;
     }
     if (isDirectlySubmitted) {
-        params.append('onlyDirectlySubmitted', 'true');
+        params.onlyDirectlySubmitted = true;
     }
-
-    url += '?' + params.toString();
-
-    const data = useFetch(url);
-
-    if (data.rejected) {
-        return <GenericErrorMessage/>;
-    }
-
-    if (data.pending) {
-        return <LoadingSpinner/>;
-    }
-
-    if (!data.value) {
-        return null;
-    }
-
-    if (data.value.subjects[0].nb_annotations === 0) {
-        return <NoData/>
-    }
+    const data = useFetch(url + qs.stringify(params, { addQueryPrefix: true }));
 
     const handleEntityNameClick = (event, entity) => {
         event.preventDefault();
@@ -95,13 +76,6 @@ const GeneExpressionRibbon = ({geneId}) => {
             content: ({assay}) => assay.abbreviation,
             width: '200px',
         },
-        /*
-                {
-                    label: 'Antibody',
-                    content: ({antibody}) => <div>{antibody}</div>,
-                    width: '200px',
-                },
-        */
         {
             label: 'Stage',
             content: 'startStage',
@@ -201,6 +175,20 @@ const GeneExpressionRibbon = ({geneId}) => {
         }
     }
 
+    const summaryTableQuery = {
+        ...getSelectedTermQueryParams(selectedRibbonTerm),
+        includeReporter: isChecked,
+        onlyDirectlySubmitted: isDirectlySubmitted,
+        'filter.termName': filteredTerm,
+    };
+
+    const detailTableQuery = {
+        supertermId: selectedSupertermId,
+        subtermId: selectedSubtermId,
+        includeReporter: isChecked,
+        onlyDirectlySubmitted: isDirectlySubmitted,
+    };
+
     return (
         <div>
             <div className='custom-control custom-checkbox'>
@@ -228,12 +216,17 @@ const GeneExpressionRibbon = ({geneId}) => {
                 </label>
             </div>
 
-            <Ribbon
-                subjects={data.value.subjects}
-                categories={data.value.categories}
-                itemClick={handleRibbonCellClick}
-                selected={selectedRibbonTerm}
-            />
+            { data.rejected && <GenericErrorMessage/> }
+            { data.pending && <LoadingSpinner/> }
+            { !data.pending && data.value && (data.value.subjects[0].nb_annotations === 0 ?
+                <NoData/> :
+                <Ribbon
+                    subjects={data.value.subjects}
+                    categories={data.value.categories}
+                    itemClick={handleRibbonCellClick}
+                    selected={selectedRibbonTerm}
+                />
+            )}
 
             {selectedTableEntity &&
             <button className=' btn btn-link btn-sm px-0' onClick={() => setSelectedTableEntity(null)}>
@@ -256,7 +249,7 @@ const GeneExpressionRibbon = ({geneId}) => {
 
             {selectedRibbonTerm && !selectedTableEntity &&
             <DataTable
-                url={`/action/api/marker/${geneId}/expression/ribbon-detail${getSelectedTermQueryParams(selectedRibbonTerm)}&includeReporter=${isChecked}&onlyDirectlySubmitted=${isDirectlySubmitted}&filter.termName=${filteredTerm}`}
+                url={`/action/api/marker/${geneId}/expression/ribbon-detail?${qs.stringify(summaryTableQuery)}`}
                 columns={columns}
                 rowKey={row => row.entity.superterm.oboID + (row.entity.subterm && ',' + row.entity.subterm.oboID)}
                 showEmptyTable={filteredTerm}
@@ -267,7 +260,7 @@ const GeneExpressionRibbon = ({geneId}) => {
 
             {selectedTableEntity &&
             <DataTable
-                url={`/action/api/marker/${geneId}/expression/ribbon-expression-detail?supertermId=${selectedSupertermId}&subtermId=${selectedSubtermId}&includeReporter=${isChecked}&onlyDirectlySubmitted=${isDirectlySubmitted}`}
+                url={`/action/api/marker/${geneId}/expression/ribbon-expression-detail?${qs.stringify(detailTableQuery)}`}
                 columns={columnsDetail}
                 rowKey={row => row.id}
                 tableState={detailTableState}

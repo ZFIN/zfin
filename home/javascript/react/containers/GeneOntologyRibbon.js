@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import qs from 'qs';
 import {useFetch, useRibbonState} from '../utils/effects';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -75,6 +76,8 @@ const GeneOntologyRibbon = ({geneId}) => {
         },
     ];
 
+    const tableQuery = getSelectedTermQueryParams(selected);
+
     return (
         <div>
             <Ribbon
@@ -86,7 +89,7 @@ const GeneOntologyRibbon = ({geneId}) => {
 
             {selected &&
                 <DataTable
-                    url={`/action/api/marker/${geneId}/go${getSelectedTermQueryParams(selected)}`}
+                    url={`/action/api/marker/${geneId}/go?${qs.stringify(tableQuery)}`}
                     columns={columns}
                     rowKey='rowKey'
                     tableState={tableState}
