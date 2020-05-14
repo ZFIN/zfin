@@ -155,7 +155,7 @@ def generateGenesAndTranscripts() {
         }
 
     }
-
+    int cdsCounter = 0
     Map <String,List<GenomeFeature>> ensemblFeatureMap = [:]
     db.eachRow("""
         select 
@@ -179,13 +179,15 @@ def generateGenesAndTranscripts() {
             parent = row.gff_parent
         }
         String id = row.gff_id
+        if (row.gff_feature == "CDS") {
+            cdsCounter++
+            id += ":$cdsCounter"
+        }
         String zdbId = ensemblToZfinIDMap[row.gff_id]
         //only switch to ZFIN IDs for genes
         if (id.startsWith("ENSDARG") && zdbId) {
             id = zdbId
         }
-
-
 
         String name = ensemblToZfinNameMap[row.gff_id] ?: row.gff_name
 
@@ -272,6 +274,7 @@ def generateGenesAndTranscripts() {
                 transcript.setSource("ZFIN")
                 zfinGenesWriter.println(transcript.toString())
                 ensemblFeatureMap[transcript.getId()].each { GenomeFeature region ->
+                    if (region.getType() == "CDS") { println region.toString() }
                     region.setSource("ZFIN")
                     zfinGenesWriter.println(region)
                 }
