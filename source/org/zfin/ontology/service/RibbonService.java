@@ -280,7 +280,7 @@ public class RibbonService {
         }
         final String filterValue = pagination.getFieldFilter(FieldFilter.FILTER_TERM_NAME);
         if (StringUtils.isNotEmpty(filterValue)) {
-            query.addFilterQuery("phenotype_statement:" + "*" + filterValue.trim() + "*");
+            query.addFilterQuery("phenotype_statement_ac:(" + filterValue.trim() + ")");
         }
         // get Facet for the ao term and the PK of the expression record.
         query.addFacetPivotField("phenotype_statement,phenotype_statement_term_id,stage_term_id,pub_zdb_id,id");

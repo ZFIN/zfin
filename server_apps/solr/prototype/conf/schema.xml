@@ -1050,6 +1050,7 @@
     <copyField source="allele" dest="allele_t"/>
     <copyField source="construct" dest="construct_t"/>
     <copyField source="phenotype_statement" dest="phenotype_statement_t"/>
+    <copyField source="phenotype_statement" dest="phenotype_statement_ac"/>
     <copyField source="synonym_phenotype_statement" dest="synonym_phenotype_statement_t"/>
     <copyField source="affected_anatomy" dest="affected_anatomy_t"/>
     <copyField source="anatomy" dest="anatomy_t"/>

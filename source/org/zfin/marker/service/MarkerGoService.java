@@ -169,7 +169,7 @@ public class MarkerGoService {
         }
         String termNameFilter = pagination.getFieldFilter(FieldFilter.FILTER_TERM_NAME);
         if (StringUtils.isNotEmpty(termNameFilter)) {
-            query.addFilterQuery("name_ac:" + SolrService.luceneEscape(termNameFilter));
+            query.addFilterQuery("name_ac:(" + SolrService.luceneEscape(termNameFilter) + ")");
         }
 
         query.setStart(pagination.getStart());
