@@ -4,14 +4,14 @@ import qs from 'qs';
 import {useFetch, useRibbonState} from '../utils/effects';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
+import DataTable, {DEFAULT_TABLE_STATE} from '../components/data-table';
 import NoData from '../components/NoData';
 import Ribbon, {getSelectedTermQueryParams} from '../components/Ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 
 const GeneOntologyRibbon = ({geneId}) => {
     const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
-    const [selected, setSelected] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
+    const [selected, setSelected] = useRibbonState();
 
     const data = useFetch(`/action/api/marker/${geneId}/go/ribbon-summary`);
 
@@ -29,6 +29,11 @@ const GeneOntologyRibbon = ({geneId}) => {
 
     if (data.value.subjects[0].nb_annotations === 0) {
         return <NoData />
+    }
+
+    const handleRibbonSelect = (subject, group) => {
+        setTableState(DEFAULT_TABLE_STATE);
+        setSelected(subject, group);
     }
 
     const columns = [
@@ -83,7 +88,7 @@ const GeneOntologyRibbon = ({geneId}) => {
             <Ribbon
                 subjects={data.value.subjects}
                 categories={data.value.categories}
-                itemClick={setSelected}
+                itemClick={handleRibbonSelect}
                 selected={selected}
             />
 

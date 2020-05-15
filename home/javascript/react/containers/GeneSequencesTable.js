@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import DataTable from '../components/DataTable';
+import DataTable from '../components/data-table';
 import AttributionLink from '../components/AttributionLink';
 import BlastDropDown from '../components/BlastDropDown';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';

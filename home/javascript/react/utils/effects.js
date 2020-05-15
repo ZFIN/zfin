@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import produce from 'immer';
+import qs from 'qs';
 import http from './http';
 
 export const useFetch = (url) => {
@@ -53,28 +54,35 @@ export const useFetch = (url) => {
 };
 
 export const useTableDataFetch = (baseUrl, tableState) => {
-    let url = baseUrl +
-        (baseUrl.indexOf('?') < 0 ? '?' : '&') +
-        `limit=${tableState.limit}&page=${tableState.page}`;
-    if (tableState.sortBy) {
-        url += `&sortBy=${tableState.sortBy}`;
-    }
-    return useFetch(url);
+    const params = qs.stringify(tableState, {
+        allowDots: true,
+        skipNulls: true,
+    });
+    const separator = baseUrl.indexOf('?') < 0 ? '?' : '&';
+    return useFetch(baseUrl + separator + params);
 };
 
-export const useRibbonState = (onSelect) => {
+export const useRibbonState = () => {
     const [selected, setSelected] = useState(null);
 
     const handleItemClick = (subject, group) => {
         if (selected && selected.group.id === group.id && selected.group.type === group.type) {
             setSelected(null);
         } else {
-            if (typeof onSelect === 'function') {
-                onSelect();
-            }
             setSelected({subject, group});
         }
     };
 
     return [selected, handleItemClick];
+};
+
+export const useDebouncedValue = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => setDebouncedValue(value), delay);
+        return () => clearTimeout(timeout);
+    }, [delay, value]);
+
+    return debouncedValue;
 };

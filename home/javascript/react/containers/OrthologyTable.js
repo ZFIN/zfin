@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DataTable from '../components/DataTable';
+import DataTable from '../components/data-table';
 import OrthologyEvidenceLink from '../components/OrthologyEvidenceLink';
 
 const OrthologyTable = ({geneId}) => {

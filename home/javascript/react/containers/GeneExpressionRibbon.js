@@ -7,7 +7,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import NoData from '../components/NoData';
 import Ribbon, {getSelectedTermQueryParams} from '../components/Ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
-import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
+import DataTable, {DEFAULT_TABLE_STATE} from '../components/data-table';
 import AttributionLink from '../components/AttributionLink';
 import StageTimeline from '../components/StageTimeline';
 import GeneExpressionFigureGallery from './GeneExpressionFigureGallery';
@@ -16,11 +16,10 @@ import StageTimelineHeader from '../components/StageTimelineHeader';
 const GeneExpressionRibbon = ({geneId}) => {
     const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
     const [detailTableState, setDetailTableState] = useState(DEFAULT_TABLE_STATE);
-    const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
+    const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState();
     const [selectedTableEntity, setSelectedTableEntity] = useState(null);
     const [isChecked, setIsChecked] = useState(false);
     const [isDirectlySubmitted, setIsDirectlySubmitted] = useState(false);
-    const [filteredTerm, setFilteredTerm] = useState('');
 
     let url = `/action/api/marker/${geneId}/expression/ribbon-summary`;
     let params = {};
@@ -37,16 +36,6 @@ const GeneExpressionRibbon = ({geneId}) => {
         setSelectedTableEntity(entity);
     };
 
-    const handleFilterChange = (event) => {
-        event.preventDefault();
-        setFilteredTerm(event.target.value);
-    };
-
-    const handleFilter = (event, term) => {
-        event.preventDefault();
-        setFilteredTerm(term);
-    };
-
     const handleReporterSelection = (event) => {
         setIsChecked(event.target.checked);
     };
@@ -55,9 +44,10 @@ const GeneExpressionRibbon = ({geneId}) => {
     };
 
     const handleRibbonCellClick = (subject, group) => {
+        setTableState(DEFAULT_TABLE_STATE);
+        setDetailTableState(DEFAULT_TABLE_STATE);
         setSelectedTableEntity(null);
         setSelectedRibbonTerm(subject, group);
-        setFilteredTerm('');
     };
 
     const columnsDetail = [
@@ -96,30 +86,7 @@ const GeneExpressionRibbon = ({geneId}) => {
 
     const columns = [
         {
-            label: (
-                <div>
-                    <div>Expression Location</div>
-                    <form className='form-inline'>
-                        <label className='sr-only' htmlFor='filterInputField'>Name</label>
-                        <input
-                            type='text'
-                            className='form-control mb-2 mr-sm-2'
-                            id='filterTermName'
-                            size='15'
-                            value={filteredTerm}
-                            onChange={event => handleFilterChange(event)}
-                        />
-                        <button
-                            type='button'
-                            className='btn btn-secondary btn-sm mb-2'
-                            onClick={event => handleFilter(event, '')}
-                        >
-                            Clear
-                        </button>
-                    </form>
-                </div>
-            ),
-            key: 'locations',
+            label: 'Expression Location',
             content: ({entity}) =>
                 <a
                     href='#'
@@ -129,6 +96,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                     {entity.superterm.termName} {entity.subterm && entity.subterm.termName}
                 </a>,
             width: '140px',
+            filterName: 'termName',
         },
         {
             label: <StageTimelineHeader />,
@@ -179,7 +147,6 @@ const GeneExpressionRibbon = ({geneId}) => {
         ...getSelectedTermQueryParams(selectedRibbonTerm),
         includeReporter: isChecked,
         onlyDirectlySubmitted: isDirectlySubmitted,
-        'filter.termName': filteredTerm,
     };
 
     const detailTableQuery = {
@@ -252,7 +219,6 @@ const GeneExpressionRibbon = ({geneId}) => {
                 url={`/action/api/marker/${geneId}/expression/ribbon-detail?${qs.stringify(summaryTableQuery)}`}
                 columns={columns}
                 rowKey={row => row.entity.superterm.oboID + (row.entity.subterm && ',' + row.entity.subterm.oboID)}
-                showEmptyTable={filteredTerm}
                 tableState={tableState}
                 onTableStateChange={setTableState}
             />

@@ -224,3 +224,14 @@ body.home {
         }
     }
 }
+
+.input-overlay-button {
+    border: 0;
+    background: none;
+    color: #999999;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    line-height: 1;
+}

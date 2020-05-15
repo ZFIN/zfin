@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DataTable from '../components/DataTable';
+import DataTable from '../components/data-table';
 
 const MarkerCitationsTable = ({markerId}) => {
     const columns = [

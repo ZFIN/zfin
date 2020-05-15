@@ -1,4 +1,13 @@
-import { bool, object, shape } from 'prop-types';
+import {
+    bool,
+    func,
+    node,
+    object,
+    oneOf,
+    oneOfType,
+    shape,
+    string,
+} from 'prop-types';
 
 export const fetchType = shape({
     pending: bool,
@@ -6,4 +15,12 @@ export const fetchType = shape({
     reason: object,
     fulfilled: bool,
     value: object,
+});
+
+export const columnDefinitionType = shape({
+    align: oneOf(['right', 'center', 'left']),
+    label: node.isRequired,
+    content: oneOfType([string, func]).isRequired,
+    key: string,
+    filterName: string,
 });

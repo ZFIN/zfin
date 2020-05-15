@@ -7,7 +7,7 @@ import GenericErrorMessage from '../components/GenericErrorMessage';
 import LoadingSpinner from '../components/LoadingSpinner';
 import NoData from '../components/NoData';
 import Ribbon, {getSelectedTermQueryParams} from '../components/Ribbon';
-import DataTable, {DEFAULT_TABLE_STATE} from '../components/DataTable';
+import DataTable, {DEFAULT_TABLE_STATE} from '../components/data-table';
 import StageTimelineHeader from '../components/StageTimelineHeader';
 import StageTimeline from '../components/StageTimeline';
 import AttributionLink from '../components/AttributionLink';
@@ -18,10 +18,9 @@ const PhenotypeRibbon = ({geneId}) => {
     const data = useFetch(`/action/api/marker/${geneId}/phenotype/ribbon-summary`);
     const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
     const [detailTableState, setDetailTableState] = useState(DEFAULT_TABLE_STATE);
-    const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState(() => setTableState(DEFAULT_TABLE_STATE));
+    const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState();
     const [selectedTablePhenotype, setSelectedTablePhenotype] = useState(null);
     const [selectedTableIDs, setSelectedTableIDs] = useState(null);
-    const [filteredTerm, setFilteredTerm] = useState('');
 
     if (data.rejected) {
         return <GenericErrorMessage/>;
@@ -45,21 +44,12 @@ const PhenotypeRibbon = ({geneId}) => {
         setSelectedTablePhenotype(phenotype);
     };
 
-    const handleFilterChange = (event) => {
-        event.preventDefault();
-        setFilteredTerm(event.target.value);
-    };
-
-    const handleFilter = (event, term) => {
-        event.preventDefault();
-        setFilteredTerm(term);
-    };
-
     const handleRibbonCellClick = (subject, group) => {
+        setTableState(DEFAULT_TABLE_STATE);
+        setDetailTableState(DEFAULT_TABLE_STATE);
         setSelectedTablePhenotype(null);
         setSelectedTableIDs(null);
         setSelectedRibbonTerm(subject, group);
-        setFilteredTerm('');
     };
 
     const columnsDetail = [
@@ -96,29 +86,7 @@ const PhenotypeRibbon = ({geneId}) => {
 
     const columns = [
         {
-            label: (
-                <div>
-                    <div>Phenotype</div>
-                    <form className='form-inline'>
-                        <label className='sr-only' htmlFor='filterInputField'>Name</label>
-                        <input
-                            type='text'
-                            className='form-control mb-2 mr-sm-2'
-                            id='filterTermName'
-                            size='15'
-                            value={filteredTerm}
-                            onChange={event => handleFilterChange(event)}
-                        />
-                        <button
-                            type='button'
-                            className='btn btn-secondary btn-sm mb-2'
-                            onClick={event => handleFilter(event, '')}
-                        >
-                            Clear
-                        </button>
-                    </form>
-                </div>
-            ),
+            label: 'Phenotype',
             key: 'locations',
             content: ({phenotype, phenotypeIDs}) =>
                 <a
@@ -127,6 +95,7 @@ const PhenotypeRibbon = ({geneId}) => {
                     dangerouslySetInnerHTML={{__html: phenotype}}
                 />,
             width: '140px',
+            filterName: 'termName',
         },
         {
             label: <StageTimelineHeader/>,
@@ -166,10 +135,7 @@ const PhenotypeRibbon = ({geneId}) => {
         }
     }
 
-    const summaryTableQuery = {
-        ...getSelectedTermQueryParams(selectedRibbonTerm),
-        'filter.termName': filteredTerm,
-    };
+    const summaryTableQuery = getSelectedTermQueryParams(selectedRibbonTerm);
 
     const detailTableQuery = {
         termId: selectedTableIDs,
@@ -204,7 +170,6 @@ const PhenotypeRibbon = ({geneId}) => {
                 url={`/action/api/marker/${geneId}/phenotype/summary?${qs.stringify(summaryTableQuery)}`}
                 columns={columns}
                 rowKey={row => row.phenotype}
-                showEmptyTable={filteredTerm}
                 tableState={tableState}
                 onTableStateChange={setTableState}
             />
@@ -219,8 +184,6 @@ const PhenotypeRibbon = ({geneId}) => {
                 onTableStateChange={setDetailTableState}
             />
             }
-
-
         </div>
     )
 };

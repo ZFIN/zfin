@@ -260,7 +260,7 @@
         <div class="search">
             <form class="fs-autocomplete" method="GET" action="/search">
                 <input placeholder="Search" name="q" autocomplete="off" type="text">
-                <button type="submit">
+                <button class="input-overlay-button" type="submit">
                     <i class="fas fa-search"></i>
                 </button>
             </form>

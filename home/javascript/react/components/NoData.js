@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const NoData = ({placeholder}) => (
-    <i className='text-muted'>{placeholder || 'No Data Available'}</i>
+    <i className='text-muted'>{placeholder || 'No data available'}</i>
 );
 
 NoData.propTypes = {

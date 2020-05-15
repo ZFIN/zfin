@@ -1,17 +1,14 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
-import LoadingSpinner from './LoadingSpinner';
-import {useTableDataFetch} from '../utils/effects';
-import {stringToFunction} from '../utils';
-import NoData from './NoData';
-import GenericErrorMessage from './GenericErrorMessage';
-
-export const DEFAULT_TABLE_STATE = {
-    limit: 10,
-    page: 1,
-    sortBy: null,
-};
+import LoadingSpinner from '../LoadingSpinner';
+import {useTableDataFetch} from '../../utils/effects';
+import {stringToFunction} from '../../utils';
+import NoData from '../NoData';
+import GenericErrorMessage from '../GenericErrorMessage';
+import {columnDefinitionType} from '../../utils/types';
+import HeaderCell from './HeaderCell';
+import {DEFAULT_TABLE_STATE} from './index';
 
 const DataTable = ({
     columns,
@@ -21,7 +18,6 @@ const DataTable = ({
     rowKey,
     tableState,
     url,
-    showEmptyTable = false,
     sortOptions
 }) => {
     if ((tableState && !onTableStateChange) || (!tableState && onTableStateChange)) {
@@ -50,7 +46,7 @@ const DataTable = ({
 
     const {results, returnedRecords, supplementalData, total} = data.value;
 
-    if (total === 0 && !showEmptyTable) {
+    if (total === 0 && Object.keys(tableState.filter).length === 0) {
         return <NoData/>
     }
 
@@ -77,6 +73,13 @@ const DataTable = ({
         setTableState(produce(state => {
             state.sortBy = sortBy;
         }))
+    }
+
+    const handleFilterChange = (field, value) => {
+        setTableState(produce(state => {
+            state.page = 1;
+            state.filter[field] = value;
+        }));
     }
 
     return (
@@ -120,11 +123,12 @@ const DataTable = ({
                     <thead>
                         <tr>
                             {columns.map(column => (
-                                !column.hidden && (
-                                    <th key={column.key || column.label} style={{width: column.width, textAlign: column.align}}>
-                                        {column.label}
-                                    </th>
-                                )
+                                <HeaderCell
+                                    column={column}
+                                    defaultFilterValue={tableState.filter[column.filterName]}
+                                    key={column.key || column.label}
+                                    onChange={handleFilterChange}
+                                />
                             ))}
                         </tr>
                     </thead>
@@ -146,9 +150,13 @@ const DataTable = ({
                             </tr>
                         ))
                         }
-                        {total === 0 && <tr>
-                            <td colSpan={columns.length}><NoData/></td>
-                        </tr>}
+                        {total === 0 && (
+                            <tr>
+                                <td className='text-center' colSpan={columns.length}>
+                                    <NoData placeholder='No rows match filters' />
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -198,12 +206,7 @@ const DataTable = ({
 };
 
 DataTable.propTypes = {
-    columns: PropTypes.arrayOf(PropTypes.shape({
-        align: PropTypes.oneOf(['right', 'center', 'left']),
-        label: PropTypes.node.isRequired,
-        content: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
-        key: PropTypes.string,
-    })).isRequired,
+    columns: PropTypes.arrayOf(columnDefinitionType).isRequired,
     downloadOptions: PropTypes.arrayOf(PropTypes.shape({
         format: PropTypes.string,
         url: PropTypes.string,
@@ -217,7 +220,6 @@ DataTable.propTypes = {
         page: PropTypes.number,
     }),
     url: PropTypes.string.isRequired,
-    showEmptyTable: PropTypes.bool,
 };
 
 export default DataTable;
