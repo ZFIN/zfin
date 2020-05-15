@@ -359,7 +359,7 @@ public interface MarkerRepository {
 
     List<Marker> getMarkersByAlias(String key);
 
-    List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker construct, boolean b, MarkerRelationship.Type... types);
+    List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayForTypes(Marker construct, boolean is1to2, MarkerRelationship.Type... types);
 
     MarkerDBLink getMarkerDBLink(String linkId);
     String getABRegID(String zdbID);

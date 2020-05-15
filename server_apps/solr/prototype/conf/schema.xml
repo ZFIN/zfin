@@ -821,6 +821,7 @@
         <field name="xref" type="string" indexed="true" stored="true" multiValued="true"/>
 
         <field name="related_gene_symbol" type="gene_symbol" indexed="true" stored="true" multiValued="true"/>
+        <field name="related_gene_zdb_id" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
         <field name="stage_term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
         <field name="anatomy_term_id" type="keyword" indexed="true" stored="true" multiValued="true"/>

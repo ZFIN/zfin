@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.log4j.Log4j2;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import org.zfin.marker.service.ConstructService;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -30,7 +32,7 @@ public class ConstructController {
     @JsonView(View.SequenceAPI.class)
     @RequestMapping(value = "/marker/{zdbID}/constructs")
     public JsonResultResponse<ConstructInfo> getConstructView(@PathVariable("zdbID") String zdbID,
-                                                              @Version Pagination pagination) {
+                                                              @Version Pagination pagination) throws IOException, SolrServerException {
 
         JsonResultResponse<ConstructInfo> response = constructService.getConstructs(zdbID, pagination);
         response.setHttpServletRequest(request);

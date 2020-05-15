@@ -2056,20 +2056,26 @@
             <!-- these mrel queries could be sped up by grabbing 3 relationships and using a case statement to change
                  the column alias for mrkr_abbrev based on which relationship it is...  -->
             <entity name="construct_coding_promoter"
-                    query="select mrel_mrkr_1_zdb_id, mrkr_abbrev as regulatory_region, mrkr_name as promoter_full_name
-                          from marker_relationship, marker
-                          where mrel_type = 'promoter of'
+                    query="select
+                            mrel_mrkr_1_zdb_id,
+                            mrkr_abbrev as regulatory_region,
+                            mrkr_name as promoter_full_name,
+                            mrkr_zdb_id as related_gene_zdb_id
+                        from marker_relationship, marker
+                        where mrel_type = 'promoter of'
                             and mrel_mrkr_2_zdb_id = mrkr_zdb_id "
                     cacheImpl="SortedMapBackedCache"
                     where="mrel_mrkr_1_zdb_id=construct.id"
             />
 
-
-
             <entity name="construct_coding_sequence"
-                    query="select mrel_mrkr_1_zdb_id, mrkr_abbrev as coding_sequence, mrkr_name as coding_sequence_full_name
-                          from marker_relationship, marker
-                          where mrel_type = 'coding sequence of'
+                    query="select
+                            mrel_mrkr_1_zdb_id,
+                            mrkr_abbrev as coding_sequence,
+                            mrkr_name as coding_sequence_full_name,
+                            mrkr_zdb_id as related_gene_zdb_id
+                        from marker_relationship, marker
+                        where mrel_type = 'coding sequence of'
                             and mrel_mrkr_2_zdb_id = mrkr_zdb_id"
                     cacheImpl="SortedMapBackedCache"
                     where="mrel_mrkr_1_zdb_id=construct.id"
@@ -2087,9 +2093,13 @@
             />
 
             <entity name="construct_regulatory_region"
-                    query="select mrel_mrkr_1_zdb_id, mrkr_abbrev as engineered_region, mrkr_name as engineered_region_full_name
-                          from marker_relationship, marker
-                          where mrel_type = 'contains region'
+                    query="select
+                            mrel_mrkr_1_zdb_id,
+                            mrkr_abbrev as engineered_region,
+                            mrkr_name as engineered_region_full_name,
+                            mrkr_zdb_id as related_gene_zdb_id
+                        from marker_relationship, marker
+                        where mrel_type = 'contains region'
                             and mrel_mrkr_2_zdb_id = mrkr_zdb_id "
                     cacheImpl="SortedMapBackedCache"
                     where="mrel_mrkr_1_zdb_id=construct.id"
@@ -2105,7 +2115,6 @@
                     cacheImpl="SortedMapBackedCache"
                     where="construct_zdb_id=construct.id"
             />
-
 
             <entity name="construct_publication_xref"
                     query="

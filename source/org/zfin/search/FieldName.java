@@ -140,6 +140,7 @@ public enum FieldName {
     RELATED_ACCESSION("related_accession", "Accession"),
     RELATED_ACCESSION_TEXT("related_accession_t", "Accession"),
     RELATED_GENE_SYMBOL("related_gene_symbol"),
+    RELATED_GENE_ZDB_ID("related_gene_zdb_id"),
     REPORTER_COLOR("reporter_color"),
     REPORTER_EXPRESSION_ANATOMY_TF("reporter_expression_anatomy_tf", "Expressed In"),
     REPORTER_GENE("reporter_gene"),
