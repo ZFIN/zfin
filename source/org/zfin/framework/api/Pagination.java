@@ -63,6 +63,10 @@ public class Pagination {
         fieldFilterValueMap.put(fieldFilter, value);
     }
 
+    public String getFieldFilter(FieldFilter fieldFilter) {
+        return fieldFilterValueMap.get(fieldFilter);
+    }
+
     public void makeSingleFieldFilter(FieldFilter fieldFilter, String value) {
         fieldFilterValueMap.clear();
         fieldFilterValueMap.put(fieldFilter, value);

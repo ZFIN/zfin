@@ -11,6 +11,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.marker.Marker;
@@ -165,6 +166,10 @@ public class MarkerGoService {
                 List<GenericTerm> slimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
                 slimTerms.forEach(term -> query.addFilterQuery("-term_id:" + SolrService.luceneEscape(term.getOboID())));
             }
+        }
+        String termNameFilter = pagination.getFieldFilter(FieldFilter.FILTER_TERM_NAME);
+        if (StringUtils.isNotEmpty(termNameFilter)) {
+            query.addFilterQuery("name_ac:" + SolrService.luceneEscape(termNameFilter));
         }
 
         query.setStart(pagination.getStart());

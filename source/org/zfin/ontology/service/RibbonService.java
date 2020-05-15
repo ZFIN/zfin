@@ -278,7 +278,7 @@ public class RibbonService {
             String escapedRibbonTermID = ribbonTermID.replace(":", "\\:");
             query.addFilterQuery("term_id:" + escapedRibbonTermID);
         }
-        final String filterValue = pagination.getFieldFilterValueMap().getFilterValue(FieldFilter.FILTER_TERM_NAME);
+        final String filterValue = pagination.getFieldFilter(FieldFilter.FILTER_TERM_NAME);
         if (StringUtils.isNotEmpty(filterValue)) {
             query.addFilterQuery("phenotype_statement:" + "*" + filterValue.trim() + "*");
         }

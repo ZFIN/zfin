@@ -11,19 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.framework.api.*;
 import org.zfin.marker.service.MarkerGoService;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api")
@@ -55,7 +48,9 @@ public class GeneOntologyRibbonController {
     public JsonResultResponse<GeneOntologyAnnotationTableRow> getGoAnnotations(@PathVariable String zdbID,
                                                                                @RequestParam(required = false) String termId,
                                                                                @RequestParam(required = false) boolean isOther,
+                                                                               @RequestParam(value = "filter.termName", required = false) String filterTermName,
                                                                                @Version Pagination pagination) throws IOException, SolrServerException {
+        pagination.addFieldFilter(FieldFilter.FILTER_TERM_NAME, filterTermName);
         JsonResultResponse<GeneOntologyAnnotationTableRow> response = markerGoService.getGoEvidence(zdbID, termId, isOther, pagination);
         response.setHttpServletRequest(request);
 

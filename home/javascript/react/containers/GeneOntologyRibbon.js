@@ -52,6 +52,7 @@ const GeneOntologyRibbon = ({geneId}) => {
             label: 'Term',
             content: ({term}) => <a href={`/${term.oboID}`}>{term.termName}</a>,
             width: '200px',
+            filterName: 'termName',
         },
         {
             label: 'Annotation Extension',
