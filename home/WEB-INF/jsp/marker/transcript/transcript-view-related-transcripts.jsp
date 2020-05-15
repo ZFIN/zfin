@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.TranscriptBean" scope="request"/>
 
-<z:dataTable collapse="true" hasData="${!empty formBean.relatedTranscriptDisplay.transcripts}">
+<z:dataTable collapse="true" hasData="${!empty formBean.relatedTranscriptDisplayList}">
 
     <thead>
     <tr>

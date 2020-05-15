@@ -3,6 +3,7 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.TranscriptBean" scope="request"/>
 
 <c:set var="SUMMARY" value="Summary"/>
+<c:set var="TARGETGENES" value="Target Genes"/>
 <c:set var="RELATEDTRANSCRIPTS" value="Related Transcripts"/>
 <c:set var="SEQUENCE" value="Sequence"/>
 <c:set var="GBROWSE" value="Gbrowse"/>
@@ -11,8 +12,14 @@
 <c:set var="SUPPORTINGSEQUENCES" value="Supporting Sequences"/>
 <c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage
-        sections="${[SUMMARY, RELATEDTRANSCRIPTS, SEQUENCE, GBROWSE, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}">
+<c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
+    <c:set var="sections" value="${[SUMMARY, TARGETGENES, RELATEDTRANSCRIPTS, SEQUENCE, GBROWSE, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}"/>
+</c:if>
+<c:if test="${formBean.marker.transcriptType.display ne 'miRNA'}">
+    <c:set var="sections" value="${[SUMMARY, RELATEDTRANSCRIPTS, SEQUENCE, GBROWSE, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}"/>
+</c:if>
+
+<z:dataPage sections="${sections}">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -32,6 +39,12 @@
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <jsp:include page="transcript-view-summary.jsp"/>
         </div>
+
+        <c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
+            <z:section title="${TARGETGENES}">
+             <jsp:include page="transcript-view-targets.jsp"/>
+            </z:section>
+        </c:if>
 
         <z:section title="${RELATEDTRANSCRIPTS}">
             <z:section title="Confirmed Transcripts">

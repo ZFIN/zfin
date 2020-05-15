@@ -58,7 +58,5 @@
     </z:attributeListItem>
 </z:attributeList>
 
-<c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
-    <zfin2:transcriptTargets transcriptTargets="${formBean.transcriptTargets}"/>
-</c:if>
+
 
