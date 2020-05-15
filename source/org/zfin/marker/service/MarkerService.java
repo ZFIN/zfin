@@ -185,11 +185,13 @@ public class MarkerService {
     public static List<MarkerDBLink> getMarkerDBLinks(Marker marker) {
         SequencePageInfoBean sequenceInfo = getSequenceInfoFull(marker);
 
+        if (sequenceInfo.getDbLinks() == null)
+            return new ArrayList<>();
         List<MarkerDBLink> links = sequenceInfo.getDbLinks().stream()
                 .map(dbLink -> getMarkerDBLink(marker, dbLink))
                 .collect(Collectors.toList());
         sequenceInfo.getRelatedMarkerDBLinks().values().forEach(markerDBLinks -> markerDBLinks.forEach(markerDBLink -> links.add(getMarkerDBLink(marker, markerDBLink))));
-        return links;
+        return links.stream().distinct().collect(Collectors.toList());
     }
 
     public static MarkerDBLink getMarkerDBLink(Marker marker, DBLink dbLink) {
@@ -227,9 +229,11 @@ public class MarkerService {
                         , MarkerRelationship.Type.CLONE_CONTAINS_GENE
                 )
         );
+
         relatedLinks.addAll(getTranscriptReferences(marker));
         for (RelatedMarkerDBLinkDisplay relatedLink : relatedLinks) {
             sequenceInfo.addRelatedMarkerDBLink(relatedLink.getRelationshipType(), relatedLink.getLink());
+            sequenceInfo.addDBLink(relatedLink.getLink());
         }
 
         return sequenceInfo;

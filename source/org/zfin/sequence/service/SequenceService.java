@@ -111,7 +111,7 @@ public class SequenceService {
         }
 
         JsonResultResponse<MarkerDBLink> response = new JsonResultResponse<>();
-        SequenceInfo sequenceInfo=new SequenceInfo();
+        SequenceInfo sequenceInfo;
 
         if (summary) {
             if (!zdbID.contains("GENE")){

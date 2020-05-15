@@ -93,8 +93,8 @@ public class SequenceInfo  {
 //    }
 
     public List<DBLink> getDbLinks() {
-        if(dbLinks!=null && false==isSorted){
-            Collections.sort(dbLinks,comparator);
+        if(dbLinks!=null && !isSorted){
+            dbLinks.sort(comparator);
             isSorted = true;
         }
         return dbLinks;
@@ -103,7 +103,7 @@ public class SequenceInfo  {
 
     public void setDbLinks(List<DBLink> dbLinks) {
         this.dbLinks = dbLinks;
-        Collections.sort(dbLinks,comparator);
+        dbLinks.sort(comparator);
         isSorted = true;
     }
 
