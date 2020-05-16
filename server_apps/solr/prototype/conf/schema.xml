@@ -1036,7 +1036,9 @@
     <copyField source="affected_gene" dest="gene_t"/>
     <copyField source="antigen_gene" dest="gene_t"/>
     <copyField source="regulatory_region" dest="regulatory_region_t"/>
+    <copyField source="regulatory_region" dest="regulatory_region_ac"/>
     <copyField source="coding_sequence" dest="coding_sequence_t"/>
+    <copyField source="coding_sequence" dest="coding_sequence_ac"/>
     <copyField source="inserted_in_gene" dest="inserted_in_gene_t"/>
     <copyField source="lab" dest="lab_t"/>
     <!--<copyField source="curator" dest="curator_t"/>-->

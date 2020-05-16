@@ -23,16 +23,19 @@ const GeneConstructsTable = ({geneId}) => {
             label: 'Construct',
             content: ({construct}) => <MarkerLink marker={construct} />,
             width: '150px',
+            filterName: 'name',
         },
         {
             label: 'Regulatory Regions',
             content: ({regulatoryRegions}) => <MarkerList focusMarkerId={geneId} markers={regulatoryRegions} />,
             width: '120px',
+            filterName: 'regulatoryRegion',
         },
         {
             label: 'Coding Sequences',
             content: ({codingSequences}) => <MarkerList focusMarkerId={geneId} markers={codingSequences} />,
             width: '120px',
+            filterName: 'codingSequence',
         },
         {
             label: 'Species',

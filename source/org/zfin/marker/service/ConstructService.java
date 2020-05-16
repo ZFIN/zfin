@@ -1,11 +1,13 @@
 package org.zfin.marker.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.infrastructure.ControlledVocab;
@@ -54,6 +56,10 @@ public class ConstructService {
                 FieldName.CATEGORY.getName() + ":" + Category.CONSTRUCT.getName(),
                 FieldName.RELATED_GENE_ZDB_ID.getName() + ":" + zdbID
         );
+        addFilterQuery(query, FieldName.NAME_AC, pagination.getFieldFilter(FieldFilter.NAME));
+        addFilterQuery(query, FieldName.REGULATORY_REGION_AC, pagination.getFieldFilter(FieldFilter.REGULATORY_REGION));
+        addFilterQuery(query, FieldName.CODING_SEQUENCE_AC, pagination.getFieldFilter(FieldFilter.CODING_SEQUENCE));
+
         query.setFields(FieldName.ID.getName());
         query.setRows(pagination.getLimit());
         query.setStart(pagination.getStart());
@@ -106,6 +112,12 @@ public class ConstructService {
         response.setResults(constructInfoList);
 
         return response;
+    }
+
+    private void addFilterQuery(SolrQuery query, FieldName field, String value) {
+        if (StringUtils.isNotEmpty(value)) {
+            query.addFilterQuery(field.getName() + ":(" + value + ")");
+        }
     }
 }
 
