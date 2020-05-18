@@ -126,7 +126,7 @@ const PhenotypeRibbon = ({geneId}) => {
     if (selectedTablePhenotype) {
         selectedTermName = selectedTablePhenotype;
         //todo: need to handle subterm also
-        selectedTermId = selectedTableIDs;
+        selectedTermId = selectedRibbonTerm.group.id;
     } else if (selectedRibbonTerm) {
         selectedTermName = selectedRibbonTerm.group.label;
         selectedTermIsOther = selectedRibbonTerm.group.type === 'Other';

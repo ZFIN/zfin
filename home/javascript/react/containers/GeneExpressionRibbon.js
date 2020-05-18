@@ -132,6 +132,7 @@ const GeneExpressionRibbon = ({geneId}) => {
             selectedTermName +=  ' ' + selectedTableEntity.subterm.termName
         }
         selectedSupertermId = selectedTableEntity.superterm.oboID;
+        selectedTermId = selectedTableEntity.superterm.oboID;
         if (selectedTableEntity.subterm) {
             selectedSubtermId = selectedTableEntity.subterm.oboID;
         }
@@ -152,6 +153,7 @@ const GeneExpressionRibbon = ({geneId}) => {
     const detailTableQuery = {
         supertermId: selectedSupertermId,
         subtermId: selectedSubtermId,
+        termId: selectedSupertermId,
         includeReporter: isChecked,
         onlyDirectlySubmitted: isDirectlySubmitted,
     };
