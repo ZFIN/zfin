@@ -17,15 +17,14 @@ const HeaderCell = ({column, defaultFilterValue, onChange}) => {
     }, [debouncedValue]);
     useEffect(() => {
         setFilterValue(defaultFilterValue);
-        if (!defaultFilterValue) {
+        if (typeof defaultFilterValue === 'undefined') {
             setFilterOpen(false);
         }
     }, [defaultFilterValue]);
 
     const toggleFilter = () => setFilterOpen(prev => !prev);
-    const handleClose = () => {
-        setFilterValue(null);
-        setFilterOpen(false);
+    const handleClear = () => {
+        setFilterValue('');
     }
 
     if (!column || column.hidden) {
@@ -49,7 +48,7 @@ const HeaderCell = ({column, defaultFilterValue, onChange}) => {
                     />
                     <button
                         className='input-overlay-button p-1'
-                        onClick={handleClose}
+                        onClick={handleClear}
                     >
                         <i className='fas fa-times' />
                     </button>
