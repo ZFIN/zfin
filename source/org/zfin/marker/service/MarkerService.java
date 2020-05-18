@@ -49,6 +49,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
@@ -191,7 +193,19 @@ public class MarkerService {
                 .map(dbLink -> getMarkerDBLink(marker, dbLink))
                 .collect(Collectors.toList());
         sequenceInfo.getRelatedMarkerDBLinks().values().forEach(markerDBLinks -> markerDBLinks.forEach(markerDBLink -> links.add(getMarkerDBLink(marker, markerDBLink))));
-        return links.stream().distinct().collect(Collectors.toList());
+        // aggregate same db link, group by publication
+        Map<String, List<MarkerDBLink>> map = links.stream()
+                .collect(groupingBy(DBLink::getAccessionNumber, toList()));
+        List<MarkerDBLink> groupedLinks = map.values().stream()
+                .map(markerDBLinks -> {
+                    MarkerDBLink link = markerDBLinks.get(0);
+                    markerDBLinks.remove(0);
+                    markerDBLinks.forEach(markerDBLink -> link.addPublicationAttributions(markerDBLink.getPublications()));
+                    return link;
+                })
+                .collect(toList());
+
+        return groupedLinks;
     }
 
     public static MarkerDBLink getMarkerDBLink(Marker marker, DBLink dbLink) {

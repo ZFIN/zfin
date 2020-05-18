@@ -1,16 +1,10 @@
 package org.zfin.infrastructure.presentation;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.zfin.construct.ConstructComponent;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.infrastructure.ControlledVocab;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListAdapter;
@@ -19,28 +13,28 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static org.zfin.repository.RepositoryFactory.getConstructRepository;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 @Controller
 @RequestMapping("/infrastructure")
+@Log4j2
 public class CitationListController {
 
-    private Logger logger = LogManager.getLogger(CitationListController.class);
+    @RequestMapping(value = "data-citation-list/{ids}")
+    public String getCitationList(Model model, @PathVariable String ids) {
+        return featureMarkerelationCitationList(model, null, ids);
+    }
 
     @RequestMapping(value = "data-citation-list/{zdbID}/{ids}")
     public String featureMarkerelationCitationList(Model model, @PathVariable String zdbID, @PathVariable String ids) {
-        model.addAttribute("dataZdbID", zdbID);
+        if (zdbID != null)
+            model.addAttribute("dataZdbID", zdbID);
         List<Publication> publications = new ArrayList<>();
-        if (ids !=null) {
-            List<String> pubIDs = Arrays.asList(ids.split(","));
+        if (ids != null) {
+            List<String> pubIDs = List.of(ids.split(","));
             for (String pubs : pubIDs) {
                 publications.add(RepositoryFactory.getPublicationRepository().getPublication(pubs));
             }
-        }
-        else{
+        } else {
             List<PublicationAttribution> publicationAttributions = RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(zdbID);
             for (PublicationAttribution pub : publicationAttributions) {
                 publications.add(pub.getPublication());

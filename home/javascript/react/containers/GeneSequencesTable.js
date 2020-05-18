@@ -21,7 +21,7 @@ const GeneSequencesTable = ({geneId}) => {
                     accession={row.displayName}
                     publicationCount={row.publicationCount}
                     publication={row.singlePublication}
-                    multiPubAccessionID={row.zdbID}
+                    multiPubs={row.publicationIds}
                 />
             ),
             width: '150px',

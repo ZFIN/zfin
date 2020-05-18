@@ -1,6 +1,3 @@
-/**
- * Class DBLink.
- */
 package org.zfin.sequence;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,9 +13,11 @@ import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.Origination;
 
 import java.text.NumberFormat;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public abstract class DBLink implements EntityAttribution, EntityZdbID {
@@ -62,10 +61,10 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
         return referenceDatabase.getForeignDBDataType().getDataType().toString();
     }
 
-/*
-    @JsonView(View.SequenceAPI.class)
-    @JsonProperty("lengthDisplay")
-*/
+    /*
+        @JsonView(View.SequenceAPI.class)
+        @JsonProperty("lengthDisplay")
+    */
     public String getHRLength() {
         if (length != null)
             return NumberFormat.getInstance().format(length);
@@ -207,6 +206,10 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
         this.publications = publications;
     }
 
+    @JsonView(View.SequenceAPI.class)
+    public String getPublicationIds(){
+        return publications.stream().map(publicationAttribution -> publicationAttribution.getPublication().getZdbID()).collect(Collectors.joining(","));
+    }
 
     @JsonView(View.SequenceAPI.class)
     public Publication getSinglePublication() {
@@ -326,6 +329,12 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     @JsonProperty("displayName")
     public String getDisplayName() {
         return referenceDatabase.getForeignDB().getDisplayName() + ":" + accessionNumber;
+    }
+
+    public void addPublicationAttributions(Set<PublicationAttribution> publications) {
+        if (this.publications == null)
+            this.publications = new HashSet<>();
+        this.publications.addAll(publications);
     }
 }
 
