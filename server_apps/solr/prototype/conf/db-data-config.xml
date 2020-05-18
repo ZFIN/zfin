@@ -5907,7 +5907,7 @@ and child.term_ontology = 'disease_ontology';
                              join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
                              join fish on genox_fish_zdb_id = fish_zdb_id
                              join figure on efs_fig_zdb_id = fig_zdb_id
-                             join publication on fig_source_zdb_id = publication.zdb_id">
+                             join publication on fig_source_zdb_id = publication.zdb_id where xpatres_expression_found = 't'">
 
             <entity name="expression_result_term_id"
                     query="select term_name as expression_anatomy_parent,
@@ -5990,7 +5990,7 @@ and child.term_ontology = 'disease_ontology';
                        from expression_experiment2
                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                             join expression_result2 on xpatres_efs_id = efs_pk_id
-                            join image on img_fig_zdb_id = efs_fig_zdb_id;"
+                            join image on img_fig_zdb_id = efs_fig_zdb_id where xpatres_expression_found = 't';"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"
             />
