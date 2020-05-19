@@ -9,7 +9,8 @@ public enum FieldFilter {
     RELATIONSHIP_TYPE("relationship.type"),
     NAME("name"),
     REGULATORY_REGION("regulatoryRegion"),
-    CODING_SEQUENCE("codingSequence")
+    CODING_SEQUENCE("codingSequence"),
+    SPECIES("species")
     ;
     private String name;
 

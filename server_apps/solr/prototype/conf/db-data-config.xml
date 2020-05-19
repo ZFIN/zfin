@@ -2116,6 +2116,25 @@
                     where="construct_zdb_id=construct.id"
             />
 
+<!--        the union which adds danio rerio for every construct is technically wrong-->
+<!--        but it matches the behavior of marker pages which add it to every row of -->
+<!--        the construct table-->
+            <entity name="construct_related_species"
+                    query="select
+                            cv_name_definition as related_species_name_ac,
+                            cc_construct_zdb_id as construct_zdb_id
+                          from construct_component
+                            inner join controlled_vocabulary on cc_component_zdb_id = cv_zdb_id
+                            where cv_foreign_species is not null
+                          union
+                          select
+                            'Danio rerio' as related_species_name_ac,
+                            construct_zdb_id
+                          from construct"
+                    cacheImpl="SortedMapBackedCache"
+                    where="construct_zdb_id=construct.id"
+            />
+
             <entity name="construct_publication_xref"
                     query="
                         select

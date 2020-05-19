@@ -37,10 +37,12 @@ public class ConstructController {
                                                               @RequestParam(value = "filter.name", required = false) String filterName,
                                                               @RequestParam(value = "filter.regulatoryRegion", required = false) String filterRegulatoryRegion,
                                                               @RequestParam(value = "filter.codingSequence", required = false) String filterCodingSequence,
+                                                              @RequestParam(value = "filter.species", required = false) String filterSpecies,
                                                               @Version Pagination pagination) throws IOException, SolrServerException {
         pagination.addFieldFilter(FieldFilter.NAME, filterName);
         pagination.addFieldFilter(FieldFilter.REGULATORY_REGION, filterRegulatoryRegion);
         pagination.addFieldFilter(FieldFilter.CODING_SEQUENCE, filterCodingSequence);
+        pagination.addFieldFilter(FieldFilter.SPECIES, filterSpecies);
         JsonResultResponse<ConstructInfo> response = constructService.getConstructs(zdbID, pagination);
         response.setHttpServletRequest(request);
 

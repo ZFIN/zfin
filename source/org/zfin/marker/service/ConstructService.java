@@ -59,6 +59,7 @@ public class ConstructService {
         addFilterQuery(query, FieldName.NAME_AC, pagination.getFieldFilter(FieldFilter.NAME));
         addFilterQuery(query, FieldName.REGULATORY_REGION_AC, pagination.getFieldFilter(FieldFilter.REGULATORY_REGION));
         addFilterQuery(query, FieldName.CODING_SEQUENCE_AC, pagination.getFieldFilter(FieldFilter.CODING_SEQUENCE));
+        addFilterQuery(query, FieldName.RELATED_SPECIES_NAME_AC, pagination.getFieldFilter(FieldFilter.SPECIES));
 
         query.setFields(FieldName.ID.getName());
         query.setRows(pagination.getLimit());

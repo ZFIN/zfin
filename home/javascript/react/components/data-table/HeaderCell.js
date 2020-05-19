@@ -23,9 +23,7 @@ const HeaderCell = ({column, defaultFilterValue, onChange}) => {
     }, [defaultFilterValue]);
 
     const toggleFilter = () => setFilterOpen(prev => !prev);
-    const handleClear = () => {
-        setFilterValue('');
-    }
+    const handleClear = () => setFilterValue('');
 
     if (!column || column.hidden) {
         return null;
@@ -43,7 +41,7 @@ const HeaderCell = ({column, defaultFilterValue, onChange}) => {
                     <input
                         className='form-control form-control-sm'
                         type='text'
-                        value={filterValue}
+                        value={filterValue || ''}
                         onChange={event => setFilterValue(event.target.value)}
                     />
                     <button

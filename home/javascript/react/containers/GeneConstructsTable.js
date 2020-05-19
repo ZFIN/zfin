@@ -45,6 +45,7 @@ const GeneConstructsTable = ({geneId}) => {
                 </CommaSeparatedList>
             ),
             width: '130px',
+            filterName: 'species',
         },
         {
             label: 'Tg Lines',
