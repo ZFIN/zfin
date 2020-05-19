@@ -66,7 +66,9 @@ public class BasicConstructInfo extends AbstractScriptWrapper {
                             if (CollectionUtils.isNotEmpty(components)) {
                                 for (ConstructComponent component : components) {
                                     ConstructComponentDTO componentDTO = new ConstructComponentDTO();
-                                    componentDTO.setComponentID("ZFIN:" + component.getComponentZdbID());
+                                    // currently only populate the component ZDB id when we've already submitted the gene in the BGI (ie: no EFGs, regions at this time)
+                                    if (component.getComponentZdbID().startsWith("ZDB-GENE"))
+                                        componentDTO.setComponentID("ZFIN:" + component.getComponentZdbID());
                                     if (component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF) || component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF_)) {
                                         componentDTO.setComponentRelation("expresses");
                                     } else if (component.getType().equals(ConstructComponent.Type.PROMOTER_OF) || component.getType().equals(ConstructComponent.Type.PROMOTER_OF_)) {
@@ -95,6 +97,12 @@ public class BasicConstructInfo extends AbstractScriptWrapper {
                                 }
                                 dto.setSecondaryIds(secondaryDTOs);
                             }
+                            List<String> pages = new ArrayList<>();
+                            pages.add("construct");
+                            List<CrossReferenceDTO> xRefs = new ArrayList<>();
+                            CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", construct.getZdbID(), pages);
+                            xRefs.add(xref);
+                            dto.setCrossReferences(xRefs);
                             return dto;
                         })
                 .collect(Collectors.toList());

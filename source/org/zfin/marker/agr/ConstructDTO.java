@@ -17,7 +17,15 @@ public class ConstructDTO {
     protected String primaryId;
     public static final String ZFIN = "ZFIN:";
     private List<ConstructComponentDTO> constructComponents;
+    private List<CrossReferenceDTO> crossReferences;
 
+    public List<CrossReferenceDTO> getCrossReferences() {
+        return crossReferences;
+    }
+
+    public void setCrossReferences(List<CrossReferenceDTO> crossReferences) {
+        this.crossReferences = crossReferences;
+    }
 
     public List<ConstructComponentDTO> getConstructComponents() {
         return constructComponents;

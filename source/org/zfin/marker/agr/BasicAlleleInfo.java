@@ -66,16 +66,18 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                             dto.setSymbolText(feature.getName());
                             dto.setPrimaryId(feature.getZdbID());
                             Marker gene = feature.getAllelicGene();
-                            Marker construct = getFeatureRepository().getSingleConstruct(feature.getZdbID());
                             List<AlleleRelationDTO> alleleObjectRelations = new ArrayList<>();
-                            if (construct != null) {
-                                AlleleRelationDTO cobjectRelation = new AlleleRelationDTO();
-                                ObjectRelationDTO constructRelation = new ObjectRelationDTO();
-                                constructRelation.setAssociationType("contains");
-                                constructRelation.setConstruct("ZFIN:"+construct.getZdbID());
-                                cobjectRelation.setObjectRelation(constructRelation);
-                                alleleObjectRelations.add(cobjectRelation);
+                            for (Marker construct : getFeatureRepository().getConstruct(feature.getZdbID())) {
+                                if (construct != null) {
+                                    AlleleRelationDTO cobjectRelation = new AlleleRelationDTO();
+                                    ObjectRelationDTO constructRelation = new ObjectRelationDTO();
+                                    constructRelation.setAssociationType("contains");
+                                    constructRelation.setConstruct("ZFIN:"+construct.getZdbID());
+                                    cobjectRelation.setObjectRelation(constructRelation);
+                                    alleleObjectRelations.add(cobjectRelation);
+                                }
                             }
+
                             if (gene != null) {
                                 AlleleRelationDTO gobjectRelation = new AlleleRelationDTO();
                                 ObjectRelationDTO geneRelation = new ObjectRelationDTO();

@@ -114,19 +114,17 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Marker getSingleConstruct(String featureZdbId) {
+    public List<Marker> getConstruct(String featureZdbId) {
             String hql = "select distinct fmrel1.marker from FeatureMarkerRelationship fmrel1" +
                     " where fmrel1.type in (:innocuous, :phenotypic) " +
-                    " and fmrel1.feature = :featureZdbId" +
-                    " and not exists (select 'x' from FeatureMarkerRelationship fmrel2 " +
-                    "where fmrel1.zdbID != fmrel2.zdbID and fmrel1.feature = fmrel2.feature)" ;
+                    " and fmrel1.feature = :featureZdbId" ;
 
             Query query = currentSession().createQuery(hql);
             query.setString("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
             query.setString("phenotypic", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
             query.setString("featureZdbId", featureZdbId);
 
-            return (Marker) query.uniqueResult();
+            return (List<Marker>) query.list();
     }
 
     @SuppressWarnings("unchecked")
