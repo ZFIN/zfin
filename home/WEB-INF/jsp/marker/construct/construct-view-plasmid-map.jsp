@@ -7,7 +7,7 @@
     <c:forEach var="fig" items="${formBean.marker.figures}">
 
         <c:forEach var="img" items="${fig.images}">
-            <a href="/${img.zdbID}"><img src="/imageLoadUp/${img.imageFilename}"></a>
+            <a href="/${img.zdbID}"><img src="/imageLoadUp/${img.medium}"></a>
         </c:forEach>
     </c:forEach>
 </z:ifHasData>
