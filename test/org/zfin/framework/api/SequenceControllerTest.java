@@ -28,24 +28,24 @@ public class SequenceControllerTest extends AbstractDatabaseTest {
         // alcama
         String zdbID = "ZDB-GENE-990415-30";
 
-        JsonResultResponse<MarkerDBLink> links = controller.getSequenceView(zdbID, false, null, null, null, new Pagination());
+        JsonResultResponse<MarkerDBLink> links = controller.getSequenceView(zdbID, false, null, null, new Pagination());
         assertNotNull(links);
         assertThat(links.getTotal(), greaterThanOrEqualTo(34L));
 
-        links = controller.getSequenceView(zdbID, false, null, "1", null, new Pagination());
+        links = controller.getSequenceView(zdbID, false, null, "1", new Pagination());
         assertNotNull(links);
         // filtered records for accession number '1'.
         assertThat(links.getTotal(), greaterThanOrEqualTo(13L));
         assertThat(links.getTotal(), lessThanOrEqualTo(20L));
 
-        links = controller.getSequenceView(zdbID, false, "GEnomic", null, null, new Pagination());
+        links = controller.getSequenceView(zdbID, false, "GEnomic", null, new Pagination());
         assertNotNull(links);
         // filtered records on type
         assertThat(links.getTotal(), greaterThanOrEqualTo(3L));
         assertThat(links.getTotal(), lessThanOrEqualTo(10L));
 
         // summary view
-        links = controller.getSequenceView(zdbID, true, null, null, null, new Pagination());
+        links = controller.getSequenceView(zdbID, true, null, null, new Pagination());
         assertNotNull(links);
         assertThat(links.getResults().size(), equalTo(3));
     }
