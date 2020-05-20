@@ -6037,9 +6037,9 @@ and child.term_ontology = 'disease_ontology';
                             join expression_result2 on xpatres_efs_id = efs_pk_id
                             join publication as pub on xpatex_source_zdb_id = pub.zdb_id where jtype='Unpublished';"
                 cacheImpl="SortedMapBackedCache"
-                where="id=expression_result.id"
-        />
-
+                where="id=expression_result.id"/>
+        </entity>
+    
         <entity name="phenotype_observation"
                 query="select distinct
                         'Phenotype Observation' as category,
