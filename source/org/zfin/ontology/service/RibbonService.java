@@ -421,7 +421,8 @@ public class RibbonService {
         if (StringUtils.isNotEmpty(ribbonTermID)) {
             // filter by stage
             if (ribbonTermID.contains("ZFS:")) {
-                details.removeIf(detail -> detail.getStages().stream().noneMatch(stage -> stage.getOboID().equals(ribbonTermID)));
+
+                details.removeIf(detail -> detail.getStages() == null);
             }
         }
         return details;
@@ -508,10 +509,13 @@ public class RibbonService {
 
         // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
         Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
+       
         if (ribbonTermID != null) {
+
             // filter by stage
             if (ribbonTermID.contains("ZFS:")) {
-                details.removeIf(detail -> detail.getStages().stream().noneMatch(stage -> stage.getOboID().equals(ribbonTermID)));
+
+                details.removeIf(detail -> detail.getStages() == null);
             }
         }
         return details;
