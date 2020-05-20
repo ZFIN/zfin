@@ -107,9 +107,19 @@ public class RibbonService {
                 .map(GenericTerm::getOboID)
                 .collect(toList());
 
-        Map<String, Integer> otherCounts = getRibbonCounts(partialQuery, categoryIDs, slimIDs);
+        // get the counts for the All annotation blocks and the slim blocks
         Map<String, Integer> allCounts = getRibbonCounts(partialQuery, categoryIDs);
         Map<String, Integer> slimCounts = getRibbonCounts(partialQuery, slimIDs);
+        // other counts have to be done one category at a time so that post-composed terms which are included
+        // under a slim term of one category aren't excluded from the Other of another category
+        Map<String, Integer> otherCounts = new HashMap<>();
+        for (RibbonCategoryConfig category : categoryConfigs) {
+            otherCounts.putAll(getRibbonCounts(
+                    partialQuery,
+                    List.of(category.getCategoryTerm().getOboID()),
+                    category.getSlimTerms().stream().map(GenericTerm::getOboID).collect(toList())
+            ));
+        }
 
         // build the categories field with term names and definitions
         List<RibbonCategory> categories = categoryConfigs.stream()
@@ -507,7 +517,7 @@ public class RibbonService {
 
         // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
         Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
-       
+
         if (ribbonTermID != null) {
 
             // filter by stage
