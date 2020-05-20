@@ -283,13 +283,11 @@ public class RibbonService {
             query.addFilterQuery("phenotype_statement_ac:(" + filterValue.trim() + ")");
         }
         // get Facet for the ao term and the PK of the expression record.
-        query.addFacetPivotField("phenotype_statement,phenotype_statement_term_id,stage_term_id,pub_zdb_id,id");
-        query.setParam("f.phenotype_statement.facet.offset", String.valueOf(pagination.getStart()));
-        query.setParam("f.phenotype_statement.facet.limit", String.valueOf(pagination.getLimit()));
-        query.setParam("stats", "true");
-        query.setParam("stats.field", "{!countDistinct=true}phenotype_statement_term_id");
-        query.setParam("f.phenotype_statement.facet.sort", "index");
-        query.setGetFieldStatistics("{!countDistinct=true}phenotype_statement_term_id");
+        query.addFacetPivotField("phenotype_statement_s,phenotype_statement_term_id,stage_term_id,pub_zdb_id,id");
+        query.setParam("f.phenotype_statement_s.facet.offset", String.valueOf(pagination.getStart()));
+        query.setParam("f.phenotype_statement_s.facet.limit", String.valueOf(pagination.getLimit()));
+        query.setParam("f.phenotype_statement_s.facet.sort", "index");
+        query.setGetFieldStatistics("{!countDistinct=true}phenotype_statement_s");
 
         QueryResponse queryResponse = null;
         try {
@@ -347,7 +345,7 @@ public class RibbonService {
         phenotypeRibbonDetails.removeIf(phenotypeRibbonDetail -> phenotypeRibbonDetail.getStages() == null);
 
         JsonResultResponse<PhenotypeRibbonSummary> response = new JsonResultResponse<>();
-        response.setTotal(queryResponse.getFieldStatsInfo().get("phenotype_statement_term_id").getCountDistinct());
+        response.setTotal(queryResponse.getFieldStatsInfo().get("phenotype_statement_s").getCountDistinct());
         response.setResults(phenotypeRibbonDetails);
 
         return response;
