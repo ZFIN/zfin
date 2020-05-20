@@ -74,7 +74,13 @@
         </z:section>
 
         <z:section title="${SUPPORTINGSEQUENCES}">
-            <div class="__react-root" id="GeneSequencesTable" data-gene-id="${formBean.marker.zdbID}"></div>
+            <div
+                class="__react-root"
+                id="MarkerSequencesTable"
+                data-marker-id="${formBean.marker.zdbID}"
+                data-show-summary="true"
+            >
+            </div>
         </z:section>
 
         <z:section title="${CITATIONS}">

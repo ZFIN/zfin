@@ -40,19 +40,14 @@ public class SequenceController {
     @JsonView(View.SequenceAPI.class)
     @RequestMapping(value = "/marker/{zdbID}/sequences")
     public JsonResultResponse<MarkerDBLink> getSequenceView(@PathVariable("zdbID") String zdbID,
-                                                            @RequestParam(value = "summary", required = false, defaultValue = "true") boolean summary,
+                                                            @RequestParam(value = "summary", required = false, defaultValue = "false") boolean summary,
                                                             @RequestParam(value = "filter.type", required = false) String type,
                                                             @RequestParam(value = "filter.accession", required = false) String accessionNumber,
-                                                            @RequestParam(value = "filter.length", required = false) String length,
                                                             @Version Pagination pagination) {
         pagination.addFieldFilter(FieldFilter.SEQUENCE_ACCESSION, accessionNumber);
         pagination.addFieldFilter(FieldFilter.SEQUENCE_TYPE, type);
-
         JsonResultResponse<MarkerDBLink> response = sequenceService.getMarkerDBLinkJsonResultResponse(zdbID, pagination, summary);
-
-
         response.setHttpServletRequest(request);
-
         return response;
     }
 

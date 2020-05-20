@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 import LoadingSpinner from '../LoadingSpinner';
@@ -13,12 +13,13 @@ import {DEFAULT_TABLE_STATE} from './index';
 const DataTable = ({
     columns,
     downloadOptions,
+    onDataLoaded,
     onTableStateChange,
     pagination = true,
     rowKey,
+    sortOptions,
     tableState,
     url,
-    sortOptions
 }) => {
     if ((tableState && !onTableStateChange) || (!tableState && onTableStateChange)) {
         if (process.env.NODE_ENV === 'development') {
@@ -31,6 +32,11 @@ const DataTable = ({
     const setTableState = onTableStateChange || setControlledTableState;
 
     const data = useTableDataFetch(url, tableState);
+    useEffect(() => {
+        if (typeof onDataLoaded === 'function' && !data.loading && !data.rejected && data.value && data.value.total > 0) {
+            onDataLoaded();
+        }
+    }, [data]);
 
     if (data.rejected) {
         return <GenericErrorMessage/>;
@@ -211,6 +217,7 @@ DataTable.propTypes = {
         format: PropTypes.string,
         url: PropTypes.string,
     })),
+    onDataLoaded: PropTypes.func,
     onTableStateChange: PropTypes.func,
     pagination: PropTypes.bool,
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,

@@ -6,7 +6,10 @@ import org.springframework.stereotype.Service;
 import org.zfin.Species;
 import org.zfin.framework.api.*;
 import org.zfin.marker.Marker;
-import org.zfin.marker.presentation.SequenceInfo;
+import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.Transcript;
+import org.zfin.marker.presentation.DbLinkDisplayComparator;
+import org.zfin.marker.presentation.RelatedMarkerDBLinkDisplay;
 import org.zfin.marker.presentation.SummaryDBLinkDisplay;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -14,7 +17,10 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -111,70 +117,81 @@ public class SequenceService {
         }
 
         JsonResultResponse<MarkerDBLink> response = new JsonResultResponse<>();
-        SequenceInfo sequenceInfo;
 
-        if (summary) {
-            if (!zdbID.contains("GENE")){
-               sequenceInfo = MarkerService.getMarkerSequenceInfo(marker);
-            }
-            else {
-               sequenceInfo = MarkerService.getSequenceInfoSummary(marker);
-            }
-            response.setResults(sequenceInfo.getDbLinks().stream()
+        List<MarkerDBLink> allDBLinks = new ArrayList<>();
+
+        if (marker.getType() == Marker.Type.TSCRIPT) {
+            allDBLinks.addAll(TranscriptService.getSupportingSequenceInfo((Transcript) marker)
+                    .getDbLinks()
+                    .stream()
                     .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
                     .collect(Collectors.toList())
             );
-            response.setTotal(sequenceInfo.getNumberDBLinks());
         } else {
-            List<MarkerDBLink> fullMarkerDBLinks = MarkerService.getMarkerDBLinks(marker);
-
-            // filtering
-            FilterService<MarkerDBLink> filterService = new FilterService<>(new SequenceFiltering());
-            List<MarkerDBLink> filteredDBLinksList = filterService.filterAnnotations(fullMarkerDBLinks, pagination.getFieldFilterValueMap());
-
-            // sorting
-            SequenceSorting sorting = new SequenceSorting();
-            filteredDBLinksList.sort(sorting.getComparator(pagination.getSortBy()));
-
-
-            response.calculateRequestDuration(startTime);
-            response.setTotal(filteredDBLinksList.size());
-
-            // paginating
-            response.setResults(filteredDBLinksList.stream()
-                    .skip(pagination.getStart())
-                    .limit(pagination.getLimit())
-                    .collect(Collectors.toList()));
-        }
-
-        return response;
-    }
-
-
-
-    public JsonResultResponse<MarkerDBLink> getOtherMarkerDBLinkJsonResultResponse(String zdbID
-                                                                              ) {
-        Marker marker = markerRepository.getMarker(zdbID);
-        if (marker == null) {
-            String errorMessage = "No marker found for ID: " + zdbID;
-            log.error(errorMessage);
-            RestErrorMessage error = new RestErrorMessage(404);
-            error.addErrorMessage(errorMessage);
-            throw new RestErrorException(error);
-        }
-
-        JsonResultResponse<MarkerDBLink> response = new JsonResultResponse<>();
-
-            SequenceInfo sequenceInfo = MarkerService.getMarkerSequenceInfo(marker);
-            response.setResults(sequenceInfo.getDbLinks().stream()
+            allDBLinks.addAll(sequenceRepository
+                    .getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE)
+                    .stream()
                     .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
                     .collect(Collectors.toList())
             );
-            response.setTotal(sequenceInfo.getNumberDBLinks());
+        }
+
+        if (marker.isGenedom()) {
+            List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
+                    .getDBLinksForFirstRelatedMarker(
+                            marker,
+                            DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
+                            MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
+                            MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
+                            MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
+                    );
+            relatedLinks.addAll(RepositoryFactory.getSequenceRepository()
+                    .getDBLinksForSecondRelatedMarker(
+                            marker,
+                            DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
+                            MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                    )
+            );
+            relatedLinks.addAll(MarkerService.getTranscriptReferences(marker));
+            allDBLinks.addAll(relatedLinks.stream()
+                    .map(RelatedMarkerDBLinkDisplay::getLink)
+                    .collect(Collectors.toList())
+            );
+        }
+
+        List<MarkerDBLink> groupedLinks = MarkerService.aggregateDBLinksByPub(allDBLinks);
+
+        // links must be sorted before going into the summarizer so that the correct first one gets kept
+        groupedLinks.sort(new DbLinkDisplayComparator());
+        List<MarkerDBLink> displayedLinks;
+        if (summary) {
+            Set<ForeignDBDataType.DataType> types = new HashSet<>();
+            displayedLinks = new ArrayList<>();
+            for (MarkerDBLink link : groupedLinks) {
+                ForeignDBDataType.DataType linkType = link.getReferenceDatabase().getForeignDBDataType().getDataType();
+                if (!types.contains(linkType)) {
+                    displayedLinks.add(link);
+                    types.add(linkType);
+                }
+            }
+        } else {
+            displayedLinks = groupedLinks;
+        }
+
+        // filtering
+        FilterService<MarkerDBLink> filterService = new FilterService<>(new SequenceFiltering());
+        List<MarkerDBLink> filteredDBLinksList = filterService.filterAnnotations(displayedLinks, pagination.getFieldFilterValueMap());
+
+        response.calculateRequestDuration(startTime);
+        response.setTotal(filteredDBLinksList.size());
+
+        // paginating
+        response.setResults(filteredDBLinksList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
 
         return response;
     }
-
-
 
 }

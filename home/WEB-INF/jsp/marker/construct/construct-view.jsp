@@ -47,7 +47,12 @@
         </z:section>
 
         <z:section title="${SEQUENCEINFORMATION}">
-            <div class="__react-root" id="OtherMarkerSequencesTable" data-marker-id="${formBean.marker.zdbID}"></div>
+            <div
+                class="__react-root"
+                id="MarkerSequencesTable"
+                data-marker-id="${formBean.marker.zdbID}"
+            >
+            </div>
         </z:section>
 
         <z:section title="${OTHERPAGES}">

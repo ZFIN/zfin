@@ -152,51 +152,11 @@ public class MarkerService {
         return sequenceInfo;
     }
 
-
-    public static SequenceInfo getMarkerSequenceInfo(Marker marker) {
-
-        SequenceInfo sequenceInfo = new SequenceInfo();
-
-        sequenceInfo.setDbLinks(RepositoryFactory.getSequenceRepository()
-                .getDBLinksForMarkerAndDisplayGroup(marker
-                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
-        );
-
-
-        sequenceInfo.setNumberDBLinks(sequenceInfo.getDbLinks().size());
-
-        List<DBLink> dbLinkSet = new ArrayList<>();
-        Set<String> types = new HashSet<>();
-        for (DBLink dbLink : sequenceInfo.getDbLinks()) {
-            String type = dbLink.getReferenceDatabase().getForeignDBDataType().getDataType().toString();
-            if (!types.contains(type)) {
-                types.add(type);
-                dbLinkSet.add(dbLink);
-            } else if (types.contains(type)) {
-                sequenceInfo.setHasMoreLinks(true);
-            }
-        }
-
-        sequenceInfo.setDbLinks(dbLinkSet);
-
-
-        return sequenceInfo;
-    }
-
-
-    public static List<MarkerDBLink> getMarkerDBLinks(Marker marker) {
-        SequencePageInfoBean sequenceInfo = getSequenceInfoFull(marker);
-
-        if (sequenceInfo.getDbLinks() == null)
-            return new ArrayList<>();
-        List<MarkerDBLink> links = sequenceInfo.getDbLinks().stream()
-                .map(dbLink -> getMarkerDBLink(marker, dbLink))
-                .collect(Collectors.toList());
-        sequenceInfo.getRelatedMarkerDBLinks().values().forEach(markerDBLinks -> markerDBLinks.forEach(markerDBLink -> links.add(getMarkerDBLink(marker, markerDBLink))));
-        // aggregate same db link, group by publication
+    public static List<MarkerDBLink> aggregateDBLinksByPub(Collection<MarkerDBLink> links) {
         Map<String, List<MarkerDBLink>> map = links.stream()
                 .collect(groupingBy(DBLink::getAccessionNumber, toList()));
-        List<MarkerDBLink> groupedLinks = map.values().stream()
+
+        return map.values().stream()
                 .map(markerDBLinks -> {
                     MarkerDBLink link = markerDBLinks.get(0);
                     markerDBLinks.remove(0);
@@ -204,8 +164,6 @@ public class MarkerService {
                     return link;
                 })
                 .collect(toList());
-
-        return groupedLinks;
     }
 
     public static MarkerDBLink getMarkerDBLink(Marker marker, DBLink dbLink) {

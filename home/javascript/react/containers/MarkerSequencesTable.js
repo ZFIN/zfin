@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import qs from 'qs';
 import DataTable from '../components/data-table';
 import AttributionLink from '../components/AttributionLink';
 import BlastDropDown from '../components/BlastDropDown';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 
-const GeneSequencesTable = ({geneId}) => {
-    const [summary, setSummary] = useState(true);
+const MarkerSequencesTable = ({markerId, showSummary}) => {
+    const [summary, setSummary] = useState(showSummary === 'true');
+    const [hasData, setHasData] = useState(false);
+
     const columns = [
         {
             label: 'Type',
             content: row => row.type,
             width: '80px',
+            filterName: 'type',
         },
         {
             label: 'Accession #',
@@ -25,6 +29,7 @@ const GeneSequencesTable = ({geneId}) => {
                 />
             ),
             width: '150px',
+            filterName: 'accession',
         },
         {
             label: 'Length (nt/aa)',
@@ -38,21 +43,31 @@ const GeneSequencesTable = ({geneId}) => {
             width: '100px',
         }
     ];
+
+    const params = {};
+    if (summary) {
+        params.summary = true;
+    }
+
     return (
-        <React.Fragment>
-            <DataTableSummaryToggle detailLabel='All Sequences' value={summary} onChange={setSummary} />
+        <>
+            {showSummary && hasData && (
+                <DataTableSummaryToggle detailLabel='All Sequences' value={summary} onChange={setSummary} />
+            )}
             <DataTable
                 columns={columns}
-                url={`/action/api/marker/${geneId}/sequences?summary=${summary}`}
+                url={`/action/api/marker/${markerId}/sequences?${qs.stringify(params)}`}
+                onDataLoaded={() => setHasData(true)}
                 pagination={!summary}
                 rowKey={row => row.zdbID}
             />
-        </React.Fragment>
+        </>
     );
 };
 
-GeneSequencesTable.propTypes = {
-    geneId: PropTypes.string,
+MarkerSequencesTable.propTypes = {
+    markerId: PropTypes.string,
+    showSummary: PropTypes.string,
 };
 
-export default GeneSequencesTable;
+export default MarkerSequencesTable;
