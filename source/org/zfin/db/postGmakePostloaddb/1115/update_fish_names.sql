@@ -8,6 +8,6 @@ update marker
 			where fmrel_mrkr_zdb_id = mrkr_zdb_id
 			and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
 			and genofeat_geno_Zdb_id = fish_genotype_zdb_id
-			and fish_name is null);
+			and (fish_name = '' or fish_name is null));
 
 
