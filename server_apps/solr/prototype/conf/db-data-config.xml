@@ -6027,19 +6027,22 @@ and child.term_ontology = 'disease_ontology';
                                               where cefs_genox_zdb_id = xpatex_genox_zdb_id);"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
-        </entity>
 
-        <!-- expression_result_journal_type -->
-        <entity name="expression_result_is_directly_submitted"
-                query="select 'true' as is_directly_submitted , 'xpatres-' || xpatres_pk_id as id
+            <!-- expression_result_journal_type -->
+            <entity name="expression_result_is_directly_submitted"
+                    query="select 'true' as is_directly_submitted , 'xpatres-' || xpatres_pk_id as id
                            from expression_experiment2
                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                             join expression_result2 on xpatres_efs_id = efs_pk_id
                             join publication as pub on xpatex_source_zdb_id = pub.zdb_id where jtype='Unpublished';"
-                cacheImpl="SortedMapBackedCache"
-                where="id=expression_result.id"/>
+                    cacheImpl="SortedMapBackedCache"
+                    where="id=expression_result.id"/>
         </entity>
-    
+
+
+
+
+
         <entity name="phenotype_observation"
                 query="select distinct
                         'Phenotype Observation' as category,
