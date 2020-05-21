@@ -111,7 +111,6 @@ public class ConstructViewController {
                         }
                     }
                 }
-            
             allFish = allFish.stream().distinct().collect(Collectors.toList());
             Collections.sort(allFish);
             markerBean.setFish(allFish);
