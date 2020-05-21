@@ -911,7 +911,7 @@ public class ExpressionService {
             query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
         }
         if (StringUtils.isNotEmpty(supertermId)) {
-            query.addFilterQuery("superterm_id:" + SolrService.luceneEscape(termId));
+            query.addFilterQuery("superterm_id:" + SolrService.luceneEscape(supertermId));
         }
         if (StringUtils.isNotEmpty(subtermId)) {
             query.addFilterQuery("subterm_id:" + SolrService.luceneEscape(subtermId));
@@ -952,8 +952,7 @@ public class ExpressionService {
 
     public void addDirectSubmissionFilter(SolrQuery query, boolean onlyDirectlySubmitted) {
         if (onlyDirectlySubmitted) {
-            query.addFilterQuery("journal_type:Unpublished");
-
+            query.addFilterQuery("is_directly_submitted:true");
         }
     }
 }
