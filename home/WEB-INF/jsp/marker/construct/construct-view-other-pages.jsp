@@ -4,15 +4,15 @@
 
 <z:ifHasData test="${!empty formBean.otherMarkerPages}" noDataMessage="None">
     <ul class='comma-separated'>
-    <c:forEach var="link" items="${formBean.otherMarkerPages}">
-
-        <c:if test="${!link.displayName.contains('VEGA')}">
-                <li>
+        <c:forEach var="link" items="${formBean.otherMarkerPages}">
+            <li>
+                <c:if test="${!link.displayName.contains('VEGA')}">
                     <a href="${link.link}">${link.displayName}</a>
                     ${link.attributionLink}
-                <li>
-        </c:if>
-    </c:forEach>
+                </c:if>
+            </li>
+        </c:forEach>
     </ul>
 </z:ifHasData>
+
 
