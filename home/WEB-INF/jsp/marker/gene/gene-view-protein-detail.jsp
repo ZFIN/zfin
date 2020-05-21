@@ -21,7 +21,7 @@
 
                     <td> <zfin:link entity="${category.proDBLink}"/><br> <zfin2:externalLink
                             href="https://www.ebi.ac.uk/interpro/protein/UniProt/${category.proDBLink.accessionNumber}">InterPro</zfin2:externalLink>
-                            <c:if test="${category.PDB}"><zfin2:externalLink href="https://http://www.rcsb.org/pdb/protein/${category.proDBLink.accessionNumber}">, PDB</zfin2:externalLink> </c:if>
+                            <c:if test="${category.PDB}"><zfin2:externalLink href="https://www.rcsb.org/pdb/protein/${category.proDBLink.accessionNumber}">, PDB</zfin2:externalLink> </c:if>
 
                     </td>
                             <td>${category.proDBLink.length}</td>
