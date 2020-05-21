@@ -118,7 +118,6 @@ public class ConstructViewController {
             // Transgenics that utilize the construct
             int numFeatures = featureRepository.getNumberOfFeaturesForConstruct(construct);
             model.addAttribute("numberOfFeatures", numFeatures);
-            if (numFeatures <= 50) {
                 List<Feature> features = featureRepository.getFeaturesByConstruct(construct);
                 markerBean.setTransgenics(features);
 
@@ -144,7 +143,6 @@ public class ConstructViewController {
                             }
                         }
                     }
-                }
                 HashSet hs = new HashSet();
                 hs.addAll(allFish);
                 allFish.clear();
